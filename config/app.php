@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'xingstation'),
+    'name' => env('APP_NAME', 'publication'),
 
     /*
     |--------------------------------------------------------------------------
@@ -159,7 +159,12 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        \App\Providers\GizWitsServiceProvider::class,
+
+
+        /**
+         * 第三方provider
+         */
+        App\Providers\EasySmsServiceProvider::class,
     ],
 
     /*
