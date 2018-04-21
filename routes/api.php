@@ -38,6 +38,8 @@ $api->version('v1', [
         // 删除token
         $api->delete('authorizations/current', 'AuthorizationsController@destroy');
 
+        // 游客可以访问的接口
+        $api->get('categories', 'CategoriesController@index');
 
         // 需要 token 验证的接口
         $api->group(['middleware' => 'api.auth'], function ($api) {
@@ -47,9 +49,11 @@ $api->version('v1', [
             $api->post('images', 'ImagesController@store');
             // 编辑登录用户信息
             $api->patch('user', 'UsersController@update');//patch 部分修改资源，提供部分资源信息
+            // 发布话题
+            $api->post('topics', 'TopicsController@store');
+            // 修改话题
+            $api->patch('topics/{topic}', 'TopicsController@update');
 
-            // 图片资源
-            $api->post('images', 'ImagesController@store');
         });
     });
 });
