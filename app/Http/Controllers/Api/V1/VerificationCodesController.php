@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Requests\Api\V1\VerificationCodeRequest;
-use Illuminate\Http\Request;
 use Overtrue\EasySms\EasySms;
 
 class VerificationCodesController extends Controller
@@ -12,17 +11,21 @@ class VerificationCodesController extends Controller
     {
         $phone = $request->phone;
 
-        // 生成4位随机数，左侧补0
-        $code = str_pad(random_int(1, 9999), 4, 0, STR_PAD_LEFT);
+        if (!app()->environment('production')) {
+            $code = "1234";
+        } else {
+            // 生成4位随机数，左侧补0
+            $code = str_pad(random_int(1, 9999), 4, 0, STR_PAD_LEFT);
 
-        try {
-            $result = $easySms->send($phone, [
-                'content' => "【Lbbs社区】您的验证码是{$code}。如非本人操作，请忽略本短信"
-            ]);
-        } catch (\GuzzleHttp\Exception\ClientException $exception) {
-            $response = $exception->getResponse();
-            $result = json_decode($response->getBody()->getContents(), true);
-            return $this->response->errorInternal($result['msg'] ?? '短信发送异常');
+            try {
+                $result = $easySms->send($phone, [
+                    'content' => "【EXE颜镜店】您正在注册EXE颜镜店商城，短信验证码：{$code} 有效期为600秒，感谢您注册使用！",
+                ]);
+            } catch (\GuzzleHttp\Exception\ClientException $exception) {
+                $response = $exception->getResponse();
+                $result = json_decode($response->getBody()->getContents(), true);
+                return $this->response->errorInternal($result['msg'] ?? '短信发送异常');
+            }
         }
 
         $key = 'verificationCode_' . str_random(15);

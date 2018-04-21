@@ -12,6 +12,7 @@
     "dingo/api": "2.0.0-alpha1",
     "doctrine/dbal": "^2.7",
     "fideloper/proxy": "^4.0",
+    "gregwar/captcha": "^1.1",
     "laravel/framework": "5.5.*",
     "laravel/horizon": "^1.2",
     "laravel/tinker": "^1.0",
