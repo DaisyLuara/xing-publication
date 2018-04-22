@@ -68,6 +68,11 @@ $api->version('v1', [
 
             // 发布回复
             $api->post('topics/{topic}/replies', 'RepliesController@store');
+            // 删除回复
+            $api->delete('topics/{topic}/replies/{reply}', 'RepliesController@destroy');
+
+
+
 
             // 当前登录用户权限
             $api->get('user/permissions', 'PermissionsController@index');
