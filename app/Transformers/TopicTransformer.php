@@ -7,6 +7,16 @@ use League\Fractal\TransformerAbstract;
 
 class TopicTransformer extends TransformerAbstract
 {
+    /**
+     * 接口中返回额外资源
+     * 接口自动处理N+1问题
+     * 如果要处理复杂的嵌套及关系加载
+     * app(\Dingo\Api\Transformer\Factory::class)->disableEagerLoading();
+     * 临时关闭DingoAPI预加载 自己手动处理
+     * @var array
+     */
+    protected $availableIncludes = ['user', 'category'];
+
     public function transform(Topic $topic)
     {
         return [
@@ -23,5 +33,15 @@ class TopicTransformer extends TransformerAbstract
             'created_at' => $topic->created_at->toDateTimeString(),
             'updated_at' => $topic->updated_at->toDateTimeString(),
         ];
+    }
+
+    public function includeUser(Topic $topic)
+    {
+        return $this->item($topic->user, new UserTransformer());
+    }
+
+    public function includeCategory(Topic $topic)
+    {
+        return $this->item($topic->category, new CategoryTransformer());
     }
 }

@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
 
+    use HasRoles;
     /**
      * The attributes that are mass assignable.
      *
@@ -64,5 +65,10 @@ class User extends Authenticatable implements JWTSubject
         }
 
         $this->attributes['avatar'] = $path;
+    }
+
+    public function isAuthorOf($model)
+    {
+        return $this->id == $model->user_id;
     }
 }

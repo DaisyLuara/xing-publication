@@ -40,19 +40,37 @@ $api->version('v1', [
 
         // 游客可以访问的接口
         $api->get('categories', 'CategoriesController@index');
+        //话题列表
+        $api->get('topics', 'TopicsController@index');
+        //某个用户的话题列表
+        $api->get('users/{user}/topics', 'TopicsController@userIndex');
+        //话题详情
+        $api->get('topics/{topic}', 'TopicsController@show');
 
         // 需要 token 验证的接口
         $api->group(['middleware' => 'api.auth'], function ($api) {
+
             // 当前登录用户信息
             $api->get('user', 'UsersController@me');
             // 图片资源
             $api->post('images', 'ImagesController@store');
             // 编辑登录用户信息
             $api->patch('user', 'UsersController@update');//patch 部分修改资源，提供部分资源信息
+
+
             // 发布话题
             $api->post('topics', 'TopicsController@store');
             // 修改话题
             $api->patch('topics/{topic}', 'TopicsController@update');
+            // 删除话题
+            $api->delete('topics/{topic}', 'TopicsController@destroy');
+
+
+            // 发布回复
+            $api->post('topics/{topic}/replies', 'RepliesController@store');
+
+            // 当前登录用户权限
+            $api->get('user/permissions', 'PermissionsController@index');
 
         });
     });
