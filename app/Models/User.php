@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Auth;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -10,6 +12,21 @@ class User extends Authenticatable implements JWTSubject
 {
 
     use HasRoles;
+
+    use Notifiable {
+        notify as protected laravelNotify;
+    }
+
+    public function notify($instance)
+    {
+        // 如果要通知的人是当前用户，就不必通知了！
+        if ($this->id == Auth::id()) {
+            return;
+        }
+        $this->increment('notification_count');
+        $this->laravelNotify($instance);
+    }
+
     /**
      * The attributes that are mass assignable.
      *
@@ -70,5 +87,12 @@ class User extends Authenticatable implements JWTSubject
     public function isAuthorOf($model)
     {
         return $this->id == $model->user_id;
+    }
+
+    public function markAsRead()
+    {
+        $this->notification_count = 0;
+        $this->save();
+        $this->unreadNotifications->markAsRead();
     }
 }

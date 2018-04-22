@@ -71,7 +71,12 @@ $api->version('v1', [
             // 删除回复
             $api->delete('topics/{topic}/replies/{reply}', 'RepliesController@destroy');
 
-
+            //消息通知
+            $api->get('user/notifications', 'NotificationsController@index');
+            // 通知统计
+            $api->get('user/notifications/stats', 'NotificationsController@stats');
+            // 标记消息通知为已读
+            $api->patch('user/read/notifications', 'NotificationsController@read');
 
 
             // 当前登录用户权限
