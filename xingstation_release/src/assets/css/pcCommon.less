@@ -1,0 +1,102 @@
+// list layout
+.page-list-template {
+  background-color: white;
+  border-radius: 5px;
+  &.tab {
+    padding: 10px 0;
+  }
+  &.single {
+    margin: 10px;
+    padding: 10px;
+  }
+  .search-area {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    background-color: #eff2f7;
+    padding: 15px;
+    .search-inner {
+      .input-item {
+        width: 150px;
+        margin-right: 10px;
+      }
+      .select-item {
+        width: 150px;
+        margin-right: 10px;
+      }
+      .search {
+        margin-left: 10px;
+      }
+    }
+  }
+  .fuction-area {
+    margin-top: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 16px;
+    align-items: center;
+    .label {
+      font-size: 14px;
+    }
+  }
+  .table-area {
+    margin: 20px 0;
+  }
+  .button-area {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+  .pagination {
+    margin: 20px 0;
+    padding-right: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+// edit layout
+.page-edit-template {
+  margin: 10px;
+  .pane {
+    border-radius: 5px;
+    background-color: white;
+    padding: 20px;
+    margin: 20px 0;
+    .pane-title {
+      padding-bottom: 20px;
+      font-size: 18px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+    .pane-input {
+      width: 350px;
+    }
+  }
+  .button-area {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+  .button-area-begin {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+// span & button styles
+.danger {
+  color: red;
+  cursor: pointer;
+}
+.operate {
+  color: #20a0ff;
+  cursor: pointer;
+}
+.span-gold {
+  color: #cc9900;
+}
