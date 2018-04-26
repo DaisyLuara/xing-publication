@@ -9,9 +9,21 @@ class AuthorizationsController extends Controller
 {
     public function store(AuthorizationRequest $request)
     {
+        //管理员登陆 使用短信+验证码登陆
+        $verifyData = \Cache::get($request->verification_key);
+
+        if (!$verifyData) {
+            return $this->response->error('验证码已失效', 422);
+        }
+
         /**
-         * @todo 短信验证码+图形验证码
+         * hash_equals 防止时序攻击
          */
+        if (!hash_equals($verifyData['code'], $request->verification_code)) {
+            // 返回401
+            return $this->response->errorUnauthorized('验证码错误');
+        }
+
         $username = $request->username;
 
         filter_var($username, FILTER_VALIDATE_EMAIL) ?
