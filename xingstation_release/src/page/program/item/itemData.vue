@@ -188,7 +188,6 @@ export default {
           type: 'pie',
           name: '性别访问数',
           data: [{name:'女',y: 45.0, color: '#7cb5ec'},
-            {name:'未知',y: 32.0, color: '#434348'},
             {
               name: '男',
               y: 18.8,
