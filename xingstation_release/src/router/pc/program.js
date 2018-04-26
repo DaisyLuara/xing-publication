@@ -51,7 +51,7 @@ let router = {
           },
         },
         {
-          path: 'data/:uid',
+          path: 'data',
           component: () =>
             import(/* webpackChunkName: "page/program/item/itemData" */ 'page/program/item/itemData'),
           name: '节目数据',

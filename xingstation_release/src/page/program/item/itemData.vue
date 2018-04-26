@@ -1,213 +1,163 @@
 <template>
-  <div class="root">
-    <div class="item-data-wrap">
-      <div class="item-content-wrap">
-        <div class="show-item-wrap" >
-          <el-row :gutter="20">
-            <el-col :span="8">
-              <el-card class="item-info-wrap" id="test">
-                <div slot="header" class="clearfix">
-                  <span class="item-header">节目信息</span>
-                </div>
-                <div class="item-content">
-                  <el-row :gutter="10">
-                    <el-col :xs="8" :sm="8" :md="8" :lg="8" :xl="8"><div class="item-info-name">节目名称</div></el-col>
-                    <el-col :xs="16" :sm="16" :md="16" :lg="16" :xl="16"><div class="item-info">苏宁易购418电器购物节</div></el-col>
-                  </el-row>
-                  <el-row :gutter="10">
-                    <el-col :xs="8" :sm="8" :md="8" :lg="8" :xl="8"><div class="item-info-name">所属客户</div></el-col>
-                    <el-col :xs="16" :sm="16" :md="16" :lg="16" :xl="16"><div class="item-info">苏宁易购</div></el-col>
-                  </el-row>
-                  <el-row :gutter="10">
-                    <el-col :xs="8" :sm="8" :md="8" :lg="8" :xl="8"><div class="item-info-name">投放日期</div></el-col>
-                    <el-col :xs="16" :sm="16" :md="16" :lg="16" :xl="16"><div class="item-info">2018/01/01 - 2018/02/04</div></el-col>
-                  </el-row>
-                  <el-row :gutter="10">
-                    <el-col :xs="8" :sm="8" :md="8" :lg="8" :xl="8"><div class="item-info-name">发布时间</div></el-col>
-                    <el-col :xs="16" :sm="16" :md="16" :lg="16" :xl="16"><div class="item-info">10:00 - 20:00</div></el-col>
-                  </el-row>
-                  <el-row :gutter="10">
-                    <el-col :xs="8" :sm="8" :md="8" :lg="8" :xl="8"><div class="item-info-name">发布位置</div></el-col>
-                    <el-col :xs="16" :sm="16" :md="16" :lg="16" :xl="16"><div class="item-info">八佰伴 1F(001),2F(002),3F(003)</div></el-col>
-                  </el-row>
-                </div>
-              </el-card>
-            </el-col>
-            <el-col :span="16">
-              <el-card class="data-wrap">
-                <div slot="header" class="clearfix">
-                  <span class="data-header">整体情况 <span class="header-example"> (以下数据有近三十分钟的统计延迟)</span></span>
-                  <el-date-picker
-                    v-model="value"
-                    type="daterange"
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期" class="date-seach">
-                  </el-date-picker>
-                </div>
-                <div class="data-content">
-                  <el-row :gutter="25">
-                    <el-col :xs="8" :sm="8" :md="8" :lg="8" :xl="8">
-                      <div class="data-item-wrap">
-                        <el-card>
-                          <div slot="header" class="clearfix header">
-                            <span>围观数</span>
-                          </div>
-                          <div class="header-content">
-                            200,000 (人)
-                          </div>
-                        </el-card>
-                      </div>
-                    </el-col>
-                    <el-col :xs="8" :sm="8" :md="8" :lg="8" :xl="8">
-                      <div class="data-item-wrap">
-                        <el-card>
-                          <div slot="header" class="clearfix header">
-                            <span>体验数</span>
-                          </div>
-                          <div class="header-content">
-                            89,000 (人)
-                          </div>
-                        </el-card>
-                      </div>
-                    </el-col>
-                    <el-col :xs="8" :sm="8" :md="8" :lg="8" :xl="8">
-                      <div class="data-item-wrap">
-                        <el-card>
-                          <div slot="header" class="clearfix header">
-                            <span>扫码率</span>
-                          </div>
-                          <div class="header-content">
-                            58.56 %
-                          </div>
-                        </el-card>
-                      </div>
-                    </el-col>
-                  </el-row>
-                  <el-row :gutter="10">
-                    <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-                      <div class="age-wrap">
-                        <highcharts :options="ageOptions"></highcharts>
-                      </div>
-                    </el-col>
-                    <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-                      <div class="sex-wrap">
-                        <highcharts :options="sexOptions"></highcharts>
-                      </div>
-                    </el-col>
-                  </el-row>
-                </div>
-              </el-card>
-            </el-col>
-          </el-row>
-        </div>
-        <div class="line-data-wrap">
-          <el-card class="line-wrap">
-            <div class="search-wrap">
-              <div>
-                <label>时间范围：</label>
-                <el-date-picker
-                  v-model="dataValue"
-                  type="daterange"
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期">
-                </el-date-picker>
-              </div>
-              <div>
-                <el-select v-model="value" placeholder="请选择">
-                  <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-                <el-button type="primary">下载报表</el-button>
-              </div>
-            </div>
-            <div>
-              <highcharts :options="lineOptions"></highcharts>
-            </div>
-          </el-card>
-        </div>
+  <div class="point-data-wrapper" v-loading="loading">
+    <div class="headline-wrapper">
+      <div>
+      <span>节目名称：{{pointName}}</span>
+      <el-select v-model="pointSelected" filterable @change="pointHandle" placeholder="请选择点位">
+        <el-option
+          v-for="item in pointOptions"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id">
+        </el-option>
+      </el-select>
       </div>
+      <el-date-picker
+      v-model="dateTime"
+      type="daterange"
+      start-placeholder="开始日期"
+      end-placeholder="结束日期"
+      :default-value="dateTime" :picker-options="pickerOptions2" @change="dateChangeHandle" :clearable="false">
+      </el-date-picker>
+    </div>
+    <div class="content-wrapper" v-loading="poepleCountFlag">
+      <ul class="btns-wrapper">
+        <li v-for="(item, key) in peopleCount" :key="key">
+          <a class="btn" :class="{'active': item.name == active}" @click="lineDataHandle(item)">
+            <i class="title">
+              {{item.name}}
+            </i>
+            <span class="count">
+              {{item.count}}
+            </span>
+            <i class="arrow-icon"></i>
+            <i class="right-arrow-icon" v-if="key != peopleCountLength -1">{{(peopleCount[key+1].count==0 & item.count == 0) ? 0 : new Number((peopleCount[key+1].count/item.count)*100).toFixed(1)}}%</i>
+          </a>
+        </li>
+      </ul>
+      <div class="chart">
+        <highcharts :options="splineOptions" class="highchart" ref="lineChar"></highcharts>
+      </div>
+    </div>
+    <div class="pie-content-wrapper">
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <div class="pie-sex-wrapper">
+            <div class="headline-wrapper">
+              <span>性别分布</span>
+            </div>
+            <div class="pie-sex-content" v-loading="sexFlag">
+              <div v-show="ageType" style="text-align:center">暂无数据</div>
+              <highcharts :options="sexPieOptions" class="highchart" ref="sexPie"></highcharts>
+            </div>
+          </div>
+        </el-col>
+        <el-col :span="12">
+          <div class="pie-age-wrapper">
+            <div class="headline-wrapper">
+              <span>年龄分布</span>
+            </div>
+            <div class="pie-age-content" v-loading="ageFlag">
+              <div v-show="sexType" style="text-align:center">暂无数据</div>
+              <highcharts :options="agePieOptions" class="highchart" ref="agePie" ></highcharts>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
     </div>
   </div>
 </template>
-
 <script>
-import { Button, Input, Row, Col, Card, DatePicker,Select, Option} from 'element-ui'
+import { Row, Col, DatePicker, Select, Option} from 'element-ui'
+// import data from 'service/pointData'
 
 export default {
-  data () {
+  components:{
+    'el-row': Row,
+    'el-col': Col,
+    'el-date-picker': DatePicker,
+    'el-select': Select,
+    'el-option': Option
+  },
+  data(){
     return {
-      value: '',
-      dataValue: '',
-      options: [{
-        value: '选项1',
-        label: '围观数'
-      }, {
-        value: '选项2',
-        label: '体验数'
-      }, {
-        value: '选项3',
-        label: '扫码率'
-      }],
-      ageOptions : {
-        chart: {
-          plotBackgroundColor: null,
-          plotBorderWidth: null,
-          plotShadow: false
+      loading: true,
+      dateTime: [new Date().getTime() - 3600 * 1000 * 24 * 6, new Date().getTime()],
+      pickerOptions2: {
+        disabledDate(time) {
+          return time.getTime() < new Date('2017-12-31');
+        }
+      },
+      active: '围观人数',
+      splineOptions : {
+        chart:{
+          type: 'spline'
         },
         title: {
-          text: '年龄分布'
+          text: null
         },
-        tooltip: {
-          headerFormat: '{series.name}<br>',
-          pointFormat: '{point.name}: <b>{point.percentage:.1f}%</b>'
+        xAxis: {
+          type: 'category'
+          // categories: ['2018-01-01', '2018-01-02', '2018-01-03', '2018-01-04', '2018-01-05', '2018-01-06','2018-01-07']
         },
-        plotOptions: {
-          pie: {
-            allowPointSelect: true,
-            cursor: 'pointer',
-            dataLabels: {
-              enabled: false
-            },
-            showInLegend: true
-          }
+        yAxis: [{
+          title: {
+            text: null,
+          },
+          floor: 0,
+          tickAmount: 5
+        }],
+        legend: {
+          enabled: false
         },
         credits: {
           enabled: false
         },
         series: [{
-          type: 'pie',
-          name: '年龄占比',
-          data: [
-            {name: '24-30岁', y: 45.0, color: '#8085e9'},
-            {name:'31-40', y: 26.8, color: '#2b908f'},
-            {
-              name: '41-50',
-              y: 12.8,
-              sliced: true,
-              selected: true,
-              color:'#f7a35c'
-            }
-          ]
+          color: "#919fc1",
+          data: [150, 73, 20,150, 73, 20,150],
+          name:"数量"
         }]
       },
-      sexOptions: {
-        chart: {
-          plotBackgroundColor: null,
-          plotBorderWidth: null,
-          plotShadow: false
+       agePieOptions : {
+        chart:{
+          type: 'column'
         },
         title: {
-          text: '性别分布'
+          text: null
+        },
+        xAxis: {
+          type: 'category'
+        },
+        yAxis: [{
+          title: {
+            text: '年龄统计',
+          },
+          tickAmount: 5
+        }],
+        legend: {
+          enabled: false
+        },
+        credits: {
+          enabled: false
+        },
+        series: [{
+          dashStyle: 'shortDash',
+          color: "#1e9f8e",
+          name:"年龄统计",
+          data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+        }]
+      },
+      sexPieOptions : {
+        chart:{
+          type: 'pie',
+          plotBackgroundColor: null,
+          plotBorderWidth: null,
+          plotShadow: false,
         },
         tooltip: {
-          headerFormat: '{series.name}<br>',
-          pointFormat: '{point.name}: <b>{point.percentage:.1f}%</b>'
+          headerFormat: '{性别访问数}<br>',
+          pointFormat: '{point.name}: <b>{point.y}</b>'
         },
         plotOptions: {
           pie: {
@@ -219,14 +169,25 @@ export default {
             showInLegend: true
           }
         },
+        title: {
+          text: null
+        },
+        legend: {
+          align: 'right',
+          verticalAlign: 'middle',
+          layout: 'vertical',
+          symbolHeight: 12,
+          symbolWidth: 20,
+          symbolRadius: 2,
+          squareSymbol: false
+        },
         credits: {
           enabled: false
         },
         series: [{
           type: 'pie',
-          name: '性别占比',
-          data: [
-            {name:'女',y: 45.0, color: '#7cb5ec'},
+          name: '性别访问数',
+          data: [{name:'女',y: 45.0, color: '#7cb5ec'},
             {name:'未知',y: 32.0, color: '#434348'},
             {
               name: '男',
@@ -234,182 +195,414 @@ export default {
               sliced: true,
               selected: true,
               color: '#90ed7d'
-            }
-          ]
+            }]
         }]
       },
-      lineOptions: {
-        chart: {
-          type: 'line'
-        },
-        title: {
-          text: ''
-        },
-        xAxis: {
-          categories: [
-            '11月30日', '12月1日', '12月3日'
-          ]
-        },
-        yAxis: [{
-          min: 0,
-          title: {
-            text: ''
-          }
-        }, {
-          title: {
-            text: '点击率(%)'
-          },
-          opposite: true
-        }],
-        credits: {
-          enabled: false
-        },
-        legend: {
-          enabled: true
-        },
-        tooltip: {
-          shared: true
-        },
-        series: [{
-          name: '曝光量',
-          color: 'rgba(165,170,217,1)',
-          data: [150, 73, 20],
-        }, {
-          name: '点击率',
-          color: 'rgba(248,161,63,1)',
-          data: [25, 90, 40],
-          yAxis: 1
-        }]
-      }
+      peopleCount: [{
+        name: '围观人数',
+        count: '1000'
+      },{
+        name: '交互完成人数',
+        count: '900'
+      },{
+        name: '微信扫描人数',
+        count: '800'
+      },{
+        name: '转化人数',
+        count: '800'
+      }],
+      type: '',
+      ageType: false,
+      sexType: false,
+      pointName:'',
+      poepleCountFlag: false,
+      ageFlag: false,
+      sexFlag: false,
+      pointOptions: [{
+        value: '选项1',
+        label: '凯德'
+      },{
+        value: '选项1',
+        label: '苏州中心'
+      }],
+      pointSelected: '',
+      currentPointId: ''
     }
   },
-  mounted() {
-    // let height = document.getElementById('test').offsetHeight
-    // document.getElementsByClassName('data-wrap')[0].style.height = height + 'px'
+  created(){
+    this.pointName = this.$route.query.name
+    // this.currentPointId = this.$route.query.id
+    // this.getPointList()
+    // this.getPeopleCount()
+    // this.getAgeInfo()
+    // this.getGenderInfo()
+    this.loading = false
   },
-  methods: {
+  computed:{
+    'peopleCountLength': function (){
+      return this.peopleCount.length
+    }
   },
-  components: {
-    "el-select": Select,
-    "el-option": Option,
-    "el-row": Row,
-    "el-button": Button,
-    "el-col": Col,
-    "el-input": Input,
-    "el-card": Card,
-    "el-date-picker": DatePicker
+  methods:{
+    getPeopleCount(){
+      this.poepleCountFlag = true
+      let id = this.currentPointId
+      let args = {}
+      if((this.dateTime[1]-this.dateTime[0])/3600/1000/24<30){
+        args = {
+          start_date : this.handleDateTransform(this.dateTime[0]),
+          end_date: this.handleDateTransform(new Date(this.dateTime[1]).getTime() + 3600 * 1000 * 24 * 1)
+        }
+      }else{
+        this.$message({
+          type: 'warning',
+          message: '时间范围不能超过30天'
+        });
+        this.poepleCountFlag = false
+        return false;
+      }    
+      data.getCountDataInfoById(this, id, args).then((response) => {
+        if(response.length>0){
+          this.peopleCount = response.sort(this.sortNumber)
+          this.type = this.peopleCount[0].type
+          this.active = this.peopleCount[0].name
+          this.getLineData()
+        }
+      }).catch(err => {
+        console.log(err)
+        this.poepleCountFlag = false
+        
+      })
+    },
+    getAgeInfo(){
+      this.ageFlag = true
+      let args = {}
+      let id = this.currentPointId
+      if((this.dateTime[1]-this.dateTime[0])/3600/1000/24<30){
+        args = {
+          start_date : this.handleDateTransform(this.dateTime[0]),
+          end_date: this.handleDateTransform(new Date(this.dateTime[1]).getTime() + 3600 * 1000 * 24 * 1)
+        }
+      }else{
+        this.$message({
+          type: 'warning',
+          message: '时间范围不能超过30天'
+        });
+        this.ageFlag = false
+        return false;
+      }    
+      data.getAgeInfoById(this, id, args).then((response) => {
+        let chart = this.$refs.agePie.chart;
+        let dataAge = []
+        if(response.length>0){
+          console.log(response)
+          this.ageType = false;
+          for(let i = 0; i < response.length; i++){
+            if(i==0){
+              dataAge.push({'name':response[i].age,'y':response[i].count})
+            }else{
+              dataAge.push([response[i].age,response[i].count])
+            }
+          }
+        //  this.agePieOptions.series.data = dataAge
+         chart.series[0].setData(dataAge,true)
+        }else{
+          this.ageType = true;
+          chart.series[0].setData(dataAge,true)
+        }
+        this.ageFlag = false
+      }).catch(err => {
+        console.log(err)
+        this.ageFlag = false
+        
+      })
+    },
+    getGenderInfo(){
+      this.sexFlag = true
+      let args = {}
+      let id = this.currentPointId
+      if((this.dateTime[1]-this.dateTime[0])/3600/1000/24<30){
+        args = {
+          start_date : this.handleDateTransform(this.dateTime[0]),
+          end_date: this.handleDateTransform(new Date(this.dateTime[1]).getTime() + 3600 * 1000 * 24 * 1)
+        }
+      }else{
+        this.$message({
+          type: 'warning',
+          message: '时间范围不能超过30天'
+        });
+        this.sexFlag = false
+        return false;
+      }
+      data.getGenderInfoById(this, id, args).then((response) => {
+        let chart = this.$refs.sexPie.chart;
+        let dataGender = []
+        if(response.length>0){
+          this.sexType = false
+          for(let i = 0; i < response.length; i++){
+            if(i==0){
+              dataGender.push({'name':response[i].gender == null ? '未知' : response[i].gender == 0 ? '女' : '男','y':response[i].count,'sliced': true,'selected': true})
+            }else{
+              dataGender.push([response[i].gender == null ? '未知' : response[i].gender == 0 ? '女' : '男',response[i].count])
+            }
+          }
+        //  this.agePieOptions.series.data = dataGender
+         console.log(dataGender)
+         chart.series[0].setData(dataGender,true)
+        }else{
+          this.sexType = true
+          chart.series[0].setData(dataGender,true)
+        }
+        this.sexFlag = false
+      }).catch(err => {
+        console.log(err)
+        this.sexFlag = false
+      })
+    },
+    getLineData(){
+      this.poepleCountFlag = true
+      let args = {}
+      let id = this.currentPointId
+      if((this.dateTime[1]-this.dateTime[0])/3600/1000/24<30){
+        args = {
+          start_date : this.handleDateTransform(this.dateTime[0]),
+          end_date: this.handleDateTransform(new Date(this.dateTime[1]).getTime() + 3600 * 1000 * 24 * 1),
+          type: this.type
+        }
+      }else{
+        this.$message({
+          type: 'warning',
+          message: '时间范围不能超过30天'
+        });
+        this.poepleCountFlag = false
+        return false;
+      }
+      data.getLineDataByType(this,id,args).then((response) => {
+        let chart = this.$refs.lineChar.chart;
+        let dataLine = []
+        let dateArr = []
+        let newDateArr = []
+        let dateCount = (this.dateTime[1]-this.dateTime[0])/3600/1000/24 + 1
+        if(response.length>0){
+          console.log(response)
+          for(let j = 0; j < response.length; j++){
+            console.log(response[j])
+            dateArr.push(response[j].date)
+          }
+          console.log(dateArr)
+          for(let i = 0; i < dateCount; i++){
+            let startDate = new Date(this.dateTime[0]).getTime()
+            newDateArr = this.updateDayArr(dateArr,this.handleDateTransform(startDate + 3600 * 1000 * 24 * i),response)
+          }
+          newDateArr.sort(this.sortDate)
+          for(let k = 0; k < newDateArr.length; k++){
+            dataLine.push({'y':newDateArr[k].count,'name':newDateArr[k].date})
+          }
+         chart.series[0].setData(dataLine,true)
+        }else{
+          for(let a = 0; a < dateCount; a++){
+            let startDate = new Date(this.dateTime[0]).getTime()
+            newDateArr = this.updateDayArr(dateArr,this.handleDateTransform(startDate + 3600 * 1000 * 24 * a),response)
+          }
+          newDateArr.sort(this.sortDate)
+          for(let h = 0; h < newDateArr.length; h++){
+            dataLine.push({'y':newDateArr[h].count,'name':newDateArr[h].date})
+          }
+          chart.series[0].setData(dataLine,true)
+        }
+        // console.log(dateArr)
+        // console.log(newDateArr)
+        this.poepleCountFlag = false
+      }).catch(err => {
+        console.log(err)
+        this.poepleCountFlag = false
+      })
+    },
+    getPointList(){
+      data.getPointList(this).then((response) => {
+       console.log(response)
+       this.pointOptions = response
+       this.pointSelected = parseInt(this.$route.query.id)
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    pointHandle(){
+      console.log(this.pointSelected)
+    this.currentPointId = this.pointSelected
+    this.getPeopleCount()
+    this.getAgeInfo()
+    this.getGenderInfo()
+    this.loading = false
+    },
+    lineDataHandle(obj){
+      this.active = obj.name
+      this.type = obj.type
+      // this.getLineData()
+    },
+    updateDayArr(oldArr, newElement,res){
+      if (oldArr.indexOf(newElement) === -1) {
+        res.push({"date":newElement,'count':0})
+        return res;
+      } else {
+        return res
+      }
+    },
+    dateChangeHandle(){
+      let dateCount = (this.dateTime[1]-this.dateTime[0])/3600/1000/24
+      if(dateCount>29){
+        this.$message({
+          type: 'warning',
+          message: '时间范围不能超过30天'
+        });
+      }else{
+        this.getAgeInfo();
+        this.getPeopleCount()
+        this.getGenderInfo()
+      }
+    },
+    sortNumber(countA,countB)
+    {
+      return (countA.count - countB.count < 0)
+    },
+    sortDate(countA,countB)
+    {
+      return new Date(countA.date) > new Date(countB.date) ? 1 : -1;
+    },
+    handleDateTransform (valueDate) {
+      let date = new Date (valueDate)
+      let year = date.getFullYear() + '-';
+      let mouth = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+      let day = (date.getDate() <10  ? '0'+(date.getDate()) : date.getDate()) + '';
+      return year+mouth+day
+    }
   }
 }
 </script>
-
 <style lang="less" scoped>
-  .root {
-    font-size: 14px;
-    color: #5E6D82;
-    .item-data-wrap{
-      background: #fff;
-      padding: 30px;
-      .el-form-item{
-        margin-bottom: 0;
-      }
-      .item-content-wrap{
-        .show-item-wrap{
-          margin-bottom: 15px; 
-          .item-info-wrap{
-            .item-header{
-              font-weight: 600;
-              font-size: 16px;
-              color: #444;
-            }
-            .item-content{
-              padding: 10px;
-              .item-info-name{
-                color: #7d7a7a;
-                font-size: 16px;
-              }
-              .item-info{
-                margin-bottom: 10px;
-                font-size: 14px;
-                color: #444;
-                word-wrap: break-word;
-                img{
-                  width: 50%;
-                }
-              }
-            }
-          }
-          .data-wrap{
-            position: relative;
-            .data-header{
-              font-weight: 600;
-              font-size: 16px;
-              color: #444;
-              .header-example{
-                color: #ccc;
-                font-size: 14px;
-              }
-            }
-            .date-seach{
-              position: absolute;
-              right: 30px;
-              top: 10px;
-            }
-            .data-content{
-              .data-item-wrap{
-                .header{
-                  color: #444;
-                  font-weight: 600;
-                }
-                .header-content{
-                  font-size: 18px;
-                  color: #6f6969;
-                }
-              }
-              .age-wrap{
-                .age-title{
-                  color: #444;
-                  font-size: 14px;
-                  font-weight: 600;
-                }
-              }
-            }
-          }
+  .point-data-wrapper{
+    padding: 15px;
+    .headline-wrapper{
+      padding: 20px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      font-size: 16px;
+      background-color: #fff;
+    }
+    .content-wrapper{
+      padding: 15px;
+      background-color: #fff;
+      .btns-wrapper{
+        min-height: 170px;
+        padding: 10px 0;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        li{
+          padding-right: 95px;
+          padding-top: 20px; 
         }
-        .actions-wrap{
-          margin-top: 5px;
-          display: flex;
-          flex-direction: row;
-          justify-content: space-between;
-          font-size: 16px;
-          align-items: center;
-          margin-bottom: 10px;
-          .label {
+        .btn{
+          cursor: pointer;
+          width: 145px;
+          height: 145px;
+          display: block;
+          border-radius: 5px;
+          background:url('~assets/images/program/circle.png') center 35px no-repeat #f6f6f6;
+          position: relative;
+          .title{
+            display: block;
+            height: 35px;
+            line-height: 35px;
+            padding-left: 20px;
             font-size: 14px;
+            color: #999;
+            font-weight: 600;
+            font-style: normal;
+          }
+          .count{
+            display: block;
+            text-align: center;
+            height: 30px;
+            padding-top: 40px;
+            font-size: 18px;
+            color: #517ebb;
+          }
+          .arrow-icon{
+            position: absolute;
+            z-index: 2;
+            top: 145px;
+            left: 66px;
+            display: none;
+            width: 17px;
+            height: 9px;
+            background: url('~assets/images/program/arrow.png') 50% no-repeat;
+          }
+          .right-arrow-icon{
+            position: absolute;
+            z-index: 2;
+            text-align: center;
+            color: #fff;
+            line-height: 34px;
+            top: 63px;
+            right: -90px;
+            width: 82px;
+            height: 34px;
+            background: url('~assets/images/program/right-arrow.png') 50% no-repeat;
           }
         }
+        .active,.btn:hover{
+          .title{
+            color: #fff;
+          }
+          .arrow-icon{
+            display: block;
+          }
+          background-color: #517ebb;
+        }
       }
-      .line-data-wrap{
-        .search-wrap{
-          margin-top: 5px;
+      .chart{
+        padding-top: 30px;
+        width: 100%;
+        .highcharts-container {
+          // width: 100%;
+        }
+      }
+    }
+    .pie-content-wrapper{
+      margin-top: 15px;
+      .pie-sex-wrapper{
+        background-color: #fff;
+        width: 100%;
+        .headline-wrapper{
+          padding: 20px;
           display: flex;
           flex-direction: row;
           justify-content: space-between;
           font-size: 16px;
-          align-items: center;
-          margin-bottom: 10px;
-          .warning{
-            background: #ebf1fd;
-            padding: 8px;
-            margin-left: 10px;
-            color: #444;
-            font-size: 12px;
-            i{
-              color: #4a8cf3;
-              margin-right: 5px;
-            }
+          background-color: #fff;
+          color: #444;
+        }
+        .pie-sex-content{
+          .highchart{
+            .highcharts-container { overflow: hidden !important; }
           }
+        }
+      }
+      .pie-age-wrapper{
+        background-color: #fff;
+        .headline-wrapper{
+          padding: 20px;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          font-size: 16px;
+          background-color: #fff;
+          color: #444;
         }
       }
     }
   }
 </style>
+

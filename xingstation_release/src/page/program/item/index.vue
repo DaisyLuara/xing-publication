@@ -164,9 +164,14 @@ export default {
       })
     },
     showData (id) {
-      this.$router.push({
-        path: '/program/item/data/' + id
+      const { href } = this.$router.resolve({
+        path: '/program/item/data',
+        query: {
+          id: 1,
+          name: '好孩子'
+        }
       })
+      window.open(href, '_blank')
     }
   },
   components: {
