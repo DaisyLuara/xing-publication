@@ -33,7 +33,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'phone', 'avatar', 'introduction'
+        'name', 'email', 'password', 'phone', 'avatar', 'introduction','ar_user_id'
     ];
 
     /**
@@ -99,5 +99,10 @@ class User extends Authenticatable implements JWTSubject
         $this->notification_count = 0;
         $this->save();
         $this->unreadNotifications->markAsRead();
+    }
+
+    public function ar_user()
+    {
+        return $this->hasOne(ArUser::class, 'ar_user_id', 'id');
     }
 }

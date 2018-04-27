@@ -82,6 +82,13 @@ $api->version('v1', [
             // 当前登录用户权限
             $api->get('user/permissions', 'PermissionsController@index');
 
+            //数据统计
+            $api->get('stats', 'FaceCountController@index');
+
+            //节目
+            $api->get('projects', 'ProjectController@index');
+
+
         });
     });
 });

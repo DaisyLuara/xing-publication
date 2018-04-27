@@ -16,6 +16,7 @@ class AddAvatarAndIntroductionToUsersTable extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->string('avatar')->nullable();
             $table->string('introduction')->nullable();
+            $table->integer('ar_user_id')->index()->nullable()->comment('星视度用户ID');
         });
     }
 
@@ -29,6 +30,7 @@ class AddAvatarAndIntroductionToUsersTable extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('avatar');
             $table->dropColumn('introduction');
+            $table->dropColumn('ar_user_id');
         });
     }
 }
