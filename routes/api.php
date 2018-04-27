@@ -89,6 +89,10 @@ $api->version('v1', [
             $api->get('projects', 'ProjectController@index');
 
 
+            //星视度用户
+            $api->get('staffs', 'ArUserController@index');
+
+
         });
     });
 });
