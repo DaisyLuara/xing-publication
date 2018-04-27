@@ -7,7 +7,7 @@ use League\Fractal\TransformerAbstract;
 
 class PointTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['project', 'arUser'];
+    protected $availableIncludes = ['projects', 'arUsers'];
 
     public function transform(Point $point)
     {
@@ -21,14 +21,14 @@ class PointTransformer extends TransformerAbstract
         ];
     }
 
-    public function includeProject(Point $point)
+    public function includeProjects(Point $point)
     {
-        return $this->collection($point->projects(), new ProjectTransformer());
+        return $this->collection($point->projects, new ProjectTransformer());
     }
 
-    public function includeArUser(Point $point)
+    public function includeArUsers(Point $point)
     {
-        return $this->collection($point->arUsers(), new ArUserTransformer());
+        return $this->collection($point->arUsers, new ArUserTransformer());
     }
 
 }
