@@ -190,8 +190,10 @@ export default {
   },
 
   setToken(context, tokenObj) {
-    context.$cookie.set("jwt_token", tokenObj.token)
-    localStorage.setItem("jwt_token", tokenObj.token)
+    // context.$cookie.set("jwt_token1", tokenObj.token)
+    // localStorage.setItem("jwt_token1", tokenObj.token)
+    context.$cookie.set("jwt_token1", 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0IiwiaWF0IjoxNTI0ODgxMjQzLCJleHAiOjE1NTY0MTcyNDMsIm5iZiI6MTUyNDg4MTI0MywianRpIjoia3JURXFmQ1lxUWhEQmVReSIsInN1YiI6MSwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.Dm4tqFNZKf0on2_P46W7JLbzbevVZPcoHdHG04UdpRc')
+    localStorage.setItem("jwt_token1", 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0IiwiaWF0IjoxNTI0ODgxMjQzLCJleHAiOjE1NTY0MTcyNDMsIm5iZiI6MTUyNDg4MTI0MywianRpIjoia3JURXFmQ1lxUWhEQmVReSIsInN1YiI6MSwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.Dm4tqFNZKf0on2_P46W7JLbzbevVZPcoHdHG04UdpRc')
     context.$cookie.set("jwt_ttl", tokenObj.ttl)
     localStorage.setItem("jwt_ttl", tokenObj.ttl)
     let tokenBeginTime = (new Date()).getTime()

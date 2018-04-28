@@ -2,15 +2,23 @@
   <div class="point-data-wrapper" v-loading="loading">
     <div class="headline-wrapper">
       <div>
-      <span>节目名称：{{pointName}}</span>
-      <el-select v-model="pointSelected" filterable @change="pointHandle" placeholder="请选择点位">
-        <el-option
-          v-for="item in pointOptions"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id">
-        </el-option>
-      </el-select>
+        <span>节目名称：{{pointName}} </span>
+        <el-select v-model="userSelected" filterable @change="pointHandle" placeholder="请选择用户(可搜索)">
+          <el-option
+            v-for="item in pointOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+        <el-select v-model="pointSelected" filterable @change="pointHandle" placeholder="请选择点位(可搜索)">
+          <el-option
+            v-for="item in pointOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
       </div>
       <el-date-picker
       v-model="dateTime"
@@ -225,6 +233,7 @@ export default {
         label: '苏州中心'
       }],
       pointSelected: '',
+      userSelected: '',
       currentPointId: ''
     }
   },
@@ -427,11 +436,11 @@ export default {
       })
     },
     pointHandle(){
-      console.log(this.pointSelected)
-    this.currentPointId = this.pointSelected
-    this.getPeopleCount()
-    this.getAgeInfo()
-    this.getGenderInfo()
+    //   console.log(this.pointSelected)
+    // this.currentPointId = this.pointSelected
+    // this.getPeopleCount()
+    // this.getAgeInfo()
+    // this.getGenderInfo()
     this.loading = false
     },
     lineDataHandle(obj){
