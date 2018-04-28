@@ -1,6 +1,6 @@
 <template>
   <div class="root">
-    <div class="item-list-wrap">
+    <div class="item-list-wrap" v-loading="loading">
       <div class="item-content-wrap">
         <div class="search-wrap">
           <el-form :model="filters" :inline="true" ref="searchForm" :rules="rules">
@@ -22,7 +22,7 @@
         </div>
         <div class="actions-wrap">
           <span class="label">
-            节目数量: 12
+            节目数量: {{pagination.total}}
           </span>
           <el-button size="small" type="success" @click="linkToAddItem">投放节目</el-button>
         </div>
@@ -32,17 +32,25 @@
             label="节目名称"
             >
           </el-table-column>
-          <el-table-column
+          <!-- <el-table-column
             prop="release_time"
             label="发布时间"
             >
-          </el-table-column>
-          <el-table-column
+          </el-table-column> -->
+          <!-- <el-table-column
             prop="salesman"
             label="关联销售"
             >
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column
+            prop="icon"
+            label="节目icon"
+            >
+            <template slot-scope="scope">
+              <img :src="scope.row.icon" alt="" class="icon-item"/>
+            </template>
+          </el-table-column>
+          <!-- <el-table-column
             prop="count"
             label="点位数量"
             >
@@ -56,12 +64,12 @@
             prop="put_end_time"
             label="结束投放"
             >
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column label="操作" width="280">
             <template slot-scope="scope">
               <el-button size="small" type="danger">删除</el-button>
               <el-button size="small" type="primary" @click="linkToEdit(scope.row.id)">修改</el-button>
-              <el-button size="small" type="warning" @click="showData(scope.row.id)">数据</el-button>
+              <el-button size="small" type="warning" @click="showData(scope.row.id, scope.row.name)">数据</el-button>
               <el-button size="small">合约</el-button>
             </template>
           </el-table-column>
@@ -98,8 +106,9 @@ export default {
         // ]
       },
       dataValue: '',
+      loading: true,
       pagination: {
-        total: 100,
+        total: 0,
         pageSize: 20,
         currentPage: 1
       },
@@ -141,11 +150,18 @@ export default {
   },
   methods: {
     getProjectList () {
-       project.getProjectList(this).then(response => {
-         console.log(response)
+      let searchArgs = {
+        page : this.pagination.currentPage
+      }
+      project.getProjectList(this, searchArgs).then((response) => {
+       console.log(response)
+       let data = response.data
+       this.tableData = data
+       this.pagination.total = response.meta.pagination.total
+       this.loading = false
       }).catch(error => {
         console.log(error)
-        // this.setting.loading = false;
+       this.loading = false
       })
     },
     search (formName) {
@@ -161,23 +177,24 @@ export default {
     },
     changePage (currentPage) {
       this.pagination.currentPage = currentPage
+      this.getProjectList()
     },
     linkToAddItem () {
       this.$router.push({
-        path: '/program/item/add'
+        path: '/project/item/add'
       })
     },
     linkToEdit (id) {
       this.$router.push({
-        path: '/program/item/edit/' + id
+        path: '/project/item/edit/' + id
       })
     },
-    showData (id) {
+    showData (id,name) {
       const { href } = this.$router.resolve({
-        path: '/program/item/data',
+        path: '/project/item/data',
         query: {
-          id: 1,
-          name: '好孩子'
+          id: id,
+          name: name
         }
       })
       window.open(href, '_blank')
@@ -207,6 +224,10 @@ export default {
         margin-bottom: 0;
       }
       .item-content-wrap{
+        .icon-item{
+          padding: 10px;
+          width: 15%;
+        }
         .search-wrap{
           margin-top: 5px;
           display: flex;

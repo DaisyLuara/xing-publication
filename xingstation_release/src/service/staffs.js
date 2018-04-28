@@ -1,9 +1,9 @@
 import {router} from '../main'
-const PROJECT_API = '/api/projects'
+const STAFFS_API = '/api/staffs'
 export default {
-  getProjectList(context,args) {
+  getStaffsList(context,args) {
     return new Promise(function(resolve, reject){
-      context.$http.get(PROJECT_API, {params: args}).then(response => {
+      context.$http.get(STAFFS_API).then(response => {
         resolve(response.data)
       }).catch(error => {
         reject(error)

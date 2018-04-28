@@ -45,22 +45,22 @@ function VueAxios(Vue) {
   axios.interceptors.response.use(function(response) {
     // Do something with response data
     let result = response.data;
-    if (result && !result.success) {
-      if (response.config && response.config.passError) {
-        return Promise.reject(response);
-      } else {
-        // if (!auth.checkFacility()) {
-        //   Message.error(result.message)
-        // }
-        return Promise.reject(result);
-      }
-    }
+    // if (result && !result.success) {
+    //   if (response.config && response.config.passError) {
+    //     return Promise.reject(response);
+    //   } else {
+    //     // if (!auth.checkFacility()) {
+    //     //   Message.error(result.message)
+    //     // }
+    //     return Promise.reject(result);
+    //   }
+    // }
     return response;
   }, function(error) {
     if (error.response) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
-      if (error.response.status == 401) {
+      if (error.response.status_code == 401) {
         // 退出登录，清除登录信息，跳转到登录页面
         // Message.error("对不起，您未被授权")
         auth.clearLoginData(app)
@@ -70,7 +70,7 @@ function VueAxios(Vue) {
         })
         
       } else {
-        Message.error("请求出错：代码" + error.response.status)
+        Message.error("请求出错：代码" + error.response.status_code)
       }
     } else if (error.request) {
       // The request was made but no response was received

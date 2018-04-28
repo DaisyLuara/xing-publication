@@ -1,6 +1,6 @@
 <template>
-  <div class="program-root">
-    <second-sidebar module="program"></second-sidebar>
+  <div class="project-root">
+    <second-sidebar module="project"></second-sidebar>
     <div class="topbar">
       {{this.$route.meta.title}}
     </div>
@@ -9,7 +9,7 @@
 </template>
 <script>
 export default {
-  name: 'clientView',
+  name: 'projectView',
   data() {
     return {
     }
@@ -20,7 +20,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  .program-root {
+  .project-root {
     height: 100%;
     background-color: #EFF2F7;
     .topbar {
