@@ -60,7 +60,7 @@ export default {
               continue
             }
             switch (m.path) {
-              case 'program':
+              case 'project':
                 m.src = require('../assets/images/icons/warehouse-icon.png')
                 break
               case 'system':

@@ -113,7 +113,7 @@ export default {
   },
 
   getToken() {
-    return localStorage.getItem('jwt_token')
+    return localStorage.getItem('jwt_token1')
   },
 
   getUserInfo() {
