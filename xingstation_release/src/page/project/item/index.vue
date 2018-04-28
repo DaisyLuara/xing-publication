@@ -86,6 +86,8 @@
 </template>
 
 <script>
+import project from 'service/project'
+
 import { Button, Input, Table, TableColumn, Pagination, Form, FormItem, MessageBox, DatePicker} from 'element-ui'
 
 export default {
@@ -138,7 +140,18 @@ export default {
   },
   mounted() {
   },
+  created () {
+    this.getProjectList()
+  },
   methods: {
+    getProjectList () {
+       project.getProjectList(this).then(response => {
+         console.log(response)
+      }).catch(error => {
+        console.log(error)
+        // this.setting.loading = false;
+      })
+    },
     search (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
