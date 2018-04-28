@@ -9,7 +9,7 @@
             </el-form-item>
               <el-button @click="search('searchForm')" type="primary">搜索</el-button>
           </el-form>
-          <div>
+          <!-- <div>
             <el-date-picker
               v-model="dataValue"
               type="daterange"
@@ -18,48 +18,44 @@
               end-placeholder="结束日期">
             </el-date-picker>
             <label class="warning"> <i class="el-icon-warning"></i> 由于数量较大，昨日数据正式生成，请稍后再获取</label>
-          </div>
+          </div> -->
         </div>
         <div class="actions-wrap">
           <span class="label">
             节目数量: 12
           </span>
-          <el-button size="small" type="success" @click="linkToAddItem">新增节目</el-button>
+          <el-button size="small" type="success" @click="linkToAddItem">投放节目</el-button>
         </div>
         <el-table :data="tableData" style="width: 100%">
           <el-table-column
             prop="name"
             label="节目名称"
-            min-width="200"
             >
           </el-table-column>
           <el-table-column
             prop="release_time"
             label="发布时间"
-            min-width="200"
             >
           </el-table-column>
           <el-table-column
             prop="salesman"
             label="关联销售"
-            width="100"
             >
           </el-table-column>
           <el-table-column
             prop="count"
             label="点位数量"
-            width="100"
             >
           </el-table-column>
           <el-table-column
-            prop="status"
-            label="状态"
-            width="120">
+            prop="put_start_time"
+            label="开始投放"
+            >
           </el-table-column>
           <el-table-column
-            prop="put_time"
-            label="投放时段"
-            min-width="250">
+            prop="put_end_time"
+            label="结束投放"
+            >
           </el-table-column>
           <el-table-column label="操作" width="280">
             <template slot-scope="scope">
@@ -104,37 +100,37 @@ export default {
       dataValue: '',
       pagination: {
         total: 100,
-        pageSize: 10,
+        pageSize: 20,
         currentPage: 1
       },
       tableData: [{
         name: '苏宁易购商场导览',
         salesman: '杨清远',
         count: '3',
-        put_time: '2018/01/01-2018/02/04 共计30天',
+        put_start_time: '2018/01/01',
+        put_end_time: '2018/02/04',
         release_time: '2018-04-06 12:03:46',
-        status: '投放中'
       }, {
         name: '苏宁易购商场导览',
         salesman: '杨清远',
-        put_time: '2018/01/01-2018/02/04 共计30天',
+        put_start_time: '2018/01/01',
+        put_end_time: '2018/02/04',
         release_time: '2018-04-06 12:03:46',
         count: '3',
-        status: '投放中'
       }, {
         name: '苏宁易购商场导览',
         salesman: '杨清远',
-        put_time: '2018/01/01-2018/02/04 共计30天',
+         put_start_time: '2018/01/01',
+        put_end_time: '2018/02/04',
         release_time: '2018-04-06 12:03:46',
         count: '3',
-        status: '投放中'
       }, {
         name: '苏宁易购商场导览',
         salesman: '杨清远',
-        put_time: '2018/01/01-2018/02/04 共计30天',
+        put_start_time: '2018/01/01',
+        put_end_time: '2018/02/04',
         release_time: '2018-04-06 12:03:46',
         count: '3',
-        status: '投放中'
       }]
     }
   },
