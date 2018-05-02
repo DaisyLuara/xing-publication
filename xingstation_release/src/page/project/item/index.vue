@@ -42,14 +42,14 @@
             label="关联销售"
             >
           </el-table-column> -->
-          <el-table-column
+          <!-- <el-table-column
             prop="icon"
             label="节目icon"
             >
             <template slot-scope="scope">
               <img :src="scope.row.icon" alt="" class="icon-item"/>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <!-- <el-table-column
             prop="count"
             label="点位数量"

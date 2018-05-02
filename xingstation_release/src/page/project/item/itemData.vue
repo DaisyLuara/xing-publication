@@ -76,6 +76,8 @@
   </div>
 </template>
 <script>
+import stats from 'service/stats'
+
 import { Row, Col, DatePicker, Select, Option} from 'element-ui'
 // import data from 'service/pointData'
 
@@ -105,8 +107,8 @@ export default {
           text: null
         },
         xAxis: {
-          type: 'category'
-          // categories: ['2018-01-01', '2018-01-02', '2018-01-03', '2018-01-04', '2018-01-05', '2018-01-06','2018-01-07']
+          // type: 'category'
+          categories: ['2018-01-01', '2018-01-02', '2018-01-03', '2018-01-04', '2018-01-05', '2018-01-06','2018-01-07']
         },
         yAxis: [{
           title: {
@@ -238,6 +240,7 @@ export default {
     }
   },
   created(){
+    this.getStatsCount()
     this.pointName = this.$route.query.name
     // this.currentPointId = this.$route.query.id
     // this.getPointList()
@@ -252,36 +255,74 @@ export default {
     }
   },
   methods:{
-    getPeopleCount(){
+    getStatsCount(){
       this.poepleCountFlag = true
       let id = this.currentPointId
       let args = {}
-      if((this.dateTime[1]-this.dateTime[0])/3600/1000/24<30){
-        args = {
-          start_date : this.handleDateTransform(this.dateTime[0]),
-          end_date: this.handleDateTransform(new Date(this.dateTime[1]).getTime() + 3600 * 1000 * 24 * 1)
-        }
-      }else{
-        this.$message({
-          type: 'warning',
-          message: '时间范围不能超过30天'
-        });
+      // if((this.dateTime[1]-this.dateTime[0])/3600/1000/24<30){
+      //   args = {
+      //     start_date : this.handleDateTransform(this.dateTime[0]),
+      //     end_date: this.handleDateTransform(new Date(this.dateTime[1]).getTime() + 3600 * 1000 * 24 * 1)
+      //   }
+      // }else{
+      //   this.$message({
+      //     type: 'warning',
+      //     message: '时间范围不能超过30天'
+      //   });
+      //   this.poepleCountFlag = false
+      //   return false;
+      // }    
+      args = {
+        oid: '243'
+      }
+      stats.getStats(this, args).then((response) => {
+        console.log(response)
         this.poepleCountFlag = false
-        return false;
-      }    
-      data.getCountDataInfoById(this, id, args).then((response) => {
-        if(response.length>0){
-          this.peopleCount = response.sort(this.sortNumber)
-          this.type = this.peopleCount[0].type
-          this.active = this.peopleCount[0].name
-          this.getLineData()
-        }
+        // for (let i = 0; i < 4; i++ ) {
+        //   this.peopleCount[i].count = response.face_count_logs
+        // }
+        // if(response.length>0){
+          // this.peopleCount = response.sort(this.sortNumber)
+          // this.type = this.peopleCount[0].type
+          // this.active = this.peopleCount[0].name
+          // this.getLineData()
+        // }
       }).catch(err => {
         console.log(err)
         this.poepleCountFlag = false
         
       })
     },
+    // getPeopleCount(){
+    //   this.poepleCountFlag = true
+    //   let id = this.currentPointId
+    //   let args = {}
+    //   if((this.dateTime[1]-this.dateTime[0])/3600/1000/24<30){
+    //     args = {
+    //       start_date : this.handleDateTransform(this.dateTime[0]),
+    //       end_date: this.handleDateTransform(new Date(this.dateTime[1]).getTime() + 3600 * 1000 * 24 * 1)
+    //     }
+    //   }else{
+    //     this.$message({
+    //       type: 'warning',
+    //       message: '时间范围不能超过30天'
+    //     });
+    //     this.poepleCountFlag = false
+    //     return false;
+    //   }    
+    //   data.getCountDataInfoById(this, id, args).then((response) => {
+    //     if(response.length>0){
+    //       this.peopleCount = response.sort(this.sortNumber)
+    //       this.type = this.peopleCount[0].type
+    //       this.active = this.peopleCount[0].name
+    //       this.getLineData()
+    //     }
+    //   }).catch(err => {
+    //     console.log(err)
+    //     this.poepleCountFlag = false
+        
+    //   })
+    // },
     getAgeInfo(){
       this.ageFlag = true
       let args = {}
