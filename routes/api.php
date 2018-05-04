@@ -95,7 +95,8 @@ $api->version('v1', [
             $api->post('users', ['middleware' => ['role:super-admin|admin'], 'uses' => 'UsersController@store']);
 
             // 获取可用角色列表
-            $api->get('roles', ['middleware' => ['role:super-admin|admin'], 'uses' => 'RolesController@index']);
+            $api->get('system/roles', ['middleware' => ['role:super-admin|admin'], 'uses' => 'RolesController@index']);
+            $api->get('system/users', 'UsersController@index');
         });
     });
 });

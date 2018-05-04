@@ -4,13 +4,31 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Models\User;
 use App\Models\Image;
+use Illuminate\Http\Request;
 use App\Transformers\UserTransformer;
 use App\Http\Requests\Api\V1\UserRequest;
 
 class UsersController extends Controller
 {
+
+    public function index(Request $request, User $user)
+    {
+        $isSuperAdmin = $this->user()->isSuperAdmin();
+
+        $query = $user->query();
+
+        $users = $query->whereHas('roles', function ($q) use ($isSuperAdmin) {
+            if (!$isSuperAdmin) {
+                $q->where('name', '<>', 'super-admin');
+            }
+        })->paginate(5);
+
+        return $this->response->paginator($users, new UserTransformer());
+    }
+
+
     /**
-     * 本系统不只允许管理员创建用户
+     * 管理员创建用户
      * @param UserRequest $request
      * @return mixed
      */
