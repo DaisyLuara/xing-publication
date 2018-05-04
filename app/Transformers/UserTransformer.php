@@ -17,6 +17,7 @@ class UserTransformer extends TransformerAbstract
             'email' => $user->email,
             'avatar' => $user->avatar,
             'bound_phone' => $user->phone ? true : false,//用户隐私保密
+            'phone' => $user->phone,
         ];
     }
 
