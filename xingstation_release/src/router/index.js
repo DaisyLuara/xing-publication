@@ -78,35 +78,35 @@ router.beforeEach((to, from, next) => {
   // //   next({ path: '/m' })
   // // }
 
-  // // 非登录白名单（非登录状态下，仍然可以访问的路由）
-  // let loginess = ['/login', '/findPassword', '/register', '/setNewPassword']
-  // if (!auth.checkLogin()) {
-  //   let pathWhiteList = loginess.filter(pathness => {
-  //     if (to.path == pathness) {
-  //       return pathness
-  //     }
-  //   })
+  // 非登录白名单（非登录状态下，仍然可以访问的路由）
+  let loginess = ['/login']
+  if (!auth.checkLogin()) {
+    let pathWhiteList = loginess.filter(pathness => {
+      if (to.path == pathness) {
+        return pathness
+      }
+    })
 
-  //   if (pathWhiteList.length < 1) {
-  //     next({ path: '/login' })
-  //   } else {
-  //     next()
-  //   }
-  //   return
-  // }
+    if (pathWhiteList.length < 1) {
+      next({ path: '/login' })
+    } else {
+      next()
+    }
+    return
+  }
 
   // // 登录黑名单（登录状态下，不可再访问的路由）
-  // let unlessLogout = ['/login', '/register']
-  // let loginBlackList = unlessLogout.filter(unlessPath => {
-  //   if (to.path == unlessPath) {
-  //     return unlessPath
-  //   }
-  // })
-  // if (loginBlackList.length > 0) {
-  //   next({ path: '/' })
-  //   return
-  // }
-
+  let unlessLogout = ['/login']
+  let loginBlackList = unlessLogout.filter(unlessPath => {
+    if (to.path == unlessPath) {
+      return unlessPath
+    }
+  })
+  if (loginBlackList.length > 0) {
+    next({ path: '/' })
+    return
+  }
+console.log(to)
   // 权限白名单(不受权限限制)
   // let permissioness = ['/login', '/findPassword']
   let hasPathPermission = auth.checkPathPermission(to)

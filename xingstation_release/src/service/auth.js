@@ -1,25 +1,20 @@
 import { router } from '../main'
+import { Message, MessageBox } from 'element-ui'
 
 const HOST = process.env.SERVER_URL
-const REGISTER_API = '/api/users/register'
-const LOGIN_API = '/api/users/auth'
-const CHECK_LOGIN_API = '/api/users/alive'
-const LOGOUT_API = '/api/users/logout'
-const USERINFO_API = '/api/users/user'
-const REFRESH_TOKEN_API = '/api/users/refresh'
-const IMAGE_CAPTCHA = '/api/common/getCaptchaKey'
-const IMAGE_CAPTCHA_URL = '/api/common/captcha'
-const RESET_PASSWORD = '/api/password/reset'
-const RESET_FIRST_PASSWORD = '/api/password/resetFirstPassword'
-const SMS_CAPTCHA = '/api/sms/sendVerifySms'
-const VOICE_CAPTCHA = '/api/sms/sendVoiceVerifySms'
+const LOGIN_API = '/api/authorizations'
+const LOGOUT_API = '/api/authorizations/current'
+const USERINFO_API = '/api/user'
+const IMAGE_CAPTCHA = '/api/captchas'
+const SMS_CAPTCHA = '/api/verificationCodes'
 export default {
   login(context, creds, redirect) {
     context.setting.submiting = true;
     console.log(creds)
     context.$http.post(LOGIN_API, creds).then(response => {
+      console.log(response)
         //  将token与权限存储到cookie和localstorage中,取的时候从localstorage中取
-        let loginResult = response.data.data;
+        let loginResult = response.data;
         this.setToken(context, loginResult);
         context.$message({
           message: "登录成功!",
@@ -27,29 +22,15 @@ export default {
         })
         context.setting.submiting = false;
         this.refreshUserInfo(context).then(() => {
-          // if (this.checkFacility()) {
-          //   context.$router.push({
-          //     path: '/m'
-          //   })
-          // } else {
-            context.$router.push({
-              path: redirect ? redirect : '/'
-            })
-          // }
+          context.$router.push({
+            path: redirect ? redirect : '/'
+          })
         })
       })
       .catch(err => {
-        context.setting.loginFailedTimes++;
+        console.log(err)
+        // context.setting.loginFailedTimes++;
         context.setting.submiting = false;
-        if (err.data && err.data.first_login) {
-          context.$store.commit('setOldPassword', {
-            mobile: creds.passport,
-            old_password: creds.password
-          })
-          context.$router.push({
-            path: '/setNewPassword'
-          })
-        }
       })
   },
   checkFacility() {
@@ -73,9 +54,8 @@ export default {
   },
 
   logout(context) {
-    context.$http.get(LOGOUT_API).then(data => {
+    context.$http.delete(LOGOUT_API).then(data => {
       this.clearLoginData(context)
-
       context.$router.push({
         path: '/login'
       })
@@ -100,7 +80,8 @@ export default {
     let promise = new Promise((resolve, reject) => {
       context.$http.get(USERINFO_API).then(response => {
           let result = response.data;
-          localStorage.setItem("user_info", JSON.stringify(result.data))
+          console.log(result)
+          localStorage.setItem("user_info", JSON.stringify(result))
             //context.$store.commit('setCurUserInfo', result.data)
           resolve(result.data)
         })
@@ -113,7 +94,7 @@ export default {
   },
 
   getToken() {
-    return localStorage.getItem('jwt_token1')
+    return localStorage.getItem('jwt_token')
   },
 
   getUserInfo() {
@@ -150,52 +131,13 @@ export default {
     return localStorage.getItem('jwt_begin_time')
   },
 
-  // 判断token是否需要refresh
-  checkTokenRefresh() {
-    let nowTime = new Date(),
-      tokenBeginTime = this.getTokenBeginTime(),
-      tokenLifeTime = this.getTokenLifeTime(),
-      differTime = nowTime - tokenBeginTime;
-    // token过期，不能发送refresh请求
-    if (this.checkTokenExpired()) {
-      return false;
-    }
-
-    let thresholdTime = Math.floor((tokenLifeTime - 5) / 3),
-      tokenlatestLifeTime = Math.floor(differTime / (60 * 1000));
-
-    if (tokenlatestLifeTime >= thresholdTime) {
-      return true;
-    }
-
-    return false;
-
-  },
-
-  refreshToken(context) {
-    context.$store.commit('setRefreshTokenStatus', true)
-    let promise = new Promise((resolve, reject) => {
-      context.$http.get(REFRESH_TOKEN_API).then(response => {
-        let tokenObj = response.data.data;
-        this.setToken(context, tokenObj)
-        context.$store.commit('setRefreshTokenStatus', false)
-        resolve("更新token成功")
-      }).catch(error => {
-        context.$store.commit('setRefreshTokenStatus', false)
-        reject(error)
-      })
-    })
-
-    return promise;
-  },
-
   setToken(context, tokenObj) {
-    // context.$cookie.set("jwt_token1", tokenObj.token)
-    // localStorage.setItem("jwt_token1", tokenObj.token)
-    context.$cookie.set("jwt_token1", 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0IiwiaWF0IjoxNTI0ODgxMjQzLCJleHAiOjE1NTY0MTcyNDMsIm5iZiI6MTUyNDg4MTI0MywianRpIjoia3JURXFmQ1lxUWhEQmVReSIsInN1YiI6MSwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.Dm4tqFNZKf0on2_P46W7JLbzbevVZPcoHdHG04UdpRc')
-    localStorage.setItem("jwt_token1", 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0IiwiaWF0IjoxNTI0ODgxMjQzLCJleHAiOjE1NTY0MTcyNDMsIm5iZiI6MTUyNDg4MTI0MywianRpIjoia3JURXFmQ1lxUWhEQmVReSIsInN1YiI6MSwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.Dm4tqFNZKf0on2_P46W7JLbzbevVZPcoHdHG04UdpRc')
-    context.$cookie.set("jwt_ttl", tokenObj.ttl)
-    localStorage.setItem("jwt_ttl", tokenObj.ttl)
+    // context.$cookie.set("jwt_token", tokenObj.access_token)
+    // localStorage.setItem("jwt_token", tokenObj.access_token)
+    context.$cookie.set("jwt_token", tokenObj.access_token)
+    localStorage.setItem("jwt_token", tokenObj.access_token)
+    context.$cookie.set("jwt_ttl", tokenObj.expires_in)
+    localStorage.setItem("jwt_ttl", tokenObj.expires_in)
     let tokenBeginTime = (new Date()).getTime()
     context.$cookie.set("jwt_begin_time", tokenBeginTime)
     localStorage.setItem("jwt_begin_time", tokenBeginTime)
@@ -222,9 +164,9 @@ export default {
   },
 
   // 获取图形验证码
-  getImageCaptcha(context) {
+  getImageCaptcha(context, args) {
     let promise = new Promise((resolve, reject) => {
-      context.$http.get(IMAGE_CAPTCHA).then(result => {
+      context.$http.post(IMAGE_CAPTCHA, args).then(result => {
         resolve(result.data);
       }).catch(error => {
         reject(error)
@@ -232,106 +174,23 @@ export default {
     })
     return promise;
   },
-
-  getImageCaptchaUrl(key) {
-    return HOST + IMAGE_CAPTCHA_URL + '?key=' + key
-  },
-
-  resetPassword(context, params) {
-    context.setting.submiting = true;
-    context.$http.post(RESET_PASSWORD, params).then(response => {
-        let resetResult = response.data.data;
-        // 成功，登出用户
-        context.setting.submiting = false;
-        context.$message({
-          message: "密码重置成功，请重新登录!",
-          type: "success"
-        })
-
-        if (this.checkLogin(context)) {
-          this.logout(context);
-        } else {
-          // 仅仅清除历史登录数据，并不发送登出请求
-          this.clearLoginData(context);
-          context.$router.push({
-            path: '/login'
-          })
-        }
-
-      })
-      .catch(err => {
-        context.getImageCaptcha();
-        context.setting.submiting = false;
-      })
-  },
-
-  sendSmsCaptcha(context, mobile) {
+  sendSmsCaptcha(context, args) {
     let promise = new Promise((resolve, reject) => {
-      context.$http.post(SMS_CAPTCHA, { mobile }).then(response => {
+      context.$http.post(SMS_CAPTCHA, args).then(response => {
         resolve(response.data)
       }).catch(error => {
         reject(error)
       })
     })
     return promise;
-  },
-
-  sendVoiceCaptcha(context, mobile) {
-    let promise = new Promise((resolve, reject) => {
-      context.$http.post(VOICE_CAPTCHA, { mobile }).then(response => {
-        resolve(response.data)
-      }).catch(error => {
-        reject(error)
-      })
-    })
-    return promise;
-  },
-
-  register(context, creds, redirect) {
-    context.setting.submiting = true
-    context.$http.post(REGISTER_API, creds).then(response => {
-        let registerResult = response.data.data
-        context.$message({
-          message: "注册成功!",
-          type: "success"
-        })
-        context.setting.submiting = false
-        context.$router.push({
-          path: '/login'
-        })
-      })
-      .catch(err => {
-        context.setting.submiting = false
-      })
-  },
-
-  setFirstPassword(context, params) {
-    context.setting.submiting = true;
-    context.$http.post(RESET_FIRST_PASSWORD, params).then(response => {
-        let registerResult = response.data.data
-        context.$message({
-          message: "新密码设置成功!",
-          type: "success"
-        })
-        context.setting.submiting = false
-        this.login(context, {
-            passport: params.mobile,
-            password: params.new_password,
-            remember_token: true
-          })
-          // context.$router.push({
-          //   path: redirect ? redirect : '/login'
-          // })
-      })
-      .catch(err => {
-        context.setting.submiting = false;
-      })
   }
 }
 
 function hasPermission(name, perms) {
   if (!perms) {
-    return false;
+    console.log(1)
+    // 正确的应该是false 等着陈重的接口
+    return true;
   }
   if (name == perms.name) {
     return true
@@ -343,6 +202,7 @@ function hasPermission(name, perms) {
     if (name == perms[i]['name']) {
       return true
     } else if (name.indexOf(perms[i]['name']) == 0) {
+      
       return hasPermission(name, perms[i]['children'])
     }
   }

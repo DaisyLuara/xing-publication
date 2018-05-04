@@ -22,8 +22,9 @@
         <span class="logout-btn" @click="logout">登出</span>
       </el-popover>
       <div class="sidebar-user" v-popover:popover @click="handleUser">
+        <img src="https://fsdhubcdn.phphub.org/uploads/images/201710/14/1/LOnMrqbHJn.png?imageView2/1/w/200/h/200" alt="" class="avatar"/>
         <div class="sidebar-user-block">
-          <p class="sidebar-user-item sidebar-user-item-main" style="font-size: 14px;">{{name}}</p>
+          <p class="sidebar-user-item sidebar-user-item-main" style="font-size: 20px;">{{name}}</p>
           <p class="sidebar-user-item sidebar-user-item-sub" style="font-size: 12px;">{{role}}</p>
         </div>
       </div>
@@ -175,13 +176,22 @@ export default {
   width: 100%;
   height: 90px;
   text-align: center;
-  background: #20a0ff url(../assets/images/user-bg.png) no-repeat center 5px;
+  // background: #20a0ff url(../assets/images/user-bg.png) no-repeat center 5px;
   color: #fff;
   cursor: pointer;
+  .avatar{
+    width: 100%;
+  }
 }
 .sidebar-user-block {
-  display: table-cell;
-  vertical-align: middle;
+  position: absolute;
+  z-index: 33;
+  top: 10%;
+  left: 30%;
+  color: #000;
+  font-weight: 600;
+  // display: table-cell;
+  // vertical-align: middle;
 }
 .sidebar-user-item {
   max-width: 90px;

@@ -6,7 +6,7 @@ let router = {
   name: '节目',
   meta: {
     title: '节目',
-    permission: '',
+    // permission: '',
   },
   component: () =>
     import(/* webpackChunkName: "page/project/projectView" */ 'page/project/projectView'),

@@ -7,7 +7,7 @@ import { Message, MessageBox } from 'element-ui'
 import store from '../store'
 import auth from '../service/auth'
 import app from '../main'
-const REFRESH_TOKEN_API = '/api/users/refresh'
+// const REFRESH_TOKEN_API = '/api/users/refresh'
 
 function VueAxios(Vue) {
   if (VueAxios.installed) {
@@ -23,19 +23,22 @@ function VueAxios(Vue) {
     config.headers['Authorization'] = 'Bearer ' + auth.getToken();
     // one request of refreshing token can be send at one time
     // auth or logout cannot trrigle refresh token
-    if (store.getters.isRefreshToken || config.url.includes('auth') || config.url.includes('logout')) {
+    // if (store.getters.isRefreshToken || config.url.includes('auth') || config.url.includes('logout')) {
+      if (config.url.includes('auth') || config.url.includes('logout')) {
       return config;
     } else {
-      if (auth.checkTokenRefresh()) {
-        // refresh token
-        return auth.refreshToken(app).then(result => {
-          return config;
-        }).catch(error => {
-          return config;
-        })
-      } else {
-        return config
-      }
+      // if (auth.checkTokenRefresh()) {
+      //   // refresh token
+      //   return auth.refreshToken(app).then(result => {
+      //     return config;
+      //   }).catch(error => {
+      //     return config;
+      //   })
+      // } else {
+      //   return config
+      // }
+      return config
+      
     }
 
   }, function(error) {
@@ -57,6 +60,7 @@ function VueAxios(Vue) {
     // }
     return response;
   }, function(error) {
+    console.log(error.response)
     if (error.response) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
@@ -70,7 +74,7 @@ function VueAxios(Vue) {
         })
         
       } else {
-        Message.error("请求出错：代码" + error.response.status_code)
+        Message.error("请求出错：代码" + error.response.status)
       }
     } else if (error.request) {
       // The request was made but no response was received

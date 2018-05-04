@@ -41,7 +41,7 @@ let validate = {
     }
   },
 
-  imageCaptcha(value, md5Val) {
+  imageCaptcha(value) {
     if(isEmpty(value)){
       return {
         validate: false,
@@ -56,20 +56,18 @@ let validate = {
       }
     }
 
-    if(!checkLength(value, 4)){
+    if(!checkLength(value, 5)){
       return {
         validate: false,
-        errorText: '请输入4位验证码'
+        errorText: '请输入5位验证码'
       }
     }
-
-    if(!checkImageCaptcha(value, md5Val)){
-      return {
-        validate: false,
-        errorText: '验证码不正确'
-      }
-    }
-
+    // if(!checkImageCaptcha(value, md5Val)){
+    //   return {
+    //     validate: false,
+    //     errorText: '验证码不正确'
+    //   }
+    // }
     return {
       validate: true
     }
@@ -138,6 +136,7 @@ function checkPassword(value) {
 }
 
 function checkImageCaptcha(value, md5Val) {
+  console.log(md5(md5(value.toLowerCase())))
   if(md5(md5(value.toLowerCase())) == md5Val){
     return true;
   }else{
