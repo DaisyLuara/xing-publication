@@ -92,7 +92,7 @@ $api->version('v1', [
             $api->get('staffs', 'ArUserController@index');
 
             // 管理员添加用户
-            $api->post('users', ['middleware' => ['role:super-admin'], 'uses' => 'UsersController@store']);
+            $api->post('users', ['middleware' => ['role:super-admin|admin'], 'uses' => 'UsersController@store']);
 
             // 获取可用角色列表
             $api->get('roles', ['middleware' => ['role:super-admin|admin'], 'uses' => 'RolesController@index']);

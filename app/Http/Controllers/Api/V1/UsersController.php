@@ -16,14 +16,19 @@ class UsersController extends Controller
      */
     public function store(UserRequest $request)
     {
+        $role = $this->user()->getSystemRoles()->firstWhere('id', $request->role_id);
+        if (is_null($role)) {
+            return $this->response->errorNotFound('角色不存在');
+        }
 
+        /** @var User $user */
         $user = User::create([
             'name' => $request->name,
             'phone' => $request->phone,
             'password' => bcrypt($request->password),
         ]);
 
-//        $user->assignRole($role);
+        $user->assignRole($role);
 
         return $this->response->item($user, new UserTransformer())->setStatusCode(201);
     }
