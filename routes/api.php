@@ -97,6 +97,12 @@ $api->version('v1', [
             // 获取可用角色列表
             $api->get('system/roles', ['middleware' => ['role:super-admin|admin'], 'uses' => 'RolesController@index']);
             $api->get('system/users', 'UsersController@index');
+
+            //客户管理
+            $api->get('customers', 'CustomerController@index');
+            $api->get('customers/{customer}', 'CustomerController@show');
+            $api->post('customers', ['middleware' => ['permission:customer'], 'uses' => 'CustomerController@store']);
+            $api->patch('customers/{customer}', ['middleware' => ['permission:customer'], 'uses' => 'CustomerController@update']);
         });
     });
 });

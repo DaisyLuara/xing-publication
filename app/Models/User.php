@@ -107,9 +107,16 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(ArUser::class, 'ar_user_id', 'id');
     }
 
+    //超级管理员
     public function isSuperAdmin()
     {
-        return $this->hasrole('super-admin');
+        return $this->hasRole('super-admin');
+    }
+
+    //普通管理员
+    public function isAdmin()
+    {
+        return $this->hasRole(['super_admin', 'admin']);
     }
 
     //系统配置 可选角色
