@@ -27,8 +27,7 @@ $api->version('v1', [
     ], function ($api) {
         // 短信验证码
         $api->post('verificationCodes', 'VerificationCodesController@store');
-        // 用户注册
-        $api->post('users', 'UsersController@store');
+
         // 图片验证码
         $api->post('captchas', 'CaptchasController@store');
         // 登录
@@ -92,7 +91,11 @@ $api->version('v1', [
             //星视度用户
             $api->get('staffs', 'ArUserController@index');
 
+            // 管理员添加用户
+            $api->post('users', ['middleware' => ['role:super-admin'], 'uses' => 'UsersController@store']);
 
+            // 获取可用角色列表
+            $api->get('roles', ['middleware' => ['role:super-admin|admin'], 'uses' => 'RolesController@index']);
         });
     });
 });

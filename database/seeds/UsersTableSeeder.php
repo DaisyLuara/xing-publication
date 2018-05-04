@@ -31,7 +31,24 @@ class UsersTableSeeder extends Seeder
                 'ar_user_id' => $ar_user->uid,
             ];
             // 插入到数据库中
-            User::insert($user_array);
+            $user = User::create($user_array);
+            $user->assignRole('user');
         });
+
+        //添加超级管理员
+        User::create([
+            'avatar' => $faker->randomElement($avatars),
+            'name' => '陈重',
+            'phone' => '13818403072',
+            'password' => bcrypt('password'),
+        ])->assignRole('super-admin');
+
+        //添加管理员
+        User::create([
+            'avatar' => $faker->randomElement($avatars),
+            'name' => '王翔',
+            'phone' => '18616348089',
+            'password' => bcrypt('password'),
+        ])->assignRole('admin');
     }
 }
