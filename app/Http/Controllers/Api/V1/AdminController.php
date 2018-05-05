@@ -13,16 +13,7 @@ class AdminController extends Controller
 
     public function show($user_id)
     {
-        $isSuperAdmin = $this->user()->isSuperAdmin();
-
-        $query = User::query();
-        $user = $query->whereHas('roles', function ($q) use ($isSuperAdmin) {
-            if (!$isSuperAdmin) {
-                $q->where('name', '<>', 'super-admin');
-            }
-        })->where('id', '=', $user_id)->first();
-
-        return $this->response->item($user, new UserTransformer());
+        return $this->response->item($this->getUserByID($user_id), new UserTransformer());
     }
 
     public function index(Request $request, User $user)
@@ -68,27 +59,40 @@ class AdminController extends Controller
         return $this->response->item($user, new UserTransformer())->setStatusCode(201);
     }
 
-    public function update(UserRequest $request)
+    public function update($user_id, UserRequest $request)
     {
-        /** @var User $currentUser */
+
+
+        $user = $this->getUserByID($user_id);
         $currentUser = $this->user();
 
-        $attributes = $request->only(['name', 'phone', 'password']);
-
-        //传入的权限不会超过本身权限
+        //传入的权限不会超过管理员本身权限
         $role = $currentUser->getSystemRoles()->firstWhere('id', $request->role_id);
         if ($request->role_id && $role) {
-            $currentUser->syncRoles($role);
+            $user->syncRoles($role);
         }
 
+        $attributes = $request->only(['name', 'phone', 'password']);
         if ($request->avatar_image_id) {
             $image = Image::find($request->avatar_image_id);
 
             $attributes['avatar'] = $image->path;
         }
 
-        $currentUser->update($attributes);
+        $user->update($attributes);
 
-        return $this->response->item($currentUser, new UserTransformer());
+        return $this->response->item($user, new UserTransformer());
+    }
+
+    private function getUserByID($user_id)
+    {
+        $isSuperAdmin = $this->user()->isSuperAdmin();
+
+        $query = User::query();
+        return $query->whereHas('roles', function ($q) use ($isSuperAdmin) {
+            if (!$isSuperAdmin) {
+                $q->where('name', '<>', 'super-admin');
+            }
+        })->where('id', '=', $user_id)->first();
     }
 }

@@ -17,6 +17,7 @@ class UserTransformer extends TransformerAbstract
             'email' => $user->email,
             'avatar' => $user->avatar,
             'phone' => substr_replace($user->phone, '****', 3, 4),
+            'ar_user_id' => $user->ar_user_id,
         ];
     }
 
