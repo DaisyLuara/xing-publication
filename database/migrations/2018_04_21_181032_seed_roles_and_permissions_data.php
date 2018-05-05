@@ -35,8 +35,8 @@ class SeedRolesAndPermissionsData extends Migration
         $user = Role::create(['name' => 'user', 'display_name' => '普通用户']);
         $user->givePermissionTo(['customer', 'project']);
 
-        // 审核员 负责节目上传后的审批
-        $auditor = Role::create(['name' => 'auditor', 'display_name' => '审核员']);
+        // 法务 公司资质审核&负责节目上传后的审批
+        $auditor = Role::create(['name' => 'legal-affairs', 'display_name' => '法务']);
         $auditor->givePermissionTo(['project']);
 
     }
