@@ -27,8 +27,7 @@ $api->version('v1', [
     ], function ($api) {
         // 短信验证码
         $api->post('verificationCodes', 'VerificationCodesController@store');
-        // 用户注册
-        $api->post('users', 'UsersController@store');
+
         // 图片验证码
         $api->post('captchas', 'CaptchasController@store');
         // 登录
@@ -92,7 +91,18 @@ $api->version('v1', [
             //星视度用户
             $api->get('staffs', 'ArUserController@index');
 
+            // 管理员添加用户
+            $api->post('users', ['middleware' => ['role:super-admin|admin'], 'uses' => 'UsersController@store']);
 
+            // 获取可用角色列表
+            $api->get('system/roles', ['middleware' => ['role:super-admin|admin'], 'uses' => 'RolesController@index']);
+            $api->get('system/users', 'UsersController@index');
+
+            //客户管理
+            $api->get('customers', 'CustomerController@index');
+            $api->get('customers/{customer}', 'CustomerController@show');
+            $api->post('customers', ['middleware' => ['permission:customer'], 'uses' => 'CustomerController@store']);
+            $api->patch('customers/{customer}', ['middleware' => ['permission:customer'], 'uses' => 'CustomerController@update']);
         });
     });
 });

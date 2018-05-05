@@ -4,49 +4,51 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Models\User;
 use App\Models\Image;
+use Illuminate\Http\Request;
 use App\Transformers\UserTransformer;
 use App\Http\Requests\Api\V1\UserRequest;
 
 class UsersController extends Controller
 {
+
+    public function index(Request $request, User $user)
+    {
+        $isSuperAdmin = $this->user()->isSuperAdmin();
+
+        $query = $user->query();
+
+        $users = $query->whereHas('roles', function ($q) use ($isSuperAdmin) {
+            if (!$isSuperAdmin) {
+                $q->where('name', '<>', 'super-admin');
+            }
+        })->paginate(5);
+
+        return $this->response->paginator($users, new UserTransformer());
+    }
+
+
     /**
-     * 开放式系统注册使用
-     * 本系统不只允许管理员创建用户
+     * 管理员创建用户
      * @param UserRequest $request
      * @return mixed
      */
     public function store(UserRequest $request)
     {
-        $verifyData = \Cache::get($request->verification_key);
-
-        if (!$verifyData) {
-            return $this->response->error('验证码已失效', 422);
+        $role = $this->user()->getSystemRoles()->firstWhere('id', $request->role_id);
+        if (is_null($role)) {
+            return $this->response->errorNotFound('角色不存在');
         }
 
-        /**
-         * hash_equals 防止时序攻击
-         */
-        if (!hash_equals($verifyData['code'], $request->verification_code)) {
-            // 返回401
-            return $this->response->errorUnauthorized('验证码错误');
-        }
-
+        /** @var User $user */
         $user = User::create([
             'name' => $request->name,
-            'phone' => $verifyData['phone'],
+            'phone' => $request->phone,
             'password' => bcrypt($request->password),
         ]);
 
-        // 清除验证码缓存
-        \Cache::forget($request->verification_key);
+        $user->assignRole($role);
 
-        return $this->response->item($user, new UserTransformer())
-            ->setMeta([
-                'access_token' => \Auth::guard('api')->fromUser($user),
-                'token_type' => 'Bearer',
-                'expires_in' => \Auth::guard('api')->factory()->getTTL() * 60
-            ])
-            ->setStatusCode(201);
+        return $this->response->item($user, new UserTransformer())->setStatusCode(201);
     }
 
     public function me()

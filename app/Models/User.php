@@ -7,6 +7,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Spatie\Permission\Models\Role;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -33,7 +34,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'phone', 'avatar', 'introduction','ar_user_id'
+        'name', 'email', 'password', 'phone', 'avatar', 'introduction', 'ar_user_id'
     ];
 
     /**
@@ -104,5 +105,23 @@ class User extends Authenticatable implements JWTSubject
     public function ar_user()
     {
         return $this->hasOne(ArUser::class, 'ar_user_id', 'id');
+    }
+
+    //超级管理员
+    public function isSuperAdmin()
+    {
+        return $this->hasRole('super-admin');
+    }
+
+    //普通管理员
+    public function isAdmin()
+    {
+        return $this->hasRole(['super_admin', 'admin']);
+    }
+
+    //系统配置 可选角色
+    public function getSystemRoles()
+    {
+        return $this->isSuperAdmin() ? Role::all() : Role::where('name', '<>', 'super-admin')->get();
     }
 }
