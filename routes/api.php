@@ -91,12 +91,12 @@ $api->version('v1', [
             //星视度用户
             $api->get('staffs', 'ArUserController@index');
 
-            // 管理员添加用户
-            $api->post('users', ['middleware' => ['role:super-admin|admin'], 'uses' => 'UsersController@store']);
-
-            // 获取可用角色列表
+            // 权限设置
+            $api->get('system/users', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminController@index']);
+            $api->get('system/users/{user}', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminController@show']);
+            $api->post('system/users', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminController@store']);
+            $api->patch('system/users/{user}', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminController@update']);
             $api->get('system/roles', ['middleware' => ['role:super-admin|admin'], 'uses' => 'RolesController@index']);
-            $api->get('system/users', 'UsersController@index');
 
             //客户管理
             $api->get('customers', 'CustomerController@index');

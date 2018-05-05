@@ -36,9 +36,8 @@ class UserRequest extends FormRequest
                 $userId = \Auth::guard('api')->id();
                 return [
                     'name' => 'between:3,25|unique:users,name,' . $userId,
-                    'email' => 'email',
-                    'introduction' => 'max:80',
-                    'avatar_image_id' => 'exists:images,id,type,avatar,user_id,' . $userId,
+                    'phone' => 'unique:users',
+                    'password' => 'string|min:6'
                 ];
                 break;
         }
