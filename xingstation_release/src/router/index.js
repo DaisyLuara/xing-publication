@@ -25,18 +25,18 @@ var router = new Router({
       path: '/logout',
       component: logout,
     },
-    {
-      path: '/register',
-      component: register,
-    },
-    {
-      path: '/findPassword',
-      component: findPassword,
-    },
-    {
-      path: '/setNewPassword',
-      component: setNewPassword,
-    },
+    // {
+    //   path: '/register',
+    //   component: register,
+    // },
+    // {
+    //   path: '/findPassword',
+    //   component: findPassword,
+    // },
+    // {
+    //   path: '/setNewPassword',
+    //   component: setNewPassword,
+    // },
     { path: '*', component: PageNotFound },
   ],
 })
@@ -111,6 +111,7 @@ console.log(to)
   // let permissioness = ['/login', '/findPassword']
   let hasPathPermission = auth.checkPathPermission(to)
   if (hasPathPermission) {
+    console.log(44)
     store.commit('refreshRoute', to)
     next()
   } else {

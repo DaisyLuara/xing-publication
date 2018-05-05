@@ -14,7 +14,7 @@ export default {
   name: 'pc站',
   component: pcHome,
   meta: {
-    permission: 'main',
+    // permission: 'main',
   },
   children: [
     // main,

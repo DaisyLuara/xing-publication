@@ -4,8 +4,9 @@ import { Message, MessageBox } from 'element-ui'
 const HOST = process.env.SERVER_URL
 const LOGIN_API = '/api/authorizations'
 const LOGOUT_API = '/api/authorizations/current'
-const USERINFO_API = '/api/user'
+const USERINFO_API = '/api/user?include=permissions'
 const IMAGE_CAPTCHA = '/api/captchas'
+const USER_API = '/api/user'
 const SMS_CAPTCHA = '/api/verificationCodes'
 export default {
   login(context, creds, redirect) {
@@ -77,10 +78,9 @@ export default {
   },
 
   refreshUserInfo(context) {
-    let promise = new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       context.$http.get(USERINFO_API).then(response => {
           let result = response.data;
-          console.log(result)
           localStorage.setItem("user_info", JSON.stringify(result))
             //context.$store.commit('setCurUserInfo', result.data)
           resolve(result.data)
@@ -89,8 +89,6 @@ export default {
           reject(error)
         })
     })
-
-    return promise
   },
 
   getToken() {
@@ -107,7 +105,7 @@ export default {
 
   getPermission() {
     let user_info = this.getUserInfo()
-    return user_info.perms
+    return user_info.permissions
   },
 
   checkPathPermission(route) {
@@ -132,8 +130,6 @@ export default {
   },
 
   setToken(context, tokenObj) {
-    // context.$cookie.set("jwt_token", tokenObj.access_token)
-    // localStorage.setItem("jwt_token", tokenObj.access_token)
     context.$cookie.set("jwt_token", tokenObj.access_token)
     localStorage.setItem("jwt_token", tokenObj.access_token)
     context.$cookie.set("jwt_ttl", tokenObj.expires_in)
@@ -163,6 +159,16 @@ export default {
     return false;
   },
 
+  modifyUser(context,args){
+    return new Promise((resolve, reject) => {
+      context.$http.patch(USER_API, args).then(result => {
+        resolve(result.data);
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
   // 获取图形验证码
   getImageCaptcha(context, args) {
     let promise = new Promise((resolve, reject) => {
@@ -188,23 +194,12 @@ export default {
 
 function hasPermission(name, perms) {
   if (!perms) {
-    console.log(1)
-    // 正确的应该是false 等着陈重的接口
-    return true;
+    return false;
   }
-  if (name == perms.name) {
-    return true
-  }
-  if (perms.children && perms.children.length == 0) {
-    return false
-  }
-  for (let i in perms) {
-    if (name == perms[i]['name']) {
+  for (let i in perms.data) {
+    if (name == perms.data[i]['name']) {
       return true
-    } else if (name.indexOf(perms[i]['name']) == 0) {
-      
-      return hasPermission(name, perms[i]['children'])
-    }
+    } 
   }
   return false
 }

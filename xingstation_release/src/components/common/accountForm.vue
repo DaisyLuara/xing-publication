@@ -21,7 +21,7 @@
               </el-col>
               <el-col :xs="8" :sm="8" :md="8" :lg="8">
               <div class="btn-code-wrap" @click="phoneSuccessHandle()">
-                <span class="btn-code-label__countdown">获取验证码</span>
+                <span class="btn-code-label__countdown">点击验证</span>
               </div>
             </el-col>
                 
@@ -242,7 +242,6 @@ export default {
       }
     },
     phoneSuccessHandle() {
-      console.log(this.validateError.account)
       if(!this.validateError.account && this.accountForm.account) {
         this.ImageCaptchaHandle()
       } else {
@@ -261,7 +260,7 @@ export default {
     }, 
     ImageCaptchaHandle() {
       this.getImageCaptcha();
-      this.showImageCaptcha = true
+     
     },
     linkToLogin() {
       this.$router.push({
@@ -272,15 +271,19 @@ export default {
       this.$refs[formName].resetFields();
     },
     getImageCaptcha() {
-      console.log(this.accountForm.account)
       let args = {
         phone: this.accountForm.account
       }
       auth.getImageCaptcha(this, args).then(result => {
-        console.log(result)
-        let imageCaptchaObj = result;
-        this.accountForm.imageCaptcha.key = imageCaptchaObj.captcha_key;
-        this.setting.imageCaptcha.image_url = imageCaptchaObj.captcha_image_content
+        console.log(JSON.stringify(result) !== '{}')
+        if (JSON.stringify(result) !== '{}') {
+          let imageCaptchaObj = result;
+          this.accountForm.imageCaptcha.key = imageCaptchaObj.captcha_key;
+          this.setting.imageCaptcha.image_url = imageCaptchaObj.captcha_image_content
+          this.showImageCaptcha = true
+        } else {
+           this.showImageCaptcha = false
+        }
       }).catch(error => {
         console.log(error)
       })
