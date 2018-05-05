@@ -7,7 +7,7 @@ use League\Fractal\TransformerAbstract;
 
 class CustomerTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['roles'];
+    protected $availableIncludes = ['user'];
 
     public function transform(Customer $customer)
     {
@@ -16,12 +16,13 @@ class CustomerTransformer extends TransformerAbstract
             'name' => $customer->name,
             'phone' => $customer->phone,
             'address' => $customer->address,
-            'status' => $customer->status,
+            'status' => (int)$customer->status,
+            'customer_name' => $customer->customer_name
         ];
     }
 
     public function includeUser(Customer $customer)
     {
-        return $this->collection($customer->user, new RoleTransformer());
+        return $this->item($customer->user, new UserTransformer());
     }
 }
