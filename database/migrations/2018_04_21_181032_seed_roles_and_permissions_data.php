@@ -24,19 +24,19 @@ class SeedRolesAndPermissionsData extends Migration
         Permission::create(['name' => 'system']);
 
         // 创建超级管理员角色，并赋予权限
-        $superAdmin = Role::create(['name' => 'super-admin']);
+        $superAdmin = Role::create(['name' => 'super-admin', 'display_name' => '系统管理员']);
         $superAdmin->givePermissionTo(['customer', 'contract', 'system', 'project']);
 
         // 创建管理员角色，并赋予权限
-        $admin = Role::create(['name' => 'admin']);
+        $admin = Role::create(['name' => 'admin', 'display_name' => '管理员']);
         $admin->givePermissionTo(['customer', 'system', 'project']);
 
         // 创建普通用户
-        $user = Role::create(['name' => 'user']);
+        $user = Role::create(['name' => 'user', 'display_name' => '普通用户']);
         $user->givePermissionTo(['customer', 'project']);
 
         // 审核员 负责节目上传后的审批
-        $auditor = Role::create(['name' => 'auditor']);
+        $auditor = Role::create(['name' => 'auditor', 'display_name' => '审核员']);
         $auditor->givePermissionTo(['project']);
 
     }
