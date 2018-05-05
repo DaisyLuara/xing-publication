@@ -4,10 +4,9 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Requests\Api\V1\CustomerRequest;
 use App\Transformers\CustomerTransformer;
-use Illuminate\Http\Request;
 use App\Models\Customer;
 
-class CustomerController extends Controller
+class AdminCustomersController extends Controller
 {
     public function index(Customer $customer)
     {
@@ -24,9 +23,11 @@ class CustomerController extends Controller
         return $this->response->paginator($customers, new CustomerTransformer());
     }
 
-    public function show()
+    public function show(Customer $customer)
     {
+        $this->authorize('show', $customer);
 
+        return $this->response->item($customer, new CustomerTransformer());
     }
 
     public function store(CustomerRequest $request, Customer $customer)
@@ -40,9 +41,12 @@ class CustomerController extends Controller
 
     }
 
-    public function update()
+    public function update(CustomerRequest $request, Customer $customer)
     {
+        $this->authorize('update', $customer);
 
+        $customer->update($request->all());
+        return $this->response->item($customer, new CustomerTransformer());
     }
 
 }

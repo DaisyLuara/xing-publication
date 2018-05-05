@@ -6,7 +6,7 @@ namespace App\Models;
 class Customer extends Model
 {
 
-    protected $fillable = ['name', 'phone', '', 'address', 'status', 'user_id'];
+    protected $fillable = ['name', 'phone', 'customer_name', 'address', 'status', 'user_id'];
 
     public function user()
     {

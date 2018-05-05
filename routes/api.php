@@ -99,10 +99,10 @@ $api->version('v1', [
             $api->get('system/roles', ['middleware' => ['role:super-admin|admin'], 'uses' => 'RolesController@index']);
 
             //客户管理
-            $api->get('customers', 'CustomerController@index');
-            $api->get('customers/{customer}', 'CustomerController@show');
-            $api->post('customers', ['middleware' => ['permission:customer'], 'uses' => 'CustomerController@store']);
-            $api->patch('customers/{customer}', ['middleware' => ['permission:customer'], 'uses' => 'CustomerController@update']);
+            $api->get('customers', 'AdminCustomersController@index');
+            $api->get('customers/{customer}', 'AdminCustomersController@show');
+            $api->post('customers', ['middleware' => ['permission:customer'], 'uses' => 'AdminCustomersController@store']);
+            $api->patch('customers/{customer}', ['middleware' => ['permission:customer'], 'uses' => 'AdminCustomersController@update']);
         });
     });
 });

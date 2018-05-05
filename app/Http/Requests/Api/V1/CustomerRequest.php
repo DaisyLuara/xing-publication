@@ -18,14 +18,16 @@ class CustomerRequest extends FormRequest
                 return [
                     'name' => 'required|string',
                     'address' => 'required|string',
-                    'phone' => 'required|mobile',
+                    'phone' => 'required|regex:/^1[3456789]\d{9}$/|unique:customers',
+                    'customer_name' => 'required|string|between:2,25'
                 ];
                 break;
             case 'PATCH':
                 return [
                     'name' => 'string',
                     'address' => 'string',
-                    'phone' => 'required|mobile',
+                    'phone' => 'regex:/^1[3456789]\d{9}$/',
+                    'customer_name' => 'between:2,25|string'
                 ];
                 break;
         }
@@ -37,6 +39,7 @@ class CustomerRequest extends FormRequest
             'name' => '公司全称',
             'address' => '公司地址',
             'phone' => '手机号码',
+            'customer_name' => '客户名称'
         ];
     }
 }

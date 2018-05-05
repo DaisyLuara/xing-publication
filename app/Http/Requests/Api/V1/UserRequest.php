@@ -26,17 +26,16 @@ class UserRequest extends FormRequest
         switch ($this->method()) {
             case 'POST':
                 return [
-                    'name' => 'required|string|max:255',
+                    'name' => 'required|string|between:2,25',
                     'password' => 'required|string|min:6',
-                    'phone' => 'required|unique:users',
+                    'phone' => 'required|regex:/^1[3456789]\d{9}$/|unique:users',
                     'role_id' => 'required'
                 ];
                 break;
             case 'PATCH':
-                $userId = \Auth::guard('api')->id();
                 return [
-                    'name' => 'between:3,25|unique:users,name,' . $userId,
-                    'phone' => 'unique:users',
+                    'name' => 'between:2,25|string',
+                    'phone' => 'regex:/^1[3456789]\d{9}$/',
                     'password' => 'string|min:6'
                 ];
                 break;
@@ -55,7 +54,7 @@ class UserRequest extends FormRequest
     {
         return [
             'name.unique' => '用户名已被占用，请重新填写',
-            'name.between' => '用户名必须介于 3 - 25 个字符之间。',
+            'name.between' => '用户名必须介于 2 - 25 个字符之间。',
             'name.required' => '用户名不能为空。',
             'password.required' => '密码必须输入',
             'password.string' => '密码必须是字符串',
