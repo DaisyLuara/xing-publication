@@ -16,6 +16,9 @@ class UsersController extends Controller
         $isSuperAdmin = $this->user()->isSuperAdmin();
 
         $query = $user->query();
+        if ($request->has('phone')) {
+            $query->where('phone', 'like', $request->phone . '%');
+        }
 
         $users = $query->whereHas('roles', function ($q) use ($isSuperAdmin) {
             if (!$isSuperAdmin) {
@@ -62,7 +65,8 @@ class UsersController extends Controller
     {
         $user = $this->user();
 
-        $attributes = $request->only(['name', 'email']);
+        $attributes = $request->only(['name', 'phone', 'password', 'role_id']);
+        //@todo 修改用户角色
 
         if ($request->avatar_image_id) {
             $image = Image::find($request->avatar_image_id);
