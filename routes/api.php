@@ -98,11 +98,19 @@ $api->version('v1', [
             $api->patch('system/users/{user}', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminController@update']);
             $api->get('system/roles', ['middleware' => ['role:super-admin|admin'], 'uses' => 'RolesController@index']);
 
-            //客户管理
-            $api->get('customers', 'AdminCustomersController@index');
-            $api->get('customers/{customer}', 'AdminCustomersController@show');
-            $api->post('customers', ['middleware' => ['permission:customer'], 'uses' => 'AdminCustomersController@store']);
-            $api->patch('customers/{customer}', ['middleware' => ['permission:customer'], 'uses' => 'AdminCustomersController@update']);
+            //公司管理
+            $api->get('companies', 'AdminCompaniesController@index');
+            $api->get('companies/{company}', 'AdminCompaniesController@show');
+            $api->post('companies', ['middleware' => ['role:user'], 'uses' => 'AdminCompaniesController@store']);
+            $api->patch('companies/{company}', ['middleware' => ['role:user'], 'uses' => 'AdminCompaniesController@update']);
+
+            //公司客户管理
+            $api->get('companies/{company}/customers', 'AdminCustomersController@index');
+            $api->get('companies/{company}/customers/{customer}', 'AdminCustomersController@show');
+            $api->post('companies/{company}/customers', ['middleware' => ['permission:customer'], 'uses' => 'AdminCustomersController@store']);
+            $api->patch('companies/{company}/customers/{customer}', ['middleware' => ['permission:customer'], 'uses' => 'AdminCustomersController@update']);
+
+
         });
     });
 });
