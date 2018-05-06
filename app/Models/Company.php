@@ -17,4 +17,9 @@ class Company extends Model
     {
         return $this->hasMany(Customer::class);
     }
+
+    public function isCompanyCustomer($model)
+    {
+        return $this->id == $model->company_id;
+    }
 }

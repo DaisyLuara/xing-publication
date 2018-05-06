@@ -92,10 +92,10 @@ $api->version('v1', [
             $api->get('staffs', 'ArUserController@index');
 
             // 权限设置
-            $api->get('system/users', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminController@index']);
-            $api->get('system/users/{user}', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminController@show']);
-            $api->post('system/users', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminController@store']);
-            $api->patch('system/users/{user}', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminController@update']);
+            $api->get('system/users', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminUsersController@index']);
+            $api->get('system/users/{user}', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminUsersController@show']);
+            $api->post('system/users', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminUsersController@store']);
+            $api->patch('system/users/{user}', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminUsersController@update']);
             $api->get('system/roles', ['middleware' => ['role:super-admin|admin'], 'uses' => 'RolesController@index']);
 
             //公司管理
@@ -107,8 +107,8 @@ $api->version('v1', [
             //公司客户管理
             $api->get('companies/{company}/customers', 'AdminCustomersController@index');
             $api->get('companies/{company}/customers/{customer}', 'AdminCustomersController@show');
-            $api->post('companies/{company}/customers', ['middleware' => ['permission:customer'], 'uses' => 'AdminCustomersController@store']);
-            $api->patch('companies/{company}/customers/{customer}', ['middleware' => ['permission:customer'], 'uses' => 'AdminCustomersController@update']);
+            $api->post('companies/{company}/customers', ['middleware' => ['permission:company'], 'uses' => 'AdminCustomersController@store']);
+            $api->patch('companies/{company}/customers/{customer}', ['middleware' => ['permission:company'], 'uses' => 'AdminCustomersController@update']);
 
 
         });

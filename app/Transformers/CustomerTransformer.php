@@ -7,7 +7,7 @@ use League\Fractal\TransformerAbstract;
 
 class CustomerTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['user'];
+    protected $availableIncludes = ['company'];
 
     public function transform(Customer $customer)
     {
@@ -20,6 +20,6 @@ class CustomerTransformer extends TransformerAbstract
 
     public function includeCompany(Customer $customer)
     {
-        return $this->item($customer->company, new UserTransformer());
+        return $this->item($customer->company, new CompanyTransformer());
     }
 }
