@@ -13,11 +13,7 @@ class ImagesController extends Controller
     {
         $user = $this->user();
 
-        /**
-         * @todo 上传到对象存储器
-         */
-        $size = $request->type == 'avatar' ? 362 : 1024;
-        $result = $uploader->save($request->image, str_plural($request->type), $user->id, $size);
+        $result = $uploader->save($request->image, str_plural($request->type));
 
         $image->path = $result['path'];
         $image->type = $request->type;
