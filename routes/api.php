@@ -51,44 +51,28 @@ $api->version('v1', [
 
             // 当前登录用户信息
             $api->get('user', 'UsersController@me');
-            // 图片资源
-            $api->post('images', 'ImagesController@store');
-            // 编辑登录用户信息
             $api->patch('user', 'UsersController@update');//patch 部分修改资源，提供部分资源信息
 
+            // 图片资源
+            $api->post('images', 'ImagesController@store');
 
-            // 发布话题
+            // 话题
             $api->post('topics', 'TopicsController@store');
-            // 修改话题
             $api->patch('topics/{topic}', 'TopicsController@update');
-            // 删除话题
             $api->delete('topics/{topic}', 'TopicsController@destroy');
 
-
-            // 发布回复
+            // 回复
             $api->post('topics/{topic}/replies', 'RepliesController@store');
-            // 删除回复
             $api->delete('topics/{topic}/replies/{reply}', 'RepliesController@destroy');
 
             //消息通知
             $api->get('user/notifications', 'NotificationsController@index');
-            // 通知统计
             $api->get('user/notifications/stats', 'NotificationsController@stats');
-            // 标记消息通知为已读
             $api->patch('user/read/notifications', 'NotificationsController@read');
-
-
-            // 当前登录用户权限
-            $api->get('user/permissions', 'PermissionsController@index');
 
             //数据统计
             $api->get('stats', 'FaceCountController@index');
-
-            //节目
             $api->get('projects', 'ProjectController@index');
-
-
-            //星视度用户
             $api->get('staffs', 'ArUserController@index');
 
             // 权限设置
