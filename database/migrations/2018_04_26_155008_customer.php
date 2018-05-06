@@ -15,13 +15,9 @@ class Customer extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->unsigned()->index();
-            $table->string('name', 1024)->defualt('')->comment('公司全称');
-            $table->string('customer_name', 20)->defualt('')->comment('客户名称');
-            $table->string('address', 1024)->defualt('')->comment('公司地址');
+            $table->integer('company_id')->unsigned()->index();
+            $table->string('name', 20)->defualt('')->comment('客户名称');
             $table->string('phone')->nullable()->unique();
-            $table->string('email')->default('');
-            $table->enum('status', [1, 2, 3])->default(1)->comment('1待合作 2合作中 3已结束');
             $table->timestamps();
 
         });

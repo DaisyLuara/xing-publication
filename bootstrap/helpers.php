@@ -45,3 +45,27 @@ function model_plural_name($model)
     // 获取子串的复数形式，例如：传参 `user` 会得到 `users`
     return str_plural($snake_case_name);
 }
+
+function make_tree($arr)
+{
+
+    //@todo 行业类别 分类处理
+    $refer = array();
+    $tree = array();
+    foreach ($arr as $k => $v) {
+        $refer[$v['id']] = &$arr[$k];  //创建主键的数组引用
+    }
+
+    foreach ($arr as $k => $v) {
+        $pid = $v['pid'];   //获取当前分类的父级id
+        if ($pid == 0) {
+            $tree[] = &$arr[$k];   //顶级栏目
+        } else {
+            if (isset($refer[$pid])) {
+                $refer[$pid]['sub'][] = &$arr[$k];  //如果存在父级栏目，则添加进父级栏目的子栏目数组中
+            }
+        }
+    }
+
+    return $tree;
+}
