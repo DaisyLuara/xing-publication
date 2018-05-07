@@ -19,12 +19,16 @@ class UsersController extends Controller
     {
         $user = $this->user();
 
-        $attributes = $request->only(['name', 'phone', 'password']);
+        $attributes = $request->only(['name', 'phone']);
 
         if ($request->avatar_image_id) {
             $image = Image::find($request->avatar_image_id);
 
             $attributes['avatar'] = $image->path;
+        }
+
+        if ($request->password) {
+            $attributes['password'] = bcrypt($request->password);
         }
 
         $user->update($attributes);
