@@ -2,23 +2,23 @@
   <div class="add-customer-wrap">
     <div class="topbar">
       <el-breadcrumb separator="/">
-        <el-breadcrumb-item :to="{ path: '/customer/customers' }">客户管理</el-breadcrumb-item>
-        <el-breadcrumb-item>{{customerID ? '修改' : '添加'}}</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/customer/customers' }">联系人管理</el-breadcrumb-item>
+        <el-breadcrumb-item>{{contactID ? '修改' : '添加'}}</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <div :element-loading-text="setting.loadingText" v-loading="setting.loading">
       <div class="customer-title">
       {{$route.name}}
       </div>
-      <el-form ref="customerForm" :model="customerForm" :rules="rules" label-width="100px">
-        <el-form-item label="公司名称" prop="customer.name">
-          <el-input class="customer-form-input" v-model="customerForm.customer.name" :maxlength="50"></el-input>
+      <el-form ref="contactForm" :model="contactForm" :rules="rules" label-width="100px">
+        <el-form-item label="联系人名称" prop="contact.name">
+          <el-input class="customer-form-input" v-model="contactForm.contact.name" :maxlength="50"></el-input>
         </el-form-item>
-        <el-form-item label="公司地址" prop="customer.address">
-          <el-input class="customer-form-input" v-model="customerForm.customer.address" :maxlength="60"></el-input>
+        <el-form-item label="联系电话" prop="contact.phone">
+          <el-input class="customer-form-input" v-model="contactForm.contact.phone" :maxlength="11"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :loading="loading"  @click="onSubmit('customerForm')">保存</el-button>
+          <el-button type="primary" :loading="loading"  @click="onSubmit('contactForm')">保存</el-button>
           <el-button @click="historyBack()">取消</el-button>
         </el-form-item>
       </el-form>
@@ -32,7 +32,7 @@ import router from 'router'
 import { Select, Option, Button, Input, Form, FormItem } from 'element-ui'
 
 export default {
-  name: 'addCustomer',
+  name: 'addContact',
   data() {
     return {
       setting: {
@@ -40,23 +40,30 @@ export default {
         loading: false,
         loadingText: "拼命加载中"
       },
-      customerForm: {
-        customer: {
+      contactForm: {
+        contact: {
           name: '',
           phone: '',
-          address: '',
-          customer_name: '',
         },
       },
-      customerID: '',
+      contactID: '',
       rules: {
-        "customer.name": [
-          { message: '请输入公司名称', trigger: 'blur' , required: true}
+        "contact.phone": [
+          { validator: (rule, value, callback) => {
+            if (/^\s*$/.test(value)) {
+              callback('请输入手机')
+            } else if(!/^1[3456789]\d{9}$/.test(value)) {
+              callback('手机格式不正确,请重新输入')
+            } else {
+              callback()
+            }
+          }, trigger: 'blur' , required: true}
         ],
-        "customer.address": [
-          { message: '请输入公司地址', trigger: 'blur' , required: true}
+        "contact.name": [
+          { message: '请输入联系人名称', trigger: 'blur' , required: true}
         ],
       },
+      contactName:'',
       loading: false
     }
   },
@@ -64,7 +71,9 @@ export default {
     if(this.setting.loading == true){
       return false
     }
-    this.customerID = this.$route.params.uid
+    this.contactID = this.$route.query.id
+    this.contactName = this.$route.query.name
+    console.log(this.contactID)
     this.setting.loadingText = "拼命加载中"
     this.setting.loading = false
   },
@@ -73,16 +82,16 @@ export default {
       this.$refs[formName].validate((valid) => {
         if(valid){
           this.loading = true;
-          console.log(this[formName])
-          company.saveCustomer(this, this[formName].customer).then(result => {
+          let id = this.contactID
+          let name = this.contactName
+          company.saveContact(this, id, this[formName].contact).then(result => {
             this.loading = false;
             this.$message({
               message: "添加成功",
               type: "success"
             })
-            // todo是否返回用户列表
             this.$router.push({
-              path: "/company/customers"
+              path: "/company/customers/contacts?id="+id+"&name=" + name
             })
           }).catch(error => {
             this.loading = false;
@@ -93,6 +102,20 @@ export default {
           return;
         }
       })
+    },
+    handleClose(data) {
+      if (data && data.length > 0 && data[0].media_url) {
+        console.dir(data)
+        this.imageUrl = data[0].media_url
+      } else {
+        console.log('图片上传失败')
+      }
+    },
+    handleOpenPane() {
+      this.panelVisible = true
+    },
+    handleImageDelete() {
+      this.imageUrl = ''
     },
     resetForm(formName) {
      

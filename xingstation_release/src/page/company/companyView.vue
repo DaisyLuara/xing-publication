@@ -1,6 +1,6 @@
 <template>
-  <div class="customer-root">
-    <second-sidebar module="customer"></second-sidebar>
+  <div class="company-root">
+    <second-sidebar module="company"></second-sidebar>
     <div class="topbar">
       {{this.$route.meta.title}}
     </div>
@@ -9,7 +9,7 @@
 </template>
 <script>
 export default {
-  name: 'customerView',
+  name: 'companyView',
   data() {
     return {
     }
@@ -20,7 +20,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  .customer-root {
+  .company-root {
     height: 100%;
     background-color: #EFF2F7;
     .topbar {

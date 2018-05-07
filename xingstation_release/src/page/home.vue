@@ -29,7 +29,7 @@
         </div>
       </div>
     </div>
-    <div class="modules" :class="{'modules-top': memuFlag}">
+    <div class="modules">
       <router-view></router-view>
     </div>
   </div>
@@ -44,7 +44,6 @@ export default {
   data() {
     return {
       visible: false,
-      memuFlag: false,
     }
   },
   created() {
@@ -67,7 +66,7 @@ export default {
               case 'system':
                 m.src = require('../assets/images/icons/setting-icon.png')
                 break
-              case 'customer':
+              case 'company':
                 m.src = require('../assets/images/icons/marketing-icon.png')
                 break
               case 'main':
@@ -84,7 +83,6 @@ export default {
           }
         }
       }
-      console.log(items)
       return items
     },
     currModule() {

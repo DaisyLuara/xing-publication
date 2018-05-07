@@ -109,7 +109,7 @@ export default {
       loading: true,
       pagination: {
         total: 0,
-        pageSize: 20,
+        pageSize: 10,
         currentPage: 1
       },
       tableData: [{

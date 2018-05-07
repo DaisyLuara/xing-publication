@@ -2,7 +2,7 @@
   <div class="root">
     <div class="item-list-wrap">
       <div class="item-content-wrap">
-        <div class="show-item-wrap" >
+        <!-- <div class="show-item-wrap" >
           <el-row :gutter="20">
             <el-col :span="8">
               <el-card class="customer-info-wrap" id="test">
@@ -43,7 +43,7 @@
               </el-card>
             </el-col>
           </el-row>
-        </div>
+        </div> -->
         <div class="search-wrap">
           <el-form :model="filters" :inline="true" ref="searchForm" :rules="rules">
             <el-form-item label="" prop="name">
@@ -161,8 +161,8 @@ export default {
     }
   },
   mounted() {
-    let height = document.getElementById('test').offsetHeight
-    document.getElementsByClassName('data-wrap')[0].style.height = height + 'px'
+    // let height = document.getElementById('test').offsetHeight
+    // document.getElementsByClassName('data-wrap')[0].style.height = height + 'px'
   },
   methods: {
     search (formName) {
