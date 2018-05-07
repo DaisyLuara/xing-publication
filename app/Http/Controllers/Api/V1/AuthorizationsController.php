@@ -4,27 +4,36 @@ namespace App\Http\Controllers\Api\V1;
 
 use Auth;
 use App\Http\Requests\Api\V1\AuthorizationRequest;
+use App\Models\User;
 
 class AuthorizationsController extends Controller
 {
-    public function store(AuthorizationRequest $request)
+    public function store(AuthorizationRequest $request, User $user)
     {
-        //管理员登陆 使用短信+验证码登陆
-        $verifyData = \Cache::get($request->verification_key);
-
-        if (!$verifyData) {
-            return $this->response->error('验证码已失效', 422);
-        }
-
-        /**
-         * hash_equals 防止时序攻击
-         */
-        if (!hash_equals($verifyData['code'], $request->verification_code)) {
-            // 返回401
-            return $this->response->errorUnauthorized('验证码错误');
-        }
-
+        $query = $user->query();
         $username = $request->username;
+
+        $user = $query->whereHas('roles', function ($q) {
+            $q->where('name', '=', 'super-admin');
+        })->where('phone', '=', $username)->first();
+
+        if ($user) {
+            //管理员登陆 使用短信+验证码登陆
+            $verifyData = \Cache::get($request->verification_key);
+
+            if (!$verifyData) {
+                return $this->response->error('验证码已失效', 422);
+            }
+
+            /**
+             * hash_equals 防止时序攻击
+             */
+            if (!hash_equals($verifyData['code'], $request->verification_code)) {
+                // 返回401
+                return $this->response->errorUnauthorized('验证码错误');
+            }
+        }
+
 
         filter_var($username, FILTER_VALIDATE_EMAIL) ?
             $credentials['email'] = $username :

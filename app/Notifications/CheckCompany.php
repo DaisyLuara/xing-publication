@@ -39,10 +39,11 @@ class CheckCompany extends Notification
 
         // 存入数据库里的数据
         return [
-            'company_id' => $this->company->id,
+            'id' => $this->company->id,
             'reply_content' => '创建公司待审批',
             'user_id' => $user->id,
             'user_name' => $user->name,
+            'type' => 'review'
         ];
 
     }
