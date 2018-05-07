@@ -8,7 +8,7 @@ use App\Transformers\UserTransformer;
 use App\Http\Requests\Api\V1\UserRequest;
 
 
-class AdminController extends Controller
+class AdminUsersController extends Controller
 {
 
     public function show($user_id)

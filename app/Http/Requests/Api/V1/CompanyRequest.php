@@ -4,7 +4,7 @@ namespace App\Http\Requests\Api\V1;
 
 use Dingo\Api\Http\FormRequest;
 
-class CustomerRequest extends FormRequest
+class CompanyRequest extends FormRequest
 {
     public function authorize()
     {
@@ -17,13 +17,13 @@ class CustomerRequest extends FormRequest
             case 'POST':
                 return [
                     'name' => 'required|string',
-                    'phone' => 'required|regex:/^1[3456789]\d{9}$/|unique:customers',
+                    'address' => 'required|string',
                 ];
                 break;
             case 'PATCH':
                 return [
                     'name' => 'string',
-                    'phone' => 'regex:/^1[3456789]\d{9}$/',
+                    'address' => 'string',
                 ];
                 break;
         }
@@ -32,8 +32,8 @@ class CustomerRequest extends FormRequest
     public function attributes()
     {
         return [
-            'phone' => '手机号码',
-            'customer_name' => '客户名称'
+            'name' => '公司全称',
+            'address' => '公司地址',
         ];
     }
 }

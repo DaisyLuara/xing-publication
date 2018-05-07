@@ -61,9 +61,9 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Topic::class);
     }
 
-    public function customers()
+    public function company()
     {
-        return $this->hasMany(Customer::class);
+        return $this->hasMany(Company::class);
     }
 
     public function setPasswordAttribute($value)
