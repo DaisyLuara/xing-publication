@@ -2,23 +2,24 @@
 
 namespace App\Notifications;
 
-use App\Models\Company;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
+use App\Models\AdminProject;
 
-class CheckCompany extends Notification
+class CheckAdminProject extends Notification
 {
     use Queueable;
-    public $company;
+
+    public $adminProject;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(Company $company)
+    public function __construct(AdminProject $adminProject)
     {
-        $this->company = $company;
+        $this->adminProject = $adminProject;
     }
 
     /**
@@ -35,12 +36,11 @@ class CheckCompany extends Notification
     public function toDatabase($notifiable)
     {
 
-        $user = $this->company->user;
+        $user = $this->adminProject->user;
 
-        // 存入数据库里的数据
         return [
-            'company_id' => $this->company->id,
-            'reply_content' => '创建公司待审批',
+            'company_id' => $this->adminProject->id,
+            'reply_content' => '节目创建待审批',
             'user_id' => $user->id,
             'user_name' => $user->name,
         ];
