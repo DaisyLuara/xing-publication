@@ -50,5 +50,13 @@ class UsersTableSeeder extends Seeder
             'phone' => '18616348089',
             'password' => bcrypt('password'),
         ])->assignRole('admin');
+
+        //添加法务
+        User::create([
+            'avatar' => $faker->randomElement($avatars),
+            'name' => '方圆',
+            'phone' => '15921145624',
+            'password' => bcrypt('password'),
+        ])->assignRole('legal-affairs');
     }
 }
