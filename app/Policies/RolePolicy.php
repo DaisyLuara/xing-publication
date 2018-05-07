@@ -4,7 +4,7 @@ namespace App\Policies;
 
 use App\Models\User;
 
-class UserPolicy
+class RolePolicy
 {
     public function index(User $currentUser)
     {
