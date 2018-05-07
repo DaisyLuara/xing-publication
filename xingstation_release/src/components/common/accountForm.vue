@@ -270,7 +270,8 @@ export default {
         phone: this.accountForm.account
       }
       auth.getImageCaptcha(this, args).then(result => {
-        if (JSON.stringify(result) !== '{}') {
+        console.log(result)
+        if (result) {
           let imageCaptchaObj = result;
           this.accountForm.imageCaptcha.key = imageCaptchaObj.captcha_key;
           this.setting.imageCaptcha.image_url = imageCaptchaObj.captcha_image_content
