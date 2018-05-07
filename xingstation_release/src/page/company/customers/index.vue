@@ -47,7 +47,7 @@
           <el-table-column label="操作" width="280">
             <template slot-scope="scope">
               <el-button size="small" type="primary" @click="linkToEdit(scope.row.id)">修改</el-button>
-              <el-button size="small" type="warning" @click="showDetail(scope.row.id)">节目</el-button>
+              <!-- <el-button size="small" type="warning" @click="showDetail(scope.row.id)">节目</el-button> -->
               <el-button size="small" @click="showContactDetail(scope.row.id,scope.row.name)">联系人详情</el-button>
             </template>
           </el-table-column>

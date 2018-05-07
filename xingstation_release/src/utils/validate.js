@@ -128,7 +128,7 @@ function checkMobile(value) {
 
 function checkPassword(value) {
   let len = value.length;
-  if(len < 8 || len > 20){
+  if(len < 6 || len > 20){
     return false;
   }else{
     return true;

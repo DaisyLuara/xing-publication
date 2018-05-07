@@ -64,7 +64,7 @@ function VueAxios(Vue) {
     if (error.response) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
-      if (error.response.data.status_code == 401) {
+      if (error.response.status == 401) {
         // 退出登录，清除登录信息，跳转到登录页面
         // Message.error("对不起，您未被授权")
         auth.clearLoginData(app)
@@ -72,7 +72,7 @@ function VueAxios(Vue) {
         router.push({
           path: '/login'
         })
-        Message.error("请求出错：代码" + error.response.data.message)
+        Message.error("请求出错：代码" + error.response.status)
       } else {
         Message.error("请求出错：代码" + error.response.status)
       }

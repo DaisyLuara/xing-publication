@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import appSetting from './modules/appSetting'
 import curUserInfo from './modules/curUserInfo'
+import notificationCount from './modules/notificationCount'
 import getters from './getters'
 // import actions from './actions'
 import mutations from './mutations'
@@ -19,6 +20,7 @@ export default new Vuex.Store({
     appSetting,
     curUserInfo,
     appState,
+    notificationCount
   },
   getters,
   // actions,
