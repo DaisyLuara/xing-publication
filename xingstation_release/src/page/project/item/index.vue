@@ -9,16 +9,6 @@
             </el-form-item>
               <el-button @click="search('searchForm')" type="primary">搜索</el-button>
           </el-form>
-          <!-- <div>
-            <el-date-picker
-              v-model="dataValue"
-              type="daterange"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期">
-            </el-date-picker>
-            <label class="warning"> <i class="el-icon-warning"></i> 由于数量较大，昨日数据正式生成，请稍后再获取</label>
-          </div> -->
         </div>
         <div class="actions-wrap">
           <span class="label">
@@ -31,46 +21,47 @@
             prop="name"
             label="节目名称"
             >
+            <template slot-scope="scope">
+              {{scope.row.project.name}}
+            </template>
           </el-table-column>
-          <!-- <el-table-column
-            prop="release_time"
-            label="发布时间"
-            >
-          </el-table-column> -->
-          <!-- <el-table-column
-            prop="salesman"
-            label="关联销售"
-            >
-          </el-table-column> -->
-          <!-- <el-table-column
+          <el-table-column
             prop="icon"
             label="节目icon"
             >
             <template slot-scope="scope">
-              <img :src="scope.row.icon" alt="" class="icon-item"/>
+              <img :src="scope.row.project.icon" alt="" class="icon-item"/>
             </template>
-          </el-table-column> -->
-          <!-- <el-table-column
-            prop="count"
-            label="点位数量"
+          </el-table-column>
+          <el-table-column
+            prop="pointName"
+            label="区域"
+            >
+            <template slot-scope="scope">
+              {{scope.row.point.name}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="created_at"
+            label="时间"
             >
           </el-table-column>
           <el-table-column
-            prop="put_start_time"
-            label="开始投放"
+            prop="start_date"
+            label="开始时间"
             >
           </el-table-column>
           <el-table-column
-            prop="put_end_time"
-            label="结束投放"
+            prop="end_date"
+            label="结束时间"
             >
-          </el-table-column> -->
+          </el-table-column>
           <el-table-column label="操作" width="280">
             <template slot-scope="scope">
-              <el-button size="small" type="danger">删除</el-button>
+              <!-- <el-button size="small" type="danger">删除</el-button> -->
               <el-button size="small" type="primary" @click="linkToEdit(scope.row.id)">修改</el-button>
               <el-button size="small" type="warning" @click="showData(scope.row.id, scope.row.name)">数据</el-button>
-              <el-button size="small">合约</el-button>
+              <!-- <el-button size="small">合约</el-button> -->
             </template>
           </el-table-column>
         </el-table>
@@ -112,35 +103,7 @@ export default {
         pageSize: 10,
         currentPage: 1
       },
-      tableData: [{
-        name: '苏宁易购商场导览',
-        salesman: '杨清远',
-        count: '3',
-        put_start_time: '2018/01/01',
-        put_end_time: '2018/02/04',
-        release_time: '2018-04-06 12:03:46',
-      }, {
-        name: '苏宁易购商场导览',
-        salesman: '杨清远',
-        put_start_time: '2018/01/01',
-        put_end_time: '2018/02/04',
-        release_time: '2018-04-06 12:03:46',
-        count: '3',
-      }, {
-        name: '苏宁易购商场导览',
-        salesman: '杨清远',
-         put_start_time: '2018/01/01',
-        put_end_time: '2018/02/04',
-        release_time: '2018-04-06 12:03:46',
-        count: '3',
-      }, {
-        name: '苏宁易购商场导览',
-        salesman: '杨清远',
-        put_start_time: '2018/01/01',
-        put_end_time: '2018/02/04',
-        release_time: '2018-04-06 12:03:46',
-        count: '3',
-      }]
+      tableData: []
     }
   },
   mounted() {
@@ -151,7 +114,8 @@ export default {
   methods: {
     getProjectList () {
       let searchArgs = {
-        page : this.pagination.currentPage
+        page : this.pagination.currentPage,
+        include: 'point,project'
       }
       project.getProjectList(this, searchArgs).then((response) => {
        console.log(response)
@@ -226,7 +190,7 @@ export default {
       .item-content-wrap{
         .icon-item{
           padding: 10px;
-          width: 15%;
+          width: 50%;
         }
         .search-wrap{
           margin-top: 5px;

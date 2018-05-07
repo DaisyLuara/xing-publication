@@ -1,5 +1,5 @@
 import {router} from '../main'
-const PROJECT_API = '/api/projects'
+const PROJECT_API = '/api/projects/launch'
 export default {
   getProjectList(context,args) {
     return new Promise(function(resolve, reject){
