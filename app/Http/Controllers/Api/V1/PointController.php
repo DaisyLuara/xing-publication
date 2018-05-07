@@ -10,7 +10,7 @@ class PointController extends Controller
     public function index(Request $request, Point $point)
     {
         $query = $point->query();
-        $points = $query->paginate(20);
+        $points = $query->paginate(10);
         return $this->response->paginator($points, new PointTransformer());
     }
 

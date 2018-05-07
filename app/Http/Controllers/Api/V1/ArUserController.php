@@ -11,7 +11,7 @@ class ArUserController extends Controller
     public function index(Request $request, ArUser $arUser)
     {
         $query = $arUser->query();
-        $arUsers = $query->paginate(20);
+        $arUsers = $query->paginate(10);
         return $this->response->paginator($arUsers, new ArUserTransformer());
     }
 }

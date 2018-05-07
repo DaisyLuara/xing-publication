@@ -29,7 +29,7 @@ class AdminUsersController extends Controller
             if (!$isSuperAdmin) {
                 $q->where('name', '<>', 'super-admin');
             }
-        })->paginate(5);
+        })->paginate(10);
 
         return $this->response->paginator($users, new UserTransformer());
     }
@@ -56,6 +56,7 @@ class AdminUsersController extends Controller
 
         $user->assignRole($role);
 
+        //@todo 关联创建EXE LOOK 用户
         return $this->response->item($user, new UserTransformer())->setStatusCode(201);
     }
 
