@@ -1,5 +1,7 @@
 import {router} from '../main'
 const NOTICE_API = '/api/user/notifications'
+const READ_NOTICE_API = '/api/user/read/notifications'
+const NOTICE_SRATS_API = '/api/user/notifications/stats'
 export default {
   getNoticeList(context, args) {
     return new Promise(function(resolve, reject){
@@ -10,5 +12,22 @@ export default {
       })
     })
   },
-  
+  readNotifications(context) {
+    return new Promise(function(resolve, reject){
+      context.$http.patch(READ_NOTICE_API).then(response => {
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+  notificationStats(context) {
+    return new Promise(function(resolve, reject){
+      context.$http.get(NOTICE_SRATS_API).then(response => {
+        resolve(response.data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  }
 }

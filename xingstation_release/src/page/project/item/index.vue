@@ -1,24 +1,14 @@
 <template>
   <div class="root">
-    <div class="item-list-wrap" v-loading="loading">
+    <div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
       <div class="item-content-wrap">
         <div class="search-wrap">
-          <el-form :model="filters" :inline="true" ref="searchForm" :rules="rules">
+          <el-form :model="filters" :inline="true" ref="searchForm" >
             <el-form-item label="" prop="name">
               <el-input v-model="filters.name" placeholder="请输入节目名称" style="width: 300px;"></el-input>
             </el-form-item>
               <el-button @click="search('searchForm')" type="primary">搜索</el-button>
           </el-form>
-          <!-- <div>
-            <el-date-picker
-              v-model="dataValue"
-              type="daterange"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期">
-            </el-date-picker>
-            <label class="warning"> <i class="el-icon-warning"></i> 由于数量较大，昨日数据正式生成，请稍后再获取</label>
-          </div> -->
         </div>
         <div class="actions-wrap">
           <span class="label">
@@ -31,46 +21,45 @@
             prop="name"
             label="节目名称"
             >
+            <template slot-scope="scope">
+              {{scope.row.project.name}}
+            </template>
           </el-table-column>
-          <!-- <el-table-column
-            prop="release_time"
-            label="发布时间"
-            >
-          </el-table-column> -->
-          <!-- <el-table-column
-            prop="salesman"
-            label="关联销售"
-            >
-          </el-table-column> -->
-          <!-- <el-table-column
+          <el-table-column
             prop="icon"
             label="节目icon"
             >
             <template slot-scope="scope">
-              <img :src="scope.row.icon" alt="" class="icon-item"/>
+              <img :src="scope.row.project.icon" alt="" class="icon-item"/>
             </template>
-          </el-table-column> -->
-          <!-- <el-table-column
-            prop="count"
-            label="点位数量"
-            >
           </el-table-column>
           <el-table-column
-            prop="put_start_time"
-            label="开始投放"
+            prop="pointName"
+            label="区域"
             >
-          </el-table-column>
-          <el-table-column
-            prop="put_end_time"
-            label="结束投放"
-            >
-          </el-table-column> -->
-          <el-table-column label="操作" width="280">
             <template slot-scope="scope">
-              <el-button size="small" type="danger">删除</el-button>
+              {{scope.row.point.name}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="created_at"
+            label="时间"
+            >
+          </el-table-column>
+          <el-table-column
+            prop="start_date"
+            label="开始时间"
+            >
+          </el-table-column>
+          <el-table-column
+            prop="end_date"
+            label="结束时间"
+            >
+          </el-table-column>
+          <el-table-column label="操作" width="200">
+            <template slot-scope="scope">
               <el-button size="small" type="primary" @click="linkToEdit(scope.row.id)">修改</el-button>
               <el-button size="small" type="warning" @click="showData(scope.row.id, scope.row.name)">数据</el-button>
-              <el-button size="small">合约</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -100,10 +89,9 @@ export default {
       filters: {
         name: ''
       },
-      rules: {
-        // name: [
-        //   { required: true, message: '请输入客户名称', trigger: 'blur' },
-        // ]
+      setting: {
+        loading: false,
+        loadingText: "拼命加载中"
       },
       dataValue: '',
       loading: true,
@@ -112,68 +100,37 @@ export default {
         pageSize: 10,
         currentPage: 1
       },
-      tableData: [{
-        name: '苏宁易购商场导览',
-        salesman: '杨清远',
-        count: '3',
-        put_start_time: '2018/01/01',
-        put_end_time: '2018/02/04',
-        release_time: '2018-04-06 12:03:46',
-      }, {
-        name: '苏宁易购商场导览',
-        salesman: '杨清远',
-        put_start_time: '2018/01/01',
-        put_end_time: '2018/02/04',
-        release_time: '2018-04-06 12:03:46',
-        count: '3',
-      }, {
-        name: '苏宁易购商场导览',
-        salesman: '杨清远',
-         put_start_time: '2018/01/01',
-        put_end_time: '2018/02/04',
-        release_time: '2018-04-06 12:03:46',
-        count: '3',
-      }, {
-        name: '苏宁易购商场导览',
-        salesman: '杨清远',
-        put_start_time: '2018/01/01',
-        put_end_time: '2018/02/04',
-        release_time: '2018-04-06 12:03:46',
-        count: '3',
-      }]
+      tableData: []
     }
   },
   mounted() {
   },
   created () {
+    
     this.getProjectList()
   },
   methods: {
     getProjectList () {
+      this.setting.loadingText = "拼命加载中"
+      this.setting.loading = true;
       let searchArgs = {
-        page : this.pagination.currentPage
+        page : this.pagination.currentPage,
+        include: 'point,project',
+        project_name: this.filters.name
       }
       project.getProjectList(this, searchArgs).then((response) => {
-       console.log(response)
        let data = response.data
        this.tableData = data
        this.pagination.total = response.meta.pagination.total
-       this.loading = false
+      this.setting.loading = false;
       }).catch(error => {
         console.log(error)
-       this.loading = false
+      this.setting.loading = false;
       })
     },
     search (formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          alert('submit!');
-        } else {
-          console.log('error submit!!');
-          return false;
-        }
-      });
-      console.log('search')
+      this.pagination.currentPage = 1;
+      this.getProjectList();
     },
     changePage (currentPage) {
       this.pagination.currentPage = currentPage
@@ -226,7 +183,7 @@ export default {
       .item-content-wrap{
         .icon-item{
           padding: 10px;
-          width: 15%;
+          width: 50%;
         }
         .search-wrap{
           margin-top: 5px;

@@ -1,19 +1,41 @@
 <template>
-  <div class="page-list-template tab" v-loading="loading">
+  <div class="page-list-template tab" :element-loading-text="setting.loadingText" v-loading="setting.loading">
+    <div class="actions-wrap">
+      <el-button size="small" type="info" @click="readNotifications">全部读取</el-button>
+    </div>
     <div class="table-area">
       <el-table
-        :data="tableData">
+        :data="noticeList">
         <el-table-column
-          prop="name"
-          label="名称">
+          prop="id"
+          label="ID">
+          <template slot-scope="scope">
+            <!-- <a :href="'/#/company/customers/edit/' + scope.row.data.id" style="color: #108aea">{{scope.row.data.id}}</a> -->
+            {{scope.row.data.id}}
+          </template>
         </el-table-column>
         <el-table-column
-          prop="info"
-          label="信息">
+          prop="reply_content"
+          label="内容">
+          <template slot-scope="scope">
+            {{scope.row.data.reply_content}}
+          </template>
         </el-table-column>
         <el-table-column
-          prop="date"
-          label="时间"
+          prop="user_name"
+          label="创建人">
+          <template slot-scope="scope">
+            {{scope.row.data.user_name}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="created_at"
+          label="创建时间"
+          >
+        </el-table-column>
+        <el-table-column
+          prop="read_at"
+          label="读取时间"
           >
         </el-table-column>
       </el-table>
@@ -22,10 +44,10 @@
     <div class="pagination">
       <el-pagination
         @current-change="handleCurrentChange"
-        :current-page.sync="currentPage"
-        :page-size="pageSize"
+        :current-page.sync="pagination.currentPage"
+        :page-size="pagination.pageSize"
         layout="prev, pager, next, jumper"
-        :total="pageTotal">
+        :total="pagination.total">
       </el-pagination>
     </div>
   </div>
@@ -38,7 +60,9 @@ import {
   Table,
   TableColumn,
   Pagination,
+  Button,
 } from 'element-ui'
+import notice from 'service/notice'
 import { mapState } from 'vuex'
 export default {
   props: ['active'],
@@ -48,33 +72,20 @@ export default {
     ElTable: Table,
     ElTableColumn: TableColumn,
     ElPagination: Pagination,
+    ElButton: Button
   },
   data() {
     return {
-      currentPage: 1,
-      pageTotal: 1,
-      pageSize: 10,
-      tableData: [{
-          date: '2018-04-08 09:55:42',
-          name: '宏伊广场',
-          area: '上海',
-          icon: ''
-        }, {
-          date: '2018-04-08 09:55:42',
-          name: '宏伊广场',
-          area: '上海',
-          icon: ''
-        }, {
-          date: '2018-04-08 09:55:42',
-          name: '宏伊广场',
-          area: '上海',
-          icon: ''
-        }, {
-          date: '2018-04-08 09:55:42',
-          name: '宏伊广场',
-          area: '上海',
-          icon: ''
-        }],
+      pagination: {
+        total: 0,
+        pageSize: 10,
+        currentPage: 1
+      },
+      setting: {
+        loading: true,
+        loadingText: "拼命加载中"
+      },
+      noticeList: [],
       loading: false,
     }
   },
@@ -95,7 +106,40 @@ export default {
   mounted() {
     this.processState()
   },
+  created() {
+    this.getNoticeList()
+  },
   methods: {
+    getNoticeList (){
+      this.setting.loading = true;
+      let pageNum = this.pagination.currentPage
+      let args = {
+        page: pageNum,
+      }
+      this.setting.loadingText = "拼命加载中"
+      return notice.getNoticeList(this, args).then(response => {
+        this.noticeList = response.data
+        this.pagination.total = response.meta.pagination.total;
+        this.setting.loading = false;
+      }).catch(error => {
+        this.setting.loading = false;
+      })
+    },
+    notificationStats() {
+      return notice.notificationStats(this).then((response) => {
+        this.$store.commit('saveNotificationState', response)
+        this.getNoticeList()
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    readNotifications() {
+      return notice.readNotifications(this).then((response) => {
+        this.notificationStats()
+      }).catch(err => {
+        console.log(err)
+      })
+    },
     processState() {
       if (this.lastClickTab === 'all' || this.lastClickTab === '') {
         this.currentPage =
@@ -106,32 +150,17 @@ export default {
 
     handleCurrentChange(e) {
       this.currentPage = e
-      this.getData()
-    },
-
-    getData() {
-      const getUrl = '/api/location/locations'
-      let params = {
-        params: {
-          page_num: this.currentPage,
-          location_name: this.searchValueName,
-          location_type_id: 1,
-          limit: this.pageSize
-        }
-      }
-      this.$http.get(getUrl, params).then(response => {
-        if (response.status === 200) {
-          this.tableData = response.data.data
-          this.pageSize = response.data.page.limit
-          this.pageTotal = response.data.page.count
-          this.loading = false
-        } else {
-          this.$message.error(response.message)
-        }
-      }).catch(error => {
-        console.log(error)
-      })
+      this.getNoticeList()
     },
   }
 }
 </script>
+<style lang="less" scoped>
+  .page-list-template{
+    .actions-wrap{
+      text-align: right;
+      margin: 10px auto;
+    }
+  }
+</style>
+

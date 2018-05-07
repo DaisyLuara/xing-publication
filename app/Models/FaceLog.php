@@ -11,8 +11,13 @@ class FaceLog extends Model
     public $table = 'face_log';
     protected $primaryKey='flid';
 
-    public function apo()
+    public function pointArUser()
     {
         return $this->hasOne(PointArUser::class, 'oid', 'oid');
+    }
+
+    public function project()
+    {
+        return $this->hasOne(Project::class, 'versionname', 'belong');
     }
 }
