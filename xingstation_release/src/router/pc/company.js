@@ -58,7 +58,7 @@ let router = {
         {
           path: 'contacts/add',
           component: () =>
-            import(/* webpackChunkName: "page/company/customers/contacts/ContactSave" */ 'page/company/customers/contacts/ContactSave'),
+            import(/* webpackChunkName: "page/company/customers/contacts/contactSave" */ 'page/company/customers/contacts/contactSave'),
           name: '新增联系人',
           meta: {
           },
@@ -66,7 +66,7 @@ let router = {
         {
           path: 'contacts/edit',
           component: () =>
-            import(/* webpackChunkName: "page/company/customers/contacts/ContactSave" */ 'page/company/customers/contacts/ContactSave'),
+            import(/* webpackChunkName: "page/company/customers/contacts/contactSave" */ 'page/company/customers/contacts/contactSave'),
           name: '修改联系人',
           meta: {
           },
