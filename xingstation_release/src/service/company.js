@@ -19,19 +19,30 @@ export default {
       })
     })
   },
-  saveContact(context, uid, args) {
-    return new Promise(function(resolve, reject){
-      context.$http.post(CUSTOMER_API + '/' + uid + '/customers?include=company.user', args).then(response => {
-        resolve(response.data.data)
-      }).catch(error => {
-        reject(error)
+  saveContact(context, pid, args, uid) {
+    if(uid){
+      return new Promise(function(resolve, reject){
+        context.$http.patch(CUSTOMER_API + '/' + pid + '/customers/'+uid, args).then(response => {
+          resolve(response.data.data)
+        }).catch(error => {
+          reject(error)
+        })
       })
-    })
+    }else {
+      return new Promise(function(resolve, reject){
+        context.$http.post(CUSTOMER_API + '/' + pid + '/customers', args).then(response => {
+          resolve(response.data.data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    }
   },
   getContactDetial(context, pid, uid) {
     return new Promise(function(resolve, reject){
+      console.log(CUSTOMER_API + '/' + pid + '/customers/' + uid)
       context.$http.get(CUSTOMER_API + '/' + pid + '/customers/' + uid).then(response => {
-        resolve(response.data.data)
+        resolve(response.data)
       }).catch(error => {
         reject(error)
       })
