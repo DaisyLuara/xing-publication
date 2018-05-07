@@ -6,6 +6,9 @@
  * Time: 下午5:41
  */
 
+use App\Models\User;
+use Illuminate\Http\Request;
+
 /**
  *求两个已知经纬度之间的距离,单位为千米
  * @param lng1,lng2 经度
@@ -26,3 +29,19 @@ if (!function_exists('distance')) {
         return 2 * asin(sqrt(pow(sin($a / 2), 2) + cos($radLat1) * cos($radLat2) * pow(sin($b / 2), 2))) * 6378137;
     }
 }
+
+if (!function_exists('getArUserID')) {
+    function getArUserID(User $user, Request $request)
+    {
+        if (!$user->isAdmin()) {
+            return $user->ar_user_id;
+        }
+
+        if ($request->ar_user_id) {
+            return $request->ar_user_id;
+        }
+
+        return 0;
+    }
+}
+
