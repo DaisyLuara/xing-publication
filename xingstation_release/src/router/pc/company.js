@@ -47,10 +47,27 @@ let router = {
           },
         },
         {
-          path: 'detail/:uid',
+          path: 'contacts',
           component: () =>
-            import(/* webpackChunkName: "page/company/customers/customerDetail" */ 'page/company/customers/customerDetail'),
-          name: '客户详情',
+            import(/* webpackChunkName: "page/company/customers/contacts/contactList" */ 'page/company/customers/contacts/contactList'),
+          name: '联系人详情列表',
+          meta: {
+            title: '联系人详情列表'
+          },
+        },
+        {
+          path: 'contacts/add',
+          component: () =>
+            import(/* webpackChunkName: "page/company/customers/contacts/ContactSave" */ 'page/company/customers/contacts/ContactSave'),
+          name: '新增联系人',
+          meta: {
+          },
+        },
+        {
+          path: 'contacts/edit',
+          component: () =>
+            import(/* webpackChunkName: "page/company/customers/contacts/ContactSave" */ 'page/company/customers/contacts/ContactSave'),
+          name: '修改联系人',
           meta: {
           },
         },

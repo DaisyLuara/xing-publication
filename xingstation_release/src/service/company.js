@@ -1,9 +1,28 @@
 import {router} from '../main'
-const CUSTOMER_API = '/api/customers'
+const CUSTOMER_API = '/api/companies'
 export default {
   saveCustomer(context, args) {
     return new Promise(function(resolve, reject){
-      context.$http.post(CUSTOMER_API, args).then(response => {
+      context.$http.post(CUSTOMER_API + '?include=user', args).then(response => {
+        resolve(response.data.data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+  getConstactList(context, uid, args){
+    return new Promise(function(resolve, reject){
+      context.$http.get(CUSTOMER_API + '/' + uid + '/customers',args).then(response => {
+        resolve(response.data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+  saveContact(context, uid, args) {
+    return new Promise(function(resolve, reject){
+      console.log(uid)
+      context.$http.post(CUSTOMER_API + '/' + uid + '/customers?include=company.user', args).then(response => {
         resolve(response.data.data)
       }).catch(error => {
         reject(error)

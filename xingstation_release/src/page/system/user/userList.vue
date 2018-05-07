@@ -56,7 +56,7 @@ export default {
       },
       pagination: {
         total: 100,
-        pageSize: 5,
+        pageSize: 10,
         currentPage: 1
       },
     }
@@ -86,7 +86,6 @@ export default {
         this.setting.loading = false;
         this.userList = response.data;
         this.pagination.total = response.meta.pagination.total;
-        this.pagination.pageSize = response.meta.pagination.total_pages;
         this.handleRole();
       }).catch(error => {
         this.setting.loading = false;
