@@ -94,7 +94,7 @@ export default {
               type: "success"
             })
             this.$router.push({
-              path: "/company/customers/contacts?id="+id+"&name=" + name
+              path: "/company/customers/contacts?id="+pid+"&name=" + name
             })
           }).catch(error => {
             this.setting.loading = false

@@ -127,7 +127,7 @@ export default {
         let args = {
           include: 'roles'
         }
-        user.getUserInfoByUid(this, this.userID, args).then(result => {
+        user.getUserDetial(this, this.userID, args).then(result => {
           this.userForm.user.phone = result.phone;
           this.userForm.user.name = result.name;
           this.userForm.user.role_id = result.roles.data[0].id

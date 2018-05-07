@@ -3,9 +3,9 @@ import auth from 'service/auth'
 let router = {
   path: 'project',
   redirect: 'project/item',
-  name: '节目',
+  name: '投放',
   meta: {
-    title: '节目',
+    title: '投放',
     permission: 'project',
   },
   component: () =>
@@ -13,19 +13,19 @@ let router = {
   children: [
     {
       path: 'item',
-      name: '节目管理',
+      name: '投放管理',
       redirect: 'item/index',
       meta: {
-        title: '节目管理',
+        title: '投放管理',
       },
       component: () =>
         import(/* webpackChunkName: "page/project/item/routerView" */ 'page/project/item/routerView'),
       children: [
         {
           path: 'index',
-          name: '节目详情列表',
+          name: '投放详情列表',
           meta: {
-            title: '节目详情列表',
+            title: '投放详情列表',
           },
           component: () =>
             import(/* webpackChunkName: "page/project/item/index" */ 'page/project/item/index'),
@@ -34,7 +34,7 @@ let router = {
           path: 'add',
           component: () =>
             import(/* webpackChunkName: "page/project/item/itemSave" */ 'page/project/item/itemSave'),
-          name: '新增节目',
+          name: '新增投放',
           meta: {
           },
         },
@@ -42,7 +42,7 @@ let router = {
           path: 'edit/:uid',
           component: () =>
             import(/* webpackChunkName: "page/project/item/itemSave" */ 'page/project/item/itemSave'),
-          name: '修改节目',
+          name: '修改投放',
           meta: {
           },
         },
@@ -50,7 +50,7 @@ let router = {
           path: 'data',
           component: () =>
             import(/* webpackChunkName: "page/project/item/itemData" */ 'page/project/item/itemData'),
-          name: '节目数据',
+          name: '投放数据',
           meta: {
           },
         },

@@ -33,7 +33,7 @@ export default {
     })
     return promise;
   },
-  getUserInfoByUid(context, uid, args) {
+  getUserDetial(context, uid, args) {
     if(!uid) {
       return false;
     }

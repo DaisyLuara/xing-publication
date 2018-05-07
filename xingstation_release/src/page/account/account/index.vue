@@ -112,7 +112,7 @@ export default {
         if(valid){
           this.loading = true;
           delete this[formName].user.repassword
-          auth.modifyUser(this, this[formName]).then(result => {
+          auth.modifyUser(this, this[formName].user).then(result => {
             this.loading = false;
             let user_info = JSON.parse(localStorage.getItem("user_info"))
             user_info.name = result.name
