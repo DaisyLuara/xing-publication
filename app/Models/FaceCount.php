@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-
+use App\Models\PointProject;
 
 class FaceCount extends Model
 {
@@ -22,5 +22,10 @@ class FaceCount extends Model
     public function apo()
     {
         return $this->hasOne(PointArUser::class, 'oid', 'oid');
+    }
+
+    public function pointProject(){
+
+        return $this->hasOne(PointProject::class,'oid','oid');
     }
 }
