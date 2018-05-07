@@ -2,7 +2,7 @@
   <div class="second-sidebar">
     <div class="module-name">{{moduleName}}</div>
     <el-menu router :default-active="currPath">
-      <el-menu-item v-for="item in items" :key="item.path" :index="getPath(item)">{{item.meta.title}}</el-menu-item>
+      <el-menu-item v-for="item in items" :key="item.path" :index="getPath(item)" >{{item.meta.title}}</el-menu-item>
     </el-menu>
   </div>
 </template>
@@ -48,13 +48,10 @@ export default {
     items: function () {
       let ret = []
       for (let item of this.route.children) {
-        // if (auth.checkPathPermission(item)) {
-          if (item.meta && item.meta.title) {
-            ret.push(item)
-          }
-        // }
+        if (item.meta && item.meta.title) {
+          ret.push(item)
+        }
       }
-      console.log(ret)
       return ret
     }
   },

@@ -4,7 +4,7 @@ import { Message, MessageBox } from 'element-ui'
 const HOST = process.env.SERVER_URL
 const LOGIN_API = '/api/authorizations'
 const LOGOUT_API = '/api/authorizations/current'
-const USERINFO_API = '/api/user?include=permissions'
+const USERINFO_API = '/api/user?include=permissions,roles'
 const IMAGE_CAPTCHA = '/api/captchas'
 const USER_API = '/api/user'
 const SMS_CAPTCHA = '/api/verificationCodes'
@@ -151,7 +151,7 @@ export default {
     }
 
     let tokenlatestLifeTime = Math.floor(differTime / (60 * 1000));
-    // console.log("距离token生成已过去:" + tokenlatestLifeTime + "分钟", "token时效:" + tokenLifeTime + "分钟")
+    console.log("距离token生成已过去:" + tokenlatestLifeTime + "分钟", "token时效:" + tokenLifeTime + "分钟")
     if (tokenlatestLifeTime >= tokenLifeTime) {
       return true;
     }

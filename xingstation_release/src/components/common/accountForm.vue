@@ -270,7 +270,7 @@ export default {
         phone: this.accountForm.account
       }
       auth.getImageCaptcha(this, args).then(result => {
-        if (JSON.stringify(result) !== '{}') {
+        if (result) {
           let imageCaptchaObj = result;
           this.accountForm.imageCaptcha.key = imageCaptchaObj.captcha_key;
           this.setting.imageCaptcha.image_url = imageCaptchaObj.captcha_image_content
@@ -309,6 +309,7 @@ export default {
           }
           smsIntervel();
       }).catch(error => {
+        this.getImageCaptcha();
         this.validateError.imageCaptcha = true;
         this.validateErrorText.imageCaptcha = '输入验证码不正确';
           console.log(error)

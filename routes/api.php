@@ -16,6 +16,11 @@ use Illuminate\Http\Request;
 
 $api = app('Dingo\Api\Routing\Router');
 
+app('Dingo\Api\Exception\Handler')->register(function (Exception $exception) {
+    $request = Illuminate\Http\Request::capture();
+    return app('App\Exceptions\DingoAPIHandler')->render($request, $exception);
+});
+
 $api->version('v1', [
     'namespace' => 'App\Http\Controllers\Api\V1',
     'middleware' => ['serializer:array', 'bindings'] //api返回数据切换. Fractal 组件默认提供  DataArraySerializer ArraySerializer
@@ -74,14 +79,15 @@ $api->version('v1', [
             $api->get('stats', 'FaceCountController@index');
 
             //分天统计详情
-            $api->get('detail','FaceCountController@detail');
+            $api->get('detail', 'FaceCountController@detail');
 
             //性别年龄分布
-            $api->get('ageAndGender','FaceCountController@ageAndGenderDetail');
+            $api->get('ageAndGender', 'FaceCountController@ageAndGenderDetail');
 
             //节目
             $api->get('userProject','ProjectController@userProject');
             $api->get('projects', 'ProjectController@index');
+            $api->get('projects/launch', 'ProjectLaunchController@index');
             $api->get('staffs', 'ArUserController@index');
 
             // 权限设置

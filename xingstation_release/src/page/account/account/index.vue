@@ -17,7 +17,7 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" :loading="loading"  @click="onSubmit('userForm')">保存</el-button>
-            <el-button @click="historyBack()">取消</el-button>
+            <!-- <el-button @click="historyBack()">取消</el-button> -->
           </el-form-item>
         </el-form>
       </div>
@@ -96,7 +96,6 @@ export default {
     }
     this.setting.loadingText = "拼命加载中"
     let user = JSON.parse(localStorage.getItem("user_info"))
-    console.log(user)
     this.userForm.user.name = user.name
     this.userForm.user.phone = user.phone
     this.setting.loading = false
@@ -104,8 +103,6 @@ export default {
   methods: {
     onSubmit(formName) {
       this.$refs[formName].validate((valid) => {
-        console.log(!this.userForm.user.password)
-        console.log(!this.userForm.user.repassword)
         if(!this.userForm.user.password && !this.userForm.user.repassword){
           delete this.rules["user.password"]
           delete this.rules["user.repassword"]
@@ -115,12 +112,12 @@ export default {
         if(valid){
           this.loading = true;
           delete this[formName].user.repassword
-          console.log(this[formName])
-          auth.modifyUser(this, this[formName]).then(result => {
+          auth.modifyUser(this, this[formName].user).then(result => {
             this.loading = false;
             let user_info = JSON.parse(localStorage.getItem("user_info"))
             user_info.name = result.name
             user_info.phone = result.phone
+            user_info.password = ''
             this.$store.commit('setCurUserInfo', user_info)
             localStorage.setItem('user_info',JSON.stringify(user_info))
             this.$message({
@@ -137,28 +134,15 @@ export default {
         }
       })
     },
-    handleClose(data) {
-      if (data && data.length > 0 && data[0].media_url) {
-        console.dir(data)
-        this.imageUrl = data[0].media_url
-      } else {
-        console.log('图片上传失败')
-      }
-    },
-    handleOpenPane() {
-      this.panelVisible = true
-    },
-    handleImageDelete() {
-      this.imageUrl = ''
-    },
+    
     resetForm(formName) {
       this.$refs[formName].resetFields();
-      this.userForm.user.name = this.userFormBack.user.name;
-      this.userForm.user.nick_name = this.userFormBack.user.nick_name;
-      this.userForm.roles = [];
-      for(let i = 0, uL = this.userFormBack.roles.length; i < uL; i++){
-        this.userForm.roles.push(this.userFormBack.roles[i])
-      }
+      // this.userForm.user.name = this.userFormBack.user.name;
+      // this.userForm.user.nick_name = this.userFormBack.user.nick_name;
+      // this.userForm.roles = [];
+      // for(let i = 0, uL = this.userFormBack.roles.length; i < uL; i++){
+      //   this.userForm.roles.push(this.userFormBack.roles[i])
+      // }
     },
     historyBack () {
       router.back()

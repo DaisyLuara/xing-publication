@@ -7,7 +7,8 @@
             <el-form-item label="" prop="name">
               <el-input v-model="filters.name" placeholder="请输入客户名称" style="width: 300px;"></el-input>
             </el-form-item>
-              <el-button @click="search('searchForm')" type="primary">搜索</el-button>
+            <el-button @click="search('searchForm')" type="primary">搜索</el-button>
+            <el-button @click="resetSearch" type="default">重置</el-button>
           </el-form>
         </div>
         <div class="actions-wrap">
@@ -45,9 +46,8 @@
           </el-table-column>
           <el-table-column label="操作" width="280">
             <template slot-scope="scope">
-              <!-- <el-button size="small" type="danger">删除</el-button> -->
               <el-button size="small" type="primary" @click="linkToEdit(scope.row.id)">修改</el-button>
-              <el-button size="small" type="warning" @click="showDetail(scope.row.id)">节目</el-button>
+              <!-- <el-button size="small" type="warning" @click="showDetail(scope.row.id)">节目</el-button> -->
               <el-button size="small" @click="showContactDetail(scope.row.id,scope.row.name)">联系人详情</el-button>
             </template>
           </el-table-column>
@@ -95,15 +95,8 @@ export default {
   },
   methods: {
     search (formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          alert('submit!');
-        } else {
-          console.log('error submit!!');
-          return false;
-        }
-      });
-      console.log('search')
+      this.pagination.currentPage = 1;
+      this.getCustomerList();
     },
     test(item) {
       switch(item.status){
@@ -126,6 +119,7 @@ export default {
       let args = {
         include: 'user',
         page: pageNum,
+        name: this.filters.name
       }
       this.setting.loadingText = "拼命加载中"
       this.setting.loading = true;
@@ -133,7 +127,6 @@ export default {
         this.setting.loading = false;
         this.customerList = response.data;
         this.pagination.total = response.meta.pagination.total;
-        this.pagination.pageSize = response.meta.pagination.total_pages;
         this.handleRole();
       }).catch(error => {
         this.setting.loading = false;
@@ -152,6 +145,11 @@ export default {
       this.$router.push({
         path: '/company/customers/edit/' + id
       })
+    },
+    resetSearch () {
+      this.filters.name = ''
+      this.pagination.currentPage = 1;
+      this.getCustomerList();
     },
     showContactDetail (id,name) {
       const { href } = this.$router.resolve({

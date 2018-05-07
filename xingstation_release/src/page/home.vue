@@ -7,9 +7,14 @@
         </div>
       </div>
       <el-menu router :default-active="'/' + currModule">
-        <el-menu-item v-for="m in modules" :key="m.path" :index="'/' + m.path" class="menu-item">
+        <el-menu-item v-for="m in modules" :key="m.path" :index="'/' + m.path" class="menu-item" v-if="m.path != 'inform'">
           <img :src="m.src" class="first-sidebar-icon"/>
           {{m.meta.title}}
+        </el-menu-item>
+        <el-menu-item class="menu-item" index="/inform">
+          <el-badge :value="noticeCount" :max="99" class="item">
+            <el-button size="small">通知</el-button>
+          </el-badge>
         </el-menu-item>
       </el-menu>
       <el-popover
@@ -22,10 +27,10 @@
         <span class="logout-btn" @click="logout">登出</span>
       </el-popover>
       <div class="sidebar-user" v-popover:popover @click="handleUser">
-        <img src="https://fsdhubcdn.phphub.org/uploads/images/201710/14/1/LOnMrqbHJn.png?imageView2/1/w/200/h/200" alt="" class="avatar"/>
+        <img src="../assets/images/user-default-icon.png" alt="" class="avatar"/>
         <div class="sidebar-user-block">
           <p class="sidebar-user-item sidebar-user-item-main" style="font-size: 20px;">{{name}}</p>
-          <p class="sidebar-user-item sidebar-user-item-sub" style="font-size: 12px;">{{role}}</p>
+          <p class="sidebar-user-item sidebar-user-item-sub" style="font-size: 16px;">{{role}}</p>
         </div>
       </div>
     </div>
@@ -36,8 +41,9 @@
 </template>
 
 <script>
-import { Menu, MenuItem, Popover, Button } from 'element-ui'
+import { Menu, MenuItem, Popover, Button, Badge} from 'element-ui'
 import auth from 'service/auth'
+import notice from 'service/notice'
 
 export default {
   name: 'home',
@@ -47,8 +53,10 @@ export default {
     }
   },
   created() {
+    // this.testTimeout()
     let userInfo = JSON.parse(localStorage.getItem('user_info'))
     this.$store.commit('setCurUserInfo', userInfo)
+    this.notificationStats()
   },
   computed: {
     modules() {
@@ -106,17 +114,33 @@ export default {
     },
     role() {
       if ('roles' in this.$store.state.curUserInfo) {
-        return this.$store.state.curUserInfo.roles.length > 0
-          ? this.$store.state.curUserInfo.roles[0].display_name
+        return this.$store.state.curUserInfo.roles.data.length > 0
+          ? this.$store.state.curUserInfo.roles.data[0].display_name
           : ''
       }
       return ''
     },
+    noticeCount() {
+      return this.$store.state.notificationCount.noticeCount
+    }
   },
   methods: {
+    // testTimeout() {
+    //   let a = setInterval(() => {
+    //     clearInterval(a)
+    //     console.log(1)
+    //   }, 2000) 
+    // },
     logout() {
       this.visible = false
       auth.logout(this)
+    },
+    notificationStats() {
+      return notice.notificationStats(this).then((response) => {
+        this.$store.commit('saveNotificationState', response)
+      }).catch(err => {
+        console.log(err)
+      })
     },
     handleUser(){
       console.log(2)
@@ -130,6 +154,7 @@ export default {
     'el-menu-item': MenuItem,
     'el-popover': Popover,
     'el-button': Button,
+    'el-badge': Badge
   },
 }
 </script>

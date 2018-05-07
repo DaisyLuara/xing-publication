@@ -4,7 +4,7 @@
       <el-tab-pane label="全部" name="all">
         <All ref="all" :active="activeName" />
       </el-tab-pane>
-      <el-tab-pane label="系统" name="system">
+      <!-- <el-tab-pane label="系统" name="system">
         <System ref="system" :active="activeName" />
       </el-tab-pane>
       <el-tab-pane label="审核" name="audit">
@@ -15,7 +15,7 @@
       </el-tab-pane>
       <el-tab-pane label="账户" name="account">
         <Account :active="activeName" />
-      </el-tab-pane>
+      </el-tab-pane> -->
     </el-tabs>
   </div>  
 </template>
@@ -29,10 +29,10 @@ export default {
     ElTabPane: TabPane,
     ElButton: Button,
     All: () => import('./com/all'),
-    Audit: resolve => require(['./com/audit'], resolve),
-    System:  resolve => require(['./com/system'], resolve),
-    Account:  resolve => require(['./com/account'], resolve),
-    Program:  resolve => require(['./com/program'], resolve),
+    // Audit: resolve => require(['./com/audit'], resolve),
+    // System:  resolve => require(['./com/system'], resolve),
+    // Account:  resolve => require(['./com/account'], resolve),
+    // Program:  resolve => require(['./com/program'], resolve),
   },
   computed: {
     ...mapState({
