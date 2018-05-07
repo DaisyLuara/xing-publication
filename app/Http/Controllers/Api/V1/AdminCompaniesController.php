@@ -5,13 +5,19 @@ namespace App\Http\Controllers\Api\V1;
 use App\Models\Company;
 use App\Transformers\CompanyTransformer;
 use App\Http\Requests\Api\V1\CompanyRequest;
+use Illuminate\Http\Request;
 
 class AdminCompaniesController extends Controller
 {
-    public function index(Company $company)
+    public function index(Request $request, Company $company)
     {
         $query = $company->query();
         $currentUser = $this->user();
+
+        if ($request->has('name')) {
+            $query->where('name', 'like', $request->name . '%');
+        }
+
         if ($currentUser->isAdmin()) {
             $companies = $query->paginate(10);
         } else {
