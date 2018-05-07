@@ -15,7 +15,7 @@ class AdminCompaniesController extends Controller
         $currentUser = $this->user();
 
         if ($request->has('name')) {
-            $query->where('name', 'like', $request->name . '%');
+            $query->where('name', 'like', '%' . $request->name . '%');
         }
 
         if ($currentUser->isAdmin()) {

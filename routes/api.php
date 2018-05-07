@@ -85,6 +85,7 @@ $api->version('v1', [
             $api->get('ageAndGender', 'FaceCountController@ageAndGenderDetail');
 
             //节目
+            $api->get('userProject','ProjectController@userProject');
             $api->get('projects', 'ProjectController@index');
             $api->get('projects/launch', 'ProjectLaunchController@index');
             $api->get('staffs', 'ArUserController@index');

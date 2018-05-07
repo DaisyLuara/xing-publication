@@ -34,7 +34,6 @@ class FaceCountController extends Controller
             });
         }
 
-
         if ($request->has('oid')) {
             $query->where('oid', '=', $request->oid);
         }
@@ -60,7 +59,9 @@ class FaceCountController extends Controller
         $query = $faceCount->query();
 
         $uid = 0;
-        if (!$this->user()->isAdmin()) {
+        if ($this->user()->isAdmin() && $request->has('ar_user_id')) {
+            $uid = $request->ar_user_id;
+        } else if (!$this->user()->isAdmin()) {
             $uid = $this->user()->ar_user_id;
         }
         if ($uid) {
@@ -92,7 +93,9 @@ class FaceCountController extends Controller
         $query = $faceLog->query();
 
         $uid = 0;
-        if (!$this->user()->isAdmin()) {
+        if ($this->user()->isAdmin() && $request->has('ar_user_id')) {
+            $uid = $request->ar_user_id;
+        } else if (!$this->user()->isAdmin()) {
             $uid = $this->user()->ar_user_id;
         }
         if ($uid) {
