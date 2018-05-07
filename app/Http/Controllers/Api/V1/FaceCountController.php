@@ -29,7 +29,7 @@ class FaceCountController extends Controller
 
         $query = $faceCount->query();
         if ($uid) {
-            $query->whereHas('apo', function ($q) use ($uid) {
+            $query->whereHas('pointArUser', function ($q) use ($uid) {
                 $q->where('uid', '=', $uid);
             });
         }
@@ -64,7 +64,7 @@ class FaceCountController extends Controller
             $uid = $this->user()->ar_user_id;
         }
         if ($uid) {
-            $query->whereHas('apo', function ($q) use ($uid) {
+            $query->whereHas('pointArUser', function ($q) use ($uid) {
                 $q->where('uid', '=', $uid);
             });
         }
@@ -96,7 +96,7 @@ class FaceCountController extends Controller
             $uid = $this->user()->ar_user_id;
         }
         if ($uid) {
-            $query->whereHas('apo', function ($q) use ($uid) {
+            $query->whereHas('pointArUser', function ($q) use ($uid) {
                 $q->where('uid', '=', $uid);
             });
         }

@@ -19,13 +19,9 @@ class FaceCount extends Model
         return $this->hasOne(Project::class, 'versionname', 'belong');
     }
 
-    public function apo()
+    public function pointArUser()
     {
         return $this->hasOne(PointArUser::class, 'oid', 'oid');
     }
 
-    public function pointProject(){
-
-        return $this->hasOne(PointProject::class,'oid','oid');
-    }
 }
