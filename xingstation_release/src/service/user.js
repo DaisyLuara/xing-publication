@@ -1,6 +1,5 @@
 import {router} from '../main'
 const USER_API = '/api/system/users'
-const ADD_USER_API = '/api/users'
 const ROLES_API = '/api/system/roles' // 获取当前用户可分配角色的分页接口
 export default {
   saveUser(context, args, uid) {
@@ -15,7 +14,7 @@ export default {
       return promise;
     }else{
       let promise = new Promise(function(resolve, reject){
-        context.$http.post(ADD_USER_API, args).then(response => {
+        context.$http.post(USER_API, args).then(response => {
           resolve(response.data.data)
         }).catch(error => {
           reject(error)

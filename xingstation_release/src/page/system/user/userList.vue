@@ -97,7 +97,7 @@ export default {
         for(let i = 0; i < userListLen; i++) {
           let thisUser = this.userList[i]
           let thisRoles = thisUser.roles
-          let rolesNameCombined = thisRoles.data[0].name
+          let rolesNameCombined = thisRoles.data[0].display_name
           this.userList[i].role = rolesNameCombined
         }
         console.log(this.userList)

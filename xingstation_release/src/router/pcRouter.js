@@ -7,7 +7,7 @@ import inform from 'router/pc/inform'
 import account from 'router/pc/account'
 // import feedback from 'router/pc/feedback'
 // import help from 'router/pc/help'
-import contract from 'router/pc/contract'
+// import contract from 'router/pc/contract'
 
 export default {
   path: '/',
@@ -21,7 +21,7 @@ export default {
     system,
     company,
     project,
-    contract,
+    // contract,
     inform,
     account,
     // feedback,

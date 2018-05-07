@@ -25,12 +25,12 @@
         </el-form-item>
         <el-form-item label="角色" prop="user.role_id">
           <el-radio-group v-model="userForm.user.role_id">
-            <el-radio v-for="role in allRoles" :data="role" :key="role.id" :label="role.id">{{role.name}}</el-radio>
+            <el-radio v-for="role in allRoles" :data="role" :key="role.id" :label="role.id">{{role.display_name}}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" :loading="loading"  @click="onSubmit('userForm')">保存</el-button>
-          <el-button @click="historyBack()">取消</el-button>
+          <el-button @click="resetForm('userForm')">取消</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -128,11 +128,9 @@ export default {
           include: 'roles'
         }
         user.getUserInfoByUid(this, this.userID, args).then(result => {
-          console.log(result)
           this.userForm.user.phone = result.phone;
           this.userForm.user.name = result.name;
           this.userForm.user.role_id = result.roles.data[0].id
-          console.log(this.userForm.user.role_id)
           this.setting.loading = false
         }).catch(error => {
           console.log(error)
@@ -176,12 +174,6 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
-      this.userForm.user.name = this.userFormBack.user.name;
-      this.userForm.user.nick_name = this.userFormBack.user.nick_name;
-      this.userForm.roles = [];
-      for(let i = 0, uL = this.userFormBack.roles.length; i < uL; i++){
-        this.userForm.roles.push(this.userFormBack.roles[i])
-      }
     },
     historyBack () {
       router.back()

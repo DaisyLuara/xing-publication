@@ -133,7 +133,6 @@ export default {
         this.setting.loading = false;
         this.customerList = response.data;
         this.pagination.total = response.meta.pagination.total;
-        this.pagination.pageSize = response.meta.pagination.total_pages;
         this.handleRole();
       }).catch(error => {
         this.setting.loading = false;

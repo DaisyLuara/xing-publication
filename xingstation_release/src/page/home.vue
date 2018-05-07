@@ -7,9 +7,14 @@
         </div>
       </div>
       <el-menu router :default-active="'/' + currModule">
-        <el-menu-item v-for="m in modules" :key="m.path" :index="'/' + m.path" class="menu-item">
+        <el-menu-item v-for="m in modules" :key="m.path" :index="'/' + m.path" class="menu-item" v-if="m.path != 'inform'">
           <img :src="m.src" class="first-sidebar-icon"/>
           {{m.meta.title}}
+        </el-menu-item>
+        <el-menu-item class="menu-item" index="/inform">
+          <el-badge :value="200" :max="99" class="item">
+            <el-button size="small">通知</el-button>
+          </el-badge>
         </el-menu-item>
       </el-menu>
       <el-popover
@@ -36,7 +41,7 @@
 </template>
 
 <script>
-import { Menu, MenuItem, Popover, Button } from 'element-ui'
+import { Menu, MenuItem, Popover, Button, Badge} from 'element-ui'
 import auth from 'service/auth'
 
 export default {
@@ -130,6 +135,7 @@ export default {
     'el-menu-item': MenuItem,
     'el-popover': Popover,
     'el-button': Button,
+    'el-badge': Badge
   },
 }
 </script>
