@@ -1,9 +1,9 @@
 <template>
   <div class="root">
-    <div class="item-list-wrap" v-loading="loading">
+    <div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
       <div class="item-content-wrap">
         <div class="search-wrap">
-          <el-form :model="filters" :inline="true" ref="searchForm" :rules="rules">
+          <el-form :model="filters" :inline="true" ref="searchForm" >
             <el-form-item label="" prop="name">
               <el-input v-model="filters.name" placeholder="请输入节目名称" style="width: 300px;"></el-input>
             </el-form-item>
@@ -56,12 +56,10 @@
             label="结束时间"
             >
           </el-table-column>
-          <el-table-column label="操作" width="280">
+          <el-table-column label="操作" width="200">
             <template slot-scope="scope">
-              <!-- <el-button size="small" type="danger">删除</el-button> -->
               <el-button size="small" type="primary" @click="linkToEdit(scope.row.id)">修改</el-button>
               <el-button size="small" type="warning" @click="showData(scope.row.id, scope.row.name)">数据</el-button>
-              <!-- <el-button size="small">合约</el-button> -->
             </template>
           </el-table-column>
         </el-table>
@@ -91,10 +89,9 @@ export default {
       filters: {
         name: ''
       },
-      rules: {
-        // name: [
-        //   { required: true, message: '请输入客户名称', trigger: 'blur' },
-        // ]
+      setting: {
+        loading: false,
+        loadingText: "拼命加载中"
       },
       dataValue: '',
       loading: true,
@@ -109,35 +106,31 @@ export default {
   mounted() {
   },
   created () {
+    
     this.getProjectList()
   },
   methods: {
     getProjectList () {
+      this.setting.loadingText = "拼命加载中"
+      this.setting.loading = true;
       let searchArgs = {
         page : this.pagination.currentPage,
-        include: 'point,project'
+        include: 'point,project',
+        project_name: this.filters.name
       }
       project.getProjectList(this, searchArgs).then((response) => {
-       console.log(response)
        let data = response.data
        this.tableData = data
        this.pagination.total = response.meta.pagination.total
-       this.loading = false
+      this.setting.loading = false;
       }).catch(error => {
         console.log(error)
-       this.loading = false
+      this.setting.loading = false;
       })
     },
     search (formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          alert('submit!');
-        } else {
-          console.log('error submit!!');
-          return false;
-        }
-      });
-      console.log('search')
+      this.pagination.currentPage = 1;
+      this.getProjectList();
     },
     changePage (currentPage) {
       this.pagination.currentPage = currentPage

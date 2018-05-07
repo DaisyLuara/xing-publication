@@ -33,7 +33,7 @@
             label="状态"
             >
             <template slot-scope="scope">
-              {{test(scope.row)}}
+              {{statusHanlde(scope.row)}}
             </template>
           </el-table-column>
           <el-table-column
@@ -47,7 +47,6 @@
           <el-table-column label="操作" width="280">
             <template slot-scope="scope">
               <el-button size="small" type="primary" @click="linkToEdit(scope.row.id)">修改</el-button>
-              <!-- <el-button size="small" type="warning" @click="showDetail(scope.row.id)">节目</el-button> -->
               <el-button size="small" @click="showContactDetail(scope.row.id,scope.row.name)">联系人详情</el-button>
             </template>
           </el-table-column>
@@ -98,7 +97,7 @@ export default {
       this.pagination.currentPage = 1;
       this.getCustomerList();
     },
-    test(item) {
+    statusHanlde(item) {
       switch(item.status){
         case 1:
           return '待合作'
