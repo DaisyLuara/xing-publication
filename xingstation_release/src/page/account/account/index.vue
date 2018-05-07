@@ -115,21 +115,18 @@ export default {
         if(valid){
           this.loading = true;
           delete this[formName].user.repassword
+          console.log(this[formName])
           auth.modifyUser(this, this[formName]).then(result => {
             this.loading = false;
-            console.log(result)
             let user_info = JSON.parse(localStorage.getItem("user_info"))
             user_info.name = result.name
             user_info.phone = result.phone
-            localStorage.setItem("user_info")
+            this.$store.commit('setCurUserInfo', user_info)
+            localStorage.setItem('user_info',JSON.stringify(user_info))
             this.$message({
               message: "修改成功" ,
               type: "success"
             })
-            // todo是否返回用户列表
-            // this.$router.push({
-            //   path: "/account/account/index"
-            // })
           }).catch(error => {
             this.loading = false;
             console.log(error)

@@ -233,7 +233,6 @@ export default {
               verification_key: this.accountForm.verification_key,
               verification_code: this.accountForm.smsCaptcha
             }
-            console.log(loginParams)
             auth.login(this, loginParams, this.setting.redirect_url)
           } else {
             return false;
@@ -249,13 +248,9 @@ export default {
       }
     },
     getSmsCaptcha() {
-      console.log(this.validateError.imageCaptcha)
       if(!this.validateError.imageCaptcha & (this.accountForm.imageCaptcha.value.length == 5)){
         this.showSmsCaptcha = true
         this.sendSmsCaptcha()
-        console.log('send')
-      } else {
-        console.log('not send')
       }
     }, 
     ImageCaptchaHandle() {
@@ -275,7 +270,6 @@ export default {
         phone: this.accountForm.account
       }
       auth.getImageCaptcha(this, args).then(result => {
-        console.log(JSON.stringify(result) !== '{}')
         if (JSON.stringify(result) !== '{}') {
           let imageCaptchaObj = result;
           this.accountForm.imageCaptcha.key = imageCaptchaObj.captcha_key;
@@ -291,7 +285,6 @@ export default {
 
     sendSmsCaptcha() {
       // 校验手机号码、验证码
-      console.log(this.accountForm.imageCaptcha)
       let args = {
         captcha_key: this.accountForm.imageCaptcha.key,
         captcha_code: this.accountForm.imageCaptcha.value
