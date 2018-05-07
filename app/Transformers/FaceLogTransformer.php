@@ -14,16 +14,21 @@ use League\Fractal\TransformerAbstract;
 
 class FaceLogTransformer extends TransformerAbstract
 {
-    public function transform(FaceLog $faceLog){
+    public function transform(FaceLog $faceLog)
+    {
         return [
-            'gnum'=>$faceLog->gnum,
-            'bnum'=>$faceLog->bum,
-            '0-10'=>$faceLog->age10,
-            '11-18'=>$faceLog->age18,
-            '19-30'=>$faceLog->age30,
-            '31-40'=>$faceLog->age40,
-            '41-60'=>$faceLog->age60,
-            '61岁以上'=>$faceLog->age61
+            'gender' => [
+                'male' => $faceLog->bnum,
+                'female' => $faceLog->gnum,
+            ],
+            'age' => [
+                $faceLog->age10,
+                $faceLog->age18,
+                $faceLog->age30,
+                $faceLog->age40,
+                $faceLog->age60,
+                $faceLog->age61,
+            ]
         ];
     }
 }
