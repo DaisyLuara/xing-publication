@@ -23,6 +23,13 @@ class ProjectLaunchController extends Controller
             });
         }
 
+        if ($request->project_name) {
+            $project_name = $request->project_name;
+            $query->whereHas('project', function ($query) use ($project_name) {
+                $query->where('name', 'like', "%$project_name%");
+            });
+        }
+
         $projects = $query->paginate(10);
         return $this->response->paginator($projects, new ProjectLaunchTransformer());
 
