@@ -6,7 +6,7 @@ let router = {
   name: '节目',
   meta: {
     title: '节目',
-    // permission: '',
+    permission: 'project',
   },
   component: () =>
     import(/* webpackChunkName: "page/project/projectView" */ 'page/project/projectView'),
@@ -17,7 +17,6 @@ let router = {
       redirect: 'item/index',
       meta: {
         title: '节目管理',
-        // permission: '',
       },
       component: () =>
         import(/* webpackChunkName: "page/project/item/routerView" */ 'page/project/item/routerView'),
@@ -27,7 +26,6 @@ let router = {
           name: '节目详情列表',
           meta: {
             title: '节目详情列表',
-            // permission: '',
           },
           component: () =>
             import(/* webpackChunkName: "page/project/item/index" */ 'page/project/item/index'),
@@ -38,7 +36,6 @@ let router = {
             import(/* webpackChunkName: "page/project/item/itemSave" */ 'page/project/item/itemSave'),
           name: '新增节目',
           meta: {
-            // permission: 'project.item.edit',
           },
         },
         {
@@ -47,7 +44,6 @@ let router = {
             import(/* webpackChunkName: "page/project/item/itemSave" */ 'page/project/item/itemSave'),
           name: '修改节目',
           meta: {
-            // permission: 'project.item.edit',
           },
         },
         {
@@ -56,7 +52,6 @@ let router = {
             import(/* webpackChunkName: "page/project/item/itemData" */ 'page/project/item/itemData'),
           name: '节目数据',
           meta: {
-            // permission: 'project.item.edit',
           },
         },
       ],
@@ -67,9 +62,7 @@ let router = {
 router.redirect = () => {
   let routes = router.children
   for (let route of routes) {
-    if (auth.checkPathPermission(route)) {
-      return '/project/' + route.path
-    }
+    return '/project/' + route.path
   }
 }
 

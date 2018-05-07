@@ -1,12 +1,12 @@
 import {router} from '../main'
-const USER_API = '/api/tenants/users'
-const ROLES_API = '/api/tenants/roles' // 获取当前用户可分配角色的分页接口
-const DELETE_USERS = 'api/tenants/users/destroyAll ' //删除多个用户
+const USER_API = '/api/system/users'
+const ADD_USER_API = '/api/users'
+const ROLES_API = '/api/system/roles' // 获取当前用户可分配角色的分页接口
 export default {
   saveUser(context, args, uid) {
     if(uid){
       let promise = new Promise(function(resolve, reject){
-        context.$http.put(USER_API + "/" + uid, args).then(response => {
+        context.$http.patch(USER_API + "/" + uid, args).then(response => {
           resolve(response.data.data)
         }).catch(error => {
           reject(error)
@@ -15,7 +15,7 @@ export default {
       return promise;
     }else{
       let promise = new Promise(function(resolve, reject){
-        context.$http.post(USER_API, args).then(response => {
+        context.$http.post(ADD_USER_API, args).then(response => {
           resolve(response.data.data)
         }).catch(error => {
           reject(error)
@@ -26,7 +26,7 @@ export default {
   },
   getManageableRoles(context, args) {
     let promise = new Promise(function(resolve, reject){
-      context.$http.get(ROLES_API, {params: args}).then(response => {
+      context.$http.get(ROLES_API).then(response => {
         resolve(response.data)
       }).catch(error => {
         reject(error)
@@ -34,33 +34,28 @@ export default {
     })
     return promise;
   },
-  getUserInfoByUid(context, uid) {
+  getUserInfoByUid(context, uid, args) {
     if(!uid) {
       return false;
     }
-
     let promise = new Promise(function(resolve, reject){
-      context.$http.get(USER_API + "/" + uid).then(response => {
-        resolve(response.data.data)
+      context.$http.get(USER_API + '/' + uid ,{params: args}).then(response => {
+        resolve(response.data)
       }).catch(error => {
         reject(error)
       })
     })
-
     return promise;
   },
   getUserList(context, args) {
     let promise = new Promise(function(resolve, reject){
-      context.$http.get(USER_API, {params: args}).then(response => {
+      context.$http.get(USER_API ,{params: args}).then(response => {
         resolve(response.data)
       }).catch(error => {
         reject(error)
       })
     })
-
     return promise;
   },
-  deleteUsers(context, uids) {
-    return context.$http.post(DELETE_USERS, uids)
-  }
+  
 }

@@ -3,7 +3,7 @@
     <div class="first-sidebar">
       <div class="logo-wrap">
         <div class="logo">
-          <img src="../assets/logo.png" />
+          <img src="../assets/images/exe-logo-white-circle.png" />
         </div>
       </div>
       <el-menu router :default-active="'/' + currModule">
@@ -84,6 +84,7 @@ export default {
           }
         }
       }
+      console.log(items)
       return items
     },
     currModule() {
@@ -187,7 +188,8 @@ export default {
   position: absolute;
   z-index: 33;
   top: 10%;
-  left: 30%;
+  left: 16%;
+  right: 16%;
   color: #000;
   font-weight: 600;
   // display: table-cell;
