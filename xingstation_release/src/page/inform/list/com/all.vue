@@ -8,11 +8,11 @@
           label="名称">
         </el-table-column>
         <el-table-column
-          prop="info"
-          label="信息">
+          prop="reply_content"
+          label="内容">
         </el-table-column>
         <el-table-column
-          prop="date"
+          prop="created_at"
           label="时间"
           >
         </el-table-column>
