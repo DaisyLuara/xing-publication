@@ -1,70 +1,60 @@
 <template>
-  <div class="root">
+  <div class="root" :element-loading-text="setting.loadingText" v-loading="setting.loading">
     <div class="customer-list-wrap">
       <div class="customer-content-wrap">
-        <div class="search-wrap">
-          <el-form :model="filters" :inline="true" ref="searchForm" :rules="rules">
+        <!-- <div class="search-wrap">
+          <el-form :model="filters" :inline="true" ref="searchForm">
             <el-form-item label="" prop="name">
               <el-input v-model="filters.name" placeholder="请输入客户名称" style="width: 300px;"></el-input>
             </el-form-item>
               <el-button @click="search('searchForm')" type="primary">搜索</el-button>
           </el-form>
-        </div>
+        </div> -->
         <div class="actions-wrap">
           <span class="label">
-            客户数量: 12
+            客户数量: {{pagination.total}}
           </span>
           <el-button size="small" type="success" @click="linkToAddClient">新增客户</el-button>
         </div>
-        <el-table :data="tableData" style="width: 100%">
+        <el-table :data="customerList" style="width: 100%">
           <el-table-column
-            prop="company_name"
+            prop="name"
             label="公司全称"
-            width="150"
             >
           </el-table-column>
           <el-table-column
-            prop="company_web"
-            label="公司网站"
-            width="280"
-            >
-          </el-table-column>
-          <el-table-column
-            prop="contact"
+            prop="customer_name"
             label="联系人">
           </el-table-column>
           <el-table-column
-            prop="contact_number"
+            prop="phone"
             label="联系人电话"
-            width="150">
+            >
           </el-table-column>
           <el-table-column
-            prop="industry_big"
-            label="行业大类"
-            width="150">
-          </el-table-column>
-          <el-table-column
-            prop="company_address"
+            prop="address"
             label="公司地址"
-            width="280">
-          </el-table-column>
-          <el-table-column
-            prop="industry_samll"
-            label="行业小类"
-            width="150">
-          </el-table-column>
-          <el-table-column
-            prop="qualification"
-            label="资质">
+            >
           </el-table-column>
           <el-table-column
             prop="status"
             label="状态"
-            width="100">
-          </el-table-column>
-          <el-table-column label="操作" width="220">
+            >
             <template slot-scope="scope">
-              <el-button size="small" type="danger">删除</el-button>
+              {{test(scope.row)}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="user_name"
+            label="销售"
+            >
+            <template slot-scope="scope">
+              {{scope.row.user.name}}
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="200">
+            <template slot-scope="scope">
+              <!-- <el-button size="small" type="danger">删除</el-button> -->
               <el-button size="small" type="primary" @click="linkToEdit(scope.row.id)">修改</el-button>
               <el-button size="small" @click="showDetail(scope.row.id)">详情</el-button>
             </template>
@@ -86,66 +76,27 @@
 </template>
 
 <script>
+import customer from 'service/customer'
+
 import { Button, Input, Table, TableColumn, Pagination, Form, FormItem, MessageBox } from 'element-ui'
 
 export default {
   data () {
     return {
-      filters: {
-        name: ''
-      },
-      rules: {
-        // name: [
-        //   { required: true, message: '请输入客户名称', trigger: 'blur' },
-        // ]
+      setting: {
+        loading: false,
+        loadingText: "拼命加载中"
       },
       pagination: {
         total: 100,
         pageSize: 10,
         currentPage: 1
       },
-      tableData: [{
-        company_name: '百度',
-        company_web: 'http://www.baidu.com',
-        contact: '王小虎',
-        contact_number: '13409809090',
-        industry_big: '测试',
-        company_address: '上海市普陀区金沙江路 1517 弄',
-        industry_samll: '测试小类',
-        qualification: '',
-        status: '未开始'
-      }, {
-        company_name: '百度',
-        company_web: 'http://www.baidu.com',
-        contact: '王小虎',
-        contact_number: '13409809090',
-        industry_big: '测试',
-        company_address: '上海市普陀区金沙江路 1517 弄',
-        industry_samll: '测试小类',
-        qualification: '',
-        status: '开始'
-      }, {
-        company_name: '百度',
-        company_web: 'http://www.baidu.com',
-        contact: '王小虎',
-        contact_number: '13409809090',
-        industry_big: '测试',
-        company_address: '上海市普陀区金沙江路 1517 弄',
-        industry_samll: '测试小类',
-        qualification: '',
-        status: '结束'
-      }, {
-        company_name: '百度',
-        company_web: 'http://www.baidu.com',
-        contact: '王小虎',
-        contact_number: '13409809090',
-        industry_big: '测试',
-        company_address: '上海市普陀区金沙江路 1517 弄',
-        industry_samll: '测试小类',
-        qualification: '',
-        status: '暂停'
-      }]
+      customerList: []
     }
+  },
+  created () {
+    this.getCustomerList()
   },
   methods: {
     search (formName) {
@@ -158,6 +109,40 @@ export default {
         }
       });
       console.log('search')
+    },
+    test(item) {
+      switch(item.status){
+        case 1:
+          return '待合作'
+        break;
+        case 2:
+          return '合作中'
+        break;
+        case 3:
+          return '已结束'
+        break;
+      }
+    },
+    getCustomerList(){
+      if(this.setting.loading == true){
+        return false;
+      }
+      let pageNum = this.pagination.currentPage
+      let args = {
+        include: 'user',
+        page: pageNum,
+      }
+      this.setting.loadingText = "拼命加载中"
+      this.setting.loading = true;
+      return customer.getCustomerList(this, args).then(response => {
+        this.setting.loading = false;
+        this.customerList = response.data;
+        this.pagination.total = response.meta.pagination.total;
+        this.pagination.pageSize = response.meta.pagination.total_pages;
+        this.handleRole();
+      }).catch(error => {
+        this.setting.loading = false;
+      })
     },
     changePage (currentPage) {
       this.pagination.currentPage = currentPage

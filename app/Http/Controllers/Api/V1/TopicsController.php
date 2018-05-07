@@ -18,14 +18,14 @@ class TopicsController extends Controller
             $query->where('category_id', $categoryId);
         }
 
-        $topics = $query->paginate(20);
+        $topics = $query->paginate(10);
 
         return $this->response->paginator($topics, new TopicTransformer());
     }
 
     public function userIndex(User $user, Request $request)
     {
-        $topics = $user->topics()->recent()->paginate(20);
+        $topics = $user->topics()->recent()->paginate(10);
         return $this->response->paginator($topics, new TopicTransformer());
     }
 

@@ -48,12 +48,13 @@ export default {
     items: function () {
       let ret = []
       for (let item of this.route.children) {
-        if (auth.checkPathPermission(item)) {
+        // if (auth.checkPathPermission(item)) {
           if (item.meta && item.meta.title) {
             ret.push(item)
           }
-        }
+        // }
       }
+      console.log(ret)
       return ret
     }
   },

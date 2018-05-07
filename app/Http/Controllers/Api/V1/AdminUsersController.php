@@ -8,7 +8,7 @@ use App\Transformers\UserTransformer;
 use App\Http\Requests\Api\V1\UserRequest;
 
 
-class AdminController extends Controller
+class AdminUsersController extends Controller
 {
 
     public function show($user_id)
@@ -29,7 +29,7 @@ class AdminController extends Controller
             if (!$isSuperAdmin) {
                 $q->where('name', '<>', 'super-admin');
             }
-        })->paginate(5);
+        })->paginate(10);
 
         return $this->response->paginator($users, new UserTransformer());
     }
@@ -56,6 +56,7 @@ class AdminController extends Controller
 
         $user->assignRole($role);
 
+        //@todo 关联创建EXE LOOK 用户
         return $this->response->item($user, new UserTransformer())->setStatusCode(201);
     }
 

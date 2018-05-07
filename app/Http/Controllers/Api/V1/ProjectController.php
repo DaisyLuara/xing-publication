@@ -11,7 +11,7 @@ class ProjectController extends Controller
     public function index(Request $request, Project $project)
     {
         $query = $project->query();
-        $projects = $query->paginate(20);
+        $projects = $query->paginate(10);
         return $this->response->paginator($projects, new ProjectTransformer());
     }
 }

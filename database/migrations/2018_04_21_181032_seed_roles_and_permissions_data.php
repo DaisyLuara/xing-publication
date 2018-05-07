@@ -18,26 +18,26 @@ class SeedRolesAndPermissionsData extends Migration
         app()['cache']->forget('spatie.permission.cache');
 
         // 先创建权限
-        Permission::create(['name' => 'customer']);
+        Permission::create(['name' => 'company']);
         Permission::create(['name' => 'contract']);
         Permission::create(['name' => 'project']);
         Permission::create(['name' => 'system']);
 
         // 创建超级管理员角色，并赋予权限
-        $superAdmin = Role::create(['name' => 'super-admin']);
-        $superAdmin->givePermissionTo(['customer', 'contract', 'system', 'project']);
+        $superAdmin = Role::create(['name' => 'super-admin', 'display_name' => '系统管理员']);
+        $superAdmin->givePermissionTo(['company', 'contract', 'system', 'project']);
 
         // 创建管理员角色，并赋予权限
-        $admin = Role::create(['name' => 'admin']);
-        $admin->givePermissionTo(['customer', 'system', 'project']);
+        $admin = Role::create(['name' => 'admin', 'display_name' => '管理员']);
+        $admin->givePermissionTo(['company', 'system', 'project']);
 
         // 创建普通用户
-        $user = Role::create(['name' => 'user']);
-        $user->givePermissionTo(['customer', 'project']);
+        $user = Role::create(['name' => 'user', 'display_name' => '普通用户']);
+        $user->givePermissionTo(['company', 'project']);
 
-        // 审核员 负责节目上传后的审批
-        $auditor = Role::create(['name' => 'auditor']);
-        $auditor->givePermissionTo(['project']);
+        // 法务 公司资质审核&负责节目上传后的审批
+        $auditor = Role::create(['name' => 'legal-affairs', 'display_name' => '法务']);
+        $auditor->givePermissionTo(['project', 'company']);
 
     }
 

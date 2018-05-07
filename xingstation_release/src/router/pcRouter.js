@@ -1,7 +1,7 @@
 import pcHome from 'page/home'
 import system from 'router/pc/system'
 // import main from 'router/pc/main'
-import customer from 'router/pc/customer'
+import company from 'router/pc/company'
 import project from 'router/pc/project'
 import inform from 'router/pc/inform'
 import account from 'router/pc/account'
@@ -14,12 +14,12 @@ export default {
   name: 'pc站',
   component: pcHome,
   meta: {
-    permission: 'main',
+    // permission: 'main',
   },
   children: [
     // main,
     system,
-    customer,
+    company,
     project,
     contract,
     inform,

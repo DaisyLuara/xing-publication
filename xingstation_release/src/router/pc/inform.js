@@ -40,9 +40,7 @@ let router = {
 router.redirect = () => {
   let routes = router.children
   for (let route of routes) {
-    if (auth.checkPathPermission(route)) {
-      return '/inform/' + route.path
-    }
+    return '/inform/' + route.path
   }
 }
 

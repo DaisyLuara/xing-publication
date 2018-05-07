@@ -21,7 +21,7 @@
               </el-col>
               <el-col :xs="8" :sm="8" :md="8" :lg="8">
               <div class="btn-code-wrap" @click="phoneSuccessHandle()">
-                <span class="btn-code-label__countdown">获取验证码</span>
+                <span class="btn-code-label__countdown">点击验证</span>
               </div>
             </el-col>
                 
@@ -233,7 +233,6 @@ export default {
               verification_key: this.accountForm.verification_key,
               verification_code: this.accountForm.smsCaptcha
             }
-            console.log(loginParams)
             auth.login(this, loginParams, this.setting.redirect_url)
           } else {
             return false;
@@ -242,7 +241,6 @@ export default {
       }
     },
     phoneSuccessHandle() {
-      console.log(this.validateError.account)
       if(!this.validateError.account && this.accountForm.account) {
         this.ImageCaptchaHandle()
       } else {
@@ -250,18 +248,14 @@ export default {
       }
     },
     getSmsCaptcha() {
-      console.log(this.validateError.imageCaptcha)
       if(!this.validateError.imageCaptcha & (this.accountForm.imageCaptcha.value.length == 5)){
         this.showSmsCaptcha = true
         this.sendSmsCaptcha()
-        console.log('send')
-      } else {
-        console.log('not send')
       }
     }, 
     ImageCaptchaHandle() {
       this.getImageCaptcha();
-      this.showImageCaptcha = true
+     
     },
     linkToLogin() {
       this.$router.push({
@@ -272,15 +266,18 @@ export default {
       this.$refs[formName].resetFields();
     },
     getImageCaptcha() {
-      console.log(this.accountForm.account)
       let args = {
         phone: this.accountForm.account
       }
       auth.getImageCaptcha(this, args).then(result => {
-        console.log(result)
-        let imageCaptchaObj = result;
-        this.accountForm.imageCaptcha.key = imageCaptchaObj.captcha_key;
-        this.setting.imageCaptcha.image_url = imageCaptchaObj.captcha_image_content
+        if (JSON.stringify(result) !== '{}') {
+          let imageCaptchaObj = result;
+          this.accountForm.imageCaptcha.key = imageCaptchaObj.captcha_key;
+          this.setting.imageCaptcha.image_url = imageCaptchaObj.captcha_image_content
+          this.showImageCaptcha = true
+        } else {
+           this.showImageCaptcha = false
+        }
       }).catch(error => {
         console.log(error)
       })
@@ -288,7 +285,6 @@ export default {
 
     sendSmsCaptcha() {
       // 校验手机号码、验证码
-      console.log(this.accountForm.imageCaptcha)
       let args = {
         captcha_key: this.accountForm.imageCaptcha.key,
         captcha_code: this.accountForm.imageCaptcha.value
