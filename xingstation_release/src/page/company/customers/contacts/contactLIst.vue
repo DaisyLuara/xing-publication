@@ -97,7 +97,7 @@ export default {
       this.$router.push({
         path: '/company/customers/contacts/add',
         query: {
-          id: this.$route.query.id,
+          pid: this.$route.query.id,
           name: this.companyName
         }
       })
@@ -107,7 +107,7 @@ export default {
         path: '/company/customers/contacts/edit',
         query: {
           uid: id,
-          id: this.$route.query.id,
+          pid: this.$route.query.id,
           name: this.companyName
         }
       })

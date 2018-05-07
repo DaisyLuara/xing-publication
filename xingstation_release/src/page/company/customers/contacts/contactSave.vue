@@ -19,7 +19,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" :loading="loading"  @click="onSubmit('contactForm')">保存</el-button>
-          <el-button @click="historyBack()">取消</el-button>
+          <el-button @click="resetForm('contactForm')">取消</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -46,6 +46,7 @@ export default {
           phone: '',
         },
       },
+      pid: '',
       contactID: '',
       rules: {
         "contact.phone": [
@@ -71,9 +72,10 @@ export default {
     if(this.setting.loading == true){
       return false
     }
-    this.contactID = this.$route.query.id
+    this.contactID = this.$route.query.uid
+    this.pid = this.$route.query.pid
     this.contactName = this.$route.query.name
-    console.log(this.contactID)
+    this.getContactDetial()
     this.setting.loadingText = "拼命加载中"
     this.setting.loading = false
   },
@@ -81,20 +83,21 @@ export default {
     onSubmit(formName) {
       this.$refs[formName].validate((valid) => {
         if(valid){
-          this.loading = true;
-          let id = this.contactID
+          this.setting.loading = true;
+          let pid = this.pid
           let name = this.contactName
-          company.saveContact(this, id, this[formName].contact).then(result => {
-            this.loading = false;
+          let uid = this.$route.query.uid
+          company.saveContact(this, pid, this[formName].contact, uid).then(result => {
+            this.setting.loading = false
             this.$message({
-              message: "添加成功",
+              message: uid ? "修改成功" : "添加成功",
               type: "success"
             })
             this.$router.push({
               path: "/company/customers/contacts?id="+id+"&name=" + name
             })
           }).catch(error => {
-            this.loading = false;
+            this.setting.loading = false
             console.log(error)
           })
         }else{
@@ -104,10 +107,19 @@ export default {
       })
     },
     getContactDetial(){
-
+      let uid = this.$route.query.uid
+      if(uid) {
+        company.getContactDetial(this, this.pid, uid ).then((result) => {
+          this.contactForm.contact = result
+          this.setting.loading = false
+        }).catch((err) => {
+          console.log(err)
+          this.setting.loading = false
+        })
+      }
     },
     resetForm(formName) {
-     
+     this.$refs[formName].resetFields();
     },
     historyBack () {
       router.back()
