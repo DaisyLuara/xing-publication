@@ -103,19 +103,8 @@ export default {
         }
       })
     },
-    handleClose(data) {
-      if (data && data.length > 0 && data[0].media_url) {
-        console.dir(data)
-        this.imageUrl = data[0].media_url
-      } else {
-        console.log('图片上传失败')
-      }
-    },
-    handleOpenPane() {
-      this.panelVisible = true
-    },
-    handleImageDelete() {
-      this.imageUrl = ''
+    getContactDetial(){
+
     },
     resetForm(formName) {
      
