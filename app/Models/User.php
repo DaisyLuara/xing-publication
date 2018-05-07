@@ -116,7 +116,7 @@ class User extends Authenticatable implements JWTSubject
     //普通管理员
     public function isAdmin()
     {
-        return $this->hasRole(['super_admin', 'admin']);
+        return $this->hasRole(['super-admin', 'admin']);
     }
 
     //系统配置 可选角色
