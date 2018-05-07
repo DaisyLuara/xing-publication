@@ -1,15 +1,15 @@
 import auth from 'service/auth'
 
 let router = {
-  path: 'customer',
-  redirect: 'customer/customers',
+  path: 'company',
+  redirect: 'company/customers',
   name: '客户',
   meta: {
     title: '客户',
-    permission: 'customer',
+    permission: 'company',
   },
   component: () =>
-    import(/* webpackChunkName: "page/customer/customerView" */ 'page/customer/customerView'),
+    import(/* webpackChunkName: "page/company/companyView" */ 'page/company/companyView'),
   children: [
     {
       path: 'customers',
@@ -19,7 +19,7 @@ let router = {
         title: '客户管理',
       },
       component: () =>
-        import(/* webpackChunkName: "page/customer/customers/routerView" */ 'page/customer/customers/routerView'),
+        import(/* webpackChunkName: "page/company/customers/routerView" */ 'page/company/customers/routerView'),
       children: [
         {
           path: 'index',
@@ -28,12 +28,12 @@ let router = {
             title: '客户管理列表',
           },
           component: () =>
-            import(/* webpackChunkName: "page/customer/customers/index" */ 'page/customer/customers/index'),
+            import(/* webpackChunkName: "page/company/customers/index" */ 'page/company/customers/index'),
         },
         {
           path: 'add',
           component: () =>
-            import(/* webpackChunkName: "page/customer/customers/customerSave" */ 'page/customer/customers/customerSave'),
+            import(/* webpackChunkName: "page/company/customers/customerSave" */ 'page/company/customers/customerSave'),
           name: '新增客户',
           meta: {
           },
@@ -41,7 +41,7 @@ let router = {
         {
           path: 'edit/:uid',
           component: () =>
-            import(/* webpackChunkName: "page/customer/customers/customerSave" */ 'page/customer/customers/customerSave'),
+            import(/* webpackChunkName: "page/company/customers/customerSave" */ 'page/company/customers/customerSave'),
           name: '修改客户',
           meta: {
           },
@@ -49,7 +49,7 @@ let router = {
         {
           path: 'detail/:uid',
           component: () =>
-            import(/* webpackChunkName: "page/customer/customers/customerDetail" */ 'page/customer/customers/customerDetail'),
+            import(/* webpackChunkName: "page/company/customers/customerDetail" */ 'page/company/customers/customerDetail'),
           name: '客户详情',
           meta: {
           },
@@ -62,7 +62,7 @@ let router = {
 router.redirect = () => {
   let routes = router.children
   for (let route of routes) {
-    return '/customer/' + route.path
+    return '/company/' + route.path
   }
 }
 
