@@ -15,9 +15,8 @@ class FaceCountController extends Controller
     public function index(Request $request, FaceCount $faceCount)
     {
 
-        $date_start = $request->has('start_date') ? $request->start_date : Carbon::now()->addDays(-7);
-        $date_end = $request->has('end_date') ? $request->end_date : Carbon::now();
-
+        $date_start = $request->has('start_date') ? $request->start_date : Carbon::now()->addDays(-7)->toDateString();
+        $date_end = $request->has('end_date') ? $request->end_date : Carbon::now()->toDateString();
         $belong = $request->has('belong') ? $request->belong : 'all';
 
         $user = $this->user();
@@ -44,8 +43,8 @@ class FaceCountController extends Controller
     //分天统计
     public function detail(Request $request, FaceCount $faceCount)
     {
-        $date_start = $request->has('start_date') ? $request->start_date : Carbon::now()->addDays(-7);
-        $date_end = $request->has('end_date') ? $request->end_date : Carbon::now();
+        $date_start = $request->has('start_date') ? $request->start_date : Carbon::now()->addDays(-7)->toDateString();
+        $date_end = $request->has('end_date') ? $request->end_date : Carbon::now()->toDateString();
 
         $belong = $request->has('belong') ? $request->belong : 'all';
 
@@ -76,8 +75,8 @@ class FaceCountController extends Controller
     public function ageAndGenderDetail(Request $request, FaceLog $faceLog)
     {
 
-        $date_start = $request->has('start_date') ? $request->start_date : Carbon::now()->addDays(-7);
-        $date_end = $request->has('end_date') ? $request->end_date : Carbon::now();
+        $date_start = $request->has('start_date') ? $request->start_date : Carbon::now()->addDays(-7)->toDateString();
+        $date_end = $request->has('end_date') ? $request->end_date : Carbon::now()->toDateString();
         $belong = $request->has('belong') ? $request->belong : 'all';
         $type = $request->has('type') ? $request->type : 'looker';
 
