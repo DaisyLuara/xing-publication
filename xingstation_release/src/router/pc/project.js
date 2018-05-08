@@ -3,9 +3,9 @@ import auth from 'service/auth'
 let router = {
   path: 'project',
   redirect: 'project/item',
-  name: '投放',
+  name: '节目',
   meta: {
-    title: '投放',
+    title: '节目',
     permission: 'project',
   },
   component: () =>
