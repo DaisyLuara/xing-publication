@@ -6,6 +6,7 @@ use App\Models\ProjectLaunchLocal;
 use Illuminate\Http\Request;
 use App\Models\ProjectLaunch;
 use App\Transformers\ProjectLaunchTransformer;
+use App\Http\Requests\Api\V1\ProjectLaunchRequest;
 
 class ProjectLaunchController extends Controller
 {
@@ -53,28 +54,37 @@ class ProjectLaunchController extends Controller
     }
 
     //测试环境 使用 本地数据更新
-    public function store(Request $request, ProjectLaunchLocal $projectLaunchLocal)
+    public function store(ProjectLaunchRequest $request, ProjectLaunchLocal $projectLaunchLocal)
     {
-//        $launches = $request->all();
-//        if (count($launches)) {
-//            $query = $projectLaunchLocal->query();
-//            foreach ($launches as $launch) {
-//                $query->create($launch);
-//            }
-//        }
-//        return $this->response->noContent();
+        $launch = $request->all();
+        $query = $projectLaunchLocal->query();
+
+        if (count($launch['oids'])) {
+            $oids = $launch['oids'];
+            unset($launch['oids']);
+            foreach ($oids as $oid) {
+                $query->create(array_merge(['oid' => $oid], $launch));
+            }
+        }
+
+        return $this->response->noContent();
     }
 
     public function update(Request $request, ProjectLaunchLocal $projectLaunchLocal)
     {
 
-//        $launches = $request->all();
-//        if (count($launches)) {
-//            $query = $projectLaunchLocal->query();
-//            foreach ($launches as $launch) {
-//                $query->update(['tvoid' => $launch['tvoid']], $launches);
-//            }
-//        }
-//        return $this->response->noContent();
+        $launch = $request->all();
+
+        if (count($launch['tvoids'])) {
+            $tvoids = $launch['tvoids'];
+            unset($launch['tvoids']);
+            unset($launch['oid']);
+
+            foreach ($tvoids as $tvoid) {
+                $query = $projectLaunchLocal->query();
+                $query->where(['tvoid' => $tvoid])->update($launch);
+            }
+        }
+        return $this->response->noContent();
     }
 }
