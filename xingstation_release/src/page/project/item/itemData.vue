@@ -3,20 +3,20 @@
     <div class="headline-wrapper">
       <div>
         <span>节目名称：{{pointName}} </span>
-        <el-select v-model="userSelected" filterable @change="pointHandle" placeholder="请选择用户(可搜索)">
+        <el-select v-model="userSelected" filterable @change="pointHandle" placeholder="请选择用户(可搜索)" remote :remote-method="getUser" v-if="showUser">
           <el-option
             v-for="item in pointOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
+            :key="item.id"
+            :label="item.name"
+            :value="item.name">
           </el-option>
         </el-select>
-        <el-select v-model="pointSelected" filterable @change="pointHandle" placeholder="请选择点位(可搜索)">
+        <el-select v-model="projectSelect" filterable placeholder="请选择点位(可搜索)" remote :remote-method="getProject" @change="projectChangeHandle()">
           <el-option
-            v-for="item in pointOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
+            v-for="item in projectList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.alias">
           </el-option>
         </el-select>
       </div>
@@ -35,7 +35,10 @@
             <i class="title">
               {{item.name}}
             </i>
-            <span class="count">
+            <span class="count" v-if="item.alias === 'scannum'">
+              {{item.count}} / {{(item.count==0 & item.out == 0) ? 0 : new Number((item.count/item.out)*100).toFixed(1)}}%
+            </span>
+            <span class="count" v-if="item.alias !== 'scannum'">
               {{item.count}}
             </span>
             <i class="arrow-icon"></i>
@@ -77,9 +80,7 @@
 </template>
 <script>
 import stats from 'service/stats'
-
 import { Row, Col, DatePicker, Select, Option} from 'element-ui'
-// import data from 'service/pointData'
 
 export default {
   components:{
@@ -98,6 +99,9 @@ export default {
           return time.getTime() < new Date('2017-12-31');
         }
       },
+      projectSelect: '',
+      projectLoading: false,
+      projectList: [],
       active: '围观人数',
       splineOptions : {
         chart:{
@@ -207,23 +211,12 @@ export default {
             }]
         }]
       },
-      peopleCount: [{
-        name: '围观人数',
-        count: '1000'
-      },{
-        name: '交互完成人数',
-        count: '900'
-      },{
-        name: '微信扫描人数',
-        count: '800'
-      },{
-        name: '转化人数',
-        count: '800'
-      }],
+      peopleCount: [],
       type: '',
       ageType: false,
       sexType: false,
       pointName:'',
+      arUserId: '',
       poepleCountFlag: false,
       ageFlag: false,
       sexFlag: false,
@@ -236,15 +229,15 @@ export default {
       }],
       pointSelected: '',
       userSelected: '',
-      currentPointId: ''
+      projectAlias: ''
     }
   },
   created(){
-    this.getStatsCount()
     this.pointName = this.$route.query.name
-    // this.currentPointId = this.$route.query.id
+    this.projectSelect = this.pointName
+    this.projectAlias = this.$route.query.alias
     // this.getPointList()
-    // this.getPeopleCount()
+    this.getPeopleCount()
     // this.getAgeInfo()
     // this.getGenderInfo()
     this.loading = false
@@ -252,77 +245,93 @@ export default {
   computed:{
     'peopleCountLength': function (){
       return this.peopleCount.length
-    }
+    },
+    showUser(){
+      let user_info = JSON.parse(localStorage.getItem('user_info'))
+      console.log(user_info)
+      let roles = user_info.roles.data[0].name
+      return roles == 'user' ? false : true
+    },
   },
+  
   methods:{
-    getStatsCount(){
-      this.poepleCountFlag = true
-      let id = this.currentPointId
-      let args = {}
-      // if((this.dateTime[1]-this.dateTime[0])/3600/1000/24<30){
-      //   args = {
-      //     start_date : this.handleDateTransform(this.dateTime[0]),
-      //     end_date: this.handleDateTransform(new Date(this.dateTime[1]).getTime() + 3600 * 1000 * 24 * 1)
-      //   }
-      // }else{
-      //   this.$message({
-      //     type: 'warning',
-      //     message: '时间范围不能超过30天'
-      //   });
-      //   this.poepleCountFlag = false
-      //   return false;
-      // }    
-      args = {
-        oid: '243'
-      }
-      stats.getStats(this, args).then((response) => {
+    projectChangeHandle(){
+      this.projectAlias = this.projectSelect
+      console.log(this.projectSelect)
+
+    },
+    getUser() {
+      return stats.getUser(this).then((response) => {
         console.log(response)
-        this.poepleCountFlag = false
-        // for (let i = 0; i < 4; i++ ) {
-        //   this.peopleCount[i].count = response.face_count_logs
-        // }
-        // if(response.length>0){
-          // this.peopleCount = response.sort(this.sortNumber)
-          // this.type = this.peopleCount[0].type
-          // this.active = this.peopleCount[0].name
-          // this.getLineData()
-        // }
+        // this.poepleCountFlag = false
+       
       }).catch(err => {
         console.log(err)
-        this.poepleCountFlag = false
+        // this.poepleCountFlag = false
         
       })
     },
-    // getPeopleCount(){
-    //   this.poepleCountFlag = true
-    //   let id = this.currentPointId
-    //   let args = {}
-    //   if((this.dateTime[1]-this.dateTime[0])/3600/1000/24<30){
-    //     args = {
-    //       start_date : this.handleDateTransform(this.dateTime[0]),
-    //       end_date: this.handleDateTransform(new Date(this.dateTime[1]).getTime() + 3600 * 1000 * 24 * 1)
-    //     }
-    //   }else{
-    //     this.$message({
-    //       type: 'warning',
-    //       message: '时间范围不能超过30天'
-    //     });
-    //     this.poepleCountFlag = false
-    //     return false;
-    //   }    
-    //   data.getCountDataInfoById(this, id, args).then((response) => {
-    //     if(response.length>0){
-    //       this.peopleCount = response.sort(this.sortNumber)
-    //       this.type = this.peopleCount[0].type
-    //       this.active = this.peopleCount[0].name
-    //       this.getLineData()
-    //     }
-    //   }).catch(err => {
-    //     console.log(err)
-    //     this.poepleCountFlag = false
+    getProject(query) {
+      if(this.showUser){
+        } else {
+        let user_info = JSON.parse(localStorage.getItem('user_info'))
+        this.arUserId = user_info.ar_user_id
+      }
+      let args = {
+        ar_user_id: this.arUserId,
+        name: query
+      }
+      if (query !== '') {
+        this.projectLoading = true
+        setTimeout(() => {
+          return stats.getProject(this,args).then((response) => {
+            this.projectList = response.data
+            this.projectLoading = false
+          }).catch(err => {
+            console.log(err)
+            this.projectLoading = false
+          })
+        }, 1000);
+      } 
+    },
+    getPeopleCount(){
+      this.poepleCountFlag = true
+      let id = this.currentPointId
+      let args = {}
+      if((this.dateTime[1]-this.dateTime[0])/3600/1000/24<30){
+        args = {
+          start_date : this.handleDateTransform(this.dateTime[0]),
+          end_date: this.handleDateTransform(new Date(this.dateTime[1]).getTime() + 3600 * 1000 * 24 * 1),
+          alias: this.projectAlias
+        }
+      }else{
+        this.$message({
+          type: 'warning',
+          message: '时间范围不能超过30天'
+        });
+        this.poepleCountFlag = false
+        return false;
+      }    
+      return stats.getStaus(this,args).then((response) => {
+        this.peopleCount = response
+        this.type = this.peopleCount[0].alias
+        this.getLineData()
+      }).catch((err) => {
+        this.poepleCountFlag = false
+        console.log(err)
+      })
+      // data.getCountDataInfoById(this, id, args).then((response) => {
+      //   if(response.length>0){
+      //     this.peopleCount = response.sort(this.sortNumber)
+      //     this.type = this.peopleCount[0].type
+      //     this.active = this.peopleCount[0].name
+      //   }
+      // }).catch(err => {
+      //   console.log(err)
+      //   this.poepleCountFlag = false
         
-    //   })
-    // },
+      // })
+    },
     getAgeInfo(){
       this.ageFlag = true
       let args = {}
@@ -416,7 +425,7 @@ export default {
         args = {
           start_date : this.handleDateTransform(this.dateTime[0]),
           end_date: this.handleDateTransform(new Date(this.dateTime[1]).getTime() + 3600 * 1000 * 24 * 1),
-          type: this.type
+          alias: this.type
         }
       }else{
         this.$message({
@@ -426,7 +435,7 @@ export default {
         this.poepleCountFlag = false
         return false;
       }
-      data.getLineDataByType(this,id,args).then((response) => {
+      stats.getDayDetail(this,args).then((response) => {
         let chart = this.$refs.lineChar.chart;
         let dataLine = []
         let dateArr = []
@@ -435,8 +444,8 @@ export default {
         if(response.length>0){
           console.log(response)
           for(let j = 0; j < response.length; j++){
-            console.log(response[j])
-            dateArr.push(response[j].date)
+            console.log(response[j].face_count_logs)
+            dateArr.push(response[j].face_count_logs)
           }
           console.log(dateArr)
           for(let i = 0; i < dateCount; i++){
@@ -449,18 +458,18 @@ export default {
           }
          chart.series[0].setData(dataLine,true)
         }else{
+          console.log(33)
           for(let a = 0; a < dateCount; a++){
             let startDate = new Date(this.dateTime[0]).getTime()
             newDateArr = this.updateDayArr(dateArr,this.handleDateTransform(startDate + 3600 * 1000 * 24 * a),response)
           }
+          console.log(newDateArr)
           newDateArr.sort(this.sortDate)
           for(let h = 0; h < newDateArr.length; h++){
             dataLine.push({'y':newDateArr[h].count,'name':newDateArr[h].date})
           }
           chart.series[0].setData(dataLine,true)
         }
-        // console.log(dateArr)
-        // console.log(newDateArr)
         this.poepleCountFlag = false
       }).catch(err => {
         console.log(err)
@@ -468,7 +477,7 @@ export default {
       })
     },
     getPointList(){
-      data.getPointList(this).then((response) => {
+      stats.getPointList(this).then((response) => {
        console.log(response)
        this.pointOptions = response
        this.pointSelected = parseInt(this.$route.query.id)
@@ -486,10 +495,13 @@ export default {
     },
     lineDataHandle(obj){
       this.active = obj.name
-      this.type = obj.type
-      // this.getLineData()
+      this.type = obj.alias
+      this.getLineData()
     },
     updateDayArr(oldArr, newElement,res){
+      console.log(oldArr)
+      console.log(newElement)
+      console.log(res)
       if (oldArr.indexOf(newElement) === -1) {
         res.push({"date":newElement,'count':0})
         return res;
@@ -530,7 +542,7 @@ export default {
 </script>
 <style lang="less" scoped>
   .point-data-wrapper{
-    padding: 15px;
+    // padding: 15px;
     .headline-wrapper{
       padding: 20px;
       display: flex;
