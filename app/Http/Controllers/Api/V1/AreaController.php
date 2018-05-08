@@ -14,8 +14,10 @@ class PointController extends Controller
         return $this->response->paginator($points, new PointTransformer());
     }
 
-    public function userIndex()
+    public function query(Request $request, Point $point)
     {
 
     }
+
+
 }
