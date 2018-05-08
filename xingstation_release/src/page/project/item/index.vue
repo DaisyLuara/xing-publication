@@ -59,7 +59,7 @@
           <el-table-column label="操作" width="200">
             <template slot-scope="scope">
               <el-button size="small" type="primary" @click="linkToEdit(scope.row.id)">修改</el-button>
-              <el-button size="small" type="warning" @click="showData(scope.row.id, scope.row.name)">数据</el-button>
+              <el-button size="small" type="warning" @click="showData(scope.row.project.alias, scope.row.project.name, arUserName)" v-if="dataShowFlag">数据</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -95,6 +95,8 @@ export default {
       },
       dataValue: '',
       loading: true,
+      arUserName: '',
+      dataShowFlag: true,
       pagination: {
         total: 0,
         pageSize: 10,
@@ -106,8 +108,10 @@ export default {
   mounted() {
   },
   created () {
-    
     this.getProjectList()
+    let user_info = JSON.parse(localStorage.getItem('user_info'))
+    this.arUserName = user_info.name
+    this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
   },
   methods: {
     getProjectList () {
@@ -146,12 +150,13 @@ export default {
         path: '/project/item/edit/' + id
       })
     },
-    showData (id,name) {
+    showData (alias,name,userId) {
       const { href } = this.$router.resolve({
         path: '/project/item/data',
         query: {
-          id: id,
-          name: name
+          alias: alias,
+          name: name,
+          uName: userId
         }
       })
       window.open(href, '_blank')

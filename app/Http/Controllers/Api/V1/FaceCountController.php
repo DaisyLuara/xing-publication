@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Models\FaceCount;
-use App\Models\FaceLog;
 use App\Transformers\FaceCountTransformer;
-use App\Transformers\FaceLogTransformer;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
@@ -27,8 +25,6 @@ class FaceCountController extends Controller
 
     public function detail(Request $request, FaceCount $faceCount)
     {
-
-
         $query = $this->queryInit($request, $faceCount->query());
         $default = $this->getDefaultParams($request);
 

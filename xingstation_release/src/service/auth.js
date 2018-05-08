@@ -58,7 +58,6 @@ export default {
     context.$http.delete(LOGOUT_API).then(data => {
       this.clearLoginData(context)
       let setIntervalValue = context.$store.state.notificationCount.setIntervalValue
-      console.log(setIntervalValue)
       clearInterval(setIntervalValue)
       context.$router.push({
         path: '/login'
