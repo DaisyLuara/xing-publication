@@ -1,7 +1,7 @@
 <template>
   <div class="page-list-template tab" :element-loading-text="setting.loadingText" v-loading="setting.loading">
     <div class="actions-wrap">
-      <el-button size="small" type="info" @click="readNotifications">全部读取</el-button>
+      <el-button size="small" type="info" @click="readNotifications" v-if="unreadCount != 0">全部读取</el-button>
     </div>
     <div class="table-area">
       <el-table
@@ -76,6 +76,7 @@ export default {
   },
   data() {
     return {
+      unreadCount: 0,
       pagination: {
         total: 0,
         pageSize: 10,
@@ -89,6 +90,7 @@ export default {
       loading: false,
     }
   },
+  
   computed: {
     ...mapState({
       lastPage: state => state.appState.lastPage,
@@ -108,6 +110,7 @@ export default {
   },
   created() {
     this.getNoticeList()
+    this.unreadCount = this.$store.state.notificationCount.noticeCount
   },
   methods: {
     getNoticeList (){
