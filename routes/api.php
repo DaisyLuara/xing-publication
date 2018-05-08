@@ -81,23 +81,19 @@ $api->version('v1', [
             $api->get('ageAndGender', 'FaceLogController@index');
 
             //广告投放
-            $api->get('adLaunch/index','AdLaunchController@index');
-            $api->get('adLaunch/query','AdLaunchController@query');
+            $api->get('adLaunch','AdLaunchController@index');
 
             //广告
-            $api->get('advertisement/index','AdvertisementController@index');
-            $api->get('advertisement/query','AdvertisementController@query');
+            $api->get('advertisement','AdvertisementController@index');
 
             //广告主
             $api->get('advertiser','AdvertiserController@index');
-            $api->get('advertiser/query','AdvertiserController@query');
 
             //广告行业
-            $api->get('adTrade/index','AdTradeController@index');
+            $api->get('adTrade','AdTradeController@index');
 
             //设备
-            $api->get('push/index','PushController@index');
-            $api->get('push/query','PushController@query');
+            $api->get('push','PushController@index');
 
             //节目投放
             $api->get('userProject', 'ProjectController@userProject');
@@ -107,10 +103,13 @@ $api->version('v1', [
             $api->post('projects/launch', 'ProjectLaunchController@store');
 
             //远程搜索
-            $api->get('areas/query', 'AreaController@query');//区域搜索
-            $api->get('markets/query', 'MarketController@query');//商场搜索
-            $api->get('points/query', ['middleware' => ['role:super-admin|admin'], 'uses' => 'PointController@query']);//点位查询
-            $api->get('launches/tpl/query', ['middleware' => ['role:super-admin|admin'], 'uses' => 'ProjectLaunchTplController@query']);//点位查询
+            $api->get('areas/query', 'QueryController@areaQuery');//区域搜索
+            $api->get('markets/query', 'QueryController@marketQuery');//商场搜索
+            $api->get('points/query', ['middleware' => ['role:super-admin|admin'], 'uses' => 'QueryController@pointQuery']);//点位查询
+            $api->get('launches/tpl/query', ['middleware' => ['role:super-admin|admin'], 'uses' => 'QueryController@launchTplQuery']);//点位查询
+            $api->get('advertisement/query','AdvertisementController@query');
+            $api->get('advertiser/query','AdvertiserController@query');
+            $api->get('adTrade/query','AdTradeController@query');
 
             // 权限设置
             $api->get('system/users', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminUsersController@index']);
