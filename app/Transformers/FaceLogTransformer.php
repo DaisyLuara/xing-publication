@@ -18,16 +18,16 @@ class FaceLogTransformer extends TransformerAbstract
     {
         return [
             'gender' => [
-                'male' => $faceLog->bnum,
-                'female' => $faceLog->gnum,
+                'male' => (int)$faceLog->bnum,
+                'female' => (int)$faceLog->gnum,
             ],
             'age' => [
-                ['count' => $faceLog->age10, 'age' => '0-10岁'],
-                ['count' => $faceLog->age18, 'age' => '11-18岁'],
-                ['count' => $faceLog->age30, 'age' => '19-30岁'],
-                ['count' => $faceLog->age40, 'age' => '31-40岁'],
-                ['count' => $faceLog->age60, 'age' => '41-60岁'],
-                ['count' => $faceLog->age61, 'age' => '60岁以上']
+                ['count' => (int)$faceLog->age10, 'age' => '0-10岁'],
+                ['count' => (int)$faceLog->age18, 'age' => '11-18岁'],
+                ['count' => (int)$faceLog->age30, 'age' => '19-30岁'],
+                ['count' => (int)$faceLog->age40, 'age' => '31-40岁'],
+                ['count' => (int)$faceLog->age60, 'age' => '41-60岁'],
+                ['count' => (int)$faceLog->age61, 'age' => '60岁以上']
             ]
         ];
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Models\FaceCount;
+use App\Transformers\FaceCountDetailTransformer;
 use App\Transformers\FaceCountTransformer;
 use Carbon\Carbon;
 use DB;
@@ -34,7 +35,7 @@ class FaceCountController extends Controller
             ->groupBy(DB::raw("date_format(date,'%Y-%m-%d')"))
             ->get();
 
-        return $this->response->array($faceCount);
+        return $this->response->collection($faceCount, new FaceCountDetailTransformer());
     }
 
     private function queryInit($request, $query)
