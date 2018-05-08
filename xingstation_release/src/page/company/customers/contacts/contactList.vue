@@ -2,14 +2,6 @@
   <div class="root" :element-loading-text="setting.loadingText" v-loading="setting.loading">
     <div class="item-list-wrap">
       <div class="item-content-wrap">
-        <!-- <div class="search-wrap">
-          <el-form :model="filters" :inline="true" ref="searchForm" :rules="rules">
-            <el-form-item label="" prop="name">
-              <el-input v-model="filters.name" placeholder="请输入节目名称" style="width: 300px;"></el-input>
-            </el-form-item>
-              <el-button @click="search('searchForm')" type="primary">搜索</el-button>
-          </el-form>
-        </div> -->
         <div class="actions-wrap">
           <span class="label">
             {{companyName}} {{12}} 人
@@ -78,17 +70,6 @@ export default {
       }).catch(error => {
         this.setting.loading = false;
       })
-    },
-    search (formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          alert('submit!');
-        } else {
-          console.log('error submit!!');
-          return false;
-        }
-      });
-      console.log('search')
     },
     changePage (currentPage) {
       this.pagination.currentPage = currentPage

@@ -68,7 +68,7 @@ export default {
           { validator: (rule, value, callback) => {
             if (/^\s*$/.test(value)) {
               callback('请输入密码')
-            } else if(!/^.{8,20}$/.test(value)) {
+            } else if(!/^.{6,20}$/.test(value)) {
               callback('密码长度不正确,请重新输入')
             } else {
               callback()
