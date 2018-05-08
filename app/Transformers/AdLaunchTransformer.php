@@ -12,7 +12,7 @@ class AdLaunchTransformer extends TransformerAbstract
     {
         return [
             'id' => $adLaunch->aoid,
-            'point' => $adLaunch->area->name.'-'.$adLaunch->market->name,
+            'point' => $adLaunch->area->name.'-'.$adLaunch->market->name.'-'.$adLaunch,
             'advertiser' => $adLaunch->advertiser->name,
             'advertisement' => $adLaunch->advertisement->name,
             'adType' => $adLaunch->advertisement->type,

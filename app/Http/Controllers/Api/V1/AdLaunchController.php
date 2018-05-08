@@ -40,7 +40,7 @@ class AdLaunchController extends Controller
         }
 
         if ($request->has('marketid')) {
-            $query->where('atid', '=', $request->marketid);
+            $query->where('marketid', '=', $request->marketid);
         }
 
         $adLaunch = $query->whereRaw("str_to_date(date,'%Y-%m-%d') between '$start_date' and '$end_date'")

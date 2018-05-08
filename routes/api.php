@@ -81,23 +81,23 @@ $api->version('v1', [
             $api->get('ageAndGender', 'FaceLogController@index');
 
             //广告投放
-            $api->get('adLaunch','AdLaunchController@index');
-            $api->get('adLaunchQuery','AdLaunchController@query');
+            $api->get('adLaunch/index','AdLaunchController@index');
+            $api->get('adLaunch/query','AdLaunchController@query');
 
             //广告
-            $api->get('advertisement','AdvertisementController@index');
-            $api->get('advertisementQuery','AdvertisementController@query');
+            $api->get('advertisement/index','AdvertisementController@index');
+            $api->get('advertisement/query','AdvertisementController@query');
 
             //广告主
             $api->get('advertiser','AdvertiserController@index');
-            $api->get('advertiserQuery','AdvertiserController@query');
+            $api->get('advertiser/query','AdvertiserController@query');
 
             //广告行业
-            $api->get('adTrade','AdTradeController@index');
+            $api->get('adTrade/index','AdTradeController@index');
 
             //设备
-            $api->get('push','PushController@index');
-            $api->get('pushQuery','PushController@query');
+            $api->get('push/index','PushController@index');
+            $api->get('push/query','PushController@query');
 
             //节目投放
             $api->get('userProject', 'ProjectController@userProject');
