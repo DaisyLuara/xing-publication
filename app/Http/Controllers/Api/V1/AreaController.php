@@ -3,21 +3,20 @@
 namespace App\Http\Controllers\Api\V1;
 
 use Illuminate\Http\Request;
-use App\Transformers\PointTransformer;
+use App\Transformers\AreaTransformer;
+use App\Models\Area;
 
-class PointController extends Controller
+class AreaController extends Controller
 {
-    public function index(Request $request, Point $point)
+    public function query(Request $request, Area $area)
     {
-        $query = $point->query();
-        $points = $query->paginate(10);
-        return $this->response->paginator($points, new PointTransformer());
+        $query = $area->query();
+        $areas = collect();
+        if ($request->name) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+            $areas = $query->get();
+        }
+        return $this->response->collection($areas, new AreaTransformer());
     }
-
-    public function query(Request $request, Point $point)
-    {
-
-    }
-
 
 }

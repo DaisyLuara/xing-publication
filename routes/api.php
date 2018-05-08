@@ -80,11 +80,16 @@ $api->version('v1', [
             $api->get('detail', 'FaceCountController@detail');
             $api->get('ageAndGender', 'FaceLogController@index');
 
-            //节目
+            //节目投放
             $api->get('userProject', 'ProjectController@userProject');
             $api->get('projects', 'ProjectController@index');
             $api->get('projects/launch', 'ProjectLaunchController@index');
             $api->get('staffs', 'ArUserController@index');
+
+            //远程搜索
+            $api->get('areas/query', 'AreaController@query');//区域搜索
+            $api->get('markets/query', 'MarketController@query');//商场搜索
+            $api->get('points/query', ['middleware' => ['role:super-admin|admin'], 'uses' => 'PointController@query']);//点位查询
 
             // 权限设置
             $api->get('system/users', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminUsersController@index']);
@@ -104,7 +109,6 @@ $api->version('v1', [
             $api->get('companies/{company}/customers/{customer}', 'AdminCustomersController@show');
             $api->post('companies/{company}/customers', ['middleware' => ['permission:company'], 'uses' => 'AdminCustomersController@store']);
             $api->patch('companies/{company}/customers/{customer}', ['middleware' => ['permission:company'], 'uses' => 'AdminCustomersController@update']);
-
 
         });
     });
