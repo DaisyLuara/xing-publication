@@ -19,16 +19,13 @@ class FaceCountTransformer extends TransformerAbstract
                 'count' => (int)$faceCount->playernum,
             ],
             [
-                'name' => '会员人数',
-                'count' => (int)$faceCount->lovenum,
+                'name' => '微信扫描人数',
+                'count' => (int)$faceCount->scannum,
+                'out' => (int)$faceCount->outnum,
             ],
             [
                 'name' => '转化人数',
-                'count' => (int)$faceCount->outnum,
-            ],
-            [
-                'name' => '微信扫描人数',
-                'count' => (int)$faceCount->scannum,
+                'count' => (int)$faceCount->lovenum,
             ],
         ];
     }
