@@ -1,5 +1,5 @@
 <template>
-  <div class="item-wrap-template" v-loading="loading">
+  <div class="item-wrap-template" :element-loading-text="setting.loadingText" v-loading="setting.loading">
     <div class="topbar">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item :to="{ path: '/program/item' }">节目投放管理</el-breadcrumb-item>
@@ -12,44 +12,44 @@
       </div>
       <el-form
         ref="projectForm"
-        :model="projectForm" label-width="100px">
-        <el-form-item label="节目名称">
-          <el-select v-model="projectForm.projectName" filterable placeholder="请选择">
+        :model="projectForm" label-width="150px">
+        <el-form-item label="节目名称" prop="project" :rules="[{ required: true, message: '请输入节目名称', trigger: 'submit' }]">
+          <el-select v-model="projectForm.project" filterable placeholder="请搜索" remote :remote-method="getProject" @change="projectChangeHandle">
             <el-option
               v-for="item in projectList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="区域">
-          <el-select v-model="projectForm.area" placeholder="请选择">
+        <el-form-item label="区域" prop="area"  :rules="[{ required: true, message: '请输入区域', trigger: 'submit' }]">
+          <el-select v-model="projectForm.area" placeholder="请选择" filterable @change="areaChangeHandle">
             <el-option
               v-for="item in areaList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="商场" prop="client">
-          <el-select v-model="projectForm.clientValue"  placeholder="请选择">
+        <el-form-item label="商场" prop="market" :rules="[{ required: true, message: '请输入商场', trigger: 'submit' }]">
+          <el-select v-model="projectForm.market"  placeholder="请搜索" filterable :loading="searchLoading" remote :remote-method="getMarket" @change="marketChangeHandle">
             <el-option
-              v-for="item in clientOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+              v-for="item in marketList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="点位">
-          <el-select v-model="projectForm.point" placeholder="请选择"  multiple>
+        <el-form-item label="点位" prop="point" :rules="[{ required: true, message: '请输入点位', trigger: 'submit' }]">
+          <el-select v-model="projectForm.point" placeholder="请选择"  multiple filterable @change="pointChangeHandle" :loading="searchLoading">
             <el-option
               v-for="item in pointList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
@@ -57,9 +57,9 @@
           <el-select v-model="projectForm.weekday" placeholder="请选择" filterable>
             <el-option
               v-for="item in weekdayList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
@@ -67,9 +67,9 @@
           <el-select v-model="projectForm.weekend" placeholder="请选择" filterable>
             <el-option
               v-for="item in weekendList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
@@ -77,28 +77,28 @@
           <el-select v-model="projectForm.define" placeholder="请选择" filterable>
             <el-option
               v-for="item in defineList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="投放开始时间">
+        <el-form-item label="投放开始时间" prop="sdate" :rules="[{ type: 'date', required: true, message: '请输入投放开始时间', trigger: 'submit' }]">
           <el-date-picker
           v-model="projectForm.sdate"
           type="date"
           placeholder="选择投放开始时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="投放开始时间">
+        <el-form-item label="投放结束时间" prop="edate" :rules="[{ type: 'date', required: true, message: '请输入投放结束时间', trigger: 'submit' }]">
           <el-date-picker
           v-model="projectForm.edate"
           type="date"
-          placeholder="选择投放开始时间">
+          placeholder="选择投放结束时间">
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="goNextStep">完成</el-button>
+          <el-button type="primary" @click="submit('projectForm')">完成</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -328,6 +328,7 @@
 </template>
 
 <script>
+import search from 'service/search'
 import {
   Form,
   Select,
@@ -338,6 +339,7 @@ import {
   DatePicker,
   MessageBox,
 } from 'element-ui'
+
 export default {
   components: {
     ElForm: Form,
@@ -350,28 +352,35 @@ export default {
   },
   data() {
     return {
-      items:[{ message: 'Foo',id:0 }],
-      playType: true,
-      switchValue: '',
-      userID: '',
-      step: 1,
-      loading: false,
+      // items:[{ message: 'Foo',id:0 }],
+      setting: {
+        isOpenSelectAll: true,
+        loading: false,
+        loadingText: "拼命加载中"
+      },
+      // playType: true,
+      // switchValue: '',
+      // userID: '',
+      // step: 1,
+      marketList: [],
+      // loading: false,
       weekdayList: [],
       weekendList: [],
       defineList: [],
-
+      pointList: [],
+      projectList: [],
+      searchLoading: false,
       projectForm: {
-        clientValue:'',
-        projectName: '',
+        project: '',
         area: '',
-        point: '',
+        market: '',
+        point: [],
         weekday: '',
         weekend: '',
         define: '',
         sdate: '',
         edate: '',
       },
-      projectList: [],
       areaList: [{
         value: '选项1',
         label: '上海'
@@ -379,41 +388,119 @@ export default {
         value: '选项2',
         label: '苏州'
       }],
-      checkOptions:[{
-        value: '选项1',
-        label: '李一'
-      }, {
-        value: '选项2',
-        label: '李二'
-      }],
-      pointList: [{
-        value: '选项1',
-        label: '浦东新区'
-      },{
-        value: '选项2',
-        label: '黄浦区'
-      }],
-      clientOptions: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }],
     }
   },
   mounted() {
   },
+  created() {
+    this.setting.loading = true
+    let moduleList = this.getModuleList()
+    let areaList = this.getAreaList()
+    Promise.all([moduleList, areaList]).then(() => {
+      // this.matchStoreIdToName()
+      this.setting.loading = false
+    }).catch((err) => {
+      console.log(err)
+      this.setting.loading = false
+    })
+  },
   methods: {
-    submit() {
-      MessageBox.alert('节目提交成功，节目已经进入审核阶段，审核结果会通过站内消息通知', '提示', {
-        confirmButtonText: '确定',
-        callback: action => {
-          // MessageBox.message({
-          //   type: 'info',
-          // });
+    projectChangeHandle() {
+      console.log(this.projectForm.project)
+    },
+    getProject(query) {
+      this.searchLoading = true
+      let args = {
+        name: query,
+      }
+      return search.getProjectList(this,args).then((response) => {
+        this.projectList = response.data
+        if(this.projectList.length == 0) {
+          this.projectForm.project = ''
+          this.projectForm.projectList = []
         }
-      });
+        this.searchLoading = false
+      }).catch(err => {
+        console.log(err)
+        this.searchLoading = false
+      })
+    },
+    getModuleList() {
+      return search.getModuleList(this).then((response) => {
+       let data = response.data
+       this.weekdayList = data
+       this.weekendList = data
+       this.defineList = data
+      }).catch(error => {
+        console.log(error)
+      this.setting.loading = false;
+      })
+    },
+    areaChangeHandle() {
+      console.log(this.projectForm.area)
+      this.projectForm.market = ''
+      this.getMarket(this.projectForm.market)
+    },
+    getAreaList () {
+      return search.getAeraList(this).then((response) => {
+       let data = response.data
+       this.areaList = data
+      }).catch(error => {
+        console.log(error)
+      this.setting.loading = false;
+      })
+    },
+    marketChangeHandle() {
+      console.log(this.projectForm.market)
+      this.projectForm.point = []
+      this.getPoint()
+    },
+    pointChangeHandle() {
+      console.log(this.projectForm.point)
+    },
+    getPoint() {
+      let args = {
+        include: 'market',
+        market_id: this.projectForm.market
+      }
+      this.searchLoading = true
+      return search.gePointList(this, args).then((response) => {
+        console.log(response)
+        this.pointList = response.data
+        this.searchLoading = false
+      }).catch(err => {
+        this.searchLoading = false
+        console.log(err)
+      })
+    },
+    getMarket(query) {
+      this.searchLoading = true
+      let args = {
+        name: query,
+        include: 'area',
+        area_id: this.projectForm.area
+      }
+      return search.getMarketList(this,args).then((response) => {
+        this.marketList = response.data
+        if(this.marketList.length == 0) {
+          this.projectForm.market = ''
+          this.projectForm.marketList = []
+        }
+        this.searchLoading = false
+      }).catch(err => {
+        console.log(err)
+        this.searchLoading = false
+      })
+    },
+    submit(formName) {
+      this.$refs[formName].validate((valid) => {
+        if(valid){
+          console.log('submit')
+        }else{
+          console.log('error submit');
+          return;
+        }
+      })
     },
     addProgram() {
       let i = this.items.length
