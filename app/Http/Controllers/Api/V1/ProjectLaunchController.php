@@ -31,6 +31,22 @@ class ProjectLaunchController extends Controller
             });
         }
 
+        if ($request->market_id) {
+            $market_id = $request->market_id;
+            $query->whereHas('point', function ($query) use ($market_id) {
+                $query->where('marketid', '=', $market_id);
+            });
+        }
+
+        if ($request->area_id) {
+            $area_id = $request->area_id;
+            $query->whereHas('point', function ($query) use ($area_id) {
+                $query->whereHas('market', function ($query) use ($area_id) {
+                    $query->where('areaid', '=', $area_id);
+                });
+            });
+        }
+
         $projects = $query->paginate(10);
         return $this->response->paginator($projects, new ProjectLaunchTransformer());
 
@@ -39,26 +55,26 @@ class ProjectLaunchController extends Controller
     //测试环境 使用 本地数据更新
     public function store(Request $request, ProjectLaunchLocal $projectLaunchLocal)
     {
-        $launches = $request->all();
-        if (count($launches)) {
-            $query = $projectLaunchLocal->query();
-            foreach ($launches as $launch) {
-                $query->create($launch);
-            }
-        }
-        return $this->response->noContent();
+//        $launches = $request->all();
+//        if (count($launches)) {
+//            $query = $projectLaunchLocal->query();
+//            foreach ($launches as $launch) {
+//                $query->create($launch);
+//            }
+//        }
+//        return $this->response->noContent();
     }
 
     public function update(Request $request, ProjectLaunchLocal $projectLaunchLocal)
     {
 
-        $launches = $request->all();
-        if (count($launches)) {
-            $query = $projectLaunchLocal->query();
-            foreach ($launches as $launch) {
-                $query->update(['tvoid' => $launch['tvoid']], $launches);
-            }
-        }
-        return $this->response->noContent();
+//        $launches = $request->all();
+//        if (count($launches)) {
+//            $query = $projectLaunchLocal->query();
+//            foreach ($launches as $launch) {
+//                $query->update(['tvoid' => $launch['tvoid']], $launches);
+//            }
+//        }
+//        return $this->response->noContent();
     }
 }
