@@ -8,22 +8,22 @@
               <el-input v-model="filters.name" placeholder="请输入节目名称" style="width: 300px;"></el-input>
             </el-form-item>
             <el-form-item label="" prop="area">
-              <el-select v-model="filters.area" placeholder="请选择区域">
+              <el-select v-model="filters.area" placeholder="请选择区域" @change="areaChangeHandle">
                 <el-option
                   v-for="item in areaList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
                 </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="" prop="market">
-              <el-select v-model="filters.clientValue"  placeholder="请选择商场">
+              <el-select v-model="filters.market" placeholder="请选择商场" filterable :loading="marketLoading" remote :remote-method="getMarket" @change="marketChangeHandle">
                 <el-option
                   v-for="item in marketList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
                 </el-option>
               </el-select>
             </el-form-item>
@@ -41,6 +41,7 @@
           <el-table-column
             prop="name"
             label="节目名称"
+            width="180"
             >
             <template slot-scope="scope">
               {{scope.row.project.name}}
@@ -65,7 +66,7 @@
           <el-table-column
             prop="market_name"
             label="商场"
-            >
+            width="180">
             <template slot-scope="scope">
               {{scope.row.point.market.name}}
             </template>
@@ -73,7 +74,7 @@
           <el-table-column
             prop="point_name"
             label="点位"
-            >
+            width="200">
             <template slot-scope="scope">
               {{scope.row.point.name}}
             </template>
@@ -81,17 +82,17 @@
           <el-table-column
             prop="created_at"
             label="时间"
-            >
+            width="180">
           </el-table-column>
           <el-table-column
             prop="start_date"
             label="开始时间"
-            >
+            width="180">
           </el-table-column>
           <el-table-column
             prop="end_date"
             label="结束时间"
-            >
+            width="180">
           </el-table-column>
           <el-table-column label="操作" width="200">
             <template slot-scope="scope">
@@ -117,6 +118,7 @@
 
 <script>
 import project from 'service/project'
+import search from 'service/search'
 
 import { Button, Input, Table, TableColumn, Pagination, Form, FormItem, MessageBox, DatePicker, Select, Option} from 'element-ui'
 
@@ -125,9 +127,10 @@ export default {
     return {
       filters: {
         name: '',
-        clientValue: '',
+        market: '',
         area: ''
       },
+      marketLoading: false,
       marketList: [],
       areaList: [],
       setting: {
@@ -150,6 +153,7 @@ export default {
   },
   created () {
     this.getProjectList()
+    this.getAreaList()
     let user_info = JSON.parse(localStorage.getItem('user_info'))
     this.arUserName = user_info.name
     this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
@@ -161,7 +165,9 @@ export default {
       let searchArgs = {
         page : this.pagination.currentPage,
         include: 'point.market.area,project',
-        project_name: this.filters.name
+        project_name: this.filters.name,
+        area_id: this.filters.area,
+        market_id: this.filters.market
       }
       project.getProjectList(this, searchArgs).then((response) => {
        let data = response.data
@@ -171,6 +177,32 @@ export default {
       }).catch(error => {
         console.log(error)
       this.setting.loading = false;
+      })
+    },
+    marketChangeHandle() {
+      console.log(this.filters.market)
+    },
+    areaChangeHandle() {
+      this.filters.market = ''
+      this.getMarket(this.filters.market)
+    },
+    getMarket(query) {
+      this.marketLoading = true
+      let args = {
+        name: query,
+        include: 'area',
+        area_id: this.filters.area
+      }
+      return search.getMarketList(this,args).then((response) => {
+        this.marketList = response.data
+        if(this.marketList.length == 0) {
+          this.filters.market = ''
+          this.marketList = []
+        }
+        this.marketLoading = false
+      }).catch(err => {
+        console.log(err)
+        this.marketLoading = false
       })
     },
     search (formName) {
@@ -184,6 +216,15 @@ export default {
     linkToAddItem () {
       this.$router.push({
         path: '/project/item/add'
+      })
+    },
+    getAreaList () {
+      return search.getAeraList(this).then((response) => {
+       let data = response.data
+       this.areaList = data
+      }).catch(error => {
+        console.log(error)
+      this.setting.loading = false;
       })
     },
     linkToEdit (id) {
