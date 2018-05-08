@@ -13,7 +13,7 @@ class ArUserController extends Controller
         if ($this->user()->isAdmin()) {
             $query = $arUser->query();
 
-            $arUsers = null;
+            $arUsers = collect();
             if ($request->name) {
                 $arUsers = $query->where('realname', 'like', '%' . $request->name . '%')->get();
             }
