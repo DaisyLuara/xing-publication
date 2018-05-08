@@ -148,7 +148,6 @@ export default {
       })
     },
     handleUser(){
-      console.log(2)
       this.$router.push({
         path: '/account/account/index'
       })
