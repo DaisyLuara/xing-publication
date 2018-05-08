@@ -18,4 +18,9 @@ class Point extends Model
     {
         return $this->belongsToMany(Project::class, 'istar_tv_oid', 'oid', 'default_plid');
     }
+
+    public function scene()
+    {
+        return $this->belongsTo(Scene::class, 'sid', 'sid');
+    }
 }
