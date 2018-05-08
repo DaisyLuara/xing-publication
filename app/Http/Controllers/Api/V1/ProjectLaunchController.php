@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Requests\Api\V1\ProjectLaunchRequest;
+use App\Models\ProjectLaunchLocal;
 use Illuminate\Http\Request;
 use App\Models\ProjectLaunch;
 use App\Transformers\ProjectLaunchTransformer;
@@ -32,6 +34,17 @@ class ProjectLaunchController extends Controller
 
         $projects = $query->paginate(10);
         return $this->response->paginator($projects, new ProjectLaunchTransformer());
+
+    }
+
+    public function store(ProjectLaunchRequest $request, ProjectLaunchLocal $projectLaunchLocal)
+    {
+
+
+    }
+
+    public function update()
+    {
 
     }
 }
