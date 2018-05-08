@@ -1,0 +1,1272 @@
+{
+	"variables": [],
+	"info": {
+		"name": "publication",
+		"_postman_id": "59c0941f-557b-f0e3-53a2-cd3ca302b6b5",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "登陆相关",
+			"description": "",
+			"item": [
+				{
+					"name": "图片验证码",
+					"request": {
+						"url": "http://{{host}}/api/captchas",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"phone\":\"13818403072\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "刷新token",
+					"request": {
+						"url": "http://{{host}}/api/authorizations/current",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "用户登录",
+					"request": {
+						"url": "http://{{host}}/api/authorizations",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\":\"17701628884\",\n\t\"password\":\"123456\",\n\t\"verification_key\":\"verificationCode_98TadYW6wicyxrq\",\n\t\"verification_code\":\"1234\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "发送短信验证码",
+					"request": {
+						"url": "http://{{host}}/api/verificationCodes",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"captcha_key\":\"captcha-V4cbVoRiKDErr9X\",\n   \"captcha_code\":\"436rs\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "用户中心",
+			"description": "",
+			"item": [
+				{
+					"name": "用户信息",
+					"request": {
+						"url": {
+							"raw": "http://{{host}}/api/user?include=permissions,roles&ar_user_id=",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"user"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "permissions,roles",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "ar_user_id",
+									"value": "",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_tokensa}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "修改用户",
+					"request": {
+						"url": "http://{{host}}/api/user",
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token1}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"name\":\"ccc\",\n   \"password\": \"123456zz\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "退出登录",
+					"request": {
+						"url": "http://{{host}}/api/authorizations/current",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic Og==",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "图像",
+			"description": "",
+			"item": [
+				{
+					"name": "查看头像",
+					"request": {
+						"url": "http://{{host}}/uploads/images/avatars/201804/21//1_1524299092_McVl0yUsiU.jpeg",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "上传头像",
+					"request": {
+						"url": "http://{{host}}/api/images",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token1}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"description": "",
+									"type": "file",
+									"src": "dockerlnmp.png"
+								},
+								{
+									"key": "type",
+									"value": "avatar",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "测试用接口",
+			"description": "",
+			"item": [
+				{
+					"name": "话题",
+					"description": "",
+					"item": [
+						{
+							"name": "查看分类",
+							"request": {
+								"url": "http://{{host}}/api/categories",
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "发布话题",
+							"request": {
+								"url": "http://{{host}}/api/topics",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_token1}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"title\":\"测试titless\",\n\t\"body\":\"测试body2\",\n\t\"category_id\":1,\n\t\"excerpt\":\"sadfadfadfasdfadfa\"\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "修改话题",
+							"request": {
+								"url": "http://{{host}}/api/topics/103",
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_token3}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"title\":\"测试titssslessssss\",\n\t\"body\":\"测试body2 话题更新了\",\n\t\"category_id\":1,\n\t\"excerpt\":\"sadfadfadfasdfsdfssadfa\"\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "话题列表",
+							"request": {
+								"url": {
+									"raw": "http://{{host}}/api/topics?include=user,category",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"topics"
+									],
+									"query": [
+										{
+											"key": "include",
+											"value": "user,category",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "某个用户话题列表",
+							"request": {
+								"url": "http://{{host}}/api/users/1/topics",
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "话题详情",
+							"request": {
+								"url": {
+									"raw": "http://{{host}}/api/topics/103?include=user.roles,category",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"topics",
+										"103"
+									],
+									"query": [
+										{
+											"key": "include",
+											"value": "user.roles,category",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_token3}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"content\":\"回复话题\"\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "回复",
+					"description": "",
+					"item": [
+						{
+							"name": "发表回复",
+							"request": {
+								"url": "http://{{host}}/api/topics/1/replies",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_token1}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"content\":\"这是一个回复好不好\"\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "删除某一话题的回复",
+							"request": {
+								"url": "http://{{host}}/api/topics/103/replies/4",
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_token2}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "用户注册",
+					"request": {
+						"url": "http://{{host}}/api/users",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"verification_key\":\"verificationCode_VfIFnQhsh5UPwJ8\",\n\t\"verification_code\":\"1234\",\n\t\"name\":\"test\",\n\t\"password\":\"123456\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "消息通知",
+			"description": "",
+			"item": [
+				{
+					"name": "消息通知列表",
+					"request": {
+						"url": "http://{{host}}/api/user/notifications",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_fawu}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "消息通知统计",
+					"request": {
+						"url": "http://{{host}}/api/user/notifications/stats",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_fawu}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "全部已读",
+					"request": {
+						"url": "http://{{host}}/api/user/read/notifications",
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_fawu}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "客户中心",
+			"description": "",
+			"item": [
+				{
+					"name": "负责人",
+					"description": "",
+					"item": [
+						{
+							"name": "负责人列表",
+							"request": {
+								"url": {
+									"raw": "http://{{host}}/api/companies/5/customers?include=company.user",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"companies",
+										"5",
+										"customers"
+									],
+									"query": [
+										{
+											"key": "include",
+											"value": "company.user",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_token2}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "负责人详情",
+							"request": {
+								"url": "http://{{host}}/api/companies/1/customers/2",
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_token1}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "修改负责人",
+							"request": {
+								"url": "http://{{host}}/api/companies/1/customers/2",
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_token1}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t    \"name\": \"上海某某科技公ss司\",\n\t    \"phone\": \"13818403071\"\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "创建负责人",
+							"request": {
+								"url": {
+									"raw": "http://{{host}}/api/companies/1/customers?include=company.user",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"companies",
+										"1",
+										"customers"
+									],
+									"query": [
+										{
+											"key": "include",
+											"value": "company.user",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_token2}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\" : \"陈经理aa\",\n  \"phone\":\"13818203271\"\n}"
+								},
+								"description": null
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "客户",
+					"description": "",
+					"item": [
+						{
+							"name": "客户列表",
+							"request": {
+								"url": {
+									"raw": "http://{{host}}/api/companies?include=user&name=腾讯",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"companies"
+									],
+									"query": [
+										{
+											"key": "include",
+											"value": "user",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "name",
+											"value": "腾讯",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_token1}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "客户详情",
+							"request": {
+								"url": {
+									"raw": "http://{{host}}/api/companies/1?include=customers",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"companies",
+										"1"
+									],
+									"query": [
+										{
+											"key": "include",
+											"value": "customers",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_token1}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "修改客户",
+							"request": {
+								"url": "http://{{host}}/api/companies/1",
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_token1}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"上海某某科技公ss司\",\n    \"address\": \"上海市浦东南路113s3号\",\n    \"status\": 2\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "创建客户",
+							"request": {
+								"url": {
+									"raw": "http://{{host}}/api/companies?include=user",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"companies"
+									],
+									"query": [
+										{
+											"key": "include",
+											"value": "user",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_token1}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\" : \"上海某某科技公司\",\n  \"address\":\"上海市浦东南路1133号\"\n}"
+								},
+								"description": null
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			]
+		},
+		{
+			"name": "投放",
+			"description": "",
+			"item": [
+				{
+					"name": "数据",
+					"description": "",
+					"item": [
+						{
+							"name": "漏斗数据",
+							"request": {
+								"url": {
+									"raw": "http://{{host}}/api/stats?start_date=2017-04-01&alias=isStarJT",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"stats"
+									],
+									"query": [
+										{
+											"key": "start_date",
+											"value": "2017-04-01",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "alias",
+											"value": "isStarJT",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_tokensa}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": "查询参数\n\talias=节目别名&\n\ttype=looknum|playernum& \n\tstart_date=开始日期&\n\tend_date=结束日期"
+							},
+							"response": []
+						},
+						{
+							"name": "分天数据",
+							"request": {
+								"url": {
+									"raw": "http://{{host}}/api/detail?start_date=2017-10-01&end_date=2018-05-04&alias=isStarJT",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"detail"
+									],
+									"query": [
+										{
+											"key": "start_date",
+											"value": "2017-10-01",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "end_date",
+											"value": "2018-05-04",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "alias",
+											"value": "isStarJT",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_token1}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": "查询参数\n\talias=节目别名&\n\ttype=looknum|playernum& \n\tstart_date=开始日期&\n\tend_date=结束日期"
+							},
+							"response": []
+						},
+						{
+							"name": "性别年龄",
+							"request": {
+								"url": {
+									"raw": "http://{{host}}/api/ageAndGender?start_date=2018-05-01&end_date=2018-05-04",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"ageAndGender"
+									],
+									"query": [
+										{
+											"key": "start_date",
+											"value": "2018-05-01",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "end_date",
+											"value": "2018-05-04",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_token1}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": "0-10 岁\n11-18 岁\n19-30 岁\n31-40 岁\n41-59 岁\n60岁以上"
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "节目过滤",
+					"request": {
+						"url": {
+							"raw": "http://{{host}}/api/userProject?ar_user_id=1080",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"userProject"
+							],
+							"query": [
+								{
+									"key": "ar_user_id",
+									"value": "1080",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_tokensa}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": "关联 点位信息\ninclude=points\n关联 点位，用户信息\ninclude=points.user\n"
+					},
+					"response": []
+				},
+				{
+					"name": "节目投放列表",
+					"request": {
+						"url": {
+							"raw": "http://{{host}}/api/projects/launch?include=point,project&ar_user_id=1044&project_name=嘻哈全屏",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"launch"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "point,project",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "ar_user_id",
+									"value": "1044",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "project_name",
+									"value": "嘻哈全屏",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token1}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "星视度用户过滤",
+					"request": {
+						"url": {
+							"raw": "http://{{host}}/api/staffs?name=黄",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"staffs"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "黄",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token1}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": "关联点位\n\tinclude=points\n关联点位对应的节目\n\tinclude=points.projects"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "设置",
+			"description": "",
+			"item": [
+				{
+					"name": "管理员添加用户",
+					"request": {
+						"url": {
+							"raw": "http://{{host}}/api/system/users?include=roles",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"system",
+								"users"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "roles",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_tokena}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"陈重\",\n\t\"phone\":13818423173,\n\t\"password\":\"123456\",\n\t\"role_id\":4\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "获取可用角色列表",
+					"request": {
+						"url": "http://{{host}}/api/system/roles",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_tokensa}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": "管理员添加用户的时候，根据当前角色，获取不同的角色列表。"
+					},
+					"response": []
+				},
+				{
+					"name": "用户列表",
+					"request": {
+						"url": {
+							"raw": "http://{{host}}/api/system/users?include=roles",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"system",
+								"users"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "roles",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_tokensa}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "用户详情",
+					"request": {
+						"url": {
+							"raw": "http://{{host}}/api/system/users/21?include=permissions,roles",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"system",
+								"users",
+								"21"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "permissions,roles",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_tokensa}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "管理员修改用户",
+					"request": {
+						"url": {
+							"raw": "http://{{host}}/api/system/users/3?include=permissions",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"system",
+								"users",
+								"3"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "permissions",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_tokena}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"杨浩然测试\",\n\t\"password\":\"1234567\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

@@ -22,12 +22,12 @@ class FaceLogTransformer extends TransformerAbstract
                 'female' => $faceLog->gnum,
             ],
             'age' => [
-                $faceLog->age10,
-                $faceLog->age18,
-                $faceLog->age30,
-                $faceLog->age40,
-                $faceLog->age60,
-                $faceLog->age61,
+                ['count' => $faceLog->age10, 'age' => '0-10岁'],
+                ['count' => $faceLog->age18, 'age' => '11-18岁'],
+                ['count' => $faceLog->age30, 'age' => '19-30岁'],
+                ['count' => $faceLog->age40, 'age' => '31-40岁'],
+                ['count' => $faceLog->age60, 'age' => '41-60岁'],
+                ['count' => $faceLog->age61, 'age' => '60岁以上']
             ]
         ];
     }

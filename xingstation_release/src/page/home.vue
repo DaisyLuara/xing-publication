@@ -29,8 +29,8 @@
       <div class="sidebar-user" v-popover:popover @click="handleUser">
         <img src="../assets/images/user-default-icon.png" alt="" class="avatar"/>
         <div class="sidebar-user-block">
-          <p class="sidebar-user-item sidebar-user-item-main" style="font-size: 20px;">{{name}}</p>
-          <p class="sidebar-user-item sidebar-user-item-sub" style="font-size: 16px;">{{role}}</p>
+          <p class="sidebar-user-item sidebar-user-item-main" style="font-size: 18px;">{{name}}</p>
+          <p class="sidebar-user-item sidebar-user-item-sub" style="font-size: 14px;">{{role}}</p>
         </div>
       </div>
     </div>
@@ -50,13 +50,20 @@ export default {
   data() {
     return {
       visible: false,
+      setIntervalValue: ''
     }
   },
   created() {
-    // this.testTimeout()
     let userInfo = JSON.parse(localStorage.getItem('user_info'))
     this.$store.commit('setCurUserInfo', userInfo)
     this.notificationStats()
+  },
+  beforeMount () {
+    let _self = this
+    this.setIntervalValue = setInterval(function(){
+      _self.notificationStats()
+    },120000)
+    // clearInterval(a)
   },
   computed: {
     modules() {
@@ -124,26 +131,23 @@ export default {
       return this.$store.state.notificationCount.noticeCount
     }
   },
+  mounted() {
+    
+  },
   methods: {
-    // testTimeout() {
-    //   let a = setInterval(() => {
-    //     clearInterval(a)
-    //     console.log(1)
-    //   }, 2000) 
-    // },
     logout() {
       this.visible = false
       auth.logout(this)
     },
     notificationStats() {
       return notice.notificationStats(this).then((response) => {
+        response.setIntervalValue = this.setIntervalValue
         this.$store.commit('saveNotificationState', response)
       }).catch(err => {
         console.log(err)
       })
     },
     handleUser(){
-      console.log(2)
       this.$router.push({
         path: '/account/account/index'
       })
