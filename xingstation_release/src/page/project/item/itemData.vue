@@ -3,15 +3,15 @@
     <div class="headline-wrapper">
       <div>
         <span>节目名称：{{pointName}} </span>
-        <el-select v-model="userSelected" filterable @change="pointHandle" placeholder="请选择用户(可搜索)" remote :remote-method="getUser" v-if="showUser">
+        <el-select v-model="userSelect" filterable placeholder="请选择用户(可搜索)" v-if="showUser" :loading="projectLoading" remote :remote-method="getUser" @change="userChangeHandle">
           <el-option
-            v-for="item in pointOptions"
+            v-for="item in userList"
             :key="item.id"
             :label="item.name"
-            :value="item.name">
+            :value="item.id">
           </el-option>
         </el-select>
-        <el-select v-model="projectSelect" filterable placeholder="请选择点位(可搜索)" remote :remote-method="getProject" @change="projectChangeHandle()">
+        <el-select v-model="projectSelect" filterable placeholder="请选择节目(可搜索)" :loading="projectLoading" remote :remote-method="getProject" @change="projectChangeHandle">
           <el-option
             v-for="item in projectList"
             :key="item.id"
@@ -19,6 +19,7 @@
             :value="item.alias">
           </el-option>
         </el-select>
+        <el-button @click="searchHandle">搜索节目</el-button>
       </div>
       <el-date-picker
       v-model="dateTime"
@@ -80,7 +81,7 @@
 </template>
 <script>
 import stats from 'service/stats'
-import { Row, Col, DatePicker, Select, Option} from 'element-ui'
+import { Row, Col, DatePicker, Select, Option, Button} from 'element-ui'
 
 export default {
   components:{
@@ -88,6 +89,7 @@ export default {
     'el-col': Col,
     'el-date-picker': DatePicker,
     'el-select': Select,
+    'el-button': Button,
     'el-option': Option
   },
   data(){
@@ -96,7 +98,7 @@ export default {
       dateTime: [new Date().getTime() - 3600 * 1000 * 24 * 6, new Date().getTime()],
       pickerOptions2: {
         disabledDate(time) {
-          return time.getTime() < new Date('2017-12-31');
+          return time.getTime() < new Date('2016-12-31');
         }
       },
       projectSelect: '',
@@ -157,7 +159,6 @@ export default {
           dashStyle: 'shortDash',
           color: "#1e9f8e",
           name:"年龄统计",
-          // data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
         }]
       },
       sexPieOptions : {
@@ -199,18 +200,11 @@ export default {
         series: [{
           type: 'pie',
           name: '性别访问数',
-          data: [{name:'女',y: 45.0, color: '#7cb5ec'},
-            {
-              name: '男',
-              y: 18.8,
-              sliced: true,
-              selected: true,
-              color: '#90ed7d'
-            }]
         }]
       },
       peopleCount: [],
       type: '',
+      userList: [],
       ageType: false,
       sexType: false,
       pointName:'',
@@ -218,15 +212,7 @@ export default {
       poepleCountFlag: false,
       ageFlag: false,
       sexFlag: false,
-      pointOptions: [{
-        value: '选项1',
-        label: '凯德'
-      },{
-        value: '选项1',
-        label: '苏州中心'
-      }],
-      pointSelected: '',
-      userSelected: '',
+      userSelect: '',
       projectAlias: ''
     }
   },
@@ -234,7 +220,6 @@ export default {
     this.pointName = this.$route.query.name
     this.projectSelect = this.pointName
     this.projectAlias = this.$route.query.alias
-    // this.getPointList()
     this.getPeopleCount()
     this.getAgeAndGender()
     this.loading = false
@@ -252,44 +237,100 @@ export default {
   },
   
   methods:{
-    projectChangeHandle(){
+    searchHandle() {
       this.projectAlias = this.projectSelect
-      console.log(this.projectSelect)
-
-    },
-    getUser() {
-      return stats.getUser(this).then((response) => {
-        console.log(response)
-        // this.poepleCountFlag = false
-       
-      }).catch(err => {
-        console.log(err)
-        // this.poepleCountFlag = false
-        
-      })
-    },
-    getProject(query) {
-      if(this.showUser){
-        } else {
-        let user_info = JSON.parse(localStorage.getItem('user_info'))
-        this.arUserId = user_info.ar_user_id
+      if(/.*[\u4e00-\u9fa5]+.*$/.test(this.projectAlias)){
+        this.projectAlias = this.$route.query.alias
       }
+      let dateCount = (this.dateTime[1]-this.dateTime[0])/3600/1000/24
+      if(dateCount > 29){
+        this.$message({
+          type: 'warning',
+          message: '时间范围不能超过30天'
+        });
+      }else{
+        this.getAgeAndGender();
+        this.getPeopleCount()
+        }
+    },
+    projectChangeHandle() {
+      this.projectAlias = this.projectSelect
+      console.log(this.projectAlias)
+    },
+    userChangeHandle(){
+      this.arUserId = this.userSelect
+      this.projectSelect = ''
+      if(this.arUserId) {
+        this.getProject('')
+      }
+    },
+    getUser(query) {
       let args = {
-        ar_user_id: this.arUserId,
         name: query
       }
       if (query !== '') {
         this.projectLoading = true
-        setTimeout(() => {
-          return stats.getProject(this,args).then((response) => {
-            this.projectList = response.data
+          return stats.getUser(this, args).then((response) => {
+            this.userList = response.data
+            if(this.userList.length == 0) {
+              this.projectList = []
+              this.projectList.unshift({id: -1, name:'',alias: ''}) 
+              this.projectSelect = ''
+            }
+            console.log(this.projectList)
             this.projectLoading = false
           }).catch(err => {
             console.log(err)
             this.projectLoading = false
           })
-        }, 1000);
-      } 
+      }else{
+        this.userSelect = ''
+        this.userList = []
+        return false
+      }
+    },
+    getProject(query) {
+      let args = {
+        ar_user_id: this.arUserId,
+        name: query
+      }
+      if(this.showUser){
+        // if(query === '') {
+        //   this.projectSelect == query
+        // }
+        console.log(this.arUserId)
+        this.projectLoading = true
+        if(!this.arUserId){
+          delete args.ar_user_id
+        } 
+        console.log(args)
+        return stats.getProject(this,args).then((response) => {
+          this.projectList = response.data
+          console.log(response)
+          this.projectList.unshift({id: -1, name:'',alias: ''}) 
+          this.projectLoading = false
+        }).catch(err => {
+          console.log(err)
+          this.projectLoading = false
+        })
+        } else {
+          let user_info = JSON.parse(localStorage.getItem('user_info'))
+          this.arUserId = user_info.ar_user_id
+          if (query !== '') {
+            this.projectLoading = true
+              return stats.getProject(this,args).then((response) => {
+                this.projectList = response.data
+                this.projectLoading = false
+              }).catch(err => {
+                console.log(err)
+                this.projectLoading = false
+            })
+        }else{
+          this.projectSelect = ''
+          this.projectList = []
+          return false
+        }
+      }
     },
     getPeopleCount(){
       this.poepleCountFlag = true
@@ -299,7 +340,14 @@ export default {
         args = {
           start_date : this.handleDateTransform(this.dateTime[0]),
           end_date: this.handleDateTransform(new Date(this.dateTime[1]).getTime()),
-          alias: this.projectAlias
+          alias: this.projectAlias,
+          ar_user_id: this.arUserId
+        }
+        if(!this.projectSelect) {
+          delete args.alias
+        }
+        if(!this.arUserId) {
+          delete args.ar_user_id
         }
       }else{
         this.$message({
@@ -327,7 +375,14 @@ export default {
         args = {
           start_date : this.handleDateTransform(this.dateTime[0]),
           end_date: this.handleDateTransform(new Date(this.dateTime[1]).getTime()),
-          alias: this.projectAlias
+          alias: this.projectAlias,
+          ar_user_id: this.arUserId
+        }
+        if(!this.projectSelect) {
+          delete args.alias
+        }
+        if(!this.arUserId) {
+          delete args.ar_user_id
         }
       }else{
         this.$message({
@@ -383,7 +438,14 @@ export default {
           start_date : this.handleDateTransform(this.dateTime[0]),
           end_date: this.handleDateTransform(new Date(this.dateTime[1]).getTime()),
           type: this.type,
-          alias: this.projectAlias
+          alias: this.projectAlias,
+          ar_user_id: this.arUserId
+        }
+        if(!this.projectSelect) {
+          delete args.alias
+        }
+        if(!this.arUserId) {
+          delete args.ar_user_id
         }
       }else{
         this.$message({
@@ -399,14 +461,16 @@ export default {
         let dateArr = []
         let newDateArr = []
         let dateCount = (this.dateTime[1]-this.dateTime[0])/3600/1000/24 + 1
-        if(response.length>0){
-          for(let j = 0; j < response.length; j++){
-            dateArr.push(response[j].face_count_logs)
+        let res = response.data
+        if(res.length > 0){
+          for(let j = 0; j < res.length; j++){
+            dateArr.push(res[j].date)
           }
           for(let i = 0; i < dateCount; i++){
             let startDate = new Date(this.dateTime[0]).getTime()
-            newDateArr = this.updateDayArr(dateArr,this.handleDateTransform(startDate + 3600 * 1000 * 24 * i),response)
+            newDateArr = this.updateDayArr(dateArr,this.handleDateTransform(startDate + 3600 * 1000 * 24 * i),res)
           }
+          
           newDateArr.sort(this.sortDate)
           for(let k = 0; k < newDateArr.length; k++){
             dataLine.push({'y':newDateArr[k].count,'name':newDateArr[k].date})
@@ -415,7 +479,7 @@ export default {
         }else{
           for(let a = 0; a < dateCount; a++){
             let startDate = new Date(this.dateTime[0]).getTime()
-            newDateArr = this.updateDayArr(dateArr,this.handleDateTransform(startDate + 3600 * 1000 * 24 * a),response)
+            newDateArr = this.updateDayArr(dateArr,this.handleDateTransform(startDate + 3600 * 1000 * 24 * a), res)
           }
           newDateArr.sort(this.sortDate)
           for(let h = 0; h < newDateArr.length; h++){
@@ -429,23 +493,6 @@ export default {
         this.poepleCountFlag = false
       })
     },
-    getPointList(){
-      stats.getPointList(this).then((response) => {
-       console.log(response)
-       this.pointOptions = response
-       this.pointSelected = parseInt(this.$route.query.id)
-      }).catch(err => {
-        console.log(err)
-      })
-    },
-    pointHandle(){
-    //   console.log(this.pointSelected)
-    // this.currentPointId = this.pointSelected
-    // this.getPeopleCount()
-    // this.getAgeInfo()
-    // this.getGenderInfo()
-    this.loading = false
-    },
     lineDataHandle(obj){
       this.active = obj.name
       this.type = obj.alias
@@ -453,7 +500,7 @@ export default {
     },
     updateDayArr(oldArr, newElement,res){
       if (oldArr.indexOf(newElement) === -1) {
-        res.push({"date":newElement,'count':0})
+        res.push({'count':0,"date":newElement})
         return res;
       } else {
         return res
