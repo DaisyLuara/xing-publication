@@ -12,12 +12,12 @@ class AdLaunchTransformer extends TransformerAbstract
     {
         return [
             'id' => $adLaunch->aoid,
-            'point' => $adLaunch->area->name.'-'.$adLaunch->market->name.'-'.$adLaunch,
+            'point' => $adLaunch->area->name.'-'.$adLaunch->market->name,
             'advertiser' => $adLaunch->advertiser->name,
             'advertisement' => $adLaunch->advertisement->name,
             'adType' => $adLaunch->advertisement->type,
             'link'=>$adLaunch->advertisement->link,
-            'size'=>($adLaunch->advertisement->size)/1024/1024,
+            'size'=>round(($adLaunch->advertisement->size)/1024/1024,1),
             'kTime'=>$adLaunch->ktime,
             'startDate'=>date('Y-m-d H:i:s',$adLaunch->sdate),
             'endDate'=>date('Y-m-d H:i:s',$adLaunch->edate),
