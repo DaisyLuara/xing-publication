@@ -16,7 +16,8 @@
           </span>
           <el-button size="small" type="success" @click="linkToAddItem">投放节目</el-button>
         </div>
-        <el-table :data="tableData" style="width: 100%">
+        <el-table :data="tableData" style="width: 100%" highlight-current-row>
+          <el-table-column type="selection" width="55" ></el-table-column>
           <el-table-column
             prop="name"
             label="节目名称"
@@ -34,8 +35,24 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="pointName"
+            prop="areaName"
             label="区域"
+            >
+            <template slot-scope="scope">
+              {{scope.row.point.market.area.name}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="market_name"
+            label="商场"
+            >
+            <template slot-scope="scope">
+              {{scope.row.point.market.name}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="point_name"
+            label="点位"
             >
             <template slot-scope="scope">
               {{scope.row.point.name}}
@@ -119,7 +136,7 @@ export default {
       this.setting.loading = true;
       let searchArgs = {
         page : this.pagination.currentPage,
-        include: 'point,project',
+        include: 'point.market.area,project',
         project_name: this.filters.name
       }
       project.getProjectList(this, searchArgs).then((response) => {
