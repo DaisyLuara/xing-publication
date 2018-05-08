@@ -15,22 +15,4 @@ class AdvertiserController extends Controller
         return $this->response->paginator($advertiser, new AdvertiserTransformer());
     }
 
-    public function query(Request $request, Advertiser $advertiser)
-    {
-        $query = $advertiser->query();
-        $advertiser = collect();
-        if (!$request->name && !$request->atid) {
-            return $this->response->collection($advertiser, new AdvertiserTransformer());
-        }
-
-        if ($request->has('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
-        }
-
-        if ($request->has('atid')) {
-            $query->where('atid', '=', $request->atid);
-        }
-        $advertiser = $query->get();
-        return $this->response->paginator($advertiser, new AdvertiserTransformer());
-    }
 }

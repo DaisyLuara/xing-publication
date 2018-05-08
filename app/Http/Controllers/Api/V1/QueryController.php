@@ -6,11 +6,17 @@ use App\Transformers\AreaTransformer;
 use App\Transformers\MarketTransformer;
 use App\Transformers\PointTransformer;
 use App\Transformers\ProjectLaunchTplTransformer;
+use App\Transformers\AdTradeTransformer;
+use App\Transformers\AdvertiserTransformer;
+use App\Transformers\AdvertisementTransformer;
 use Illuminate\Http\Request;
 use App\Models\Market;
 use App\Models\Area;
 use App\Models\Point;
 use App\Models\ProjectLaunchTpl;
+use App\Models\AdTrade;
+use App\Models\Advertiser;
+use App\Models\Advertisement;
 
 class QueryController extends Controller
 {
@@ -78,6 +84,55 @@ class QueryController extends Controller
 
         return $this->response->collection($templates, new ProjectLaunchTplTransformer());
 
+    }
+
+
+    public function adTradeQuery(Request $request, AdTrade $adTrade)
+    {
+        $query = $adTrade->query();
+        if ($request->name) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+        $adTrade = $query->get();
+        return $this->response->collection($adTrade, new AdTradeTransformer());
+    }
+
+    public function advertiserQuery(Request $request, Advertiser $advertiser)
+    {
+        $query = $advertiser->query();
+        $advertiser = collect();
+        if (!$request->name && !$request->atid) {
+            return $this->response->collection($advertiser, new AdvertiserTransformer());
+        }
+
+        if ($request->name) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        if ($request->atid) {
+            $query->where('atid', '=', $request->atid);
+        }
+        $advertiser = $query->get();
+        return $this->response->paginator($advertiser, new AdvertiserTransformer());
+    }
+
+    public function advertisementQuery(Request $request, Advertisement $advertisement)
+    {
+        $query = $advertisement->query();
+        $advertisement = collect();
+        if (!$request->atiid && !$request->name) {
+            return $this->response->collection($advertisement, new AdvertisementTransformer());
+        }
+
+        if ($request->name) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        if ($request->atiid) {
+            $query->where('atiid', '=', $request->atiid);
+        }
+        $advertisement = $query->get();
+        return $this->response->collection($advertisement, new AdvertisementTransformer());
     }
 
 }

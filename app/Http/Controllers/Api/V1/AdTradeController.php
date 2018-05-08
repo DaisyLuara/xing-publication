@@ -15,13 +15,4 @@ class AdTradeController extends Controller
         return $this->response->paginator($adTrade, new AdTradeTransformer());
     }
 
-    public function query(Request $request, AdTrade $adTrade)
-    {
-        $query = $adTrade->query();
-        if($request->name){
-            $query->where('name', 'like', '%' . $request->name . '%');
-        }
-        $adTrade = $query->get();
-        return $this->response->collection($adTrade, new AdTradeTransformer());
-    }
 }
