@@ -2,7 +2,8 @@ import {router} from '../main'
 const STAFFS_API = '/api/staffs'
 const USER_PROJECT_API = '/api/userProject'
 const STATS_API = '/api/stats'
-const DAY_DETAIL_API = 'api/detail'
+const DAY_DETAIL_API = '/api/detail'
+const AGE_GENDER_API = '/api/ageAndGender'
 export default {
   getUser(context,args) {
     return new Promise(function(resolve, reject){
@@ -40,5 +41,14 @@ export default {
       })
     })
   },
+  getAgeAndGender(context, args){
+    return new Promise(function(resolve, reject){
+      context.$http.get(AGE_GENDER_API, {params:args}).then(response => {
+        resolve(response.data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  }
 
 }
