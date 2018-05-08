@@ -113,7 +113,7 @@ class QueryController extends Controller
             $query->where('atid', '=', $request->atid);
         }
         $advertiser = $query->get();
-        return $this->response->paginator($advertiser, new AdvertiserTransformer());
+        return $this->response->collection($advertiser, new AdvertiserTransformer());
     }
 
     public function advertisementQuery(Request $request, Advertisement $advertisement)
