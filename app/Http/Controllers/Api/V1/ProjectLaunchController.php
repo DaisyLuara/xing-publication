@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Requests\Api\V1\ProjectLaunchRequest;
 use App\Models\ProjectLaunchLocal;
 use Illuminate\Http\Request;
 use App\Models\ProjectLaunch;
@@ -37,14 +36,29 @@ class ProjectLaunchController extends Controller
 
     }
 
-    public function store(ProjectLaunchRequest $request, ProjectLaunchLocal $projectLaunchLocal)
+    //测试环境 使用 本地数据更新
+    public function store(Request $request, ProjectLaunchLocal $projectLaunchLocal)
     {
-
-
+        $launches = $request->all();
+        if (count($launches)) {
+            $query = $projectLaunchLocal->query();
+            foreach ($launches as $launch) {
+                $query->create($launch);
+            }
+        }
+        return $this->response->noContent();
     }
 
-    public function update()
+    public function update(Request $request, ProjectLaunchLocal $projectLaunchLocal)
     {
 
+        $launches = $request->all();
+        if (count($launches)) {
+            $query = $projectLaunchLocal->query();
+            foreach ($launches as $launch) {
+                $query->update(['tvoid' => $launch['tvoid']], $launches);
+            }
+        }
+        return $this->response->noContent();
     }
 }

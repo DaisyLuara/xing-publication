@@ -85,6 +85,7 @@ $api->version('v1', [
             $api->get('projects', 'ProjectController@index');
             $api->get('projects/launch', 'ProjectLaunchController@index');
             $api->get('staffs', 'ArUserController@index');
+            $api->post('projects/launch', 'ProjectLaunchController@store');
 
             //远程搜索
             $api->get('areas/query', 'AreaController@query');//区域搜索
