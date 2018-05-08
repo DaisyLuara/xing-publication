@@ -18,4 +18,14 @@ class Point extends Model
     {
         return $this->belongsToMany(Project::class, 'istar_tv_oid', 'oid', 'default_plid');
     }
+
+    public function area()
+    {
+        return $this->hasOne(Area::class, 'areaid', 'areaid');
+    }
+
+    public function market()
+    {
+        return $this->hasOne(Market::class, 'marketid', 'marketid');
+    }
 }
