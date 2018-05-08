@@ -825,7 +825,7 @@
 							"name": "漏斗数据",
 							"request": {
 								"url": {
-									"raw": "http://{{host}}/api/stats?start_date=2017-04-01&alias=isStarJT",
+									"raw": "http://{{host}}/api/stats?start_date=2018-04-01&alias=isStarJT",
 									"protocol": "http",
 									"host": [
 										"{{host}}"
@@ -837,7 +837,7 @@
 									"query": [
 										{
 											"key": "start_date",
-											"value": "2017-04-01",
+											"value": "2018-04-01",
 											"equals": true,
 											"description": ""
 										},
@@ -867,7 +867,7 @@
 							"name": "分天数据",
 							"request": {
 								"url": {
-									"raw": "http://{{host}}/api/detail?start_date=2017-10-01&end_date=2018-05-04&alias=isStarJT",
+									"raw": "http://{{host}}/api/detail?start_date=2018-06-01&end_date=2018-05-04",
 									"protocol": "http",
 									"host": [
 										"{{host}}"
@@ -879,19 +879,13 @@
 									"query": [
 										{
 											"key": "start_date",
-											"value": "2017-10-01",
+											"value": "2018-06-01",
 											"equals": true,
 											"description": ""
 										},
 										{
 											"key": "end_date",
 											"value": "2018-05-04",
-											"equals": true,
-											"description": ""
-										},
-										{
-											"key": "alias",
-											"value": "isStarJT",
 											"equals": true,
 											"description": ""
 										}
@@ -915,7 +909,7 @@
 							"name": "性别年龄",
 							"request": {
 								"url": {
-									"raw": "http://{{host}}/api/ageAndGender?start_date=2018-05-01&end_date=2018-05-04",
+									"raw": "http://{{host}}/api/ageAndGender?start_date=2018-06-01&end_date=2018-05-04",
 									"protocol": "http",
 									"host": [
 										"{{host}}"
@@ -927,7 +921,7 @@
 									"query": [
 										{
 											"key": "start_date",
-											"value": "2018-05-01",
+											"value": "2018-06-01",
 											"equals": true,
 											"description": ""
 										},
@@ -955,42 +949,6 @@
 						}
 					],
 					"_postman_isSubFolder": true
-				},
-				{
-					"name": "节目过滤",
-					"request": {
-						"url": {
-							"raw": "http://{{host}}/api/userProject?ar_user_id=1080",
-							"protocol": "http",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"userProject"
-							],
-							"query": [
-								{
-									"key": "ar_user_id",
-									"value": "1080",
-									"equals": true,
-									"description": ""
-								}
-							],
-							"variable": []
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{jwt_tokensa}}",
-								"description": ""
-							}
-						],
-						"body": {},
-						"description": "关联 点位信息\ninclude=points\n关联 点位，用户信息\ninclude=points.user\n"
-					},
-					"response": []
 				},
 				{
 					"name": "节目投放列表",
@@ -1038,42 +996,6 @@
 						],
 						"body": {},
 						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "星视度用户过滤",
-					"request": {
-						"url": {
-							"raw": "http://{{host}}/api/staffs?name=黄",
-							"protocol": "http",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"staffs"
-							],
-							"query": [
-								{
-									"key": "name",
-									"value": "黄",
-									"equals": true,
-									"description": ""
-								}
-							],
-							"variable": []
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{jwt_token1}}",
-								"description": ""
-							}
-						],
-						"body": {},
-						"description": "关联点位\n\tinclude=points\n关联点位对应的节目\n\tinclude=points.projects"
 					},
 					"response": []
 				}
@@ -1262,6 +1184,196 @@
 							"mode": "raw",
 							"raw": "{\n\t\"name\":\"杨浩然测试\",\n\t\"password\":\"1234567\"\n}"
 						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "远程搜索",
+			"description": "",
+			"item": [
+				{
+					"name": "节目搜索",
+					"request": {
+						"url": {
+							"raw": "http://{{host}}/api/userProject?name=街头",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"userProject"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "街头",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_tokensa}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": "关联 点位信息\ninclude=points\n关联 点位，用户信息\ninclude=points.user\n"
+					},
+					"response": []
+				},
+				{
+					"name": "星视度用户搜索",
+					"request": {
+						"url": "http://{{host}}/api/staffs",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_tokensa}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": "关联点位\n\tinclude=points\n关联点位对应的节目\n\tinclude=points.projects"
+					},
+					"response": []
+				},
+				{
+					"name": "区域搜索",
+					"request": {
+						"url": {
+							"raw": "http://{{host}}/api/areas/query?name=上海",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"areas",
+								"query"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "上海",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token1}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "商场搜索",
+					"request": {
+						"url": {
+							"raw": "http://{{host}}/api/markets/query?&include=area&area_id=2",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"markets",
+								"query"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "area",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "area_id",
+									"value": "2",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "",
+									"value": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token1}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": "支持根据 商场名称 或者 根据区域ID查询数据"
+					},
+					"response": []
+				},
+				{
+					"name": "点位搜索",
+					"request": {
+						"url": {
+							"raw": "http://{{host}}/api/points/query?&market_id=38&include=market",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"points",
+								"query"
+							],
+							"query": [
+								{
+									"key": "market_id",
+									"value": "38",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "include",
+									"value": "market",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "",
+									"value": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_tokena}}",
+								"description": ""
+							}
+						],
+						"body": {},
 						"description": ""
 					},
 					"response": []

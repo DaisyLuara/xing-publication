@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Models\FaceCount;
+use App\Transformers\FaceCountDetailTransformer;
 use App\Transformers\FaceCountTransformer;
 use Carbon\Carbon;
 use DB;
@@ -34,7 +35,7 @@ class FaceCountController extends Controller
             ->groupBy(DB::raw("date_format(date,'%Y-%m-%d')"))
             ->get();
 
-        return $this->response->array($faceCount);
+        return $this->response->collection($faceCount, new FaceCountDetailTransformer());
     }
 
     private function queryInit($request, $query)
@@ -55,7 +56,7 @@ class FaceCountController extends Controller
 
     }
 
-    public function getDefaultParams($request)
+    private function getDefaultParams($request)
     {
         $start_date = $request->has('start_date') ? (new Carbon($request->start_date))->toDateString() : Carbon::now()->addDays(-7)->toDateString();
         $end_date = $request->has('end_date') ? (new Carbon($request->end_date))->toDateString() : Carbon::now()->toDateString();

@@ -7,7 +7,7 @@ use League\Fractal\TransformerAbstract;
 
 class PointTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['projects', 'arUsers'];
+    protected $availableIncludes = ['projects', 'arUsers', 'market'];
 
     public function transform(Point $point)
     {
@@ -29,6 +29,11 @@ class PointTransformer extends TransformerAbstract
     public function includeArUsers(Point $point)
     {
         return $this->collection($point->arUsers, new ArUserTransformer());
+    }
+
+    public function includeMarket(Point $point)
+    {
+        return $this->item($point->market, new MarketTransformer());
     }
 
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Models\ProjectLaunchLocal;
 use Illuminate\Http\Request;
 use App\Models\ProjectLaunch;
 use App\Transformers\ProjectLaunchTransformer;
@@ -33,5 +34,31 @@ class ProjectLaunchController extends Controller
         $projects = $query->paginate(10);
         return $this->response->paginator($projects, new ProjectLaunchTransformer());
 
+    }
+
+    //测试环境 使用 本地数据更新
+    public function store(Request $request, ProjectLaunchLocal $projectLaunchLocal)
+    {
+        $launches = $request->all();
+        if (count($launches)) {
+            $query = $projectLaunchLocal->query();
+            foreach ($launches as $launch) {
+                $query->create($launch);
+            }
+        }
+        return $this->response->noContent();
+    }
+
+    public function update(Request $request, ProjectLaunchLocal $projectLaunchLocal)
+    {
+
+        $launches = $request->all();
+        if (count($launches)) {
+            $query = $projectLaunchLocal->query();
+            foreach ($launches as $launch) {
+                $query->update(['tvoid' => $launch['tvoid']], $launches);
+            }
+        }
+        return $this->response->noContent();
     }
 }

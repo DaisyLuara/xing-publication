@@ -19,13 +19,23 @@ class Point extends Model
         return $this->belongsToMany(Project::class, 'istar_tv_oid', 'oid', 'default_plid');
     }
 
+<<<<<<< HEAD
     public function area()
     {
         return $this->hasOne(Area::class, 'areaid', 'areaid');
+=======
+    public function scene()
+    {
+        return $this->belongsTo(Scene::class, 'sid', 'sid');
+>>>>>>> aa819bdd18dd85ea411ee984ace544037a07f27c
     }
 
     public function market()
     {
+<<<<<<< HEAD
         return $this->hasOne(Market::class, 'marketid', 'marketid');
+=======
+        return $this->belongsTo(Market::class, 'marketid', 'marketid');
+>>>>>>> aa819bdd18dd85ea411ee984ace544037a07f27c
     }
 }

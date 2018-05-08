@@ -3,29 +3,30 @@
     <div class="headline-wrapper">
       <div>
         <span>节目名称：{{pointName}} </span>
-        <el-select v-model="userSelected" filterable @change="pointHandle" placeholder="请选择用户(可搜索)">
+        <el-select v-model="userSelect" filterable placeholder="请选择用户(可搜索)" v-if="showUser" :loading="projectLoading" remote :remote-method="getUser" @change="userChangeHandle">
           <el-option
-            v-for="item in pointOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
+            v-for="item in userList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
           </el-option>
         </el-select>
-        <el-select v-model="pointSelected" filterable @change="pointHandle" placeholder="请选择点位(可搜索)">
+        <el-select v-model="projectSelect" filterable placeholder="请选择节目(可搜索)" :loading="projectLoading" remote :remote-method="getProject" @change="projectChangeHandle">
           <el-option
-            v-for="item in pointOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
+            v-for="item in projectList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.alias">
           </el-option>
         </el-select>
+        <el-button @click="searchHandle">搜索节目</el-button>
       </div>
       <el-date-picker
       v-model="dateTime"
       type="daterange"
       start-placeholder="开始日期"
       end-placeholder="结束日期"
-      :default-value="dateTime" :picker-options="pickerOptions2" @change="dateChangeHandle" :clearable="false">
+      :default-value="dateTime" :picker-options="pickerOptions2" @change="dateChangeHandle" :clearable="false" style="width:230px">
       </el-date-picker>
     </div>
     <div class="content-wrapper" v-loading="poepleCountFlag">
@@ -35,7 +36,10 @@
             <i class="title">
               {{item.name}}
             </i>
-            <span class="count">
+            <span class="count" v-if="item.alias === 'scannum'">
+              {{item.count}} / {{(item.count==0 & item.out == 0) ? 0 : new Number((item.count/item.out)*100).toFixed(1)}}%
+            </span>
+            <span class="count" v-if="item.alias !== 'scannum'">
               {{item.count}}
             </span>
             <i class="arrow-icon"></i>
@@ -77,9 +81,7 @@
 </template>
 <script>
 import stats from 'service/stats'
-
-import { Row, Col, DatePicker, Select, Option} from 'element-ui'
-// import data from 'service/pointData'
+import { Row, Col, DatePicker, Select, Option, Button} from 'element-ui'
 
 export default {
   components:{
@@ -87,6 +89,7 @@ export default {
     'el-col': Col,
     'el-date-picker': DatePicker,
     'el-select': Select,
+    'el-button': Button,
     'el-option': Option
   },
   data(){
@@ -95,9 +98,12 @@ export default {
       dateTime: [new Date().getTime() - 3600 * 1000 * 24 * 6, new Date().getTime()],
       pickerOptions2: {
         disabledDate(time) {
-          return time.getTime() < new Date('2017-12-31');
+          return time.getTime() < new Date('2016-12-31');
         }
       },
+      projectSelect: '',
+      projectLoading: false,
+      projectList: [],
       active: '围观人数',
       splineOptions : {
         chart:{
@@ -107,8 +113,7 @@ export default {
           text: null
         },
         xAxis: {
-          // type: 'category'
-          categories: ['2018-01-01', '2018-01-02', '2018-01-03', '2018-01-04', '2018-01-05', '2018-01-06','2018-01-07']
+          type: 'category'
         },
         yAxis: [{
           title: {
@@ -125,7 +130,6 @@ export default {
         },
         series: [{
           color: "#919fc1",
-          data: [150, 73, 20,150, 73, 20,150],
           name:"数量"
         }]
       },
@@ -155,7 +159,6 @@ export default {
           dashStyle: 'shortDash',
           color: "#1e9f8e",
           name:"年龄统计",
-          data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
         }]
       },
       sexPieOptions : {
@@ -197,214 +200,232 @@ export default {
         series: [{
           type: 'pie',
           name: '性别访问数',
-          data: [{name:'女',y: 45.0, color: '#7cb5ec'},
-            {
-              name: '男',
-              y: 18.8,
-              sliced: true,
-              selected: true,
-              color: '#90ed7d'
-            }]
         }]
       },
-      peopleCount: [{
-        name: '围观人数',
-        count: '1000'
-      },{
-        name: '交互完成人数',
-        count: '900'
-      },{
-        name: '微信扫描人数',
-        count: '800'
-      },{
-        name: '转化人数',
-        count: '800'
-      }],
+      peopleCount: [],
       type: '',
+      userList: [],
       ageType: false,
       sexType: false,
       pointName:'',
+      arUserId: '',
       poepleCountFlag: false,
       ageFlag: false,
       sexFlag: false,
-      pointOptions: [{
-        value: '选项1',
-        label: '凯德'
-      },{
-        value: '选项1',
-        label: '苏州中心'
-      }],
-      pointSelected: '',
-      userSelected: '',
-      currentPointId: ''
+      userSelect: '',
+      projectAlias: ''
     }
   },
   created(){
-    this.getStatsCount()
     this.pointName = this.$route.query.name
-    // this.currentPointId = this.$route.query.id
-    // this.getPointList()
-    // this.getPeopleCount()
-    // this.getAgeInfo()
-    // this.getGenderInfo()
+    this.projectSelect = this.pointName
+    this.projectAlias = this.$route.query.alias
+    this.getPeopleCount()
+    this.getAgeAndGender()
     this.loading = false
   },
   computed:{
     'peopleCountLength': function (){
       return this.peopleCount.length
-    }
+    },
+    showUser(){
+      let user_info = JSON.parse(localStorage.getItem('user_info'))
+      console.log(user_info)
+      let roles = user_info.roles.data[0].name
+      return roles == 'user' ? false : true
+    },
   },
+  
   methods:{
-    getStatsCount(){
+    searchHandle() {
+      this.projectAlias = this.projectSelect
+      if(/.*[\u4e00-\u9fa5]+.*$/.test(this.projectAlias)){
+        this.projectAlias = this.$route.query.alias
+      }
+      let dateCount = (this.dateTime[1]-this.dateTime[0])/3600/1000/24
+      if(dateCount > 29){
+        this.$message({
+          type: 'warning',
+          message: '时间范围不能超过30天'
+        });
+      }else{
+        this.getAgeAndGender();
+        this.getPeopleCount()
+        }
+    },
+    projectChangeHandle() {
+      this.projectAlias = this.projectSelect
+      console.log(this.projectAlias)
+    },
+    userChangeHandle(){
+      this.arUserId = this.userSelect
+      this.projectSelect = ''
+      if(this.arUserId) {
+        this.getProject('')
+      }
+    },
+    getUser(query) {
+      let args = {
+        name: query
+      }
+      if (query !== '') {
+        this.projectLoading = true
+          return stats.getUser(this, args).then((response) => {
+            this.userList = response.data
+            if(this.userList.length == 0) {
+              this.projectList = []
+              this.projectList.unshift({id: -1, name:'',alias: ''}) 
+              this.projectSelect = ''
+            }
+            console.log(this.projectList)
+            this.projectLoading = false
+          }).catch(err => {
+            console.log(err)
+            this.projectLoading = false
+          })
+      }else{
+        this.userSelect = ''
+        this.userList = []
+        return false
+      }
+    },
+    getProject(query) {
+      let args = {
+        ar_user_id: this.arUserId,
+        name: query
+      }
+      if(this.showUser){
+        // if(query === '') {
+        //   this.projectSelect == query
+        // }
+        console.log(this.arUserId)
+        this.projectLoading = true
+        if(!this.arUserId){
+          delete args.ar_user_id
+        } 
+        console.log(args)
+        return stats.getProject(this,args).then((response) => {
+          this.projectList = response.data
+          console.log(response)
+          this.projectList.unshift({id: -1, name:'',alias: ''}) 
+          this.projectLoading = false
+        }).catch(err => {
+          console.log(err)
+          this.projectLoading = false
+        })
+        } else {
+          let user_info = JSON.parse(localStorage.getItem('user_info'))
+          this.arUserId = user_info.ar_user_id
+          if (query !== '') {
+            this.projectLoading = true
+              return stats.getProject(this,args).then((response) => {
+                this.projectList = response.data
+                this.projectLoading = false
+              }).catch(err => {
+                console.log(err)
+                this.projectLoading = false
+            })
+        }else{
+          this.projectSelect = ''
+          this.projectList = []
+          return false
+        }
+      }
+    },
+    getPeopleCount(){
       this.poepleCountFlag = true
       let id = this.currentPointId
       let args = {}
-      // if((this.dateTime[1]-this.dateTime[0])/3600/1000/24<30){
-      //   args = {
-      //     start_date : this.handleDateTransform(this.dateTime[0]),
-      //     end_date: this.handleDateTransform(new Date(this.dateTime[1]).getTime() + 3600 * 1000 * 24 * 1)
-      //   }
-      // }else{
-      //   this.$message({
-      //     type: 'warning',
-      //     message: '时间范围不能超过30天'
-      //   });
-      //   this.poepleCountFlag = false
-      //   return false;
-      // }    
-      args = {
-        oid: '243'
-      }
-      stats.getStats(this, args).then((response) => {
-        console.log(response)
-        this.poepleCountFlag = false
-        // for (let i = 0; i < 4; i++ ) {
-        //   this.peopleCount[i].count = response.face_count_logs
-        // }
-        // if(response.length>0){
-          // this.peopleCount = response.sort(this.sortNumber)
-          // this.type = this.peopleCount[0].type
-          // this.active = this.peopleCount[0].name
-          // this.getLineData()
-        // }
-      }).catch(err => {
-        console.log(err)
-        this.poepleCountFlag = false
-        
-      })
-    },
-    // getPeopleCount(){
-    //   this.poepleCountFlag = true
-    //   let id = this.currentPointId
-    //   let args = {}
-    //   if((this.dateTime[1]-this.dateTime[0])/3600/1000/24<30){
-    //     args = {
-    //       start_date : this.handleDateTransform(this.dateTime[0]),
-    //       end_date: this.handleDateTransform(new Date(this.dateTime[1]).getTime() + 3600 * 1000 * 24 * 1)
-    //     }
-    //   }else{
-    //     this.$message({
-    //       type: 'warning',
-    //       message: '时间范围不能超过30天'
-    //     });
-    //     this.poepleCountFlag = false
-    //     return false;
-    //   }    
-    //   data.getCountDataInfoById(this, id, args).then((response) => {
-    //     if(response.length>0){
-    //       this.peopleCount = response.sort(this.sortNumber)
-    //       this.type = this.peopleCount[0].type
-    //       this.active = this.peopleCount[0].name
-    //       this.getLineData()
-    //     }
-    //   }).catch(err => {
-    //     console.log(err)
-    //     this.poepleCountFlag = false
-        
-    //   })
-    // },
-    getAgeInfo(){
-      this.ageFlag = true
-      let args = {}
-      let id = this.currentPointId
       if((this.dateTime[1]-this.dateTime[0])/3600/1000/24<30){
         args = {
           start_date : this.handleDateTransform(this.dateTime[0]),
-          end_date: this.handleDateTransform(new Date(this.dateTime[1]).getTime() + 3600 * 1000 * 24 * 1)
+          end_date: this.handleDateTransform(new Date(this.dateTime[1]).getTime()),
+          alias: this.projectAlias,
+          ar_user_id: this.arUserId
+        }
+        if(!this.projectSelect) {
+          delete args.alias
+        }
+        if(!this.arUserId) {
+          delete args.ar_user_id
         }
       }else{
         this.$message({
           type: 'warning',
           message: '时间范围不能超过30天'
         });
-        this.ageFlag = false
+        this.poepleCountFlag = false
         return false;
       }    
-      data.getAgeInfoById(this, id, args).then((response) => {
-        let chart = this.$refs.agePie.chart;
-        let dataAge = []
-        if(response.length>0){
-          console.log(response)
-          this.ageType = false;
-          for(let i = 0; i < response.length; i++){
-            if(i==0){
-              dataAge.push({'name':response[i].age,'y':response[i].count})
-            }else{
-              dataAge.push([response[i].age,response[i].count])
-            }
-          }
-        //  this.agePieOptions.series.data = dataAge
-         chart.series[0].setData(dataAge,true)
-        }else{
-          this.ageType = true;
-          chart.series[0].setData(dataAge,true)
-        }
-        this.ageFlag = false
-      }).catch(err => {
+      return stats.getStaus(this,args).then((response) => {
+        this.peopleCount = response
+        this.type = this.peopleCount[0].alias
+        this.getLineData()
+      }).catch((err) => {
+        this.poepleCountFlag = false
         console.log(err)
-        this.ageFlag = false
-        
       })
     },
-    getGenderInfo(){
+    getAgeAndGender() {
+      this.ageFlag = true
       this.sexFlag = true
       let args = {}
       let id = this.currentPointId
       if((this.dateTime[1]-this.dateTime[0])/3600/1000/24<30){
         args = {
           start_date : this.handleDateTransform(this.dateTime[0]),
-          end_date: this.handleDateTransform(new Date(this.dateTime[1]).getTime() + 3600 * 1000 * 24 * 1)
+          end_date: this.handleDateTransform(new Date(this.dateTime[1]).getTime()),
+          alias: this.projectAlias,
+          ar_user_id: this.arUserId
+        }
+        if(!this.projectSelect) {
+          delete args.alias
+        }
+        if(!this.arUserId) {
+          delete args.ar_user_id
         }
       }else{
         this.$message({
           type: 'warning',
           message: '时间范围不能超过30天'
         });
+        this.ageFlag = false
         this.sexFlag = false
         return false;
       }
-      data.getGenderInfoById(this, id, args).then((response) => {
-        let chart = this.$refs.sexPie.chart;
+      stats.getAgeAndGender(this, args).then((response) => {
+        let ageChart = this.$refs.agePie.chart;
+        let genderChat = this.$refs.sexPie.chart;
+        let dataAge = []
         let dataGender = []
-        if(response.length>0){
-          this.sexType = false
-          for(let i = 0; i < response.length; i++){
+        if(response !== '{}'){
+          let ageArr = response.age
+          let genderArr = response.gender
+          this.ageType = false;
+          this.sexFlag = false
+          
+          for(let i = 0; i < ageArr.length; i++){
             if(i==0){
-              dataGender.push({'name':response[i].gender == null ? '未知' : response[i].gender == 0 ? '女' : '男','y':response[i].count,'sliced': true,'selected': true})
+              dataAge.push({'name':ageArr[i].age,'y':parseInt(ageArr[i].count)})
             }else{
-              dataGender.push([response[i].gender == null ? '未知' : response[i].gender == 0 ? '女' : '男',response[i].count])
+              dataAge.push([ageArr[i].age,parseInt(ageArr[i].count)])
             }
           }
-        //  this.agePieOptions.series.data = dataGender
-         console.log(dataGender)
-         chart.series[0].setData(dataGender,true)
+          dataGender.push({'name':'女','y':parseInt(genderArr.female),'sliced': true,'selected': true})
+          dataGender.push({'name':'男','y':parseInt(genderArr.male)})
+          ageChart.series[0].setData(dataAge,true)
+          genderChat.series[0].setData(dataGender,true)
         }else{
-          this.sexType = true
-          chart.series[0].setData(dataGender,true)
+          this.ageType = true;
+          this.sexFlag = true
+          ageChart.series[0].setData(dataAge,true)
+          genderChat.series[0].setData(dataGender,true)
         }
+        this.ageFlag = false
         this.sexFlag = false
       }).catch(err => {
         console.log(err)
+        this.ageFlag = false
         this.sexFlag = false
       })
     },
@@ -415,8 +436,16 @@ export default {
       if((this.dateTime[1]-this.dateTime[0])/3600/1000/24<30){
         args = {
           start_date : this.handleDateTransform(this.dateTime[0]),
-          end_date: this.handleDateTransform(new Date(this.dateTime[1]).getTime() + 3600 * 1000 * 24 * 1),
-          type: this.type
+          end_date: this.handleDateTransform(new Date(this.dateTime[1]).getTime()),
+          type: this.type,
+          alias: this.projectAlias,
+          ar_user_id: this.arUserId
+        }
+        if(!this.projectSelect) {
+          delete args.alias
+        }
+        if(!this.arUserId) {
+          delete args.ar_user_id
         }
       }else{
         this.$message({
@@ -426,23 +455,22 @@ export default {
         this.poepleCountFlag = false
         return false;
       }
-      data.getLineDataByType(this,id,args).then((response) => {
+      stats.getDayDetail(this,args).then((response) => {
         let chart = this.$refs.lineChar.chart;
         let dataLine = []
         let dateArr = []
         let newDateArr = []
         let dateCount = (this.dateTime[1]-this.dateTime[0])/3600/1000/24 + 1
-        if(response.length>0){
-          console.log(response)
-          for(let j = 0; j < response.length; j++){
-            console.log(response[j])
-            dateArr.push(response[j].date)
+        let res = response.data
+        if(res.length > 0){
+          for(let j = 0; j < res.length; j++){
+            dateArr.push(res[j].date)
           }
-          console.log(dateArr)
           for(let i = 0; i < dateCount; i++){
             let startDate = new Date(this.dateTime[0]).getTime()
-            newDateArr = this.updateDayArr(dateArr,this.handleDateTransform(startDate + 3600 * 1000 * 24 * i),response)
+            newDateArr = this.updateDayArr(dateArr,this.handleDateTransform(startDate + 3600 * 1000 * 24 * i),res)
           }
+          
           newDateArr.sort(this.sortDate)
           for(let k = 0; k < newDateArr.length; k++){
             dataLine.push({'y':newDateArr[k].count,'name':newDateArr[k].date})
@@ -451,7 +479,7 @@ export default {
         }else{
           for(let a = 0; a < dateCount; a++){
             let startDate = new Date(this.dateTime[0]).getTime()
-            newDateArr = this.updateDayArr(dateArr,this.handleDateTransform(startDate + 3600 * 1000 * 24 * a),response)
+            newDateArr = this.updateDayArr(dateArr,this.handleDateTransform(startDate + 3600 * 1000 * 24 * a), res)
           }
           newDateArr.sort(this.sortDate)
           for(let h = 0; h < newDateArr.length; h++){
@@ -459,39 +487,20 @@ export default {
           }
           chart.series[0].setData(dataLine,true)
         }
-        // console.log(dateArr)
-        // console.log(newDateArr)
         this.poepleCountFlag = false
       }).catch(err => {
         console.log(err)
         this.poepleCountFlag = false
       })
-    },
-    getPointList(){
-      data.getPointList(this).then((response) => {
-       console.log(response)
-       this.pointOptions = response
-       this.pointSelected = parseInt(this.$route.query.id)
-      }).catch(err => {
-        console.log(err)
-      })
-    },
-    pointHandle(){
-    //   console.log(this.pointSelected)
-    // this.currentPointId = this.pointSelected
-    // this.getPeopleCount()
-    // this.getAgeInfo()
-    // this.getGenderInfo()
-    this.loading = false
     },
     lineDataHandle(obj){
       this.active = obj.name
-      this.type = obj.type
-      // this.getLineData()
+      this.type = obj.alias
+      this.getLineData()
     },
     updateDayArr(oldArr, newElement,res){
       if (oldArr.indexOf(newElement) === -1) {
-        res.push({"date":newElement,'count':0})
+        res.push({'count':0,"date":newElement})
         return res;
       } else {
         return res
@@ -505,9 +514,8 @@ export default {
           message: '时间范围不能超过30天'
         });
       }else{
-        this.getAgeInfo();
+        this.getAgeAndGender();
         this.getPeopleCount()
-        this.getGenderInfo()
       }
     },
     sortNumber(countA,countB)
@@ -530,7 +538,7 @@ export default {
 </script>
 <style lang="less" scoped>
   .point-data-wrapper{
-    padding: 15px;
+    // padding: 15px;
     .headline-wrapper{
       padding: 20px;
       display: flex;
