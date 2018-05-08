@@ -52,6 +52,7 @@ let router = {
             import(/* webpackChunkName: "page/project/item/itemData" */ 'page/project/item/itemData'),
           name: '投放数据',
           meta: {
+            title: '统计指标'
           },
         },
       ],
