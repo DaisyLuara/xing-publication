@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Models\Company;
 use App\Models\Project;
-use Illuminate\Http\Request;
 use App\Transformers\ProjectTransformer;
+use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
@@ -19,19 +18,13 @@ class ProjectController extends Controller
 
     public function userProject(Request $request, Project $project)
     {
-        $uid = 0;
-        if ($this->user()->isAdmin() && $request->has('ar_user_id')) {
-            $uid = $request->ar_user_id;
-        } else if (!$this->user()->isAdmin()) {
-            $uid = $this->user()->ar_user_id;
-        }
-
+        $user = $this->user();
+        $arUserId = getArUserID($user, $request);
         $query = $project->query();
-
-        if ($uid) {
-            $query->whereHas('points', function ($q) use ($uid) {
-                $q->whereHas('arUsers', function ($q) use ($uid) {
-                    $q->where('admin_staff.uid', '=', $uid);
+        if ($arUserId) {
+            $query->whereHas('points', function ($q) use ($arUserId) {
+                $q->whereHas('arUsers', function ($q) use ($arUserId) {
+                    $q->where('admin_staff.uid', '=', $arUserId);
                 });
             });
         }

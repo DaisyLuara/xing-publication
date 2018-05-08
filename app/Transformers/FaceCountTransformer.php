@@ -10,11 +10,23 @@ class FaceCountTransformer extends TransformerAbstract
     public function transform(FaceCount $faceCount)
     {
         return [
-            'looknum' => (int)$faceCount->looknum,
-            'playernum' => (int)$faceCount->playernum,
-            'lovenum' => (int)$faceCount->lovenum,
-            'outnum' => (int)$faceCount->scannum,
-            'scannum' => (int)$faceCount->scannum,
+            [
+                'name' => '围观人数',
+                'count' => (int)$faceCount->looknum,
+            ],
+            [
+                'name' => '交互完成人数',
+                'count' => (int)$faceCount->playernum,
+            ],
+            [
+                'name' => '微信扫描人数',
+                'count' => (int)$faceCount->scannum,
+                'out' => (int)$faceCount->outnum,
+            ],
+            [
+                'name' => '转化人数',
+                'count' => (int)$faceCount->lovenum,
+            ],
         ];
     }
 

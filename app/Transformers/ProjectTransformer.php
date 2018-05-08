@@ -18,7 +18,7 @@ class ProjectTransformer extends TransformerAbstract
             'info' => $project->info,
             'icon' => $project->icon,
             'image' => $project->image,
-            'versionname'=>$project->versionname,
+            'alias'=>$project->versionname,
         ];
     }
 

@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Models;
-use App\Models\PointProject;
 
 class FaceCount extends Model
 {
