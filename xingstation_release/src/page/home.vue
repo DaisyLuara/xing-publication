@@ -84,7 +84,7 @@ export default {
               case 'company':
                 m.src = require('../assets/images/icons/marketing-icon.png')
                 break
-              case 'main':
+              case 'ad':
                 m.src = require('../assets/images/icons/advertisement-icon.png')
                 break
               case 'contract':

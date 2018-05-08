@@ -7,80 +7,65 @@
             <el-form-item label="" prop="name">
               <el-input v-model="filters.name" placeholder="请输入节目名称" style="width: 300px;"></el-input>
             </el-form-item>
-            <el-form-item label="" prop="area">
-              <el-select v-model="filters.area" placeholder="请选择区域">
-                <el-option
-                  v-for="item in areaList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="" prop="market">
-              <el-select v-model="filters.clientValue"  placeholder="请选择商场">
-                <el-option
-                  v-for="item in marketList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-button @click="search('searchForm')" type="primary">搜索</el-button>
+              <el-button @click="search('searchForm')" type="primary">搜索</el-button>
           </el-form>
         </div>
         <div class="actions-wrap">
           <span class="label">
-            节目数量: {{pagination.total}}
+            广告数量: {{pagination.total}}
           </span>
-          <el-button size="small" type="success" @click="linkToAddItem">投放节目</el-button>
+          <el-button size="small" type="success" @click="linkToAddItem">投放广告</el-button>
         </div>
         <el-table :data="tableData" style="width: 100%" highlight-current-row>
           <el-table-column type="selection" width="55" ></el-table-column>
           <el-table-column
-            prop="name"
-            label="节目名称"
-            >
-            <template slot-scope="scope">
-              {{scope.row.project.name}}
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="icon"
-            label="节目icon"
-            >
-            <template slot-scope="scope">
-              <img :src="scope.row.project.icon" alt="" class="icon-item"/>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="areaName"
-            label="区域"
-            >
-            <template slot-scope="scope">
-              {{scope.row.point.market.area.name}}
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="market_name"
-            label="商场"
-            >
-            <template slot-scope="scope">
-              {{scope.row.point.market.name}}
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="point_name"
+            prop="point"
             label="点位"
             >
-            <template slot-scope="scope">
-              {{scope.row.point.name}}
-            </template>
+            <!-- <template slot-scope="scope">
+              {{scope.row.project.name}}
+            </template> -->
           </el-table-column>
           <el-table-column
-            prop="created_at"
-            label="时间"
+            prop="adPeople"
+            label="广告主"
+            >
+            <!-- <template slot-scope="scope">
+              <img :src="scope.row.project.icon" alt="" class="icon-item"/>
+            </template> -->
+          </el-table-column>
+          <el-table-column
+            prop="ad"
+            label="广告"
+            >
+            <!-- <template slot-scope="scope">
+              {{scope.row.point.market.area.name}}
+            </template> -->
+          </el-table-column>
+          <el-table-column
+            prop="adType"
+            label="广告类型"
+            >
+            <!-- <template slot-scope="scope">
+              {{scope.row.point.market.name}}
+            </template> -->
+          </el-table-column>
+          <el-table-column
+            prop="link"
+            label="链接"
+            >
+            <!-- <template slot-scope="scope">
+              {{scope.row.point.name}}
+            </template> -->
+          </el-table-column>
+          <el-table-column
+            prop="size"
+            label="大小"
+            >
+          </el-table-column>
+          <el-table-column
+            prop="start_date"
+            label="周期"
             >
           </el-table-column>
           <el-table-column
@@ -93,10 +78,15 @@
             label="结束时间"
             >
           </el-table-column>
+          <el-table-column
+            prop="date"
+            label="时间"
+            >
+          </el-table-column>
           <el-table-column label="操作" width="200">
             <template slot-scope="scope">
               <el-button size="small" type="primary" @click="linkToEdit(scope.row.id)">修改</el-button>
-              <el-button size="small" type="warning" @click="showData(scope.row.project.alias, scope.row.project.name, arUserName)" v-if="dataShowFlag">数据</el-button>
+              <!-- <el-button size="small" type="warning" @click="showData(scope.row.project.alias, scope.row.project.name, arUserName)" v-if="dataShowFlag">数据</el-button> -->
             </template>
           </el-table-column>
         </el-table>
@@ -118,18 +108,14 @@
 <script>
 import project from 'service/project'
 
-import { Button, Input, Table, TableColumn, Pagination, Form, FormItem, MessageBox, DatePicker, Select, Option} from 'element-ui'
+import { Button, Input, Table, TableColumn, Pagination, Form, FormItem, MessageBox, DatePicker} from 'element-ui'
 
 export default {
   data () {
     return {
       filters: {
-        name: '',
-        clientValue: '',
-        area: ''
+        name: ''
       },
-      marketList: [],
-      areaList: [],
       setting: {
         loading: false,
         loadingText: "拼命加载中"
@@ -149,7 +135,7 @@ export default {
   mounted() {
   },
   created () {
-    this.getProjectList()
+    // this.getProjectList()
     let user_info = JSON.parse(localStorage.getItem('user_info'))
     this.arUserName = user_info.name
     this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
@@ -211,9 +197,7 @@ export default {
     "el-input": Input,
     "el-pagination": Pagination,
     "el-form": Form,
-    "el-form-item": FormItem,
-    'el-select': Select,
-    'el-option': Option
+    "el-form-item": FormItem
   }
 }
 </script>

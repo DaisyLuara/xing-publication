@@ -2,19 +2,39 @@
   <div class="item-wrap-template" v-loading="loading">
     <div class="topbar">
       <el-breadcrumb separator="/">
-        <el-breadcrumb-item :to="{ path: '/program/item' }">节目管理</el-breadcrumb-item>
-        <el-breadcrumb-item>{{userID ? '修改' : '添加'}}</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/program/item' }">节目投放管理</el-breadcrumb-item>
+        <el-breadcrumb-item>添加</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
-    <div class="pane" v-if="this.step === 1">
+    <div class="pane">
       <div class="pane-title">
-        基本信息
+        新增节目投放
       </div>
       <el-form
-        ref="stepOne"
-        :model="stepOne" label-width="80px">
-        <el-form-item label="所属客户" prop="client">
-          <el-select v-model="stepOne.clientValue" filterable placeholder="请选择">
+        ref="projectForm"
+        :model="projectForm" label-width="100px">
+        <el-form-item label="节目名称">
+          <el-select v-model="projectForm.projectName" filterable placeholder="请选择">
+            <el-option
+              v-for="item in projectList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="区域">
+          <el-select v-model="projectForm.area" placeholder="请选择">
+            <el-option
+              v-for="item in areaList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="商场" prop="client">
+          <el-select v-model="projectForm.clientValue"  placeholder="请选择">
             <el-option
               v-for="item in clientOptions"
               :key="item.value"
@@ -23,62 +43,66 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="节目合约">
-          <el-select v-model="stepOne.contract" filterable placeholder="请选择">
+        <el-form-item label="点位">
+          <el-select v-model="projectForm.point" placeholder="请选择"  multiple>
             <el-option
-              v-for="item in contractOptions"
+              v-for="item in pointList"
               :key="item.value"
               :label="item.label"
               :value="item.value">
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="节目名称">
-          <el-input v-model="stepOne.name" class="item-input"></el-input>
-        </el-form-item>
-        <el-form-item label="城市">
-          <el-select v-model="stepOne.city" filterable placeholder="请选择">
+        <el-form-item label="工作日模版">
+          <el-select v-model="projectForm.weekday" placeholder="请选择" filterable>
             <el-option
-              v-for="item in cityOptions"
+              v-for="item in weekdayList"
               :key="item.value"
               :label="item.label"
               :value="item.value">
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="区域">
-          <el-select v-model="stepOne.district" filterable placeholder="请选择">
+        <el-form-item label="周末模版">
+          <el-select v-model="projectForm.weekend" placeholder="请选择" filterable>
             <el-option
-              v-for="item in districtOptions"
+              v-for="item in weekendList"
               :key="item.value"
               :label="item.label"
               :value="item.value">
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="地址详情">
-          <el-input v-model="stepOne.address" class="item-input"></el-input>
+        <el-form-item label="自定义模版">
+          <el-select v-model="projectForm.define" placeholder="请选择" filterable>
+            <el-option
+              v-for="item in defineList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="投放日期">
+        <el-form-item label="投放开始时间">
           <el-date-picker
-          v-model="stepOne.putDate"
+          v-model="projectForm.sdate"
           type="date"
-          placeholder="选择日期">
+          placeholder="选择投放开始时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="发布时间">
+        <el-form-item label="投放开始时间">
           <el-date-picker
-          v-model="stepOne.releaseDate"
-          type="daterange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期">
-        </el-date-picker>
+          v-model="projectForm.edate"
+          type="date"
+          placeholder="选择投放开始时间">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="goNextStep">完成</el-button>
         </el-form-item>
       </el-form>
-      <el-button type="primary" size="small" @click="goNextStep">下一步</el-button>
     </div>
-    <div class="pane" v-if="this.step === 2">
+    <!-- <div class="pane" v-if="this.step === 2">
       <div class="pane-title">
         定向设置
       </div>
@@ -299,8 +323,7 @@
       </el-form>
       <el-button type="default" size="small" @click="goPreStep">上一步</el-button>
       <el-button type="primary" size="small" @click="submit">确定发布</el-button>
-    </div>
-    <picture-panel :panelVisible.sync="panelVisible" @close="handleClose" :singleFlag="false"></picture-panel>
+    </div> -->
   </div>
 </template>
 
@@ -309,37 +332,21 @@ import {
   Form,
   Select,
   Option,
-  RadioGroup,
-  Radio,
   FormItem,
   Button,
   Input,
-  Upload,
   DatePicker,
-  Switch,
-  Card,
-  Row,
   MessageBox,
-  Col
 } from 'element-ui'
-import picturePanel from 'components/common/picturePanel'
 export default {
   components: {
     ElForm: Form,
     ElSelect: Select,
     ElOption: Option,
-    ElRadioGroup: RadioGroup,
-    ElRadio: Radio,
     ElFormItem: FormItem,
     ElButton: Button,
     ElInput: Input,
-    picturePanel,
-    ElUpload: Upload,
     ElDatePicker: DatePicker,
-    ElSwitch: Switch,
-    ElCard: Card,
-    ElRow: Row,
-    ElCol: Col
   },
   data() {
     return {
@@ -349,32 +356,23 @@ export default {
       userID: '',
       step: 1,
       loading: false,
-      stepOne: {
-        clientValue: '',
-        contract: '',
-        name: '',
-        district: '',
-        city: '',
-        address: '',
-        putDate: '',
-        releaseDate: ''
+      weekdayList: [],
+      weekendList: [],
+      defineList: [],
+
+      projectForm: {
+        clientValue:'',
+        projectName: '',
+        area: '',
+        point: '',
+        weekday: '',
+        weekend: '',
+        define: '',
+        sdate: '',
+        edate: '',
       },
-      stepTwo: {
-        clientValue: '',
-        gender: '',
-        age: '',
-        appearance: '',
-        peopleCount: '',
-        dressingIndex: '',
-        weatherIndex: ''
-      },
-      stepThree:{
-        imageUrl: ''
-      },
-      stepFour: {
-        checkPeople: ''
-      },
-      cityOptions: [{
+      projectList: [],
+      areaList: [{
         value: '选项1',
         label: '上海'
       }, {
@@ -387,17 +385,8 @@ export default {
       }, {
         value: '选项2',
         label: '李二'
-      }, {
-        value: '选项3',
-        label: '李三'
-      }, {
-        value: '选项4',
-        label: '李四'
-      }, {
-        value: '选项5',
-        label: '李五'
       }],
-      districtOptions: [{
+      pointList: [{
         value: '选项1',
         label: '浦东新区'
       },{
@@ -410,33 +399,7 @@ export default {
       }, {
         value: '选项2',
         label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
       }],
-      contractOptions: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
-      }],
-      panelVisible: false,
     }
   },
   mounted() {
@@ -471,21 +434,7 @@ export default {
     },
     goNextStep() {
       this.step++
-    },
-    handleClose () {
-      this.panelVisible = false
-    },
-    handleImageDelete(name) {
-      if (name === 'cover') {
-        this.stepTwo.cover_url = ''
-      }
-      if (name === 'icon') {
-        this.stepTwo.thumbnail_url = ''
-      }
-    },
-    handleOpenPane(name) {
-      this.panelVisible = true
-    },
+    }
   },
 }
 </script>
@@ -495,7 +444,7 @@ export default {
     .pane {
       border-radius: 5px;
       background-color: white;
-      padding: 20px 20px 80px;
+      padding: 20px 40px 80px;
 
       .el-select,.item-input,.el-date-editor.el-input{
         width: 380px;
