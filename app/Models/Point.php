@@ -23,4 +23,9 @@ class Point extends Model
     {
         return $this->belongsTo(Scene::class, 'sid', 'sid');
     }
+
+    public function market()
+    {
+        return $this->belongsTo(Market::class, 'marketid', 'marketid');
+    }
 }
