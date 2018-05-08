@@ -90,6 +90,7 @@ $api->version('v1', [
             $api->get('areas/query', 'AreaController@query');//区域搜索
             $api->get('markets/query', 'MarketController@query');//商场搜索
             $api->get('points/query', ['middleware' => ['role:super-admin|admin'], 'uses' => 'PointController@query']);//点位查询
+            $api->get('launches/tpl/query', ['middleware' => ['role:super-admin|admin'], 'uses' => 'ProjectLaunchTplController@query']);//点位查询
 
             // 权限设置
             $api->get('system/users', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminUsersController@index']);

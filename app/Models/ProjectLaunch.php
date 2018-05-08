@@ -7,6 +7,7 @@ class ProjectLaunch extends Model
 {
     protected $connection = 'ar';
     public $table = 'istar_tv_oid';
+    protected $primaryKey = 'tvoid';
 
     public function point()
     {
