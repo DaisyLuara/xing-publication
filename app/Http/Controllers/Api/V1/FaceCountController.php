@@ -20,17 +20,12 @@ class FaceCountController extends Controller
 
         $belong = $request->has('belong') ? $request->belong : 'all';
 
-        $uid = 0;
-        if ($this->user()->isAdmin() && $request->has('ar_user_id')) {
-            $uid = $request->ar_user_id;
-        } else if (!$this->user()->isAdmin()) {
-            $uid = $this->user()->ar_user_id;
-        }
-
+        $user = $this->user();
+        $arUserId = getArUserID($user, $request);
         $query = $faceCount->query();
-        if ($uid) {
-            $query->whereHas('pointArUser', function ($q) use ($uid) {
-                $q->where('uid', '=', $uid);
+        if ($arUserId) {
+            $query->whereHas('pointArUser', function ($q) use ($arUserId) {
+                $q->where('uid', '=', $arUserId);
             });
         }
 
@@ -41,7 +36,7 @@ class FaceCountController extends Controller
         $faceCount = $query->where('belong', '=', $belong)
             ->whereRaw("str_to_date(date, '%Y-%m-%d') BETWEEN '$date_start' AND '$date_end'")
             ->selectRaw('sum(looknum) as looknum ,sum(playernum) as playernum ,sum(lovenum) as lovenum,sum(outnum) as outnum,sum(scannum) as scannum')
-            ->get();
+            ->first();
 
         return $this->response->item($faceCount, new FaceCountTransformer());
     }
@@ -58,15 +53,11 @@ class FaceCountController extends Controller
 
         $query = $faceCount->query();
 
-        $uid = 0;
-        if ($this->user()->isAdmin() && $request->has('ar_user_id')) {
-            $uid = $request->ar_user_id;
-        } else if (!$this->user()->isAdmin()) {
-            $uid = $this->user()->ar_user_id;
-        }
-        if ($uid) {
-            $query->whereHas('pointArUser', function ($q) use ($uid) {
-                $q->where('uid', '=', $uid);
+        $user = $this->user();
+        $arUserId = getArUserID($user, $request);
+        if ($arUserId) {
+            $query->whereHas('pointArUser', function ($q) use ($arUserId) {
+                $q->where('uid', '=', $arUserId);
             });
         }
         if ($request->has('oid')) {
@@ -92,15 +83,11 @@ class FaceCountController extends Controller
 
         $query = $faceLog->query();
 
-        $uid = 0;
-        if ($this->user()->isAdmin() && $request->has('ar_user_id')) {
-            $uid = $request->ar_user_id;
-        } else if (!$this->user()->isAdmin()) {
-            $uid = $this->user()->ar_user_id;
-        }
-        if ($uid) {
-            $query->whereHas('pointArUser', function ($q) use ($uid) {
-                $q->where('uid', '=', $uid);
+        $user = $this->user();
+        $arUserId = getArUserID($user, $request);
+        if ($arUserId) {
+            $query->whereHas('pointArUser', function ($q) use ($arUserId) {
+                $q->where('uid', '=', $arUserId);
             });
         }
         if ($request->has('oid')) {
