@@ -77,15 +77,11 @@ $api->version('v1', [
 
             //数据统计
             $api->get('stats', 'FaceCountController@index');
-
-            //分天统计详情
             $api->get('detail', 'FaceCountController@detail');
-
-            //性别年龄分布
-            $api->get('ageAndGender', 'FaceCountController@ageAndGenderDetail');
+            $api->get('ageAndGender', 'FaceLogController@index');
 
             //节目
-            $api->get('userProject','ProjectController@userProject');
+            $api->get('userProject', 'ProjectController@userProject');
             $api->get('projects', 'ProjectController@index');
             $api->get('projects/launch', 'ProjectLaunchController@index');
             $api->get('staffs', 'ArUserController@index');
