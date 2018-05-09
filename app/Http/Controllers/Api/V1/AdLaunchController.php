@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Requests\Api\V1\AdLaunchRequest;
 use App\Models\AdLaunch;
+use App\Models\Mock\AdLaunchLocal;
 use App\Transformers\AdLaunchTransformer;
 
 class AdLaunchController extends Controller
@@ -44,5 +45,38 @@ class AdLaunchController extends Controller
 
         $adLaunch = $query->orderBy('date', 'desc')->paginate(10);
         return $this->response->paginator($adLaunch, new AdLaunchTransformer());
+    }
+
+    //测试环境 使用 本地数据更新
+    public function store(AdLaunchRequest $request, AdLaunchLocal $adLaunchLocal)
+    {
+        $launch = $request->all();
+        $query = $adLaunchLocal->query();
+
+        $oids = $launch['oids'];
+        unset($launch['oids']);
+
+        foreach ($oids as $oid) {
+            $query->create(array_merge(['oid' => $oid, 'date' => date('Y-m-d H:i:s'), 'clientdate' => time() * 1000], $launch));
+        }
+
+        return $this->response->noContent();
+    }
+
+    public function update(AdLaunchRequest $request, AdLaunchLocal $adLaunchLocal)
+    {
+
+        $launch = $request->all();
+
+        $aoids = $launch['aoids'];
+        unset($launch['aoids']);
+        unset($launch['oid']);
+
+        foreach ($aoids as $aoid) {
+            $query = $adLaunchLocal->query();
+            $query->where(['aoid' => $aoid])->update($launch);
+        }
+
+        return $this->response->noContent();
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Models\ProjectLaunchLocal;
+use App\Models\Mock\ProjectLaunchLocal;
 use Illuminate\Http\Request;
 use App\Models\ProjectLaunch;
 use App\Transformers\ProjectLaunchTransformer;
