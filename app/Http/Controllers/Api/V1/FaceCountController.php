@@ -29,7 +29,7 @@ class FaceCountController extends Controller
         $query = $this->queryInit($request, $faceCount->query());
         $default = $this->getDefaultParams($request);
 
-        $faceCount = $query->whereRaw("str_to_date(date, '%Y-%m-%d') BETWEEN '" . $default['start_date'] . "' AND '" . $default['end_date'] . "'")
+        $faceCount = $query->whereRaw("str_to_date(date, '%Y-%m-%d') BETWEEN '" . $default['startDate'] . "' AND '" . $default['endDate'] . "'")
             ->where('belong', '=', $default['alias'])
             ->selectRaw("date_format(date,'%Y-%m-%d') as date,sum(" . $default['type'] . ") as count")
             ->groupBy(DB::raw("date_format(date,'%Y-%m-%d')"))
