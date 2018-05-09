@@ -177,18 +177,18 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="投放开始时间" prop="sdate" v-if="modifyOptionFlag.sdate" :rules="[{ type: 'date', required: true, message: '请输入投放开始时间', trigger: 'submit' }]">
+          <el-form-item label="自定义开始时间" prop="sdate" v-if="modifyOptionFlag.sdate" :rules="[{ type: 'date', required: true, message: '请输入自定义开始时间', trigger: 'submit' }]">
             <el-date-picker
             v-model="projectForm.sdate"
             type="date"
-            placeholder="选择投放开始时间" :editable="false">
+            placeholder="选择自定义开始时间" :editable="false">
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="投放结束时间" prop="edate" v-if="modifyOptionFlag.sdate" :rules="[{ type: 'date', required: true, message: '请输入投放结束时间', trigger: 'submit' }]">
+          <el-form-item label="自定义结束时间" prop="edate" v-if="modifyOptionFlag.sdate" :rules="[{ type: 'date', required: true, message: '请输入自定义结束时间', trigger: 'submit' }]">
             <el-date-picker
             v-model="projectForm.edate"
             type="date"
-            placeholder="选择投放结束时间"
+            placeholder="选择自定义结束时间"
             :editable="false"
             >
             </el-date-picker>
