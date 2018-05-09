@@ -22,7 +22,6 @@ class UsersTableSeeder extends Seeder
         ];
 
         $ar_users = ArUser::get();
-        dd($ar_users->toArray());
         $ar_users->each(function ($ar_user) use ($faker, $avatars) {
             $user_array = [
                 'avatar' => $faker->randomElement($avatars),
@@ -34,7 +33,7 @@ class UsersTableSeeder extends Seeder
             // 插入到数据库中
             $user = User::create($user_array);
 
-            if (in_array($ar_user->role_id, [8, 3])) {
+            if (in_array($ar_user->role_id, [3, 5, 6, 7, 9, 11])) {
                 $user->assignRole('user');
             } elseif (in_array($ar_user->role_id, [2])) {
                 $user->assignRole('admin');
@@ -42,6 +41,8 @@ class UsersTableSeeder extends Seeder
                 $user->assignRole('project-manager');
             } elseif ($ar_user->role_id == 10) {
                 $user->assignRole('dev-ops');
+            } elseif ($ar_user->role_id == 1) {
+                $user->assignRole('super-admin');
             }
 
         });
