@@ -8,7 +8,7 @@
               <el-input v-model="filters.name" placeholder="请输入节目名称" style="width: 300px;"></el-input>
             </el-form-item>
             <el-form-item label="" prop="area">
-              <el-select v-model="filters.area" placeholder="请选择区域" @change="areaChangeHandle">
+              <el-select v-model="filters.area" placeholder="请选择区域" @change="areaChangeHandle" filterable>
                 <el-option
                   v-for="item in areaList"
                   :key="item.id"
@@ -28,6 +28,7 @@
               </el-select>
             </el-form-item>
             <el-button @click="search('searchForm')" type="primary">搜索</el-button>
+            <el-button @click="resetSearch" type="default">重置</el-button>
           </el-form>
         </div>
         <div class="actions-wrap">
@@ -36,7 +37,7 @@
           </span>
           <el-button size="small" type="success" @click="linkToAddItem">投放节目</el-button>
         </div>
-        <el-table :data="tableData" style="width: 100%" highlight-current-row>
+        <el-table :data="tableData" style="width: 100%" highlight-current-row  @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55" ></el-table-column>
           <el-table-column
             prop="name"
@@ -160,6 +161,16 @@ export default {
     this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
   },
   methods: {
+    handleSelectionChange(val) {
+      console.log(val)
+    },
+    resetSearch () {
+      this.filters.market = ''
+      this.filters.area = ''
+      this.filters.name = ''
+      this.pagination.currentPage = 1;
+      this.getProjectList();
+    },
     getProjectList () {
       this.setting.loadingText = "拼命加载中"
       this.setting.loading = true;

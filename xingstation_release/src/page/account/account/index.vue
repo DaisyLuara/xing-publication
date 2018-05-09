@@ -10,10 +10,10 @@
             <el-input class="user-form-input" v-model="userForm.user.phone" :maxlength="11"></el-input>
           </el-form-item>
           <el-form-item label="密码" prop="user.password">
-            <el-input class="user-form-input" v-model="userForm.user.password"></el-input>
+            <el-input class="user-form-input" v-model="userForm.user.password" type="password"></el-input>
           </el-form-item>
           <el-form-item label="确认密码" prop="user.repassword">
-            <el-input class="user-form-input" v-model="userForm.user.repassword"></el-input>
+            <el-input class="user-form-input" v-model="userForm.user.repassword" type="password"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" :loading="loading"  @click="onSubmit('userForm')">保存</el-button>
