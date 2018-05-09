@@ -97,6 +97,9 @@ $api->version('v1', [
             //落地方式配置
             $api->get('project_ad_launch', 'ProjectAdLaunchController@index');
 
+            //授权广告
+            $api->get('wx_third','WxThirdController@index');
+
             //设备
             $api->get('push', 'PushController@index');
 

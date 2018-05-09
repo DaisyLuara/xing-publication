@@ -30,22 +30,14 @@ let router = {
           component: () =>
             import(/* webpackChunkName: "page/ad/item/index" */ 'page/ad/item/index'),
         },
-        // {
-        //   path: 'add',
-        //   component: () =>
-        //     import(/* webpackChunkName: "page/ad/item/itemSave" */ 'page/ad/item/itemSave'),
-        //   name: '新增投放节目',
-        //   meta: {
-        //   },
-        // },
-        // {
-        //   path: 'edit/:uid',
-        //   component: () =>
-        //     import(/* webpackChunkName: "page/ad/item/itemSave" */ 'page/ad/item/itemSave'),
-        //   name: '修改投放节目',
-        //   meta: {
-        //   },
-        // },
+        {
+          path: 'add',
+          component: () =>
+            import(/* webpackChunkName: "page/ad/item/adSave" */ 'page/ad/item/adSave'),
+          name: '新增广告投放节目',
+          meta: {
+          },
+        },
       ]
     },
   ],
