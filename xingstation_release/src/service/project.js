@@ -1,5 +1,6 @@
 import {router} from '../main'
 const PROJECT_API = '/api/projects/launch'
+const MODIFY_PROJECT_API = '/api/projects/launches'
 export default {
   getProjectList(context,args) {
     return new Promise(function(resolve, reject){
@@ -10,7 +11,7 @@ export default {
       })
     })
   },
-  savePorjectLaunch(context, args, uid) {
+  savePorjectLaunch(context, args) {
     return new Promise(function(resolve, reject){
       context.$http.post(PROJECT_API, args).then(response => {
         resolve(response.data)
@@ -19,5 +20,14 @@ export default {
       })
     })
   },
+  modifyProjectLaunch(context, args){
+    return new Promise(function(resolve, reject){
+      context.$http.patch(MODIFY_PROJECT_API, args).then(response => {
+        resolve(response.data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  }
 
 }

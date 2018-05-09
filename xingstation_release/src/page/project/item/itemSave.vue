@@ -12,7 +12,7 @@
       </div>
       <el-form
         ref="projectForm"
-        :model="projectForm" label-width="150px" :rules="rules">
+        :model="projectForm" label-width="150px">
         <el-form-item label="节目名称" prop="project" :rules="[{ required: true, message: '请输入节目名称', trigger: 'submit',type: 'number'}]">
           <el-select v-model="projectForm.project" filterable placeholder="请搜索" remote :remote-method="getProject" @change="projectChangeHandle">
             <el-option
@@ -90,7 +90,7 @@
           placeholder="选择投放开始时间" :editable="false">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="投放结束时间" prop="edate">
+        <el-form-item label="投放结束时间" prop="edate" :rules="[{ type: 'date', required: true, message: '请输入投放结束时间', trigger: 'submit' }]">
           <el-date-picker
           v-model="projectForm.edate"
           type="date"
@@ -132,19 +132,19 @@ export default {
     ElDatePicker: DatePicker,
   },
   data() {
-    let edate = (rule, value, callback) => {
-      if (value === '') {
-          callback(new Error('请输入投放结束日期'));
-      } else {
-        let sdate = this.projectForm.sdate
-        console.log(new Date(sdate).getTime() - new Date(value).getTime() > 0)
-        if(new Date(sdate).getTime() - new Date(value).getTime() > 0){
-          callback(new Error('投放结束日期要比投放开始日期大'));
-        } else {
-          callback();
-        }
-      }
-    }
+    // let edate = (rule, value, callback) => {
+    //   if (value === '') {
+    //       callback(new Error('请输入投放结束日期'));
+    //   } else {
+    //     let sdate = this.projectForm.sdate
+    //     console.log(new Date(sdate).getTime() - new Date(value).getTime() > 0)
+    //     if(new Date(sdate).getTime() - new Date(value).getTime() > 0){
+    //       callback(new Error('投放结束日期要比投放开始日期大'));
+    //     } else {
+    //       callback();
+    //     }
+    //   }
+    // }
     return {
       setting: {
         isOpenSelectAll: true,
@@ -170,11 +170,11 @@ export default {
         edate: '',
       },
       areaList: [],
-      rules:{
-        edate: [
-          { validator: edate, trigger: 'submit',type: 'date', required: true},
-        ],
-      },
+      // rules:{
+      //   edate: [
+      //     { validator: edate, trigger: 'submit',type: 'date', required: true},
+      //   ],
+      // },
     }
   },
   mounted() {
@@ -283,8 +283,8 @@ export default {
         if(valid){
         this.setting.loading = true
           let args = {
-            sdate: new Date(this.projectForm.sdate).getTime(),
-            edate: new Date(this.projectForm.edate).getTime(),
+            sdate: new Date(this.projectForm.sdate).getTime() / 1000,
+            edate: new Date(this.projectForm.edate).getTime() / 1000,
             default_plid: this.projectForm.project,
             weekday_tvid: this.projectForm.weekday,
             weekend_tvid: this.projectForm.weekend,
