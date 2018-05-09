@@ -14,7 +14,7 @@ class PushTransformer extends TransformerAbstract
     public function transform(Push $push){
         return [
             'id'=>$push->id,
-            'img'=>$push->img,
+            'img'=>$push->project->icon,
             'area'=>$push->point->area->name,
             'market'=>$push->point->market->name,
             'point'=>$push->point->name,
@@ -25,6 +25,7 @@ class PushTransformer extends TransformerAbstract
             'on/off_time'=>$push->shours.'-'.$push->ehours.'点',
             'version'=>$push->curversion,
             'system'=>$push->systemversion,
+            'did'=>(empty($push->did)==true)?'有':null,
         ];
     }
 

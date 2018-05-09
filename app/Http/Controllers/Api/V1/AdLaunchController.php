@@ -42,7 +42,9 @@ class AdLaunchController extends Controller
             $query->whereRaw("str_to_date(date,'%Y-%m-%d') between '$startDate' and '$endDate'");
         }
 
-        $adLaunch = $query->orderBy('date', 'desc')->paginate(10);
+        $adLaunch = $query->whereHas('advertisement')
+            ->orderBy('date', 'desc')
+            ->paginate(10);
         return $this->response->paginator($adLaunch, new AdLaunchTransformer());
     }
 }

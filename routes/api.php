@@ -95,6 +95,9 @@ $api->version('v1', [
             //节目广告投放
             $api->get('project_ad_launch','ProjectAdLaunchController@index');
 
+            //授权广告
+            $api->get('wx_third','WxThirdController@index');
+
             //设备
             $api->get('push', 'PushController@index');
 
