@@ -770,6 +770,12 @@
 						{
 							"name": "漏斗数据",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_tokensa}}"
+									}
+								},
 								"method": "GET",
 								"header": [
 									{
@@ -782,7 +788,7 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "http://{{host}}/api/stats?start_date=2018-04-01&alias=isStarJT",
+									"raw": "http://{{host}}/api/stats?start_date=2018-05-01&end_date=2018-05-04&point_id=276",
 									"protocol": "http",
 									"host": [
 										"{{host}}"
@@ -794,11 +800,20 @@
 									"query": [
 										{
 											"key": "start_date",
-											"value": "2018-04-01"
+											"value": "2018-05-01"
+										},
+										{
+											"key": "end_date",
+											"value": "2018-05-04"
 										},
 										{
 											"key": "alias",
-											"value": "isStarJT"
+											"value": "isStarJT",
+											"disabled": true
+										},
+										{
+											"key": "point_id",
+											"value": "276"
 										}
 									]
 								},
@@ -809,6 +824,12 @@
 						{
 							"name": "分天数据",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_token1}}"
+									}
+								},
 								"method": "GET",
 								"header": [
 									{
@@ -821,7 +842,7 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "http://{{host}}/api/detail?start_date=2018-06-01&end_date=2018-05-04",
+									"raw": "http://{{host}}/api/detail?start_date=2018-05-01&end_date=2018-05-04",
 									"protocol": "http",
 									"host": [
 										"{{host}}"
@@ -833,7 +854,7 @@
 									"query": [
 										{
 											"key": "start_date",
-											"value": "2018-06-01"
+											"value": "2018-05-01"
 										},
 										{
 											"key": "end_date",
@@ -848,6 +869,12 @@
 						{
 							"name": "性别年龄",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{jwt_tokensa}}"
+									}
+								},
 								"method": "GET",
 								"header": [
 									{
@@ -860,23 +887,32 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "http://{{host}}/api/ageAndGender?start_date=2018-06-01&end_date=2018-05-04",
+									"raw": "http://{{host}}/api/age_gender?start_date=2018-05-01&end_date=2018-05-04&point_id=276",
 									"protocol": "http",
 									"host": [
 										"{{host}}"
 									],
 									"path": [
 										"api",
-										"ageAndGender"
+										"age_gender"
 									],
 									"query": [
 										{
 											"key": "start_date",
-											"value": "2018-06-01"
+											"value": "2018-05-01"
 										},
 										{
 											"key": "end_date",
 											"value": "2018-05-04"
+										},
+										{
+											"key": "alias",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "point_id",
+											"value": "276"
 										}
 									]
 								},
