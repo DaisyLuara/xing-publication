@@ -84,7 +84,10 @@
 </template>
 <script>
 import stats from 'service/stats'
+// import Highcharts from 'highcharts/highstock';
+// import Highcharts3D from 'highcharts/highcharts-3d';
 import { Row, Col, DatePicker, Select, Option, Button} from 'element-ui'
+// Highcharts3D(Highcharts)
 
 export default {
   components:{
@@ -96,6 +99,7 @@ export default {
     'el-option': Option
   },
   data(){
+    
     return {
       setting: {
         isOpenSelectAll: true,
@@ -142,7 +146,22 @@ export default {
       },
        agePieOptions : {
         chart:{
-          type: 'column'
+          type: 'column',
+          options3d: {
+            enabled: true,
+            alpha: 3,
+            beta: 13,
+            depth: 30,
+            // viewDistance: 10
+          }
+        },
+        plotOptions: {
+          series: {
+            animation: {
+              duration: 2000,
+              easing: 'easeOutBounce'
+            }
+          }
         },
         title: {
           text: null
@@ -163,28 +182,36 @@ export default {
           enabled: false
         },
         series: [{
-          dashStyle: 'shortDash',
-          color: "#1e9f8e",
+          // dashStyle: 'shortDash',
+          color: "#3D96AE",
           name:"年龄统计",
         }]
       },
       sexPieOptions : {
         chart:{
           type: 'pie',
-          plotBackgroundColor: null,
-          plotBorderWidth: null,
-          plotShadow: false,
+          options3d: {
+            enabled: true,
+            alpha: 40,
+            beta: 0
+          },
+          // plotBackgroundColor: null,
+          // plotBorderWidth: null,
+          // plotShadow: false,
         },
         tooltip: {
           headerFormat: '{性别访问数}<br>',
-          pointFormat: '{point.name}: <b>{point.y}</b>'
+          pointFormat: '{point.name}: <b>{point.y} 占比{point.percentage:.1f}%</b>'
         },
+        colors: ['#8bbc21', '#f28f43'],
         plotOptions: {
           pie: {
             allowPointSelect: true,
             cursor: 'pointer',
+            depth: 40,
             dataLabels: {
-              enabled: false
+              enabled: true,
+              format: '{point.name} {point.y} 占比{point.percentage:.1f}% '
             },
             showInLegend: true
           }
@@ -242,6 +269,20 @@ export default {
   },
   
   methods:{
+    animation(pos) {
+      // Math.easeOutBounce = function (pos) {
+        if ((pos) < (1 / 2.75)) {
+            return (7.5625 * pos * pos);
+        }
+        if (pos < (2 / 2.75)) {
+            return (7.5625 * (pos -= (1.5 / 2.75)) * pos + 0.75);
+        }
+        if (pos < (2.5 / 2.75)) {
+            return (7.5625 * (pos -= (2.25 / 2.75)) * pos + 0.9375);
+        }
+        return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
+      // };
+    },
     searchHandle() {
       this.active = '围观人数'
       this.projectAlias = this.projectSelect
