@@ -11,10 +11,9 @@ class ProjectAdLaunchController extends Controller
     public function index(Request $request, ProjectAdLaunch $projectAdLaunch)
     {
         $query = $projectAdLaunch->query();
-        if ($request->piid) {
-            $piid = $request->piid;
-            $query->whereHas('project', function ($q) use ($piid) {
-                $q->where('id', '=', $piid);
+        if ($request->project_id) {
+            $query->whereHas('project', function ($q) use ($request) {
+                $q->where('id', '=', $request->project_id);
             });
         }
 

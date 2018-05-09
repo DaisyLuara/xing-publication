@@ -20,14 +20,14 @@ class PushController extends Controller
                 });
             }
 
-            if ($request->has('alias')) {
+            if ($request->has('project_id')) {
                 $q->whereHas('projects', function ($q) use ($request) {
-                    $q->where('versionname', '=', $request->alias);
+                    $q->where('id', '=', $request->project_id);
                 });
             }
 
-            if ($request->has('oid')) {
-                $q->where('oid', '=', $request->oid);
+            if ($request->has('point_id')) {
+                $q->where('oid', '=', $request->point_id);
             }
 
             $q->orderBy('areaid', 'desc')->orderBy('marketid', 'desc');
