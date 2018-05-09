@@ -44,7 +44,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="点位" prop="point" :rules="[{ required: true, message: '请输入点位', trigger: 'submit',type: 'array'}]">
-          <el-select v-model="projectForm.point" placeholder="请选择"  multiple filterable @change="pointChangeHandle" :loading="searchLoading">
+          <el-select v-model="projectForm.point" placeholder="请选择"  multiple filterable @change="pointChangeHandle" :loading="searchLoading" :multiple-limit="10">
             <el-option
               v-for="item in pointList"
               :key="item.id"
@@ -109,6 +109,7 @@
 
 <script>
 import search from 'service/search'
+import project from 'service/project'
 import {
   Form,
   Select,
@@ -280,9 +281,31 @@ export default {
     submit(formName) {
       this.$refs[formName].validate((valid) => {
         if(valid){
-          console.log('submit')
+        this.setting.loading = true
+          let args = {
+            sdate: new Date(this.projectForm.sdate).getTime(),
+            edate: new Date(this.projectForm.edate).getTime(),
+            default_plid: this.projectForm.project,
+            weekday_tvid: this.projectForm.weekday,
+            weekend_tvid: this.projectForm.weekend,
+            div_tvid: this.projectForm.define,
+            oids: this.projectForm.point
+          }
+          return project.savePorjectLaunch(this, args).then((response) => {
+            this.setting.loading = false
+            this.$message({
+              message: "添加成功",
+              type: "success"
+            })
+            this.$router.push({
+              path: "/project/index/"
+            })
+            console.log(response)
+          }).catch((err) => {
+            this.setting.loading = false
+            console.log(err)
+          })
         }else{
-          console.log(this.projectForm)
           console.log('error submit');
           return;
         }
