@@ -3,7 +3,7 @@ const STAFFS_API = '/api/staffs'
 const USER_PROJECT_API = '/api/userProject'
 const STATS_API = '/api/stats'
 const DAY_DETAIL_API = '/api/detail'
-const AGE_GENDER_API = '/api/ageAndGender'
+const AGE_GENDER_API = '/api/age_gender'
 export default {
   getUser(context,args) {
     return new Promise(function(resolve, reject){

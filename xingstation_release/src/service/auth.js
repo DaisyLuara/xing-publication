@@ -77,6 +77,8 @@ export default {
     localStorage.removeItem('user_info')
     localStorage.removeItem('jwt_ttl')
     localStorage.removeItem('jwt_begin_time')
+    let setIntervalValue = context.$store.state.notificationCount.setIntervalValue
+    clearInterval(setIntervalValue)
   },
 
   refreshUserInfo(context) {

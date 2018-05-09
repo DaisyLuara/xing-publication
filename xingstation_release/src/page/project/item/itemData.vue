@@ -19,7 +19,8 @@
             :value="item.alias">
           </el-option>
         </el-select>
-        <el-button @click="searchHandle">搜索</el-button>
+        <el-button @click="searchHandle" type="primary">搜索</el-button>
+        <el-button @click="resetSearch">重置</el-button>
       </div>
       <el-date-picker
       v-model="dateTime"
@@ -298,9 +299,18 @@ export default {
       }else{
         this.setting.loading = true
         this.allPromise()
-        // this.getAgeAndGender();
-        // this.getPeopleCount()
-        }
+      }
+    },
+    resetSearch(){
+      if(this.showUser){
+        this.userSelect = ''
+        this.arUserId = this.userSelect
+        this.projectSelect = ''
+      } else{
+        this.projectSelect = ''
+      }
+      this.setting.loading = true
+      this.allPromise()
     },
     projectChangeHandle() {
       this.projectAlias = this.projectSelect
@@ -333,7 +343,6 @@ export default {
             this.userList = response.data
             if(this.userList.length == 0) {
               this.projectList = []
-              this.projectList.unshift({id: -1, name:'',alias: ''}) 
               this.projectSelect = ''
             }
             this.projectLoading = false
@@ -359,7 +368,6 @@ export default {
         } 
         return stats.getProject(this,args).then((response) => {
           this.projectList = response.data
-          this.projectList.unshift({id: -1, name:'',alias: ''}) 
           this.projectLoading = false
         }).catch(err => {
           console.log(err)

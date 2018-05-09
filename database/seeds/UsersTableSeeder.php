@@ -21,7 +21,7 @@ class UsersTableSeeder extends Seeder
             'https://fsdhubcdn.phphub.org/uploads/images/201710/14/1/NDnzMutoxX.png?imageView2/1/w/200/h/200',
         ];
 
-        $ar_users = ArUser::where('role_id', '=', 8)->get();
+        $ar_users = ArUser::get();
         $ar_users->each(function ($ar_user) use ($faker, $avatars) {
             $user_array = [
                 'avatar' => $faker->randomElement($avatars),
@@ -32,16 +32,20 @@ class UsersTableSeeder extends Seeder
             ];
             // 插入到数据库中
             $user = User::create($user_array);
-            $user->assignRole('user');
-        });
 
-        //添加超级管理员
-        User::create([
-            'avatar' => $faker->randomElement($avatars),
-            'name' => '陈重',
-            'phone' => '13818403072',
-            'password' => bcrypt('password'),
-        ])->assignRole('super-admin');
+            if (in_array($ar_user->role_id, [3, 5, 6, 7, 9, 11])) {
+                $user->assignRole('user');
+            } elseif (in_array($ar_user->role_id, [2])) {
+                $user->assignRole('admin');
+            } elseif (in_array($ar_user->role_id, [4])) {
+                $user->assignRole('project-manager');
+            } elseif ($ar_user->role_id == 10) {
+                $user->assignRole('dev-ops');
+            } elseif ($ar_user->role_id == 1) {
+                $user->assignRole('super-admin');
+            }
+
+        });
 
         //添加管理员
         User::create([
@@ -51,12 +55,11 @@ class UsersTableSeeder extends Seeder
             'password' => bcrypt('password'),
         ])->assignRole('admin');
 
-        //添加法务
         User::create([
             'avatar' => $faker->randomElement($avatars),
-            'name' => '方圆',
-            'phone' => '15921145624',
+            'name' => '赵俊',
+            'phone' => '18255482472',
             'password' => bcrypt('password'),
-        ])->assignRole('legal-affairs');
+        ])->assignRole('admin');
     }
 }

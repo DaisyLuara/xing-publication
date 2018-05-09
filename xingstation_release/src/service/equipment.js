@@ -1,14 +1,13 @@
 import {router} from '../main'
-const STAFFS_API = '/api/staffs'
+const EQUIPMENT_API = '/api/push'
 export default {
-  getStaffsList(context,args) {
+  gettEquipmentList(context,args) {
     return new Promise(function(resolve, reject){
-      context.$http.get(STAFFS_API).then(response => {
+      context.$http.get(EQUIPMENT_API, {params: args}).then(response => {
         resolve(response.data)
       }).catch(error => {
         reject(error)
       })
     })
   }
-
 }

@@ -5,7 +5,7 @@
         <div class="search-wrap">
           <el-form :model="filters" :inline="true" ref="searchForm" >
             <el-form-item label="" prop="name">
-              <el-input v-model="filters.name" placeholder="请输入节目名称" style="width: 300px;"></el-input>
+              <el-input v-model="filters.name" placeholder="请输入节目名称" style="width: 250px;"></el-input>
             </el-form-item>
             <el-form-item label="" prop="area">
               <el-select v-model="filters.area" placeholder="请选择区域" @change="areaChangeHandle" filterable>
@@ -31,15 +31,9 @@
             <el-button @click="resetSearch" type="default">重置</el-button>
           </el-form>
         </div>
-        <div class="actions-wrap">
-          <span class="label">
-            节目数量: {{pagination.total}}
-          </span>
-          <el-button size="small" type="success" @click="linkToAddItem">投放节目</el-button>
-        </div>
         <div class="editCondition-wrap" style="padding: 0 0 15px;">
           <el-form :model="editCondition" :inline="true" ref="editForm" >
-            <el-form-item label="修改选项" prop="xiu">
+            <el-form-item label="修改选项" style="margin-bottom: 0;">
               <el-checkbox-group v-model="editCondition.conditionList">
                 <el-checkbox label="节目名称"></el-checkbox>
                 <el-checkbox label="工作日模版"></el-checkbox>
@@ -52,12 +46,19 @@
             <el-button @click="modifyEdit" type="danger" size="small">修改</el-button>
           </el-form>
         </div>
+        <div class="actions-wrap">
+          <span class="label">
+            节目数量: {{pagination.total}}
+          </span>
+          <el-button size="small" type="success" @click="linkToAddItem">投放节目</el-button>
+        </div>
         <el-table :data="tableData" style="width: 100%" highlight-current-row  @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55" ></el-table-column>
           <el-table-column
             prop="name"
             label="节目名称"
-            width="180"
+            width="130"
+            fixed
             >
             <template slot-scope="scope">
               {{scope.row.project.name}}
@@ -66,7 +67,7 @@
           <el-table-column
             prop="icon"
             label="节目icon"
-            width="180"
+            width="140"
             >
             <template slot-scope="scope">
               <img :src="scope.row.project.icon" alt="" class="icon-item"/>
@@ -75,6 +76,7 @@
           <el-table-column
             prop="areaName"
             label="区域"
+            width="130"
             >
             <template slot-scope="scope">
               {{scope.row.point.market.area.name}}
@@ -83,7 +85,8 @@
           <el-table-column
             prop="market_name"
             label="商场"
-            width="180">
+            min-width="150"
+            >
             <template slot-scope="scope">
               {{scope.row.point.market.name}}
             </template>
@@ -91,7 +94,7 @@
           <el-table-column
             prop="point_name"
             label="点位"
-            width="200">
+            min-width="200">
             <template slot-scope="scope">
               {{scope.row.point.name}}
             </template>
@@ -99,19 +102,20 @@
           <el-table-column
             prop="created_at"
             label="创建时间"
-            width="180">
+            min-width="180">
           </el-table-column>
           <el-table-column
             prop="start_date"
-            label="开始时间"
-            width="180">
+            label="自定义开始时间"
+            min-width="180"
+            >
           </el-table-column>
           <el-table-column
             prop="end_date"
-            label="结束时间"
-            width="180">
+            label="自定义结束时间"
+            min-width="180">
           </el-table-column>
-          <el-table-column label="操作" width="100">
+          <el-table-column label="操作" width="150" fixed="right">
             <template slot-scope="scope">
               <!-- <el-button size="small" type="primary" @click="linkToEdit(scope.row)">修改</el-button> -->
               <el-button size="small" type="warning" @click="showData(scope.row.project.alias, scope.row.project.name, arUserName)" v-if="dataShowFlag">数据</el-button>
@@ -546,6 +550,12 @@ export default {
           .el-form-item{
             margin-bottom: 0;
           }
+          .el-select{
+            width: 250px;
+          }
+          .item-input{
+            width: 230px;
+          }
           .warning{
             background: #ebf1fd;
             padding: 8px;
@@ -559,7 +569,6 @@ export default {
           }
         }
         .actions-wrap{
-          margin-top: 5px;
           display: flex;
           flex-direction: row;
           justify-content: space-between;
