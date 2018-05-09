@@ -27,7 +27,7 @@ class QueryController extends Controller
             $query->where('name', 'like', '%' . $request->name . '%');
         }
 
-        $areas = $query->get();
+        $areas = $query->where('areaid', '>', 0)->get();
 
         return $this->response->collection($areas, new AreaTransformer());
     }
@@ -48,7 +48,7 @@ class QueryController extends Controller
             $query->where('areaid', '=', $request->area_id);
         }
 
-        $markets = $query->get();
+        $markets = $query->where('marketid', '>', 0)->get();
 
         return $this->response->collection($markets, new MarketTransformer());
     }
