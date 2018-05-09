@@ -5,10 +5,12 @@ namespace App\Transformers;
 
 use App\Models\Push;
 use Carbon\Carbon;
+use League\Fractal\Scope;
 use League\Fractal\TransformerAbstract;
 
 class PushTransformer extends TransformerAbstract
 {
+    protected $availableIncludes=['point'];
     public function transform(Push $push){
         return [
             'id'=>$push->id,
@@ -18,11 +20,16 @@ class PushTransformer extends TransformerAbstract
             'point'=>$push->point->name,
             'faceDate'=>Carbon::parse(date('Y-m-d H:i:s',($push->facedate)/1000))->diffForHumans(Carbon::now()),
             'networkDate'=>Carbon::parse(date('Y-m-d H:i:s',($push->networkdate)/1000))->diffForHumans(Carbon::now()),
-            'screenStatus'=>$push->hdmi,
+            'screenStatus'=>($push->hdmi==1)?'开启':'关闭',
             'loginDate'=>(new Carbon($push->date))->format('m-d H:i'),
-            'on/off_time'=>$push->shours.'-'.$push->ehours,
+            'on/off_time'=>$push->shours.'-'.$push->ehours.'点',
             'version'=>$push->curversion,
-            'system'=>$push->system,
+            'system'=>$push->systemversion,
         ];
     }
+
+   public function includePoint(Push $push){
+        return $this->item($push->point,new PointTransformer());
+   }
+
 }
