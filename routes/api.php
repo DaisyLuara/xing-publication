@@ -92,6 +92,9 @@ $api->version('v1', [
             //广告行业
             $api->get('adTrade', 'AdTradeController@index');
 
+            //节目广告投放
+            $api->get('projectAdLaunch','ProjectAdLaunchController@index');
+
             //设备
             $api->get('push', 'PushController@index');
 
