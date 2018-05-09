@@ -103,12 +103,12 @@
           </el-table-column>
           <el-table-column
             prop="start_date"
-            label="开始时间"
+            label="自定义开始时间"
             width="180">
           </el-table-column>
           <el-table-column
             prop="end_date"
-            label="结束时间"
+            label="自定义结束时间"
             width="180">
           </el-table-column>
           <el-table-column label="操作" width="100">
