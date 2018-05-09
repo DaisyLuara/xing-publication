@@ -13,7 +13,7 @@ class FaceLogController extends Controller
     {
         $date_start = $request->has('start_date') ? $request->start_date : Carbon::now()->addDays(-7);
         $date_end = $request->has('end_date') ? $request->end_date : Carbon::now();
-        $belong = $request->has('belong') ? $request->belong : 'all';
+        $belong = $request->has('alias') ? $request->alias : 'all';
         $type = $request->has('type') ? $request->type : 'looker';
 
         $query = $faceLog->query();
