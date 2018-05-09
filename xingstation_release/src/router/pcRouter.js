@@ -6,6 +6,7 @@ import project from 'router/pc/project'
 import inform from 'router/pc/inform'
 import account from 'router/pc/account'
 import ad from 'router/pc/ad'
+import equipment from 'router/pc/equipment'
 // import feedback from 'router/pc/feedback'
 // import help from 'router/pc/help'
 // import contract from 'router/pc/contract'
@@ -22,6 +23,7 @@ export default {
     system,
     company,
     project,
+    equipment,
     // contract,
     inform,
     account,
