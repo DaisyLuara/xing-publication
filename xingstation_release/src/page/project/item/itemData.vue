@@ -243,6 +243,7 @@ export default {
   
   methods:{
     searchHandle() {
+      this.active = '围观人数'
       this.projectAlias = this.projectSelect
       if(/.*[\u4e00-\u9fa5]+.*$/.test(this.projectAlias)){
         this.projectAlias = this.$route.query.alias
