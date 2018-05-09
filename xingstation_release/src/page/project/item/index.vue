@@ -38,8 +38,8 @@
                 <el-checkbox label="节目名称"></el-checkbox>
                 <el-checkbox label="工作日模版"></el-checkbox>
                 <el-checkbox label="周末模版"></el-checkbox>
-                <el-checkbox label="开始时间"></el-checkbox>
-                <el-checkbox label="结束时间" ></el-checkbox>
+                <el-checkbox label="自定义开始时间"></el-checkbox>
+                <el-checkbox label="自定义结束时间" ></el-checkbox>
                 <el-checkbox label="自定义模版" ></el-checkbox>
               </el-checkbox-group>
             </el-form-item>
