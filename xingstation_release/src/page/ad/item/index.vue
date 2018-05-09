@@ -21,25 +21,27 @@
           <el-table-column
             prop="point"
             label="点位"
-            width="350"
+            min-width="200"
+            fixed
             >
           </el-table-column>
           <el-table-column
             prop="advertiser"
             label="广告主"
-            width="200"
+            min-width="100"
+            fixed
             >
           </el-table-column>
           <el-table-column
             prop="advertisement"
             label="广告"
-            width="200"
+            width="100"
             >
           </el-table-column>
           <el-table-column
             prop="adType"
             label="广告类型"
-            width="200"
+            width="100"
             >
           </el-table-column>
           <el-table-column
@@ -48,7 +50,7 @@
             width="80"
             >
             <template slot-scope="scope">
-              <router-link :to="scope.row.link">查看</router-link>
+              <a :href="scope.row.link" target="_blank" style="color: blue">查看</a>
             </template>
           </el-table-column>
           <el-table-column
@@ -66,22 +68,22 @@
           <el-table-column
             prop="startDate"
             label="开始时间"
-            width="200"
+            min-width="200"
             >
           </el-table-column>
           <el-table-column
             prop="endDate"
             label="结束时间"
-            width="200"
+            min-width="200"
             >
           </el-table-column>
           <el-table-column
             prop="date"
             label="时间"
-            width="200"
+            min-width="200"
             >
           </el-table-column>
-          <el-table-column label="操作" width="200">
+          <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
               <el-button size="small" type="primary" @click="linkToEdit(scope.row.id)">修改</el-button>
               <!-- <el-button size="small" type="warning" @click="showData(scope.row.project.alias, scope.row.project.name, arUserName)" v-if="dataShowFlag">数据</el-button> -->

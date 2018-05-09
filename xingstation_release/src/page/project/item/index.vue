@@ -57,7 +57,8 @@
           <el-table-column
             prop="name"
             label="节目名称"
-            width="180"
+            width="130"
+            fixed
             >
             <template slot-scope="scope">
               {{scope.row.project.name}}
@@ -66,7 +67,7 @@
           <el-table-column
             prop="icon"
             label="节目icon"
-            width="180"
+            width="140"
             >
             <template slot-scope="scope">
               <img :src="scope.row.project.icon" alt="" class="icon-item"/>
@@ -75,6 +76,7 @@
           <el-table-column
             prop="areaName"
             label="区域"
+            width="130"
             >
             <template slot-scope="scope">
               {{scope.row.point.market.area.name}}
@@ -83,7 +85,8 @@
           <el-table-column
             prop="market_name"
             label="商场"
-            width="180">
+            min-width="150"
+            >
             <template slot-scope="scope">
               {{scope.row.point.market.name}}
             </template>
@@ -91,7 +94,7 @@
           <el-table-column
             prop="point_name"
             label="点位"
-            width="200">
+            min-width="200">
             <template slot-scope="scope">
               {{scope.row.point.name}}
             </template>
@@ -99,19 +102,20 @@
           <el-table-column
             prop="created_at"
             label="创建时间"
-            width="180">
+            min-width="180">
           </el-table-column>
           <el-table-column
             prop="start_date"
             label="自定义开始时间"
-            width="180">
+            min-width="180"
+            >
           </el-table-column>
           <el-table-column
             prop="end_date"
             label="自定义结束时间"
-            width="180">
+            min-width="180">
           </el-table-column>
-          <el-table-column label="操作" width="100">
+          <el-table-column label="操作" width="150" fixed="right">
             <template slot-scope="scope">
               <!-- <el-button size="small" type="primary" @click="linkToEdit(scope.row)">修改</el-button> -->
               <el-button size="small" type="warning" @click="showData(scope.row.project.alias, scope.row.project.name, arUserName)" v-if="dataShowFlag">数据</el-button>
