@@ -5,23 +5,24 @@ namespace App\Http\Controllers\Api\V1;
 use App\Models\AdLaunch;
 use App\Transformers\AdLaunchTransformer;
 use Illuminate\Http\Request;
+use App\Http\Requests\Api\V1\AdLaunchRequest;
 
 class AdLaunchController extends Controller
 {
-    public function index(Request $request, AdLaunch $adLaunch)
+    public function index(AdLaunchRequest $request, AdLaunch $adLaunch)
     {
         $query = $adLaunch->query();
 
-        if ($request->has('atid')) {
-            $query->where('atid', '=', $request->atid);
+        if ($request->has('adTrade_id')) {
+            $query->where('atid', '=', $request->adTrade_id);
         }
 
-        if ($request->has('atiid')) {
-            $query->where('atiid', '=', $request->atiid);
+        if ($request->has('advertiser_id')) {
+            $query->where('atiid', '=', $request->advertiser_id);
         }
 
-        if ($request->has('aid')) {
-            $query->where('aid', '=', $request->aid);
+        if ($request->has('advertisement_id')) {
+            $query->where('aid', '=', $request->advertisement_id);
         }
 
         if ($request->has('area_id')) {
@@ -32,8 +33,8 @@ class AdLaunchController extends Controller
             $query->where('marketid', '=', $request->market_id);
         }
 
-        if ($request->has('oid')) {
-            $query->where('oid', '=', $request->oid);
+        if ($request->has('point_id')) {
+            $query->where('oid', '=', $request->point_id);
         }
 
         if ($request->has('start_date') && $request->has('end_date')) {

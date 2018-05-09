@@ -48,8 +48,8 @@ class FaceCountController extends Controller
             });
         }
 
-        if ($request->has('oid')) {
-            $query->where('oid', '=', $request->oid);
+        if ($request->has('point_id')) {
+            $query->where('oid', '=', $request->point_id);
         }
 
         return $query;
@@ -58,8 +58,8 @@ class FaceCountController extends Controller
 
     private function getDefaultParams($request)
     {
-        $start_date = $request->has('start_date') ? (new Carbon($request->start_date))->toDateString() : Carbon::now()->addDays(-7)->toDateString();
-        $end_date = $request->has('end_date') ? (new Carbon($request->end_date))->toDateString() : Carbon::now()->toDateString();
+        $start_date = $request->has('start_date') ? $request->start_date : Carbon::now()->addDays(-7)->toDateString();
+        $end_date = $request->has('end_date') ? $request->end_date : Carbon::now()->toDateString();
         $alias = $request->has('alias') ? $request->alias : 'all';
         $type = $request->has('type') ? $request->type : 'looknum';
 

@@ -13,7 +13,7 @@ class AdLaunchRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,12 +23,14 @@ class AdLaunchRequest extends FormRequest
      */
     public function rules()
     {
-        switch ($this->method()){
+/*        switch ($this->method()) {
             case 'GET':
                 return [
-                    'start_date'=>'date_format:%Y-%m-%d',
-                    'end_date'=>'date_format:%Y-%m-%d',
+                    'start_date' => 'date_format:Y-m-d',
+                    'end_date' => 'date_format:Y-m-d',
                 ];
-        }
+                break;
+        }*/
+        return [];
     }
 }

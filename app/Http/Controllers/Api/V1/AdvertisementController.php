@@ -11,11 +11,11 @@ class AdvertisementController extends Controller
     public function index(Request $request, Advertisement $advertisement)
     {
         $query = $advertisement->query();
-        if ($request->atid) {
-            $query->where('atid', '=', $request->atid);
+        if ($request->adTrade_id) {
+            $query->where('atid', '=', $request->adTrade_id);
         }
-        if ($request->atiid) {
-            $query->where('atiid', '=', $request->atiid);
+        if ($request->advertiser_id) {
+            $query->where('atiid', '=', $request->advertiser_id);
         }
         $advertisement = $query->orderBy('atid', 'desc')
             ->orderBy('date', 'desc')
