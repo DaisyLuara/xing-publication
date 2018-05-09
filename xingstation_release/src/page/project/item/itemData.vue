@@ -1,8 +1,8 @@
 <template>
-  <div class="point-data-wrapper" v-loading="loading">
+  <div class="point-data-wrapper" :element-loading-text="setting.loadingText" v-loading="setting.loading">
     <div class="headline-wrapper">
       <div>
-        <span>节目名称：{{pointName}} </span>
+        <!-- <span>节目名称：{{pointName}} </span> -->
         <el-select v-model="userSelect" filterable placeholder="请选择用户(可搜索)" v-if="showUser" :loading="projectLoading" remote :remote-method="getUser" @change="userChangeHandle">
           <el-option
             v-for="item in userList"
@@ -19,7 +19,7 @@
             :value="item.alias">
           </el-option>
         </el-select>
-        <el-button @click="searchHandle">搜索节目</el-button>
+        <el-button @click="searchHandle">搜索</el-button>
       </div>
       <el-date-picker
       v-model="dateTime"
@@ -33,6 +33,9 @@
       <ul class="btns-wrapper">
         <li v-for="(item, key) in peopleCount" :key="key">
           <a class="btn" :class="{'active': item.name == active}" @click="lineDataHandle(item)">
+            <!-- <i class="title" v-if="item.alias === 'scannum'">
+              {{item.name}} / {{(item.count==0 & item.out == 0) ? 0 : new Number((item.count/item.out)*100).toFixed(1)}}%
+            </i> -->
             <i class="title">
               {{item.name}}
             </i>
@@ -94,7 +97,11 @@ export default {
   },
   data(){
     return {
-      loading: true,
+      setting: {
+        isOpenSelectAll: true,
+        loading: false,
+        loadingText: "拼命加载中"
+      },
       dateTime: [new Date().getTime() - 3600 * 1000 * 24 * 6, new Date().getTime()],
       pickerOptions2: {
         disabledDate(time) {
@@ -217,12 +224,11 @@ export default {
     }
   },
   created(){
+    this.setting.loading = true
     this.pointName = this.$route.query.name
     this.projectSelect = this.pointName
     this.projectAlias = this.$route.query.alias
-    this.getPeopleCount()
-    this.getAgeAndGender()
-    this.loading = false
+    this.allPromise()
   },
   computed:{
     'peopleCountLength': function (){
@@ -230,7 +236,6 @@ export default {
     },
     showUser(){
       let user_info = JSON.parse(localStorage.getItem('user_info'))
-      console.log(user_info)
       let roles = user_info.roles.data[0].name
       return roles == 'user' ? false : true
     },
@@ -249,8 +254,10 @@ export default {
           message: '时间范围不能超过30天'
         });
       }else{
-        this.getAgeAndGender();
-        this.getPeopleCount()
+        this.setting.loading = true
+        this.allPromise()
+        // this.getAgeAndGender();
+        // this.getPeopleCount()
         }
     },
     projectChangeHandle() {
@@ -263,6 +270,16 @@ export default {
       if(this.arUserId) {
         this.getProject('')
       }
+    },
+    allPromise(){
+      let peopleCount = this.getPeopleCount()
+      let ageAndGender = this.getAgeAndGender()
+      Promise.all([peopleCount, ageAndGender]).then(() => {
+        this.setting.loading = false
+      }).catch((err) => {
+        console.log(err)
+        this.setting.loading = false
+      })
     },
     getUser(query) {
       let args = {
@@ -277,7 +294,6 @@ export default {
               this.projectList.unshift({id: -1, name:'',alias: ''}) 
               this.projectSelect = ''
             }
-            console.log(this.projectList)
             this.projectLoading = false
           }).catch(err => {
             console.log(err)
@@ -295,18 +311,12 @@ export default {
         name: query
       }
       if(this.showUser){
-        // if(query === '') {
-        //   this.projectSelect == query
-        // }
-        console.log(this.arUserId)
         this.projectLoading = true
         if(!this.arUserId){
           delete args.ar_user_id
         } 
-        console.log(args)
         return stats.getProject(this,args).then((response) => {
           this.projectList = response.data
-          console.log(response)
           this.projectList.unshift({id: -1, name:'',alias: ''}) 
           this.projectLoading = false
         }).catch(err => {
@@ -514,8 +524,10 @@ export default {
           message: '时间范围不能超过30天'
         });
       }else{
-        this.getAgeAndGender();
-        this.getPeopleCount()
+        this.setting.loading = true
+        this.allPromise()
+        // this.getAgeAndGender();
+        // this.getPeopleCount()
       }
     },
     sortNumber(countA,countB)
@@ -583,7 +595,7 @@ export default {
             text-align: center;
             height: 30px;
             padding-top: 40px;
-            font-size: 18px;
+            font-size: 15px;
             color: #517ebb;
           }
           .arrow-icon{

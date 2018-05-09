@@ -3,12 +3,12 @@
     <div class="topbar">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item :to="{ path: '/program/item' }">节目投放管理</el-breadcrumb-item>
-        <el-breadcrumb-item>添加</el-breadcrumb-item>
+        <el-breadcrumb-item>修改</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <div class="pane">
       <div class="pane-title">
-        新增节目投放
+        修改节目投放
       </div>
       <el-form
         ref="projectForm"
@@ -17,36 +17,6 @@
           <el-select v-model="projectForm.project" filterable placeholder="请搜索" remote :remote-method="getProject" @change="projectChangeHandle">
             <el-option
               v-for="item in projectList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="区域" prop="area"  :rules="[{ required: true, message: '请输入区域', trigger: 'submit' ,type: 'number'}]">
-          <el-select v-model="projectForm.area" placeholder="请选择" filterable @change="areaChangeHandle">
-            <el-option
-              v-for="item in areaList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="商场" prop="market" :rules="[{ required: true, message: '请输入商场', trigger: 'submit' ,type: 'number'}]">
-          <el-select v-model="projectForm.market"  placeholder="请搜索" filterable :loading="searchLoading" remote :remote-method="getMarket" @change="marketChangeHandle">
-            <el-option
-              v-for="item in marketList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="点位" prop="point" :rules="[{ required: true, message: '请输入点位', trigger: 'submit',type: 'array'}]">
-          <el-select v-model="projectForm.point" placeholder="请选择"  multiple filterable @change="pointChangeHandle" :loading="searchLoading">
-            <el-option
-              v-for="item in pointList"
               :key="item.id"
               :label="item.name"
               :value="item.id">
@@ -150,25 +120,19 @@ export default {
         loading: false,
         loadingText: "拼命加载中"
       },
-      marketList: [],
       weekdayList: [],
       weekendList: [],
       defineList: [],
-      pointList: [],
       projectList: [],
       searchLoading: false,
       projectForm: {
         project: '',
-        area: '',
-        market: '',
-        point: [],
         weekday: '',
         weekend: '',
         define: '',
         sdate: '',
         edate: '',
       },
-      areaList: [],
       rules:{
         edate: [
           { validator: edate, trigger: 'submit',type: 'date', required: true},
@@ -181,13 +145,8 @@ export default {
   created() {
     this.setting.loading = true
     let moduleList = this.getModuleList()
-    let areaList = this.getAreaList()
-    Promise.all([moduleList, areaList]).then(() => {
-      this.setting.loading = false
-    }).catch((err) => {
-      console.log(err)
-      this.setting.loading = false
-    })
+    this.setting.loading = false
+    
   },
   methods: {
     projectChangeHandle() {
@@ -221,62 +180,6 @@ export default {
       this.setting.loading = false;
       })
     },
-    areaChangeHandle() {
-      console.log(this.projectForm.area)
-      this.projectForm.market = ''
-      this.getMarket(this.projectForm.market)
-    },
-    getAreaList () {
-      return search.getAeraList(this).then((response) => {
-       let data = response.data
-       this.areaList = data
-      }).catch(error => {
-        console.log(error)
-      this.setting.loading = false;
-      })
-    },
-    marketChangeHandle() {
-      console.log(this.projectForm.market)
-      this.projectForm.point = []
-      this.getPoint()
-    },
-    pointChangeHandle() {
-      console.log(this.projectForm.point)
-    },
-    getPoint() {
-      let args = {
-        include: 'market',
-        market_id: this.projectForm.market
-      }
-      this.searchLoading = true
-      return search.gePointList(this, args).then((response) => {
-        console.log(response)
-        this.pointList = response.data
-        this.searchLoading = false
-      }).catch(err => {
-        this.searchLoading = false
-        console.log(err)
-      })
-    },
-    getMarket(query) {
-      this.searchLoading = true
-      let args = {
-        name: query,
-        include: 'area',
-        area_id: this.projectForm.area
-      }
-      return search.getMarketList(this,args).then((response) => {
-        this.marketList = response.data
-        if(this.marketList.length == 0) {
-          this.projectForm.market = ''
-          this.projectForm.marketList = []
-        }
-        this.searchLoading = false
-      }).catch(err => {
-        console.log(err)
-        this.searchLoading = false
-      })
-    },
     submit(formName) {
       this.$refs[formName].validate((valid) => {
         if(valid){
@@ -298,15 +201,8 @@ export default {
       border-radius: 5px;
       background-color: white;
       padding: 20px 40px 80px;
-
       .el-select,.item-input,.el-date-editor.el-input{
         width: 380px;
-      }
-      .item-list{
-        .program-title{
-          color: #555;
-          font-size: 14px;
-        }
       }
       .pane-title {
         padding-bottom: 20px;
@@ -314,6 +210,9 @@ export default {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+      }
+      .pane-input {
+        width: 350px;
       }
     }
   }

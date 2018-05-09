@@ -101,6 +101,7 @@ $api->version('v1', [
             $api->get('projects/launch', 'ProjectLaunchController@index');
             $api->get('staffs', 'ArUserController@index');
             $api->post('projects/launch', 'ProjectLaunchController@store');
+            $api->patch('projects/launches', 'ProjectLaunchController@update');
 
             //远程搜索
             $api->get('areas/query', 'QueryController@areaQuery');//区域搜索

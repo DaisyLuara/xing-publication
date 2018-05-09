@@ -16,14 +16,15 @@ class ProjectLaunchRequest extends FormRequest
         switch ($this->method()) {
             case 'POST':
                 return [
-                    'name' => 'required|string',
-                    'address' => 'required|string',
+                    'oid' => 'required|array',
+                    'default_plid' => 'required',
+                    'sdate' => 'required',
+                    'edate' => 'required',
                 ];
                 break;
             case 'PATCH':
                 return [
-                    'name' => 'string',
-                    'address' => 'string',
+                    'tvoids' => 'required',
                 ];
                 break;
         }
@@ -32,8 +33,10 @@ class ProjectLaunchRequest extends FormRequest
     public function attributes()
     {
         return [
-            'name' => '公司全称',
-            'address' => '公司地址',
+            'default_plid' => '节目',
+            'sdate' => '开始时间',
+            'edate' => '结束时间',
+            'tvoids' => '节目投放ID',
         ];
     }
 }
