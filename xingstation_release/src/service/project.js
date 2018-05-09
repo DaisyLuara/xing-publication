@@ -9,6 +9,15 @@ export default {
         reject(error)
       })
     })
-  }
+  },
+  savePorjectLaunch(context, args, uid) {
+    return new Promise(function(resolve, reject){
+      context.$http.post(PROJECT_API, args).then(response => {
+        resolve(response.data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
 
 }

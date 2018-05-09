@@ -48,7 +48,12 @@ class ProjectLaunchController extends Controller
             });
         }
 
-        $projects = $query->paginate(10);
+        if ($request->ids) {
+            $ids = explode(',', $request->ids);
+            $query->whereIn('tvoid', $ids);
+        }
+
+        $projects = $query->orderBy('tvoid', 'desc')->paginate(10);
         return $this->response->paginator($projects, new ProjectLaunchTransformer());
 
     }
@@ -59,32 +64,30 @@ class ProjectLaunchController extends Controller
         $launch = $request->all();
         $query = $projectLaunchLocal->query();
 
-        if (count($launch['oids'])) {
-            $oids = $launch['oids'];
-            unset($launch['oids']);
-            foreach ($oids as $oid) {
-                $query->create(array_merge(['oid' => $oid], $launch));
-            }
+        $oids = $launch['oids'];
+        unset($launch['oids']);
+
+        foreach ($oids as $oid) {
+            $query->create(array_merge(['oid' => $oid], $launch));
         }
 
         return $this->response->noContent();
     }
 
-    public function update(Request $request, ProjectLaunchLocal $projectLaunchLocal)
+    public function update(ProjectLaunchRequest $request, ProjectLaunchLocal $projectLaunchLocal)
     {
 
         $launch = $request->all();
 
-        if (count($launch['tvoids'])) {
-            $tvoids = $launch['tvoids'];
-            unset($launch['tvoids']);
-            unset($launch['oid']);
+        $tvoids = $launch['tvoids'];
+        unset($launch['tvoids']);
+        unset($launch['oid']);
 
-            foreach ($tvoids as $tvoid) {
-                $query = $projectLaunchLocal->query();
-                $query->where(['tvoid' => $tvoid])->update($launch);
-            }
+        foreach ($tvoids as $tvoid) {
+            $query = $projectLaunchLocal->query();
+            $query->where(['tvoid' => $tvoid])->update($launch);
         }
+
         return $this->response->noContent();
     }
 }

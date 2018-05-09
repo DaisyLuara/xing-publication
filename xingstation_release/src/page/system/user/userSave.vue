@@ -18,10 +18,10 @@
           <el-input class="user-form-input" v-model="userForm.user.phone" :maxlength="11" placeholder="输入手机号"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="user.password">
-          <el-input class="user-form-input" v-model="userForm.user.password"></el-input>
+          <el-input class="user-form-input" v-model="userForm.user.password" type="password"></el-input>
         </el-form-item>
         <el-form-item label="确认密码" prop="user.repassword">
-          <el-input class="user-form-input" v-model="userForm.user.repassword"></el-input>
+          <el-input class="user-form-input" v-model="userForm.user.repassword" type="password"></el-input>
         </el-form-item>
         <el-form-item label="角色" prop="user.role_id">
           <el-radio-group v-model="userForm.user.role_id">

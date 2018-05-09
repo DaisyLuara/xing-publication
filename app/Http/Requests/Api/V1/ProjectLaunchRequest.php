@@ -16,7 +16,7 @@ class ProjectLaunchRequest extends FormRequest
         switch ($this->method()) {
             case 'POST':
                 return [
-                    'oid' => 'required|array',
+                    'oids' => 'required|array|max:10',
                     'default_plid' => 'required',
                     'sdate' => 'required',
                     'edate' => 'required',
@@ -24,7 +24,7 @@ class ProjectLaunchRequest extends FormRequest
                 break;
             case 'PATCH':
                 return [
-                    'tvoids' => 'required',
+                    'tvoids' => 'required|array|max:10',
                 ];
                 break;
         }
@@ -33,10 +33,10 @@ class ProjectLaunchRequest extends FormRequest
     public function attributes()
     {
         return [
-            'default_plid' => '节目',
-            'sdate' => '开始时间',
-            'edate' => '结束时间',
-            'tvoids' => '节目投放ID',
+            'default_plid' => 'default_plid(节目)',
+            'sdate' => 'sdate(开始时间)',
+            'edate' => 'edate(结束时间)',
+            'tvoids' => 'tvoids(节目投放ID)',
         ];
     }
 }
