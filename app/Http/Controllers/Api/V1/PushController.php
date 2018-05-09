@@ -11,17 +11,6 @@ class PushController extends Controller
     public function index(Request $request, Push $push)
     {
         $query = $push->query();
-        $query->whereHas('point', function ($q) {
-            $q->orderBy('areaid', 'desc')->orderBy('marketid', 'desc');
-        });
-        $push = $query->orderBy('date', 'desc')
-            ->paginate(10);
-        return $this->response->paginator($push, new PushTransformer());
-    }
-
-    public function query(Request $request, Push $push)
-    {
-        $query = $push->query();
         $query->whereHas('point', function ($q) use ($request) {
             $user = $this->user();
             $arUserId = getArUserID($user, $request);

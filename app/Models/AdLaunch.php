@@ -12,31 +12,31 @@ class AdLaunch extends Model
 
     public function adTrade()
     {
-        return $this->hasOne(AdTrade::class, 'atid', 'atid');
+        return $this->belongsTo(AdTrade::class, 'atid', 'atid');
     }
 
     public function advertiser()
     {
-        return $this->hasOne(Advertiser::class, 'atiid', 'atiid');
+        return $this->belongsTo(Advertiser::class, 'atiid', 'atiid');
     }
 
     public function advertisement()
     {
-        return $this->hasOne(Advertisement::class, 'aid', 'aid');
+        return $this->belongsTo(Advertisement::class, 'aid', 'aid');
     }
 
     public function area()
     {
-        return $this->hasOne(Area::class,'areaid','areaid');
+        return $this->belongsTo(Area::class,'areaid','areaid');
     }
 
     public function market()
     {
-        return $this->hasOne(Market::class,'marketid','marketid');
+        return $this->belongsTo(Market::class,'marketid','marketid');
     }
 
     public function point()
     {
-        return $this->hasOne(Point::class, 'oid', 'oid');
+        return $this->belongsTo(Point::class, 'oid', 'oid');
     }
 }

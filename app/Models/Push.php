@@ -10,6 +10,6 @@ class Push extends Model
     public $table='push';
 
     function point(){
-        return $this->hasOne(Point::class,'oid','oid');
+        return $this->belongsTo(Point::class,'oid','oid');
     }
 }

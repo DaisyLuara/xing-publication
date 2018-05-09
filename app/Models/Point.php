@@ -28,4 +28,9 @@ class Point extends Model
     {
         return $this->belongsTo(Market::class, 'marketid', 'marketid');
     }
+
+    public function area()
+    {
+        return $this->belongsTo(Area::class, 'areaid', 'areaid');
+    }
 }
