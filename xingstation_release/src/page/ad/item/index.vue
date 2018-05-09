@@ -16,71 +16,69 @@
           </span>
           <el-button size="small" type="success" @click="linkToAddItem">投放广告</el-button>
         </div>
-        <el-table :data="tableData" style="width: 100%" highlight-current-row>
+        <el-table :data="adList" style="width: 100%" highlight-current-row>
           <el-table-column type="selection" width="55" ></el-table-column>
           <el-table-column
             prop="point"
             label="点位"
+            width="350"
             >
-            <!-- <template slot-scope="scope">
-              {{scope.row.project.name}}
-            </template> -->
           </el-table-column>
           <el-table-column
-            prop="adPeople"
+            prop="advertiser"
             label="广告主"
+            width="200"
             >
-            <!-- <template slot-scope="scope">
-              <img :src="scope.row.project.icon" alt="" class="icon-item"/>
-            </template> -->
           </el-table-column>
           <el-table-column
-            prop="ad"
+            prop="advertisement"
             label="广告"
+            width="200"
             >
-            <!-- <template slot-scope="scope">
-              {{scope.row.point.market.area.name}}
-            </template> -->
           </el-table-column>
           <el-table-column
             prop="adType"
             label="广告类型"
+            width="200"
             >
-            <!-- <template slot-scope="scope">
-              {{scope.row.point.market.name}}
-            </template> -->
           </el-table-column>
           <el-table-column
             prop="link"
             label="链接"
+            width="80"
             >
-            <!-- <template slot-scope="scope">
-              {{scope.row.point.name}}
-            </template> -->
+            <template slot-scope="scope">
+              <router-link :to="scope.row.link">查看</router-link>
+            </template>
           </el-table-column>
           <el-table-column
             prop="size"
             label="大小"
+            width="80"
             >
           </el-table-column>
           <el-table-column
-            prop="start_date"
+            prop="kTime"
             label="周期"
+            width="80"
             >
           </el-table-column>
           <el-table-column
-            prop="start_date"
+            prop="startDate"
             label="开始时间"
+            width="200"
             >
           </el-table-column>
           <el-table-column
-            prop="end_date"
+            prop="endDate"
             label="结束时间"
+            width="200"
             >
           </el-table-column>
           <el-table-column
             prop="date"
             label="时间"
+            width="200"
             >
           </el-table-column>
           <el-table-column label="操作" width="200">
@@ -106,7 +104,7 @@
 </template>
 
 <script>
-import project from 'service/project'
+import ad from 'service/ad'
 
 import { Button, Input, Table, TableColumn, Pagination, Form, FormItem, MessageBox, DatePicker} from 'element-ui'
 
@@ -129,31 +127,32 @@ export default {
         pageSize: 10,
         currentPage: 1
       },
-      tableData: []
+      adList: []
     }
   },
   mounted() {
   },
   created () {
-    // this.getProjectList()
-    let user_info = JSON.parse(localStorage.getItem('user_info'))
-    this.arUserName = user_info.name
-    this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
+    this.getAdList()
+    // let user_info = JSON.parse(localStorage.getItem('user_info'))
+    // this.arUserName = user_info.name
+    // this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
   },
   methods: {
-    getProjectList () {
+    getAdList () {
       this.setting.loadingText = "拼命加载中"
       this.setting.loading = true;
       let searchArgs = {
         page : this.pagination.currentPage,
-        include: 'point.market.area,project',
-        project_name: this.filters.name
+        // include: 'point.market.area,project',
+        // project_name: this.filters.name
       }
-      project.getProjectList(this, searchArgs).then((response) => {
+      ad.getAdList(this, searchArgs).then((response) => {
        let data = response.data
-       this.tableData = data
+       console.log(data)
+       this.adList = data
        this.pagination.total = response.meta.pagination.total
-      this.setting.loading = false;
+        this.setting.loading = false;
       }).catch(error => {
         console.log(error)
       this.setting.loading = false;
@@ -161,11 +160,11 @@ export default {
     },
     search (formName) {
       this.pagination.currentPage = 1;
-      this.getProjectList();
+      this.getAdList();
     },
     changePage (currentPage) {
       this.pagination.currentPage = currentPage
-      this.getProjectList()
+      this.getAdList()
     },
     linkToAddItem () {
       this.$router.push({
