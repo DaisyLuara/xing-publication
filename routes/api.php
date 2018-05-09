@@ -82,6 +82,8 @@ $api->version('v1', [
 
             //广告投放
             $api->get('ad_launch', 'AdLaunchController@index');
+            $api->post('ad_launch', 'AdLaunchController@store');
+            $api->patch('ad_launch', 'AdLaunchController@update');
 
             //广告
             $api->get('advertisement', 'AdvertisementController@index');
@@ -92,8 +94,8 @@ $api->version('v1', [
             //广告行业
             $api->get('ad_trade', 'AdTradeController@index');
 
-            //节目广告投放
-            $api->get('project_ad_launch','ProjectAdLaunchController@index');
+            //落地方式配置
+            $api->get('project_ad_launch', 'ProjectAdLaunchController@index');
 
             //授权广告
             $api->get('wx_third','WxThirdController@index');

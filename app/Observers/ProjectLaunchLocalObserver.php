@@ -2,7 +2,7 @@
 
 namespace App\Observers;
 
-use App\Models\ProjectLaunchLocal;
+use App\Models\Mock\ProjectLaunchLocal;
 
 // creating, created, updating, updated, saving,
 // saved,  deleting, deleted, restoring, restored
