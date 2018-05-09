@@ -11,9 +11,9 @@ class FaceLogController extends Controller
 {
     public function index(Request $request, FaceLog $faceLog)
     {
-        $date_start = $request->has('start_date') ? $request->start_date : Carbon::now()->addDays(-7);
-        $date_end = $request->has('end_date') ? $request->end_date : Carbon::now();
-        $belong = $request->has('belong') ? $request->belong : 'all';
+        $startDate = $request->has('start_date') ? $request->start_date : Carbon::now()->addDays(-7);
+        $endDate = $request->has('end_date') ? $request->end_date : Carbon::now();
+        $belong = $request->has('alias') ? $request->alias : 'all';
         $type = $request->has('type') ? $request->type : 'looker';
 
         $query = $faceLog->query();
@@ -25,11 +25,11 @@ class FaceLogController extends Controller
                 $q->where('uid', '=', $arUserId);
             });
         }
-        if ($request->has('oid')) {
-            $query->where('oid', '=', $request->oid);
+        if ($request->has('point_id')) {
+            $query->where('oid', '=', $request->point_id);
         }
 
-        $faceLog = $query->whereRaw("str_to_date(date, '%Y-%m-%d') BETWEEN '$date_start' AND '$date_end'")
+        $faceLog = $query->whereRaw("str_to_date(date, '%Y-%m-%d') BETWEEN '$startDate' AND '$endDate'")
             ->where('type', '=', $type)
             ->where('belong', '=', $belong)
             ->selectRaw('sum(gnum) as gnum,sum(bnum) as bnum,

@@ -78,10 +78,10 @@ $api->version('v1', [
             //数据统计
             $api->get('stats', 'FaceCountController@index');
             $api->get('detail', 'FaceCountController@detail');
-            $api->get('ageAndGender', 'FaceLogController@index');
+            $api->get('age_gender', 'FaceLogController@index');
 
             //广告投放
-            $api->get('adLaunch', 'AdLaunchController@index');
+            $api->get('ad_launch', 'AdLaunchController@index');
 
             //广告
             $api->get('advertisement', 'AdvertisementController@index');
@@ -90,10 +90,10 @@ $api->version('v1', [
             $api->get('advertiser', 'AdvertiserController@index');
 
             //广告行业
-            $api->get('adTrade', 'AdTradeController@index');
+            $api->get('ad_trade', 'AdTradeController@index');
 
             //节目广告投放
-            $api->get('projectAdLaunch','ProjectAdLaunchController@index');
+            $api->get('project_ad_launch','ProjectAdLaunchController@index');
 
             //设备
             $api->get('push', 'PushController@index');
@@ -111,7 +111,7 @@ $api->version('v1', [
             $api->get('markets/query', 'QueryController@marketQuery');//商场搜索
             $api->get('points/query', ['middleware' => ['role:super-admin|admin'], 'uses' => 'QueryController@pointQuery']);//点位查询
             $api->get('launches/tpl/query', ['middleware' => ['role:super-admin|admin'], 'uses' => 'QueryController@launchTplQuery']);//点位模板查询
-            $api->get('adTrade/query', 'QueryController@adTradeQuery');//广告行业搜索
+            $api->get('ad_trade/query', 'QueryController@adTradeQuery');//广告行业搜索
             $api->get('advertiser/query', 'QueryController@advertiserQuery');//广告主搜索
             $api->get('advertisement/query', 'QueryController@advertisementQuery');//广告搜索
 

@@ -101,7 +101,7 @@ class QueryController extends Controller
     {
         $query = $advertiser->query();
         $advertiser = collect();
-        if (!$request->name && !$request->atid) {
+        if (!$request->name && !$request->ad_trade_id) {
             return $this->response->collection($advertiser, new AdvertiserTransformer());
         }
 
@@ -109,8 +109,8 @@ class QueryController extends Controller
             $query->where('name', 'like', '%' . $request->name . '%');
         }
 
-        if ($request->atid) {
-            $query->where('atid', '=', $request->atid);
+        if ($request->ad_trade_id) {
+            $query->where('atid', '=', $request->ad_trade_id);
         }
         $advertiser = $query->get();
         return $this->response->collection($advertiser, new AdvertiserTransformer());
@@ -120,7 +120,7 @@ class QueryController extends Controller
     {
         $query = $advertisement->query();
         $advertisement = collect();
-        if (!$request->atiid && !$request->name) {
+        if (!$request->advertiser_id && !$request->name) {
             return $this->response->collection($advertisement, new AdvertisementTransformer());
         }
 
@@ -128,8 +128,8 @@ class QueryController extends Controller
             $query->where('name', 'like', '%' . $request->name . '%');
         }
 
-        if ($request->atiid) {
-            $query->where('atiid', '=', $request->atiid);
+        if ($request->advertiser_id) {
+            $query->where('atiid', '=', $request->advertiser_id);
         }
         $advertisement = $query->get();
         return $this->response->collection($advertisement, new AdvertisementTransformer());
