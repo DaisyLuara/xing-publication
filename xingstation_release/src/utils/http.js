@@ -76,7 +76,7 @@ function VueAxios(Vue) {
         Message.error("请求出错：代码" + error.response.status)
       } else {
         if(error.response.status == 429) {
-          Message.error("请求出错:" + error.response.message)
+          Message.error("请求出错:" + error.response.statusText)
         }else{
           Message.error("请求出错：代码" + error.response.status)
         }
