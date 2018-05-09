@@ -5,7 +5,7 @@
         <div class="search-wrap">
           <el-form :model="filters" :inline="true" ref="searchForm" >
             <el-form-item label="" prop="name">
-              <el-input v-model="filters.name" placeholder="请输入节目名称" style="width: 300px;"></el-input>
+              <el-input v-model="filters.name" placeholder="请输入节目名称" style="width: 250px;"></el-input>
             </el-form-item>
             <el-form-item label="" prop="area">
               <el-select v-model="filters.area" placeholder="请选择区域" @change="areaChangeHandle" filterable>
@@ -545,6 +545,12 @@ export default {
           margin-bottom: 10px;
           .el-form-item{
             margin-bottom: 0;
+          }
+          .el-select{
+            width: 250px;
+          }
+          .item-input{
+            width: 230px;
           }
           .warning{
             background: #ebf1fd;

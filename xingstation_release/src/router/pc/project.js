@@ -38,14 +38,14 @@ let router = {
           meta: {
           },
         },
-        {
-          path: 'edit',
-          component: () =>
-            import(/* webpackChunkName: "page/project/item/itemEdit" */ 'page/project/item/itemEdit'),
-          name: '修改投放节目',
-          meta: {
-          },
-        },
+        // {
+        //   path: 'edit',
+        //   component: () =>
+        //     import(/* webpackChunkName: "page/project/item/itemEdit" */ 'page/project/item/itemEdit'),
+        //   name: '修改投放节目',
+        //   meta: {
+        //   },
+        // },
         {
           path: 'data',
           component: () =>
