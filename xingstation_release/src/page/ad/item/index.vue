@@ -83,12 +83,6 @@
             min-width="200"
             >
           </el-table-column>
-          <el-table-column label="操作" width="100" fixed="right">
-            <template slot-scope="scope">
-              <el-button size="small" type="primary" @click="linkToEdit(scope.row.id)">修改</el-button>
-              <!-- <el-button size="small" type="warning" @click="showData(scope.row.project.alias, scope.row.project.name, arUserName)" v-if="dataShowFlag">数据</el-button> -->
-            </template>
-          </el-table-column>
         </el-table>
         <div class="pagination-wrap">
           <el-pagination
@@ -170,25 +164,9 @@ export default {
     },
     linkToAddItem () {
       this.$router.push({
-        path: '/project/item/add'
+        path: '/ad/item/add'
       })
     },
-    linkToEdit (id) {
-      this.$router.push({
-        path: '/project/item/edit/' + id
-      })
-    },
-    showData (alias,name,userId) {
-      const { href } = this.$router.resolve({
-        path: '/project/item/data',
-        query: {
-          alias: alias,
-          name: name,
-          uName: userId
-        }
-      })
-      window.open(href, '_blank')
-    }
   },
   components: {
     "el-table": Table,

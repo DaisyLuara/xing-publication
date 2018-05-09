@@ -31,15 +31,9 @@
             <el-button @click="resetSearch" type="default">重置</el-button>
           </el-form>
         </div>
-        <div class="actions-wrap">
-          <span class="label">
-            节目数量: {{pagination.total}}
-          </span>
-          <el-button size="small" type="success" @click="linkToAddItem">投放节目</el-button>
-        </div>
         <div class="editCondition-wrap" style="padding: 0 0 15px;">
           <el-form :model="editCondition" :inline="true" ref="editForm" >
-            <el-form-item label="修改选项" prop="xiu">
+            <el-form-item label="修改选项" style="margin-bottom: 0;">
               <el-checkbox-group v-model="editCondition.conditionList">
                 <el-checkbox label="节目名称"></el-checkbox>
                 <el-checkbox label="工作日模版"></el-checkbox>
@@ -51,6 +45,12 @@
             </el-form-item>
             <el-button @click="modifyEdit" type="danger" size="small">修改</el-button>
           </el-form>
+        </div>
+        <div class="actions-wrap">
+          <span class="label">
+            节目数量: {{pagination.total}}
+          </span>
+          <el-button size="small" type="success" @click="linkToAddItem">投放节目</el-button>
         </div>
         <el-table :data="tableData" style="width: 100%" highlight-current-row  @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55" ></el-table-column>
@@ -569,7 +569,6 @@ export default {
           }
         }
         .actions-wrap{
-          margin-top: 5px;
           display: flex;
           flex-direction: row;
           justify-content: space-between;
