@@ -1300,7 +1300,7 @@
 						"header": [],
 						"body": {},
 						"url": {
-							"raw": "http://{{host}}/api/advertiser/query?atid=1",
+							"raw": "http://{{host}}/api/advertiser/query?ad_trade_id=1",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
@@ -1312,7 +1312,7 @@
 							],
 							"query": [
 								{
-									"key": "atid",
+									"key": "ad_trade_id",
 									"value": "1"
 								}
 							]
@@ -1332,7 +1332,7 @@
 						"method": "GET",
 						"header": [],
 						"body": {},
-						"url": "http://{{host}}/api/adTrade/query"
+						"url": "http://{{host}}/api/ad_trade/query"
 					},
 					"response": []
 				},
@@ -1349,7 +1349,7 @@
 						"header": [],
 						"body": {},
 						"url": {
-							"raw": "http://{{host}}/api/advertisement/query?atiid=7",
+							"raw": "http://{{host}}/api/advertisement/query?advertiser_id=7",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
@@ -1361,7 +1361,7 @@
 							],
 							"query": [
 								{
-									"key": "atiid",
+									"key": "advertiser_id",
 									"value": "7"
 								}
 							]
@@ -1387,7 +1387,56 @@
 						"method": "GET",
 						"header": [],
 						"body": {},
-						"url": "http://{{host}}/api/adLaunch"
+						"url": {
+							"raw": "http://{{host}}/api/ad_launch?ad_trade_id=7&start_date=2018-05-01&end_date=2018-05-04",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"ad_launch"
+							],
+							"query": [
+								{
+									"key": "ad_trade_id",
+									"value": "7"
+								},
+								{
+									"key": "advertiser_id",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "advertisement_id",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "area_id",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "market_id",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "point_id",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "start_date",
+									"value": "2018-05-01"
+								},
+								{
+									"key": "end_date",
+									"value": "2018-05-04"
+								}
+							]
+						}
 					},
 					"response": []
 				},
@@ -1404,7 +1453,7 @@
 						"header": [],
 						"body": {},
 						"url": {
-							"raw": "http://{{host}}/api/advertisement?atiid=20",
+							"raw": "http://{{host}}/api/advertisement?ad_trade_id=1&advertiser_id=1",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
@@ -1415,8 +1464,12 @@
 							],
 							"query": [
 								{
-									"key": "atiid",
-									"value": "20"
+									"key": "ad_trade_id",
+									"value": "1"
+								},
+								{
+									"key": "advertiser_id",
+									"value": "1"
 								}
 							]
 						}
@@ -1436,7 +1489,7 @@
 						"header": [],
 						"body": {},
 						"url": {
-							"raw": "http://{{host}}/api/advertiser?atid=4",
+							"raw": "http://{{host}}/api/advertiser?ad_trade_id=4",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
@@ -1447,7 +1500,7 @@
 							],
 							"query": [
 								{
-									"key": "atid",
+									"key": "ad_trade_id",
 									"value": "4"
 								}
 							]
@@ -1467,14 +1520,14 @@
 						"auth": {
 							"type": "bearer",
 							"bearer": {
-								"token": "{{jwt_token1}}"
+								"token": "{{jwt_tokensa}}"
 							}
 						},
 						"method": "GET",
 						"header": [],
 						"body": {},
 						"url": {
-							"raw": "http://{{host}}/api/push?include=point.projects&oid=128",
+							"raw": "http://{{host}}/api/push?point_id=276",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
@@ -1485,12 +1538,13 @@
 							],
 							"query": [
 								{
-									"key": "include",
-									"value": "point.projects"
+									"key": "project_id",
+									"value": "",
+									"disabled": true
 								},
 								{
-									"key": "oid",
-									"value": "128"
+									"key": "point_id",
+									"value": "276"
 								}
 							]
 						}
@@ -1516,23 +1570,29 @@
 						"header": [],
 						"body": {},
 						"url": {
-							"raw": "http://{{host}}/api/projectAdLaunch?type=mobile&piid=1",
+							"raw": "http://{{host}}/api/project_ad_launch?project_id=1",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"projectAdLaunch"
+								"project_ad_launch"
 							],
 							"query": [
 								{
-									"key": "type",
-									"value": "mobile"
+									"key": "project_id",
+									"value": "1"
 								},
 								{
-									"key": "piid",
-									"value": "1"
+									"key": "visiable",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "",
+									"disabled": true
 								}
 							]
 						}

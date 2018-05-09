@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Requests\Api\V1\AdLaunchRequest;
 use App\Models\AdLaunch;
 use App\Transformers\AdLaunchTransformer;
-use Illuminate\Http\Request;
-use App\Http\Requests\Api\V1\AdLaunchRequest;
 
 class AdLaunchController extends Controller
 {
@@ -13,8 +12,8 @@ class AdLaunchController extends Controller
     {
         $query = $adLaunch->query();
 
-        if ($request->has('adTrade_id')) {
-            $query->where('atid', '=', $request->adTrade_id);
+        if ($request->has('ad_trade_id')) {
+            $query->where('atid', '=', $request->ad_trade_id);
         }
 
         if ($request->has('advertiser_id')) {
@@ -38,9 +37,9 @@ class AdLaunchController extends Controller
         }
 
         if ($request->has('start_date') && $request->has('end_date')) {
-            $start_date = $request->start_date;
-            $end_date = $request->end_date;
-            $query->whereRaw("str_to_date(date,'%Y-%m-%d') between '$start_date' and '$end_date'");
+            $startDate = $request->start_date;
+            $endDate = $request->end_date;
+            $query->whereRaw("str_to_date(date,'%Y-%m-%d') between '$startDate' and '$endDate'");
         }
 
         $adLaunch = $query->orderBy('date', 'desc')->paginate(10);

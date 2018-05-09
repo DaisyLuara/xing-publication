@@ -11,8 +11,8 @@ class AdvertisementController extends Controller
     public function index(Request $request, Advertisement $advertisement)
     {
         $query = $advertisement->query();
-        if ($request->adTrade_id) {
-            $query->where('atid', '=', $request->adTrade_id);
+        if ($request->ad_trade_id) {
+            $query->where('atid', '=', $request->ad_trade_id);
         }
         if ($request->advertiser_id) {
             $query->where('atiid', '=', $request->advertiser_id);

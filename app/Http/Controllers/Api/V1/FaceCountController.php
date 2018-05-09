@@ -17,7 +17,7 @@ class FaceCountController extends Controller
         $default = $this->getDefaultParams($request);
 
         $faceCount = $query->where('belong', '=', $default['alias'])
-            ->whereRaw("str_to_date(date, '%Y-%m-%d') BETWEEN '" . $default['start_date'] . "' AND '" . $default['end_date'] . "'")
+            ->whereRaw("str_to_date(date, '%Y-%m-%d') BETWEEN '" . $default['startDate'] . "' AND '" . $default['endDate'] . "'")
             ->selectRaw('sum(looknum) as looknum ,sum(playernum) as playernum ,sum(lovenum) as lovenum,sum(outnum) as outnum,sum(scannum) as scannum')
             ->first();
 
@@ -58,11 +58,11 @@ class FaceCountController extends Controller
 
     private function getDefaultParams($request)
     {
-        $start_date = $request->has('start_date') ? $request->start_date : Carbon::now()->addDays(-7)->toDateString();
-        $end_date = $request->has('end_date') ? $request->end_date : Carbon::now()->toDateString();
+        $startDate = $request->has('start_date') ? $request->start_date : Carbon::now()->addDays(-7)->toDateString();
+        $endDate = $request->has('end_date') ? $request->end_date : Carbon::now()->toDateString();
         $alias = $request->has('alias') ? $request->alias : 'all';
         $type = $request->has('type') ? $request->type : 'looknum';
 
-        return compact('start_date', 'end_date', 'alias', 'type');
+        return compact('startDate', 'endDate', 'alias', 'type');
     }
 }
