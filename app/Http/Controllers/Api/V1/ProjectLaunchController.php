@@ -48,7 +48,12 @@ class ProjectLaunchController extends Controller
             });
         }
 
-        $projects = $query->paginate(10);
+        if ($request->ids) {
+            $ids = explode(',', $request->ids);
+            $query->whereIn('tvoid', $ids);
+        }
+
+        $projects = $query->orderBy('tvoid', 'desc')->paginate(10);
         return $this->response->paginator($projects, new ProjectLaunchTransformer());
 
     }
