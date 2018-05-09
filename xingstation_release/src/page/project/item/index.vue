@@ -40,7 +40,7 @@
         <div class="editCondition-wrap" style="padding: 0 0 15px;">
           <el-form :model="editCondition" :inline="true" ref="editForm" >
             <el-form-item label="修改选项" prop="xiu">
-              <el-checkbox-group v-model="eidtkList">
+              <el-checkbox-group v-model="editCondition.conditionList">
                 <el-checkbox label="节目名称"></el-checkbox>
                 <el-checkbox label="工作日模版"></el-checkbox>
                 <el-checkbox label="周末模版"></el-checkbox>
@@ -49,7 +49,7 @@
                 <el-checkbox label="自定义模版" ></el-checkbox>
               </el-checkbox-group>
             </el-form-item>
-            <el-button @click="search('searchForm')" type="danger" size="small">修改</el-button>
+            <el-button @click="modifyEdit" type="danger" size="small">修改</el-button>
           </el-form>
         </div>
         <el-table :data="tableData" style="width: 100%" highlight-current-row  @selection-change="handleSelectionChange">
@@ -129,6 +129,71 @@
           </el-pagination>
         </div>
       </div>
+      <el-dialog title="批量修改" :visible.sync="editVisible">
+        <el-form
+        ref="projectForm"
+        :model="projectForm" label-width="150px">
+          <el-form-item label="节目名称" prop="project"  v-if="modifyOptionFlag.project" :rules="[{ type: 'number', required: true, message: '请输入节目', trigger: 'submit' }]">
+            <el-select v-model="projectForm.project" filterable placeholder="请搜索" remote :remote-method="getProject" @change="projectChangeHandle">
+              <el-option
+                v-for="item in projectList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="工作日模版" prop="weekday" v-if="modifyOptionFlag.weekday" :rules="[{ type: 'number', required: true, message: '请选择工作日模版', trigger: 'submit' }]">
+            <el-select v-model="projectForm.weekday" placeholder="请选择" filterable>
+              <el-option
+                v-for="item in weekdayList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="周末模版" prop="weekend" v-if="modifyOptionFlag.weekend" :rules="[{ type: 'number', required: true, message: '请选择周末模版', trigger: 'submit' }]">
+            <el-select v-model="projectForm.weekend" placeholder="请选择" filterable>
+              <el-option
+                v-for="item in weekendList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="自定义模版" prop="define" v-if="modifyOptionFlag.define" :rules="[{ required: true, message: '请选择自定义模版', trigger: 'submit',type: 'number' }]">
+            <el-select v-model="projectForm.define" placeholder="请选择" filterable>
+              <el-option
+                v-for="item in defineList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="投放开始时间" prop="sdate" v-if="modifyOptionFlag.sdate" :rules="[{ type: 'date', required: true, message: '请输入投放开始时间', trigger: 'submit' }]">
+            <el-date-picker
+            v-model="projectForm.sdate"
+            type="date"
+            placeholder="选择投放开始时间" :editable="false">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="投放结束时间" prop="edate" v-if="modifyOptionFlag.sdate" :rules="[{ type: 'date', required: true, message: '请输入投放结束时间', trigger: 'submit' }]">
+            <el-date-picker
+            v-model="projectForm.edate"
+            type="date"
+            placeholder="选择投放结束时间"
+            :editable="false"
+            >
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="submitModify('projectForm')">完成</el-button>
+          </el-form-item>
+         </el-form>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -137,11 +202,12 @@
 import project from 'service/project'
 import search from 'service/search'
 
-import { Button, Input, Table, TableColumn, Pagination, Form, FormItem, MessageBox, DatePicker, Select, Option, CheckboxGroup, Checkbox} from 'element-ui'
+import { Button, Input, Table, TableColumn, Pagination,Dialog, Form, FormItem, MessageBox, DatePicker, Select, Option, CheckboxGroup, Checkbox} from 'element-ui'
 
 export default {
   data () {
     return {
+      editVisible: false,
       eidtkList: [],
       filters: {
         name: '',
@@ -149,7 +215,7 @@ export default {
         area: ''
       },
       editCondition:{
-        eidtkList: []
+        conditionList: [],
       },
       marketLoading: false,
       marketList: [],
@@ -167,7 +233,30 @@ export default {
         pageSize: 10,
         currentPage: 1
       },
-      tableData: []
+      weekdayList: [],
+      weekendList: [],
+      defineList: [],
+      projectList: [],
+      searchLoading: false,
+      projectForm: {
+        project: '',
+        weekday: '',
+        weekend: '',
+        define: '',
+        sdate: '',
+        edate: '',
+      },
+      modifyOptionFlag: {
+        project: false,
+        weekday: false,
+        weekend: false,
+        define: false,
+        sdate: false,
+        edate: false,
+      },
+      tvoids: [],
+      tableData: [],
+      selectAll: [],
     }
   },
   mounted() {
@@ -181,7 +270,70 @@ export default {
   },
   methods: {
     handleSelectionChange(val) {
-      console.log(val)
+      this.selectAll = val
+      console.log(this.selectAll.length)
+    },
+    modifyEdit() {
+      if(this.selectAll.length == 0 ){
+        this.$message({
+          message: "请选择节目",
+          type: "warning"
+        })
+      }else{
+        if(this.editCondition.conditionList.length == 0) {
+            this.$message({
+            message: "请选择修改项目",
+            type: "warning"
+          })
+        } else{
+          this.getModuleList()
+          // this.$refs[projectForm].resetFields();
+          this.projectForm = {
+            project: '',
+            weekday: '',
+            weekend: '',
+            define: '',
+            sdate: '',
+            edate: '',
+          }
+          this.tvoids = []
+          let optionModify = this.editCondition.conditionList
+          for (let i = 0; i < this.selectAll.length; i++) {
+            let id = this.selectAll[i].point.id
+            this.tvoids.push(id)
+          }
+          this.modifyOptionFlag.project = false
+          this.modifyOptionFlag.weekend = false
+          this.modifyOptionFlag.weekday = false
+          this.modifyOptionFlag.sdate = false
+          this.modifyOptionFlag.edate = false
+          this.modifyOptionFlag.define = false
+          for (let k = 0; k < optionModify.length; k++) {
+            let type = optionModify[k]
+            switch(type) {
+              case '节目名称':
+                this.modifyOptionFlag.project = true
+              break
+              case '周末模版':
+                this.modifyOptionFlag.weekend= true
+              break
+              case '工作日模版':
+                this.modifyOptionFlag.weekday = true
+              break
+              case '开始时间':
+                this.modifyOptionFlag.sdate = true
+              break
+              case '结束时间':
+                this.modifyOptionFlag.edate = true
+              break
+              case '自定义模版':
+                this.modifyOptionFlag.define = true
+              break
+            }
+          }
+          this.editVisible = true
+        }
+      }
     },
     resetSearch () {
       this.filters.market = ''
@@ -189,6 +341,78 @@ export default {
       this.filters.name = ''
       this.pagination.currentPage = 1;
       this.getProjectList();
+    },
+    projectChangeHandle() {
+      console.log(this.projectForm.project)
+    },
+    getProject(query) {
+      this.searchLoading = true
+      let args = {
+        name: query,
+      }
+      return search.getProjectList(this,args).then((response) => {
+        this.projectList = response.data
+        if(this.projectList.length == 0) {
+          this.projectForm.project = ''
+          this.projectList = []
+        }
+        this.searchLoading = false
+      }).catch(err => {
+        console.log(err)
+        this.searchLoading = false
+      })
+    },
+    submitModify(formName) {
+      this.$refs[formName].validate((valid) => {
+        if(valid){
+        this.setting.loading = true
+          let args = {
+            tvoids: this.tvoids,
+            default_plid: this.projectForm.project,
+            sdate: new Date(this.projectForm.sdate).getTime() / 1000,
+            edate: new Date(this.projectForm.edate).getTime() / 1000,
+            weekday_tvid: this.projectForm.weekday,
+            weekend_tvid: this.projectForm.weekend,
+            div_tvid: this.projectForm.define,
+          }
+          this.modifyOptionFlag.project ? args : delete args.default_plid 
+          this.modifyOptionFlag.weekday ? args : delete args.weekday_tvid 
+          this.modifyOptionFlag.weekend ? args : delete args.weekend_tvid 
+          this.modifyOptionFlag.define ? args : delete args.div_tvid 
+          this.modifyOptionFlag.sdate ? args : delete args.sdate 
+          this.modifyOptionFlag.edate ? args : delete args.edate 
+          console.log(args)
+          this.setting.loading = false
+          return project.modifyProjectLaunch(this, args).then((response) => {
+            this.setting.loading = false
+            this.$message({
+              message: "修改成功",
+              type: "success"
+            })
+            this.getProjectList();
+            this.editVisible = false
+            this.editCondition.conditionList = []
+            console.log(response)
+          }).catch((err) => {
+            this.setting.loading = false
+            console.log(err)
+          })
+        }else{
+          console.log('error submit');
+          return;
+        }
+      })
+    },
+    getModuleList() {
+      return search.getModuleList(this).then((response) => {
+       let data = response.data
+       this.weekdayList = data
+       this.weekendList = data
+       this.defineList = data
+      }).catch(error => {
+        console.log(error)
+      this.setting.loading = false;
+      })
     },
     getProjectList () {
       this.setting.loadingText = "拼命加载中"
@@ -289,7 +513,8 @@ export default {
     'el-select': Select,
     'el-option': Option,
     'el-checkbox-group': CheckboxGroup,
-    'el-checkbox': Checkbox
+    'el-checkbox': Checkbox,
+    'el-dialog':Dialog
   }
 }
 </script>
@@ -299,11 +524,12 @@ export default {
     font-size: 14px;
     color: #5E6D82;
     .item-list-wrap{
+      .el-select,.item-input,.el-input{
+        width: 380px;
+      }
       background: #fff;
       padding: 30px;
-      .el-form-item{
-        margin-bottom: 0;
-      }
+      
       .item-content-wrap{
         .icon-item{
           padding: 10px;
@@ -317,6 +543,9 @@ export default {
           font-size: 16px;
           align-items: center;
           margin-bottom: 10px;
+          .el-form-item{
+            margin-bottom: 0;
+          }
           .warning{
             background: #ebf1fd;
             padding: 8px;
