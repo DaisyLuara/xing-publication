@@ -3,12 +3,6 @@
     <div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
       <div class="item-content-wrap">
         <div class="search-wrap">
-          <!-- <el-form :model="filters" :inline="true" ref="searchForm" >
-            <el-form-item label="" prop="name">
-              <el-input v-model="filters.name" placeholder="请输入节目名称" style="width: 300px;"></el-input>
-            </el-form-item>
-              <el-button @click="search('searchForm')" type="primary">搜索</el-button>
-          </el-form> -->
           <el-form
         ref="adForm"
         :model="adForm"  :inline="true">
@@ -84,7 +78,22 @@
           </span>
           <el-button size="small" type="success" @click="linkToAddItem">投放广告</el-button>
         </div>
-        <el-table :data="adList" style="width: 100%" highlight-current-row>
+        <div class="editCondition-wrap" style="padding: 0 0 15px;">
+          <el-form :model="editCondition" :inline="true" ref="editForm" >
+            <el-form-item label="修改选项" style="margin-bottom: 0;">
+              <el-checkbox-group v-model="editCondition.conditionList">
+                <el-checkbox label="广告行业"></el-checkbox>
+                <el-checkbox label="广告主"></el-checkbox>
+                <el-checkbox label="广告"></el-checkbox>
+                <el-checkbox label="周期"></el-checkbox>
+                <el-checkbox label="开始时间" ></el-checkbox>
+                <el-checkbox label="结束时间" ></el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+            <el-button @click="modifyEdit" type="danger" size="small">修改</el-button>
+          </el-form>
+        </div>
+        <el-table :data="adList" style="width: 100%" highlight-current-row @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55" ></el-table-column>
           <el-table-column
             prop="point"
@@ -171,7 +180,7 @@
 import ad from 'service/ad'
 import search from 'service/search'
 
-import { Button, Input, Table,Select,Option, TableColumn, Pagination, Form, FormItem, MessageBox, DatePicker} from 'element-ui'
+import { Button, Input, Table,Select, Option, TableColumn, Pagination, Form, FormItem, MessageBox, DatePicker, Checkbox, CheckboxGroup, Dialog} from 'element-ui'
 
 export default {
   data () {
@@ -182,6 +191,9 @@ export default {
       setting: {
         loading: false,
         loadingText: "拼命加载中"
+      },
+      editCondition:{
+        conditionList: [],
       },
       marketList: [],
       weekdayList: [],
@@ -210,7 +222,16 @@ export default {
         pageSize: 10,
         currentPage: 1
       },
-      adList: []
+      modifyOptionFlag: {
+        ad_trade_id: false,
+        advertiser_id: false,
+        advertisement_id: false,
+        cycle: false,
+        sdate: false,
+        edate: false,
+      },
+      adList: [],
+      selectAll: []
     }
   },
   mounted() {
@@ -231,7 +252,11 @@ export default {
     // this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
   },
   methods: {
-     getAdTradeList(){
+     handleSelectionChange(val) {
+      this.selectAll = val
+      console.log(this.selectAll.length)
+    },
+    getAdTradeList(){
       return search.getAdTradeList(this).then((response) => {
        let data = response.data
        this.adTradeList = data
@@ -378,6 +403,68 @@ export default {
       this.pagination.currentPage = currentPage
       this.getAdList()
     },
+    modifyEdit() {
+      if(this.selectAll.length == 0 ){
+        this.$message({
+          message: "请选择广告",
+          type: "warning"
+        })
+      }else{
+        if(this.editCondition.conditionList.length == 0) {
+            this.$message({
+            message: "请选择修改项目",
+            type: "warning"
+          })
+        } else{
+          // this.getModuleList()
+          // // this.$refs[projectForm].resetFields();
+          // this.projectForm = {
+          //   project: '',
+          //   weekday: '',
+          //   weekend: '',
+          //   define: '',
+          //   sdate: '',
+          //   edate: '',
+          // }
+          // this.tvoids = []
+          // let optionModify = this.editCondition.conditionList
+          // for (let i = 0; i < this.selectAll.length; i++) {
+          //   let id = this.selectAll[i].point.id
+          //   this.tvoids.push(id)
+          // }
+          // this.modifyOptionFlag.project = false
+          // this.modifyOptionFlag.weekend = false
+          // this.modifyOptionFlag.weekday = false
+          // this.modifyOptionFlag.sdate = false
+          // this.modifyOptionFlag.edate = false
+          // this.modifyOptionFlag.define = false
+          // for (let k = 0; k < optionModify.length; k++) {
+          //   let type = optionModify[k]
+          //   switch(type) {
+          //     case '节目名称':
+          //       this.modifyOptionFlag.project = true
+          //     break
+          //     case '周末模版':
+          //       this.modifyOptionFlag.weekend= true
+          //     break
+          //     case '工作日模版':
+          //       this.modifyOptionFlag.weekday = true
+          //     break
+          //     case '开始时间':
+          //       this.modifyOptionFlag.sdate = true
+          //     break
+          //     case '结束时间':
+          //       this.modifyOptionFlag.edate = true
+          //     break
+          //     case '自定义模版':
+          //       this.modifyOptionFlag.define = true
+          //     break
+          //   }
+          // }
+          // this.editVisible = true
+        }
+      }
+    },
     linkToAddItem () {
       this.$router.push({
         path: '/ad/item/add'
@@ -394,7 +481,10 @@ export default {
     "el-form": Form,
     "el-select": Select,
     "el-option": Option,
-    "el-form-item": FormItem
+    "el-form-item": FormItem,
+    'el-checkbox-group': CheckboxGroup,
+    'el-checkbox': Checkbox,
+    'el-dialog':Dialog
   }
 }
 </script>
