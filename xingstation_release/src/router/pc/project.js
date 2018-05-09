@@ -39,9 +39,9 @@ let router = {
           },
         },
         {
-          path: 'edit/:uid',
+          path: 'edit',
           component: () =>
-            import(/* webpackChunkName: "page/project/item/itemSave" */ 'page/project/item/itemSave'),
+            import(/* webpackChunkName: "page/project/item/itemEdit" */ 'page/project/item/itemEdit'),
           name: '修改投放节目',
           meta: {
           },

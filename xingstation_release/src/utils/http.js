@@ -68,7 +68,8 @@ function VueAxios(Vue) {
         // 退出登录，清除登录信息，跳转到登录页面
         // Message.error("对不起，您未被授权")
         auth.clearLoginData(app)
-
+        let setIntervalValue = context.$store.state.notificationCount.setIntervalValue
+        clearInterval(setIntervalValue)
         router.push({
           path: '/login'
         })

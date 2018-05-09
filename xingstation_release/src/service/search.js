@@ -1,9 +1,9 @@
 import {router} from '../main'
 const AREAS_API = '/api/areas/query'
-const MARKET_API = 'api/markets/query'
-const MODULE_API = 'api/launches/tpl/query'
-const POINT_API = 'api/points/query'
-const PROJECT_API = 'api/points/query'
+const MARKET_API = '/api/markets/query'
+const MODULE_API = '/api/launches/tpl/query'
+const POINT_API = '/api/points/query'
+const PROJECT_API = '/api/userProject'
 export default {
   getAeraList(context) {
     return new Promise(function(resolve, reject){

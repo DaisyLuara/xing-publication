@@ -50,6 +50,7 @@
           <el-table-column
             prop="icon"
             label="节目icon"
+            width="180"
             >
             <template slot-scope="scope">
               <img :src="scope.row.project.icon" alt="" class="icon-item"/>
@@ -96,7 +97,7 @@
           </el-table-column>
           <el-table-column label="操作" width="200">
             <template slot-scope="scope">
-              <el-button size="small" type="primary" @click="linkToEdit(scope.row.id)">修改</el-button>
+              <el-button size="small" type="primary" @click="linkToEdit(scope.row)">修改</el-button>
               <el-button size="small" type="warning" @click="showData(scope.row.project.alias, scope.row.project.name, arUserName)" v-if="dataShowFlag">数据</el-button>
             </template>
           </el-table-column>
@@ -227,9 +228,11 @@ export default {
       this.setting.loading = false;
       })
     },
-    linkToEdit (id) {
+    linkToEdit (item) {
+      let pid = item.project.id
+      let pname = item.project.name
       this.$router.push({
-        path: '/project/item/edit/' + id
+        path: '/project/item/edit',
       })
     },
     showData (alias,name,userId) {
