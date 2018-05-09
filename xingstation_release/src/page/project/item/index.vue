@@ -37,6 +37,21 @@
           </span>
           <el-button size="small" type="success" @click="linkToAddItem">投放节目</el-button>
         </div>
+        <div class="editCondition-wrap" style="padding: 0 0 15px;">
+          <el-form :model="editCondition" :inline="true" ref="editForm" >
+            <el-form-item label="修改选项" prop="xiu">
+              <el-checkbox-group v-model="eidtkList">
+                <el-checkbox label="节目名称"></el-checkbox>
+                <el-checkbox label="工作日模版"></el-checkbox>
+                <el-checkbox label="周末模版"></el-checkbox>
+                <el-checkbox label="开始时间"></el-checkbox>
+                <el-checkbox label="结束时间" ></el-checkbox>
+                <el-checkbox label="自定义模版" ></el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+            <el-button @click="search('searchForm')" type="danger" size="small">修改</el-button>
+          </el-form>
+        </div>
         <el-table :data="tableData" style="width: 100%" highlight-current-row  @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55" ></el-table-column>
           <el-table-column
@@ -96,9 +111,9 @@
             label="结束时间"
             width="180">
           </el-table-column>
-          <el-table-column label="操作" width="200">
+          <el-table-column label="操作" width="100">
             <template slot-scope="scope">
-              <el-button size="small" type="primary" @click="linkToEdit(scope.row)">修改</el-button>
+              <!-- <el-button size="small" type="primary" @click="linkToEdit(scope.row)">修改</el-button> -->
               <el-button size="small" type="warning" @click="showData(scope.row.project.alias, scope.row.project.name, arUserName)" v-if="dataShowFlag">数据</el-button>
             </template>
           </el-table-column>
@@ -122,15 +137,19 @@
 import project from 'service/project'
 import search from 'service/search'
 
-import { Button, Input, Table, TableColumn, Pagination, Form, FormItem, MessageBox, DatePicker, Select, Option} from 'element-ui'
+import { Button, Input, Table, TableColumn, Pagination, Form, FormItem, MessageBox, DatePicker, Select, Option, CheckboxGroup, Checkbox} from 'element-ui'
 
 export default {
   data () {
     return {
+      eidtkList: [],
       filters: {
         name: '',
         market: '',
         area: ''
+      },
+      editCondition:{
+        eidtkList: []
       },
       marketLoading: false,
       marketList: [],
@@ -268,7 +287,9 @@ export default {
     "el-form": Form,
     "el-form-item": FormItem,
     'el-select': Select,
-    'el-option': Option
+    'el-option': Option,
+    'el-checkbox-group': CheckboxGroup,
+    'el-checkbox': Checkbox
   }
 }
 </script>

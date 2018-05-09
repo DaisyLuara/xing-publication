@@ -14,6 +14,8 @@
         <el-menu-item class="menu-item" index="/inform">
           <el-badge :value="noticeCount" :max="99" class="item">
             <el-button size="small">通知</el-button>
+          <!-- <img src="../assets/images/bell.png"/> -->
+            
           </el-badge>
         </el-menu-item>
       </el-menu>
@@ -41,7 +43,7 @@
 </template>
 
 <script>
-import { Menu, MenuItem, Popover, Button, Badge} from 'element-ui'
+import { Menu, MenuItem, Popover, Button, Badge, Icon} from 'element-ui'
 import auth from 'service/auth'
 import notice from 'service/notice'
 
