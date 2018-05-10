@@ -17,12 +17,12 @@
             >
           </el-table-column>
           <el-table-column
-            prop="icon"
+            prop="img"
             label="产品"
             min-width="140"
             >
             <template slot-scope="scope">
-              <img :src="scope.row.point.icon" alt="" class="icon-item"/>
+              <img :src="scope.row.img" alt="" class="icon-item"/>
             </template>
           </el-table-column>
           <el-table-column
@@ -37,7 +37,7 @@
             width="200">
           </el-table-column>
           <el-table-column
-            prop="point.name"
+            prop="point"
             label="点位"
             width="200">
           </el-table-column>
@@ -55,6 +55,10 @@
             prop="screenStatus"
             label="屏幕状态"
             width="100">
+            <template slot-scope="scope">
+              <span v-if="scope.row.screenStatus==0">开</span>
+              <span v-if="scope.row.screenStatus==1">关</span>
+            </template>
           </el-table-column>
           <el-table-column
             prop="loginDate"
@@ -66,20 +70,16 @@
             label="开/关机"
             width="100">
           </el-table-column>
+            
+          
           <el-table-column
-            prop="version"
-            label="版本"
-            width="120">
-          </el-table-column>
-          <el-table-column
-            prop="system"
-            label="系统"
-            width="120">
-          </el-table-column>
-          <el-table-column
-            prop="smart_strip"
+            prop="device_id"
             label="智能插排"
             width="100">
+            <template slot-scope="scope">
+              <span v-if="scope.row.device_id==''"></span>
+              <span v-if="scope.row.device_id!=''">有</span>
+            </template>
           </el-table-column>
           <el-table-column label="操作" width="150" fixed="right">
             <template slot-scope="scope">
@@ -142,8 +142,6 @@ export default {
       this.setting.loading = true;
       let searchArgs = {
         page : this.pagination.currentPage,
-        include: 'point.projects',
-        oid: 128
         }
       equipment.gettEquipmentList(this, searchArgs).then((response) => {
        let data = response.data
@@ -160,6 +158,7 @@ export default {
     },
     
     changePage (currentPage) {
+      alert(currentPage)
       this.pagination.currentPage = currentPage
       this.gettEquipmentList ();
     },
