@@ -6,6 +6,7 @@ class ProjectLaunchTpl extends Model
 {
     protected $connection = 'ar';
     public $table = 'istar_tv';
+    public $timestamps = false;
 
 }
 
