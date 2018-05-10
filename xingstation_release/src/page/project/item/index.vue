@@ -53,12 +53,12 @@
           <el-button size="small" type="success" @click="linkToAddItem">投放节目</el-button>
         </div>
         <el-table :data="tableData" style="width: 100%" highlight-current-row  @selection-change="handleSelectionChange" ref="multipleTable">
-          <el-table-column type="selection" width="55" ></el-table-column>
+          <el-table-column type="selection" width="45" ></el-table-column>
           <el-table-column
             prop="name"
             label="节目名称"
-            width="130"
-            fixed
+            width="100"
+            :show-overflow-tooltip="true"
             >
             <template slot-scope="scope">
               {{scope.row.project.name}}
@@ -67,7 +67,7 @@
           <el-table-column
             prop="icon"
             label="节目icon"
-            width="140"
+            width="130"
             >
             <template slot-scope="scope">
               <img :src="scope.row.project.icon" alt="" class="icon-item"/>
@@ -76,7 +76,8 @@
           <el-table-column
             prop="areaName"
             label="区域"
-            width="130"
+            width="80"
+            :show-overflow-tooltip="true"
             >
             <template slot-scope="scope">
               {{scope.row.point.market.area.name}}
@@ -85,7 +86,8 @@
           <el-table-column
             prop="market_name"
             label="商场"
-            min-width="150"
+            min-width="100"
+            :show-overflow-tooltip="true"
             >
             <template slot-scope="scope">
               {{scope.row.point.market.name}}
@@ -94,7 +96,9 @@
           <el-table-column
             prop="point_name"
             label="点位"
-            min-width="200">
+            min-width="100"
+            :show-overflow-tooltip="true"
+            >
             <template slot-scope="scope">
               {{scope.row.point.name}}
             </template>
@@ -102,20 +106,25 @@
           <el-table-column
             prop="created_at"
             label="创建时间"
-            min-width="180">
+            min-width="100"
+            :show-overflow-tooltip="true"
+            >
           </el-table-column>
           <el-table-column
             prop="start_date"
             label="自定义开始时间"
-            min-width="180"
+            min-width="140"
+            :show-overflow-tooltip="true"
             >
           </el-table-column>
           <el-table-column
             prop="end_date"
             label="自定义结束时间"
-            min-width="180">
+            min-width="140"
+            :show-overflow-tooltip="true"
+            >
           </el-table-column>
-          <el-table-column label="操作" width="150" fixed="right">
+          <el-table-column label="操作" width="80" fixed="right">
             <template slot-scope="scope">
               <!-- <el-button size="small" type="primary" @click="linkToEdit(scope.row)">修改</el-button> -->
               <el-button size="small" type="warning" @click="showData(scope.row.project.alias, scope.row.project.name, arUserName)" v-if="dataShowFlag">数据</el-button>
@@ -133,7 +142,7 @@
           </el-pagination>
         </div>
       </div>
-      <el-dialog title="批量修改" :visible.sync="editVisible" @close="dialogClose">
+      <el-dialog title="批量修改" :visible.sync="editVisible" @close="dialogClose" v-loading="loading">
         <el-form
         ref="projectForm"
         :model="projectForm" label-width="150px">
@@ -250,6 +259,7 @@ export default {
         sdate: '',
         edate: '',
       },
+      loading: true,
       modifyOptionFlag: {
         project: false,
         weekday: false,
@@ -350,6 +360,7 @@ export default {
       this.filters.area = ''
       this.filters.name = ''
       this.pagination.currentPage = 1;
+      this.editCondition.conditionList = []
       this.getProjectList();
     },
     projectChangeHandle() {
@@ -375,7 +386,7 @@ export default {
     submitModify(formName) {
       this.$refs[formName].validate((valid) => {
         if(valid){
-        this.setting.loading = true
+        this.loading = true
           let args = {
             tvoids: this.tvoids,
             default_plid: this.projectForm.project,
@@ -392,7 +403,7 @@ export default {
           this.modifyOptionFlag.sdate ? args : delete args.sdate 
           this.modifyOptionFlag.edate ? args : delete args.edate 
           console.log(args)
-          this.setting.loading = false
+          this.loading = false
           return project.modifyProjectLaunch(this, args).then((response) => {
             this.setting.loading = false
             this.$message({
@@ -404,10 +415,11 @@ export default {
             this.editCondition.conditionList = []
             console.log(response)
           }).catch((err) => {
-            this.setting.loading = false
+            this.loading = false
             console.log(err)
           })
         }else{
+          this.loading = false
           console.log('error submit');
           return;
         }
@@ -438,6 +450,9 @@ export default {
        let data = response.data
        this.tableData = data
        this.pagination.total = response.meta.pagination.total
+      //  this.$nextTick(() => {
+      //   this.$refs.multipleTable.doLayout()
+      // })
       this.setting.loading = false;
       }).catch(error => {
         console.log(error)
@@ -472,6 +487,7 @@ export default {
     },
     search (formName) {
       this.pagination.currentPage = 1;
+      this.editCondition.conditionList = []
       this.getProjectList();
     },
     changePage (currentPage) {
@@ -543,7 +559,7 @@ export default {
       .item-content-wrap{
         .icon-item{
           padding: 10px;
-          width: 50%;
+          width: 60%;
         }
         .search-wrap{
           margin-top: 5px;

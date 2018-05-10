@@ -5,7 +5,7 @@
         <div class="search-wrap">
           <el-form ref="adSearchForm" :model="adSearchForm"  :inline="true">
             <el-form-item label="" prop="adTrade">
-              <el-select v-model="adSearchForm.ad_trade_id" filterable placeholder="请搜索广告行业" @change="adTradeChangeHandle">
+              <el-select v-model="adSearchForm.ad_trade_id" filterable placeholder="请搜索广告行业" @change="adTradeChangeHandle('search')">
                 <el-option
                   v-for="item in adTradeList"
                   :key="item.id"
@@ -15,7 +15,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="" prop="advertiser_id">
-              <el-select v-model="adSearchForm.advertiser_id" filterable placeholder="请搜索广告主" @change="advertiserChangeHandle" :loading="searchLoading">
+              <el-select v-model="adSearchForm.advertiser_id" filterable placeholder="请搜索广告主" @change="advertiserChangeHandle('search')" :loading="searchLoading">
                 <el-option
                   v-for="item in advertiserList"
                   :key="item.id"
@@ -25,7 +25,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="" prop="advertisement_id">
-              <el-select v-model="adSearchForm.advertisement_id" filterable  placeholder="请搜索广告" :loading="searchLoading" @change="advertisementChangeHandle">
+              <el-select v-model="adSearchForm.advertisement_id" filterable  placeholder="请搜索广告" :loading="searchLoading">
                 <el-option
                   v-for="item in advertisementList"
                   :key="item.id"
@@ -79,7 +79,7 @@
         <div class="editCondition-wrap" style="padding: 0 0 15px;">
           <el-form :model="editCondition" :inline="true" ref="editForm" >
             <el-form-item label="修改选项" style="margin-bottom: 0;">
-              <el-checkbox-group v-model="editCondition.conditionList" @change="contentEditChange">
+              <el-checkbox-group v-model="editCondition.conditionList">
                 <el-checkbox v-for="item in conditionContent" :label="item" :key="item"></el-checkbox>
               </el-checkbox-group>
             </el-form-item>
@@ -91,28 +91,27 @@
           <el-table-column
             prop="point"
             label="点位"
-            min-width="200"
-            fixed
-            >
+            min-width="150"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             prop="advertiser"
             label="广告主"
-            min-width="100"
-            fixed
+            min-width="80"
+            :show-overflow-tooltip="true"
             >
           </el-table-column>
           <el-table-column
             prop="advertisement"
             label="广告"
-            width="100"
-            >
+            width="80"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             prop="adType"
-            label="广告类型"
-            width="100"
-            >
+            label="类型"
+            width="80"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             prop="link"
@@ -127,31 +126,33 @@
             prop="size"
             label="大小"
             width="80"
+            :show-overflow-tooltip="true"
             >
           </el-table-column>
           <el-table-column
             prop="kTime"
             label="周期"
             width="80"
-            >
+            :show-overflow-tooltip="true"
+           >
           </el-table-column>
           <el-table-column
             prop="startDate"
             label="开始时间"
-            min-width="200"
-            >
+            min-width="100"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             prop="endDate"
             label="结束时间"
-            min-width="200"
-            >
+            min-width="100"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             prop="date"
             label="时间"
-            min-width="200"
-            >
+            min-width="80"
+            :show-overflow-tooltip="true">
           </el-table-column>
         </el-table>
         <div class="pagination-wrap">
@@ -164,12 +165,14 @@
           >
           </el-pagination>
         </div>
-        <el-dialog title="批量修改" :visible.sync="editVisible" @close="dialogClose">
+        
+      </div>
+      <el-dialog title="批量修改" :visible.sync="editVisible" @close="dialogClose" v-loading="loading">
         <el-form
         ref="adForm"
         :model="adForm" label-width="150px">
           <el-form-item label="广告行业" prop="ad_trade_id"  v-if="modifyOptionFlag.ad_trade_id" :rules="[{ type: 'number', required: true, message: '请选择广告行业', trigger: 'submit' }]">
-            <el-select v-model="adForm.ad_trade_id" filterable placeholder="请搜索" @change="adTradeChangeHandle">
+            <el-select v-model="adForm.ad_trade_id" filterable placeholder="请搜索" @change="adTradeChangeHandle('edit')">
               <el-option
                 v-for="item in adTradeList"
                 :key="item.id"
@@ -179,9 +182,9 @@
             </el-select>
           </el-form-item>
           <el-form-item label="广告主" prop="advertiser_id" v-if="modifyOptionFlag.advertiser_id" :rules="[{ type: 'number', required: true, message: '请选择广告主', trigger: 'submit' }]">
-            <el-select v-model="adForm.advertiser_id" placeholder="请选择" filterable>
+            <el-select v-model="adForm.advertiser_id" placeholder="请选择" filterable @change="advertiserChangeHandle('edit')" :loading="searchLoading">
               <el-option
-                v-for="item in advertiserList"
+                v-for="item in advertiserFormList"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id">
@@ -189,17 +192,17 @@
             </el-select>
           </el-form-item>
           <el-form-item label="广告" prop="advertisement_id" v-if="modifyOptionFlag.advertisement_id" :rules="[{ type: 'number', required: true, message: '请选择广告', trigger: 'submit' }]">
-            <el-select v-model="adForm.advertisement_id" placeholder="请选择" filterable>
+            <el-select v-model="adForm.advertisement_id" placeholder="请选择" filterable :loading="searchLoading">
               <el-option
-                v-for="item in advertisementList"
+                v-for="item in advertisementFormList"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id">
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="周期(s)" prop="cycle" v-if="modifyOptionFlag.cycle" :rules="[{ required: true, message: '请输入周期', trigger: 'submit',type: 'number' }]">
-            <el-input v-model="adForm.cycle" placeholder="请输入周期"></el-input>
+          <el-form-item label="周期(s)" prop="cycle" v-if="modifyOptionFlag.cycle" :rules="[{ required: true, message: '请输入周期', trigger: 'submit'}]">
+            <el-input v-model="adForm.cycle" placeholder="请输入周期" ></el-input>
           </el-form-item>
           <el-form-item label="开始时间" prop="sdate" v-if="modifyOptionFlag.sdate" :rules="[{ type: 'date', required: true, message: '请输入开始时间', trigger: 'submit' }]">
             <el-date-picker
@@ -222,7 +225,6 @@
           </el-form-item>
          </el-form>
       </el-dialog>
-      </div>
     </div>
   </div>
 </template>
@@ -247,6 +249,7 @@ export default {
       editCondition:{
         conditionList: [],
       },
+      loading: false,
       marketList: [],
       weekdayList: [],
       weekendList: [],
@@ -255,7 +258,9 @@ export default {
       adTradeList: [],
       searchLoading: false,
       advertiserList: [],
+      advertiserFormList:[],
       advertisementList:[],
+      advertisementFormList: [],
       adSearchForm: {
         ad_trade_id: '',
         advertiser_id: '',
@@ -286,13 +291,15 @@ export default {
         ad_trade_id: '',
         advertiser_id: '',
         advertisement_id: '',
-        cycle: '',
+        cycle: 0,
         sdate: '',
         edate: '',
       },
+      aoids: [],
       adList: [],
       selectAll: [],
-      editVisible: false
+      editVisible: false,
+      slectedLength: 0
     }
   },
   mounted() {
@@ -316,10 +323,6 @@ export default {
     handleSelectionChange(val) {
       this.selectAll = val
     },
-    contentEditChange(value) {
-      let length = value.length
-      console.log(value[length-1])
-    },
     dialogClose() {
       if(!this.editVisible) {
         this.editCondition.conditionList = []
@@ -335,40 +338,72 @@ export default {
       this.setting.loading = false;
       })
     },
-    adTradeChangeHandle() {
-      this.adSearchForm.advertiser_id = ''
-      this.getAdvertiserList()
+    adTradeChangeHandle(type) {
+      console.log(this.adSearchForm)
+      if(type === 'edit') {
+        this.adForm.advertiser_id = ''
+        } else {
+        this.adSearchForm.advertiser_id = ''
+      }
+      this.getAdvertiserList(type)
     },
-    advertisementChangeHandle (){
+    
+    advertiserChangeHandle(type){
+      if(type === 'edit') {
+        this.adForm.advertisement_id = ''
+        } else {
+        this.adSearchForm.advertisement_id = ''
+      }
+      this.getAdvertisementList(type)
     },
-    advertiserChangeHandle(){
-      this.adSearchForm.advertisement_id = ''
-      
-      this.getAdvertisementList()
-    },
-    getAdvertisementList() {
-      let args = {
-        advertiser_id: this.adSearchForm.advertiser_id
+    getAdvertisementList(type) {
+      let args = {}
+      if(type === 'edit') {
+        args = {
+          advertiser_id: this.adForm.advertiser_id
+        }
+      } else {
+        args = {
+          advertiser_id: this.adSearchForm.advertiser_id
+        }
       }
       this.searchLoading = true
       return search.getAdvertisementList(this, args).then((response) => {
         let data = response.data
-        this.advertisementList = data
+        if(type === 'edit') {
+          this.advertisementFormList = data
+        } else {
+          this.advertisementList = data
+        }
         this.searchLoading = false
       }).catch(error => {
         console.log(error)
       this.searchLoading = false
-      
       })
     },
-    getAdvertiserList() {
-      let args = {
-        ad_trade_id: this.adSearchForm.ad_trade_id
+    getAdvertiserList(type) {
+      console.log(type)
+      let args = {}
+      if(type === 'edit') {
+        args = {
+          ad_trade_id: this.adForm.ad_trade_id
+        }
+      } else {
+        args = {
+          ad_trade_id: this.adSearchForm.ad_trade_id
+        }
       }
+      console.log(args)
       this.searchLoading = true
       return search.getAdvertiserList(this, args).then((response) => {
         let data = response.data
-        this.advertiserList = data
+        if(type === 'edit') {
+          console.log(22)
+          this.advertiserFormList = data
+        } else {
+          console.log(333)
+          this.advertiserList = data
+        }
         this.searchLoading = false
       }).catch(error => {
         console.log(error)
@@ -455,6 +490,7 @@ export default {
     },
     search (formName) {
       this.pagination.currentPage = 1;
+      this.editCondition.conditionList = []
       this.getAdList();
     },
     resetSearch (formName) {
@@ -465,6 +501,7 @@ export default {
       this.adSearchForm.market_id = ''
       this.adSearchForm.point_id = ''
       this.pagination.currentPage = 1;
+      this.editCondition.conditionList = []
       this.getAdList();
     },
     changePage (currentPage) {
@@ -493,11 +530,12 @@ export default {
             sdate: '',
             edate: '',
           }
-          this.tvoids = []
+          this.aoids = []
           let optionModify = this.editCondition.conditionList
+          console.log(optionModify)
           for (let i = 0; i < this.selectAll.length; i++) {
-            let id = this.selectAll[i].point.id
-            this.tvoids.push(id)
+            let id = this.selectAll[i].id
+            this.aoids.push(id)
           }
           this.modifyOptionFlag.ad_trade_id = false
           this.modifyOptionFlag.advertiser_id = false
@@ -510,11 +548,17 @@ export default {
             switch(type) {
               case '广告行业':
                 this.modifyOptionFlag.ad_trade_id = true
+                this.modifyOptionFlag.advertiser_id = true
+                this.modifyOptionFlag.advertisement_id = true
               break
               case '广告主':
-                this.modifyOptionFlag.advertiser_id= true
+                this.modifyOptionFlag.ad_trade_id = true
+                this.modifyOptionFlag.advertiser_id = true
+                this.modifyOptionFlag.advertisement_id = true
               break
               case '广告':
+                this.modifyOptionFlag.ad_trade_id = true
+                this.modifyOptionFlag.advertiser_id = true
                 this.modifyOptionFlag.advertisement_id = true
               break
               case '周期':
@@ -531,6 +575,45 @@ export default {
           this.editVisible = true
         }
       }
+    },
+    submitModify(formName) {
+      this.$refs[formName].validate((valid) => {
+        if(valid){
+        this.loading = true
+          let args = {
+            sdate: new Date(this.adForm.sdate).getTime() / 1000,
+            edate: new Date(this.adForm.edate).getTime() / 1000,
+            aid: this.adForm.ad_trade_id,
+            atid: this.adForm.advertiser_id,
+            atiid: this.adForm.advertisement_id,
+            ktime: parseInt(this.adForm.cycle),
+            aoids: this.aoids
+          }
+          this.modifyOptionFlag.ad_trade_id ? args : delete args.aid 
+          this.modifyOptionFlag.advertiser_id ? args : delete args.atid 
+          this.modifyOptionFlag.advertisement_id ? args : delete args.atiid 
+          this.modifyOptionFlag.cycle ? args : delete args.ktime 
+          this.modifyOptionFlag.sdate ? args : delete args.sdate 
+          this.modifyOptionFlag.edate ? args : delete args.edate 
+          return ad.modifyAdLaunch(this, args).then((response) => {
+            this.loading = false
+            this.$message({
+              message: "修改成功",
+              type: "success"
+            })
+            this.getAdList();
+            this.editVisible = false
+            this.editCondition.conditionList = []
+          }).catch((err) => {
+            this.loading = false
+            console.log(err)
+          })
+        }else{
+          this.loading = false
+          console.log('error submit');
+          return;
+        }
+      })
     },
     linkToAddItem () {
       this.$router.push({
@@ -567,7 +650,7 @@ export default {
         width: 380px;
       }
       .el-form-item{
-        margin-bottom: 5px;
+         margin-bottom: 20px;
       }
       .item-content-wrap{
         .icon-item{
@@ -582,6 +665,9 @@ export default {
           font-size: 16px;
           align-items: center;
           margin-bottom: 10px;
+          .el-form-item{
+            margin-bottom: 5px;
+          }
           .el-select{
             width: 200px;
           }

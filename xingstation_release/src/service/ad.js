@@ -18,6 +18,15 @@ export default {
         reject(error)
       })
     })
+  },
+  modifyAdLaunch(context, args) {
+    return new Promise(function(resolve, reject){
+      context.$http.patch(AD_API, args).then(response => {
+        resolve(response.data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
   }
 
 }
