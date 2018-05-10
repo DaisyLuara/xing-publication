@@ -14,7 +14,7 @@
         <el-menu-item class="menu-item" index="/inform">
           <el-badge :value="noticeCount" :max="99" class="item">
             <!-- <el-button size="small">通知</el-button> -->
-          <img src="../assets/images/bell-icon.png" alt="" style="width: 73%"/>
+          <img src="../assets/images/bell-icon.png" alt="" style="width: 50%"/>
           </el-badge>
         </el-menu-item>
       </el-menu>
@@ -175,8 +175,8 @@ export default {
   align-items: center;
 }
 .el-badge__content.is-fixed {
-  top: 6px;
-  right: 26px;
+  top: 10px;
+  right: 32px;
 }
 .logo-wrap {
   .logo {
