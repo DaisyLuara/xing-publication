@@ -47,7 +47,7 @@ class PushController extends Controller
 
         $push = $query->where('push.oid', '>', 0)
             ->whereNotIn('push.alias', ['star', 'shop', 'agent'])
-            ->orderBy('oid','desc')
+            ->orderBy('oid', 'desc')
             ->orderBy('clientdate', 'desc')
             ->paginate(10);
 

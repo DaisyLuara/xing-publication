@@ -10,7 +10,7 @@ use League\Fractal\TransformerAbstract;
 
 class PushTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['point'];
+    protected $availableIncludes = ['point', 'project'];
 
     public function transform(Push $push)
     {
@@ -34,7 +34,10 @@ class PushTransformer extends TransformerAbstract
 
     public function includeProject(Push $push)
     {
-        return $this->item($push->point, new ProjectTransformer());
+        $project = $push->project;
+        if ($project) {
+            return $this->item($project, new ProjectTransformer());
+        }
     }
 
 }
