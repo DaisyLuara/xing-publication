@@ -33,6 +33,15 @@ class AppServiceProvider extends ServiceProvider
             return true;
 //            return Auth::check();
         });
+
+        \App\Models\User::observe(\App\Observers\UserObserver::class);
+        \App\Models\Reply::observe(\App\Observers\ReplyObserver::class);
+        \App\Models\Topic::observe(\App\Observers\TopicObserver::class);
+        \App\Models\Company::observe(\App\Observers\CompanyObserver::class);
+        \App\Models\AdminProject::observe(\App\Observers\AdminProjectObserver::class);
+        \App\Models\Mock\ProjectLaunchLocal::observe(\App\Observers\ProjectLaunchLocalObserver::class);
+
+        \Carbon\Carbon::setLocale('zh');
     }
 
     /**
@@ -42,6 +51,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        \API::error(function (\Illuminate\Database\Eloquent\ModelNotFoundException $exception) {
+            abort(404);
+        });
+
+        \API::error(function (\Illuminate\Auth\Access\AuthorizationException $exception) {
+            abort(403, $exception->getMessage());
+        });
     }
 }

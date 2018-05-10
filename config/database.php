@@ -53,21 +53,18 @@ return [
             'strict' => true,
             'engine' => null,
         ],
-        'jingsaas' => [
+        'ar' => [
             'driver' => 'mysql',
-            'host' => env('JINGSAAS_DB_HOST', 'mysql'),
-            'port' => env('JINGSAAS_DB_PORT', '3306'),
-            'database' => env('JINGSAAS_DB_DATABASE', 'jingsaas'),
-            'username' => env('JINGSAAS_DB_USERNAME', 'jingfree'),
-            'password' => env('JINGSAAS_DB_PASSWORD', 'passw0rd'),
-            'unix_socket' => env('JINGSAAS_DB_SOCKET', ''),
+            'host' => env('AR_DB_HOST', '120.27.138.242'),
+            'port' => env('AR_DB_PORT', '3306'),
+            'database' => env('AR_DB_DATABASE', 'ar'),
+            'username' => env('AR_DB_USERNAME', 'chenzhong'),
+            'password' => env('AR_DB_PASSWORD', '717513736'),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => '',
             'strict' => true,
             'engine' => null,
         ],
-
         'pgsql' => [
             'driver' => 'pgsql',
             'host' => env('DB_HOST', '127.0.0.1'),
