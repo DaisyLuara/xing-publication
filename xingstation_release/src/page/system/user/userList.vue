@@ -10,8 +10,14 @@
         <el-button @click="resetSearch" type="default">重置</el-button>
       </el-form>
     </div>
-    <div class="actions-wrap">
+    <!-- <div class="actions-wrap">
       <el-button size="small" type="success"  @click="linkToAddUser">新增用户</el-button>
+    </div> -->
+    <div class="actions-wrap">
+      <span class="label">
+        用户数量: {{pagination.total}}
+      </span>
+      <el-button size="small" type="success" @click="linkToAddUser">新增用户</el-button>
     </div>
     <el-table :data="userList" highlight-current-row ref="userTable" style="width: 100%">
       <el-table-column prop="name" label="姓名"></el-table-column>
@@ -181,8 +187,16 @@ export default {
     padding: 5px;
   }
   .actions-wrap{
-    text-align: right;
-    margin: 10px auto;
+    margin-top: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 16px;
+    align-items: center;
+    margin-bottom: 10px;
+    .label {
+      font-size: 14px;
+    }
   }
   .pagination-wrap{
     margin: 10px auto;
