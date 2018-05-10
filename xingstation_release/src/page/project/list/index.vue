@@ -9,41 +9,44 @@
         </div>
         <el-table :data="tableData" style="width: 100%" highlight-current-row >
           <el-table-column type="selection" width="55" ></el-table-column>
-          <el-table-column
-            prop="id"
-            label="ID"
-            min-width="80"
-            fixed
-            >
+          <el-table-column type="expand">
+            <template slot-scope="scope">
+              <el-form label-position="left" inline class="demo-table-expand">
+                <el-form-item label="产品">
+                  <!-- <span>{{scope.row.point}}</span> -->
+                </el-form-item>
+                <el-form-item label="图标icon">
+                  <!-- <a :href="scope.row.icon" target="_blank" style="color: blue">查看</a> -->
+                </el-form-item>
+                <el-form-item label="连接">
+                  <!-- <a :href="scope.row.link" target="_blank" style="color: blue">查看</a> -->
+                </el-form-item>
+                <el-form-item label="版本">
+                  <!-- <span>{{scope.row.advertisement}}</span> -->
+                </el-form-item>
+                <el-form-item label="版本号">
+                  <!-- <span>{{scope.row.adType}}</span> -->
+                </el-form-item>
+                <el-form-item label="时间">
+                  <!-- <span>{{ scope.row.date }}</span> -->
+                </el-form-item>
+              </el-form>
+            </template>
           </el-table-column>
           <el-table-column
             prop="img"
             label="产品"
-            width="130"
+            min-width="130"
             :show-overflow-tooltip="true"
             >
-           <template slot-scope="scope">
-              <img :src="scope.row.img" alt="" class="icon-item"/>
-            </template>
           </el-table-column>
           <el-table-column
             prop="area"
             label="图标"
-            width="130"
+            min-width="100"
             >
-          </el-table-column>
-          <el-table-column
-            prop="market"
-            label="封面"
-            min-width="150"
-            >
-          </el-table-column>
-          <el-table-column
-            prop="point"
-            label="连接"
-            min-width="100">
             <template slot-scope="scope">
-              <span>查看</span>
+              <!-- <img :src="scope.row.project.icon" alt="" class="icon-item"/> -->
             </template>
           </el-table-column>
           <el-table-column
@@ -62,10 +65,10 @@
           <el-table-column
             prop="screenStatus"
             label="时间"
-            min-width="100"
+            min-width="150"
             :show-overflow-tooltip="true">
           </el-table-column>
-          <el-table-column label="操作" width="150" fixed="right">
+          <el-table-column label="操作" width="150">
             <template slot-scope="scope">
               <el-button size="small" type="primary" @click="linkToEdit()">推送</el-button> 
               <el-button size="small" type="warning" @click="showData()">编辑</el-button>
@@ -177,10 +180,23 @@ export default {
     .item-list-wrap{
       background: #fff;
       padding: 30px;
+
       .el-form-item{
         margin-bottom: 0;
       }
       .item-content-wrap{
+        .demo-table-expand {
+        font-size: 0;
+        }
+        .demo-table-expand label {
+          width: 90px;
+          color: #99a9bf;
+        }
+        .demo-table-expand .el-form-item {
+          margin-right: 0;
+          margin-bottom: 0;
+          width: 50%;
+        }
         .icon-item{
           padding: 10px;
           width: 50%;

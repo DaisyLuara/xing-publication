@@ -7,56 +7,75 @@
             总数:{{pagination.total}} 
           </span>
         </div>
-       <el-table :data="tableData" style="width: 100%" highlight-current-row>
-          <el-table-column type="selection" width="55" ></el-table-column>
-          <el-table-column
-            prop="id"
-            label="ID"
-            min-width="80"
-            fixed
-            >
+       <el-table :data="tableData" style="width: 100%" >
+         <el-table-column type="expand">
+            <template slot-scope="scope">
+              <el-form label-position="left" inline class="demo-table-expand">
+                <el-form-item label="产品">
+                  <!-- <img :src="scope.row.img" alt="" class="icon-item"/> -->
+                  <a :href="scope.row.img" target="_blank" style="color: blue">查看</a>
+                </el-form-item>
+                <el-form-item label="区域">
+                  <span>{{scope.row.area}}</span>
+                </el-form-item>
+                <el-form-item label="商场">
+                  <span>{{scope.row.market}}</span>
+                </el-form-item>
+                <el-form-item label="点位">
+                  <span>{{scope.row.point}}</span>
+                </el-form-item>
+                <el-form-item label="上次互动">
+                  <span>{{scope.row.faceDate}}</span>
+                </el-form-item>
+                <el-form-item label="联网时间">
+                  <span>{{ scope.row.networkDate }}</span>
+                </el-form-item>
+                <el-form-item label="屏幕状态">
+                  <span>{{ scope.row.screenStatus == 0 ? '开' :'关'}}</span>
+                </el-form-item>
+                <el-form-item label="登录时间">
+                  <span>{{ scope.row.loginDate }}</span>
+                </el-form-item>
+                <el-form-item label="开/关机">
+                  <!-- <span>{{ scope.row.on/off_time }}</span> -->
+                </el-form-item>
+                <el-form-item label="智能插排">
+                  <span>{{ scope.row.device_id == '' ? '': '有'}}</span>
+                </el-form-item>
+              </el-form>
+            </template>
           </el-table-column>
           <el-table-column
             prop="img"
             label="产品"
-            min-width="130"
+            min-width="150"
+            :show-overflow-tooltip="true"
             >
             <template slot-scope="scope">
               <img :src="scope.row.img" alt="" class="icon-item"/>
             </template>
           </el-table-column>
           <el-table-column
-            prop="area"
-            label="区域"
-            width="100"
-            >
-          </el-table-column>
-          <el-table-column
             prop="market"
             label="商场"
-            width="100"
+            min-width="130"
             :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             prop="point"
             label="点位"
-            width="100"
+            min-width="100"
             :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             prop="faceDate"
             label="上次互动"
-            width="100">
-          </el-table-column>
-          <el-table-column
-            prop="networkDate"
-            label="联网时间"
-            width="100">
+            min-width="100">
           </el-table-column>
           <el-table-column
             prop="screenStatus"
             label="屏幕状态"
-            width="100">
+            min-width="80">
             <template slot-scope="scope">
               <span v-if="scope.row.screenStatus==0">开</span>
               <span v-if="scope.row.screenStatus==1">关</span>
@@ -65,26 +84,15 @@
           <el-table-column
             prop="loginDate"
             label="登录时间"
-            width="100"
+            min-width="100"
             :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             prop="on/off_time"
             label="开/关机"
-            width="100">
+            width="90">
           </el-table-column>
-            
-          
-          <el-table-column
-            prop="device_id"
-            label="智能插排"
-            width="100">
-            <template slot-scope="scope">
-              <span v-if="scope.row.device_id==''"></span>
-              <span v-if="scope.row.device_id!=''">有</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" width="150" fixed="right">
+          <el-table-column label="操作" width="150">
             <template slot-scope="scope">
                <el-button size="small" type="primary" @click="linkToEdit()">重启</el-button> 
                <el-button size="small" type="warning" @click="showData()">编辑</el-button>
@@ -137,7 +145,6 @@ export default {
   },
   created () {
     this.gettEquipmentList();
-    
   },
   methods: {
     gettEquipmentList () {
@@ -149,9 +156,6 @@ export default {
       equipment.gettEquipmentList(this, searchArgs).then((response) => {
        let data = response.data
        this.tableData = data
-       console.log('=========');
-       console.log(response);
-       console.log('=========');
        this.pagination.total = response.meta.pagination.total
        this.setting.loading = false;
       }).catch(error => {
@@ -161,7 +165,6 @@ export default {
     },
     
     changePage (currentPage) {
-      alert(currentPage)
       this.pagination.currentPage = currentPage
       this.gettEquipmentList ();
     },
@@ -190,6 +193,18 @@ export default {
         margin-bottom: 0;
       }
       .item-content-wrap{
+        .demo-table-expand {
+          font-size: 0;
+        }
+        .demo-table-expand label {
+          width: 90px;
+          color: #99a9bf;
+        }
+        .demo-table-expand .el-form-item {
+          margin-right: 0;
+          margin-bottom: 0;
+          width: 50%;
+        }
         .icon-item{
           padding: 10px;
           width: 50%;

@@ -88,6 +88,42 @@
         </div>
         <el-table :data="adList" style="width: 100%" highlight-current-row @selection-change="handleSelectionChange" ref="multipleTable">
           <el-table-column type="selection" width="55" ></el-table-column>
+          <el-table-column type="expand">
+            <template slot-scope="scope">
+              <el-form label-position="left" inline class="demo-table-expand">
+                <el-form-item label="点位">
+                  <span>{{scope.row.point}}</span>
+                </el-form-item>
+                <el-form-item label="广告主">
+                  <span>{{scope.row.advertiser}}</span>
+                </el-form-item>
+                <el-form-item label="广告">
+                  <span>{{scope.row.advertisement}}</span>
+                </el-form-item>
+                <el-form-item label="类型">
+                  <span>{{scope.row.adType}}</span>
+                </el-form-item>
+                <el-form-item label="链接">
+                  <a :href="scope.row.link" target="_blank" style="color: blue">查看</a>
+                </el-form-item>
+                <el-form-item label="大小">
+                  <span>{{ scope.row.size }}</span>
+                </el-form-item>
+                <el-form-item label="周期">
+                  <span>{{ scope.row.kTime }}</span>
+                </el-form-item>
+                <el-form-item label="开始时间">
+                  <span>{{ scope.row.startDate }}</span>
+                </el-form-item>
+                <el-form-item label="结束时间">
+                  <span>{{ scope.row.endDate }}</span>
+                </el-form-item>
+                <el-form-item label="时间">
+                  <span>{{ scope.row.date }}</span>
+                </el-form-item>
+              </el-form>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="point"
             label="点位"
@@ -104,54 +140,20 @@
           <el-table-column
             prop="advertisement"
             label="广告"
-            width="80"
+            min-width="80"
             :show-overflow-tooltip="true">
-          </el-table-column>
-          <el-table-column
-            prop="adType"
-            label="类型"
-            width="80"
-            :show-overflow-tooltip="true">
-          </el-table-column>
-          <el-table-column
-            prop="link"
-            label="链接"
-            width="80"
-            >
-            <template slot-scope="scope">
-              <a :href="scope.row.link" target="_blank" style="color: blue">查看</a>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="size"
-            label="大小"
-            width="80"
-            :show-overflow-tooltip="true"
-            >
           </el-table-column>
           <el-table-column
             prop="kTime"
             label="周期"
-            width="80"
+            min-width="80"
             :show-overflow-tooltip="true"
            >
           </el-table-column>
           <el-table-column
-            prop="startDate"
-            label="开始时间"
-            min-width="100"
-            :show-overflow-tooltip="true">
-          </el-table-column>
-          <el-table-column
-            prop="endDate"
-            label="结束时间"
-            min-width="100"
-            :show-overflow-tooltip="true">
-          </el-table-column>
-          <el-table-column
             prop="date"
             label="时间"
-            min-width="80"
+            min-width="150"
             :show-overflow-tooltip="true">
           </el-table-column>
         </el-table>
@@ -339,7 +341,6 @@ export default {
       })
     },
     adTradeChangeHandle(type) {
-      console.log(this.adSearchForm)
       if(type === 'edit') {
         this.adForm.advertiser_id = ''
         } else {
@@ -382,7 +383,6 @@ export default {
       })
     },
     getAdvertiserList(type) {
-      console.log(type)
       let args = {}
       if(type === 'edit') {
         args = {
@@ -393,15 +393,12 @@ export default {
           ad_trade_id: this.adSearchForm.ad_trade_id
         }
       }
-      console.log(args)
       this.searchLoading = true
       return search.getAdvertiserList(this, args).then((response) => {
         let data = response.data
         if(type === 'edit') {
-          console.log(22)
           this.advertiserFormList = data
         } else {
-          console.log(333)
           this.advertiserList = data
         }
         this.searchLoading = false
@@ -651,6 +648,23 @@ export default {
       }
       .el-form-item{
          margin-bottom: 20px;
+      }
+      .el-table__body-wrapper{
+        overflow-x: auto;
+        overflow-y: overlay;
+        position: relative;
+      }
+      .demo-table-expand {
+        font-size: 0;
+      }
+      .demo-table-expand label {
+        width: 90px;
+        color: #99a9bf;
+      }
+      .demo-table-expand .el-form-item {
+        margin-right: 0;
+        margin-bottom: 0;
+        width: 50%;
       }
       .item-content-wrap{
         .icon-item{

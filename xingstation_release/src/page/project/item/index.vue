@@ -52,12 +52,42 @@
           </span>
           <el-button size="small" type="success" @click="linkToAddItem">投放节目</el-button>
         </div>
-        <el-table :data="tableData" style="width: 100%" highlight-current-row  @selection-change="handleSelectionChange" ref="multipleTable">
+        <el-table :data="tableData" style="width: 100%" highlight-current-row  @selection-change="handleSelectionChange" ref="multipleTable" type="expand">
           <el-table-column type="selection" width="45" ></el-table-column>
+          <el-table-column type="expand">
+            <template slot-scope="scope">
+              <el-form label-position="left" inline class="demo-table-expand">
+                <el-form-item label="节目名称">
+                  <span>{{scope.row.project.name}}</span>
+                </el-form-item>
+                <el-form-item label="节目icon">
+                  <a :href="scope.row.project.icon" target="_blank" style="color: blue">查看</a>
+                </el-form-item>
+                <el-form-item label="区域">
+                  <span>{{scope.row.point.market.area.name}}</span>
+                </el-form-item>
+                <el-form-item label="商场">
+                  <span>{{scope.row.point.market.name}}</span>
+                </el-form-item>
+                <el-form-item label="点位">
+                  <span>{{scope.row.point.name}}</span>
+                </el-form-item>
+                <el-form-item label="创建时间">
+                  <span>{{ scope.row.created_at }}</span>
+                </el-form-item>
+                <el-form-item label="自定义开始时间">
+                  <span>{{ scope.row.start_date }}</span>
+                </el-form-item>
+                <el-form-item label="自定义开始时间">
+                  <span>{{ scope.row.end_date }}</span>
+                </el-form-item>
+              </el-form>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="name"
             label="节目名称"
-            width="100"
+            min-width="150"
             :show-overflow-tooltip="true"
             >
             <template slot-scope="scope">
@@ -67,20 +97,10 @@
           <el-table-column
             prop="icon"
             label="节目icon"
-            width="130"
+            min-width="100"
             >
             <template slot-scope="scope">
               <img :src="scope.row.project.icon" alt="" class="icon-item"/>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="areaName"
-            label="区域"
-            width="80"
-            :show-overflow-tooltip="true"
-            >
-            <template slot-scope="scope">
-              {{scope.row.point.market.area.name}}
             </template>
           </el-table-column>
           <el-table-column
@@ -106,27 +126,12 @@
           <el-table-column
             prop="created_at"
             label="创建时间"
-            min-width="100"
+            min-width="150"
             :show-overflow-tooltip="true"
             >
           </el-table-column>
-          <el-table-column
-            prop="start_date"
-            label="自定义开始时间"
-            min-width="140"
-            :show-overflow-tooltip="true"
-            >
-          </el-table-column>
-          <el-table-column
-            prop="end_date"
-            label="自定义结束时间"
-            min-width="140"
-            :show-overflow-tooltip="true"
-            >
-          </el-table-column>
-          <el-table-column label="操作" width="80" fixed="right">
+          <el-table-column label="操作" width="80">
             <template slot-scope="scope">
-              <!-- <el-button size="small" type="primary" @click="linkToEdit(scope.row)">修改</el-button> -->
               <el-button size="small" type="warning" @click="showData(scope.row.project.alias, scope.row.project.name, arUserName)" v-if="dataShowFlag">数据</el-button>
             </template>
           </el-table-column>
@@ -193,7 +198,7 @@
             placeholder="选择自定义开始时间" :editable="false">
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="自定义结束时间" prop="edate" v-if="modifyOptionFlag.sdate" :rules="[{ type: 'date', required: true, message: '请输入自定义结束时间', trigger: 'submit' }]">
+          <el-form-item label="自定义结束时间" prop="edate" v-if="modifyOptionFlag.edate" :rules="[{ type: 'date', required: true, message: '请输入自定义结束时间', trigger: 'submit' }]">
             <el-date-picker
             v-model="projectForm.edate"
             type="date"
@@ -555,11 +560,22 @@ export default {
       }
       background: #fff;
       padding: 30px;
-      
       .item-content-wrap{
         .icon-item{
           padding: 10px;
           width: 60%;
+        }
+        .demo-table-expand {
+          font-size: 0;
+        }
+        .demo-table-expand label {
+          width: 90px;
+          color: #99a9bf;
+        }
+        .demo-table-expand .el-form-item {
+          margin-right: 0;
+          margin-bottom: 0;
+          width: 50%;
         }
         .search-wrap{
           margin-top: 5px;
