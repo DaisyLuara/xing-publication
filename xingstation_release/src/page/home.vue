@@ -13,9 +13,8 @@
         </el-menu-item>
         <el-menu-item class="menu-item" index="/inform">
           <el-badge :value="noticeCount" :max="99" class="item">
-            <el-button size="small">通知</el-button>
-          <!-- <img src="../assets/images/bell.png"/> -->
-            
+            <!-- <el-button size="small">通知</el-button> -->
+          <img src="../assets/images/bell-icon.png" alt="" style="width: 73%"/>
           </el-badge>
         </el-menu-item>
       </el-menu>
@@ -175,6 +174,10 @@ export default {
   flex-direction: row;
   align-items: center;
 }
+.el-badge__content.is-fixed {
+  top: 6px;
+  right: 26px;
+}
 .logo-wrap {
   .logo {
     margin-top: 15px;
@@ -183,6 +186,7 @@ export default {
 .modules-top {
   padding-top: 0;
 }
+
 .el-popover.popper-logout {
   padding: 0;
   min-width: 80px;
