@@ -3,7 +3,7 @@
     <div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
       <div class="item-content-wrap">
         <div class="search-wrap">
-          <el-form ref="adSearchForm" :model="adSearchForm"  :inline="true">
+          <el-form ref="adSearchForm" :model="adSearchForm"  :inline="true" class="search-form">
             <el-form-item label="" prop="adTrade">
               <el-select v-model="adSearchForm.ad_trade_id" filterable placeholder="请搜索广告行业" @change="adTradeChangeHandle('search')">
                 <el-option
@@ -235,7 +235,7 @@
 import ad from 'service/ad'
 import search from 'service/search'
 
-import { Button, Input, Table,Select, Option, TableColumn, Pagination, Form, FormItem, MessageBox, DatePicker, Checkbox, CheckboxGroup, Dialog} from 'element-ui'
+import { Button, Input, Table,Select, Option, Col, TableColumn, Pagination, Form, FormItem, MessageBox, DatePicker, Checkbox, CheckboxGroup, Dialog} from 'element-ui'
 
 export default {
   data () {
@@ -503,6 +503,7 @@ export default {
     },
     changePage (currentPage) {
       this.pagination.currentPage = currentPage
+      this.editCondition.conditionList = []
       this.getAdList()
     },
     modifyEdit() {
@@ -631,7 +632,8 @@ export default {
     "el-form-item": FormItem,
     'el-checkbox-group': CheckboxGroup,
     'el-checkbox': Checkbox,
-    'el-dialog':Dialog
+    'el-dialog':Dialog,
+    "el-col": Col
   }
 }
 </script>
@@ -657,6 +659,7 @@ export default {
       .demo-table-expand {
         font-size: 0;
       }
+      
       .demo-table-expand label {
         width: 90px;
         color: #99a9bf;
@@ -684,6 +687,11 @@ export default {
           }
           .el-select{
             width: 200px;
+          }
+          @media (max-width: 1368px) {
+            .el-select{
+              width: 250px;
+            }
           }
           .warning{
             background: #ebf1fd;
@@ -714,6 +722,7 @@ export default {
           text-align: right;
         }
       }
+      
     }
   }
 </style>
