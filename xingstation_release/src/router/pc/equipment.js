@@ -6,7 +6,7 @@ let router = {
   name: '设备',
   meta: {
     title: '设备',
-    //permission: 'equipment',
+    permission: 'device',
   },
   component: () =>
     import(/* webpackChunkName: "page/equipment/equipmentView" */ 'page/equipment/equipmentView'),

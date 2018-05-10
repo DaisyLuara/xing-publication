@@ -8,7 +8,7 @@
               <el-input v-model="filters.name" placeholder="请输入节目名称" style="width: 250px;"></el-input>
             </el-form-item>
             <el-form-item label="" prop="area">
-              <el-select v-model="filters.area" placeholder="请选择区域" @change="areaChangeHandle" filterable>
+              <el-select v-model="filters.area" placeholder="请选择区域" @change="areaChangeHandle" filterable clearable>
                 <el-option
                   v-for="item in areaList"
                   :key="item.id"
@@ -18,7 +18,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="" prop="market">
-              <el-select v-model="filters.market" placeholder="请选择商场" filterable :loading="marketLoading" remote :remote-method="getMarket" @change="marketChangeHandle">
+              <el-select v-model="filters.market" placeholder="请选择商场" filterable :loading="marketLoading" remote :remote-method="getMarket" @change="marketChangeHandle" clearable>
                 <el-option
                   v-for="item in marketList"
                   :key="item.id"
@@ -52,13 +52,43 @@
           </span>
           <el-button size="small" type="success" @click="linkToAddItem">投放节目</el-button>
         </div>
-        <el-table :data="tableData" style="width: 100%" highlight-current-row  @selection-change="handleSelectionChange">
-          <el-table-column type="selection" width="55" ></el-table-column>
+        <el-table :data="tableData" style="width: 100%" highlight-current-row  @selection-change="handleSelectionChange" ref="multipleTable" type="expand">
+          <el-table-column type="selection" width="45" ></el-table-column>
+          <el-table-column type="expand">
+            <template slot-scope="scope">
+              <el-form label-position="left" inline class="demo-table-expand">
+                <el-form-item label="节目名称">
+                  <span>{{scope.row.project.name}}</span>
+                </el-form-item>
+                <el-form-item label="节目icon">
+                  <a :href="scope.row.project.icon" target="_blank" style="color: blue">查看</a>
+                </el-form-item>
+                <el-form-item label="区域">
+                  <span>{{scope.row.point.market.area.name}}</span>
+                </el-form-item>
+                <el-form-item label="商场">
+                  <span>{{scope.row.point.market.name}}</span>
+                </el-form-item>
+                <el-form-item label="点位">
+                  <span>{{scope.row.point.name}}</span>
+                </el-form-item>
+                <el-form-item label="创建时间">
+                  <span>{{ scope.row.created_at }}</span>
+                </el-form-item>
+                <el-form-item label="自定义开始时间">
+                  <span>{{ scope.row.start_date }}</span>
+                </el-form-item>
+                <el-form-item label="自定义结束时间">
+                  <span>{{ scope.row.end_date }}</span>
+                </el-form-item>
+              </el-form>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="name"
             label="节目名称"
-            width="130"
-            fixed
+            min-width="150"
+            :show-overflow-tooltip="true"
             >
             <template slot-scope="scope">
               {{scope.row.project.name}}
@@ -67,25 +97,17 @@
           <el-table-column
             prop="icon"
             label="节目icon"
-            width="140"
+            min-width="100"
             >
             <template slot-scope="scope">
               <img :src="scope.row.project.icon" alt="" class="icon-item"/>
             </template>
           </el-table-column>
           <el-table-column
-            prop="areaName"
-            label="区域"
-            width="130"
-            >
-            <template slot-scope="scope">
-              {{scope.row.point.market.area.name}}
-            </template>
-          </el-table-column>
-          <el-table-column
             prop="market_name"
             label="商场"
-            min-width="150"
+            min-width="100"
+            :show-overflow-tooltip="true"
             >
             <template slot-scope="scope">
               {{scope.row.point.market.name}}
@@ -94,7 +116,9 @@
           <el-table-column
             prop="point_name"
             label="点位"
-            min-width="200">
+            min-width="100"
+            :show-overflow-tooltip="true"
+            >
             <template slot-scope="scope">
               {{scope.row.point.name}}
             </template>
@@ -102,22 +126,12 @@
           <el-table-column
             prop="created_at"
             label="创建时间"
-            min-width="180">
-          </el-table-column>
-          <el-table-column
-            prop="start_date"
-            label="自定义开始时间"
-            min-width="180"
+            min-width="150"
+            :show-overflow-tooltip="true"
             >
           </el-table-column>
-          <el-table-column
-            prop="end_date"
-            label="自定义结束时间"
-            min-width="180">
-          </el-table-column>
-          <el-table-column label="操作" width="150" fixed="right">
+          <el-table-column label="操作" width="80">
             <template slot-scope="scope">
-              <!-- <el-button size="small" type="primary" @click="linkToEdit(scope.row)">修改</el-button> -->
               <el-button size="small" type="warning" @click="showData(scope.row.project.alias, scope.row.project.name, arUserName)" v-if="dataShowFlag">数据</el-button>
             </template>
           </el-table-column>
@@ -133,12 +147,12 @@
           </el-pagination>
         </div>
       </div>
-      <el-dialog title="批量修改" :visible.sync="editVisible">
+      <el-dialog title="批量修改" :visible.sync="editVisible" @close="dialogClose" v-loading="loading">
         <el-form
         ref="projectForm"
         :model="projectForm" label-width="150px">
           <el-form-item label="节目名称" prop="project"  v-if="modifyOptionFlag.project" :rules="[{ type: 'number', required: true, message: '请输入节目', trigger: 'submit' }]">
-            <el-select v-model="projectForm.project" filterable placeholder="请搜索" remote :remote-method="getProject" @change="projectChangeHandle">
+            <el-select v-model="projectForm.project" filterable placeholder="请搜索" remote :remote-method="getProject" @change="projectChangeHandle" clearable>
               <el-option
                 v-for="item in projectList"
                 :key="item.id"
@@ -148,7 +162,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="工作日模版" prop="weekday" v-if="modifyOptionFlag.weekday" :rules="[{ type: 'number', required: true, message: '请选择工作日模版', trigger: 'submit' }]">
-            <el-select v-model="projectForm.weekday" placeholder="请选择" filterable>
+            <el-select v-model="projectForm.weekday" placeholder="请选择" filterable clearable>
               <el-option
                 v-for="item in weekdayList"
                 :key="item.id"
@@ -158,7 +172,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="周末模版" prop="weekend" v-if="modifyOptionFlag.weekend" :rules="[{ type: 'number', required: true, message: '请选择周末模版', trigger: 'submit' }]">
-            <el-select v-model="projectForm.weekend" placeholder="请选择" filterable>
+            <el-select v-model="projectForm.weekend" placeholder="请选择" filterable clearable>
               <el-option
                 v-for="item in weekendList"
                 :key="item.id"
@@ -168,7 +182,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="自定义模版" prop="define" v-if="modifyOptionFlag.define" :rules="[{ required: true, message: '请选择自定义模版', trigger: 'submit',type: 'number' }]">
-            <el-select v-model="projectForm.define" placeholder="请选择" filterable>
+            <el-select v-model="projectForm.define" placeholder="请选择" filterable clearable>
               <el-option
                 v-for="item in defineList"
                 :key="item.id"
@@ -184,7 +198,7 @@
             placeholder="选择自定义开始时间" :editable="false">
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="自定义结束时间" prop="edate" v-if="modifyOptionFlag.sdate" :rules="[{ type: 'date', required: true, message: '请输入自定义结束时间', trigger: 'submit' }]">
+          <el-form-item label="自定义结束时间" prop="edate" v-if="modifyOptionFlag.edate" :rules="[{ type: 'date', required: true, message: '请输入自定义结束时间', trigger: 'submit' }]">
             <el-date-picker
             v-model="projectForm.edate"
             type="date"
@@ -250,6 +264,7 @@ export default {
         sdate: '',
         edate: '',
       },
+      loading: true,
       modifyOptionFlag: {
         project: false,
         weekday: false,
@@ -273,6 +288,12 @@ export default {
     this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
   },
   methods: {
+    dialogClose() {
+      if(!this.editVisible) {
+        this.editCondition.conditionList = []
+        this.$refs.multipleTable.clearSelection();
+      }
+    },
     handleSelectionChange(val) {
       this.selectAll = val
       console.log(this.selectAll.length)
@@ -303,7 +324,7 @@ export default {
           this.tvoids = []
           let optionModify = this.editCondition.conditionList
           for (let i = 0; i < this.selectAll.length; i++) {
-            let id = this.selectAll[i].point.id
+            let id = this.selectAll[i].id
             this.tvoids.push(id)
           }
           this.modifyOptionFlag.project = false
@@ -324,10 +345,10 @@ export default {
               case '工作日模版':
                 this.modifyOptionFlag.weekday = true
               break
-              case '开始时间':
+              case '自定义开始时间':
                 this.modifyOptionFlag.sdate = true
               break
-              case '结束时间':
+              case '自定义结束时间':
                 this.modifyOptionFlag.edate = true
               break
               case '自定义模版':
@@ -344,6 +365,7 @@ export default {
       this.filters.area = ''
       this.filters.name = ''
       this.pagination.currentPage = 1;
+      this.editCondition.conditionList = []
       this.getProjectList();
     },
     projectChangeHandle() {
@@ -369,7 +391,7 @@ export default {
     submitModify(formName) {
       this.$refs[formName].validate((valid) => {
         if(valid){
-        this.setting.loading = true
+        this.loading = true
           let args = {
             tvoids: this.tvoids,
             default_plid: this.projectForm.project,
@@ -386,7 +408,7 @@ export default {
           this.modifyOptionFlag.sdate ? args : delete args.sdate 
           this.modifyOptionFlag.edate ? args : delete args.edate 
           console.log(args)
-          this.setting.loading = false
+          this.loading = false
           return project.modifyProjectLaunch(this, args).then((response) => {
             this.setting.loading = false
             this.$message({
@@ -398,10 +420,11 @@ export default {
             this.editCondition.conditionList = []
             console.log(response)
           }).catch((err) => {
-            this.setting.loading = false
+            this.loading = false
             console.log(err)
           })
         }else{
+          this.loading = false
           console.log('error submit');
           return;
         }
@@ -432,6 +455,9 @@ export default {
        let data = response.data
        this.tableData = data
        this.pagination.total = response.meta.pagination.total
+      //  this.$nextTick(() => {
+      //   this.$refs.multipleTable.doLayout()
+      // })
       this.setting.loading = false;
       }).catch(error => {
         console.log(error)
@@ -466,10 +492,12 @@ export default {
     },
     search (formName) {
       this.pagination.currentPage = 1;
+      this.editCondition.conditionList = []
       this.getProjectList();
     },
     changePage (currentPage) {
       this.pagination.currentPage = currentPage
+      this.editCondition.conditionList = []
       this.getProjectList()
     },
     linkToAddItem () {
@@ -533,10 +561,21 @@ export default {
       }
       background: #fff;
       padding: 30px;
-      
       .item-content-wrap{
         .icon-item{
           padding: 10px;
+          width: 60%;
+        }
+        .demo-table-expand {
+          font-size: 0;
+        }
+        .demo-table-expand label {
+          width: 90px;
+          color: #99a9bf;
+        }
+        .demo-table-expand .el-form-item {
+          margin-right: 0;
+          margin-bottom: 0;
           width: 50%;
         }
         .search-wrap{

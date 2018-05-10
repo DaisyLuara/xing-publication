@@ -3,7 +3,7 @@
     <div class="headline-wrapper">
       <div>
         <!-- <span>节目名称：{{pointName}} </span> -->
-        <el-select v-model="userSelect" filterable placeholder="请选择用户(可搜索)" v-if="showUser" :loading="projectLoading" remote :remote-method="getUser" @change="userChangeHandle">
+        <el-select v-model="userSelect" filterable placeholder="请选择用户(可搜索)" v-if="showUser" :loading="projectLoading" remote :remote-method="getUser" @change="userChangeHandle" clearable>
           <el-option
             v-for="item in userList"
             :key="item.id"
@@ -11,7 +11,7 @@
             :value="item.id">
           </el-option>
         </el-select>
-        <el-select v-model="projectSelect" filterable placeholder="请选择节目(可搜索)" :loading="projectLoading" remote :remote-method="getProject" @change="projectChangeHandle">
+        <el-select v-model="projectSelect" filterable placeholder="请选择节目(可搜索)" :loading="projectLoading" remote :remote-method="getProject" @change="projectChangeHandle" clearable>
           <el-option
             v-for="item in projectList"
             :key="item.id"
@@ -85,10 +85,10 @@
 </template>
 <script>
 import stats from 'service/stats'
-// import Highcharts from 'highcharts/highstock';
-// import Highcharts3D from 'highcharts/highcharts-3d';
 import { Row, Col, DatePicker, Select, Option, Button} from 'element-ui'
-// Highcharts3D(Highcharts)
+import Highcharts from 'highcharts';
+import load3D from 'highcharts/highcharts-3d';
+load3D(Highcharts)
 
 export default {
   components:{
@@ -148,13 +148,13 @@ export default {
        agePieOptions : {
         chart:{
           type: 'column',
-          options3d: {
-            enabled: true,
-            alpha: 3,
-            beta: 13,
-            depth: 30,
-            // viewDistance: 10
-          }
+          // options3d: {
+          //   enabled: true,
+          //   alpha: 3,
+          //   beta: 13,
+          //   depth: 30,
+          //   // viewDistance: 10
+          // }
         },
         plotOptions: {
           series: {
@@ -184,7 +184,7 @@ export default {
         },
         series: [{
           // dashStyle: 'shortDash',
-          color: "#3D96AE",
+          color: "#7cb5ec",
           name:"年龄统计",
         }]
       },
@@ -458,12 +458,12 @@ export default {
         let genderChat = this.$refs.sexPie.chart;
         let dataAge = []
         let dataGender = []
+        // let colors = ['#7cb5ec', '#91e8e1', '#90ed7d', '#f7a35c', '#8085e9','#f15c80'];
         if(response !== '{}'){
           let ageArr = response.age
           let genderArr = response.gender
           this.ageType = false;
           this.sexFlag = false
-          
           for(let i = 0; i < ageArr.length; i++){
             if(i==0){
               dataAge.push({'name':ageArr[i].age,'y':parseInt(ageArr[i].count)})
@@ -474,12 +474,39 @@ export default {
           dataGender.push({'name':'女','y':parseInt(genderArr.female),'sliced': true,'selected': true})
           dataGender.push({'name':'男','y':parseInt(genderArr.male)})
           ageChart.series[0].setData(dataAge,true)
+          // let pointsList = ageChart.series[0].points;
+          //   //遍历设置每一个数据点颜色
+          //   for (let k = 0; k < pointsList.length; k++) {
+          //     ageChart.series[0].points[k].update({
+          //     color: {
+          //       linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 }, //横向渐变效果 如果将x2和y2值交换将会变成纵向渐变效果
+          //       stops: [
+          //         [0, Highcharts.Color(colors[k]).setOpacity(1).get('rgba')],
+          //         [0.5, 'rgb(255, 255, 255)'],
+          //         [1, Highcharts.Color(colors[k]).setOpacity(1).get('rgba')]
+          //         ] 
+          //       }
+          //     });
+          //   }
           genderChat.series[0].setData(dataGender,true)
         }else{
           this.ageType = true;
           this.sexFlag = true
           ageChart.series[0].setData(dataAge,true)
           genderChat.series[0].setData(dataGender,true)
+          // let pointsList = ageChart.series[0].points;
+          // for (let k = 0; k < pointsList.length; k++) {
+          //   ageChart.series[0].points[k].update({
+          //     color: {
+          //       linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 }, //横向渐变效果 如果将x2和y2值交换将会变成纵向渐变效果
+          //       stops: [
+          //         [0, Highcharts.Color(colors[k]).setOpacity(1).get('rgba')],
+          //         [0.5, 'rgb(255, 255, 255)'],
+          //         [1, Highcharts.Color(colors[k]).setOpacity(1).get('rgba')]
+          //         ] 
+          //       }
+          //     });
+          //   }
         }
         this.ageFlag = false
         this.sexFlag = false

@@ -10,14 +10,6 @@ class ProjectController extends Controller
 {
     public function index(Request $request, Project $project)
     {
-        $query = $project->query();
-        $projects = $query->paginate(10);
-        return $this->response->paginator($projects, new ProjectTransformer());
-    }
-
-
-    public function userProject(Request $request, Project $project)
-    {
         $user = $this->user();
         $arUserId = getArUserID($user, $request);
         $query = $project->query();
@@ -32,7 +24,10 @@ class ProjectController extends Controller
         if ($request->alias) {
             $query->where('versionname', '=', $request->alias);
         }
-        $project = $query->where('name', 'like', "%{$request->name}%")->get();
-        return $this->response->collection($project, new ProjectTransformer());
+        $project = $query->where('name', 'like', "%{$request->name}%")
+            ->orderBy('clientdate', 'desc')
+            ->paginate(10);
+        return $this->response->paginator($project, new ProjectTransformer());
     }
+
 }

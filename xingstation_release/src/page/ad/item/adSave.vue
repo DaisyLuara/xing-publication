@@ -14,7 +14,7 @@
         ref="adForm"
         :model="adForm" label-width="150px">
         <el-form-item label="广告行业" prop="adTrade" :rules="[{ required: true, message: '请输入广告行业名称', trigger: 'submit',type: 'number'}]">
-          <el-select v-model="adForm.adTrade" filterable placeholder="请搜索" @change="adTradeChangeHandle">
+          <el-select v-model="adForm.adTrade" filterable placeholder="请搜索" @change="adTradeChangeHandle" clearable>
             <el-option
               v-for="item in adTradeList"
               :key="item.id"
@@ -24,7 +24,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="广告主" prop="advertiser" :rules="[{ required: true, message: '请输入广告主名称', trigger: 'submit',type: 'number'}]">
-          <el-select v-model="adForm.advertiser" filterable placeholder="请搜索" @change="advertiserChangeHandle" :loading="searchLoading">
+          <el-select v-model="adForm.advertiser" filterable placeholder="请搜索" @change="advertiserChangeHandle" :loading="searchLoading" clearable>
             <el-option
               v-for="item in advertiserList"
               :key="item.id"
@@ -34,7 +34,7 @@
           </el-select>
         </el-form-item>
          <el-form-item label="广告" prop="advertisement" :rules="[{ required: true, message: '请输入广告名称', trigger: 'submit',type: 'number'}]">
-          <el-select v-model="adForm.advertisement" filterable  placeholder="请搜索" :loading="searchLoading" @change="advertisementChangeHandle">
+          <el-select v-model="adForm.advertisement" filterable  placeholder="请搜索" :loading="searchLoading" @change="advertisementChangeHandle" clearable>
             <el-option
               v-for="item in advertisementList"
               :key="item.id"
@@ -43,8 +43,8 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="区域" prop="area"  :rules="[{ required: true, message: '请输入区域', trigger: 'submit' ,type: 'number'}]">
-          <el-select v-model="adForm.area" placeholder="请选择" filterable @change="areaChangeHandle">
+        <el-form-item label="区域" prop="area"  :rules="[{ required: true, message: '请输入区域', trigger: 'submit' ,type: 'number'}]" >
+          <el-select v-model="adForm.area" placeholder="请选择" filterable @change="areaChangeHandle" clearable>
             <el-option
               v-for="item in areaList"
               :key="item.id"
@@ -53,8 +53,8 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="商场" prop="market" :rules="[{ required: true, message: '请输入商场', trigger: 'submit' ,type: 'number'}]">
-          <el-select v-model="adForm.market"  placeholder="请搜索" filterable :loading="searchLoading" remote :remote-method="getMarket" @change="marketChangeHandle">
+        <el-form-item label="商场" prop="market" :rules="[{ required: true, message: '请输入商场', trigger: 'submit' ,type: 'number'}]" >
+          <el-select v-model="adForm.market"  placeholder="请搜索" filterable :loading="searchLoading" remote :remote-method="getMarket" @change="marketChangeHandle" clearable>
             <el-option
               v-for="item in marketList"
               :key="item.id"
@@ -64,7 +64,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="点位" prop="point" :rules="[{ required: true, message: '请输入点位', trigger: 'submit',type: 'array'}]">
-          <el-select v-model="adForm.point" placeholder="请选择"  multiple filterable :loading="searchLoading" :multiple-limit="10">
+          <el-select v-model="adForm.point" placeholder="请选择"  multiple filterable :loading="searchLoading" :multiple-limit="10" clearable>
             <el-option
               v-for="item in pointList"
               :key="item.id"
@@ -103,7 +103,7 @@
 
 <script>
 import search from 'service/search'
-import project from 'service/project'
+import ad from 'service/ad'
 import {
   Form,
   Select,
@@ -149,8 +149,8 @@ export default {
         area: '',
         market: '',
         point: [],
-        sdate: new Date(),
-        edate: new Date(),
+        sdate: '',
+        edate: '',
       },
       areaList: [],
     }
@@ -161,7 +161,7 @@ export default {
     this.setting.loading = true
     let areaList = this.getAreaList()
     let adTradeList = this.getAdTradeList()
-    Promise.all([moduleList, areaList, adTradeList]).then(() => {
+    Promise.all([areaList, adTradeList]).then(() => {
       this.setting.loading = false
     }).catch((err) => {
       console.log(err)
@@ -179,58 +179,60 @@ export default {
       })
     },
     adTradeChangeHandle() {
-      console.log(this.adForm.adTrade)
+      this.adForm.advertiser = ''
       this.getAdvertiserList()
     },
     advertisementChangeHandle (){
       console.log(this.adForm.advertisement)
     },
     advertiserChangeHandle(){
-      console.log(this.adForm.advertiser)
+      this.adForm.advertisement = ''
       this.getAdvertisementList()
     },
     getAdvertisementList() {
       let args = {
         advertiser_id: this.adForm.advertiser
       }
+      this.searchLoading = true
       return search.getAdvertisementList(this, args).then((response) => {
-       let data = response.data
-       this.advertisementList = data
-       console.log(data)
+        let data = response.data
+        this.advertisementList = data
+        this.searchLoading = false
       }).catch(error => {
         console.log(error)
-      this.setting.loading = false;
+        this.searchLoading = false
       })
     },
     getAdvertiserList() {
       let args = {
         ad_trade_id: this.adForm.adTrade
       }
+      this.searchLoading = true
       return search.getAdvertiserList(this, args).then((response) => {
-       let data = response.data
-       this.advertiserList = data
-       console.log(data)
+        let data = response.data
+        this.advertiserList = data
+        this.searchLoading = false
       }).catch(error => {
         console.log(error)
-      this.setting.loading = false;
+      this.searchLoading = false
       })
     },
     areaChangeHandle() {
-      console.log(this.adForm.area)
       this.adForm.market = ''
       this.getMarket(this.adForm.market)
     },
     getAreaList () {
+      this.searchLoading = true
       return search.getAeraList(this).then((response) => {
        let data = response.data
        this.areaList = data
+        this.searchLoading = false
       }).catch(error => {
         console.log(error)
-      this.setting.loading = false;
+        this.searchLoading = false
       })
     },
     marketChangeHandle() {
-      console.log(this.adForm.market)
       this.adForm.point = []
       this.getPoint()
     },
@@ -241,7 +243,6 @@ export default {
       }
       this.searchLoading = true
       return search.gePointList(this, args).then((response) => {
-        console.log(response)
         this.pointList = response.data
         this.searchLoading = false
       }).catch(err => {
@@ -275,13 +276,15 @@ export default {
           let args = {
             sdate: new Date(this.adForm.sdate).getTime() / 1000,
             edate: new Date(this.adForm.edate).getTime() / 1000,
-            default_plid: this.adForm.project,
-            weekday_tvid: this.adForm.weekday,
-            weekend_tvid: this.adForm.weekend,
-            div_tvid: this.adForm.define,
-            oids: this.adForm.point
+            atid: this.adForm.adTrade,
+            atiid: this.adForm.advertiser,
+            aid: this.adForm.advertisement,
+            marketid: this.adForm.market,
+            areaid: this.adForm.area,
+            oids: this.adForm.point,
+            ktime: parseInt(this.adForm.cycle)
           }
-          return project.savePorjectLaunch(this, args).then((response) => {
+          return ad.saveAdLaunch(this, args).then((response) => {
             this.setting.loading = false
             this.$message({
               message: "添加成功",
@@ -290,7 +293,6 @@ export default {
             this.$router.push({
               path: "/ad/item/index"
             })
-            console.log(response)
           }).catch((err) => {
             this.setting.loading = false
             console.log(err)

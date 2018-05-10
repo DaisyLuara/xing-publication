@@ -16,7 +16,7 @@ class PointTransformer extends TransformerAbstract
             'name' => $point->name,
             'info' => $point->info,
             'icon' => $point->icon,
-            'image' => $point->image,
+            'image' => (string)$point->image,
             'type' => $point->type,
         ];
     }

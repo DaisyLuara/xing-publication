@@ -49,6 +49,27 @@ let router = {
         },
       ],
     },
+    {
+      path: 'list',
+      name: '节目列表',
+      redirect: 'list/index',
+      meta: {
+        title: '节目列表',
+      },
+      component: () =>
+        import(/* webpackChunkName: "page/project/list/routerView" */ 'page/project/list/routerView'),
+      children: [
+        {
+          path: 'index',
+          name: '节目列表详情',
+          meta: {
+            title: '节目列表详情',
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/project/list/index" */ 'page/project/list/index'),
+        },
+      ],
+    },
   ],
 }
 

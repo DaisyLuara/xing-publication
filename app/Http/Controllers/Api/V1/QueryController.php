@@ -9,6 +9,7 @@ use App\Transformers\ProjectLaunchTplTransformer;
 use App\Transformers\AdTradeTransformer;
 use App\Transformers\AdvertiserTransformer;
 use App\Transformers\AdvertisementTransformer;
+use App\Transformers\ProjectTransformer;
 use Illuminate\Http\Request;
 use App\Models\Market;
 use App\Models\Area;
@@ -17,6 +18,7 @@ use App\Models\ProjectLaunchTpl;
 use App\Models\AdTrade;
 use App\Models\Advertiser;
 use App\Models\Advertisement;
+use App\Models\Project;
 
 class QueryController extends Controller
 {
@@ -71,6 +73,26 @@ class QueryController extends Controller
         $points = $query->get();
 
         return $this->response->collection($points, new PointTransformer());
+    }
+
+    public function projectQuery(Request $request, Project $project)
+    {
+        $user = $this->user();
+        $arUserId = getArUserID($user, $request);
+        $query = $project->query();
+        if ($arUserId) {
+            $query->whereHas('points', function ($q) use ($arUserId) {
+                $q->whereHas('arUsers', function ($q) use ($arUserId) {
+                    $q->where('admin_staff.uid', '=', $arUserId);
+                });
+            });
+        }
+
+        if ($request->alias) {
+            $query->where('versionname', '=', $request->alias);
+        }
+        $project = $query->where('name', 'like', "%{$request->name}%")->get();
+        return $this->response->collection($project, new ProjectTransformer());
     }
 
     public function launchTplQuery(Request $request, ProjectLaunchTpl $projectLaunchTpl)

@@ -98,7 +98,7 @@ $api->version('v1', [
             $api->get('project_ad_launch', 'ProjectAdLaunchController@index');
 
             //授权广告
-            $api->get('wx_third','WxThirdController@index');
+            $api->get('wx_third', 'WxThirdController@index');
 
             //设备
             $api->get('push', 'PushController@index');
@@ -107,7 +107,6 @@ $api->version('v1', [
             $api->get('excel','ExcelController@export');
 
             //节目投放
-            $api->get('userProject', 'ProjectController@userProject');
             $api->get('projects', 'ProjectController@index');
             $api->get('projects/launch', 'ProjectLaunchController@index');
             $api->get('staffs', 'ArUserController@index');
@@ -122,6 +121,7 @@ $api->version('v1', [
             $api->get('ad_trade/query', 'QueryController@adTradeQuery');//广告行业搜索
             $api->get('advertiser/query', 'QueryController@advertiserQuery');//广告主搜索
             $api->get('advertisement/query', 'QueryController@advertisementQuery');//广告搜索
+            $api->get('projects/query', 'QueryController@projectQuery');
 
             // 权限设置
             $api->get('system/users', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminUsersController@index']);
