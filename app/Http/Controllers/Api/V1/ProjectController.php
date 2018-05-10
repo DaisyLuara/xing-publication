@@ -16,23 +16,5 @@ class ProjectController extends Controller
     }
 
 
-    public function userProject(Request $request, Project $project)
-    {
-        $user = $this->user();
-        $arUserId = getArUserID($user, $request);
-        $query = $project->query();
-        if ($arUserId) {
-            $query->whereHas('points', function ($q) use ($arUserId) {
-                $q->whereHas('arUsers', function ($q) use ($arUserId) {
-                    $q->where('admin_staff.uid', '=', $arUserId);
-                });
-            });
-        }
 
-        if ($request->alias) {
-            $query->where('versionname', '=', $request->alias);
-        }
-        $project = $query->where('name', 'like', "%{$request->name}%")->get();
-        return $this->response->collection($project, new ProjectTransformer());
-    }
 }
