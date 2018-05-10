@@ -11,26 +11,6 @@ class PushController extends Controller
     public function index(Request $request, Push $push)
     {
         $query = $push->query();
-        $query->whereHas('point', function ($q) use ($request) {
-            $user = $this->user();
-            $arUserId = getArUserID($user, $request);
-            if ($arUserId) {
-                $q->whereHas('arUsers', function ($q) use ($arUserId) {
-                    $q->where('admin_staff.uid', '=', $arUserId);
-                });
-            }
-
-            if ($request->has('project_id')) {
-                $q->whereHas('projects', function ($q) use ($request) {
-                    $q->where('id', '=', $request->project_id);
-                });
-            }
-
-            if ($request->has('point_id')) {
-                $q->where('oid', '=', $request->point_id);
-            }
-
-        });
 
         if ($request->machine_status) {
             $machine_status = $request->machine_status;
@@ -45,13 +25,23 @@ class PushController extends Controller
             }
         }
 
-        $push = $query->where('push.oid', '>', 0)
+        $pushes = $query->join('avr_official', 'avr_official.oid', '=', 'push.oid')
+            ->join('avr_official_market', 'avr_official_market.marketid', '=', 'avr_official.marketid')
+            ->join('avr_official_area', 'avr_official_area.areaid', '=', 'avr_official.areaid')
+            ->join('ar_product_list', 'ar_product_list.versionname', '=', 'push.alias')
+            ->where('push.oid', '>', 0)
+            ->where('avr_official.visiable', '=', 1)
             ->whereNotIn('push.alias', ['star', 'shop', 'agent'])
-            ->orderBy('oid', 'desc')
-            ->orderBy('clientdate', 'desc')
-            ->paginate(10);
+            ->orderBy('avr_official.areaid', 'desc')
+            ->orderBy('avr_official.marketid', 'desc')
+            ->orderBy('push.clientdate', 'desc')
+            ->paginate(10, ['push.*',
+                'avr_official.name as point_name',
+                'avr_official_area.name as area_name',
+                'avr_official_market.name as market_name',
+                'ar_product_list.icon as product_img']);
 
-        return $this->response->paginator($push, new PushTransformer());
+        return $this->response->paginator($pushes, new PushTransformer());
     }
 
 }

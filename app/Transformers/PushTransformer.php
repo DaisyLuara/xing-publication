@@ -16,6 +16,10 @@ class PushTransformer extends TransformerAbstract
     {
         return [
             'id' => $push->id,
+            'img' => $push->product_img,
+            'area' => $push->area_name,
+            'market' => $push->market_name,
+            'point' => $push->point_name,
             'faceDate' => Carbon::parse(date('Y-m-d H:i:s', ($push->facedate) / 1000))->diffForHumans(Carbon::now()),
             'networkDate' => Carbon::parse(date('Y-m-d H:i:s', ($push->networkdate) / 1000))->diffForHumans(Carbon::now()),
             'screenStatus' => $push->hdmi,
