@@ -32,23 +32,25 @@ class PushController extends Controller
 
         });
 
-        $query->join('avr_official', 'push.oid', '=', 'avr_official.oid')
-            ->orderBy('areaid', 'desc')
-            ->orderBy('marketid');
-
-        if ($request->mb) {
-            $mb = $request->mb;
-            if ($mb == 'online') {
-                $query->whereNotIn('push.oid', [-1, 30, 31,182,177,45,46,47,48,49,50,51,52])->where('state','=','0');
-            } else if ($mb == 'dev') {
-                $query->whereIn('push.oid',[30,31]);
-            } else {
-                $query->whereIn('state',[1,2,3,4,5,6,7]);
+        if ($request->machine_status) {
+            $machine_status = $request->machine_status;
+            if ($machine_status == 'online') {
+                $query->whereNotIn('oid', [30, 31, 16, 177])->where('state', '=', '0');
+            } else if ($machine_status == 'cp') {
+                $query->whereNotIn('oid', [30, 31, 16, 177])->where('state', '=', -1);
+            } elseif ($machine_status == 'tmp') {
+                $query->whereNotIn('oid', [30, 31, 16, 177])->where('state', '>', 0);
+            } elseif ($machine_status == 'dev') {
+                $query->whereIn('oid', [30, 31, 16, 177]);
             }
         }
 
-        $push = $query->orderBy('push.date', 'desc')
+        $push = $query->where('push.oid', '>', 0)
+            ->whereNotIn('push.alias', ['star', 'shop', 'agent'])
+            ->orderBy('oid','desc')
+            ->orderBy('clientdate', 'desc')
             ->paginate(10);
+
         return $this->response->paginator($push, new PushTransformer());
     }
 
