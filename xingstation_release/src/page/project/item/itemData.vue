@@ -127,23 +127,6 @@ export default {
         xAxis: {
           type: 'category'
         },
-        plotOptions: {
-        //   series: {
-        //     events: {
-        //       afterAnimate: function () {
-        //         this.chart.renderer.label(this.name + ' has appeared', 100, 70)
-        //           .attr({
-        //               padding: 10,
-        //               fill: Highcharts.getOptions().colors[0]
-        //           })
-        //           .css({
-        //               color: 'white'
-        //           })
-        //           .add();
-        //       }
-        //   }
-        // }
-        },
         yAxis: [{
           title: {
             text: null,
@@ -201,7 +184,7 @@ export default {
         },
         series: [{
           // dashStyle: 'shortDash',
-          color: "#3D96AE",
+          color: "#7cb5ec",
           name:"年龄统计",
         }]
       },
@@ -475,7 +458,7 @@ export default {
         let genderChat = this.$refs.sexPie.chart;
         let dataAge = []
         let dataGender = []
-        let colors = ['#7cb5ec', '#91e8e1', '#90ed7d', '#f7a35c', '#8085e9','#f15c80'];
+        // let colors = ['#7cb5ec', '#91e8e1', '#90ed7d', '#f7a35c', '#8085e9','#f15c80'];
         if(response !== '{}'){
           let ageArr = response.age
           let genderArr = response.gender
@@ -491,39 +474,39 @@ export default {
           dataGender.push({'name':'女','y':parseInt(genderArr.female),'sliced': true,'selected': true})
           dataGender.push({'name':'男','y':parseInt(genderArr.male)})
           ageChart.series[0].setData(dataAge,true)
-          let pointsList = ageChart.series[0].points;
-            //遍历设置每一个数据点颜色
-            for (let k = 0; k < pointsList.length; k++) {
-              ageChart.series[0].points[k].update({
-              color: {
-                linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 }, //横向渐变效果 如果将x2和y2值交换将会变成纵向渐变效果
-                stops: [
-                  [0, Highcharts.Color(colors[k]).setOpacity(1).get('rgba')],
-                  [0.5, 'rgb(255, 255, 255)'],
-                  [1, Highcharts.Color(colors[k]).setOpacity(1).get('rgba')]
-                  ] 
-                }
-              });
-            }
+          // let pointsList = ageChart.series[0].points;
+          //   //遍历设置每一个数据点颜色
+          //   for (let k = 0; k < pointsList.length; k++) {
+          //     ageChart.series[0].points[k].update({
+          //     color: {
+          //       linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 }, //横向渐变效果 如果将x2和y2值交换将会变成纵向渐变效果
+          //       stops: [
+          //         [0, Highcharts.Color(colors[k]).setOpacity(1).get('rgba')],
+          //         [0.5, 'rgb(255, 255, 255)'],
+          //         [1, Highcharts.Color(colors[k]).setOpacity(1).get('rgba')]
+          //         ] 
+          //       }
+          //     });
+          //   }
           genderChat.series[0].setData(dataGender,true)
         }else{
           this.ageType = true;
           this.sexFlag = true
           ageChart.series[0].setData(dataAge,true)
           genderChat.series[0].setData(dataGender,true)
-          let pointsList = ageChart.series[0].points;
-          for (let k = 0; k < pointsList.length; k++) {
-            ageChart.series[0].points[k].update({
-              color: {
-                linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 }, //横向渐变效果 如果将x2和y2值交换将会变成纵向渐变效果
-                stops: [
-                  [0, Highcharts.Color(colors[k]).setOpacity(1).get('rgba')],
-                  [0.5, 'rgb(255, 255, 255)'],
-                  [1, Highcharts.Color(colors[k]).setOpacity(1).get('rgba')]
-                  ] 
-                }
-              });
-            }
+          // let pointsList = ageChart.series[0].points;
+          // for (let k = 0; k < pointsList.length; k++) {
+          //   ageChart.series[0].points[k].update({
+          //     color: {
+          //       linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 }, //横向渐变效果 如果将x2和y2值交换将会变成纵向渐变效果
+          //       stops: [
+          //         [0, Highcharts.Color(colors[k]).setOpacity(1).get('rgba')],
+          //         [0.5, 'rgb(255, 255, 255)'],
+          //         [1, Highcharts.Color(colors[k]).setOpacity(1).get('rgba')]
+          //         ] 
+          //       }
+          //     });
+          //   }
         }
         this.ageFlag = false
         this.sexFlag = false
