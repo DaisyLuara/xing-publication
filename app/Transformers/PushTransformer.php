@@ -20,12 +20,12 @@ class PushTransformer extends TransformerAbstract
             'point'=>$push->point->name,
             'faceDate'=>Carbon::parse(date('Y-m-d H:i:s',($push->facedate)/1000))->diffForHumans(Carbon::now()),
             'networkDate'=>Carbon::parse(date('Y-m-d H:i:s',($push->networkdate)/1000))->diffForHumans(Carbon::now()),
-            'screenStatus'=>($push->hdmi==1)?'开启':'关闭',
+            'screenStatus'=>$push->hdmi,
             'loginDate'=>(new Carbon($push->date))->format('m-d H:i'),
             'on/off_time'=>$push->shours.'-'.$push->ehours.'点',
             'version'=>$push->curversion,
             'system'=>$push->systemversion,
-            'did'=>(empty($push->did)==true)?'有':null,
+            'device_id'=>(string)$push->did,
         ];
     }
 

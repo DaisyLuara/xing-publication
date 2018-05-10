@@ -30,11 +30,26 @@ class PushController extends Controller
                 $q->where('oid', '=', $request->point_id);
             }
 
-            $q->orderBy('areaid', 'desc')->orderBy('marketid', 'desc');
-
         });
-        $push = $query->orderBy('date', 'desc')
+
+        $query->join('avr_official', 'push.oid', '=', 'avr_official.oid')
+            ->orderBy('areaid', 'desc')
+            ->orderBy('marketid');
+
+        if ($request->mb) {
+            $mb = $request->mb;
+            if ($mb == 'online') {
+                $query->whereNotIn('push.oid', [-1, 30, 31,182,177,45,46,47,48,49,50,51,52])->where('state','=','0');
+            } else if ($mb == 'dev') {
+                $query->whereIn('push.oid',[30,31]);
+            } else {
+                $query->whereIn('state',[1,2,3,4,5,6,7]);
+            }
+        }
+
+        $push = $query->orderBy('push.date', 'desc')
             ->paginate(10);
         return $this->response->paginator($push, new PushTransformer());
     }
+
 }
