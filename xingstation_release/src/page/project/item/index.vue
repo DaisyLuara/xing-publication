@@ -97,7 +97,7 @@
           <el-table-column
             prop="icon"
             label="节目icon"
-            min-width="130"
+            min-width="100"
             >
             <template slot-scope="scope">
               <img :src="scope.row.project.icon" alt="" class="icon-item"/>
@@ -126,7 +126,7 @@
           <el-table-column
             prop="created_at"
             label="创建时间"
-            min-width="100"
+            min-width="150"
             :show-overflow-tooltip="true"
             >
           </el-table-column>
