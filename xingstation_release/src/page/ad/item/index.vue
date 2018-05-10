@@ -3,74 +3,72 @@
     <div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
       <div class="item-content-wrap">
         <div class="search-wrap">
-          <el-form
-        ref="adSearchForm"
-        :model="adSearchForm"  :inline="true">
-        <el-form-item label="" prop="adTrade">
-          <el-select v-model="adSearchForm.ad_trade_id" filterable placeholder="请搜索广告行业" @change="adTradeChangeHandle">
-            <el-option
-              v-for="item in adTradeList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="" prop="advertiser_id">
-          <el-select v-model="adSearchForm.advertiser_id" filterable placeholder="请搜索广告主" @change="advertiserChangeHandle" :loading="searchLoading">
-            <el-option
-              v-for="item in advertiserList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-         <el-form-item label="" prop="advertisement_id">
-          <el-select v-model="adSearchForm.advertisement_id" filterable  placeholder="请搜索广告" :loading="searchLoading" @change="advertisementChangeHandle">
-            <el-option
-              v-for="item in advertisementList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="" prop="area_id">
-          <el-select v-model="adSearchForm.area_id" placeholder="请选择区域" filterable @change="areaChangeHandle">
-            <el-option
-              v-for="item in areaList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="" prop="market_id">
-          <el-select v-model="adSearchForm.market_id"  placeholder="请搜索商场" filterable :loading="searchLoading" remote :remote-method="getMarket" @change="marketChangeHandle">
-            <el-option
-              v-for="item in marketList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="" prop="point_id">
-          <el-select v-model="adSearchForm.point_id" placeholder="请选择点位"   filterable :loading="searchLoading" >
-            <el-option
-              v-for="item in pointList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="search('adSearchForm')">搜索</el-button>
-          <el-button @click="resetSearch('adSearchForm')">重置</el-button>
-        </el-form-item>
-      </el-form>
+          <el-form ref="adSearchForm" :model="adSearchForm"  :inline="true">
+            <el-form-item label="" prop="adTrade">
+              <el-select v-model="adSearchForm.ad_trade_id" filterable placeholder="请搜索广告行业" @change="adTradeChangeHandle">
+                <el-option
+                  v-for="item in adTradeList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="" prop="advertiser_id">
+              <el-select v-model="adSearchForm.advertiser_id" filterable placeholder="请搜索广告主" @change="advertiserChangeHandle" :loading="searchLoading">
+                <el-option
+                  v-for="item in advertiserList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="" prop="advertisement_id">
+              <el-select v-model="adSearchForm.advertisement_id" filterable  placeholder="请搜索广告" :loading="searchLoading" @change="advertisementChangeHandle">
+                <el-option
+                  v-for="item in advertisementList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="" prop="area_id">
+              <el-select v-model="adSearchForm.area_id" placeholder="请选择区域" filterable @change="areaChangeHandle">
+                <el-option
+                  v-for="item in areaList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="" prop="market_id">
+              <el-select v-model="adSearchForm.market_id"  placeholder="请搜索商场" filterable :loading="searchLoading" remote :remote-method="getMarket" @change="marketChangeHandle">
+                <el-option
+                  v-for="item in marketList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="" prop="point_id">
+              <el-select v-model="adSearchForm.point_id" placeholder="请选择点位"   filterable :loading="searchLoading" >
+                <el-option
+                  v-for="item in pointList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="search('adSearchForm')">搜索</el-button>
+              <el-button @click="resetSearch('adSearchForm')">重置</el-button>
+            </el-form-item>
+          </el-form>
         </div>
         <div class="actions-wrap">
           <span class="label">
@@ -81,13 +79,8 @@
         <div class="editCondition-wrap" style="padding: 0 0 15px;">
           <el-form :model="editCondition" :inline="true" ref="editForm" >
             <el-form-item label="修改选项" style="margin-bottom: 0;">
-              <el-checkbox-group v-model="editCondition.conditionList">
-                <el-checkbox label="广告行业"></el-checkbox>
-                <el-checkbox label="广告主"></el-checkbox>
-                <el-checkbox label="广告"></el-checkbox>
-                <el-checkbox label="周期"></el-checkbox>
-                <el-checkbox label="开始时间" ></el-checkbox>
-                <el-checkbox label="结束时间" ></el-checkbox>
+              <el-checkbox-group v-model="editCondition.conditionList" @change="contentEditChange">
+                <el-checkbox v-for="item in conditionContent" :label="item" :key="item"></el-checkbox>
               </el-checkbox-group>
             </el-form-item>
             <el-button @click="modifyEdit" type="danger" size="small">修改</el-button>
@@ -250,6 +243,7 @@ export default {
         loading: false,
         loadingText: "拼命加载中"
       },
+      conditionContent: ['广告行业','广告主','广告','周期','开始时间','结束时间'],
       editCondition:{
         conditionList: [],
       },
@@ -321,6 +315,10 @@ export default {
   methods: {
     handleSelectionChange(val) {
       this.selectAll = val
+    },
+    contentEditChange(value) {
+      let length = value.length
+      console.log(value[length-1])
     },
     dialogClose() {
       if(!this.editVisible) {

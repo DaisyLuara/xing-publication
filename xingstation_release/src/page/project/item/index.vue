@@ -330,10 +330,10 @@ export default {
               case '工作日模版':
                 this.modifyOptionFlag.weekday = true
               break
-              case '开始时间':
+              case '自定义开始时间':
                 this.modifyOptionFlag.sdate = true
               break
-              case '结束时间':
+              case '自定义结束时间':
                 this.modifyOptionFlag.edate = true
               break
               case '自定义模版':
