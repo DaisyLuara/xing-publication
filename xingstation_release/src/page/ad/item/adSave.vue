@@ -276,15 +276,14 @@ export default {
           let args = {
             sdate: new Date(this.adForm.sdate).getTime() / 1000,
             edate: new Date(this.adForm.edate).getTime() / 1000,
-            aid: this.adForm.adTrade,
-            atid: this.adForm.advertiser,
-            atiid: this.adForm.advertisement,
+            atid: this.adForm.adTrade,
+            atiid: this.adForm.advertiser,
+            aid: this.adForm.advertisement,
             marketid: this.adForm.market,
             areaid: this.adForm.area,
             oids: this.adForm.point,
             ktime: parseInt(this.adForm.cycle)
           }
-          
           return ad.saveAdLaunch(this, args).then((response) => {
             this.setting.loading = false
             this.$message({

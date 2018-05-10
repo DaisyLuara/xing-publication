@@ -167,9 +167,8 @@
           >
           </el-pagination>
         </div>
-        
       </div>
-      <el-dialog title="批量修改" :visible.sync="editVisible" @close="dialogClose" v-loading="loading">
+      <el-dialog title="批量修改" :visible.sync="editVisible" @close="dialogClose" v-loading="loading" width="100%" :fullscreen="true">
         <el-form
         ref="adForm"
         :model="adForm" label-width="150px">
@@ -350,6 +349,7 @@ export default {
     },
     
     advertiserChangeHandle(type){
+      console.log(this.adForm.advertiser_id)
       if(type === 'edit') {
         this.adForm.advertisement_id = ''
         } else {
@@ -371,6 +371,7 @@ export default {
       this.searchLoading = true
       return search.getAdvertisementList(this, args).then((response) => {
         let data = response.data
+        console.log(data)
         if(type === 'edit') {
           this.advertisementFormList = data
         } else {
@@ -581,15 +582,15 @@ export default {
           let args = {
             sdate: new Date(this.adForm.sdate).getTime() / 1000,
             edate: new Date(this.adForm.edate).getTime() / 1000,
-            aid: this.adForm.ad_trade_id,
-            atid: this.adForm.advertiser_id,
-            atiid: this.adForm.advertisement_id,
+            atid: this.adForm.ad_trade_id,
+            atiid: this.adForm.advertiser_id,
+            aid: this.adForm.advertisement_id,
             ktime: parseInt(this.adForm.cycle),
             aoids: this.aoids
           }
-          this.modifyOptionFlag.ad_trade_id ? args : delete args.aid 
-          this.modifyOptionFlag.advertiser_id ? args : delete args.atid 
-          this.modifyOptionFlag.advertisement_id ? args : delete args.atiid 
+          this.modifyOptionFlag.ad_trade_id ? args : delete args.atid 
+          this.modifyOptionFlag.advertiser_id ? args : delete args.atiid 
+          this.modifyOptionFlag.advertisement_id ? args : delete args.aid 
           this.modifyOptionFlag.cycle ? args : delete args.ktime 
           this.modifyOptionFlag.sdate ? args : delete args.sdate 
           this.modifyOptionFlag.edate ? args : delete args.edate 
