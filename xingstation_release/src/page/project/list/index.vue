@@ -154,7 +154,6 @@ export default {
       })
     }, 
     changePage (currentPage) {
-      alert(currentPage)
       this.pagination.currentPage = currentPage
       this.getProjectListDetails ();
     },
