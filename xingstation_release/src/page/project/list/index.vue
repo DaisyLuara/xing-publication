@@ -133,6 +133,7 @@ export default {
     // let user_info = JSON.parse(localStorage.getItem('user_info'))
     // this.arUserName = user_info.name
     // this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
+    
   },
   methods: {
    getProjectListDetails () {
