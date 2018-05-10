@@ -217,6 +217,7 @@ export default {
           margin-bottom: 10px;
           .label {
             font-size: 14px;
+            margin:5px 0;
           }
         }
         .pagination-wrap{
