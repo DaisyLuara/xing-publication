@@ -85,10 +85,10 @@
 </template>
 <script>
 import stats from 'service/stats'
-// import Highcharts from 'highcharts/highstock';
-// import Highcharts3D from 'highcharts/highcharts-3d';
 import { Row, Col, DatePicker, Select, Option, Button} from 'element-ui'
-// Highcharts3D(Highcharts)
+import Highcharts from 'highcharts';
+import load3D from 'highcharts/highcharts-3d';
+load3D(Highcharts)
 
 export default {
   components:{
@@ -126,6 +126,23 @@ export default {
         },
         xAxis: {
           type: 'category'
+        },
+        plotOptions: {
+        //   series: {
+        //     events: {
+        //       afterAnimate: function () {
+        //         this.chart.renderer.label(this.name + ' has appeared', 100, 70)
+        //           .attr({
+        //               padding: 10,
+        //               fill: Highcharts.getOptions().colors[0]
+        //           })
+        //           .css({
+        //               color: 'white'
+        //           })
+        //           .add();
+        //       }
+        //   }
+        // }
         },
         yAxis: [{
           title: {
@@ -463,7 +480,7 @@ export default {
           let genderArr = response.gender
           this.ageType = false;
           this.sexFlag = false
-          
+          // var colors = ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80'];
           for(let i = 0; i < ageArr.length; i++){
             if(i==0){
               dataAge.push({'name':ageArr[i].age,'y':parseInt(ageArr[i].count)})
@@ -479,7 +496,36 @@ export default {
           this.ageType = true;
           this.sexFlag = true
           ageChart.series[0].setData(dataAge,true)
+            
+          // var pointsList = ageChart.series[0].points;
+          //   //遍历设置每一个数据点颜色
+          //   console.log(pointsList)
+          //   for (var i = 0; i < pointsList.length; i++) {
+          //     ageChart.series[0].points[i].update({
+          //   color: {
+          //     linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 }, //横向渐变效果 如果将x2和y2值交换将会变成纵向渐变效果
+          //   stops: [
+          //     [0, Highcharts.Color(colorArr[i]).setOpacity(1).get('rgba')],
+          //     [0.5, 'rgb(255, 255, 255)'],
+          //     [1, Highcharts.Color(colorArr[i]).setOpacity(1).get('rgba')]
+          //     ] 
+          //   }
+          //     });
+          //   }
           genderChat.series[0].setData(dataGender,true)
+
+          // for (var i = 0; i < pointsList.length; i++) {
+          //   chart.series[0].points[i].update({
+          //     color: {
+          //     linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 }, //横向渐变效果 如果将x2和y2值交换将会变成纵向渐变效果
+          //     stops: [
+          //     [0, Highcharts.Color(colorArr[i]).setOpacity(1).get('rgba')],
+          //     [0.5, 'rgb(255, 255, 255)'],
+          //     [1, Highcharts.Color(colorArr[i]).setOpacity(1).get('rgba')]
+          //     ] 
+          //   }
+          //   });
+          // }
         }
         this.ageFlag = false
         this.sexFlag = false
