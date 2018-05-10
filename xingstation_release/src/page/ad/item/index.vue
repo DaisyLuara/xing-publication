@@ -91,28 +91,27 @@
           <el-table-column
             prop="point"
             label="点位"
-            min-width="200"
-            fixed
-            >
+            min-width="150"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             prop="advertiser"
             label="广告主"
-            min-width="100"
-            fixed
+            min-width="80"
+            :show-overflow-tooltip="true"
             >
           </el-table-column>
           <el-table-column
             prop="advertisement"
             label="广告"
-            width="100"
-            >
+            width="80"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             prop="adType"
-            label="广告类型"
-            width="100"
-            >
+            label="类型"
+            width="80"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             prop="link"
@@ -127,31 +126,33 @@
             prop="size"
             label="大小"
             width="80"
+            :show-overflow-tooltip="true"
             >
           </el-table-column>
           <el-table-column
             prop="kTime"
             label="周期"
             width="80"
-            >
+            :show-overflow-tooltip="true"
+           >
           </el-table-column>
           <el-table-column
             prop="startDate"
             label="开始时间"
-            min-width="200"
-            >
+            min-width="100"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             prop="endDate"
             label="结束时间"
-            min-width="200"
-            >
+            min-width="100"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             prop="date"
             label="时间"
-            min-width="200"
-            >
+            min-width="80"
+            :show-overflow-tooltip="true">
           </el-table-column>
         </el-table>
         <div class="pagination-wrap">
