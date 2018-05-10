@@ -9,6 +9,8 @@ class ProjectAdLaunch extends Model
     protected $connection='ar';
     public $table='ar_product_ad_list';
     protected $primaryKey='adid';
+    public $timestamps = false;
+
 
     public function wxThird(){
         return $this->belongsTo(WxThird::class,'wiid','id');

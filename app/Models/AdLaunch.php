@@ -9,6 +9,7 @@ class AdLaunch extends Model
     protected $connection = 'ar';
     public $table = 'avr_ad_oid';
     protected $primaryKey = 'aoid';
+    public $timestamps = false;
 
     public function adTrade()
     {
@@ -27,12 +28,12 @@ class AdLaunch extends Model
 
     public function area()
     {
-        return $this->belongsTo(Area::class,'areaid','areaid');
+        return $this->belongsTo(Area::class, 'areaid', 'areaid');
     }
 
     public function market()
     {
-        return $this->belongsTo(Market::class,'marketid','marketid');
+        return $this->belongsTo(Market::class, 'marketid', 'marketid');
     }
 
     public function point()
