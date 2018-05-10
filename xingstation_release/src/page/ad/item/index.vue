@@ -5,7 +5,7 @@
         <div class="search-wrap">
           <el-form ref="adSearchForm" :model="adSearchForm"  :inline="true" class="search-form">
             <el-form-item label="" prop="adTrade">
-              <el-select v-model="adSearchForm.ad_trade_id" filterable placeholder="请搜索广告行业" @change="adTradeChangeHandle('search')">
+              <el-select v-model="adSearchForm.ad_trade_id" filterable placeholder="请搜索广告行业" @change="adTradeChangeHandle('search')" clearable>
                 <el-option
                   v-for="item in adTradeList"
                   :key="item.id"
@@ -15,7 +15,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="" prop="advertiser_id">
-              <el-select v-model="adSearchForm.advertiser_id" filterable placeholder="请搜索广告主" @change="advertiserChangeHandle('search')" :loading="searchLoading">
+              <el-select v-model="adSearchForm.advertiser_id" filterable placeholder="请搜索广告主" @change="advertiserChangeHandle('search')" :loading="searchLoading" clearable>
                 <el-option
                   v-for="item in advertiserList"
                   :key="item.id"
@@ -25,7 +25,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="" prop="advertisement_id">
-              <el-select v-model="adSearchForm.advertisement_id" filterable  placeholder="请搜索广告" :loading="searchLoading">
+              <el-select v-model="adSearchForm.advertisement_id" filterable  placeholder="请搜索广告" :loading="searchLoading" clearable>
                 <el-option
                   v-for="item in advertisementList"
                   :key="item.id"
@@ -35,7 +35,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="" prop="area_id">
-              <el-select v-model="adSearchForm.area_id" placeholder="请选择区域" filterable @change="areaChangeHandle">
+              <el-select v-model="adSearchForm.area_id" placeholder="请选择区域" filterable @change="areaChangeHandle" clearable>
                 <el-option
                   v-for="item in areaList"
                   :key="item.id"
@@ -45,7 +45,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="" prop="market_id">
-              <el-select v-model="adSearchForm.market_id"  placeholder="请搜索商场" filterable :loading="searchLoading" remote :remote-method="getMarket" @change="marketChangeHandle">
+              <el-select v-model="adSearchForm.market_id"  placeholder="请搜索商场" filterable :loading="searchLoading" remote :remote-method="getMarket" @change="marketChangeHandle" clearable>
                 <el-option
                   v-for="item in marketList"
                   :key="item.id"
@@ -55,7 +55,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="" prop="point_id">
-              <el-select v-model="adSearchForm.point_id" placeholder="请选择点位"   filterable :loading="searchLoading" >
+              <el-select v-model="adSearchForm.point_id" placeholder="请选择点位"   filterable :loading="searchLoading" clearable>
                 <el-option
                   v-for="item in pointList"
                   :key="item.id"
@@ -110,16 +110,16 @@
                   <span>{{ scope.row.size }}</span>
                 </el-form-item>
                 <el-form-item label="周期">
-                  <span>{{ scope.row.kTime }}</span>
+                  <span>{{ scope.row.kTime }} s</span>
+                </el-form-item>
+                <el-form-item label="时间">
+                  <span>{{ scope.row.date }}</span>
                 </el-form-item>
                 <el-form-item label="开始时间">
                   <span>{{ scope.row.startDate }}</span>
                 </el-form-item>
                 <el-form-item label="结束时间">
                   <span>{{ scope.row.endDate }}</span>
-                </el-form-item>
-                <el-form-item label="时间">
-                  <span>{{ scope.row.date }}</span>
                 </el-form-item>
               </el-form>
             </template>
@@ -168,12 +168,12 @@
           </el-pagination>
         </div>
       </div>
-      <el-dialog title="批量修改" :visible.sync="editVisible" @close="dialogClose" v-loading="loading" width="100%" :fullscreen="true">
+      <el-dialog title="批量修改" :visible.sync="editVisible" @close="dialogClose" v-loading="loading">
         <el-form
         ref="adForm"
         :model="adForm" label-width="150px">
           <el-form-item label="广告行业" prop="ad_trade_id"  v-if="modifyOptionFlag.ad_trade_id" :rules="[{ type: 'number', required: true, message: '请选择广告行业', trigger: 'submit' }]">
-            <el-select v-model="adForm.ad_trade_id" filterable placeholder="请搜索" @change="adTradeChangeHandle('edit')">
+            <el-select v-model="adForm.ad_trade_id" filterable placeholder="请搜索" @change="adTradeChangeHandle('edit')" clearable>
               <el-option
                 v-for="item in adTradeList"
                 :key="item.id"
@@ -183,7 +183,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="广告主" prop="advertiser_id" v-if="modifyOptionFlag.advertiser_id" :rules="[{ type: 'number', required: true, message: '请选择广告主', trigger: 'submit' }]">
-            <el-select v-model="adForm.advertiser_id" placeholder="请选择" filterable @change="advertiserChangeHandle('edit')" :loading="searchLoading">
+            <el-select v-model="adForm.advertiser_id" placeholder="请选择" filterable @change="advertiserChangeHandle('edit')" :loading="searchLoading" clearable>
               <el-option
                 v-for="item in advertiserFormList"
                 :key="item.id"
@@ -193,7 +193,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="广告" prop="advertisement_id" v-if="modifyOptionFlag.advertisement_id" :rules="[{ type: 'number', required: true, message: '请选择广告', trigger: 'submit' }]">
-            <el-select v-model="adForm.advertisement_id" placeholder="请选择" filterable :loading="searchLoading">
+            <el-select v-model="adForm.advertisement_id" placeholder="请选择" filterable :loading="searchLoading" clearable>
               <el-option
                 v-for="item in advertisementFormList"
                 :key="item.id"
@@ -649,6 +649,7 @@ export default {
       .el-select,.item-input,.el-input{
         width: 380px;
       }
+      
       .el-form-item{
          margin-bottom: 20px;
       }

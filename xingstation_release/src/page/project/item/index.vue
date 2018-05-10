@@ -8,7 +8,7 @@
               <el-input v-model="filters.name" placeholder="请输入节目名称" style="width: 250px;"></el-input>
             </el-form-item>
             <el-form-item label="" prop="area">
-              <el-select v-model="filters.area" placeholder="请选择区域" @change="areaChangeHandle" filterable>
+              <el-select v-model="filters.area" placeholder="请选择区域" @change="areaChangeHandle" filterable clearable>
                 <el-option
                   v-for="item in areaList"
                   :key="item.id"
@@ -18,7 +18,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="" prop="market">
-              <el-select v-model="filters.market" placeholder="请选择商场" filterable :loading="marketLoading" remote :remote-method="getMarket" @change="marketChangeHandle">
+              <el-select v-model="filters.market" placeholder="请选择商场" filterable :loading="marketLoading" remote :remote-method="getMarket" @change="marketChangeHandle" clearable>
                 <el-option
                   v-for="item in marketList"
                   :key="item.id"
@@ -78,7 +78,7 @@
                 <el-form-item label="自定义开始时间">
                   <span>{{ scope.row.start_date }}</span>
                 </el-form-item>
-                <el-form-item label="自定义开始时间">
+                <el-form-item label="自定义结束时间">
                   <span>{{ scope.row.end_date }}</span>
                 </el-form-item>
               </el-form>
@@ -152,7 +152,7 @@
         ref="projectForm"
         :model="projectForm" label-width="150px">
           <el-form-item label="节目名称" prop="project"  v-if="modifyOptionFlag.project" :rules="[{ type: 'number', required: true, message: '请输入节目', trigger: 'submit' }]">
-            <el-select v-model="projectForm.project" filterable placeholder="请搜索" remote :remote-method="getProject" @change="projectChangeHandle">
+            <el-select v-model="projectForm.project" filterable placeholder="请搜索" remote :remote-method="getProject" @change="projectChangeHandle" clearable>
               <el-option
                 v-for="item in projectList"
                 :key="item.id"
@@ -162,7 +162,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="工作日模版" prop="weekday" v-if="modifyOptionFlag.weekday" :rules="[{ type: 'number', required: true, message: '请选择工作日模版', trigger: 'submit' }]">
-            <el-select v-model="projectForm.weekday" placeholder="请选择" filterable>
+            <el-select v-model="projectForm.weekday" placeholder="请选择" filterable clearable>
               <el-option
                 v-for="item in weekdayList"
                 :key="item.id"
@@ -172,7 +172,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="周末模版" prop="weekend" v-if="modifyOptionFlag.weekend" :rules="[{ type: 'number', required: true, message: '请选择周末模版', trigger: 'submit' }]">
-            <el-select v-model="projectForm.weekend" placeholder="请选择" filterable>
+            <el-select v-model="projectForm.weekend" placeholder="请选择" filterable clearable>
               <el-option
                 v-for="item in weekendList"
                 :key="item.id"
@@ -182,7 +182,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="自定义模版" prop="define" v-if="modifyOptionFlag.define" :rules="[{ required: true, message: '请选择自定义模版', trigger: 'submit',type: 'number' }]">
-            <el-select v-model="projectForm.define" placeholder="请选择" filterable>
+            <el-select v-model="projectForm.define" placeholder="请选择" filterable clearable>
               <el-option
                 v-for="item in defineList"
                 :key="item.id"
@@ -324,7 +324,7 @@ export default {
           this.tvoids = []
           let optionModify = this.editCondition.conditionList
           for (let i = 0; i < this.selectAll.length; i++) {
-            let id = this.selectAll[i].point.id
+            let id = this.selectAll[i].id
             this.tvoids.push(id)
           }
           this.modifyOptionFlag.project = false
