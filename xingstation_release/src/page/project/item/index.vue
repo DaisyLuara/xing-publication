@@ -142,7 +142,7 @@
           </el-pagination>
         </div>
       </div>
-      <el-dialog title="批量修改" :visible.sync="editVisible" @close="dialogClose">
+      <el-dialog title="批量修改" :visible.sync="editVisible" @close="dialogClose" v-loading="loading">
         <el-form
         ref="projectForm"
         :model="projectForm" label-width="150px">
@@ -259,6 +259,7 @@ export default {
         sdate: '',
         edate: '',
       },
+      loading: true,
       modifyOptionFlag: {
         project: false,
         weekday: false,
@@ -359,6 +360,7 @@ export default {
       this.filters.area = ''
       this.filters.name = ''
       this.pagination.currentPage = 1;
+      this.editCondition.conditionList = []
       this.getProjectList();
     },
     projectChangeHandle() {
@@ -384,7 +386,7 @@ export default {
     submitModify(formName) {
       this.$refs[formName].validate((valid) => {
         if(valid){
-        this.setting.loading = true
+        this.loading = true
           let args = {
             tvoids: this.tvoids,
             default_plid: this.projectForm.project,
@@ -401,7 +403,7 @@ export default {
           this.modifyOptionFlag.sdate ? args : delete args.sdate 
           this.modifyOptionFlag.edate ? args : delete args.edate 
           console.log(args)
-          this.setting.loading = false
+          this.loading = false
           return project.modifyProjectLaunch(this, args).then((response) => {
             this.setting.loading = false
             this.$message({
@@ -413,10 +415,11 @@ export default {
             this.editCondition.conditionList = []
             console.log(response)
           }).catch((err) => {
-            this.setting.loading = false
+            this.loading = false
             console.log(err)
           })
         }else{
+          this.loading = false
           console.log('error submit');
           return;
         }
@@ -447,6 +450,9 @@ export default {
        let data = response.data
        this.tableData = data
        this.pagination.total = response.meta.pagination.total
+      //  this.$nextTick(() => {
+      //   this.$refs.multipleTable.doLayout()
+      // })
       this.setting.loading = false;
       }).catch(error => {
         console.log(error)
@@ -481,6 +487,7 @@ export default {
     },
     search (formName) {
       this.pagination.currentPage = 1;
+      this.editCondition.conditionList = []
       this.getProjectList();
     },
     changePage (currentPage) {

@@ -284,6 +284,7 @@ export default {
             oids: this.adForm.point,
             ktime: parseInt(this.adForm.cycle)
           }
+          
           return ad.saveAdLaunch(this, args).then((response) => {
             this.setting.loading = false
             this.$message({
