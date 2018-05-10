@@ -62,7 +62,7 @@ return [
             'password' => env('AR_DB_PASSWORD', '717513736'),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
-            'strict' => true,
+            'strict' => false,
             'engine' => null,
         ],
         'pgsql' => [
