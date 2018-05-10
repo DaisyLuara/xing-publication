@@ -37,7 +37,7 @@
                   <span>{{ scope.row.loginDate }}</span>
                 </el-form-item>
                 <el-form-item label="开/关机">
-                  <!-- <span>{{ scope.row.on/off_time }}</span> -->
+                  <span>{{ scope.row.on_off }}</span>
                 </el-form-item>
                 <el-form-item label="智能插排">
                   <span>{{ scope.row.device_id == '' ? '': '有'}}</span>
@@ -88,15 +88,9 @@
             :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
-            prop="on/off_time"
+            prop="on_off"
             label="开/关机"
             width="90">
-          </el-table-column>
-          <el-table-column label="操作" width="150">
-            <template slot-scope="scope">
-               <el-button size="small" type="primary" @click="linkToEdit()">重启</el-button> 
-               <el-button size="small" type="warning" @click="showData()">编辑</el-button>
-            </template>
           </el-table-column>
         </el-table>
         <div class="pagination-wrap">
@@ -156,6 +150,10 @@ export default {
       equipment.gettEquipmentList(this, searchArgs).then((response) => {
        let data = response.data
        this.tableData = data
+       this.tableData.forEach(function (value) {
+        value.on_off=value['on_time']+'-'+value['off_time']+'点';
+         });
+       console.log(data);
        this.pagination.total = response.meta.pagination.total
        this.setting.loading = false;
       }).catch(error => {
