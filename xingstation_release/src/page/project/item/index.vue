@@ -497,6 +497,7 @@ export default {
     },
     changePage (currentPage) {
       this.pagination.currentPage = currentPage
+      this.editCondition.conditionList = []
       this.getProjectList()
     },
     linkToAddItem () {

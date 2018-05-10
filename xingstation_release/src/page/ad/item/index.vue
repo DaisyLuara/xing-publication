@@ -3,7 +3,7 @@
     <div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
       <div class="item-content-wrap">
         <div class="search-wrap">
-          <el-form ref="adSearchForm" :model="adSearchForm"  :inline="true">
+          <el-form ref="adSearchForm" :model="adSearchForm"  :inline="true" class="search-form">
             <el-form-item label="" prop="adTrade">
               <el-select v-model="adSearchForm.ad_trade_id" filterable placeholder="请搜索广告行业" @change="adTradeChangeHandle('search')">
                 <el-option
@@ -167,9 +167,8 @@
           >
           </el-pagination>
         </div>
-        
       </div>
-      <el-dialog title="批量修改" :visible.sync="editVisible" @close="dialogClose" v-loading="loading">
+      <el-dialog title="批量修改" :visible.sync="editVisible" @close="dialogClose" v-loading="loading" width="100%" :fullscreen="true">
         <el-form
         ref="adForm"
         :model="adForm" label-width="150px">
@@ -235,7 +234,7 @@
 import ad from 'service/ad'
 import search from 'service/search'
 
-import { Button, Input, Table,Select, Option, TableColumn, Pagination, Form, FormItem, MessageBox, DatePicker, Checkbox, CheckboxGroup, Dialog} from 'element-ui'
+import { Button, Input, Table,Select, Option, Col, TableColumn, Pagination, Form, FormItem, MessageBox, DatePicker, Checkbox, CheckboxGroup, Dialog} from 'element-ui'
 
 export default {
   data () {
@@ -350,6 +349,7 @@ export default {
     },
     
     advertiserChangeHandle(type){
+      console.log(this.adForm.advertiser_id)
       if(type === 'edit') {
         this.adForm.advertisement_id = ''
         } else {
@@ -371,6 +371,7 @@ export default {
       this.searchLoading = true
       return search.getAdvertisementList(this, args).then((response) => {
         let data = response.data
+        console.log(data)
         if(type === 'edit') {
           this.advertisementFormList = data
         } else {
@@ -503,6 +504,7 @@ export default {
     },
     changePage (currentPage) {
       this.pagination.currentPage = currentPage
+      this.editCondition.conditionList = []
       this.getAdList()
     },
     modifyEdit() {
@@ -580,15 +582,15 @@ export default {
           let args = {
             sdate: new Date(this.adForm.sdate).getTime() / 1000,
             edate: new Date(this.adForm.edate).getTime() / 1000,
-            aid: this.adForm.ad_trade_id,
-            atid: this.adForm.advertiser_id,
-            atiid: this.adForm.advertisement_id,
+            atid: this.adForm.ad_trade_id,
+            atiid: this.adForm.advertiser_id,
+            aid: this.adForm.advertisement_id,
             ktime: parseInt(this.adForm.cycle),
             aoids: this.aoids
           }
-          this.modifyOptionFlag.ad_trade_id ? args : delete args.aid 
-          this.modifyOptionFlag.advertiser_id ? args : delete args.atid 
-          this.modifyOptionFlag.advertisement_id ? args : delete args.atiid 
+          this.modifyOptionFlag.ad_trade_id ? args : delete args.atid 
+          this.modifyOptionFlag.advertiser_id ? args : delete args.atiid 
+          this.modifyOptionFlag.advertisement_id ? args : delete args.aid 
           this.modifyOptionFlag.cycle ? args : delete args.ktime 
           this.modifyOptionFlag.sdate ? args : delete args.sdate 
           this.modifyOptionFlag.edate ? args : delete args.edate 
@@ -631,7 +633,8 @@ export default {
     "el-form-item": FormItem,
     'el-checkbox-group': CheckboxGroup,
     'el-checkbox': Checkbox,
-    'el-dialog':Dialog
+    'el-dialog':Dialog,
+    "el-col": Col
   }
 }
 </script>
@@ -657,6 +660,7 @@ export default {
       .demo-table-expand {
         font-size: 0;
       }
+      
       .demo-table-expand label {
         width: 90px;
         color: #99a9bf;
@@ -684,6 +688,11 @@ export default {
           }
           .el-select{
             width: 200px;
+          }
+          @media (max-width: 1368px) {
+            .el-select{
+              width: 250px;
+            }
           }
           .warning{
             background: #ebf1fd;
@@ -714,6 +723,7 @@ export default {
           text-align: right;
         }
       }
+      
     }
   }
 </style>
