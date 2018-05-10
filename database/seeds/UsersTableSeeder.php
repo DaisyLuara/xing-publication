@@ -33,11 +33,11 @@ class UsersTableSeeder extends Seeder
             // 插入到数据库中
             $user = User::create($user_array);
 
-            if (in_array($ar_user->role_id, [3, 5, 6, 7, 9, 11])) {
+            if (in_array($ar_user->role_id, [8])) {
                 $user->assignRole('user');
             } elseif (in_array($ar_user->role_id, [2])) {
                 $user->assignRole('admin');
-            } elseif (in_array($ar_user->role_id, [4])) {
+            } elseif (in_array($ar_user->role_id, [3, 4, 5, 6, 7, 9, 11])) {
                 $user->assignRole('project-manager');
             } elseif ($ar_user->role_id == 10) {
                 $user->assignRole('dev-ops');
