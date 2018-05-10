@@ -30,7 +30,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" :loading="loading"  @click="onSubmit('userForm')">保存</el-button>
-          <el-button @click="resetForm('userForm')">取消</el-button>
+          <el-button @click="historyBack()">取消</el-button>
         </el-form-item>
       </el-form>
     </div>

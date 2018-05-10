@@ -165,13 +165,13 @@ export default {
        agePieOptions : {
         chart:{
           type: 'column',
-          options3d: {
-            enabled: true,
-            alpha: 3,
-            beta: 13,
-            depth: 30,
-            // viewDistance: 10
-          }
+          // options3d: {
+          //   enabled: true,
+          //   alpha: 3,
+          //   beta: 13,
+          //   depth: 30,
+          //   // viewDistance: 10
+          // }
         },
         plotOptions: {
           series: {
@@ -475,12 +475,12 @@ export default {
         let genderChat = this.$refs.sexPie.chart;
         let dataAge = []
         let dataGender = []
+        let colors = ['#7cb5ec', '#91e8e1', '#90ed7d', '#f7a35c', '#8085e9','#f15c80'];
         if(response !== '{}'){
           let ageArr = response.age
           let genderArr = response.gender
           this.ageType = false;
           this.sexFlag = false
-          // var colors = ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9','#f15c80'];
           for(let i = 0; i < ageArr.length; i++){
             if(i==0){
               dataAge.push({'name':ageArr[i].age,'y':parseInt(ageArr[i].count)})
@@ -491,41 +491,39 @@ export default {
           dataGender.push({'name':'女','y':parseInt(genderArr.female),'sliced': true,'selected': true})
           dataGender.push({'name':'男','y':parseInt(genderArr.male)})
           ageChart.series[0].setData(dataAge,true)
+          let pointsList = ageChart.series[0].points;
+            //遍历设置每一个数据点颜色
+            for (let k = 0; k < pointsList.length; k++) {
+              ageChart.series[0].points[k].update({
+              color: {
+                linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 }, //横向渐变效果 如果将x2和y2值交换将会变成纵向渐变效果
+                stops: [
+                  [0, Highcharts.Color(colors[k]).setOpacity(1).get('rgba')],
+                  [0.5, 'rgb(255, 255, 255)'],
+                  [1, Highcharts.Color(colors[k]).setOpacity(1).get('rgba')]
+                  ] 
+                }
+              });
+            }
           genderChat.series[0].setData(dataGender,true)
         }else{
           this.ageType = true;
           this.sexFlag = true
           ageChart.series[0].setData(dataAge,true)
-            
-          // var pointsList = ageChart.series[0].points;
-          //   //遍历设置每一个数据点颜色
-          //   console.log(pointsList)
-          //   for (var i = 0; i < pointsList.length; i++) {
-          //     ageChart.series[0].points[i].update({
-          //   color: {
-          //     linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 }, //横向渐变效果 如果将x2和y2值交换将会变成纵向渐变效果
-          //   stops: [
-          //     [0, Highcharts.Color(colorArr[i]).setOpacity(1).get('rgba')],
-          //     [0.5, 'rgb(255, 255, 255)'],
-          //     [1, Highcharts.Color(colorArr[i]).setOpacity(1).get('rgba')]
-          //     ] 
-          //   }
-          //     });
-          //   }
           genderChat.series[0].setData(dataGender,true)
-
-          // for (var i = 0; i < pointsList.length; i++) {
-          //   chart.series[0].points[i].update({
-          //     color: {
-          //     linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 }, //横向渐变效果 如果将x2和y2值交换将会变成纵向渐变效果
-          //     stops: [
-          //     [0, Highcharts.Color(colorArr[i]).setOpacity(1).get('rgba')],
-          //     [0.5, 'rgb(255, 255, 255)'],
-          //     [1, Highcharts.Color(colorArr[i]).setOpacity(1).get('rgba')]
-          //     ] 
-          //   }
-          //   });
-          // }
+          let pointsList = ageChart.series[0].points;
+          for (let k = 0; k < pointsList.length; k++) {
+            ageChart.series[0].points[k].update({
+              color: {
+                linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 }, //横向渐变效果 如果将x2和y2值交换将会变成纵向渐变效果
+                stops: [
+                  [0, Highcharts.Color(colors[k]).setOpacity(1).get('rgba')],
+                  [0.5, 'rgb(255, 255, 255)'],
+                  [1, Highcharts.Color(colors[k]).setOpacity(1).get('rgba')]
+                  ] 
+                }
+              });
+            }
         }
         this.ageFlag = false
         this.sexFlag = false

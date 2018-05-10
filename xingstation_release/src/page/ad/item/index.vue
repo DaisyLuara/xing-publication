@@ -70,12 +70,6 @@
             </el-form-item>
           </el-form>
         </div>
-        <div class="actions-wrap">
-          <span class="label">
-            广告数量: {{pagination.total}}
-          </span>
-          <el-button size="small" type="success" @click="linkToAddItem">投放广告</el-button>
-        </div>
         <div class="editCondition-wrap" style="padding: 0 0 15px;">
           <el-form :model="editCondition" :inline="true" ref="editForm" >
             <el-form-item label="修改选项" style="margin-bottom: 0;">
@@ -85,6 +79,12 @@
             </el-form-item>
             <el-button @click="modifyEdit" type="danger" size="small">修改</el-button>
           </el-form>
+        </div>
+        <div class="actions-wrap">
+          <span class="label">
+            广告数量: {{pagination.total}}
+          </span>
+          <el-button size="small" type="success" @click="linkToAddItem">投放广告</el-button>
         </div>
         <el-table :data="adList" style="width: 100%" highlight-current-row @selection-change="handleSelectionChange" ref="multipleTable">
           <el-table-column type="selection" width="55" ></el-table-column>
