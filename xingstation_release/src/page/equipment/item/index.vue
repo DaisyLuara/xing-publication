@@ -4,7 +4,7 @@
       <div class="item-content-wrap">
         <div class="total-wrap">
           <span class="label">
-            总数: 214
+            总数:{{pagination.total}} 
           </span>
         </div>
        <el-table :data="tableData" style="width: 100%" highlight-current-row>
@@ -12,16 +12,14 @@
           <el-table-column
             prop="id"
             label="ID"
-            width="90"
+            min-width="80"
+            fixed
             >
-            <!--<template slot-scope="scope">
-              {{scope.row.project.name}}
-            </template>-->
           </el-table-column>
           <el-table-column
             prop="icon"
             label="产品"
-            width="150"
+            min-width="140"
             >
             <template slot-scope="scope">
               <img :src="scope.row.point.icon" alt="" class="icon-item"/>
@@ -30,27 +28,18 @@
           <el-table-column
             prop="area"
             label="区域"
-            width="150"
+            width="130"
             >
-            <!--<template slot-scope="scope">
-              {{scope.row.point.market.area.name}}
-            </template>-->
           </el-table-column>
           <el-table-column
             prop="market"
             label="商场"
-            width="150">
-            <!--<template slot-scope="scope">
-              {{scope.row.point.market.name}}
-            </template>-->
+            width="200">
           </el-table-column>
           <el-table-column
             prop="point.name"
             label="点位"
-            width="150">
-           <!-- <template slot-scope="scope">
-              {{scope.row.point.name}}
-            </template>-->
+            width="200">
           </el-table-column>
           <el-table-column
             prop="faceDate"
@@ -70,7 +59,7 @@
           <el-table-column
             prop="loginDate"
             label="登录时间"
-            width="100">
+            width="150">
           </el-table-column>
           <el-table-column
             prop="on/off_time"
@@ -80,19 +69,19 @@
           <el-table-column
             prop="version"
             label="版本"
-            width="100">
+            width="120">
           </el-table-column>
           <el-table-column
             prop="system"
             label="系统"
-            width="100">
+            width="120">
           </el-table-column>
           <el-table-column
             prop="smart_strip"
             label="智能插排"
             width="100">
           </el-table-column>
-          <el-table-column label="操作" width="150">
+          <el-table-column label="操作" width="150" fixed="right">
             <template slot-scope="scope">
                <el-button size="small" type="primary" @click="linkToEdit()">重启</el-button> 
                <el-button size="small" type="warning" @click="showData()">编辑</el-button>
@@ -145,20 +134,17 @@ export default {
   },
   created () {
     this.gettEquipmentList();
-    // this.getProjectList()
-    // let user_info = JSON.parse(localStorage.getItem('user_info'))
-    // this.arUserName = user_info.name
-    // this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
+    
   },
   methods: {
     gettEquipmentList () {
       this.setting.loadingText = "拼命加载中"
       this.setting.loading = true;
       let searchArgs = {
+        page : this.pagination.currentPage,
         include: 'point.projects',
-        oid: 128,
-        Authorizationa:'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYWQuamluZ2ZyZWUudG9wL2FwaS9hdXRob3JpemF0aW9ucyIsImlhdCI6MTUyNTg2MjM5MywiZXhwIjoxNTI1ODY1OTkzLCJuYmYiOjE1MjU4NjIzOTMsImp0aSI6InB6QlcxakdjNDdrZ21lMzciLCJzdWIiOjIyLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.DWQ55Eolvh8ecq3Mqs2KQXtx56t8nNknBhnSJ0NzupA'
-      }
+        oid: 128
+        }
       equipment.gettEquipmentList(this, searchArgs).then((response) => {
        let data = response.data
        this.tableData = data
@@ -172,25 +158,11 @@ export default {
       this.setting.loading = false;
       })
     },
-    // search (formName) {
-    //   this.pagination.currentPage = 1;
-    //   this.getProjectList();
-    // },
+    
     changePage (currentPage) {
       this.pagination.currentPage = currentPage
-      this.getProjectList()
+      this.gettEquipmentList ();
     },
-    // linkToAddItem () {
-    //   this.$router.push({
-    //     path: '/project/item/add'
-    //   })
-    // },
-    // linkToEdit () {
-    //    console.log(111111)
-    // },
-    // showData () {
-    //   console.log(222222)
-    // }
   },
   components: {
     "el-table": Table,
@@ -220,26 +192,6 @@ export default {
           padding: 10px;
           width: 50%;
         }
-        // .search-wrap{
-        //   margin-top: 5px;
-        //   display: flex;
-        //   flex-direction: row;
-        //   justify-content: space-between;
-        //   font-size: 16px;
-        //   align-items: center;
-        //   margin-bottom: 10px;
-        //   .warning{
-        //     background: #ebf1fd;
-        //     padding: 8px;
-        //     margin-left: 10px;
-        //     color: #444;
-        //     font-size: 12px;
-        //     i{
-        //       color: #4a8cf3;
-        //       margin-right: 5px;
-        //     }
-        //   }
-        // }
         .total-wrap{
           margin-top: 5px;
           display: flex;

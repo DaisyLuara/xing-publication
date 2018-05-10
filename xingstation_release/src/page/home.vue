@@ -90,7 +90,7 @@ export default {
                 m.src = require('../assets/images/icons/advertisement-icon.png')
                 break
               case 'equipment':
-                m.src = require('../assets/images/icons/product-icon.png')
+                m.src = require('../assets/images/icons/shop-icon.png')
                 break
               case 'contract':
                 m.src = require('../assets/images/icons/fitting-icon.png')

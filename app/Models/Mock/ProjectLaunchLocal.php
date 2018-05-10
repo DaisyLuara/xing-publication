@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Mock;
 
+use App\Models\Model;
 
 class ProjectLaunchLocal extends Model
 {
     public $table = 'project_launches';
     public $timestamps = false;
+    protected $primaryKey = 'tvoid';
 
     public $fillable = [
         'cid',

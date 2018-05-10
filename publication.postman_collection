@@ -1,17 +1,20 @@
 {
+	"variables": [],
 	"info": {
-		"_postman_id": "19139a1b-810a-4ca8-986e-a916c09f048b",
-		"name": "publication",
+		"name": "publication copy",
+		"_postman_id": "20ed2933-4c44-1076-d0f1-49ef9823e276",
+		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
 	"item": [
 		{
 			"name": "登陆相关",
-			"description": null,
+			"description": "",
 			"item": [
 				{
 					"name": "图片验证码",
 					"request": {
+						"url": "http://{{host}}/api/captchas",
 						"method": "POST",
 						"header": [
 							{
@@ -23,13 +26,14 @@
 							"mode": "raw",
 							"raw": "{\n\t\"phone\":\"13818403072\"\n}"
 						},
-						"url": "http://{{host}}/api/captchas"
+						"description": ""
 					},
 					"response": []
 				},
 				{
 					"name": "刷新token",
 					"request": {
+						"url": "http://{{host}}/api/authorizations/current",
 						"method": "PUT",
 						"header": [
 							{
@@ -41,13 +45,14 @@
 							"mode": "raw",
 							"raw": ""
 						},
-						"url": "http://{{host}}/api/authorizations/current"
+						"description": ""
 					},
 					"response": []
 				},
 				{
 					"name": "用户登录",
 					"request": {
+						"url": "http://{{host}}/api/authorizations",
 						"method": "POST",
 						"header": [
 							{
@@ -59,13 +64,14 @@
 							"mode": "raw",
 							"raw": "{\n\t\"username\":\"17701628884\",\n\t\"password\":\"123456\",\n\t\"verification_key\":\"verificationCode_98TadYW6wicyxrq\",\n\t\"verification_code\":\"1234\"\n}"
 						},
-						"url": "http://{{host}}/api/authorizations"
+						"description": ""
 					},
 					"response": []
 				},
 				{
 					"name": "发送短信验证码",
 					"request": {
+						"url": "http://{{host}}/api/verificationCodes",
 						"method": "POST",
 						"header": [
 							{
@@ -77,7 +83,7 @@
 							"mode": "raw",
 							"raw": "{\n   \"captcha_key\":\"captcha-V4cbVoRiKDErr9X\",\n   \"captcha_code\":\"436rs\"\n}"
 						},
-						"url": "http://{{host}}/api/verificationCodes"
+						"description": ""
 					},
 					"response": []
 				}
@@ -85,22 +91,11 @@
 		},
 		{
 			"name": "用户中心",
-			"description": null,
+			"description": "",
 			"item": [
 				{
 					"name": "用户信息",
 					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{jwt_tokensa}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "http://{{host}}/api/user?include=permissions,roles&ar_user_id=",
 							"protocol": "http",
@@ -120,14 +115,28 @@
 									"key": "ar_user_id",
 									"value": ""
 								}
-							]
-						}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_tokensa}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
 					},
 					"response": []
 				},
 				{
 					"name": "修改用户",
 					"request": {
+						"url": "http://{{host}}/api/user",
 						"method": "PATCH",
 						"header": [
 							{
@@ -143,13 +152,14 @@
 							"mode": "raw",
 							"raw": "{\n   \"name\":\"ccc\",\n   \"password\": \"123456zz\"\n}"
 						},
-						"url": "http://{{host}}/api/user"
+						"description": ""
 					},
 					"response": []
 				},
 				{
 					"name": "退出登录",
 					"request": {
+						"url": "http://{{host}}/api/authorizations/current",
 						"method": "DELETE",
 						"header": [
 							{
@@ -161,7 +171,7 @@
 							"mode": "raw",
 							"raw": ""
 						},
-						"url": "http://{{host}}/api/authorizations/current"
+						"description": ""
 					},
 					"response": []
 				}
@@ -169,24 +179,26 @@
 		},
 		{
 			"name": "图像",
-			"description": null,
+			"description": "",
 			"item": [
 				{
 					"name": "查看头像",
 					"request": {
+						"url": "http://{{host}}/uploads/images/avatars/201804/21//1_1524299092_McVl0yUsiU.jpeg",
 						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": ""
 						},
-						"url": "http://{{host}}/uploads/images/avatars/201804/21//1_1524299092_McVl0yUsiU.jpeg"
+						"description": ""
 					},
 					"response": []
 				},
 				{
 					"name": "上传头像",
 					"request": {
+						"url": "http://{{host}}/api/images",
 						"method": "POST",
 						"header": [
 							{
@@ -199,7 +211,8 @@
 							"formdata": [
 								{
 									"key": "image",
-									"type": "file"
+									"type": "file",
+									"value": ""
 								},
 								{
 									"key": "type",
@@ -208,7 +221,7 @@
 								}
 							]
 						},
-						"url": "http://{{host}}/api/images"
+						"description": ""
 					},
 					"response": []
 				}
@@ -216,28 +229,30 @@
 		},
 		{
 			"name": "测试用接口",
-			"description": null,
+			"description": "",
 			"item": [
 				{
 					"name": "话题",
-					"description": null,
+					"description": "",
 					"item": [
 						{
 							"name": "查看分类",
 							"request": {
+								"url": "http://{{host}}/api/categories",
 								"method": "GET",
 								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": ""
 								},
-								"url": "http://{{host}}/api/categories"
+								"description": ""
 							},
 							"response": []
 						},
 						{
 							"name": "发布话题",
 							"request": {
+								"url": "http://{{host}}/api/topics",
 								"method": "POST",
 								"header": [
 									{
@@ -253,13 +268,14 @@
 									"mode": "raw",
 									"raw": "{\n\t\"title\":\"测试titless\",\n\t\"body\":\"测试body2\",\n\t\"category_id\":1,\n\t\"excerpt\":\"sadfadfadfasdfadfa\"\n}"
 								},
-								"url": "http://{{host}}/api/topics"
+								"description": ""
 							},
 							"response": []
 						},
 						{
 							"name": "修改话题",
 							"request": {
+								"url": "http://{{host}}/api/topics/103",
 								"method": "PATCH",
 								"header": [
 									{
@@ -275,19 +291,13 @@
 									"mode": "raw",
 									"raw": "{\n\t\"title\":\"测试titssslessssss\",\n\t\"body\":\"测试body2 话题更新了\",\n\t\"category_id\":1,\n\t\"excerpt\":\"sadfadfadfasdfsdfssadfa\"\n}"
 								},
-								"url": "http://{{host}}/api/topics/103"
+								"description": ""
 							},
 							"response": []
 						},
 						{
 							"name": "话题列表",
 							"request": {
-								"method": "GET",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "http://{{host}}/api/topics?include=user,category",
 									"protocol": "http",
@@ -303,42 +313,36 @@
 											"key": "include",
 											"value": "user,category"
 										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "某个用户话题列表",
-							"request": {
+									],
+									"variable": []
+								},
 								"method": "GET",
 								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": ""
 								},
-								"url": "http://{{host}}/api/users/1/topics"
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "某个用户话题列表",
+							"request": {
+								"url": "http://{{host}}/api/users/1/topics",
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"description": ""
 							},
 							"response": []
 						},
 						{
 							"name": "话题详情",
 							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwt_token3}}"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"content\":\"回复话题\"\n}"
-								},
 								"url": {
 									"raw": "http://{{host}}/api/topics/103?include=user.roles,category",
 									"protocol": "http",
@@ -355,8 +359,25 @@
 											"key": "include",
 											"value": "user.roles,category"
 										}
-									]
-								}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_token3}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"content\":\"回复话题\"\n}"
+								},
+								"description": ""
 							},
 							"response": []
 						}
@@ -365,11 +386,12 @@
 				},
 				{
 					"name": "回复",
-					"description": null,
+					"description": "",
 					"item": [
 						{
 							"name": "发表回复",
 							"request": {
+								"url": "http://{{host}}/api/topics/1/replies",
 								"method": "POST",
 								"header": [
 									{
@@ -385,13 +407,14 @@
 									"mode": "raw",
 									"raw": "{\n\t\"content\":\"这是一个回复好不好\"\n}"
 								},
-								"url": "http://{{host}}/api/topics/1/replies"
+								"description": ""
 							},
 							"response": []
 						},
 						{
 							"name": "删除某一话题的回复",
 							"request": {
+								"url": "http://{{host}}/api/topics/103/replies/4",
 								"method": "DELETE",
 								"header": [
 									{
@@ -403,7 +426,7 @@
 									"mode": "raw",
 									"raw": ""
 								},
-								"url": "http://{{host}}/api/topics/103/replies/4"
+								"description": ""
 							},
 							"response": []
 						}
@@ -413,6 +436,7 @@
 				{
 					"name": "用户注册",
 					"request": {
+						"url": "http://{{host}}/api/users",
 						"method": "POST",
 						"header": [
 							{
@@ -424,7 +448,7 @@
 							"mode": "raw",
 							"raw": "{\n\t\"verification_key\":\"verificationCode_VfIFnQhsh5UPwJ8\",\n\t\"verification_code\":\"1234\",\n\t\"name\":\"test\",\n\t\"password\":\"123456\"\n}"
 						},
-						"url": "http://{{host}}/api/users"
+						"description": ""
 					},
 					"response": []
 				}
@@ -432,11 +456,12 @@
 		},
 		{
 			"name": "消息通知",
-			"description": null,
+			"description": "",
 			"item": [
 				{
 					"name": "消息通知列表",
 					"request": {
+						"url": "http://{{host}}/api/user/notifications",
 						"method": "GET",
 						"header": [
 							{
@@ -448,13 +473,14 @@
 							"mode": "raw",
 							"raw": ""
 						},
-						"url": "http://{{host}}/api/user/notifications"
+						"description": ""
 					},
 					"response": []
 				},
 				{
 					"name": "消息通知统计",
 					"request": {
+						"url": "http://{{host}}/api/user/notifications/stats",
 						"method": "GET",
 						"header": [
 							{
@@ -466,13 +492,14 @@
 							"mode": "raw",
 							"raw": ""
 						},
-						"url": "http://{{host}}/api/user/notifications/stats"
+						"description": ""
 					},
 					"response": []
 				},
 				{
 					"name": "全部已读",
 					"request": {
+						"url": "http://{{host}}/api/user/read/notifications",
 						"method": "PATCH",
 						"header": [
 							{
@@ -484,7 +511,7 @@
 							"mode": "raw",
 							"raw": ""
 						},
-						"url": "http://{{host}}/api/user/read/notifications"
+						"description": ""
 					},
 					"response": []
 				}
@@ -492,26 +519,15 @@
 		},
 		{
 			"name": "客户中心",
-			"description": null,
+			"description": "",
 			"item": [
 				{
 					"name": "负责人",
-					"description": null,
+					"description": "",
 					"item": [
 						{
 							"name": "负责人列表",
 							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwt_token2}}"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "http://{{host}}/api/companies/5/customers?include=company.user",
 									"protocol": "http",
@@ -529,14 +545,28 @@
 											"key": "include",
 											"value": "company.user"
 										}
-									]
-								}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_token2}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"description": ""
 							},
 							"response": []
 						},
 						{
 							"name": "负责人详情",
 							"request": {
+								"url": "http://{{host}}/api/companies/1/customers/2",
 								"method": "GET",
 								"header": [
 									{
@@ -548,13 +578,14 @@
 									"mode": "raw",
 									"raw": ""
 								},
-								"url": "http://{{host}}/api/companies/1/customers/2"
+								"description": ""
 							},
 							"response": []
 						},
 						{
 							"name": "修改负责人",
 							"request": {
+								"url": "http://{{host}}/api/companies/1/customers/2",
 								"method": "PATCH",
 								"header": [
 									{
@@ -570,28 +601,13 @@
 									"mode": "raw",
 									"raw": "{\n\t    \"name\": \"上海某某科技公ss司\",\n\t    \"phone\": \"13818403071\"\n}"
 								},
-								"url": "http://{{host}}/api/companies/1/customers/2"
+								"description": ""
 							},
 							"response": []
 						},
 						{
 							"name": "创建负责人",
 							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwt_token2}}"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"name\" : \"陈经理aa\",\n  \"phone\":\"13818203271\"\n}"
-								},
 								"url": {
 									"raw": "http://{{host}}/api/companies/1/customers?include=company.user",
 									"protocol": "http",
@@ -609,8 +625,25 @@
 											"key": "include",
 											"value": "company.user"
 										}
-									]
-								}
+									],
+									"variable": []
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_token2}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\" : \"陈经理aa\",\n  \"phone\":\"13818203271\"\n}"
+								},
+								"description": ""
 							},
 							"response": []
 						}
@@ -619,22 +652,11 @@
 				},
 				{
 					"name": "客户",
-					"description": null,
+					"description": "",
 					"item": [
 						{
 							"name": "客户列表",
 							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwt_token1}}"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "http://{{host}}/api/companies?include=user&name=腾讯",
 									"protocol": "http",
@@ -654,14 +676,9 @@
 											"key": "name",
 											"value": "腾讯"
 										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "客户详情",
-							"request": {
+									],
+									"variable": []
+								},
 								"method": "GET",
 								"header": [
 									{
@@ -673,6 +690,13 @@
 									"mode": "raw",
 									"raw": ""
 								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "客户详情",
+							"request": {
 								"url": {
 									"raw": "http://{{host}}/api/companies/1?include=customers",
 									"protocol": "http",
@@ -689,14 +713,28 @@
 											"key": "include",
 											"value": "customers"
 										}
-									]
-								}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_token1}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"description": ""
 							},
 							"response": []
 						},
 						{
 							"name": "修改客户",
 							"request": {
+								"url": "http://{{host}}/api/companies/1",
 								"method": "PATCH",
 								"header": [
 									{
@@ -712,28 +750,13 @@
 									"mode": "raw",
 									"raw": "{\n\t\"name\": \"上海某某科技公ss司\",\n    \"address\": \"上海市浦东南路113s3号\",\n    \"status\": 2\n}"
 								},
-								"url": "http://{{host}}/api/companies/1"
+								"description": ""
 							},
 							"response": []
 						},
 						{
 							"name": "创建客户",
 							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwt_token1}}"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"name\" : \"上海某某科技公司\",\n  \"address\":\"上海市浦东南路1133号\"\n}"
-								},
 								"url": {
 									"raw": "http://{{host}}/api/companies?include=user",
 									"protocol": "http",
@@ -749,8 +772,25 @@
 											"key": "include",
 											"value": "user"
 										}
-									]
-								}
+									],
+									"variable": []
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_token1}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\" : \"上海某某科技公司\",\n  \"address\":\"上海市浦东南路1133号\"\n}"
+								},
+								"description": ""
 							},
 							"response": []
 						}
@@ -761,32 +801,15 @@
 		},
 		{
 			"name": "投放",
-			"description": null,
+			"description": "",
 			"item": [
 				{
 					"name": "数据",
-					"description": null,
+					"description": "",
 					"item": [
 						{
 							"name": "漏斗数据",
 							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": {
-										"token": "{{jwt_tokensa}}"
-									}
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwt_tokensa}}"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "http://{{host}}/api/stats?start_date=2018-05-01&end_date=2018-05-04&point_id=276",
 									"protocol": "http",
@@ -815,7 +838,19 @@
 											"key": "point_id",
 											"value": "276"
 										}
-									]
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_tokensa}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
 								},
 								"description": "查询参数\n\talias=节目别名&\n\ttype=looknum|playernum& \n\tstart_date=开始日期&\n\tend_date=结束日期"
 							},
@@ -824,23 +859,6 @@
 						{
 							"name": "分天数据",
 							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": {
-										"token": "{{jwt_token1}}"
-									}
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwt_token1}}"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "http://{{host}}/api/detail?start_date=2018-05-01&end_date=2018-05-04",
 									"protocol": "http",
@@ -860,20 +878,8 @@
 											"key": "end_date",
 											"value": "2018-05-04"
 										}
-									]
-								},
-								"description": "查询参数\n\talias=节目别名&\n\ttype=looknum|playernum& \n\tstart_date=开始日期&\n\tend_date=结束日期"
-							},
-							"response": []
-						},
-						{
-							"name": "性别年龄",
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": {
-										"token": "{{jwt_tokensa}}"
-									}
+									],
+									"variable": []
 								},
 								"method": "GET",
 								"header": [
@@ -886,6 +892,13 @@
 									"mode": "raw",
 									"raw": ""
 								},
+								"description": "查询参数\n\talias=节目别名&\n\ttype=looknum|playernum& \n\tstart_date=开始日期&\n\tend_date=结束日期"
+							},
+							"response": []
+						},
+						{
+							"name": "性别年龄",
+							"request": {
 								"url": {
 									"raw": "http://{{host}}/api/age_gender?start_date=2018-05-01&end_date=2018-05-04&point_id=276",
 									"protocol": "http",
@@ -914,7 +927,19 @@
 											"key": "point_id",
 											"value": "276"
 										}
-									]
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_token1}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
 								},
 								"description": "0-10 岁\n11-18 岁\n19-30 岁\n31-40 岁\n41-59 岁\n60岁以上"
 							},
@@ -926,17 +951,6 @@
 				{
 					"name": "节目投放列表",
 					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{jwt_token1}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "http://{{host}}/api/projects/launch?include=point,project&ar_user_id=1044&project_name=嘻哈全屏",
 							"protocol": "http",
@@ -961,8 +975,21 @@
 									"key": "project_name",
 									"value": "嘻哈全屏"
 								}
-							]
-						}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token1}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
 					},
 					"response": []
 				}
@@ -970,11 +997,30 @@
 		},
 		{
 			"name": "设置",
-			"description": null,
+			"description": "",
 			"item": [
 				{
 					"name": "管理员添加用户",
 					"request": {
+						"url": {
+							"raw": "http://{{host}}/api/system/users?include=roles",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"system",
+								"users"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "roles"
+								}
+							],
+							"variable": []
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -990,30 +1036,14 @@
 							"mode": "raw",
 							"raw": "{\n\t\"name\":\"陈重\",\n\t\"phone\":13818423173,\n\t\"password\":\"123456\",\n\t\"role_id\":4\n}"
 						},
-						"url": {
-							"raw": "http://{{host}}/api/system/users?include=roles",
-							"protocol": "http",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"system",
-								"users"
-							],
-							"query": [
-								{
-									"key": "include",
-									"value": "roles"
-								}
-							]
-						}
+						"description": ""
 					},
 					"response": []
 				},
 				{
 					"name": "获取可用角色列表",
 					"request": {
+						"url": "http://{{host}}/api/system/roles",
 						"method": "GET",
 						"header": [
 							{
@@ -1025,7 +1055,6 @@
 							"mode": "raw",
 							"raw": ""
 						},
-						"url": "http://{{host}}/api/system/roles",
 						"description": "管理员添加用户的时候，根据当前角色，获取不同的角色列表。"
 					},
 					"response": []
@@ -1033,17 +1062,6 @@
 				{
 					"name": "用户列表",
 					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{jwt_tokensa}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "http://{{host}}/api/system/users?include=roles",
 							"protocol": "http",
@@ -1060,14 +1078,9 @@
 									"key": "include",
 									"value": "roles"
 								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "用户详情",
-					"request": {
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -1079,6 +1092,13 @@
 							"mode": "raw",
 							"raw": ""
 						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "用户详情",
+					"request": {
 						"url": {
 							"raw": "http://{{host}}/api/system/users/21?include=permissions,roles",
 							"protocol": "http",
@@ -1096,29 +1116,27 @@
 									"key": "include",
 									"value": "permissions,roles"
 								}
-							]
-						}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_tokensa}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
 					},
 					"response": []
 				},
 				{
 					"name": "管理员修改用户",
 					"request": {
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{jwt_tokena}}"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"name\":\"杨浩然测试\",\n\t\"password\":\"1234567\"\n}"
-						},
 						"url": {
 							"raw": "http://{{host}}/api/system/users/3?include=permissions",
 							"protocol": "http",
@@ -1136,8 +1154,25 @@
 									"key": "include",
 									"value": "permissions"
 								}
-							]
-						}
+							],
+							"variable": []
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_tokena}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"杨浩然测试\",\n\t\"password\":\"1234567\"\n}"
+						},
+						"description": ""
 					},
 					"response": []
 				}
@@ -1145,22 +1180,11 @@
 		},
 		{
 			"name": "远程搜索",
-			"description": null,
+			"description": "",
 			"item": [
 				{
 					"name": "节目搜索",
 					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{jwt_tokensa}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "http://{{host}}/api/userProject?name=街头",
 							"protocol": "http",
@@ -1176,15 +1200,9 @@
 									"key": "name",
 									"value": "街头"
 								}
-							]
+							],
+							"variable": []
 						},
-						"description": "关联 点位信息\ninclude=points\n关联 点位，用户信息\ninclude=points.user\n"
-					},
-					"response": []
-				},
-				{
-					"name": "星视度用户搜索",
-					"request": {
 						"method": "GET",
 						"header": [
 							{
@@ -1196,7 +1214,25 @@
 							"mode": "raw",
 							"raw": ""
 						},
+						"description": "关联 点位信息\ninclude=points\n关联 点位，用户信息\ninclude=points.user\n"
+					},
+					"response": []
+				},
+				{
+					"name": "星视度用户搜索",
+					"request": {
 						"url": "http://{{host}}/api/staffs",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_tokensa}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"description": "关联点位\n\tinclude=points\n关联点位对应的节目\n\tinclude=points.projects"
 					},
 					"response": []
@@ -1204,17 +1240,6 @@
 				{
 					"name": "区域搜索",
 					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{jwt_token1}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "http://{{host}}/api/areas/query?name=上海",
 							"protocol": "http",
@@ -1231,14 +1256,9 @@
 									"key": "name",
 									"value": "上海"
 								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "商场搜索",
-					"request": {
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -1250,6 +1270,13 @@
 							"mode": "raw",
 							"raw": ""
 						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "商场搜索",
+					"request": {
 						"url": {
 							"raw": "http://{{host}}/api/markets/query?include=area&area_id=2&=",
 							"protocol": "http",
@@ -1274,7 +1301,19 @@
 									"key": "",
 									"value": ""
 								}
-							]
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token1}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
 						},
 						"description": "支持根据 商场名称 或者 根据区域ID查询数据"
 					},
@@ -1283,17 +1322,6 @@
 				{
 					"name": "点位搜索",
 					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{jwt_tokena}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "http://{{host}}/api/points/query?market_id=38&include=market&=",
 							"protocol": "http",
@@ -1318,23 +1346,27 @@
 									"key": "",
 									"value": ""
 								}
-							]
-						}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_tokena}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
 					},
 					"response": []
 				},
 				{
 					"name": "广告主搜索",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": {
-								"token": "{{jwt_tokensa}}"
-							}
-						},
-						"method": "GET",
-						"header": [],
-						"body": {},
 						"url": {
 							"raw": "http://{{host}}/api/advertiser/query?ad_trade_id=1",
 							"protocol": "http",
@@ -1351,39 +1383,36 @@
 									"key": "ad_trade_id",
 									"value": "1"
 								}
-							]
-						}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
 					},
 					"response": []
 				},
 				{
 					"name": "广告行业搜索",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": {
-								"token": "{{jwt_tokensa}}"
-							}
-						},
+						"url": "http://{{host}}/api/ad_trade/query",
 						"method": "GET",
 						"header": [],
-						"body": {},
-						"url": "http://{{host}}/api/ad_trade/query"
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
 					},
 					"response": []
 				},
 				{
 					"name": "广告搜索",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": {
-								"token": "{{jwt_tokensa}}"
-							}
-						},
-						"method": "GET",
-						"header": [],
-						"body": {},
 						"url": {
 							"raw": "http://{{host}}/api/advertisement/query?advertiser_id=7",
 							"protocol": "http",
@@ -1400,8 +1429,16 @@
 									"key": "advertiser_id",
 									"value": "7"
 								}
-							]
-						}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
 					},
 					"response": []
 				}
@@ -1409,20 +1446,11 @@
 		},
 		{
 			"name": "广告",
-			"description": null,
+			"description": "",
 			"item": [
 				{
 					"name": "广告投放列表",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": {
-								"token": "{{jwt_tokensa}}"
-							}
-						},
-						"method": "GET",
-						"header": [],
-						"body": {},
 						"url": {
 							"raw": "http://{{host}}/api/ad_launch?ad_trade_id=7&start_date=2018-05-01&end_date=2018-05-04",
 							"protocol": "http",
@@ -1471,23 +1499,22 @@
 									"key": "end_date",
 									"value": "2018-05-04"
 								}
-							]
-						}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
 					},
 					"response": []
 				},
 				{
 					"name": "广告列表",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": {
-								"token": "{{jwt_tokensa}}"
-							}
-						},
-						"method": "GET",
-						"header": [],
-						"body": {},
 						"url": {
 							"raw": "http://{{host}}/api/advertisement?ad_trade_id=1&advertiser_id=1",
 							"protocol": "http",
@@ -1507,23 +1534,22 @@
 									"key": "advertiser_id",
 									"value": "1"
 								}
-							]
-						}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
 					},
 					"response": []
 				},
 				{
 					"name": "广告主列表",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": {
-								"token": "{{jwt_tokensa}}"
-							}
-						},
-						"method": "GET",
-						"header": [],
-						"body": {},
 						"url": {
 							"raw": "http://{{host}}/api/advertiser?ad_trade_id=4",
 							"protocol": "http",
@@ -1539,8 +1565,66 @@
 									"key": "ad_trade_id",
 									"value": "4"
 								}
-							]
-						}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "批量新增广告投放",
+					"request": {
+						"url": "http://{{host}}/api/ad_launch",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token2}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"oids\":[11,12,13,14],\n\t\"aid\":22,\n\t\"atid\":33,\n\t\"atiid\":44,\n\t\"areaid\":55,\n\t\"marketid\":66,\n\t\"ktime\":2\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "批量修改广告投放",
+					"request": {
+						"url": "http://{{host}}/api/ad_launch",
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token1}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"aoids\":[550,551,552,553],\n\t\"aid\":23,\n\t\"sdate\": 1555333300\n}"
+						},
+						"description": ""
 					},
 					"response": []
 				}
@@ -1548,20 +1632,11 @@
 		},
 		{
 			"name": "设备",
-			"description": null,
+			"description": "",
 			"item": [
 				{
 					"name": "设备列表",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": {
-								"token": "{{jwt_tokensa}}"
-							}
-						},
-						"method": "GET",
-						"header": [],
-						"body": {},
 						"url": {
 							"raw": "http://{{host}}/api/push?point_id=276",
 							"protocol": "http",
@@ -1582,8 +1657,16 @@
 									"key": "point_id",
 									"value": "276"
 								}
-							]
-						}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
 					},
 					"response": []
 				}
@@ -1591,20 +1674,11 @@
 		},
 		{
 			"name": "节目广告",
-			"description": null,
+			"description": "",
 			"item": [
 				{
 					"name": "节目广告投放列表",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": {
-								"token": "{{jwt_tokensa}}"
-							}
-						},
-						"method": "GET",
-						"header": [],
-						"body": {},
 						"url": {
 							"raw": "http://{{host}}/api/project_ad_launch?project_id=1",
 							"protocol": "http",
@@ -1630,8 +1704,16 @@
 									"value": "",
 									"disabled": true
 								}
-							]
-						}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
 					},
 					"response": []
 				}

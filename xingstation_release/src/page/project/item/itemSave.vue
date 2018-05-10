@@ -1,12 +1,12 @@
 <template>
-  <div class="item-wrap-template" :element-loading-text="setting.loadingText" v-loading="setting.loading">
+  <div class="item-wrap-template">
     <div class="topbar">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item :to="{ path: '/project/item/index' }">节目投放管理</el-breadcrumb-item>
         <el-breadcrumb-item>添加</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
-    <div class="pane">
+    <div class="pane"  :element-loading-text="setting.loadingText" v-loading="setting.loading">
       <div class="pane-title">
         新增节目投放
       </div>
@@ -83,18 +83,18 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="投放开始时间" prop="sdate" :rules="[{ type: 'date', required: true, message: '请输入投放开始时间', trigger: 'submit' }]">
+        <el-form-item label="自定义开始时间" prop="sdate" >
           <el-date-picker
           v-model="projectForm.sdate"
           type="date"
-          placeholder="选择投放开始时间" :editable="false">
+          placeholder="请选择自定义开始时间" :editable="false">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="投放结束时间" prop="edate" :rules="[{ type: 'date', required: true, message: '请输入投放结束时间', trigger: 'submit' }]">
+        <el-form-item label="自定义结束时间" prop="edate">
           <el-date-picker
           v-model="projectForm.edate"
           type="date"
-          placeholder="选择投放结束时间"
+          placeholder="请选择自定义结束时间"
           :editable="false"
           >
           </el-date-picker>
@@ -132,19 +132,6 @@ export default {
     ElDatePicker: DatePicker,
   },
   data() {
-    // let edate = (rule, value, callback) => {
-    //   if (value === '') {
-    //       callback(new Error('请输入投放结束日期'));
-    //   } else {
-    //     let sdate = this.projectForm.sdate
-    //     console.log(new Date(sdate).getTime() - new Date(value).getTime() > 0)
-    //     if(new Date(sdate).getTime() - new Date(value).getTime() > 0){
-    //       callback(new Error('投放结束日期要比投放开始日期大'));
-    //     } else {
-    //       callback();
-    //     }
-    //   }
-    // }
     return {
       setting: {
         isOpenSelectAll: true,
@@ -170,11 +157,6 @@ export default {
         edate: '',
       },
       areaList: [],
-      // rules:{
-      //   edate: [
-      //     { validator: edate, trigger: 'submit',type: 'date', required: true},
-      //   ],
-      // },
     }
   },
   mounted() {

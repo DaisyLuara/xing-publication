@@ -2,35 +2,48 @@
 
 namespace App\Http\Requests\Api\V1;
 
-use Illuminate\Foundation\Http\FormRequest;
+use Dingo\Api\Http\FormRequest;
 
 class AdLaunchRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
     public function authorize()
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
+
     public function rules()
     {
-/*        switch ($this->method()) {
-            case 'GET':
+        switch ($this->method()) {
+            case 'POST':
                 return [
-                    'start_date' => 'date_format:Y-m-d',
-                    'end_date' => 'date_format:Y-m-d',
+                    'oids' => 'required|array|max:10',
+                    'aid' => 'required|integer',
+                    'atid' => 'required|integer',
+                    'atiid' => 'required|integer',
+                    'areaid' => 'required|integer',
+                    'marketid' => 'required|integer',
                 ];
                 break;
-        }*/
-        return [];
+            case 'PATCH':
+                return [
+                    'aoids' => 'required|array|max:10',
+                ];
+                break;
+            default:
+                return [];
+        }
+    }
+
+    public function attributes()
+    {
+        return [
+            'atid' => 'atid(行业ID)',
+            'atiid' => 'atiid(广告主ID)',
+            'aid' => 'aid(广告ID)',
+            'areaid' => 'areaid(区域ID)',
+            'marketid' => 'marketid(商场ID)',
+            'oid' => 'oid(点位ID)',
+        ];
     }
 }
