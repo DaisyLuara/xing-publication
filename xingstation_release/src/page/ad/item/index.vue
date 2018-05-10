@@ -110,16 +110,16 @@
                   <span>{{ scope.row.size }}</span>
                 </el-form-item>
                 <el-form-item label="周期">
-                  <span>{{ scope.row.kTime }}</span>
+                  <span>{{ scope.row.kTime }} s</span>
+                </el-form-item>
+                <el-form-item label="时间">
+                  <span>{{ scope.row.date }}</span>
                 </el-form-item>
                 <el-form-item label="开始时间">
                   <span>{{ scope.row.startDate }}</span>
                 </el-form-item>
                 <el-form-item label="结束时间">
                   <span>{{ scope.row.endDate }}</span>
-                </el-form-item>
-                <el-form-item label="时间">
-                  <span>{{ scope.row.date }}</span>
                 </el-form-item>
               </el-form>
             </template>

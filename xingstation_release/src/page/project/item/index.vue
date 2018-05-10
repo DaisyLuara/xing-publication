@@ -324,7 +324,7 @@ export default {
           this.tvoids = []
           let optionModify = this.editCondition.conditionList
           for (let i = 0; i < this.selectAll.length; i++) {
-            let id = this.selectAll[i].point.id
+            let id = this.selectAll[i].id
             this.tvoids.push(id)
           }
           this.modifyOptionFlag.project = false
