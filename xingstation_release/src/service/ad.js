@@ -10,5 +10,14 @@ export default {
       })
     })
   },
+  saveAdLaunch(context, args) {
+    return new Promise(function(resolve, reject){
+      context.$http.post(AD_API, args).then(response => {
+        resolve(response.data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  }
 
 }

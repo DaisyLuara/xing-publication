@@ -52,7 +52,7 @@
           </span>
           <el-button size="small" type="success" @click="linkToAddItem">投放节目</el-button>
         </div>
-        <el-table :data="tableData" style="width: 100%" highlight-current-row  @selection-change="handleSelectionChange">
+        <el-table :data="tableData" style="width: 100%" highlight-current-row  @selection-change="handleSelectionChange" ref="multipleTable">
           <el-table-column type="selection" width="55" ></el-table-column>
           <el-table-column
             prop="name"
@@ -133,7 +133,7 @@
           </el-pagination>
         </div>
       </div>
-      <el-dialog title="批量修改" :visible.sync="editVisible">
+      <el-dialog title="批量修改" :visible.sync="editVisible" @close="dialogClose">
         <el-form
         ref="projectForm"
         :model="projectForm" label-width="150px">
@@ -273,6 +273,12 @@ export default {
     this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
   },
   methods: {
+    dialogClose() {
+      if(!this.editVisible) {
+        this.editCondition.conditionList = []
+        this.$refs.multipleTable.clearSelection();
+      }
+    },
     handleSelectionChange(val) {
       this.selectAll = val
       console.log(this.selectAll.length)
