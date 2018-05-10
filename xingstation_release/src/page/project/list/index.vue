@@ -12,14 +12,15 @@
           <el-table-column
             prop="id"
             label="ID"
-            width="130"
+            min-width="80"
             fixed
             >
           </el-table-column>
           <el-table-column
             prop="img"
             label="产品"
-            width="140"
+            width="130"
+            :show-overflow-tooltip="true"
             >
            <template slot-scope="scope">
               <img :src="scope.row.img" alt="" class="icon-item"/>
@@ -40,7 +41,7 @@
           <el-table-column
             prop="point"
             label="连接"
-            min-width="200">
+            min-width="100">
             <template slot-scope="scope">
               <span>查看</span>
             </template>
@@ -48,18 +49,21 @@
           <el-table-column
             prop="faceDate"
             label="版本"
-            min-width="180">
+            min-width="100"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             prop="networkDate"
             label="版本号"
-            min-width="180"
+            min-width="100"
+            :show-overflow-tooltip="true"
             >
           </el-table-column>
           <el-table-column
             prop="screenStatus"
             label="时间"
-            min-width="180">
+            min-width="100"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column label="操作" width="150" fixed="right">
             <template slot-scope="scope">

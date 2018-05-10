@@ -19,7 +19,7 @@
           <el-table-column
             prop="img"
             label="产品"
-            min-width="140"
+            min-width="130"
             >
             <template slot-scope="scope">
               <img :src="scope.row.img" alt="" class="icon-item"/>
@@ -28,18 +28,20 @@
           <el-table-column
             prop="area"
             label="区域"
-            width="130"
+            width="100"
             >
           </el-table-column>
           <el-table-column
             prop="market"
             label="商场"
-            width="200">
+            width="100"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             prop="point"
             label="点位"
-            width="200">
+            width="100"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             prop="faceDate"
@@ -63,7 +65,8 @@
           <el-table-column
             prop="loginDate"
             label="登录时间"
-            width="150">
+            width="100"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             prop="on/off_time"
