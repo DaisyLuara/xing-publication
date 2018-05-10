@@ -1,7 +1,7 @@
 {
 	"variables": [],
 	"info": {
-		"name": "publication copy",
+		"name": "publication",
 		"_postman_id": "20ed2933-4c44-1076-d0f1-49ef9823e276",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
@@ -800,202 +800,6 @@
 			]
 		},
 		{
-			"name": "投放",
-			"description": "",
-			"item": [
-				{
-					"name": "数据",
-					"description": "",
-					"item": [
-						{
-							"name": "漏斗数据",
-							"request": {
-								"url": {
-									"raw": "http://{{host}}/api/stats?start_date=2018-05-01&end_date=2018-05-04&point_id=276",
-									"protocol": "http",
-									"host": [
-										"{{host}}"
-									],
-									"path": [
-										"api",
-										"stats"
-									],
-									"query": [
-										{
-											"key": "start_date",
-											"value": "2018-05-01"
-										},
-										{
-											"key": "end_date",
-											"value": "2018-05-04"
-										},
-										{
-											"key": "alias",
-											"value": "isStarJT",
-											"disabled": true
-										},
-										{
-											"key": "point_id",
-											"value": "276"
-										}
-									],
-									"variable": []
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwt_tokensa}}"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"description": "查询参数\n\talias=节目别名&\n\ttype=looknum|playernum& \n\tstart_date=开始日期&\n\tend_date=结束日期"
-							},
-							"response": []
-						},
-						{
-							"name": "分天数据",
-							"request": {
-								"url": {
-									"raw": "http://{{host}}/api/detail?start_date=2018-05-01&end_date=2018-05-04",
-									"protocol": "http",
-									"host": [
-										"{{host}}"
-									],
-									"path": [
-										"api",
-										"detail"
-									],
-									"query": [
-										{
-											"key": "start_date",
-											"value": "2018-05-01"
-										},
-										{
-											"key": "end_date",
-											"value": "2018-05-04"
-										}
-									],
-									"variable": []
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwt_token1}}"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"description": "查询参数\n\talias=节目别名&\n\ttype=looknum|playernum& \n\tstart_date=开始日期&\n\tend_date=结束日期"
-							},
-							"response": []
-						},
-						{
-							"name": "性别年龄",
-							"request": {
-								"url": {
-									"raw": "http://{{host}}/api/age_gender?start_date=2018-05-01&end_date=2018-05-04&point_id=276",
-									"protocol": "http",
-									"host": [
-										"{{host}}"
-									],
-									"path": [
-										"api",
-										"age_gender"
-									],
-									"query": [
-										{
-											"key": "start_date",
-											"value": "2018-05-01"
-										},
-										{
-											"key": "end_date",
-											"value": "2018-05-04"
-										},
-										{
-											"key": "alias",
-											"value": null,
-											"disabled": true
-										},
-										{
-											"key": "point_id",
-											"value": "276"
-										}
-									],
-									"variable": []
-								},
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{jwt_token1}}"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"description": "0-10 岁\n11-18 岁\n19-30 岁\n31-40 岁\n41-59 岁\n60岁以上"
-							},
-							"response": []
-						}
-					],
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "节目投放列表",
-					"request": {
-						"url": {
-							"raw": "http://{{host}}/api/projects/launch?include=point,project&ar_user_id=1044&project_name=嘻哈全屏",
-							"protocol": "http",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"projects",
-								"launch"
-							],
-							"query": [
-								{
-									"key": "include",
-									"value": "point,project"
-								},
-								{
-									"key": "ar_user_id",
-									"value": "1044"
-								},
-								{
-									"key": "project_name",
-									"value": "嘻哈全屏"
-								}
-							],
-							"variable": []
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{jwt_token1}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"description": ""
-					},
-					"response": []
-				}
-			]
-		},
-		{
 			"name": "设置",
 			"description": "",
 			"item": [
@@ -1186,19 +990,22 @@
 					"name": "节目搜索",
 					"request": {
 						"url": {
-							"raw": "http://{{host}}/api/userProject?name=街头",
+							"raw": "http://{{host}}/api/projects/query?name=街头",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"userProject"
+								"projects",
+								"query"
 							],
 							"query": [
 								{
 									"key": "name",
-									"value": "街头"
+									"value": "街头",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
@@ -1207,7 +1014,8 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_tokensa}}"
+								"value": "{{jwt_token2}}",
+								"description": ""
 							}
 						],
 						"body": {
@@ -1627,57 +1435,9 @@
 						"description": ""
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "设备",
-			"description": "",
-			"item": [
+				},
 				{
-					"name": "设备列表",
-					"request": {
-						"url": {
-							"raw": "http://{{host}}/api/push?point_id=276",
-							"protocol": "http",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"push"
-							],
-							"query": [
-								{
-									"key": "project_id",
-									"value": "",
-									"disabled": true
-								},
-								{
-									"key": "point_id",
-									"value": "276"
-								}
-							],
-							"variable": []
-						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"description": ""
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "节目广告",
-			"description": "",
-			"item": [
-				{
-					"name": "节目广告投放列表",
+					"name": "落地方式配置",
 					"request": {
 						"url": {
 							"raw": "http://{{host}}/api/project_ad_launch?project_id=1",
@@ -1692,7 +1452,9 @@
 							"query": [
 								{
 									"key": "project_id",
-									"value": "1"
+									"value": "1",
+									"equals": true,
+									"description": ""
 								},
 								{
 									"key": "visiable",
@@ -1708,14 +1470,291 @@
 							"variable": []
 						},
 						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token1}}",
+								"description": ""
+							}
+						],
+						"body": {},
 						"description": ""
 					},
 					"response": []
+				}
+			]
+		},
+		{
+			"name": "设备",
+			"description": "",
+			"item": [
+				{
+					"name": "设备列表",
+					"request": {
+						"url": {
+							"raw": "http://{{host}}/api/push?page=2",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"push"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "2",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "project_id",
+									"value": "",
+									"disabled": true
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token2}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "节目",
+			"description": "",
+			"item": [
+				{
+					"name": "投放",
+					"description": "",
+					"item": [
+						{
+							"name": "数据",
+							"description": "",
+							"item": [
+								{
+									"name": "漏斗数据",
+									"request": {
+										"url": {
+											"raw": "http://{{host}}/api/stats?start_date=2018-05-01&end_date=2018-05-04&point_id=276",
+											"protocol": "http",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"stats"
+											],
+											"query": [
+												{
+													"key": "start_date",
+													"value": "2018-05-01"
+												},
+												{
+													"key": "end_date",
+													"value": "2018-05-04"
+												},
+												{
+													"key": "alias",
+													"value": "isStarJT",
+													"disabled": true
+												},
+												{
+													"key": "point_id",
+													"value": "276"
+												}
+											],
+											"variable": []
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{jwt_tokensa}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"description": "查询参数\n\talias=节目别名&\n\ttype=looknum|playernum& \n\tstart_date=开始日期&\n\tend_date=结束日期"
+									},
+									"response": []
+								},
+								{
+									"name": "分天数据",
+									"request": {
+										"url": {
+											"raw": "http://{{host}}/api/detail?start_date=2018-05-01&end_date=2018-05-04",
+											"protocol": "http",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"detail"
+											],
+											"query": [
+												{
+													"key": "start_date",
+													"value": "2018-05-01"
+												},
+												{
+													"key": "end_date",
+													"value": "2018-05-04"
+												}
+											],
+											"variable": []
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{jwt_token1}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"description": "查询参数\n\talias=节目别名&\n\ttype=looknum|playernum& \n\tstart_date=开始日期&\n\tend_date=结束日期"
+									},
+									"response": []
+								},
+								{
+									"name": "性别年龄",
+									"request": {
+										"url": {
+											"raw": "http://{{host}}/api/age_gender?start_date=2018-05-01&end_date=2018-05-04&point_id=276",
+											"protocol": "http",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"age_gender"
+											],
+											"query": [
+												{
+													"key": "start_date",
+													"value": "2018-05-01"
+												},
+												{
+													"key": "end_date",
+													"value": "2018-05-04"
+												},
+												{
+													"key": "alias",
+													"value": null,
+													"disabled": true
+												},
+												{
+													"key": "point_id",
+													"value": "276"
+												}
+											],
+											"variable": []
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{jwt_token1}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"description": "0-10 岁\n11-18 岁\n19-30 岁\n31-40 岁\n41-59 岁\n60岁以上"
+									},
+									"response": []
+								}
+							],
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "节目投放列表",
+							"request": {
+								"url": {
+									"raw": "http://{{host}}/api/projects/launch?include=point,project&ar_user_id=1044&project_name=嘻哈全屏",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"projects",
+										"launch"
+									],
+									"query": [
+										{
+											"key": "include",
+											"value": "point,project"
+										},
+										{
+											"key": "ar_user_id",
+											"value": "1044"
+										},
+										{
+											"key": "project_name",
+											"value": "嘻哈全屏"
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_token1}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"description": ""
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "节目管理",
+					"description": "",
+					"item": [
+						{
+							"name": "节目列表",
+							"request": {
+								"url": "http://{{host}}/api/projects",
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_token2}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
 				}
 			]
 		}
