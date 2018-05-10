@@ -2,6 +2,15 @@
   <div class="root">
     <div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
       <div class="item-content-wrap">
+       <div class="search-wrap">
+          <el-form :model="filters" :inline="true" ref="searchForm" >
+            <el-form-item label="" prop="name">
+              <el-input v-model="filters.name" placeholder="请输入节目名称" style="width: 250px;"></el-input>
+            </el-form-item>
+            <el-button @click="search()" type="primary">搜索</el-button>
+            <el-button @click="resetSearch" type="default">重置</el-button>
+          </el-form>
+        </div>
       <div class="total-wrap">
           <span class="label">
             总数:{{pagination.total}} 
@@ -12,57 +21,57 @@
             <template slot-scope="scope">
               <el-form label-position="left" inline class="demo-table-expand">
                 <el-form-item label="产品">
-                  <!-- <span>{{scope.row.point}}</span> -->
+                  <span>{{scope.row.name}}</span> 
                 </el-form-item>
                 <el-form-item label="图标icon">
-                  <!-- <a :href="scope.row.icon" target="_blank" style="color: blue">查看</a> -->
+                  <a :href="scope.row.icon" target="_blank" style="color: blue">查看</a> 
                 </el-form-item>
-                <el-form-item label="连接">
-                  <!-- <a :href="scope.row.link" target="_blank" style="color: blue">查看</a> -->
+                <el-form-item label="链接">
+                  <a :href="scope.row.link" target="_blank" style="color: blue">查看</a>
                 </el-form-item>
                 <el-form-item label="版本">
-                  <!-- <span>{{scope.row.advertisement}}</span> -->
+                  <span>{{scope.row.version_name}}</span>
                 </el-form-item>
                 <el-form-item label="版本号">
-                  <!-- <span>{{scope.row.adType}}</span> -->
+                  <span>{{scope.row.version_code}}</span> 
                 </el-form-item>
                 <el-form-item label="时间">
-                  <!-- <span>{{ scope.row.date }}</span> -->
+                  <span>{{ scope.row.created_at }}</span> 
                 </el-form-item>
               </el-form>
             </template>
           </el-table-column>
           <el-table-column
-            prop="img"
+            prop="name"
             label="产品"
-            min-width="130"
+            min-width="100"
             :show-overflow-tooltip="true"
             >
           </el-table-column>
           <el-table-column
-            prop="area"
+            prop="icon"
             label="图标"
-            min-width="100"
+            min-width="130"
             >
             <template slot-scope="scope">
-              <!-- <img :src="scope.row.project.icon" alt="" class="icon-item"/> -->
+              <img :src="scope.row.icon" alt="" class="icon-item"/> 
             </template>
           </el-table-column>
           <el-table-column
-            prop="faceDate"
+            prop="version_name"
             label="版本"
             min-width="100"
             :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
-            prop="networkDate"
+            prop="version_code"
             label="版本号"
             min-width="100"
             :show-overflow-tooltip="true"
             >
           </el-table-column>
           <el-table-column
-            prop="screenStatus"
+            prop="created_at"
             label="时间"
             min-width="150"
             :show-overflow-tooltip="true">
@@ -90,7 +99,7 @@
 </template>
 
 <script>
-import equipment from 'service/equipment'
+import project from 'service/project'
 import search from 'service/search'
 
 import { Button, Input, Table, TableColumn, Pagination,Dialog, Form, FormItem, MessageBox, DatePicker, Select, Option, CheckboxGroup, Checkbox} from 'element-ui'
@@ -120,39 +129,51 @@ export default {
   mounted() {
   },
   created () {
-    this.gettEquipmentList();
+    this.getProjectListDetails();
     // let user_info = JSON.parse(localStorage.getItem('user_info'))
     // this.arUserName = user_info.name
     // this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
+    
   },
   methods: {
-   gettEquipmentList () {
+   getProjectListDetails () {
       this.setting.loadingText = "拼命加载中"
       this.setting.loading = true;
       let searchArgs = {
         page : this.pagination.currentPage,
+        name : this.filters.name
         }
-      equipment.gettEquipmentList(this, searchArgs).then((response) => {
+      project.getProjectListDetails(this, searchArgs).then((response) => {
        let data = response.data
        this.tableData = data
-       console.log('=========');
        console.log(response);
-       console.log('=========');
        this.pagination.total = response.meta.pagination.total
        this.setting.loading = false;
       }).catch(error => {
         console.log(error)
       this.setting.loading = false;
       })
-    },
-    
+    }, 
     changePage (currentPage) {
-      alert(currentPage)
       this.pagination.currentPage = currentPage
-      this.gettEquipmentList ();
+      this.getProjectListDetails ();
     },
-     
-
+    linkToEdit(){
+      console.log(11111);
+    },
+    showData(){
+      console.log(222222);
+    },
+    search () {
+      this.pagination.currentPage = 1;
+      this.tableData = []
+      this.getProjectListDetails();
+    },
+    resetSearch () {
+      this.filters.name = ''
+      this.pagination.currentPage = 1;
+      this.getProjectListDetails();
+    },
   },
   components: {
     "el-table": Table,
@@ -200,6 +221,35 @@ export default {
           padding: 10px;
           width: 50%;
         }
+        .search-wrap{
+          margin-top: 5px;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          font-size: 16px;
+          align-items: center;
+          margin-bottom: 10px;
+          .el-form-item{
+            margin-bottom: 0;
+          }
+          .el-select{
+            width: 250px;
+          }
+          .item-input{
+            width: 230px;
+          }
+          .warning{
+            background: #ebf1fd;
+            padding: 8px;
+            margin-left: 10px;
+            color: #444;
+            font-size: 12px;
+            i{
+              color: #4a8cf3;
+              margin-right: 5px;
+            }
+          }
+        }
         .total-wrap{
           margin-top: 5px;
           display: flex;
@@ -210,6 +260,7 @@ export default {
           margin-bottom: 10px;
           .label {
             font-size: 14px;
+            margin:5px 0;
           }
         }
         .pagination-wrap{

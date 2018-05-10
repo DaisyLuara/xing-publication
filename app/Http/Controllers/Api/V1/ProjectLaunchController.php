@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Models\Mock\ProjectLaunchLocal;
 use Illuminate\Http\Request;
 use App\Models\ProjectLaunch;
 use App\Transformers\ProjectLaunchTransformer;
@@ -59,7 +58,7 @@ class ProjectLaunchController extends Controller
     }
 
     //测试环境 使用 本地数据更新
-    public function store(ProjectLaunchRequest $request, ProjectLaunchLocal $projectLaunchLocal)
+    public function store(ProjectLaunchRequest $request, ProjectLaunch $projectLaunchLocal)
     {
         $launch = $request->all();
         $query = $projectLaunchLocal->query();
@@ -74,7 +73,7 @@ class ProjectLaunchController extends Controller
         return $this->response->noContent();
     }
 
-    public function update(ProjectLaunchRequest $request, ProjectLaunchLocal $projectLaunchLocal)
+    public function update(ProjectLaunchRequest $request, ProjectLaunch $projectLaunchLocal)
     {
 
         $launch = $request->all();
