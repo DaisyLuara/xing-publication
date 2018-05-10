@@ -8,7 +8,6 @@
           </span>
         </div>
         <el-table :data="tableData" style="width: 100%" highlight-current-row >
-          <el-table-column type="selection" width="55" ></el-table-column>
           <el-table-column type="expand">
             <template slot-scope="scope">
               <el-form label-position="left" inline class="demo-table-expand">
