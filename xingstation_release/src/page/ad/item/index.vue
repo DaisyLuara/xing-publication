@@ -168,7 +168,7 @@
           </el-pagination>
         </div>
       </div>
-      <el-dialog title="批量修改" :visible.sync="editVisible" @close="dialogClose" v-loading="loading" width="100%" :fullscreen="true">
+      <el-dialog title="批量修改" :visible.sync="editVisible" @close="dialogClose" v-loading="loading">
         <el-form
         ref="adForm"
         :model="adForm" label-width="150px">
@@ -649,6 +649,7 @@ export default {
       .el-select,.item-input,.el-input{
         width: 380px;
       }
+      
       .el-form-item{
          margin-bottom: 20px;
       }
