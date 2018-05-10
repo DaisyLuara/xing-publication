@@ -198,7 +198,7 @@
             placeholder="选择自定义开始时间" :editable="false">
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="自定义结束时间" prop="edate" v-if="modifyOptionFlag.sdate" :rules="[{ type: 'date', required: true, message: '请输入自定义结束时间', trigger: 'submit' }]">
+          <el-form-item label="自定义结束时间" prop="edate" v-if="modifyOptionFlag.edate" :rules="[{ type: 'date', required: true, message: '请输入自定义结束时间', trigger: 'submit' }]">
             <el-date-picker
             v-model="projectForm.edate"
             type="date"
