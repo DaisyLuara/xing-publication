@@ -78,7 +78,7 @@
                 <el-form-item label="自定义开始时间">
                   <span>{{ scope.row.start_date }}</span>
                 </el-form-item>
-                <el-form-item label="自定义开始时间">
+                <el-form-item label="自定义结束时间">
                   <span>{{ scope.row.end_date }}</span>
                 </el-form-item>
               </el-form>
