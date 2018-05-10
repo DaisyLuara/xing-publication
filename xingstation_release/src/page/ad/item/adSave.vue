@@ -14,7 +14,7 @@
         ref="adForm"
         :model="adForm" label-width="150px">
         <el-form-item label="广告行业" prop="adTrade" :rules="[{ required: true, message: '请输入广告行业名称', trigger: 'submit',type: 'number'}]">
-          <el-select v-model="adForm.adTrade" filterable placeholder="请搜索" @change="adTradeChangeHandle">
+          <el-select v-model="adForm.adTrade" filterable placeholder="请搜索" @change="adTradeChangeHandle" clearable>
             <el-option
               v-for="item in adTradeList"
               :key="item.id"
@@ -24,7 +24,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="广告主" prop="advertiser" :rules="[{ required: true, message: '请输入广告主名称', trigger: 'submit',type: 'number'}]">
-          <el-select v-model="adForm.advertiser" filterable placeholder="请搜索" @change="advertiserChangeHandle" :loading="searchLoading">
+          <el-select v-model="adForm.advertiser" filterable placeholder="请搜索" @change="advertiserChangeHandle" :loading="searchLoading" clearable>
             <el-option
               v-for="item in advertiserList"
               :key="item.id"
@@ -34,7 +34,7 @@
           </el-select>
         </el-form-item>
          <el-form-item label="广告" prop="advertisement" :rules="[{ required: true, message: '请输入广告名称', trigger: 'submit',type: 'number'}]">
-          <el-select v-model="adForm.advertisement" filterable  placeholder="请搜索" :loading="searchLoading" @change="advertisementChangeHandle">
+          <el-select v-model="adForm.advertisement" filterable  placeholder="请搜索" :loading="searchLoading" @change="advertisementChangeHandle" clearable>
             <el-option
               v-for="item in advertisementList"
               :key="item.id"
@@ -43,8 +43,8 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="区域" prop="area"  :rules="[{ required: true, message: '请输入区域', trigger: 'submit' ,type: 'number'}]">
-          <el-select v-model="adForm.area" placeholder="请选择" filterable @change="areaChangeHandle">
+        <el-form-item label="区域" prop="area"  :rules="[{ required: true, message: '请输入区域', trigger: 'submit' ,type: 'number'}]" >
+          <el-select v-model="adForm.area" placeholder="请选择" filterable @change="areaChangeHandle" clearable>
             <el-option
               v-for="item in areaList"
               :key="item.id"
@@ -53,8 +53,8 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="商场" prop="market" :rules="[{ required: true, message: '请输入商场', trigger: 'submit' ,type: 'number'}]">
-          <el-select v-model="adForm.market"  placeholder="请搜索" filterable :loading="searchLoading" remote :remote-method="getMarket" @change="marketChangeHandle">
+        <el-form-item label="商场" prop="market" :rules="[{ required: true, message: '请输入商场', trigger: 'submit' ,type: 'number'}]" >
+          <el-select v-model="adForm.market"  placeholder="请搜索" filterable :loading="searchLoading" remote :remote-method="getMarket" @change="marketChangeHandle" clearable>
             <el-option
               v-for="item in marketList"
               :key="item.id"
@@ -64,7 +64,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="点位" prop="point" :rules="[{ required: true, message: '请输入点位', trigger: 'submit',type: 'array'}]">
-          <el-select v-model="adForm.point" placeholder="请选择"  multiple filterable :loading="searchLoading" :multiple-limit="10">
+          <el-select v-model="adForm.point" placeholder="请选择"  multiple filterable :loading="searchLoading" :multiple-limit="10" clearable>
             <el-option
               v-for="item in pointList"
               :key="item.id"

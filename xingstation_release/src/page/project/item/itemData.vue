@@ -3,7 +3,7 @@
     <div class="headline-wrapper">
       <div>
         <!-- <span>节目名称：{{pointName}} </span> -->
-        <el-select v-model="userSelect" filterable placeholder="请选择用户(可搜索)" v-if="showUser" :loading="projectLoading" remote :remote-method="getUser" @change="userChangeHandle">
+        <el-select v-model="userSelect" filterable placeholder="请选择用户(可搜索)" v-if="showUser" :loading="projectLoading" remote :remote-method="getUser" @change="userChangeHandle" clearable>
           <el-option
             v-for="item in userList"
             :key="item.id"
@@ -11,7 +11,7 @@
             :value="item.id">
           </el-option>
         </el-select>
-        <el-select v-model="projectSelect" filterable placeholder="请选择节目(可搜索)" :loading="projectLoading" remote :remote-method="getProject" @change="projectChangeHandle">
+        <el-select v-model="projectSelect" filterable placeholder="请选择节目(可搜索)" :loading="projectLoading" remote :remote-method="getProject" @change="projectChangeHandle" clearable>
           <el-option
             v-for="item in projectList"
             :key="item.id"
