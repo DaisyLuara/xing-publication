@@ -11,6 +11,20 @@ class AdLaunch extends Model
     protected $primaryKey = 'aoid';
     public $timestamps = false;
 
+    public $fillable = [
+        'atid',
+        'atiid',
+        'aid',
+        'areaid',
+        'marketid',
+        'oid',
+        'ktime',
+        'sdate',
+        'edate',
+        'date',
+        'clientdate'
+    ];
+
     public function adTrade()
     {
         return $this->belongsTo(AdTrade::class, 'atid', 'atid');
