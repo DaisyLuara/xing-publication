@@ -1,6 +1,6 @@
 import {router} from '../main'
 const STAFFS_API = '/api/staffs'
-const USER_PROJECT_API = '/api/userProject'
+const USER_PROJECT_API = '/api/projects/query'
 const STATS_API = '/api/stats'
 const DAY_DETAIL_API = '/api/detail'
 const AGE_GENDER_API = '/api/age_gender'
