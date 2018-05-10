@@ -103,7 +103,7 @@
 
 <script>
 import search from 'service/search'
-import project from 'service/project'
+import ad from 'service/ad'
 import {
   Form,
   Select,
@@ -149,8 +149,8 @@ export default {
         area: '',
         market: '',
         point: [],
-        sdate: new Date(),
-        edate: new Date(),
+        sdate: '',
+        edate: '',
       },
       areaList: [],
     }
@@ -161,7 +161,7 @@ export default {
     this.setting.loading = true
     let areaList = this.getAreaList()
     let adTradeList = this.getAdTradeList()
-    Promise.all([moduleList, areaList, adTradeList]).then(() => {
+    Promise.all([areaList, adTradeList]).then(() => {
       this.setting.loading = false
     }).catch((err) => {
       console.log(err)
@@ -179,58 +179,60 @@ export default {
       })
     },
     adTradeChangeHandle() {
-      console.log(this.adForm.adTrade)
+      this.adForm.advertiser = ''
       this.getAdvertiserList()
     },
     advertisementChangeHandle (){
       console.log(this.adForm.advertisement)
     },
     advertiserChangeHandle(){
-      console.log(this.adForm.advertiser)
+      this.adForm.advertisement = ''
       this.getAdvertisementList()
     },
     getAdvertisementList() {
       let args = {
         advertiser_id: this.adForm.advertiser
       }
+      this.searchLoading = true
       return search.getAdvertisementList(this, args).then((response) => {
-       let data = response.data
-       this.advertisementList = data
-       console.log(data)
+        let data = response.data
+        this.advertisementList = data
+        this.searchLoading = false
       }).catch(error => {
         console.log(error)
-      this.setting.loading = false;
+        this.searchLoading = false
       })
     },
     getAdvertiserList() {
       let args = {
         ad_trade_id: this.adForm.adTrade
       }
+      this.searchLoading = true
       return search.getAdvertiserList(this, args).then((response) => {
-       let data = response.data
-       this.advertiserList = data
-       console.log(data)
+        let data = response.data
+        this.advertiserList = data
+        this.searchLoading = false
       }).catch(error => {
         console.log(error)
-      this.setting.loading = false;
+      this.searchLoading = false
       })
     },
     areaChangeHandle() {
-      console.log(this.adForm.area)
       this.adForm.market = ''
       this.getMarket(this.adForm.market)
     },
     getAreaList () {
+      this.searchLoading = true
       return search.getAeraList(this).then((response) => {
        let data = response.data
        this.areaList = data
+        this.searchLoading = false
       }).catch(error => {
         console.log(error)
-      this.setting.loading = false;
+        this.searchLoading = false
       })
     },
     marketChangeHandle() {
-      console.log(this.adForm.market)
       this.adForm.point = []
       this.getPoint()
     },
@@ -241,7 +243,6 @@ export default {
       }
       this.searchLoading = true
       return search.gePointList(this, args).then((response) => {
-        console.log(response)
         this.pointList = response.data
         this.searchLoading = false
       }).catch(err => {
@@ -275,13 +276,15 @@ export default {
           let args = {
             sdate: new Date(this.adForm.sdate).getTime() / 1000,
             edate: new Date(this.adForm.edate).getTime() / 1000,
-            default_plid: this.adForm.project,
-            weekday_tvid: this.adForm.weekday,
-            weekend_tvid: this.adForm.weekend,
-            div_tvid: this.adForm.define,
-            oids: this.adForm.point
+            aid: this.adForm.adTrade,
+            atid: this.adForm.advertiser,
+            atiid: this.adForm.advertisement,
+            marketid: this.adForm.market,
+            areaid: this.adForm.area,
+            oids: this.adForm.point,
+            ktime: parseInt(this.adForm.cycle)
           }
-          return project.savePorjectLaunch(this, args).then((response) => {
+          return ad.saveAdLaunch(this, args).then((response) => {
             this.setting.loading = false
             this.$message({
               message: "添加成功",
@@ -290,7 +293,6 @@ export default {
             this.$router.push({
               path: "/ad/item/index"
             })
-            console.log(response)
           }).catch((err) => {
             this.setting.loading = false
             console.log(err)

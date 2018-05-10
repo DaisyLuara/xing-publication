@@ -93,7 +93,7 @@
             <el-button @click="modifyEdit" type="danger" size="small">修改</el-button>
           </el-form>
         </div>
-        <el-table :data="adList" style="width: 100%" highlight-current-row @selection-change="handleSelectionChange">
+        <el-table :data="adList" style="width: 100%" highlight-current-row @selection-change="handleSelectionChange" ref="multipleTable">
           <el-table-column type="selection" width="55" ></el-table-column>
           <el-table-column
             prop="point"
@@ -171,12 +171,12 @@
           >
           </el-pagination>
         </div>
-        <el-dialog title="批量修改" :visible.sync="editVisible">
+        <el-dialog title="批量修改" :visible.sync="editVisible" @close="dialogClose">
         <el-form
         ref="adForm"
         :model="adForm" label-width="150px">
-          <el-form-item label="广告行业" prop="project"  v-if="modifyOptionFlag.ad_trade_id" :rules="[{ type: 'number', required: true, message: '请选择广告行业', trigger: 'submit' }]">
-            <el-select v-model="adForm.ad_trade_id" filterable placeholder="请搜索" remote :remote-method="getProject" @change="projectChangeHandle">
+          <el-form-item label="广告行业" prop="ad_trade_id"  v-if="modifyOptionFlag.ad_trade_id" :rules="[{ type: 'number', required: true, message: '请选择广告行业', trigger: 'submit' }]">
+            <el-select v-model="adForm.ad_trade_id" filterable placeholder="请搜索" @change="adTradeChangeHandle">
               <el-option
                 v-for="item in adTradeList"
                 :key="item.id"
@@ -205,8 +205,8 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="周期" prop="cycle" v-if="modifyOptionFlag.define" :rules="[{ required: true, message: '请输入周期', trigger: 'submit',type: 'number' }]">
-            <el-input v-model="adForm.cycle"></el-input>
+          <el-form-item label="周期(s)" prop="cycle" v-if="modifyOptionFlag.cycle" :rules="[{ required: true, message: '请输入周期', trigger: 'submit',type: 'number' }]">
+            <el-input v-model="adForm.cycle" placeholder="请输入周期"></el-input>
           </el-form-item>
           <el-form-item label="开始时间" prop="sdate" v-if="modifyOptionFlag.sdate" :rules="[{ type: 'date', required: true, message: '请输入开始时间', trigger: 'submit' }]">
             <el-date-picker
@@ -297,7 +297,8 @@ export default {
         edate: '',
       },
       adList: [],
-      selectAll: []
+      selectAll: [],
+      editVisible: false
     }
   },
   mounted() {
@@ -318,9 +319,14 @@ export default {
     // this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
   },
   methods: {
-     handleSelectionChange(val) {
+    handleSelectionChange(val) {
       this.selectAll = val
-      console.log(this.selectAll.length)
+    },
+    dialogClose() {
+      if(!this.editVisible) {
+        this.editCondition.conditionList = []
+        this.$refs.multipleTable.clearSelection();
+      }
     },
     getAdTradeList(){
       return search.getAdTradeList(this).then((response) => {
@@ -332,59 +338,60 @@ export default {
       })
     },
     adTradeChangeHandle() {
-      console.log(this.adSearchForm.adTrade)
+      this.adSearchForm.advertiser_id = ''
       this.getAdvertiserList()
     },
     advertisementChangeHandle (){
-      console.log(this.adSearchForm.advertisement)
     },
     advertiserChangeHandle(){
-      console.log(this.adSearchForm.advertiser)
+      this.adSearchForm.advertisement_id = ''
+      
       this.getAdvertisementList()
     },
     getAdvertisementList() {
       let args = {
         advertiser_id: this.adSearchForm.advertiser_id
       }
+      this.searchLoading = true
       return search.getAdvertisementList(this, args).then((response) => {
-       let data = response.data
-       this.advertisementList = data
-       console.log(data)
+        let data = response.data
+        this.advertisementList = data
+        this.searchLoading = false
       }).catch(error => {
         console.log(error)
-      this.setting.loading = false;
+      this.searchLoading = false
+      
       })
     },
     getAdvertiserList() {
       let args = {
         ad_trade_id: this.adSearchForm.ad_trade_id
       }
+      this.searchLoading = true
       return search.getAdvertiserList(this, args).then((response) => {
-       let data = response.data
-       this.advertiserList = data
-       console.log(data)
+        let data = response.data
+        this.advertiserList = data
+        this.searchLoading = false
       }).catch(error => {
         console.log(error)
-      this.setting.loading = false;
+        this.searchLoading = false
       })
     },
     areaChangeHandle() {
-      console.log(this.adSearchForm.area)
-      this.adSearchForm.market = ''
+      this.adSearchForm.market_id = ''
       this.getMarket(this.adSearchForm.market)
     },
     getAreaList () {
       return search.getAeraList(this).then((response) => {
-       let data = response.data
-       this.areaList = data
+        let data = response.data
+        this.areaList = data
       }).catch(error => {
         console.log(error)
       this.setting.loading = false;
       })
     },
     marketChangeHandle() {
-      console.log(this.adSearchForm.market)
-      this.adSearchForm.point = []
+      this.adSearchForm.point_id = ''
       this.getPoint()
     },
     getPoint() {
@@ -394,7 +401,6 @@ export default {
       }
       this.searchLoading = true
       return search.gePointList(this, args).then((response) => {
-        console.log(response)
         this.pointList = response.data
         this.searchLoading = false
       }).catch(err => {
@@ -439,12 +445,10 @@ export default {
       this.adSearchForm.area_id !== '' ? searchArgs : delete searchArgs.area_id 
       this.adSearchForm.market_id !== '' ? searchArgs : delete searchArgs.market_id 
       this.adSearchForm.point_id !== '' ? searchArgs : delete searchArgs.point_id
-      console.log(searchArgs) 
       return ad.getAdList(this, searchArgs).then((response) => {
-       let data = response.data
-       console.log(data)
-       this.adList = data
-       this.pagination.total = response.meta.pagination.total
+        let data = response.data
+        this.adList = data
+        this.pagination.total = response.meta.pagination.total
         this.setting.loading = false;
       }).catch(error => {
         console.log(error)
@@ -482,52 +486,51 @@ export default {
             type: "warning"
           })
         } else{
-          // this.getAdTradeList()
-          // // this.$refs[adForm].resetFields();
-          // this.adForm = {
-              // ad_trade_id: '',
-              // advertiser_id: '',
-              // advertisement_id: '',
-              // cycle: '',
-              // sdate: '',
-              // edate: '',
-          // }
-          // this.tvoids = []
-          // let optionModify = this.editCondition.conditionList
-          // for (let i = 0; i < this.selectAll.length; i++) {
-          //   let id = this.selectAll[i].point.id
-          //   this.tvoids.push(id)
-          // }
-          // this.modifyOptionFlag.ad_trade_id = false
-          // this.modifyOptionFlag.advertiser_id = false
-          // this.modifyOptionFlag.advertisement_id = false
-          // this.modifyOptionFlag.cycle = false
-          // this.modifyOptionFlag.sdate = false
-          // this.modifyOptionFlag.edate = false
-          // for (let k = 0; k < optionModify.length; k++) {
-          //   let type = optionModify[k]
-          //   switch(type) {
-          //     case '广告行业':
-          //       this.modifyOptionFlag.ad_trade_id = true
-          //     break
-          //     case '广告主':
-          //       this.modifyOptionFlag.advertiser_id= true
-          //     break
-          //     case '广告':
-          //       this.modifyOptionFlag.advertisement_id = true
-          //     break
-          //     case '周期':
-          //       this.modifyOptionFlag.cycle = true
-          //     break
-          //     case '开始时间':
-          //       this.modifyOptionFlag.sdate = true
-          //     break
-          //     case '结束时间':
-          //       this.modifyOptionFlag.edate = true
-          //     break
-          //   }
-          // }
-          // this.editVisible = true
+          this.getAdTradeList()
+          this.adForm = {
+            ad_trade_id: '',
+            advertiser_id: '',
+            advertisement_id: '',
+            cycle: '',
+            sdate: '',
+            edate: '',
+          }
+          this.tvoids = []
+          let optionModify = this.editCondition.conditionList
+          for (let i = 0; i < this.selectAll.length; i++) {
+            let id = this.selectAll[i].point.id
+            this.tvoids.push(id)
+          }
+          this.modifyOptionFlag.ad_trade_id = false
+          this.modifyOptionFlag.advertiser_id = false
+          this.modifyOptionFlag.advertisement_id = false
+          this.modifyOptionFlag.cycle = false
+          this.modifyOptionFlag.sdate = false
+          this.modifyOptionFlag.edate = false
+          for (let k = 0; k < optionModify.length; k++) {
+            let type = optionModify[k]
+            switch(type) {
+              case '广告行业':
+                this.modifyOptionFlag.ad_trade_id = true
+              break
+              case '广告主':
+                this.modifyOptionFlag.advertiser_id= true
+              break
+              case '广告':
+                this.modifyOptionFlag.advertisement_id = true
+              break
+              case '周期':
+                this.modifyOptionFlag.cycle = true
+              break
+              case '开始时间':
+                this.modifyOptionFlag.sdate = true
+              break
+              case '结束时间':
+                this.modifyOptionFlag.edate = true
+              break
+            }
+          }
+          this.editVisible = true
         }
       }
     },
@@ -562,6 +565,9 @@ export default {
     .item-list-wrap{
       background: #fff;
       padding: 30px;
+      .el-select,.item-input,.el-input{
+        width: 380px;
+      }
       .el-form-item{
         margin-bottom: 5px;
       }
@@ -578,6 +584,9 @@ export default {
           font-size: 16px;
           align-items: center;
           margin-bottom: 10px;
+          .el-select{
+            width: 200px;
+          }
           .warning{
             background: #ebf1fd;
             padding: 8px;
