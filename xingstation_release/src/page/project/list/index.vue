@@ -2,12 +2,12 @@
   <div class="root">
     <div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
       <div class="item-content-wrap">
-        <div class="total-wrap">
+      <div class="total-wrap">
           <span class="label">
             总数:{{pagination.total}} 
           </span>
         </div>
-       <el-table :data="tableData" style="width: 100%" highlight-current-row>
+        <el-table :data="tableData" style="width: 100%" highlight-current-row >
           <el-table-column type="selection" width="55" ></el-table-column>
           <el-table-column
             prop="id"
@@ -19,75 +19,56 @@
           <el-table-column
             prop="img"
             label="产品"
-            min-width="130"
+            width="130"
+            :show-overflow-tooltip="true"
             >
-            <template slot-scope="scope">
+           <template slot-scope="scope">
               <img :src="scope.row.img" alt="" class="icon-item"/>
             </template>
           </el-table-column>
           <el-table-column
             prop="area"
-            label="区域"
-            width="100"
+            label="图标"
+            width="130"
             >
           </el-table-column>
           <el-table-column
             prop="market"
-            label="商场"
-            width="100"
-            :show-overflow-tooltip="true">
+            label="封面"
+            min-width="150"
+            >
           </el-table-column>
           <el-table-column
             prop="point"
-            label="点位"
-            width="100"
-            :show-overflow-tooltip="true">
+            label="连接"
+            min-width="100">
+            <template slot-scope="scope">
+              <span>查看</span>
+            </template>
           </el-table-column>
           <el-table-column
             prop="faceDate"
-            label="上次互动"
-            width="100">
-          </el-table-column>
-          <el-table-column
-            prop="networkDate"
-            label="联网时间"
-            width="100">
-          </el-table-column>
-          <el-table-column
-            prop="screenStatus"
-            label="屏幕状态"
-            width="100">
-            <template slot-scope="scope">
-              <span v-if="scope.row.screenStatus==0">开</span>
-              <span v-if="scope.row.screenStatus==1">关</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="loginDate"
-            label="登录时间"
-            width="100"
+            label="版本"
+            min-width="100"
             :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
-            prop="on/off_time"
-            label="开/关机"
-            width="100">
+            prop="networkDate"
+            label="版本号"
+            min-width="100"
+            :show-overflow-tooltip="true"
+            >
           </el-table-column>
-            
-          
           <el-table-column
-            prop="device_id"
-            label="智能插排"
-            width="100">
-            <template slot-scope="scope">
-              <span v-if="scope.row.device_id==''"></span>
-              <span v-if="scope.row.device_id!=''">有</span>
-            </template>
+            prop="screenStatus"
+            label="时间"
+            min-width="100"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column label="操作" width="150" fixed="right">
             <template slot-scope="scope">
-               <el-button size="small" type="primary" @click="linkToEdit()">重启</el-button> 
-               <el-button size="small" type="warning" @click="showData()">编辑</el-button>
+              <el-button size="small" type="primary" @click="linkToEdit()">推送</el-button> 
+              <el-button size="small" type="warning" @click="showData()">编辑</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -101,19 +82,20 @@
           >
           </el-pagination>
         </div>
-      </div>
+      </div>  
     </div>
   </div>
 </template>
 
 <script>
 import equipment from 'service/equipment'
+import search from 'service/search'
 
-import { Button, Input, Table, TableColumn, Pagination, Form, FormItem, MessageBox, DatePicker} from 'element-ui'
+import { Button, Input, Table, TableColumn, Pagination,Dialog, Form, FormItem, MessageBox, DatePicker, Select, Option, CheckboxGroup, Checkbox} from 'element-ui'
 
 export default {
   data () {
-    return {
+      return {
       filters: {
         name: ''
       },
@@ -137,10 +119,12 @@ export default {
   },
   created () {
     this.gettEquipmentList();
-    
+    // let user_info = JSON.parse(localStorage.getItem('user_info'))
+    // this.arUserName = user_info.name
+    // this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
   },
   methods: {
-    gettEquipmentList () {
+   gettEquipmentList () {
       this.setting.loadingText = "拼命加载中"
       this.setting.loading = true;
       let searchArgs = {
@@ -165,6 +149,8 @@ export default {
       this.pagination.currentPage = currentPage
       this.gettEquipmentList ();
     },
+     
+
   },
   components: {
     "el-table": Table,
@@ -174,7 +160,12 @@ export default {
     "el-input": Input,
     "el-pagination": Pagination,
     "el-form": Form,
-    "el-form-item": FormItem
+    "el-form-item": FormItem,
+    'el-select': Select,
+    'el-option': Option,
+    'el-checkbox-group': CheckboxGroup,
+    'el-checkbox': Checkbox,
+    'el-dialog':Dialog
   }
 }
 </script>
