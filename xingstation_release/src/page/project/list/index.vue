@@ -76,12 +76,12 @@
             min-width="150"
             :show-overflow-tooltip="true">
           </el-table-column>
-          <el-table-column label="操作" width="150">
+          <!--<el-table-column label="操作" width="150">
             <template slot-scope="scope">
               <el-button size="small" type="primary" @click="linkToEdit()">推送</el-button> 
               <el-button size="small" type="warning" @click="showData()">编辑</el-button>
             </template>
-          </el-table-column>
+          </el-table-column>-->
         </el-table>
         <div class="pagination-wrap">
           <el-pagination
