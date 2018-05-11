@@ -36,9 +36,6 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
-<<<<<<< Updated upstream
-        parent::report($exception);
-=======
 
         $official_account = app('wechat.official_account');
         $official_account->template_message->send([
@@ -53,7 +50,6 @@ class Handler extends ExceptionHandler
                 'remark' => $exception->getMessage(),
             ]
         ]);
->>>>>>> Stashed changes
     }
 
     /**
