@@ -44,6 +44,16 @@
               {{scope.row.user.name}}
             </template>
           </el-table-column>
+          <el-table-column
+            prop="created_at"
+            label="创建时间"
+            >
+          </el-table-column>
+          <el-table-column
+            prop="updated_at"
+            label="修改时间"
+            >
+          </el-table-column>
           <el-table-column label="操作" width="280">
             <template slot-scope="scope">
               <el-button size="small" type="primary" @click="linkToEdit(scope.row.id)">修改</el-button>

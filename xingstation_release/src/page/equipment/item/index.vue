@@ -42,6 +42,12 @@
                 <el-form-item label="智能插排">
                   <span>{{ scope.row.device_id == '' ? '': '有'}}</span>
                 </el-form-item>
+                <el-form-item label="创建时间">
+                  <span>{{ scope.row.created_at }}</span>
+                </el-form-item>
+                <el-form-item label="修改时间">
+                  <span>{{ scope.row.updated_at }}</span>
+                </el-form-item>
               </el-form>
             </template>
           </el-table-column>
@@ -91,6 +97,11 @@
             prop="on_off"
             label="开/关机"
             width="90">
+          </el-table-column>
+          <el-table-column
+            prop="created_at"
+            label="创建时间"
+            >
           </el-table-column>
         </el-table>
         <div class="pagination-wrap">
