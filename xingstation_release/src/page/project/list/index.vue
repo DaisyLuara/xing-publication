@@ -79,12 +79,6 @@
             min-width="150"
             :show-overflow-tooltip="true">
           </el-table-column>
-          <!--<el-table-column label="操作" width="150">
-            <template slot-scope="scope">
-              <el-button size="small" type="primary" @click="linkToEdit()">推送</el-button> 
-              <el-button size="small" type="warning" @click="showData()">编辑</el-button>
-            </template>
-          </el-table-column>-->
         </el-table>
         <div class="pagination-wrap">
           <el-pagination
@@ -149,7 +143,6 @@ export default {
       project.getProjectListDetails(this, searchArgs).then((response) => {
        let data = response.data
        this.tableData = data
-       console.log(response);
        this.pagination.total = response.meta.pagination.total
        this.setting.loading = false;
       }).catch(error => {
@@ -160,12 +153,6 @@ export default {
     changePage (currentPage) {
       this.pagination.currentPage = currentPage
       this.getProjectListDetails ();
-    },
-    linkToEdit(){
-      console.log(11111);
-    },
-    showData(){
-      console.log(222222);
     },
     search () {
       this.pagination.currentPage = 1;
