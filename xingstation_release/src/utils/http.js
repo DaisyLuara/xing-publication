@@ -52,9 +52,6 @@ function VueAxios(Vue) {
     //   if (response.config && response.config.passError) {
     //     return Promise.reject(response);
     //   } else {
-    //     // if (!auth.checkFacility()) {
-    //     //   Message.error(result.message)
-    //     // }
     //     return Promise.reject(result);
     //   }
     // }
