@@ -23,8 +23,7 @@
 </template>
 
 <script>
-import project from 'service/project'
-import search from 'service/search'
+// import search from 'service/search'
 
 import { Button, Input, Table, TableColumn, Pagination,Dialog, Form, FormItem, MessageBox, DatePicker, Select, Option, CheckboxGroup, Checkbox} from 'element-ui'
 
@@ -89,14 +88,14 @@ export default {
       console.log(222222);
     },
     search () {
-      this.pagination.currentPage = 1;
-      this.tableData = []
-      this.getProjectListDetails();
+      // this.pagination.currentPage = 1;
+      // this.tableData = []
+      // this.getProjectListDetails();
     },
     resetSearch () {
       this.filters.name = ''
-      this.pagination.currentPage = 1;
-      this.getProjectListDetails();
+      // this.pagination.currentPage = 1;
+      // this.getProjectListDetails();
     },
   },
   components: {
