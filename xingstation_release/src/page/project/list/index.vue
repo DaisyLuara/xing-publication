@@ -35,8 +35,11 @@
                 <el-form-item label="版本号">
                   <span>{{scope.row.version_code}}</span> 
                 </el-form-item>
-                <el-form-item label="时间">
-                  <span>{{ scope.row.created_at }}</span> 
+                <el-form-item label="创建时间">
+                  <span>{{ scope.row.created_at }}</span>
+                </el-form-item>
+                <el-form-item label="修改时间">
+                  <span>{{ scope.row.updated_at }}</span>
                 </el-form-item>
               </el-form>
             </template>
@@ -72,7 +75,7 @@
           </el-table-column>
           <el-table-column
             prop="created_at"
-            label="时间"
+            label="创建时间"
             min-width="150"
             :show-overflow-tooltip="true">
           </el-table-column>
