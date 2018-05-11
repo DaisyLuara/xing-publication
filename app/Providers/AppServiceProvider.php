@@ -40,6 +40,7 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\Company::observe(\App\Observers\CompanyObserver::class);
         \App\Models\AdminProject::observe(\App\Observers\AdminProjectObserver::class);
         \App\Models\ProjectLaunch::observe(\App\Observers\ProjectLaunchObserver::class);
+        \App\Models\AdLaunch::observe(\App\Observers\AdLaunchObserver::class);
 
         \Carbon\Carbon::setLocale('zh');
     }
