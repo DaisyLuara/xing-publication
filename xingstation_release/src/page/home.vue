@@ -11,9 +11,10 @@
           <img :src="m.src" class="first-sidebar-icon"/>
           {{m.meta.title}}
         </el-menu-item>
-        <el-menu-item class="menu-item" index="/inform" style="padding-left: 32px;">
-          <el-badge :value="noticeCount" :max="99" class="item">
-            <img src="../assets/images/icons/notification-icon.png" alt="" style="width: 100%"/>
+        <el-menu-item class="menu-item" index="/inform">
+          <el-badge :value="9" :max="99" class="item">
+          <img src="../assets/images/icons/notification-icon.png" class="first-sidebar-icon" style="padding-right: 3px;"/>
+            通知
           </el-badge>
         </el-menu-item>
       </el-menu>
@@ -91,8 +92,8 @@ export default {
                 m.src = require('../assets/images/icons/setting-icon.png')
                 break
               case 'team':
-              m.src = require('../assets/images/icons/team-icon.png')
-              break
+                m.src = require('../assets/images/icons/team-icon.png')
+                break
               default:
                 m.src = ''
                 break
@@ -178,6 +179,7 @@ export default {
 }
 .el-badge__content.is-fixed {
   top: 10px;
+  right: 45px;
 }
 .logo-wrap {
   .logo {
