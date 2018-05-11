@@ -12,7 +12,7 @@
           {{m.meta.title}}
         </el-menu-item>
         <el-menu-item class="menu-item" index="/inform">
-          <el-badge :value="9" :max="99" class="item">
+          <el-badge :value="noticeCount" :max="99" class="item">
           <img src="../assets/images/icons/notification-icon.png" class="first-sidebar-icon" style="padding-right: 3px;"/>
             通知
           </el-badge>
