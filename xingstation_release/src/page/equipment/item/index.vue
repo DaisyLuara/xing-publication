@@ -103,11 +103,6 @@
             label="开/关机"
             width="90">
           </el-table-column>
-          <el-table-column
-            prop="created_at"
-            label="创建时间"
-            >
-          </el-table-column>
         </el-table>
         <div class="pagination-wrap">
           <el-pagination
