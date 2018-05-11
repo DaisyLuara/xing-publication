@@ -21,7 +21,8 @@ class AdLaunchTransformer extends TransformerAbstract
             'kTime'=>(int)$adLaunch->ktime,
             'startDate'=>date('Y-m-d H:i:s',$adLaunch->sdate),
             'endDate'=>date('Y-m-d H:i:s',$adLaunch->edate),
-            'date'=>$adLaunch->date,
+            'created_at'=>$adLaunch->date,
+            'updated_at'=>formatClientDate($adLaunch->clientdate),
         ];
     }
 }

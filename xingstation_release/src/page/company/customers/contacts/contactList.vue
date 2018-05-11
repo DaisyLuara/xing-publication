@@ -4,7 +4,7 @@
       <div class="item-content-wrap">
         <div class="actions-wrap">
           <span class="label">
-            {{companyName}} {{12}} 人
+            {{companyName}} {{total}} 人
           </span>
           <el-button size="small" type="success" @click="linkToAddItem">新增联系人</el-button>
         </div>
@@ -17,6 +17,16 @@
           <el-table-column
             prop="phone"
             label="联系人电话"
+            >
+          </el-table-column>
+          <el-table-column
+            prop="created_at"
+            label="创建时间"
+            >
+          </el-table-column>
+          <el-table-column
+            prop="updated_at"
+            label="修改时间"
             >
           </el-table-column>
           <el-table-column label="操作" width="280">
@@ -42,11 +52,7 @@ export default {
         loadingText: "拼命加载中"
       },
       companyName: '',
-      pagination: {
-        total: 100,
-        pageSize: 10,
-        currentPage: 1
-      },
+      total: 0,
       contactList: []
     }
   },
@@ -66,6 +72,7 @@ export default {
       }
       return company.getConstactList(this, uid, args).then(response => {
         this.contactList = response.data;
+        this.total = response.meta.pagination.total;
         this.setting.loading = false;
       }).catch(error => {
         this.setting.loading = false;

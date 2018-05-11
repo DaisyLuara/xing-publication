@@ -96,6 +96,7 @@
           type="date"
           placeholder="请选择自定义结束时间"
           :editable="false"
+          value-format="yyyy-MM-dd"
           >
           </el-date-picker>
         </el-form-item>
@@ -163,16 +164,19 @@ export default {
   },
   created() {
     this.setting.loading = true
-    let moduleList = this.getModuleList()
-    let areaList = this.getAreaList()
-    Promise.all([moduleList, areaList]).then(() => {
-      this.setting.loading = false
-    }).catch((err) => {
-      console.log(err)
-      this.setting.loading = false
-    })
+    this.getModuleList()
+    this.getAreaList()
+    this.setting.loading = false
+    
+    // Promise.all([moduleList, areaList]).then(() => {
+    //   this.setting.loading = false
+    // }).catch((err) => {
+    //   console.log(err)
+    //   this.setting.loading = false
+    // })
   },
   methods: {
+  
     projectChangeHandle() {
       console.log(this.projectForm.project)
     },
@@ -233,7 +237,6 @@ export default {
       }
       this.searchLoading = true
       return search.gePointList(this, args).then((response) => {
-        console.log(response)
         this.pointList = response.data
         this.searchLoading = false
       }).catch(err => {
@@ -264,9 +267,11 @@ export default {
       this.$refs[formName].validate((valid) => {
         if(valid){
         this.setting.loading = true
+          let edate = (new Date(this.projectForm.edate).getTime() + ((((23*60+59)*60)+59)*1000)) / 1000
+          console.log(edate)
           let args = {
             sdate: new Date(this.projectForm.sdate).getTime() / 1000,
-            edate: new Date(this.projectForm.edate).getTime() / 1000,
+            edate: edate,
             default_plid: this.projectForm.project,
             weekday_tvid: this.projectForm.weekday,
             weekend_tvid: this.projectForm.weekend,

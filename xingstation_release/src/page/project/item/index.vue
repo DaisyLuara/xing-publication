@@ -75,6 +75,9 @@
                 <el-form-item label="创建时间">
                   <span>{{ scope.row.created_at }}</span>
                 </el-form-item>
+                <el-form-item label="修改时间">
+                  <span>{{ scope.row.updated_at }}</span>
+                </el-form-item>
                 <el-form-item label="自定义开始时间">
                   <span>{{ scope.row.start_date }}</span>
                 </el-form-item>
@@ -83,6 +86,12 @@
                 </el-form-item>
               </el-form>
             </template>
+          </el-table-column>
+          <el-table-column
+            prop="id"
+            label="ID"
+            width="80"
+            >
           </el-table-column>
           <el-table-column
             prop="name"
@@ -391,12 +400,13 @@ export default {
     submitModify(formName) {
       this.$refs[formName].validate((valid) => {
         if(valid){
-        this.loading = true
+          let edate = (new Date(this.projectForm.edate).getTime() + ((((23*60+59)*60)+59)*1000)) / 1000
+          this.loading = true
           let args = {
             tvoids: this.tvoids,
             default_plid: this.projectForm.project,
             sdate: new Date(this.projectForm.sdate).getTime() / 1000,
-            edate: new Date(this.projectForm.edate).getTime() / 1000,
+            edate: edate,
             weekday_tvid: this.projectForm.weekday,
             weekend_tvid: this.projectForm.weekend,
             div_tvid: this.projectForm.define,

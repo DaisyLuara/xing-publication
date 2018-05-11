@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Requests\Api\V1\AdLaunchRequest;
 use App\Models\AdLaunch;
 use App\Transformers\AdLaunchTransformer;
+use DB;
 
 class AdLaunchController extends Controller
 {
@@ -48,9 +49,12 @@ class AdLaunchController extends Controller
         return $this->response->paginator($adLaunch, new AdLaunchTransformer());
     }
 
-    //测试环境 使用 本地数据更新
     public function store(AdLaunchRequest $request, AdLaunch $adLaunchLocal)
     {
+        if (env('APP_ENV') != 'production') {
+            return $this->response->noContent();
+        }
+
         $launch = $request->all();
         $query = $adLaunchLocal->query();
 
@@ -67,9 +71,13 @@ class AdLaunchController extends Controller
     public function update(AdLaunchRequest $request, AdLaunch $adLaunchLocal)
     {
 
-        $launch = $request->all();
+        if (env('APP_ENV') != 'production') {
+            return $this->response->noContent();
+        }
 
+        $launch = $request->all();
         $aoids = $launch['aoids'];
+
         unset($launch['aoids']);
         unset($launch['oid']);
 

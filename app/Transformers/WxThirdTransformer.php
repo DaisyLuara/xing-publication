@@ -23,7 +23,8 @@ class WxThirdTransformer extends TransformerAbstract
             'icon' => $wxThird->head_img,
             'type' => $wxThird->projectAdLaunch->type,
             'expires' => $wxThird->expires_in,
-            'date' => $wxThird->date,
+            'created_at' => $wxThird->date,
+            'updated_at' => formatClientDate($wxThird->clientdate),
         ];
     }
 }

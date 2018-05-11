@@ -28,6 +28,16 @@
           <el-button size="small" @click="linkToEdit(scope.row)">修改</el-button>
         </template>
       </el-table-column>
+      <el-table-column
+        prop="created_at"
+        label="创建时间"
+        >
+      </el-table-column>
+      <el-table-column
+        prop="updated_at"
+        label="修改时间"
+        >
+      </el-table-column>
     </el-table>
     <div class="pagination-wrap">
       <el-pagination

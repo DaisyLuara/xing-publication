@@ -45,3 +45,11 @@ if (!function_exists('getArUserID')) {
     }
 }
 
+
+if (!function_exists('formatClientDate')) {
+    function formatClientDate($clientRate)
+    {
+        return date('Y-m-d H:i:s', $clientRate / 1000);
+    }
+}
+

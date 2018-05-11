@@ -21,7 +21,8 @@ class AdvertisementTransformer extends TransformerAbstract
             'size' => ($advertisement->size) / 1024 / 1024,
             'fps' => $advertisement->fps,
             'isad' => $advertisement->isad,
-            'date' => $advertisement->date,
+            'created_at' => $advertisement->date,
+            'updated_at'=>formatClientDate($advertisement->clientdate),
         ];
     }
 }

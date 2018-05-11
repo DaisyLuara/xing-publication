@@ -57,9 +57,13 @@ class ProjectLaunchController extends Controller
 
     }
 
-    //测试环境 使用 本地数据更新
     public function store(ProjectLaunchRequest $request, ProjectLaunch $projectLaunchLocal)
     {
+
+        if (env('APP_ENV') != 'production') {
+            return $this->response->noContent();
+        }
+
         $launch = $request->all();
         $query = $projectLaunchLocal->query();
 
@@ -76,9 +80,13 @@ class ProjectLaunchController extends Controller
     public function update(ProjectLaunchRequest $request, ProjectLaunch $projectLaunchLocal)
     {
 
-        $launch = $request->all();
+        if (env('APP_ENV') != 'production') {
+            return $this->response->noContent();
+        }
 
+        $launch = $request->all();
         $tvoids = $launch['tvoids'];
+
         unset($launch['tvoids']);
         unset($launch['oid']);
 
