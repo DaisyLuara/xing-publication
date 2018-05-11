@@ -29,6 +29,8 @@ class PushTransformer extends TransformerAbstract
             'version' => $push->curversion,
             'system' => $push->systemversion,
             'device_id' => (string)$push->did,
+            'created_at' => $push->date,
+            'updated_at' => formatClientDate($push->clientdate),
         ];
     }
 

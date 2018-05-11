@@ -8,15 +8,17 @@ use League\Fractal\TransformerAbstract;
 
 class ProjectAdLaunchTransformer extends TransformerAbstract
 {
-    public function transform(ProjectAdLaunch $projectAdLaunch){
+    public function transform(ProjectAdLaunch $projectAdLaunch)
+    {
         return [
-            'id'=>$projectAdLaunch->adid,
-            'name'=>$projectAdLaunch->project->name,
-            'icon'=>$projectAdLaunch->project->icon,
-            'type'=>$projectAdLaunch->type,
-            'adName'=>$projectAdLaunch->wxThird->nick_name,
-            'ad'=>$projectAdLaunch->wxThird->head_img,
-            'date'=>$projectAdLaunch->date,
+            'id' => $projectAdLaunch->adid,
+            'name' => $projectAdLaunch->project->name,
+            'icon' => $projectAdLaunch->project->icon,
+            'type' => $projectAdLaunch->type,
+            'adName' => $projectAdLaunch->wxThird->nick_name,
+            'ad' => $projectAdLaunch->wxThird->head_img,
+            'created_at' => $projectAdLaunch->date,
+            'updated_at' => formatClientDate($projectAdLaunch->clientdate),
         ];
     }
 }
