@@ -587,10 +587,11 @@ export default {
     submitModify(formName) {
       this.$refs[formName].validate((valid) => {
         if(valid){
-        this.loading = true
+          this.loading = true
+          let edate = (new Date(this.adForm.edate).getTime() + ((((23*60+59)*60)+59)*1000)) / 1000
           let args = {
             sdate: new Date(this.adForm.sdate).getTime() / 1000,
-            edate: new Date(this.adForm.edate).getTime() / 1000,
+            edate: edate,
             atid: this.adForm.ad_trade_id,
             atiid: this.adForm.advertiser_id,
             aid: this.adForm.advertisement_id,

@@ -400,12 +400,13 @@ export default {
     submitModify(formName) {
       this.$refs[formName].validate((valid) => {
         if(valid){
-        this.loading = true
+          let edate = (new Date(this.projectForm.edate).getTime() + ((((23*60+59)*60)+59)*1000)) / 1000
+          this.loading = true
           let args = {
             tvoids: this.tvoids,
             default_plid: this.projectForm.project,
             sdate: new Date(this.projectForm.sdate).getTime() / 1000,
-            edate: new Date(this.projectForm.edate).getTime() / 1000,
+            edate: edate,
             weekday_tvid: this.projectForm.weekday,
             weekend_tvid: this.projectForm.weekend,
             div_tvid: this.projectForm.define,

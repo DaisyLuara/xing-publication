@@ -18,8 +18,6 @@ class ProjectLaunchRequest extends FormRequest
                 return [
                     'oids' => 'required|array|max:10',
                     'default_plid' => 'required',
-                    'sdate' => 'required',
-                    'edate' => 'required',
                 ];
                 break;
             case 'PATCH':
