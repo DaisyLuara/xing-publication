@@ -8,6 +8,9 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Auth\AuthenticationException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Spatie\Permission\Exceptions\UnauthorizedException;
+use Dingo\Api\Exception\{
+    RateLimitExceededException, ValidationHttpException
+};
 
 class Handler extends ExceptionHandler
 {
@@ -19,8 +22,9 @@ class Handler extends ExceptionHandler
     protected $dontReport = [
         TokenExpiredException::class,
         \Illuminate\Database\Eloquent\ModelNotFoundException::class,
-        \Illuminate\Validation\ValidationException::class,
         UnauthorizedException::class,
+        RateLimitExceededException::class,
+        ValidationHttpException::class,
 
     ];
 
