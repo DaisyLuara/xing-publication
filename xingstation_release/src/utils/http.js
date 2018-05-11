@@ -21,6 +21,11 @@ function VueAxios(Vue) {
   // http拦截器
   axios.interceptors.request.use(function(config) {
     config.headers['Authorization'] = 'Bearer ' + auth.getToken();
+    //拦截三方url Authorization 换成tower_access_token 值
+    //   if(config.url.indexOf("https://tower.im/api/v1")>=0)
+    //  {
+    //   config.headers['Authorization'] = 'Bearer ' + 'tower_access_token';
+    //  }
     // one request of refreshing token can be send at one time
     // auth or logout cannot trrigle refresh token
     // if (store.getters.isRefreshToken || config.url.includes('auth') || config.url.includes('logout')) {
