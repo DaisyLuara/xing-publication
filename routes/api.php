@@ -103,6 +103,9 @@ $api->version('v1', [
             //设备
             $api->get('push', 'PushController@index');
 
+            //Excel
+            $api->get('excel','ExcelController@export');
+
             //节目投放
             $api->get('projects', 'ProjectController@index');
             $api->get('projects/launch', 'ProjectLaunchController@index');

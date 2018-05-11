@@ -2,51 +2,33 @@
   <div class="root">
     <div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
       <div class="item-content-wrap">
-       <div class="button-wrap">
-            <el-button  type="primary" round>团队成员</el-button>
-            <el-button  type="primary" round>开发</el-button>
-            <el-button  type="primary" round>产品经理</el-button>
-            <el-button  type="primary" round>测试</el-button>
-            <el-button  type="primary" round>UI设计</el-button>
-            <el-button  type="primary" round>颜镜店</el-button>
-            <el-button  type="primary" round>星视度智造</el-button>
-            <el-button  type="primary" round>平台运营</el-button>
-            <el-button  type="primary" round>知识产权</el-button>
-            <el-button  type="primary" round>业务</el-button>
-            <el-button  type="primary" round>访客</el-button>
+       <div class="search-wrap">
+          <el-form :model="filters" :inline="true" ref="searchForm" >
+            <el-form-item label="" prop="name">
+               <el-button icon="el-icon-star-off" circle class="btn"></el-button>
+            </el-form-item>
+            <el-form-item label="" prop="name">
+               <el-button round class="btn">所有项目</el-button>
+            </el-form-item>
+            <el-form-item label="" prop="name">
+               <el-button round class="btn">3月峰会</el-button>
+            </el-form-item>
+            <el-form-item label="" prop="name">
+              <el-button round class="btn">APP开发</el-button>
+            </el-form-item>
+            <el-form-item label="" prop="name">
+              <el-button round class="btn">游戏模版修改</el-button>
+            </el-form-item>
+            <el-form-item label="" prop="name">
+              <el-button round class="btn">星视度平台</el-button>
+            </el-form-item>
+          </el-form>
         </div>
-      <div class="member-wrap">
-        <div class="total-wrap">
-             <h3 class="label">
-            团队成员
-            <span>共（<b>54</b>）人</span>
-            </h3>
+      <div class="total-wrap">
+          <span class="label">
+            总数:1
+          </span>
         </div>
-        <el-table :data="tableData" style="width: 100%" highlight-current-row >
-          <el-table-column
-            prop="icon"
-            label="图标"
-            min-width="130"
-            >
-            <template slot-scope="scope">
-              <img :src="scope.row.icon" alt="" class="icon-item"/> 
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="name"
-            label="名称"
-            min-width="100"
-            :show-overflow-tooltip="true"
-            >
-          </el-table-column>
-          <el-table-column
-            prop="version_name"
-            label="邮箱"
-            min-width="100"
-            :show-overflow-tooltip="true">
-          </el-table-column>
-        </el-table>
-     </div>
       
       </div>  
     </div>
@@ -54,7 +36,6 @@
 </template>
 
 <script>
-// import search from 'service/search'
 
 import { Button, Input, Table, TableColumn, Pagination,Dialog, Form, FormItem, MessageBox, DatePicker, Select, Option, CheckboxGroup, Checkbox} from 'element-ui'
 
@@ -156,7 +137,7 @@ export default {
       padding: 30px;
 
       .el-form-item{
-        margin-bottom: 0;
+        margin-bottom: 10px;
       }
       .item-content-wrap{
         .demo-table-expand {
@@ -175,7 +156,7 @@ export default {
           padding: 10px;
           width: 50%;
         }
-        .button-wrap{
+        .search-wrap{
           margin-top: 5px;
           display: flex;
           flex-direction: row;
@@ -183,8 +164,11 @@ export default {
           font-size: 16px;
           align-items: center;
           margin-bottom: 10px;
+          .btn{
+            background-color: #f0f0f0;
+          }
           .el-form-item{
-            margin-bottom: 0;
+            margin-bottom: 10px;
           }
           .el-select{
             width: 250px;
