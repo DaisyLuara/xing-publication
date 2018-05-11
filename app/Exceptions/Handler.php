@@ -6,6 +6,8 @@ use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Auth\AuthenticationException;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Spatie\Permission\Exceptions\UnauthorizedException;
 
 class Handler extends ExceptionHandler
 {
@@ -15,7 +17,11 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        //
+        TokenExpiredException::class,
+        \Illuminate\Database\Eloquent\ModelNotFoundException::class,
+        \Illuminate\Validation\ValidationException::class,
+        UnauthorizedException::class,
+
     ];
 
     /**
@@ -37,6 +43,7 @@ class Handler extends ExceptionHandler
     public function report(Exception $exception)
     {
 
+        dd($exception);
         $official_account = app('wechat.official_account');
         $official_account->template_message->send([
             'touser' => 'oNN6q0pq-f0-Z2E2gb0QeOmY4r-M',
