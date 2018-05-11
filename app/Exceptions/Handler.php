@@ -43,7 +43,6 @@ class Handler extends ExceptionHandler
     public function report(Exception $exception)
     {
 
-        dd($exception);
         $official_account = app('wechat.official_account');
         $official_account->template_message->send([
             'touser' => 'oNN6q0pq-f0-Z2E2gb0QeOmY4r-M',
