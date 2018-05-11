@@ -4,10 +4,11 @@ namespace App\Exports;
 
 use App\Models\FaceCount;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Events\AfterSheet;
 use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
+use Maatwebsite\Excel\Events\AfterSheet;
+use DB;
 
 class ProjectExport implements FromCollection, WithStrictNullComparison, WithHeadings, WithEvents
 {
@@ -47,13 +48,14 @@ class ProjectExport implements FromCollection, WithStrictNullComparison, WithHea
         $faceCount = new FaceCount();
         $query = $faceCount->query();
 
+        //DB::setDefaultConnection('ar');
+        //DB::table('face_count_log');
         $faceCount = $query->join('ar_product_list', 'belong', '=', 'versionname')
             ->whereRaw("date_format(face_count_log.date, '%Y-%m-%d') BETWEEN '{$this->startDate}' AND '{$this->endDate}'")
             ->whereNotIn('oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
             ->groupby('belong')
             ->selectRaw('ar_product_list.name as name,count(oid) as pushNum ,sum(looknum) as lookNum ,sum(playernum) as playerNum ,sum(lovenum) as loveNum,sum(outnum) as outNum,sum(scannum) as scanNum')
             ->get();
-
         $data = collect();
         $data->push([
             '',
@@ -76,6 +78,7 @@ class ProjectExport implements FromCollection, WithStrictNullComparison, WithHea
             '',
         ]);
         $faceCount->each(function ($item) use (&$data) {
+            //dd($item);
             $item = [
                 'name' => $item['name'],
                 'lookNum' => $item['lookNum'],
