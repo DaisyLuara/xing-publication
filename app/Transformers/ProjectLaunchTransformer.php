@@ -17,6 +17,7 @@ class ProjectLaunchTransformer extends TransformerAbstract
             'start_date' => date('Y-m-d H:i:s', $projectLaunch->sdate),
             'end_date' => date('Y-m-d H:i:s', $projectLaunch->edate),
             'created_at' => $projectLaunch->date,
+            'updated_at' => formatClientDate($projectLaunch->clientdate),
         ];
     }
 

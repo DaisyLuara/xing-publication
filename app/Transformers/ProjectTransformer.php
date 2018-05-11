@@ -19,9 +19,10 @@ class ProjectTransformer extends TransformerAbstract
             'icon' => $project->icon,
             'image' => $project->image,
             'alias' => $project->versionname,
-            'created_at' => date('Y-m-d H:i:s', $project->clientdate / 1000),
             'version_code' => $project->versioncode,
             'link' => $project->link,
+            'created_at' => $project->date,
+            'updated_at' => formatClientDate($project->clientdate),
         ];
     }
 

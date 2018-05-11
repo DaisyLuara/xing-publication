@@ -272,10 +272,11 @@ export default {
     submit(formName) {
       this.$refs[formName].validate((valid) => {
         if(valid){
-        this.setting.loading = true
+          let edate = (new Date(this.adForm.edate).getTime() + ((((23*60+59)*60)+59)*1000)) / 1000
+          this.setting.loading = true
           let args = {
             sdate: new Date(this.adForm.sdate).getTime() / 1000,
-            edate: new Date(this.adForm.edate).getTime() / 1000,
+            edate: edate,
             atid: this.adForm.adTrade,
             atiid: this.adForm.advertiser,
             aid: this.adForm.advertisement,

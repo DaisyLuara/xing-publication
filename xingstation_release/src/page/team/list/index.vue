@@ -13,97 +13,17 @@
         </div>
       <div class="total-wrap">
           <span class="label">
-            总数:{{pagination.total}} 
+            总数:1
           </span>
         </div>
-        <el-table :data="tableData" style="width: 100%" highlight-current-row >
-          <el-table-column type="expand">
-            <template slot-scope="scope">
-              <el-form label-position="left" inline class="demo-table-expand">
-                <el-form-item label="产品">
-                  <span>{{scope.row.name}}</span> 
-                </el-form-item>
-                <el-form-item label="图标icon">
-                  <a :href="scope.row.icon" target="_blank" style="color: blue">查看</a> 
-                </el-form-item>
-                <el-form-item label="链接">
-                  <a :href="scope.row.link" target="_blank" style="color: blue">查看</a>
-                </el-form-item>
-                <el-form-item label="版本">
-                  <span>{{scope.row.version_name}}</span>
-                </el-form-item>
-                <el-form-item label="版本号">
-                  <span>{{scope.row.version_code}}</span> 
-                </el-form-item>
-                <el-form-item label="创建时间">
-                  <span>{{ scope.row.created_at }}</span>
-                </el-form-item>
-                <el-form-item label="修改时间">
-                  <span>{{ scope.row.updated_at }}</span>
-                </el-form-item>
-              </el-form>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="name"
-            label="产品"
-            min-width="100"
-            :show-overflow-tooltip="true"
-            >
-          </el-table-column>
-          <el-table-column
-            prop="icon"
-            label="图标"
-            min-width="130"
-            >
-            <template slot-scope="scope">
-              <img :src="scope.row.icon" alt="" class="icon-item"/> 
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="version_name"
-            label="版本"
-            min-width="100"
-            :show-overflow-tooltip="true">
-          </el-table-column>
-          <el-table-column
-            prop="version_code"
-            label="版本号"
-            min-width="100"
-            :show-overflow-tooltip="true"
-            >
-          </el-table-column>
-          <el-table-column
-            prop="created_at"
-            label="创建时间"
-            min-width="150"
-            :show-overflow-tooltip="true">
-          </el-table-column>
-          <!--<el-table-column label="操作" width="150">
-            <template slot-scope="scope">
-              <el-button size="small" type="primary" @click="linkToEdit()">推送</el-button> 
-              <el-button size="small" type="warning" @click="showData()">编辑</el-button>
-            </template>
-          </el-table-column>-->
-        </el-table>
-        <div class="pagination-wrap">
-          <el-pagination
-          layout="prev, pager, next, jumper, total"
-          :total="pagination.total"
-          :page-size="pagination.pageSize"
-          :current-page="pagination.currentPage"
-          @current-change="changePage"
-          >
-          </el-pagination>
-        </div>
+      
       </div>  
     </div>
   </div>
 </template>
 
 <script>
-import project from 'service/project'
-import search from 'service/search'
+// import search from 'service/search'
 
 import { Button, Input, Table, TableColumn, Pagination,Dialog, Form, FormItem, MessageBox, DatePicker, Select, Option, CheckboxGroup, Checkbox} from 'element-ui'
 
@@ -132,7 +52,7 @@ export default {
   mounted() {
   },
   created () {
-    this.getProjectListDetails();
+    // this.getProjectListDetails();
     // let user_info = JSON.parse(localStorage.getItem('user_info'))
     // this.arUserName = user_info.name
     // this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
@@ -168,14 +88,14 @@ export default {
       console.log(222222);
     },
     search () {
-      this.pagination.currentPage = 1;
-      this.tableData = []
-      this.getProjectListDetails();
+      // this.pagination.currentPage = 1;
+      // this.tableData = []
+      // this.getProjectListDetails();
     },
     resetSearch () {
       this.filters.name = ''
-      this.pagination.currentPage = 1;
-      this.getProjectListDetails();
+      // this.pagination.currentPage = 1;
+      // this.getProjectListDetails();
     },
   },
   components: {

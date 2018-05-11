@@ -112,8 +112,11 @@
                 <el-form-item label="周期">
                   <span>{{ scope.row.kTime }} s</span>
                 </el-form-item>
-                <el-form-item label="时间">
-                  <span>{{ scope.row.date }}</span>
+                <el-form-item label="创建时间">
+                  <span>{{ scope.row.created_at }}</span>
+                </el-form-item>
+                <el-form-item label="修改时间">
+                  <span>{{ scope.row.updated_at }}</span>
                 </el-form-item>
                 <el-form-item label="开始时间">
                   <span>{{ scope.row.startDate }}</span>
@@ -123,6 +126,12 @@
                 </el-form-item>
               </el-form>
             </template>
+          </el-table-column>
+          <el-table-column
+            prop="id"
+            label="ID"
+            min-width="80"
+            >
           </el-table-column>
           <el-table-column
             prop="point"
@@ -151,8 +160,8 @@
            >
           </el-table-column>
           <el-table-column
-            prop="date"
-            label="时间"
+            prop="created_at"
+            label="创建时间"
             min-width="150"
             :show-overflow-tooltip="true">
           </el-table-column>
@@ -578,10 +587,11 @@ export default {
     submitModify(formName) {
       this.$refs[formName].validate((valid) => {
         if(valid){
-        this.loading = true
+          this.loading = true
+          let edate = (new Date(this.adForm.edate).getTime() + ((((23*60+59)*60)+59)*1000)) / 1000
           let args = {
             sdate: new Date(this.adForm.sdate).getTime() / 1000,
-            edate: new Date(this.adForm.edate).getTime() / 1000,
+            edate: edate,
             atid: this.adForm.ad_trade_id,
             atiid: this.adForm.advertiser_id,
             aid: this.adForm.advertisement_id,
