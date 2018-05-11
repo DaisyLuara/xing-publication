@@ -75,6 +75,9 @@
                 <el-form-item label="创建时间">
                   <span>{{ scope.row.created_at }}</span>
                 </el-form-item>
+                <el-form-item label="创建时间">
+                  <span>{{ scope.row.updated_at }}</span>
+                </el-form-item>
                 <el-form-item label="自定义开始时间">
                   <span>{{ scope.row.start_date }}</span>
                 </el-form-item>
@@ -83,6 +86,12 @@
                 </el-form-item>
               </el-form>
             </template>
+          </el-table-column>
+          <el-table-column
+            prop="id"
+            label="ID"
+            width="80"
+            >
           </el-table-column>
           <el-table-column
             prop="name"
