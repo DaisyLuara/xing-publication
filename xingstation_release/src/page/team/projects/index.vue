@@ -5,25 +5,22 @@
        <div class="search-wrap">
           <el-form :model="filters" :inline="true" ref="searchForm" >
             <el-form-item label="" prop="name">
-               <el-button icon="el-icon-star-off" circle></el-button>
+               <el-button icon="el-icon-star-off" circle class="btn"></el-button>
             </el-form-item>
             <el-form-item label="" prop="name">
-               <el-button icon="el-icon-star-off" circle></el-button>
+               <el-button round class="btn">所有项目</el-button>
             </el-form-item>
             <el-form-item label="" prop="name">
-               <el-button icon="el-icon-star-off" circle></el-button>
+               <el-button round class="btn">3月峰会</el-button>
             </el-form-item>
             <el-form-item label="" prop="name">
-               <el-button icon="el-icon-star-off" circle></el-button>
+              <el-button round class="btn">APP开发</el-button>
             </el-form-item>
             <el-form-item label="" prop="name">
-               <el-button icon="el-icon-star-off" circle></el-button>
+              <el-button round class="btn">游戏模版修改</el-button>
             </el-form-item>
             <el-form-item label="" prop="name">
-               <el-button icon="el-icon-star-off" circle></el-button>
-            </el-form-item>
-            <el-form-item label="" prop="name">
-               <el-button icon="el-icon-star-off" circle></el-button>
+              <el-button round class="btn">星视度平台</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -140,7 +137,7 @@ export default {
       padding: 30px;
 
       .el-form-item{
-        margin-bottom: 0;
+        margin-bottom: 10px;
       }
       .item-content-wrap{
         .demo-table-expand {
@@ -167,8 +164,11 @@ export default {
           font-size: 16px;
           align-items: center;
           margin-bottom: 10px;
+          .btn{
+            background-color: #f0f0f0;
+          }
           .el-form-item{
-            margin-bottom: 0;
+            margin-bottom: 10px;
           }
           .el-select{
             width: 250px;
