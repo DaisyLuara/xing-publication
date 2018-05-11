@@ -2,8 +2,10 @@
   <div class="root">
     <div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
       <div class="item-content-wrap">
-       <div class="button-wrap">
-            <el-button  type="primary" round>团队成员</el-button>
+       <div id="button-wrap">
+           
+        <el-form :model="filters" :inline="true" ref="searchForm" >
+           <el-button  type="primary" round>团队成员</el-button>
             <el-button  type="primary" round>开发</el-button>
             <el-button  type="primary" round>产品经理</el-button>
             <el-button  type="primary" round>测试</el-button>
@@ -13,13 +15,15 @@
             <el-button  type="primary" round>平台运营</el-button>
             <el-button  type="primary" round>知识产权</el-button>
             <el-button  type="primary" round>业务</el-button>
-            <el-button  type="primary" round>访客</el-button>
+            <el-button  type="primary" round>访客</el-button> 
+          </el-form>
+            
         </div>
       <div class="member-wrap">
         <div class="total-wrap">
-             <h3 class="label">
+            <h3 class="label" style="font-size:16px">
             团队成员
-            <span>共（<b>54</b>）人</span>
+            <span style="font-size:10px">共（<b>54</b>）人</span>
             </h3>
         </div>
         <el-table :data="tableData" style="width: 100%" highlight-current-row >
@@ -83,6 +87,8 @@ export default {
   mounted() {
   },
   created () {
+    //alert(document.getElementById("button-wrap").offsetWidth);
+    
     // this.getProjectListDetails();
     // let user_info = JSON.parse(localStorage.getItem('user_info'))
     // this.arUserName = user_info.name
@@ -154,7 +160,6 @@ export default {
     .item-list-wrap{
       background: #fff;
       padding: 30px;
-
       .el-form-item{
         margin-bottom: 0;
       }
@@ -175,7 +180,7 @@ export default {
           padding: 10px;
           width: 50%;
         }
-        .button-wrap{
+        #button-wrap{
           margin-top: 5px;
           display: flex;
           flex-direction: row;
@@ -186,23 +191,13 @@ export default {
           .el-form-item{
             margin-bottom: 0;
           }
-          .el-select{
-            width: 250px;
+          .el-button{
+            margin-top:5px;
+            margin-left:0;
+            background:#72b7e8;
+            border:none;
           }
-          .item-input{
-            width: 230px;
-          }
-          .warning{
-            background: #ebf1fd;
-            padding: 8px;
-            margin-left: 10px;
-            color: #444;
-            font-size: 12px;
-            i{
-              color: #4a8cf3;
-              margin-right: 5px;
-            }
-          }
+          
         }
         .total-wrap{
           margin-top: 5px;
