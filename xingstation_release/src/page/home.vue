@@ -62,7 +62,7 @@ export default {
     let _self = this
     this.setIntervalValue = setInterval(function(){
       _self.notificationStats()
-    },120000)
+    },300000)
     // clearInterval(a)
   },
   computed: {
@@ -82,16 +82,13 @@ export default {
                 m.src = require('../assets/images/icons/permission-icon.png')
                 break
               case 'company':
-                m.src = require('../assets/images/icons/marketing-icon.png')
+                m.src = require('../assets/images/icons/company-icon.png')
                 break
               case 'ad':
                 m.src = require('../assets/images/icons/advertisement-icon.png')
                 break
               case 'equipment':
                 m.src = require('../assets/images/icons/setting-icon.png')
-                break
-              case 'contract':
-                m.src = require('../assets/images/icons/fitting-icon.png')
                 break
               case 'team':
               m.src = require('../assets/images/icons/team-icon.png')

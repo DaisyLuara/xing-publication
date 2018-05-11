@@ -52,6 +52,11 @@
             </template>
           </el-table-column>
           <el-table-column
+            prop="id"
+            label="ID"
+            min-width="80">
+          </el-table-column>
+          <el-table-column
             prop="img"
             label="产品"
             min-width="150"
