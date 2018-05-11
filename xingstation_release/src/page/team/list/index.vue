@@ -21,9 +21,8 @@
             团队成员
             <span>共（<b>54</b>）人</span>
             </h3>
-          </div>
-         
-          <el-table :data="tableData" style="width: 100%" highlight-current-row >
+        </div>
+        <el-table :data="tableData" style="width: 100%" highlight-current-row >
           <el-table-column
             prop="icon"
             label="图标"
