@@ -5,31 +5,34 @@
        <div class="search-wrap">
           <el-form :model="filters" :inline="true" ref="searchForm" >
             <el-form-item label="" prop="name">
-               <el-button icon="el-icon-star-off" circle class="btn"></el-button>
+               <el-button icon="el-icon-star-off" class="btn"></el-button>
             </el-form-item>
             <el-form-item label="" prop="name">
-               <el-button round class="btn">所有项目</el-button>
+               <el-button class="btn active">所有项目</el-button>
             </el-form-item>
             <el-form-item label="" prop="name">
-               <el-button round class="btn">3月峰会</el-button>
+               <el-button class="btn">3月峰会</el-button>
             </el-form-item>
             <el-form-item label="" prop="name">
-              <el-button round class="btn">APP开发</el-button>
+              <el-button class="btn">APP开发</el-button>
             </el-form-item>
             <el-form-item label="" prop="name">
-              <el-button round class="btn">游戏模版修改</el-button>
+              <el-button class="btn">游戏模版修改</el-button>
             </el-form-item>
             <el-form-item label="" prop="name">
-              <el-button round class="btn">星视度平台</el-button>
+              <el-button class="btn">星视度平台</el-button>
             </el-form-item>
           </el-form>
         </div>
-      <div class="total-wrap">
-          <span class="label">
-            总数:1
-          </span>
-        </div>
-      
+        <el-table
+        :data="tableData"
+        style="width: 100%" :show-header="false">
+          <el-table-column
+            prop="name"
+            label=""
+            width="180">
+          </el-table-column>
+        </el-table>
       </div>  
     </div>
   </div>
@@ -58,7 +61,15 @@ export default {
         pageSize: 10,
         currentPage: 1
       },
-      tableData: []
+      tableData: [{
+        name: '商场室内点位展示-小程序',
+      }, {
+        name: '商场室内点位展示-小程序',
+      }, {
+        name: '商场室内点位展示-小程序',
+      }, {
+        name: '商场室内点位展示-小程序',
+      }]
     }
   },
   mounted() {
@@ -135,27 +146,10 @@ export default {
     .item-list-wrap{
       background: #fff;
       padding: 30px;
-
-      .el-form-item{
-        margin-bottom: 10px;
+      .el-table__row:hover {
+        background-color: #FBFDF7;
       }
       .item-content-wrap{
-        .demo-table-expand {
-        font-size: 0;
-        }
-        .demo-table-expand label {
-          width: 90px;
-          color: #99a9bf;
-        }
-        .demo-table-expand .el-form-item {
-          margin-right: 0;
-          margin-bottom: 0;
-          width: 50%;
-        }
-        .icon-item{
-          padding: 10px;
-          width: 50%;
-        }
         .search-wrap{
           margin-top: 5px;
           display: flex;
@@ -166,6 +160,13 @@ export default {
           margin-bottom: 10px;
           .btn{
             background-color: #f0f0f0;
+            border: 1px solid #f0f0f0;
+            border-radius: 20px;
+          }
+          .active{
+            background-color: #aed4d1;
+            border: 1px solid #aed4d1;
+            color: #fff;
           }
           .el-form-item{
             margin-bottom: 10px;
