@@ -34,6 +34,29 @@ let router = {
         },
       ],
     },
+    {
+      path: 'projects',
+      name: '项目管理',
+      redirect: 'projects/index',
+      meta: {
+        title: '项目管理',
+        permission: '',
+      },
+      component: () =>
+        import(/* webpackChunkName: "page/team/projects/routerView" */ 'page/team/projects/routerView'),
+      children: [
+        {
+          path: 'index',
+          name: '项目列表',
+          meta: {
+            title: '项目列表',
+            permission: '',
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/team/projects/index" */ 'page/team/projects/index'),
+        },
+      ],
+    },
   ],
 }
 
