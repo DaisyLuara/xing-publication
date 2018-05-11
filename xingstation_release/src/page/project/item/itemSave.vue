@@ -163,14 +163,16 @@ export default {
   },
   created() {
     this.setting.loading = true
-    let moduleList = this.getModuleList()
-    let areaList = this.getAreaList()
-    Promise.all([moduleList, areaList]).then(() => {
-      this.setting.loading = false
-    }).catch((err) => {
-      console.log(err)
-      this.setting.loading = false
-    })
+    this.getModuleList()
+    this.getAreaList()
+    this.setting.loading = false
+    
+    // Promise.all([moduleList, areaList]).then(() => {
+    //   this.setting.loading = false
+    // }).catch((err) => {
+    //   console.log(err)
+    //   this.setting.loading = false
+    // })
   },
   methods: {
     projectChangeHandle() {
