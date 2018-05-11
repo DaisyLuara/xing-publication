@@ -3,71 +3,89 @@
     <div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
       <div class="item-content-wrap">
         <div class="search-wrap">
-          <el-form ref="adSearchForm" :model="adSearchForm"  :inline="true" class="search-form">
-            <el-form-item label="" prop="adTrade">
-              <el-select v-model="adSearchForm.ad_trade_id" filterable placeholder="请搜索广告行业" @change="adTradeChangeHandle('search')" clearable>
-                <el-option
-                  v-for="item in adTradeList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="" prop="advertiser_id">
-              <el-select v-model="adSearchForm.advertiser_id" filterable placeholder="请搜索广告主" @change="advertiserChangeHandle('search')" :loading="searchLoading" clearable>
-                <el-option
-                  v-for="item in advertiserList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="" prop="advertisement_id">
-              <el-select v-model="adSearchForm.advertisement_id" filterable  placeholder="请搜索广告" :loading="searchLoading" clearable>
-                <el-option
-                  v-for="item in advertisementList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="" prop="area_id">
-              <el-select v-model="adSearchForm.area_id" placeholder="请选择区域" filterable @change="areaChangeHandle" clearable>
-                <el-option
-                  v-for="item in areaList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="" prop="market_id">
-              <el-select v-model="adSearchForm.market_id"  placeholder="请搜索商场" filterable :loading="searchLoading" remote :remote-method="getMarket" @change="marketChangeHandle" clearable>
-                <el-option
-                  v-for="item in marketList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="" prop="point_id">
-              <el-select v-model="adSearchForm.point_id" placeholder="请选择点位"   filterable :loading="searchLoading" clearable>
-                <el-option
-                  v-for="item in pointList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="search('adSearchForm')">搜索</el-button>
-              <el-button @click="resetSearch('adSearchForm')">重置</el-button>
-            </el-form-item>
+          <el-form ref="adSearchForm" :model="adSearchForm"  class="search-form">
+            <el-row :gutter="20">
+              <el-col :span="6">
+                <el-form-item label="" prop="adTrade">
+                  <el-select v-model="adSearchForm.ad_trade_id" filterable placeholder="请搜索广告行业" @change="adTradeChangeHandle('search')" clearable>
+                    <el-option
+                      v-for="item in adTradeList"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item label="" prop="advertiser_id">
+                  <el-select v-model="adSearchForm.advertiser_id" filterable placeholder="请搜索广告主" @change="advertiserChangeHandle('search')" :loading="searchLoading" clearable>
+                    <el-option
+                      v-for="item in advertiserList"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item label="" prop="advertisement_id">
+                  <el-select v-model="adSearchForm.advertisement_id" filterable  placeholder="请搜索广告" :loading="searchLoading" clearable>
+                    <el-option
+                      v-for="item in advertisementList"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="6">
+                <el-form-item label="" prop="area_id">
+                  <el-select v-model="adSearchForm.area_id" placeholder="请选择区域" filterable @change="areaChangeHandle" clearable>
+                    <el-option
+                      v-for="item in areaList"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item label="" prop="market_id">
+                  <el-select v-model="adSearchForm.market_id"  placeholder="请搜索商场" filterable :loading="searchLoading" remote :remote-method="getMarket" @change="marketChangeHandle" clearable>
+                    <el-option
+                      v-for="item in marketList"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item label="" prop="point_id">
+                  <el-select v-model="adSearchForm.point_id" placeholder="请选择点位"   filterable :loading="searchLoading" clearable>
+                    <el-option
+                      v-for="item in pointList"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item>
+                  <el-button type="primary" @click="search('adSearchForm')">搜索</el-button>
+                  <el-button @click="resetSearch('adSearchForm')">重置</el-button>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </el-form>
         </div>
         <div class="editCondition-wrap" style="padding: 0 0 15px;">
@@ -243,7 +261,7 @@
 import ad from 'service/ad'
 import search from 'service/search'
 
-import { Button, Input, Table,Select, Option, Col, TableColumn, Pagination, Form, FormItem, MessageBox, DatePicker, Checkbox, CheckboxGroup, Dialog} from 'element-ui'
+import { Button, Input, Table,Select, Option, Col, TableColumn, Pagination, Form, FormItem, MessageBox, DatePicker, Checkbox, CheckboxGroup, Dialog, Row } from 'element-ui'
 
 export default {
   data () {
@@ -644,7 +662,9 @@ export default {
     'el-checkbox-group': CheckboxGroup,
     'el-checkbox': Checkbox,
     'el-dialog':Dialog,
-    "el-col": Col
+    "el-col": Col,
+    "el-row": Row
+
   }
 }
 </script>
@@ -695,15 +715,10 @@ export default {
           align-items: center;
           margin-bottom: 10px;
           .el-form-item{
-            margin-bottom: 5px;
+            margin-bottom: 10px;
           }
           .el-select{
             width: 200px;
-          }
-          @media (max-width: 1368px) {
-            .el-select{
-              width: 250px;
-            }
           }
           .warning{
             background: #ebf1fd;
