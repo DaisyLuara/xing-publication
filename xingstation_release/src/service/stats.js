@@ -4,10 +4,12 @@ const USER_PROJECT_API = '/api/projects/query'
 const STATS_API = '/api/stats'
 const DAY_DETAIL_API = '/api/detail'
 const AGE_GENDER_API = '/api/age_gender'
+const HOST = process.env.SERVER_URL
+
 export default {
   getUser(context,args) {
     return new Promise(function(resolve, reject){
-      context.$http.get(STAFFS_API, {params:args}).then(response => {
+      context.$http.get(HOST + STAFFS_API, {params:args}).then(response => {
         resolve(response.data)
       }).catch(error => {
         reject(error)
@@ -16,7 +18,7 @@ export default {
   },
   getProject(context, args) {
     return new Promise(function(resolve, reject){
-      context.$http.get(USER_PROJECT_API, {params:args}).then(response => {
+      context.$http.get(HOST + USER_PROJECT_API, {params:args}).then(response => {
         resolve(response.data)
       }).catch(error => {
         reject(error)
@@ -25,7 +27,7 @@ export default {
   },
   getStaus(context, args){
     return new Promise(function(resolve, reject){
-      context.$http.get(STATS_API, {params:args}).then(response => {
+      context.$http.get(HOST + STATS_API, {params:args}).then(response => {
         resolve(response.data)
       }).catch(error => {
         reject(error)
@@ -34,7 +36,7 @@ export default {
   },
   getDayDetail(context, args) {
     return new Promise(function(resolve, reject){
-      context.$http.get(DAY_DETAIL_API, {params:args}).then(response => {
+      context.$http.get(HOST + DAY_DETAIL_API, {params:args}).then(response => {
         resolve(response.data)
       }).catch(error => {
         reject(error)
@@ -43,7 +45,7 @@ export default {
   },
   getAgeAndGender(context, args){
     return new Promise(function(resolve, reject){
-      context.$http.get(AGE_GENDER_API, {params:args}).then(response => {
+      context.$http.get(HOST + AGE_GENDER_API, {params:args}).then(response => {
         resolve(response.data)
       }).catch(error => {
         reject(error)

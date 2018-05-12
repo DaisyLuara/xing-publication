@@ -1,10 +1,6 @@
 import {router} from '../main'
-// <<<<<<< Updated upstream
-// const TEAM_API = '/tower/teams/'
-// const TOWER_LIST = 'https://tower.im/api/v1/teams/c6dc912c2f494e7ea73bed4488bb3493/members'
-// =======
-const TOWER_LIST = '/apiceshi/'+'api/v1/teams/c6dc912c2f494e7ea73bed4488bb3493/members'
-// >>>>>>> Stashed changes
+const TOWER = '/tower/'
+const TEAM_API = 'api/v1/teams/'
 export default {
   getTowerList(context) {
     return new Promise(function(resolve, reject){
@@ -15,9 +11,9 @@ export default {
       })
     })
   },
-  getTeamList(context,id) {
+  getProjectsList(context,id) {
     return new Promise(function(resolve, reject){
-      context.$http.get(TEAM_API + id + '/projects').then(response => {
+      context.$http.get(TOWER + TEAM_API + id + '/projects').then(response => {
         resolve(response.data)
       }).catch(error => {
         reject(error)
