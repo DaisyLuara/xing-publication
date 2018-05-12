@@ -115,13 +115,8 @@ export default {
   },
   methods: {
     towerAuthorization() {
-    var divDom = document.getElementById('test')
-    return team.getProjectsList(this).then((response) => {
-        console.log(response)
-        divDom.innerHTML = response
-    }).catch(err => {
-    console.log(err)
-    })
+        let user_info = JSON.parse(localStorage.getItem('user_info'))
+        window.open('http://papi.jingfree.top/api/login/tower?id=' + user_info.id)
     },
     say(event)
     {
