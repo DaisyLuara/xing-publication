@@ -15,27 +15,17 @@ function VueAxios(Vue) {
   }
 
   // axios默认设置
-  //axios.defaults.baseURL = process.env.SERVER_URL;
+  axios.defaults.baseURL = process.env.SERVER_URL;
   // axios.defaults.withCredentials = true;
 
   // http拦截器
   axios.interceptors.request.use(function(config) {
-// <<<<<<< Updated upstream
-//     console.log(config)
-//     if(!config.url.includes('tower')) {
-//       config.headers['Authorization'] = 'Bearer ' + auth.getToken();
-//     } else {
-//       config.headers['Authorization'] = 'Bearer 08b439dddc557716fc794f3556ba36f320a70ab8d2b72af8ede3f64c44c087de';
-//     }
-// =======
     config.headers['Authorization'] = 'Bearer ' + auth.getToken();
     if (config.url.includes('api/v1')) {
-      config.headers['Authorization'] = 'Bearer ' + '08b439dddc557716fc794f3556ba36f320a70ab8d2b72af8ede3f64c44c087de';
+      config.headers['Authorization'] = 'Bearer ' + 'dbec1544e30e5f3b113771f427dcda8fa721fc7eeaee416685549bbe24f694ae';
       return config;
     } 
     config.headers['Authorization'] = 'Bearer ' + auth.getToken();
-    console.log()
-// >>>>>>> Stashed changes
     // one request of refreshing token can be send at one time
     // auth or logout cannot trrigle refresh token
     // if (store.getters.isRefreshToken || config.url.includes('auth') || config.url.includes('logout')) {
