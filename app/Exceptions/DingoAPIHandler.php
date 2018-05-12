@@ -5,7 +5,6 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
-use Dingo\Api\Http\Response\Factory;
 
 class DingoAPIHandler extends ExceptionHandler
 {
