@@ -45,7 +45,7 @@ class Handler extends ExceptionHandler
     public function report(Exception $exception)
     {
 
-        if ($this->shouldReport($exception)) {
+        if ($this->shouldReport($exception) && env('APP_ENV') == 'production') {
 
             $official_account = app('wechat.official_account');
             $official_account->template_message->send([
