@@ -5,33 +5,22 @@
         <el-card class="box-card">
           <div class="search-wrap">
             <el-form :model="filters" :inline="true" ref="searchForm" >
-              <!-- <el-form-item label="" prop="name">
-                <el-button icon="el-icon-star-off" class="btn"></el-button>
-              </el-form-item> -->
-              <el-form-item label="" prop="name">
-                <el-button class="btn active">所有项目</el-button>
-              </el-form-item>
-              <el-form-item label="" prop="">
-                <el-button class="btn">3月峰会</el-button>
-              </el-form-item>
-              <el-form-item label="" prop="name">
-                <el-button class="btn">APP开发</el-button>
-              </el-form-item>
-              <el-form-item label="" prop="name">
-                <el-button class="btn">游戏模版修改</el-button>
-              </el-form-item>
-              <el-form-item label="" prop="name">
-                <el-button class="btn">星视度平台</el-button>
+              <el-form-item label="" v-for="item in titleArr" :key="item.id" >
+              <el-button icon="el-icon-star-off" class="btn" @click="changePage" :class="{'active': 'item.id' == active}" v-if="item.id == 0"></el-button>
+                <el-button class="btn" :class="{'active': item.id == active}" @click="changePage" v-else>{{item.attributes.name}}</el-button>
               </el-form-item>
             </el-form>
           </div>
           <el-table
-          :data="tableData"
+          :data="allProjectsList"
           style="width: 100%" :show-header="false" :cell-class-name="tableColClassName">
             <el-table-column
-              prop="name"
+              prop=""
               label=""
               >
+              <template slot-scope="scope">
+                {{scope.row.attributes.name}}
+              </template>
             </el-table-column>
           </el-table>
         </el-card>
@@ -50,6 +39,7 @@ export default {
       filters: {
         name: ''
       },
+      active: '1',
       setting: {
         loading: false,
         loadingText: "拼命加载中"
@@ -64,15 +54,7 @@ export default {
         currentPage: 1
       },
       titleArr: [],
-      allProjectsList: [{
-        name: '商场室内点位展示-小程序',
-      }, {
-        name: '商场室内点位展示-小程序',
-      }, {
-        name: '商场室内点位展示-小程序',
-      }, {
-        name: '商场室内点位展示-小程序',
-      }]
+      allProjectsList: []
     }
   },
   mounted() {
@@ -89,41 +71,38 @@ export default {
       console.log(22)
       return "col-td";
     },
+    changePage() {
+
+    },
     getTeamsList () {
       this.setting.loadingText = "拼命加载中"
       this.setting.loading = true;
       let id = 'c6dc912c2f494e7ea73bed4488bb3493'
       return team.getProjectsList(this, id).then((response) => {
         this.allProjectsList = response.data
-        console.log(response)
-        this.titleArr = response.include
+        console.log(this.allProjectsList)
+        this.titleArr = response.included
+        this.titleArr.unshift({
+          "id": "0",
+          "type": "project_groups",
+          "attributes": {
+              "name": "",
+              "display_order": 0
+          }
+        },{
+          "id": "1",
+          "type": "project_groups",
+          "attributes": {
+            "name": "所有项目",
+            "display_order": 0
+          }
+        })
+        console.log(this.titleArr)
         this.setting.loading = false;
       }).catch(err => {
         console.log(err)
        this.setting.loading = false;
       })
-
-
-    }, 
-    changePage (currentPage) {
-      this.pagination.currentPage = currentPage
-      this.getProjectListDetails ();
-    },
-    linkToEdit(){
-      console.log(11111);
-    },
-    showData(){
-      console.log(222222);
-    },
-    search () {
-      // this.pagination.currentPage = 1;
-      // this.tableData = []
-      // this.getProjectListDetails();
-    },
-    resetSearch () {
-      this.filters.name = ''
-      // this.pagination.currentPage = 1;
-      // this.getProjectListDetails();
     },
   },
   components: {

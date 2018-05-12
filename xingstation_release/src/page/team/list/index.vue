@@ -6,8 +6,8 @@
            
         <el-form :model="filters" :inline="true" ref="searchForm" >
            <el-button  :autofocus="false" round v-for="(item,index) in groupData" :id="item.id" @click="say($event)" >{{item.attributes.name=='ACTIVIEW'?'团队成员':item.attributes.name}}</el-button>
-          </el-form>
-            
+        </el-form>
+        <el-button class="btn" @click="towerAuthorization">tower授权</el-button>
         </div>
       <div class="member-wrap">
         <div class="total-wrap">
@@ -67,6 +67,7 @@
       
       </div>  
     </div>
+    <div id="test"></div>
   </div>
 </template>
 
@@ -113,6 +114,15 @@ export default {
     
   },
   methods: {
+    towerAuthorization() {
+    var divDom = document.getElementById('test')
+    return team.getProjectsList(this).then((response) => {
+        console.log(response)
+        divDom.innerHTML = response
+    }).catch(err => {
+    console.log(err)
+    })
+    },
     say(event)
     {
       //获取当前元素id
