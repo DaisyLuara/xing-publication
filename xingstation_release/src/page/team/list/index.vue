@@ -67,6 +67,7 @@
       
       </div>  
     </div>
+    <div id="test"></div>
   </div>
 </template>
 
@@ -2422,7 +2423,13 @@ export default {
   },
   methods: {
     towerAuthorization() {
-        
+    var divDom = document.getElementById('test')
+    return team.getProjectsList(this).then((response) => {
+        console.log(response)
+        divDom.innerHTML = response
+    }).catch(err => {
+    console.log(err)
+    })
     },
     say(event)
     {

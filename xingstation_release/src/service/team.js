@@ -1,6 +1,7 @@
 import {router} from '../main'
 const TOWER = '/tower/'
 const TEAM_API = 'api/v1/teams/'
+const Authorization_API = '/login/tower'
 export default {
   getTowerList(context) {
     return new Promise(function(resolve, reject){
@@ -19,6 +20,16 @@ export default {
         reject(error)
       })
     })
+  },
+  towerAuthorization(context) {
+    return new Promise(function(resolve, reject){
+      context.$http.get(TOWER + Authorization_API).then(response => {
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+    
   }
 }
 
