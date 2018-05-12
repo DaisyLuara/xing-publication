@@ -85,8 +85,8 @@ export default {
         console.log(item)
         var filterArr = this.projectsList.filter(project => {
           console.log(project)
-          if(project.relationships.project_groups.data.length > 0) {
-            project.relationships.data[0].id == item.id
+          if(project.relationships.project_groups.data[0].length > 0) {
+            project.relationships.project_groups.data[0].id == item.id
           }
         })
         this.allProjectsList = filterArr

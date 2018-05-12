@@ -16,12 +16,12 @@ function VueAxios(Vue) {
 
   // axios默认设置
 
-  // axios.defaults.baseURL = process.env.SERVER_URL;
+  axios.defaults.baseURL = process.env.SERVER_URL;
   // axios.defaults.withCredentials = true;
 
   // http拦截器
   axios.interceptors.request.use(function(config) {
-    config.headers['Authorization'] = 'Bearer ' + auth.getToken();
+    // config.headers['Authorization'] = 'Bearer ' + auth.getToken();
     if (config.url.includes('api/v1')) {
       config.headers['Authorization'] = 'Bearer ' + 'dbec1544e30e5f3b113771f427dcda8fa721fc7eeaee416685549bbe24f694ae';
       return config;
