@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -17,8 +18,9 @@ use Illuminate\Http\Request;
 $api = app('Dingo\Api\Routing\Router');
 
 app('Dingo\Api\Exception\Handler')->register(function (Exception $exception) {
-    $request = Illuminate\Http\Request::capture();
-    return app('App\Exceptions\DingoAPIHandler')->render($request, $exception);
+    if ($exception instanceof TokenExpiredException) {
+        return response()->json('未登录', 401);
+    };
 });
 
 $api->version('v1', [
