@@ -1,5 +1,5 @@
 import {router} from '../main'
-const TOWER = '/tower/'
+// const TOWER = '/tower/'
 const TEAM_API = 'api/v1/teams/'
 const Authorization_API = '/login/tower'
 export default {
@@ -14,7 +14,7 @@ export default {
   },
   getProjectsList(context,id) {
     return new Promise(function(resolve, reject){
-      context.$http.get(TOWER + TEAM_API + id + '/projects').then(response => {
+      context.$http.get(TEAM_API + id + '/projects').then(response => {
         resolve(response.data)
       }).catch(error => {
         reject(error)
@@ -23,7 +23,7 @@ export default {
   },
   towerAuthorization(context) {
     return new Promise(function(resolve, reject){
-      context.$http.get(TOWER + Authorization_API).then(response => {
+      context.$http.get(Authorization_API).then(response => {
         resolve(response)
       }).catch(error => {
         reject(error)
