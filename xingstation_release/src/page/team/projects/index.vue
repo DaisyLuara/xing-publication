@@ -2,45 +2,47 @@
   <div class="root">
     <div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
       <div class="item-content-wrap">
-       <div class="search-wrap">
-          <el-form :model="filters" :inline="true" ref="searchForm" >
-            <el-form-item label="" prop="name">
-               <el-button icon="el-icon-star-off" class="btn"></el-button>
-            </el-form-item>
-            <el-form-item label="" prop="name">
-               <el-button class="btn active">所有项目</el-button>
-            </el-form-item>
-            <el-form-item label="" prop="name">
-               <el-button class="btn">3月峰会</el-button>
-            </el-form-item>
-            <el-form-item label="" prop="name">
-              <el-button class="btn">APP开发</el-button>
-            </el-form-item>
-            <el-form-item label="" prop="name">
-              <el-button class="btn">游戏模版修改</el-button>
-            </el-form-item>
-            <el-form-item label="" prop="name">
-              <el-button class="btn">星视度平台</el-button>
-            </el-form-item>
-          </el-form>
-        </div>
-        <el-table
-        :data="tableData"
-        style="width: 100%" :show-header="false">
-          <el-table-column
-            prop="name"
-            label=""
-            width="180">
-          </el-table-column>
-        </el-table>
+        <el-card class="box-card">
+          <div class="search-wrap">
+            <el-form :model="filters" :inline="true" ref="searchForm" >
+              <el-form-item label="" prop="name">
+                <el-button icon="el-icon-star-off" class="btn"></el-button>
+              </el-form-item>
+              <el-form-item label="" prop="name">
+                <el-button class="btn active">所有项目</el-button>
+              </el-form-item>
+              <el-form-item label="" prop="name">
+                <el-button class="btn">3月峰会</el-button>
+              </el-form-item>
+              <el-form-item label="" prop="name">
+                <el-button class="btn">APP开发</el-button>
+              </el-form-item>
+              <el-form-item label="" prop="name">
+                <el-button class="btn">游戏模版修改</el-button>
+              </el-form-item>
+              <el-form-item label="" prop="name">
+                <el-button class="btn">星视度平台</el-button>
+              </el-form-item>
+            </el-form>
+          </div>
+          <el-table
+          :data="tableData"
+          style="width: 100%" :show-header="false" :cell-class-name="tableColClassName">
+            <el-table-column
+              prop="name"
+              label=""
+              >
+            </el-table-column>
+          </el-table>
+        </el-card>
       </div>  
     </div>
   </div>
 </template>
 
 <script>
-
-import { Button, Input, Table, TableColumn, Pagination,Dialog, Form, FormItem, MessageBox, DatePicker, Select, Option, CheckboxGroup, Checkbox} from 'element-ui'
+ import team from 'service/team'
+import { Button, Input, Table, TableColumn, Form, FormItem, MessageBox, Card,} from 'element-ui'
 
 export default {
   data () {
@@ -75,30 +77,46 @@ export default {
   mounted() {
   },
   created () {
-    // this.getProjectListDetails();
+    this.getTeamsList();
     // let user_info = JSON.parse(localStorage.getItem('user_info'))
     // this.arUserName = user_info.name
     // this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
     
   },
   methods: {
-   getProjectListDetails () {
+    tableColClassName({row, column, rowIndex, columnIndex}) {
+      console.log(22)
+      return "col-td";
+    },
+    getTeamsList () {
       this.setting.loadingText = "拼命加载中"
       this.setting.loading = true;
-      let searchArgs = {
-        page : this.pagination.currentPage,
-        name : this.filters.name
-        }
-      project.getProjectListDetails(this, searchArgs).then((response) => {
-       let data = response.data
-       this.tableData = data
-       console.log(response);
-       this.pagination.total = response.meta.pagination.total
+      let id = 'c6dc912c2f494e7ea73bed4488bb3493'
+      // return team.getTeamsList(this, id ,args).then((response) => {
+      //  let data = response.data
+      //  console.log(data)
+      // //  this.tableData = data
+      // //  console.log(response);
+      //  this.setting.loading = false;
+      // }).catch(error => {
+      //   console.log(error)
+      // this.setting.loading = false;
+      // })
+      return team.getTeamList(this, id).then((response) => {
+        // this.projectList = response.data
+        console.log(response)
+        // if(this.projectList.length == 0) {
+        //   this.projectForm.project = ''
+        //   this.projectList = []
+        // }
        this.setting.loading = false;
-      }).catch(error => {
-        console.log(error)
-      this.setting.loading = false;
+        
+      }).catch(err => {
+        console.log(err)
+       this.setting.loading = false;
       })
+
+
     }, 
     changePage (currentPage) {
       this.pagination.currentPage = currentPage
@@ -123,18 +141,12 @@ export default {
   },
   components: {
     "el-table": Table,
-    "el-date-picker": DatePicker,
     "el-table-column":  TableColumn,
     "el-button": Button,
     "el-input": Input,
-    "el-pagination": Pagination,
     "el-form": Form,
     "el-form-item": FormItem,
-    'el-select': Select,
-    'el-option': Option,
-    'el-checkbox-group': CheckboxGroup,
-    'el-checkbox': Checkbox,
-    'el-dialog':Dialog
+    "el-card": Card
   }
 }
 </script>
@@ -143,13 +155,21 @@ export default {
   .root {
     font-size: 14px;
     color: #5E6D82;
+   
     .item-list-wrap{
       background: #fff;
       padding: 30px;
-      .el-table__row:hover {
+      .el-table{
+        font-size: 18px;
+        color: #333;
+      }
+      .el-table--enable-row-hover .el-table__body tr:hover>td {
         background-color: #FBFDF7;
       }
       .item-content-wrap{
+        position: relative;
+        width: 1000px;
+        margin: 0 auto;
         .search-wrap{
           margin-top: 5px;
           display: flex;
