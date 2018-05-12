@@ -18,7 +18,7 @@ class TowerLoginController extends Controller
     {
         $tower = Socialite::driver('tower')->stateless();
         if ($request->id) {
-            $tower->with($request->id);
+            $tower->with(['user_id' => $request->id]);
         }
 
         return $tower->redirect();
