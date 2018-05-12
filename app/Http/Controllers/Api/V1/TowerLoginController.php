@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 
 use Laravel\Socialite\Facades\Socialite;
+use Log;
 
 class TowerLoginController extends Controller
 {
@@ -14,7 +15,7 @@ class TowerLoginController extends Controller
      */
     public function redirectToProvider()
     {
-        return Socialite::driver('tower')->redirect();
+        return Socialite::driver('tower')->stateless()->redirect();
     }
 
     /**
@@ -24,7 +25,7 @@ class TowerLoginController extends Controller
      */
     public function handleProviderCallback()
     {
-        $user = Socialite::driver('tower')->user();
-
+        $user = Socialite::driver('tower')->stateless()->user();
+        Log::info('get user from tower', ['user' => $user]);
     }
 }
