@@ -2,16 +2,16 @@
   <div class="root">
     <div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
       <div class="item-content-wrap">
-       <div id="button-wrap">
+       <div class="button-wrap">
            
         <el-form :model="filters" :inline="true" ref="searchForm" >
-           <el-button  class="active" round v-for="(item,index) in groupData" :id="item.id" @click="say($event)" >{{item.attributes.name=='ACTIVIEW'?'团队成员':item.attributes.name}}</el-button>
+           <el-button  :autofocus="false" round v-for="(item,index) in groupData" :id="item.id" @click="say($event)" >{{item.attributes.name=='ACTIVIEW'?'团队成员':item.attributes.name}}</el-button>
           </el-form>
             
         </div>
       <div class="member-wrap">
         <div class="total-wrap">
-            <h3 class="label" style="font-size:16px">
+            <h3 class="label">
             {{gropName}}
             <span style="font-size:10px">共（<b>{{updateDate.length}}</b>）人</span>
             </h3>
@@ -20,7 +20,8 @@
           <el-table-column
             prop="attributes.gavatar"
             label="图标"
-            min-width="130"
+            min-width="80"
+            align="center"
             >
             <template slot-scope="scope">
               <img :src="scope.row.attributes.gavatar" alt=""  class="icon-item"/> 
@@ -29,11 +30,11 @@
           <el-table-column
             prop="attributes.nickname"
             label="名称"
-            min-width="100"
+            min-width="130"
             >
             <template slot-scope="scope">
-              <a>{{scope.row.attributes.nickname}}</a>
-              <el-tag type="info" v-for="(item,index) in scope.row.relationships.groups.data ">{{item.id | groupFilters(groupData)}}</el-tag>
+              <a class="member-name">{{scope.row.attributes.nickname}}</a>
+              <el-tag type="info" class="group-tag" v-for="(item,index) in scope.row.relationships.groups.data ">{{item.id | groupFilters(groupData)}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column
@@ -41,6 +42,9 @@
             label="手机号"
             min-width="100"
             >
+            <template slot-scope="scope">
+              <span>{{scope.row.attributes.phone==null?'-':scope.row.attributes.phone}}</span>
+            </template>
           </el-table-column>
           <el-table-column
             prop="attributes.mailbox"
@@ -52,7 +56,11 @@
             prop="attributes.comment"
             label="内容"
             min-width="100"
+            align="right"
            >
+            <template slot-scope="scope">
+              <span>{{scope.row.attributes.comment==null?'-':scope.row.attributes.comment}}</span>
+            </template>
           </el-table-column>
         </el-table>
      </div>
@@ -63,7 +71,7 @@
 </template>
 
 <script>
- import team from 'service/team'
+import team from 'service/team'
 let th=this;
 import { Button, Input, Table, TableColumn, Pagination,Dialog, Form, FormItem, MessageBox, DatePicker, Select, Option, CheckboxGroup, Checkbox,Tag} from 'element-ui'
 
@@ -2416,10 +2424,9 @@ export default {
     say(event)
     {
       //获取当前元素id
-      var el = event.currentTarget;
-      console.log(this.groupData);
-		   alert("当前对象的内容："+el.innerHTML);
-       var id='ff84d99229b7402ebf873f1e9caacfa7';
+      var id = event.currentTarget.id;
+		   alert(id);
+       //var id='ff84d99229b7402ebf873f1e9caacfa7';
        this.updateDate=new Array();
        for(var i=0;i<this.groupData.length;i++)
        {
@@ -2443,24 +2450,23 @@ export default {
        }
        
     },
-   getTowerList () {
+    getTowerList () {
       this.setting.loadingText = "拼命加载中"
       this.setting.loading = true;
-      let searchArgs = {}
-      // team.getTowerList(this, searchArgs).then((response) => {
-      //  let data = response.data
-      //  this.tableData = data
-      //  console.log(response);
-      //  this.setting.loading = false;
-      // }).catch(error => {
-      //   console.log(error)
-      // this.setting.loading = false;
-      // })
-     
-      this.tableData=this.responseDate;
-      this.updateDate=this.responseDate;
-      this.groupData=this.responseIncluded;
+      team.getTowerList(this).then((response) => {
+       let data = response.data
+       this.tableData = data
+       console.log(response);
+       this.setting.loading = false;
+      }).catch(error => {
+        console.log(error)
       this.setting.loading = false;
+      })
+     
+      // this.tableData=this.responseDate;
+      // this.updateDate=this.responseDate;
+      // this.groupData=this.responseIncluded;
+      // this.setting.loading = false;
     }
   },
   filters:{
@@ -2493,6 +2499,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+//::selection { background:red; color:lightgreen; } 
+// ::-moz-selection { background:deeppink; color:lightgreen; } 
+// ::-webkit-selection { background:deeppink; color:lightgreen;}
   .root {
     font-size: 14px;
     color: #5E6D82;
@@ -2516,10 +2525,11 @@ export default {
           width: 50%;
         }
         .icon-item{
-          padding: 10px;
-          width: 50%;
+          padding: 5px;
+          width: 45%;
+          border-radius:50%;
         }
-        #button-wrap{
+        .button-wrap{
           margin-top: 5px;
           display: flex;
           flex-direction: row;
@@ -2531,12 +2541,16 @@ export default {
             margin-bottom: 0;
           }
           .el-button{
-            margin-top:5px;
-            margin-left:0;
+            margin:5px 5px 5px 0;
           }
-          .active{
-            background:#72b7e8;
-          } 
+          .el-button:hover{
+            background: #72b7e8;
+            color: #ffffff;  
+          }
+          .el-button:focus{
+            background: #72b7e8;
+            color: #ffffff;  
+          }
         }
         .total-wrap{
           margin-top: 5px;
@@ -2547,13 +2561,20 @@ export default {
           align-items: center;
           margin-bottom: 10px;
           .label {
-            font-size: 14px;
-            margin:5px 0;
+            font-size: 18px;
+            margin:10px  0 10px 5px;
           }
         }
-        .pagination-wrap{
-          margin: 10px auto;
-          text-align: right;
+        .member-name{
+          display:block;
+          font-size:16px;
+          font-weight:700;
+        }
+        .group-tag{
+           margin:5px 5px 5px 0;
+           //padding:0 5px;
+           border-radius:20px;
+           font-size:14px;
         }
       }
     }
