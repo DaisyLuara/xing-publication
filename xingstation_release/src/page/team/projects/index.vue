@@ -5,13 +5,13 @@
         <el-card class="box-card">
           <div class="search-wrap">
             <el-form :model="filters" :inline="true" ref="searchForm" >
-              <el-form-item label="" prop="name">
+              <!-- <el-form-item label="" prop="name">
                 <el-button icon="el-icon-star-off" class="btn"></el-button>
-              </el-form-item>
+              </el-form-item> -->
               <el-form-item label="" prop="name">
                 <el-button class="btn active">所有项目</el-button>
               </el-form-item>
-              <el-form-item label="" prop="name">
+              <el-form-item label="" prop="">
                 <el-button class="btn">3月峰会</el-button>
               </el-form-item>
               <el-form-item label="" prop="name">
@@ -63,7 +63,8 @@ export default {
         pageSize: 10,
         currentPage: 1
       },
-      tableData: [{
+      titleArr: [],
+      allProjectsList: [{
         name: '商场室内点位展示-小程序',
       }, {
         name: '商场室内点位展示-小程序',
@@ -92,25 +93,11 @@ export default {
       this.setting.loadingText = "拼命加载中"
       this.setting.loading = true;
       let id = 'c6dc912c2f494e7ea73bed4488bb3493'
-      // return team.getTeamsList(this, id ,args).then((response) => {
-      //  let data = response.data
-      //  console.log(data)
-      // //  this.tableData = data
-      // //  console.log(response);
-      //  this.setting.loading = false;
-      // }).catch(error => {
-      //   console.log(error)
-      // this.setting.loading = false;
-      // })
-      return team.getTeamList(this, id).then((response) => {
-        // this.projectList = response.data
+      return team.getProjectsList(this, id).then((response) => {
+        this.allProjectsList = response.data
         console.log(response)
-        // if(this.projectList.length == 0) {
-        //   this.projectForm.project = ''
-        //   this.projectList = []
-        // }
-       this.setting.loading = false;
-        
+        this.titleArr = response.include
+        this.setting.loading = false;
       }).catch(err => {
         console.log(err)
        this.setting.loading = false;
@@ -168,7 +155,7 @@ export default {
       }
       .item-content-wrap{
         position: relative;
-        width: 1000px;
+        width: 960px;
         margin: 0 auto;
         .search-wrap{
           margin-top: 5px;

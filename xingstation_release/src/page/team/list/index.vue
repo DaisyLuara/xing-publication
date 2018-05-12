@@ -33,7 +33,7 @@
             min-width="130"
             >
             <template slot-scope="scope">
-              <a class="member-name">{{scope.row.attributes.nickname}}</a>
+              <a class="member-name" href="javascript:;">{{scope.row.attributes.nickname}}</a>
               <el-tag type="info" class="group-tag" v-for="(item,index) in scope.row.relationships.groups.data ">{{item.id | groupFilters(groupData)}}</el-tag>
             </template>
           </el-table-column>
@@ -97,9 +97,7 @@ export default {
       tableData: [],
       updateDate:[],
       groupData:[],
-      gropName:'团队成员',
-      responseDate:[],
-    responseIncluded: []
+      gropName:'团队成员'
     }
   },
   mounted() {
@@ -127,33 +125,42 @@ export default {
         if(id===this.groupData[i].id)
         {
           this.gropName=this.groupData[i].attributes.name;
+          if('ACTIVIEW'==this.groupData[i].attributes.name)
+          {
+         this.gropName='团队成员';
+         this.updateDate=this.tableData;
+          }
+          alert(this.groupData[i].attributes.name)
           break;
         }
        }
-       //获取对应分组数据
-       for(var i=0;i<this.tableData.length;i++)
+       if(this.updateDate.length<=0)
        {
-        for(var j=0;j<this.tableData[i].relationships.groups.data.length;j++)
-        {
-        if(id==this.tableData[i].relationships.groups.data[j].id)
-        {
-           this.updateDate.push(this.tableData[i]);
-           break;
-        }
-        }
+       //获取对应分组数据
+           for(var i=0;i<this.tableData.length;i++)
+           {
+             for(var j=0;j<this.tableData[i].relationships.groups.data.length;j++)
+              {
+               if(id==this.tableData[i].relationships.groups.data[j].id)
+              {
+                this.updateDate.push(this.tableData[i]);
+                break;
+              }
+              }
+          }
        }
        
     },
     getTowerList () {
       this.setting.loadingText = "拼命加载中"
       this.setting.loading = true;
-      this.http.defaults.baseURL=''
-      team.getTowerList(this).then((response) => {
-       this.responseDate=response.data;
-       this.responseIncluded=response.included;
-       this.tableData = this.responseDate;
-       this.updateDate=this.responseDate;
-       this.groupData=this.responseIncluded;
+      let id = 'c6dc912c2f494e7ea73bed4488bb3493'
+      team.getTowerList(this, id).then((response) => {
+      //  this.responseDate=response.data;
+      //  this.responseIncluded=response.included;
+       this.tableData = response.data;
+       this.updateDate=response.data;
+       this.groupData=response.included;
        this.setting.loading = false;
        console.log(response);
        this.setting.loading = false;

@@ -1,6 +1,5 @@
 import { router } from '../main'
 import { Message, MessageBox } from 'element-ui'
-
 const HOST = process.env.SERVER_URL
 const LOGIN_API = '/api/authorizations'
 const LOGOUT_API = '/api/authorizations/current'
@@ -12,7 +11,7 @@ export default {
   login(context, creds, redirect) {
     context.setting.submiting = true;
     console.log(creds)
-    context.$http.post(LOGIN_API, creds).then(response => {
+    context.$http.post(HOST + LOGIN_API, creds).then(response => {
       console.log(response)
         //  将token与权限存储到cookie和localstorage中,取的时候从localstorage中取
         let loginResult = response.data;
@@ -55,7 +54,7 @@ export default {
   },
 
   logout(context) {
-    context.$http.delete(LOGOUT_API).then(data => {
+    context.$http.delete(HOST + LOGOUT_API).then(data => {
       this.clearLoginData(context)
       let setIntervalValue = context.$store.state.notificationCount.setIntervalValue
       clearInterval(setIntervalValue)
@@ -83,7 +82,7 @@ export default {
 
   refreshUserInfo(context) {
     return new Promise((resolve, reject) => {
-      context.$http.get(USERINFO_API).then(response => {
+      context.$http.get(HOST + USERINFO_API).then(response => {
           let result = response.data;
           localStorage.setItem("user_info", JSON.stringify(result))
             //context.$store.commit('setCurUserInfo', result.data)
@@ -165,7 +164,7 @@ export default {
 
   modifyUser(context,args){
     return new Promise((resolve, reject) => {
-      context.$http.patch(USER_API, args).then(result => {
+      context.$http.patch(HOST + USER_API, args).then(result => {
         resolve(result.data);
       }).catch(error => {
         reject(error)
@@ -176,7 +175,7 @@ export default {
   // 获取图形验证码
   getImageCaptcha(context, args) {
     let promise = new Promise((resolve, reject) => {
-      context.$http.post(IMAGE_CAPTCHA, args).then(result => {
+      context.$http.post(HOST + IMAGE_CAPTCHA, args).then(result => {
         resolve(result.data);
       }).catch(error => {
         reject(error)
@@ -186,7 +185,7 @@ export default {
   },
   sendSmsCaptcha(context, args) {
     let promise = new Promise((resolve, reject) => {
-      context.$http.post(SMS_CAPTCHA, args).then(response => {
+      context.$http.post(HOST + SMS_CAPTCHA, args).then(response => {
         resolve(response.data)
       }).catch(error => {
         reject(error)

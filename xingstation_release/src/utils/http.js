@@ -15,7 +15,8 @@ function VueAxios(Vue) {
   }
 
   // axios默认设置
-  axios.defaults.baseURL = process.env.SERVER_URL;
+
+  // axios.defaults.baseURL = process.env.SERVER_URL;
   // axios.defaults.withCredentials = true;
 
   // http拦截器

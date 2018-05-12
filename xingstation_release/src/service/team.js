@@ -1,18 +1,19 @@
 import {router} from '../main'
-const TOWER_LIST = '/apiceshi/'+'api/v1/teams/c6dc912c2f494e7ea73bed4488bb3493/members'
+const TOWER = '/tower/'
+const TEAM_API = 'api/v1/teams/'
 export default {
-  getTowerList(context) {
+  getTowerList(context, id) {
     return new Promise(function(resolve, reject){
-      context.$http.get(TOWER_LIST).then(response => {
+      context.$http.get(TOWER+TEAM_API + id + '/members').then(response => {
         resolve(response.data)
       }).catch(error => {
         reject(error)
       })
     })
   },
-  getTeamList(context,id) {
+  getProjectsList(context,id) {
     return new Promise(function(resolve, reject){
-      context.$http.get(TEAM_API + id + '/projects').then(response => {
+      context.$http.get(TOWER + TEAM_API + id + '/projects').then(response => {
         resolve(response.data)
       }).catch(error => {
         reject(error)

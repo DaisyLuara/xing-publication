@@ -1,9 +1,10 @@
 import {router} from '../main'
 const AD_API = '/api/ad_launch'
+const HOST = process.env.SERVER_URL;
 export default {
   getAdList(context,args) {
     return new Promise(function(resolve, reject){
-      context.$http.get(AD_API, {params: args}).then(response => {
+      context.$http.get(HOST + AD_API, {params: args}).then(response => {
         resolve(response.data)
       }).catch(error => {
         reject(error)
@@ -12,7 +13,7 @@ export default {
   },
   saveAdLaunch(context, args) {
     return new Promise(function(resolve, reject){
-      context.$http.post(AD_API, args).then(response => {
+      context.$http.post(HOST + AD_API, args).then(response => {
         resolve(response.data)
       }).catch(error => {
         reject(error)
@@ -21,7 +22,7 @@ export default {
   },
   modifyAdLaunch(context, args) {
     return new Promise(function(resolve, reject){
-      context.$http.patch(AD_API, args).then(response => {
+      context.$http.patch(HOST + AD_API, args).then(response => {
         resolve(response.data)
       }).catch(error => {
         reject(error)
