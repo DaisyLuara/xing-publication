@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -17,8 +18,9 @@ use Illuminate\Http\Request;
 $api = app('Dingo\Api\Routing\Router');
 
 app('Dingo\Api\Exception\Handler')->register(function (Exception $exception) {
-    $request = Illuminate\Http\Request::capture();
-    return app('App\Exceptions\DingoAPIHandler')->render($request, $exception);
+    if ($exception instanceof TokenExpiredException) {
+        return response()->json('未登录', 401);
+    };
 });
 
 $api->version('v1', [
@@ -104,7 +106,7 @@ $api->version('v1', [
             $api->get('push', 'PushController@index');
 
             //Excel
-            $api->get('excel','ExcelController@export');
+            $api->get('excel', 'ExcelController@export');
 
             //节目投放
             $api->get('projects', 'ProjectController@index');
@@ -141,6 +143,10 @@ $api->version('v1', [
             $api->get('companies/{company}/customers/{customer}', 'AdminCustomersController@show');
             $api->post('companies/{company}/customers', ['middleware' => ['permission:company'], 'uses' => 'AdminCustomersController@store']);
             $api->patch('companies/{company}/customers/{customer}', ['middleware' => ['permission:company'], 'uses' => 'AdminCustomersController@update']);
+
+            //第三方集成
+            $api->get('login/tower', 'TowerLoginController@redirectToProvider');
+            $api->get('login/tower/callback', 'TowerLoginController@handleProviderCallback');
 
         });
     });

@@ -43,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\AdLaunch::observe(\App\Observers\AdLaunchObserver::class);
 
         \Carbon\Carbon::setLocale('zh');
+        $this->bootTowerSocialite();
     }
 
     /**
@@ -59,5 +60,17 @@ class AppServiceProvider extends ServiceProvider
         \API::error(function (\Illuminate\Auth\Access\AuthorizationException $exception) {
             abort(403, $exception->getMessage());
         });
+    }
+
+    private function bootTowerSocialite()
+    {
+        $socialite = $this->app->make('Laravel\Socialite\Contracts\Factory');
+        $socialite->extend(
+            'tower',
+            function ($app) use ($socialite) {
+                $config = $app['config']['services.tower'];
+                return $socialite->buildProvider(TowerProvider::class, $config);
+            }
+        );
     }
 }
