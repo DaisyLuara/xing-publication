@@ -16,14 +16,14 @@ function VueAxios(Vue) {
 
   // axios默认设置
 
-  axios.defaults.baseURL = process.env.SERVER_URL;
+  // axios.defaults.baseURL = process.env.SERVER_URL;
   // axios.defaults.withCredentials = true;
 
   // http拦截器
   axios.interceptors.request.use(function(config) {
     // config.headers['Authorization'] = 'Bearer ' + auth.getToken();
     if (config.url.includes('api/v1')) {
-      config.headers['Authorization'] = 'Bearer ' + 'dbec1544e30e5f3b113771f427dcda8fa721fc7eeaee416685549bbe24f694ae';
+      config.headers['Authorization'] = 'Bearer ' + 'e36edf86cac4024f163936a3b8eb3b4223d7f4f3316712a08b33d9a4ece5c406';
       return config;
     } 
     config.headers['Authorization'] = 'Bearer ' + auth.getToken();
