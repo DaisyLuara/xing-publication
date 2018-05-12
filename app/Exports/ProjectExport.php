@@ -30,11 +30,11 @@ class ProjectExport implements FromCollection, WithStrictNullComparison, WithEve
             ->selectRaw("ar_product_list.name as projectName,date_format(face_count_log.date,'%Y-%m') as date, sum(looknum) as lookNum ,sum(playernum) as playerNum ,sum(lovenum) as loveNum,sum(outnum) as outNum,sum(scannum) as scanNum");
 
         $sql1 = "a.projectName ,max(case a.date when '$date1' then concat_ws(',',cast(a.looknum as char),cast(a.playernum as char),cast(a.lovenum as char),cast(a.outnum as char),cast(a.scannum as char)) else 0 end) '$date1'";
-        $sql2 = ",max(case a.date when '$date2' then concat_ws(',',cast(a.looknum as char),cast(a.playernum as char),cast(a.lovenum as char),cast(a.outnum as char),cast(a.scannum as char)) else 0 end) '$date2'";
-        $sql3 = ",max(case a.date when '$date3' then concat_ws(',',cast(a.looknum as char),cast(a.playernum as char),cast(a.lovenum as char),cast(a.outnum as char),cast(a.scannum as char)) else 0 end) '$date3'";
-        $sql4 = ",max(case a.date when '$date4' then concat_ws(',',cast(a.looknum as char),cast(a.playernum as char),cast(a.lovenum as char),cast(a.outnum as char),cast(a.scannum as char)) else 0 end) '$date4'";
-        $sql5 = ",max(case a.date when '$date5' then concat_ws(',',cast(a.looknum as char),cast(a.playernum as char),cast(a.lovenum as char),cast(a.outnum as char),cast(a.scannum as char)) else 0 end) '$date5'";
-        $sql6 = ",max(case a.date when '$date6' then concat_ws(',',cast(a.looknum as char),cast(a.playernum as char),cast(a.lovenum as char),cast(a.outnum as char),cast(a.scannum as char)) else 0 end) '$date6'";
+        $sql2 = ",max(case a.date when '$date2' then concat_ws(',',cast(a.lookNum as char),cast(a.playerNum as char),cast(a.loveNum as char),cast(a.outNum as char),cast(a.scanNum as char)) else 0 end) '$date2'";
+        $sql3 = ",max(case a.date when '$date3' then concat_ws(',',cast(a.lookNum as char),cast(a.playerNum as char),cast(a.loveNum as char),cast(a.outNum as char),cast(a.scanNum as char)) else 0 end) '$date3'";
+        $sql4 = ",max(case a.date when '$date4' then concat_ws(',',cast(a.lookNum as char),cast(a.playerNum as char),cast(a.loveNum as char),cast(a.outNum as char),cast(a.scanNum as char)) else 0 end) '$date4'";
+        $sql5 = ",max(case a.date when '$date5' then concat_ws(',',cast(a.lookNum as char),cast(a.playerNum as char),cast(a.loveNum as char),cast(a.outNum as char),cast(a.scanNum as char)) else 0 end) '$date5'";
+        $sql6 = ",max(case a.date when '$date6' then concat_ws(',',cast(a.lookNum as char),cast(a.playerNum as char),cast(a.loveNum as char),cast(a.outNum as char),cast(a.scanNum as char)) else 0 end) '$date6'";
         $sql = $sql1 . $sql2 . $sql3 . $sql4 . $sql5 . $sql6;
         $faceCount = DB::connection('ar')->table(DB::raw("({$faceCount->toSql()}) as a"))
             ->selectRaw("$sql")
@@ -56,18 +56,18 @@ class ProjectExport implements FromCollection, WithStrictNullComparison, WithEve
                     $aa['projectName'] = $value;
                 } else {
                     if ($value == 0) {
-                        $aa[$key . '-' . 'looknum'] = 0;
-                        $aa[$key . '-' . 'playernum'] = 0;
-                        $aa[$key . '-' . 'lovenum'] = 0;
-                        $aa[$key . '-' . 'outnum'] = 0;
-                        $aa[$key . '-' . 'scannum'] = 0;
+                        $aa[$key . '-' . 'lookNum'] = 0;
+                        $aa[$key . '-' . 'playerNum'] = 0;
+                        $aa[$key . '-' . 'loveNum'] = 0;
+                        $aa[$key . '-' . 'outNum'] = 0;
+                        $aa[$key . '-' . 'scanNum'] = 0;
                     } else {
                         $num = explode(',', $value);
-                        $aa[$key . '-' . 'looknum'] = $num['0'];
-                        $aa[$key . '-' . 'playernum'] = $num['1'];
-                        $aa[$key . '-' . 'lovenum'] = $num['2'];
-                        $aa[$key . '-' . 'outnum'] = $num['3'];
-                        $aa[$key . '-' . 'scannum'] = $num['4'];
+                        $aa[$key . '-' . 'lookNum'] = $num['0'];
+                        $aa[$key . '-' . 'playerNum'] = $num['1'];
+                        $aa[$key . '-' . 'loveNum'] = $num['2'];
+                        $aa[$key . '-' . 'outNum'] = $num['3'];
+                        $aa[$key . '-' . 'scanNum'] = $num['4'];
                     }
                 }
             }
@@ -81,7 +81,7 @@ class ProjectExport implements FromCollection, WithStrictNullComparison, WithEve
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $event->sheet->getDelegate()->setMergeCells(['A1:A2', 'B1:F1', 'G1:K1','L1:P1', 'Q1:U1', 'V1:Z1', 'AA1:AE1']);
+                $event->sheet->getDelegate()->setMergeCells(['A1:A2', 'B1:F1', 'G1:K1', 'L1:P1', 'Q1:U1', 'V1:Z1', 'AA1:AE1']);
             }
         ];
     }

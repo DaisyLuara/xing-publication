@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Exports\ActiveHeaderExport;
 use App\Exports\PointExport;
 use App\Exports\ProjectExport;
 use App\Exports\MarketingExport;
@@ -24,6 +25,10 @@ class ExcelController extends Controller
 
     public function pointExcel(Request $request)
     {
-        Excel::store(new PointExport(), '点位数据统计.xlsx');
+        Excel::store(new PointExport($request), '点位数据统计.xlsx');
+    }
+
+    public function activeExcel(Request $request){
+        Excel::store(new ActiveHeaderExport(),'动态表头测试.xlsx');
     }
 }
