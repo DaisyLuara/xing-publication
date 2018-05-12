@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 
+use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 use Log;
 
@@ -13,7 +14,7 @@ class TowerLoginController extends Controller
      *
      * @return Response
      */
-    public function redirectToProvider()
+    public function redirectToProvider(Request $request)
     {
         return Socialite::driver('tower')->stateless()->redirect();
     }
