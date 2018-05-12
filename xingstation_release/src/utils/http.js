@@ -21,7 +21,6 @@ function VueAxios(Vue) {
 
   // http拦截器
   axios.interceptors.request.use(function(config) {
-    // config.headers['Authorization'] = 'Bearer ' + auth.getToken();
     if (config.url.includes('api/v1')) {
       config.headers['Authorization'] = 'Bearer ' + 'e36edf86cac4024f163936a3b8eb3b4223d7f4f3316712a08b33d9a4ece5c406';
       return config;

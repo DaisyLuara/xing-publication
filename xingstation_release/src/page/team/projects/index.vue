@@ -62,10 +62,6 @@ export default {
   },
   created () {
     this.getTeamsList();
-    // let user_info = JSON.parse(localStorage.getItem('user_info'))
-    // this.arUserName = user_info.name
-    // this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
-    
   },
   methods: {
     tableColClassName({row, column, rowIndex, columnIndex}) {
@@ -83,13 +79,19 @@ export default {
       } else {
         this.active = item.id
         console.log(item)
-        var filterArr = this.projectsList.filter(project => {
-          console.log(project)
-          if(project.relationships.project_groups.data.length > 0) {
-            project.relationships.project_groups.data[0].id == item.id
+        let arr = []
+        for(var i=0;i<this.projectsList.length;i++)
+          {
+            for(var j=0;j<this.projectsList[i].relationships.project_groups.data.length;j++)
+            {
+              if(item.id==this.projectsList[i].relationships.project_groups.data[j].id)
+              {
+                arr.push(this.projectsList[i]);
+                break;
+              }
+            }
           }
-        })
-        this.allProjectsList = filterArr
+          this.allProjectsList = arr
       }
     },
     getTeamsList () {
