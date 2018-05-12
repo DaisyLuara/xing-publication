@@ -15,6 +15,7 @@ function VueAxios(Vue) {
   }
 
   // axios默认设置
+
   // axios.defaults.baseURL = process.env.SERVER_URL;
   // axios.defaults.withCredentials = true;
 
@@ -26,7 +27,6 @@ function VueAxios(Vue) {
       return config;
     } 
     config.headers['Authorization'] = 'Bearer ' + auth.getToken();
-
     // one request of refreshing token can be send at one time
     // auth or logout cannot trrigle refresh token
     // if (store.getters.isRefreshToken || config.url.includes('auth') || config.url.includes('logout')) {
