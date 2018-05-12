@@ -104,8 +104,8 @@ $api->version('v1', [
             $api->get('push', 'PushController@index');
 
             //数据报表导出
+            $api->get('marketing_excel','ExcelController@marketingExcel');
             $api->get('project_excel','ExcelController@projectExcel');
-            $api->get('project_month_excel','ExcelController@projectMonthExcel');
 
             //节目投放
             $api->get('projects', 'ProjectController@index');
