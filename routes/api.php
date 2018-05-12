@@ -53,6 +53,10 @@ $api->version('v1', [
         //话题详情
         $api->get('topics/{topic}', 'TopicsController@show');
 
+        //第三方集成
+        $api->get('login/tower', 'TowerLoginController@redirectToProvider');
+        $api->get('login/tower/callback', 'TowerLoginController@handleProviderCallback');
+
         // 需要 token 验证的接口
         $api->group(['middleware' => 'api.auth'], function ($api) {
 
@@ -144,9 +148,6 @@ $api->version('v1', [
             $api->post('companies/{company}/customers', ['middleware' => ['permission:company'], 'uses' => 'AdminCustomersController@store']);
             $api->patch('companies/{company}/customers/{customer}', ['middleware' => ['permission:company'], 'uses' => 'AdminCustomersController@update']);
 
-            //第三方集成
-            $api->get('login/tower', 'TowerLoginController@redirectToProvider');
-            $api->get('login/tower/callback', 'TowerLoginController@handleProviderCallback');
 
         });
     });

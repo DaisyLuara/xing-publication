@@ -15,7 +15,7 @@ class TowerProvider extends AbstractProvider implements ProviderInterface
      *
      * @var array
      */
-    protected $scopes = ['user:email'];
+    protected $scopes = [''];
 
     /**
      * {@inheritdoc}

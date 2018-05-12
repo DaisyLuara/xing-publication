@@ -1,8 +1,9 @@
 import {router} from '../main'
 const TOWER = '/tower/'
 const HOST = 'https://tower.im/'
+
 const TEAM_API = 'api/v1/teams/'
-const Authorization_API = '/login/tower'
+const Authorization_API = '/api/login/tower'
 export default {
   getTowerList(context, id) {
     return new Promise(function(resolve, reject){
