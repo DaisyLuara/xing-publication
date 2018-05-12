@@ -6,8 +6,8 @@
           <div class="search-wrap">
             <el-form :model="filters" :inline="true" ref="searchForm" >
               <el-form-item label="" v-for="item in titleArr" :key="item.id" >
-              <el-button icon="el-icon-star-off" class="btn" @click="changePage" :class="{'active': 'item.id' == active}" v-if="item.id == 0"></el-button>
-                <el-button class="btn" :class="{'active': item.id == active}" @click="changePage" v-else>{{item.attributes.name}}</el-button>
+              <el-button icon="el-icon-star-off" class="btn" @click="changePage('0')" :class="{'active': item.id == active}" v-if="item.id == 0"></el-button>
+                <el-button class="btn" :class="{'active': item.id == active}" @click="changePage(item)" v-else>{{item.attributes.name}}</el-button>
               </el-form-item>
             </el-form>
           </div>
@@ -54,7 +54,8 @@ export default {
         currentPage: 1
       },
       titleArr: [],
-      allProjectsList: []
+      allProjectsList: [],
+      projectsList: []
     }
   },
   mounted() {
@@ -71,8 +72,25 @@ export default {
       console.log(22)
       return "col-td";
     },
-    changePage() {
-
+    changePage(item) {
+      if(item === '0') {
+        this.active = '0'
+        var pinnedArr = this.projectsList.filter(project => project.attributes.is_pinned == true)
+        this.allProjectsList = pinnedArr
+      } else if (item.id == '1') {
+        this.active = item.id
+        this.allProjectsList = this.projectsList
+      } else {
+        this.active = item.id
+        console.log(item)
+        var filterArr = this.projectsList.filter(project => {
+          console.log(project)
+          if(project.relationships.project_groups.data.length > 0) {
+            project.relationships.data[0].id == item.id
+          }
+        })
+        this.allProjectsList = filterArr
+      }
     },
     getTeamsList () {
       this.setting.loadingText = "拼命加载中"
@@ -98,6 +116,7 @@ export default {
           }
         })
         console.log(this.titleArr)
+        this.projectsList = this.allProjectsList
         this.setting.loading = false;
       }).catch(err => {
         console.log(err)
