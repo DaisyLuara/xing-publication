@@ -110,7 +110,6 @@ class MarketingExport implements FromCollection, WithStrictNullComparison, WithH
         });
 
         return $data;
-        dd($data);
     }
 
     public function registerEvents(): array
