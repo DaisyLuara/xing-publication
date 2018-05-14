@@ -11,10 +11,10 @@ use Maatwebsite\Excel\Events\AfterSheet;
 
 class MarketingExport implements FromCollection, WithStrictNullComparison, WithHeadings, WithEvents
 {
-    public function __construct($startDate, $endDate)
+    public function __construct($request)
     {
-        $this->startDate = $startDate;
-        $this->endDate = $endDate;
+        $this->startDate = $request->start_date;
+        $this->endDate = $request->end_date;
     }
 
     public function headings(): array

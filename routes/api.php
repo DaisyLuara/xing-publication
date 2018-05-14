@@ -108,8 +108,6 @@ $api->version('v1', [
             $api->get('project_excel','ExcelController@projectExcel');
             $api->get('point_excel','ExcelController@pointExcel');
 
-            $api->get('active_header','ExcelController@activeExcel');
-
             //节目投放
             $api->get('projects', 'ProjectController@index');
             $api->get('projects/launch', 'ProjectLaunchController@index');
