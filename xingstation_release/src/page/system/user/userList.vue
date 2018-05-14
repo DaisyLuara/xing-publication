@@ -23,11 +23,6 @@
       <el-table-column prop="name" label="姓名"></el-table-column>
       <el-table-column prop="phone" label="手机号码"></el-table-column>
       <el-table-column prop="role" label="角色"></el-table-column>
-      <el-table-column label="操作" width="200">
-        <template slot-scope="scope">
-          <el-button size="small" @click="linkToEdit(scope.row)">修改</el-button>
-        </template>
-      </el-table-column>
       <el-table-column
         prop="created_at"
         label="创建时间"
@@ -37,6 +32,11 @@
         prop="updated_at"
         label="修改时间"
         >
+      </el-table-column>
+      <el-table-column label="操作" width="200">
+        <template slot-scope="scope">
+          <el-button size="small" @click="linkToEdit(scope.row)" type="warning">修改</el-button>
+        </template>
       </el-table-column>
     </el-table>
     <div class="pagination-wrap">
