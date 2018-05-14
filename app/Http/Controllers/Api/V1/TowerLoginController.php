@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api\V1;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 use Log;
+use App\Models\User;
 
 class TowerLoginController extends Controller
 {
@@ -16,7 +17,8 @@ class TowerLoginController extends Controller
      */
     public function redirectToProvider(Request $request)
     {
-        return Socialite::driver('tower')->stateless()->with(['id' => $request->id])->redirect();
+//        $redirectUrl = config('services')['tower']['redirect'] . '?' . 'id=' . $request->id;
+        return Socialite::driver('tower')->stateless()->redirect();
     }
 
     /**
@@ -26,9 +28,17 @@ class TowerLoginController extends Controller
      */
     public function handleProviderCallback(Request $request)
     {
-        $user = Socialite::driver('tower')
+        Log::info('request all', $request->all());
+        /* @var \Laravel\Socialite\Two\User $tower_user */
+        $tower_user = Socialite::driver('tower')
             ->stateless()
             ->user();
-        Log::info('get user from tower', ['user' => $user]);
+        Log::info('get user from tower', ['tower_user' => $tower_user]);
+        User::where('id', '=', $request->id)->update(
+            [
+                'tower_access_token' => $tower_user->token,
+                'tower_refresh_token' => $tower_user->refreshToken,
+            ]
+        );
     }
 }
