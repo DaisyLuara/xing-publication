@@ -38,7 +38,7 @@ class TowerProvider extends AbstractProvider implements ProviderInterface
      */
     protected function getUserByToken($token)
     {
-        $userUrl = 'https://tower.im/user?access_token=' . $token;
+        $userUrl = 'https://tower.im/api/v1/user?access_token=' . $token;
 
         $response = $this->getHttpClient()->get(
             $userUrl, $this->getRequestOptions()
@@ -55,9 +55,18 @@ class TowerProvider extends AbstractProvider implements ProviderInterface
     protected function mapUserToObject(array $user)
     {
         return (new User)->setRaw($user)->map([
-            'id' => $user['id'], 'nickname' => $user['login'], 'name' => Arr::get($user, 'name'),
-            'email' => Arr::get($user, 'email'), 'avatar' => $user['avatar_url'],
+            'id' => Arr::get($user, 'data.id'), 'nickname' => Arr::get($user, 'data.attributes.nickname'),
+            'email' => Arr::get($user, 'data.attributes.email'),
         ]);
+    }
+
+    protected function getTokenFields($code)
+    {
+        return [
+            'client_id' => $this->clientId, 'client_secret' => $this->clientSecret,
+            'code' => $code, 'redirect_uri' => $this->redirectUrl,
+            'grant_type' => 'authorization_code',
+        ];
     }
 
     /**
