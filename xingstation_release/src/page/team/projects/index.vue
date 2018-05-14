@@ -124,21 +124,21 @@ export default {
         if(response) {
           this.allProjectsList = response.data
           this.titleArr = response.included
-          // this.titleArr.unshift({
-          //   "id": "0",
-          //   "type": "project_groups",
-          //   "attributes": {
-          //       "name": "",
-          //       "display_order": 0
-          //   }
-          // },{
-          //   "id": "1",
-          //   "type": "project_groups",
-          //   "attributes": {
-          //     "name": "所有项目",
-          //     "display_order": 0
-          //   }
-          // })
+          this.titleArr.unshift({
+            "id": "0",
+            "type": "project_groups",
+            "attributes": {
+                "name": "",
+                "display_order": 0
+            }
+          },{
+            "id": "1",
+            "type": "project_groups",
+            "attributes": {
+              "name": "所有项目",
+              "display_order": 0
+            }
+          })
           this.projectsList = this.allProjectsList
         }
         this.setting.loading = false;
