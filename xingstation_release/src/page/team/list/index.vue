@@ -114,6 +114,7 @@ export default {
     }).catch(err => {
       console.log(err)
     })
+    // localStorage.setItem('tower_access_token','8995a9869d18fa19ab7f86dd2e883e9d6e2c92d6a4c89a5faaf77a3efbb3fb67')
     // if(localStorage.getItem('tower_auth') === 'false') {
     //     console.log(22)
     //     this.emptyText = '请点击tower授权按钮'
@@ -163,6 +164,7 @@ export default {
       this.setting.loading = true;
       let id = 'c6dc912c2f494e7ea73bed4488bb3493'
       team.getTowerList(this, id).then((response) => {
+          console.log(response)
         if(response){
         this.tableData = response.data;
         this.updateDate=response.data;
@@ -173,6 +175,7 @@ export default {
        console.log(response);
        this.setting.loading = false;
       }).catch(error => {
+          console.log(error)
       this.setting.loading = false;
       })
     }
