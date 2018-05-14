@@ -71,22 +71,10 @@ export default {
     }).catch(err => {
       console.log(err)
     })
-    // if(localStorage.getItem('tower_auth') === 'false') {
-    //     console.log(22)
-    //     this.emptyText = '请点击tower授权按钮'
-    // } else {
-    //     console.log(2333)
-    //     this.emptyText = '暂无数据'
-        // this.getTeamsList();
-    // }
-        this.getTeamsList();
+    this.getTeamsList();
   },
   methods: {
-    towerAuthorization() {
-        // let user_info = JSON.parse(localStorage.getItem('user_info'))
-        console.log(this.SERVER_URL)
-        window.open(this.SERVER_URL+ '/api/login/tower')
-    },
+    
     tableColClassName({row, column, rowIndex, columnIndex}) {
       return "col-td";
     },
