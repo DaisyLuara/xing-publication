@@ -109,7 +109,6 @@ export default {
       this.setting.loading = true;
       let id = 'c6dc912c2f494e7ea73bed4488bb3493'
       return team.getProjectsList(this, id).then((response) => {
-        console.log(response)
         if(response) {
           this.allProjectsList = response.data
           this.titleArr = response.included
