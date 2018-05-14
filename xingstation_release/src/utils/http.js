@@ -32,7 +32,7 @@ function VueAxios(Vue) {
     } else if(config.url.includes('tower')){
       console.log('tower')
       // config.headers['Authorization'] = 'Bearer ' + auth.getTowerAccessToken();
-      config.headers['Authorization'] = 'Bearer 8995a9869d18fa19ab7f86dd2e883e9d6e2c92d6a4c89a5faaf77a3efbb3fb67'
+      config.headers['Authorization'] = 'Bearer 4ab7f183b1201e082d2248f65ed13859a100551cf1ca4c081d4b575e5c7c8ec7'
       console.log(config)
       return config;
     }else{
