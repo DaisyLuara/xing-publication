@@ -74,9 +74,11 @@ function VueAxios(Vue) {
       // that falls out of the range of 2xx
       if (error.response.status == 401) {
         if (error.response.config.url.includes('api/v1')) {
+            let user_info = JSON.parse(localStorage.getItem('user_info'))
+            let id = user_info.id
             // localStorage.setItem('tower_auth',false);
             console.log(process.env.SERVER_URL)
-            window.open(process.env.SERVER_URL+ '/api/login/tower')
+            window.open(process.env.SERVER_URL+ '/api/login/tower?id=' + id)
         } else {
           // 退出登录，清除登录信息，跳转到登录页面
           // Message.error("对不起，您未被授权")
