@@ -67,14 +67,17 @@ function VueAxios(Vue) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
       if (error.response.status == 401) {
-        console.log(401)
-        // 退出登录，清除登录信息，跳转到登录页面
-        // Message.error("对不起，您未被授权")
-        auth.clearLoginData(app)
-        router.push({
-          path: '/login'
-        })
-        Message.error("请求出错：代码" + error.response.status)
+        if (error.response.config.url.includes('api/v1')) {
+
+        } else {
+          // 退出登录，清除登录信息，跳转到登录页面
+          // Message.error("对不起，您未被授权")
+          auth.clearLoginData(app)
+          router.push({
+            path: '/login'
+          })
+          Message.error("请求出错：代码" + error.response.status)
+        }
       } else {
         if(error.response.status == 429) {
           Message.error("请求出错:" + error.response.statusText)
