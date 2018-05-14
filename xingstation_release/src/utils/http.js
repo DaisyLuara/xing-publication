@@ -31,8 +31,8 @@ function VueAxios(Vue) {
       
     } else if(config.url.includes('tower')){
       console.log('tower')
-      config.headers['Authorization'] = 'Bearer ' + auth.getTowerAccessToken();
-      // config.headers['Authorization'] = 'Bearer 8995a9869d18fa19ab7f86dd2e883e9d6e2c92d6a4c89a5faaf77a3efbb3fb67'
+      // config.headers['Authorization'] = 'Bearer ' + auth.getTowerAccessToken();
+      config.headers['Authorization'] = 'Bearer 8995a9869d18fa19ab7f86dd2e883e9d6e2c92d6a4c89a5faaf77a3efbb3fb67'
       console.log(config)
       return config;
     }else{
@@ -57,6 +57,8 @@ function VueAxios(Vue) {
   axios.interceptors.response.use(function(response) {
     // Do something with response data
     let result = response.data;
+    console.log(response)
+    console.log(result)
     // if (result && !result.success) {
     //   if (response.config && response.config.passError) {
     //     return Promise.reject(response);
@@ -67,7 +69,8 @@ function VueAxios(Vue) {
     // localStorage.setItem('tower_auth',true);
     return response;
   }, function(error) {
-    console.log(error.response)
+    console.log(error)
+    console.log(222222)
     if (error.response) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
