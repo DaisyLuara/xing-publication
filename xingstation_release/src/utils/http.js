@@ -28,12 +28,9 @@ function VueAxios(Vue) {
     if (config.url.includes('auth') || config.url.includes('logout')) {
       config.headers['Authorization'] = 'Bearer ' + auth.getToken();
       return config;
-      
     } else if(config.url.includes('tower')){
-      console.log('tower')
       config.headers['Authorization'] = 'Bearer ' + auth.getTowerAccessToken();
       // config.headers['Authorization'] = 'Bearer e36edf86cac4024f163936a3b8eb3b4223d7f4f3316712a08b33d9a4ece5c406'
-      console.log(config)
       return config;
     }else{
       // if (auth.checkTokenRefresh()) {
@@ -51,16 +48,12 @@ function VueAxios(Vue) {
     }
 
   }, function(error) {
-    console.log(error)
     return Promise.reject(error);
   });
 
   axios.interceptors.response.use(function(response) {
     // Do something with response data
     let result = response.data;
-    console.log(response)
-    console.log(444444)
-
     // if (result && !result.success) {
     //   if (response.config && response.config.passError) {
     //     return Promise.reject(response);
@@ -70,8 +63,6 @@ function VueAxios(Vue) {
     // }
     return response;
   }, function(error) {
-    console.log(error.config)
-    console.log(error.code)
     if (error.response) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
@@ -97,11 +88,13 @@ function VueAxios(Vue) {
       if(error.request.status === 0) {
         let user_info = JSON.parse(localStorage.getItem('user_info'))
         let id = user_info.id
-        console.log(user_info.id)
-        console.log(process.env.SERVER_URL)
         
         if(user_info.tower_access_token !=='' ) {
-
+          auth.refreshTowerOuthToken(app).then(result => {
+            console.log(result)
+          }).catch(error => {
+            console.log(error)
+          })
         } else {
           window.open(process.env.SERVER_URL+ '/api/login/tower?id=' + id)
         }

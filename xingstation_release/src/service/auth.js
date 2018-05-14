@@ -7,6 +7,7 @@ const USERINFO_API = '/api/user?include=permissions,roles'
 const IMAGE_CAPTCHA = '/api/captchas'
 const USER_API = '/api/user'
 const SMS_CAPTCHA = '/api/verificationCodes'
+const TOWER_OUTH_TOKEN = '/api/oauth/token'
 export default {
   login(context, creds, redirect) {
     context.setting.submiting = true;
@@ -174,6 +175,16 @@ export default {
     return new Promise((resolve, reject) => {
       context.$http.patch(HOST + USER_API, args).then(result => {
         resolve(result.data);
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  refreshTowerOuthToken(context) {
+    return new Promise((resolve, reject) => {
+      context.$http.post(HOST + TOWER_OUTH_TOKEN).then(result => {
+        resolve(result);
       }).catch(error => {
         reject(error)
       })
