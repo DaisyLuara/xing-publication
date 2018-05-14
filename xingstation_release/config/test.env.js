@@ -5,4 +5,5 @@ const devEnv = require('./dev.env')
 module.exports = merge(devEnv, {
     NODE_ENV: '"testing"',
     SERVER_URL: '"http://papi.newgls.cn"',
+    TOWER_URL: '"https://tower.im/"'
 })
