@@ -18,7 +18,8 @@ class TowerLoginController extends Controller
      */
     public function redirectToProvider(Request $request)
     {
-        setcookie('user_id', $request->id, time() + 1000, '/', '.newgls.cn');
+        $cookieDomain = env('APP_ENV') == 'production' ? '.xingstation.com' : '.newgls.cn';
+        setcookie('user_id', $request->id, time() + 1000, '/', $cookieDomain);
         return Socialite::driver('tower')->stateless()->redirect();
     }
 
@@ -27,20 +28,18 @@ class TowerLoginController extends Controller
      *
      * @return Response
      */
-    public function handleProviderCallback(Request $request)
+    public function handleProviderCallback()
     {
-        Log::info('user_cookie', ['cookie' => Cookie::get('user_id')]);
-//        $request->offsetUnset('id');
         /* @var \Laravel\Socialite\Two\User $tower_user */
-//        $tower_user = Socialite::driver('tower')
-//            ->stateless()
-//            ->user();
-//        Log::info('get user from tower', ['tower_user' => $tower_user]);
-//        User::where('id', '=', $user_id)->update(
-//            [
-//                'tower_access_token' => $tower_user->token,
-//                'tower_refresh_token' => $tower_user->refreshToken,
-//            ]
-//        );
+        $tower_user = Socialite::driver('tower')
+            ->stateless()
+            ->user();
+        Log::info('get user from tower', ['tower_user' => $tower_user]);
+        User::where('id', '=', Cookie::get('user_id'))->update(
+            [
+                'tower_access_token' => $tower_user->token,
+                'tower_refresh_token' => $tower_user->refreshToken,
+            ]
+        );
     }
 }
