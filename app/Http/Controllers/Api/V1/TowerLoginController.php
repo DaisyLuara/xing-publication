@@ -29,12 +29,14 @@ class TowerLoginController extends Controller
     public function handleProviderCallback(Request $request)
     {
         Log::info('request all', $request->all());
+        $user_id = $request->id;
+        $request->offsetUnset('id');
         /* @var \Laravel\Socialite\Two\User $tower_user */
         $tower_user = Socialite::driver('tower')
             ->stateless()
             ->user();
         Log::info('get user from tower', ['tower_user' => $tower_user]);
-        User::where('id', '=', $request->id)->update(
+        User::where('id', '=', $user_id)->update(
             [
                 'tower_access_token' => $tower_user->token,
                 'tower_refresh_token' => $tower_user->refreshToken,
