@@ -2,7 +2,6 @@ import {router} from '../main'
 const HOST = process.env.TOWER_URL
 
 const TEAM_API = 'api/v1/teams/'
-const Authorization_API = '/api/login/tower'
 export default {
   getTowerList(context, id) {
     return new Promise(function(resolve, reject){
