@@ -28,8 +28,10 @@ function VueAxios(Vue) {
     if (config.url.includes('auth') || config.url.includes('logout')) {
       config.headers['Authorization'] = 'Bearer ' + auth.getToken();
       return config;
-    } else if(config.url.includes('api/v1')){
+      console.log('auth')
       
+    } else if(config.url.includes('api/v1')){
+      console.log('tower')
       config.headers['Authorization'] = 'Bearer ' + auth.getTowerAccessToken();
       // config.headers['Authorization'] = 'Bearer c362aa7588450b299520dd02dcd9796d8c444b41d22acc8289f3be77f60fa9e7'
       return config;
@@ -44,6 +46,7 @@ function VueAxios(Vue) {
       // } else {
       //   return config
       // }
+      console.log('other')
       config.headers['Authorization'] = 'Bearer ' + auth.getToken();
       return config
     }

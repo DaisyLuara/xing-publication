@@ -110,7 +110,7 @@ export default {
   },
   created () {
     auth.refreshUserInfo(this).then((res) => {
-      console.log(res)
+    //   console.log(res)
     }).catch(err => {
       console.log(err)
     })
@@ -125,11 +125,6 @@ export default {
       this.getTowerList();
   },
   methods: {
-    towerAuthorization() {
-        let user_info = JSON.parse(localStorage.getItem('user_info'))
-        window.open(this.SERVER_URL+ '/api/login/tower')
-    },
-
     say(id)
     {
        this.active=id;
@@ -168,7 +163,6 @@ export default {
       this.setting.loading = true;
       let id = 'c6dc912c2f494e7ea73bed4488bb3493'
       team.getTowerList(this, id).then((response) => {
-        localStorage.setItem('tower_auth', true)
         this.tableData = response.data;
         this.updateDate=response.data;
         this.groupData=response.included;
