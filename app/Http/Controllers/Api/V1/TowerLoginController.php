@@ -16,12 +16,13 @@ class TowerLoginController extends Controller
      */
     public function redirectToProvider(Request $request)
     {
-        $tower = Socialite::driver('tower')->stateless();
-        if ($request->id) {
-            $tower->with(['user_id' => $request->id]);
-        }
-
-        return $tower->redirect();
+//        $tower = Socialite::driver('tower')->stateless();
+//        if ($request->id) {
+//            $tower->with(['user_id' => $request->id]);
+//        }
+//
+//        return $tower->redirect();
+        return Socialite::driver('tower')->stateless()->redirect();
     }
 
     /**
