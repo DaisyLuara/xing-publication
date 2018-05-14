@@ -7,7 +7,7 @@
         <el-form :model="filters" :inline="true" ref="searchForm" >
            <el-button class="button" size="small" v-for="(item,index) in groupData" :key="item.id" :class="{'active': item.id == active}"  @click="say(item.id)" >{{item.attributes.name=='ACTIVIEW'?'团队成员':item.attributes.name}}</el-button>
         </el-form>
-        <el-button class="btn" @click="towerAuthorization">tower授权</el-button>
+        <!-- <el-button class="btn" @click="towerAuthorization">tower授权</el-button> -->
         </div>
       <div class="member-wrap">
         <div class="total-wrap">
@@ -16,7 +16,7 @@
             <span style="font-size:14px;color: #999;">(共<b>{{updateDate.length}}</b>人)</span>
             </h1>
         </div>
-        <el-table :data="updateDate" style="width: 100%" :show-header="false">
+        <el-table :data="updateDate" style="width: 100%" :show-header="false" :empty-text="emptyText">
           <el-table-column
             prop="attributes.gavatar"
             label="图标"
@@ -73,6 +73,8 @@
 
 <script>
 import team from 'service/team'
+import auth from 'service/auth'
+
 let th=this;
 import { Button, Input, Table, TableColumn,Dialog, Form, FormItem ,Tag,Card} from 'element-ui'
 
@@ -84,6 +86,7 @@ export default {
       filters: {
         name: ''
       },
+      emptyText: '暂无数据',
       setting: {
         loading: false,
         loadingText: "拼命加载中"
@@ -106,19 +109,27 @@ export default {
   mounted() {
   },
   created () {
-    this.getTowerList();
-    
-    // this.getProjectListDetails();
-    // let user_info = JSON.parse(localStorage.getItem('user_info'))
-    // this.arUserName = user_info.name
-    // this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
-    
+    auth.refreshUserInfo(this).then((res) => {
+      console.log(res)
+    }).catch(err => {
+      console.log(err)
+    })
+    // if(localStorage.getItem('tower_auth') === 'false') {
+    //     console.log(22)
+    //     this.emptyText = '请点击tower授权按钮'
+    // } else {
+    //     console.log(2333)
+    //     this.emptyText = '暂无数据'
+    //     this.getTowerList();
+    // }
+      this.getTowerList();
   },
   methods: {
     towerAuthorization() {
         let user_info = JSON.parse(localStorage.getItem('user_info'))
-        window.open(this.SERVER_URL+ '/api/login/tower?id=' + user_info.id)
+        window.open(this.SERVER_URL+ '/api/login/tower')
     },
+
     say(id)
     {
        this.active=id;
@@ -157,6 +168,7 @@ export default {
       this.setting.loading = true;
       let id = 'c6dc912c2f494e7ea73bed4488bb3493'
       team.getTowerList(this, id).then((response) => {
+        localStorage.setItem('tower_auth', true)
         this.tableData = response.data;
         this.updateDate=response.data;
         this.groupData=response.included;
@@ -165,7 +177,6 @@ export default {
        console.log(response);
        this.setting.loading = false;
       }).catch(error => {
-        console.log(error)
       this.setting.loading = false;
       })
     }

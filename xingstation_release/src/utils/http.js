@@ -29,7 +29,9 @@ function VueAxios(Vue) {
       config.headers['Authorization'] = 'Bearer ' + auth.getToken();
       return config;
     } else if(config.url.includes('api/v1')){
-      config.headers['Authorization'] = 'Bearer ' + '690aee8e99b52d9128ff2eecffa3fa36bb27f22427a2975627b9f51fddf16b6d';
+      
+      config.headers['Authorization'] = 'Bearer ' + auth.getTowerAccessToken();
+      // config.headers['Authorization'] = 'Bearer c362aa7588450b299520dd02dcd9796d8c444b41d22acc8289f3be77f60fa9e7'
       return config;
     }else{
       // if (auth.checkTokenRefresh()) {
@@ -60,6 +62,7 @@ function VueAxios(Vue) {
     //     return Promise.reject(result);
     //   }
     // }
+    // localStorage.setItem('tower_auth',true);
     return response;
   }, function(error) {
     console.log(error.response)
@@ -68,7 +71,9 @@ function VueAxios(Vue) {
       // that falls out of the range of 2xx
       if (error.response.status == 401) {
         if (error.response.config.url.includes('api/v1')) {
-
+            // localStorage.setItem('tower_auth',false);
+            console.log(process.env.SERVER_URL)
+            window.open(process.env.SERVER_URL+ '/api/login/tower')
         } else {
           // 退出登录，清除登录信息，跳转到登录页面
           // Message.error("对不起，您未被授权")

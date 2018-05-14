@@ -10,6 +10,7 @@
                 <el-button class="btn" :class="{'active': item.id == active}" @click="changePage(item)" v-else size="small">{{item.attributes.name}}</el-button>
               </el-form-item>
             </el-form>
+            <!-- <el-button class="btn-tower" @click="towerAuthorization">tower授权</el-button> -->
           </div>
           <el-table
           :data="allProjectsList"
@@ -30,7 +31,9 @@
 </template>
 
 <script>
- import team from 'service/team'
+ import team from 'service/team' 
+ import auth from 'service/auth'
+ 
 import { Button, Input, Table, TableColumn, Form, FormItem, MessageBox, Card,} from 'element-ui'
 
 export default {
@@ -39,6 +42,7 @@ export default {
       filters: {
         name: ''
       },
+      SERVER_URL: process.env.SERVER_URL,
       active: '1',
       setting: {
         loading: false,
@@ -53,6 +57,7 @@ export default {
         pageSize: 10,
         currentPage: 1
       },
+      emptyText: '暂无数据',
       titleArr: [],
       allProjectsList: [],
       projectsList: []
@@ -61,9 +66,26 @@ export default {
   mounted() {
   },
   created () {
-    this.getTeamsList();
+    auth.refreshUserInfo(this).then((res) => {
+      console.log(res)
+    }).catch(err => {
+      console.log(err)
+    })
+    // if(localStorage.getItem('tower_auth') === 'false') {
+    //     console.log(22)
+    //     this.emptyText = '请点击tower授权按钮'
+    // } else {
+    //     console.log(2333)
+    //     this.emptyText = '暂无数据'
+        this.getTeamsList();
+    // }
   },
   methods: {
+    towerAuthorization() {
+        // let user_info = JSON.parse(localStorage.getItem('user_info'))
+        console.log(this.SERVER_URL)
+        window.open(this.SERVER_URL+ '/api/login/tower')
+    },
     tableColClassName({row, column, rowIndex, columnIndex}) {
       return "col-td";
     },
@@ -97,6 +119,7 @@ export default {
       this.setting.loading = true;
       let id = 'c6dc912c2f494e7ea73bed4488bb3493'
       return team.getProjectsList(this, id).then((response) => {
+        localStorage.setItem('tower_auth', true)
         this.allProjectsList = response.data
         this.titleArr = response.included
         this.titleArr.unshift({

@@ -99,6 +99,12 @@ export default {
     return localStorage.getItem('jwt_token')
   },
 
+  getTowerAccessToken() {
+    let user_info = JSON.parse(localStorage.getItem('user_info'))
+    console.log(user_info.tower_access_token)
+    return user_info.tower_access_token
+  },
+
   getUserInfo() {
     let user_info = localStorage.getItem('user_info')
     if (user_info) {
