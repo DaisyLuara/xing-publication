@@ -5,40 +5,16 @@ namespace App\Exports;
 use App\Models\FaceCount;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
-class MarketingExport implements FromCollection, WithStrictNullComparison, WithHeadings, WithEvents
+class MarketingExport implements FromCollection, WithStrictNullComparison, WithEvents
 {
     public function __construct($request)
     {
         $this->startDate = $request->start_date;
         $this->endDate = $request->end_date;
-    }
-
-    public function headings(): array
-    {
-        return [
-            '节目名称',
-            '围观数',
-            '',
-            '活跃用户',
-            '玩家数',
-            '',
-            '会员数',
-            '',
-            '生成数',
-            '扫码数',
-            '扫码率',
-            '1',
-            '2',
-            '5',
-            '7',
-            '10',
-            '20',
-            '合计',
-        ];
     }
 
     public function collection()
@@ -54,26 +30,10 @@ class MarketingExport implements FromCollection, WithStrictNullComparison, WithH
             ->selectRaw('ar_product_list.name as name,count(oid) as pushNum ,sum(looknum) as lookNum ,sum(playernum) as playerNum ,sum(lovenum) as loveNum,sum(outnum) as outNum,sum(scannum) as scanNum')
             ->get();
         $data = collect();
-        $data->push([
-            '',
-            '总数',
-            '平均数',
-            '总数',
-            '总数',
-            '平均数',
-            '总数',
-            '平均数',
-            '',
-            '',
-            '',
-            '刷脸',
-            '活跃用户',
-            '大玩家',
-            '生成数',
-            '扫码',
-            '会员',
-            '',
-        ]);
+        $header1 = ['节目名称', '围观数', '', '活跃用户', '玩家数', '', '会员数', '', '生成数', '扫码数', '扫码率', '1', '2', '5', '7', '10', '20', '合计'];
+        $header2 = ['', '总数', '平均数', '总数', '总数', '平均数', '总数', '平均数', '', '', '', '刷脸', '活跃用户', '大玩家', '生成数', '扫码', '会员', ''];
+        $data->push($header1);
+        $data->push($header2);
         $faceCount->each(function ($item) use (&$data) {
             $item = [
                 'name' => $item['name'],
@@ -108,7 +68,7 @@ class MarketingExport implements FromCollection, WithStrictNullComparison, WithH
 
             $data->push($item);
         });
-
+        $this->data = $data;
         return $data;
     }
 
@@ -116,7 +76,12 @@ class MarketingExport implements FromCollection, WithStrictNullComparison, WithH
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $event->sheet->getDelegate()->setMergeCells(['A1:A2', 'B1:C1', 'E1:F1', 'G1:H1','I1:I2', 'J1:J2', 'K1:K2', 'R1:R2']);
+                $event->sheet->getDelegate()
+                    ->getStyle('A1:R' . $this->data->count())
+                    ->getAlignment()
+                    ->setVertical(Alignment::VERTICAL_CENTER)
+                    ->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $event->sheet->getDelegate()->setMergeCells(['A1:A2', 'B1:C1', 'E1:F1', 'G1:H1', 'I1:I2', 'J1:J2', 'K1:K2', 'R1:R2']);
             }
         ];
     }

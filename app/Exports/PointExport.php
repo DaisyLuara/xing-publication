@@ -7,6 +7,8 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 
 class PointExport implements FromCollection, WithStrictNullComparison, WithEvents
 {
@@ -58,19 +60,15 @@ class PointExport implements FromCollection, WithStrictNullComparison, WithEvent
         $data = collect();
         $header1 = [''];
         for ($i = 0; $i < $projectNum; $i++) {
-            $header1[] = $pName[$i];
-            $header1[] = '';
-            $header1[] = '';
-            $header1[] = '';
-            $header1[] = '';
+            $header1 = array_merge($header1, [$pName[$i], '', '', '', '']);
         }
         $header2 = [''];
         for ($i = 0; $i < $projectNum; $i++) {
-            $header2[] = '围观';
-            $header2[] = '玩家';
-            $header2[] = '生成';
-            $header2[] = '扫码';
-            $header2[] = '会员';
+            $header2 = array_merge($header2, ['', '', '', '', '']);
+        }
+        $header3 = [''];
+        for ($i = 0; $i < $projectNum; $i++) {
+            $header3 = array_merge($header3, ['围观', '玩家', '生成', '扫码', '会员']);
         }
         $total = DB::connection('ar')
             ->table('face_count_log as fcl')
@@ -82,10 +80,11 @@ class PointExport implements FromCollection, WithStrictNullComparison, WithEvent
             ->get();
         $totalNum = json_decode(json_encode($total), true);
         $totalNum = collect($totalNum)->flatten()->all();
-        $header3 = array_merge(['Total'], $totalNum);
+        $header4 = array_merge(['Total'], $totalNum);
         $data->push($header1);
         $data->push($header2);
         $data->push($header3);
+        $data->push($header4);
         $faceCount->each(function ($item) use (&$data) {
             $item = json_decode(json_encode($item), true);
 
@@ -113,6 +112,7 @@ class PointExport implements FromCollection, WithStrictNullComparison, WithEvent
             $data->push($aa);
         });
 
+        $this->data = $data;
         return $data;
     }
 
@@ -121,21 +121,34 @@ class PointExport implements FromCollection, WithStrictNullComparison, WithEvent
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $cellArray = ['A1:A2'];
+                $cellArray = ['A1:A3'];
                 for ($i = 0; $i < $this->projectNum; $i++) {
                     $startNum = 1 + 5 * $i;
                     $endNum = 5 * ($i + 1);
 
-                    $cellArray[] = $this->change($startNum) . '1:' . $this->change($endNum) . '1';
+                    $cellArray[] = $this->change($startNum) . '1:' . $this->change($endNum) . '2';
                 }
+                $event->sheet->getDelegate()->getStyle('A1:' . $this->change($this->projectNum * 5) . $this->data->count())->applyFromArray([
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['argb' => '00000000']
+                        ]
+                    ]
+                ]);
                 $event->sheet->getDelegate()->setMergeCells($cellArray);
+                $event->sheet->getDelegate()
+                    ->getStyle('A1:' . $this->change($this->projectNum * 5) . $this->data->count())
+                    ->getAlignment()
+                    ->setVertical(Alignment::VERTICAL_CENTER)
+                    ->setHorizontal(Alignment::HORIZONTAL_CENTER);
             }
         ];
     }
 
     public function change($x)
     {
-        $map=['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
+        $map = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
         $t = "";
         while ($x >= 0) {
             $t = $map[$x % 26] . $t;

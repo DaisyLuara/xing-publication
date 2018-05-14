@@ -8,6 +8,8 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 
 class ProjectExport implements FromCollection, WithStrictNullComparison, WithEvents
 {
@@ -43,9 +45,17 @@ class ProjectExport implements FromCollection, WithStrictNullComparison, WithEve
 
         $data = collect();
         $header1 = ['节目', $date1, '', '', '', '', $date2, '', '', '', '', $date3, '', '', '', '', $date4, '', '', '', '', $date5, '', '', '', '', $date6, '', '', '', ''];
-        $header2 = ['', '围观数', '玩家数', '会员数', '生成数', '扫码数', '围观数', '玩家数', '会员数', '生成数', '扫码数', '围观数', '玩家数', '会员数', '生成数', '扫码数', '围观数', '玩家数', '会员数', '生成数', '扫码数', '围观数', '玩家数', '会员数', '生成数', '扫码数', '围观数', '玩家数', '会员数', '生成数', '扫码数'];
+        $header2 = [''];
+        for ($i = 0; $i < 6; $i++) {
+            $header2 = array_merge($header2, ['', '', '', '', '']);
+        }
+        $header3 = [''];
+        for ($i = 0; $i < 6; $i++) {
+            $header3 = array_merge($header3, ['围观数', '玩家数', '会员数', '生成数', '扫码数']);
+        }
         $data->push($header1);
         $data->push($header2);
+        $data->push($header3);
         $faceCount->each(function ($item) use (&$data) {
             $item = json_decode(json_encode($item), true);
 
@@ -71,9 +81,9 @@ class ProjectExport implements FromCollection, WithStrictNullComparison, WithEve
                     }
                 }
             }
-
             $data->push($aa);
         });
+        $this->data = $data;
         return $data;
     }
 
@@ -81,7 +91,21 @@ class ProjectExport implements FromCollection, WithStrictNullComparison, WithEve
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $event->sheet->getDelegate()->setMergeCells(['A1:A2', 'B1:F1', 'G1:K1', 'L1:P1', 'Q1:U1', 'V1:Z1', 'AA1:AE1']);
+
+                $event->sheet->getDelegate()->getStyle('A1:AE' . $this->data->count())->applyFromArray([
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['argb' => '00000000']
+                        ]
+                    ]
+                ]);
+                $event->sheet->getDelegate()
+                    ->getStyle('A1:AE' . $this->data->count())
+                    ->getAlignment()
+                    ->setVertical(Alignment::VERTICAL_CENTER)
+                    ->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $event->sheet->getDelegate()->setMergeCells(['A1:A3', 'B1:F2', 'G1:K2', 'L1:P2', 'Q1:U2', 'V1:Z2', 'AA1:AE2']);
             }
         ];
     }
