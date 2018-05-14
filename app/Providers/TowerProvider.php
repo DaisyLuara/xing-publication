@@ -44,9 +44,8 @@ class TowerProvider extends AbstractProvider implements ProviderInterface
             $userUrl, $this->getRequestOptions()
         );
 
-        $user = json_decode($response->getBody(), true);
+        return json_decode($response->getBody(), true);
 
-        return $user;
     }
 
     /**
