@@ -14,11 +14,9 @@ export default {
   },
   getProjectsList(context,id) {
     return new Promise(function(resolve, reject){
-      console.log(1)
       context.$http.get(HOST + TEAM_API + id + '/projects').then(response => {
         resolve(response.data)
       }).catch(error => {
-        console.log(error)
         reject(error)
       })
     })
