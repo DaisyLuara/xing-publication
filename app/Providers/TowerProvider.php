@@ -54,9 +54,10 @@ class TowerProvider extends AbstractProvider implements ProviderInterface
      */
     protected function mapUserToObject(array $user)
     {
+        $user = $user['data'];
         return (new User)->setRaw($user)->map([
-            'id' => $user['id'], 'nickname' => $user['login'], 'name' => Arr::get($user, 'name'),
-            'email' => Arr::get($user, 'email'), 'avatar' => $user['avatar_url'],
+            'id' => Arr::get($user, 'data.id'), 'nickname' => Arr::get($user, 'data.attributes.nickname'),
+            'email' => Arr::get($user, 'data.attributes.email'), 'avatar' => $user['data.attributes.gavatar'],
         ]);
     }
 
