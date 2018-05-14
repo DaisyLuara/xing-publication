@@ -34,7 +34,7 @@
             >
             <template slot-scope="scope">
               <a class="member-name" href="javascript:;">{{scope.row.attributes.nickname}}</a>
-              <el-tag type="info" class="group-tag" v-for="(item,index) in scope.row.relationships.groups.data " :key="item.id" size="mini">{{item.id | groupFilters(groupData)}}</el-tag>
+              <el-tag type="info" class="group-tag" v-for="(item,index) in scope.row.relationships.groups.data " :key="item.id" size="mini">{{item.id }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column
@@ -178,16 +178,16 @@ export default {
     }
   },
   filters:{
-    groupFilters:function (arg,datas) {
-      console.log(arg)
-      console.log(datas)
-     for(var i=0;i<datas.length;i++){
-      if(arg==datas[i].id){
-         return datas[i].attributes.name;
-      }
-     }
-        return "";
-    }
+    // groupFilters:function (arg,datas) {
+    //   console.log(arg)
+    //   console.log(datas)
+    //  for(var i=0;i<datas.length;i++){
+    //   if(arg==datas[i].id){
+    //      return datas[i].attributes.name;
+    //   }
+    //  }
+    //     return "";
+    // }
     },
   components: {
     "el-table": Table,
