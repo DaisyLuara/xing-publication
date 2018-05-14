@@ -29,7 +29,7 @@ class TowerLoginController extends Controller
      */
     public function handleProviderCallback(Request $request)
     {
-        Log::info('user_cookie', Cookie::get('user_id'));
+        Log::info('user_cookie', ['cookie' => Cookie::get('user_id')]);
 //        $request->offsetUnset('id');
         /* @var \Laravel\Socialite\Two\User $tower_user */
 //        $tower_user = Socialite::driver('tower')
