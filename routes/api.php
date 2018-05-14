@@ -149,7 +149,7 @@ $api->version('v1', [
             $api->patch('companies/{company}/customers/{customer}', ['middleware' => ['permission:company'], 'uses' => 'AdminCustomersController@update']);
 
             //团队
-            $api->post('tower/oauth/token', 'TowerController@refresh');
+            $api->post('oauth/token', 'TowerController@refresh');
 
         });
     });

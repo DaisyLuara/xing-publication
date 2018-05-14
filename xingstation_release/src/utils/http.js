@@ -31,8 +31,8 @@ function VueAxios(Vue) {
       
     } else if(config.url.includes('tower')){
       console.log('tower')
-      // config.headers['Authorization'] = 'Bearer ' + auth.getTowerAccessToken();
-      config.headers['Authorization'] = 'Bearer 4ab7f183b1201e082d2248f65ed13859a100551cf1ca4c081d4b575e5c7c8ec7'
+      config.headers['Authorization'] = 'Bearer ' + auth.getTowerAccessToken();
+      // config.headers['Authorization'] = 'Bearer e36edf86cac4024f163936a3b8eb3b4223d7f4f3316712a08b33d9a4ece5c406'
       console.log(config)
       return config;
     }else{
@@ -51,6 +51,7 @@ function VueAxios(Vue) {
     }
 
   }, function(error) {
+    console.log(error)
     return Promise.reject(error);
   });
 
@@ -58,7 +59,8 @@ function VueAxios(Vue) {
     // Do something with response data
     let result = response.data;
     console.log(response)
-    console.log(result)
+    console.log(444444)
+
     // if (result && !result.success) {
     //   if (response.config && response.config.passError) {
     //     return Promise.reject(response);
@@ -66,23 +68,14 @@ function VueAxios(Vue) {
     //     return Promise.reject(result);
     //   }
     // }
-    // localStorage.setItem('tower_auth',true);
     return response;
   }, function(error) {
-    console.log(error)
-    console.log(222222)
+    console.log(error.config)
+    console.log(error.code)
     if (error.response) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
       if (error.response.status == 401) {
-        if (error.response.config.url.includes('tower')) {
-            let user_info = JSON.parse(localStorage.getItem('user_info'))
-            let id = user_info.id
-            console.log(user_info.id)
-            // localStorage.setItem('tower_auth',false);
-            console.log(process.env.SERVER_URL)
-            window.open(process.env.SERVER_URL+ '/api/login/tower?id=' + id)
-        } else {
           // 退出登录，清除登录信息，跳转到登录页面
           // Message.error("对不起，您未被授权")
           auth.clearLoginData(app)
@@ -90,7 +83,6 @@ function VueAxios(Vue) {
             path: '/login'
           })
           Message.error("请求出错：代码" + error.response.status)
-        }
       } else {
         if(error.response.status == 429) {
           Message.error("请求出错:" + error.response.statusText)
@@ -102,7 +94,18 @@ function VueAxios(Vue) {
       // The request was made but no response was received
       // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
       // http.ClientRequest in node.js
-      console.log(error.request);
+      if(error.request.status === 0) {
+        let user_info = JSON.parse(localStorage.getItem('user_info'))
+        let id = user_info.id
+        console.log(user_info.id)
+        console.log(process.env.SERVER_URL)
+        
+        if(user_info.tower_access_token !=='' ) {
+
+        } else {
+          window.open(process.env.SERVER_URL+ '/api/login/tower?id=' + id)
+        }
+      }
     } else {
       // Something happened in setting up the request that triggered an Error
       console.log('Error', error.message);
