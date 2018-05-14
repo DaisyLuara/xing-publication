@@ -21,17 +21,17 @@ function VueAxios(Vue) {
 
   // http拦截器
   axios.interceptors.request.use(function(config) {
-    if (config.url.includes('api/v1')) {
-      config.headers['Authorization'] = 'Bearer ' + 'e36edf86cac4024f163936a3b8eb3b4223d7f4f3316712a08b33d9a4ece5c406';
-      return config;
-    } 
-    config.headers['Authorization'] = 'Bearer ' + auth.getToken();
+    // config.headers['Authorization'] = 'Bearer ' + auth.getToken();
     // one request of refreshing token can be send at one time
     // auth or logout cannot trrigle refresh token
     // if (store.getters.isRefreshToken || config.url.includes('auth') || config.url.includes('logout')) {
-      if (config.url.includes('auth') || config.url.includes('logout')) {
+    if (config.url.includes('auth') || config.url.includes('logout')) {
+      config.headers['Authorization'] = 'Bearer ' + auth.getToken();
       return config;
-    } else {
+    } else if(config.url.includes('api/v1')){
+      config.headers['Authorization'] = 'Bearer ' + 'e36edf86cac4024f163936a3b8eb3b4223d7f4f3316712a08b33d9a4ece5c406';
+      return config;
+    }else{
       // if (auth.checkTokenRefresh()) {
       //   // refresh token
       //   return auth.refreshToken(app).then(result => {
@@ -42,8 +42,8 @@ function VueAxios(Vue) {
       // } else {
       //   return config
       // }
+      config.headers['Authorization'] = 'Bearer ' + auth.getToken();
       return config
-      
     }
 
   }, function(error) {

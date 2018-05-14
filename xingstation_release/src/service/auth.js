@@ -84,6 +84,7 @@ export default {
     return new Promise((resolve, reject) => {
       context.$http.get(HOST + USERINFO_API).then(response => {
           let result = response.data;
+          console.log(result)
           localStorage.setItem("user_info", JSON.stringify(result))
             //context.$store.commit('setCurUserInfo', result.data)
           resolve(result.data)

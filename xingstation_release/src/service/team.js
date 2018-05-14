@@ -1,6 +1,5 @@
 import {router} from '../main'
-const TOWER = '/tower/'
-const HOST = 'https://tower.im/'
+const HOST = process.env.TOWER_URL
 
 const TEAM_API = 'api/v1/teams/'
 const Authorization_API = '/api/login/tower'
