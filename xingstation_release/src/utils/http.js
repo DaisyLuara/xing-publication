@@ -29,7 +29,7 @@ function VueAxios(Vue) {
       config.headers['Authorization'] = 'Bearer ' + auth.getToken();
       return config;
     } else if(config.url.includes('api/v1')){
-      config.headers['Authorization'] = 'Bearer ' + 'e36edf86cac4024f163936a3b8eb3b4223d7f4f3316712a08b33d9a4ece5c406';
+      config.headers['Authorization'] = 'Bearer ' + '690aee8e99b52d9128ff2eecffa3fa36bb27f22427a2975627b9f51fddf16b6d';
       return config;
     }else{
       // if (auth.checkTokenRefresh()) {
