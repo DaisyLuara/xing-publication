@@ -13,10 +13,24 @@ const path = require('path')
 const chalk = require('chalk')
 const webpack = require('webpack')
 const config = require('../config')
+var proxyMiddleware = require('http-proxy-middleware')
 const webpackConfig = require('./webpack.prod.conf')
+
+
+var proxyTable = config.build.proxyTable
+console.log(proxyTable)
 
 const spinner = ora('building for production...')
 spinner.start()
+
+// proxy api requests
+Object.keys(proxyTable).forEach(function (context) {
+  var options = proxyTable[context]
+  if (typeof options === 'string') {
+    options = { target: options }
+  }
+  proxyMiddleware(options.filter || context, options)
+})
 
 rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
   if (err) throw err
