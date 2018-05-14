@@ -38,7 +38,7 @@ class TowerProvider extends AbstractProvider implements ProviderInterface
      */
     protected function getUserByToken($token)
     {
-        $userUrl = 'https://tower.im/user?access_token=' . $token;
+        $userUrl = 'https://tower.im/api/v1/user?access_token=' . $token;
 
         $response = $this->getHttpClient()->get(
             $userUrl, $this->getRequestOptions()
