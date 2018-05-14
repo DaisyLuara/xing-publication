@@ -28,7 +28,6 @@ class TowerLoginController extends Controller
     {
         $user = Socialite::driver('tower')
             ->stateless()
-            ->with(['code' => $request->code, 'grant_type' => 'authorization_code'])
             ->user();
         Log::info('get user from tower', ['user' => $user]);
     }
