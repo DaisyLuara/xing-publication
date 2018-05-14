@@ -37,7 +37,7 @@ return [
     'tower' => [
         'client_id' => env('TOWER_CLIENT_ID'),
         'client_secret' => env('TOWER_CLIENT_SECRET'),
-        'redirect' => env('APP_URL') . '/' . env('API_PREFIX') . '/login/tower/callback',
+        'redirect' => env('TOWER_CLIENT_REDIRECT')
     ],
 
 ];
