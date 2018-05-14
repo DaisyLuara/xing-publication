@@ -68,10 +68,11 @@ export default {
   created () {
     auth.refreshUserInfo(this).then((res) => {
       console.log(res)
+      this.getTeamsList();
     }).catch(err => {
       console.log(err)
+      this.setting.loading = false;
     })
-    this.getTeamsList();
   },
   methods: {
     

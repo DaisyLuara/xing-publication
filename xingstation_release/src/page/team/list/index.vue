@@ -111,8 +111,10 @@ export default {
   created () {
     auth.refreshUserInfo(this).then((res) => {
     //   console.log(res)
+      this.getTowerList();
     }).catch(err => {
       console.log(err)
+      this.setting.loading = false;
     })
     // localStorage.setItem('tower_access_token','8995a9869d18fa19ab7f86dd2e883e9d6e2c92d6a4c89a5faaf77a3efbb3fb67')
     // if(localStorage.getItem('tower_auth') === 'false') {
@@ -123,7 +125,6 @@ export default {
     //     this.emptyText = '暂无数据'
     //     this.getTowerList();
     // }
-      this.getTowerList();
   },
   methods: {
     say(id)
