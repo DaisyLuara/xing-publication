@@ -494,6 +494,12 @@ babel-plugin-component@^0.9.1:
   version "0.9.1"
   resolved "http://registry.npm.taobao.org/babel-plugin-component/download/babel-plugin-component-0.9.1.tgz#17b74ce8025256d52bb24fac0a4d4185ad01813f"
 
+babel-plugin-external-helpers@^6.22.0:
+  version "6.22.0"
+  resolved "http://registry.npm.taobao.org/babel-plugin-external-helpers/download/babel-plugin-external-helpers-6.22.0.tgz#2285f48b02bd5dede85175caf8c62e86adccefa1"
+  dependencies:
+    babel-runtime "^6.22.0"
+
 babel-plugin-syntax-async-functions@^6.8.0:
   version "6.13.0"
   resolved "http://registry.npm.taobao.org/babel-plugin-syntax-async-functions/download/babel-plugin-syntax-async-functions-6.13.0.tgz#cad9cad1191b5ad634bf30ae0872391e0647be95"
@@ -3759,6 +3765,12 @@ map-visit@^1.0.0:
   resolved "http://registry.npm.taobao.org/map-visit/download/map-visit-1.0.0.tgz#ecdca8f13144e660f1b5bd41f12f3479d98dfb8f"
   dependencies:
     object-visit "^1.0.0"
+
+mapv@^2.0.20:
+  version "2.0.20"
+  resolved "http://registry.npm.taobao.org/mapv/download/mapv-2.0.20.tgz#af6d5295f8925d07ce196e3d1e04b720722104c0"
+  dependencies:
+    babel-plugin-external-helpers "^6.22.0"
 
 math-expression-evaluator@^1.2.14:
   version "1.2.17"
