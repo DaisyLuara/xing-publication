@@ -18,7 +18,7 @@
         </div>
         <el-table :data="updateDate" style="width: 100%" :show-header="false" :empty-text="emptyText">
           <el-table-column
-            prop="gavatar"
+            prop="attributes.avatar"
             label="图标"
             min-width="80"
             align="center"
@@ -28,7 +28,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="nickname"
+            prop="attributes.nickname"
             label="名称"
             min-width="150"
             >
@@ -38,7 +38,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="phone"
+            prop="attributes.phone"
             label="手机号"
             min-width="100"
             >
@@ -47,13 +47,13 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="mailbox"
+            prop="attributes.mailbox"
             label="邮箱"
             min-width="100"
            >
           </el-table-column>
           <el-table-column
-            prop="comment"
+            prop="attributes.comment"
             label="内容"
             min-width="100"
             align="right"
