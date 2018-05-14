@@ -80,6 +80,7 @@ export default {
   data () {
       return {
       active:'',
+      SERVER_URL: process.env.SERVER_URL,
       filters: {
         name: ''
       },
@@ -116,7 +117,7 @@ export default {
   methods: {
     towerAuthorization() {
         let user_info = JSON.parse(localStorage.getItem('user_info'))
-        window.open('http://papi.jingfree.top/api/login/tower?id=' + user_info.id)
+        window.open(this.SERVER_URL+ '/api/login/tower?id=' + user_info.id)
     },
     say(id)
     {

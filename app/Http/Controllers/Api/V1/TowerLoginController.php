@@ -16,13 +16,7 @@ class TowerLoginController extends Controller
      */
     public function redirectToProvider(Request $request)
     {
-//        $tower = Socialite::driver('tower')->stateless();
-//        if ($request->id) {
-//            $tower->with(['user_id' => $request->id]);
-//        }
-//
-//        return $tower->redirect();
-        return Socialite::driver('tower')->stateless()->redirect();
+        return Socialite::driver('tower')->stateless()->with(['id' => $request->id])->redirect();
     }
 
     /**
@@ -30,9 +24,12 @@ class TowerLoginController extends Controller
      *
      * @return Response
      */
-    public function handleProviderCallback()
+    public function handleProviderCallback(Request $request)
     {
-        $user = Socialite::driver('tower')->stateless()->user();
+        $user = Socialite::driver('tower')
+            ->stateless()
+            ->with(['code' => $request->code, 'grant_type' => 'authorization_code'])
+            ->user();
         Log::info('get user from tower', ['user' => $user]);
     }
 }
