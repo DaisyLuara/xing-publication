@@ -17,6 +17,7 @@ class UserTransformer extends TransformerAbstract
             'email' => $user->email,
             'avatar' => $user->avatar,
             'phone' => $user->phone,
+            'tower_access_token' => $user->tower_access_token,
             'ar_user_id' => $user->ar_user_id,
             'created_at' => $user->created_at->toDateTimeString(),
             'updated_at' => $user->updated_at->toDateTimeString(),
