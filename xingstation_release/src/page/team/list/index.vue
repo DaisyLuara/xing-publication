@@ -163,10 +163,12 @@ export default {
       this.setting.loading = true;
       let id = 'c6dc912c2f494e7ea73bed4488bb3493'
       team.getTowerList(this, id).then((response) => {
+        if(response){
         this.tableData = response.data;
         this.updateDate=response.data;
         this.groupData=response.included;
         this.active=this.groupData[0].id;
+        }
         this.setting.loading = false;
        console.log(response);
        this.setting.loading = false;
@@ -177,6 +179,8 @@ export default {
   },
   filters:{
     groupFilters:function (arg,datas) {
+      console.log(arg)
+      console.log(datas)
      for(var i=0;i<datas.length;i++){
       if(arg==datas[i].id){
          return datas[i].attributes.name;
