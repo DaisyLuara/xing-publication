@@ -149,6 +149,9 @@ export default {
       .el-table--enable-row-hover .el-table__body tr:hover>td {
         background-color: #FBFDF7;
       }
+      .el-button:hover {
+        color: #606266;
+      }
       .item-content-wrap{
         position: relative;
         width: 960px;
