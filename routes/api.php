@@ -148,6 +148,8 @@ $api->version('v1', [
             $api->post('companies/{company}/customers', ['middleware' => ['permission:company'], 'uses' => 'AdminCustomersController@store']);
             $api->patch('companies/{company}/customers/{customer}', ['middleware' => ['permission:company'], 'uses' => 'AdminCustomersController@update']);
 
+            //团队
+            $api->post('tower/oauth/token', 'TowerController@refresh');
 
         });
     });
