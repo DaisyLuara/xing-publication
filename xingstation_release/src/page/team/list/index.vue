@@ -5,7 +5,7 @@
        <el-card class="box-card">
         <div class="button-wrap">  
         <el-form :model="filters" :inline="true" ref="searchForm" >
-           <el-button class="button"  v-for="(item,index) in groupData" :key="item.id" :class="{'active': item.id == active}"  @click="say(item.id)" >{{item.attributes.name=='ACTIVIEW'?'团队成员':item.attributes.name}}</el-button>
+           <el-button class="button" size="small" v-for="(item,index) in groupData" :key="item.id" :class="{'active': item.id == active}"  @click="say(item.id)" >{{item.attributes.name=='ACTIVIEW'?'团队成员':item.attributes.name}}</el-button>
         </el-form>
         <el-button class="btn" @click="towerAuthorization">tower授权</el-button>
         </div>
@@ -34,7 +34,7 @@
             >
             <template slot-scope="scope">
               <a class="member-name" href="javascript:;">{{scope.row.attributes.nickname}}</a>
-              <el-tag type="info" class="group-tag" v-for="(item,index) in scope.row.relationships.groups.data " :key="item.id">{{item.id | groupFilters(groupData)}}</el-tag>
+              <el-tag type="info" class="group-tag" v-for="(item,index) in scope.row.relationships.groups.data " :key="item.id" size="mini">{{item.id | groupFilters(groupData)}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column

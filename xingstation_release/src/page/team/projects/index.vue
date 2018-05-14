@@ -6,8 +6,8 @@
           <div class="search-wrap">
             <el-form :model="filters" :inline="true" ref="searchForm" >
               <el-form-item label="" v-for="item in titleArr" :key="item.id" >
-              <el-button icon="el-icon-star-off" class="btn" @click="changePage('0')" :class="{'active': item.id == active}" v-if="item.id == 0"></el-button>
-                <el-button class="btn" :class="{'active': item.id == active}" @click="changePage(item)" v-else>{{item.attributes.name}}</el-button>
+              <el-button icon="el-icon-star-off" class="btn" @click="changePage('0')" :class="{'active': item.id == active}" v-if="item.id == 0" size="small"></el-button>
+                <el-button class="btn" :class="{'active': item.id == active}" @click="changePage(item)" v-else size="small">{{item.attributes.name}}</el-button>
               </el-form-item>
             </el-form>
           </div>
