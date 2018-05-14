@@ -77,7 +77,7 @@ export default {
     // } else {
     //     console.log(2333)
     //     this.emptyText = '暂无数据'
-        this.getTeamsList();
+        //this.getTeamsList();
     // }
   },
   methods: {
