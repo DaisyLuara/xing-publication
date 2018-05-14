@@ -6,7 +6,7 @@ export default {
   getTowerList(context, id) {
     return new Promise(function(resolve, reject){
       context.$http.get(HOST + TEAM_API + id + '/members').then(response => {
-        resolve(response)
+        resolve(response.data)
       }).catch(error => {
         reject(error)
       })

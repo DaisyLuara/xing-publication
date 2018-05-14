@@ -18,7 +18,7 @@
         </div>
         <el-table :data="updateDate" style="width: 100%" :show-header="false" :empty-text="emptyText">
           <el-table-column
-            prop="attributes.gavatar"
+            prop="gavatar"
             label="图标"
             min-width="80"
             align="center"
@@ -28,7 +28,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="attributes.nickname"
+            prop="nickname"
             label="名称"
             min-width="150"
             >
@@ -38,7 +38,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="attributes.phone"
+            prop="phone"
             label="手机号"
             min-width="100"
             >
@@ -47,13 +47,13 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="attributes.mailbox"
+            prop="mailbox"
             label="邮箱"
             min-width="100"
            >
           </el-table-column>
           <el-table-column
-            prop="attributes.comment"
+            prop="comment"
             label="内容"
             min-width="100"
             align="right"
@@ -164,7 +164,6 @@ export default {
       this.setting.loading = true;
       let id = 'c6dc912c2f494e7ea73bed4488bb3493'
       team.getTowerList(this, id).then((response) => {
-          console.log(response)
         if(response){
         this.tableData = response.data;
         this.updateDate=response.data;
@@ -182,6 +181,7 @@ export default {
   },
   filters:{
     groupFilters:function (arg,datas) {
+      console.log(datas)
      for(var i=0;i<datas.length;i++){
       if(arg==datas[i].id){
          return datas[i].attributes.name;
