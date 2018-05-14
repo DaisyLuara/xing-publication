@@ -56,7 +56,7 @@ class TowerProvider extends AbstractProvider implements ProviderInterface
     {
         return (new User)->setRaw($user)->map([
             'id' => Arr::get($user, 'data.id'), 'nickname' => Arr::get($user, 'data.attributes.nickname'),
-            'email' => Arr::get($user, 'data.attributes.email'), 'avatar' => $user['data.attributes.gavatar'],
+            'email' => Arr::get($user, 'data.attributes.email'),
         ]);
     }
 
