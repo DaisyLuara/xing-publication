@@ -11,10 +11,10 @@
         </div>
       <div class="member-wrap">
         <div class="total-wrap">
-            <h3 class="label">
+            <h1 class="label" style="font-size:32px">
             {{gropName}}
-            <span style="font-size:10px">共（<b>{{updateDate.length}}</b>）人</span>
-            </h3>
+            <span style="font-size:14px;color: #999;">(共<b>{{updateDate.length}}</b>人)</span>
+            </h1>
         </div>
         <el-table :data="updateDate" style="width: 100%" :show-header="false">
           <el-table-column
@@ -206,6 +206,10 @@ export default {
       }
       .el-button:hover {
         color: #606266;
+      }
+      .el-table{
+        font-size: 18px;
+        color: #333;
       }
       .item-content-wrap{
         position: relative;
