@@ -17,8 +17,8 @@ class TowerLoginController extends Controller
      */
     public function redirectToProvider(Request $request)
     {
-//        $redirectUrl = config('services')['tower']['redirect'] . '?' . 'id=' . $request->id;
-        return Socialite::driver('tower')->stateless()->redirect();
+        $redirectUrl = config('services')['tower']['redirect'] . '?' . 'id=' . $request->id;
+        return Socialite::driver('tower')->stateless()->redirectUrl($redirectUrl)->redirect();
     }
 
     /**
