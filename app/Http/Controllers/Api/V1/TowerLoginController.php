@@ -18,7 +18,7 @@ class TowerLoginController extends Controller
      */
     public function redirectToProvider(Request $request)
     {
-        setcookie('user_id', $request->id, 1000, '/', '.newgls.cn');
+        setcookie('user_id', $request->id, time() + 1000, '/', '.newgls.cn');
         return Socialite::driver('tower')->stateless()->redirect();
     }
 
