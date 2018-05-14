@@ -88,8 +88,8 @@
             label="屏幕状态"
             min-width="80">
             <template slot-scope="scope">
-              <span v-if="scope.row.screenStatus==0">开</span>
-              <span v-if="scope.row.screenStatus==1">关</span>
+              <span v-if="scope.row.screenStatus==1">开</span>
+              <span v-if="scope.row.screenStatus==0">关</span>
             </template>
           </el-table-column>
           <el-table-column

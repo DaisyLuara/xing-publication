@@ -5,7 +5,6 @@ import App from './App'
 import router from './router'
 import store from './store'
 import utils from './service/utils'
-
 import VueAxios from 'utils/http'
 import VueCookie from 'vue-cookie'
 // import auth from 'service/auth'
@@ -19,7 +18,6 @@ import {
   MessageBox
 } from 'element-ui'
 
-import 'element-ui/lib/theme-default/index.css'
 import VueHighcharts from 'vue-highcharts'
 
 Vue.use(utils)
@@ -28,6 +26,7 @@ Vue.use(VueCookie)
 Vue.use(Loading.directive)
 Vue.use(Breadcrumb)
 Vue.use(BreadcrumbItem)
+
 Vue.use(VueHighcharts)
 
 Vue.prototype.$message = Message

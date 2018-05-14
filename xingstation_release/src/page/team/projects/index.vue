@@ -1,0 +1,198 @@
+<template>
+  <div class="root">
+    <div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
+      <div class="item-content-wrap">
+        <el-card class="box-card">
+          <div class="search-wrap">
+            <el-form :model="filters" :inline="true" ref="searchForm" >
+              <el-form-item label="" v-for="item in titleArr" :key="item.id" >
+              <el-button icon="el-icon-star-off" class="btn" @click="changePage" :class="{'active': 'item.id' == active}" v-if="item.id == 0"></el-button>
+                <el-button class="btn" :class="{'active': item.id == active}" @click="changePage" v-else>{{item.attributes.name}}</el-button>
+              </el-form-item>
+            </el-form>
+          </div>
+          <el-table
+          :data="allProjectsList"
+          style="width: 100%" :show-header="false" :cell-class-name="tableColClassName">
+            <el-table-column
+              prop=""
+              label=""
+              >
+              <template slot-scope="scope">
+                {{scope.row.attributes.name}}
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-card>
+      </div>  
+    </div>
+  </div>
+</template>
+
+<script>
+ import team from 'service/team'
+import { Button, Input, Table, TableColumn, Form, FormItem, MessageBox, Card,} from 'element-ui'
+
+export default {
+  data () {
+      return {
+      filters: {
+        name: ''
+      },
+      active: '1',
+      setting: {
+        loading: false,
+        loadingText: "拼命加载中"
+      },
+      dataValue: '',
+      loading: true,
+      arUserName: '',
+      dataShowFlag: true,
+      pagination: {
+        total: 0,
+        pageSize: 10,
+        currentPage: 1
+      },
+      titleArr: [],
+      allProjectsList: []
+    }
+  },
+  mounted() {
+  },
+  created () {
+    this.getTeamsList();
+    // let user_info = JSON.parse(localStorage.getItem('user_info'))
+    // this.arUserName = user_info.name
+    // this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
+    
+  },
+  methods: {
+    tableColClassName({row, column, rowIndex, columnIndex}) {
+      console.log(22)
+      return "col-td";
+    },
+    changePage() {
+
+    },
+    getTeamsList () {
+      this.setting.loadingText = "拼命加载中"
+      this.setting.loading = true;
+      let id = 'c6dc912c2f494e7ea73bed4488bb3493'
+      return team.getProjectsList(this, id).then((response) => {
+        this.allProjectsList = response.data
+        console.log(this.allProjectsList)
+        this.titleArr = response.included
+        this.titleArr.unshift({
+          "id": "0",
+          "type": "project_groups",
+          "attributes": {
+              "name": "",
+              "display_order": 0
+          }
+        },{
+          "id": "1",
+          "type": "project_groups",
+          "attributes": {
+            "name": "所有项目",
+            "display_order": 0
+          }
+        })
+        console.log(this.titleArr)
+        this.setting.loading = false;
+      }).catch(err => {
+        console.log(err)
+       this.setting.loading = false;
+      })
+    },
+  },
+  components: {
+    "el-table": Table,
+    "el-table-column":  TableColumn,
+    "el-button": Button,
+    "el-input": Input,
+    "el-form": Form,
+    "el-form-item": FormItem,
+    "el-card": Card
+  }
+}
+</script>
+
+<style lang="less" scoped>
+  .root {
+    font-size: 14px;
+    color: #5E6D82;
+   
+    .item-list-wrap{
+      background: #fff;
+      padding: 30px;
+      .el-table{
+        font-size: 18px;
+        color: #333;
+      }
+      .el-table--enable-row-hover .el-table__body tr:hover>td {
+        background-color: #FBFDF7;
+      }
+      .item-content-wrap{
+        position: relative;
+        width: 960px;
+        margin: 0 auto;
+        .search-wrap{
+          margin-top: 5px;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          font-size: 16px;
+          align-items: center;
+          margin-bottom: 10px;
+          .btn{
+            background-color: #f0f0f0;
+            border: 1px solid #f0f0f0;
+            border-radius: 20px;
+          }
+          .active{
+            background-color: #aed4d1;
+            border: 1px solid #aed4d1;
+            color: #fff;
+          }
+          .el-form-item{
+            margin-bottom: 10px;
+          }
+          .el-select{
+            width: 250px;
+          }
+          .item-input{
+            width: 230px;
+          }
+          .warning{
+            background: #ebf1fd;
+            padding: 8px;
+            margin-left: 10px;
+            color: #444;
+            font-size: 12px;
+            i{
+              color: #4a8cf3;
+              margin-right: 5px;
+            }
+          }
+        }
+        .total-wrap{
+          margin-top: 5px;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          font-size: 16px;
+          align-items: center;
+          margin-bottom: 10px;
+          .label {
+            font-size: 14px;
+            margin:5px 0;
+          }
+        }
+        .pagination-wrap{
+          margin: 10px auto;
+          text-align: right;
+        }
+      }
+    }
+  }
+</style>

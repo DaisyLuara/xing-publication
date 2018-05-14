@@ -1336,21 +1336,28 @@
 							"query": [
 								{
 									"key": "ad_trade_id",
-									"value": "1"
+									"value": "1",
+									"equals": true,
+									"description": ""
 								},
 								{
 									"key": "advertiser_id",
-									"value": "1"
+									"value": "1",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
 						},
 						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token2}}",
+								"description": ""
+							}
+						],
+						"body": {},
 						"description": ""
 					},
 					"response": []
@@ -1371,17 +1378,22 @@
 							"query": [
 								{
 									"key": "ad_trade_id",
-									"value": "4"
+									"value": "4",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
 						},
 						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token2}}",
+								"description": ""
+							}
+						],
+						"body": {},
 						"description": ""
 					},
 					"response": []
@@ -1749,6 +1761,417 @@
 									}
 								],
 								"body": {},
+								"description": ""
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			]
+		},
+		{
+			"name": "TowerAPI",
+			"description": "",
+			"item": [
+				{
+					"name": "用户中心",
+					"description": "",
+					"item": [
+						{
+							"name": "用户信息",
+							"request": {
+								"url": "{{towerhost}}/user",
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{tower_access_token}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "团队",
+					"description": "",
+					"item": [
+						{
+							"name": "获取加入的团队列表",
+							"request": {
+								"url": "{{towerhost}}/teams",
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{tower_access_token}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "创建团队(不需要实现)",
+							"request": {
+								"url": "{{towerhost}}/teams",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{tower_access_token}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \"team\": { \"name\": \"陈重测试\" } }"
+								},
+								"description": ""
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "成员",
+					"description": "",
+					"item": [
+						{
+							"name": "获取团队全部成员",
+							"request": {
+								"url": "{{towerhost}}/teams/c6dc912c2f494e7ea73bed4488bb3493/members",
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{tower_access_token}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "获取当前账号在团队中的信息",
+							"request": {
+								"url": "{{towerhost}}/teams/c6dc912c2f494e7ea73bed4488bb3493/member",
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{tower_access_token}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "获取成员信息",
+							"request": {
+								"url": "{{towerhost}}/members/046cd66f3b2a464baa60148c064de571",
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{tower_access_token}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "获取指派给成员未完成任务",
+							"request": {
+								"url": "{{towerhost}}/members/046cd66f3b2a464baa60148c064de571/assigned_uncompleted_todos",
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{tower_access_token}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "获取指派给成员已完成任务",
+							"request": {
+								"url": "{{towerhost}}/members/046cd66f3b2a464baa60148c064de571/assigned_completed_todos",
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{tower_access_token}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "获取成员创建的未完成任务",
+							"request": {
+								"url": "{{towerhost}}/members/046cd66f3b2a464baa60148c064de571/created_uncompleted_todos",
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{tower_access_token}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "获取成员创建的已完成任务",
+							"request": {
+								"url": "{{towerhost}}/members/046cd66f3b2a464baa60148c064de571/created_completed_todos",
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{tower_access_token}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "项目",
+					"description": "",
+					"item": [
+						{
+							"name": "获取团队中所有项目",
+							"request": {
+								"url": "{{towerhost}}/teams/c6dc912c2f494e7ea73bed4488bb3493/projects",
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{tower_access_token}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "创建项目",
+							"request": {
+								"url": "{{towerhost}}/teams/c6dc912c2f494e7ea73bed4488bb3493/projects",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{tower_access_token}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \"project\": { \"name\": \"Tower集成\", \"desc\": \"Project Desc\", \"member_ids\": [] } }"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "更新项目信息",
+							"request": {
+								"url": "{{towerhost}}/projects/88265d9d74f84aceb871648092fbcfb8",
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{tower_access_token}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \"project\": { \"name\": \"Tower集成测试nihao\", \"desc\": \"Project Desc\", \"member_ids\": [] } }"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "获取项目信息",
+							"request": {
+								"url": "{{towerhost}}/projects/7f8a8d6f573541508496ced33c60143a",
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{tower_access_token}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \"project\": { \"name\": \"Tower集成\", \"desc\": \"Project Desc\", \"member_ids\": [] } }"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "删除项目",
+							"request": {
+								"url": "{{towerhost}}/projects/8ed0c4c01d324894ad72b3b68de590ed",
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{tower_access_token}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \"project\": { \"name\": \"Tower集成\", \"desc\": \"Project Desc\", \"member_ids\": [] } }"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "获取项目成员",
+							"request": {
+								"url": "{{towerhost}}/projects/88265d9d74f84aceb871648092fbcfb8",
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{tower_access_token}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \"project\": { \"name\": \"Tower集成\", \"desc\": \"Project Desc\", \"member_ids\": [] } }"
+								},
+								"description": ""
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "任务清单",
+					"description": "",
+					"item": [
+						{
+							"name": "获取项目中所有任务清单",
+							"request": {
+								"url": "{{towerhost}}/projects/88265d9d74f84aceb871648092fbcfb8",
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{tower_access_token}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \"project\": { \"name\": \"Tower集成\", \"desc\": \"Project Desc\", \"member_ids\": [] } }"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "创建任务清单",
+							"request": {
+								"url": "{{towerhost}}/projects/88265d9d74f84aceb871648092fbcfb8/todolist",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{tower_access_token}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \"todolist\": { \"name\": \"Todolist\", \"desc\": \"Todolist Desc\" } }\t"
+								},
 								"description": ""
 							},
 							"response": []

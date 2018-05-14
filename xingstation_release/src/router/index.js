@@ -108,7 +108,6 @@ console.log(to)
   // let permissioness = ['/login', '/findPassword']
   let hasPathPermission = auth.checkPathPermission(to)
   if (hasPathPermission) {
-    console.log(44)
     store.commit('refreshRoute', to)
     next()
   } else {

@@ -2,34 +2,84 @@
   <div class="root">
     <div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
       <div class="item-content-wrap">
-       <div class="search-wrap">
-          <el-form :model="filters" :inline="true" ref="searchForm" >
-            <el-form-item label="" prop="name">
-              <el-input v-model="filters.name" placeholder="请输入节目名称" style="width: 250px;"></el-input>
-            </el-form-item>
-            <el-button @click="search()" type="primary">搜索</el-button>
-            <el-button @click="resetSearch" type="default">重置</el-button>
-          </el-form>
+       <div class="button-wrap">
+           
+        <el-form :model="filters" :inline="true" ref="searchForm" >
+           <el-button  :autofocus="false" round v-for="(item,index) in groupData" :id="item.id" @click="say($event)" >{{item.attributes.name=='ACTIVIEW'?'团队成员':item.attributes.name}}</el-button>
+        </el-form>
+        <el-button class="btn" @click="towerAuthorization">tower授权</el-button>
         </div>
-      <div class="total-wrap">
-          <span class="label">
-            总数:1
-          </span>
+      <div class="member-wrap">
+        <div class="total-wrap">
+            <h3 class="label">
+            {{gropName}}
+            <span style="font-size:10px">共（<b>{{updateDate.length}}</b>）人</span>
+            </h3>
         </div>
+        <el-table :data="updateDate" style="width: 100%" :show-header="false">
+          <el-table-column
+            prop="attributes.gavatar"
+            label="图标"
+            min-width="80"
+            align="center"
+            >
+            <template slot-scope="scope">
+              <img :src="scope.row.attributes.gavatar" alt=""  class="icon-item"/> 
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="attributes.nickname"
+            label="名称"
+            min-width="130"
+            >
+            <template slot-scope="scope">
+              <a class="member-name" href="javascript:;">{{scope.row.attributes.nickname}}</a>
+              <el-tag type="info" class="group-tag" v-for="(item,index) in scope.row.relationships.groups.data ">{{item.id | groupFilters(groupData)}}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="attributes.phone"
+            label="手机号"
+            min-width="100"
+            >
+            <template slot-scope="scope">
+              <span>{{scope.row.attributes.phone==null?'-':scope.row.attributes.phone}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="attributes.mailbox"
+            label="邮箱"
+            min-width="100"
+           >
+          </el-table-column>
+          <el-table-column
+            prop="attributes.comment"
+            label="内容"
+            min-width="100"
+            align="right"
+           >
+            <template slot-scope="scope">
+              <span>{{scope.row.attributes.comment==null?'-':scope.row.attributes.comment}}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+     </div>
       
       </div>  
     </div>
+    <div id="test"></div>
   </div>
 </template>
 
 <script>
-// import search from 'service/search'
-
-import { Button, Input, Table, TableColumn, Pagination,Dialog, Form, FormItem, MessageBox, DatePicker, Select, Option, CheckboxGroup, Checkbox} from 'element-ui'
+import team from 'service/team'
+let th=this;
+import { Button, Input, Table, TableColumn, Pagination,Dialog, Form, FormItem, MessageBox, DatePicker, Select, Option, CheckboxGroup, Checkbox,Tag} from 'element-ui'
 
 export default {
   data () {
       return {
+      SERVER_URL: process.env.SERVER_URL,
       filters: {
         name: ''
       },
@@ -46,12 +96,18 @@ export default {
         pageSize: 10,
         currentPage: 1
       },
-      tableData: []
+      tableData: [],
+      updateDate:[],
+      groupData:[],
+      gropName:'团队成员'
     }
   },
   mounted() {
   },
   created () {
+    this.getTowerList();
+    //alert(document.getElementById("button-wrap").offsetWidth);
+    
     // this.getProjectListDetails();
     // let user_info = JSON.parse(localStorage.getItem('user_info'))
     // this.arUserName = user_info.name
@@ -59,45 +115,77 @@ export default {
     
   },
   methods: {
-   getProjectListDetails () {
+    towerAuthorization() {
+        let user_info = JSON.parse(localStorage.getItem('user_info'))
+        window.open(this.SERVER_URL+ '/api/login/tower?id=' + user_info.id)
+    },
+    say(event)
+    {
+      //获取当前元素id
+      var id = event.currentTarget.id;
+		   alert(id);
+       //var id='ff84d99229b7402ebf873f1e9caacfa7';
+       this.updateDate=new Array();
+       for(var i=0;i<this.groupData.length;i++)
+       {
+        if(id===this.groupData[i].id)
+        {
+          this.gropName=this.groupData[i].attributes.name;
+          if('ACTIVIEW'==this.groupData[i].attributes.name)
+          {
+         this.gropName='团队成员';
+         this.updateDate=this.tableData;
+          }
+          alert(this.groupData[i].attributes.name)
+          break;
+        }
+       }
+       if(this.updateDate.length<=0)
+       {
+       //获取对应分组数据
+           for(var i=0;i<this.tableData.length;i++)
+           {
+             for(var j=0;j<this.tableData[i].relationships.groups.data.length;j++)
+              {
+               if(id==this.tableData[i].relationships.groups.data[j].id)
+              {
+                this.updateDate.push(this.tableData[i]);
+                break;
+              }
+              }
+          }
+       }
+       
+    },
+    getTowerList () {
       this.setting.loadingText = "拼命加载中"
       this.setting.loading = true;
-      let searchArgs = {
-        page : this.pagination.currentPage,
-        name : this.filters.name
-        }
-      project.getProjectListDetails(this, searchArgs).then((response) => {
-       let data = response.data
-       this.tableData = data
+      let id = 'c6dc912c2f494e7ea73bed4488bb3493'
+      team.getTowerList(this, id).then((response) => {
+      //  this.responseDate=response.data;
+      //  this.responseIncluded=response.included;
+       this.tableData = response.data;
+       this.updateDate=response.data;
+       this.groupData=response.included;
+       this.setting.loading = false;
        console.log(response);
-       this.pagination.total = response.meta.pagination.total
        this.setting.loading = false;
       }).catch(error => {
         console.log(error)
       this.setting.loading = false;
       })
-    }, 
-    changePage (currentPage) {
-      this.pagination.currentPage = currentPage
-      this.getProjectListDetails ();
-    },
-    linkToEdit(){
-      console.log(11111);
-    },
-    showData(){
-      console.log(222222);
-    },
-    search () {
-      // this.pagination.currentPage = 1;
-      // this.tableData = []
-      // this.getProjectListDetails();
-    },
-    resetSearch () {
-      this.filters.name = ''
-      // this.pagination.currentPage = 1;
-      // this.getProjectListDetails();
-    },
+    }
   },
+  filters:{
+    groupFilters:function (arg,datas) {
+     for(var i=0;i<datas.length;i++){
+      if(arg==datas[i].id){
+         return datas[i].attributes.name;
+      }
+     }
+        return "";
+    }
+    },
   components: {
     "el-table": Table,
     "el-date-picker": DatePicker,
@@ -111,19 +199,22 @@ export default {
     'el-option': Option,
     'el-checkbox-group': CheckboxGroup,
     'el-checkbox': Checkbox,
-    'el-dialog':Dialog
+    'el-dialog':Dialog,
+    'el-tag':Tag
   }
 }
 </script>
 
 <style lang="less" scoped>
+//::selection { background:red; color:lightgreen; } 
+// ::-moz-selection { background:deeppink; color:lightgreen; } 
+// ::-webkit-selection { background:deeppink; color:lightgreen;}
   .root {
     font-size: 14px;
     color: #5E6D82;
     .item-list-wrap{
       background: #fff;
       padding: 30px;
-
       .el-form-item{
         margin-bottom: 0;
       }
@@ -141,10 +232,11 @@ export default {
           width: 50%;
         }
         .icon-item{
-          padding: 10px;
-          width: 50%;
+          padding: 5px;
+          width: 45%;
+          border-radius:50%;
         }
-        .search-wrap{
+        .button-wrap{
           margin-top: 5px;
           display: flex;
           flex-direction: row;
@@ -155,22 +247,16 @@ export default {
           .el-form-item{
             margin-bottom: 0;
           }
-          .el-select{
-            width: 250px;
+          .el-button{
+            margin:5px 5px 5px 0;
           }
-          .item-input{
-            width: 230px;
+          .el-button:hover{
+            background: #72b7e8;
+            color: #ffffff;  
           }
-          .warning{
-            background: #ebf1fd;
-            padding: 8px;
-            margin-left: 10px;
-            color: #444;
-            font-size: 12px;
-            i{
-              color: #4a8cf3;
-              margin-right: 5px;
-            }
+          .el-button:focus{
+            background: #72b7e8;
+            color: #ffffff;  
           }
         }
         .total-wrap{
@@ -182,13 +268,20 @@ export default {
           align-items: center;
           margin-bottom: 10px;
           .label {
-            font-size: 14px;
-            margin:5px 0;
+            font-size: 18px;
+            margin:10px  0 10px 5px;
           }
         }
-        .pagination-wrap{
-          margin: 10px auto;
-          text-align: right;
+        .member-name{
+          display:block;
+          font-size:16px;
+          font-weight:700;
+        }
+        .group-tag{
+           margin:5px 5px 5px 0;
+           //padding:0 5px;
+           border-radius:20px;
+           font-size:14px;
         }
       }
     }
