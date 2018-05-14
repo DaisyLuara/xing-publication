@@ -65,7 +65,6 @@ export default {
   },
   methods: {
     tableColClassName({row, column, rowIndex, columnIndex}) {
-      console.log(22)
       return "col-td";
     },
     changePage(item) {
@@ -78,7 +77,6 @@ export default {
         this.allProjectsList = this.projectsList
       } else {
         this.active = item.id
-        console.log(item)
         let arr = []
         for(var i=0;i<this.projectsList.length;i++)
           {
@@ -100,7 +98,6 @@ export default {
       let id = 'c6dc912c2f494e7ea73bed4488bb3493'
       return team.getProjectsList(this, id).then((response) => {
         this.allProjectsList = response.data
-        console.log(this.allProjectsList)
         this.titleArr = response.included
         this.titleArr.unshift({
           "id": "0",
@@ -117,7 +114,6 @@ export default {
             "display_order": 0
           }
         })
-        console.log(this.titleArr)
         this.projectsList = this.allProjectsList
         this.setting.loading = false;
       }).catch(err => {
