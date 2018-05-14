@@ -36,7 +36,7 @@ class TowerLoginController extends Controller
         User::where('id', '=', $request->id)->update(
             [
                 'tower_access_token' => $tower_user->token,
-                'tower_refresh_token' => $tower_user->refresh_token,
+                'tower_refresh_token' => $tower_user->refreshToken,
             ]
         );
     }
