@@ -49,7 +49,7 @@ class ProjectExport implements FromCollection, WithStrictNullComparison, WithEve
             ->get();
 
         $data = collect();
-        $header1 = ['节目', $date1, '', '', '', '', $date2, '', '', '', '', $date3, '', '', '', '', $date4, '', '', '', '', $date5, '', '', '', '', $date6, '', '', '', ''];
+        $header1 = ['节目名称', $date1, '', '', '', '', $date2, '', '', '', '', $date3, '', '', '', '', $date4, '', '', '', '', $date5, '', '', '', '', $date6, '', '', '', ''];
         $header2 = [''];
         for ($i = 0; $i < 6; $i++) {
             $header2 = array_merge($header2, ['', '', '', '', '']);
@@ -101,7 +101,6 @@ class ProjectExport implements FromCollection, WithStrictNullComparison, WithEve
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' => Border::BORDER_THIN,
-                            'color' => ['argb' => '00000000']
                         ]
                     ]
                 ]);
@@ -111,7 +110,8 @@ class ProjectExport implements FromCollection, WithStrictNullComparison, WithEve
                 $event->sheet->getDelegate()
                     ->getStyle('A1:AE' . $this->data->count())
                     ->getAlignment()
-                    ->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                    ->setHorizontal(Alignment::HORIZONTAL_CENTER)
+                    ->setVertical(Alignment::VERTICAL_CENTER);
                 //表头加粗
                 $event->sheet->getDelegate()
                     ->getStyle('A1:AE3')

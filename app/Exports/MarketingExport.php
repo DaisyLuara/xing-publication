@@ -100,7 +100,6 @@ class MarketingExport implements FromCollection, WithStrictNullComparison, WithE
                         'borders' => [
                             'allBorders' => [
                                 'borderStyle' => Border::BORDER_THIN,
-                                'color' => ['argb' => '00000000']
                             ]
                         ]
                     ]);

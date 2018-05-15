@@ -148,7 +148,6 @@ class PointExport implements FromCollection, WithStrictNullComparison, WithEvent
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' => Border::BORDER_THIN,
-                            'color' => ['argb' => '00000000']
                         ]
                     ]
                 ]);
