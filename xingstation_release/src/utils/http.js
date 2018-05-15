@@ -85,10 +85,11 @@ function VueAxios(Vue) {
       // The request was made but no response was received
       // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
       // http.ClientRequest in node.js
+      console.log('request' + error.request)
       if(error.request.status === 0) {
         let user_info = JSON.parse(localStorage.getItem('user_info'))
         let id = user_info.id
-        if(user_info.tower_access_token !=='' ) {
+        if(user_info.tower_access_token) {
           auth.refreshTowerOuthToken(app).then(result => {
             
             console.log(result)
@@ -98,7 +99,7 @@ function VueAxios(Vue) {
             console.log(error)
           })
         } else {
-          window.open(process.env.SERVER_URL+ '/api/login/tower?id=' + id)
+          window.open(process.env.SERVER_URL+ '/api/login/tower?id=' + id, '_blank')
         }
       }
     } else {
