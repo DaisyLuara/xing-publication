@@ -90,9 +90,10 @@ function VueAxios(Vue) {
         let id = user_info.id
         if(user_info.tower_access_token !=='' ) {
           auth.refreshTowerOuthToken(app).then(result => {
-            console.log(result.data)
+            
+            console.log(result)
           localStorage.removeItem('user_info')
-          localStorage.setItem("user_info", JSON.stringify(result.data))
+          localStorage.setItem("user_info", JSON.stringify(result))
           }).catch(error => {
             console.log(error)
           })
