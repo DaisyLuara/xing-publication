@@ -8,6 +8,7 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 
 class MarketingExport implements FromCollection, WithStrictNullComparison, WithEvents
 {
@@ -29,8 +30,10 @@ class MarketingExport implements FromCollection, WithStrictNullComparison, WithE
         $data = collect();
         $header1 = ['节目名称', '围观数', '', '活跃用户', '玩家数', '', '会员数', '', '生成数', '扫码数', '扫码率', '1', '2', '5', '7', '10', '20', '合计'];
         $header2 = ['', '总数', '平均数', '总数', '总数', '平均数', '总数', '平均数', '', '', '', '刷脸', '活跃用户', '大玩家', '生成数', '扫码', '会员', ''];
+        $header3 = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
         $data->push($header1);
         $data->push($header2);
+        $data->push($header3);
         $faceCount->each(function ($item) use (&$data) {
             $item = json_decode(json_encode($item), true);
             $item = [
@@ -74,8 +77,8 @@ class MarketingExport implements FromCollection, WithStrictNullComparison, WithE
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-
-                $event->sheet->getDelegate()->setMergeCells(['A1:A2', 'B1:C1', 'E1:F1', 'G1:H1', 'I1:I2', 'J1:J2', 'K1:K2', 'R1:R2']);
+                $cellArray = ['A1:A3', 'B1:C1', 'B2:B3', 'C2:C3', 'D2:D3', 'E1:F1', 'E2:E3', 'F2:F3', 'G1:H1', 'G2:G3', 'H2:H3', 'I1:I3', 'J1:J3', 'K1:K3', 'L2:L3', 'M2:M3', 'N2:N3', 'O2:O3', 'P2:P3', 'Q2:Q3', 'R1:R3'];
+                $event->sheet->getDelegate()->setMergeCells($cellArray);
 
                 $event->sheet->getDelegate()
                     ->getStyle('A1:R' . $this->data->count())
@@ -88,6 +91,17 @@ class MarketingExport implements FromCollection, WithStrictNullComparison, WithE
                     ->applyFromArray([
                         'font' => [
                             'bold' => 'true'
+                        ]
+                    ]);
+
+                $event->sheet->getDelegate()
+                    ->getStyle('A1:R' . $this->data->count())
+                    ->applyFromArray([
+                        'borders' => [
+                            'allBorders' => [
+                                'borderStyle' => Border::BORDER_THIN,
+                                'color' => ['argb' => '00000000']
+                            ]
                         ]
                     ]);
             }
