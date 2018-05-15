@@ -99,7 +99,7 @@ function VueAxios(Vue) {
             console.log(error)
           })
         } else {
-          window.open(process.env.SERVER_URL+ '/api/login/tower?id=' + id, '_blank')
+          window.open(process.env.HTTPS_SERVER_URL + '/api/login/tower?id=' + id, '_blank')
         }
       }
     } else {
