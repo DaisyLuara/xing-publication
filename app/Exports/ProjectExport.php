@@ -100,12 +100,22 @@ class ProjectExport implements FromCollection, WithStrictNullComparison, WithEve
                         ]
                     ]
                 ]);
+
+                $event->sheet->getDelegate()->setMergeCells(['A1:A3', 'B1:F2', 'G1:K2', 'L1:P2', 'Q1:U2', 'V1:Z2', 'AA1:AE2']);
+                //居中
                 $event->sheet->getDelegate()
                     ->getStyle('A1:AE' . $this->data->count())
                     ->getAlignment()
                     ->setVertical(Alignment::VERTICAL_CENTER)
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                $event->sheet->getDelegate()->setMergeCells(['A1:A3', 'B1:F2', 'G1:K2', 'L1:P2', 'Q1:U2', 'V1:Z2', 'AA1:AE2']);
+                //表头加粗
+                $event->sheet->getDelegate()
+                    ->getStyle('A1:AE3')
+                    ->applyFromArray([
+                        'font' => [
+                            'bold' => 'true'
+                        ]
+                    ]);
             }
         ];
     }

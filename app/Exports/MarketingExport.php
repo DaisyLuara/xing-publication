@@ -76,12 +76,22 @@ class MarketingExport implements FromCollection, WithStrictNullComparison, WithE
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
+
+                $event->sheet->getDelegate()->setMergeCells(['A1:A2', 'B1:C1', 'E1:F1', 'G1:H1', 'I1:I2', 'J1:J2', 'K1:K2', 'R1:R2']);
+
                 $event->sheet->getDelegate()
                     ->getStyle('A1:R' . $this->data->count())
                     ->getAlignment()
                     ->setVertical(Alignment::VERTICAL_CENTER)
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                $event->sheet->getDelegate()->setMergeCells(['A1:A2', 'B1:C1', 'E1:F1', 'G1:H1', 'I1:I2', 'J1:J2', 'K1:K2', 'R1:R2']);
+
+                $event->sheet->getDelegate()
+                    ->getStyle('A1:R2')
+                    ->applyFromArray([
+                        'font' => [
+                            'bold' => 'true'
+                        ]
+                    ]);
             }
         ];
     }

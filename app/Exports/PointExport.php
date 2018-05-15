@@ -41,46 +41,60 @@ class PointExport implements FromCollection, WithStrictNullComparison, WithEvent
         $projectName->each(function ($item) use (&$Max) {
             $item = json_decode(json_encode($item), true);
             $name = $item['name'];
-            $Max = $Max . ",max(case a.name when '$name' then concat_ws(',', cast(a.lookNum as char), cast(a.playerNum as char),cast(a.outNum as char), cast(a.scanNum as char),cast(a.loveNum as char))else 0 end) '$name'";
+            $Max = $Max . ",max(case a.name when '$name' then concat_ws(',', cast(a.looknum as char), cast(a.playernum as char),cast(a.outnum as char), cast(a.scannum as char),cast(a.lovenum as char))else 0 end) '$name'";
         });
 
         $faceCount = DB::connection('ar')
             ->table('face_count_log as fcl')
             ->join('ar_product_list as apl', 'fcl.belong', '=', 'apl.versionname')
             ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '$this->startDate' and '$this->endDate' and oid='$this->oid' and belong <> 'all' ")
-            ->selectRaw("apl.name as name,date_format(fcl.date,'%Y-%m-%d') as date,sum(looknum) as lookNum,sum(playernum) as playerNum,sum(outnum) as outNum,sum(scannum) as scanNum,sum(lovenum) as loveNum")
+            ->selectRaw("apl.name as name,date_format(fcl.date,'%Y-%m-%d') as date,sum(looknum) as looknum,sum(playernum) as playernum,sum(outnum) as outnum,sum(scannum) as scannum,sum(lovenum) as lovenum")
             ->groupBy(DB::raw("belong,date_format(fcl.date,'%Y-%m-%d')"));
 
         $faceCount = DB::connection('ar')
             ->table(DB::raw("({$faceCount->toSql()}) as a"))
-            ->selectRaw("a.date" . $Max)
+            ->selectRaw("a.date,sum(a.looknum) as looknum,sum(a.playernum) as playernum,sum(a.outnum) as outnum,sum(a.scannum) as scannum,sum(a.lovenum) as lovenum" . $Max)
             ->groupBy('a.date')
             ->get();
 
         $data = collect();
-        $header1 = [''];
+        $header1 = ['', '合计', '', '', '', ''];
         for ($i = 0; $i < $projectNum; $i++) {
             $header1 = array_merge($header1, [$pName[$i], '', '', '', '']);
         }
         $header2 = [''];
-        for ($i = 0; $i < $projectNum; $i++) {
+        for ($i = 0; $i < $projectNum + 1; $i++) {
             $header2 = array_merge($header2, ['', '', '', '', '']);
         }
         $header3 = [''];
-        for ($i = 0; $i < $projectNum; $i++) {
+        for ($i = 0; $i < $projectNum + 1; $i++) {
             $header3 = array_merge($header3, ['围观', '玩家', '生成', '扫码', '会员']);
         }
-        $total = DB::connection('ar')
+        $totalByDay = DB::connection('ar')
             ->table('face_count_log as fcl')
             ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
             ->where('oid', '=', $this->oid)
             ->where('belong', '<>', 'all')
             ->groupBy('belong')
-            ->selectRaw("sum(looknum) as lookNum,sum(playernum) as playerNum,sum(outnum) as outNum,sum(scannum) as scanNum,sum(lovenum) as loveNum")
+            ->selectRaw("sum(looknum) as looknum,sum(playernum) as playernum,sum(outnum) as outnum,sum(scannum) as scannum,sum(lovenum) as lovenum")
+            ->get();
+        $total = DB::connection('ar')
+            ->table('face_count_log as fcl')
+            ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
+            ->where('oid', '=', $this->oid)
+            ->where('belong', '<>', 'all')
+            ->selectRaw("sum(looknum) as looknum,sum(playernum) as playernum,sum(outnum) as outnum,sum(scannum) as scannum,sum(lovenum) as lovenum")
             ->get();
         $totalNum = json_decode(json_encode($total), true);
         $totalNum = collect($totalNum)->flatten()->all();
-        $header4 = array_merge(['Total'], $totalNum);
+
+        $totalByDayNum = json_decode(json_encode($totalByDay), true);
+        $totalByDayNum = collect($totalByDayNum)->flatten()->all();
+
+        $header4 = ['Total'];
+        $header4 = array_merge($header4, $totalNum);
+        $header4 = array_merge($header4, $totalByDayNum);
+
         $data->push($header1);
         $data->push($header2);
         $data->push($header3);
@@ -90,22 +104,22 @@ class PointExport implements FromCollection, WithStrictNullComparison, WithEvent
 
             $aa = [];
             foreach ($item as $key => $value) {
-                if ($key == 'date') {
-                    $aa['date'] = $value;
+                if ($key == 'date' || $key == 'looknum' || $key == 'playernum' || $key == 'outnum' || $key == 'scannum' || $key == 'lovenum') {
+                    $aa[$key] = $value;
                 } else {
                     if ($value == 0) {
-                        $aa[$key . '-' . 'lookNum'] = 0;
-                        $aa[$key . '-' . 'playerNum'] = 0;
-                        $aa[$key . '-' . 'loveNum'] = 0;
-                        $aa[$key . '-' . 'outNum'] = 0;
-                        $aa[$key . '-' . 'scanNum'] = 0;
+                        $aa[$key . '-' . 'looknum'] = 0;
+                        $aa[$key . '-' . 'playernum'] = 0;
+                        $aa[$key . '-' . 'lovenum'] = 0;
+                        $aa[$key . '-' . 'outnum'] = 0;
+                        $aa[$key . '-' . 'scannum'] = 0;
                     } else {
                         $num = explode(',', $value);
-                        $aa[$key . '-' . 'lookNum'] = $num['0'];
-                        $aa[$key . '-' . 'playerNum'] = $num['1'];
-                        $aa[$key . '-' . 'loveNum'] = $num['2'];
-                        $aa[$key . '-' . 'outNum'] = $num['3'];
-                        $aa[$key . '-' . 'scanNum'] = $num['4'];
+                        $aa[$key . '-' . 'looknum'] = $num['0'];
+                        $aa[$key . '-' . 'playernum'] = $num['1'];
+                        $aa[$key . '-' . 'lovenum'] = $num['2'];
+                        $aa[$key . '-' . 'outnum'] = $num['3'];
+                        $aa[$key . '-' . 'scannum'] = $num['4'];
                     }
                 }
             }
@@ -122,13 +136,15 @@ class PointExport implements FromCollection, WithStrictNullComparison, WithEvent
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 $cellArray = ['A1:A3'];
-                for ($i = 0; $i < $this->projectNum; $i++) {
+                for ($i = 0; $i < $this->projectNum + 1; $i++) {
                     $startNum = 1 + 5 * $i;
                     $endNum = 5 * ($i + 1);
 
                     $cellArray[] = $this->change($startNum) . '1:' . $this->change($endNum) . '2';
                 }
-                $event->sheet->getDelegate()->getStyle('A1:' . $this->change($this->projectNum * 5) . $this->data->count())->applyFromArray([
+                $event->sheet->getDelegate()->setMergeCells($cellArray);
+
+                $event->sheet->getDelegate()->getStyle('A1:' . $this->change(($this->projectNum + 1) * 5) . $this->data->count())->applyFromArray([
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' => Border::BORDER_THIN,
@@ -136,12 +152,20 @@ class PointExport implements FromCollection, WithStrictNullComparison, WithEvent
                         ]
                     ]
                 ]);
-                $event->sheet->getDelegate()->setMergeCells($cellArray);
+
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:' . $this->change($this->projectNum * 5) . $this->data->count())
+                    ->getStyle('A1:' . $this->change(($this->projectNum + 1) * 5) . $this->data->count())
                     ->getAlignment()
                     ->setVertical(Alignment::VERTICAL_CENTER)
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+                $event->sheet->getDelegate()
+                    ->getStyle('A1:' . $this->change(($this->projectNum + 1) * 5) . '3')
+                    ->applyFromArray([
+                        'font' => [
+                            'bold' => 'true'
+                        ]
+                    ]);
             }
         ];
     }
