@@ -21,18 +21,18 @@ function VueAxios(Vue) {
 
   // http拦截器
   axios.interceptors.request.use(function(config) {
-    config.headers['Authorization'] = 'Bearer ' + auth.getToken();
-    if (config.url.includes('api/v1')) {
-      config.headers['Authorization'] = 'Bearer ' + 'dbec1544e30e5f3b113771f427dcda8fa721fc7eeaee416685549bbe24f694ae';
-      return config;
-    } 
-    config.headers['Authorization'] = 'Bearer ' + auth.getToken();
+    // config.headers['Authorization'] = 'Bearer ' + auth.getToken();
     // one request of refreshing token can be send at one time
     // auth or logout cannot trrigle refresh token
     // if (store.getters.isRefreshToken || config.url.includes('auth') || config.url.includes('logout')) {
-      if (config.url.includes('auth') || config.url.includes('logout')) {
+    if (config.url.includes('auth') || config.url.includes('logout')) {
+      config.headers['Authorization'] = 'Bearer ' + auth.getToken();
       return config;
-    } else {
+    } else if(config.url.includes('tower')){
+      config.headers['Authorization'] = 'Bearer ' + auth.getTowerAccessToken();
+      // config.headers['Authorization'] = 'Bearer e36edf86cac4024f163936a3b8eb3b4223d7f4f3316712a08b33d9a4ece5c406'
+      return config;
+    }else{
       // if (auth.checkTokenRefresh()) {
       //   // refresh token
       //   return auth.refreshToken(app).then(result => {
@@ -43,8 +43,8 @@ function VueAxios(Vue) {
       // } else {
       //   return config
       // }
+      config.headers['Authorization'] = 'Bearer ' + auth.getToken();
       return config
-      
     }
 
   }, function(error) {
@@ -63,19 +63,17 @@ function VueAxios(Vue) {
     // }
     return response;
   }, function(error) {
-    console.log(error.response)
     if (error.response) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
       if (error.response.status == 401) {
-        console.log(401)
-        // 退出登录，清除登录信息，跳转到登录页面
-        // Message.error("对不起，您未被授权")
-        auth.clearLoginData(app)
-        router.push({
-          path: '/login'
-        })
-        Message.error("请求出错：代码" + error.response.status)
+          // 退出登录，清除登录信息，跳转到登录页面
+          // Message.error("对不起，您未被授权")
+          auth.clearLoginData(app)
+          router.push({
+            path: '/login'
+          })
+          Message.error("请求出错：代码" + error.response.status)
       } else {
         if(error.response.status == 429) {
           Message.error("请求出错:" + error.response.statusText)
@@ -87,7 +85,21 @@ function VueAxios(Vue) {
       // The request was made but no response was received
       // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
       // http.ClientRequest in node.js
-      console.log(error.request);
+      if(error.request.status === 0) {
+        let user_info = JSON.parse(localStorage.getItem('user_info'))
+        let id = user_info.id
+        if(user_info.tower_access_token !=='' ) {
+          auth.refreshTowerOuthToken(app).then(result => {
+            console.log(result.data)
+          localStorage.removeItem('user_info')
+          localStorage.setItem("user_info", JSON.stringify(result.data))
+          }).catch(error => {
+            console.log(error)
+          })
+        } else {
+          window.open(process.env.SERVER_URL+ '/api/login/tower?id=' + id)
+        }
+      }
     } else {
       // Something happened in setting up the request that triggered an Error
       console.log('Error', error.message);

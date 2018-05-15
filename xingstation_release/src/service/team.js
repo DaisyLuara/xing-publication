@@ -1,13 +1,11 @@
 import {router} from '../main'
-// const TOWER = '/tower/'
-const HOST = 'https://tower.im/'
+const HOST = process.env.SERVER_URL
 
-const TEAM_API = 'api/v1/teams/'
-const Authorization_API = '/api/login/tower'
+const TEAM_API = '/tower/teams/'
 export default {
   getTowerList(context, id) {
     return new Promise(function(resolve, reject){
-      context.$http.get(TOWER+TEAM_API + id + '/members').then(response => {
+      context.$http.get(HOST + TEAM_API + id + '/members').then(response => {
         resolve(response.data)
       }).catch(error => {
         reject(error)
@@ -22,6 +20,6 @@ export default {
         reject(error)
       })
     })
-  }
+  },
 }
 

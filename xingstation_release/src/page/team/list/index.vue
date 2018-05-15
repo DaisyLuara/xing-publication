@@ -2,23 +2,23 @@
   <div class="root">
     <div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
       <div class="item-content-wrap">
-       <div class="button-wrap">
-           
+       <el-card class="box-card">
+        <div class="button-wrap">  
         <el-form :model="filters" :inline="true" ref="searchForm" >
-           <el-button  :autofocus="false" round v-for="(item,index) in groupData" :id="item.id" @click="say($event)" >{{item.attributes.name=='ACTIVIEW'?'团队成员':item.attributes.name}}</el-button>
+           <el-button class="button" size="small" v-for="(item,index) in groupData" :key="item.id" :class="{'active': item.id == active}"  @click="say(item.id)" >{{item.attributes.name=='ACTIVIEW'?'团队成员':item.attributes.name}}</el-button>
         </el-form>
-        <el-button class="btn" @click="towerAuthorization">tower授权</el-button>
+        <!-- <el-button class="btn" @click="towerAuthorization">tower授权</el-button> -->
         </div>
       <div class="member-wrap">
         <div class="total-wrap">
-            <h3 class="label">
+            <h1 class="label" style="font-size:32px">
             {{gropName}}
-            <span style="font-size:10px">共（<b>{{updateDate.length}}</b>）人</span>
-            </h3>
+            <span style="font-size:14px;color: #999;">(共<b>{{updateDate.length}}</b>人)</span>
+            </h1>
         </div>
-        <el-table :data="updateDate" style="width: 100%" :show-header="false">
+        <el-table :data="updateDate" style="width: 100%" :show-header="false" :empty-text="emptyText">
           <el-table-column
-            prop="attributes.gavatar"
+            prop="attributes.avatar"
             label="图标"
             min-width="80"
             align="center"
@@ -30,17 +30,17 @@
           <el-table-column
             prop="attributes.nickname"
             label="名称"
-            min-width="130"
+            min-width="150"
             >
             <template slot-scope="scope">
               <a class="member-name" href="javascript:;">{{scope.row.attributes.nickname}}</a>
-              <el-tag type="info" class="group-tag" v-for="(item,index) in scope.row.relationships.groups.data ">{{item.id | groupFilters(groupData)}}</el-tag>
+              <el-tag type="info" class="group-tag" v-for="(item,index) in scope.row.relationships.groups.data " :key="item.id" size="mini">{{item.id | groupFilters(groupData)}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column
             prop="attributes.phone"
             label="手机号"
-            min-width="100"
+            min-width="80"
             >
             <template slot-scope="scope">
               <span>{{scope.row.attributes.phone==null?'-':scope.row.attributes.phone}}</span>
@@ -49,13 +49,13 @@
           <el-table-column
             prop="attributes.mailbox"
             label="邮箱"
-            min-width="100"
+            min-width="150"
            >
           </el-table-column>
           <el-table-column
             prop="attributes.comment"
             label="内容"
-            min-width="100"
+            min-width="80"
             align="right"
            >
             <template slot-scope="scope">
@@ -63,8 +63,8 @@
             </template>
           </el-table-column>
         </el-table>
-     </div>
-      
+      </div>
+      </el-card>
       </div>  
     </div>
     <div id="test"></div>
@@ -73,16 +73,20 @@
 
 <script>
 import team from 'service/team'
+import auth from 'service/auth'
+
 let th=this;
-import { Button, Input, Table, TableColumn, Pagination,Dialog, Form, FormItem, MessageBox, DatePicker, Select, Option, CheckboxGroup, Checkbox,Tag} from 'element-ui'
+import { Button, Input, Table, TableColumn,Dialog, Form, FormItem ,Tag,Card} from 'element-ui'
 
 export default {
   data () {
       return {
+      active:'',
       SERVER_URL: process.env.SERVER_URL,
       filters: {
         name: ''
       },
+      emptyText: '暂无数据',
       setting: {
         loading: false,
         loadingText: "拼命加载中"
@@ -105,26 +109,18 @@ export default {
   mounted() {
   },
   created () {
-    this.getTowerList();
-    //alert(document.getElementById("button-wrap").offsetWidth);
-    
-    // this.getProjectListDetails();
-    // let user_info = JSON.parse(localStorage.getItem('user_info'))
-    // this.arUserName = user_info.name
-    // this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
+    auth.refreshUserInfo(this).then((res) => {
+      this.getTowerList();
+    }).catch(err => {
+      console.log(err)
+      this.setting.loading = false;
+    })
     
   },
   methods: {
-    towerAuthorization() {
-        let user_info = JSON.parse(localStorage.getItem('user_info'))
-        window.open(this.SERVER_URL+ '/api/login/tower?id=' + user_info.id)
-    },
-    say(event)
+    say(id)
     {
-      //获取当前元素id
-      var id = event.currentTarget.id;
-		   alert(id);
-       //var id='ff84d99229b7402ebf873f1e9caacfa7';
+       this.active=id;
        this.updateDate=new Array();
        for(var i=0;i<this.groupData.length;i++)
        {
@@ -133,45 +129,43 @@ export default {
           this.gropName=this.groupData[i].attributes.name;
           if('ACTIVIEW'==this.groupData[i].attributes.name)
           {
-         this.gropName='团队成员';
-         this.updateDate=this.tableData;
+            this.gropName='团队成员';
+            this.updateDate=this.tableData;
           }
-          alert(this.groupData[i].attributes.name)
           break;
         }
        }
        if(this.updateDate.length<=0)
        {
        //获取对应分组数据
-           for(var i=0;i<this.tableData.length;i++)
-           {
-             for(var j=0;j<this.tableData[i].relationships.groups.data.length;j++)
-              {
-               if(id==this.tableData[i].relationships.groups.data[j].id)
-              {
-                this.updateDate.push(this.tableData[i]);
-                break;
-              }
-              }
+        for(var i=0;i<this.tableData.length;i++)
+        {
+          for(var j=0;j<this.tableData[i].relationships.groups.data.length;j++)
+          {
+            if(id==this.tableData[i].relationships.groups.data[j].id)
+          {
+            this.updateDate.push(this.tableData[i]);
+            break;
           }
-       }
-       
+          }
+      }
+     }   
     },
     getTowerList () {
       this.setting.loadingText = "拼命加载中"
       this.setting.loading = true;
       let id = 'c6dc912c2f494e7ea73bed4488bb3493'
       team.getTowerList(this, id).then((response) => {
-      //  this.responseDate=response.data;
-      //  this.responseIncluded=response.included;
-       this.tableData = response.data;
-       this.updateDate=response.data;
-       this.groupData=response.included;
-       this.setting.loading = false;
-       console.log(response);
+        if(response){
+        this.tableData = response.data;
+        this.updateDate=response.data;
+        this.groupData=response.included;
+        this.active=this.groupData[0].id;
+        }
+        this.setting.loading = false;
        this.setting.loading = false;
       }).catch(error => {
-        console.log(error)
+          console.log(error)
       this.setting.loading = false;
       })
     }
@@ -188,27 +182,19 @@ export default {
     },
   components: {
     "el-table": Table,
-    "el-date-picker": DatePicker,
     "el-table-column":  TableColumn,
     "el-button": Button,
     "el-input": Input,
-    "el-pagination": Pagination,
     "el-form": Form,
     "el-form-item": FormItem,
-    'el-select': Select,
-    'el-option': Option,
-    'el-checkbox-group': CheckboxGroup,
-    'el-checkbox': Checkbox,
     'el-dialog':Dialog,
-    'el-tag':Tag
+    'el-tag':Tag,
+    "el-card": Card
   }
 }
 </script>
 
 <style lang="less" scoped>
-//::selection { background:red; color:lightgreen; } 
-// ::-moz-selection { background:deeppink; color:lightgreen; } 
-// ::-webkit-selection { background:deeppink; color:lightgreen;}
   .root {
     font-size: 14px;
     color: #5E6D82;
@@ -218,7 +204,17 @@ export default {
       .el-form-item{
         margin-bottom: 0;
       }
+      .el-button:hover {
+        color: #606266;
+      }
+      .el-table{
+        font-size: 14px;
+        color: #333;
+      }
       .item-content-wrap{
+        position: relative;
+        width: 960px;
+        margin: 0 auto;
         .demo-table-expand {
         font-size: 0;
         }
@@ -247,16 +243,18 @@ export default {
           .el-form-item{
             margin-bottom: 0;
           }
+          .button{
+            background-color: #f0f0f0;
+            border: 1px solid #f0f0f0;
+            border-radius: 20px;
+          }
           .el-button{
             margin:5px 5px 5px 0;
           }
-          .el-button:hover{
-            background: #72b7e8;
-            color: #ffffff;  
-          }
-          .el-button:focus{
-            background: #72b7e8;
-            color: #ffffff;  
+          .active{
+            background-color: #aed4d1;
+            border: 1px solid #aed4d1;
+            color: #fff;
           }
         }
         .total-wrap{

@@ -6,10 +6,11 @@
           <div class="search-wrap">
             <el-form :model="filters" :inline="true" ref="searchForm" >
               <el-form-item label="" v-for="item in titleArr" :key="item.id" >
-              <el-button icon="el-icon-star-off" class="btn" @click="changePage" :class="{'active': 'item.id' == active}" v-if="item.id == 0"></el-button>
-                <el-button class="btn" :class="{'active': item.id == active}" @click="changePage" v-else>{{item.attributes.name}}</el-button>
+              <el-button icon="el-icon-star-off" class="btn" @click="changePage('0')" :class="{'active': item.id == active}" v-if="item.id == 0" size="small"></el-button>
+                <el-button class="btn" :class="{'active': item.id == active}" @click="changePage(item)" v-else size="small">{{item.attributes.name}}</el-button>
               </el-form-item>
             </el-form>
+            <!-- <el-button class="btn-tower" @click="towerAuthorization">tower授权</el-button> -->
           </div>
           <el-table
           :data="allProjectsList"
@@ -30,7 +31,9 @@
 </template>
 
 <script>
- import team from 'service/team'
+ import team from 'service/team' 
+ import auth from 'service/auth'
+ 
 import { Button, Input, Table, TableColumn, Form, FormItem, MessageBox, Card,} from 'element-ui'
 
 export default {
@@ -39,6 +42,7 @@ export default {
       filters: {
         name: ''
       },
+      SERVER_URL: process.env.SERVER_URL,
       active: '1',
       setting: {
         loading: false,
@@ -53,51 +57,78 @@ export default {
         pageSize: 10,
         currentPage: 1
       },
+      emptyText: '暂无数据',
       titleArr: [],
-      allProjectsList: []
+      allProjectsList: [],
+      projectsList: []
     }
   },
   mounted() {
   },
   created () {
-    this.getTeamsList();
-    // let user_info = JSON.parse(localStorage.getItem('user_info'))
-    // this.arUserName = user_info.name
-    // this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
-    
+    auth.refreshUserInfo(this).then((res) => {
+      console.log(res)
+      this.getTeamsList();
+    }).catch(err => {
+      console.log(err)
+      this.setting.loading = false;
+    })
   },
   methods: {
+    
     tableColClassName({row, column, rowIndex, columnIndex}) {
-      console.log(22)
       return "col-td";
     },
-    changePage() {
-
+    changePage(item) {
+      if(item === '0') {
+        this.active = '0'
+        var pinnedArr = this.projectsList.filter(project => project.attributes.is_pinned == true)
+        this.allProjectsList = pinnedArr
+      } else if (item.id == '1') {
+        this.active = item.id
+        this.allProjectsList = this.projectsList
+      } else {
+        this.active = item.id
+        let arr = []
+        for(var i=0;i<this.projectsList.length;i++)
+          {
+            for(var j=0;j<this.projectsList[i].relationships.project_groups.data.length;j++)
+            {
+              if(item.id==this.projectsList[i].relationships.project_groups.data[j].id)
+              {
+                arr.push(this.projectsList[i]);
+                break;
+              }
+            }
+          }
+          this.allProjectsList = arr
+      }
     },
     getTeamsList () {
       this.setting.loadingText = "拼命加载中"
       this.setting.loading = true;
       let id = 'c6dc912c2f494e7ea73bed4488bb3493'
       return team.getProjectsList(this, id).then((response) => {
-        this.allProjectsList = response.data
-        console.log(this.allProjectsList)
-        this.titleArr = response.included
-        this.titleArr.unshift({
-          "id": "0",
-          "type": "project_groups",
-          "attributes": {
-              "name": "",
+        if(response) {
+          this.allProjectsList = response.data
+          this.titleArr = response.included
+          this.titleArr.unshift({
+            "id": "0",
+            "type": "project_groups",
+            "attributes": {
+                "name": "",
+                "display_order": 0
+            }
+          },{
+            "id": "1",
+            "type": "project_groups",
+            "attributes": {
+              "name": "所有项目",
               "display_order": 0
-          }
-        },{
-          "id": "1",
-          "type": "project_groups",
-          "attributes": {
-            "name": "所有项目",
-            "display_order": 0
-          }
-        })
-        console.log(this.titleArr)
+            }
+          })
+          this.projectsList = this.allProjectsList
+        }
         this.setting.loading = false;
       }).catch(err => {
         console.log(err)
@@ -131,6 +162,9 @@ export default {
       }
       .el-table--enable-row-hover .el-table__body tr:hover>td {
         background-color: #FBFDF7;
+      }
+      .el-button:hover {
+        color: #606266;
       }
       .item-content-wrap{
         position: relative;

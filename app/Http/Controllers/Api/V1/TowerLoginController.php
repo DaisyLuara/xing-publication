@@ -41,5 +41,7 @@ class TowerLoginController extends Controller
                 'tower_refresh_token' => $tower_user->refreshToken,
             ]
         );
+
+        return redirect(env('TOWER_TEAM_REDIRECT'));
     }
 }
