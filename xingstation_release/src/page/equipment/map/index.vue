@@ -18,7 +18,7 @@ export default {
     return {
       currentLat: 31.20936447823612,
       currentlng: 121.6082842304611,
-      currentLevel: 16,
+      currentLevel: 12,
       bindTime: [],
       map: null,
       mapvLayer: null,
@@ -325,7 +325,10 @@ export default {
           .then(BMap => {
             window.BMap = BMap
             this.map = new BMap.Map('container') // 创建地图实例
-            this.map.centerAndZoom(new BMap.Point(121.52199, 31.233178), 16) // 初始化地图,设置中心点坐标和地图级别
+            this.map.centerAndZoom(
+              new BMap.Point(this.currentlng, this.currentLat),
+              this.currentLevel
+            ) // 初始化地图,设置中心点坐标和地图级别
             this.map.enableScrollWheelZoom(true) // 开启鼠标滚轮缩放
             this.map.setMapStyle({
               style: 'midnight'
