@@ -108,6 +108,7 @@ $api->version('v1', [
 
             //设备
             $api->get('push', 'PushController@index');
+            $api->get('point/map', 'PointController@map');
 
             //Excel
             $api->get('excel', 'ExcelController@export');
