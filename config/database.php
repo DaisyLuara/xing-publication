@@ -52,6 +52,14 @@ return [
             'prefix' => '',
             'strict' => true,
             'engine' => null,
+            'modes' => [
+                'STRICT_TRANS_TABLES',
+                'NO_ZERO_IN_DATE',
+                'NO_ZERO_DATE',
+                'ERROR_FOR_DIVISION_BY_ZERO',
+                'NO_AUTO_CREATE_USER',
+                'NO_ENGINE_SUBSTITUTION'
+            ]
         ],
         'ar' => [
             'driver' => 'mysql',
@@ -62,7 +70,7 @@ return [
             'password' => env('AR_DB_PASSWORD', '717513736'),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
-            'strict' => true,
+            'strict' => false,
             'engine' => null,
         ],
         'pgsql' => [

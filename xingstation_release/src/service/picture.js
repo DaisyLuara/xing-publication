@@ -2,6 +2,8 @@ import { router } from '../main'
 const MEDIA_API = '/api/media/media'
 const MEDIA_GROUP_API = '/api/media/mediaGroups'
 const pictureUseType = 'picture_system'
+const HOST = process.env.SERVER_URL
+
 export default {
   getMediaGroupsList(context, type, picture) {
     let promise = new Promise(function(resolve, reject) {

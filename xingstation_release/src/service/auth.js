@@ -1,6 +1,5 @@
 import { router } from '../main'
 import { Message, MessageBox } from 'element-ui'
-
 const HOST = process.env.SERVER_URL
 const LOGIN_API = '/api/authorizations'
 const LOGOUT_API = '/api/authorizations/current'
@@ -8,11 +7,12 @@ const USERINFO_API = '/api/user?include=permissions,roles'
 const IMAGE_CAPTCHA = '/api/captchas'
 const USER_API = '/api/user'
 const SMS_CAPTCHA = '/api/verificationCodes'
+const TOWER_OUTH_TOKEN = '/api/oauth/token?include=permissions,roles'
 export default {
   login(context, creds, redirect) {
     context.setting.submiting = true;
     console.log(creds)
-    context.$http.post(LOGIN_API, creds).then(response => {
+    context.$http.post(HOST + LOGIN_API, creds).then(response => {
       console.log(response)
         //  将token与权限存储到cookie和localstorage中,取的时候从localstorage中取
         let loginResult = response.data;
@@ -55,7 +55,7 @@ export default {
   },
 
   logout(context) {
-    context.$http.delete(LOGOUT_API).then(data => {
+    context.$http.delete(HOST + LOGOUT_API).then(data => {
       this.clearLoginData(context)
       let setIntervalValue = context.$store.state.notificationCount.setIntervalValue
       clearInterval(setIntervalValue)
@@ -76,6 +76,7 @@ export default {
     localStorage.removeItem('jwt_token')
     localStorage.removeItem('user_info')
     localStorage.removeItem('jwt_ttl')
+    localStorage.removeItem('permissions')
     localStorage.removeItem('jwt_begin_time')
     let setIntervalValue = context.$store.state.notificationCount.setIntervalValue
     clearInterval(setIntervalValue)
@@ -83,8 +84,11 @@ export default {
 
   refreshUserInfo(context) {
     return new Promise((resolve, reject) => {
-      context.$http.get(USERINFO_API).then(response => {
+      context.$http.get(HOST + USERINFO_API).then(response => {
           let result = response.data;
+          console.log(result)
+          localStorage.setItem('permissions',JSON.stringify(result.permissions))
+          localStorage.removeItem('user_info')
           localStorage.setItem("user_info", JSON.stringify(result))
             //context.$store.commit('setCurUserInfo', result.data)
           resolve(result.data)
@@ -99,17 +103,23 @@ export default {
     return localStorage.getItem('jwt_token')
   },
 
+  getTowerAccessToken() {
+    let user_info = JSON.parse(localStorage.getItem('user_info'))
+    console.log(user_info.tower_access_token)
+    return user_info.tower_access_token
+  },
+
   getUserInfo() {
-    let user_info = localStorage.getItem('user_info')
-    if (user_info) {
-      return JSON.parse(user_info)
+    let permissions = localStorage.getItem('permissions')
+    if (permissions) {
+      return JSON.parse(permissions)
     }
     return {}
   },
 
   getPermission() {
-    let user_info = this.getUserInfo()
-    return user_info.permissions
+    let permissions = this.getUserInfo()
+    return permissions
   },
 
   checkPathPermission(route) {
@@ -165,7 +175,17 @@ export default {
 
   modifyUser(context,args){
     return new Promise((resolve, reject) => {
-      context.$http.patch(USER_API, args).then(result => {
+      context.$http.patch(HOST + USER_API, args).then(result => {
+        resolve(result.data);
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  refreshTowerOuthToken(context) {
+    return new Promise((resolve, reject) => {
+      context.$http.post(HOST + TOWER_OUTH_TOKEN).then(result => {
         resolve(result.data);
       }).catch(error => {
         reject(error)
@@ -176,7 +196,7 @@ export default {
   // 获取图形验证码
   getImageCaptcha(context, args) {
     let promise = new Promise((resolve, reject) => {
-      context.$http.post(IMAGE_CAPTCHA, args).then(result => {
+      context.$http.post(HOST + IMAGE_CAPTCHA, args).then(result => {
         resolve(result.data);
       }).catch(error => {
         reject(error)
@@ -186,7 +206,7 @@ export default {
   },
   sendSmsCaptcha(context, args) {
     let promise = new Promise((resolve, reject) => {
-      context.$http.post(SMS_CAPTCHA, args).then(response => {
+      context.$http.post(HOST + SMS_CAPTCHA, args).then(response => {
         resolve(response.data)
       }).catch(error => {
         reject(error)
