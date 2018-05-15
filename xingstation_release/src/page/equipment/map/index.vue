@@ -243,8 +243,8 @@ export default {
             })
             let styleJson = this.styleJson
             this.map.setMapStyle({ styleJson: styleJson })
-            this.map.addEventListener('click', function() {
-              alert('您点击了地图。')
+            this.map.addEventListener('zoomend', function() {
+              console.log(this.map.getZoom())
             })
             this.handleMapVInit().then(() => {
               let mapv = window.mapv
