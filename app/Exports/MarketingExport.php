@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\FaceCount;
+use DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
@@ -19,11 +19,8 @@ class MarketingExport implements FromCollection, WithStrictNullComparison, WithE
 
     public function collection()
     {
-
-        $faceCount = new FaceCount();
-        $query = $faceCount->query();
-
-        $faceCount = $query->join('ar_product_list', 'belong', '=', 'versionname')
+        $faceCount = DB::connection('ar')->table('face_count_log')
+            ->join('ar_product_list', 'belong', '=', 'versionname')
             ->whereRaw("date_format(face_count_log.date, '%Y-%m-%d') BETWEEN '{$this->startDate}' AND '{$this->endDate}'")
             ->whereNotIn('oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
             ->groupby('belong')
@@ -35,6 +32,7 @@ class MarketingExport implements FromCollection, WithStrictNullComparison, WithE
         $data->push($header1);
         $data->push($header2);
         $faceCount->each(function ($item) use (&$data) {
+            $item = json_decode(json_encode($item), true);
             $item = [
                 'name' => $item['name'],
                 'lookNum' => $item['lookNum'],

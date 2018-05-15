@@ -13,14 +13,19 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 
 class ProjectExport implements FromCollection, WithStrictNullComparison, WithEvents
 {
+    public function __construct($request)
+    {
+        $this->date = $request->date;
+    }
+
     public function collection()
     {
-        $date1 = date_format(Carbon::now()->addMonth(-5), 'Y-m');
-        $date2 = date_format(Carbon::now()->addMonth(-4), 'Y-m');
-        $date3 = date_format(Carbon::now()->addMonth(-3), 'Y-m');
-        $date4 = date_format(Carbon::now()->addMonth(-2), 'Y-m');
-        $date5 = date_format(Carbon::now()->addMonth(-1), 'Y-m');
-        $date6 = date_format(Carbon::now(), 'Y-m');
+        $date1 = date_format((new Carbon($this->date))->addMonth(-5), 'Y-m');
+        $date2 = date_format((new Carbon($this->date))->addMonth(-4), 'Y-m');
+        $date3 = date_format((new Carbon($this->date))->addMonth(-3), 'Y-m');
+        $date4 = date_format((new Carbon($this->date))->addMonth(-2), 'Y-m');
+        $date5 = date_format((new Carbon($this->date))->addMonth(-1), 'Y-m');
+        $date6 = date_format(new Carbon($this->date), 'Y-m');
 
         $faceCount = DB::connection('ar')->table('face_count_log')
             ->join('ar_product_list', 'belong', '=', 'versionname')
@@ -106,7 +111,6 @@ class ProjectExport implements FromCollection, WithStrictNullComparison, WithEve
                 $event->sheet->getDelegate()
                     ->getStyle('A1:AE' . $this->data->count())
                     ->getAlignment()
-                    ->setVertical(Alignment::VERTICAL_CENTER)
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER);
                 //表头加粗
                 $event->sheet->getDelegate()

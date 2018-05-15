@@ -17,7 +17,7 @@ class ExcelController extends Controller
 
     public function projectExcel(Request $request)
     {
-        Excel::store(new ProjectExport(), '节目数据统计.xlsx');
+        Excel::store(new ProjectExport($request), '节目数据统计.xlsx');
     }
 
     public function pointExcel(Request $request)
