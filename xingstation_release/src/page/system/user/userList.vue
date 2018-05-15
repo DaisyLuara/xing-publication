@@ -33,7 +33,7 @@
         label="修改时间"
         >
       </el-table-column>
-      <el-table-column label="操作" width="200">
+      <el-table-column label="操作" width="100">
         <template slot-scope="scope">
           <el-button size="small" @click="linkToEdit(scope.row)" type="warning">修改</el-button>
         </template>

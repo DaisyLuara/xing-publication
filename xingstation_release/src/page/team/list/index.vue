@@ -18,7 +18,7 @@
         </div>
         <el-table :data="updateDate" style="width: 100%" :show-header="false" :empty-text="emptyText">
           <el-table-column
-            prop="gavatar"
+            prop="attributes.avatar"
             label="图标"
             min-width="80"
             align="center"
@@ -28,7 +28,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="nickname"
+            prop="attributes.nickname"
             label="名称"
             min-width="150"
             >
@@ -38,24 +38,24 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="phone"
+            prop="attributes.phone"
             label="手机号"
-            min-width="100"
+            min-width="80"
             >
             <template slot-scope="scope">
               <span>{{scope.row.attributes.phone==null?'-':scope.row.attributes.phone}}</span>
             </template>
           </el-table-column>
           <el-table-column
-            prop="mailbox"
+            prop="attributes.mailbox"
             label="邮箱"
-            min-width="100"
+            min-width="150"
            >
           </el-table-column>
           <el-table-column
-            prop="comment"
+            prop="attributes.comment"
             label="内容"
-            min-width="100"
+            min-width="80"
             align="right"
            >
             <template slot-scope="scope">
@@ -110,20 +110,12 @@ export default {
   },
   created () {
     auth.refreshUserInfo(this).then((res) => {
-    //   console.log(res)
+      this.getTowerList();
     }).catch(err => {
       console.log(err)
+      this.setting.loading = false;
     })
-    // localStorage.setItem('tower_access_token','8995a9869d18fa19ab7f86dd2e883e9d6e2c92d6a4c89a5faaf77a3efbb3fb67')
-    // if(localStorage.getItem('tower_auth') === 'false') {
-    //     console.log(22)
-    //     this.emptyText = '请点击tower授权按钮'
-    // } else {
-    //     console.log(2333)
-    //     this.emptyText = '暂无数据'
-    //     this.getTowerList();
-    // }
-      this.getTowerList();
+    
   },
   methods: {
     say(id)
@@ -171,7 +163,6 @@ export default {
         this.active=this.groupData[0].id;
         }
         this.setting.loading = false;
-       console.log(response);
        this.setting.loading = false;
       }).catch(error => {
           console.log(error)
@@ -181,7 +172,6 @@ export default {
   },
   filters:{
     groupFilters:function (arg,datas) {
-      console.log(datas)
      for(var i=0;i<datas.length;i++){
       if(arg==datas[i].id){
          return datas[i].attributes.name;
@@ -218,7 +208,7 @@ export default {
         color: #606266;
       }
       .el-table{
-        font-size: 18px;
+        font-size: 14px;
         color: #333;
       }
       .item-content-wrap{

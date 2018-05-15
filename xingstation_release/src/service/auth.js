@@ -7,6 +7,7 @@ const USERINFO_API = '/api/user?include=permissions,roles'
 const IMAGE_CAPTCHA = '/api/captchas'
 const USER_API = '/api/user'
 const SMS_CAPTCHA = '/api/verificationCodes'
+const TOWER_OUTH_TOKEN = '/api/oauth/token?include=permissions,roles'
 export default {
   login(context, creds, redirect) {
     context.setting.submiting = true;
@@ -75,6 +76,7 @@ export default {
     localStorage.removeItem('jwt_token')
     localStorage.removeItem('user_info')
     localStorage.removeItem('jwt_ttl')
+    localStorage.removeItem('permissions')
     localStorage.removeItem('jwt_begin_time')
     let setIntervalValue = context.$store.state.notificationCount.setIntervalValue
     clearInterval(setIntervalValue)
@@ -85,6 +87,7 @@ export default {
       context.$http.get(HOST + USERINFO_API).then(response => {
           let result = response.data;
           console.log(result)
+          localStorage.setItem('permissions',JSON.stringify(result.permissions))
           localStorage.removeItem('user_info')
           localStorage.setItem("user_info", JSON.stringify(result))
             //context.$store.commit('setCurUserInfo', result.data)
@@ -107,16 +110,16 @@ export default {
   },
 
   getUserInfo() {
-    let user_info = localStorage.getItem('user_info')
-    if (user_info) {
-      return JSON.parse(user_info)
+    let permissions = localStorage.getItem('permissions')
+    if (permissions) {
+      return JSON.parse(permissions)
     }
     return {}
   },
 
   getPermission() {
-    let user_info = this.getUserInfo()
-    return user_info.permissions
+    let permissions = this.getUserInfo()
+    return permissions
   },
 
   checkPathPermission(route) {
@@ -173,6 +176,16 @@ export default {
   modifyUser(context,args){
     return new Promise((resolve, reject) => {
       context.$http.patch(HOST + USER_API, args).then(result => {
+        resolve(result.data);
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  refreshTowerOuthToken(context) {
+    return new Promise((resolve, reject) => {
+      context.$http.post(HOST + TOWER_OUTH_TOKEN).then(result => {
         resolve(result.data);
       }).catch(error => {
         reject(error)
