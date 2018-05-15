@@ -1,6 +1,6 @@
 <template>
   <div class="root">
-    <div class="item-list-wrap">
+    <div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
       <div id="container" style="width: 100%; height: 80vh;"></div>
       <canvas id="canvas"></canvas>
     </div>
@@ -9,9 +9,17 @@
 
 <script>
 import BaiduMap from './baidu-map'
+import { DatePicker } from 'element-ui'
 export default {
+  components: {
+    ElDatePicker: DatePicker
+  },
   data() {
     return {
+      currentLat: 31.20936447823612,
+      currentlng: 121.6082842304611,
+      currentLevel: 16,
+      bindTime: [],
       map: null,
       mapvLayer: null,
       filters: {
@@ -185,6 +193,22 @@ export default {
             color: '#000000ff'
           }
         }
+      ],
+      zoom: [
+        2000000,
+        1000000,
+        500000,
+        200000,
+        100000,
+        50000,
+        25000,
+        20000,
+        10000,
+        5000,
+        2000,
+        1000,
+        500,
+        200
       ]
     }
   },
@@ -198,6 +222,63 @@ export default {
       } catch (e) {
         console.log(e)
       }
+    },
+    clearLayer() {
+      this.mapvLayer.destroy()
+    },
+    getDataByTimeArea() {
+      this.setting.loading = true
+      let request_url = process.env.SERVER_URL + '/api/point/map'
+      let computedDistance =
+        this.getDistanceByLevel(this.currentLevel - 2) / 1000
+      let request_para = {
+        params: {
+          lat: this.currentLat,
+          lng: this.currentlng,
+          distance: computedDistance
+        }
+      }
+      this.$http.get(request_url, request_para).then(r => {
+        console.dir(r)
+        this.setting.loading = false
+        let resArr = r.data.data
+        let data = []
+        for (let i = 0; i < resArr.length; i++) {
+          data.push({
+            geometry: {
+              type: 'Point',
+              coordinates: [resArr[i].lng, resArr[i].lat]
+            },
+            count: resArr[i].count
+          })
+        }
+        let dataSet = new mapv.DataSet(data)
+
+        let options = {
+          fillStyle: 'rgba(55, 50, 250, 0.8)',
+          shadowColor: 'rgba(255, 250, 50, 1)',
+          shadowBlur: 20,
+          max: 100,
+          size: 50,
+          label: {
+            show: true,
+            fillStyle: 'white',
+            // shadowColor: 'yellow',
+            font: '15px Arial'
+            // shadowBlur: 10,
+          },
+          globalAlpha: 0.5,
+          gradient: {
+            0.25: 'rgb(0,0,255)',
+            0.55: 'rgb(0,255,0)',
+            0.85: 'yellow',
+            1.0: 'rgb(255,0,0)'
+          },
+          draw: 'honeycomb'
+        }
+        this.mapvLayer = new mapv.baiduMapLayer(this.map, dataSet, options)
+      })
+      console.log('change')
     },
     handleMapVInit() {
       return new Promise((resolve, reject) => {
@@ -229,107 +310,43 @@ export default {
         }
       })
     },
-
+    getDistanceByLevel(level) {
+      if (level > 15) {
+        return 1000
+      } else if (level <= 3) {
+        return this.zoom[0]
+      } else {
+        return this.zoom[level - 3]
+      }
+    },
     handleMapInit() {
       return new Promise((resolve, reject) => {
         BaiduMap.init()
           .then(BMap => {
             window.BMap = BMap
             this.map = new BMap.Map('container') // 创建地图实例
-            this.map.centerAndZoom(new BMap.Point(105.403119, 38.028658), 5) // 初始化地图,设置中心点坐标和地图级别
+            this.map.centerAndZoom(new BMap.Point(121.52199, 31.233178), 16) // 初始化地图,设置中心点坐标和地图级别
             this.map.enableScrollWheelZoom(true) // 开启鼠标滚轮缩放
             this.map.setMapStyle({
               style: 'midnight'
             })
             let styleJson = this.styleJson
             this.map.setMapStyle({ styleJson: styleJson })
-            this.map.addEventListener('zoomend', function() {
-              console.log(this.map.getZoom())
+            this.map.addEventListener('zoomend', () => {
+              this.clearLayer()
+              let zoomLevel = this.map.getZoom()
+              let position = this.map.getCenter()
+              this.currentLevel = zoomLevel
+              this.currentLat = position.lat
+              this.currentlng = position.lng
+
+              this.getDataByTimeArea()
+              console.log(zoomLevel)
+              console.log(position)
             })
             this.handleMapVInit().then(() => {
               let mapv = window.mapv
-              let randomCount = 300
-              let data = []
-              let citys = [
-                '北京',
-                '天津',
-                '上海',
-                '重庆',
-                '石家庄',
-                '太原',
-                '呼和浩特',
-                '哈尔滨',
-                '长春',
-                '沈阳',
-                '济南',
-                '南京',
-                '合肥',
-                '杭州',
-                '南昌',
-                '福州',
-                '郑州',
-                '武汉',
-                '长沙',
-                '广州',
-                '南宁',
-                '西安',
-                '银川',
-                '兰州',
-                '西宁',
-                '乌鲁木齐',
-                '成都',
-                '贵阳',
-                '昆明',
-                '拉萨',
-                '海口'
-              ]
-
-              // 构造数据
-              while (randomCount--) {
-                let cityCenter = mapv.utilCityCenter.getCenterByCityName(
-                  citys[parseInt(Math.random() * citys.length)]
-                )
-                data.push({
-                  geometry: {
-                    type: 'Point',
-                    coordinates: [
-                      cityCenter.lng - 2 + Math.random() * 4,
-                      cityCenter.lat - 2 + Math.random() * 4
-                    ]
-                  },
-                  count: 30 * Math.random()
-                })
-              }
-              console.dir(data)
-              let dataSet = new mapv.DataSet(data)
-
-              let options = {
-                fillStyle: 'rgba(55, 50, 250, 0.8)',
-                shadowColor: 'rgba(255, 250, 50, 1)',
-                shadowBlur: 20,
-                max: 100,
-                size: 50,
-                label: {
-                  show: true,
-                  fillStyle: 'white'
-                  // shadowColor: 'yellow',
-                  // font: '20px Arial',
-                  // shadowBlur: 10,
-                },
-                globalAlpha: 0.5,
-                gradient: {
-                  0.25: 'rgb(0,0,255)',
-                  0.55: 'rgb(0,255,0)',
-                  0.85: 'yellow',
-                  1.0: 'rgb(255,0,0)'
-                },
-                draw: 'honeycomb'
-              }
-              this.mapvLayer = new mapv.baiduMapLayer(
-                this.map,
-                dataSet,
-                options
-              )
+              this.getDataByTimeArea()
             })
           })
           .catch(e => {
@@ -349,6 +366,13 @@ export default {
   .item-list-wrap {
     background: #fff;
     padding: 30px;
+    .func {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin: 10px 0;
+    }
   }
 }
 </style>
