@@ -31,21 +31,6 @@
             <el-button @click="resetSearch" type="default">重置</el-button>
           </el-form>
         </div>
-        <div class="editCondition-wrap" style="padding: 0 0 15px;">
-          <el-form :model="editCondition" :inline="true" ref="editForm" >
-            <el-form-item label="修改选项" style="margin-bottom: 0;">
-              <el-checkbox-group v-model="editCondition.conditionList">
-                <el-checkbox label="节目名称"></el-checkbox>
-                <el-checkbox label="工作日模版"></el-checkbox>
-                <el-checkbox label="周末模版"></el-checkbox>
-                <el-checkbox label="自定义开始时间"></el-checkbox>
-                <el-checkbox label="自定义结束时间" ></el-checkbox>
-                <el-checkbox label="自定义模版" ></el-checkbox>
-              </el-checkbox-group>
-            </el-form-item>
-            <el-button @click="modifyEdit" type="danger" size="small">修改</el-button>
-          </el-form>
-        </div>
         <div class="actions-wrap">
           <span class="label">
             节目数量: {{pagination.total}}
@@ -293,11 +278,11 @@ export default {
   mounted() {
   },
   created () {
-    this.getProjectList()
-    this.getAreaList()
-    let user_info = JSON.parse(localStorage.getItem('user_info'))
-    this.arUserName = user_info.name
-    this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
+    // this.getProjectList()
+    // this.getAreaList()
+    // let user_info = JSON.parse(localStorage.getItem('user_info'))
+    // this.arUserName = user_info.name
+    // this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
   },
   methods: {
     dialogClose() {
