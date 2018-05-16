@@ -1,7 +1,6 @@
 <?php
 
-use Tymon\JWTAuth\Exceptions\TokenExpiredException;
-
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -110,8 +109,10 @@ $api->version('v1', [
             $api->get('push', 'PushController@index');
             $api->get('point/map', 'PointController@map');
 
-            //Excel
-            $api->get('excel', 'ExcelController@export');
+            //数据报表导出
+            $api->get('marketing_excel','ExcelController@marketingExcel');
+            $api->get('project_excel','ExcelController@projectExcel');
+            $api->get('point_excel','ExcelController@pointExcel');
 
             //节目投放
             $api->get('projects', 'ProjectController@index');
