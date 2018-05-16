@@ -17,8 +17,9 @@ use Illuminate\Http\Request;
 $api = app('Dingo\Api\Routing\Router');
 
 app('Dingo\Api\Exception\Handler')->register(function (Exception $exception) {
-    $request = Illuminate\Http\Request::capture();
-    return app('App\Exceptions\DingoAPIHandler')->render($request, $exception);
+    if ($exception instanceof TokenExpiredException) {
+        return response()->json('未登录', 401);
+    };
 });
 
 $api->version('v1', [
@@ -50,6 +51,10 @@ $api->version('v1', [
         $api->get('users/{user}/topics', 'TopicsController@userIndex');
         //话题详情
         $api->get('topics/{topic}', 'TopicsController@show');
+
+        //第三方集成
+        $api->get('login/tower', 'TowerLoginController@redirectToProvider');
+        $api->get('login/tower/callback', 'TowerLoginController@handleProviderCallback');
 
         // 需要 token 验证的接口
         $api->group(['middleware' => 'api.auth'], function ($api) {
@@ -102,6 +107,7 @@ $api->version('v1', [
 
             //设备
             $api->get('push', 'PushController@index');
+            $api->get('point/map', 'PointController@map');
 
             //数据报表导出
             $api->get('marketing_excel','ExcelController@marketingExcel');
@@ -143,6 +149,9 @@ $api->version('v1', [
             $api->get('companies/{company}/customers/{customer}', 'AdminCustomersController@show');
             $api->post('companies/{company}/customers', ['middleware' => ['permission:company'], 'uses' => 'AdminCustomersController@store']);
             $api->patch('companies/{company}/customers/{customer}', ['middleware' => ['permission:company'], 'uses' => 'AdminCustomersController@update']);
+
+            //团队
+            $api->post('oauth/token', 'TowerController@refresh');
 
         });
     });
