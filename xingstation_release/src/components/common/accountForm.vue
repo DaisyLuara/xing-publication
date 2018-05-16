@@ -177,7 +177,7 @@ export default {
           md5: '',
           image_url: ''
         },
-        redirect_url: this.$route.query.redirect_url
+        redirect_url: '/home/item/index'
       },
       rules: {
         account: [
