@@ -13,11 +13,14 @@ class PointTransformer extends TransformerAbstract
     {
         return [
             'id' => (int)$point->oid,
-            'name' => $point->name,
-            'info' => $point->info,
-            'icon' => $point->icon,
+            'name' => (string)$point->name,
+            'info' => (string)$point->info,
+            'icon' => (string)$point->icon,
             'image' => (string)$point->image,
-            'type' => $point->type,
+            'type' => (string)$point->type,
+            'lat' => (string)$point->lat,
+            'lng' => (string)$point->lng,
+            'count' => (int)$point->count,
         ];
     }
 

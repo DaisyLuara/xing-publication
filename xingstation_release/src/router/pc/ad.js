@@ -6,7 +6,7 @@ let router = {
   name: '广告',
   meta: {
     title: '广告',
-    // permission: 'ad',
+    permission: 'ad',
   },
   component: () =>
     import(/* webpackChunkName: "page/ad/adView" */ 'page/ad/adView'),

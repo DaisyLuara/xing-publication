@@ -50,7 +50,10 @@
           <span class="label">
             节目数量: {{pagination.total}}
           </span>
-          <el-button size="small" type="success" @click="linkToAddItem">投放节目</el-button>
+          <div>
+            <el-button size="small" type="info">节目报表</el-button>
+            <el-button size="small" type="success" @click="linkToAddItem">投放节目</el-button>
+          </div>
         </div>
         <el-table :data="tableData" style="width: 100%" highlight-current-row  @selection-change="handleSelectionChange" ref="multipleTable" type="expand">
           <el-table-column type="selection" width="45" ></el-table-column>

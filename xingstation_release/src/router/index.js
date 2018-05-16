@@ -11,7 +11,7 @@ import PageNotFound from 'page/PageNotFound'
 Vue.use(Router)
 
 var router = new Router({
-  // mode: 'history',
+  mode: 'history',
   routes: [
     pcRouter,
     {
@@ -108,7 +108,6 @@ console.log(to)
   // let permissioness = ['/login', '/findPassword']
   let hasPathPermission = auth.checkPathPermission(to)
   if (hasPathPermission) {
-    console.log(44)
     store.commit('refreshRoute', to)
     next()
   } else {
