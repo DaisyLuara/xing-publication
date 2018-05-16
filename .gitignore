@@ -14,3 +14,4 @@ yarn-error.log
 .env
 supervisord.pid
 .DS_Store
+_ide_helper.php
