@@ -1,6 +1,15 @@
 <template>
   <div class="root">
     <div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
+      <div class="func">
+        <div></div>
+        <el-switch
+          v-model="requestToday"
+          @change="getDataByTimeArea()"
+          active-text="当天"
+          inactive-text="所有">
+        </el-switch>
+      </div>
       <div id="container" style="width: 100%; height: 80vh;"></div>
       <canvas id="canvas"></canvas>
     </div>
@@ -9,13 +18,14 @@
 
 <script>
 import BaiduMap from './baidu-map'
-import { DatePicker } from 'element-ui'
+import { Switch } from 'element-ui'
 export default {
   components: {
-    ElDatePicker: DatePicker
+    ElSwitch: Switch
   },
   data() {
     return {
+      requestToday: true,
       currentLat: 31.20936447823612,
       currentlng: 121.6082842304611,
       currentLevel: 12,
@@ -235,7 +245,8 @@ export default {
         params: {
           lat: this.currentLat,
           lng: this.currentlng,
-          distance: computedDistance
+          distance: computedDistance,
+          date: this.requestToday ? 'today' : 'all'
         }
       }
       this.$http.get(request_url, request_para).then(r => {
@@ -278,7 +289,6 @@ export default {
         }
         this.mapvLayer = new mapv.baiduMapLayer(this.map, dataSet, options)
       })
-      console.log('change')
     },
     handleMapVInit() {
       return new Promise((resolve, reject) => {
