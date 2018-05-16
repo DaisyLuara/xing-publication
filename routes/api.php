@@ -87,15 +87,23 @@ $api->version('v1', [
 
             //广告
             $api->get('advertisement', 'AdvertisementController@index');
+            $api->post('advertisement', 'AdvertisementController@store');
+            $api->patch('advertisement', 'AdvertisementController@update');
 
             //广告主
             $api->get('advertiser', 'AdvertiserController@index');
+            $api->post('advertiser', 'AdvertiserController@store');
+            $api->patch('advertiser', 'AdvertiserController@update');
 
             //广告行业
             $api->get('ad_trade', 'AdTradeController@index');
+            $api->post('ad_trade', 'AdTradeController@store');
+            $api->patch('ad_trade', 'AdTradeController@update');
 
             //落地方式配置
             $api->get('project_ad_launch', 'ProjectAdLaunchController@index');
+            $api->post('project_ad_launch', 'ProjectAdLaunchController@store');
+            $api->patch('project_ad_launch', 'ProjectAdLaunchController@update');
 
             //授权广告
             $api->get('wx_third', 'WxThirdController@index');
@@ -104,12 +112,14 @@ $api->version('v1', [
             $api->get('push', 'PushController@index');
 
             //数据报表导出
-            $api->get('marketing_excel','ExcelController@marketingExcel');
-            $api->get('project_excel','ExcelController@projectExcel');
-            $api->get('point_excel','ExcelController@pointExcel');
+            $api->get('marketing_excel', 'ExcelController@marketingExcel');
+            $api->get('project_excel', 'ExcelController@projectExcel');
+            $api->get('point_excel', 'ExcelController@pointExcel');
 
             //节目投放
             $api->get('projects', 'ProjectController@index');
+            $api->post('projects', 'ProjectController@store');
+            $api->patch('projects', 'ProjectController@update');
             $api->get('projects/launch', 'ProjectLaunchController@index');
             $api->get('staffs', 'ArUserController@index');
             $api->post('projects/launch', 'ProjectLaunchController@store');
