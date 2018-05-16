@@ -26,6 +26,12 @@ class ChartDataController extends Controller
             case 3:
                 $data = $this->getTopProjects($startDate, $endDate);
                 break;
+            case 4:
+                $data = $this->getAge($startDate, $endDate);
+                break;
+            case 5:
+                $data = $this->getGender($startDate, $endDate);
+                break;
             default:
                 return null;
 
@@ -35,6 +41,12 @@ class ChartDataController extends Controller
 
     }
 
+    /**
+     * 围观人数(分时/分天)
+     * @param $startDate
+     * @param $endDate
+     * @return array
+     */
     private function getLookPeople($startDate, $endDate)
     {
         $dt = new Carbon($startDate);
@@ -106,6 +118,12 @@ class ChartDataController extends Controller
     }
 
 
+    /**
+     * 点位排行榜
+     * @param $startDate
+     * @param $endDate
+     * @return array
+     */
     private function getTopPoints($startDate, $endDate)
     {
         $data = DB::connection('ar')->table('face_count_log')
@@ -131,6 +149,12 @@ class ChartDataController extends Controller
         return $output;
     }
 
+    /**
+     * 节目排行榜
+     * @param $startDate
+     * @param $endDate
+     * @return array
+     */
     private function getTopProjects($startDate, $endDate)
     {
         $data = DB::connection('ar')->table('face_count_log')
@@ -154,4 +178,72 @@ class ChartDataController extends Controller
 
         return $output;
     }
+
+    /**
+     * 年龄分布
+     * @param $startDate
+     * @param $endDate
+     * @return array
+     */
+    private function getAge($startDate, $endDate)
+    {
+        $data = DB::connection('ar')->table('face_log')
+            ->whereRaw("str_to_date(date, '%Y-%m-%d') BETWEEN '$startDate' AND '$endDate'")
+            ->where('belong', '=', 'all')
+            ->selectRaw('sum(age10b+age10g) as age10,sum(age18b+age18g) as age18,sum(age30b+age30g) as age30,
+            sum(age40b+age40g) as age40,sum(age60b+age60g) as age60,sum(age61b+age61g) as age61')
+            ->whereNotIn('oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
+            ->where('type', '=', 'looker')
+            ->where('belong', '=', 'all')
+            ->first();
+        $output = [];
+        $ageMapping = [
+            'age10' => '0-10',
+            'age18' => '11-18',
+            'age30' => '19-30',
+            'age40' => '31-40',
+            'age60' => '41-60',
+            'age61' => '60岁以上',
+        ];
+        foreach ($data as $key => $value) {
+            $output[] = [
+                'count' => $value,
+                'display_name' => $ageMapping[$key],
+            ];
+        }
+        return $output;
+    }
+
+
+    /**
+     * 性别数据
+     * @param $startDate
+     * @param $endDate
+     * @return array
+     */
+    private function getGender($startDate, $endDate)
+    {
+
+        $data = DB::connection('ar')->table('face_log')
+            ->whereRaw("str_to_date(date, '%Y-%m-%d') BETWEEN '$startDate' AND '$endDate'")
+            ->where('belong', '=', 'all')
+            ->selectRaw("sum(gnum) as female,sum(bnum) as male")
+            ->whereNotIn('oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
+            ->where('type', '=', 'looker')
+            ->where('belong', '=', 'all')
+            ->first();
+        $output = [];
+        $genderMapping = [
+            'male' => '男',
+            'female' => '女',
+        ];
+        foreach ($data as $key => $value) {
+            $output[] = [
+                'count' => $value,
+                'display_name' => $genderMapping[$key],
+            ];
+        }
+        return $output;
+    }
+
 }
