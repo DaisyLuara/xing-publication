@@ -113,7 +113,7 @@ export default {
       pointOptions : {
         title: {
           text: '点位趋势',
-          style: {'fontSize': '24px'},
+          style: {'fontSize': '20px'},
           align: 'left'
         },
         xAxis: {
@@ -251,7 +251,7 @@ export default {
         title: {
           text: '点位前10名',
           align: 'left',
-          style: {'fontSize': '24px'}
+          style: {'fontSize': '20px'}
         },
         subtitle: {
           text: '2018/5/16'
@@ -296,7 +296,7 @@ export default {
         title: {
           text: '节目前10名',
           align: 'left',
-          style: {'fontSize': '24px'}
+          style: {'fontSize': '20px'}
         },
         subtitle: {
           text: '2018/5/16'
@@ -361,7 +361,9 @@ export default {
           }
         },
         title: {
-          text: null
+          text: '性别趋势',
+          style: {'fontSize': '20px'},
+          align: 'left'
         },
         legend: {
           align: 'right',
@@ -406,7 +408,9 @@ export default {
           }
         },
         title: {
-          text: null
+          text: '年龄趋势',
+          style: {'fontSize': '20px'},
+          align: 'left'
         },
         xAxis: {
           type: 'category'

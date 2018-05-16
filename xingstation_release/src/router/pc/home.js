@@ -23,9 +23,9 @@ let router = {
       children: [
         {
           path: 'index',
-          name: '首页',
+          name: '首页详情',
           meta: {
-            title: '首页',
+            title: '首页详情',
           },
           component: () =>
             import(/* webpackChunkName: "page/home/item/index" */ 'page/home/item/index'),
