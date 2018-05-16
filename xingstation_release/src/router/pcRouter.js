@@ -7,7 +7,7 @@ import account from 'router/pc/account'
 import ad from 'router/pc/ad'
 import team from 'router/pc/team'
 import equipment from 'router/pc/equipment'
-import point from 'router/pc/point'
+// import point from 'router/pc/point'
 import home from 'router/pc/home'
 // import feedback from 'router/pc/feedback'
 // import help from 'router/pc/help'
@@ -25,7 +25,7 @@ export default {
     system,
     company,
     project,
-    point,
+    // point,
     inform,
     account,
     ad,
