@@ -110,9 +110,9 @@ $api->version('v1', [
             $api->get('point/map', 'PointController@map');
 
             //数据报表导出
-            $api->get('marketing_excel','ExcelController@marketingExcel');
-            $api->get('project_excel','ExcelController@projectExcel');
-            $api->get('point_excel','ExcelController@pointExcel');
+            $api->get('marketing_excel', 'ExcelController@marketingExcel');
+            $api->get('project_excel', 'ExcelController@projectExcel');
+            $api->get('point_excel', 'ExcelController@pointExcel');
 
             //节目投放
             $api->get('projects', 'ProjectController@index');
@@ -152,6 +152,9 @@ $api->version('v1', [
 
             //团队
             $api->post('oauth/token', 'TowerController@refresh');
+
+            //图表
+            $api->post('chart_data', 'ChartDataController@index');
 
         });
     });
