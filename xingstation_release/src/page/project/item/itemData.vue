@@ -119,7 +119,7 @@ export default {
       active: '围观人数',
       splineOptions : {
         chart:{
-          type: 'spline'
+          type: 'area'
         },
         title: {
           text: null
@@ -141,7 +141,7 @@ export default {
           enabled: false
         },
         series: [{
-          color: "#919fc1",
+          color: "#8bbc21",
           name:"数量"
         }]
       },
