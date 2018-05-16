@@ -38,15 +38,15 @@ let router = {
           meta: {
           },
         },
-        // {
-        //   path: 'data',
-        //   component: () =>
-        //     import(/* webpackChunkName: "page/point/item/itemData" */ 'page/point/item/itemData'),
-        //   name: '点位数据',
-        //   meta: {
-        //     title: '统计指标'
-        //   },
-        // },
+        {
+          path: 'data',
+          component: () =>
+            import(/* webpackChunkName: "page/point/item/data" */ 'page/point/item/data'),
+          name: '点位数据',
+          meta: {
+            title: '统计指标'
+          },
+        },
       ],
     },
   ],

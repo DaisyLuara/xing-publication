@@ -5,8 +5,7 @@
   "author": "xingstation",
   "private": true,
   "scripts": {
-    "dev":
-      "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "production": "npm run build",
     "build": "node build/build.js",
@@ -16,6 +15,8 @@
   "dependencies": {
     "axios": "^0.16.1",
     "babel-polyfill": "^6.26.0",
+    "echarts": "^4.1.0",
+    "echarts-gl": "^1.1.1",
     "element-ui": "^2.3.7",
     "highcharts": "^v5.0.14",
     "js-md5": "^0.4.2",
@@ -90,5 +91,9 @@
     "node": ">= 6.0.0",
     "npm": ">= 3.0.0"
   },
-  "browserslist": ["> 1%", "last 2 versions", "not ie <= 8"]
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
 }

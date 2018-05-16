@@ -139,7 +139,7 @@
           </el-table-column>
           <el-table-column label="操作" width="80">
             <template slot-scope="scope">
-              <el-button size="small" type="warning" @click="showData(scope.row, scope.row)">数据</el-button>
+              <el-button size="small" type="warning" @click="showData">数据</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -354,14 +354,9 @@ export default {
         path: '/project/item/edit',
       })
     },
-    showData (alias,name,userId) {
+    showData () {
       const { href } = this.$router.resolve({
-        path: '/project/item/data',
-        query: {
-          alias: alias,
-          name: name,
-          uName: userId
-        }
+        path: '/point/item/data',
       })
       window.open(href, '_blank')
     }
