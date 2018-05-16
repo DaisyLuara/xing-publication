@@ -32,8 +32,8 @@ class ProjectAdLaunchController extends Controller
     public function store(ProjectAdLaunchRequest $request, ProjectAdLaunch $projectAdLaunch)
     {
         $data = $request->all();
-        $oids = explode(',', $request->oid);
-        unset($data['oid']);
+        $oids = explode(',', $request->oids);
+        unset($data['oids']);
 
         $query = $projectAdLaunch->query();
         foreach ($oids as $oid) {

@@ -35,9 +35,9 @@ class ProjectRequest extends FormRequest
                     'packname' => 'required|string',
                     'versioncode' => 'required|string',
                     'versionname' => 'required|string',
-                    'open' => 'required|integer',
-                    'scan' => 'required|integer',
-                    'linkall' => 'required|integer',
+                    'open' => 'required|integer|in:0,1',
+                    'scan' => 'required|integer|in:0,1',
+                    'linkall' => 'required|integer|in:0,1',
                 ];
                 break;
             case 'PATCH':

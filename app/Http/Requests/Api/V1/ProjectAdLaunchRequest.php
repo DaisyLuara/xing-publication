@@ -25,7 +25,7 @@ class ProjectAdLaunchRequest extends FormRequest
                 return [
                     'piid' => 'required|integer',
                     'oid' => 'required|array|max:10',
-                    'visiable' => 'required|integer',
+                    'visiable' => 'required|integer|in:0,1',
                     'type' => 'required|string',
                     'wiid' => 'required|integer',
                     'url' => 'required|string',
@@ -33,7 +33,7 @@ class ProjectAdLaunchRequest extends FormRequest
                     'image' => 'required|string',
                     'info' => 'required|string',
                     'reply' => 'required|string',
-                    'only' => 'required|integer'
+                    'only' => 'required|integer|in:0,1'
                 ];
                 break;
             case 'PATCH':

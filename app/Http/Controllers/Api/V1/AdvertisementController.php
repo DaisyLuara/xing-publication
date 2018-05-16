@@ -43,7 +43,7 @@ class AdvertisementController extends Controller
     public function update(AdvertisementRequest $request, Advertisement $advertisement)
     {
         $data = $request->all();
-        $aids = $request->aid;
+        $aids = $request->aids;
         unset($data['aids']);
 
         $query = $advertisement->query();
