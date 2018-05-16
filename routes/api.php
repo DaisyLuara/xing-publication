@@ -163,6 +163,9 @@ $api->version('v1', [
             //团队
             $api->post('oauth/token', 'TowerController@refresh');
 
+            //图表
+            $api->post('chart_data', 'ChartDataController@index');
+
         });
     });
 });

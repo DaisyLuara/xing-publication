@@ -97,6 +97,9 @@ export default {
               case 'point':
                 m.src = require('../assets/images/icons/point-icon.png')
                 break
+              case 'home':
+                m.src = require('../assets/images/icons/home-icon.png')
+                break
               default:
                 m.src = ''
                 break

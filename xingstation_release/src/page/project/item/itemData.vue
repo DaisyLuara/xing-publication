@@ -207,6 +207,7 @@ export default {
         colors: ['#5eb6c8', '#ffd259'],
         plotOptions: {
           pie: {
+            innerSize: 100,
             allowPointSelect: true,
             cursor: 'pointer',
             depth: 40,
