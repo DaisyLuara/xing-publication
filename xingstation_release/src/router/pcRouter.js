@@ -8,8 +8,7 @@ import ad from 'router/pc/ad'
 import team from 'router/pc/team'
 import equipment from 'router/pc/equipment'
 import point from 'router/pc/point'
-
-// import main from 'router/pc/main'
+import home from 'router/pc/home'
 // import feedback from 'router/pc/feedback'
 // import help from 'router/pc/help'
 // import contract from 'router/pc/contract'
@@ -22,6 +21,7 @@ export default {
     // permission: 'main',
   },
   children: [
+    home,
     system,
     company,
     project,
