@@ -21,10 +21,6 @@ class AdvertiserController extends Controller
 
     public function store(AdvertiserRequest $request, Advertiser $advertiser)
     {
-        if (env('APP_ENV') != 'production') {
-            return $this->response->noContent();
-        }
-
         $data = $request->all();
         $names = explode(PHP_EOL, $request->name);
         unset($data['name']);
@@ -39,12 +35,9 @@ class AdvertiserController extends Controller
 
     public function update(AdvertiserRequest $request, Advertiser $advertiser)
     {
-        if (env('APP_ENV') != 'production') {
-            return $this->response->noContent();
-        }
-
         $data = $request->all();
         $atiids = $request->atiids;
+        unset($data['atiids']);
 
         $query = $advertiser->query();
         foreach ($atiids as $atiid) {

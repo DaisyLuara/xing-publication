@@ -31,10 +31,6 @@ class ProjectAdLaunchController extends Controller
 
     public function store(ProjectAdLaunchRequest $request, ProjectAdLaunch $projectAdLaunch)
     {
-        if (env('APP_ENV') != 'production') {
-            return $this->response->noContent();
-        }
-
         $data = $request->all();
         $oids = explode(',', $request->oid);
         unset($data['oid']);
@@ -48,12 +44,9 @@ class ProjectAdLaunchController extends Controller
 
     public function update(ProjectAdLaunchRequest $request, ProjectAdLaunch $projectAdLaunch)
     {
-        if (env('APP_ENV') != 'production') {
-            return $this->response->noContent();
-        }
-
         $data = $request->all();
         $adids = $request->adids;
+        unset($data['adids']);
 
         $query = $projectAdLaunch->query();
         foreach ($adids as $adid) {

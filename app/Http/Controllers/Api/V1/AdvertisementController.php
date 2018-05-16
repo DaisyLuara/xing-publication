@@ -26,15 +26,12 @@ class AdvertisementController extends Controller
 
     public function store(AdvertisementRequest $request, Advertisement $advertisement)
     {
-
-        if (env('APP_ENV') != 'production') {
-            return $this->response->noContent();
-        }
         $data = $request->all();
         $name = $data['name'];
         $names = explode(PHP_EOL, $name);
         unset($data['name']);
 
+        //需要获取link的size
         $query = $advertisement->query();
         foreach ($names as $name) {
             $query->create(array_merge(['name' => $name, 'date' => date('Y-m-d H:i:s'), 'clientdate' => time() * 1000], $data));
@@ -45,12 +42,9 @@ class AdvertisementController extends Controller
 
     public function update(AdvertisementRequest $request, Advertisement $advertisement)
     {
-        if (env('APP_ENV') != 'production') {
-            return $this->response->noContent();
-        }
-
         $data = $request->all();
         $aids = $request->aid;
+        unset($data['aids']);
 
         $query = $advertisement->query();
         foreach ($aids as $aid) {

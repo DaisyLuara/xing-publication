@@ -18,10 +18,6 @@ class AdTradeController extends Controller
 
     public function store(AdTradeRequest $request, AdTrade $adTrade)
     {
-        if (env('APP_ENV') != 'production') {
-            return $this->response->noContent();
-        }
-
         $data = $request->all();
         $names = explode(PHP_EOL, $request->name);
         unset($data['name']);
@@ -35,12 +31,9 @@ class AdTradeController extends Controller
 
     public function update(AdTradeRequest $request, AdTrade $adTrade)
     {
-        if (env('APP_ENV') != 'production') {
-            return $this->response->noContent();
-        }
-
         $data = $request->all();
         $atids = $request->atids;
+        unset($data['atids']);
 
         $query = $adTrade->query();
         foreach ($atids as $atid) {

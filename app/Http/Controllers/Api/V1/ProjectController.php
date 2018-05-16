@@ -33,10 +33,6 @@ class ProjectController extends Controller
 
     public function store(ProjectRequest $request, Project $project)
     {
-        if (env('APP_ENV') != 'production') {
-            return $this->response->noContent();
-        }
-
         $data = $request->all();
         $names = explode(PHP_EOL, $request->name);
         unset($data['name']);
@@ -50,12 +46,9 @@ class ProjectController extends Controller
 
     public function update(ProjectRequest $request, Project $project)
     {
-        if (env('APP_ENV') != 'production') {
-            return $this->response->noContent();
-        }
-
         $data = $request->all();
         $ids = $request->ids;
+        unset($data['ids']);
 
         $query = $project->query();
         foreach ($ids as $id) {
