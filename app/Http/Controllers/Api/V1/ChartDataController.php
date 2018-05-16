@@ -49,23 +49,12 @@ class ChartDataController extends Controller
      */
     private function getLookPeople($startDate, $endDate)
     {
-        $dt = new Carbon($startDate);
-        $preStartDate = $dt->previous()->toDateString();
-
-        $dt = new Carbon($endDate);
-        $preEndDate = $dt->previous()->toDateString();
-
-
         $groupByDay = $startDate != $endDate;
 
         if ($groupByDay) {
-            $new = $this->getDataByDay($startDate, $endDate);
-            $old = $this->getDataByDay($preStartDate, $preEndDate);
-            return array_merge($new, $old);
+            return $this->getDataByDay($startDate, $endDate);
         }
-        $new = $this->getDataByHour($startDate, $endDate);
-        $old = $this->getDataByHour($preStartDate, $preEndDate);
-        return array_merge($new, $old);
+        return $this->getDataByHour($startDate, $endDate);
 
     }
 
