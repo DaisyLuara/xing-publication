@@ -198,11 +198,11 @@ class ChartDataController extends Controller
             ->first();
         $output = [];
         $ageMapping = [
-            'age10' => '0-10',
-            'age18' => '11-18',
-            'age30' => '19-30',
-            'age40' => '31-40',
-            'age60' => '41-60',
+            'age10' => '0-10岁',
+            'age18' => '11-18岁',
+            'age30' => '19-30岁',
+            'age40' => '31-40岁',
+            'age60' => '41-60岁',
             'age61' => '60岁以上',
         ];
         foreach ($data as $key => $value) {
