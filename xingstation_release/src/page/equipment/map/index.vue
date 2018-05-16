@@ -4,8 +4,9 @@
       <div class="func">
         <div></div>
         <el-switch
+          v-if="controlReady === true"
           v-model="requestToday"
-          @change="getDataByTimeArea()"
+          @change="handleTimeSwitch"
           active-text="当天"
           inactive-text="所有">
         </el-switch>
@@ -25,6 +26,7 @@ export default {
   },
   data() {
     return {
+      controlReady: false,
       requestToday: true,
       currentLat: 31.20936447823612,
       currentlng: 121.6082842304611,
@@ -233,6 +235,14 @@ export default {
         console.log(e)
       }
     },
+    handleTimeSwitch() {
+      if (this.controlReady) {
+        this.clearLayer()
+        this.getDataByTimeArea()
+      } else {
+        return
+      }
+    },
     clearLayer() {
       this.mapvLayer.destroy()
     },
@@ -250,7 +260,6 @@ export default {
         }
       }
       this.$http.get(request_url, request_para).then(r => {
-        console.dir(r)
         this.setting.loading = false
         let resArr = r.data.data
         let data = []
@@ -305,18 +314,15 @@ export default {
               vMapNode.readyState === 'loaded' ||
               vMapNode.readyState === 'complete'
             ) {
-              console.log('VMap加载完毕')
               resolve()
             } else {
               vMapNode.onload = () => {
                 resolve()
-                console.log('VMap加载完毕')
               }
             }
           }
         } catch (e) {
           reject(e)
-          console.log(e)
         }
       })
     },
@@ -354,17 +360,15 @@ export default {
               this.currentlng = position.lng
 
               this.getDataByTimeArea()
-              console.log(zoomLevel)
-              console.log(position)
             })
             this.handleMapVInit().then(() => {
               let mapv = window.mapv
               this.getDataByTimeArea()
+              this.controlReady = true
             })
           })
           .catch(e => {
             reject(e)
-            console.log(e)
           })
       })
     }
