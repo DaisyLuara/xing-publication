@@ -127,6 +127,7 @@ export default {
         xAxis: {
           type: 'category'
         },
+        
         yAxis: [{
           title: {
             text: null,
@@ -139,6 +140,20 @@ export default {
         },
         credits: {
           enabled: false
+        },
+        plotOptions: {
+          area: {
+            marker: {
+              enabled: false,
+              symbol: 'circle',
+              radius: 2,
+              states: {
+                hover: {
+                  enabled: true
+                }
+              }
+            }
+          }
         },
         series: [{
           color: "#8bbc21",
