@@ -7,7 +7,7 @@ const HOST = process.env.SERVER_URL
 export default {
   getMediaGroupsList(context, type, picture) {
     let promise = new Promise(function(resolve, reject) {
-      context.$http.get(MEDIA_GROUP_API).then((res) => {
+      context.$http.get(HOST + MEDIA_GROUP_API).then((res) => {
         let data = res.data.data
         context.mediaGroup.mediaGroupList = picture.formatMediaGroup(data)
         if (data.length) {
@@ -57,7 +57,7 @@ export default {
       if (context.serch.searchFlag) {
         context.searchMedia()
       } else {
-        context.$http.get(MEDIA_API, { params: params }).then((res) => {
+        context.$http.get(HOST + MEDIA_API, { params: params }).then((res) => {
           context.pagination.count = res.data.page.count
           if (type == pictureUseType) {
             context.mediaGroup.mediaGroupList[context.mediaGroup.media_group_id].media_count = context.pagination.count
@@ -81,7 +81,7 @@ export default {
   searchHandle(context, params, type) {
     let promise = new Promise(function(resolve, reject) {
       let _context = context
-      context.$http.get(MEDIA_API + '/search', {
+      context.$http.get(HOST + MEDIA_API + '/search', {
         params: params
       }).then((res) => {
         context.pagination.count = res.data.page.count

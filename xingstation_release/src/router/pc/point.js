@@ -30,6 +30,14 @@ let router = {
           component: () =>
             import(/* webpackChunkName: "page/point/item/index" */ 'page/point/item/index'),
         },
+        {
+          path: 'add',
+          component: () =>
+            import(/* webpackChunkName: "page/point/item/itemSave" */ 'page/point/item/itemSave'),
+          name: '新增点位',
+          meta: {
+          },
+        },
         // {
         //   path: 'data',
         //   component: () =>
