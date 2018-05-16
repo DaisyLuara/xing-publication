@@ -16,7 +16,7 @@ class PointController extends Controller
         $distance = $request->distance ? $request->distance : 1;
 
         $query = $point->query();
-        if ($request->date && $request->date = 'today') {
+        if ($request->date && $request->date == 'today') {
             $startDate = Carbon::now()->startOfDay()->toDateTimeString();
             $endDate = Carbon::now()->endOfDay()->toDateTimeString();
             $query->whereRaw("str_to_date(face_count_log.date, '%Y-%m-%d %H:%i:%s') BETWEEN '" . $startDate . "' AND '" . $endDate . "'");
