@@ -46,10 +46,14 @@ class ChartDataController extends Controller
 
         $groupByDay = $startDate != $endDate;
 
-        return [
-            'new' => $groupByDay ? $this->getDataByDay($startDate, $endDate) : $this->getDataByHour($startDate, $endDate),
-            'old' => $groupByDay ? $this->getDataByDay($preStartDate, $preEndDate) : $this->getDataByHour($preStartDate, $preEndDate),
-        ];
+        if ($groupByDay) {
+            $new = $this->getDataByDay($startDate, $endDate);
+            $old = $this->getDataByDay($preStartDate, $preEndDate);
+            return array_merge($new, $old);
+        }
+        $new = $this->getDataByHour($startDate, $endDate);
+        $old = $this->getDataByHour($preStartDate, $preEndDate);
+        return array_merge($new, $old);
 
     }
 
