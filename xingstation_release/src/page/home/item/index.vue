@@ -68,7 +68,7 @@ export default {
   },
   data() {
     return {
-      dataValue: [new Date().getTime()- 3600 * 1000 * 24, new Date().getTime()],
+      dataValue: [new Date().getTime(), new Date().getTime()],
       pickerOptions2: {
         shortcuts: [{
           text: '今天',
