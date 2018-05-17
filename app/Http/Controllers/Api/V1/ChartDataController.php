@@ -118,11 +118,11 @@ class ChartDataController extends Controller
         $data = DB::connection('ar')->table('face_count_log')
             ->join('avr_official', 'avr_official.oid', '=', 'face_count_log.oid')
             ->join('avr_official_market', 'avr_official_market.marketid', '=', 'avr_official.marketid')
-            ->where('belong', '<>', 'all')
+            ->where('belong', '=', 'all')
             ->selectRaw("sum(looknum) AS count,avr_official.name,avr_official_market.name as market_name")
             ->whereRaw("date_format(face_count_log.date, '%Y-%m-%d') BETWEEN '$startDate' AND '$endDate' ")
             ->whereNotIn('face_count_log.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
-            ->groupBy('belong')
+            ->groupBy('face_count_log.oid')
             ->orderBy('count', 'desc')
             ->limit(10)
             ->get();
@@ -148,7 +148,6 @@ class ChartDataController extends Controller
     {
         $data = DB::connection('ar')->table('face_count_log')
             ->join('ar_product_list', 'ar_product_list.versionname', '=', 'face_count_log.belong')
-            ->where('belong', '<>', 'all')
             ->selectRaw("sum(looknum) AS count,ar_product_list.name")
             ->whereRaw("date_format(face_count_log.date, '%Y-%m-%d') BETWEEN '$startDate' AND '$endDate' ")
             ->whereNotIn('oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
