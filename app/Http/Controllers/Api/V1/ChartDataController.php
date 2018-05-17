@@ -32,6 +32,12 @@ class ChartDataController extends Controller
             case 5:
                 $data = $this->getGender($startDate, $endDate);
                 break;
+            case 7:
+                $data = $this->getAllPeople();
+                break;
+            case 8:
+                $data = $this->getAllPeopleByPoint();
+                break;
             default:
                 return null;
 
@@ -231,6 +237,61 @@ class ChartDataController extends Controller
                 'display_name' => $genderMapping[$key],
             ];
         }
+        return $output;
+    }
+
+
+    /**
+     * 获取 围观人数 玩家人数 会员人数
+     * @param int $ar_user_id
+     */
+    private function getAllPeople($arUserID = 0)
+    {
+        $data = DB::connection('ar')->table('face_count_log')
+            ->selectRaw("sum(looknum) AS looknum,sum(playernum) AS playernum,sum(lovenum)  AS lovenum")
+            ->whereNotIn('oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
+            ->where('belong', '=', 'all')
+            ->first();
+        $output = [];
+
+        $totalMapping = [
+            'looknum' => '围观总数',
+            'playernum' => '互动总数',
+            'lovenum' => '扫码拉新',
+        ];
+
+        foreach ($data as $key => $value) {
+            $output[] = [
+                'count' => $value,
+                'display_name' => $totalMapping[$key],
+            ];
+        }
+        return $output;
+
+    }
+
+    public function getAllPeopleByPoint($arUserID = 0)
+    {
+        $data = DB::connection('ar')->table('face_count_log')
+            ->selectRaw("sum(looknum) AS looknum,
+                         sum(playernum) AS playernum,
+                         sum(lovenum)  AS lovenum,
+                         max(face_count_log.clientdate) as max,
+                         min(face_count_log.clientdate) as min,
+                         face_count_log.oid")
+            ->whereNotIn('oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
+            ->where('belong', '=', 'all')
+            ->groupBy('face_count_log.oid')
+            ->orderBy('looknum', 'desc')
+            ->limit(100)
+            ->get();
+
+        $output = 0;
+        $data->each(function ($item) use (&$output) {
+            $day = ceil(($item->max - $item->min) / 1000 / 24 / 3600);
+            $output += $day;
+        });
+
         return $output;
     }
 
