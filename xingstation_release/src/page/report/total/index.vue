@@ -17,22 +17,22 @@ export default {
         },
         tooltip: {
             trigger: 'item',
-            formatter: "{a} <br/>{b} : {c}%"
+            formatter: "{b} : {c}"
         },
         toolbox: {
-            feature: {
-                dataView: {readOnly: false},
-                restore: {},
-                saveAsImage: {}
-            }
+          feature: {
+            dataView: {readOnly: false},
+            restore: {},
+            saveAsImage: {}
+          }
         },
         legend: {
-            data: ['围观总数','互动总数','扫码拉新总数']
+          data: ['围观','互动','扫码拉新']
         },
+        color:['#e6861c','#38449a', '#c0002b'],
         calculable: true,
         series: [
         {
-          // name:'漏斗图',
           type:'funnel',
           left: '10%',
           top: 60,
@@ -45,13 +45,18 @@ export default {
           sort: 'descending',
           gap: 2,
           label: {
+            fontSize: 16,
+            fontWeight: '700',
             normal: {
-              show: true,
-              position: 'inside'
+              position: 'inside',
+              formatter: "{b} {c}",
+              textStyle: {
+                fontSize: 16
+              }
             },
             emphasis: {
               textStyle: {
-                fontSize: 20
+                fontSize: 18
               }
             }
           },
@@ -71,9 +76,9 @@ export default {
             }
           },
           data: [
-            {value: 60, name: '围观总数'},
-            {value: 40, name: '互动总数'},
-            {value: 20, name: '扫码拉新总数'},
+            {value: 60, name: '围观'},
+            {value: 40, name: '互动'},
+            {value: 20, name: '扫码拉新'},
           ]
         }
       ],
