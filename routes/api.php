@@ -68,6 +68,7 @@ $api->version('v1', [
             $api->get('stats', 'FaceCountController@index');
             $api->get('detail', 'FaceCountController@detail');
             $api->get('age_gender', 'FaceLogController@index');
+            $api->get('ten_user', 'FaceCountController@getTenUser');
 
             //广告投放
             $api->get('ad_launch', 'AdLaunchController@index');
