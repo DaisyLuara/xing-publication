@@ -34,9 +34,6 @@
       <ul class="btns-wrapper">
         <li v-for="(item, key) in peopleCount" :key="key">
           <a class="btn" :class="{'active': item.name == active}" @click="lineDataHandle(item)">
-            <!-- <i class="title" v-if="item.alias === 'scannum'">
-              {{item.name}} / {{(item.count==0 & item.out == 0) ? 0 : new Number((item.count/item.out)*100).toFixed(1)}}%
-            </i> -->
             <i class="title">
               {{item.name}}
             </i>
@@ -59,9 +56,6 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <div class="pie-sex-wrapper">
-            <div class="headline-wrapper">
-              <span>性别分布</span>
-            </div>
             <div class="pie-sex-content" v-loading="sexFlag">
               <div v-show="ageType" style="text-align:center">暂无数据</div>
               <highcharts :options="sexPieOptions" class="highchart" ref="sexPie"></highcharts>
@@ -70,9 +64,6 @@
         </el-col>
         <el-col :span="12">
           <div class="pie-age-wrapper">
-            <div class="headline-wrapper">
-              <span>年龄分布</span>
-            </div>
             <div class="pie-age-content" v-loading="ageFlag">
               <div v-show="sexType" style="text-align:center">暂无数据</div>
               <highcharts :options="agePieOptions" class="highchart" ref="agePie" ></highcharts>
@@ -87,8 +78,8 @@
 import stats from 'service/stats'
 import { Row, Col, DatePicker, Select, Option, Button} from 'element-ui'
 import Highcharts from 'highcharts';
-import load3D from 'highcharts/highcharts-3d';
-load3D(Highcharts)
+import loadExporting from 'highcharts/modules/exporting';
+loadExporting(Highcharts);
 
 export default {
   components:{
@@ -165,10 +156,18 @@ export default {
           type: 'column',
         },
         title: {
-          text: null
+          text: '年龄分布',
+          align:'left'
         },
         xAxis: {
           type: 'category'
+        },
+        plotOptions: {
+          column: {
+            dataLabels: {
+              enabled: true
+            }
+          }
         },
         yAxis: [{
           title: {
@@ -183,7 +182,6 @@ export default {
           enabled: false
         },
         series: [{
-          // dashStyle: 'shortDash',
           color: "#7cb5ec",
           name:"年龄统计",
         }]
@@ -191,14 +189,13 @@ export default {
       sexPieOptions : {
         chart:{
           type: 'pie',
-          // options3d: {
-          //   enabled: true,
-          //   alpha: 40,
-          //   beta: 0
-          // },
           plotBackgroundColor: null,
           plotBorderWidth: null,
           plotShadow: false,
+        },
+        title: {
+          text: '性别分布',
+          align:'left'
         },
         tooltip: {
           headerFormat: '{性别访问数}<br>',
@@ -210,16 +207,13 @@ export default {
             innerSize: 100,
             allowPointSelect: true,
             cursor: 'pointer',
-            depth: 40,
+            // depth: 40,
             dataLabels: {
               enabled: true,
               format: '{point.name} {point.y} 占比{point.percentage:.1f}% '
             },
             showInLegend: true
           }
-        },
-        title: {
-          text: null
         },
         legend: {
           align: 'right',
@@ -620,6 +614,7 @@ export default {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
+        margin-bottom: 10px;
         li{
           padding-right: 95px;
           padding-top: 20px; 

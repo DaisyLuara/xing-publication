@@ -54,7 +54,6 @@
 import { Tabs, TabPane, Button, Row, Col, Card, DatePicker} from 'element-ui'
 import Highcharts from 'highcharts';
 import loadExporting from 'highcharts/modules/exporting';
-// import loadStock from 'highcharts/modules/stock';
 loadExporting(Highcharts);
 
 import stats from 'service/stats'
