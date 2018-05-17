@@ -53,6 +53,9 @@
 <script>
 import { Tabs, TabPane, Button, Row, Col, Card, DatePicker} from 'element-ui'
 import Highcharts from 'highcharts';
+import loadExporting from 'highcharts/modules/exporting';
+loadExporting(Highcharts);
+
 import stats from 'service/stats'
 import chartData from 'service/chart'
 
@@ -114,7 +117,6 @@ export default {
         xAxis: {
           // type: 'datetime'
           type: 'category',
-          
         },
         yAxis: [{
           title: {
@@ -198,7 +200,6 @@ export default {
           title: null,
           labels: {
             overflow: 'justify',
-            
           }
         },
         tooltip: {
@@ -206,7 +207,7 @@ export default {
         plotOptions: {
           bar: {
             dataLabels: {
-              enabled: false
+              enabled: true
             }
           }
         },
@@ -230,6 +231,7 @@ export default {
         },
         subtitle: {
         },
+        
         xAxis: {
           type: 'category',
           labels: {
@@ -251,7 +253,7 @@ export default {
         plotOptions: {
           bar: {
             dataLabels: {
-              enabled: false
+              enabled: true
             }
           }
         },
@@ -321,9 +323,9 @@ export default {
           },
         },
         plotOptions: {
-          series: {
-            animation: {
-              duration: 2000,
+          column: {
+            dataLabels: {
+              enabled: true
             }
           }
         },
