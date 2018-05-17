@@ -68,7 +68,7 @@ export default {
   },
   data() {
     return {
-      dataValue: [new Date().getTime(), new Date().getTime()],
+      dataValue: [new Date().getTime() - 3600 * 1000 * 24, new Date().getTime()- 3600 * 1000 * 24],
       pickerOptions2: {
         shortcuts: [{
           text: '今天',
@@ -434,13 +434,7 @@ export default {
             let projectData = []
             let projectChart = this.$refs.projectTenChar.chart;
             if(response.length>0){
-              for(let i = 0; i < response.length; i++){
-                if(i==0){
-                  projectData.push({'name':response[i].display_name,'y':parseInt(response[i].count)})
-                }else{
-                  projectData.push([response[i].display_name,parseInt(response[i].count)])
-                }
-              }
+              this.drawChart(response,projectData)
             projectChart.update({
               series: [{
                 data: projectData,
@@ -456,13 +450,7 @@ export default {
           let pointData = []
           let pointChart = this.$refs.pointTenChar.chart;
           if(response.length>0){
-            for(let i = 0; i < response.length; i++){
-              if(i==0){
-                pointData.push({'name':response[i].display_name,'y':parseInt(response[i].count)})
-              }else{
-                pointData.push([response[i].display_name,parseInt(response[i].count)])
-              }
-            }
+            this.drawChart(response,pointData)
           pointChart.update({
             series: [{
               data: pointData,
@@ -500,13 +488,7 @@ export default {
           let ageData = []
           let ageChart = this.$refs.agePie.chart;
           if(response.length>0){
-            for(let i = 0; i < response.length; i++){
-              if(i==0){
-                ageData.push({'name':response[i].display_name,'y':parseInt(response[i].count)})
-              }else{
-                ageData.push([response[i].display_name,parseInt(response[i].count)])
-              }
-            }
+            this.drawChart(response,ageData)
           ageChart.update({
             series: [{
               data: ageData,
@@ -522,14 +504,7 @@ export default {
           let lookersData = []
           let lookerChart = this.$refs.pointChar.chart;
           if(response.length>0){
-           
-            for(let j = 0; j < response.length; j++){
-              if(j==0){
-                lookersData.push({'name':response[j].display_name,'y':parseInt(response[j].count)})
-              }else{
-                lookersData.push([response[j].display_name,parseInt(response[j].count)])
-              }
-            }
+            this.drawChart(response,lookersData)
           lookerChart.update({
             series: [{
               type: 'area',
@@ -576,7 +551,16 @@ export default {
         }
       })
     },
-   
+    drawChart(response,data) {
+      console.log(data)
+      for(let j = 0; j < response.length; j++){
+          if(j==0){
+            data.push({'name':response[j].display_name,'y':parseInt(response[j].count)})
+          }else{
+            data.push([response[j].display_name,parseInt(response[j].count)])
+          }
+        }
+    },
     handleDateTransform (valueDate) {
       let date = new Date (valueDate)
       let year = date.getFullYear() + '-';
