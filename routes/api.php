@@ -108,6 +108,12 @@ $api->version('v1', [
             $api->get('project_excel', 'ExcelController@projectExcel');
             $api->get('point_excel', 'ExcelController@pointExcel');
 
+            //产品
+            $api->get('product', 'ProductController@index');
+
+            //节目模板
+            $api->get('project_template', 'ProjectTemplateController@index');
+
             //节目投放
             $api->get('projects', 'ProjectController@index');
             $api->post('projects', 'ProjectController@store');
