@@ -28,29 +28,11 @@ $api->version('v1', [
 ], function ($api) {
     $api->group([
         'middleware' => 'api.throttle',//频率限制中间件
-        'limit' => config('api.rate_limits.sign.limit'),
-        'expires' => config('api.rate_limits.sign.expires'),
+        'limit' => config('api.rate_limits.access.limit'),
+        'expires' => config('api.rate_limits.access.expires'),
     ], function ($api) {
-        // 短信验证码
-        $api->post('verificationCodes', 'VerificationCodesController@store');
 
-        // 图片验证码
-        $api->post('captchas', 'CaptchasController@store');
-        // 登录
-        $api->post('authorizations', 'AuthorizationsController@store');
-        // 刷新token
-        $api->put('authorizations/current', 'AuthorizationsController@update');
-        // 删除token
-        $api->delete('authorizations/current', 'AuthorizationsController@destroy');
-
-        // 游客可以访问的接口
-        $api->get('categories', 'CategoriesController@index');
-        //话题列表
-        $api->get('topics', 'TopicsController@index');
-        //某个用户的话题列表
-        $api->get('users/{user}/topics', 'TopicsController@userIndex');
-        //话题详情
-        $api->get('topics/{topic}', 'TopicsController@show');
+        $api->post('captchas', 'CaptchasController@store');// 图片验证码
 
         //第三方集成
         $api->get('login/tower', 'TowerLoginController@redirectToProvider');
@@ -62,6 +44,8 @@ $api->version('v1', [
             // 当前登录用户信息
             $api->get('user', 'UsersController@me');
             $api->patch('user', 'UsersController@update');//patch 部分修改资源，提供部分资源信息
+            $api->put('authorizations/current', 'AuthorizationsController@update');// 刷新token
+            $api->delete('authorizations/current', 'AuthorizationsController@destroy');// 删除token
 
             // 图片资源
             $api->post('images', 'ImagesController@store');
@@ -168,5 +152,14 @@ $api->version('v1', [
             $api->post('chart_data', 'ChartDataController@index');
 
         });
+    });
+
+    $api->group([
+        'middleware' => 'api.throttle',
+        'limit' => config('api.rate_limits.sign.limit'),
+        'expires' => config('api.rate_limits.sign.expires'),
+    ], function ($api) {
+        $api->post('verificationCodes', 'VerificationCodesController@store'); // 短信验证码
+        $api->post('authorizations', 'AuthorizationsController@store'); //登陆
     });
 });
