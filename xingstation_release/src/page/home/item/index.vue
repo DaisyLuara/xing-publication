@@ -1,5 +1,5 @@
 <template>
-  <div class="home-wrap">
+  <div class="home-wrap" v-loading="loading">
     <div class="search-wrap">
       <el-date-picker
       v-model="dataValue"
@@ -68,7 +68,8 @@ export default {
   },
   data() {
     return {
-      dataValue: [new Date().getTime() - 3600 * 1000 * 24, new Date().getTime()- 3600 * 1000 * 24],
+      loading: false,
+      dataValue: [new Date().getTime() - 3600 * 1000 * 24*6, new Date().getTime()],
       pickerOptions2: {
         shortcuts: [{
           text: '今天',
@@ -135,10 +136,12 @@ export default {
               percent = new Number(((this.points[1].y - this.points[0].y) /  this.points[0].y) * 100).toFixed(2)
               s = '<b>' + percent +'%' + '</b>';
             }
+            console.log(this.points)
             for(let i=0;i<this.points.length; i++) {
-               s += '<br/>' + this.points[i].series.name + ': ' +
+               s += '<br/>' + this.points[i].point.name + ': ' +
                     this.y;
             }
+            console.log(s)
             return s;
         },
         },
@@ -557,7 +560,6 @@ export default {
       })
     },
     drawChart(response,data) {
-      console.log(data)
       for(let j = 0; j < response.length; j++){
           if(j==0){
             data.push({'name':response[j].display_name,'y':parseInt(response[j].count)})
