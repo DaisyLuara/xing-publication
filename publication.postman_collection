@@ -97,23 +97,26 @@
 					"name": "用户信息",
 					"request": {
 						"url": {
-							"raw": "http://{{host}}/api/user?include=permissions,roles&ar_user_id=",
+							"raw": "http://{{host}}/user?include=permissios,roles&ar_user_id=",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
-								"api",
 								"user"
 							],
 							"query": [
 								{
 									"key": "include",
-									"value": "permissions,roles"
+									"value": "permissios,roles",
+									"equals": true,
+									"description": ""
 								},
 								{
 									"key": "ar_user_id",
-									"value": ""
+									"value": "",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
@@ -122,7 +125,8 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_tokensa}}"
+								"value": "{{jwt_token_a}}",
+								"description": ""
 							}
 						],
 						"body": {
@@ -770,7 +774,9 @@
 									"query": [
 										{
 											"key": "include",
-											"value": "user"
+											"value": "user",
+											"equals": true,
+											"description": ""
 										}
 									],
 									"variable": []
@@ -779,11 +785,13 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_token1}}"
+										"value": "{{jwt_token2}}",
+										"description": ""
 									},
 									{
 										"key": "Content-Type",
-										"value": "application/json"
+										"value": "application/json",
+										"description": ""
 									}
 								],
 								"body": {
@@ -1493,6 +1501,51 @@
 						"description": ""
 					},
 					"response": []
+				},
+				{
+					"name": "授权广告列表",
+					"request": {
+						"url": {
+							"raw": "http://{{host}}/api/wx_third?type=mobile",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"wx_third"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "mobile"
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "广告行业列表",
+					"request": {
+						"url": "http://{{host}}/api/ad_trade",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
 				}
 			]
 		},
@@ -1533,6 +1586,55 @@
 							{
 								"key": "Authorization",
 								"value": "{{jwt_token2}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "设备热力图",
+					"request": {
+						"url": {
+							"raw": "http://{{host}}/api/point/map?lat=31.20936447823612&lng=121.6082842304611&distance=100",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"point",
+								"map"
+							],
+							"query": [
+								{
+									"key": "lat",
+									"value": "31.20936447823612",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "lng",
+									"value": "121.6082842304611",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "distance",
+									"value": "100",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token_a}}",
 								"description": ""
 							}
 						],
@@ -1781,13 +1883,35 @@
 						{
 							"name": "用户信息",
 							"request": {
-								"url": "{{towerhost}}/user",
+								"url": "papi.jingfree.top/tower/user",
 								"method": "GET",
 								"header": [
 									{
 										"key": "Authorization",
 										"value": "{{tower_access_token}}",
 										"description": ""
+									},
+									{
+										"key": "Origin",
+										"value": " http://devad.jingfree.top",
+										"description": ""
+									},
+									{
+										"key": "Access-Control-Request-Method",
+										"value": "GET",
+										"description": ""
+									},
+									{
+										"key": "Access-Control-Request-Headers",
+										"value": "",
+										"description": "",
+										"disabled": true
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": "",
+										"disabled": true
 									}
 								],
 								"body": {},
@@ -1980,13 +2104,19 @@
 						{
 							"name": "获取团队中所有项目",
 							"request": {
-								"url": "{{towerhost}}/teams/c6dc912c2f494e7ea73bed4488bb3493/projects",
+								"url": "papi.jingfree.top/tower/teams/c6dc912c2f494e7ea73bed4488bb3493/projects",
 								"method": "GET",
 								"header": [
 									{
 										"key": "Authorization",
 										"value": "{{tower_access_token}}",
 										"description": ""
+									},
+									{
+										"key": "Origin",
+										"value": "",
+										"description": "",
+										"disabled": true
 									}
 								],
 								"body": {},
@@ -2047,7 +2177,7 @@
 						{
 							"name": "获取项目信息",
 							"request": {
-								"url": "{{towerhost}}/projects/7f8a8d6f573541508496ced33c60143a",
+								"url": "{{host}}/tower/projects/7f8a8d6f573541508496ced33c60143a",
 								"method": "GET",
 								"header": [
 									{
@@ -2129,7 +2259,7 @@
 						{
 							"name": "获取项目中所有任务清单",
 							"request": {
-								"url": "{{towerhost}}/projects/88265d9d74f84aceb871648092fbcfb8",
+								"url": "{{towerhost}}/projects/88265d9d74f84aceb871648092fbcfb8/todolist",
 								"method": "GET",
 								"header": [
 									{
@@ -2178,6 +2308,193 @@
 						}
 					],
 					"_postman_isSubFolder": true
+				}
+			]
+		},
+		{
+			"name": "团队",
+			"description": "",
+			"item": [
+				{
+					"name": "tower授权页",
+					"request": {
+						"url": {
+							"raw": "{{host}}/login/tower?id=111",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"login",
+								"tower"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "111",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token2}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "刷新token",
+					"request": {
+						"url": {
+							"raw": "{{host}}/oauth/token?include=permission",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"oauth",
+								"token"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "permission",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token_a}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "数据报表",
+			"description": "",
+			"item": [
+				{
+					"name": "营销创意成果数据表",
+					"request": {
+						"url": {
+							"raw": "http://{{host}}/api/marketing_excel?start_date=2018-04-01&end_date=2018-04-30",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"marketing_excel"
+							],
+							"query": [
+								{
+									"key": "start_date",
+									"value": "2018-04-01"
+								},
+								{
+									"key": "end_date",
+									"value": "2018-04-30"
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "节目数据表",
+					"request": {
+						"url": {
+							"raw": "http://{{host}}/api/project_excel?date=2018-04",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"project_excel"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "2018-04"
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "点位数据表",
+					"request": {
+						"url": {
+							"raw": "http://{{host}}/api/point_excel?oid=20&start_date=2018-04-01&end_date=2018-04-30",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"point_excel"
+							],
+							"query": [
+								{
+									"key": "oid",
+									"value": "20"
+								},
+								{
+									"key": "start_date",
+									"value": "2018-04-01"
+								},
+								{
+									"key": "end_date",
+									"value": "2018-04-30"
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
 				}
 			]
 		}

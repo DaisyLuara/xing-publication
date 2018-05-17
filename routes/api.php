@@ -1,7 +1,6 @@
 <?php
 
-use Tymon\JWTAuth\Exceptions\TokenExpiredException;
-
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,29 +28,11 @@ $api->version('v1', [
 ], function ($api) {
     $api->group([
         'middleware' => 'api.throttle',//频率限制中间件
-        'limit' => config('api.rate_limits.sign.limit'),
-        'expires' => config('api.rate_limits.sign.expires'),
+        'limit' => config('api.rate_limits.access.limit'),
+        'expires' => config('api.rate_limits.access.expires'),
     ], function ($api) {
-        // 短信验证码
-        $api->post('verificationCodes', 'VerificationCodesController@store');
 
-        // 图片验证码
-        $api->post('captchas', 'CaptchasController@store');
-        // 登录
-        $api->post('authorizations', 'AuthorizationsController@store');
-        // 刷新token
-        $api->put('authorizations/current', 'AuthorizationsController@update');
-        // 删除token
-        $api->delete('authorizations/current', 'AuthorizationsController@destroy');
-
-        // 游客可以访问的接口
-        $api->get('categories', 'CategoriesController@index');
-        //话题列表
-        $api->get('topics', 'TopicsController@index');
-        //某个用户的话题列表
-        $api->get('users/{user}/topics', 'TopicsController@userIndex');
-        //话题详情
-        $api->get('topics/{topic}', 'TopicsController@show');
+        $api->post('captchas', 'CaptchasController@store');// 图片验证码
 
         //第三方集成
         $api->get('login/tower', 'TowerLoginController@redirectToProvider');
@@ -63,6 +44,8 @@ $api->version('v1', [
             // 当前登录用户信息
             $api->get('user', 'UsersController@me');
             $api->patch('user', 'UsersController@update');//patch 部分修改资源，提供部分资源信息
+            $api->put('authorizations/current', 'AuthorizationsController@update');// 刷新token
+            $api->delete('authorizations/current', 'AuthorizationsController@destroy');// 删除token
 
             // 图片资源
             $api->post('images', 'ImagesController@store');
@@ -93,15 +76,23 @@ $api->version('v1', [
 
             //广告
             $api->get('advertisement', 'AdvertisementController@index');
+            $api->post('advertisement', 'AdvertisementController@store');
+            $api->patch('advertisement', 'AdvertisementController@update');
 
             //广告主
             $api->get('advertiser', 'AdvertiserController@index');
+            $api->post('advertiser', 'AdvertiserController@store');
+            $api->patch('advertiser', 'AdvertiserController@update');
 
             //广告行业
             $api->get('ad_trade', 'AdTradeController@index');
+            $api->post('ad_trade', 'AdTradeController@store');
+            $api->patch('ad_trade', 'AdTradeController@update');
 
             //落地方式配置
             $api->get('project_ad_launch', 'ProjectAdLaunchController@index');
+            $api->post('project_ad_launch', 'ProjectAdLaunchController@store');
+            $api->patch('project_ad_launch', 'ProjectAdLaunchController@update');
 
             //授权广告
             $api->get('wx_third', 'WxThirdController@index');
@@ -110,11 +101,15 @@ $api->version('v1', [
             $api->get('push', 'PushController@index');
             $api->get('point/map', 'PointController@map');
 
-            //Excel
-            $api->get('excel', 'ExcelController@export');
+            //数据报表导出
+            $api->get('marketing_excel', 'ExcelController@marketingExcel');
+            $api->get('project_excel', 'ExcelController@projectExcel');
+            $api->get('point_excel', 'ExcelController@pointExcel');
 
             //节目投放
             $api->get('projects', 'ProjectController@index');
+            $api->post('projects', 'ProjectController@store');
+            $api->patch('projects', 'ProjectController@update');
             $api->get('projects/launch', 'ProjectLaunchController@index');
             $api->get('staffs', 'ArUserController@index');
             $api->post('projects/launch', 'ProjectLaunchController@store');
@@ -152,6 +147,18 @@ $api->version('v1', [
             //团队
             $api->post('oauth/token', 'TowerController@refresh');
 
+            //图表
+            $api->post('chart_data', 'ChartDataController@index');
+
         });
+    });
+
+    $api->group([
+        'middleware' => 'api.throttle',
+        'limit' => config('api.rate_limits.sign.limit'),
+        'expires' => config('api.rate_limits.sign.expires'),
+    ], function ($api) {
+        $api->post('verificationCodes', 'VerificationCodesController@store'); // 短信验证码
+        $api->post('authorizations', 'AuthorizationsController@store'); //登陆
     });
 });

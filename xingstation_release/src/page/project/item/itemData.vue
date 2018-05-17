@@ -119,7 +119,7 @@ export default {
       active: '围观人数',
       splineOptions : {
         chart:{
-          type: 'spline'
+          type: 'area'
         },
         title: {
           text: null
@@ -127,6 +127,7 @@ export default {
         xAxis: {
           type: 'category'
         },
+        
         yAxis: [{
           title: {
             text: null,
@@ -140,29 +141,28 @@ export default {
         credits: {
           enabled: false
         },
+        plotOptions: {
+          area: {
+            marker: {
+              enabled: false,
+              symbol: 'circle',
+              radius: 2,
+              states: {
+                hover: {
+                  enabled: true
+                }
+              }
+            }
+          }
+        },
         series: [{
-          color: "#919fc1",
+          color: "#e09f91",
           name:"数量"
         }]
       },
        agePieOptions : {
         chart:{
           type: 'column',
-          // options3d: {
-          //   enabled: true,
-          //   alpha: 3,
-          //   beta: 13,
-          //   depth: 30,
-          //   // viewDistance: 10
-          // }
-        },
-        plotOptions: {
-          series: {
-            animation: {
-              duration: 2000,
-              easing: 'easeOutBounce'
-            }
-          }
         },
         title: {
           text: null
@@ -191,22 +191,23 @@ export default {
       sexPieOptions : {
         chart:{
           type: 'pie',
-          options3d: {
-            enabled: true,
-            alpha: 40,
-            beta: 0
-          },
-          // plotBackgroundColor: null,
-          // plotBorderWidth: null,
-          // plotShadow: false,
+          // options3d: {
+          //   enabled: true,
+          //   alpha: 40,
+          //   beta: 0
+          // },
+          plotBackgroundColor: null,
+          plotBorderWidth: null,
+          plotShadow: false,
         },
         tooltip: {
           headerFormat: '{性别访问数}<br>',
           pointFormat: '{point.name}: <b>{point.y} 占比{point.percentage:.1f}%</b>'
         },
-        colors: ['#8bbc21', '#f28f43'],
+        colors: ['#5eb6c8', '#ffd259'],
         plotOptions: {
           pie: {
+            innerSize: 100,
             allowPointSelect: true,
             cursor: 'pointer',
             depth: 40,
@@ -474,39 +475,13 @@ export default {
           dataGender.push({'name':'女','y':parseInt(genderArr.female),'sliced': true,'selected': true})
           dataGender.push({'name':'男','y':parseInt(genderArr.male)})
           ageChart.series[0].setData(dataAge,true)
-          // let pointsList = ageChart.series[0].points;
-          //   //遍历设置每一个数据点颜色
-          //   for (let k = 0; k < pointsList.length; k++) {
-          //     ageChart.series[0].points[k].update({
-          //     color: {
-          //       linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 }, //横向渐变效果 如果将x2和y2值交换将会变成纵向渐变效果
-          //       stops: [
-          //         [0, Highcharts.Color(colors[k]).setOpacity(1).get('rgba')],
-          //         [0.5, 'rgb(255, 255, 255)'],
-          //         [1, Highcharts.Color(colors[k]).setOpacity(1).get('rgba')]
-          //         ] 
-          //       }
-          //     });
-          //   }
           genderChat.series[0].setData(dataGender,true)
         }else{
           this.ageType = true;
           this.sexFlag = true
           ageChart.series[0].setData(dataAge,true)
           genderChat.series[0].setData(dataGender,true)
-          // let pointsList = ageChart.series[0].points;
-          // for (let k = 0; k < pointsList.length; k++) {
-          //   ageChart.series[0].points[k].update({
-          //     color: {
-          //       linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 }, //横向渐变效果 如果将x2和y2值交换将会变成纵向渐变效果
-          //       stops: [
-          //         [0, Highcharts.Color(colors[k]).setOpacity(1).get('rgba')],
-          //         [0.5, 'rgb(255, 255, 255)'],
-          //         [1, Highcharts.Color(colors[k]).setOpacity(1).get('rgba')]
-          //         ] 
-          //       }
-          //     });
-          //   }
+        
         }
         this.ageFlag = false
         this.sexFlag = false

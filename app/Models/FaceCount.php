@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Scopes\FaceCountScope;
+
 class FaceCount extends Model
 {
     protected $connection = 'ar';
@@ -21,6 +23,12 @@ class FaceCount extends Model
     public function pointArUser()
     {
         return $this->hasOne(PointArUser::class, 'oid', 'oid');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope(new FaceCountScope());
     }
 
 }

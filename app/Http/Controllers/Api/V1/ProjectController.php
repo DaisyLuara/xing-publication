@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Requests\Api\V1\ProjectRequest;
 use App\Models\Project;
 use App\Transformers\ProjectTransformer;
 use Illuminate\Http\Request;
@@ -30,4 +31,29 @@ class ProjectController extends Controller
         return $this->response->paginator($project, new ProjectTransformer());
     }
 
+    public function store(ProjectRequest $request, Project $project)
+    {
+        $data = $request->all();
+        $names = explode(PHP_EOL, $request->name);
+        unset($data['name']);
+
+        $query = $project->query();
+        foreach ($names as $name) {
+            $query->create(array_merge(['name' => $name, 'date' => date('Y-m-d H:i:s'), 'clientdate' => time() * 1000], $data));
+        }
+        return $this->response->noContent();
+    }
+
+    public function update(ProjectRequest $request, Project $project)
+    {
+        $data = $request->all();
+        $ids = $request->ids;
+        unset($data['ids']);
+
+        $query = $project->query();
+        foreach ($ids as $id) {
+            $query->where('id', '=', $id)->update($data);
+        }
+        return $this->response->noContent();
+    }
 }
