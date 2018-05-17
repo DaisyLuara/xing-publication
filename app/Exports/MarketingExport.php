@@ -103,6 +103,7 @@ class MarketingExport implements FromCollection, WithStrictNullComparison, WithE
                             ]
                         ]
                     ]);
+                $event->sheet->getDelegate()->freezePane('A4');
             }
         ];
     }

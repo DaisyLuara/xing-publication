@@ -27,27 +27,24 @@ class PointExport implements FromCollection, WithStrictNullComparison, WithEvent
             ->join('ar_product_list as apl', 'fcl.belong', '=', 'apl.versionname')
             ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
             ->where('oid', '=', $this->oid)
-            ->where('belong', '<>', 'all')
             ->selectRaw('apl.name')
             ->groupBy('belong')
             ->get();
         $projectNum = $projectName->count();
         $this->projectNum = $projectNum;
 
-        $aaa = json_decode(json_encode($projectName), true);
-        $pName = collect($aaa)->flatten()->all();
+        $pName = $projectName->flatten()->all();
 
         $Max = "";
         $projectName->each(function ($item) use (&$Max) {
-            $item = json_decode(json_encode($item), true);
-            $name = $item['name'];
+            $name = $item->name;
             $Max = $Max . ",max(case a.name when '$name' then concat_ws(',', cast(a.looknum as char), cast(a.playernum as char),cast(a.outnum as char), cast(a.scannum as char),cast(a.lovenum as char))else 0 end) '$name'";
         });
 
         $faceCount = DB::connection('ar')
             ->table('face_count_log as fcl')
             ->join('ar_product_list as apl', 'fcl.belong', '=', 'apl.versionname')
-            ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '$this->startDate' and '$this->endDate' and oid='$this->oid' and belong <> 'all' ")
+            ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '$this->startDate' and '$this->endDate' and oid='$this->oid'")
             ->selectRaw("apl.name as name,date_format(fcl.date,'%Y-%m-%d') as date,sum(looknum) as looknum,sum(playernum) as playernum,sum(outnum) as outnum,sum(scannum) as scannum,sum(lovenum) as lovenum")
             ->groupBy(DB::raw("belong,date_format(fcl.date,'%Y-%m-%d')"));
 
@@ -60,7 +57,7 @@ class PointExport implements FromCollection, WithStrictNullComparison, WithEvent
         $data = collect();
         $header1 = ['', '合计', '', '', '', ''];
         for ($i = 0; $i < $projectNum; $i++) {
-            $header1 = array_merge($header1, [$pName[$i], '', '', '', '']);
+            $header1 = array_merge($header1, [$pName[$i]->name, '', '', '', '']);
         }
         $header2 = [''];
         for ($i = 0; $i < $projectNum + 1; $i++) {
@@ -100,8 +97,6 @@ class PointExport implements FromCollection, WithStrictNullComparison, WithEvent
         $data->push($header3);
         $data->push($header4);
         $faceCount->each(function ($item) use (&$data) {
-            $item = json_decode(json_encode($item), true);
-
             $aa = [];
             foreach ($item as $key => $value) {
                 if ($key == 'date' || $key == 'looknum' || $key == 'playernum' || $key == 'outnum' || $key == 'scannum' || $key == 'lovenum') {
@@ -165,6 +160,7 @@ class PointExport implements FromCollection, WithStrictNullComparison, WithEvent
                             'bold' => 'true'
                         ]
                     ]);
+                $event->sheet->getDelegate()->freezePane('B4');
             }
         ];
     }

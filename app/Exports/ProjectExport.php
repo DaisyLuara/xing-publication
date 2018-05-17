@@ -62,8 +62,6 @@ class ProjectExport implements FromCollection, WithStrictNullComparison, WithEve
         $data->push($header2);
         $data->push($header3);
         $faceCount->each(function ($item) use (&$data) {
-            $item = json_decode(json_encode($item), true);
-
             $aa = [];
             foreach ($item as $key => $value) {
 
@@ -120,6 +118,7 @@ class ProjectExport implements FromCollection, WithStrictNullComparison, WithEve
                             'bold' => 'true'
                         ]
                     ]);
+                $event->sheet->getDelegate()->freezePane('A4');
             }
         ];
     }
