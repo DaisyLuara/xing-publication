@@ -33,13 +33,11 @@ class PointExport implements FromCollection, WithStrictNullComparison, WithEvent
         $projectNum = $projectName->count();
         $this->projectNum = $projectNum;
 
-        $aaa = json_decode(json_encode($projectName), true);
-        $pName = collect($aaa)->flatten()->all();
+        $pName = $projectName->flatten()->all();
 
         $Max = "";
         $projectName->each(function ($item) use (&$Max) {
-            $item = json_decode(json_encode($item), true);
-            $name = $item['name'];
+            $name = $item->name;
             $Max = $Max . ",max(case a.name when '$name' then concat_ws(',', cast(a.looknum as char), cast(a.playernum as char),cast(a.outnum as char), cast(a.scannum as char),cast(a.lovenum as char))else 0 end) '$name'";
         });
 
@@ -59,7 +57,7 @@ class PointExport implements FromCollection, WithStrictNullComparison, WithEvent
         $data = collect();
         $header1 = ['', '合计', '', '', '', ''];
         for ($i = 0; $i < $projectNum; $i++) {
-            $header1 = array_merge($header1, [$pName[$i], '', '', '', '']);
+            $header1 = array_merge($header1, [$pName[$i]->name, '', '', '', '']);
         }
         $header2 = [''];
         for ($i = 0; $i < $projectNum + 1; $i++) {
@@ -99,8 +97,6 @@ class PointExport implements FromCollection, WithStrictNullComparison, WithEvent
         $data->push($header3);
         $data->push($header4);
         $faceCount->each(function ($item) use (&$data) {
-            $item = json_decode(json_encode($item), true);
-
             $aa = [];
             foreach ($item as $key => $value) {
                 if ($key == 'date' || $key == 'looknum' || $key == 'playernum' || $key == 'outnum' || $key == 'scannum' || $key == 'lovenum') {
