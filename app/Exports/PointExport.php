@@ -27,7 +27,6 @@ class PointExport implements FromCollection, WithStrictNullComparison, WithEvent
             ->join('ar_product_list as apl', 'fcl.belong', '=', 'apl.versionname')
             ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
             ->where('oid', '=', $this->oid)
-            ->where('belong', '<>', 'all')
             ->selectRaw('apl.name')
             ->groupBy('belong')
             ->get();
@@ -47,7 +46,7 @@ class PointExport implements FromCollection, WithStrictNullComparison, WithEvent
         $faceCount = DB::connection('ar')
             ->table('face_count_log as fcl')
             ->join('ar_product_list as apl', 'fcl.belong', '=', 'apl.versionname')
-            ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '$this->startDate' and '$this->endDate' and oid='$this->oid' and belong <> 'all' ")
+            ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '$this->startDate' and '$this->endDate' and oid='$this->oid'")
             ->selectRaw("apl.name as name,date_format(fcl.date,'%Y-%m-%d') as date,sum(looknum) as looknum,sum(playernum) as playernum,sum(outnum) as outnum,sum(scannum) as scannum,sum(lovenum) as lovenum")
             ->groupBy(DB::raw("belong,date_format(fcl.date,'%Y-%m-%d')"));
 
