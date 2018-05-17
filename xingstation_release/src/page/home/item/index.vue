@@ -55,6 +55,7 @@ import { Tabs, TabPane, Button, Row, Col, Card, DatePicker} from 'element-ui'
 import Highcharts from 'highcharts';
 import stats from 'service/stats'
 import chartData from 'service/chart'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
@@ -183,18 +184,19 @@ export default {
         },
         xAxis: {
           type: 'category',
-          title: {
-            text: null
-          },
           labels: {
-            staggerLines: 3
+            formatter: function() {
+              return this.value.substring(0,5) + '...'
+						},
+            // staggerLines: 3,
           }
         },
         yAxis: {
           min: 0,
           title: null,
           labels: {
-            overflow: 'justify'
+            overflow: 'justify',
+            
           }
         },
         tooltip: {
@@ -228,8 +230,11 @@ export default {
         },
         xAxis: {
           type: 'category',
-          title: {
-            text: null
+          labels: {
+            autoRotationLimit:40,
+            formatter: function() {
+              return this.value.substring(0,5) + '...'
+						},
           }
         },
         yAxis: {
