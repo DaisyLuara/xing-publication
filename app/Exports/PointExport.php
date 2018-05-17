@@ -160,6 +160,7 @@ class PointExport implements FromCollection, WithStrictNullComparison, WithEvent
                             'bold' => 'true'
                         ]
                     ]);
+                $event->sheet->getDelegate()->freezePane('B4');
             }
         ];
     }
