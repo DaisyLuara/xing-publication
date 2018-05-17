@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yangqiang
- * Date: 2018/5/15
- * Time: 15:59
- */
 
 namespace App\Scopes;
 
