@@ -92,7 +92,7 @@ export default {
           onClick(picker) {
             const end = new Date();
             const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 6);
             picker.$emit('pick', [start, end]);
           }
         }, {
@@ -360,7 +360,6 @@ export default {
     }
   },
   mounted() {
-    
   },
   created() {
     this.getProjectTenChartData()
@@ -495,8 +494,8 @@ export default {
         case 'age':
           let ageData = []
           let ageChart = this.$refs.agePie.chart;
-          if(response.length>0){
-            this.drawChart(response,ageData)
+          if(response.length > 0){
+            this.drawChart(response, ageData)
           ageChart.update({
             series: [{
               data: ageData,
