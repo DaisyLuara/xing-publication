@@ -55,7 +55,6 @@ import { Tabs, TabPane, Button, Row, Col, Card, DatePicker} from 'element-ui'
 import Highcharts from 'highcharts';
 import stats from 'service/stats'
 import chartData from 'service/chart'
-import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
@@ -278,7 +277,8 @@ export default {
         },
         plotOptions: {
           pie: {
-            innerSize: 100,
+            // innerSize: 100,
+            innerSize: '20%',
             allowPointSelect: true,
             cursor: 'pointer',
             dataLabels: {
