@@ -2,7 +2,7 @@ import auth from 'service/auth'
 
 let router = {
   path: 'report',
-  redirect: 'report/total',
+  redirect: 'report/overview',
   name: '报表',
   meta: {
     title: '报表',
@@ -12,15 +12,15 @@ let router = {
     import(/* webpackChunkName: "page/report/reportView" */ 'page/report/reportView'),
   children: [
     {
-      path: 'total',
+      path: 'overview',
       name: '概览管理',
-      redirect: 'total/index',
+      redirect: 'overview/index',
       meta: {
         title: '概览数据',
         permission: ''
       },
       component: () =>
-        import(/* webpackChunkName: "page/report/total/routerView" */ 'page/report/total/routerView'),
+        import(/* webpackChunkName: "page/report/overview/routerView" */ 'page/report/overview/routerView'),
       children: [
         {
           path: 'index',
@@ -30,7 +30,7 @@ let router = {
             permission: ''
           },
           component: () =>
-            import(/* webpackChunkName: "page/report/total/index" */ 'page/report/total/index')
+            import(/* webpackChunkName: "page/report/overview/index" */ 'page/report/overview/index')
         }
       ]
     },

@@ -54,7 +54,9 @@
 import { Tabs, TabPane, Button, Row, Col, Card, DatePicker} from 'element-ui'
 import Highcharts from 'highcharts';
 import loadExporting from 'highcharts/modules/exporting';
+import loadExportData from 'highcharts/modules/export-data';
 loadExporting(Highcharts);
+loadExportData(Highcharts);
 
 import stats from 'service/stats'
 import chartData from 'service/chart'
@@ -115,7 +117,9 @@ export default {
           align: 'left'
         },
         xAxis: {
-          // type: 'datetime'
+          title: {
+            text: '日期'
+          },
           type: 'category',
         },
         yAxis: [{
@@ -140,7 +144,7 @@ export default {
             }
             console.log(this.points)
             for(let i=0;i<this.points.length; i++) {
-               s += '<br/>' + this.points[i].point.name + ': ' +
+               s += '<br/>' + this.points[i].point.name + '-->' +
                     this.y;
             }
             console.log(s)
@@ -187,6 +191,9 @@ export default {
         subtitle: {
         },
         xAxis: {
+          title:{
+            text: '名称'
+          },
           type: 'category',
           labels: {
             formatter: function() {
@@ -234,6 +241,9 @@ export default {
         
         xAxis: {
           type: 'category',
+          title:{
+            text: '名称'
+          },
           labels: {
             autoRotationLimit:40,
             formatter: function() {
@@ -310,6 +320,11 @@ export default {
         credits: {
           enabled: false
         },
+        yAxis: [{
+          title: {
+            text: '名称',
+          }
+        }],
         series: [{
           type: 'pie',
           name: '性别访问数',
@@ -335,6 +350,9 @@ export default {
           align: 'left'
         },
         xAxis: {
+          title: {
+            text: '名称'
+          },
           type: 'category'
         },
         yAxis: [{

@@ -25,9 +25,16 @@
       <el-date-picker
       v-model="dateTime"
       type="daterange"
+      align="right"
+      unlink-panels
+      range-separator="至"
       start-placeholder="开始日期"
       end-placeholder="结束日期"
-      :default-value="dateTime" :picker-options="pickerOptions2" @change="dateChangeHandle" :clearable="false" style="width:230px">
+      :default-value="dateTime"
+      :clearable="false"
+      :picker-options="pickerOptions2"
+      @change="dateChangeHandle"
+      >
       </el-date-picker>
     </div>
     <div class="content-wrapper" v-loading="poepleCountFlag">
@@ -79,7 +86,9 @@ import stats from 'service/stats'
 import { Row, Col, DatePicker, Select, Option, Button} from 'element-ui'
 import Highcharts from 'highcharts';
 import loadExporting from 'highcharts/modules/exporting';
+import loadExportData from 'highcharts/modules/export-data';
 loadExporting(Highcharts);
+loadExportData(Highcharts);
 
 export default {
   components:{
@@ -100,9 +109,39 @@ export default {
       },
       dateTime: [new Date().getTime() - 3600 * 1000 * 24 * 6, new Date().getTime()],
       pickerOptions2: {
-        disabledDate(time) {
-          return time.getTime() < new Date('2016-12-31');
-        }
+        shortcuts: [{
+          text: '今天',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+          text: '昨天',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24);
+              end.setTime(end.getTime() - 3600 * 1000 * 24);
+              picker.$emit('pick', [start, end]);
+            }
+          },{
+          text: '过去7天',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 6);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '过去30天',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 29);
+            picker.$emit('pick', [start, end]);
+          }
+        },]
       },
       projectSelect: '',
       projectLoading: false,
@@ -116,9 +155,11 @@ export default {
           text: null
         },
         xAxis: {
+          title: {
+            text: '日期'
+          },
           type: 'category'
         },
-        
         yAxis: [{
           title: {
             text: null,
@@ -160,6 +201,9 @@ export default {
           align:'left'
         },
         xAxis: {
+          title: {
+            text: '名称'
+          },
           type: 'category'
         },
         plotOptions: {

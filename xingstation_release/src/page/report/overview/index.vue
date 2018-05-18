@@ -19,14 +19,7 @@
 <script>
 import echarts from 'echarts/lib/echarts'
 import echartsGl from 'echarts-gl'
-
 import { Tabs, TabPane, Button, Row, Col, Card, DatePicker } from 'element-ui'
-
-import Highcharts from 'highcharts'
-import loadExporting from 'highcharts/modules/exporting'
-import loadFunnel from 'highcharts/modules/funnel'
-loadExporting(Highcharts)
-loadFunnel(Highcharts)
 
 export default {
   data() {
@@ -163,17 +156,6 @@ export default {
   },
   methods: {
     handleEcharts() {
-      // let dom = document.getElementById('echart')
-      // let myChart = echarts.init(dom)
-      // if (this.barOption && typeof this.barOption === 'object') {
-      //   myChart.setOption(this.barOption, true)
-      // }
-
-      // let dom2 = document.getElementById('echart2')
-      // let myChart2 = echarts.init(dom2)
-      // if (this.barOption2 && typeof this.barOption2 === 'object') {
-      //   myChart2.setOption(this.barOption2, true)
-      // }
       let dom3 = document.getElementById('echart3')
       let myChart3 = echarts.init(dom3)
       if (this.funnelOptions && typeof this.funnelOptions === 'object') {
