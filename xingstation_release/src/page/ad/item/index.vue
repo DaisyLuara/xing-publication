@@ -437,7 +437,7 @@ export default {
     },
     areaChangeHandle() {
       this.adSearchForm.market_id = ''
-      this.getMarket(this.adSearchForm.market)
+      this.getMarket()
     },
     getAreaList () {
       return search.getAeraList(this).then((response) => {
@@ -476,7 +476,7 @@ export default {
       return search.getMarketList(this,args).then((response) => {
         this.marketList = response.data
         if(this.marketList.length == 0) {
-          this.adSearchForm.market = ''
+          this.adSearchForm.market_id = ''
           this.adSearchForm.marketList = []
         }
         this.searchLoading = false
