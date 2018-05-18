@@ -51,7 +51,6 @@
             节目数量: {{pagination.total}}
           </span>
           <div>
-            <el-button size="small" type="info">节目报表</el-button>
             <el-button size="small" type="success" @click="linkToAddItem">投放节目</el-button>
           </div>
         </div>
