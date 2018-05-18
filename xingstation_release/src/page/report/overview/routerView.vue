@@ -1,11 +1,11 @@
 <template>
-  <div class="total-root">
+  <div class="overview-root">
     <router-view></router-view>
   </div>
 </template>
 <script>
 export default {
-  name: 'totalView',
+  name: 'overviewView',
   data() {
     return {
     }
@@ -16,7 +16,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  .total-root {
+  .overview-root {
     height: 100%;
     background-color: #EFF2F7;
   }

@@ -2,7 +2,7 @@ import auth from 'service/auth'
 
 let router = {
   path: 'report',
-  redirect: 'report/total',
+  redirect: 'report/overview',
   name: '报表',
   meta: {
     title: '报表',
@@ -12,48 +12,48 @@ let router = {
     import(/* webpackChunkName: "page/report/reportView" */ 'page/report/reportView'),
   children: [
     {
-      path: 'total',
-      name: '总数管理',
-      redirect: 'total/index',
+      path: 'overview',
+      name: '概览管理',
+      redirect: 'overview/index',
       meta: {
-        title: '总数管理',
+        title: '概览数据',
         permission: ''
       },
       component: () =>
-        import(/* webpackChunkName: "page/report/total/routerView" */ 'page/report/total/routerView'),
+        import(/* webpackChunkName: "page/report/overview/routerView" */ 'page/report/overview/routerView'),
       children: [
         {
           path: 'index',
-          name: '总数',
+          name: '概览详情',
           meta: {
-            title: '总数',
+            title: '概览详情',
             permission: ''
           },
           component: () =>
-            import(/* webpackChunkName: "page/report/total/index" */ 'page/report/total/index')
+            import(/* webpackChunkName: "page/report/overview/index" */ 'page/report/overview/index')
         }
       ]
     },
     {
-      path: 'other',
-      name: '其他统计',
-      redirect: 'other/index',
+      path: 'project',
+      name: '节目管理',
+      redirect: 'project/index',
       meta: {
-        title: '其他统计',
+        title: '节目数据',
         permission: ''
       },
       component: () =>
-        import(/* webpackChunkName: "page/report/total/routerView" */ 'page/report/other/routerView'),
+        import(/* webpackChunkName: "page/report/projet/routerView" */ 'page/report/project/routerView'),
       children: [
         {
           path: 'index',
-          name: '其他',
+          name: '节目数据',
           meta: {
-            title: '其他',
+            title: '节目数据',
             permission: ''
           },
           component: () =>
-            import(/* webpackChunkName: "page/report/total/index" */ 'page/report/other/index')
+            import(/* webpackChunkName: "page/report/project/index" */ 'page/report/project/index')
         }
       ]
     }

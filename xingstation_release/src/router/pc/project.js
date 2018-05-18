@@ -38,15 +38,15 @@ let router = {
           meta: {
           },
         },
-        {
-          path: 'data',
-          component: () =>
-            import(/* webpackChunkName: "page/project/item/itemData" */ 'page/project/item/itemData'),
-          name: '节目数据',
-          meta: {
-            title: '统计指标'
-          },
-        },
+        // {
+        //   path: 'data',
+        //   component: () =>
+        //     import(/* webpackChunkName: "page/project/item/itemData" */ 'page/project/item/itemData'),
+        //   name: '节目数据',
+        //   meta: {
+        //     title: '统计指标'
+        //   },
+        // },
       ],
     },
     {

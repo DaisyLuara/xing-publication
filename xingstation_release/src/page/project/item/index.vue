@@ -51,7 +51,6 @@
             节目数量: {{pagination.total}}
           </span>
           <div>
-            <el-button size="small" type="info">节目报表</el-button>
             <el-button size="small" type="success" @click="linkToAddItem">投放节目</el-button>
           </div>
         </div>
@@ -142,11 +141,11 @@
             :show-overflow-tooltip="true"
             >
           </el-table-column>
-          <el-table-column label="操作" width="80">
+          <!-- <el-table-column label="操作" width="80">
             <template slot-scope="scope">
               <el-button size="small" type="warning" @click="showData(scope.row.project.alias, scope.row.project.name, arUserName)" v-if="dataShowFlag">数据</el-button>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
         <div class="pagination-wrap">
           <el-pagination
@@ -256,8 +255,8 @@ export default {
       },
       dataValue: '',
       loading: true,
-      arUserName: '',
-      dataShowFlag: true,
+      // arUserName: '',
+      // dataShowFlag: true,
       pagination: {
         total: 0,
         pageSize: 10,
@@ -295,9 +294,9 @@ export default {
   created () {
     this.getProjectList()
     this.getAreaList()
-    let user_info = JSON.parse(localStorage.getItem('user_info'))
-    this.arUserName = user_info.name
-    this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
+    // let user_info = JSON.parse(localStorage.getItem('user_info'))
+    // this.arUserName = user_info.name
+    // this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
   },
   methods: {
     dialogClose() {
@@ -534,17 +533,17 @@ export default {
         path: '/project/item/edit',
       })
     },
-    showData (alias,name,userId) {
-      const { href } = this.$router.resolve({
-        path: '/project/item/data',
-        query: {
-          alias: alias,
-          name: name,
-          uName: userId
-        }
-      })
-      window.open(href, '_blank')
-    }
+    // showData (alias,name,userId) {
+    //   const { href } = this.$router.resolve({
+    //     path: '/project/item/data',
+    //     query: {
+    //       alias: alias,
+    //       name: name,
+    //       uName: userId
+    //     }
+    //   })
+    //   window.open(href, '_blank')
+    // }
   },
   components: {
     "el-table": Table,
