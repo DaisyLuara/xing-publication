@@ -1,11 +1,11 @@
 <template>
-  <div class="other-root">
+  <div class="project-root">
     <router-view></router-view>
   </div>
 </template>
 <script>
 export default {
-  name: 'otherView',
+  name: 'projectView',
   data() {
     return {}
   },
@@ -14,8 +14,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.other-root {
+.project-root {
   height: 100%;
+  margin: 10px;
   background-color: #eff2f7;
 }
 </style>

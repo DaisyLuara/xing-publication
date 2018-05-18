@@ -4,24 +4,12 @@
     <el-row :gutter="20">
       <el-col :span="12">
         <el-card shadow="always">
-          <highcharts :options="pieOptions" class="highchart" ref="piechar"></highcharts>
+          <div class="" id="echart4" ref="mychart" style="height: 500px; width: 100%"></div>
         </el-card>
       </el-col>
       <el-col :span="12">
         <el-card shadow="always">
-          <highcharts :options="funnelOptions" class="highchart" ref="funnelchar"></highcharts>
-        </el-card>
-      </el-col>
-    </el-row>
-    <el-row :gutter="20">
-      <el-col :span="12">
-        <el-card shadow="always">
-          <div class="" id="echart" ref="mychart" style="height: 900px; width: 100%"></div>
-        </el-card>
-      </el-col>
-      <el-col :span="12">
-        <el-card shadow="always">
-          <div class="" id="echart2" ref="mychart" style="height: 900px; width: 100%"></div>
+          <div class="" id="echart3" ref="mychart" style="height: 500px; width: 100%"></div>
         </el-card>
       </el-col>
     </el-row>
@@ -44,217 +32,124 @@ export default {
   data() {
     return {
       pieOptions: {
-        title: {
-          text: '屏幕总数 381 台'
+        title : {
+          text: '屏幕总数 381',
+          x:'center'
         },
-        xAxis: {
-          categories: [
-            'Jan',
-            'Feb',
-            'Mar',
-            'Apr',
-            'May',
-            'Jun',
-            'Jul',
-            'Aug',
-            'Sep',
-            'Oct',
-            'Nov',
-            'Dec'
-          ]
+        tooltip : {
+          trigger: 'item',
+          formatter: "{a} <br/>{b} : {c}"
         },
-        plotOptions: {
-          pie: {
-            // innerSize: 100,
-            innerSize: '20%',
-            allowPointSelect: true,
-            cursor: 'pointer',
-            dataLabels: {
-              enabled: true,
-              format: '{point.name} {point.y} '
-            },
-            showInLegend: true
+        toolbox: {
+          feature: {
+            dataView: {readOnly: false},
+            restore: {},
+            saveAsImage: {}
           }
         },
-        colors: ['#e6861c', '#38449a', '#c0002b'],
+        colors: ['#0a5ab4',],
         legend: {
-          enabled: false
+            orient: 'vertical',
+            left: 'left',
+            data: ['总人数','人脸总张数','曝光人数']
         },
-        credits: {
-          enabled: false
-        },
-        series: [
+        series : [
           {
+            label: {
+              normal: {
+                formatter: '{b}\n {c}',
+                // position: 'inside'
+              },
+              emphasis: {
+                textStyle: {
+                  fontSize: 20
+                }
+              }
+            },
+            name: '数量',
             type: 'pie',
-            allowPointSelect: true,
-            keys: ['name', 'y', 'selected', 'sliced'],
-            data: [
-              // ['屏幕总数', 381, true, true],
-              ['总人数', 2011386, , true, true],
-              ['人脸总张数', 4778197, false],
-              ['曝光人数', 20215890, false]
+            radius : ['50%', '70%'],
+            data:[
+              {value:2011386, name:'总人数', selected:true},
+              {value:4778197, name:'人脸总张数'},
+              {value:20215890, name:'曝光人数'},
             ],
-            showInLegend: true
+            itemStyle: {
+              emphasis: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
           }
         ]
       },
       funnelOptions: {
-        chart: {
-          type: 'funnel'
-        },
         title: {
-          text: '总互动时间 4453 分钟'
+          text: '总数',
         },
-        colors: ['#e6861c', '#38449a', '#c0002b'],
-        plotOptions: {
-          series: {
-            dataLabels: {
-              enabled: true,
-              format: '<b>{point.name} {point.y:,.0f}</b> ',
-              color:
-                (Highcharts.theme && Highcharts.theme.contrastTextColor) ||
-                'black',
-              softConnector: true
-            },
-            center: ['40%', '50%'],
-            neckWidth: '0%',
-            neckHeight: '0%',
-            width: '80%'
+        tooltip: {
+          trigger: 'item',
+          formatter: "{a} <br/>{b} : {c}%"
+        },
+        toolbox: {
+          feature: {
+            dataView: {readOnly: false},
+            restore: {},
+            saveAsImage: {}
           }
         },
         legend: {
-          enabled: false
+            // data: ['展现','点击','访问']
         },
-        credits: {
-          enabled: false
-        },
+        calculable: true,
         series: [
           {
-            name: 'Unique users',
+            name:'总数',
+            type:'funnel',
+            left: '10%',
+            top: 60,
+            bottom: 60,
+            width: '80%',
+            min: 0,
+            minSize: '0%',
+            maxSize: '100%',
+            sort: 'descending',
+            gap: 2,
+            label: {
+              normal: {
+                formatter: '{b} {c}',
+                position: 'inside'
+              },
+              emphasis: {
+                textStyle: {
+                  fontSize: 20
+                }
+              }
+            },
+            labelLine: {
+              normal: {
+                length: 10,
+                lineStyle: {
+                  width: 1,
+                  type: 'solid'
+                }
+              }
+            },
+            itemStyle: {
+              normal: {
+                borderColor: '#fff',
+                borderWidth: 1
+              }
+            },
             data: [
-              ['围观总数', 9139],
-              ['互动总数', 5463],
-              ['扫码拉新总数', 2434]
+              {value: 9139, name: '围观总数'},
+              {value: 5463, name: '互动总数'},
+              {value: 2434, name: '扫码拉新总数'},
             ]
           }
         ]
       },
-      barOption: {
-        title: {
-          text: '每屏互动指标',
-          // subtext: '每座屏互动时间2138(分钟)',
-          textStyle: {
-            fontSize: 20
-          },
-          subtextStyle: {
-            fontSize: 16
-          }
-        },
-        legend: {
-          data: ['日均', '总数'],
-          textStyle: {
-            fontSize: 18
-          }
-        },
-        xAxis: {
-          type: 'category',
-          data: ['每座屏围观数', '每座屏互动总数', '每座屏扫码拉新总数']
-        },
-        yAxis: {
-          type: 'value'
-        },
-        color: ['#e6861c', '#38449a', '#c0002b'],
-        series: [
-          {
-            name: '日均',
-            label: {
-              normal: {
-                show: true,
-                position: 'insideTop'
-              }
-            },
-            data: [76, 41, 10],
-            type: 'bar'
-          },
-          {
-            name: '总数',
-            label: {
-              normal: {
-                show: true,
-                position: 'insideTop'
-              }
-            },
-            data: [5279, 2862, 692],
-            type: 'bar'
-          }
-        ],
-        toolbox: {
-          feature: {
-            dataView: { readOnly: false },
-            restore: {},
-            saveAsImage: {}
-          }
-        }
-      },
-      barOption2: {
-        title: {
-          text: '携程每屏互动指标',
-          // subtext: '每座屏互动时间495(分钟)',
-          textStyle: {
-            fontSize: 20
-          },
-          subtextStyle: {
-            fontSize: 16
-          }
-        },
-        legend: {
-          data: ['日均', '总数'],
-          textStyle: {
-            fontSize: 18
-          }
-        },
-        xAxis: {
-          type: 'category',
-          data: ['每座屏围观数', '每座屏互动总数', '每座屏扫码拉新总数']
-        },
-        yAxis: {
-          type: 'value'
-        },
-        color: ['#e6861c', '#38449a', '#c0002b'],
-        series: [
-          {
-            name: '日均',
-            label: {
-              normal: {
-                show: true,
-                position: 'insideTop'
-              }
-            },
-            data: [239, 140, 62],
-            type: 'bar'
-          },
-          {
-            name: '总数',
-            label: {
-              normal: {
-                show: true,
-                position: 'insideTop'
-              }
-            },
-            data: [1015, 607, 270],
-            type: 'bar'
-          }
-        ],
-        toolbox: {
-          feature: {
-            dataView: { readOnly: false },
-            restore: {},
-            saveAsImage: {}
-          }
-        }
-      },
-      myChart: null,
-      myChart2: null
     }
   },
   mounted() {
@@ -268,16 +163,26 @@ export default {
   },
   methods: {
     handleEcharts() {
-      let dom = document.getElementById('echart')
-      let myChart = echarts.init(dom)
-      if (this.barOption && typeof this.barOption === 'object') {
-        myChart.setOption(this.barOption, true)
-      }
+      // let dom = document.getElementById('echart')
+      // let myChart = echarts.init(dom)
+      // if (this.barOption && typeof this.barOption === 'object') {
+      //   myChart.setOption(this.barOption, true)
+      // }
 
-      let dom2 = document.getElementById('echart2')
-      let myChart2 = echarts.init(dom2)
-      if (this.barOption2 && typeof this.barOption2 === 'object') {
-        myChart2.setOption(this.barOption2, true)
+      // let dom2 = document.getElementById('echart2')
+      // let myChart2 = echarts.init(dom2)
+      // if (this.barOption2 && typeof this.barOption2 === 'object') {
+      //   myChart2.setOption(this.barOption2, true)
+      // }
+      let dom3 = document.getElementById('echart3')
+      let myChart3 = echarts.init(dom3)
+      if (this.funnelOptions && typeof this.funnelOptions === 'object') {
+        myChart3.setOption(this.funnelOptions, true)
+      }
+      let dom4 = document.getElementById('echart4')
+      let myChart4 = echarts.init(dom4)
+      if (this.pieOptions && typeof this.pieOptions === 'object') {
+        myChart4.setOption(this.pieOptions, true)
       }
     }
   }
