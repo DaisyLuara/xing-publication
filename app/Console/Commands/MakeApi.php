@@ -73,9 +73,9 @@ class MakeApi extends Command
             $this->makeDirectory($path);
 
             $this->files->put($path, $this->buildClass($name, $stub[$i]));
+            $this->info($name . ' created successfully.');
         }
 
-        $this->info(' created successfully.');
     }
 
     protected function qualifyClass($name, $defaultNameSpace)
