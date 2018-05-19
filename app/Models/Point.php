@@ -26,12 +26,12 @@ class Point extends Model
 
     public function market()
     {
-        return $this->belongsTo(Market::class, 'marketid', 'marketid')->select('name as market_name');
+        return $this->belongsTo(Market::class, 'marketid', 'marketid');
     }
 
     public function area()
     {
-        return $this->belongsTo(Area::class, 'areaid', 'areaid')->select('name as area_name');
+        return $this->belongsTo(Area::class, 'areaid', 'areaid');
     }
 
 }
