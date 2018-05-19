@@ -132,6 +132,7 @@ $api->version('v1', [
             $api->get('advertiser/query', 'QueryController@advertiserQuery');//广告主搜索
             $api->get('advertisement/query', 'QueryController@advertisementQuery');//广告搜索
             $api->get('projects/query', 'QueryController@projectQuery');
+            $api->get('scene/query', 'QueryController@sceneQueryIndex');
 
             // 权限设置
             $api->get('system/users', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminUsersController@index']);
