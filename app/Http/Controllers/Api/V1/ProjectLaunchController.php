@@ -59,11 +59,6 @@ class ProjectLaunchController extends Controller
 
     public function store(ProjectLaunchRequest $request, ProjectLaunch $projectLaunchLocal)
     {
-
-        if (env('APP_ENV') != 'production') {
-            return $this->response->noContent();
-        }
-
         $launch = $request->all();
         $query = $projectLaunchLocal->query();
 
@@ -79,10 +74,6 @@ class ProjectLaunchController extends Controller
 
     public function update(ProjectLaunchRequest $request, ProjectLaunch $projectLaunchLocal)
     {
-
-        if (env('APP_ENV') != 'production') {
-            return $this->response->noContent();
-        }
 
         $launch = $request->all();
         $tvoids = $launch['tvoids'];
