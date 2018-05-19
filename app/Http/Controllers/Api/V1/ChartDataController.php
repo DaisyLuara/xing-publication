@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Requests\Api\V1\ChartDataRequest;
+use App\Transformers\ChartDataTransformer;
+use Illuminate\Database\Eloquent\Builder;
 use App\Models\FaceCount;
 use App\Models\FaceLog;
 use Carbon\Carbon;
 use DB;
-use Illuminate\Database\Eloquent\Builder;
 
 class ChartDataController extends Controller
 {
@@ -15,7 +16,6 @@ class ChartDataController extends Controller
     {
         $faceLogQuery = FaceLog::query();
         $faceCountQuery = FaceCount::query();
-        $data = null;
         switch ($request->id) {
             case 1:
                 $data = $this->getLookNumber($request, $faceLogQuery);
@@ -301,7 +301,8 @@ class ChartDataController extends Controller
         $startDate = $request->start_date;
         $endDate = $request->end_date;
 
-        //选择所有数据/按项目查询
+        //按节目搜索 默认搜索所有节目
+        //@todo 优化
         if ($selectByAlias) {
             $alias = $request->alias ? $request->alias : 'all';
             $query->where('belong', '=', $alias);
@@ -312,6 +313,14 @@ class ChartDataController extends Controller
         //查询单一指标/所有指标
         if ($request->index) {
             $query->selectRaw("sum(" . $request->index . ") as count");
+        }
+
+        //按账号搜索
+        $user = $this->user();
+        $arUserId = getArUserID($user, $request);
+        if ($arUserId) {
+            $query->join('admin_per_oid', 'admin_per_oid.oid', '=', 'face_count_log.oid')
+                ->where('admin_per_oid.uid', '=', $arUserId);
         }
 
         $query->join('avr_official', 'avr_official.oid', '=', 'face_count_log.oid')
