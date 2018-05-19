@@ -18,20 +18,6 @@ class FaceCountController extends Controller
      */
     public function index(Request $request, FaceCount $faceCount)
     {
-
-        /**
-         * @todo 漏斗数据 放到 图表接口重构
-         */
-//        $query = $this->queryInit($request, $faceCount->query());
-//        $default = $this->getDefaultParams($request);
-
-//        $faceCount = $query->where('belong', '=', $default['alias'])
-//            ->whereRaw("str_to_date(date, '%Y-%m-%d') BETWEEN '" . $default['startDate'] . "' AND '" . $default['endDate'] . "'")
-//            ->selectRaw('sum(looknum) as looknum ,sum(playernum) as playernum ,sum(lovenum) as lovenum,sum(outnum) as outnum,sum(scannum) as scannum')
-//            ->first();
-//
-//        return $this->response->item($faceCount, new FaceCountTransformer());
-
         $query = $this->queryInit($request, $faceCount->query());
         $default = $this->getDefaultParams($request);
 
@@ -59,19 +45,7 @@ class FaceCountController extends Controller
         return $this->response->paginator($faceCount, new FaceCountTransformer());
     }
 
-//    public function detail(Request $request, FaceCount $faceCount)
-//    {
-//        $query = $this->queryInit($request, $faceCount->query());
-//        $default = $this->getDefaultParams($request);
-//
-//        $faceCount = $query->whereRaw("str_to_date(date, '%Y-%m-%d') BETWEEN '" . $default['startDate'] . "' AND '" . $default['endDate'] . "'")
-//            ->where('belong', '=', $default['alias'])
-//            ->selectRaw("date_format(date,'%Y-%m-%d') as date,sum(" . $default['type'] . ") as count")
-//            ->groupBy(DB::raw("date_format(date,'%Y-%m-%d')"))
-//            ->get();
-//
-//        return $this->response->collection($faceCount, new FaceCountDetailTransformer());
-//    }
+
 
     private function queryInit($request, $query)
     {
