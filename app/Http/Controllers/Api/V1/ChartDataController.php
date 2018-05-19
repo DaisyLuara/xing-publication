@@ -310,8 +310,8 @@ class ChartDataController extends Controller
         }
 
         //查询单一指标/所有指标
-        if ($request->type) {
-            $query->selectRaw("sum(" . $request->type . ") as count");
+        if ($request->index) {
+            $query->selectRaw("sum(" . $request->index . ") as count");
         }
 
         $query->join('avr_official', 'avr_official.oid', '=', 'face_count_log.oid')
