@@ -433,6 +433,8 @@ export default {
             console.log(response)
           }).catch((err) => {
             this.loading = false
+            this.editVisible = false
+            this.editCondition.conditionList = []
             console.log(err)
           })
         }else{

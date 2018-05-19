@@ -632,6 +632,8 @@ export default {
             this.editVisible = false
             this.editCondition.conditionList = []
           }).catch((err) => {
+            this.editVisible = false
+            this.editCondition.conditionList = []
             this.loading = false
             console.log(err)
           })

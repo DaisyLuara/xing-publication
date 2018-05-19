@@ -125,6 +125,7 @@
         <span class="label">
           数量: {{pagination.total}}
         </span>
+        <el-button size="small" type="primary">导出</el-button>
       </div>
       <el-table
         :data="tableData5"
