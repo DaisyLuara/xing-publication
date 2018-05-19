@@ -33,6 +33,7 @@ $api->version('v1', [
     ], function ($api) {
 
         $api->post('captchas', 'CaptchasController@store');// 图片验证码
+        $api->get('point_configs/{point_config}', 'PointConfigController@show');//点位配置
 
         //第三方集成
         $api->get('login/tower', 'TowerLoginController@redirectToProvider');
