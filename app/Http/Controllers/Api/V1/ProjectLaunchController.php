@@ -64,10 +64,10 @@ class ProjectLaunchController extends Controller
 
     }
 
-    public function store(ProjectLaunchRequest $request, ProjectLaunch $projectLaunchLocal)
+    public function store(ProjectLaunchRequest $request, ProjectLaunch $projectLaunch)
     {
         $launch = $request->all();
-        $query = $projectLaunchLocal->query();
+        $query = $projectLaunch->query();
 
         $oids = $launch['oids'];
         unset($launch['oids']);
@@ -79,7 +79,7 @@ class ProjectLaunchController extends Controller
         return $this->response->noContent();
     }
 
-    public function update(ProjectLaunchRequest $request, ProjectLaunch $projectLaunchLocal)
+    public function update(ProjectLaunchRequest $request, ProjectLaunch $projectLaunch)
     {
 
         $launch = $request->all();
@@ -89,7 +89,7 @@ class ProjectLaunchController extends Controller
         unset($launch['oid']);
 
         foreach ($tvoids as $tvoid) {
-            $query = $projectLaunchLocal->query();
+            $query = $projectLaunch->query();
             $query->where(['tvoid' => $tvoid])->update($launch);
         }
 
