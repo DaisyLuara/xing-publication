@@ -11,32 +11,63 @@ use Illuminate\Http\Request;
 
 class FaceCountController extends Controller
 {
+    /**
+     * @param Request $request
+     * @param FaceCount $faceCount
+     * @return mixed
+     */
     public function index(Request $request, FaceCount $faceCount)
     {
+
+        /**
+         * @todo 漏斗数据 放到 图表接口重构
+         */
+//        $query = $this->queryInit($request, $faceCount->query());
+//        $default = $this->getDefaultParams($request);
+
+//        $faceCount = $query->where('belong', '=', $default['alias'])
+//            ->whereRaw("str_to_date(date, '%Y-%m-%d') BETWEEN '" . $default['startDate'] . "' AND '" . $default['endDate'] . "'")
+//            ->selectRaw('sum(looknum) as looknum ,sum(playernum) as playernum ,sum(lovenum) as lovenum,sum(outnum) as outnum,sum(scannum) as scannum')
+//            ->first();
+//
+//        return $this->response->item($faceCount, new FaceCountTransformer());
+
         $query = $this->queryInit($request, $faceCount->query());
         $default = $this->getDefaultParams($request);
 
-        $faceCount = $query->where('belong', '=', $default['alias'])
-            ->whereRaw("str_to_date(date, '%Y-%m-%d') BETWEEN '" . $default['startDate'] . "' AND '" . $default['endDate'] . "'")
-            ->selectRaw('sum(looknum) as looknum ,sum(playernum) as playernum ,sum(lovenum) as lovenum,sum(outnum) as outnum,sum(scannum) as scannum')
-            ->first();
+        $query->join('avr_official', 'avr_official.oid', '=', 'face_count_log.oid')
+            ->join('avr_official_market', 'avr_official.marketid', '=', 'avr_official_market.marketid')
+            ->join('avr_official_area', 'avr_official_area.areaid', '=', 'avr_official.areaid');
+        $faceCount = $query->whereRaw("str_to_date(face_count_log.date, '%Y-%m-%d') BETWEEN '" . $default['startDate'] . "' AND '" . $default['endDate'] . "'")
+            ->where('face_count_log.belong', '=', $default['alias'])
+            ->selectRaw('fclid as id,
+                         looknum,
+                         playernum,
+                         lovenum,
+                         outnum,
+                         scannum,
+                         avr_official.name as point_name,
+                         avr_official_market.name as market_name,
+                         avr_official_area.name as area_name,
+                         face_count_log.date as created_at')
+            ->paginate(5);
 
-        return $this->response->item($faceCount, new FaceCountTransformer());
+        return $this->response->paginator($faceCount, new FaceCountTransformer());
     }
 
-    public function detail(Request $request, FaceCount $faceCount)
-    {
-        $query = $this->queryInit($request, $faceCount->query());
-        $default = $this->getDefaultParams($request);
-
-        $faceCount = $query->whereRaw("str_to_date(date, '%Y-%m-%d') BETWEEN '" . $default['startDate'] . "' AND '" . $default['endDate'] . "'")
-            ->where('belong', '=', $default['alias'])
-            ->selectRaw("date_format(date,'%Y-%m-%d') as date,sum(" . $default['type'] . ") as count")
-            ->groupBy(DB::raw("date_format(date,'%Y-%m-%d')"))
-            ->get();
-
-        return $this->response->collection($faceCount, new FaceCountDetailTransformer());
-    }
+//    public function detail(Request $request, FaceCount $faceCount)
+//    {
+//        $query = $this->queryInit($request, $faceCount->query());
+//        $default = $this->getDefaultParams($request);
+//
+//        $faceCount = $query->whereRaw("str_to_date(date, '%Y-%m-%d') BETWEEN '" . $default['startDate'] . "' AND '" . $default['endDate'] . "'")
+//            ->where('belong', '=', $default['alias'])
+//            ->selectRaw("date_format(date,'%Y-%m-%d') as date,sum(" . $default['type'] . ") as count")
+//            ->groupBy(DB::raw("date_format(date,'%Y-%m-%d')"))
+//            ->get();
+//
+//        return $this->response->collection($faceCount, new FaceCountDetailTransformer());
+//    }
 
     private function queryInit($request, $query)
     {
@@ -49,7 +80,7 @@ class FaceCountController extends Controller
         }
 
         if ($request->has('point_id')) {
-            $query->where('oid', '=', $request->point_id);
+            $query->where('face_count_log.oid', '=', $request->point_id);
         }
 
         return $query;

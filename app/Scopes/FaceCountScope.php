@@ -10,6 +10,6 @@ class FaceCountScope implements Scope
 {
     public function apply(Builder $builder, Model $model)
     {
-        $builder->whereNotIn('oid', [16, 19, 30, 31, 335, 334, 329, 328, 327]);
+        $builder->whereNotIn('face_count_log.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327]);
     }
 }

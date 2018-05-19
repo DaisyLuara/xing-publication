@@ -12,7 +12,7 @@ class FaceCount extends Model
 
     public function point()
     {
-        return $this->hasOne(Point::class, 'oid', 'oid');
+        return $this->belongsTo(Point::class, 'oid', 'oid');
     }
 
     public function project()
