@@ -81,6 +81,7 @@ class ChartDataController extends Controller
                              sum(t21) AS t21,
                              sum(t22) AS t22")
             ->whereRaw("date_format(date, '%Y-%m-%d') BETWEEN '$startDate' AND '$endDate' ")
+            ->where('belong', '=', 'all')
             ->whereNotIn('oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
             ->first();
         $output = [];
@@ -99,6 +100,7 @@ class ChartDataController extends Controller
             ->selectRaw("sum(allnum) AS count,date_format(face_log.date, '%Y-%m-%d') AS day")
             ->whereRaw("date_format(date, '%Y-%m-%d') BETWEEN '$startDate' AND '$endDate' ")
             ->whereNotIn('oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
+            ->where('belong', '=', 'all')
             ->groupBy('day')
             ->get();
         $output = [];
