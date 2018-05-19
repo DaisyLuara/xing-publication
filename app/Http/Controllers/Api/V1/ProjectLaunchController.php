@@ -24,6 +24,13 @@ class ProjectLaunchController extends Controller
             });
         }
 
+        if ($request->scene_id) {
+            $scene_id = $request->scene_id;
+            $query->whereHas('point', function ($query) use ($scene_id) {
+                $query->where('sid', '=', $scene_id);
+            });
+        }
+
         if ($request->project_name) {
             $project_name = $request->project_name;
             $query->whereHas('project', function ($query) use ($project_name) {
