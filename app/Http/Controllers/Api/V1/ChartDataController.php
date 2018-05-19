@@ -249,6 +249,7 @@ class ChartDataController extends Controller
             $output[] = [
                 'count' => $value,
                 'display_name' => $totalMapping[$key],
+                'index' => $key,
             ];
         }
         return $output;
