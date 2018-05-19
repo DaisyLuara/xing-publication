@@ -72,6 +72,14 @@ class QueryController extends Controller
             $query->where('marketid', '=', $request->market_id);
         }
 
+        $user = $this->user();
+        $arUserId = getArUserID($user, $request);
+        if ($arUserId) {
+            $query->whereHas('arUsers', function ($q) use ($arUserId) {
+                $q->where('admin_staff.uid', '=', $arUserId);
+            });
+        }
+
         $points = $query->get();
 
         return $this->response->collection($points, new PointTransformer());

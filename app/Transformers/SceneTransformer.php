@@ -10,6 +10,7 @@ class SceneTransformer extends TransformerAbstract
     public function transform(Scene $scene)
     {
         return [
+            'id' => (int)$scene->sid,
             'name' => (string)$scene->name,
         ];
     }
