@@ -50,6 +50,10 @@ class FaceCountController extends Controller
                          avr_official_market.name as market_name,
                          avr_official_area.name as area_name,
                          face_count_log.date as created_at')
+            ->where('fclid', '>', 0)
+            ->orderBy('avr_official_area.areaid', 'desc')
+            ->orderBy('avr_official_market.marketid', 'desc')
+            ->orderBy('avr_official.oid', 'desc')
             ->paginate(5);
 
         return $this->response->paginator($faceCount, new FaceCountTransformer());
@@ -81,6 +85,13 @@ class FaceCountController extends Controller
 
         if ($request->has('point_id')) {
             $query->where('face_count_log.oid', '=', $request->point_id);
+        }
+
+        if ($request->scene_id) {
+            $scene_id = $request->scene_id;
+            $query->whereHas('point', function ($query) use ($scene_id) {
+                $query->where('sid', '=', $scene_id);
+            });
         }
 
         return $query;
