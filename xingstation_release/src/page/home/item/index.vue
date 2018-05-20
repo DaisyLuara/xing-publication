@@ -125,7 +125,7 @@ export default {
         },
         xAxis: {
           title: {
-            text: '日期'
+            text: ''
           },
           type: 'category',
         },
@@ -198,7 +198,7 @@ export default {
         },
         xAxis: {
           title:{
-            text: '名称'
+            text: ''
           },
           type: 'category',
           labels: {
@@ -248,7 +248,7 @@ export default {
         xAxis: {
           type: 'category',
           title:{
-            text: '名称'
+            text: ''
           },
           labels: {
             autoRotationLimit:40,
@@ -328,7 +328,7 @@ export default {
         },
         yAxis: [{
           title: {
-            text: '名称',
+            text: '',
           }
         }],
         series: [{
@@ -357,7 +357,7 @@ export default {
         },
         xAxis: {
           title: {
-            text: '名称'
+            text: ''
           },
           type: 'category'
         },
