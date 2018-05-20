@@ -165,6 +165,11 @@ return [
          * 第三方provider
          */
         App\Providers\EasySmsServiceProvider::class,
+
+        /**
+         * Excel 导出
+         */
+        App\Providers\ExcelServiceProvider::class,
     ],
 
     /*
