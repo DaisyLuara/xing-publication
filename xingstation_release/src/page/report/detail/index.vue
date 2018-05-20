@@ -42,8 +42,8 @@
         </el-row>
         <el-row :gutter="20">
           <el-col :span="8">
-            <el-form-item label="" prop="area" >
-              <el-select v-model="area" placeholder="请选择区域" filterable  clearable  @change="areaChangeHandle">
+            <el-form-item label="" prop="area_id" >
+              <el-select v-model="area_id" placeholder="请选择区域" filterable  clearable  @change="areaChangeHandle">
                 <el-option
                   v-for="item in areaList"
                   :key="item.id"
@@ -54,7 +54,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="" prop="market" >
+            <el-form-item label="" prop="market_id" >
               <el-select v-model="market_id" placeholder="请搜索商场" filterable :loading="searchLoading" remote :remote-method="getMarket"  @change="marketChangeHandle" clearable>
                 <el-option
                   v-for="item in marketList"
@@ -66,8 +66,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="" prop="point" >
-              <el-select v-model="point" placeholder="请选择点位"   filterable :loading="searchLoading" clearable>
+            <el-form-item label="" prop="point_id" >
+              <el-select v-model="point_id" placeholder="请选择点位"   filterable :loading="searchLoading" clearable>
                 <el-option
                   v-for="item in pointList"
                   :key="item.id"
@@ -293,9 +293,9 @@ export default {
         }
       ],
       reportValue: '',
-      area:'',
+      area_id:'',
       market_id: '',
-      point: '',
+      point_id: '',
       setting: {
         isOpenSelectAll: true,
         loading: false,
@@ -552,7 +552,7 @@ export default {
       let args = {
         name: query,
         include: 'area',
-        area_id: this.area
+        area_id: this.area_id
       }
       console.log(args)
       return search.getMarketList(this,args).then((response) => {
@@ -583,11 +583,11 @@ export default {
     },
     areaChangeHandle() {
       this.market_id = ''
-      this.point = ''
+      this.point_id = ''
       this.getMarket()
     },
     marketChangeHandle() {
-      this.point = ''
+      this.point_id = ''
       this.getPoint()
     },
     getSceneList() {
@@ -609,9 +609,9 @@ export default {
         this.userSelect = ''
         this.arUserId = this.userSelect
         this.projectSelect = ''
-        this.area = ''
+        this.area_id = ''
         this.market_id = ''
-        this.point= ''
+        this.point_id = ''
         this.sceneSelect = ''
       } else{
         this.projectSelect = ''
@@ -757,8 +757,8 @@ export default {
         ar_user_id: this.arUserId,
         market_id: this.market_id,
         scene_id: this.sceneSelect,
-        area_id: this.area,
-        point_id: this.point
+        area_id: this.area_id,
+        point_id: this.point_id
       }
       if(!this.projectSelect) {
         delete args.alias
@@ -769,10 +769,10 @@ export default {
       if(!this.sceneSelect) {
         delete args.scene_id
       }
-      if(!this.area) {
+      if(!this.area_id) {
         delete args.area_id
       }
-      if(!this.point) {
+      if(!this.point_id) {
         delete args.point_id
       }
       if(!this.market_id) {
