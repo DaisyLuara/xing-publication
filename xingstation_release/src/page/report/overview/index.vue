@@ -1,7 +1,7 @@
 <template>
   <div class="root">
     <div class="item-list-wrap"  :element-loading-text="setting.loadingText" v-loading="setting.loading">
-      <div class="search-wrap">
+      <!-- <div class="search-wrap">
         <el-form ref="searchForm" :model="searchForm"  class="search-form">
           <el-row :gutter="20">
             <el-col :span="8" v-if="showUser">
@@ -106,7 +106,7 @@
             </el-col>
           </el-row>
         </el-form>
-      </div>
+      </div> -->
       <div class="chart-wrap">
         <el-row :gutter="20">
           <el-col :span="12">
@@ -121,7 +121,7 @@
           </el-col>
         </el-row>
       </div>
-      <div :element-loading-text="tableSetting.loadingText" v-loading="tableSetting.loading">
+      <!-- <div :element-loading-text="tableSetting.loadingText" v-loading="tableSetting.loading">
         <div class="actions-wrap">
           <span class="label">
             数量: {{pagination.total}}
@@ -216,23 +216,133 @@
             >
             </el-pagination>
         </div>
+      </div> -->
+      <div class="pie-content-wrapper">
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <div class="pie-sex-wrapper">
+              <div class="pie-sex-content" v-loading="sexFlag">
+                <highcharts :options="sexPieOptions" class="highchart" ref="sexPie"></highcharts>
+              </div>
+            </div>
+          </el-col>
+          <el-col :span="12">
+            <div class="pie-age-wrapper">
+              <div class="pie-age-content" v-loading="ageFlag">
+                <highcharts :options="agePieOptions" class="highchart" ref="agePie" ></highcharts>
+              </div>
+            </div>
+          </el-col>
+        </el-row>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import {  Button, Row, Col, Card, DatePicker,FormItem, Form ,Select, Option, Table, TableColumn, Pagination} from 'element-ui'
 import echarts from 'echarts/lib/echarts'
 import echartsGl from 'echarts-gl'
-import {  Button, Row, Col, Card, DatePicker,FormItem, Form ,Select, Option, Table, TableColumn, Pagination} from 'element-ui'
+import Highcharts from 'highcharts';
+import loadExporting from 'highcharts/modules/exporting';
+import loadExportData from 'highcharts/modules/export-data';
 import stats from 'service/stats'
 import search from 'service/search'
 import chart from 'service/chart'
 import reportViewVue from '../reportView.vue';
+loadExporting(Highcharts);
+loadExportData(Highcharts);
+
 
 export default {
   data() {
     return {
+      sexFlag: false,
+      ageFlag: false,
+       agePieOptions : {
+        chart:{
+          type: 'column',
+        },
+        title: {
+          text: '年龄分布',
+          align:'left'
+        },
+        xAxis: {
+          title: {
+            text: '范围'
+          },
+          type: 'category'
+        },
+        plotOptions: {
+          column: {
+            dataLabels: {
+              enabled: true
+            }
+          }
+        },
+        yAxis: [{
+          title: {
+            text: '年龄统计',
+          },
+          tickAmount: 5
+        }],
+        legend: {
+          enabled: false
+        },
+        credits: {
+          enabled: false
+        },
+        series: [{
+          color: "#7cb5ec",
+          name:"年龄统计",
+        }]
+      },
+      sexPieOptions : {
+        chart:{
+          type: 'pie',
+          plotBackgroundColor: null,
+          plotBorderWidth: null,
+          plotShadow: false,
+        },
+        title: {
+          text: '性别分布',
+          align:'left'
+        },
+        tooltip: {
+          headerFormat: '{性别访问数}<br>',
+          pointFormat: '{point.name}: <b>{point.y} 占比{point.percentage:.1f}%</b>'
+        },
+        colors: ['#5eb6c8', '#ffd259'],
+        plotOptions: {
+          pie: {
+            innerSize: '20%',
+            allowPointSelect: true,
+            cursor: 'pointer',
+            // depth: 40,
+            dataLabels: {
+              enabled: true,
+              format: '{point.name} {point.y} 占比{point.percentage:.1f}% '
+            },
+            showInLegend: true
+          }
+        },
+        legend: {
+          align: 'right',
+          verticalAlign: 'middle',
+          layout: 'vertical',
+          symbolHeight: 12,
+          symbolWidth: 20,
+          symbolRadius: 2,
+          squareSymbol: false
+        },
+        credits: {
+          enabled: false
+        },
+        series: [{
+          type: 'pie',
+          name: '性别访问数',
+        }]
+      },
       tableSetting: {
         loading: false,
         loadingText: "拼命加载中"
@@ -376,7 +486,7 @@ export default {
       let that = this;
       let obj = {
         title: {
-          text: '总数',
+          text: '',
         },
         tooltip: {
           trigger: 'item',
@@ -389,13 +499,13 @@ export default {
             saveAsImage: {}
           }
         },
-        color: ['#90bcde','#508ebc','#f5b12f'],
+        color: ['#508ebc','#7199c1','#97bde4','#f5b12f'],
         legend: {
         },
         calculable: true,
         series: [
           {
-            name:'总数',
+            name:'数量',
             type:'funnel',
             left: '10%',
             top: 60,
@@ -446,13 +556,14 @@ export default {
       this.getMachineAcquisitionTotal();
     }
   },
+ 
   created() {
-    this.setting.loading = true
-    this.getAreaList()
-    this.getSceneList()
-    this.getPointList()
-    
-    
+    // this.setting.loading = true
+    // this.getAreaList()
+    // this.getSceneList()
+    // this.getPointList()
+    this.getAge()
+    this.getGender()
   },
   components: {
     ElRow: Row,
@@ -469,6 +580,46 @@ export default {
     ElPagination: Pagination
   },
   methods: {
+    getAge() {
+      this.ageFlag = true
+      let args = this.setArgs()
+      args.id = '4'
+      delete args.page
+      return chart.getChartData(this, args).then((response) => {
+        let ageChart = this.$refs.agePie.chart;
+        let dataAge = []
+        for(let i = 0; i < response.length; i++){
+          dataAge.push({'name':response[i].display_name,'y':parseInt(response[i].count)})
+        }
+        ageChart.series[0].setData(dataAge,true)
+        this.ageFlag = false;
+      }).catch((err) => {
+        this.ageFlag = false
+        console.log(err)
+      })
+    },
+    getGender(){
+      this.sexFlag = true
+      let args = this.setArgs()
+      args.id = '5'
+      delete args.page
+      return chart.getChartData(this, args).then((response) => {
+        let genderChat = this.$refs.sexPie.chart;
+        let dataGender = []
+        for(let i = 0; i < response.length; i++){
+          if(i==0){
+            dataGender.push({'name':response[i].display_name,'y':parseInt(response[i].count),'sliced': true,'selected': true})
+          }else{
+            dataGender.push([response[i].display_name,parseInt(response[i].count)])
+          }
+        }
+        genderChat.series[0].setData(dataGender,true)
+        this.sexFlag = false;
+      }).catch((err) => {
+        this.sexFlag = false
+        console.log(err)
+      })
+    },
     getPointList() {
       this.tableSetting.loading = true
       let args = this.setArgs()

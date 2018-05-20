@@ -86,7 +86,6 @@
               type="daterange"
               align="right"
               unlink-panels
-              range-separator="至"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               :default-value="dateTime"
@@ -127,6 +126,109 @@
         <highcharts :options="splineOptions" class="highchart" ref="lineChar"></highcharts>
       </div>
     </div>
+    <div v-loading="tableSetting.loading" class="table-wrap">
+      <div class="actions-wrap">
+        <span class="label">
+          数量: {{pagination.total}}
+        </span>
+        <div>
+          <el-select v-model="reportValue" placeholder="请选择导出报表类型">
+            <el-option
+              v-for="item in reportList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </div>
+      </div>
+      <el-table
+        :data="tableData"
+        style="width: 100%">
+        <el-table-column type="expand">
+          <template slot-scope="scope">
+            <el-form label-position="left" inline class="demo-table-expand">
+              <el-form-item label="ID">
+                <span>{{ scope.row.id }}</span>
+              </el-form-item>
+              <el-form-item label="点位">
+                  {{ scope.row.area_name }} {{scope.row.market_name}} {{scope.row.point_name}}
+              </el-form-item>
+              <el-form-item label="围观">
+                <span>{{ scope.row.looknum }}</span>
+              </el-form-item>
+              <el-form-item label="互动">
+                <span>{{ scope.row.playernum }}</span>
+              </el-form-item>
+              <el-form-item label="拉新">
+                <span>{{ scope.row.lovenum }}</span>
+              </el-form-item>
+              <el-form-item label="扫码率">
+                <span>扫码/生成数：{{ scope.row.scannum }} / {{ scope.row.outnum }} 扫码率：{{scope.row.outnum !== 0 ? new Number(scope.row.scannum / scope.row.outnum ).toFixed(1): 0 }}%</span>
+              </el-form-item>
+              <el-form-item label="创建时间">
+                <span>{{ scope.row.created_at }}</span>
+              </el-form-item>
+            </el-form>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="ID"
+          prop="id"
+          width="100">
+        </el-table-column>
+        <el-table-column
+          label="点位"
+          prop=""
+          min-width="130"
+          :show-overflow-tooltip="true">
+          <template slot-scope="scope">
+            {{ scope.row.area_name }} {{scope.row.market_name}} {{scope.row.point_name}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="围观"
+          prop="looknum"
+          min-width="100">
+        </el-table-column>
+        <el-table-column
+          label="互动"
+          prop="playernum"
+          min-width="100"
+          :show-overflow-tooltip="true">
+        </el-table-column>
+        <el-table-column
+          label="拉新"
+          prop="lovenum"
+          min-width="100"
+          :show-overflow-tooltip="true">
+        </el-table-column>
+        <el-table-column
+          label="扫码率"
+          prop=""
+          min-width="120"
+          :show-overflow-tooltip="true">
+          <template slot-scope="scope">
+          <span>扫码/生成数：{{ scope.row.scannum }} / {{ scope.row.outnum }} <br/> 扫码率：{{scope.row.outnum !== 0 ? new Number(scope.row.scannum / scope.row.outnum ).toFixed(1): 0}}%</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="创建时间"
+          min-width="120"
+          prop="created_at">
+        </el-table-column>
+      </el-table>
+      <div class="pagination-wrap">
+        <el-pagination
+        layout="prev, pager, next, jumper, total"
+        :total="pagination.total"
+        :page-size="pagination.pageSize"
+        :current-page="pagination.currentPage"
+        @current-change="changePage"
+        >
+        </el-pagination>
+      </div>
+    </div>
     <div class="pie-content-wrapper">
       <el-row :gutter="20">
         <el-col :span="12">
@@ -151,11 +253,10 @@
 import stats from 'service/stats'
 import search from 'service/search'
 import chart from 'service/chart'
-import { Row, Col, DatePicker, Select, Option, Button, Form, FormItem} from 'element-ui'
+import { Row, Col, DatePicker, Select, Option, Button, Form, FormItem, Table, TableColumn,Pagination} from 'element-ui'
 import Highcharts from 'highcharts';
 import loadExporting from 'highcharts/modules/exporting';
 import loadExportData from 'highcharts/modules/export-data';
-import reportViewVue from '../reportView.vue';
 loadExporting(Highcharts);
 loadExportData(Highcharts);
 
@@ -168,10 +269,30 @@ export default {
     'el-button': Button,
     'el-option': Option,
     'el-form-item': FormItem,
-    'el-form': Form
+    'el-form': Form,
+    'el-table': Table,
+    'el-table-column': TableColumn,
+    'el-pagination': Pagination
   },
   data(){
     return {
+      tableSetting: {
+        loading: false,
+        loadingText: "拼命加载中"
+      },
+      reportList:[
+        {
+          value: '选项1',
+          label: '黄金糕'
+        }, {
+          value: '选项2',
+          label: '双皮奶'
+        }, {
+          value: '选项3',
+          label: '蚵仔煎'
+        }
+      ],
+      reportValue: '',
       area:'',
       market_id: '',
       point: '',
@@ -278,7 +399,7 @@ export default {
           name:"数量",
         }]
       },
-       agePieOptions : {
+      agePieOptions : {
         chart:{
           type: 'column',
         },
@@ -362,6 +483,12 @@ export default {
           name: '性别访问数',
         }]
       },
+      pagination: {
+        total: 0,
+        pageSize: 5,
+        currentPage: 1
+      },
+      tableData: [],
       peopleCount: [],
       type: '',
       userList: [],
@@ -380,6 +507,7 @@ export default {
     this.setting.loading = true
     this.getSceneList()
     this.getAreaList()
+    
     this.allPromise()
   },
   computed:{
@@ -400,6 +528,23 @@ export default {
       }).catch(error => {
         console.log(error)
       this.setting.loading = false;
+      })
+    },
+    getPointList() {
+      this.tableSetting.loading = true
+      let args = this.setArgs()
+      args.page = this.pagination.currentPage
+      delete args.id
+      return stats.getStaus(this,args).then((response) => {
+        console.log(response)
+        this.tableData = response.data
+        this.pagination.total = response.meta.pagination.total
+        this.setting.loading = false
+        this.tableSetting.loading = false
+      }).catch((err) => {
+        console.log(err)
+        this.tableSetting.loading = false
+        this.setting.loading = false
       })
     },
     getMarket(query) {
@@ -453,6 +598,7 @@ export default {
       })
     },
     searchHandle() {
+      this.pagination.currentPage = 1
       this.active = '围观总数'
       this.projectAlias = this.projectSelect
       this.setting.loading = true
@@ -485,6 +631,7 @@ export default {
       }
     },
     allPromise(){
+      this.getPointList()
       this.getPeopleCount()
       this.getAge()
       this.getGender()
@@ -576,6 +723,10 @@ export default {
         this.ageFlag = false
         console.log(err)
       })
+    },
+    changePage (currentPage) {
+      this.pagination.currentPage = currentPage
+      this.getPointList()
     },
     getGender(){
       this.sexFlag = true
@@ -769,6 +920,26 @@ export default {
         .highcharts-container {
           // width: 100%;
         }
+      }
+    }
+    .table-wrap{
+      padding: 15px;
+      background: #fff;
+      margin: 10px 0;
+    }
+    .pagination-wrap{
+        margin: 10px auto;
+        text-align: right;
+      }
+    .actions-wrap{
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      font-size: 16px;
+      align-items: center;
+      margin-bottom: 10px;
+      .label {
+        font-size: 14px;
       }
     }
     .pie-content-wrapper{
