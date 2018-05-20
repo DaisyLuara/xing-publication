@@ -1,11 +1,11 @@
 <template>
-  <div class="project-root">
+  <div class="detail-root">
     <router-view></router-view>
   </div>
 </template>
 <script>
 export default {
-  name: 'projectView',
+  name: 'detailView',
   data() {
     return {}
   },
@@ -14,7 +14,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.project-root {
+.detail-root {
   height: 100%;
   margin: 10px;
   background-color: #eff2f7;
