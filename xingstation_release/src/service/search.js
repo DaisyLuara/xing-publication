@@ -8,6 +8,7 @@ const PROJECT_API = '/api/projects/query'
 const AD_TRADE_API = '/api/ad_trade/query'
 const ADVERTISER_API='/api/advertiser/query'
 const ADVERTISEMENT_API = '/api/advertisement/query'
+const SENCE_API = '/api/scene/query'
 const HOST = process.env.SERVER_URL
 
 export default {
@@ -83,7 +84,7 @@ export default {
       })
     })
   },
-  getUser(context,args) {
+  getUserList(context, args) {
     return new Promise(function(resolve, reject){
       context.$http.get(HOST + STAFFS_API, {params:args}).then(response => {
         resolve(response.data)
@@ -92,5 +93,14 @@ export default {
       })
     })
   },
+  getSceneList(context) {
+    return new Promise(function(resolve, reject){
+      context.$http.get(HOST + SENCE_API).then(response => {
+        resolve(response.data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  }
 
 }

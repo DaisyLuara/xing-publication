@@ -5,10 +5,10 @@
         <div class="search-wrap">
           <el-form :model="filters" :inline="true" ref="searchForm">
             <el-form-item label="" prop="name">
-              <el-input v-model="filters.name" placeholder="请输入客户名称" style="width: 300px;"></el-input>
+              <el-input v-model="filters.name" placeholder="请输入客户名称" style="width: 200px;"></el-input>
             </el-form-item>
-            <el-button @click="search('searchForm')" type="primary">搜索</el-button>
-            <el-button @click="resetSearch" type="default">重置</el-button>
+            <el-button @click="search('searchForm')" type="primary" size="small">搜索</el-button>
+            <el-button @click="resetSearch" type="default" size="small">重置</el-button>
           </el-form>
         </div>
         <div class="actions-wrap">

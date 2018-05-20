@@ -74,7 +74,7 @@ export default {
   data() {
     return {
       loading: false,
-      dataValue: [new Date().getTime() - 3600 * 1000 * 24*6, new Date().getTime()],
+      dataValue: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date().getTime()],
       pickerOptions2: {
         shortcuts: [{
           text: '今天',
@@ -93,22 +93,30 @@ export default {
               picker.$emit('pick', [start, end]);
             }
           },{
-          text: '过去7天',
+          text: '最近一周',
           onClick(picker) {
             const end = new Date();
             const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 6);
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
             picker.$emit('pick', [start, end]);
           }
         }, {
-          text: '过去30天',
+          text: '最近一个月',
           onClick(picker) {
             const end = new Date();
             const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 29);
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
             picker.$emit('pick', [start, end]);
           }
-        },]
+        },{
+          text: '最近三个月',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+            picker.$emit('pick', [start, end]);
+          }
+        }]
       },
       pointOptions : {
         title: {
@@ -144,12 +152,11 @@ export default {
             }
             console.log(this.points)
             for(let i=0;i<this.points.length; i++) {
-               s += '<br/>' + this.points[i].point.name + '-->' +
-                    this.y;
+              s += '<br/>' + this.points[i].point.name + ': ' +
+              this.y;
             }
-            console.log(s)
             return s;
-        },
+          },
         },
         plotOptions: {
           area: {
@@ -390,19 +397,11 @@ export default {
   },
   methods: {
    dateChangeHandle(){
-      let dateCount = (this.dataValue[1]-this.dataValue[0])/3600/1000/24
-      if(dateCount>29){
-        this.$message({
-          type: 'warning',
-          message: '时间范围不能超过30天'
-        });
-      }else{
-        this.getProjectTenChartData()
-        this.getPointTenChartData()
-        this.getSexChartData()
-        this.getAgeChartData()
-        this.getLookersChartData()
-      }
+    this.getProjectTenChartData()
+    this.getPointTenChartData()
+    this.getSexChartData()
+    this.getAgeChartData()
+    this.getLookersChartData()
     },
     getProjectTenChartData() {
       this.getChartData('project','3')
@@ -420,18 +419,10 @@ export default {
       this.getChartData('lookers', '1')
     },
     getChartData (type,id) {
-      let args = {}
-      if((this.dataValue[1]-this.dataValue[0])/3600/1000/24<30){
-        args = {
-          start_date : this.handleDateTransform(this.dataValue[0]),
-          end_date: this.handleDateTransform(new Date(this.dataValue[1]).getTime())
-        }
-      }else{
-        this.$message({
-          type: 'warning',
-          message: '时间范围不能超过30天'
-        });
-        return false;
+      let args = {
+        start_date : this.handleDateTransform(this.dataValue[0]),
+        end_date: this.handleDateTransform(new Date(this.dataValue[1]).getTime()),
+        home_page: true
       }
       switch(id) {
         case '1':
@@ -574,18 +565,17 @@ export default {
           case 'lookers':
             this.lookerFlag = false;
           break
-
         }
       })
     },
     drawChart(response,data) {
       for(let j = 0; j < response.length; j++){
-          if(j==0){
-            data.push({'name':response[j].display_name,'y':parseInt(response[j].count)})
-          }else{
-            data.push([response[j].display_name,parseInt(response[j].count)])
-          }
+        if(j==0){
+          data.push({'name':response[j].display_name,'y':parseInt(response[j].count)})
+        }else{
+          data.push([response[j].display_name,parseInt(response[j].count)])
         }
+      }
     },
     handleDateTransform (valueDate) {
       let date = new Date (valueDate)
