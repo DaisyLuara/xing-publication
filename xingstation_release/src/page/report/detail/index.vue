@@ -112,13 +112,13 @@
               {{item.display_name}}
             </i>
             <span class="count" v-if="item.index === 'scannum'">
-              {{item.count}} / {{(peopleCount[key-1].count==0) ? 0 : new Number((item.count/peopleCount[key-1].count)*100).toFixed(1)}}%
+              {{item.count == null ? 0 : item.count}} / {{(peopleCount[key-1].count == null) ? 0 : new Number((item.count/peopleCount[key-1].count)*100).toFixed(1)}}%
             </span>
             <span class="count" v-if="item.index !== 'scannum'">
-              {{item.count}}
+              {{item.count == null ? 0 : item.count}}
             </span>
             <i class="arrow-icon"></i>
-            <i class="right-arrow-icon" v-if="key != peopleCountLength -1">{{(peopleCount[key+1].count==0 & item.count == 0) ? 0 : new Number((peopleCount[key+1].count/item.count)*100).toFixed(1)}}%</i>
+            <i class="right-arrow-icon" v-if="key != peopleCountLength -1">{{(peopleCount[key+1].count == null) ? 0 : (item.index !== 'playernum' ? new Number((peopleCount[key+1].count/item.count)*100).toFixed(1) : new Number((peopleCount[key+2].count/item.count)*100).toFixed(1))}}%</i>
           </a>
         </li>
       </ul>
@@ -179,37 +179,37 @@
         </el-table-column>
         <el-table-column
           label="点位"
-          prop=""
+          prop="point"
           min-width="130"
           :show-overflow-tooltip="true">
-          <template slot-scope="scope">
-            {{ scope.row.area_name }} {{scope.row.market_name}} {{scope.row.point_name}}
+          <template slot-scope="props">
+            {{ props.row.area_name }} {{props.row.market_name}} {{props.row.point_name}}
           </template>
         </el-table-column>
         <el-table-column
           label="围观"
           prop="looknum"
-          min-width="100">
+          min-width="90">
         </el-table-column>
         <el-table-column
           label="互动"
           prop="playernum"
-          min-width="100"
+          min-width="90"
           :show-overflow-tooltip="true">
         </el-table-column>
         <el-table-column
           label="拉新"
           prop="lovenum"
-          min-width="100"
+          min-width="90"
           :show-overflow-tooltip="true">
         </el-table-column>
         <el-table-column
           label="扫码率"
-          prop=""
+          prop="scannum"
           min-width="120"
           :show-overflow-tooltip="true">
-          <template slot-scope="scope">
-          <span>扫码/生成数：{{ scope.row.scannum }} / {{ scope.row.outnum }} <br/> 扫码率：{{scope.row.outnum !== 0 ? new Number(scope.row.scannum / scope.row.outnum ).toFixed(1): 0}}%</span>
+          <template slot-scope="props">
+            <span>扫码/生成数：{{ props.row.scannum }} / {{ props.row.outnum }} <br/> 扫码率：{{props.row.outnum !== 0 ? new Number(props.row.scannum / props.row.outnum ).toFixed(1): 0}}%</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -841,6 +841,7 @@ export default {
         }
       }
     }
+    
     .content-wrapper{
       padding: 15px;
       background-color: #fff;
@@ -925,7 +926,19 @@ export default {
     .table-wrap{
       padding: 15px;
       background: #fff;
-      margin: 10px 0;
+      margin: 15px 0;
+      .demo-table-expand {
+        font-size: 0;
+      }
+      .demo-table-expand label {
+        width: 90px;
+        color: #99a9bf;
+      }
+      .demo-table-expand .el-form-item {
+        margin-right: 0;
+        margin-bottom: 0;
+        width: 50%;
+      }
     }
     .pagination-wrap{
         margin: 10px auto;
