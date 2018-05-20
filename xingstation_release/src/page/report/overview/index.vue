@@ -1,11 +1,11 @@
 <template>
   <div class="root">
-    <div class="item-list-wrap">
+    <div class="item-list-wrap"  :element-loading-text="setting.loadingText" v-loading="setting.loading">
       <div class="search-wrap">
         <el-form ref="searchForm" :model="searchForm"  class="search-form">
           <el-row :gutter="20">
-            <el-col :span="8">
-              <el-form-item label="" prop="user">
+            <el-col :span="8" v-if="showUser">
+              <el-form-item label="" prop="user" >
                 <el-select v-model="searchForm.user" filterable placeholder="请搜索账号" remote :remote-method="getUser" clearable :loading="searchLoading">
                   <el-option
                     v-for="item in userList"
@@ -18,7 +18,7 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="" prop="scene_id">
-                <el-select v-model="searchForm.scene_id" placeholder="请选择场景" filterable  clearable :loading="searchLoading">
+                <el-select v-model="searchForm.scene_id" placeholder="请选择场景" filterable  clearable>
                   <el-option
                     v-for="item in sceneList"
                     :key="item.id"
@@ -44,7 +44,7 @@
           <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item label="" prop="area">
-                <el-select v-model="searchForm.area" placeholder="请选择区域" filterable  clearable :loading="searchLoading" @change="areaChangeHandle">
+                <el-select v-model="searchForm.area" placeholder="请选择区域" filterable  clearable  @change="areaChangeHandle">
                   <el-option
                     v-for="item in areaList"
                     :key="item.id"
@@ -111,98 +111,111 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-card shadow="always">
-              <div class="" id="echart4" ref="mychart" style="height: 500px; width: 100%"></div>
+              <div class="" id="echart4" ref="chart" style="height: 500px; width: 100%"></div>
             </el-card>
           </el-col>
           <el-col :span="12">
-            <el-card shadow="always">
-              <div class="" id="echart3" ref="mychart" style="height: 500px; width: 100%"></div>
+            <el-card shadow="always" v-loading="machineAcquisitionFlag">
+              <div class="" id="machineAcquisition" ref="acquisitionChart" style="height: 500px; width: 100%"></div>
             </el-card>
           </el-col>
         </el-row>
       </div>
-      <div class="actions-wrap">
-        <span class="label">
-          数量: {{pagination.total}}
-        </span>
-        <el-button size="small" type="primary">导出</el-button>
-      </div>
-      <el-table
-        :data="tableData5"
-        style="width: 100%">
-        <el-table-column type="expand">
-          <template slot-scope="props">
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="ID">
-                <span>{{ props.row.id }}</span>
-              </el-form-item>
-              <el-form-item label="点位">
-                <span>{{ props.row.point }}</span>
-              </el-form-item>
-              <el-form-item label="商品 ID">
-                <span>{{ props.row.id }}</span>
-              </el-form-item>
-              <el-form-item label="人气">
-                <span>{{ props.row.lookers }}</span>
-              </el-form-item>
-              <el-form-item label="引流">
-                <span>{{ props.row.drainage }}</span>
-              </el-form-item>
-              <el-form-item label="召唤">
-                <span>{{ props.row.call }}</span>
-              </el-form-item>
-              <el-form-item label="输出">
-                <span>{{ props.row.out }}</span>
-              </el-form-item>
-              <el-form-item label="时间">
-                <span>{{ props.row.created_at }}</span>
-              </el-form-item>
-            </el-form>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="ID"
-          prop="id"
-          width="100">
-        </el-table-column>
-        <el-table-column
-          label="点位"
-          prop="point"
-          :show-overflow-tooltip="true">
-        </el-table-column>
-        <el-table-column
-          label="人气"
-          prop="lookers">
-        </el-table-column>
-        <el-table-column
-          label="引流"
-          prop="drainage"
-          :show-overflow-tooltip="true">
-        </el-table-column>
-        <el-table-column
-          label="召唤"
-          prop="call"
-          :show-overflow-tooltip="true">
-        </el-table-column>
-        <el-table-column
-          label="输出"
-          prop="out"
-          :show-overflow-tooltip="true">
-        </el-table-column>
-        <el-table-column
-          label="时间"
-          prop="created_at">
-        </el-table-column>
-      </el-table>
-      <div class="pagination-wrap">
-          <el-pagination
-          layout="prev, pager, next, jumper, total"
-          :total="pagination.total"
-          :page-size="pagination.pageSize"
-          :current-page="pagination.currentPage"
-          @current-change="changePage"
-          >
-          </el-pagination>
+      <div :element-loading-text="tableSetting.loadingText" v-loading="tableSetting.loading">
+        <div class="actions-wrap">
+          <span class="label">
+            数量: {{pagination.total}}
+          </span>
+          <div>
+            <el-button size="small" type="success" >导出</el-button>
+          </div>
+        </div>
+        <el-table
+          :data="tableData"
+          style="width: 100%">
+          <el-table-column type="expand">
+            <template slot-scope="scope">
+              <el-form label-position="left" inline class="demo-table-expand">
+                <el-form-item label="ID">
+                  <span>{{ scope.row.id }}</span>
+                </el-form-item>
+                <el-form-item label="点位">
+                    {{ scope.row.area_name }} {{scope.row.market_name}} {{scope.row.point_name}}
+                </el-form-item>
+                <el-form-item label="围观">
+                  <span>{{ scope.row.looknum }}</span>
+                </el-form-item>
+                <el-form-item label="互动">
+                  <span>{{ scope.row.playernum }}</span>
+                </el-form-item>
+                <el-form-item label="拉新">
+                  <span>{{ scope.row.lovenum }}</span>
+                </el-form-item>
+                <el-form-item label="扫码率">
+                  <span>扫码/生成数：{{ scope.row.scannum }} / {{ scope.row.outnum }} 扫码率：{{scope.row.outnum !== 0 ? new Number(scope.row.scannum / scope.row.outnum ).toFixed(1): 0 }}%</span>
+                </el-form-item>
+                <el-form-item label="创建时间">
+                  <span>{{ scope.row.created_at }}</span>
+                </el-form-item>
+              </el-form>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="ID"
+            prop="id"
+            width="100">
+          </el-table-column>
+          <el-table-column
+            label="点位"
+            prop=""
+            min-width="130"
+            :show-overflow-tooltip="true">
+            <template slot-scope="scope">
+              {{ scope.row.area_name }} {{scope.row.market_name}} {{scope.row.point_name}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="围观"
+            prop="looknum"
+            min-width="100">
+          </el-table-column>
+          <el-table-column
+            label="互动"
+            prop="playernum"
+            min-width="100"
+            :show-overflow-tooltip="true">
+          </el-table-column>
+          <el-table-column
+            label="拉新"
+            prop="lovenum"
+            min-width="100"
+            :show-overflow-tooltip="true">
+          </el-table-column>
+          <el-table-column
+            label="扫码率"
+            prop=""
+            min-width="120"
+            :show-overflow-tooltip="true">
+            <template slot-scope="scope">
+            <span>扫码/生成数：{{ scope.row.scannum }} / {{ scope.row.outnum }} <br/> 扫码率：{{scope.row.outnum !== 0 ? new Number(scope.row.scannum / scope.row.outnum ).toFixed(1): 0}}%</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="创建时间"
+            min-width="120"
+            prop="created_at">
+          </el-table-column>
+        </el-table>
+        <div class="pagination-wrap">
+            <el-pagination
+            layout="prev, pager, next, jumper, total"
+            :total="pagination.total"
+            :page-size="pagination.pageSize"
+            :current-page="pagination.currentPage"
+            @current-change="changePage"
+            >
+            </el-pagination>
+        </div>
       </div>
     </div>
   </div>
@@ -212,17 +225,27 @@
 import echarts from 'echarts/lib/echarts'
 import echartsGl from 'echarts-gl'
 import {  Button, Row, Col, Card, DatePicker,FormItem, Form ,Select, Option, Table, TableColumn, Pagination} from 'element-ui'
+import stats from 'service/stats'
 import search from 'service/search'
+import chart from 'service/chart'
+import reportViewVue from '../reportView.vue';
 
 export default {
   data() {
     return {
+      tableSetting: {
+        loading: false,
+        loadingText: "拼命加载中"
+      },
+      setting: {
+        loading: false,
+        loadingText: "拼命加载中"
+      },
       pagination: {
         total: 0,
-        pageSize: 10,
+        pageSize: 5,
         currentPage: 1
       },
-      dataValue: [new Date().getTime() - 3600 * 1000 * 24*6, new Date().getTime()],
       searchForm: {
         scene_id:'',
         area: '',
@@ -230,7 +253,7 @@ export default {
         point: '',
         user: '',
         project: '',
-        dataValue: [new Date().getTime() - 3600 * 1000 * 24*6, new Date().getTime()]
+        dataValue: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date().getTime()]
       },
       pickerOptions2: {
         shortcuts: [{
@@ -250,22 +273,30 @@ export default {
               picker.$emit('pick', [start, end]);
             }
           },{
-          text: '过去7天',
+          text: '最近一周',
           onClick(picker) {
             const end = new Date();
             const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 6);
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
             picker.$emit('pick', [start, end]);
           }
         }, {
-          text: '过去30天',
+          text: '最近一个月',
           onClick(picker) {
             const end = new Date();
             const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 29);
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
             picker.$emit('pick', [start, end]);
           }
-        },]
+        },{
+          text: '最近三个月',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+            picker.$emit('pick', [start, end]);
+          }
+        }]
       },
       projectList: [],
       sceneList: [],
@@ -326,7 +357,24 @@ export default {
           }
         ]
       },
-      funnelOptions: {
+      machineAcquisitionChart: {},
+      machineAcquisitionFlag: false,
+      tableData: [],
+      machineAcquisitionData: []
+    }
+  },
+  computed: {
+    showUser(){
+      let user_info = JSON.parse(localStorage.getItem('user_info'))
+      let roles = user_info.roles.data[0].name
+      return roles == 'user' ? false : true
+    },
+    machineAcquisitionOrigin () {
+      return this.machineAcquisitionData;
+    },
+    machineAcquisitionOption() {
+      let that = this;
+      let obj = {
         title: {
           text: '总数',
         },
@@ -383,54 +431,28 @@ export default {
                 borderWidth: 1
               }
             },
-            data: [
-              {value: 9139, name: '围观总数'},
-              {value: 5463, name: '互动总数'},
-              {value: 2434, name: '扫码拉新总数'},
-            ]
+            data: that.machineAcquisitionOrigin
           }
         ]
-      },
-      tableData5: [{
-        id: '440177',
-        point: '镇江豪客来万达金街店一楼',
-        lookers: '围观：7',
-        drainage: '玩家：1品誉心智转化率：14%',
-        call: '会员：0	购买意愿转化率：0%',
-        out: '扫码/生成数：0/5场景扫码率：0%',
-        created_at: '2018-05-18'
-      }, {
-        id: '440177',
-        point: '镇江豪客来万达金街店一楼',
-        lookers: '围观：7',
-        drainage: '玩家：1品誉心智转化率：14%',
-        call: '会员：0	购买意愿转化率：0%',
-        out: '扫码/生成数：0/5场景扫码率：0%',
-        created_at: '2018-05-18'
-      }, {
-        id: '440177',
-        point: '镇江豪客来万达金街店一楼',
-        lookers: '围观：7',
-        drainage: '玩家：1品誉心智转化率：14%',
-        call: '会员：0	购买意愿转化率：0%',
-        out: '扫码/生成数：0/5场景扫码率：0%',
-        created_at: '2018-05-18'
-      }, {
-        id: '440177',
-        point: '镇江豪客来万达金街店一楼',
-        lookers: '围观：7',
-        drainage: '玩家：1品誉心智转化率：14%',
-        call: '会员：0	购买意愿转化率：0%',
-        out: '扫码/生成数：0/5场景扫码率：0%',
-        created_at: '2018-05-18'
-      }]
+      }
+      return obj
     }
   },
   mounted() {
-    this.handleEcharts()
+    this.getMachineAcquisitionTotal()
+  },
+  updated () {
+    if (!this.machineAcquisitionChart) {
+      this.getMachineAcquisitionTotal();
+    }
   },
   created() {
+    this.setting.loading = true
     this.getAreaList()
+    this.getSceneList()
+    this.getPointList()
+    
+    
   },
   components: {
     ElRow: Row,
@@ -447,13 +469,43 @@ export default {
     ElPagination: Pagination
   },
   methods: {
+    getPointList() {
+      this.tableSetting.loading = true
+      let args = {
+        start_date : this.handleDateTransform(this.searchForm.dataValue[0]),
+        end_date: this.handleDateTransform(new Date(this.searchForm.dataValue[1]).getTime()),
+        page: this.pagination.currentPage,
+        scene_id: this.searchForm.scene_id,
+        market_id: this.searchForm.market_id,
+        area_id: this.searchForm.area,
+        ar_user_id: this.searchForm.user,
+      }
+      return stats.getStaus(this,args).then((response) => {
+        console.log(response)
+        this.tableData = response.data
+        this.pagination.total = response.meta.pagination.total
+        this.setting.loading = false
+        this.tableSetting.loading = false
+      }).catch((err) => {
+        console.log(err)
+        this.tableSetting.loading = false
+        this.setting.loading = false
+      })
+    },
+    getSceneList() {
+      return search.getSceneList(this).then((response) => {
+        this.sceneList = response.data
+      }).catch(err=> {
+        console.log(err)
+      })
+    },
     getUser(query) {
       let args = {
         name: query
       }
       if (query !== '') {
         this.searchLoading = true
-          return search.getUser(this, args).then((response) => {
+          return search.getUserList(this, args).then((response) => {
             this.userList = response.data
             if(this.userList.length == 0) {
             }
@@ -540,33 +592,62 @@ export default {
       this.searchForm.point = ''
       this.getPoint()
     },
-    search(formName) {
-
+    search() {
+      this.getMachineAcquisitionTotal()
+      this.getPointList()
     },
     resetSearch(formName) {
-
+      this.searchForm.dataValue = [new Date().getTime() - 3600 * 1000 * 24*6, new Date().getTime()]
+      this.$refs[formName].resetFields();
     },
     changePage (currentPage) {
       this.pagination.currentPage = currentPage
-      // this.getAdList()
+      this.getPointList()
+    },
+    handleDateTransform (valueDate) {
+      let date = new Date (valueDate)
+      let year = date.getFullYear() + '-';
+      let mouth = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+      let day = (date.getDate() <10  ? '0'+(date.getDate()) : date.getDate()) + '';
+      return year+mouth+day
+    },
+    getMachineAcquisitionTotal() {
+      this.machineAcquisitionFlag = true
+      let args = {
+        id: '6',
+        start_date: this.handleDateTransform(this.searchForm.dataValue[0]),
+        end_date: this.handleDateTransform(new Date(this.searchForm.dataValue[1]).getTime())
+      }
+      return chart.getChartData(this, args).then((response) => {
+        this.machineAcquisitionData = []
+        for(let j = 0; j < response.length; j++){
+          if(response[j].display_name !== '生成数') {
+            this.machineAcquisitionData.push({
+              value: response[j].count,
+              name: response[j].display_name
+            })
+          }
+        }
+        this.handleEcharts()
+        this.machineAcquisitionFlag = false
+      }).catch((err) => {
+        this.machineAcquisitionFlag = false
+        console.log(err)
+      })
     },
     handleEcharts() {
-      let dom3 = document.getElementById('echart3')
-      let myChart3 = echarts.init(dom3)
-      if (this.funnelOptions && typeof this.funnelOptions === 'object') {
-        myChart3.setOption(this.funnelOptions, true)
-        // window.onresize = myChart3.resize;
-        // myChart3.resize()
-      }
+      let machineAcquisitionDom = this.$refs.acquisitionChart
+      this.machineAcquisitionChart = echarts.init(machineAcquisitionDom)
+      this.machineAcquisitionChart.setOption(this.machineAcquisitionOption)
+
       let dom4 = document.getElementById('echart4')
       let myChart4 = echarts.init(dom4)
       if (this.pieOptions && typeof this.pieOptions === 'object') {
         myChart4.setOption(this.pieOptions, true)
         // window.onresize = myChart4.resize;
       }
-
       window.onresize = function () { 
-        myChart3.resize();
+        this.machineAcquisitionChart.resize();
         myChart4.resize();
       };
     }
@@ -621,6 +702,17 @@ export default {
           color: #4a8cf3;
           margin-right: 5px;
         }
+      }
+    }
+    .actions-wrap{
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      font-size: 16px;
+      align-items: center;
+      margin-bottom: 10px;
+      .label {
+        font-size: 14px;
       }
     }
     .pagination-wrap{
