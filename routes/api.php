@@ -150,8 +150,8 @@ $api->version('v1', [
             $api->post('oauth/token', 'TowerController@refresh');
 
             //数据统计
-            $api->get('stats', 'FaceCountController@index');//列表页
-            $api->post('chart_data', 'ChartDataController@index');//图表接口
+            $api->get('stats', 'ChartDataController@index');//列表
+            $api->post('chart_data', 'ChartDataController@chart');//图表
             $api->get('export', 'ExportController@store');
 
         });
