@@ -3,19 +3,17 @@
 namespace App\Exports;
 
 use DB;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 
-class MarketingExport implements FromCollection, WithStrictNullComparison, WithEvents
+class MarketingExport extends AbstractExport
 {
     public function __construct($request)
     {
         $this->startDate = $request->start_date;
         $this->endDate = $request->end_date;
+        $this->fileName = '营销创意成果.xlsx';
     }
 
     public function collection()

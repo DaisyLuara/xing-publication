@@ -66,9 +66,6 @@ $api->version('v1', [
             $api->patch('user/read/notifications', 'NotificationsController@read');
 
             //数据统计
-            $api->get('stats', 'FaceCountController@index');
-            $api->get('detail', 'FaceCountController@detail');
-            $api->get('age_gender', 'FaceLogController@index');
 
             //广告投放
             $api->get('ad_launch', 'AdLaunchController@index');
@@ -103,11 +100,6 @@ $api->version('v1', [
             //设备
             $api->get('push', 'PushController@index');
             $api->get('point/map', 'PointController@map');
-
-            //数据报表导出
-            $api->get('marketing_excel', 'ExcelController@marketingExcel');
-            $api->get('project_excel', 'ExcelController@projectExcel');
-            $api->get('point_excel', 'ExcelController@pointExcel');
 
             //产品
             $api->get('product', 'ProductController@index');
@@ -157,8 +149,10 @@ $api->version('v1', [
             //团队
             $api->post('oauth/token', 'TowerController@refresh');
 
-            //图表
-            $api->post('chart_data', 'ChartDataController@index');
+            //数据统计
+            $api->get('stats', 'FaceCountController@index');//列表页
+            $api->post('chart_data', 'ChartDataController@index');//图表接口
+            $api->get('export', 'ExportController@store');
 
         });
     });
