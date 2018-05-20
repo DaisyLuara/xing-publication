@@ -369,8 +369,10 @@ export default {
     adTradeChangeHandle(type) {
       if(type === 'edit') {
         this.adForm.advertiser_id = ''
+        this.adForm.advertisement_id = ''
         } else {
         this.adSearchForm.advertiser_id = ''
+        this.adSearchForm.advertisement_id = ''
       }
       this.getAdvertiserList(type)
     },

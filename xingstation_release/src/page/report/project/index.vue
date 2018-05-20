@@ -92,7 +92,6 @@
               :default-value="dateTime"
               :clearable="false"
               :picker-options="pickerOptions2"
-              @change="dateChangeHandle"
               >
               </el-date-picker>
             </el-form-item>
@@ -379,10 +378,9 @@ export default {
   },
   created(){
     this.setting.loading = true
-    this.allPromise()
     this.getSceneList()
     this.getAreaList()
-    this.setting.loading = false
+    this.allPromise()
   },
   computed:{
     'peopleCountLength': function (){
@@ -440,11 +438,10 @@ export default {
     },
     areaChangeHandle() {
       this.market_id = ''
-      console.log(33)
+      this.point = ''
       this.getMarket()
     },
     marketChangeHandle() {
-      console.log(this.market_id)
       this.point = ''
       this.getPoint()
     },
@@ -456,18 +453,10 @@ export default {
       })
     },
     searchHandle() {
-      this.active = '围观人数'
+      this.active = '围观总数'
       this.projectAlias = this.projectSelect
-      let dateCount = (this.dateTime[1]-this.dateTime[0])/3600/1000/24
-      if(dateCount > 29){
-        this.$message({
-          type: 'warning',
-          message: '时间范围不能超过30天'
-        });
-      }else{
-        this.setting.loading = true
-        this.allPromise()
-      }
+      this.setting.loading = true
+      this.allPromise()
     },
     resetSearch(){
       if(this.showUser){
@@ -496,15 +485,10 @@ export default {
       }
     },
     allPromise(){
-      let peopleCount = this.getPeopleCount()
-      let age = this.getAge()
-      let gender = this.getGender()
-      Promise.all([peopleCount, age, gender]).then(() => {
-        this.setting.loading = false
-      }).catch((err) => {
-        console.log(err)
-        this.setting.loading = false
-      })
+      this.getPeopleCount()
+      this.getAge()
+      this.getGender()
+      this.setting.loading = false
     },
     getUser(query) {
       let args = {
@@ -619,13 +603,29 @@ export default {
         start_date : this.handleDateTransform(this.dateTime[0]),
         end_date: this.handleDateTransform(new Date(this.dateTime[1]).getTime()),
         alias: this.projectAlias,
-        ar_user_id: this.arUserId
+        ar_user_id: this.arUserId,
+        market_id: this.market_id,
+        scene_id: this.sceneSelect,
+        area_id: this.area,
+        point_id: this.point
       }
       if(!this.projectSelect) {
         delete args.alias
       }
       if(!this.arUserId) {
         delete args.ar_user_id
+      }
+      if(!this.sceneSelect) {
+        delete args.scene_id
+      }
+      if(!this.area) {
+        delete args.area_id
+      }
+      if(!this.point) {
+        delete args.point_id
+      }
+      if(!this.market_id) {
+        delete args.market_id
       }
       return args
     },
@@ -650,10 +650,6 @@ export default {
       this.active = obj.display_name
       this.type = obj.index
       this.getLineData()
-    },
-    dateChangeHandle(){
-      this.setting.loading = true
-      this.allPromise()
     },
     handleDateTransform (valueDate) {
       let date = new Date (valueDate)

@@ -14,7 +14,7 @@
         ref="projectForm"
         :model="projectForm" label-width="150px">
         <el-form-item label="节目名称" prop="project" :rules="[{ required: true, message: '请输入节目名称', trigger: 'submit',type: 'number'}]">
-          <el-select v-model="projectForm.project" filterable placeholder="请搜索" remote :remote-method="getProject" @change="projectChangeHandle">
+          <el-select v-model="projectForm.project" filterable placeholder="请搜索" remote :remote-method="getProject" @change="projectChangeHandle" clearable :loading="searchLoading">
             <el-option
               v-for="item in projectList"
               :key="item.id"
@@ -24,7 +24,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="区域" prop="area"  :rules="[{ required: true, message: '请输入区域', trigger: 'submit' ,type: 'number'}]">
-          <el-select v-model="projectForm.area" placeholder="请选择" filterable @change="areaChangeHandle">
+          <el-select v-model="projectForm.area" placeholder="请选择" filterable @change="areaChangeHandle" clearable>
             <el-option
               v-for="item in areaList"
               :key="item.id"
@@ -34,7 +34,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="商场" prop="market" :rules="[{ required: true, message: '请输入商场', trigger: 'submit' ,type: 'number'}]">
-          <el-select v-model="projectForm.market"  placeholder="请搜索" filterable :loading="searchLoading" remote :remote-method="getMarket" @change="marketChangeHandle">
+          <el-select v-model="projectForm.market"  placeholder="请搜索" filterable :loading="searchLoading" remote :remote-method="getMarket" @change="marketChangeHandle" clearable>
             <el-option
               v-for="item in marketList"
               :key="item.id"
@@ -44,7 +44,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="点位" prop="point" :rules="[{ required: true, message: '请输入点位', trigger: 'submit',type: 'array'}]">
-          <el-select v-model="projectForm.point" placeholder="请选择"  multiple filterable @change="pointChangeHandle" :loading="searchLoading" :multiple-limit="10">
+          <el-select v-model="projectForm.point" placeholder="请选择"  multiple filterable @change="pointChangeHandle" :loading="searchLoading" :multiple-limit="10" clearable>
             <el-option
               v-for="item in pointList"
               :key="item.id"
@@ -54,7 +54,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="工作日模版">
-          <el-select v-model="projectForm.weekday" placeholder="请选择" filterable>
+          <el-select v-model="projectForm.weekday" placeholder="请选择" filterable clearable>
             <el-option
               v-for="item in weekdayList"
               :key="item.id"
@@ -64,7 +64,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="周末模版">
-          <el-select v-model="projectForm.weekend" placeholder="请选择" filterable>
+          <el-select v-model="projectForm.weekend" placeholder="请选择" filterable clearable>
             <el-option
               v-for="item in weekendList"
               :key="item.id"
@@ -74,7 +74,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="自定义模版">
-          <el-select v-model="projectForm.define" placeholder="请选择" filterable>
+          <el-select v-model="projectForm.define" placeholder="请选择" filterable clearable>
             <el-option
               v-for="item in defineList"
               :key="item.id"
@@ -211,6 +211,7 @@ export default {
     areaChangeHandle() {
       console.log(this.projectForm.area)
       this.projectForm.market = ''
+      this.projectForm.point = []
       this.getMarket(this.projectForm.market)
     },
     getAreaList () {

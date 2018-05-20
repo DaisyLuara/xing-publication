@@ -35,7 +35,7 @@
                     v-for="item in projectList"
                     :key="item.id"
                     :label="item.name"
-                    :value="item.id">
+                    :value="item.alias">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -471,15 +471,7 @@ export default {
   methods: {
     getPointList() {
       this.tableSetting.loading = true
-      let args = {
-        start_date : this.handleDateTransform(this.searchForm.dataValue[0]),
-        end_date: this.handleDateTransform(new Date(this.searchForm.dataValue[1]).getTime()),
-        page: this.pagination.currentPage,
-        scene_id: this.searchForm.scene_id,
-        market_id: this.searchForm.market_id,
-        area_id: this.searchForm.area,
-        ar_user_id: this.searchForm.user,
-      }
+      let args = this.setArgs()
       return stats.getStaus(this,args).then((response) => {
         console.log(response)
         this.tableData = response.data
@@ -491,6 +483,38 @@ export default {
         this.tableSetting.loading = false
         this.setting.loading = false
       })
+    },
+    setArgs() {
+      let args = {
+        start_date : this.handleDateTransform(this.searchForm.dataValue[0]),
+        end_date: this.handleDateTransform(new Date(this.searchForm.dataValue[1]).getTime()),
+        page: this.pagination.currentPage,
+        scene_id: this.searchForm.scene_id,
+        market_id: this.searchForm.market_id,
+        area_id: this.searchForm.area,
+        ar_user_id: this.searchForm.user,
+        point_id: this.searchForm.point,
+        alias: this.searchForm.project
+      }
+      if(!this.searchForm.project) {
+        delete args.alias
+      }
+      if(!this.searchForm.user) {
+        delete args.ar_user_id
+      }
+      if(!this.searchForm.scene_id) {
+        delete args.scene_id
+      }
+      if(!this.searchForm.market_id) {
+        delete args.market_id
+      }
+      if(!this.searchForm.area) {
+        delete args.area_id
+      }
+      if(!this.searchForm.point) {
+        delete args.point_id
+      }
+      return args
     },
     getSceneList() {
       return search.getSceneList(this).then((response) => {
@@ -553,10 +577,7 @@ export default {
         include: 'area',
         area_id: this.searchForm.area
       }
-      console.log(args)
       return search.getMarketList(this,args).then((response) => {
-        console.log(response)
-        console.log(response.data)
         this.marketList = response.data
         if(this.marketList.length == 0) {
           this.searchForm.market_id = ''
@@ -584,11 +605,10 @@ export default {
     },
     areaChangeHandle() {
       this.searchForm.market_id = ''
-      console.log(33)
+      this.searchForm.point = ''
       this.getMarket()
     },
     marketChangeHandle() {
-      console.log(this.searchForm.market_id)
       this.searchForm.point = ''
       this.getPoint()
     },
@@ -613,11 +633,9 @@ export default {
     },
     getMachineAcquisitionTotal() {
       this.machineAcquisitionFlag = true
-      let args = {
-        id: '6',
-        start_date: this.handleDateTransform(this.searchForm.dataValue[0]),
-        end_date: this.handleDateTransform(new Date(this.searchForm.dataValue[1]).getTime())
-      }
+      let args = this.setArgs()
+      args.id = '6'
+      delete args.page
       return chart.getChartData(this, args).then((response) => {
         this.machineAcquisitionData = []
         for(let j = 0; j < response.length; j++){
