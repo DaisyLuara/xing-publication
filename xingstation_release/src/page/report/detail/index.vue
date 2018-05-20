@@ -140,6 +140,7 @@
               :value="item.value">
             </el-option>
           </el-select>
+          <el-button type="success" size="small"  @click="changeReportType">下载</el-button>
         </div>
       </div>
       <el-table
@@ -253,10 +254,11 @@
 import stats from 'service/stats'
 import search from 'service/search'
 import chart from 'service/chart'
-import { Row, Col, DatePicker, Select, Option, Button, Form, FormItem, Table, TableColumn,Pagination} from 'element-ui'
+import { Row, Col, DatePicker, Select, Option, Button, Form, FormItem, Table, TableColumn,Pagination, MessageBox} from 'element-ui'
 import Highcharts from 'highcharts';
 import loadExporting from 'highcharts/modules/exporting';
 import loadExportData from 'highcharts/modules/export-data';
+import reportViewVue from '../reportView.vue';
 loadExporting(Highcharts);
 loadExportData(Highcharts);
 
@@ -282,17 +284,14 @@ export default {
       },
       reportList:[
         {
-          value: '选项1',
-          label: '黄金糕'
+          value: 'point',
+          label: '点位数据'
         }, {
-          value: '选项2',
-          label: '双皮奶'
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
+          value: 'marketing',
+          label: '营销成果数据'
         }
       ],
-      reportValue: '',
+      reportValue: 'point',
       area_id:'',
       market_id: '',
       point_id: '',
@@ -521,6 +520,36 @@ export default {
     },
   },
   methods:{
+    changeReportType() {
+      if(this.reportValue === 'point') {
+        if (!this.point_id) {
+          this.$message({
+            message: "点位数据下载，请选择点位",
+            type: "warning"
+          })
+        } else {
+          this.getExcelData()
+        }
+      } else {
+        this.getExcelData()
+      }
+    },
+    getExcelData() {
+      console.log(this.reportValue)
+      let args = this.setArgs()
+      args.type = this.reportValue
+      delete args.id
+      return chart.getExcelData(this, args).then((response) => {
+        console.log('下载成功')
+        const a = document.createElement('a');
+        a.href = response;
+        a.download = 'download';
+        a.click();
+        window.URL.revokeObjectURL(response);
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
     getAreaList () {
       return search.getAeraList(this).then((response) => {
        let data = response.data
@@ -643,7 +672,7 @@ export default {
       }
       if (query !== '') {
         this.searchLoading = true
-          return stats.getUser(this, args).then((response) => {
+          return search.getUserList(this, args).then((response) => {
             this.userList = response.data
             if(this.userList.length == 0) {
               this.projectList = []
@@ -670,7 +699,7 @@ export default {
         if(!this.arUserId){
           delete args.ar_user_id
         } 
-        return stats.getProject(this,args).then((response) => {
+        return search.getProjectList(this,args).then((response) => {
           this.projectList = response.data
           this.searchLoading = false
         }).catch(err => {
@@ -682,7 +711,7 @@ export default {
           this.arUserId = user_info.ar_user_id
           if (query !== '') {
             this.searchLoading = true
-              return stats.getProject(this,args).then((response) => {
+              return search.getProjectList(this,args).then((response) => {
                 this.projectList = response.data
                 this.searchLoading = false
               }).catch(err => {

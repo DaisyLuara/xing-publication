@@ -57,7 +57,6 @@ import loadExportData from 'highcharts/modules/export-data';
 loadExporting(Highcharts);
 loadExportData(Highcharts);
 
-import stats from 'service/stats'
 import chartData from 'service/chart'
 
 export default {
