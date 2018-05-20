@@ -47,32 +47,28 @@ class ChartDataController extends Controller
 
     }
 
+
     /**
-     * 围观人数(分时/分天)
-     * @param $startDate
-     * @param $endDate
+     * 围观人数 分段显示
+     * @param $request
+     * @param $query
      * @return array
      */
     private function getLookNumber($request, $query)
     {
-        $groupByDay = $request->start_date != $request->end_date;
+        $startDate = (new Carbon($request->start_date))->timestamp;
+        $endDate = (new Carbon($request->end_date))->timestamp;
+        $days = ($endDate - $startDate) / 24 / 60 / 60;
 
         $this->handleFaceLogQuery($request, $query);
 
-        if ($groupByDay) {
-            return $this->getLookNumberByDay($query);
+        if ($days) {
+            $format = $days <= 31 ? '%Y-%m-%d' : '%Y-%m';
+            return $query->selectRaw("sum(allnum) AS count,date_format(face_log.date, '$format') AS display_name")
+                ->groupBy('display_name')
+                ->get();
         }
-        return $this->getLookNumberByHour($query);
 
-    }
-
-    /**
-     * 分时数据
-     * @param $query
-     * @return array
-     */
-    private function getLookNumberByHour($query)
-    {
         $data = $query->selectRaw("sum(t10) AS t10,sum(t11) AS t11,sum(t12) AS t12,sum(t13) AS t13,sum(t14) AS t14,sum(t15) AS t15,sum(t16) AS t16,sum(t17) AS t17,sum(t18) AS t18,sum(t19) AS t19,sum(t20) AS t20,sum(t21) AS t21,sum(t22) AS t22")
             ->first()
             ->toArray();
@@ -84,18 +80,6 @@ class ChartDataController extends Controller
             ];
         }
         return $output;
-    }
-
-    /**
-     * 分天数据
-     * @param $query
-     * @return mixed
-     */
-    private function getLookNumberByDay($query)
-    {
-        return $query->selectRaw("sum(allnum) AS count,date_format(face_log.date, '%Y-%m-%d') AS display_name")
-            ->groupBy('display_name')
-            ->get();
     }
 
     /**
