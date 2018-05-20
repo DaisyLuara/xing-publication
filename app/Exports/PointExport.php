@@ -15,7 +15,7 @@ class PointExport extends AbstractExport
         $this->startDate = $request->start_date;
         $this->endDate = $request->end_date;
         $this->pointId = $request->point_id;
-        $this->fileName = '点位数据.xlsx';
+        $this->fileName = '点位数据';
     }
 
     public function collection()

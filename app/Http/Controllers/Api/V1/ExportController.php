@@ -9,8 +9,11 @@ class ExportController extends Controller
 {
     public function store(ExportRequest $request)
     {
+        $path = config('filesystems')['disks']['qiniu']['url'];
         $export = app($request->type);
-        return Excel::download($export, $export->fileName);
+        $fileName = $export->fileName . '_' . time() . '_' . '.' . 'xlsx';
+        Excel::store($export, $fileName, 'qiniu');
+        return $path . urlencode($fileName);
     }
 
 }

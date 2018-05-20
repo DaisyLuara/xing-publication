@@ -13,7 +13,7 @@ class MarketingExport extends AbstractExport
     {
         $this->startDate = $request->start_date;
         $this->endDate = $request->end_date;
-        $this->fileName = '营销创意成果.xlsx';
+        $this->fileName = '营销创意成果';
     }
 
     public function collection()
