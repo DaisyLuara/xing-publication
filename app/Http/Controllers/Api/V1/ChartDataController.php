@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Requests\Api\V1\ChartDataRequest;
+use App\Transformers\FaceCountTransformer;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use App\Models\FaceCount;
 use App\Models\FaceLog;
 use Carbon\Carbon;
@@ -11,7 +13,24 @@ use DB;
 
 class ChartDataController extends Controller
 {
-    public function index(ChartDataRequest $request)
+    public function index(Request $request)
+    {
+
+        $query = FaceCount::query();
+        $this->handleQuery($request, $query);
+
+        $faceCount = $query->selectRaw('fclid as id,looknum,playernum,lovenum,outnum,scannum,avr_official.name as point_name,avr_official_market.name as market_name,avr_official_area.name as area_name,face_count_log.date as created_at')
+            ->where('fclid', '>', 0)
+            ->orderBy('avr_official_area.areaid', 'desc')
+            ->orderBy('avr_official_market.marketid', 'desc')
+            ->orderBy('avr_official.oid', 'desc')
+            ->paginate(5);
+
+        return $this->response->paginator($faceCount, new FaceCountTransformer());
+    }
+
+
+    public function chart(ChartDataRequest $request)
     {
         $faceLogQuery = FaceLog::query();
         $faceCountQuery = FaceCount::query();
@@ -265,7 +284,7 @@ class ChartDataController extends Controller
         return $output;
     }
 
-    private function handleQuery(ChartDataRequest $request, Builder $query, $selectByAlias = true)
+    private function handleQuery(Request $request, Builder $query, $selectByAlias = true)
     {
         $table = $query->getModel()->getTable();
         //查询时间范围
@@ -315,6 +334,7 @@ class ChartDataController extends Controller
 
         $query->join('avr_official', 'avr_official.oid', '=', "$table.oid")
             ->join('avr_official_market', 'avr_official_market.marketid', '=', 'avr_official.marketid')
+            ->join('avr_official_area', 'avr_official_area.areaid', '=', 'avr_official.areaid')
             ->whereRaw("date_format($table.date, '%Y-%m-%d') BETWEEN '$startDate' AND '$endDate' ");
     }
 
