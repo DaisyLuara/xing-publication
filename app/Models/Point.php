@@ -33,4 +33,5 @@ class Point extends Model
     {
         return $this->belongsTo(Area::class, 'areaid', 'areaid');
     }
+
 }

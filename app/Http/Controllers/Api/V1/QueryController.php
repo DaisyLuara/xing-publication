@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Models\Scene;
 use App\Transformers\AreaTransformer;
 use App\Transformers\MarketTransformer;
 use App\Transformers\PointTransformer;
@@ -10,6 +11,7 @@ use App\Transformers\AdTradeTransformer;
 use App\Transformers\AdvertiserTransformer;
 use App\Transformers\AdvertisementTransformer;
 use App\Transformers\ProjectTransformer;
+use App\Transformers\SceneTransformer;
 use Illuminate\Http\Request;
 use App\Models\Market;
 use App\Models\Area;
@@ -68,6 +70,14 @@ class QueryController extends Controller
 
         if ($request->market_id) {
             $query->where('marketid', '=', $request->market_id);
+        }
+
+        $user = $this->user();
+        $arUserId = getArUserID($user, $request);
+        if ($arUserId) {
+            $query->whereHas('arUsers', function ($q) use ($arUserId) {
+                $q->where('admin_staff.uid', '=', $arUserId);
+            });
         }
 
         $points = $query->get();
@@ -155,6 +165,11 @@ class QueryController extends Controller
         }
         $advertisement = $query->get();
         return $this->response->collection($advertisement, new AdvertisementTransformer());
+    }
+
+    public function sceneQueryIndex(Scene $scene)
+    {
+        return $this->response->collection($scene->where('sid', '>', 0)->get(), new SceneTransformer());
     }
 
 }

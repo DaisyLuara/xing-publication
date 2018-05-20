@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yangqiang
- * Date: 2018/5/9
- * Time: 19:30
- */
 
 namespace App\Transformers;
 

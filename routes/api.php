@@ -97,6 +97,8 @@ $api->version('v1', [
 
             //授权广告
             $api->get('wx_third', 'WxThirdController@index');
+            //广告数据统计
+            $api->get('project_ad_log', 'ProjectAdLogController@index');
 
             //设备
             $api->get('push', 'PushController@index');
@@ -106,6 +108,12 @@ $api->version('v1', [
             $api->get('marketing_excel', 'ExcelController@marketingExcel');
             $api->get('project_excel', 'ExcelController@projectExcel');
             $api->get('point_excel', 'ExcelController@pointExcel');
+
+            //产品
+            $api->get('product', 'ProductController@index');
+
+            //节目模板
+            $api->get('project_template', 'ProjectTemplateController@index');
 
             //节目投放
             $api->get('projects', 'ProjectController@index');
@@ -119,12 +127,13 @@ $api->version('v1', [
             //远程搜索
             $api->get('areas/query', 'QueryController@areaQuery');//区域搜索
             $api->get('markets/query', 'QueryController@marketQuery');//商场搜索
-            $api->get('points/query', ['middleware' => ['role:super-admin|admin'], 'uses' => 'QueryController@pointQuery']);//点位查询
-            $api->get('launches/tpl/query', ['middleware' => ['role:super-admin|admin'], 'uses' => 'QueryController@launchTplQuery']);//点位模板查询
+            $api->get('points/query', 'QueryController@pointQuery');//点位查询
+            $api->get('launches/tpl/query', 'QueryController@launchTplQuery');//点位模板查询
             $api->get('ad_trade/query', 'QueryController@adTradeQuery');//广告行业搜索
             $api->get('advertiser/query', 'QueryController@advertiserQuery');//广告主搜索
             $api->get('advertisement/query', 'QueryController@advertisementQuery');//广告搜索
             $api->get('projects/query', 'QueryController@projectQuery');
+            $api->get('scene/query', 'QueryController@sceneQueryIndex');
 
             // 权限设置
             $api->get('system/users', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminUsersController@index']);

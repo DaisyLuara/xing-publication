@@ -5,7 +5,17 @@
         <div class="search-wrap">
           <el-form :model="filters" :inline="true" ref="searchForm" >
             <el-form-item label="" prop="name">
-              <el-input v-model="filters.name" placeholder="请输入节目名称" style="width: 250px;"></el-input>
+              <el-input v-model="filters.name" placeholder="请输入节目名称" style="width: 180px;"></el-input>
+            </el-form-item>
+            <el-form-item label="" prop="scene">
+              <el-select v-model="filters.scene" placeholder="请选择场景" filterable clearable>
+                <el-option
+                  v-for="item in sceneList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="" prop="area">
               <el-select v-model="filters.area" placeholder="请选择区域" @change="areaChangeHandle" filterable clearable>
@@ -27,13 +37,13 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-button @click="search('searchForm')" type="primary">搜索</el-button>
-            <el-button @click="resetSearch" type="default">重置</el-button>
+            <el-button @click="search('searchForm')" type="primary" size="small">搜索</el-button>
+            <el-button @click="resetSearch" type="default" size="small">重置</el-button>
           </el-form>
         </div>
         <div class="editCondition-wrap" style="padding: 0 0 15px;">
           <el-form :model="editCondition" :inline="true" ref="editForm" >
-            <el-form-item label="修改选项" style="margin-bottom: 0;">
+            <el-form-item label="修改投放选项" style="margin-bottom: 0;">
               <el-checkbox-group v-model="editCondition.conditionList">
                 <el-checkbox label="节目名称"></el-checkbox>
                 <el-checkbox label="工作日模版"></el-checkbox>
@@ -51,7 +61,7 @@
             节目数量: {{pagination.total}}
           </span>
           <div>
-            <el-button size="small" type="success" @click="linkToAddItem">投放节目</el-button>
+            <el-button size="small" type="success" @click="linkToAddItem">新增投放</el-button>
           </div>
         </div>
         <el-table :data="tableData" style="width: 100%" highlight-current-row  @selection-change="handleSelectionChange" ref="multipleTable" type="expand">
@@ -64,6 +74,9 @@
                 </el-form-item>
                 <el-form-item label="节目icon">
                   <a :href="scope.row.project.icon" target="_blank" style="color: blue">查看</a>
+                </el-form-item>
+                <el-form-item label="场景">
+                  <span>{{scope.row.point.scene.name}}</span>
                 </el-form-item>
                 <el-form-item label="区域">
                   <span>{{scope.row.point.market.area.name}}</span>
@@ -115,6 +128,16 @@
             </template>
           </el-table-column>
           <el-table-column
+            prop="scene"
+            label="场景"
+            min-width="100"
+            :show-overflow-tooltip="true"
+            >
+            <template slot-scope="scope">
+              {{scope.row.point.scene.name}}
+            </template>
+          </el-table-column>
+          <el-table-column
             prop="market_name"
             label="商场"
             min-width="100"
@@ -140,11 +163,6 @@
             min-width="150"
             :show-overflow-tooltip="true"
             >
-          </el-table-column>
-          <el-table-column label="操作" width="80">
-            <template slot-scope="scope">
-              <el-button size="small" type="warning" @click="showData(scope.row.project.alias, scope.row.project.name, arUserName)" v-if="dataShowFlag">数据</el-button>
-            </template>
           </el-table-column>
         </el-table>
         <div class="pagination-wrap">
@@ -241,11 +259,13 @@ export default {
       filters: {
         name: '',
         market: '',
-        area: ''
+        area: '',
+        scene: ''
       },
       editCondition:{
         conditionList: [],
       },
+      sceneList: '',
       marketLoading: false,
       marketList: [],
       areaList: [],
@@ -255,8 +275,6 @@ export default {
       },
       dataValue: '',
       loading: true,
-      arUserName: '',
-      dataShowFlag: true,
       pagination: {
         total: 0,
         pageSize: 10,
@@ -294,11 +312,16 @@ export default {
   created () {
     this.getProjectList()
     this.getAreaList()
-    let user_info = JSON.parse(localStorage.getItem('user_info'))
-    this.arUserName = user_info.name
-    this.dataShowFlag = user_info.roles.data[0].name === 'legal-affairs' ? false : true
+    this.getSceneList()
   },
   methods: {
+    getSceneList() {
+      return search.getSceneList(this).then((response) => {
+        this.sceneList = response.data
+      }).catch(err=> {
+        console.log(err)
+      })
+    },
     dialogClose() {
       if(!this.editVisible) {
         this.editCondition.conditionList = []
@@ -323,7 +346,6 @@ export default {
           })
         } else{
           this.getModuleList()
-          // this.$refs[projectForm].resetFields();
           this.projectForm = {
             project: '',
             weekday: '',
@@ -433,6 +455,8 @@ export default {
             console.log(response)
           }).catch((err) => {
             this.loading = false
+            this.editVisible = false
+            this.editCondition.conditionList = []
             console.log(err)
           })
         }else{
@@ -458,19 +482,17 @@ export default {
       this.setting.loading = true;
       let searchArgs = {
         page : this.pagination.currentPage,
-        include: 'point.market.area,project',
+        include: 'point.scene,point.market,point.area,project',
         project_name: this.filters.name,
         area_id: this.filters.area,
-        market_id: this.filters.market
+        market_id: this.filters.market,
+        scene_id: this.filters.scene
       }
       project.getProjectList(this, searchArgs).then((response) => {
        let data = response.data
        this.tableData = data
        this.pagination.total = response.meta.pagination.total
-      //  this.$nextTick(() => {
-      //   this.$refs.multipleTable.doLayout()
-      // })
-      this.setting.loading = false;
+       this.setting.loading = false;
       }).catch(error => {
         console.log(error)
       this.setting.loading = false;
@@ -533,17 +555,6 @@ export default {
         path: '/project/item/edit',
       })
     },
-    showData (alias,name,userId) {
-      const { href } = this.$router.resolve({
-        path: '/project/item/data',
-        query: {
-          alias: alias,
-          name: name,
-          uName: userId
-        }
-      })
-      window.open(href, '_blank')
-    }
   },
   components: {
     "el-table": Table,
@@ -602,10 +613,10 @@ export default {
             margin-bottom: 0;
           }
           .el-select{
-            width: 250px;
+            width: 180px;
           }
           .item-input{
-            width: 230px;
+            width: 180px;
           }
           .warning{
             background: #ebf1fd;

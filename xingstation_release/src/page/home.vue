@@ -100,6 +100,9 @@ export default {
               case 'home':
                 m.src = require('../assets/images/icons/home-icon.png')
                 break
+              case 'report':
+                m.src = require('../assets/images/icons/report-icon.png')
+                break
               default:
                 m.src = ''
                 break

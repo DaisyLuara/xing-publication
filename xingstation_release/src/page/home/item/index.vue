@@ -1,5 +1,5 @@
 <template>
-  <div class="home-wrap">
+  <div class="home-wrap" v-loading="loading">
     <div class="search-wrap">
       <el-date-picker
       v-model="dataValue"
@@ -53,6 +53,11 @@
 <script>
 import { Tabs, TabPane, Button, Row, Col, Card, DatePicker} from 'element-ui'
 import Highcharts from 'highcharts';
+import loadExporting from 'highcharts/modules/exporting';
+import loadExportData from 'highcharts/modules/export-data';
+loadExporting(Highcharts);
+loadExportData(Highcharts);
+
 import stats from 'service/stats'
 import chartData from 'service/chart'
 
@@ -68,7 +73,8 @@ export default {
   },
   data() {
     return {
-      dataValue: [new Date().getTime(), new Date().getTime()],
+      loading: false,
+      dataValue: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date().getTime()],
       pickerOptions2: {
         shortcuts: [{
           text: '今天',
@@ -87,7 +93,7 @@ export default {
               picker.$emit('pick', [start, end]);
             }
           },{
-          text: '过去7天',
+          text: '最近一周',
           onClick(picker) {
             const end = new Date();
             const start = new Date();
@@ -95,14 +101,22 @@ export default {
             picker.$emit('pick', [start, end]);
           }
         }, {
-          text: '过去30天',
+          text: '最近一个月',
           onClick(picker) {
             const end = new Date();
             const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 29);
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
             picker.$emit('pick', [start, end]);
           }
-        },]
+        },{
+          text: '最近三个月',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+            picker.$emit('pick', [start, end]);
+          }
+        }]
       },
       pointOptions : {
         title: {
@@ -111,9 +125,10 @@ export default {
           align: 'left'
         },
         xAxis: {
-          // type: 'datetime'
+          title: {
+            text: '日期'
+          },
           type: 'category',
-          
         },
         yAxis: [{
           title: {
@@ -135,12 +150,13 @@ export default {
               percent = new Number(((this.points[1].y - this.points[0].y) /  this.points[0].y) * 100).toFixed(2)
               s = '<b>' + percent +'%' + '</b>';
             }
+            console.log(this.points)
             for(let i=0;i<this.points.length; i++) {
-               s += '<br/>' + this.points[i].series.name + ': ' +
-                    this.y;
+              s += '<br/>' + this.points[i].point.name + ': ' +
+              this.y;
             }
             return s;
-        },
+          },
         },
         plotOptions: {
           area: {
@@ -182,19 +198,22 @@ export default {
         subtitle: {
         },
         xAxis: {
-          type: 'category',
-          title: {
-            text: null
+          title:{
+            text: '名称'
           },
+          type: 'category',
           labels: {
-            staggerLines: 3
+            formatter: function() {
+              return this.value.substring(0,5) + '...'
+						},
+            // staggerLines: 3,
           }
         },
         yAxis: {
           min: 0,
           title: null,
           labels: {
-            overflow: 'justify'
+            overflow: 'justify',
           }
         },
         tooltip: {
@@ -202,7 +221,7 @@ export default {
         plotOptions: {
           bar: {
             dataLabels: {
-              enabled: false
+              enabled: true
             }
           }
         },
@@ -226,10 +245,17 @@ export default {
         },
         subtitle: {
         },
+        
         xAxis: {
           type: 'category',
-          title: {
-            text: null
+          title:{
+            text: '名称'
+          },
+          labels: {
+            autoRotationLimit:40,
+            formatter: function() {
+              return this.value.substring(0,5) + '...'
+						},
           }
         },
         yAxis: {
@@ -244,7 +270,7 @@ export default {
         plotOptions: {
           bar: {
             dataLabels: {
-              enabled: false
+              enabled: true
             }
           }
         },
@@ -273,7 +299,8 @@ export default {
         },
         plotOptions: {
           pie: {
-            innerSize: 100,
+            // innerSize: 100,
+            innerSize: '20%',
             allowPointSelect: true,
             cursor: 'pointer',
             dataLabels: {
@@ -300,6 +327,11 @@ export default {
         credits: {
           enabled: false
         },
+        yAxis: [{
+          title: {
+            text: '名称',
+          }
+        }],
         series: [{
           type: 'pie',
           name: '性别访问数',
@@ -313,9 +345,9 @@ export default {
           },
         },
         plotOptions: {
-          series: {
-            animation: {
-              duration: 2000,
+          column: {
+            dataLabels: {
+              enabled: true
             }
           }
         },
@@ -325,6 +357,9 @@ export default {
           align: 'left'
         },
         xAxis: {
+          title: {
+            text: '名称'
+          },
           type: 'category'
         },
         yAxis: [{
@@ -352,7 +387,6 @@ export default {
     }
   },
   mounted() {
-    
   },
   created() {
     this.getProjectTenChartData()
@@ -363,19 +397,11 @@ export default {
   },
   methods: {
    dateChangeHandle(){
-      let dateCount = (this.dataValue[1]-this.dataValue[0])/3600/1000/24
-      if(dateCount>29){
-        this.$message({
-          type: 'warning',
-          message: '时间范围不能超过30天'
-        });
-      }else{
-        this.getProjectTenChartData()
-        this.getPointTenChartData()
-        this.getSexChartData()
-        this.getAgeChartData()
-        this.getLookersChartData()
-      }
+    this.getProjectTenChartData()
+    this.getPointTenChartData()
+    this.getSexChartData()
+    this.getAgeChartData()
+    this.getLookersChartData()
     },
     getProjectTenChartData() {
       this.getChartData('project','3')
@@ -393,18 +419,10 @@ export default {
       this.getChartData('lookers', '1')
     },
     getChartData (type,id) {
-      let args = {}
-      if((this.dataValue[1]-this.dataValue[0])/3600/1000/24<30){
-        args = {
-          start_date : this.handleDateTransform(this.dataValue[0]),
-          end_date: this.handleDateTransform(new Date(this.dataValue[1]).getTime())
-        }
-      }else{
-        this.$message({
-          type: 'warning',
-          message: '时间范围不能超过30天'
-        });
-        return false;
+      let args = {
+        start_date : this.handleDateTransform(this.dataValue[0]),
+        end_date: this.handleDateTransform(new Date(this.dataValue[1]).getTime()),
+        home_page: true
       }
       switch(id) {
         case '1':
@@ -434,13 +452,7 @@ export default {
             let projectData = []
             let projectChart = this.$refs.projectTenChar.chart;
             if(response.length>0){
-              for(let i = 0; i < response.length; i++){
-                if(i==0){
-                  projectData.push({'name':response[i].display_name,'y':parseInt(response[i].count)})
-                }else{
-                  projectData.push([response[i].display_name,parseInt(response[i].count)])
-                }
-              }
+              this.drawChart(response,projectData)
             projectChart.update({
               series: [{
                 data: projectData,
@@ -456,13 +468,7 @@ export default {
           let pointData = []
           let pointChart = this.$refs.pointTenChar.chart;
           if(response.length>0){
-            for(let i = 0; i < response.length; i++){
-              if(i==0){
-                pointData.push({'name':response[i].display_name,'y':parseInt(response[i].count)})
-              }else{
-                pointData.push([response[i].display_name,parseInt(response[i].count)])
-              }
-            }
+            this.drawChart(response,pointData)
           pointChart.update({
             series: [{
               data: pointData,
@@ -499,14 +505,8 @@ export default {
         case 'age':
           let ageData = []
           let ageChart = this.$refs.agePie.chart;
-          if(response.length>0){
-            for(let i = 0; i < response.length; i++){
-              if(i==0){
-                ageData.push({'name':response[i].display_name,'y':parseInt(response[i].count)})
-              }else{
-                ageData.push([response[i].display_name,parseInt(response[i].count)])
-              }
-            }
+          if(response.length > 0){
+            this.drawChart(response, ageData)
           ageChart.update({
             series: [{
               data: ageData,
@@ -522,14 +522,7 @@ export default {
           let lookersData = []
           let lookerChart = this.$refs.pointChar.chart;
           if(response.length>0){
-           
-            for(let j = 0; j < response.length; j++){
-              if(j==0){
-                lookersData.push({'name':response[j].display_name,'y':parseInt(response[j].count)})
-              }else{
-                lookersData.push([response[j].display_name,parseInt(response[j].count)])
-              }
-            }
+            this.drawChart(response,lookersData)
           lookerChart.update({
             series: [{
               type: 'area',
@@ -572,11 +565,18 @@ export default {
           case 'lookers':
             this.lookerFlag = false;
           break
-
         }
       })
     },
-   
+    drawChart(response,data) {
+      for(let j = 0; j < response.length; j++){
+        if(j==0){
+          data.push({'name':response[j].display_name,'y':parseInt(response[j].count)})
+        }else{
+          data.push([response[j].display_name,parseInt(response[j].count)])
+        }
+      }
+    },
     handleDateTransform (valueDate) {
       let date = new Date (valueDate)
       let year = date.getFullYear() + '-';
