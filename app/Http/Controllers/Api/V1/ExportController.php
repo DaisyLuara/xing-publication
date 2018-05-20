@@ -10,7 +10,7 @@ class ExportController extends Controller
     public function store(ExportRequest $request)
     {
         $export = app($request->type);
-        Excel::store($export, $export->fileName);
+        return Excel::download($export, $export->fileName);
     }
 
 }
