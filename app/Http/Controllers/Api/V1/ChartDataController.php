@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Requests\Api\V1\ChartDataRequest;
-use App\Transformers\ChartDataTransformer;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\FaceCount;
 use App\Models\FaceLog;
@@ -36,7 +35,7 @@ class ChartDataController extends Controller
                 $data = $this->getTotal($request, $faceCountQuery);
                 break;
             case 7:
-                $data = $this->getTotalByDay($request, $faceCountQuery);
+                $data = $this->getTotalByDate($request, $faceCountQuery);
                 break;
             default:
                 return null;
@@ -246,10 +245,15 @@ class ChartDataController extends Controller
      * @param Builder $query
      * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|static[]
      */
-    public function getTotalByDay(ChartDataRequest $request, Builder $query)
+    public function getTotalByDate(ChartDataRequest $request, Builder $query)
     {
+        $startDate = (new Carbon($request->start_date))->timestamp;
+        $endDate = (new Carbon($request->end_date))->timestamp;
+        $days = ($endDate - $startDate) / 24 / 60 / 60;
+        $format = $days <= 31 ? '%Y-%m-%d' : '%Y-%m';
+
         $this->handleFaceCountLogQuery($request, $query);
-        return $query->selectRaw("date_format(face_count_log.date,'%Y-%m-%d') as display_name")
+        return $query->selectRaw("date_format(face_count_log.date,'$format') as display_name")
             ->groupBy('display_name')
             ->get();
 
