@@ -59,7 +59,7 @@ class ChartDataController extends Controller
         $endDate = (new Carbon($request->end_date))->timestamp;
         $days = ($endDate - $startDate) / 24 / 60 / 60;
 
-        $this->handleFaceLogQuery($request, $query);
+        $this->handleQuery($request, $query);
 
         if ($days) {
             $format = $days <= 31 ? '%Y-%m-%d' : '%Y-%m';
@@ -89,9 +89,9 @@ class ChartDataController extends Controller
      */
     private function getAge(ChartDataRequest $request, Builder $query)
     {
-        $this->handleFaceLogQuery($request, $query);
+        $this->handleQuery($request, $query);
         $data = $query->selectRaw('sum(age10b+age10g) as age10,sum(age18b+age18g) as age18,sum(age30b+age30g) as age30,sum(age40b+age40g) as age40,sum(age60b+age60g) as age60,sum(age61b+age61g) as age61')
-            ->where('type', '=', 'looker')
+            ->where('face_log.type', '=', 'looker')
             ->first()->toArray();
         $output = [];
         $ageMapping = [
@@ -119,10 +119,9 @@ class ChartDataController extends Controller
      */
     private function getGender(ChartDataRequest $request, Builder $query)
     {
-        $this->handleFaceLogQuery($request, $query);
-        $data = $query->where('belong', '=', 'all')
-            ->selectRaw("sum(gnum) as female,sum(bnum) as male")
-            ->where('type', '=', 'looker')
+        $this->handleQuery($request, $query);
+        $data = $query->selectRaw("sum(gnum) as female,sum(bnum) as male")
+            ->where('face_log.type', '=', 'looker')
             ->first()->toArray();
         $output = [];
         $genderMapping = [
@@ -139,23 +138,6 @@ class ChartDataController extends Controller
     }
 
     /**
-     * FaceLog 查询条件处理
-     * @param ChartDataRequest $request
-     * @param Builder $query
-     */
-    private function handleFaceLogQuery(ChartDataRequest $request, Builder $query)
-    {
-        //@todo 节目 场景 点位 用户
-        $startDate = $request->start_date;
-        $endDate = $request->end_date;
-        $alias = $request->alias ? $request->alias : 'all';
-
-        $query->whereRaw("date_format(date, '%Y-%m-%d') BETWEEN '$startDate' AND '$endDate' ")
-            ->whereNotIn('oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
-            ->where('belong', '=', $alias);
-    }
-
-    /**
      * 点位排行榜
      * @param $startDate
      * @param $endDate
@@ -163,7 +145,7 @@ class ChartDataController extends Controller
      */
     private function getTopPoints(ChartDataRequest $request, Builder $query)
     {
-        $this->handleFaceCountLogQuery($request, $query);
+        $this->handleQuery($request, $query);
         $data = $query->selectRaw("sum(looknum) AS count,avr_official.name,avr_official_market.name as market_name")
             ->groupBy('face_count_log.oid')
             ->orderBy('count', 'desc')
@@ -189,7 +171,7 @@ class ChartDataController extends Controller
      */
     private function getTopProjects(ChartDataRequest $request, Builder $query)
     {
-        $this->handleFaceCountLogQuery($request, $query, false);
+        $this->handleQuery($request, $query, false);
         $data = $query->selectRaw("sum(looknum) AS count,ar_product_list.name")
             ->groupBy('belong')
             ->orderBy('count', 'desc')
@@ -215,7 +197,7 @@ class ChartDataController extends Controller
      */
     private function getTotal(ChartDataRequest $request, Builder $query)
     {
-        $this->handleFaceCountLogQuery($request, $query);
+        $this->handleQuery($request, $query);
         $data = $query->selectRaw("sum(looknum) AS looknum,sum(playernum) AS playernum,sum(outnum)  AS outnum,sum(outnum)  AS scannum,sum(scannum)  AS scannum,sum(lovenum)  AS lovenum")
             ->first()->toArray();
         $output = [];
@@ -252,7 +234,7 @@ class ChartDataController extends Controller
         $days = ($endDate - $startDate) / 24 / 60 / 60;
         $format = $days <= 31 ? '%Y-%m-%d' : '%Y-%m';
 
-        $this->handleFaceCountLogQuery($request, $query);
+        $this->handleQuery($request, $query);
         return $query->selectRaw("date_format(face_count_log.date,'$format') as display_name")
             ->groupBy('display_name')
             ->get();
@@ -283,37 +265,57 @@ class ChartDataController extends Controller
         return $output;
     }
 
-    private function handleFaceCountLogQuery(ChartDataRequest $request, Builder $query, $selectByAlias = true)
+    private function handleQuery(ChartDataRequest $request, Builder $query, $selectByAlias = true)
     {
+        $table = $query->getModel()->getTable();
         //查询时间范围
         $startDate = $request->start_date;
         $endDate = $request->end_date;
 
         //按节目搜索 默认搜索所有节目
-        //@todo 优化
         if ($selectByAlias) {
             $alias = $request->alias ? $request->alias : 'all';
             $query->where('belong', '=', $alias);
         } else {
-            $query->join('ar_product_list', 'ar_product_list.versionname', '=', 'face_count_log.belong');
+            $query->join('ar_product_list', 'ar_product_list.versionname', '=', "$table.belong");
         }
 
-        //查询单一指标/所有指标
+        //按指标查询
         if ($request->index) {
             $query->selectRaw("sum(" . $request->index . ") as count");
         }
 
-        //按账号搜索
+        //按账号查询
         $user = $this->user();
-        $arUserId = getArUserID($user, $request);
+        $arUserId = $request->home_page ? 0 : getArUserID($user, $request);
         if ($arUserId) {
-            $query->join('admin_per_oid', 'admin_per_oid.oid', '=', 'face_count_log.oid')
+            $query->join('admin_per_oid', 'admin_per_oid.oid', '=', "$table.oid")
                 ->where('admin_per_oid.uid', '=', $arUserId);
         }
 
-        $query->join('avr_official', 'avr_official.oid', '=', 'face_count_log.oid')
+        //按场景查询
+        if ($request->scene_id) {
+            $query->where('avr_official.sid', '=', $request->scene_id);
+        }
+
+        //按区域查询
+        if ($request->area_id) {
+            $query->where('avr_official.areaid', '=', $request->area_id);
+        }
+
+        //按商场查询
+        if ($request->market_id) {
+            $query->where('avr_official.marketid', '=', $request->market_id);
+        }
+
+        //按点位查询
+        if ($request->point_id) {
+            $query->where('avr_official.oid', '=', $request->point_id);
+        }
+
+        $query->join('avr_official', 'avr_official.oid', '=', "$table.oid")
             ->join('avr_official_market', 'avr_official_market.marketid', '=', 'avr_official.marketid')
-            ->whereRaw("date_format(face_count_log.date, '%Y-%m-%d') BETWEEN '$startDate' AND '$endDate' ");
+            ->whereRaw("date_format($table.date, '%Y-%m-%d') BETWEEN '$startDate' AND '$endDate' ");
     }
 
 }

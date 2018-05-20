@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Scopes\FaceCountScope;
+use App\Scopes\ExceptPointsScope;
 
 class FaceCount extends Model
 {
@@ -28,7 +28,7 @@ class FaceCount extends Model
     protected static function boot()
     {
         parent::boot();
-        static::addGlobalScope(new FaceCountScope());
+        static::addGlobalScope(new ExceptPointsScope());
     }
 
 }
