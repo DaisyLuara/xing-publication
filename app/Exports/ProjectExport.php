@@ -2,21 +2,19 @@
 
 namespace App\Exports;
 
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use Carbon\Carbon;
 use DB;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
-use Maatwebsite\Excel\Events\AfterSheet;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use PhpOffice\PhpSpreadsheet\Style\Border;
 
-class ProjectExport implements FromCollection, WithStrictNullComparison, WithEvents
+class ProjectExport extends AbstractExport
 {
     public function __construct($request)
     {
         $this->start_date = $request->start_date;
         $this->end_date = $request->end_date;
+        $this->fileName = '节目数据.xlsx';
     }
 
     public function collection()
