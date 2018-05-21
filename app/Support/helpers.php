@@ -34,7 +34,8 @@ if (!function_exists('distance')) {
 if (!function_exists('getArUserID')) {
     function getArUserID(User $user, Request $request)
     {
-        if (!$user->isAdmin()) {
+        //BD 返回自己的 ar_user_id
+        if ($user->isUser()) {
             return $user->ar_user_id;
         }
 

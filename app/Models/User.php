@@ -34,7 +34,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'phone', 'avatar', 'introduction', 'ar_user_id','tower_access_token','tower_refresh_token'
+        'name', 'email', 'password', 'phone', 'avatar', 'introduction', 'ar_user_id', 'tower_access_token', 'tower_refresh_token'
     ];
 
     /**
@@ -117,6 +117,12 @@ class User extends Authenticatable implements JWTSubject
     public function isAdmin()
     {
         return $this->hasRole(['super-admin', 'admin']);
+    }
+
+    //销售人员
+    public function isUser()
+    {
+        return $this->hasRole('user');
     }
 
     //系统配置 可选角色
