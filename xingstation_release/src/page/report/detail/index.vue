@@ -3,9 +3,9 @@
     <div class="search-wrap">
       <el-form ref="searchForm" class="search-form">
         <el-row :gutter="20">
-          <el-col :span="8">
+          <el-col :span="8" v-if="showUser">
             <el-form-item label="" prop="user" >
-              <el-select v-model="userSelect" filterable placeholder="请选择用户(可搜索)" v-if="showUser" :loading="searchLoading" remote :remote-method="getUser" @change="userChangeHandle" clearable>
+              <el-select v-model="userSelect" filterable placeholder="请选择用户(可搜索)"  :loading="searchLoading" remote :remote-method="getUser" @change="userChangeHandle" clearable>
                 <el-option
                   v-for="item in userList"
                   :key="item.id"
@@ -706,24 +706,19 @@ export default {
           console.log(err)
           this.searchLoading = false
         })
-        } else {
+      } else {
           let user_info = JSON.parse(localStorage.getItem('user_info'))
           this.arUserId = user_info.ar_user_id
-          if (query !== '') {
-            this.searchLoading = true
-              return search.getProjectList(this,args).then((response) => {
-                this.projectList = response.data
-                this.searchLoading = false
-              }).catch(err => {
-                console.log(err)
-                this.searchLoading = false
-            })
-        }else{
-          this.projectSelect = ''
-          this.projectList = []
-          return false
-        }
-      }
+          args.ar_user_id = this.arUserId
+          this.searchLoading = true
+            return search.getProjectList(this,args).then((response) => {
+              this.projectList = response.data
+              this.searchLoading = false
+            }).catch(err => {
+              console.log(err)
+              this.searchLoading = false
+          })
+       }
     },
     getPeopleCount(){
       this.poepleCountFlag = true
