@@ -29,13 +29,13 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="" prop="type_id">
-                <el-select v-model="searchForm.type_id" placeholder="请选择分类" filterable  clearable>
+              <el-form-item label="" prop="machine_status">
+                <el-select v-model="searchForm.machine_status" placeholder="请选择分类" filterable  clearable>
                   <el-option
-                    v-for="item in typeList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
+                    v-for="item in machineList"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -113,13 +113,13 @@
                   <span>{{scope.row.point}}</span>
                 </el-form-item>
                 <el-form-item label="上次互动">
-                  <span>{{scope.row.faceDate}}</span>
+                  <span style="color: rgb(93, 217, 49)">{{scope.row.faceDate}}</span>
                 </el-form-item>
                 <el-form-item label="联网时间">
-                  <span>{{ scope.row.networkDate }}</span>
+                  <span style="color: rgb(93, 217, 49)">{{ scope.row.networkDate }}</span>
                 </el-form-item>
                 <el-form-item label="屏幕状态">
-                  <span>{{ scope.row.screenStatus == 0 ? '开' :'关'}}</span>
+                  <span style="color: rgb(93, 217, 49)">{{ scope.row.screenStatus == 0 ? '关闭'  : '开启'}}</span>
                 </el-form-item>
                 <el-form-item label="登录时间">
                   <span>{{ scope.row.loginDate }}</span>
@@ -128,7 +128,7 @@
                   <span>{{ scope.row.on_off }}</span>
                 </el-form-item>
                 <el-form-item label="智能插排">
-                  <span>{{ scope.row.device_id == '' ? '': '有'}}</span>
+                  <span style="color: rgb(93, 217, 49)">{{ scope.row.device_id == '' ? '': '有'}}</span>
                 </el-form-item>
                 <el-form-item label="创建时间">
                   <span>{{ scope.row.created_at }}</span>
@@ -170,14 +170,25 @@
             prop="faceDate"
             label="上次互动"
             min-width="100">
+            <template slot-scope="scope">
+              <span style="color: rgb(93, 217, 49)">{{scope.row.faceDate}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="networkDate"
+            label="联网时间"
+            min-width="100">
+            <template slot-scope="scope">
+              <span style="color: rgb(93, 217, 49)">{{scope.row.networkDate}}</span>
+            </template>
           </el-table-column>
           <el-table-column
             prop="screenStatus"
             label="屏幕状态"
             min-width="80">
             <template slot-scope="scope">
-              <span v-if="scope.row.screenStatus==1">开</span>
-              <span v-if="scope.row.screenStatus==0">关</span>
+              <span v-if="scope.row.screenStatus==1" style="color: rgb(93, 217, 49)">开启</span>
+              <span v-if="scope.row.screenStatus==0" style="color: rgb(93, 217, 49)">关闭</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -222,9 +233,20 @@ export default {
       areaList: [],
       marketList: [],
       pointList: [],
-      typeList: [],      
+      machineList: [{
+        value: 'online',
+        label: '运营中'
+      },
+      {
+        value: 'tmp',
+        label: '待解决'
+      },
+      {
+        value: 'dev',
+        label: '待上线'
+      }],      
       searchForm: {
-        type_id:'',
+        machine_status:'',
         area_id: '',
         market_id: '',
         point_id: '',
@@ -375,6 +397,7 @@ export default {
     },
     resetSearch(formName) {
       this.$refs[formName].resetFields();
+      this.gettEquipmentList()
     },
     gettEquipmentList () {
       this.setting.loadingText = "拼命加载中"
@@ -386,7 +409,7 @@ export default {
         point_id: this.searchForm.point_id,
         alias: this.searchForm.project_id,
         ar_user_id: this.searchForm.user_id,
-        type: this.searchForm.type_id
+        machine_status : this.searchForm.machine_status
       }
       if(!this.searchForm.project_id) {
         delete args.alias
@@ -394,8 +417,8 @@ export default {
       if(!this.searchForm.user_id) {
         delete args.ar_user_id
       }
-      if(!this.searchForm.type_id) {
-        delete args.type
+      if(!this.searchForm.machine_status) {
+        delete args.machine_status 
       }
       if(!this.searchForm.market_id) {
         delete args.market_id
