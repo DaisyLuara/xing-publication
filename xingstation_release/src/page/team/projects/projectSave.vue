@@ -21,14 +21,44 @@
             </el-form-item>
             <el-form-item prop="type">
               <h4 class="project-type">项目类型</h4>
-              <el-radio-group v-model="form.type">
-                <div >
-                  <el-radio label="看板项目" name="type" style="font-size: 18px;"></el-radio>
+                <div>
+                  <el-radio label="看板项目" name="type" v-model="form.type" style="font-size:16px;">
+                    <span class="label">看板项目</span><span class="note">更好地组织、细分和管理任务，适用于一般项目管理</span>
+                  </el-radio>
                 </div>
                 <div>
-                  <el-radio label="标准项目" name="type"></el-radio>
+                  <el-radio label="标准项目" name="type" v-model="form.type">
+                    <span class="label">标准项目</span><span class="note">擅长处理流程化任务，适用于产品研发、用户支持等场景</span>
+                  </el-radio>
                 </div>
-              </el-radio-group>
+            </el-form-item>
+            <el-form-item prop="type">
+              <h4 class="project-type">项目公开性</h4>
+                <div>
+                  <el-radio label="私有项目" name="openness" v-model="form.openness" style="font-size:16px;">
+                    <span class="label">私有项目</span><span class="note">仅项目成员可以查看和编辑该项目</span>
+                  </el-radio>
+                </div>
+                <div>
+                  <el-radio label="公开项目" name="openness" v-model="form.openness">
+                    <span class="label">公开项目</span><span class="note">任何人都可以通过链接查看该项目，仅项目成员可以编辑该项目</span>
+                  </el-radio>
+                </div>
+            </el-form-item>
+            <el-form-item prop="type">
+              <h4 class="project-type">项目分组</h4>
+                 <el-checkbox-group v-model="form.grouping">
+                  <el-checkbox label="铺屏" name="grouping"><span class="label">铺屏</span></el-checkbox>
+                  <el-checkbox label="3月峰会" name="grouping"><span class="label">3月峰会</span></el-checkbox>
+                  <el-checkbox label="APP开发" name="grouping"><span class="label">APP开发</span></el-checkbox>
+                  <el-checkbox label="游戏模板修改" name="grouping"><span class="label">游戏模板修改</span></el-checkbox>
+                  <el-checkbox label="星视度平台" name="grouping"><span class="label">星视度平台</span></el-checkbox>
+                  <el-checkbox label="KA项目" name="grouping"><span class="label">KA项目</span></el-checkbox>
+                </el-checkbox-group>
+            </el-form-item>
+            <el-form-item prop="type">
+              <h4 class="project-type">选择项目成员</h4>
+              <span class="label"></span>
             </el-form-item>
           </el-form>
         </div>
@@ -37,14 +67,17 @@
   </div>
 </template>
 <script>
-import {Card, Form, FormItem, Input, Radio, RadioGroup} from 'element-ui'
+import {Card, Form, FormItem, Input, Radio, Checkbox, CheckboxGroup} from 'element-ui'
 export default {
   data() {
     return {
       form: {
         name: '',
         content: '',
-        type: ''
+        type: '看板项目',
+        grouping: '',
+        openness: '公开项目',
+        projectMembers: []
       }
     }
   },
@@ -54,7 +87,8 @@ export default {
     ElFormItem: FormItem,
     ElInput: Input,
     ElRadio: Radio,
-    ElRadioGroup: RadioGroup
+    ElCheckbox: Checkbox,
+    ElCheckboxGroup: CheckboxGroup,
   }
 }
 </script>
@@ -74,8 +108,18 @@ export default {
       .project-content-wrap{
         padding: 10px 0;
         .project-type{
+          margin-bottom: 10px;
           font-size: 16px;
           font-weight: 500;
+        }
+        .label{
+          font-size: 16px;
+          color: #444;
+        }
+        .note{
+          color: #999;
+          font-size: 14px;
+          margin-left: 5px;
         }
       }
     }
