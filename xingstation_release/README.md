@@ -4,24 +4,26 @@
 
 ## Build Setup
 
-``` bash
-# install dependencies
-npm install
+```bash
+# install dependencies 安装依赖
+不使用<del>npm install</del>
+只使用 yarn install
+yarn 使用方法参考 https://yarnpkg.com/zh-Hans/
 
 # serve with hot reload at localhost:8080
-npm run dev
+yarn run dev
 
 # build for production with minification
-npm run build
+yarn run build
 
 # build for production and view the bundle analyzer report
-npm run build --report
+yarn run build --report
 
 # run unit tests
-npm run unit
+yarn run unit
 
 # run all tests
-npm test
+yarn test
 ```
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
