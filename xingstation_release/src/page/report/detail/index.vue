@@ -155,6 +155,9 @@
               <el-form-item label="点位">
                   {{ scope.row.area_name }} {{scope.row.market_name}} {{scope.row.point_name}}
               </el-form-item>
+              <el-form-item label="历史节目">
+                  {{ scope.row.projects }}
+              </el-form-item>
               <el-form-item label="围观">
                 <span>{{ scope.row.looknum }}</span>
               </el-form-item>
@@ -168,7 +171,7 @@
                 <span>{{ scope.row.lovenum }}</span>
               </el-form-item>
               <el-form-item label="时间">
-                <span>{{ scope.row.created_at }}</span>
+                <span>{{ scope.row.min_date }} - {{scope.row.max_date}}</span>
               </el-form-item>
             </el-form>
           </template>
@@ -189,12 +192,9 @@
         </el-table-column>
         <el-table-column
           label="历史节目"
-          prop="project"
+          prop="projects"
           min-width="130"
           :show-overflow-tooltip="true">
-          <template slot-scope="props">
-            dd
-          </template>
         </el-table-column>
         <el-table-column
           label="围观"
@@ -225,7 +225,11 @@
         <el-table-column
           label="时间"
           min-width="120"
-          prop="created_at">
+          prop="created_at"
+          :show-overflow-tooltip="true">
+          <template slot-scope="props">
+            <span>{{ props.row.min_date }} - {{props.row.max_date}}</span>
+          </template>
         </el-table-column>
       </el-table>
       <div class="pagination-wrap">
