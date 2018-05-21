@@ -167,7 +167,7 @@
               <el-form-item label="拉新">
                 <span>{{ scope.row.lovenum }}</span>
               </el-form-item>
-              <el-form-item label="创建时间">
+              <el-form-item label="时间">
                 <span>{{ scope.row.created_at }}</span>
               </el-form-item>
             </el-form>
@@ -185,6 +185,15 @@
           :show-overflow-tooltip="true">
           <template slot-scope="props">
             {{ props.row.area_name }} {{props.row.market_name}} {{props.row.point_name}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="历史节目"
+          prop="project"
+          min-width="130"
+          :show-overflow-tooltip="true">
+          <template slot-scope="props">
+            dd
           </template>
         </el-table-column>
         <el-table-column
@@ -214,7 +223,7 @@
           :show-overflow-tooltip="true">
         </el-table-column>
         <el-table-column
-          label="创建时间"
+          label="时间"
           min-width="120"
           prop="created_at">
         </el-table-column>
