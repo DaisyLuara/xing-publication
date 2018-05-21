@@ -289,7 +289,11 @@ export default {
         }, {
           value: 'marketing',
           label: '营销成果数据'
+        },{
+          value: 'daily_average',
+          label: '日均数据'
         }
+        
       ],
       reportValue: 'point',
       area_id:'',
@@ -381,6 +385,9 @@ export default {
         },
         plotOptions: {
           area: {
+            dataLabels: {
+              enabled: true
+            },
             marker: {
               enabled: false,
               symbol: 'circle',
@@ -506,7 +513,6 @@ export default {
     this.setting.loading = true
     this.getSceneList()
     this.getAreaList()
-    
     this.allPromise()
   },
   computed:{

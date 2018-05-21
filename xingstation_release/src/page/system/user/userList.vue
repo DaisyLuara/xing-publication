@@ -4,7 +4,10 @@
     <div class="search-wrap">
       <el-form  :model="filters" :inline="true">
         <el-form-item label="">
-          <el-input v-model="filters.phone" style="width:200px" placeholder="请输入搜索的手机号"></el-input>
+          <el-input v-model="filters.phone" style="width:200px" placeholder="请输入搜索的手机号" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="">
+          <el-input v-model="filters.name" style="width:200px" placeholder="请输入搜索的名字" clearable></el-input>
         </el-form-item>
         <el-button @click="search" type="primary" size="small">搜索</el-button>
         <el-button @click="resetSearch" type="default" size="small">重置</el-button>
@@ -91,7 +94,8 @@ export default {
       let args = {
         include: 'roles',
         page: pageNum,
-        phone: this.filters.phone
+        phone: this.filters.phone,
+        name: this.filters.name
       }
       this.setting.loadingText = "拼命加载中"
       this.setting.loading = true;
