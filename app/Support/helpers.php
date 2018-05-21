@@ -92,7 +92,7 @@ if (!function_exists('handPointQuery')) {
         //按节目搜索 默认搜索所有节目
         if ($selectByAlias) {
             $alias = $request->alias ? $request->alias : 'all';
-            $builder->where('belong', '=', $alias);
+            $builder->where("$projectName", '=', $alias);
         } else {
             $builder->join('ar_product_list', 'ar_product_list.versionname', '=', "$table.$projectName");
         }
