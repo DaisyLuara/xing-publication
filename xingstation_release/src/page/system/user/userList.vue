@@ -165,6 +165,7 @@ export default {
     },
     resetSearch () {
       this.filters.phone = ''
+      this.filters.name = ''
       this.pagination.currentPage = 1;
       this.getUserList();
     },
