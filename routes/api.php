@@ -33,6 +33,7 @@ $api->version('v1', [
     ], function ($api) {
 
         $api->post('captchas', 'CaptchasController@store');// 图片验证码
+        $api->get('point_configs/{point_config}', 'PointConfigController@show');//点位配置
 
         //第三方集成
         $api->get('login/tower', 'TowerLoginController@redirectToProvider');
@@ -65,9 +66,6 @@ $api->version('v1', [
             $api->patch('user/read/notifications', 'NotificationsController@read');
 
             //数据统计
-            $api->get('stats', 'FaceCountController@index');
-            $api->get('detail', 'FaceCountController@detail');
-            $api->get('age_gender', 'FaceLogController@index');
 
             //广告投放
             $api->get('ad_launch', 'AdLaunchController@index');
@@ -103,11 +101,6 @@ $api->version('v1', [
             $api->get('push', 'PushController@index');
             $api->get('point/map', 'PointController@map');
 
-            //数据报表导出
-            $api->get('marketing_excel', 'ExcelController@marketingExcel');
-            $api->get('project_excel', 'ExcelController@projectExcel');
-            $api->get('point_excel', 'ExcelController@pointExcel');
-
             //产品
             $api->get('product', 'ProductController@index');
 
@@ -126,12 +119,13 @@ $api->version('v1', [
             //远程搜索
             $api->get('areas/query', 'QueryController@areaQuery');//区域搜索
             $api->get('markets/query', 'QueryController@marketQuery');//商场搜索
-            $api->get('points/query', ['middleware' => ['role:super-admin|admin'], 'uses' => 'QueryController@pointQuery']);//点位查询
-            $api->get('launches/tpl/query', ['middleware' => ['role:super-admin|admin'], 'uses' => 'QueryController@launchTplQuery']);//点位模板查询
+            $api->get('points/query', 'QueryController@pointQuery');//点位查询
+            $api->get('launches/tpl/query', 'QueryController@launchTplQuery');//点位模板查询
             $api->get('ad_trade/query', 'QueryController@adTradeQuery');//广告行业搜索
             $api->get('advertiser/query', 'QueryController@advertiserQuery');//广告主搜索
             $api->get('advertisement/query', 'QueryController@advertisementQuery');//广告搜索
             $api->get('projects/query', 'QueryController@projectQuery');
+            $api->get('scene/query', 'QueryController@sceneQueryIndex');
 
             // 权限设置
             $api->get('system/users', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminUsersController@index']);
@@ -155,8 +149,10 @@ $api->version('v1', [
             //团队
             $api->post('oauth/token', 'TowerController@refresh');
 
-            //图表
-            $api->post('chart_data', 'ChartDataController@index');
+            //数据统计
+            $api->get('stats', 'ChartDataController@index');//列表
+            $api->post('chart_data', 'ChartDataController@chart');//图表
+            $api->get('export', 'ExportController@store');
 
         });
     });

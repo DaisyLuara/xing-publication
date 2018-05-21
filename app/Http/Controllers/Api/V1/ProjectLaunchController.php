@@ -24,6 +24,13 @@ class ProjectLaunchController extends Controller
             });
         }
 
+        if ($request->scene_id) {
+            $scene_id = $request->scene_id;
+            $query->whereHas('point', function ($query) use ($scene_id) {
+                $query->where('sid', '=', $scene_id);
+            });
+        }
+
         if ($request->project_name) {
             $project_name = $request->project_name;
             $query->whereHas('project', function ($query) use ($project_name) {
@@ -57,15 +64,10 @@ class ProjectLaunchController extends Controller
 
     }
 
-    public function store(ProjectLaunchRequest $request, ProjectLaunch $projectLaunchLocal)
+    public function store(ProjectLaunchRequest $request, ProjectLaunch $projectLaunch)
     {
-
-        if (env('APP_ENV') != 'production') {
-            return $this->response->noContent();
-        }
-
         $launch = $request->all();
-        $query = $projectLaunchLocal->query();
+        $query = $projectLaunch->query();
 
         $oids = $launch['oids'];
         unset($launch['oids']);
@@ -77,12 +79,8 @@ class ProjectLaunchController extends Controller
         return $this->response->noContent();
     }
 
-    public function update(ProjectLaunchRequest $request, ProjectLaunch $projectLaunchLocal)
+    public function update(ProjectLaunchRequest $request, ProjectLaunch $projectLaunch)
     {
-
-        if (env('APP_ENV') != 'production') {
-            return $this->response->noContent();
-        }
 
         $launch = $request->all();
         $tvoids = $launch['tvoids'];
@@ -91,7 +89,7 @@ class ProjectLaunchController extends Controller
         unset($launch['oid']);
 
         foreach ($tvoids as $tvoid) {
-            $query = $projectLaunchLocal->query();
+            $query = $projectLaunch->query();
             $query->where(['tvoid' => $tvoid])->update($launch);
         }
 

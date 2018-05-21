@@ -180,6 +180,7 @@ export default {
     },
     adTradeChangeHandle() {
       this.adForm.advertiser = ''
+      this.adForm.advertisement = ''
       this.getAdvertiserList()
     },
     advertisementChangeHandle (){
@@ -219,6 +220,7 @@ export default {
     },
     areaChangeHandle() {
       this.adForm.market = ''
+      this.adForm.point = []
       this.getMarket(this.adForm.market)
     },
     getAreaList () {

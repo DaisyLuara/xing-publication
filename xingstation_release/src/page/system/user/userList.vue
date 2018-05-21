@@ -4,15 +4,12 @@
     <div class="search-wrap">
       <el-form  :model="filters" :inline="true">
         <el-form-item label="">
-          <el-input v-model="filters.phone" style="width:300px" placeholder="请输入搜索的手机号"></el-input>
+          <el-input v-model="filters.phone" style="width:200px" placeholder="请输入搜索的手机号"></el-input>
         </el-form-item>
-        <el-button @click="search" type="primary">搜索</el-button>
-        <el-button @click="resetSearch" type="default">重置</el-button>
+        <el-button @click="search" type="primary" size="small">搜索</el-button>
+        <el-button @click="resetSearch" type="default" size="small">重置</el-button>
       </el-form>
     </div>
-    <!-- <div class="actions-wrap">
-      <el-button size="small" type="success"  @click="linkToAddUser">新增用户</el-button>
-    </div> -->
     <div class="actions-wrap">
       <span class="label">
         用户数量: {{pagination.total}}

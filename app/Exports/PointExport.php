@@ -3,21 +3,19 @@
 namespace App\Exports;
 
 use DB;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 
-class PointExport implements FromCollection, WithStrictNullComparison, WithEvents
+class PointExport extends AbstractExport
 {
 
     public function __construct($request)
     {
         $this->startDate = $request->start_date;
         $this->endDate = $request->end_date;
-        $this->oid = $request->oid;
+        $this->pointId = $request->point_id;
+        $this->fileName = '点位数据';
     }
 
     public function collection()
@@ -26,7 +24,7 @@ class PointExport implements FromCollection, WithStrictNullComparison, WithEvent
             ->table('face_count_log as fcl')
             ->join('ar_product_list as apl', 'fcl.belong', '=', 'apl.versionname')
             ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
-            ->where('oid', '=', $this->oid)
+            ->where('oid', '=', $this->pointId)
             ->selectRaw('apl.name')
             ->groupBy('belong')
             ->get();
@@ -44,7 +42,7 @@ class PointExport implements FromCollection, WithStrictNullComparison, WithEvent
         $faceCount = DB::connection('ar')
             ->table('face_count_log as fcl')
             ->join('ar_product_list as apl', 'fcl.belong', '=', 'apl.versionname')
-            ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '$this->startDate' and '$this->endDate' and oid='$this->oid'")
+            ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '$this->startDate' and '$this->endDate' and oid='$this->pointId'")
             ->selectRaw("apl.name as name,date_format(fcl.date,'%Y-%m-%d') as date,sum(looknum) as looknum,sum(playernum) as playernum,sum(outnum) as outnum,sum(scannum) as scannum,sum(lovenum) as lovenum")
             ->groupBy(DB::raw("belong,date_format(fcl.date,'%Y-%m-%d')"));
 
@@ -70,7 +68,7 @@ class PointExport implements FromCollection, WithStrictNullComparison, WithEvent
         $totalByDay = DB::connection('ar')
             ->table('face_count_log as fcl')
             ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
-            ->where('oid', '=', $this->oid)
+            ->where('oid', '=', $this->pointId)
             ->where('belong', '<>', 'all')
             ->groupBy('belong')
             ->selectRaw("sum(looknum) as looknum,sum(playernum) as playernum,sum(outnum) as outnum,sum(scannum) as scannum,sum(lovenum) as lovenum")
@@ -78,7 +76,7 @@ class PointExport implements FromCollection, WithStrictNullComparison, WithEvent
         $total = DB::connection('ar')
             ->table('face_count_log as fcl')
             ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
-            ->where('oid', '=', $this->oid)
+            ->where('oid', '=', $this->pointId)
             ->where('belong', '<>', 'all')
             ->selectRaw("sum(looknum) as looknum,sum(playernum) as playernum,sum(outnum) as outnum,sum(scannum) as scannum,sum(lovenum) as lovenum")
             ->get();
