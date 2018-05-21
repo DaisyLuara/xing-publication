@@ -58,7 +58,40 @@
             </el-form-item>
             <el-form-item prop="type">
               <h4 class="project-type">选择项目成员</h4>
-              <span class="label"></span>
+              <span class="note">管理员可以邀请和移除项目成员，只有被邀请的团队成员才能访问该项目的信息。</span>
+               <el-checkbox-group v-model="form.projectMembers">
+                  <el-checkbox label="陈重" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">陈重</span></el-checkbox>
+                  <el-checkbox label="海阔天空" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">海阔天空</span></el-checkbox>
+                  <el-checkbox label="fanyingzhao" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">fanyingzhao</span></el-checkbox>
+                  <el-checkbox label="倪一旻" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">倪一旻</span></el-checkbox>
+                  <el-checkbox label="钱雅婷" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">钱雅婷</span></el-checkbox>
+                  <el-checkbox label="秦洁莲" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">秦洁莲</span></el-checkbox>
+                  <el-checkbox label="陈重" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">陈重</span></el-checkbox>
+                  <el-checkbox label="海阔天空" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">海阔天空</span></el-checkbox>
+                  <el-checkbox label="fanyingzhao" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">fanyingzhao</span></el-checkbox>
+                  <el-checkbox label="倪一旻" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">倪一旻</span></el-checkbox>
+                  <el-checkbox label="钱雅婷" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">钱雅婷</span></el-checkbox>
+                  <el-checkbox label="秦洁莲" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">秦洁莲</span></el-checkbox>
+                  <el-checkbox label="陈重" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">陈重</span></el-checkbox>
+                  <el-checkbox label="海阔天空" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">海阔天空</span></el-checkbox>
+                  <el-checkbox label="fanyingzhao" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">fanyingzhao</span></el-checkbox>
+                  <el-checkbox label="倪一旻" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">倪一旻</span></el-checkbox>
+                  <el-checkbox label="钱雅婷" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">钱雅婷</span></el-checkbox>
+                  <el-checkbox label="秦洁莲" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">秦洁莲</span></el-checkbox>
+                  <el-checkbox label="陈重" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">陈重</span></el-checkbox>
+                  <el-checkbox label="海阔天空" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">海阔天空</span></el-checkbox>
+                  <el-checkbox label="fanyingzhao" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">fanyingzhao</span></el-checkbox>
+                  <el-checkbox label="倪一旻" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">倪一旻</span></el-checkbox>
+                  <el-checkbox label="钱雅婷" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">钱雅婷</span></el-checkbox>
+                  <el-checkbox label="秦洁莲" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">秦洁莲</span></el-checkbox>
+                  <el-checkbox label="陈重" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">陈重</span></el-checkbox>
+                  <el-checkbox label="海阔天空" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">海阔天空</span></el-checkbox>
+                  <el-checkbox label="fanyingzhao" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">fanyingzhao</span></el-checkbox>
+                  <el-checkbox label="倪一旻" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">倪一旻</span></el-checkbox>
+                  <el-checkbox label="钱雅婷" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">钱雅婷</span></el-checkbox>
+                  <el-checkbox label="秦洁莲" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">秦洁莲</span></el-checkbox>
+
+                </el-checkbox-group>
             </el-form-item>
           </el-form>
         </div>
