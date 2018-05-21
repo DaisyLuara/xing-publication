@@ -16,7 +16,7 @@
             总数:{{pagination.total}} 
           </span>
         </div>
-        <el-table :data="tableData" style="width: 100%" highlight-current-row >
+        <el-table :data="tableData" style="width: 100%" >
           <el-table-column type="expand">
             <template slot-scope="scope">
               <el-form label-position="left" inline class="demo-table-expand">
