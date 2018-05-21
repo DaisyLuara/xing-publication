@@ -19,6 +19,9 @@ class FaceCountTransformer extends TransformerAbstract
             'lovenum' => $faceCount->lovenum,
             'outnum' => $faceCount->outnum,
             'scannum' => $faceCount->scannum,
+            'max_date' => date('Y-m-d', $faceCount->max_date / 1000),
+            'min_date' => date('Y-m-d', $faceCount->min_date / 1000),
+            'projects' => (string)$faceCount->projects,
             'created_at' => $faceCount->created_at->toDateTimeString(),
         ];
     }

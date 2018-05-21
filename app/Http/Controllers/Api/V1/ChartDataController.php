@@ -17,10 +17,13 @@ class ChartDataController extends Controller
     {
 
         $query = FaceCount::query();
+        $table = $query->getModel()->getTable();
         $this->handleQuery($request, $query);
 
-        $faceCount = $query->selectRaw('fclid as id,looknum,playernum,lovenum,outnum,scannum,avr_official.name as point_name,avr_official_market.name as market_name,avr_official_area.name as area_name,face_count_log.date as created_at')
-            ->where('fclid', '>', 0)
+        $faceCount = $query->selectRaw("max($table.clientdate) as max_date,min($table.clientdate) as min_date,fclid as id,looknum,playernum,lovenum,outnum,scannum,avr_official.name as point_name,avr_official_market.name as market_name,avr_official_area.name as area_name,face_count_log.date as created_at")
+            ->selectRaw("(SELECT GROUP_CONCAT(DISTINCT (ar_product_list.name)) FROM face_count_log AS fcl2 INNER JOIN ar_product_list ON ar_product_list.versionname = fcl2.belong WHERE fcl2.oid = $table.oid AND date_format(fcl2.date, '%Y-%m-%d') BETWEEN $request->start_date AND '$request->end_date' GROUP BY fcl2.oid) as projects ")
+            ->where("$table.fclid", '>', 0)
+            ->groupBy("$table.oid")
             ->orderBy('avr_official_area.areaid', 'desc')
             ->orderBy('avr_official_market.marketid', 'desc')
             ->orderBy('avr_official.oid', 'desc')
@@ -286,56 +289,18 @@ class ChartDataController extends Controller
 
     private function handleQuery(Request $request, Builder $query, $selectByAlias = true)
     {
+        $user = $this->user();
         $table = $query->getModel()->getTable();
-        //查询时间范围
-        $startDate = $request->start_date;
-        $endDate = $request->end_date;
+        $arUserID = $request->home_page ? 0 : getArUserID($user, $request);
+        handPointQuery($request, $query, $arUserID);
 
-        //按节目搜索 默认搜索所有节目
+        //节目搜索-注意业务逻辑
         if ($selectByAlias) {
             $alias = $request->alias ? $request->alias : 'all';
-            $query->where('belong', '=', $alias);
+            $query->where("belong", '=', $alias);
         } else {
             $query->join('ar_product_list', 'ar_product_list.versionname', '=', "$table.belong");
         }
-
-        //按指标查询
-        if ($request->index) {
-            $query->selectRaw("sum(" . $request->index . ") as count");
-        }
-
-        //按账号查询
-        $user = $this->user();
-        $arUserId = $request->home_page ? 0 : getArUserID($user, $request);
-        if ($arUserId) {
-            $query->join('admin_per_oid', 'admin_per_oid.oid', '=', "$table.oid")
-                ->where('admin_per_oid.uid', '=', $arUserId);
-        }
-
-        //按场景查询
-        if ($request->scene_id) {
-            $query->where('avr_official.sid', '=', $request->scene_id);
-        }
-
-        //按区域查询
-        if ($request->area_id) {
-            $query->where('avr_official.areaid', '=', $request->area_id);
-        }
-
-        //按商场查询
-        if ($request->market_id) {
-            $query->where('avr_official.marketid', '=', $request->market_id);
-        }
-
-        //按点位查询
-        if ($request->point_id) {
-            $query->where('avr_official.oid', '=', $request->point_id);
-        }
-
-        $query->join('avr_official', 'avr_official.oid', '=', "$table.oid")
-            ->join('avr_official_market', 'avr_official_market.marketid', '=', 'avr_official.marketid')
-            ->join('avr_official_area', 'avr_official_area.areaid', '=', 'avr_official.areaid')
-            ->whereRaw("date_format($table.date, '%Y-%m-%d') BETWEEN '$startDate' AND '$endDate' ");
     }
 
 }
