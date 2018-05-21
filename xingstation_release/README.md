@@ -6,7 +6,7 @@
 
 ```bash
 # install dependencies 安装依赖
-不使用<del>npm install</del>
+不使用 npm install
 只使用 yarn install
 yarn 使用方法参考 https://yarnpkg.com/zh-Hans/
 
