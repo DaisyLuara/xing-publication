@@ -155,6 +155,9 @@
               <el-form-item label="点位">
                   {{ scope.row.area_name }} {{scope.row.market_name}} {{scope.row.point_name}}
               </el-form-item>
+              <el-form-item label="历史节目">
+                  {{ scope.row.projects }}
+              </el-form-item>
               <el-form-item label="围观">
                 <span>{{ scope.row.looknum }}</span>
               </el-form-item>
@@ -167,8 +170,8 @@
               <el-form-item label="拉新">
                 <span>{{ scope.row.lovenum }}</span>
               </el-form-item>
-              <el-form-item label="创建时间">
-                <span>{{ scope.row.created_at }}</span>
+              <el-form-item label="时间">
+                <span>{{ scope.row.min_date }} - {{scope.row.max_date}}</span>
               </el-form-item>
             </el-form>
           </template>
@@ -186,6 +189,12 @@
           <template slot-scope="props">
             {{ props.row.area_name }} {{props.row.market_name}} {{props.row.point_name}}
           </template>
+        </el-table-column>
+        <el-table-column
+          label="历史节目"
+          prop="projects"
+          min-width="130"
+          :show-overflow-tooltip="true">
         </el-table-column>
         <el-table-column
           label="围观"
@@ -214,9 +223,13 @@
           :show-overflow-tooltip="true">
         </el-table-column>
         <el-table-column
-          label="创建时间"
+          label="时间"
           min-width="120"
-          prop="created_at">
+          prop="created_at"
+          :show-overflow-tooltip="true">
+          <template slot-scope="props">
+            <span>{{ props.row.min_date }} - {{props.row.max_date}}</span>
+          </template>
         </el-table-column>
       </el-table>
       <div class="pagination-wrap">
@@ -289,11 +302,11 @@ export default {
         }, {
           value: 'marketing',
           label: '营销成果数据'
-        },{
-          value: 'daily_average',
-          label: '日均数据'
         }
-        
+        // ,{
+        //   value: 'daily_average',
+        //   label: '日均数据'
+        // }
       ],
       reportValue: 'point',
       area_id:'',
