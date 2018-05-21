@@ -118,7 +118,7 @@ export default {
       },
       pointOptions : {
         title: {
-          text: '点位趋势',
+          text: '围观人数',
           style: {'fontSize': '20px'},
           align: 'left'
         },
@@ -158,10 +158,14 @@ export default {
         },
         plotOptions: {
           area: {
+            dataLabels: {
+              enabled: true
+            },
             marker: {
-              enabled: false,
+              enabled: true,
               symbol: 'circle',
               radius: 2,
+              lineWidth: 1,
               states: {
                 hover: {
                   enabled: true
@@ -172,16 +176,6 @@ export default {
         },
         series: [{
           name: '围观人数',
-        }, {
-          name: '',
-          type: 'area',
-          lineWidth: 1,
-          color: '#e09f91',
-          fillOpacity: 0.5,
-          zIndex: 0,
-          marker: {
-            enabled: false
-          }
         }]
       },
       pointTenOptions: {
@@ -529,7 +523,7 @@ export default {
               fillOpacity: 0.5,
               zIndex: 0,
               marker: {
-                enabled: false
+                enabled: true
               },
               data: lookersData,
             },
