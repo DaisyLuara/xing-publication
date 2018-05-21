@@ -22,8 +22,8 @@
             <el-form-item prop="type">
               <h4 class="project-type">项目类型</h4>
               <el-radio-group v-model="form.type">
-                <div>
-                  <el-radio label="看板项目" name="type"></el-radio>
+                <div >
+                  <el-radio label="看板项目" name="type" style="font-size: 18px;"></el-radio>
                 </div>
                 <div>
                   <el-radio label="标准项目" name="type"></el-radio>
