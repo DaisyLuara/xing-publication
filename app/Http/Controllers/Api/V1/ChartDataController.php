@@ -286,56 +286,9 @@ class ChartDataController extends Controller
 
     private function handleQuery(Request $request, Builder $query, $selectByAlias = true)
     {
-        $table = $query->getModel()->getTable();
-        //查询时间范围
-        $startDate = $request->start_date;
-        $endDate = $request->end_date;
-
-        //按节目搜索 默认搜索所有节目
-        if ($selectByAlias) {
-            $alias = $request->alias ? $request->alias : 'all';
-            $query->where('belong', '=', $alias);
-        } else {
-            $query->join('ar_product_list', 'ar_product_list.versionname', '=', "$table.belong");
-        }
-
-        //按指标查询
-        if ($request->index) {
-            $query->selectRaw("sum(" . $request->index . ") as count");
-        }
-
-        //按账号查询
         $user = $this->user();
-        $arUserId = $request->home_page ? 0 : getArUserID($user, $request);
-        if ($arUserId) {
-            $query->join('admin_per_oid', 'admin_per_oid.oid', '=', "$table.oid")
-                ->where('admin_per_oid.uid', '=', $arUserId);
-        }
-
-        //按场景查询
-        if ($request->scene_id) {
-            $query->where('avr_official.sid', '=', $request->scene_id);
-        }
-
-        //按区域查询
-        if ($request->area_id) {
-            $query->where('avr_official.areaid', '=', $request->area_id);
-        }
-
-        //按商场查询
-        if ($request->market_id) {
-            $query->where('avr_official.marketid', '=', $request->market_id);
-        }
-
-        //按点位查询
-        if ($request->point_id) {
-            $query->where('avr_official.oid', '=', $request->point_id);
-        }
-
-        $query->join('avr_official', 'avr_official.oid', '=', "$table.oid")
-            ->join('avr_official_market', 'avr_official_market.marketid', '=', 'avr_official.marketid')
-            ->join('avr_official_area', 'avr_official_area.areaid', '=', 'avr_official.areaid')
-            ->whereRaw("date_format($table.date, '%Y-%m-%d') BETWEEN '$startDate' AND '$endDate' ");
+        $arUserID = $request->home_page ? 0 : getArUserID($user, $request);
+        handPointQuery($request, $query, $arUserID, 'belong', $selectByAlias);
     }
 
 }

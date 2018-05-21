@@ -12,24 +12,24 @@ class PushController extends Controller
     {
         $query = $push->query();
 
+        $user = $this->user();
+        $arUserID = $request->home_page ? 0 : getArUserID($user, $request);
+        handPointQuery($request, $query, $arUserID, 'alias', false);
+
         if ($request->machine_status) {
             $machine_status = $request->machine_status;
             if ($machine_status == 'online') {
-                $query->whereNotIn('oid', [30, 31, 16, 177])->where('state', '=', '0');
+                $query->whereNotIn('push.oid', [30, 31, 16, 177])->where('state', '=', '0');
             } else if ($machine_status == 'cp') {
-                $query->whereNotIn('oid', [30, 31, 16, 177])->where('state', '=', -1);
+                $query->whereNotIn('push.oid', [30, 31, 16, 177])->where('state', '=', -1);
             } elseif ($machine_status == 'tmp') {
-                $query->whereNotIn('oid', [30, 31, 16, 177])->where('state', '>', 0);
+                $query->whereNotIn('push.oid', [30, 31, 16, 177])->where('state', '>', 0);
             } elseif ($machine_status == 'dev') {
-                $query->whereIn('oid', [30, 31, 16, 177]);
+                $query->whereIn('push.oid', [30, 31, 16, 177]);
             }
         }
 
-        $pushes = $query->join('avr_official', 'avr_official.oid', '=', 'push.oid')
-            ->join('avr_official_market', 'avr_official_market.marketid', '=', 'avr_official.marketid')
-            ->join('avr_official_area', 'avr_official_area.areaid', '=', 'avr_official.areaid')
-            ->join('ar_product_list', 'ar_product_list.versionname', '=', 'push.alias')
-            ->where('push.oid', '>', 0)
+        $pushes = $query->where('push.oid', '>', 0)
             ->where('avr_official.visiable', '=', 1)
             ->whereNotIn('push.alias', ['star', 'shop', 'agent'])
             ->orderBy('avr_official.areaid', 'desc')
