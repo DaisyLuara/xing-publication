@@ -165,7 +165,7 @@
                 <span>{{ scope.row.lovenum }}</span>
               </el-form-item>
               <el-form-item label="扫码率">
-                <span>扫码/生成数：{{ scope.row.scannum }} / {{ scope.row.outnum }} 扫码率：{{scope.row.outnum !== 0 ? new Number(scope.row.scannum / scope.row.outnum ).toFixed(1): 0 }}%</span>
+                <span>扫码/生成数：{{ scope.row.scannum }} / {{ scope.row.outnum }} 扫码率：{{scope.row.outnum !== 0 ? new Number((scope.row.scannum / scope.row.outnum )*100).toFixed(1): 0 }}%</span>
               </el-form-item>
               <el-form-item label="创建时间">
                 <span>{{ scope.row.created_at }}</span>
@@ -210,7 +210,7 @@
           min-width="120"
           :show-overflow-tooltip="true">
           <template slot-scope="props">
-            <span>扫码/生成数：{{ props.row.scannum }} / {{ props.row.outnum }} <br/> 扫码率：{{props.row.outnum !== 0 ? new Number(props.row.scannum / props.row.outnum ).toFixed(1): 0}}%</span>
+            <span>扫码/生成数：{{ props.row.scannum }} / {{ props.row.outnum }} <br/> 扫码率：{{props.row.outnum !== 0 ? new Number((props.row.scannum / props.row.outnum) *100).toFixed(1): 0}}%</span>
           </template>
         </el-table-column>
         <el-table-column
