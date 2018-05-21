@@ -369,8 +369,10 @@ export default {
     adTradeChangeHandle(type) {
       if(type === 'edit') {
         this.adForm.advertiser_id = ''
+        this.adForm.advertisement_id = ''
         } else {
         this.adSearchForm.advertiser_id = ''
+        this.adSearchForm.advertisement_id = ''
       }
       this.getAdvertiserList(type)
     },
@@ -437,7 +439,7 @@ export default {
     },
     areaChangeHandle() {
       this.adSearchForm.market_id = ''
-      this.getMarket(this.adSearchForm.market)
+      this.getMarket()
     },
     getAreaList () {
       return search.getAeraList(this).then((response) => {
@@ -476,7 +478,7 @@ export default {
       return search.getMarketList(this,args).then((response) => {
         this.marketList = response.data
         if(this.marketList.length == 0) {
-          this.adSearchForm.market = ''
+          this.adSearchForm.market_id = ''
           this.adSearchForm.marketList = []
         }
         this.searchLoading = false
@@ -632,6 +634,8 @@ export default {
             this.editVisible = false
             this.editCondition.conditionList = []
           }).catch((err) => {
+            this.editVisible = false
+            this.editCondition.conditionList = []
             this.loading = false
             console.log(err)
           })

@@ -1,5 +1,6 @@
 import {router} from '../main'
 const CHART_API = '/api/chart_data'
+const EXCEL_API = '/api/export'
 const HOST = process.env.SERVER_URL
 
 export default {
@@ -12,4 +13,13 @@ export default {
       })
     })
   },
+  getExcelData(context, args) {
+    return new Promise(function(resolve, reject){
+      context.$http.get(HOST + EXCEL_API, {params: args}).then(response => {
+        resolve(response.data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  }
 }

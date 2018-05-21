@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Scopes\FaceCountScope;
+use App\Scopes\ExceptPointsScope;
 
 class FaceCount extends Model
 {
@@ -12,7 +12,7 @@ class FaceCount extends Model
 
     public function point()
     {
-        return $this->hasOne(Point::class, 'oid', 'oid');
+        return $this->belongsTo(Point::class, 'oid', 'oid');
     }
 
     public function project()
@@ -28,7 +28,7 @@ class FaceCount extends Model
     protected static function boot()
     {
         parent::boot();
-        static::addGlobalScope(new FaceCountScope());
+        static::addGlobalScope(new ExceptPointsScope());
     }
 
 }
