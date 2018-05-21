@@ -119,7 +119,8 @@
                   <span style="color: rgb(93, 217, 49)">{{ scope.row.networkDate }}</span>
                 </el-form-item>
                 <el-form-item label="屏幕状态">
-                  <span style="color: rgb(93, 217, 49)">{{ scope.row.screenStatus == 0 ? '关闭'  : '开启'}}</span>
+                  <span v-if="scope.row.screenStatus==1" style="color: rgb(93, 217, 49)">开启</span>
+                  <span v-if="scope.row.screenStatus==0" style="color: rgb(126, 8, 0);">关闭</span>
                 </el-form-item>
                 <el-form-item label="登录时间">
                   <span>{{ scope.row.loginDate }}</span>
@@ -188,7 +189,7 @@
             min-width="80">
             <template slot-scope="scope">
               <span v-if="scope.row.screenStatus==1" style="color: rgb(93, 217, 49)">开启</span>
-              <span v-if="scope.row.screenStatus==0" style="color: rgb(93, 217, 49)">关闭</span>
+              <span v-if="scope.row.screenStatus==0" style="color: rgb(126, 8, 0);">关闭</span>
             </template>
           </el-table-column>
           <el-table-column
