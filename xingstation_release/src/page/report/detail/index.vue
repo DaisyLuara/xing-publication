@@ -302,11 +302,11 @@ export default {
         }, {
           value: 'marketing',
           label: '营销成果数据'
-        },{
-          value: 'daily_average',
-          label: '日均数据'
         }
-        
+        // ,{
+        //   value: 'daily_average',
+        //   label: '日均数据'
+        // }
       ],
       reportValue: 'point',
       area_id:'',
