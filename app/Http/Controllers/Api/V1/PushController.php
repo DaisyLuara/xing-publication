@@ -14,7 +14,7 @@ class PushController extends Controller
 
         $user = $this->user();
         $arUserID = $request->home_page ? 0 : getArUserID($user, $request);
-        handPointQuery($request, $query, $arUserID, 'alias');
+        handPointQuery($request, $query, $arUserID);
 
         if ($request->machine_status) {
             $machine_status = $request->machine_status;
@@ -27,6 +27,10 @@ class PushController extends Controller
             } elseif ($machine_status == 'dev') {
                 $query->whereIn('push.oid', [30, 31, 16, 177]);
             }
+        }
+
+        if ($request->alias) {
+            $query->where('alias', '=', $request->alias);
         }
 
         $pushes = $query->join('ar_product_list', 'ar_product_list.versionname', '=', "push.alias")

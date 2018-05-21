@@ -79,7 +79,7 @@ if (!function_exists('distance')) {
  * 处理点位查询
  */
 if (!function_exists('handPointQuery')) {
-    function handPointQuery(Request $request, Builder $builder, $arUserID, $projectName, $selectByAlias = true)
+    function handPointQuery(Request $request, Builder $builder, $arUserID)
     {
         $table = $builder->getModel()->getTable();
         //查询时间范围
@@ -87,14 +87,6 @@ if (!function_exists('handPointQuery')) {
             $startDate = $request->start_date;
             $endDate = $request->end_date;
             $builder->whereRaw("date_format($table.date, '%Y-%m-%d') BETWEEN '$startDate' AND '$endDate' ");
-        }
-
-        //按节目搜索 默认搜索所有节目
-        if ($selectByAlias) {
-            $alias = $request->alias ? $request->alias : 'all';
-            $builder->where("$projectName", '=', $alias);
-        } else {
-            $builder->join('ar_product_list', 'ar_product_list.versionname', '=', "$table.$projectName");
         }
 
         //按指标查询
