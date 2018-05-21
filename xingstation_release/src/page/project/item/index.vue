@@ -407,6 +407,7 @@ export default {
       this.filters.market = ''
       this.filters.area = ''
       this.filters.name = ''
+      this.filters.scene = ''
       this.pagination.currentPage = 1;
       this.editCondition.conditionList = []
       this.getProjectList();
