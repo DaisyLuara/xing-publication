@@ -13,10 +13,10 @@ let router = {
   children: [
     {
       path: 'detail',
-      name: '数据总况',
+      name: '详细数据',
       redirect: 'detail/index',
       meta: {
-        title: '数据总况',
+        title: '详细数据',
         permission: ''
       },
       component: () =>
@@ -24,9 +24,9 @@ let router = {
       children: [
         {
           path: 'index',
-          name: '数据详情',
+          name: '详细数据展示',
           meta: {
-            title: '数据详情',
+            title: '详细数据展示',
             permission: ''
           },
           component: () =>
