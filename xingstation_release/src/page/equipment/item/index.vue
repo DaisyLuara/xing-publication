@@ -1,6 +1,94 @@
 <template>
   <div class="root">
     <div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
+      <div class="search-wrap">
+        <el-form ref="searchForm" :model="searchForm"  class="search-form">
+          <el-row :gutter="20">
+            <el-col :span="8" v-if="showUser">
+              <el-form-item label="" prop="user_id" >
+                <el-select v-model="searchForm.user_id" filterable placeholder="请搜索账号" remote :remote-method="getUser" clearable :loading="searchLoading" @change="userChangeHandle">
+                  <el-option
+                    v-for="item in userList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="" prop="project_id">
+                <el-select v-model="searchForm.project_id" filterable placeholder="请搜索节目" remote :remote-method="getProject" :loading="searchLoading" clearable>
+                  <el-option
+                    v-for="item in projectList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.alias">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="" prop="type_id">
+                <el-select v-model="searchForm.type_id" placeholder="请选择分类" filterable  clearable>
+                  <el-option
+                    v-for="item in typeList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="8">
+              <el-form-item label="" prop="area_id">
+                <el-select v-model="searchForm.area_id" placeholder="请选择区域" filterable  clearable  @change="areaChangeHandle">
+                  <el-option
+                    v-for="item in areaList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="" prop="market_id">
+                <el-select v-model="searchForm.market_id" placeholder="请搜索商场" filterable :loading="searchLoading" remote :remote-method="getMarket"  @change="marketChangeHandle" clearable>
+                  <el-option
+                    v-for="item in marketList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="" prop="point_id">
+                <el-select v-model="searchForm.point_id" placeholder="请选择点位"   filterable :loading="searchLoading" clearable>
+                  <el-option
+                    v-for="item in pointList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="10">
+              <el-form-item>
+                <el-button type="primary" @click="search('searchForm')" size="small"> 搜索</el-button>
+                <el-button @click="resetSearch('searchForm')" size="small">重置</el-button>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+      </div>
       <div class="item-content-wrap">
         <div class="total-wrap">
           <span class="label">
@@ -121,14 +209,27 @@
 
 <script>
 import equipment from 'service/equipment'
+import search from 'service/search'
 
-import { Button, Input, Table, TableColumn, Pagination, Form, FormItem, MessageBox, DatePicker} from 'element-ui'
+import { Button, Input, Table, TableColumn, Pagination, Form, FormItem, MessageBox, Row, Col, Select, Option} from 'element-ui'
 
 export default {
   data () {
     return {
-      filters: {
-        name: ''
+      searchLoading: false,
+      userList: [],
+      projectList: [],
+      areaList: [],
+      marketList: [],
+      pointList: [],
+      typeList: [],      
+      searchForm: {
+        type_id:'',
+        area_id: '',
+        market_id: '',
+        point_id: '',
+        user_id: '',
+        project_id: '',
       },
       setting: {
         loading: false,
@@ -148,17 +249,164 @@ export default {
   },
   mounted() {
   },
+  computed: {
+    showUser(){
+      let user_info = JSON.parse(localStorage.getItem('user_info'))
+      let roles = user_info.roles.data[0].name
+      return roles == 'user' ? false : true
+    },
+  },
   created () {
+    this.getAreaList()
     this.gettEquipmentList();
   },
   methods: {
+    getUser(query) {
+      let args = {
+        name: query
+      }
+      if (query !== '') {
+        this.searchLoading = true
+          return search.getUserList(this, args).then((response) => {
+            this.userList = response.data
+            if(this.userList.length == 0) {
+            }
+            this.searchLoading = false
+          }).catch(err => {
+            console.log(err)
+            this.searchLoading = false
+          })
+      }else{
+        this.searchForm.user_id = ''
+        this.userList = []
+        return false
+      }
+    },
+    getAreaList () {
+      return search.getAeraList(this).then((response) => {
+       let data = response.data
+       this.areaList = data
+      }).catch(error => {
+        console.log(error)
+      this.setting.loading = false;
+      })
+    },
+    getProject(query) {
+      let args = {
+        ar_user_id: this.searchForm.user_id,
+        name: query
+      }
+      if(this.showUser){
+        this.searchLoading = true
+        if(!this.searchForm.user_id){
+          delete args.ar_user_id
+        } 
+        return search.getProjectList(this,args).then((response) => {
+          this.projectList = response.data
+          this.searchLoading = false
+        }).catch(err => {
+          console.log(err)
+          this.searchLoading = false
+        })
+      } else {
+          let user_info = JSON.parse(localStorage.getItem('user_info'))
+          this.searchForm.user_id = user_info.ar_user_id
+          args.ar_user_id = this.searchForm.user_id
+          this.searchLoading = true
+          return search.getProjectList(this,args).then((response) => {
+            this.projectList = response.data
+            this.searchLoading = false
+          }).catch(err => {
+            console.log(err)
+            this.searchLoading = false
+          })
+       }
+    },
+    getMarket(query) {
+      this.searchLoading = true
+      let args = {
+        name: query,
+        include: 'area',
+        area_id: this.searchForm.area_id
+      }
+      return search.getMarketList(this,args).then((response) => {
+        this.marketList = response.data
+        if(this.marketList.length == 0) {
+          this.searchForm.market_id = ''
+          this.marketList = []
+        }
+        this.searchLoading = false
+      }).catch(err => {
+        console.log(err)
+        this.searchLoading = false
+      })
+    },
+    getPoint() {
+      let args = {
+        include: 'market',
+        market_id: this.searchForm.market_id
+      }
+      this.searchLoading = true
+      return search.gePointList(this, args).then((response) => {
+        this.pointList = response.data
+        this.searchLoading = false
+      }).catch(err => {
+        this.searchLoading = false
+        console.log(err)
+      })
+    },
+    userChangeHandle(){
+      this.searchForm.project_id = ''
+      if(this.searchForm.user_id) {
+        this.getProject('')
+      }
+    },
+    areaChangeHandle() {
+      this.searchForm.market_id = ''
+      this.searchForm.point_id = ''
+      this.getMarket()
+    },
+    marketChangeHandle() {
+      this.searchForm.point_id = ''
+      this.getPoint()
+    },
+    search() {
+      this.gettEquipmentList()
+    },
+    resetSearch(formName) {
+      this.$refs[formName].resetFields();
+    },
     gettEquipmentList () {
       this.setting.loadingText = "拼命加载中"
       this.setting.loading = true;
-      let searchArgs = {
+      let args = {
         page : this.pagination.currentPage,
-        }
-      equipment.gettEquipmentList(this, searchArgs).then((response) => {
+        market_id: this.searchForm.market_id,
+        area_id: this.searchForm.area_id,
+        point_id: this.searchForm.point_id,
+        alias: this.searchForm.project_id,
+        ar_user_id: this.searchForm.user_id,
+        type: this.searchForm.type_id
+      }
+      if(!this.searchForm.project_id) {
+        delete args.alias
+      }
+      if(!this.searchForm.user_id) {
+        delete args.ar_user_id
+      }
+      if(!this.searchForm.type_id) {
+        delete args.type
+      }
+      if(!this.searchForm.market_id) {
+        delete args.market_id
+      }
+      if(!this.searchForm.area_id) {
+        delete args.area_id
+      }
+      if(!this.searchForm.point_id) {
+        delete args.point_id
+      }
+      equipment.gettEquipmentList(this, args).then((response) => {
        let data = response.data
        this.tableData = data
        this.tableData.forEach(function (value) {
@@ -179,8 +427,11 @@ export default {
     },
   },
   components: {
+    "el-row": Row,
+    "el-col": Col,
     "el-table": Table,
-    "el-date-picker": DatePicker,
+    "el-select": Select,
+    "el-option": Option,
     "el-table-column":  TableColumn,
     "el-button": Button,
     "el-input": Input,
@@ -196,6 +447,32 @@ export default {
     font-size: 14px;
     color: #5E6D82;
     .item-list-wrap{
+      .search-wrap{
+        padding: 30px;
+        background: #fff;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        font-size: 16px;
+        align-items: center;
+        .el-form-item{
+          margin-bottom: 10px;
+        }
+        .el-select{
+          width: 200px;
+        }
+        .warning{
+          background: #ebf1fd;
+          padding: 8px;
+          margin-left: 10px;
+          color: #444;
+          font-size: 12px;
+          i{
+            color: #4a8cf3;
+            margin-right: 5px;
+          }
+        }
+      }
       background: #fff;
       padding: 30px;
       .el-form-item{
