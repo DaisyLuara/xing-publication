@@ -10,6 +10,7 @@ namespace app\Listeners;
 
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Events\Dispatcher;
+use Log;
 
 class UserEventSubscriber
 {
@@ -20,6 +21,7 @@ class UserEventSubscriber
     public function onUserLogin($event)
     {
         $user = $event->user;
+        Log::info('on_user_login', ['user' => $user]);
 
         //刷新tower access token
         $userToken = Socialite::driver('tower')

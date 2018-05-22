@@ -46,7 +46,10 @@ class AuthorizationsController extends Controller
             return $this->response->errorUnauthorized('用户名或密码错误');
         }
 
-        event(new Login($this->user(), false));
+        $user = Auth::guard('api')->user();
+        if ($user->tower_access_token && $user->tower_refresh_token) {
+            event(new Login($user, false));
+        }
 
         return $this->response->array([
             'access_token' => $token,
