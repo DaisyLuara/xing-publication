@@ -15,14 +15,9 @@ class ActivityLogController extends Controller
         $user = $this->user();
         $query = $activity->query();
         if (!$user->isAdmin()) {
-            $query->whereHas('causer', function ($query) use ($user) {
-                $query->where('causer_id', '=', $user->id);
-            });
+            $query->where('causer_id', '=', $user->id);
         }
 
-        /**
-         * @todo 优化
-         */
         if ($request->causer_name) {
             $causerName = $request->causer_name;
             $query->whereHas('causer', function ($query) use ($causerName) {
