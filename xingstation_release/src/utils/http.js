@@ -29,8 +29,8 @@ function VueAxios(Vue) {
       config.headers['Authorization'] = 'Bearer ' + auth.getToken();
       return config;
     } else if(config.url.includes('tower')){
-      config.headers['Authorization'] = 'Bearer ' + auth.getTowerAccessToken();
-      // config.headers['Authorization'] = 'Bearer e36edf86cac4024f163936a3b8eb3b4223d7f4f3316712a08b33d9a4ece5c406'
+      // config.headers['Authorization'] = 'Bearer ' + auth.getTowerAccessToken();
+      config.headers['Authorization'] = 'Bearer ba597e8de59f7ce0083b34b454c5ec6cdd5eff6e4cf98994d699d181b0e759b0'
       return config;
     }else{
       // if (auth.checkTokenRefresh()) {

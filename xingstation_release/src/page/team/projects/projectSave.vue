@@ -1,6 +1,6 @@
 <template>
   <div class="item-wrap-template">
-    <div class="team-project-wrap">
+    <div class="team-project-wrap" v-loading="loading">
       <el-card class="box-card">
         <h3 class="project-headline">
           创建项目
@@ -10,13 +10,13 @@
             <el-form-item prop="name" label=" " :rules="[{ required: true, message: '请输入项目名称', trigger: 'submit',type: 'number'}]">
               <el-input v-model="form.name" placeholder="项目名称" style="width: 548px;font-size: 18px;font-weight: 500;color: #444;"></el-input>
             </el-form-item>
-            <el-form-item prop="content">
+            <el-form-item prop="desc">
               <el-input
                 type="textarea"
                 placeholder="简单描述项目，便于其他人理解（选填）"
                 :autosize="{ minRows: 4, maxRows: 4}"
                 resize="none"
-                v-model="form.content"  style="width: 548px;font-size: 12px;font-weight: 500;color: #444;">
+                v-model="form.desc"  style="width: 548px;font-size: 12px;font-weight: 500;color: #444;">
               </el-input>
             </el-form-item>
             <el-form-item prop="type">
@@ -48,50 +48,30 @@
             <el-form-item prop="type">
               <h4 class="project-type">项目分组</h4>
                  <el-checkbox-group v-model="form.grouping">
-                  <el-checkbox label="铺屏" name="grouping"><span class="label">铺屏</span></el-checkbox>
-                  <el-checkbox label="3月峰会" name="grouping"><span class="label">3月峰会</span></el-checkbox>
-                  <el-checkbox label="APP开发" name="grouping"><span class="label">APP开发</span></el-checkbox>
-                  <el-checkbox label="游戏模板修改" name="grouping"><span class="label">游戏模板修改</span></el-checkbox>
-                  <el-checkbox label="星视度平台" name="grouping"><span class="label">星视度平台</span></el-checkbox>
-                  <el-checkbox label="KA项目" name="grouping"><span class="label">KA项目</span></el-checkbox>
+                  <el-checkbox :label="item.id" v-for="(item, index) in projectList" :key="item.id"><span class="label">{{item.attributes.name}}</span></el-checkbox>
                 </el-checkbox-group>
             </el-form-item>
             <el-form-item prop="type">
               <h4 class="project-type">选择项目成员</h4>
               <span class="note">管理员可以邀请和移除项目成员，只有被邀请的团队成员才能访问该项目的信息。</span>
+              <div class="btn-group">
+                <el-select v-model="value" placeholder="请添加成员" size="mini" clearable @change="addMember">
+                  <el-option
+                    v-for="item in membersList"
+                    :key="item.id"
+                    :label="item.attributes.nickname"
+                    :value="item.id">
+                  </el-option>
+                </el-select>
+                <el-checkbox-button v-for="item in groupList" :label="item.id" :key="item.id"  true-label="1" @change="chooseGroupMember(item.id)">{{item.type === 'teams' ? '所有人' : item.attributes.name}}</el-checkbox-button>
+              </div>
                <el-checkbox-group v-model="form.projectMembers">
-                  <el-checkbox label="陈重" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">陈重</span></el-checkbox>
-                  <el-checkbox label="海阔天空" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">海阔天空</span></el-checkbox>
-                  <el-checkbox label="fanyingzhao" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">fanyingzhao</span></el-checkbox>
-                  <el-checkbox label="倪一旻" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">倪一旻</span></el-checkbox>
-                  <el-checkbox label="钱雅婷" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">钱雅婷</span></el-checkbox>
-                  <el-checkbox label="秦洁莲" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">秦洁莲</span></el-checkbox>
-                  <el-checkbox label="陈重" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">陈重</span></el-checkbox>
-                  <el-checkbox label="海阔天空" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">海阔天空</span></el-checkbox>
-                  <el-checkbox label="fanyingzhao" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">fanyingzhao</span></el-checkbox>
-                  <el-checkbox label="倪一旻" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">倪一旻</span></el-checkbox>
-                  <el-checkbox label="钱雅婷" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">钱雅婷</span></el-checkbox>
-                  <el-checkbox label="秦洁莲" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">秦洁莲</span></el-checkbox>
-                  <el-checkbox label="陈重" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">陈重</span></el-checkbox>
-                  <el-checkbox label="海阔天空" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">海阔天空</span></el-checkbox>
-                  <el-checkbox label="fanyingzhao" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">fanyingzhao</span></el-checkbox>
-                  <el-checkbox label="倪一旻" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">倪一旻</span></el-checkbox>
-                  <el-checkbox label="钱雅婷" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">钱雅婷</span></el-checkbox>
-                  <el-checkbox label="秦洁莲" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">秦洁莲</span></el-checkbox>
-                  <el-checkbox label="陈重" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">陈重</span></el-checkbox>
-                  <el-checkbox label="海阔天空" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">海阔天空</span></el-checkbox>
-                  <el-checkbox label="fanyingzhao" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">fanyingzhao</span></el-checkbox>
-                  <el-checkbox label="倪一旻" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">倪一旻</span></el-checkbox>
-                  <el-checkbox label="钱雅婷" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">钱雅婷</span></el-checkbox>
-                  <el-checkbox label="秦洁莲" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">秦洁莲</span></el-checkbox>
-                  <el-checkbox label="陈重" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">陈重</span></el-checkbox>
-                  <el-checkbox label="海阔天空" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">海阔天空</span></el-checkbox>
-                  <el-checkbox label="fanyingzhao" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">fanyingzhao</span></el-checkbox>
-                  <el-checkbox label="倪一旻" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">倪一旻</span></el-checkbox>
-                  <el-checkbox label="钱雅婷" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">钱雅婷</span></el-checkbox>
-                  <el-checkbox label="秦洁莲" name="projectMembers" style="width:170px;margin-right:10px;margin-left:0"><span class="label">秦洁莲</span></el-checkbox>
-
-                </el-checkbox-group>
+                <el-checkbox :label="item.id" class="project-member" v-for="(item, index) in membersList" :key=item.id><span class="label">{{item.attributes.nickname}}</span></el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="success" size="small" style="background: #67c23a;color: #fff;" @click="test()">创建项目</el-button>
+              <el-button size="small" style="color: #888;background: #fff;">取消</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -100,26 +80,106 @@
   </div>
 </template>
 <script>
-import {Card, Form, FormItem, Input, Radio, Checkbox, CheckboxGroup} from 'element-ui'
+import team from 'service/team' 
+import {Card, Form, FormItem, Input, Radio, Checkbox, CheckboxGroup, Button, Select, Option, CheckboxButton} from 'element-ui'
 export default {
   data() {
     return {
+      value: '',
+      loading: false,
+      groupList: [],
+      membersList: [],
+      projectList: [],
+      checkboxGroup: [],
+      selectList: [],
       form: {
         name: '',
-        content: '',
+        desc: '',
         type: '看板项目',
-        grouping: '',
+        grouping: [],
         openness: '公开项目',
         projectMembers: []
       }
     }
   },
+  created() {
+    this.getProjectsList()
+    this.getMembersList()
+  },
+  methods: {
+    addMember() {
+      console.log(this.value)
+      this.selectList.push(this.value)
+      this.form.projectMembers.push(this.selectList)
+      console.log(this.form.projectMembers)
+    },
+    chooseGroupMember(id) {
+      if(this.checkboxGroup.indexOf(id) == -1) {
+        this.checkboxGroup.push(id)
+        let groupId = id
+        let memberArr = []
+        for (let i = 0;i < this.membersList.length; i++) {
+         if(groupId === this.membersList[i].relationships.team.data.id) {
+           this.form.projectMembers.push(this.membersList[i].id);
+         } else {
+           for (let j= 0;j < this.membersList[i].relationships.groups.data.length; j++) {
+             if (groupId === this.membersList[i].relationships.groups.data[j].id ) {
+               this.form.projectMembers.push(this.membersList[i].id);
+               break;
+             }
+           }
+         }
+        }
+      } else {
+        this.checkboxGroup.splice(this.checkboxGroup.indexOf(id),1)
+        this.form.projectMembers = []
+        for ( let k = 0;k < this.checkboxGroup.length; k++) {
+          for (let i = 0;i < this.membersList.length; i++) {
+            for (let j= 0;j < this.membersList[i].relationships.groups.data.length; j++) {
+              if (this.checkboxGroup[k] === this.membersList[i].relationships.groups.data[j].id) {
+                this.form.projectMembers.push(this.membersList[i].id);
+                break;
+              }
+            }
+          }
+        }
+      }
+    },
+    getMembersList () {
+      this.loading = true
+      let id = 'c6dc912c2f494e7ea73bed4488bb3493'
+      team.getTowerList(this, id).then((response) => {
+        if(response){
+          this.membersList = response.data;
+          this.groupList = response.included;
+          this.loading = false
+        }
+      }).catch(error => {
+        this.loading = false
+        console.log(error)
+      })
+    },
+    getProjectsList() {
+      let id = 'c6dc912c2f494e7ea73bed4488bb3493'
+      team.getProjectsList(this, id).then((response) => {
+        if(response){
+          this.projectList = response.included;
+        }
+      }).catch(error => {
+        console.log(error)
+      })
+    }
+  },
   components: {
+    ElCheckboxButton: CheckboxButton,
     ElCard: Card,
+    ElSelect: Select,
+    ElOption: Option,
     ElForm: Form,
     ElFormItem: FormItem,
     ElInput: Input,
     ElRadio: Radio,
+    ElButton: Button,
     ElCheckbox: Checkbox,
     ElCheckboxGroup: CheckboxGroup,
   }
@@ -133,17 +193,39 @@ export default {
       position: relative;
       width: 962px;
       margin: 0 auto;
+      
       .project-headline {
         margin: 10px 15px;
         font-size: 21px;
         font-weight: 500;
       }
       .project-content-wrap{
+        
+        .el-button{
+          background: #EBEBEB;
+          border: 1px solid #EBEBEB;
+          color: #999;
+        }
+        .el-button:hover{
+          color: #606266;
+          border-color: #EBEBEB;
+        }
+        .el-button:focus,.el-button:active {
+          color: #606266;
+          border-color: #EBEBEB;
+        }
+        .el-button--mini.is-round{
+          padding: 4px 15px;
+        }
         padding: 10px 0;
         .project-type{
-          margin-bottom: 10px;
           font-size: 16px;
           font-weight: 500;
+        }
+        .project-member{
+          width: 170px;
+          margin-right: 10px;
+          margin-left: 0;
         }
         .label{
           font-size: 16px;
