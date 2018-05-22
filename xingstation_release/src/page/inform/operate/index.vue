@@ -163,7 +163,7 @@ export default {
     },
     changePage(currentPage) {
       this.pagination.currentPage = currentPage
-      this.getOperateList()
+      this.getActivitiesList()
     },
     // search (){
     //   this.pagination.currentPage = 1;
