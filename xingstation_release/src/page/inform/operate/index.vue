@@ -2,7 +2,7 @@
   <div class="root">
     <div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
       <div class="item-content-wrap">
-        <div class="search-wrap">
+        <!-- <div class="search-wrap">
           <el-form  :model="filters" :inline="true">
             <el-form-item label="">
               <el-input v-model="filters.causer_name" style="width:200px" placeholder="请输入操作人的名字" clearable></el-input>
@@ -18,7 +18,7 @@
             <el-button @click="search" type="primary" size="small">搜索</el-button>
             <el-button @click="resetSearch" type="default" size="small">重置</el-button>
           </el-form>
-        </div>
+        </div> -->
         <div class="actions-wrap">
           <span class="label">
             通知数量: {{pagination.total}}
@@ -37,9 +37,9 @@
                 <el-form-item label="描述">
                   <span>{{scope.row.description}}</span>
                 </el-form-item>
-                <el-form-item label="操作详情">
+                <!-- <el-form-item label="操作详情">
                   <span>{{scope.row.properties.toString()}}</span>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="创建时间">
                   <span>{{scope.row.created_at}}</span>
                 </el-form-item>
@@ -72,7 +72,7 @@
             min-width="150"
             >
           </el-table-column>
-          <el-table-column
+          <!-- <el-table-column
             prop="properties"
             label="操作详情"
             min-width="150"
@@ -81,7 +81,7 @@
             <template slot-scope="scope">
               {{scope.row.properties.toString()}}
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column
             prop="created_at"
             label="创建时间"
@@ -121,10 +121,10 @@ import { Button, Input, Table, TableColumn, Pagination, MessageBox, DatePicker, 
 export default {
   data () {
     return {
-      filters: {
-        causer_name:'',
-        created_at: ''
-      },
+      // filters: {
+      //   causer_name:'',
+      //   created_at: ''
+      // },
       setting: {
         loadingText: '拼命加在中...',
         loading: false,
@@ -148,8 +148,8 @@ export default {
       this.setting.loading = true
       let args = {
         'include': 'causer',
-        'causer_name': this.filters.causer_name,
-        'created_at': new Date(this.filters.created_at).getTime() / 1000,
+        // 'causer_name': this.filters.causer_name,
+        // 'created_at': new Date(this.filters.created_at).getTime() / 1000,
         'page': this.pagination.currentPage
       }
       return notice.getActivitiesList(this, args).then((response) => {
@@ -165,16 +165,16 @@ export default {
       this.pagination.currentPage = currentPage
       this.getOperateList()
     },
-    search (){
-      this.pagination.currentPage = 1;
-      this.getActivitiesList();
-    },
-    resetSearch () {
-      this.filters.created_at = ''
-      this.filters.causer_name = ''
-      this.pagination.currentPage = 1;
-      this.getActivitiesList();
-    },
+    // search (){
+    //   this.pagination.currentPage = 1;
+    //   this.getActivitiesList();
+    // },
+    // resetSearch () {
+    //   this.filters.created_at = ''
+    //   this.filters.causer_name = ''
+    //   this.pagination.currentPage = 1;
+    //   this.getActivitiesList();
+    // },
   },
   components: {
     "el-table": Table,
