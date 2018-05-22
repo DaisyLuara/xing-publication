@@ -63,7 +63,10 @@
                     :value="item.id">
                   </el-option>
                 </el-select>
-                <el-checkbox-button v-for="item in groupList" :label="item.id" :key="item.id"  true-label="1" @change="chooseGroupMember(item.id)">{{item.type === 'teams' ? '所有人' : item.attributes.name}}</el-checkbox-button>
+                <el-checkbox-button :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">所有人</el-checkbox-button>
+                <el-checkbox-group v-model="checkedGroup"  @change="chooseGroupMember" >
+                  <el-checkbox-button v-for="item in groupList" :label="item.id" :key="item.id" v-if="item.id !== 'c6dc912c2f494e7ea73bed4488bb3493'">{{item.attributes.name}}</el-checkbox-button>
+                </el-checkbox-group>
               </div>
                <el-checkbox-group v-model="form.projectMembers">
                 <el-checkbox :label="item.id" class="project-member" v-for="(item, index) in membersList" :key=item.id><span class="label">{{item.attributes.nickname}}</span></el-checkbox>
@@ -90,8 +93,10 @@ export default {
       groupList: [],
       membersList: [],
       projectList: [],
-      checkboxGroup: [],
+      checkedGroup: [],
       selectList: [],
+      checkAll: false,
+      isIndeterminate: false,
       form: {
         name: '',
         desc: '',
@@ -108,42 +113,23 @@ export default {
   },
   methods: {
     addMember() {
-      console.log(this.value)
-      this.selectList.push(this.value)
-      this.form.projectMembers.push(this.selectList)
-      console.log(this.form.projectMembers)
     },
-    chooseGroupMember(id) {
-      if(this.checkboxGroup.indexOf(id) == -1) {
-        this.checkboxGroup.push(id)
-        let groupId = id
-        let memberArr = []
-        for (let i = 0;i < this.membersList.length; i++) {
-         if(groupId === this.membersList[i].relationships.team.data.id) {
-           this.form.projectMembers.push(this.membersList[i].id);
-         } else {
-           for (let j= 0;j < this.membersList[i].relationships.groups.data.length; j++) {
-             if (groupId === this.membersList[i].relationships.groups.data[j].id ) {
-               this.form.projectMembers.push(this.membersList[i].id);
-               break;
-             }
-           }
-         }
-        }
-      } else {
-        this.checkboxGroup.splice(this.checkboxGroup.indexOf(id),1)
-        this.form.projectMembers = []
-        for ( let k = 0;k < this.checkboxGroup.length; k++) {
+    handleCheckAllChange(val) {
+      this.checkedCities = val ? cityOptions : [];
+      this.isIndeterminate = false;
+    },
+    chooseGroupMember() {
+      this.form.projectMembers = []
+        for ( let k = 0;k < this.checkedGroup.length; k++) {
           for (let i = 0;i < this.membersList.length; i++) {
             for (let j= 0;j < this.membersList[i].relationships.groups.data.length; j++) {
-              if (this.checkboxGroup[k] === this.membersList[i].relationships.groups.data[j].id) {
+              if (this.checkedGroup[k] === this.membersList[i].relationships.groups.data[j].id) {
                 this.form.projectMembers.push(this.membersList[i].id);
                 break;
               }
             }
           }
         }
-      }
     },
     getMembersList () {
       this.loading = true
