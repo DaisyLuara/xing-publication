@@ -60,10 +60,10 @@ export default {
     this.notificationStats()
   },
   beforeMount () {
-    let _self = this
-    this.setIntervalValue = setInterval(function(){
-      _self.notificationStats()
-    },300000)
+    // let _self = this
+    // this.setIntervalValue = setInterval(function(){
+    //   _self.notificationStats()
+    // },300000)
     // clearInterval(a)
   },
   computed: {

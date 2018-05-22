@@ -60,6 +60,12 @@ class AdminUsersController extends Controller
 
         $user->assignRole($role);
 
+        activity('user')
+            ->causedBy($this->user())
+            ->on($user)
+            ->withProperties($request->except(['password']))
+            ->log('新增用户');
+
         //@todo 关联创建EXE LOOK 用户
         return $this->response->item($user, new UserTransformer())->setStatusCode(201);
     }
@@ -89,6 +95,12 @@ class AdminUsersController extends Controller
         }
 
         $user->update($attributes);
+
+        activity('user')
+            ->causedBy($currentUser)
+            ->on($user)
+            ->withProperties($request->except(['password']))
+            ->log('修改用户');
 
         return $this->response->item($user, new UserTransformer());
     }

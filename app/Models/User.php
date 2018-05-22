@@ -5,6 +5,7 @@ namespace App\Models;
 use Auth;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Activitylog\Traits\CausesActivity;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Spatie\Permission\Models\Role;
@@ -13,6 +14,7 @@ class User extends Authenticatable implements JWTSubject
 {
 
     use HasRoles;
+    use CausesActivity;
 
     use Notifiable {
         notify as protected laravelNotify;

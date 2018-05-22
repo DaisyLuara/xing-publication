@@ -81,4 +81,23 @@ class TowerProvider extends AbstractProvider implements ProviderInterface
             ],
         ];
     }
+
+    public function refresh($accessToken, $refreshToken)
+    {
+        $options = [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . $accessToken,
+            ],
+            'json' => [
+                'refresh_token' => $refreshToken,
+                'grant_type' => 'refresh_token',
+            ]
+        ];
+
+        $response = $this->getHttpClient()->request('POST', $this->getTokenUrl(), $options);
+
+        return json_decode($response->getBody(), true);
+    }
 }

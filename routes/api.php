@@ -64,6 +64,7 @@ $api->version('v1', [
             $api->get('user/notifications', 'NotificationsController@index');
             $api->get('user/notifications/stats', 'NotificationsController@stats');
             $api->patch('user/read/notifications', 'NotificationsController@read');
+            $api->get('user/activities', 'ActivityLogController@index');
 
             //数据统计
 

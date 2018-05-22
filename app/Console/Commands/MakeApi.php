@@ -13,14 +13,14 @@ class MakeApi extends Command
      *
      * @var string
      */
-    protected $signature = 'make:api';
+    protected $signature = 'xingstation:api';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = '生成Controller Model Request Transformer';
 
     /**
      * Create a new command instance.
