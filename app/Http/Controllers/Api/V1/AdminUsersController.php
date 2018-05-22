@@ -63,7 +63,7 @@ class AdminUsersController extends Controller
         activity('user')
             ->causedBy($this->user())
             ->on($user)
-            ->withProperties($request->all())
+            ->withProperties($request->except(['password']))
             ->log('新增用户');
 
         //@todo 关联创建EXE LOOK 用户
@@ -99,7 +99,7 @@ class AdminUsersController extends Controller
         activity('user')
             ->causedBy($currentUser)
             ->on($user)
-            ->withProperties($request->all())
+            ->withProperties($request->except(['password']))
             ->log('修改用户');
 
         return $this->response->item($user, new UserTransformer());
