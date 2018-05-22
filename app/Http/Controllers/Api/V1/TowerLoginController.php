@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Api\V1;
 
 
-use Illuminate\Http\Request;
+
 use Laravel\Socialite\Facades\Socialite;
-use Log;
+use Illuminate\Http\Request;
 use App\Models\User;
 use Cookie;
+use Log;
 
 class TowerLoginController extends Controller
 {

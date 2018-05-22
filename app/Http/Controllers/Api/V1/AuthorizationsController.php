@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use Auth;
 use App\Http\Requests\Api\V1\AuthorizationRequest;
 use App\Models\User;
+use Illuminate\Auth\Events\Login;
 
 class AuthorizationsController extends Controller
 {
@@ -44,6 +45,8 @@ class AuthorizationsController extends Controller
         if (!$token = Auth::guard('api')->attempt($credentials)) {
             return $this->response->errorUnauthorized('用户名或密码错误');
         }
+
+        event(new Login($this->user(), false));
 
         return $this->response->array([
             'access_token' => $token,
