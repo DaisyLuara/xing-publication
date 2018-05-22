@@ -51,7 +51,7 @@ class AuthorizationsController extends Controller
             event(new Login($user, false));
         }
 
-        activity()->causedBy($user)->log('登陆成功');
+        activity('login')->causedBy($user)->log('登陆成功');
 
         return $this->response->array([
             'access_token' => $token,
@@ -78,7 +78,7 @@ class AuthorizationsController extends Controller
     public function destroy()
     {
         Auth::guard('api')->logout();
-        activity()->causedBy($this->user())->log('用户登出');
+        activity('logout')->causedBy($this->user())->log('用户登出');
         return $this->response->noContent();
     }
 

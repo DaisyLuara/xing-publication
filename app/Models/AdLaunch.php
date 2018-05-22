@@ -8,8 +8,6 @@ use Spatie\Activitylog\Traits\LogsActivity;
 class AdLaunch extends Model
 {
 
-    use LogsActivity;
-
     protected $connection = 'ar';
     public $table = 'avr_ad_oid';
     protected $primaryKey = 'aoid';

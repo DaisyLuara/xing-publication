@@ -76,7 +76,7 @@ class ProjectLaunchController extends Controller
             $query->create(array_merge(['oid' => $oid], $launch));
         }
 
-        activity('project_launch')->withProperties($request->all())->log('批量增加节目投放');
+        activity('project_launch')->on($projectLaunch)->withProperties($request->all())->log('批量增加节目投放');
 
         return $this->response->noContent();
     }
@@ -95,7 +95,7 @@ class ProjectLaunchController extends Controller
             $query->where(['tvoid' => $tvoid])->update($launch);
         }
 
-        activity('ad_launch')->withProperties($request->all())->log('批量增加节目投放');
+        activity('project_launch')->on($projectLaunch)->withProperties($request->all())->log('批量增加节目投放');
 
         return $this->response->noContent();
     }

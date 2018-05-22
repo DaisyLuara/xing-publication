@@ -3,12 +3,8 @@
 namespace App\Models;
 
 
-use Spatie\Activitylog\Traits\LogsActivity;
-
 class ProjectLaunch extends Model
 {
-    use LogsActivity;
-
     protected $connection = 'ar';
     public $table = 'istar_tv_oid';
     protected $primaryKey = 'tvoid';

@@ -61,7 +61,7 @@ class AdLaunchController extends Controller
             $query->create(array_merge(['oid' => $oid, 'date' => date('Y-m-d H:i:s'), 'clientdate' => time() * 1000], $launch));
         }
 
-        activity('ad_launch')->withProperties($request->all())->log('批量增加广告投放');
+        activity('ad_launch')->on($adLaunch)->withProperties($request->all())->log('批量增加广告投放');
 
         return $this->response->noContent();
     }
@@ -79,7 +79,7 @@ class AdLaunchController extends Controller
             $query->where(['aoid' => $aoid])->update($launch);
         }
 
-        activity('ad_launch')->withProperties($request->all())->log('批量修改广告投放');
+        activity('ad_launch')->on($adLaunch)->withProperties($request->all())->log('批量修改广告投放');
 
         return $this->response->noContent();
     }

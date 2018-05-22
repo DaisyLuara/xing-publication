@@ -60,7 +60,7 @@ class AdminUsersController extends Controller
 
         $user->assignRole($role);
 
-        activity('ad_launch')
+        activity('user')
             ->causedBy($this->user())
             ->on($user)
             ->withProperties($request->all())
@@ -96,7 +96,7 @@ class AdminUsersController extends Controller
 
         $user->update($attributes);
 
-        activity('ad_launch')
+        activity('user')
             ->causedBy($currentUser)
             ->on($user)
             ->withProperties($request->all())
