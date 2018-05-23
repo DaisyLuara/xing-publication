@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use Auth;
 use App\Http\Requests\Api\V1\AuthorizationRequest;
 use App\Models\User;
+use Illuminate\Auth\Events\Login;
 
 class AuthorizationsController extends Controller
 {
@@ -45,6 +46,13 @@ class AuthorizationsController extends Controller
             return $this->response->errorUnauthorized('用户名或密码错误');
         }
 
+        $user = Auth::guard('api')->user();
+        if ($user->tower_access_token && $user->tower_refresh_token) {
+            event(new Login($user, false));
+        }
+
+        activity('login')->causedBy($user)->log('登陆成功');
+
         return $this->response->array([
             'access_token' => $token,
             'token_type' => 'Bearer',
@@ -70,6 +78,7 @@ class AuthorizationsController extends Controller
     public function destroy()
     {
         Auth::guard('api')->logout();
+        activity('logout')->causedBy($this->user())->log('用户登出');
         return $this->response->noContent();
     }
 

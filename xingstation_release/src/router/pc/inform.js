@@ -34,6 +34,29 @@ let router = {
         },
       ],
     },
+    {
+      path: 'operate',
+      name: '操作记录',
+      redirect: 'operate/index',
+      meta: {
+        title: '操作记录',
+        permission: '',
+      },
+      component: () =>
+        import(/* webpackChunkName: "page/inform/operate/routerView" */ 'page/inform/operate/routerView'),
+      children: [
+        {
+          path: 'index',
+          name: '操作列表',
+          meta: {
+            title: '操作列表',
+            permission: '',
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/inform/operate/index" */ 'page/inform/operate/index'),
+        },
+      ],
+    },
   ],
 }
 

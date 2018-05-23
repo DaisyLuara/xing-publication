@@ -3,9 +3,9 @@
     <div class="search-wrap">
       <el-form ref="searchForm" class="search-form">
         <el-row :gutter="20">
-          <el-col :span="8">
+          <el-col :span="8" v-if="showUser">
             <el-form-item label="" prop="user" >
-              <el-select v-model="userSelect" filterable placeholder="请选择用户(可搜索)" v-if="showUser" :loading="searchLoading" remote :remote-method="getUser" @change="userChangeHandle" clearable>
+              <el-select v-model="userSelect" filterable placeholder="请选择用户(可搜索)"  :loading="searchLoading" remote :remote-method="getUser" @change="userChangeHandle" clearable>
                 <el-option
                   v-for="item in userList"
                   :key="item.id"
@@ -155,6 +155,9 @@
               <el-form-item label="点位">
                   {{ scope.row.area_name }} {{scope.row.market_name}} {{scope.row.point_name}}
               </el-form-item>
+              <el-form-item label="历史节目">
+                  {{ scope.row.projects }}
+              </el-form-item>
               <el-form-item label="围观">
                 <span>{{ scope.row.looknum }}</span>
               </el-form-item>
@@ -167,8 +170,8 @@
               <el-form-item label="拉新">
                 <span>{{ scope.row.lovenum }}</span>
               </el-form-item>
-              <el-form-item label="创建时间">
-                <span>{{ scope.row.created_at }}</span>
+              <el-form-item label="时间">
+                <span>{{ scope.row.min_date }} - {{scope.row.max_date}}</span>
               </el-form-item>
             </el-form>
           </template>
@@ -186,6 +189,12 @@
           <template slot-scope="props">
             {{ props.row.area_name }} {{props.row.market_name}} {{props.row.point_name}}
           </template>
+        </el-table-column>
+        <el-table-column
+          label="历史节目"
+          prop="projects"
+          min-width="130"
+          :show-overflow-tooltip="true">
         </el-table-column>
         <el-table-column
           label="围观"
@@ -214,9 +223,13 @@
           :show-overflow-tooltip="true">
         </el-table-column>
         <el-table-column
-          label="创建时间"
+          label="时间"
           min-width="120"
-          prop="created_at">
+          prop="created_at"
+          :show-overflow-tooltip="true">
+          <template slot-scope="props">
+            <span>{{ props.row.min_date }} - {{props.row.max_date}}</span>
+          </template>
         </el-table-column>
       </el-table>
       <div class="pagination-wrap">
@@ -290,6 +303,10 @@ export default {
           value: 'marketing',
           label: '营销成果数据'
         }
+        // ,{
+        //   value: 'daily_average',
+        //   label: '日均数据'
+        // }
       ],
       reportValue: 'point',
       area_id:'',
@@ -381,6 +398,9 @@ export default {
         },
         plotOptions: {
           area: {
+            dataLabels: {
+              enabled: true
+            },
             marker: {
               enabled: false,
               symbol: 'circle',
@@ -506,7 +526,6 @@ export default {
     this.setting.loading = true
     this.getSceneList()
     this.getAreaList()
-    
     this.allPromise()
   },
   computed:{
@@ -706,24 +725,19 @@ export default {
           console.log(err)
           this.searchLoading = false
         })
-        } else {
+      } else {
           let user_info = JSON.parse(localStorage.getItem('user_info'))
           this.arUserId = user_info.ar_user_id
-          if (query !== '') {
-            this.searchLoading = true
-              return search.getProjectList(this,args).then((response) => {
-                this.projectList = response.data
-                this.searchLoading = false
-              }).catch(err => {
-                console.log(err)
-                this.searchLoading = false
-            })
-        }else{
-          this.projectSelect = ''
-          this.projectList = []
-          return false
-        }
-      }
+          args.ar_user_id = this.arUserId
+          this.searchLoading = true
+            return search.getProjectList(this,args).then((response) => {
+              this.projectList = response.data
+              this.searchLoading = false
+            }).catch(err => {
+              console.log(err)
+              this.searchLoading = false
+          })
+       }
     },
     getPeopleCount(){
       this.poepleCountFlag = true

@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use App\Exports\PointExport;
 use App\Exports\MarketingExport;
 use App\Exports\ProjectExport;
+use App\Exports\PointDailyAverageExport;
 
 class ExcelServiceProvider extends ServiceProvider
 {
@@ -36,6 +37,10 @@ class ExcelServiceProvider extends ServiceProvider
 
         $this->app->bind('project', function ($app) {
             return new ProjectExport($app->request);
+        });
+
+        $this->app->bind('daily_average', function ($app) {
+            return new PointDailyAverageExport($app->request);
         });
     }
 }
