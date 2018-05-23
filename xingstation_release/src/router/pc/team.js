@@ -32,6 +32,16 @@ let router = {
           component: () =>
             import(/* webpackChunkName: "page/team/projects/index" */ 'page/team/projects/index'),
         },
+        {
+          path: 'add',
+          name: '新建项目',
+          meta: {
+            title: '新建项目',
+            permission: '',
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/team/projects/projectSave" */ 'page/team/projects/projectSave'),
+        },
       ],
     },
     {
