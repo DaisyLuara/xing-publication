@@ -178,4 +178,6 @@ $api->version('v1', [
     $api->any('/openPlatform/events', 'WeChatController@events');
 
     $api->any('/openPlatform/authorization', 'WeChatController@authorization');
+
+    $api->any('/openPlatform/callback', 'WeChatController@callback');
 });
