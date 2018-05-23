@@ -36,10 +36,10 @@ let router = {
     },
     {
       path: 'operate',
-      name: '操作管理',
+      name: '操作记录',
       redirect: 'operate/index',
       meta: {
-        title: '操作管理',
+        title: '操作记录',
         permission: '',
       },
       component: () =>
