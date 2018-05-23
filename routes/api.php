@@ -178,5 +178,5 @@ $api->version('v1', [
     $api->any('/openPlatform/serve', 'WeChatController@serve');
     $api->any('/openPlatform/events', 'WeChatController@events');
 
-    $api->any('/openPlatform/authorization', 'WechatController@authorization');
+    $api->any('/openPlatform/authorization', 'WeChatController@authorization');
 });
