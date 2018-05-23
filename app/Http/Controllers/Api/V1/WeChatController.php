@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 
+use App\Models\WxThird;
 use EasyWeChat;
 use Illuminate\Http\Request;
 
@@ -74,30 +75,45 @@ class WeChatController extends Controller
 
     public function preAuthUrl(Request $request)
     {
-        $tenant_id = 1;
+        $redirectUrl = $request->redirect_url;
         $openPlatform = EasyWeChat::openPlatform();
-        $pre_auth_url = $openPlatform->getPreAuthorizationUrl('http://47.98.106.247/api/openPlatform/authorization?tenant_id=' . $tenant_id);
-        return "<!DOCTYPE HTML><html lang=\"en-US\"><head>  <meta http-equiv=\"refresh\" content=\"0; url=$pre_auth_url\">        <script type=\"text/javascript\">            window.location.href = \"$pre_auth_url\"        </script>        <title>Page Redirection</title>    </head>    <body>        <!-- Note: don't tell people to `click` the link, just tell them that it is a link. -->        If you are not redirected automatically, follow this <a href='$pre_auth_url'>link to wechat</a> </body></html>";
+        $preAuthUrl = $openPlatform->getPreAuthorizationUrl('http://47.98.106.247/api/openPlatform/authorization?redirect_url=' . $redirectUrl);
+        return "<!DOCTYPE HTML><html lang=\"en-US\"><head>  <meta http-equiv=\"refresh\" content=\"0; url=$preAuthUrl\">        <script type=\"text/javascript\">            window.location.href = \"$preAuthUrl\"        </script>        <title>Page Redirection</title>    </head>    <body>        <!-- Note: don't tell people to `click` the link, just tell them that it is a link. -->        If you are not redirected automatically, follow this <a href='$preAuthUrl'>link to wechat</a> </body></html>";
     }
 
     public function authorization(Request $request)
     {
+        /** @var \EasyWeChat\OpenPlatform\Application $openPlatform */
         $openPlatform = EasyWeChat::openPlatform();
-        dd($openPlatform->authorizer);
-    }
+        $authorization = $openPlatform->handleAuthorize();
+        $authorizer = $openPlatform->getAuthorizer($authorization['authorization_info']['authorizer_appid']);
+        dd($authorizer);
+        $data = [
+            'appid' => $authorizer['authorization_info']['authorizer_appid'],
+            'expires_in' => 7200,
+            'access_token' => $authorizer['authorization_info']['authorizer_access_token'],
+            'refresh_token' => $authorizer['authorization_info']['authorizer_refresh_token'],
+            'nick_name' => $authorizer['authorization_info']['nick_name'],
+            'user_name' => $authorizer['authorization_info']['user_name'],
+            'head_img' => $authorizer['authorization_info']['head_img'],
+            'qrcode_url' => $authorizer['authorization_info']['qrcode_url'],
+            'url' => $authorizer['authorization_info']['url'],
+            'service_type' => $authorizer['authorizer_info']['service_type_info']['id'],
+            'verify_type' => $authorizer['authorizer_info']['verify_type_info']['id']
+        ];
+        WxThird::create(array_merge(['date' => date('Y-m-d H:i:s'), 'clientdate' => time() * 1000], $data));
 
-    public function callback()
-    {
-        $openPlatform = EasyWeChat::openPlatform();
-        $officialAccount = $openPlatform->officialAccount('wx3670b0d87b4dca78');
-        $user = $officialAccount->oauth->user();
-        dd($user);
+        return response()->redirectTo($request->redirect_url);
     }
 
     public function events(Request $request)
     {
+        $appid = $request->appid;
+        $wxThird = WxThird::where('appid', '=', $appid)->first();
+
         $openPlatform = EasyWeChat::openPlatform();
-        $response = $openPlatform->officialAccount('wx3670b0d87b4dca78')->server->serve();
+        $officialAccount = $openPlatform->officialAccount($appid, $wxThird->refresh_token);
+        $response = $officialAccount->server->serve();
         return $response;
     }
 
