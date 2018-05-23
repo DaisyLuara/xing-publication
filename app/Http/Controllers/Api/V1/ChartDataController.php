@@ -82,6 +82,8 @@ class ChartDataController extends Controller
         $days = ($endDate - $startDate) / 24 / 60 / 60;
 
         $this->handleQuery($request, $query);
+        $table = $query->getModel()->getTable();
+        $query->where("$table.type", '=', 'looker');
 
         if ($days) {
             $format = $days <= 31 ? '%Y-%m-%d' : '%Y-%m';
