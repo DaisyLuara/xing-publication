@@ -294,7 +294,7 @@ export default {
               type: "success"
             })
             this.$router.push({
-              path: "/ad/item/index"
+              path: "/ad/item"
             })
           }).catch((err) => {
             this.setting.loading = false

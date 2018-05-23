@@ -14,7 +14,7 @@ let router = {
     {
       path: 'detail',
       name: '详细数据',
-      redirect: 'detail/index',
+      // redirect: 'detail/index',
       meta: {
         title: '详细数据',
         permission: ''
@@ -23,7 +23,7 @@ let router = {
         import(/* webpackChunkName: "page/report/detail/routerView" */ 'page/report/detail/routerView'),
       children: [
         {
-          path: 'index',
+          path: '/',
           name: '详细数据展示',
           meta: {
             title: '详细数据展示',

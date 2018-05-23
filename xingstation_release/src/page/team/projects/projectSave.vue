@@ -19,38 +19,6 @@
                 v-model="form.desc"  style="width: 548px;font-size: 12px;font-weight: 500;color: #444;">
               </el-input>
             </el-form-item>
-            <!-- <el-form-item prop="type">
-              <h4 class="project-type">项目类型</h4>
-                <div>
-                  <el-radio label="看板项目" name="type" v-model="form.type" style="font-size:16px;">
-                    <span class="label">看板项目</span><span class="note">更好地组织、细分和管理任务，适用于一般项目管理</span>
-                  </el-radio>
-                </div>
-                <div>
-                  <el-radio label="标准项目" name="type" v-model="form.type">
-                    <span class="label">标准项目</span><span class="note">擅长处理流程化任务，适用于产品研发、用户支持等场景</span>
-                  </el-radio>
-                </div>
-            </el-form-item>
-            <el-form-item prop="type">
-              <h4 class="project-type">项目公开性</h4>
-                <div>
-                  <el-radio label="私有项目" name="openness" v-model="form.openness" style="font-size:16px;">
-                    <span class="label">私有项目</span><span class="note">仅项目成员可以查看和编辑该项目</span>
-                  </el-radio>
-                </div>
-                <div>
-                  <el-radio label="公开项目" name="openness" v-model="form.openness">
-                    <span class="label">公开项目</span><span class="note">任何人都可以通过链接查看该项目，仅项目成员可以编辑该项目</span>
-                  </el-radio>
-                </div>
-            </el-form-item> -->
-            <!-- <el-form-item prop="type">
-              <h4 class="project-type">项目分组</h4>
-                 <el-checkbox-group v-model="form.grouping">
-                  <el-checkbox :label="item.id" v-for="(item, index) in projectList" :key="item.id"><span class="label">{{item.attributes.name}}</span></el-checkbox>
-                </el-checkbox-group>
-            </el-form-item> -->
             <el-form-item prop="type">
               <h4 class="project-type">选择项目成员</h4>
               <span class="note">管理员可以邀请和移除项目成员，只有被邀请的团队成员才能访问该项目的信息。</span>
@@ -101,9 +69,6 @@ export default {
       form: {
         name: '',
         desc: '',
-        // type: '看板项目',
-        // grouping: [],
-        // openness: '公开项目',
         projectMembers: []
       }
     }
@@ -126,9 +91,6 @@ export default {
               "member_ids": this.form.projectMembers
             }
           }
-          console.log(this.form)
-          console.log(args)
-          console.log('submit')
           return team.saveProjects(this, args ,id).then((response) => {
             console.log(response)
             this.$message({
@@ -136,7 +98,7 @@ export default {
               type: "success"
             })
             this.$router.push({
-              path: '/team/projects/index'
+              path: '/team/projects'
             })
           }).catch((err) => {
             console.log(err)

@@ -14,7 +14,6 @@ let router = {
     {
       path: 'account',
       name: '账号管理',
-      redirect: 'account/index',
       meta: {
         title: '账号管理',
       },
@@ -22,7 +21,7 @@ let router = {
         import(/* webpackChunkName: "page/account/account/routerView" */ 'page/account/account/routerView'),
       children: [
         {
-          path: 'index',
+          path: '/',
           name: '账号详情',
           meta: {
             title: '账号详情',
