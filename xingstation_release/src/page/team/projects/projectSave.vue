@@ -172,7 +172,7 @@ export default {
     },
     cancleHandle() {
       this.$router.push({
-        path: '/team/projects/index'
+        path: '/team/projects'
       })
     }
   },
