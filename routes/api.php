@@ -165,4 +165,18 @@ $api->version('v1', [
         $api->post('verificationCodes', 'VerificationCodesController@store'); // 短信验证码
         $api->post('authorizations', 'AuthorizationsController@store'); //登陆
     });
+
+//    //公众号
+//    $api->any('/wx/officialAccount/oauth', 'WeChatController@oauth');
+//    $api->any('/wx/officialAccount/oauth/callback', 'WeChatController@callback');
+//
+//    $api->any('/wx/officialAccount/message', 'WeChatController@message');
+//    $api->get('/wx/officialAccount/menu', 'WeChatController@menu');
+//    $api->get('/wx/officialAccount/qrcode', 'WeChatController@qrCode');
+
+    //第三方平台
+    $api->any('/openPlatform/serve', 'WeChatController@serve');
+    $api->any('/openPlatform/events', 'WeChatController@events');
+
+    $api->any('/openPlatform/authorization', 'WechatController@authorization');
 });
