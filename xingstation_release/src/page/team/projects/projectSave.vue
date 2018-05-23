@@ -7,7 +7,7 @@
         </h3>
         <div class="project-content-wrap">
           <el-form ref="form" :model="form" label-width="20px">
-            <el-form-item prop="name" label=" " :rules="[{ required: true, message: '请输入项目名称', trigger: 'submit',type: 'number'}]">
+            <el-form-item prop="name" label=" " :rules="[{ required: true, message: '请输入项目名称', trigger: 'submit'}]">
               <el-input v-model="form.name" placeholder="项目名称" style="width: 548px;font-size: 18px;font-weight: 500;color: #444;"></el-input>
             </el-form-item>
             <el-form-item prop="desc">
@@ -19,7 +19,7 @@
                 v-model="form.desc"  style="width: 548px;font-size: 12px;font-weight: 500;color: #444;">
               </el-input>
             </el-form-item>
-            <el-form-item prop="type">
+            <!-- <el-form-item prop="type">
               <h4 class="project-type">项目类型</h4>
                 <div>
                   <el-radio label="看板项目" name="type" v-model="form.type" style="font-size:16px;">
@@ -44,13 +44,13 @@
                     <span class="label">公开项目</span><span class="note">任何人都可以通过链接查看该项目，仅项目成员可以编辑该项目</span>
                   </el-radio>
                 </div>
-            </el-form-item>
-            <el-form-item prop="type">
+            </el-form-item> -->
+            <!-- <el-form-item prop="type">
               <h4 class="project-type">项目分组</h4>
                  <el-checkbox-group v-model="form.grouping">
                   <el-checkbox :label="item.id" v-for="(item, index) in projectList" :key="item.id"><span class="label">{{item.attributes.name}}</span></el-checkbox>
                 </el-checkbox-group>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item prop="type">
               <h4 class="project-type">选择项目成员</h4>
               <span class="note">管理员可以邀请和移除项目成员，只有被邀请的团队成员才能访问该项目的信息。</span>
@@ -73,8 +73,8 @@
               </el-checkbox-group>
             </el-form-item>
             <el-form-item>
-              <el-button type="success" size="small" style="background: #67c23a;color: #fff;" @click="test()">创建项目</el-button>
-              <el-button size="small" style="color: #888;background: #fff;">取消</el-button>
+              <el-button type="success" size="small" style="background: #67c23a;color: #fff;" @click="submit('form')">创建项目</el-button>
+              <el-button size="small" style="color: #888;background: #fff;" @click="cancleHandle">取消</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -84,13 +84,14 @@
 </template>
 <script>
 import team from 'service/team' 
-import {Card, Form, FormItem, Input, Radio, Checkbox, CheckboxGroup, Button, Select, Option, CheckboxButton} from 'element-ui'
+import {Card, Form, FormItem, Input, Radio, Checkbox, CheckboxGroup, Button, Select, Option, CheckboxButton, MessageBox} from 'element-ui'
 export default {
   data() {
     return {
       value: '',
       loading: false,
       groupList: [],
+      groupOptions: [],
       membersList: [],
       projectList: [],
       checkedGroup: [],
@@ -100,36 +101,83 @@ export default {
       form: {
         name: '',
         desc: '',
-        type: '看板项目',
-        grouping: [],
-        openness: '公开项目',
+        // type: '看板项目',
+        // grouping: [],
+        // openness: '公开项目',
         projectMembers: []
       }
     }
+  },
+  mounted() {
   },
   created() {
     this.getProjectsList()
     this.getMembersList()
   },
   methods: {
-    addMember() {
-    },
-    handleCheckAllChange(val) {
-      this.checkedCities = val ? cityOptions : [];
-      this.isIndeterminate = false;
-    },
-    chooseGroupMember() {
-      this.form.projectMembers = []
-        for ( let k = 0;k < this.checkedGroup.length; k++) {
-          for (let i = 0;i < this.membersList.length; i++) {
-            for (let j= 0;j < this.membersList[i].relationships.groups.data.length; j++) {
-              if (this.checkedGroup[k] === this.membersList[i].relationships.groups.data[j].id) {
-                this.form.projectMembers.push(this.membersList[i].id);
-                break;
-              }
+    submit(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          let id = 'c6dc912c2f494e7ea73bed4488bb3493'
+          let args = {
+            "project": {
+              "name": this.form.name,
+              "desc": this.form.desc,
+              "member_ids": this.form.projectMembers
             }
           }
+          console.log(this.form)
+          console.log(args)
+          console.log('submit')
+          return team.saveProjects(this, args ,id).then((response) => {
+            console.log(response)
+            this.$message({
+              message: "创建成功",
+              type: "success"
+            })
+            this.$router.push({
+              path: '/team/projects/index'
+            })
+          }).catch((err) => {
+            console.log(err)
+          })
+        } else {
+          console.log('error')
         }
+      })
+
+    },
+    addMember() {
+      this.selectList.push(this.value)
+      this.form.projectMembers.push(this.value)
+    },
+    handleCheckAllChange(val) {
+      this.checkedGroup = val ? this.groupOptions : [];
+      this.isIndeterminate = false;
+      this.chooseGroupMember()
+    },
+    chooseGroupMember() {
+      let checkedCount = this.checkedGroup.length;
+      this.checkAll = checkedCount === this.groupOptions.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.groupOptions.length;
+      this.form.projectMembers = []
+      for(let h = 0; h < this.selectList.length; h++) {
+        this.form.projectMembers.push(this.selectList[h])
+      }
+      for ( let k = 0;k < this.checkedGroup.length; k++) {
+        for (let i = 0;i < this.membersList.length; i++) {
+          if(!this.isIndeterminate) {
+              this.form.projectMembers.push(this.membersList[i].id);
+            } else {
+              for (let j= 0;j < this.membersList[i].relationships.groups.data.length; j++) {
+                if (this.checkedGroup[k] === this.membersList[i].relationships.groups.data[j].id) {
+                  this.form.projectMembers.push(this.membersList[i].id);
+                  break;
+                }
+              }
+          }
+        }
+      }
     },
     getMembersList () {
       this.loading = true
@@ -138,6 +186,11 @@ export default {
         if(response){
           this.membersList = response.data;
           this.groupList = response.included;
+          for(let i = 0;i<this.groupList.length; i++) {
+            if (this.groupList[i].id !== 'c6dc912c2f494e7ea73bed4488bb3493') {
+              this.groupOptions.push(this.groupList[i].id)
+            }
+          }
           this.loading = false
         }
       }).catch(error => {
@@ -153,6 +206,11 @@ export default {
         }
       }).catch(error => {
         console.log(error)
+      })
+    },
+    cancleHandle() {
+      this.$router.push({
+        path: '/team/projects/index'
       })
     }
   },
@@ -179,14 +237,12 @@ export default {
       position: relative;
       width: 962px;
       margin: 0 auto;
-      
       .project-headline {
         margin: 10px 15px;
         font-size: 21px;
         font-weight: 500;
       }
       .project-content-wrap{
-        
         .el-button{
           background: #EBEBEB;
           border: 1px solid #EBEBEB;
