@@ -14,6 +14,7 @@ let router = {
     {
       path: 'customers',
       name: '客户管理',
+      redirect: 'customers',
       meta: {
         title: '客户管理',
       },

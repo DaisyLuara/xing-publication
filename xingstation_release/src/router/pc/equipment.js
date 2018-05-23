@@ -14,6 +14,7 @@ let router = {
     {
       path: 'item',
       name: '设备管理',
+      redirect: 'item',
       meta: {
         title: '设备管理'
       },
@@ -34,6 +35,7 @@ let router = {
     {
       path: 'map',
       name: '地图总览',
+      redirect: 'map',
       meta: {
         title: '地图总览'
       },

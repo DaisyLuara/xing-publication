@@ -14,7 +14,7 @@ let router = {
     {
       path: 'detail',
       name: '详细数据',
-      // redirect: 'detail/index',
+      redirect: 'detail',
       meta: {
         title: '详细数据',
         permission: ''

@@ -14,6 +14,7 @@ let router = {
     {
       path: 'projects',
       name: '项目管理',
+      redirect: 'projects',
       meta: {
         title: '项目管理',
         permission: '',
@@ -46,6 +47,7 @@ let router = {
     {
       path: 'list',
       name: '成员管理',
+      redirect: 'list',
       meta: {
         title: '成员管理',
         permission: '',

@@ -14,6 +14,7 @@ let router = {
     {
       path: 'item',
       name: '广告投放',
+      redirect: 'item',
       meta: {
         title: '广告投放',
       },

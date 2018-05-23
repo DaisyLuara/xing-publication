@@ -14,6 +14,7 @@ let router = {
     {
       path: 'account',
       name: '账号管理',
+      redirect: 'accoun',
       meta: {
         title: '账号管理',
       },

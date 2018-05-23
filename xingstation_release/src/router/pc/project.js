@@ -14,6 +14,7 @@ let router = {
     {
       path: 'item',
       name: '节目投放',
+      redirect: 'item',
       meta: {
         title: '节目投放',
       },
@@ -42,6 +43,7 @@ let router = {
     {
       path: 'list',
       name: '节目列表',
+      redirect: 'list',
       meta: {
         title: '节目列表',
       },
