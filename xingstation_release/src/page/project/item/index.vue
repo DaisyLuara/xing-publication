@@ -79,7 +79,7 @@
                   <span>{{scope.row.point.scene.name}}</span>
                 </el-form-item>
                 <el-form-item label="区域">
-                  <span>{{scope.row.point.market.area.name}}</span>
+                  <span>{{scope.row.point.area.name}}</span>
                 </el-form-item>
                 <el-form-item label="商场">
                   <span>{{scope.row.point.market.name}}</span>
@@ -125,6 +125,16 @@
             >
             <template slot-scope="scope">
               <img :src="scope.row.project.icon" alt="" class="icon-item"/>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="scene"
+            label="区域"
+            min-width="100"
+            :show-overflow-tooltip="true"
+            >
+            <template slot-scope="scope">
+              {{scope.row.point.area.name}}
             </template>
           </el-table-column>
           <el-table-column
@@ -397,6 +407,7 @@ export default {
       this.filters.market = ''
       this.filters.area = ''
       this.filters.name = ''
+      this.filters.scene = ''
       this.pagination.currentPage = 1;
       this.editCondition.conditionList = []
       this.getProjectList();
