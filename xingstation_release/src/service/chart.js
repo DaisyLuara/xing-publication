@@ -6,7 +6,7 @@ const HOST = process.env.SERVER_URL
 export default {
   getChartData(context, args) {
     return new Promise(function(resolve, reject){
-      context.$http.get(HOST + CHART_API, {params: args}).then(response => {
+      context.$http.post(HOST + CHART_API, args).then(response => {
         resolve(response.data)
       }).catch(error => {
         reject(error)
