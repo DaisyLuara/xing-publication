@@ -93,11 +93,11 @@ class WeChatController extends Controller
             'expires_in' => 7200,
             'access_token' => $authorizer['authorization_info']['authorizer_access_token'],
             'refresh_token' => $authorizer['authorization_info']['authorizer_refresh_token'],
-            'nick_name' => $authorizer['authorization_info']['nick_name'],
-            'user_name' => $authorizer['authorization_info']['user_name'],
-            'head_img' => $authorizer['authorization_info']['head_img'],
-            'qrcode_url' => $authorizer['authorization_info']['qrcode_url'],
-            'url' => $authorizer['authorization_info']['url'],
+            'nick_name' => $authorizer['authorizer_info']['nick_name'],
+            'user_name' => $authorizer['authorizer_info']['user_name'],
+            'head_img' => $authorizer['authorizer_info']['head_img'],
+            'qrcode_url' => $authorizer['authorizer_info']['qrcode_url'],
+            'url' => $authorizer['authorizer_info']['url'],
             'service_type' => $authorizer['authorizer_info']['service_type_info']['id'],
             'verify_type' => $authorizer['authorizer_info']['verify_type_info']['id']
         ];
