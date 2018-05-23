@@ -25,7 +25,7 @@ class ActivityLogController extends Controller
             });
         }
 
-        $activityLogs = $query->paginate(10);
+        $activityLogs = $query->orderBy('id', 'desc')->paginate(10);
 
         return $this->response->paginator($activityLogs, new ActivityLogTransformer());
     }
