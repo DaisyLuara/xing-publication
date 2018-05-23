@@ -40,22 +40,22 @@ return [
     /*
      * 路由配置
      */
-    'route' => [
-
-        'enabled' => true,
-
-        /*
-         * 开放平台第三方平台路由配置
-         */
-        'open_platform' => [
-            'uri' => 'serve',
-            'action' => Overtrue\LaravelWeChat\Controllers\OpenPlatformController::class,
-            'attributes' => [
-                'prefix' => 'openPlatform',
-                'middleware' => null,
-            ],
-        ],
-    ],
+//    'route' => [
+//
+//        'enabled' => true,
+//
+//        /*
+//         * 开放平台第三方平台路由配置
+//         */
+//        'open_platform' => [
+//            'uri' => 'serve',
+//            'action' => Overtrue\LaravelWeChat\Controllers\OpenPlatformController::class,
+//            'attributes' => [
+//                'prefix' => 'openPlatform',
+//                'middleware' => null,
+//            ],
+//        ],
+//    ],
 
     /*
      * 公众号

@@ -71,17 +71,19 @@ class WeChatController extends Controller
 
 
 // ----------------------------------open_platform---------------------
-//    public function serve()
-//    {
-//        $openPlatform = EasyWeChat::openPlatform();
-//        return $openPlatform->server->serve();
-//    }
+    public function serve()
+    {
+        $openPlatform = EasyWeChat::openPlatform();
+        return $openPlatform->server->serve();
+    }
 
     public function authorization(Request $request)
     {
         $openPlatform = EasyWeChat::openPlatform();
-        $officialAccount = $openPlatform->officialAccount('wx3670b0d87b4dca78');
-        $officialAccount->user->list();
+        $authorization = $openPlatform->handleAuthorize();
+        $authorizer = $openPlatform->getAuthorizer($authorization['authorization_info']['authorizer_appid']);
+        dd($authorizer);
+
     }
 
     public function events(Request $request)

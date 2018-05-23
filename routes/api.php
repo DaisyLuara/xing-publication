@@ -175,7 +175,7 @@ $api->version('v1', [
 //    $api->get('/wx/officialAccount/qrcode', 'WeChatController@qrCode');
 
     //第三方平台
-    //$api->any('/openPlatform/serve', 'WeChatController@serve');
+    $api->any('/openPlatform/serve', 'WeChatController@serve');
     $api->any('/openPlatform/events', 'WeChatController@events');
 
     $api->any('/openPlatform/authorization', 'WeChatController@authorization');
