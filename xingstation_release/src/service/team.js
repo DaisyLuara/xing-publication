@@ -21,5 +21,14 @@ export default {
       })
     })
   },
+  saveProjects(context, args, id) {
+    return new Promise(function(resolve, reject){
+      context.$http.post(HOST + TEAM_API + id + '/projects', args).then(response => {
+        resolve(response.data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  }
 }
 

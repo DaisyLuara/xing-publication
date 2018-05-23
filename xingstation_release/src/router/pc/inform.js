@@ -14,7 +14,7 @@ let router = {
     {
       path: 'list',
       name: '消息管理',
-      redirect: 'list/index',
+      redirect: 'list',
       meta: {
         title: '消息管理',
         permission: '',
@@ -23,7 +23,7 @@ let router = {
         import(/* webpackChunkName: "page/inform/list/routerView" */ 'page/inform/list/routerView'),
       children: [
         {
-          path: 'index',
+          path: '/',
           name: '消息列表',
           meta: {
             title: '消息列表',
@@ -37,7 +37,7 @@ let router = {
     {
       path: 'operate',
       name: '操作记录',
-      redirect: 'operate/index',
+      redirect: 'operate',
       meta: {
         title: '操作记录',
         permission: '',
@@ -46,7 +46,7 @@ let router = {
         import(/* webpackChunkName: "page/inform/operate/routerView" */ 'page/inform/operate/routerView'),
       children: [
         {
-          path: 'index',
+          path: '/',
           name: '操作列表',
           meta: {
             title: '操作列表',

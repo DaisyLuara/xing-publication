@@ -14,7 +14,7 @@ let router = {
     {
       path: 'item',
       name: '广告投放',
-      redirect: 'item/index',
+      redirect: 'item',
       meta: {
         title: '广告投放',
       },
@@ -22,7 +22,7 @@ let router = {
         import(/* webpackChunkName: "page/ad/item/routerView" */ 'page/ad/item/routerView'),
       children: [
         {
-          path: 'index',
+          path: '/',
           name: '广告投放详情列表',
           meta: {
             title: '广告投放详情列表',

@@ -14,7 +14,7 @@ let router = {
     {
       path: 'customers',
       name: '客户管理',
-      redirect: 'customers/index',
+      redirect: 'customers',
       meta: {
         title: '客户管理',
       },
@@ -22,7 +22,7 @@ let router = {
         import(/* webpackChunkName: "page/company/customers/routerView" */ 'page/company/customers/routerView'),
       children: [
         {
-          path: 'index',
+          path: '/',
           name: '客户管理列表',
           meta: {
             title: '客户管理列表',

@@ -14,7 +14,7 @@ let router = {
     {
       path: 'item',
       name: '设备管理',
-      redirect: 'item/index',
+      redirect: 'item',
       meta: {
         title: '设备管理'
       },
@@ -22,7 +22,7 @@ let router = {
         import(/* webpackChunkName: "page/equipment/item/routerView" */ 'page/equipment/item/routerView'),
       children: [
         {
-          path: 'index',
+          path: '/',
           name: '设备管理列表',
           meta: {
             title: '设备管理列表'
@@ -30,29 +30,12 @@ let router = {
           component: () =>
             import(/* webpackChunkName: "page/equipment/item/index" */ 'page/equipment/item/index')
         }
-
-        // {
-        //   path: 'add',
-        //   component: () =>
-        //     import(/* webpackChunkName: "page/ad/item/itemSave" */ 'page/ad/item/itemSave'),
-        //   name: '新增投放节目',
-        //   meta: {
-        //   },
-        // },
-        // {
-        //   path: 'edit/:uid',
-        //   component: () =>
-        //     import(/* webpackChunkName: "page/ad/item/itemSave" */ 'page/ad/item/itemSave'),
-        //   name: '修改投放节目',
-        //   meta: {
-        //   },
-        // },
       ]
     },
     {
       path: 'map',
       name: '地图总览',
-      redirect: 'map/index',
+      redirect: 'map',
       meta: {
         title: '地图总览'
       },
@@ -60,7 +43,7 @@ let router = {
         import(/* webpackChunkName: "page/equipment/map/routerView" */ 'page/equipment/map/routerView'),
       children: [
         {
-          path: 'index',
+          path: '/',
           name: '热力图',
           meta: {
             title: '热力图'

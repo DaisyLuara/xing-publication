@@ -14,7 +14,7 @@ let router = {
     {
       path: 'projects',
       name: '项目管理',
-      redirect: 'projects/index',
+      redirect: 'projects',
       meta: {
         title: '项目管理',
         permission: '',
@@ -23,7 +23,7 @@ let router = {
         import(/* webpackChunkName: "page/team/projects/routerView" */ 'page/team/projects/routerView'),
       children: [
         {
-          path: 'index',
+          path: '/',
           name: '项目列表',
           meta: {
             title: '项目列表',
@@ -32,12 +32,22 @@ let router = {
           component: () =>
             import(/* webpackChunkName: "page/team/projects/index" */ 'page/team/projects/index'),
         },
+        {
+          path: 'add',
+          name: '新建项目',
+          meta: {
+            title: '新建项目',
+            permission: '',
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/team/projects/projectSave" */ 'page/team/projects/projectSave'),
+        },
       ],
     },
     {
       path: 'list',
       name: '成员管理',
-      redirect: 'list/index',
+      redirect: 'list',
       meta: {
         title: '成员管理',
         permission: '',
@@ -46,7 +56,7 @@ let router = {
         import(/* webpackChunkName: "page/team/list/routerView" */ 'page/team/list/routerView'),
       children: [
         {
-          path: 'index',
+          path: '/',
           name: '成员列表',
           meta: {
             title: '成员列表',

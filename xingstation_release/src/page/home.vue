@@ -162,7 +162,7 @@ export default {
     },
     handleUser(){
       this.$router.push({
-        path: '/account/account/index'
+        path: '/account/account'
       })
     }
   },

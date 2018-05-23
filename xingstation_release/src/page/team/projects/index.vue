@@ -10,7 +10,7 @@
                 <el-button class="btn" :class="{'active': item.id == active}" @click="changePage(item)" v-else size="small">{{item.attributes.name}}</el-button>
               </el-form-item>
             </el-form>
-            <!-- <el-button class="btn-tower" @click="towerAuthorization">tower授权</el-button> -->
+            <el-button size="small" plain @click="addProject">新建项目</el-button>
           </div>
           <el-table
           :data="allProjectsList"
@@ -135,6 +135,11 @@ export default {
        this.setting.loading = false;
       })
     },
+    addProject() {
+      this.$router.push({
+        path: '/team/projects/add'
+      })
+    }
   },
   components: {
     "el-table": Table,
