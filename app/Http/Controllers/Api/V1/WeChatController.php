@@ -76,10 +76,8 @@ class WeChatController extends Controller
     {
         $tenant_id = 1;
         $openPlatform = EasyWeChat::openPlatform();
-        $root_url = "http://47.98.106.247";
-        $redirect_url = "/api/openPlatform/callback";
-        $pre_auth_url = $openPlatform->getPreAuthorizationUrl($root_url . '/api/wx/openPlatform/authorization?tenant_id=' . $tenant_id . '&redirect_url=' . $redirect_url);
-        dd($pre_auth_url);
+        $pre_auth_url = $openPlatform->getPreAuthorizationUrl('http://47.98.106.247/api/openPlatform/authorization?tenant_id=' . $tenant_id);
+        return "<!DOCTYPE HTML><html lang=\"en-US\"><head>  <meta http-equiv=\"refresh\" content=\"0; url=$pre_auth_url\">        <script type=\"text/javascript\">            window.location.href = \"$pre_auth_url\"        </script>        <title>Page Redirection</title>    </head>    <body>        <!-- Note: don't tell people to `click` the link, just tell them that it is a link. -->        If you are not redirected automatically, follow this <a href='$pre_auth_url'>link to wechat</a> </body></html>";
     }
 
     public function authorization(Request $request)
