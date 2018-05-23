@@ -10,7 +10,7 @@
                 <el-button class="btn" :class="{'active': item.id == active}" @click="changePage(item)" v-else size="small">{{item.attributes.name}}</el-button>
               </el-form-item>
             </el-form>
-            <el-button size="small" plain @click="addProject">新建任务</el-button>
+            <el-button size="small" plain @click="addProject">新建项目</el-button>
           </div>
           <el-table
           :data="allProjectsList"

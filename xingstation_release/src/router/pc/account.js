@@ -32,27 +32,6 @@ let router = {
         },
       ],
     },
-    // {
-    //   path: 'operation',
-    //   name: '操作日志',
-    //   redirect: 'operation/index',
-    //   meta: {
-    //     title: '操作日志',
-    //   },
-    //   component: () =>
-    //     import(/* webpackChunkName: "page/account/operation/routerView" */ 'page/account/operation/routerView'),
-    //   children: [
-    //     {
-    //       path: 'index',
-    //       name: '日志详情',
-    //       meta: {
-    //         title: '日志详情',
-    //       },
-    //       component: () =>
-    //         import(/* webpackChunkName: "page/account/operation/index" */ 'page/account/operation/index'),
-    //     },
-    //   ],
-    // },
   ],
 }
 
