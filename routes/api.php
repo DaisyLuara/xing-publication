@@ -177,7 +177,8 @@ $api->version('v1', [
     //第三方平台
     $api->any('/openPlatform/events', 'WeChatController@events');
 
+    $api->any('/openPlatform/preAuthUrl', 'WeChatController@preAuthUrl');
+
     $api->any('/openPlatform/authorization', 'WeChatController@authorization');
 
-    $api->any('/openPlatform/callback', 'WeChatController@callback');
 });
