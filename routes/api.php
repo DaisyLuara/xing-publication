@@ -66,12 +66,11 @@ $api->version('v1', [
             $api->patch('user/read/notifications', 'NotificationsController@read');
             $api->get('user/activities', 'ActivityLogController@index');
 
-            //数据统计
 
             //广告投放
             $api->get('ad_launch', 'AdLaunchController@index');
-            $api->post('ad_launch', 'AdLaunchController@store');
-            $api->patch('ad_launch', 'AdLaunchController@update');
+            $api->post('ad_launch', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'AdLaunchController@store']);
+            $api->post('ad_launch', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'AdLaunchController@update']);
 
             //广告
             $api->get('advertisement', 'AdvertisementController@index');
@@ -113,8 +112,8 @@ $api->version('v1', [
             $api->post('projects', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectControllerController@store']);
             $api->patch('projects', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectControllerController@update']);
             $api->get('projects/launch', 'ProjectLaunchController@index');
-            $api->post('projects/launch', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectLaunchController@store']);
-            $api->patch('projects/launch', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectLaunchController@update']);
+            $api->post('projects/launches', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectLaunchController@store']);
+            $api->patch('projects/launches', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectLaunchController@update']);
             $api->get('staffs', 'ArUserController@index');
 
             //远程搜索
