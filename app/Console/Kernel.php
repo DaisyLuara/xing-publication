@@ -5,6 +5,8 @@ namespace App\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Console\Commands\GizWitsRestart;
+use EasyWeChat;
+use EasyWeChat\Kernel\Messages\Text;
 
 class Kernel extends ConsoleKernel
 {
@@ -24,6 +26,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->call(function (){
+        $officialAccount = EasyWeChat::officialAccount();
+        $text = new Text('test');
+        return $officialAccount->customer_service->message($text)->to('ott1x1V0a7b_KKH2XnLs_-YISIso')->send();
+
+        })->cron('0 40 16  * * ?');
     }
 
     /**
