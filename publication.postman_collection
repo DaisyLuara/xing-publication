@@ -19,7 +19,8 @@
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/json"
+								"value": "application/json",
+								"description": ""
 							}
 						],
 						"body": {
@@ -57,12 +58,13 @@
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/json"
+								"value": "application/json",
+								"description": ""
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"username\":\"17701628884\",\n\t\"password\":\"123456\",\n\t\"verification_key\":\"verificationCode_98TadYW6wicyxrq\",\n\t\"verification_code\":\"1234\"\n}"
+							"raw": "{\n\t\"username\":\"13818403072\",\n\t\"password\":\"password\",\n\t\"verification_key\":\"verificationCode_98TadYW6wicyxrq\",\n\t\"verification_code\":\"1234\"\n}"
 						},
 						"description": ""
 					},
@@ -207,7 +209,8 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_token1}}"
+								"value": "{{jwt_token1}}",
+								"description": ""
 							}
 						],
 						"body": {
@@ -261,11 +264,13 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_token1}}"
+										"value": "{{jwt_token1}}",
+										"description": ""
 									},
 									{
 										"key": "Content-Type",
-										"value": "application/json"
+										"value": "application/json",
+										"description": ""
 									}
 								],
 								"body": {
@@ -284,11 +289,13 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_token3}}"
+										"value": "{{jwt_token3}}",
+										"description": ""
 									},
 									{
 										"key": "Content-Type",
-										"value": "application/json"
+										"value": "application/json",
+										"description": ""
 									}
 								],
 								"body": {
@@ -361,7 +368,9 @@
 									"query": [
 										{
 											"key": "include",
-											"value": "user.roles,category"
+											"value": "user.roles,category",
+											"equals": true,
+											"description": ""
 										}
 									],
 									"variable": []
@@ -370,11 +379,13 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_token3}}"
+										"value": "{{jwt_token3}}",
+										"description": ""
 									},
 									{
 										"key": "Content-Type",
-										"value": "application/json"
+										"value": "application/json",
+										"description": ""
 									}
 								],
 								"body": {
@@ -400,11 +411,13 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_token1}}"
+										"value": "{{jwt_token1}}",
+										"description": ""
 									},
 									{
 										"key": "Content-Type",
-										"value": "application/json"
+										"value": "application/json",
+										"description": ""
 									}
 								],
 								"body": {
@@ -445,7 +458,8 @@
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/json"
+								"value": "application/json",
+								"description": ""
 							}
 						],
 						"body": {
@@ -515,6 +529,42 @@
 							"mode": "raw",
 							"raw": ""
 						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "操作记录列表",
+					"request": {
+						"url": {
+							"raw": "{{host}}/api/user/activities?include=causer",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"activities"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "causer",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_admin}}",
+								"description": ""
+							}
+						],
+						"body": {},
 						"description": ""
 					},
 					"response": []
@@ -594,11 +644,13 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_token1}}"
+										"value": "{{jwt_token1}}",
+										"description": ""
 									},
 									{
 										"key": "Content-Type",
-										"value": "application/json"
+										"value": "application/json",
+										"description": ""
 									}
 								],
 								"body": {
@@ -743,11 +795,13 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_token1}}"
+										"value": "{{jwt_token1}}",
+										"description": ""
 									},
 									{
 										"key": "Content-Type",
-										"value": "application/json"
+										"value": "application/json",
+										"description": ""
 									}
 								],
 								"body": {
@@ -828,7 +882,9 @@
 							"query": [
 								{
 									"key": "include",
-									"value": "roles"
+									"value": "roles",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
@@ -837,11 +893,13 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_tokena}}"
+								"value": "{{jwt_tokena}}",
+								"description": ""
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json"
+								"value": "application/json",
+								"description": ""
 							}
 						],
 						"body": {
@@ -875,7 +933,7 @@
 					"name": "用户列表",
 					"request": {
 						"url": {
-							"raw": "http://{{host}}/api/system/users?include=roles",
+							"raw": "http://{{host}}/api/system/users?include=roles&name=杨",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
@@ -888,7 +946,15 @@
 							"query": [
 								{
 									"key": "include",
-									"value": "roles"
+									"value": "roles",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "name",
+									"value": "杨",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
@@ -897,7 +963,8 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_tokensa}}"
+								"value": "{{jwt_admin}}",
+								"description": ""
 							}
 						],
 						"body": {
@@ -964,7 +1031,9 @@
 							"query": [
 								{
 									"key": "include",
-									"value": "permissions"
+									"value": "permissions",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
@@ -973,11 +1042,13 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_tokena}}"
+								"value": "{{jwt_tokena}}",
+								"description": ""
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json"
+								"value": "application/json",
+								"description": ""
 							}
 						],
 						"body": {
@@ -1042,7 +1113,8 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_tokensa}}"
+								"value": "{{jwt_tokensa}}",
+								"description": ""
 							}
 						],
 						"body": {
@@ -1139,7 +1211,7 @@
 					"name": "点位搜索",
 					"request": {
 						"url": {
-							"raw": "http://{{host}}/api/points/query?market_id=38&include=market&=",
+							"raw": "http://{{host}}/api/points/query?market_id=38&include=market",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
@@ -1152,15 +1224,21 @@
 							"query": [
 								{
 									"key": "market_id",
-									"value": "38"
+									"value": "38",
+									"equals": true,
+									"description": ""
 								},
 								{
 									"key": "include",
-									"value": "market"
+									"value": "market",
+									"equals": true,
+									"description": ""
 								},
 								{
 									"key": "",
-									"value": ""
+									"value": "",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
@@ -1169,7 +1247,8 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_tokena}}"
+								"value": "{{jwt_admin}}",
+								"description": ""
 							}
 						],
 						"body": {
@@ -1197,7 +1276,9 @@
 							"query": [
 								{
 									"key": "ad_trade_id",
-									"value": "1"
+									"value": "1",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
@@ -1243,7 +1324,9 @@
 							"query": [
 								{
 									"key": "advertiser_id",
-									"value": "7"
+									"value": "7",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
@@ -1254,6 +1337,23 @@
 							"mode": "raw",
 							"raw": ""
 						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "场景列表",
+					"request": {
+						"url": "{{host}}/api/scene/query",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_token_a}}",
+								"description": ""
+							}
+						],
+						"body": {},
 						"description": ""
 					},
 					"response": []
@@ -1268,7 +1368,7 @@
 					"name": "广告投放列表",
 					"request": {
 						"url": {
-							"raw": "http://{{host}}/api/ad_launch?ad_trade_id=7&start_date=2018-05-01&end_date=2018-05-04",
+							"raw": "http://{{host}}/api/ad_launch",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
@@ -1278,10 +1378,6 @@
 								"ad_launch"
 							],
 							"query": [
-								{
-									"key": "ad_trade_id",
-									"value": "7"
-								},
 								{
 									"key": "advertiser_id",
 									"value": null,
@@ -1306,24 +1402,19 @@
 									"key": "point_id",
 									"value": null,
 									"disabled": true
-								},
-								{
-									"key": "start_date",
-									"value": "2018-05-01"
-								},
-								{
-									"key": "end_date",
-									"value": "2018-05-04"
 								}
 							],
 							"variable": []
 						},
 						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_admin}}",
+								"description": ""
+							}
+						],
+						"body": {},
 						"description": ""
 					},
 					"response": []
@@ -1414,7 +1505,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_token2}}",
+								"value": "{{jwt_admin}}",
 								"description": ""
 							},
 							{
@@ -1439,7 +1530,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_token1}}",
+								"value": "{{jwt_admin}}",
 								"description": ""
 							},
 							{
@@ -1450,7 +1541,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"aoids\":[550,551,552,553],\n\t\"aid\":23,\n\t\"sdate\": 1555333300\n}"
+							"raw": "{\"ktime\":2,\"aoids\":[586,587,589]}\n"
 						},
 						"description": ""
 					},
@@ -1518,7 +1609,9 @@
 							"query": [
 								{
 									"key": "type",
-									"value": "mobile"
+									"value": "mobile",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
@@ -1557,7 +1650,7 @@
 					"name": "设备列表",
 					"request": {
 						"url": {
-							"raw": "http://{{host}}/api/push?page=2",
+							"raw": "http://{{host}}/api/push?page=1&machine_status=online&area_id=8",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
@@ -1569,7 +1662,19 @@
 							"query": [
 								{
 									"key": "page",
-									"value": "2",
+									"value": "1",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "machine_status",
+									"value": "online",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "area_id",
+									"value": "8",
 									"equals": true,
 									"description": ""
 								},
@@ -1585,7 +1690,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_token2}}",
+								"value": "{{jwt_admin}}",
 								"description": ""
 							}
 						],
@@ -1598,10 +1703,12 @@
 					"name": "设备热力图",
 					"request": {
 						"url": {
-							"raw": "http://{{host}}/api/point/map?lat=31.20936447823612&lng=121.6082842304611&distance=100",
+							"raw": "http://papi.xingstation.com/api/point/map?lat=31.20936447823612&lng=121.6082842304611&distance=20&date=all",
 							"protocol": "http",
 							"host": [
-								"{{host}}"
+								"papi",
+								"xingstation",
+								"com"
 							],
 							"path": [
 								"api",
@@ -1623,7 +1730,13 @@
 								},
 								{
 									"key": "distance",
-									"value": "100",
+									"value": "20",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "date",
+									"value": "all",
 									"equals": true,
 									"description": ""
 								}
@@ -1634,7 +1747,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_token_a}}",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vcGFwaS54aW5nc3RhdGlvbi5jb20vYXBpL2F1dGhvcml6YXRpb25zIiwiaWF0IjoxNTI2NDQwNDc0LCJleHAiOjE1MjY0NDQwNzQsIm5iZiI6MTUyNjQ0MDQ3NCwianRpIjoic05GaUVDTlhROXNZZGJCbiIsInN1YiI6NTAsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.QVe1f52mSx5Ia3wWP5PM2_Lub69zVLGF3DqizLFKsFc",
 								"description": ""
 							}
 						],
@@ -1654,155 +1767,10 @@
 					"description": "",
 					"item": [
 						{
-							"name": "数据",
-							"description": "",
-							"item": [
-								{
-									"name": "漏斗数据",
-									"request": {
-										"url": {
-											"raw": "http://{{host}}/api/stats?start_date=2018-05-01&end_date=2018-05-04&point_id=276",
-											"protocol": "http",
-											"host": [
-												"{{host}}"
-											],
-											"path": [
-												"api",
-												"stats"
-											],
-											"query": [
-												{
-													"key": "start_date",
-													"value": "2018-05-01"
-												},
-												{
-													"key": "end_date",
-													"value": "2018-05-04"
-												},
-												{
-													"key": "alias",
-													"value": "isStarJT",
-													"disabled": true
-												},
-												{
-													"key": "point_id",
-													"value": "276"
-												}
-											],
-											"variable": []
-										},
-										"method": "GET",
-										"header": [
-											{
-												"key": "Authorization",
-												"value": "{{jwt_tokensa}}"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": ""
-										},
-										"description": "查询参数\n\talias=节目别名&\n\ttype=looknum|playernum& \n\tstart_date=开始日期&\n\tend_date=结束日期"
-									},
-									"response": []
-								},
-								{
-									"name": "分天数据",
-									"request": {
-										"url": {
-											"raw": "http://{{host}}/api/detail?start_date=2018-05-01&end_date=2018-05-04",
-											"protocol": "http",
-											"host": [
-												"{{host}}"
-											],
-											"path": [
-												"api",
-												"detail"
-											],
-											"query": [
-												{
-													"key": "start_date",
-													"value": "2018-05-01"
-												},
-												{
-													"key": "end_date",
-													"value": "2018-05-04"
-												}
-											],
-											"variable": []
-										},
-										"method": "GET",
-										"header": [
-											{
-												"key": "Authorization",
-												"value": "{{jwt_token1}}"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": ""
-										},
-										"description": "查询参数\n\talias=节目别名&\n\ttype=looknum|playernum& \n\tstart_date=开始日期&\n\tend_date=结束日期"
-									},
-									"response": []
-								},
-								{
-									"name": "性别年龄",
-									"request": {
-										"url": {
-											"raw": "http://{{host}}/api/age_gender?start_date=2018-05-01&end_date=2018-05-04&point_id=276",
-											"protocol": "http",
-											"host": [
-												"{{host}}"
-											],
-											"path": [
-												"api",
-												"age_gender"
-											],
-											"query": [
-												{
-													"key": "start_date",
-													"value": "2018-05-01"
-												},
-												{
-													"key": "end_date",
-													"value": "2018-05-04"
-												},
-												{
-													"key": "alias",
-													"value": null,
-													"disabled": true
-												},
-												{
-													"key": "point_id",
-													"value": "276"
-												}
-											],
-											"variable": []
-										},
-										"method": "GET",
-										"header": [
-											{
-												"key": "Authorization",
-												"value": "{{jwt_token1}}"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": ""
-										},
-										"description": "0-10 岁\n11-18 岁\n19-30 岁\n31-40 岁\n41-59 岁\n60岁以上"
-									},
-									"response": []
-								}
-							],
-							"_postman_isSubFolder": true
-						},
-						{
 							"name": "节目投放列表",
 							"request": {
 								"url": {
-									"raw": "http://{{host}}/api/projects/launch?include=point,project&ar_user_id=1044&project_name=嘻哈全屏",
+									"raw": "http://{{host}}/api/projects/launch?include=point.scene,point.market,point.area,project&scene_id=1&market_id=142",
 									"protocol": "http",
 									"host": [
 										"{{host}}"
@@ -1815,15 +1783,35 @@
 									"query": [
 										{
 											"key": "include",
-											"value": "point,project"
+											"value": "point.scene,point.market,point.area,project",
+											"equals": true,
+											"description": ""
 										},
 										{
 											"key": "ar_user_id",
-											"value": "1044"
+											"value": "1044",
+											"equals": true,
+											"description": "",
+											"disabled": true
 										},
 										{
 											"key": "project_name",
-											"value": "嘻哈全屏"
+											"value": "嘻哈全屏",
+											"equals": true,
+											"description": "",
+											"disabled": true
+										},
+										{
+											"key": "scene_id",
+											"value": "1",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "market_id",
+											"value": "142",
+											"equals": true,
+											"description": ""
 										}
 									],
 									"variable": []
@@ -1832,7 +1820,8 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_token1}}"
+										"value": "{{jwt_admin}}",
+										"description": ""
 									}
 								],
 								"body": {
@@ -1883,33 +1872,17 @@
 						{
 							"name": "用户信息",
 							"request": {
-								"url": "papi.jingfree.top/tower/user",
+								"url": "{{host}}/tower/user",
 								"method": "GET",
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{tower_access_token}}",
+										"value": "Bearer 34849deea0a00957b6ebc8458f18169e30d8c4a6f87fdecb7648067ae29819ef",
 										"description": ""
 									},
 									{
 										"key": "Origin",
 										"value": " http://devad.jingfree.top",
-										"description": ""
-									},
-									{
-										"key": "Access-Control-Request-Method",
-										"value": "GET",
-										"description": ""
-									},
-									{
-										"key": "Access-Control-Request-Headers",
-										"value": "",
-										"description": "",
-										"disabled": true
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
 										"description": "",
 										"disabled": true
 									}
@@ -2168,7 +2141,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{ \"project\": { \"name\": \"Tower集成测试nihao\", \"desc\": \"Project Desc\", \"member_ids\": [] } }"
+									"raw": "{ \"project\": { \"name\": \"Tower集成测试nihao\", \"desc\": \"Project Desc\", \"member_ids\": [],\"project_type\":1 } }"
 								},
 								"description": ""
 							},
@@ -2227,7 +2200,7 @@
 						{
 							"name": "获取项目成员",
 							"request": {
-								"url": "{{towerhost}}/projects/88265d9d74f84aceb871648092fbcfb8",
+								"url": "{{towerhost}}/projects/88265d9d74f84aceb871648092fbcfb8/members",
 								"method": "GET",
 								"header": [
 									{
@@ -2259,7 +2232,7 @@
 						{
 							"name": "获取项目中所有任务清单",
 							"request": {
-								"url": "{{towerhost}}/projects/88265d9d74f84aceb871648092fbcfb8/todolist",
+								"url": "{{host}}/tower/projects/88265d9d74f84aceb871648092fbcfb8/todolists",
 								"method": "GET",
 								"header": [
 									{
@@ -2284,7 +2257,7 @@
 						{
 							"name": "创建任务清单",
 							"request": {
-								"url": "{{towerhost}}/projects/88265d9d74f84aceb871648092fbcfb8/todolist",
+								"url": "{{towerhost}}/projects/88265d9d74f84aceb871648092fbcfb8/todolists",
 								"method": "POST",
 								"header": [
 									{
@@ -2319,18 +2292,19 @@
 					"name": "tower授权页",
 					"request": {
 						"url": {
-							"raw": "{{host}}/login/tower?id=111",
+							"raw": "{{host}}/api/login/tower?id=50",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
+								"api",
 								"login",
 								"tower"
 							],
 							"query": [
 								{
 									"key": "id",
-									"value": "111",
+									"value": "50",
 									"equals": true,
 									"description": ""
 								}
@@ -2354,11 +2328,12 @@
 					"name": "刷新token",
 					"request": {
 						"url": {
-							"raw": "{{host}}/oauth/token?include=permission",
+							"raw": "{{host}}/api/oauth/token?include=permission",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
+								"api",
 								"oauth",
 								"token"
 							],
@@ -2376,7 +2351,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_token_a}}",
+								"value": "{{jwt_admin}}",
 								"description": ""
 							}
 						],
@@ -2388,113 +2363,200 @@
 			]
 		},
 		{
-			"name": "数据报表",
+			"name": "数据",
 			"description": "",
 			"item": [
 				{
-					"name": "营销创意成果数据表",
-					"request": {
-						"url": {
-							"raw": "http://{{host}}/api/marketing_excel?start_date=2018-04-01&end_date=2018-04-30",
-							"protocol": "http",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"marketing_excel"
-							],
-							"query": [
-								{
-									"key": "start_date",
-									"value": "2018-04-01"
+					"name": "导出",
+					"description": "",
+					"item": [
+						{
+							"name": "导出excel",
+							"request": {
+								"url": {
+									"raw": "http://{{host}}/api/export?start_date=2018-05-01&end_date=2018-05-02&type=daily_average&area_id=2&scene_id=1",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"export"
+									],
+									"query": [
+										{
+											"key": "start_date",
+											"value": "2018-05-01",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "end_date",
+											"value": "2018-05-02",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "type",
+											"value": "daily_average",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "area_id",
+											"value": "2",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "scene_id",
+											"value": "1",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
 								},
-								{
-									"key": "end_date",
-									"value": "2018-04-30"
-								}
-							],
-							"variable": []
-						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"description": ""
-					},
-					"response": []
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_admin}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
 				},
 				{
-					"name": "节目数据表",
-					"request": {
-						"url": {
-							"raw": "http://{{host}}/api/project_excel?date=2018-04",
-							"protocol": "http",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"project_excel"
-							],
-							"query": [
-								{
-									"key": "date",
-									"value": "2018-04"
-								}
-							],
-							"variable": []
-						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "点位数据表",
-					"request": {
-						"url": {
-							"raw": "http://{{host}}/api/point_excel?oid=20&start_date=2018-04-01&end_date=2018-04-30",
-							"protocol": "http",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"point_excel"
-							],
-							"query": [
-								{
-									"key": "oid",
-									"value": "20"
+					"name": "图表",
+					"description": "",
+					"item": [
+						{
+							"name": "图表",
+							"request": {
+								"url": {
+									"raw": "{{host}}/api/chart_data?include=a.c,a.d,b",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"chart_data"
+									],
+									"query": [
+										{
+											"key": "include",
+											"value": "a.c,a.d,b",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
 								},
-								{
-									"key": "start_date",
-									"value": "2018-04-01"
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_admin}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\"start_date\":\"2018-05-16\",\"end_date\":\"2018-05-23\",\"home_page\":true,\"id\":\"1\"}"
 								},
-								{
-									"key": "end_date",
-									"value": "2018-04-30"
-								}
-							],
-							"variable": []
+								"description": "id = 1 分天/分时数据\nid = 2 点位 top10\nid = 3 节目 top10"
+							},
+							"response": []
 						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"description": ""
-					},
-					"response": []
+						{
+							"name": "数据统计列表",
+							"request": {
+								"url": {
+									"raw": "http://{{host}}/api/stats?start_date=2018-05-01&end_date=2018-05-10&market_id=4&area_id=2&page=1",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"stats"
+									],
+									"query": [
+										{
+											"key": "start_date",
+											"value": "2018-05-01",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "end_date",
+											"value": "2018-05-10",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "market_id",
+											"value": "4",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "area_id",
+											"value": "2",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "page",
+											"value": "1",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "alias",
+											"value": "isStarJT",
+											"disabled": true
+										},
+										{
+											"key": "point_id",
+											"value": "276",
+											"equals": true,
+											"description": "",
+											"disabled": true
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_admin}}",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"description": "查询参数\n\talias=节目别名&\n\ttype=looknum|playernum& \n\tstart_date=开始日期&\n\tend_date=结束日期"
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
 				}
 			]
 		}
