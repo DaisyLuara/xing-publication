@@ -4,5 +4,6 @@ var prodEnv = require('./prod.env')
 module.exports = merge(prodEnv, {
     NODE_ENV: '"development"',
     SERVER_URL: '"http://papi.jingfree.top"',
+    HTTPS_SERVER_URL: '"http://papi.jingfree.top"',
     TOWER_URL: '"/tower/"'
 })
