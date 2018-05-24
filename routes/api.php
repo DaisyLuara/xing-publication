@@ -110,12 +110,12 @@ $api->version('v1', [
 
             //节目投放
             $api->get('projects', 'ProjectController@index');
-            $api->post('projects', 'ProjectController@store');
-            $api->patch('projects', 'ProjectController@update');
+            $api->post('projects', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectControllerController@store']);
+            $api->patch('projects', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectControllerController@update']);
             $api->get('projects/launch', 'ProjectLaunchController@index');
+            $api->post('projects/launch', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectLaunchController@store']);
+            $api->post('projects/launch', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectLaunchController@update']);
             $api->get('staffs', 'ArUserController@index');
-            $api->post('projects/launch', 'ProjectLaunchController@store');
-            $api->patch('projects/launches', 'ProjectLaunchController@update');
 
             //远程搜索
             $api->get('areas/query', 'QueryController@areaQuery');//区域搜索
