@@ -51,6 +51,10 @@ class SeedRolesAndPermissionsData extends Migration
         // 产品经理
         $auditor = Role::create(['name' => 'project-manager', 'display_name' => '产品经理']);
         $auditor->givePermissionTo(['project', 'point', 'ad']);
+
+        // 广告拓展
+        $auditor = Role::create(['name' => 'ad_manager', 'display_name' => '广告拓展']);
+        $auditor->givePermissionTo(['project', 'point', 'ad']);
     }
 
     public function down()
