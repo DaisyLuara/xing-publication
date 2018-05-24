@@ -110,7 +110,9 @@ class WeChatController extends Controller
     {
         $appid = $request->appid;
         $wxThird = WxThird::where('appid', '=', $appid)->first();
-
+        if (empty($wxThird)) {
+            return response()->json(['message' => 'official account not authorization']);
+        }
         $openPlatform = EasyWeChat::openPlatform();
         $officialAccount = $openPlatform->officialAccount($appid, $wxThird->refresh_token);
         $response = $officialAccount->server->serve();
