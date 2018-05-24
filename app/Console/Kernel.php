@@ -2,11 +2,9 @@
 
 namespace App\Console;
 
+use App\Console\Commands\GizWitsRestart;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use App\Console\Commands\GizWitsRestart;
-use EasyWeChat;
-use EasyWeChat\Kernel\Messages\Text;
 
 class Kernel extends ConsoleKernel
 {
