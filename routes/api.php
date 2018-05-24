@@ -70,7 +70,7 @@ $api->version('v1', [
             //广告投放
             $api->get('ad_launch', 'AdLaunchController@index');
             $api->post('ad_launch', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'AdLaunchController@store']);
-            $api->post('ad_launch', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'AdLaunchController@update']);
+            $api->patch('ad_launch', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'AdLaunchController@update']);
 
             //广告
             $api->get('advertisement', 'AdvertisementController@index');
