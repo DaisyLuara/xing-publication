@@ -19,8 +19,8 @@
               prop=""
               label=""
               >
-              <template slot-scope="scope">
-                {{scope.row.attributes.name}}
+              <template slot-scope="scope"  >
+                <div  @click="goProjectTask(scope.row)">{{scope.row.attributes.name}}</div>
               </template>
             </el-table-column>
           </el-table>
@@ -75,7 +75,9 @@ export default {
     })
   },
   methods: {
-    
+    goProjectTask(item){
+      this.$router.push({ path: '/team/projects/task',query: {id: item.id,name:item.attributes.name}})
+    },
     tableColClassName({row, column, rowIndex, columnIndex}) {
       return "col-td";
     },
@@ -112,6 +114,7 @@ export default {
         if(response) {
           this.allProjectsList = response.data
           this.titleArr = response.included
+        
           this.titleArr.unshift({
             "id": "0",
             "type": "project_groups",
@@ -127,7 +130,10 @@ export default {
               "display_order": 0
             }
           })
+
           this.projectsList = this.allProjectsList
+            console.log(11111111111);
+            console.log(this.projectsList );
         }
         this.setting.loading = false;
       }).catch(err => {
