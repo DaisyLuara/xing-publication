@@ -16,7 +16,7 @@
             总数:{{pagination.total}} 
           </span>
         </div>
-        <el-table :data="tableData" style="width: 100%" highlight-current-row >
+        <el-table :data="tableData" style="width: 100%" >
           <el-table-column type="expand">
             <template slot-scope="scope">
               <el-form label-position="left" inline class="demo-table-expand">
@@ -28,9 +28,6 @@
                 </el-form-item>
                 <el-form-item label="链接">
                   <a :href="scope.row.link" target="_blank" style="color: blue">查看</a>
-                </el-form-item>
-                <el-form-item label="版本">
-                  <span>{{scope.row.version_name}}</span>
                 </el-form-item>
                 <el-form-item label="版本号">
                   <span>{{scope.row.version_code}}</span> 
@@ -59,12 +56,6 @@
             <template slot-scope="scope">
               <img :src="scope.row.icon" alt="" class="icon-item"/> 
             </template>
-          </el-table-column>
-          <el-table-column
-            prop="version_name"
-            label="版本"
-            min-width="100"
-            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             prop="version_code"

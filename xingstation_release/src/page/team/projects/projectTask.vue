@@ -200,7 +200,7 @@ export default {
   },
   methods: {
     goTaskDetail(id,ID){
-      this.$router.push({ path: '/dt/',query: {id: id,ID:ID}})
+      this.$router.push({ path: '/team/projects/dt',query: {id: id,ID:ID}})
     },
     comfirmMember(data,dateTime,id,childrenID,index){
       if(data!=null&&data!=''&&data!=undefined)

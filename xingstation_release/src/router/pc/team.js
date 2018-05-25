@@ -21,7 +21,7 @@ let router = {
             component: () =>
                 import ( /* webpackChunkName: "page/team/projects/routerView" */ 'page/team/projects/routerView'),
             children: [{
-                    path: 'index',
+                    path: '/',
                     name: '项目列表',
                     meta: {
                         title: '项目列表',
@@ -31,7 +31,17 @@ let router = {
                         import ( /* webpackChunkName: "page/team/projects/index" */ 'page/team/projects/index'),
                 },
                 {
-                    path: 'index/task',
+                    path: 'add',
+                    name: '新建项目',
+                    meta: {
+                        title: '新建项目',
+                        permission: '',
+                    },
+                    component: () =>
+                        import ( /* webpackChunkName: "page/team/projects/projectSave" */ 'page/team/projects/projectSave'),
+                },
+                {
+                    path: 'task',
                     name: '项目任务',
                     meta: {
                         title: '项目任务',
@@ -42,7 +52,7 @@ let router = {
 
                 },
                 {
-                    path: '/dt',
+                    path: 'dt',
                     name: '项目任务详情',
                     meta: {
                         title: '项目任务详情',
@@ -50,7 +60,6 @@ let router = {
                     },
                     component: () =>
                         import ( /* webpackChunkName: "page/team/projects/projectDetail" */ 'page/team/projects/projectDetail'),
-
                 }
 
             ],

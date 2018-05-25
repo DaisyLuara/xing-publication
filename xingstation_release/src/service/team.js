@@ -24,6 +24,15 @@ export default {
             })
         })
     },
+    saveProjects(context, args, id) {
+        return new Promise(function(resolve, reject) {
+            context.$http.post(HOST + TEAM_API + id + '/projects', args).then(response => {
+                resolve(response.data)
+            }).catch(error => {
+                reject(error)
+            })
+        })
+    },
     //获取项目成员
     getProjectMembers(context, id) {
         return new Promise(function(resolve, reject) {

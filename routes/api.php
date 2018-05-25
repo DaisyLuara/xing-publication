@@ -64,13 +64,13 @@ $api->version('v1', [
             $api->get('user/notifications', 'NotificationsController@index');
             $api->get('user/notifications/stats', 'NotificationsController@stats');
             $api->patch('user/read/notifications', 'NotificationsController@read');
+            $api->get('user/activities', 'ActivityLogController@index');
 
-            //数据统计
 
             //广告投放
             $api->get('ad_launch', 'AdLaunchController@index');
-            $api->post('ad_launch', 'AdLaunchController@store');
-            $api->patch('ad_launch', 'AdLaunchController@update');
+            $api->post('ad_launch', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'AdLaunchController@store']);
+            $api->patch('ad_launch', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'AdLaunchController@update']);
 
             //广告
             $api->get('advertisement', 'AdvertisementController@index');
@@ -109,12 +109,12 @@ $api->version('v1', [
 
             //节目投放
             $api->get('projects', 'ProjectController@index');
-            $api->post('projects', 'ProjectController@store');
-            $api->patch('projects', 'ProjectController@update');
+            $api->post('projects', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectControllerController@store']);
+            $api->patch('projects', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectControllerController@update']);
             $api->get('projects/launch', 'ProjectLaunchController@index');
+            $api->post('projects/launch', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectLaunchController@store']);
+            $api->patch('projects/launches', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectLaunchController@update']);
             $api->get('staffs', 'ArUserController@index');
-            $api->post('projects/launch', 'ProjectLaunchController@store');
-            $api->patch('projects/launches', 'ProjectLaunchController@update');
 
             //远程搜索
             $api->get('areas/query', 'QueryController@areaQuery');//区域搜索

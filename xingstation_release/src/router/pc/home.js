@@ -14,7 +14,7 @@ let router = {
     {
       path: 'item',
       name: '首页管理',
-      redirect: 'item/index',
+      redirect: 'item',
       meta: {
         title: '首页管理',
       },
@@ -22,7 +22,7 @@ let router = {
         import(/* webpackChunkName: "page/home/item/routerView" */ 'page/home/item/routerView'),
       children: [
         {
-          path: 'index',
+          path: '/',
           name: '首页详情',
           meta: {
             title: '首页详情',

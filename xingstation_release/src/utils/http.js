@@ -30,8 +30,8 @@ function VueAxios(Vue) {
             return config;
         } else if (config.url.includes('tower')) {
             console.log(3)
-                // config.headers['Authorization'] = 'Bearer ' + auth.getTowerAccessToken();
-            config.headers['Authorization'] = 'Bearer b0f84ed20181704c312b6af9af3ba15611b90b02201a379eea30fb89e3317900'
+            config.headers['Authorization'] = 'Bearer ' + auth.getTowerAccessToken();
+            //config.headers['Authorization'] = 'Bearer b0f84ed20181704c312b6af9af3ba15611b90b02201a379eea30fb89e3317900'
             return config;
         } else {
             // if (auth.checkTokenRefresh()) {
@@ -87,22 +87,22 @@ function VueAxios(Vue) {
             // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
             // http.ClientRequest in node.js
             console.log('request' + error.request)
-                // if (error.request.status === 0) {
-                //     let user_info = JSON.parse(localStorage.getItem('user_info'))
-                //     let id = user_info.id
-                //     if (user_info.tower_access_token) {
-                //         auth.refreshTowerOuthToken(app).then(result => {
+            if (error.request.status === 0) {
+                let user_info = JSON.parse(localStorage.getItem('user_info'))
+                let id = user_info.id
+                if (user_info.tower_access_token) {
+                    auth.refreshTowerOuthToken(app).then(result => {
 
-            //             console.log(result)
-            //             localStorage.removeItem('user_info')
-            //             localStorage.setItem("user_info", JSON.stringify(result))
-            //         }).catch(error => {
-            //             console.log(error)
-            //         })
-            //     } else {
-            //         window.open(process.env.HTTPS_SERVER_URL + '/api/login/tower?id=' + id, '_blank')
-            //     }
-            // }
+                        console.log(result)
+                        localStorage.removeItem('user_info')
+                        localStorage.setItem("user_info", JSON.stringify(result))
+                    }).catch(error => {
+                        console.log(error)
+                    })
+                } else {
+                    window.open(process.env.HTTPS_SERVER_URL + '/api/login/tower?id=' + id, '_blank')
+                }
+            }
         } else {
             // Something happened in setting up the request that triggered an Error
             console.log('Error', error.message);

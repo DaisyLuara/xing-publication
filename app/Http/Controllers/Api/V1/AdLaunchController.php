@@ -49,14 +49,10 @@ class AdLaunchController extends Controller
         return $this->response->paginator($adLaunch, new AdLaunchTransformer());
     }
 
-    public function store(AdLaunchRequest $request, AdLaunch $adLaunchLocal)
+    public function store(AdLaunchRequest $request, AdLaunch $adLaunch)
     {
-        if (env('APP_ENV') != 'production') {
-            return $this->response->noContent();
-        }
-
         $launch = $request->all();
-        $query = $adLaunchLocal->query();
+        $query = $adLaunch->query();
 
         $oids = $launch['oids'];
         unset($launch['oids']);
@@ -65,16 +61,13 @@ class AdLaunchController extends Controller
             $query->create(array_merge(['oid' => $oid, 'date' => date('Y-m-d H:i:s'), 'clientdate' => time() * 1000], $launch));
         }
 
+        activity('ad_launch')->on($adLaunch)->withProperties($request->all())->log('批量增加广告投放');
+
         return $this->response->noContent();
     }
 
-    public function update(AdLaunchRequest $request, AdLaunch $adLaunchLocal)
+    public function update(AdLaunchRequest $request, AdLaunch $adLaunch)
     {
-
-        if (env('APP_ENV') != 'production') {
-            return $this->response->noContent();
-        }
-
         $launch = $request->all();
         $aoids = $launch['aoids'];
 
@@ -82,9 +75,11 @@ class AdLaunchController extends Controller
         unset($launch['oid']);
 
         foreach ($aoids as $aoid) {
-            $query = $adLaunchLocal->query();
+            $query = $adLaunch->query();
             $query->where(['aoid' => $aoid])->update($launch);
         }
+
+        activity('ad_launch')->on($adLaunch)->withProperties($request->all())->log('批量修改广告投放');
 
         return $this->response->noContent();
     }

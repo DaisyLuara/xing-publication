@@ -13,20 +13,20 @@ let router = {
   children: [
     {
       path: 'detail',
-      name: '数据总况',
-      redirect: 'detail/index',
+      name: '详细数据',
+      redirect: 'detail',
       meta: {
-        title: '数据总况',
+        title: '详细数据',
         permission: ''
       },
       component: () =>
         import(/* webpackChunkName: "page/report/detail/routerView" */ 'page/report/detail/routerView'),
       children: [
         {
-          path: 'index',
-          name: '数据详情',
+          path: '/',
+          name: '详细数据展示',
           meta: {
-            title: '数据详情',
+            title: '详细数据展示',
             permission: ''
           },
           component: () =>
