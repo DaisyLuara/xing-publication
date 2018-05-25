@@ -40,7 +40,7 @@ $api->version('v1', [
         $api->get('login/tower/callback', 'TowerLoginController@handleProviderCallback');
 
         // 需要 token 验证的接口
-        $api->group(['middleware' => 'api.auth'], function ($api) {
+        $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
             // 当前登录用户信息
             $api->get('user', 'UsersController@me');
@@ -162,7 +162,11 @@ $api->version('v1', [
         'limit' => config('api.rate_limits.sign.limit'),
         'expires' => config('api.rate_limits.sign.expires'),
     ], function ($api) {
+        //管理员登陆
         $api->post('verificationCodes', 'VerificationCodesController@store'); // 短信验证码
         $api->post('authorizations', 'AuthorizationsController@store'); //登陆
+
+        //用户登录
+        $api->post('customer/login', 'AuthorizationsController@customerLogin');
     });
 });

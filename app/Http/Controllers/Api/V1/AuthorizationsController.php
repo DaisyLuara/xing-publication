@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use Auth;
 use App\Http\Requests\Api\V1\AuthorizationRequest;
-use App\Models\User;
+use App\Models\Customer;
 use Illuminate\Auth\Events\Login;
+use Illuminate\Http\Request;
+use App\Models\User;
+use Auth;
 
 class AuthorizationsController extends Controller
 {
@@ -52,6 +54,27 @@ class AuthorizationsController extends Controller
         }
 
         activity('login')->causedBy($user)->log('登陆成功');
+
+        return $this->response->array([
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'expires_in' => Auth::guard('api')->factory()->getTTL() * 60
+        ])->setStatusCode(201);
+    }
+
+    public function customerLogin(Request $request, Customer $customer)
+    {
+        $username = $request->username;
+
+        filter_var($username, FILTER_VALIDATE_EMAIL) ?
+            $credentials['email'] = $username :
+            $credentials['phone'] = $username;
+
+        $credentials['password'] = $request->password;
+
+        if (!$token = Auth::guard('customer')->attempt($credentials)) {
+            return $this->response->errorUnauthorized('用户名或密码错误');
+        }
 
         return $this->response->array([
             'access_token' => $token,
