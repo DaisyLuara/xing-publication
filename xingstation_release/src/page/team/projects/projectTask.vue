@@ -1,104 +1,118 @@
 <template>
-  <div class="root">
-    <div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
-      <div class="item-content-wrap">
-         <el-card class="box-card">
-        <!-- 标题 -->
-          <div class="search-wrap">
-              <h3>
-                {{filters.name}}
-              </h3>
-              <hr/>
-          </div>
-          <div class="tit">
-          <h2 style="padding:0 0 6px 5px;font-weight:700">任务 </h2>
-          </div>
-          <!-- 需求池 -->
-          <div class="task-wrap">             
-              <div class="need-wrap" v-for="(item,index) in newTodolists" :key="index" >
-                <div class="top">
-                    <div>
-                    <el-button size="small" class="item">{{item.todos.length}}</el-button>
-                    <span class="name">{{item.attributes.name}}</span>
+<div class="root">
+<div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
+  <div class="item-content-wrap">
+      <el-card class="box-card">
+    <!-- 标题 -->
+      <div class="search-wrap">
+        <h3>
+          {{filters.name}}
+        </h3>
+        <hr/>
+      </div>
+      <div class="tit">
+      <h2 style="padding:0 0 6px 5px;font-weight:700">任务 </h2>
+      </div>
+      <!-- 需求池 -->
+      <div class="task-wrap">             
+        <div class="need-wrap" v-for="(item,index) in newTodolists" :key="index" >
+          <div class="top">
+              <div>
+              <el-button size="small" class="item">{{item.todos.length}}</el-button>
+              <span class="name">{{item.attributes.name}}</span>
+              </div>
+              <div class="icon-right">
+                <i class="el-icon-circle-plus-outline"  @click="addDiv(item.id)"></i>
+                <i class="el-icon-tickets"></i>
+              </div>
+            </div>
+            <ul class="list" >
+              <li  class="dragArea" v-for="(element,index) in item.todos" :key="index">
+                <div class="dragArea-top">
+                  <el-checkbox label=""  class="lable"  @change="completion(item.id,element,index)"></el-checkbox> 
+                  <!-- <input type="checkbox"/> -->
+                  <span class="text"  style="white-space: pre-wrap;"  refs="text" @click="goTaskDetail(element.id,ID)" 
+                    v-if="element.contentShow">{{element.attributes.content}}</span>
+                  <textarea class="text" v-model="element.attributes.content"  
+                    refs="text" v-if="!element.contentShow"></textarea>
+                </div>
+                  <p>
+                    <span class="member"                      
+                      @click="comfirmMember(element.relationships.assignee.data,element.attributes.due_at,item.id,element.id,index)">
+                      {{(element.relationships.assignee.data!=''&&element.relationships.assignee.data!=null&&element.relationships.assignee.data!=undefined)?element.relationships.assignee.data.id:'' | getMemberName(members)}} {{element.attributes.due_at!=null?element.attributes.due_at.split('T')[0]:''}}
+                    </span>
+                    <i class="el-icon-edit" style="float:right;" @click="modify(item.id,element.id)"></i>
+                    <i class="el-icon-delete" style="float:right;margin-right:15px"  
+                      @click="deleteTodos(item.id,element.id,index)"></i>
+                </p>
+                  <p v-if="element.show"><a class="save" @click="comfirm(item.id,element,index)">确认</a >
+                    <a class="cancle" @click="cancleModify(item.id,element.id)">取消</a>
+                  </p>
+              </li>
+                <div class=" list add-list"  >
+                  <form>
+                  <div  class="dragArea" v-for="(element,index) in item.NewDiv" :key="index">
+                    <div class="dragArea-top">
+                      <el-checkbox label="" class="lable"></el-checkbox>
+                      <textarea placeholder="新建任务" class="text" v-model="element.content"  refs="text"></textarea>
                     </div>
-                    <div class="icon-right">
-                      <i class="el-icon-circle-plus-outline"  @click="addDiv(item.id)"></i>
-                      <i class="el-icon-tickets"></i>
-                    </div>
+                    <p>
+                        <span class="member" @click="comfirmMember(null,'',item.id,'',index)" >
+                          {{(element.assignee_id!=''&&element.assignee_id!=null&&element.assignee_id)?element.assignee_id:'' | getMemberName(members)}} {{(element.due_at!=null&&element.due_at!='')?element.due_at:''|  getDateTime()}}
+                        </span>
+                    </p>
+                      <p>
+                        <a class="save" @click="save(item.id,element,index)">添加任务</a >
+                        <a class="cancle" @click="cancle(item.id,index)">取消</a>
+                      </p>
                   </div>
-                  <ul class="list" >
-                        <li  class="dragArea" v-for="(element,index) in item.todos" :key="index">
-                          <div class="dragArea-top">
-                           <el-checkbox label=""  class="lable"></el-checkbox> 
-                           <span class="text"   refs="text" @click="goTaskDetail(element.id)" v-if="element.contentShow">{{element.attributes.content}}</span>
-                           <textarea class="text" v-model="element.attributes.content"  refs="text" v-if="!element.contentShow"></textarea>
-                          </div>
-                           <p>
-                             <span class="member" @click="comfirmMember(item.id,element.id)">{{(element.relationships.assignee.data!=''&&
-                               element.relationships.assignee.data!=null&&element.relationships.assignee.data!=undefined)?element.relationships.assignee.data.id:'' | getMemberName(members)}} {{element.attributes.due_at!=null?element.attributes.due_at.split('T')[0]:''}}</span>
-                             <i class="el-icon-edit" style="float:right;" @click="modify(item.id,element.id)"></i>
-                             <i class="el-icon-delete" style="float:right;margin-right:15px"  @click="deleteTodos(item.id,element.id,index)"></i>
-                          </p>
-                           <p v-if="element.show"><a class="save" @click="comfirm(item.id,element,index)">确认</a ><a class="cancle" @click="cancleModify(item.id,element.id)">取消</a></p>
-                        </li>
-                      <div class=" list add-list"  >
-                       <form>
-                        <div  class="dragArea" v-for="(element,index) in item.NewDiv" :key="index">
-                          <div class="dragArea-top">
-                           <el-checkbox label="" class="lable"></el-checkbox>
-                            <textarea placeholder="新建任务" class="text" v-model="element.content"  refs="text"></textarea>
-                          </div>
-                          <p>
-                             <span class="member">未指派</span>
-                          </p>
-                           <p><a class="save" @click="save(item.id,element,index)">添加任务</a ><a class="cancle" @click="cancle(item.id,index)">取消</a></p>
-                        </div>
-                        </form>
-                   </div>
-                  </ul>
-                  <div class="zanwushuju" v-if="item.todos.length===0&& item.NewDiv.legth===0">{{notData}}</div>
-              </div> 
-              
-               <div class="no-data" v-if="newTodolists.length===0">{{notDataContent}}</div>
-          </div>
-         </el-card>
-         <!-- <弹出层>1 -->
-         <el-dialog  :visible.sync="dialogFormVisible">
-          <el-form :model="form">
-            <el-form-item label="将任务指派给谁" :label-width="formLabelWidth">
-               <el-select v-model="todos_assignment.todos_assignment.assignee_id" placeholder="请选择">
-                      <el-option
-                        v-for="(item,index) in members"
-                        :key="index"
-                        :label="item.attributes.nickname"
-                        :value="item.id">
-                      </el-option>
-                 </el-select>
-            </el-form-item>
-            <el-form-item label="任务截止时间" :label-width="formLabelWidth">
-               <el-date-picker
-                    v-model="todos_due.todos_due.due_at"
-                    type="date"
-                    placeholder="选择日期">
-                </el-date-picker>
-            </el-form-item>
-          </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogFormVisible = false">取 消</el-button>
-            <el-button type="primary" @click="assignMember()">确 定</el-button>
-          </div>
-        </el-dialog>
-      </div>  
-    </div>
-  </div>
+                  </form>
+              </div>
+            </ul>
+            <div class="zanwushuju" 
+              v-if="item.todos.length===0&& item.NewDiv.legth===0"
+            >{{notData}}</div>
+          </div> 
+          <div class="no-data" 
+          v-if="newTodolists.length===0"
+          >{{notDataContent}}</div>
+        </div>
+      </el-card>
+      <!-- <弹出层>1 -->
+      <el-dialog  :visible.sync="dialogFormVisible">
+      <el-form :model="form">
+        <el-form-item label="指派任务人" :label-width="formLabelWidth">
+            <el-select v-model="todos_assignment.todos_assignment.assignee_id" placeholder="请选择">
+              <el-option
+                v-for="(item,index) in members"
+                :key="index"
+                :label="item.attributes.nickname"
+                :value="item.id">
+              </el-option>
+              </el-select>
+        </el-form-item>
+        <el-form-item label="任务截止时间" :label-width="formLabelWidth">
+            <el-date-picker
+              v-model="todos_due.todos_due.due_at"
+              type="date"
+              placeholder="选择日期">
+            </el-date-picker>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancleAssignMember()">取 消</el-button>
+        <el-button type="primary" @click="assignMember()">确 定</el-button>
+      </div>
+    </el-dialog>
+  </div>  
+</div>
+</div>
 </template>
 
 <script>
- import team from 'service/team' 
- import auth from 'service/auth'
-//  import draggable from 'vuedraggable'
+import team from 'service/team' 
+import auth from 'service/auth'
 import { Button, Input, Table, Row, Col,TableColumn, Form, FormItem, MessageBox, Card, CheckboxGroup,Checkbox, Select, Option, DatePicker,Dialog} from 'element-ui'
-
 export default {
   data () {
       return {
@@ -109,12 +123,15 @@ export default {
       members: [],
       todoID:'',
       todolistID:'',
+      memberID:'',
+      due_at:'',
       todos_due:{ todos_due: { due_at: '' } },
-      todo:{ todo: { content: '', desc: 'Todo Desc', assignee_id: '', due_at: '' } },
+      todo:{ todo: { content: '', desc: '', assignee_id: '', due_at: '' } },
       todos_assignment:{ todos_assignment: { assignee_id: '' } },
       filters: {
         name: ''
       },
+      index:0,
       notDataContent:'',
       notData:'暂无任务',      
       ID:'',
@@ -124,15 +141,10 @@ export default {
         loading: false,
         loadingText: "拼命加载中"
       },
-      dataValue: '',
+      //dataValue: '',
       loading: true,
-      arUserName: '',
+      //arUserName: '',
       dataShowFlag: true,
-      pagination: {
-        total: 0,
-        pageSize: 10,
-        currentPage: 1
-      },
       emptyText: '暂无数据',
       todos: [],
       todolists: [],
@@ -147,7 +159,7 @@ export default {
     getMemberName:function (arg,members) {
       if(arg==='')
       {
-      return "";
+      return "未指派";
       }
       for(var i=0;i<members.length;i++)
       {
@@ -156,33 +168,52 @@ export default {
        return members[i].attributes.nickname;
       }
       }
-        return "";
+        return "未指派";
+    },
+    //获取年月日
+    getDateTime:function(dateTime){
+      if(dateTime==='')
+      {
+        return '';
+      }
+      var dateTimes=new Date(dateTime);
+      var year = dateTimes.getFullYear();
+      var month = dateTimes.getMonth() + 1 < 10 ? "0" + (dateTimes.getMonth() + 1)
+        : dateTimes.getMonth() + 1;
+      var day = dateTimes.getDate() < 10 ? "0" + dateTimes.getDate() : dateTimes
+        .getDate();
+      var dateStr = year + "-" + month + "-" + day;
+      return dateStr;
     }
     },
   created () {
     this.todolists=[];
     this.ID=this.$route.query.id;
     this.filters.name=this.$route.query.name;
-    this.getTodos();
-    this.getProjectMembers();
-    // auth.refreshUserInfo(this).then((res) => {
-    //   console.log(res)
-    //   //this.getTeamsList();
-    // }).catch(err => {
-    //   console.log(err)
-    //   this.setting.loading = false;
-    // })
+    auth.refreshUserInfo(this).then((res) => {
+      console.log(res)
+      this.getTodos();
+      this.getProjectMembers();
+    }).catch(err => {
+      console.log(err)
+    })
   },
   methods: {
-    
-
-    goTaskDetail(id){
-      console.log(id)
-      this.$router.push({ path: '/dt/',query: {id: id}})
+    goTaskDetail(id,ID){
+      this.$router.push({ path: '/dt/',query: {id: id,ID:ID}})
     },
-    comfirmMember(id,childrenID){
+    comfirmMember(data,dateTime,id,childrenID,index){
+      if(data!=null&&data!=''&&data!=undefined)
+      {
+      this.memberID=data.id;
+      }
+      if(dateTime!=null&&dateTime!=''&&dateTime!=undefined){
+        this.due_at=dateTime;
+      }
+      this.index=index;
       this.todoID=childrenID;
       this.todolistID=id;
+
       this.dialogTableVisible=true;
       this.dialogFormVisible=true;
     },
@@ -191,31 +222,29 @@ export default {
       // this.setting.loading = true;
       return team.getTodolists(this, this.ID).then((response) => {
          this.todolists=response.data;
-         // this.setting.loading = false;
+        //  this.setting.loading = false;
       }).catch(err => {
         console.log(err)
       //  this.setting.loading = false;
       })
     },
     async getAsyncTodos(){
-          for( var i=0;i<this.todolists.length;i++){
-          let c= await team.getTodos(this,this.todolists[i].id);
-          this.todolists[i].todos=c.data;
-          for(var j=0;j<this.todolists[i].todos.length;j++){
-              this.todolists[i].todos[j].show=false;
-              this.todolists[i].todos[j].contentShow=true;
-          }
-          //console.log(c.included,"2222222222")
-          this.todolists[i].index=i;
-          this.todolists[i].NewDiv=[];
-         }
-         this.sort(this.todolists);
-         this.newTodolists=this.todolists;
-         if(this.newTodolists.length===0)
-         {
-         this.notDataContent='任务已完成,开始下一项任务吧';
-         }
-
+      for( var i=0;i<this.todolists.length;i++){
+        let c= await team.getTodos(this,this.todolists[i].id);
+        this.todolists[i].todos=c.data;
+        for(var j=0;j<this.todolists[i].todos.length;j++){
+            this.todolists[i].todos[j].show=false;
+            this.todolists[i].todos[j].contentShow=true;
+        }
+        this.todolists[i].index=i;
+        this.todolists[i].NewDiv=[];
+        }
+        this.sort(this.todolists);
+        this.newTodolists=this.todolists;
+        if(this.newTodolists.length===0)
+        {
+        this.notDataContent='任务已完成,开始下一项任务吧';
+        }
          console.log(this.newTodolists);
      },
     getTodos(){
@@ -225,241 +254,378 @@ export default {
       });
     },
     //处理数据排序
-     sort(obj){
-       obj.sort(function(a, b){  
-          return a.index < b.index ? 1 : -1;   
-        }); 
-      },
-      addDiv(id){
-          console.log(id);
-          this.$forceUpdate(); 
-          for(var i=0;i<this.newTodolists.length;i++){
-          if(id===this.newTodolists[i].id)
-          {
-          var thef=this;
-          this.newTodolists[i].NewDiv.push({content:''});
-          this.$set(this.$data.newTodolists[i], 'NewDiv', thef.newTodolists[i].NewDiv);
-          }
-         }
-        },
-      save(id,item,index){
-        console.log(id)
-        console.log(item)
-        console.log(11111)
-        this.todo.todo.content=item.content;
-        this.createTodos(id,this.todo);
-        this.cancle(id,index);
-      },
-      cancle(id,index)
-      {
-          this.$forceUpdate();
-          for(var i=0;i<this.newTodolists.length;i++){
-          if(id===this.newTodolists[i].id)
-          {
-          var thef=this;
-          this.newTodolists[i].NewDiv.splice(index,1);
-          this.$set(this.$data.newTodolists[i], 'NewDiv', thef.newTodolists[i].NewDiv);
-          break;
-         }
-        }
-      },
-      //修改
-      modify(id,childrenID){
-       this.$forceUpdate();
-          for(var i=0;i<this.newTodolists.length;i++){
-          if(id===this.newTodolists[i].id)
-          {
-            for(var j=0;j<this.newTodolists[i].todos.length;j++)
-            {
-                if(childrenID===this.newTodolists[i].todos[j].id)
-                {
-                  var thef=this;
-                  this.newTodolists[i].todos[j].show=true;
-                  this.newTodolists[i].todos[j].contentShow=false;
-                  this.$set(thef.$data.newTodolists[i], 'todos', thef.newTodolists[i].todos);
-                }
-            }
-         
-          break;
-         }
-        }
-      },
-      //确认修改
-     async comfirm(id,element,index){
-      let responseData=await team.modifyTodos(this, element.id,{ todo: { content: element.attributes.content} })
-      this.cancleModify(id,element.id)
-      },
-      //取消修改
-      cancleModify(id,childrenID){
-        this.$forceUpdate();
-          for(var i=0;i<this.newTodolists.length;i++){
-          if(id===this.newTodolists[i].id)
-          {
-            for(var j=0;j<this.newTodolists[i].todos.length;j++)
-            {
-                if(childrenID===this.newTodolists[i].todos[j].id)
-                {
-                  var thef=this;
-                  this.newTodolists[i].todos[j].show=false;
-                  this.newTodolists[i].todos[j].contentShow=true;
-
-                  this.$set(thef.$data.newTodolists[i], 'todos', thef.newTodolists[i].todos);
-                }
-            }
-         
-          break;
-         }
-
-        }
-      },
-      //创建任务
-      async createTodos(id,todo){
-         let responseData=await team.createTodos(this, id,todo)
-         this.$forceUpdate();
-         for(var i=0;i<this.newTodolists.length;i++){
-          if(id===this.newTodolists[i].id)
-          {
-          var thef=this;
-          this.newTodolists[i].todos.push(responseData.data);
-          this.$set(this.$data.newTodolists[i], 'todos', this.newTodolists[i].todos);
-          break;
-         }
-        }
-      },
-     //修改任务
-     modifyTodos(){
-       team.modifyTodos(this, this.ID).then((response) => {
-       console.log(response.data);
-         // this.setting.loading = false;
-      }).catch(err => {
-        console.log(err)
-      //  this.setting.loading = false;
-      })
-     },
-     //删除任务
-     async deleteTodos(id,childrenID,index){
-        try{
-        let responseData=await team.deleteTodos(this, childrenID);
-        this.$forceUpdate();
+    sort(obj){
+      obj.sort(function(a, b){  
+        return a.index < b.index ? 1 : -1;   
+      }); 
+    },
+    addDiv(id){
+        this.$forceUpdate(); 
         for(var i=0;i<this.newTodolists.length;i++){
         if(id===this.newTodolists[i].id)
         {
         var thef=this;
-        this.newTodolists[i].todos.splice(index,1);
-        this.$set(thef.$data.newTodolists[i], 'todos', thef.newTodolists[i].todos);
+        this.newTodolists[i].NewDiv.push({content:'',assignee_id: '', due_at: ''});
+        this.$set(this.$data.newTodolists[i], 'NewDiv', thef.newTodolists[i].NewDiv);
+        }
+        }
+      },
+    //新建保存
+    save(id,item,index){
+      this.todo.todo.content=item.content;
+      this.todo.todo.assignee_id=item.assignee_id;
+      this.todo.todo.due_at=item.due_at;
+      this.createTodos(id,this.todo);
+      this.cancle(id,index);
+    },
+    //新建取消
+    cancle(id,index)
+    {
+        this.$forceUpdate();
+      for(var i=0;i<this.newTodolists.length;i++){
+        if(id===this.newTodolists[i].id)
+        {
+        var thef=this;
+        this.newTodolists[i].NewDiv.splice(index,1);
+        this.$set(this.$data.newTodolists[i], 'NewDiv', thef.newTodolists[i].NewDiv);
         break;
         }
-        }
-
-        }catch(e){
-            console.log(e);
-        }
-        },
-        //获取成员
-        getProjectMembers () {
-          // this.setting.loadingText = "拼命加载中"
-          // this.setting.loading = true;
-          team.getProjectMembers(this, this.ID).then((response) => {
-            if(response){
-              console.log('获取所有用户');
-              console.log(response.data);
-              this.members = response.data;
+      }
+    },
+    //修改任务
+    modify(id,childrenID){
+      this.$forceUpdate();
+        for(var i=0;i<this.newTodolists.length;i++){
+        if(id===this.newTodolists[i].id)
+        {
+          for(var j=0;j<this.newTodolists[i].todos.length;j++)
+          {
+            if(childrenID===this.newTodolists[i].todos[j].id)
+            {
+              var thef=this;
+              this.newTodolists[i].todos[j].show=true;
+              this.newTodolists[i].todos[j].contentShow=false;
+              this.$set(thef.$data.newTodolists[i], 'todos', thef.newTodolists[i].todos);
             }
-          this.setting.loading = false;
-          }).catch(error => {
-              console.log(error)
-          this.setting.loading = false;
-          })
-        },
-        //指定负责人或者更新时间
-        assignMember(){
-          console.log(this.todos_due.todos_due.due_at);
-          console.log(this.todos_assignment.todos_assignment.assignee_id);
-          if((this.todos_assignment.todos_assignment.assignee_id!=''&&this.todos_assignment.todos_assignment.assignee_id!=null
-          &&this.todos_assignment.todos_assignment.assignee_id!=undefined)&&(this.todos_due.todos_due.due_at==''||this.todos_due.todos_due.due_at==null||this.todos_due.todos_due.due_at==undefined))
-          {
-            console.log(1);
-           this.assignment();
-           return false;
+          }       
+          break;
           }
-           else if((this.todos_due.todos_due.due_at!=''&&this.todos_due.todos_due.due_at!=null&&this.todos_due.todos_due.due_at!=undefined)&&
-         (this.todos_assignment.todos_assignment.assignee_id==''||this.todos_assignment.todos_assignment.assignee_id==null
-          ||this.todos_assignment.todos_assignment.assignee_id==undefined))
-          {
-            console.log(2);
-            console.log(this.todos_due.todos_due.due_at);
-          this.due();
-          return false;
-          }
-          else if((this.todos_due.todos_due.due_at!=''&&this.todos_due.todos_due.due_at!=null&&this.todos_due.todos_due.due_at!=undefined)&&
-          (this.todos_assignment.todos_assignment.assignee_id!=''&&this.todos_assignment.todos_assignment.assignee_id!=null
-          &&this.todos_assignment.todos_assignment.assignee_id!=undefined))
-          {
-            console.log(3);
-            var thef=this;
-           Promise.all([this.assignment()]).then(function (results) {
-           thef.due();
-           return false;
-          });
-          }
-          
-        },
-        //指定负责人
-        assignment(){
-        return team.assignment(this,this.todoID,this.todos_assignment).then((response) => {
-            if(response){
-              console.log('指定负责人');
-              console.log(response.data);
-              this.dialogTableVisible=false;
-              this.dialogFormVisible=false;
-              this.todos_assignment.todos_assignment.assignee_id='';
-              this.refresh(response.data);
         }
-          }).catch(error => {
-              console.log(error)
-          })
-        },
-        //更新到期日
-        due(){
-         return team.due(this,this.todoID,this.todos_due).then((response) => {
-            if(response){
-              console.log('更新时间');
-              console.log(response.data);
-              this.dialogTableVisible=false;
-              this.dialogFormVisible=false;
-              this.refresh(response.data);
-              this.todos_due.todos_due.due_at='';
-             }
-          
-          }).catch(error => {
-              console.log(error)
-          })
-        },
-        //刷新数据
-       refresh(data)
+      },
+    //确认修改
+    async comfirm(id,element,index){
+      let responseData=await team.modifyTodos(this, element.id,{ todo: { content: element.attributes.content} })
+      this.cancleModify(id,element.id)
+    },
+    //取消修改
+    cancleModify(id,childrenID){
+      this.$forceUpdate();
+        for(var i=0;i<this.newTodolists.length;i++){
+        if(id===this.newTodolists[i].id)
+        {
+          for(var j=0;j<this.newTodolists[i].todos.length;j++)
           {
-           this.$forceUpdate();
-           for(var i=0;i<this.newTodolists.length;i++){
-                if(this.todolistID===this.newTodolists[i].id)
+            if(childrenID===this.newTodolists[i].todos[j].id)
+            {
+              var thef=this;
+              this.newTodolists[i].todos[j].show=false;
+              this.newTodolists[i].todos[j].contentShow=true;
+
+              this.$set(thef.$data.newTodolists[i], 'todos', thef.newTodolists[i].todos);
+            }
+          }       
+          break;
+          } 
+        }
+      },
+    //创建任务
+    async createTodos(id,todo){
+      let responseData=await team.createTodos(this, id,todo)
+      this.$forceUpdate();
+      for(var i=0;i<this.newTodolists.length;i++){
+      if(id===this.newTodolists[i].id)
+        {
+        var thef=this;
+        responseData.data.show=false;
+        responseData.data.contentShow=true;
+        this.newTodolists[i].todos.push(responseData.data);
+        this.$set(this.$data.newTodolists[i], 'todos', this.newTodolists[i].todos);
+        break;
+        }
+      }
+        this.todo.todo.assignee_id='';
+        this.todo.todo.due_at='';
+        this.todo.todo.content='';
+    },
+    //修改任务
+    modifyTodos(){
+      team.modifyTodos(this, this.ID).then((response) => {
+      console.log(response.data);
+    }).catch(err => {
+      console.log(err)
+    })
+    },
+    //删除任务
+    async deleteTodos(id,childrenID,index){
+      try{
+        let responseData=await team.deleteTodos(this, childrenID);
+        this.$forceUpdate();
+        for(var i=0;i<this.newTodolists.length;i++){
+          if(id===this.newTodolists[i].id)
+          {
+          var thef=this;
+          this.newTodolists[i].todos.splice(index,1);
+          this.$set(thef.$data.newTodolists[i], 'todos', thef.newTodolists[i].todos);
+          break;
+          }
+        }
+      }catch(e){
+          console.log(e);
+      }
+      },
+    //获取成员
+    getProjectMembers () {
+      team.getProjectMembers(this, this.ID).then((response) => {
+        if(response){
+          console.log('获取所有用户');
+          console.log(response.data);
+          this.members = response.data;
+        }
+      }).catch(error => {
+          console.log(error)
+      })
+    },
+    //指定负责人或者更新时间
+    assignMember(){
+      //新建处理
+      if(this.todoID===''||this.todoID===null||this.todoID===undefined)
+      {
+        this.createAssignment();
+        return false;
+      }
+        if(this.todos_assignment.todos_assignment.assignee_id!=''&&this.todos_due.todos_due.due_at=='')
+      {
+          if(this.memberID!=this.todos_assignment.todos_assignment.assignee_id)
+          {
+            this.assignment();
+          }
+          else
+          {
+            this.dialogTableVisible=false;
+            this.dialogFormVisible=false;
+            this.memberID='';
+            this.todos_assignment.todos_assignment.assignee_id='';
+          }
+        return false;
+      }
+        else if(this.todos_due.todos_due.due_at!=''&&this.todos_assignment.todos_assignment.assignee_id=='')
+        {         
+          if(this.due_at.split('T')[0]!=this.getUpdateDateTime(this.todos_due.todos_due.due_at))
+          {
+            this.due();
+            this.due_at='';
+          }
+          else{
+            this.dialogTableVisible=false;
+            this.dialogFormVisible=false;
+            this.due_at='';
+            this.todos_due.todos_due.due_at='';
+          }
+          return false;
+        }
+      else if(this.todos_due.todos_due.due_at!=''&&this.todos_assignment.todos_assignment.assignee_id!='')
+        {
+        this.contemporaryAssigneeidOrDueat();
+        }
+      else{
+        this.dialogTableVisible=false;
+        this.dialogFormVisible=false;
+          }     
+    },
+    //负责人 任务时间更新
+    contemporaryAssigneeidOrDueat(){
+      if((this.memberID!=this.todos_assignment.todos_assignment.assignee_id)&&((this.due_at==='')||(this.due_at.split('T')[0]!=this.getUpdateDateTime(this.todos_due.todos_due.due_at))))
+        {
+          var thef=this;
+          Promise.all([this.assignment()]).then(function (results) {
+          thef.due();
+          return false;
+          });
+        }
+        else
+        {
+          if(this.memberID!=this.todos_assignment.todos_assignment.assignee_id)
+          {
+            this.assignment();
+            this.memberID
+          }
+          else if((this.due_at==='')||(this.due_at.split('T')[0]!=this.getUpdateDateTime(this.todos_due.todos_due.due_at)))
+          {
+            this.due();
+            this.due_at='';
+          }
+          else
+          {
+            this.dialogTableVisible=false;
+            this.dialogFormVisible=false;
+            this.memberID='';
+            this.todos_assignment.todos_assignment.assignee_id='';
+            this.due_at='';
+            this.todos_due.todos_due.due_at='';
+          }
+        }
+    },
+    //新建任务分配
+    createAssignment(){
+      if(this.todos_assignment.todos_assignment.assignee_id!=''||this.todos_due.todos_due.due_at!='')
+        {
+        this.$forceUpdate(); 
+        for(var i=0;i<this.newTodolists.length;i++){
+          if(this.todolistID===this.newTodolists[i].id)
+          {
+          var thef=this;
+          if(this.todos_assignment.todos_assignment.assignee_id!='')
+          {
+            this.newTodolists[i].NewDiv[this.index].assignee_id=this.todos_assignment.todos_assignment.assignee_id;
+          }
+          if(this.todos_due.todos_due.due_at!='')
+          {
+          this.newTodolists[i].NewDiv[this.index].due_at=this.todos_due.todos_due.due_at+'';
+          }
+          this.$set(this.$data.newTodolists[i], 'NewDiv', thef.newTodolists[i].NewDiv);
+          break;
+          }
+        }
+          this.dialogTableVisible=false;
+          this.dialogFormVisible=false;
+          this.todos_assignment.todos_assignment.assignee_id='';
+          this.todos_due.todos_due.due_at='';
+        }
+    },
+    //分配取消
+    cancleAssignMember(){
+      this.dialogTableVisible=false;
+      this.dialogFormVisible=false;
+      this.todos_due.todos_due.due_at='';
+      this.todos_assignment.todos_assignment.assignee_id=''
+    },
+    //指定负责人
+    assignment(){
+    return team.assignment(this,this.todoID,this.todos_assignment).then((response) => {
+    if(response){
+      this.$forceUpdate();
+      console.log('指定负责人');
+      console.log(response.data);
+      this.dialogTableVisible=false;
+      this.dialogFormVisible=false;
+      this.todos_assignment.todos_assignment.assignee_id='';
+      this.$set(this.$data.todos_assignment.todos_assignment, 'assignee_id', '');
+      this.refresh(response.data);
+     }
+    }).catch(error => {
+        this.dialogTableVisible=false;
+        this.dialogFormVisible=false;
+    })
+    },
+    //更新到期日
+    due(){
+      return team.due(this,this.todoID,this.todos_due).then((response) => {
+        if(response){
+          this.$forceUpdate();
+          console.log('更新时间');
+          console.log(response.data);
+          this.dialogTableVisible=false;
+          this.dialogFormVisible=false;
+          this.refresh(response.data);
+          this.todos_due.todos_due.due_at='';
+          this.$set(this.$data.todos_due.todos_due, 'due_at', '');
+          }     
+      }).catch(error => {
+          console.log(error)
+      })
+    },
+    //刷新数据
+    refresh(data)
+      {
+        this.$forceUpdate();
+        for(var i=0;i<this.newTodolists.length;i++){
+            if(this.todolistID===this.newTodolists[i].id)
+          {
+            for(var j=0;j<this.newTodolists[i].todos.length;j++)
+            {
+              if(this.todoID===this.newTodolists[i].todos[j].id)
               {
-                for(var j=0;j<this.newTodolists[i].todos.length;j++)
-                {
-                  if(this.todoID===this.newTodolists[i].todos[j].id)
-                  {
-                   var thef=this;
-                   this.newTodolists[i].todos.splice(j,1,data);
-                   this.$set(thef.$data.newTodolists[i], 'todos', thef.newTodolists[i].todos);
-                   break;
-                  }
-                }
-               break;
+                var thef=this;
+                data.show=thef.newTodolists[i].todos[j].show;
+                data.contentShow=thef.newTodolists[i].todos[j].contentShow;
+                this.newTodolists[i].todos.splice(j,1,data);
+                this.$set(thef.$data.newTodolists[i], 'todos', thef.newTodolists[i].todos);
+                break;
               }
+            }
+            break;
           }
-          }
-
-
-
+        }
+    },
+    //获取年月日
+    getUpdateDateTime(dateTime){
+      if(dateTime==='')
+      {
+        return '';
+      }
+      var dateTimes=new Date(dateTime);
+      var year = dateTimes.getFullYear();
+      var month = dateTimes.getMonth() + 1 < 10 ? "0" + (dateTimes.getMonth() + 1)
+        : dateTimes.getMonth() + 1;
+      var day = dateTimes.getDate() < 10 ? "0" + dateTimes.getDate() : dateTimes
+        .getDate();
+      var dateStr = year + "-" + month + "-" + day;
+      return dateStr;
+    },
+    //完成任务接口
+    completion(id,element,index){
+      if(element.attributes.is_completed===false)
+      {
+      this.completionTask(id,element,index);
+      }
+      else{
+      this.openTask(id,element,index);
+      } 
+    },
+    //完成任务
+    completionTask(id,element,index){
+    team.completion(this,element.id).then((response) => {
+      console.log(response.data)
+      for(var i=0;i<this.newTodolists.length;i++){
+        if(id===this.newTodolists[i].id)
+      {
+            var thef=this;
+            this.newTodolists[i].todos[index].attributes.is_completed=true;
+            this.$set(thef.$data.newTodolists[i], 'todos', thef.newTodolists[i].todos);            
+            break;
+      }
+    }
+    }).catch(error => {
+        console.log(error)
+    })
+    },
+  //打开任务
+  openTask(id,element,index){
+      team.openTask(this,element.id).then((response) => {
+        for(var i=0;i<this.newTodolists.length;i++){
+          if(id===this.newTodolists[i].id)
+        {    
+          var thef=this;
+          this.newTodolists[i].todos[index].attributes.is_completed=false;
+          this.$set(thef.$data.newTodolists[i], 'todos', thef.newTodolists[i].todos);            
+          break;
+        }
+      }}).catch(error => {
+        console.log(error)
+    })
+  }
   },
+
   components: {
     // draggable,
     "el-table": Table,

@@ -38,6 +38,7 @@ export default {
     assignment(context, id, args) {
         return new Promise(function(resolve, reject) {
             context.$http.patch(HOST + TODOSINFO_API + id + '/assignment', args).then(response => {
+
                 resolve(response.data)
             }).catch(error => {
                 reject(error)
@@ -113,7 +114,28 @@ export default {
                 reject(error)
             })
         })
+    },
+    //完成任务
+    completion(context, id) {
+        return new Promise(function(resolve, reject) {
+            context.$http.post(HOST + TODOSINFO_API + id + '/completion').then(response => {
+                resolve(response.data)
+            }).catch(error => {
+                reject(error)
+            })
+        })
+    },
+    //打开任务
+    openTask(context, id) {
+        return new Promise(function(resolve, reject) {
+            context.$http.delete(HOST + TODOSINFO_API + id + '/completion').then(response => {
+                resolve(response.data)
+            }).catch(error => {
+                reject(error)
+            })
+        })
     }
+
 
 
 
