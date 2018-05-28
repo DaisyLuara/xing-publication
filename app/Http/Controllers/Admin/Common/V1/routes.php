@@ -8,6 +8,9 @@ $api->version('v1', [
         'limit' => config('api.rate_limits.access.limit'),
         'expires' => config('api.rate_limits.access.expires'),
     ], function ($api) {
+
+        $api->post('captchas', 'CaptchasController@store');// 图片验证码
+
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
             //远程搜索

@@ -11,7 +11,6 @@ $api->version('v1', [
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
             //设备
             $api->get('push', 'PushController@index');
-            $api->get('point/map', 'PointController@map');
         });
     });
 

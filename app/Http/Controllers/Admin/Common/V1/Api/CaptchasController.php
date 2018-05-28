@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Admin\Common\V1\Api;
 
 use App\Http\Controllers\Admin\Common\V1\Request\CaptchaRequest;
-use App\Models\User;
+use App\Http\Controllers\Controller;
 use Gregwar\Captcha\CaptchaBuilder;
+use App\Models\User;
 
 class CaptchasController extends Controller
 {

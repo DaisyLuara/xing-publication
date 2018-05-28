@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin\Auth\V1\Api;
 
 use App\Http\Controllers\Admin\Auth\V1\Request\AuthorizationRequest;
-use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Http\Request;
+use App\Models\User;
 use Auth;
 
 class AuthorizationsController extends Controller
