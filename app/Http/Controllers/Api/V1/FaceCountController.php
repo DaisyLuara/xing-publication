@@ -24,6 +24,7 @@ class FaceCountController extends Controller
             ->limit(10)
             ->selectRaw("  apo.uid as uid,aoa.name as areaName,aom.name as marketName,ao.name as pointName,sum(looknum) as looknum")
             ->get();
+        $data = [];
         $faceCount->each(function ($item) use (&$data) {
             $data[] = [
                 'uid' => $item->uid,

@@ -2,11 +2,10 @@
 
 namespace App\Exports;
 
-use Illuminate\Http\Request;
+use DB;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
-use DB;
 
 class PointDailyAverageExport extends AbstractExport
 {
@@ -47,7 +46,6 @@ class PointDailyAverageExport extends AbstractExport
             ->orderBy('ao.oid', 'desc')
             ->selectRaw("aoa.name as areaName,aom.name as marketName,ao.name as pointName,count(*) as days, sum(looknum) as looknum,sum(playernum) as playernum,sum(lovenum) as lovenum,sum(outnum) as outnum,sum(scannum) as scannum,concat_ws(',', date_format(min(fcl.date), '%Y-%m-%d'), date_format(max(fcl.date), '%Y-%m-%d')) as date")
             ->get();
-        dd($faceCount);
         $total = [
             'total' => 'Total',
             'lookSum' => 0,
