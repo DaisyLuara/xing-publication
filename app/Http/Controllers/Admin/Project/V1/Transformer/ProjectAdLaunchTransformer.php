@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Ad\V1\Transformer;
+namespace App\Http\Controllers\Admin\Project\V1\Transformer;
 
 use App\Http\Controllers\Admin\Project\V1\Models\ProjectAdLaunch;
 use League\Fractal\TransformerAbstract;
