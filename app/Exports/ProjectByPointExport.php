@@ -20,15 +20,18 @@ class ProjectByPointExport extends AbstractExport
         $this->startDate = $request->start_date;
         $this->endDate = $request->end_date;
         $this->projectId = $request->project_id;
-        $this->projectName = $request->project_name;
 
         $this->fileName = '节目-点位数据统计表';
     }
 
     public function collection()
     {
+        $projectName = DB::connection('ar')->table('ar_product_list')
+            ->where('id', '=', $this->projectId)
+            ->select('name')
+            ->first();
         $data = collect();
-        $header1 = ['点位', $this->projectName, '', '', '', '', '', '', ''];
+        $header1 = ['点位', $projectName->name, '', '', '', '', '', '', ''];
         $header2 = ['', '', '', '', '', '', '', '', ''];
         $header3 = ['', '围观人数', '玩家人数', '参与率', '生成数', '热度', '扫码', '扫码率', '会员'];
         $data->push($header1);

@@ -53,7 +53,15 @@ class PointExport extends AbstractExport
             ->get();
 
         $data = collect();
-        $header1 = ['', '合计', '', '', '', ''];
+        $point = DB::connection('ar')
+            ->table('avr_official as ao')
+            ->join('avr_official_area as aoa', 'ao.areaid', '=', 'aoa.areaid')
+            ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
+            ->where('ao.oid', '=', $this->pointId)
+            ->selectRaw("aoa.name as areaName,aom.name as marketName,ao.name as pointName")
+            ->first();
+        $pointName = $point->areaName . '-' . $point->marketName . '-' . $point->pointName;
+        $header1 = [$pointName, '合计', '', '', '', ''];
         for ($i = 0; $i < $projectNum; $i++) {
             $header1 = array_merge($header1, [$pName[$i]->name, '', '', '', '']);
         }
