@@ -27,7 +27,7 @@ class JWT extends JWTProvider
         try {
 
             if ($modelName && !$user = $this->auth->setToken($token)->checkSubjectModel($modelName)) {
-                throw new UnauthorizedHttpException('JWTAuth', 'Unable to authenticate with invalid token.');
+                throw new UnauthorizedHttpException('JWTAuth', 'Unable to authenticate with invalid model.');
             }
 
             if (!$user = $this->auth->setToken($token)->authenticate()) {
