@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Project\V1\Models;
 
+use App\Http\Controllers\Admin\WeChat\V1\Models\WxThird;
 use App\Models\Model;
 
 class ProjectAdLaunch extends Model

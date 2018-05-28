@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin\Project\V1\Api;
 
-use App\Http\Requests\Api\V1\ProjectRequest;
-use App\Models\Project;
-use App\Transformers\ProjectTransformer;
+use App\Http\Controllers\Admin\Ad\V1\Transformer\ProjectTransformer;
+use App\Http\Controllers\Admin\Project\V1\Request\ProjectRequest;
+use App\Http\Controllers\Admin\Project\V1\Models\Project;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 

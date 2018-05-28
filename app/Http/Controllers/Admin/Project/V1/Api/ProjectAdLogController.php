@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin\Project\V1\Api;
 
-use App\Models\ProjectAdLog;
-use App\Transformers\ProjectAdLogTransformer;
+use App\Http\Controllers\Admin\Ad\V1\Transformer\ProjectAdLogTransformer;
+use App\Http\Controllers\Admin\Project\V1\Models\ProjectAdLog;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 

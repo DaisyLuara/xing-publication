@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Common\V1\Transformer;
 
+use App\Http\Controllers\Admin\User\V1\Transformer\UserTransformer;
 use League\Fractal\TransformerAbstract;
 use Spatie\Activitylog\Models\Activity;
 
