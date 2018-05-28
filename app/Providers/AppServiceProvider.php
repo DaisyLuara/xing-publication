@@ -2,8 +2,18 @@
 
 namespace App\Providers;
 
+use App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch;
+use App\Http\Controllers\Admin\Project\V1\Models\AdminProject;
+use App\Http\Controllers\Admin\Company\V1\Models\Company;
+use App\Http\Controllers\Admin\Ad\V1\Models\AdLaunch;
+use App\Models\User;
+use App\Observers\ProjectLaunchObserver;
+use App\Observers\AdminProjectObserver;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
+use App\Observers\AdLaunchObserver;
+use App\Observers\CompanyObserver;
+use App\Observers\UserObserver;
 use Laravel\Horizon\Horizon;
 use Studio\Totem\Totem;
 
@@ -34,13 +44,11 @@ class AppServiceProvider extends ServiceProvider
 //            return Auth::check();
         });
 
-        \App\Models\User::observe(\App\Observers\UserObserver::class);
-        \App\Models\Reply::observe(\App\Observers\ReplyObserver::class);
-        \App\Models\Topic::observe(\App\Observers\TopicObserver::class);
-        \App\Models\Company::observe(\App\Observers\CompanyObserver::class);
-        \App\Models\AdminProject::observe(\App\Observers\AdminProjectObserver::class);
-        \App\Models\ProjectLaunch::observe(\App\Observers\ProjectLaunchObserver::class);
-        \App\Models\AdLaunch::observe(\App\Observers\AdLaunchObserver::class);
+        User::observe(UserObserver::class);
+        Company::observe(CompanyObserver::class);
+        AdminProject::observe(AdminProjectObserver::class);
+        ProjectLaunch::observe(ProjectLaunchObserver::class);
+        AdLaunch::observe(AdLaunchObserver::class);
 
         \Carbon\Carbon::setLocale('zh');
         $this->bootTowerSocialite();

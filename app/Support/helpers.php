@@ -1,14 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: root
- * Date: 17-5-24
- * Time: 下午5:41
- */
 
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 /**
  *求两个已知经纬度之间的距离,单位为千米

@@ -75,7 +75,7 @@ return [
         ],
         'customers' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Customer::class,
+            'model' => App\Http\Controllers\Admin\Company\V1\Models\Customer::class,
         ],
     ],
 
