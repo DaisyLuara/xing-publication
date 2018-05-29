@@ -2,9 +2,9 @@
 
 namespace App\Notifications;
 
-use App\Models\Company;
-use Illuminate\Bus\Queueable;
+use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use Illuminate\Notifications\Notification;
+use Illuminate\Bus\Queueable;
 
 class CheckCompany extends Notification
 {

@@ -99,12 +99,13 @@
 					"name": "用户信息",
 					"request": {
 						"url": {
-							"raw": "http://{{host}}/user?include=permissios,roles&ar_user_id=",
+							"raw": "http://{{host}}/api/user?include=permissios,roles&ar_user_id=",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
+								"api",
 								"user"
 							],
 							"query": [
@@ -127,7 +128,13 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_token_a}}",
+								"value": "{{jwt_gao}}",
+								"description": "",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vcGFwaS5qaW5nZnJlZS50b3AvYXBpL2F1dGhvcml6YXRpb25zIiwiaWF0IjoxNTI3NTExMDYzLCJleHAiOjE1Mjc1MTgyNjMsIm5iZiI6MTUyNzUxMTA2MywianRpIjoicFE0RW5yYkxBcWRmQ2xPTCIsInN1YiI6NTEsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.zRn2IZ8UGizY_HgzKIgMwfG9EWjjht6huEUAWos7Zq0",
 								"description": ""
 							}
 						],
@@ -147,16 +154,18 @@
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/json"
+								"value": "application/json",
+								"description": ""
 							},
 							{
 								"key": "Authorization",
-								"value": "{{jwt_token1}}"
+								"value": "{{jwt_gao}}",
+								"description": ""
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n   \"name\":\"ccc\",\n   \"password\": \"123456zz\"\n}"
+							"raw": "{\n   \"name\":\"高高\",\n   \"password\": \"123456zz\"\n}"
 						},
 						"description": ""
 					},
@@ -170,7 +179,8 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Basic Og=="
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vcGFwaS5qaW5nZnJlZS50b3AvYXBpL2F1dGhvcml6YXRpb25zIiwiaWF0IjoxNTI3NTExMDYzLCJleHAiOjE1Mjc1MTgyNjMsIm5iZiI6MTUyNzUxMTA2MywianRpIjoicFE0RW5yYkxBcWRmQ2xPTCIsInN1YiI6NTEsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.zRn2IZ8UGizY_HgzKIgMwfG9EWjjht6huEUAWos7Zq0",
+								"description": ""
 							}
 						],
 						"body": {
@@ -484,7 +494,8 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_fawu}}"
+								"value": "{{jwt_admin}}",
+								"description": ""
 							}
 						],
 						"body": {
@@ -503,7 +514,8 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_fawu}}"
+								"value": "{{jwt_admin}}",
+								"description": ""
 							}
 						],
 						"body": {
@@ -583,7 +595,7 @@
 							"name": "负责人列表",
 							"request": {
 								"url": {
-									"raw": "http://{{host}}/api/companies/5/customers?include=company.user",
+									"raw": "http://{{host}}/api/companies/1/customers?include=company.user",
 									"protocol": "http",
 									"host": [
 										"{{host}}"
@@ -591,13 +603,15 @@
 									"path": [
 										"api",
 										"companies",
-										"5",
+										"1",
 										"customers"
 									],
 									"query": [
 										{
 											"key": "include",
-											"value": "company.user"
+											"value": "company.user",
+											"equals": true,
+											"description": ""
 										}
 									],
 									"variable": []
@@ -606,7 +620,8 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_token2}}"
+										"value": "{{jwt_gao}}",
+										"description": ""
 									}
 								],
 								"body": {
@@ -625,7 +640,8 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_token1}}"
+										"value": "{{jwt_gao}}",
+										"description": ""
 									}
 								],
 								"body": {
@@ -644,7 +660,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_token1}}",
+										"value": "{{jwt_gao}}",
 										"description": ""
 									},
 									{
@@ -655,7 +671,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t    \"name\": \"上海某某科技公ss司\",\n\t    \"phone\": \"13818403071\"\n}"
+									"raw": "{\n\t    \"name\": \"上海某某科技公sas司\",\n\t    \"phone\": \"13818403071\"\n}"
 								},
 								"description": ""
 							},
@@ -679,7 +695,9 @@
 									"query": [
 										{
 											"key": "include",
-											"value": "company.user"
+											"value": "company.user",
+											"equals": true,
+											"description": ""
 										}
 									],
 									"variable": []
@@ -688,16 +706,18 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_token2}}"
+										"value": "{{jwt_gao}}",
+										"description": ""
 									},
 									{
 										"key": "Content-Type",
-										"value": "application/json"
+										"value": "application/json",
+										"description": ""
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"name\" : \"陈经理aa\",\n  \"phone\":\"13818203271\"\n}"
+									"raw": "{\n  \"name\" : \"陈经理aa\",\n  \"phone\":\"13818203277\",\n  \"password\":\"123456\"\n}"
 								},
 								"description": ""
 							},
@@ -714,7 +734,7 @@
 							"name": "客户列表",
 							"request": {
 								"url": {
-									"raw": "http://{{host}}/api/companies?include=user&name=腾讯",
+									"raw": "http://{{host}}/api/companies?include=user",
 									"protocol": "http",
 									"host": [
 										"{{host}}"
@@ -726,11 +746,9 @@
 									"query": [
 										{
 											"key": "include",
-											"value": "user"
-										},
-										{
-											"key": "name",
-											"value": "腾讯"
+											"value": "user",
+											"equals": true,
+											"description": ""
 										}
 									],
 									"variable": []
@@ -739,7 +757,8 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_token1}}"
+										"value": "{{jwt_gao}}",
+										"description": ""
 									}
 								],
 								"body": {
@@ -767,7 +786,9 @@
 									"query": [
 										{
 											"key": "include",
-											"value": "customers"
+											"value": "customers",
+											"equals": true,
+											"description": ""
 										}
 									],
 									"variable": []
@@ -776,7 +797,8 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_token1}}"
+										"value": "{{jwt_gao}}",
+										"description": ""
 									}
 								],
 								"body": {
@@ -795,7 +817,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_token1}}",
+										"value": "{{jwt_gao}}",
 										"description": ""
 									},
 									{
@@ -839,7 +861,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_token2}}",
+										"value": "{{jwt_gao}}",
 										"description": ""
 									},
 									{
@@ -918,7 +940,8 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_tokensa}}"
+								"value": "{{jwt_admin}}",
+								"description": ""
 							}
 						],
 						"body": {
@@ -993,7 +1016,9 @@
 							"query": [
 								{
 									"key": "include",
-									"value": "permissions,roles"
+									"value": "permissions,roles",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
@@ -1002,7 +1027,8 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_tokensa}}"
+								"value": "{{jwt_admin}}",
+								"description": ""
 							}
 						],
 						"body": {
@@ -1042,7 +1068,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_tokena}}",
+								"value": "{{jwt_admin}}",
 								"description": ""
 							},
 							{
@@ -1093,7 +1119,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_token2}}",
+								"value": "{{jwt_admin}}",
 								"description": ""
 							}
 						],
@@ -1108,12 +1134,31 @@
 				{
 					"name": "星视度用户搜索",
 					"request": {
-						"url": "http://{{host}}/api/staffs",
+						"url": {
+							"raw": "http://{{host}}/api/staffs?name=刘",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"staffs"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "刘",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_tokensa}}",
+								"value": "{{jwt_admin}}",
 								"description": ""
 							}
 						],
@@ -1142,7 +1187,9 @@
 							"query": [
 								{
 									"key": "name",
-									"value": "上海"
+									"value": "上海",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
@@ -1151,7 +1198,8 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_token1}}"
+								"value": "{{jwt_gao}}",
+								"description": ""
 							}
 						],
 						"body": {
@@ -1179,15 +1227,21 @@
 							"query": [
 								{
 									"key": "include",
-									"value": "area"
+									"value": "area",
+									"equals": true,
+									"description": ""
 								},
 								{
 									"key": "area_id",
-									"value": "2"
+									"value": "2",
+									"equals": true,
+									"description": ""
 								},
 								{
 									"key": "",
-									"value": ""
+									"value": "",
+									"equals": true,
+									"description": ""
 								}
 							],
 							"variable": []
@@ -1196,7 +1250,8 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_token1}}"
+								"value": "{{jwt_admin}}",
+								"description": ""
 							}
 						],
 						"body": {
@@ -1211,7 +1266,7 @@
 					"name": "点位搜索",
 					"request": {
 						"url": {
-							"raw": "http://{{host}}/api/points/query?market_id=38&include=market",
+							"raw": "http://{{host}}/api/points/query?market_id=38&include=market.area",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
@@ -1230,7 +1285,7 @@
 								},
 								{
 									"key": "include",
-									"value": "market",
+									"value": "market.area",
 									"equals": true,
 									"description": ""
 								},
@@ -1284,11 +1339,14 @@
 							"variable": []
 						},
 						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_admin}}",
+								"description": ""
+							}
+						],
+						"body": {},
 						"description": ""
 					},
 					"response": []
@@ -1298,11 +1356,14 @@
 					"request": {
 						"url": "http://{{host}}/api/ad_trade/query",
 						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_admin}}",
+								"description": ""
+							}
+						],
+						"body": {},
 						"description": ""
 					},
 					"response": []
@@ -1332,11 +1393,14 @@
 							"variable": []
 						},
 						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_admin}}",
+								"description": ""
+							}
+						],
+						"body": {},
 						"description": ""
 					},
 					"response": []
@@ -1349,7 +1413,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_token_a}}",
+								"value": "{{jwt_gao}}",
 								"description": ""
 							}
 						],
@@ -1452,7 +1516,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_token2}}",
+								"value": "{{jwt_admin}}",
 								"description": ""
 							}
 						],
@@ -1488,7 +1552,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_token2}}",
+								"value": "{{jwt_admin}}",
 								"description": ""
 							}
 						],
@@ -1584,7 +1648,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_token1}}",
+								"value": "{{jwt_admin}}",
 								"description": ""
 							}
 						],
@@ -1650,7 +1714,7 @@
 					"name": "设备列表",
 					"request": {
 						"url": {
-							"raw": "http://{{host}}/api/push?page=1&machine_status=online&area_id=8",
+							"raw": "http://{{host}}/api/push?page=1&machine_status=online",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
@@ -1669,12 +1733,6 @@
 								{
 									"key": "machine_status",
 									"value": "online",
-									"equals": true,
-									"description": ""
-								},
-								{
-									"key": "area_id",
-									"value": "8",
 									"equals": true,
 									"description": ""
 								},
@@ -1703,12 +1761,9 @@
 					"name": "设备热力图",
 					"request": {
 						"url": {
-							"raw": "http://papi.xingstation.com/api/point/map?lat=31.20936447823612&lng=121.6082842304611&distance=20&date=all",
-							"protocol": "http",
+							"raw": "{{host}}/api/point/map?lat=31.20936447823612&lng=121.6082842304611&distance=20&date=all",
 							"host": [
-								"papi",
-								"xingstation",
-								"com"
+								"{{host}}"
 							],
 							"path": [
 								"api",
@@ -1747,7 +1802,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vcGFwaS54aW5nc3RhdGlvbi5jb20vYXBpL2F1dGhvcml6YXRpb25zIiwiaWF0IjoxNTI2NDQwNDc0LCJleHAiOjE1MjY0NDQwNzQsIm5iZiI6MTUyNjQ0MDQ3NCwianRpIjoic05GaUVDTlhROXNZZGJCbiIsInN1YiI6NTAsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.QVe1f52mSx5Ia3wWP5PM2_Lub69zVLGF3DqizLFKsFc",
+								"value": "{{jwt_admin}}",
 								"description": ""
 							}
 						],
@@ -1770,7 +1825,7 @@
 							"name": "节目投放列表",
 							"request": {
 								"url": {
-									"raw": "http://{{host}}/api/projects/launch?include=point.scene,point.market,point.area,project&scene_id=1&market_id=142",
+									"raw": "http://{{host}}/api/projects/launch?include=point.scene,point.market,point.area,project&scene_id=1",
 									"protocol": "http",
 									"host": [
 										"{{host}}"
@@ -1804,12 +1859,6 @@
 										{
 											"key": "scene_id",
 											"value": "1",
-											"equals": true,
-											"description": ""
-										},
-										{
-											"key": "market_id",
-											"value": "142",
 											"equals": true,
 											"description": ""
 										}
@@ -1847,7 +1896,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_token2}}",
+										"value": "{{jwt_admin}}",
 										"description": ""
 									}
 								],
@@ -2440,26 +2489,8 @@
 						{
 							"name": "图表",
 							"request": {
-								"url": {
-									"raw": "{{host}}/api/chart_data?include=a.c,a.d,b",
-									"host": [
-										"{{host}}"
-									],
-									"path": [
-										"api",
-										"chart_data"
-									],
-									"query": [
-										{
-											"key": "include",
-											"value": "a.c,a.d,b",
-											"equals": true,
-											"description": ""
-										}
-									],
-									"variable": []
-								},
-								"method": "GET",
+								"url": "{{host}}/api/chart_data",
+								"method": "POST",
 								"header": [
 									{
 										"key": "Authorization",
@@ -2474,7 +2505,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\"start_date\":\"2018-05-16\",\"end_date\":\"2018-05-23\",\"home_page\":true,\"id\":\"1\"}"
+									"raw": "{\"start_date\":\"2018-04-16\",\"end_date\":\"2018-05-12\",\"home_page\":true,\"id\":\"7\",\"index\":\"looknum\"}"
 								},
 								"description": "id = 1 分天/分时数据\nid = 2 点位 top10\nid = 3 节目 top10"
 							},

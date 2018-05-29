@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use Auth;
-use Illuminate\Notifications\Notifiable;
+use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Activitylog\Traits\CausesActivity;
-use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Spatie\Permission\Traits\HasRoles;
 use Spatie\Permission\Models\Role;
+use Auth;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -56,11 +57,6 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
-    }
-
-    public function topics()
-    {
-        return $this->hasMany(Topic::class);
     }
 
     public function company()

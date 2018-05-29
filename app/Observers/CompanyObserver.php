@@ -2,7 +2,7 @@
 
 namespace App\Observers;
 
-use App\Models\Company;
+use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Models\User;
 use App\Notifications\CheckCompany;
 

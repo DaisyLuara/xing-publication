@@ -2,9 +2,8 @@
 
 namespace App\Console;
 
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use App\Console\Commands\GizWitsRestart;
+use Illuminate\Console\Scheduling\Schedule;
 
 class Kernel extends ConsoleKernel
 {

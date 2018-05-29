@@ -2,8 +2,8 @@
 
 namespace App\Notifications;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
+use Illuminate\Bus\Queueable;
 use App\Models\AdminProject;
 
 class CheckAdminProject extends Notification

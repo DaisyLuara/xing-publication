@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Exports\ProjectByPointExport;
 use Illuminate\Support\ServiceProvider;
 use App\Exports\PointExport;
 use App\Exports\MarketingExport;
@@ -41,6 +42,10 @@ class ExcelServiceProvider extends ServiceProvider
 
         $this->app->bind('daily_average', function ($app) {
             return new PointDailyAverageExport($app->request);
+        });
+
+        $this->app->bind('project_point', function ($app) {
+            return new ProjectByPointExport($app->request);
         });
     }
 }

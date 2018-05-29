@@ -2,7 +2,7 @@
 
 namespace App\Observers;
 
-use App\Models\AdLaunch;
+use App\Http\Controllers\Admin\Ad\V1\Models\AdLaunch;
 use Carbon\Carbon;
 
 // creating, created, updating, updated, saving,

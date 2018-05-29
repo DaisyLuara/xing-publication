@@ -10,127 +10,128 @@ import app from '../main'
 // const REFRESH_TOKEN_API = '/api/users/refresh'
 
 function VueAxios(Vue) {
-  if (VueAxios.installed) {
-    return
-  }
-
-  // axios默认设置
-
-  // axios.defaults.baseURL = process.env.SERVER_URL;
-  // axios.defaults.withCredentials = true;
-
-  // http拦截器
-  axios.interceptors.request.use(function(config) {
-    // config.headers['Authorization'] = 'Bearer ' + auth.getToken();
-    // one request of refreshing token can be send at one time
-    // auth or logout cannot trrigle refresh token
-    // if (store.getters.isRefreshToken || config.url.includes('auth') || config.url.includes('logout')) {
-    if (config.url.includes('auth') || config.url.includes('logout')) {
-      config.headers['Authorization'] = 'Bearer ' + auth.getToken();
-      return config;
-    } else if(config.url.includes('tower')){
-      config.headers['Authorization'] = 'Bearer ' + auth.getTowerAccessToken();
-      // config.headers['Authorization'] = 'Bearer 97de7f0d4286f9357415e384f0c4b695f456cce1640968d447b1cd335432a865'
-      return config;
-    }else{
-      // if (auth.checkTokenRefresh()) {
-      //   // refresh token
-      //   return auth.refreshToken(app).then(result => {
-      //     return config;
-      //   }).catch(error => {
-      //     return config;
-      //   })
-      // } else {
-      //   return config
-      // }
-      config.headers['Authorization'] = 'Bearer ' + auth.getToken();
-      return config
+    if (VueAxios.installed) {
+        return
     }
 
-  }, function(error) {
-    return Promise.reject(error);
-  });
+    // axios默认设置
 
-  axios.interceptors.response.use(function(response) {
-    // Do something with response data
-    let result = response.data;
-    // if (result && !result.success) {
-    //   if (response.config && response.config.passError) {
-    //     return Promise.reject(response);
-    //   } else {
-    //     return Promise.reject(result);
-    //   }
-    // }
-    return response;
-  }, function(error) {
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      if (error.response.status == 401) {
-          // 退出登录，清除登录信息，跳转到登录页面
-          // Message.error("对不起，您未被授权")
-          auth.clearLoginData(app)
-          router.push({
-            path: '/login'
-          })
-          Message.error("请求出错：代码" + error.response.status)
-      } else {
-        if(error.response.status == 429) {
-          Message.error("请求出错:" + error.response.statusText)
-        }else{
-          Message.error("请求出错：代码" + error.response.status)
-        }
-      }
-    } else if (error.request) {
-      // The request was made but no response was received
-      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-      // http.ClientRequest in node.js
-      console.log('request' + error.request)
-      if(error.request.status === 0) {
-        let user_info = JSON.parse(localStorage.getItem('user_info'))
-        let id = user_info.id
-        if(user_info.tower_access_token) {
-          auth.refreshTowerOuthToken(app).then(result => {
-            
-            console.log(result)
-          localStorage.removeItem('user_info')
-          localStorage.setItem("user_info", JSON.stringify(result))
-          }).catch(error => {
-            console.log(error)
-          })
+    // axios.defaults.baseURL = process.env.SERVER_URL;
+    // axios.defaults.withCredentials = true;
+
+    // http拦截器
+    axios.interceptors.request.use(function(config) {
+        // config.headers['Authorization'] = 'Bearer ' + auth.getToken();
+        // one request of refreshing token can be send at one time
+        // auth or logout cannot trrigle refresh token
+        // if (store.getters.isRefreshToken || config.url.includes('auth') || config.url.includes('logout')) {
+        if (config.url.includes('auth') || config.url.includes('logout')) {
+            config.headers['Authorization'] = 'Bearer ' + auth.getToken();
+            return config;
+        } else if (config.url.includes('tower')) {
+            console.log(3)
+            config.headers['Authorization'] = 'Bearer ' + auth.getTowerAccessToken();
+            //config.headers['Authorization'] = 'Bearer b0f84ed20181704c312b6af9af3ba15611b90b02201a379eea30fb89e3317900'
+            return config;
         } else {
-          window.open(process.env.HTTPS_SERVER_URL + '/api/login/tower?id=' + id, '_blank')
+            // if (auth.checkTokenRefresh()) {
+            //   // refresh token
+            //   return auth.refreshToken(app).then(result => {
+            //     return config;
+            //   }).catch(error => {
+            //     return config;
+            //   })
+            // } else {
+            //   return config
+            // }
+            config.headers['Authorization'] = 'Bearer ' + auth.getToken();
+            return config
         }
-      }
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      console.log('Error', error.message);
-    }
-    // Do something with response error
-    return Promise.reject(error);
-  });
 
-  // 挂axios到Vue上
-  Vue.axios = axios
+    }, function(error) {
+        return Promise.reject(error);
+    });
 
-  Object.defineProperties(Vue.prototype, {
+    axios.interceptors.response.use(function(response) {
+        // Do something with response data
+        let result = response.data;
+        // if (result && !result.success) {
+        //   if (response.config && response.config.passError) {
+        //     return Promise.reject(response);
+        //   } else {
+        //     return Promise.reject(result);
+        //   }
+        // }
+        return response;
+    }, function(error) {
+        if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            if (error.response.status == 401) {
+                // 退出登录，清除登录信息，跳转到登录页面
+                // Message.error("对不起，您未被授权")
+                auth.clearLoginData(app)
+                router.push({
+                    path: '/login'
+                })
+                Message.error("请求出错：代码" + error.response.status)
+            } else {
+                if (error.response.status == 429) {
+                    Message.error("请求出错:" + error.response.statusText)
+                } else {
+                    Message.error("请求出错：代码" + error.response.status)
+                }
+            }
+        } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            console.log('request' + error.request)
+            if (error.request.status === 0) {
+                let user_info = JSON.parse(localStorage.getItem('user_info'))
+                let id = user_info.id
+                if (user_info.tower_access_token) {
+                    auth.refreshTowerOuthToken(app).then(result => {
 
-    axios: {
-      get() {
-        return axios
-      }
-    },
+                        console.log(result)
+                        localStorage.removeItem('user_info')
+                        localStorage.setItem("user_info", JSON.stringify(result))
+                    }).catch(error => {
+                        console.log(error)
+                    })
+                } else {
+                    window.open(process.env.HTTPS_SERVER_URL + '/api/login/tower?id=' + id, '_blank')
+                }
+            }
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            console.log('Error', error.message);
+        }
+        // Do something with response error
+        return Promise.reject(error);
+    });
 
-    $http: {
-      get() {
-        return axios
-      }
-    }
-  })
+    // 挂axios到Vue上
+    Vue.axios = axios
+
+    Object.defineProperties(Vue.prototype, {
+
+        axios: {
+            get() {
+                return axios
+            }
+        },
+
+        $http: {
+            get() {
+                return axios
+            }
+        }
+    })
 };
 
 if (typeof window !== 'undefined' && window.Vue) {
-  window.Vue.use(VueAxios)
+    window.Vue.use(VueAxios)
 }
 
 export default VueAxios;

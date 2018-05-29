@@ -2,7 +2,7 @@
 
 namespace App\Observers;
 
-use App\Models\ProjectLaunch;
+use App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch;
 use Carbon\Carbon;
 
 // creating, created, updating, updated, saving,
