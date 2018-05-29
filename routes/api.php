@@ -40,7 +40,7 @@ $api->version('v1', [
         $api->get('login/tower/callback', 'TowerLoginController@handleProviderCallback');
 
         // 需要 token 验证的接口
-        $api->group(['middleware' => 'api.auth'], function ($api) {
+        $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
             // 当前登录用户信息
             $api->get('user', 'UsersController@me');
@@ -64,13 +64,13 @@ $api->version('v1', [
             $api->get('user/notifications', 'NotificationsController@index');
             $api->get('user/notifications/stats', 'NotificationsController@stats');
             $api->patch('user/read/notifications', 'NotificationsController@read');
+            $api->get('user/activities', 'ActivityLogController@index');
 
-            //数据统计
 
             //广告投放
             $api->get('ad_launch', 'AdLaunchController@index');
-            $api->post('ad_launch', 'AdLaunchController@store');
-            $api->patch('ad_launch', 'AdLaunchController@update');
+            $api->post('ad_launch', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'AdLaunchController@store']);
+            $api->patch('ad_launch', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'AdLaunchController@update']);
 
             //广告
             $api->get('advertisement', 'AdvertisementController@index');
@@ -109,12 +109,12 @@ $api->version('v1', [
 
             //节目投放
             $api->get('projects', 'ProjectController@index');
-            $api->post('projects', 'ProjectController@store');
-            $api->patch('projects', 'ProjectController@update');
+            $api->post('projects', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectControllerController@store']);
+            $api->patch('projects', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectControllerController@update']);
             $api->get('projects/launch', 'ProjectLaunchController@index');
+            $api->post('projects/launch', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectLaunchController@store']);
+            $api->patch('projects/launches', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectLaunchController@update']);
             $api->get('staffs', 'ArUserController@index');
-            $api->post('projects/launch', 'ProjectLaunchController@store');
-            $api->patch('projects/launches', 'ProjectLaunchController@update');
 
             //远程搜索
             $api->get('areas/query', 'QueryController@areaQuery');//区域搜索
@@ -162,8 +162,12 @@ $api->version('v1', [
         'limit' => config('api.rate_limits.sign.limit'),
         'expires' => config('api.rate_limits.sign.expires'),
     ], function ($api) {
+        //管理员登陆
         $api->post('verificationCodes', 'VerificationCodesController@store'); // 短信验证码
         $api->post('authorizations', 'AuthorizationsController@store'); //登陆
+
+        //用户登录
+        $api->post('customer/login', 'AuthorizationsController@customerLogin');
     });
 
 //    //公众号

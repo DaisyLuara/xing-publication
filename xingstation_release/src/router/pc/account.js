@@ -14,7 +14,7 @@ let router = {
     {
       path: 'account',
       name: '账号管理',
-      redirect: 'account/index',
+      redirect: 'accoun',
       meta: {
         title: '账号管理',
       },
@@ -22,7 +22,7 @@ let router = {
         import(/* webpackChunkName: "page/account/account/routerView" */ 'page/account/account/routerView'),
       children: [
         {
-          path: 'index',
+          path: '/',
           name: '账号详情',
           meta: {
             title: '账号详情',
@@ -32,27 +32,6 @@ let router = {
         },
       ],
     },
-    // {
-    //   path: 'operation',
-    //   name: '操作日志',
-    //   redirect: 'operation/index',
-    //   meta: {
-    //     title: '操作日志',
-    //   },
-    //   component: () =>
-    //     import(/* webpackChunkName: "page/account/operation/routerView" */ 'page/account/operation/routerView'),
-    //   children: [
-    //     {
-    //       path: 'index',
-    //       name: '日志详情',
-    //       meta: {
-    //         title: '日志详情',
-    //       },
-    //       component: () =>
-    //         import(/* webpackChunkName: "page/account/operation/index" */ 'page/account/operation/index'),
-    //     },
-    //   ],
-    // },
   ],
 }
 

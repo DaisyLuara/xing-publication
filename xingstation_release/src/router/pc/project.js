@@ -14,7 +14,7 @@ let router = {
     {
       path: 'item',
       name: '节目投放',
-      redirect: 'item/index',
+      redirect: 'item',
       meta: {
         title: '节目投放',
       },
@@ -22,7 +22,7 @@ let router = {
         import(/* webpackChunkName: "page/project/item/routerView" */ 'page/project/item/routerView'),
       children: [
         {
-          path: 'index',
+          path: '/',
           name: '节目投放详情列表',
           meta: {
             title: '节目投放详情列表',
@@ -38,21 +38,12 @@ let router = {
           meta: {
           },
         },
-        // {
-        //   path: 'data',
-        //   component: () =>
-        //     import(/* webpackChunkName: "page/project/item/itemData" */ 'page/project/item/itemData'),
-        //   name: '节目数据',
-        //   meta: {
-        //     title: '统计指标'
-        //   },
-        // },
       ],
     },
     {
       path: 'list',
       name: '节目列表',
-      redirect: 'list/index',
+      redirect: 'list',
       meta: {
         title: '节目列表',
       },
@@ -60,7 +51,7 @@ let router = {
         import(/* webpackChunkName: "page/project/list/routerView" */ 'page/project/list/routerView'),
       children: [
         {
-          path: 'index',
+          path: '/',
           name: '节目列表详情',
           meta: {
             title: '节目列表详情',

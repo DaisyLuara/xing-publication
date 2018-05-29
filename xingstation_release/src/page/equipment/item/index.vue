@@ -244,10 +244,10 @@ export default {
       },
       {
         value: 'dev',
-        label: '待上线'
+        label: '开发&测试'
       }],      
       searchForm: {
-        machine_status:'',
+        machine_status:'online',
         area_id: '',
         market_id: '',
         point_id: '',

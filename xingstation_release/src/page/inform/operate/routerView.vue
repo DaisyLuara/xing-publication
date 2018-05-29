@@ -1,11 +1,11 @@
 <template>
-  <div class="helps-root">
+  <div class="operate-root">
     <router-view></router-view>
   </div>
 </template>
 <script>
 export default {
-  name: 'helpsView',
+  name: 'operateView',
   data() {
     return {
     }
@@ -16,8 +16,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  .helps-root {
+  .operate-root {
     height: 100%;
+    margin: 10px;
     background-color: #EFF2F7;
   }
 </style>

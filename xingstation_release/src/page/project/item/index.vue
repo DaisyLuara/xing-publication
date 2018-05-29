@@ -5,7 +5,7 @@
         <div class="search-wrap">
           <el-form :model="filters" :inline="true" ref="searchForm" >
             <el-form-item label="" prop="name">
-              <el-input v-model="filters.name" placeholder="请输入节目名称" style="width: 180px;"></el-input>
+              <el-input v-model="filters.name" placeholder="请输入节目名称" style="width: 180px;" clearable></el-input>
             </el-form-item>
             <el-form-item label="" prop="scene">
               <el-select v-model="filters.scene" placeholder="请选择场景" filterable clearable>

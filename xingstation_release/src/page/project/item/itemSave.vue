@@ -286,7 +286,7 @@ export default {
               type: "success"
             })
             this.$router.push({
-              path: "/project/item/index"
+              path: "/project/item"
             })
             console.log(response)
           }).catch((err) => {

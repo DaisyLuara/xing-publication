@@ -10,8 +10,6 @@ import equipment from 'router/pc/equipment'
 // import point from 'router/pc/point'
 import home from 'router/pc/home'
 import report from 'router/pc/report'
-// import help from 'router/pc/help'
-// import contract from 'router/pc/contract'
 
 export default {
   path: '/',

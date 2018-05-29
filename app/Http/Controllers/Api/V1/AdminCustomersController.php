@@ -39,9 +39,14 @@ class AdminCustomersController extends Controller
     {
         $this->authorize('store', [$customer, $company]);
 
-        $customer->fill($request->all());
-        $customer->company_id = $company->id;
-        $customer->save();
+        /** @var Customer $user */
+        $customer = Customer::create([
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'password' => bcrypt($request->password),
+            'company_id' => $company->id,
+        ]);
+
 
         return $this->response->item($customer, new CustomerTransformer())
             ->setStatusCode(201);

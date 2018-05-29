@@ -177,7 +177,7 @@ export default {
           md5: '',
           image_url: ''
         },
-        redirect_url: '/home/item/index'
+        redirect_url: '/home/item'
       },
       rules: {
         account: [
