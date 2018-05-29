@@ -47,5 +47,9 @@ class ExcelServiceProvider extends ServiceProvider
         $this->app->bind('project_point', function ($app) {
             return new ProjectByPointExport($app->request);
         });
+
+        $this->app->bind('marketing_top', function ($app) {
+            return new MarketingExport($app->request);
+        });
     }
 }
