@@ -104,10 +104,14 @@
         </el-row>
       </el-form>
     </div>
+
     <div class="content-wrapper" v-loading="poepleCountFlag">
       <ul class="btns-wrapper">
         <li v-for="(item, key) in peopleCount" :key="key" v-if="item.index !== 'outnum'">
-          <a class="btn" :class="{'active': item.display_name == active}" @click="lineDataHandle(item)">
+          <a 
+            :class="'btn color-'+ key" 
+            @hover="handleHover(key)"
+            @click="lineDataHandle(item)">
             <i class="title" >
               {{item.display_name}}
             </i>
@@ -117,14 +121,36 @@
             <span class="count" v-if="item.index !== 'scannum'">
               {{item.count == null ? 0 : item.count}}
             </span>
-            <i class="arrow-icon"></i>
+            <i :class="'arrow-icon color-' + key"></i>
             <i class="right-arrow-icon" v-if="key != peopleCountLength -1">{{(peopleCount[key+1].count == null) ? 0 : (item.index !== 'playernum' ? new Number((peopleCount[key+1].count/item.count)*100).toFixed(1) : new Number((peopleCount[key+2].count/item.count)*100).toFixed(1))}}%</i>
           </a>
         </li>
       </ul>
       <div class="chart">
-        <highcharts :options="splineOptions" class="highchart" ref="lineChar"></highcharts>
+        <chart 
+          ref="echart"
+          :options="echart" 
+          auto-resize />
       </div>
+    </div>
+    
+    <!-- 漏斗图和年龄分布 -->
+    <div class="transfer-sex-wrapper">
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <div class="transfer">
+            <img style="width: 100%" src="~assets/images/data-bg.png" />
+          </div>
+        </el-col>
+        <el-col :span="12">
+          <div class="sex-age">
+            <chart 
+              ref="piechart"
+              :options="pie" 
+              auto-resize />
+          </div>
+        </el-col>
+      </el-row>
     </div>
     <div v-loading="tableSetting.loading" class="table-wrap">
       <div class="actions-wrap">
@@ -243,40 +269,41 @@
         </el-pagination>
       </div>
     </div>
-    <div class="pie-content-wrapper">
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <div class="pie-sex-wrapper">
-            <div class="pie-sex-content" v-loading="sexFlag">
-              <highcharts :options="sexPieOptions" class="highchart" ref="sexPie"></highcharts>
-            </div>
-          </div>
-        </el-col>
-        <el-col :span="12">
-          <div class="pie-age-wrapper">
-            <div class="pie-age-content" v-loading="ageFlag">
-              <highcharts :options="agePieOptions" class="highchart" ref="agePie" ></highcharts>
-            </div>
-          </div>
-        </el-col>
-      </el-row>
-    </div>
   </div>
 </template>
 <script>
 import stats from 'service/stats'
 import search from 'service/search'
 import chart from 'service/chart'
-import { Row, Col, DatePicker, Select, Option, Button, Form, FormItem, Table, TableColumn,Pagination, MessageBox} from 'element-ui'
-import Highcharts from 'highcharts';
-import loadExporting from 'highcharts/modules/exporting';
-import loadExportData from 'highcharts/modules/export-data';
-import reportViewVue from '../reportView.vue';
-loadExporting(Highcharts);
-loadExportData(Highcharts);
+import {
+  Row,
+  Col,
+  DatePicker,
+  Select,
+  Option,
+  Button,
+  Form,
+  FormItem,
+  Table,
+  TableColumn,
+  Pagination,
+  MessageBox
+} from 'element-ui'
+import Highcharts from 'highcharts'
+import loadExporting from 'highcharts/modules/exporting'
+import loadExportData from 'highcharts/modules/export-data'
+import reportViewVue from '../reportView.vue'
+import ECharts from 'vue-echarts/components/ECharts'
+import 'echarts/lib/chart/line'
+import 'echarts/lib/chart/pie'
+import 'echarts/lib/component/tooltip'
+import 'echarts/lib/component/legend'
+
+loadExporting(Highcharts)
+loadExportData(Highcharts)
 
 export default {
-  components:{
+  components: {
     'el-row': Row,
     'el-col': Col,
     'el-date-picker': DatePicker,
@@ -287,19 +314,28 @@ export default {
     'el-form': Form,
     'el-table': Table,
     'el-table-column': TableColumn,
-    'el-pagination': Pagination
+    'el-pagination': Pagination,
+    chart: ECharts
   },
-  data(){
+  data() {
+    let data = []
+
+    for (let i = 0; i <= 360; i++) {
+      let t = i / 180 * Math.PI
+      let r = Math.sin(2 * t) * Math.cos(2 * t)
+      data.push([r, i])
+    }
     return {
       tableSetting: {
         loading: false,
-        loadingText: "拼命加载中"
+        loadingText: '拼命加载中'
       },
-      reportList:[
+      reportList: [
         {
           value: 'point',
           label: '点位数据'
-        }, {
+        },
+        {
           value: 'marketing',
           label: '营销成果数据'
         }
@@ -309,57 +345,66 @@ export default {
         // }
       ],
       reportValue: 'point',
-      area_id:'',
+      area_id: '',
       market_id: '',
       point_id: '',
       setting: {
         isOpenSelectAll: true,
         loading: false,
-        loadingText: "拼命加载中"
+        loadingText: '拼命加载中'
       },
-      dateTime: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date().getTime()],
+      dateTime: [
+        new Date().getTime() - 3600 * 1000 * 24 * 7,
+        new Date().getTime()
+      ],
       pickerOptions2: {
-        shortcuts: [{
-          text: '今天',
+        shortcuts: [
+          {
+            text: '今天',
             onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              picker.$emit('pick', [start, end]);
+              const end = new Date()
+              const start = new Date()
+              picker.$emit('pick', [start, end])
             }
-          }, {
-          text: '昨天',
+          },
+          {
+            text: '昨天',
             onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24);
-              end.setTime(end.getTime() - 3600 * 1000 * 24);
-              picker.$emit('pick', [start, end]);
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24)
+              end.setTime(end.getTime() - 3600 * 1000 * 24)
+              picker.$emit('pick', [start, end])
             }
-          },{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-            picker.$emit('pick', [start, end]);
+          },
+          {
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
           }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-            picker.$emit('pick', [start, end]);
-          }
-        },{
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-            picker.$emit('pick', [start, end]);
-          }
-        }]
+        ]
       },
       areaList: [],
       marketList: [],
@@ -370,8 +415,8 @@ export default {
       searchLoading: false,
       projectList: [],
       active: '围观总数',
-      splineOptions : {
-        chart:{
+      splineOptions: {
+        chart: {
           type: 'area'
         },
         title: {
@@ -383,13 +428,15 @@ export default {
           },
           type: 'category'
         },
-        yAxis: [{
-          title: {
-            text: null,
-          },
-          floor: 0,
-          tickAmount: 5
-        }],
+        yAxis: [
+          {
+            title: {
+              text: null
+            },
+            floor: 0,
+            tickAmount: 5
+          }
+        ],
         legend: {
           enabled: false
         },
@@ -413,18 +460,20 @@ export default {
             }
           }
         },
-        series: [{
-          color: "#517ebb",
-          name:"数量",
-        }]
+        series: [
+          {
+            color: '#517ebb',
+            name: '数量'
+          }
+        ]
       },
-      agePieOptions : {
-        chart:{
-          type: 'column',
+      agePieOptions: {
+        chart: {
+          type: 'column'
         },
         title: {
           text: '年龄分布',
-          align:'left'
+          align: 'left'
         },
         xAxis: {
           title: {
@@ -439,37 +488,42 @@ export default {
             }
           }
         },
-        yAxis: [{
-          title: {
-            text: '年龄统计',
-          },
-          tickAmount: 5
-        }],
+        yAxis: [
+          {
+            title: {
+              text: '年龄统计'
+            },
+            tickAmount: 5
+          }
+        ],
         legend: {
           enabled: false
         },
         credits: {
           enabled: false
         },
-        series: [{
-          color: "#7cb5ec",
-          name:"年龄统计",
-        }]
+        series: [
+          {
+            color: '#7cb5ec',
+            name: '年龄统计'
+          }
+        ]
       },
-      sexPieOptions : {
-        chart:{
+      sexPieOptions: {
+        chart: {
           type: 'pie',
           plotBackgroundColor: null,
           plotBorderWidth: null,
-          plotShadow: false,
+          plotShadow: false
         },
         title: {
           text: '性别分布',
-          align:'left'
+          align: 'left'
         },
         tooltip: {
           headerFormat: '{性别访问数}<br>',
-          pointFormat: '{point.name}: <b>{point.y} 占比{point.percentage:.1f}%</b>'
+          pointFormat:
+            '{point.name}: <b>{point.y} 占比{point.percentage:.1f}%</b>'
         },
         colors: ['#5eb6c8', '#ffd259'],
         plotOptions: {
@@ -497,10 +551,12 @@ export default {
         credits: {
           enabled: false
         },
-        series: [{
-          type: 'pie',
-          name: '性别访问数',
-        }]
+        series: [
+          {
+            type: 'pie',
+            name: '性别访问数'
+          }
+        ]
       },
       pagination: {
         total: 0,
@@ -513,38 +569,158 @@ export default {
       userList: [],
       ageType: false,
       sexType: false,
-      pointName:'',
+      pointName: '',
       arUserId: '',
       poepleCountFlag: false,
       ageFlag: false,
       sexFlag: false,
       userSelect: '',
-      projectAlias: ''
+      projectAlias: '',
+      echart: {
+        title: {
+          text: '堆叠区域图'
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross',
+            label: {
+              backgroundColor: '#6a7985'
+            }
+          }
+        },
+        legend: {
+          data: ['邮件营销', '联盟广告', '视频广告', '直接访问', '搜索引擎']
+        },
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
+        },
+        grid: [
+          {
+            left: 50,
+            right: 50,
+            height: '35%'
+          },
+          {
+            left: 50,
+            right: 50,
+            top: '46%',
+            height: '35%'
+          }
+        ],
+        xAxis: [
+          {
+            type: 'category',
+            boundaryGap: false,
+            data: ['周一', '周二', '周三', '周四', '周五', '周六']
+          },
+          {
+            show: false,
+            gridIndex: 1,
+            type: 'category',
+            boundaryGap: false,
+            axisLine: { onZero: true },
+            data: ['周一', '周二', '周三', '周四', '周五', '周六'],
+            position: 'top'
+          }
+        ],
+        yAxis: [
+          {
+            name: '次',
+            type: 'value'
+          },
+          {
+            gridIndex: 1,
+            name: '百分比',
+            type: 'value'
+          }
+        ],
+        series: [
+          {
+            name: '邮件营销',
+            type: 'line',
+            stack: '总量',
+            areaStyle: { normal: {} }
+          },
+          {
+            name: '联盟广告',
+            type: 'line',
+            xAxisIndex: 1,
+            yAxisIndex: 1,
+            stack: '总量',
+            areaStyle: { normal: {} },
+            data: []
+          }
+        ]
+      },
+      pie: {
+        title: {
+          text: '天气情况统计',
+          subtext: '虚构数据',
+          left: 'center'
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b} : {c} ({d}%)'
+        },
+        legend: {
+          // orient: 'vertical',
+          // top: 'middle',
+          bottom: 10,
+          left: 'center',
+          data: ['西凉', '益州', '兖州', '荆州', '幽州']
+        },
+        series: [
+          {
+            type: 'pie',
+            radius: '65%',
+            center: ['50%', '50%'],
+            selectedMode: 'single',
+            data: [
+              {
+                value: 1548,
+                name: '幽州'
+              },
+
+              { value: 735, name: '西凉', selected: true }
+            ],
+            itemStyle: {
+              emphasis: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
+      }
     }
   },
-  created(){
+  created() {
     this.setting.loading = true
     this.getSceneList()
     this.getAreaList()
     this.allPromise()
   },
-  computed:{
-    'peopleCountLength': function (){
+  computed: {
+    peopleCountLength: function() {
       return this.peopleCount.length
     },
-    showUser(){
+    showUser() {
       let user_info = JSON.parse(localStorage.getItem('user_info'))
       let roles = user_info.roles.data[0].name
       return roles == 'user' ? false : true
-    },
+    }
   },
-  methods:{
+  methods: {
     changeReportType() {
-      if(this.reportValue === 'point') {
+      if (this.reportValue === 'point') {
         if (!this.point_id) {
           this.$message({
-            message: "点位数据下载，请选择点位",
-            type: "warning"
+            message: '点位数据下载，请选择点位',
+            type: 'warning'
           })
         } else {
           this.getExcelData()
@@ -558,42 +734,51 @@ export default {
       let args = this.setArgs()
       args.type = this.reportValue
       delete args.id
-      return chart.getExcelData(this, args).then((response) => {
-        console.log('下载成功')
-        const a = document.createElement('a');
-        a.href = response;
-        a.download = 'download';
-        a.click();
-        window.URL.revokeObjectURL(response);
-      }).catch((err) => {
-        console.log(err)
-      })
+      return chart
+        .getExcelData(this, args)
+        .then(response => {
+          console.log('下载成功')
+          const a = document.createElement('a')
+          a.href = response
+          a.download = 'download'
+          a.click()
+          window.URL.revokeObjectURL(response)
+        })
+        .catch(err => {
+          console.log(err)
+        })
     },
-    getAreaList () {
-      return search.getAeraList(this).then((response) => {
-       let data = response.data
-       this.areaList = data
-      }).catch(error => {
-        console.log(error)
-      this.setting.loading = false;
-      })
+    getAreaList() {
+      return search
+        .getAeraList(this)
+        .then(response => {
+          let data = response.data
+          this.areaList = data
+        })
+        .catch(error => {
+          console.log(error)
+          this.setting.loading = false
+        })
     },
     getPointList() {
       this.tableSetting.loading = true
       let args = this.setArgs()
       args.page = this.pagination.currentPage
       delete args.id
-      return stats.getStaus(this,args).then((response) => {
-        console.log(response)
-        this.tableData = response.data
-        this.pagination.total = response.meta.pagination.total
-        this.setting.loading = false
-        this.tableSetting.loading = false
-      }).catch((err) => {
-        console.log(err)
-        this.tableSetting.loading = false
-        this.setting.loading = false
-      })
+      return stats
+        .getStaus(this, args)
+        .then(response => {
+          console.log(response)
+          this.tableData = response.data
+          this.pagination.total = response.meta.pagination.total
+          this.setting.loading = false
+          this.tableSetting.loading = false
+        })
+        .catch(err => {
+          console.log(err)
+          this.tableSetting.loading = false
+          this.setting.loading = false
+        })
     },
     getMarket(query) {
       this.searchLoading = true
@@ -603,17 +788,20 @@ export default {
         area_id: this.area_id
       }
       console.log(args)
-      return search.getMarketList(this,args).then((response) => {
-        this.marketList = response.data
-        if(this.marketList.length == 0) {
-          this.market_id = ''
-          this.marketList = []
-        }
-        this.searchLoading = false
-      }).catch(err => {
-        console.log(err)
-        this.searchLoading = false
-      })
+      return search
+        .getMarketList(this, args)
+        .then(response => {
+          this.marketList = response.data
+          if (this.marketList.length == 0) {
+            this.market_id = ''
+            this.marketList = []
+          }
+          this.searchLoading = false
+        })
+        .catch(err => {
+          console.log(err)
+          this.searchLoading = false
+        })
     },
     getPoint() {
       let args = {
@@ -621,13 +809,16 @@ export default {
         market_id: this.market_id
       }
       this.searchLoading = true
-      return search.gePointList(this, args).then((response) => {
-        this.pointList = response.data
-        this.searchLoading = false
-      }).catch(err => {
-        this.searchLoading = false
-        console.log(err)
-      })
+      return search
+        .gePointList(this, args)
+        .then(response => {
+          this.pointList = response.data
+          this.searchLoading = false
+        })
+        .catch(err => {
+          this.searchLoading = false
+          console.log(err)
+        })
     },
     areaChangeHandle() {
       this.market_id = ''
@@ -639,11 +830,14 @@ export default {
       this.getPoint()
     },
     getSceneList() {
-      return search.getSceneList(this).then((response) => {
-        this.sceneList = response.data
-      }).catch(err=> {
-        console.log(err)
-      })
+      return search
+        .getSceneList(this)
+        .then(response => {
+          this.sceneList = response.data
+        })
+        .catch(err => {
+          console.log(err)
+        })
     },
     searchHandle() {
       this.pagination.currentPage = 1
@@ -652,8 +846,8 @@ export default {
       this.setting.loading = true
       this.allPromise()
     },
-    resetSearch(){
-      if(this.showUser){
+    resetSearch() {
+      if (this.showUser) {
         this.userSelect = ''
         this.arUserId = this.userSelect
         this.projectSelect = ''
@@ -661,7 +855,7 @@ export default {
         this.market_id = ''
         this.point_id = ''
         this.sceneSelect = ''
-      } else{
+      } else {
         this.projectSelect = ''
       }
       this.setting.loading = true
@@ -671,18 +865,18 @@ export default {
       this.projectAlias = this.projectSelect
       console.log(this.projectAlias)
     },
-    userChangeHandle(){
+    userChangeHandle() {
       this.arUserId = this.userSelect
       this.projectSelect = ''
-      if(this.arUserId) {
+      if (this.arUserId) {
         this.getProject('')
       }
     },
-    allPromise(){
+    allPromise() {
       this.getPointList()
       this.getPeopleCount()
       this.getAge()
-      this.getGender()
+      // this.getGender()
       this.setting.loading = false
     },
     getUser(query) {
@@ -691,18 +885,21 @@ export default {
       }
       if (query !== '') {
         this.searchLoading = true
-          return search.getUserList(this, args).then((response) => {
+        return search
+          .getUserList(this, args)
+          .then(response => {
             this.userList = response.data
-            if(this.userList.length == 0) {
+            if (this.userList.length == 0) {
               this.projectList = []
               this.projectSelect = ''
             }
             this.searchLoading = false
-          }).catch(err => {
+          })
+          .catch(err => {
             console.log(err)
             this.searchLoading = false
           })
-      }else{
+      } else {
         this.userSelect = ''
         this.userList = []
         return false
@@ -713,89 +910,117 @@ export default {
         ar_user_id: this.arUserId,
         name: query
       }
-      if(this.showUser){
+      if (this.showUser) {
         this.searchLoading = true
-        if(!this.arUserId){
+        if (!this.arUserId) {
           delete args.ar_user_id
-        } 
-        return search.getProjectList(this,args).then((response) => {
-          this.projectList = response.data
-          this.searchLoading = false
-        }).catch(err => {
-          console.log(err)
-          this.searchLoading = false
-        })
-      } else {
-          let user_info = JSON.parse(localStorage.getItem('user_info'))
-          this.arUserId = user_info.ar_user_id
-          args.ar_user_id = this.arUserId
-          this.searchLoading = true
-            return search.getProjectList(this,args).then((response) => {
-              this.projectList = response.data
-              this.searchLoading = false
-            }).catch(err => {
-              console.log(err)
-              this.searchLoading = false
+        }
+        return search
+          .getProjectList(this, args)
+          .then(response => {
+            this.projectList = response.data
+            this.searchLoading = false
           })
-       }
+          .catch(err => {
+            console.log(err)
+            this.searchLoading = false
+          })
+      } else {
+        let user_info = JSON.parse(localStorage.getItem('user_info'))
+        this.arUserId = user_info.ar_user_id
+        args.ar_user_id = this.arUserId
+        this.searchLoading = true
+        return search
+          .getProjectList(this, args)
+          .then(response => {
+            this.projectList = response.data
+            this.searchLoading = false
+          })
+          .catch(err => {
+            console.log(err)
+            this.searchLoading = false
+          })
+      }
     },
-    getPeopleCount(){
+    getPeopleCount() {
       this.poepleCountFlag = true
       let args = this.setArgs('6')
-      return chart.getChartData(this, args).then((response) => {
-        this.peopleCount = response
-        this.type = this.peopleCount[0].index
-        this.getLineData()
-      }).catch((err) => {
-        this.poepleCountFlag = false
-        console.log(err)
-      })
+      return chart
+        .getChartData(this, args)
+        .then(response => {
+          this.peopleCount = response
+          this.type = this.peopleCount[0].index
+          this.getLineData()
+        })
+        .catch(err => {
+          this.poepleCountFlag = false
+          console.log(err)
+        })
     },
     getAge() {
       this.ageFlag = true
       let args = this.setArgs('4')
-      return chart.getChartData(this, args).then((response) => {
-        let ageChart = this.$refs.agePie.chart;
-        let dataAge = []
-        for(let i = 0; i < response.length; i++){
-          dataAge.push({'name':response[i].display_name,'y':parseInt(response[i].count)})
-        }
-        ageChart.series[0].setData(dataAge,true)
-        this.ageFlag = false;
-      }).catch((err) => {
-        this.ageFlag = false
-        console.log(err)
-      })
+      return chart
+        .getChartData(this, args)
+        .then(response => {
+          let ageChart = this.$refs.agePie.chart
+          let dataAge = []
+          for (let i = 0; i < response.length; i++) {
+            dataAge.push({
+              name: response[i].display_name,
+              y: parseInt(response[i].count)
+            })
+          }
+          ageChart.series[0].setData(dataAge, true)
+          this.ageFlag = false
+        })
+        .catch(err => {
+          this.ageFlag = false
+          console.log(err)
+        })
     },
-    changePage (currentPage) {
+    changePage(currentPage) {
       this.pagination.currentPage = currentPage
       this.getPointList()
     },
-    getGender(){
+    getGender() {
       this.sexFlag = true
       let args = this.setArgs('5')
-      return chart.getChartData(this, args).then((response) => {
-        let genderChat = this.$refs.sexPie.chart;
-        let dataGender = []
-        for(let i = 0; i < response.length; i++){
-          if(i==0){
-            dataGender.push({'name':response[i].display_name,'y':parseInt(response[i].count),'sliced': true,'selected': true})
-          }else{
-            dataGender.push([response[i].display_name,parseInt(response[i].count)])
+      return chart
+        .getChartData(this, args)
+        .then(response => {
+          let genderChat = this.$refs.sexPie.chart
+          let dataGender = []
+          for (let i = 0; i < response.length; i++) {
+            if (i == 0) {
+              dataGender.push({
+                name: response[i].display_name,
+                y: parseInt(response[i].count),
+                sliced: true,
+                selected: true
+              })
+            } else {
+              dataGender.push([
+                response[i].display_name,
+                parseInt(response[i].count)
+              ])
+            }
           }
-        }
-        genderChat.series[0].setData(dataGender,true)
-        this.sexFlag = false;
-      }).catch((err) => {
-        this.sexFlag = false
-        console.log(err)
-      })
+          genderChat.series[0].setData(dataGender, true)
+          this.sexFlag = false
+        })
+        .catch(err => {
+          this.sexFlag = false
+          console.log(err)
+        })
     },
     setArgs(id) {
       let args = {
         id: id,
-        start_date : this.handleDateTransform(this.dateTime[0]),
-        end_date: this.handleDateTransform(new Date(this.dateTime[1]).getTime()),
+        start_date: this.handleDateTransform(this.dateTime[0]),
+        end_date: this.handleDateTransform(
+          new Date(this.dateTime[1]).getTime()
+        ),
         alias: this.projectAlias,
         ar_user_id: this.arUserId,
         market_id: this.market_id,
@@ -803,234 +1028,343 @@ export default {
         area_id: this.area_id,
         point_id: this.point_id
       }
-      if(!this.projectSelect) {
+      if (!this.projectSelect) {
         delete args.alias
       }
-      if(!this.arUserId) {
+      if (!this.arUserId) {
         delete args.ar_user_id
       }
-      if(!this.sceneSelect) {
+      if (!this.sceneSelect) {
         delete args.scene_id
       }
-      if(!this.area_id) {
+      if (!this.area_id) {
         delete args.area_id
       }
-      if(!this.point_id) {
+      if (!this.point_id) {
         delete args.point_id
       }
-      if(!this.market_id) {
+      if (!this.market_id) {
         delete args.market_id
       }
       return args
     },
-    getLineData(){
+    getLineData() {
       this.poepleCountFlag = true
       let args = this.setArgs('7')
       args.index = this.type
-      return chart.getChartData(this, args).then((response) => {
-        let dataLine = []
-        let chart = this.$refs.lineChar.chart;
-        for(let k = 0; k < response.length; k++){
-          dataLine.push({'y':parseInt(response[k].count),'name':response[k].display_name})
-        }
-        chart.series[0].setData(dataLine,true)
-        this.poepleCountFlag = false
-      }).catch((err) => {
-        this.poepleCountFlag = false
-        console.log(err)
-      })
+      return chart
+        .getChartData(this, args)
+        .then(response => {
+          let dataLine = []
+          let chart = this.$refs.echart
+          chart.mergeOptions(this.processChartData(response))
+          console.dir(chart)
+          // for (let k = 0; k < response.length; k++) {
+          //   dataLine.push({
+          //     y: parseInt(response[k].count),
+          //     name: response[k].display_name
+          //   })
+          // }
+          // chart.series[0].setData(dataLine, true)
+          this.poepleCountFlag = false
+        })
+        .catch(err => {
+          this.poepleCountFlag = false
+          console.log(err)
+        })
     },
-    lineDataHandle(obj){
+    processChartData(res) {
+      let newOption = {
+        xAxis: [
+          {
+            type: 'category',
+            boundaryGap: false,
+            data: res.map(r => {
+              return r.display_name
+            })
+          }
+        ],
+        series: [
+          {
+            name: '数量',
+            type: 'line',
+            areaStyle: { normal: {} },
+            data: res.map(r => {
+              return r.count
+            })
+          }
+        ]
+      }
+      return newOption
+    },
+    lineDataHandle(obj) {
       this.active = obj.display_name
       this.type = obj.index
       this.getLineData()
     },
-    handleDateTransform (valueDate) {
-      let date = new Date (valueDate)
-      let year = date.getFullYear() + '-';
-      let mouth = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
-      let day = (date.getDate() <10  ? '0'+(date.getDate()) : date.getDate()) + '';
-      return year+mouth+day
+    handleDateTransform(valueDate) {
+      let date = new Date(valueDate)
+      let year = date.getFullYear() + '-'
+      let mouth =
+        (date.getMonth() + 1 < 10
+          ? '0' + (date.getMonth() + 1)
+          : date.getMonth() + 1) + '-'
+      let day =
+        (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ''
+      return year + mouth + day
+    },
+    handleHover(key) {
+      console.log(key)
     }
   }
 }
 </script>
 <style lang="less" scoped>
-  .point-data-wrapper{
-    // padding: 10px;
-    .search-wrap{
-      padding: 30px;
-      background: #fff;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      font-size: 16px;
-      align-items: center;
-      .el-form-item{
-        margin-bottom: 10px;
-      }
-      .el-select{
-        width: 200px;
-      }
-      .warning{
-        background: #ebf1fd;
-        padding: 8px;
-        margin-left: 10px;
-        color: #444;
-        font-size: 12px;
-        i{
-          color: #4a8cf3;
-          margin-right: 5px;
-        }
-      }
-    }
-    
-    .content-wrapper{
-      padding: 15px;
-      background-color: #fff;
-      .btns-wrapper{
-        min-height: 170px;
-        padding: 10px 0;
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        margin-bottom: 10px;
-        li{
-          padding-right: 95px;
-          padding-top: 20px; 
-        }
-        .btn{
-          cursor: pointer;
-          width: 145px;
-          height: 145px;
-          display: block;
-          border-radius: 5px;
-          background:url('~assets/images/program/circle.png') center 35px no-repeat #f6f6f6;
-          position: relative;
-          .title{
-            display: block;
-            height: 35px;
-            line-height: 35px;
-            padding-left: 20px;
-            font-size: 14px;
-            color: #999;
-            font-weight: 600;
-            font-style: normal;
-          }
-          .count{
-            display: block;
-            text-align: center;
-            height: 30px;
-            padding-top: 40px;
-            font-size: 15px;
-            color: #517ebb;
-          }
-          .arrow-icon{
-            position: absolute;
-            z-index: 2;
-            top: 145px;
-            left: 66px;
-            display: none;
-            width: 17px;
-            height: 9px;
-            background: url('~assets/images/program/arrow.png') 50% no-repeat;
-          }
-          .right-arrow-icon{
-            position: absolute;
-            z-index: 2;
-            text-align: center;
-            color: #fff;
-            line-height: 34px;
-            top: 63px;
-            right: -90px;
-            width: 82px;
-            height: 34px;
-            background: url('~assets/images/program/right-arrow.png') 50% no-repeat;
-          }
-        }
-        .active,.btn:hover{
-          .title{
-            color: #fff;
-          }
-          .arrow-icon{
-            display: block;
-          }
-          background-color: #517ebb;
-        }
-      }
-      .chart{
-        padding-top: 30px;
-        width: 100%;
-        .highcharts-container {
-          // width: 100%;
-        }
-      }
-    }
-    .table-wrap{
-      padding: 15px;
-      background: #fff;
-      margin: 15px 0;
-      .demo-table-expand {
-        font-size: 0;
-      }
-      .demo-table-expand label {
-        width: 90px;
-        color: #99a9bf;
-      }
-      .demo-table-expand .el-form-item {
-        margin-right: 0;
-        margin-bottom: 0;
-        width: 50%;
-      }
-    }
-    .pagination-wrap{
-        margin: 10px auto;
-        text-align: right;
-      }
-    .actions-wrap{
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      font-size: 16px;
-      align-items: center;
+.point-data-wrapper {
+  // padding: 10px;
+  .search-wrap {
+    padding: 30px;
+    background: #fff;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 16px;
+    align-items: center;
+    .el-form-item {
       margin-bottom: 10px;
-      .label {
-        font-size: 14px;
-      }
     }
-    .pie-content-wrapper{
-      margin-top: 15px;
-      .pie-sex-wrapper{
-        background-color: #fff;
-        width: 100%;
-        .headline-wrapper{
-          padding: 20px;
-          display: flex;
-          flex-direction: row;
-          justify-content: space-between;
-          font-size: 16px;
-          background-color: #fff;
-          color: #444;
-        }
-        .pie-sex-content{
-          .highchart{
-            .highcharts-container { overflow: hidden !important; }
-          }
-        }
-      }
-      .pie-age-wrapper{
-        background-color: #fff;
-        .headline-wrapper{
-          padding: 20px;
-          display: flex;
-          flex-direction: row;
-          justify-content: space-between;
-          font-size: 16px;
-          background-color: #fff;
-          color: #444;
-        }
+    .el-select {
+      width: 200px;
+    }
+    .warning {
+      background: #ebf1fd;
+      padding: 8px;
+      margin-left: 10px;
+      color: #444;
+      font-size: 12px;
+      i {
+        color: #4a8cf3;
+        margin-right: 5px;
       }
     }
   }
+
+  .content-wrapper {
+    padding: 15px;
+    background-color: #fff;
+    .btns-wrapper {
+      min-height: 170px;
+      padding: 10px 0;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+      li {
+        padding-right: 95px;
+        padding-top: 20px;
+      }
+      .btn:hover {
+        .title {
+          color: #fff;
+        }
+        .arrow-icon {
+          position: absolute;
+          z-index: 2;
+          top: 145px;
+          left: 66px;
+          width: 0;
+          height: 0;
+          border-width: 13px 10px;
+          border-style: solid;
+          &.color-0 {
+            border-color: #8fe5b8 #ffffff #ffffff #ffffff;
+          }
+          &.color-1 {
+            border-color: #0099ff #ffffff #ffffff #ffffff;
+          }
+          &.color-2 {
+            border-color: #22b573 #ffffff #ffffff #ffffff;
+          }
+          &.color-3 {
+            border-color: #f8b62d #ffffff #ffffff #ffffff;
+          }
+          &.color-4 {
+            border-color: #e83828 #ffffff #ffffff #ffffff;
+          }
+          &.color-5 {
+            border-color: #93278f #ffffff #ffffff #ffffff;
+          }
+        }
+        &.color-0 {
+          background: url('~assets/images/program/circle.png') center 35px
+            no-repeat #8fe5b8;
+        }
+        &.color-1 {
+          background: url('~assets/images/program/circle.png') center 35px
+            no-repeat #0099ff;
+        }
+        &.color-2 {
+          background: url('~assets/images/program/circle.png') center 35px
+            no-repeat #22b573;
+        }
+        &.color-3 {
+          background: url('~assets/images/program/circle.png') center 35px
+            no-repeat #f8b62d;
+        }
+        &.color-4 {
+          background: url('~assets/images/program/circle.png') center 35px
+            no-repeat #e83828;
+        }
+        &.color-5 {
+          background: url('~assets/images/program/circle.png') center 35px
+            no-repeat #93278f;
+        }
+        // background-color: #517ebb;
+      }
+      .btn {
+        cursor: pointer;
+        width: 145px;
+        height: 145px;
+        display: block;
+        border-radius: 5px;
+        background: url('~assets/images/program/circle.png') center 35px
+          no-repeat #f6f6f6;
+        position: relative;
+
+        .title {
+          display: block;
+          height: 35px;
+          line-height: 35px;
+          padding-left: 20px;
+          font-size: 14px;
+          color: #999;
+          font-weight: 600;
+          font-style: normal;
+        }
+        .count {
+          display: block;
+          text-align: center;
+          height: 30px;
+          padding-top: 40px;
+          font-size: 15px;
+          color: #517ebb;
+        }
+        .arrow-icon {
+          position: absolute;
+          z-index: 2;
+          top: 145px;
+          left: 66px;
+          width: 0;
+          height: 0;
+          border-width: 13px 10px;
+          border-style: solid;
+          border-color: #f6f6f6 #ffffff #ffffff #ffffff;
+        }
+        .right-arrow-icon {
+          position: absolute;
+          z-index: 2;
+          text-align: center;
+          color: #fff;
+          line-height: 34px;
+          top: 63px;
+          right: -90px;
+          width: 82px;
+          height: 34px;
+          background: url('~assets/images/program/right-arrow.png') 50%
+            no-repeat;
+        }
+      }
+    }
+    .chart {
+      padding-top: 30px;
+      width: 100%;
+      .highcharts-container {
+        // width: 100%;
+      }
+    }
+  }
+  .table-wrap {
+    padding: 15px;
+    background: #fff;
+    margin: 15px 0;
+    .demo-table-expand {
+      font-size: 0;
+    }
+    .demo-table-expand label {
+      width: 90px;
+      color: #99a9bf;
+    }
+    .demo-table-expand .el-form-item {
+      margin-right: 0;
+      margin-bottom: 0;
+      width: 50%;
+    }
+  }
+  .pagination-wrap {
+    margin: 10px auto;
+    text-align: right;
+  }
+  .actions-wrap {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 16px;
+    align-items: center;
+    margin-bottom: 10px;
+    .label {
+      font-size: 14px;
+    }
+  }
+  .pie-content-wrapper {
+    margin-top: 15px;
+    .pie-sex-wrapper {
+      background-color: #fff;
+      width: 100%;
+      .headline-wrapper {
+        padding: 20px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        font-size: 16px;
+        background-color: #fff;
+        color: #444;
+      }
+      .pie-sex-content {
+        .highchart {
+          .highcharts-container {
+            overflow: hidden !important;
+          }
+        }
+      }
+    }
+    .pie-age-wrapper {
+      background-color: #fff;
+      .headline-wrapper {
+        padding: 20px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        font-size: 16px;
+        background-color: #fff;
+        color: #444;
+      }
+    }
+  }
+  .transfer-sex-wrapper {
+    margin-top: 15px;
+    .transfer {
+      background-color: #fff;
+      width: 100%;
+    }
+    .sex-age {
+      background-color: #fff;
+      width: 100%;
+    }
+  }
+  .echarts {
+    height: 800px;
+    width: 100%;
+  }
+}
 </style>
 
