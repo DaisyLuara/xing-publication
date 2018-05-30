@@ -77,6 +77,7 @@ class PointDailyAverageExport extends AbstractExport
             } else {
                 $aa['date'] = $date[0] . '|' . $date[1];
             }
+            $data->push($aa);
             $total = [
                 'total' => '总计',
                 'lookSum' => $total['lookSum'] + $aa['lookNum'],
@@ -127,6 +128,14 @@ class PointDailyAverageExport extends AbstractExport
                 //表头加粗
                 $event->sheet->getDelegate()
                     ->getStyle('A1:J2')
+                    ->applyFromArray([
+                        'font' => [
+                            'bold' => 'true'
+                        ]
+                    ]);
+
+                $event->sheet->getDelegate()
+                    ->getStyle('A'.$this->data->count().':J'.$this->data->count())
                     ->applyFromArray([
                         'font' => [
                             'bold' => 'true'
