@@ -31,7 +31,8 @@
     "spatie/laravel-permission": "~2.7",
     "studio/laravel-totem": "~2.0",
     "tymon/jwt-auth": "1.0.0-rc.2",
-    "zgldh/qiniu-laravel-storage": "^0.9.2"
+    "zgldh/qiniu-laravel-storage": "^0.9.2",
+    "hashids/hashids": "1.0.0"
   },
   "require-dev": {
     "filp/whoops": "^2.0",

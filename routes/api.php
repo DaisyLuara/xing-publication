@@ -32,3 +32,4 @@ include app_path('Http/Controllers/Admin/Project/V1/routes.php');
 include app_path('Http/Controllers/Admin/User/V1/routes.php');
 include app_path('Http/Controllers/Admin/WeChat/V1/routes.php');
 include app_path('Http/Controllers/Admin/Auth/V1/routes.php');
+include app_path('Http/Controllers/Admin/ShortUrl/V1/routes.php');
