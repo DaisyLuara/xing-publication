@@ -2,7 +2,7 @@
   <div class="item-wrap-template" >
     <div class="topbar">
       <el-breadcrumb separator="/">
-        <el-breadcrumb-item :to="{ path: '/ad/item/index' }">广告投放管理</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/ad/item' }">广告投放管理</el-breadcrumb-item>
         <el-breadcrumb-item>添加</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
