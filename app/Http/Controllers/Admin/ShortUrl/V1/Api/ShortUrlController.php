@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin\ShortUrl\V1\Api;
 
 use App\Http\Controllers\Admin\ShortUrl\V1\Request\ShortUrlRequest;
-use App\Http\Controllers\Admin\ShortUrl\V1\Models\ShortUrlRecords;
 use App\Http\Controllers\Admin\ShortUrl\V1\Models\ShortUrl;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Jobs\ShortUrlJob;
 use Hashids\Hashids;
 
 class ShortUrlController extends Controller
@@ -29,7 +29,7 @@ class ShortUrlController extends Controller
     {
         $hashIds = new Hashids();
         $shortUrl = ShortUrl::findOrFail($hashIds->decode($short_path)[0]);
-        ShortUrlRecords::create(['short_url_id' => $shortUrl->id]);
+        ShortUrlJob::dispatch($shortUrl->id)->onQueue('short_url');
 
         return redirect($shortUrl['target_url']);
     }
