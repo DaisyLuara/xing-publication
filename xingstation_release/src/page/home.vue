@@ -59,13 +59,6 @@ export default {
     this.$store.commit('setCurUserInfo', userInfo)
     this.notificationStats()
   },
-  beforeMount () {
-    // let _self = this
-    // this.setIntervalValue = setInterval(function(){
-    //   _self.notificationStats()
-    // },300000)
-    // clearInterval(a)
-  },
   computed: {
     modules() {
       let items = []

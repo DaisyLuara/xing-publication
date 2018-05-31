@@ -67,7 +67,6 @@ export default {
   },
   created () {
     auth.refreshUserInfo(this).then((res) => {
-      console.log(res)
       this.getTeamsList();
     }).catch(err => {
       console.log(err)
@@ -132,8 +131,6 @@ export default {
           })
 
           this.projectsList = this.allProjectsList
-            console.log(11111111111);
-            console.log(this.projectsList );
         }
         this.setting.loading = false;
       }).catch(err => {
