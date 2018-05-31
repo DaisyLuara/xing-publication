@@ -14,7 +14,7 @@ class UpdateShortUrlRecords2 extends Migration
     public function up()
     {
         Schema::table('short_url_records', function (Blueprint $table) {
-            $table->string('ua')->default('');
+            $table->string('ua', 1024)->default('');
             $table->string('ip')->default('');
             $table->integer('third_id')->default(0);
             $table->string('face_id')->default('');
