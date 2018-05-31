@@ -10,7 +10,6 @@
           prop="id"
           label="ID">
           <template slot-scope="scope">
-            <!-- <a :href="'/#/company/customers/edit/' + scope.row.data.id" style="color: #108aea">{{scope.row.data.id}}</a> -->
             {{scope.row.data.id}}
           </template>
         </el-table-column>
@@ -147,7 +146,6 @@ export default {
       if (this.lastClickTab === 'all' || this.lastClickTab === '') {
         this.currentPage =
           this.lastPage !== null ? this.lastPage : this.currentPage
-        // this.getData()
       }
     },
 

@@ -129,7 +129,6 @@ export default {
             console.log(error)
           })
         }else{
-          console.log('error submit');
           return;
         }
       })
@@ -137,12 +136,6 @@ export default {
     
     resetForm(formName) {
       this.$refs[formName].resetFields();
-      // this.userForm.user.name = this.userFormBack.user.name;
-      // this.userForm.user.nick_name = this.userFormBack.user.nick_name;
-      // this.userForm.roles = [];
-      // for(let i = 0, uL = this.userFormBack.roles.length; i < uL; i++){
-      //   this.userForm.roles.push(this.userFormBack.roles[i])
-      // }
     },
     historyBack () {
       router.back()

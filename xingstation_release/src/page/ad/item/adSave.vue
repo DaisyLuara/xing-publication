@@ -184,7 +184,6 @@ export default {
       this.getAdvertiserList()
     },
     advertisementChangeHandle (){
-      console.log(this.adForm.advertisement)
     },
     advertiserChangeHandle(){
       this.adForm.advertisement = ''
@@ -301,7 +300,6 @@ export default {
             console.log(err)
           })
         }else{
-          console.log('error submit');
           return;
         }
       })
