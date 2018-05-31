@@ -1,5 +1,6 @@
 <template>
   <div class="point-data-wrapper" :element-loading-text="setting.loadingText" v-loading="setting.loading">
+    <!-- 搜索 -->
     <div class="search-wrap">
       <el-form ref="searchForm" class="search-form">
         <el-row :gutter="20">
@@ -105,6 +106,7 @@
       </el-form>
     </div>
 
+    <!-- 主要图表部分 -->
     <div class="content-wrapper" v-loading="poepleCountFlag">
       <ul class="btns-wrapper">
         <li v-for="(item, key) in peopleCount" :key="key" v-if="item.index !== 'outnum'">
@@ -126,32 +128,35 @@
           </a>
         </li>
       </ul>
-      <div class="chart">
+      <div class="chart-wrapper">
         <chart 
-          ref="echart"
-          :options="echart" 
+          ref="mainChart"
+          :options="mainChart" 
           auto-resize />
       </div>
     </div>
     
     <!-- 漏斗图和年龄分布 -->
     <div class="transfer-sex-wrapper">
-      <el-row :gutter="20">
-        <el-col :span="12">
           <div class="transfer">
             <img style="width: 100%" src="~assets/images/data-bg.png" />
           </div>
-        </el-col>
-        <el-col :span="12">
           <div class="sex-age">
             <chart 
-              ref="piechart"
-              :options="pie" 
+              ref="pieChart"
+              :options="pieChart" 
               auto-resize />
           </div>
-        </el-col>
-      </el-row>
     </div>
+
+    <!-- 年龄分布图 -->
+    <div class="age-wrapper">
+      <chart
+        ref="ageChart"
+        :options="ageChart"
+        auto-resize />
+    </div>
+    <!-- 报表部分 -->
     <div v-loading="tableSetting.loading" class="table-wrap">
       <div class="actions-wrap">
         <span class="label">
@@ -296,6 +301,7 @@ import reportViewVue from '../reportView.vue'
 import ECharts from 'vue-echarts/components/ECharts'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/chart/pie'
+import 'echarts/lib/chart/bar'
 import 'echarts/lib/component/tooltip'
 import 'echarts/lib/component/legend'
 
@@ -576,7 +582,7 @@ export default {
       sexFlag: false,
       userSelect: '',
       projectAlias: '',
-      echart: {
+      mainChart: {
         title: {
           text: '堆叠区域图'
         },
@@ -606,7 +612,7 @@ export default {
           {
             left: 50,
             right: 50,
-            top: '46%',
+            top: '47%',
             height: '35%'
           }
         ],
@@ -628,12 +634,10 @@ export default {
         ],
         yAxis: [
           {
-            name: '次',
             type: 'value'
           },
           {
             gridIndex: 1,
-            name: '百分比',
             type: 'value'
           }
         ],
@@ -655,7 +659,7 @@ export default {
           }
         ]
       },
-      pie: {
+      pieChart: {
         title: {
           text: '天气情况统计',
           subtext: '虚构数据',
@@ -693,6 +697,93 @@ export default {
                 shadowColor: 'rgba(0, 0, 0, 0.5)'
               }
             }
+          }
+        ]
+      },
+      ageChart: {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            // 坐标轴指示器，坐标轴触发有效
+            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+          }
+        },
+        legend: {
+          data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎']
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            name: '直接访问',
+            type: 'bar',
+            stack: '总量',
+            label: {
+              normal: {
+                show: true,
+                position: 'insideRight'
+              }
+            },
+            data: [320, 302, 301, 334, 390, 330, 320]
+          },
+          {
+            name: '邮件营销',
+            type: 'bar',
+            stack: '总量',
+            label: {
+              normal: {
+                show: true,
+                position: 'insideRight'
+              }
+            },
+            data: [120, 132, 101, 134, 90, 230, 210]
+          },
+          {
+            name: '联盟广告',
+            type: 'bar',
+            stack: '总量',
+            label: {
+              normal: {
+                show: true,
+                position: 'insideRight'
+              }
+            },
+            data: [220, 182, 191, 234, 290, 330, 310]
+          },
+          {
+            name: '视频广告',
+            type: 'bar',
+            stack: '总量',
+            label: {
+              normal: {
+                show: true,
+                position: 'insideRight'
+              }
+            },
+            data: [150, 212, 201, 154, 190, 330, 410]
+          },
+          {
+            name: '搜索引擎',
+            type: 'bar',
+            stack: '总量',
+            label: {
+              normal: {
+                show: true,
+                position: 'insideRight'
+              }
+            },
+            data: [820, 832, 901, 934, 1290, 1330, 1320]
           }
         ]
       }
@@ -875,7 +966,7 @@ export default {
     allPromise() {
       this.getPointList()
       this.getPeopleCount()
-      this.getAge()
+      // this.getAge()
       // this.getGender()
       this.setting.loading = false
     },
@@ -1056,7 +1147,7 @@ export default {
         .getChartData(this, args)
         .then(response => {
           let dataLine = []
-          let chart = this.$refs.echart
+          let chart = this.$refs.mainChart
           chart.mergeOptions(this.processChartData(response))
           console.dir(chart)
           // for (let k = 0; k < response.length; k++) {
@@ -1275,9 +1366,10 @@ export default {
         }
       }
     }
-    .chart {
+    .chart-wrapper {
       padding-top: 30px;
       width: 100%;
+      height: 800px;
       .highcharts-container {
         // width: 100%;
       }
@@ -1352,17 +1444,36 @@ export default {
   }
   .transfer-sex-wrapper {
     margin-top: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    min-height: 600px;
     .transfer {
       background-color: #fff;
-      width: 100%;
+      width: 50%;
+      padding: 10px;
     }
     .sex-age {
+      padding: 10px;
       background-color: #fff;
-      width: 100%;
+      width: 50%;
+      min-height: 600px;
+      .echarts {
+        height: 600px;
+        width: 100%;
+      }
     }
   }
+  .age-wrapper {
+    margin-top: 15px;
+    background-color: #fff;
+    height: 600px;
+    padding: 20px;
+  }
   .echarts {
-    height: 800px;
+    height: 100%;
     width: 100%;
   }
 }
