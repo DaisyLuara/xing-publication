@@ -9,6 +9,10 @@ class ShortUrlRecords extends Model
 
     public $fillable = [
         'short_url_id',
+        'third_id',
+        'ip',
+        'ua',
+        'face_id',
         'utm_campaign',
         'utm_content',
         'utm_source',

@@ -25,11 +25,11 @@ class ShortUrlController extends Controller
 
     }
 
-    public function redirect(string $short_path)
+    public function redirect(string $short_path, Request $request)
     {
         $hashIds = new Hashids();
         $shortUrl = ShortUrl::findOrFail($hashIds->decode($short_path)[0]);
-        ShortUrlJob::dispatch($shortUrl->id)->onQueue('short_url');
+        ShortUrlJob::dispatch($shortUrl->id, ['ua' => $request->userAgent(), 'ip' => $request->getClientIp()])->onQueue('short_url');
 
         return redirect($shortUrl['target_url']);
     }

@@ -15,17 +15,21 @@ use Log;
 class ShortUrlJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     public $tries = 1;
-    protected $short_url_id;
+
+    protected $shortUrlID;
+    protected $browserInfo;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(int $short_url_id)
+    public function __construct(int $shortUrlID, array $browserInfo)
     {
-        $this->short_url_id = $short_url_id;
+        $this->shortUrlID = $shortUrlID;
+        $this->browserInfo = $browserInfo;
     }
 
     /**
@@ -35,11 +39,16 @@ class ShortUrlJob implements ShouldQueue
      */
     public function handle()
     {
-        Log::info($this->short_url_id);
-        $shortUrl = ShortUrl::query()->findOrFail($this->short_url_id);
+        $shortUrl = ShortUrl::query()->findOrFail($this->shortUrlID);
+
         $queryParams = parse_query(parse_url($shortUrl->target_url, PHP_URL_QUERY));
         $data = array_merge(['short_url_id' => $shortUrl->id], $queryParams);
-        Log::info('data', ['data' => $data]);
+        $data = array_merge($data, $this->browserInfo);
+
+        if (isset($queryParams['id'])) {
+            $data['third_id'] = $queryParams['id'];
+        }
+
         ShortUrlRecords::create($data);
     }
 }
