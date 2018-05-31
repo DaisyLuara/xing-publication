@@ -4,24 +4,23 @@ namespace App\Http\Controllers\Admin\Face\V1\Api;
 
 use App\Http\Controllers\Admin\WeChat\V1\Models\WeekRanking;
 use App\Http\Controllers\Controller;
+use App\Jobs\WeekRankingNotify;
 use Carbon\Carbon;
 use DB;
 use EasyWeChat;
-use EasyWeChat\Kernel\Messages\Text;
 
 class FaceCountController extends Controller
 {
     public function test()
     {
         $data = $this->getTenUser();
-        /** @var EasyWeChat\OfficialAccount\Application $officialAccount */
-        $officialAccount = EasyWeChat::officialAccount();
-        for ($i = 0; $i < count($data); $i++) {
-            $text = new Text('你负责的点位“' . $data[$i]['pointName'] . '”上周日均围观数处于倒数第' . ($i + 1) . '名，日均围观数：' . $data[$i]['looknum']);
-//                $user = User::where('ar_user_id', '=', $data[$i]['uid']);
-//                $openId = $user->openid;
-            $openId = 'oNN6q0sZDI_OSTV6rl0rPeHjPgH8';
-            $officialAccount->customer_service->message($text)->to($openId)->send();
+        for ($i = 0; $i < 2; $i++) {
+            //yq,cz
+            $openId = ['oNN6q0sZDI_OSTV6rl0rPeHjPgH8', 'oNN6q0pq-f0-Z2E2gb0QeOmY4r-M'];
+            for ($i = 0; $i < 2; $i++) {
+                WeekRankingNotify::dispatch($data[$i], $openId[$i]);
+            }
+
         }
     }
 
@@ -53,11 +52,13 @@ class FaceCountController extends Controller
             ->selectRaw("  apo.uid as uid,fcl.oid as oid,aoa.name as areaName,aom.name as marketName,ao.name as pointName,sum(looknum) as looknum")
             ->get();
         $data = [];
-        $faceCount->each(function ($item) use (&$data) {
+        $faceCount->each(function ($item) use (&$data, $startDate, $endDate) {
             WeekRanking::create([
                 'ar_user_id' => $item->uid,
                 'point_id' => $item->oid,
-                'looknum_average' => round($item->looknum / 7, 0)
+                'looknum_average' => round($item->looknum / 7, 0),
+                'start_date' => $startDate,
+                'end_date' => $endDate
             ]);
             $data[] = [
                 'uid' => $item->uid,

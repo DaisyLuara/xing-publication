@@ -18,6 +18,8 @@ class CreateWeekRankingTable extends Migration
             $table->integer('ar_user_id');
             $table->integer('point_id');
             $table->integer('looknum_average');
+            $table->string('start_date', 20);
+            $table->string('end_date', 20);
             $table->timestamps();
         });
     }

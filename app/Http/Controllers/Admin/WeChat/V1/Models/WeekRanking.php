@@ -18,5 +18,7 @@ class WeekRanking extends Model
         'ar_user_id',
         'point_id',
         'looknum_average',
+        'start_date',
+        'end_date'
     ];
 }

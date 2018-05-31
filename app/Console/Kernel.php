@@ -29,14 +29,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $data = $this->getTenUser();
-        /** @var EasyWeChat\OfficialAccount\Application $officialAccount */
-        $officialAccount = EasyWeChat::officialAccount();
-        $schedule->call(function () use ($officialAccount, $data) {
-            for ($i = 0; $i < count($data); $i++) {
-                $text = new Text('你负责的点位“' . $data[$i]['pointName'] . '”上周日均围观数处于倒数第' . ($i + 1) . '名，日均围观数：' . $data[$i]['looknum']);
-                $openId = 'oNN6q0sZDI_OSTV6rl0rPeHjPgH8';
-                $officialAccount->customer_service->message($text)->to($openId)->send();
-            }
+        $schedule->call(function () use ($data) {
+
         })->cron('0 0 10 ? * FRI');
     }
 
