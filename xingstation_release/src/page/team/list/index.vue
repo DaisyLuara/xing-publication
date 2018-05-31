@@ -7,7 +7,6 @@
         <el-form :model="filters" :inline="true" ref="searchForm" >
            <el-button class="button" size="small" v-for="(item,index) in groupData" :key="item.id" :class="{'active': item.id == active}"  @click="say(item.id)" >{{item.attributes.name=='ACTIVIEW'?'团队成员':item.attributes.name}}</el-button>
         </el-form>
-        <!-- <el-button class="btn" @click="towerAuthorization">tower授权</el-button> -->
         </div>
       <div class="member-wrap">
         <div class="total-wrap">

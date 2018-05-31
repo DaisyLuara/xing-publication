@@ -100,7 +100,6 @@
             <template slot-scope="scope">
               <el-form label-position="left" inline class="demo-table-expand">
                 <el-form-item label="产品">
-                  <!-- <img :src="scope.row.img" alt="" class="icon-item"/> -->
                   <a :href="scope.row.img" target="_blank" style="color: blue">查看</a>
                 </el-form-item>
                 <el-form-item label="区域">
@@ -436,7 +435,6 @@ export default {
        this.tableData.forEach(function (value) {
         value.on_off=value['on_time']+'-'+value['off_time']+'点';
          });
-       console.log(data);
        this.pagination.total = response.meta.pagination.total
        this.setting.loading = false;
       }).catch(error => {

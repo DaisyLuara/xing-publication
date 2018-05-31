@@ -92,7 +92,6 @@ export default {
             }
           }
           return team.saveProjects(this, args ,id).then((response) => {
-            console.log(response)
             this.$message({
               message: "创建成功",
               type: "success"
@@ -104,7 +103,6 @@ export default {
             console.log(err)
           })
         } else {
-          console.log('error')
         }
       })
 
