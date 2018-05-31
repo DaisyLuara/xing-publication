@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Point\V1\Request;
+namespace App\Http\Controllers\Admin\ShortUrl\V1\Request;
 
 use Dingo\Api\Http\FormRequest;
 
-class PointRequest extends FormRequest
+class ShortUrlRequest extends FormRequest
 {
     public function authorize()
     {
@@ -15,9 +15,9 @@ class PointRequest extends FormRequest
     public function rules()
     {
         switch ($this->method()) {
-            case 'post':
+            case 'POST':
                 return [
-                    'adid' => 'required',
+                    'url' => 'required|url',
                 ];
                 break;
             default:

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\ShortUrl\V1\Api;
 
+use App\Http\Controllers\Admin\ShortUrl\V1\Request\ShortUrlRequest;
 use App\Http\Controllers\Admin\ShortUrl\V1\Models\ShortUrlRecords;
 use App\Http\Controllers\Admin\ShortUrl\V1\Models\ShortUrl;
 use App\Http\Controllers\Controller;
@@ -14,11 +15,12 @@ class ShortUrlController extends Controller
     {
     }
 
-    public function store(Request $request)
+    public function store(ShortUrlRequest $request)
     {
         $shortUrl = ShortUrl::create(['target_url' => $request->get('url')]);
         $hashIds = new Hashids();
         $uri = $hashIds->encode($shortUrl->id);
+
         return response()->json(['short_url' => env('APP_URL') . "/api/s/" . $uri]);
 
     }
@@ -27,6 +29,7 @@ class ShortUrlController extends Controller
     {
         $hashIds = new Hashids();
         $shortUrl = ShortUrl::findOrFail($hashIds->decode($short_path)[0]);
+        ShortUrlRecords::create(['short_url_id' => $shortUrl->id]);
 
         return redirect($shortUrl['target_url']);
     }
