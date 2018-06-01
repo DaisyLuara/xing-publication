@@ -16,9 +16,7 @@ class FaceCountController extends Controller
         for ($i = 0; $i < 2; $i++) {
             //yq,cz
             $openId = ['oNN6q0sZDI_OSTV6rl0rPeHjPgH8', 'oNN6q0pq-f0-Z2E2gb0QeOmY4r-M'];
-            for ($i = 0; $i < 2; $i++) {
-                WeekRankingJob::dispatch($data[$i], $openId[$i])->onQueue('weekRanking');
-            }
+            WeekRankingJob::dispatch($data[$i], $openId[$i])->onQueue('weekRanking');
 
         }
     }
