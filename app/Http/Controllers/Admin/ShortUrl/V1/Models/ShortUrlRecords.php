@@ -6,17 +6,12 @@ use App\Models\Model;
 
 class ShortUrlRecords extends Model
 {
+    protected $connection = 'ar';
+    public $table = 'file_upload';
+    public $timestamps = false;
 
     public $fillable = [
-        'short_url_id',
-        'third_id',
-        'ip',
-        'ua',
-        'face_id',
-        'utm_campaign',
-        'utm_content',
-        'utm_source',
-        'utm_medium',
-        'utm_term',
+        'share',
+        'oid'
     ];
 }

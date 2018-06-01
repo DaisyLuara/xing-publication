@@ -10,7 +10,6 @@ use function GuzzleHttp\Psr7\parse_query;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Bus\Queueable;
-use Log;
 
 class ShortUrlJob implements ShouldQueue
 {
@@ -40,15 +39,12 @@ class ShortUrlJob implements ShouldQueue
     public function handle()
     {
         $shortUrl = ShortUrl::query()->findOrFail($this->shortUrlID);
-
         $queryParams = parse_query(parse_url($shortUrl->target_url, PHP_URL_QUERY));
-        $data = array_merge(['short_url_id' => $shortUrl->id], $queryParams);
-        $data = array_merge($data, $this->browserInfo);
 
         if (isset($queryParams['id'])) {
-            $data['third_id'] = $queryParams['id'];
+            ShortUrlRecords::where('id', '=', $queryParams['id'])->update(['share' => 1]);
         }
 
-        ShortUrlRecords::create($data);
+
     }
 }
