@@ -9,9 +9,12 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use EasyWeChat;
 
-class WeekRankingNotify implements ShouldQueue
+class WeekRankingJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    protected $data;
+    protected $openId;
 
     /**
      * Create a new job instance.
@@ -37,7 +40,7 @@ class WeekRankingNotify implements ShouldQueue
             'template_id' => 'tEaeatGQCZ7tanD4JuFIoddvw8dgWMAYmQcYkjrGWfs',
             'data' => [
                 'first' => '服务器出错，请尽快修复',
-                'keyword1' => request()->url(),
+                'keyword1' => '',
                 'keyword2' => '',
                 'keyword3' => '',
                 'keyword4' => '',

@@ -4,10 +4,9 @@ namespace App\Http\Controllers\Admin\Face\V1\Api;
 
 use App\Http\Controllers\Admin\WeChat\V1\Models\WeekRanking;
 use App\Http\Controllers\Controller;
-use App\Jobs\WeekRankingNotify;
+use App\Jobs\WeekRankingJob;
 use Carbon\Carbon;
 use DB;
-use EasyWeChat;
 
 class FaceCountController extends Controller
 {
@@ -18,7 +17,7 @@ class FaceCountController extends Controller
             //yq,cz
             $openId = ['oNN6q0sZDI_OSTV6rl0rPeHjPgH8', 'oNN6q0pq-f0-Z2E2gb0QeOmY4r-M'];
             for ($i = 0; $i < 2; $i++) {
-                WeekRankingNotify::dispatch($data[$i], $openId[$i]);
+                WeekRankingJob::dispatch($data[$i], $openId[$i])->allOnQueue('weekRanking');
             }
 
         }
