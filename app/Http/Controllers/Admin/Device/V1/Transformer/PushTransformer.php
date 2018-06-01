@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Device\V1\Transformer;
 
-use App\Http\Controllers\Admin\Ad\V1\Transformer\ProjectTransformer;
+use App\Http\Controllers\Admin\Project\V1\Transformer\ProjectTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\PointTransformer;
 use App\Http\Controllers\Admin\Device\V1\Models\Push;
 use League\Fractal\TransformerAbstract;
