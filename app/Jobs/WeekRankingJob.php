@@ -34,7 +34,6 @@ class WeekRankingJob implements ShouldQueue
      */
     public function handle()
     {
-        dd('test');
         $officialAccount = EasyWeChat::officialAccount();
         $message = [
             'touser' => $this->openId,
