@@ -3,10 +3,9 @@
 namespace App\Console;
 
 use App\Http\Controllers\Admin\WeChat\V1\Models\WeekRanking;
+use App\Jobs\WeekRankingJob;
 use Carbon\Carbon;
 use DB;
-use EasyWeChat;
-use EasyWeChat\Kernel\Messages\Text;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -30,7 +29,12 @@ class Kernel extends ConsoleKernel
     {
         $data = $this->getTenUser();
         $schedule->call(function () use ($data) {
+            for ($i = 0; $i < 2; $i++) {
+                //yq,cz
+                $openId = ['oNN6q0sZDI_OSTV6rl0rPeHjPgH8', 'oNN6q0pq-f0-Z2E2gb0QeOmY4r-M'];
+                WeekRankingJob::dispatch($data[$i], $openId[$i])->onQueue('weekRanking');
 
+            }
         })->cron('0 0 10 ? * FRI');
     }
 
