@@ -6,5 +6,9 @@ use League\Fractal\TransformerAbstract;
 
 class DummyClass extends TransformerAbstract
 {
-    //
+    public function transform(){
+        return [
+            //
+        ];
+    }
 }

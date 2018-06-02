@@ -16,8 +16,7 @@ class Kernel extends ConsoleKernel
      *
      * @var array
      */
-    protected $commands = [
-    ];
+    protected $commands = [];
 
     /**
      * Define the application's command schedule.
@@ -27,15 +26,14 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $data = $this->getTenUser();
-        $schedule->call(function () use ($data) {
+        $schedule->call(function () {
+            $data = $this->getTenUser();
             for ($i = 0; $i < 2; $i++) {
                 //yq,cz
                 $openId = ['oNN6q0sZDI_OSTV6rl0rPeHjPgH8', 'oNN6q0pq-f0-Z2E2gb0QeOmY4r-M'];
                 WeekRankingJob::dispatch($data[$i], $openId[$i])->onQueue('weekRanking');
-
             }
-        })->cron('0 0 10 ? * FRI');
+        })->weekly()->fridays()->at('10:00');
     }
 
     /**
@@ -52,8 +50,11 @@ class Kernel extends ConsoleKernel
 
     protected function getTenUser()
     {
-        $startDate = Carbon::now()->addDay(-12)->toDateString();
-        $endDate = Carbon::now()->addDay(-5)->toDateString();
+
+        //$startDate = Carbon::now()->addDay(-12)->toDateString();
+        //$endDate = Carbon::now()->addDay(-5)->toDateString();
+        $startDate = '2018-04-01';
+        $endDate = '2018-04-07';
 
         $totalPoint = DB::connection('ar')->table('face_count_log')
             ->whereRaw(" date_format(date,'%Y-%m-%d') between '$startDate' and '$endDate' ")
@@ -75,15 +76,17 @@ class Kernel extends ConsoleKernel
             ->groupBy('fcl.oid')
             ->orderBy('looknum')
             ->limit($limitNum)
-            ->selectRaw("  apo.uid as uid,aoa.name as areaName,aom.name as marketName,ao.name as pointName,sum(looknum) as looknum")
+            ->selectRaw("  apo.uid as uid,fcl.oid as oid,aoa.name as areaName,aom.name as marketName,ao.name as pointName,sum(looknum) as looknum")
             ->get();
 
         $data = [];
-        $faceCount->each(function ($item) use (&$data) {
+        $faceCount->each(function ($item) use (&$data, $startDate, $endDate) {
             WeekRanking::create([
                 'ar_user_id' => $item->uid,
                 'point_id' => $item->oid,
-                'looknum_average' => round($item->looknum / 7, 0)
+                'looknum_average' => round($item->looknum / 7, 0),
+                'start_date' => $startDate,
+                'end_date' => $endDate
             ]);
             $data[] = [
                 'uid' => $item->uid,
