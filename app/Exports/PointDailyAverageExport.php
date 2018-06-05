@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use Carbon\Carbon;
 use DB;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -15,21 +16,21 @@ class PointDailyAverageExport extends AbstractExport
         $this->fileName = '点位日均数据';
         $this->startDate = $request->start_date;
         $this->endDate = $request->end_date;
-        $this->projectId = $request->project_id;
+        $this->alias = $request->alias;
         $this->sceneId = $request->scene_id;
     }
 
     public function collection()
     {
         $data = collect();
-        $header1 = ['点位', '围观数', '围观日均', '玩家总数', '玩家日均', '会员总数', '会员日均', '二维码生成数', '扫码数', '时间'];
-        $header2 = ['', '', '', '', '', '', '', '', '', ''];
+        $header1 = ['点位', '围观数', '围观日均', '玩家总数', '玩家日均', '会员总数', '会员日均', '二维码生成数', '扫码数', '有效天数', '时间'];
+        $header2 = ['', '', '', '', '', '', '', '', '', '', ''];
         $data->push($header1);
         $data->push($header2);
 
         $query = DB::connection('ar')->table('face_count_log as fcl');
-        if ($this->projectId) {
-            $query->where('apl.id', '=', $this->projectId);
+        if ($this->alias) {
+            $query->where('apl.versionname', '=', $this->alias);
         }
         if ($this->sceneId) {
             $query->where('ao.sid', '=', $this->sceneId);
@@ -56,6 +57,7 @@ class PointDailyAverageExport extends AbstractExport
             'loveAverSum' => 0,
             'outSum' => 0,
             'scanSum' => 0,
+            'days' => 0,
             'date' => $this->startDate . '|' . $this->endDate
         ];
         $faceCount->each(function ($item) use (&$data, &$total) {
@@ -69,6 +71,7 @@ class PointDailyAverageExport extends AbstractExport
                 'loveNumAver' => round($item->lovenum / $item->days, 0),
                 'outNum' => $item->outnum,
                 'scanNum' => $item->scannum,
+                'days' => $item->days
             ];
 
             $date = explode(',', $item->date);
@@ -77,6 +80,7 @@ class PointDailyAverageExport extends AbstractExport
             } else {
                 $aa['date'] = $date[0] . '|' . $date[1];
             }
+            $data->push($aa);
             $total = [
                 'total' => '总计',
                 'lookSum' => $total['lookSum'] + $aa['lookNum'],
@@ -87,6 +91,7 @@ class PointDailyAverageExport extends AbstractExport
                 'loveAverSum' => $total['loveAverSum'] + $aa['loveNumAver'],
                 'outSum' => $total['outSum'] + $aa['outNum'],
                 'scanSum' => $total['scanSum'] + $aa['scanNum'],
+                'days' => (new Carbon($this->endDate))->diffInDays(new Carbon($this->startDate)) + 1,
                 'date' => $total['date']
             ];
         });
@@ -103,13 +108,13 @@ class PointDailyAverageExport extends AbstractExport
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $cellArray = ['A1:A2', 'B1:B2', 'C1:C2', 'D1:D2', 'E1:E2', 'F1:F2', 'G1:G2', 'H1:H2', 'I1:I2', 'J1:J2'];
+                $cellArray = ['A1:A2', 'B1:B2', 'C1:C2', 'D1:D2', 'E1:E2', 'F1:F2', 'G1:G2', 'H1:H2', 'I1:I2', 'J1:J2', 'K1:K2'];
 
                 //合并单元格
                 $event->sheet->getDelegate()->setMergeCells($cellArray);
 
                 //黑线框
-                $event->sheet->getDelegate()->getStyle('A1:J' . $this->data->count())->applyFromArray([
+                $event->sheet->getDelegate()->getStyle('A1:K' . $this->data->count())->applyFromArray([
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' => Border::BORDER_THIN,
@@ -119,14 +124,22 @@ class PointDailyAverageExport extends AbstractExport
 
                 //水平居中 垂直居中
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:J' . $this->data->count())
+                    ->getStyle('A1:K' . $this->data->count())
                     ->getAlignment()
                     ->setVertical(Alignment::VERTICAL_CENTER)
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
                 //表头加粗
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:J2')
+                    ->getStyle('A1:K2')
+                    ->applyFromArray([
+                        'font' => [
+                            'bold' => 'true'
+                        ]
+                    ]);
+
+                $event->sheet->getDelegate()
+                    ->getStyle('A' . $this->data->count() . ':K' . $this->data->count())
                     ->applyFromArray([
                         'font' => [
                             'bold' => 'true'

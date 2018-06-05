@@ -81,7 +81,6 @@ class WeChatController extends Controller
         $openPlatform = EasyWeChat::openPlatform();
         $authorization = $openPlatform->handleAuthorize();
         $authorizer = $openPlatform->getAuthorizer($authorization['authorization_info']['authorizer_appid']);
-        dd($authorizer);
         $data = [
             'appid' => $authorizer['authorization_info']['authorizer_appid'],
             'expires_in' => 7200,
@@ -96,7 +95,6 @@ class WeChatController extends Controller
             'verify_type' => $authorizer['authorizer_info']['verify_type_info']['id']
         ];
         WxThird::create(array_merge(['date' => date('Y-m-d H:i:s'), 'clientdate' => time() * 1000], $data));
-
         return response()->redirectTo($request->redirect_url);
     }
 
