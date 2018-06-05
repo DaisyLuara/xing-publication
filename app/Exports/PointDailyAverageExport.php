@@ -15,7 +15,7 @@ class PointDailyAverageExport extends AbstractExport
         $this->fileName = '点位日均数据';
         $this->startDate = $request->start_date;
         $this->endDate = $request->end_date;
-        $this->projectId = $request->project_id;
+        $this->alias = $request->alias;
         $this->sceneId = $request->scene_id;
     }
 
@@ -28,8 +28,8 @@ class PointDailyAverageExport extends AbstractExport
         $data->push($header2);
 
         $query = DB::connection('ar')->table('face_count_log as fcl');
-        if ($this->projectId) {
-            $query->where('apl.id', '=', $this->projectId);
+        if ($this->alias) {
+            $query->where('apl.versionname', '=', $this->alias);
         }
         if ($this->sceneId) {
             $query->where('ao.sid', '=', $this->sceneId);
@@ -77,6 +77,7 @@ class PointDailyAverageExport extends AbstractExport
             } else {
                 $aa['date'] = $date[0] . '|' . $date[1];
             }
+            $data->push($aa);
             $total = [
                 'total' => '总计',
                 'lookSum' => $total['lookSum'] + $aa['lookNum'],
@@ -127,6 +128,14 @@ class PointDailyAverageExport extends AbstractExport
                 //表头加粗
                 $event->sheet->getDelegate()
                     ->getStyle('A1:J2')
+                    ->applyFromArray([
+                        'font' => [
+                            'bold' => 'true'
+                        ]
+                    ]);
+
+                $event->sheet->getDelegate()
+                    ->getStyle('A'.$this->data->count().':J'.$this->data->count())
                     ->applyFromArray([
                         'font' => [
                             'bold' => 'true'
