@@ -30,7 +30,9 @@ class PointDailyAverageExport extends AbstractExport
 
         $query = DB::connection('ar')->table('face_count_log as fcl');
         if ($this->alias) {
-            $query->where('apl.versionname', '=', $this->alias);
+            $query->where('fcl.belong', '=', $this->alias);
+        } else {
+            $query->where('fcl.belong', '=', 'all');
         }
         if ($this->sceneId) {
             $query->where('ao.sid', '=', $this->sceneId);
@@ -40,7 +42,6 @@ class PointDailyAverageExport extends AbstractExport
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
             ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '{$this->startDate}' and '{$this->endDate}' ")
             ->whereNotIn('fcl.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
-            ->where('belong', '=', 'all')
             ->groupBy('fcl.oid')
             ->orderBy('aoa.areaid', 'desc')
             ->orderBy('aom.marketid', 'desc')
