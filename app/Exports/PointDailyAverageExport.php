@@ -35,12 +35,12 @@ class PointDailyAverageExport extends AbstractExport
         if ($this->sceneId) {
             $query->where('ao.sid', '=', $this->sceneId);
         }
-        $faceCount = $query->join('ar_product_list as apl', 'fcl.belong', '=', 'apl.versionname')
-            ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
+        $faceCount = $query->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
             ->join('avr_official_area as aoa', 'ao.areaid', '=', 'aoa.areaid')
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
             ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '{$this->startDate}' and '{$this->endDate}' ")
             ->whereNotIn('fcl.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
+            ->where('belong', '=', 'all')
             ->groupBy('fcl.oid')
             ->orderBy('aoa.areaid', 'desc')
             ->orderBy('aom.marketid', 'desc')
