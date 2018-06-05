@@ -13,11 +13,11 @@ class Attributes extends Migration
      */
     public function up()
     {
-        Schema::create('attributes', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('pid')->default(0);
-            $table->string('name')->default('');
-            $table->string('desc')->default('');
+        Schema::connection('ar')->create('xs_attributes', function (Blueprint $table) {
+            $table->increments('id')->comment('属性配置');
+            $table->integer('pid')->default(0)->comment('分类父节点');
+            $table->string('name')->default('')->comment('属性名称');
+            $table->string('desc')->default('')->comment('属性描述');
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ class Attributes extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('point_configs');
+        Schema::connection('ar')->dropIfExists('xs_attributes');
     }
 }

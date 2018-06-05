@@ -28,7 +28,7 @@ class AttributesSeeder extends Seeder
             }
         }
 
-        DB::table('project_attributes')->truncate();
+        DB::connection('ar')->table('xs_project_attributes')->truncate();
 
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
         $reader->setReadDataOnly(true);
