@@ -86,7 +86,10 @@ if (!function_exists('handPointQuery')) {
 
         //按指标查询
         if ($request->index) {
-            $builder->selectRaw("sum(" . $request->index . ") as count");
+            $indexes = explode(',', $request->index);
+            foreach ($indexes as $index) {
+                $builder->selectRaw("sum($index) as $index");
+            }
         }
 
         //按账号查询
