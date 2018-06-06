@@ -340,7 +340,6 @@ export default {
     },
     handleSelectionChange(val) {
       this.selectAll = val
-      console.log(this.selectAll.length)
     },
     modifyEdit() {
       if(this.selectAll.length == 0 ){
@@ -413,7 +412,6 @@ export default {
       this.getProjectList();
     },
     projectChangeHandle() {
-      console.log(this.projectForm.project)
     },
     getProject(query) {
       this.searchLoading = true
@@ -452,7 +450,6 @@ export default {
           this.modifyOptionFlag.define ? args : delete args.div_tvid 
           this.modifyOptionFlag.sdate ? args : delete args.sdate 
           this.modifyOptionFlag.edate ? args : delete args.edate 
-          console.log(args)
           this.loading = false
           return project.modifyProjectLaunch(this, args).then((response) => {
             this.setting.loading = false
@@ -463,7 +460,6 @@ export default {
             this.getProjectList();
             this.editVisible = false
             this.editCondition.conditionList = []
-            console.log(response)
           }).catch((err) => {
             this.loading = false
             this.editVisible = false
@@ -472,7 +468,6 @@ export default {
           })
         }else{
           this.loading = false
-          console.log('error submit');
           return;
         }
       })
@@ -510,7 +505,6 @@ export default {
       })
     },
     marketChangeHandle() {
-      console.log(this.filters.market)
     },
     areaChangeHandle() {
       this.filters.market = ''

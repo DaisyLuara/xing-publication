@@ -64,7 +64,6 @@ export default {
       
       userID: '',
       allRoles: [],
-      // imageUrl: '',
       rules: {
         "user.phone": [
           { validator: (rule, value, callback) => {
@@ -151,7 +150,6 @@ export default {
         if(valid){
         delete this[formName].user.repassword
           this.loading = true;
-          console.log(this[formName])
           user.saveUser(this, this[formName].user, this.userID).then(result => {
             this.loading = false;
             this.$message({
@@ -167,7 +165,6 @@ export default {
             console.log(error)
           })
         }else{
-          console.log('error submit');
           return;
         }
       })

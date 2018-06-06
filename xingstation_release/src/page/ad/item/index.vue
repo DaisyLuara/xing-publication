@@ -378,7 +378,6 @@ export default {
     },
     
     advertiserChangeHandle(type){
-      console.log(this.adForm.advertiser_id)
       if(type === 'edit') {
         this.adForm.advertisement_id = ''
         } else {
@@ -400,7 +399,6 @@ export default {
       this.searchLoading = true
       return search.getAdvertisementList(this, args).then((response) => {
         let data = response.data
-        console.log(data)
         if(type === 'edit') {
           this.advertisementFormList = data
         } else {
@@ -560,7 +558,6 @@ export default {
           }
           this.aoids = []
           let optionModify = this.editCondition.conditionList
-          console.log(optionModify)
           for (let i = 0; i < this.selectAll.length; i++) {
             let id = this.selectAll[i].id
             this.aoids.push(id)
@@ -641,7 +638,6 @@ export default {
           })
         }else{
           this.loading = false
-          console.log('error submit');
           return;
         }
       })
