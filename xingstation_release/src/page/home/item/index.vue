@@ -669,7 +669,7 @@ export default {
             this.drawSingleChart(response,userData)
             userChart.update({
               title: {
-                text: name + '业态场景用户结构'
+                text: '业态场景用户结构' + '(' + name + ')'
               },
               series: [{
                 name: '数量',
@@ -793,7 +793,7 @@ export default {
               series: [{
                 type: 'area',
                 lineWidth: 1,
-                color: '#e09f91',
+                color: '#649dfa',
                 fillOpacity: 0.5,
                 zIndex: 0,
                 marker: {
