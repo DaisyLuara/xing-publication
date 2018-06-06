@@ -2505,7 +2505,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\"start_date\":\"2018-04-16\",\"end_date\":\"2018-05-12\",\"home_page\":true,\"id\":\"7\",\"index\":\"looknum\"}"
+									"raw": "{\"start_date\":\"2018-01-16\",\"end_date\":\"2018-05-12\",\"home_page\":true,\"id\":\"7\",\"index\":\"looknum,playernum,lovenum\"}"
 								},
 								"description": "id = 1 分天/分时数据\nid = 2 点位 top10\nid = 3 节目 top10"
 							},
