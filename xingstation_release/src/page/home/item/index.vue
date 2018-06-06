@@ -20,18 +20,31 @@
       </el-card>
     </div>
     <div class="ranking-wrap">
-      <el-row :gutter="20">
-        <el-col :span="12">
+      <!-- <el-row :gutter="20">
+        <el-col :span="12"> -->
           <el-card shadow="always" v-loading="pointFlag">
-            <highcharts :options="pointTenOptions" class="highchart" ref="pointTenChar"></highcharts>
+            <highcharts :options="pointTenOptions2" class="highchart" ref="pointTenChar2"></highcharts> 
+            <!-- <highcharts :options="pointTenOptions" class="highchart" ref="pointTenChar"></highcharts> -->
           </el-card>
-        </el-col>
-        <el-col :span="12">
+        <!-- </el-col> -->
+        <!-- <el-col :span="12">
           <el-card shadow="always" v-loading="projectFlag">
             <highcharts :options="projectTenOptions" class="highchart" ref="projectTenChar"></highcharts>
           </el-card>
         </el-col>
-      </el-row>
+      </el-row> -->
+    </div>
+    <div class="ranking-wrap">
+      <el-card>
+        <el-row :gutter="20">
+          <el-col :span="16">
+            <highcharts :options="projectfiveOptions" class="highchart" ref="projectfiveChar"></highcharts>
+          </el-col>
+          <el-col :span="8">
+            <highcharts :options="pieOptions" class="highchart" ref="pieChar"></highcharts>
+          </el-col>
+        </el-row>
+      </el-card>
     </div>
     <div class="age-gender-wrap">
       <el-row :gutter="20">
@@ -224,6 +237,200 @@ export default {
         series: [{
           color: '#abce5b',
           name: '数量',
+        }]
+      },
+      pointTenOptions2: {
+        chart: {
+          type: 'bar'
+        },
+        title: {
+          text: '点位前10名',
+          align: 'left',
+          style: {'fontSize': '20px'}
+        },
+        subtitle: {
+        },
+        colors: ['#0071bc','#ed1e79'],
+        xAxis: {
+          categories: ['狗年大吉', '嘻哈全屏', '王者嘻哈夜', '万达广场-花间', '哈哈翻译机','旅游全屏', '复古全屏', '无教程凯德绿享生活	', '猫酷马里奥颜镜店版', '三宝大战诸葛亮'],
+          // type: 'category',
+          title:{
+            text: ''
+          },
+          labels: {
+            autoRotationLimit:40,
+            formatter: function() {
+              return this.value.substring(0,5) + '...'
+						},
+          }
+        },
+        yAxis: {
+          min: 0,
+          title: null,
+          stackLabels: {
+            enabled: true,
+            style: {
+              fontWeight: 'bold',
+              color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+            }
+          }
+        },
+        tooltip: {
+          headerFormat: '<b>{point.x}</b><br/>',
+          pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>'
+        },
+        plotOptions: {
+          series: {
+            stacking: 'normal'
+          },
+          bar: {
+            dataLabels: {
+              enabled: false
+            }
+          }
+        },
+        legend: {
+          reversed: true
+        },
+        credits: {
+          enabled: false
+        },
+        series: [{
+          // color: '#abce5b',
+          // name: '数量',
+          name: '男',
+          data: [1007, 931, 835, 603, 522, 407, 331, 235, 199, 180]
+        },  {
+          name: '女',
+          data: [2007, 831, 735, 503, 422, 407, 231, 235, 199, 99]
+        }]
+      },
+      projectfiveOptions: {
+        chart: {
+          type: 'bar'
+        },
+        title: {
+          text: '场景行业结构前5位',
+          align: 'left',
+          style: {'fontSize': '20px'}
+        },
+        subtitle: {
+        },
+        
+        xAxis: {
+          // type: 'category',
+          categories: ['美妆', '服饰', '日用', '亲子', '餐饮'],
+          title:{
+            text: ''
+          },
+          labels: {
+            autoRotationLimit:40,
+            // formatter: function() {
+            //   return this.value.substring(0,5) + '...'
+						// },
+          }
+        },
+        yAxis: {
+          min: 0,
+          title: null,
+          labels: {
+            overflow: 'justify'
+          }
+        },
+        tooltip: {
+        },
+        plotOptions: {
+          bar: {
+            dataLabels: {
+              enabled: true
+            }
+          },
+          series: {
+            cursor: 'pointer',
+            events: {
+              click: function (event) {
+                alert(
+                    this.name + ' clicked\n' +
+                    'Alt: ' + event.altKey + '\n' +
+                    'Control: ' + event.ctrlKey + '\n' +
+                    'Meta: ' + event.metaKey + '\n' +
+                    'Shift: ' + event.shiftKey
+                );
+              }
+            }
+          }
+        },
+        legend: false,
+        credits: {
+          enabled: false
+        },
+        series: [{
+          color: '#00a99d',
+          name: '数量',
+          data: [1007, 931, 635, 203, 122]
+        }]
+      },
+      pieOptions: {
+        chart:{
+          animation: {
+            duration: 1000
+          },
+          type: 'pie',
+          plotBackgroundColor: null,
+          plotBorderWidth: null,
+          plotShadow: false,
+        },
+        colors: ['#8cc63f','#fbb03b','#ed1e79','#662d91'],
+        tooltip: {
+          headerFormat: '{性别访问数}<br>',
+          pointFormat: '{point.name}: <b>{point.y} 占比{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+          pie: {
+            minPointSize: 10,
+            innerSize: '20%',
+            zMin: 0,
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+              enabled: true,
+              format: '{point.name}{point.percentage:.1f}% '
+            },
+            showInLegend: true
+          }
+        },
+        title: {
+          text: '业态场景用户结构',
+          style: {'fontSize': '20px'},
+          align: 'left'
+        },
+        legend: {
+          reversed: false
+        },
+        credits: {
+          enabled: false
+        },
+        yAxis: [{
+          title: {
+            text: '',
+          }
+        }],
+        series: [{
+          type: 'pie',
+          name: '性别访问数',
+          data: [{
+            name: '00后',
+            y: 551500
+          },{
+            name: '90后',
+            y: 505370
+          },{
+            name: '80后',
+            y: 78867
+          },{
+            name: '70后',
+            y: 312685
+          }]
         }]
       },
       projectTenOptions: {
