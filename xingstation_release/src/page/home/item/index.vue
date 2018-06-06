@@ -20,28 +20,18 @@
       </el-card>
     </div>
     <div class="ranking-wrap">
-      <!-- <el-row :gutter="20">
-        <el-col :span="12"> -->
-          <el-card shadow="always" v-loading="pointFlag">
-            <highcharts :options="pointTenOptions2" class="highchart" ref="pointTenChar2"></highcharts> 
-            <!-- <highcharts :options="pointTenOptions" class="highchart" ref="pointTenChar"></highcharts> -->
-          </el-card>
-        <!-- </el-col> -->
-        <!-- <el-col :span="12">
-          <el-card shadow="always" v-loading="projectFlag">
-            <highcharts :options="projectTenOptions" class="highchart" ref="projectTenChar"></highcharts>
-          </el-card>
-        </el-col>
-      </el-row> -->
+      <el-card shadow="always" v-loading="pointFlag">
+        <highcharts :options="pointTenOptions" class="highchart" ref="pointTenChar"></highcharts> 
+      </el-card>
     </div>
     <div class="ranking-wrap">
       <el-card>
         <el-row :gutter="20">
-          <el-col :span="16">
-            <highcharts :options="projectfiveOptions" class="highchart" ref="projectfiveChar"></highcharts>
+          <el-col :span="16" v-loading="projectFlag">
+            <highcharts :options="projectFiveOptions" class="highchart" ref="projectFiveChar"></highcharts>
           </el-col>
-          <el-col :span="8">
-            <highcharts :options="pieOptions" class="highchart" ref="pieChar"></highcharts>
+          <el-col :span="8" v-loading="userFlag">
+            <highcharts :options="userOptions" class="highchart" ref="userChar"></highcharts>
           </el-col>
         </el-row>
       </el-card>
@@ -60,10 +50,22 @@
         </el-col>
       </el-row>
     </div>
+    <el-dialog
+      title="性别详情"
+      :visible="dialogVisible"
+      width="50%"
+      :before-close="handleClose">
+        <el-card shadow="always" v-show="!genderDialogFlag">
+          <highcharts :options="maleOptions" class="highchart" ref="malePie" v-loading="maleFlag"></highcharts>
+        </el-card>
+        <el-card shadow="always" v-show="genderDialogFlag">
+          <highcharts :options="femaleOptions" class="highchart" ref="femalePie" v-loading="femaleFlag"></highcharts>
+        </el-card>
+    </el-dialog>
   </div>
 </template>
 <script>
-import { Tabs, TabPane, Button, Row, Col, Card, DatePicker} from 'element-ui'
+import { Tabs, TabPane, Button, Row, Col, Card, DatePicker, Dialog} from 'element-ui'
 import Highcharts from 'highcharts';
 import loadExporting from 'highcharts/modules/exporting';
 import loadExportData from 'highcharts/modules/export-data';
@@ -77,6 +79,7 @@ export default {
     ElRow: Row,
     ElCol: Col,
     ElCard: Card,
+    ElDialog: Dialog,
     ElDatePicker: DatePicker
   },
   computed: {
@@ -84,6 +87,10 @@ export default {
   },
   data() {
     return {
+      dialogVisible: false,
+      genderDialogFlag: false,
+      maleFlag: true,
+      femaleFlag: true,
       loading: false,
       dataValue: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date().getTime()],
       pickerOptions2: {
@@ -161,7 +168,6 @@ export default {
               percent = new Number(((this.points[1].y - this.points[0].y) /  this.points[0].y) * 100).toFixed(2)
               s = '<b>' + percent +'%' + '</b>';
             }
-            console.log(this.points)
             for(let i=0;i<this.points.length; i++) {
               s += '<br/>' + this.points[i].point.name + ': ' +
               this.y;
@@ -202,65 +208,17 @@ export default {
         },
         subtitle: {
         },
+        colors: ['#ed1e79','#0071bc'],
         xAxis: {
-          title:{
-            text: ''
-          },
-          type: 'category',
-          labels: {
-            formatter: function() {
-              return this.value.substring(0,5) + '...'
-						},
-            // staggerLines: 3,
-          }
-        },
-        yAxis: {
-          min: 0,
-          title: null,
-          labels: {
-            overflow: 'justify',
-          }
-        },
-        tooltip: {
-        },
-        plotOptions: {
-          bar: {
-            dataLabels: {
-              enabled: true
-            }
-          }
-        },
-        legend: false,
-        credits: {
-          enabled: false
-        },
-        series: [{
-          color: '#abce5b',
-          name: '数量',
-        }]
-      },
-      pointTenOptions2: {
-        chart: {
-          type: 'bar'
-        },
-        title: {
-          text: '点位前10名',
-          align: 'left',
-          style: {'fontSize': '20px'}
-        },
-        subtitle: {
-        },
-        colors: ['#0071bc','#ed1e79'],
-        xAxis: {
-          categories: ['狗年大吉', '嘻哈全屏', '王者嘻哈夜', '万达广场-花间', '哈哈翻译机','旅游全屏', '复古全屏', '无教程凯德绿享生活	', '猫酷马里奥颜镜店版', '三宝大战诸葛亮'],
-          // type: 'category',
           title:{
             text: ''
           },
           labels: {
             autoRotationLimit:40,
             formatter: function() {
-              return this.value.substring(0,5) + '...'
+              if (typeof (this.value) !== 'number') {
+                return this.value.substring(0,5) + '...'
+              }
 						},
           }
         },
@@ -296,16 +254,14 @@ export default {
           enabled: false
         },
         series: [{
-          // color: '#abce5b',
-          // name: '数量',
-          name: '男',
-          data: [1007, 931, 835, 603, 522, 407, 331, 235, 199, 180]
-        },  {
           name: '女',
-          data: [2007, 831, 735, 503, 422, 407, 231, 235, 199, 99]
+          data: []
+        },{
+          name: '男',
+          data: []
         }]
       },
-      projectfiveOptions: {
+      projectFiveOptions: {
         chart: {
           type: 'bar'
         },
@@ -316,18 +272,13 @@ export default {
         },
         subtitle: {
         },
-        
         xAxis: {
-          // type: 'category',
-          categories: ['美妆', '服饰', '日用', '亲子', '餐饮'],
+          type: 'category',
           title:{
             text: ''
           },
           labels: {
             autoRotationLimit:40,
-            // formatter: function() {
-            //   return this.value.substring(0,5) + '...'
-						// },
           }
         },
         yAxis: {
@@ -344,20 +295,6 @@ export default {
             dataLabels: {
               enabled: true
             }
-          },
-          series: {
-            cursor: 'pointer',
-            events: {
-              click: function (event) {
-                alert(
-                    this.name + ' clicked\n' +
-                    'Alt: ' + event.altKey + '\n' +
-                    'Control: ' + event.ctrlKey + '\n' +
-                    'Meta: ' + event.metaKey + '\n' +
-                    'Shift: ' + event.shiftKey
-                );
-              }
-            }
           }
         },
         legend: false,
@@ -365,12 +302,11 @@ export default {
           enabled: false
         },
         series: [{
-          color: '#00a99d',
-          name: '数量',
-          data: [1007, 931, 635, 203, 122]
+          color: '#abce5b',
+          name: '数量'
         }]
       },
-      pieOptions: {
+      userOptions: {
         chart:{
           animation: {
             duration: 1000
@@ -418,68 +354,6 @@ export default {
         series: [{
           type: 'pie',
           name: '性别访问数',
-          data: [{
-            name: '00后',
-            y: 551500
-          },{
-            name: '90后',
-            y: 505370
-          },{
-            name: '80后',
-            y: 78867
-          },{
-            name: '70后',
-            y: 312685
-          }]
-        }]
-      },
-      projectTenOptions: {
-        chart: {
-          type: 'bar'
-        },
-        title: {
-          text: '节目前10名',
-          align: 'left',
-          style: {'fontSize': '20px'}
-        },
-        subtitle: {
-        },
-        
-        xAxis: {
-          type: 'category',
-          title:{
-            text: ''
-          },
-          labels: {
-            autoRotationLimit:40,
-            formatter: function() {
-              return this.value.substring(0,5) + '...'
-						},
-          }
-        },
-        yAxis: {
-          min: 0,
-          title: null,
-          labels: {
-            overflow: 'justify'
-          }
-        },
-        tooltip: {
-        },
-        plotOptions: {
-          bar: {
-            dataLabels: {
-              enabled: true
-            }
-          }
-        },
-        legend: false,
-        credits: {
-          enabled: false
-        },
-        series: [{
-          color: '#abce5b',
-          name: '数量',
         }]
       },
       sexOptions: {
@@ -496,9 +370,11 @@ export default {
           headerFormat: '{性别访问数}<br>',
           pointFormat: '{point.name}: <b>{point.y} 占比{point.percentage:.1f}%</b>'
         },
+        colors: ['#ed1e79', '#0071bc'],
         plotOptions: {
           pie: {
-            // innerSize: 100,
+            minPointSize: 10,
+            zMin: 0,
             innerSize: '20%',
             allowPointSelect: true,
             cursor: 'pointer',
@@ -507,7 +383,7 @@ export default {
               format: '{point.name} {point.y} 占比{point.percentage:.1f}% '
             },
             showInLegend: true
-          }
+          },
         },
         title: {
           text: '性别趋势',
@@ -537,47 +413,131 @@ export default {
         }]
       },
       ageOptions: {
-        chart:{
-          type: 'column',
-          animation: {
-            duration: 3000
-          },
-        },
-        plotOptions: {
-          column: {
-            dataLabels: {
-              enabled: true
-            }
-          }
+        chart: {
+          type: 'column'
         },
         title: {
-          text: '年龄趋势',
-          style: {'fontSize': '20px'},
-          align: 'left'
+          text: '年龄趋势'
         },
         xAxis: {
+        },
+        yAxis: {
+          min: 0,
           title: {
             text: ''
           },
-          type: 'category'
+          stackLabels: {
+            enabled: true,
+            style: {
+              fontWeight: 'bold',
+              color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+            }
+          }
         },
-        yAxis: [{
-          title: {
-            text: '年龄统计',
-          },
-          tickAmount: 5
-        }],
+        colors: ['#ed1e79', '#0071bc'],
         legend: {
+          align: 'right',
+          x: -30,
+          verticalAlign: 'top',
+          y: 25,
+          floating: true,
+          backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+          borderColor: '#CCC',
+          borderWidth: 1,
+          shadow: false
+        },
+        credits: {
           enabled: false
+        },
+        tooltip: {
+          headerFormat: '<b>{point.x}</b><br/>',
+          pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>'
+        },
+        plotOptions: {
+          column: {
+            stacking: 'normal',
+            dataLabels: {
+              enabled: true,
+              color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+            }
+          }
+        },
+        series: [{
+          name: '男',
+          data: []
+        },  {
+          name: '女',
+          data: []
+        }]
+      },
+      maleOptions: {
+        chart: {
+          plotBackgroundColor: null,
+          plotBorderWidth: null,
+          plotShadow: false,
+          type: 'pie'
+        },
+        colors: ['#b6cef9','#3269b8','#397ad8','#4188f1','#649dfa','#92b5f9'],
+        title: {
+          text: '男生年龄比例详情'
+        },
+        tooltip: {
+          pointFormat: '{series.name}:{point.y}'
+        },
+        plotOptions: {
+          pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            showInLegend: true,
+            dataLabels: {
+              enabled: true,
+              format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+            }
+          }
         },
         credits: {
           enabled: false
         },
         series: [{
-          color: "#7cb5ec",
-          name:"年龄统计",
+          name: '男'
         }]
       },
+      femaleOptions: {
+        chart: {
+          plotBackgroundColor: null,
+          plotBorderWidth: null,
+          plotShadow: false,
+          type: 'pie'
+        },
+        title: {
+          text: '女生年龄比例详情'
+        },
+        tooltip: {
+          pointFormat: '{series.name}: {point.y}'
+        },
+        legend: {
+          reversed: true
+        },
+        credits: {
+          enabled: false
+        },
+        colors: ['#f3bdd0','#ae3e6c','#ca477b','#e3508b','#ef70a0','#f19ab9'],
+        plotOptions: {
+          pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            showInLegend: true,
+            dataLabels: {
+              enabled: true,
+              format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+            }
+          }
+        },
+        series: [{
+          name: '女'
+        }]
+      },
+      userFlag: false,
       ageFlag: false,
       sexFlag: false,
       projectFlag: false,
@@ -588,22 +548,22 @@ export default {
   mounted() {
   },
   created() {
-    this.getProjectTenChartData()
-    this.getPointTenChartData()
-    this.getSexChartData()
-    this.getAgeChartData()
-    this.getLookersChartData()
+    this.dateChangeHandle()
   },
   methods: {
-   dateChangeHandle(){
-    this.getProjectTenChartData()
-    this.getPointTenChartData()
-    this.getSexChartData()
-    this.getAgeChartData()
-    this.getLookersChartData()
+    handleClose () {
+      this.dialogVisible = false
     },
-    getProjectTenChartData() {
-      this.getChartData('project','3')
+    dateChangeHandle(){
+      this.userFlag = true
+      this.getSceneFiveChartData()
+      this.getPointTenChartData()
+      this.getSexChartData()
+      this.getAgeChartData()
+      this.getLookersChartData()
+    },
+    getSceneFiveChartData() {
+      this.getChartData('scene','3')
     },
     getPointTenChartData() {
       this.getChartData('point','2')
@@ -611,13 +571,20 @@ export default {
     getSexChartData() {
       this.getChartData('sex', '5')
     },
-    getAgeChartData() {
-      this.getChartData('age', '4')
+    getSingleGender(gender) {
+      this.getChartData('singleGender', '5', gender)
+    },
+    getAgeChartData(attributeId, name) {
+      if (attributeId) {
+        this.getChartData('user', '4', attributeId, name)
+      } else {
+        this.getChartData('age', '4')
+      }
     },
     getLookersChartData() {
       this.getChartData('lookers', '1')
     },
-    getChartData (type,id) {
+    getChartData (type, id, charType, name) {
       let args = {
         start_date : this.handleDateTransform(this.dataValue[0]),
         end_date: this.handleDateTransform(new Date(this.dataValue[1]).getTime()),
@@ -638,118 +605,210 @@ export default {
         break;
         case '4':
         args.id = '4'
-        this.ageFlag = true;
+        args.attribute_id = charType
+        if (!charType) {
+          delete args.attribute_id
+          this.ageFlag = true;
+        } else {
+          this.userFlag = true;
+        }
         break;
         case '5':
         args.id = '5'
-        this.sexFlag = true;
+        args.gender = charType
+        if (!charType) {
+          delete args.gender
+          this.sexFlag = true
+        } else {
+          this.maleFlag = true
+          this.femaleFlag = true
+        }
         break;
       }
-      chartData.getChartData(this, args).then((response) => {
+      return chartData.getChartData(this, args).then((response) => {
         switch(type) {
-          case 'project':
+          case 'scene':
             let projectData = []
-            let projectChart = this.$refs.projectTenChar.chart;
-            if(response.length>0){
-              this.drawChart(response,projectData)
+            let projectChart = this.$refs.projectFiveChar.chart;
+            if ( response.length > 0 ){
+              response.map((value, key) => {
+                projectData.push({'name': value.display_name, 'y': parseInt(value.count), 'id': value.attribute_id})
+              })
+              this.getAgeChartData(response[0].attribute_id, response[0].display_name)
+            } else {
+              this.userFlag = false
+            }
+            let _this = this
             projectChart.update({
+              plotOptions: {
+                bar: {
+                  dataLabels: {
+                    enabled: true
+                  }
+                },
+                series: {
+                  cursor: 'pointer',
+                  events: {
+                    click: function (event) {
+                      let attribute_id = event.point.id
+                      let name = event.point.name
+                      _this.getAgeChartData(attribute_id, name)
+                    }
+                  }
+                }
+              },
               series: [{
                 data: projectData,
+              }]
+            });
+            this.projectFlag = false
+          break
+          case 'user':
+            let userChart = this.$refs.userChar.chart;
+            let userData = []
+            this.drawSingleChart(response,userData)
+            userChart.update({
+              title: {
+                text: name + '业态场景用户结构'
+              },
+              series: [{
+                name: '数量',
+                data: userData,
+              }]
+            });
+            this.userFlag = false
+          break;
+          case 'singleGender':
+            this.femaleFlag = true
+            this.maleFlag = true
+            let singleGenderData = []
+            let maleChart = this.$refs.malePie.chart;
+            let femaleChart = this.$refs.femalePie.chart;
+            this.drawSingleChart(response, singleGenderData)
+            if (charType === 'female') {
+              femaleChart.update({
+                series: [{
+                  name: '数量',
+                  data: singleGenderData,
+                }]
+              });
+            this.femaleFlag = false
+            } else {
+              maleChart.update({
+                series: [{
+                  name: '数量',
+                  data: singleGenderData,
+                }]
+              });
+            this.maleFlag = false
+          }
+          break;
+          case 'point':
+            let pointMaleData = []
+            let pointFemaleData = []
+            let poineCategories = []
+            let pointChart = this.$refs.pointTenChar.chart;
+            this.drawGenderChart(response, pointMaleData, pointFemaleData, poineCategories)
+            pointChart.update({
+              xAxis: {
+                categories: poineCategories
+              },
+              series: [{
+                name: '女',
+                data: pointFemaleData,
+              },{
+                name: '男',
+                data: pointMaleData,
               }],
             });
-            this.projectFlag = false;
-          }else{
-            this.projectFlag = false;
-            projectChart.series[0].setData(projectData,true)
-          }
-        break
-        case 'point':
-          let pointData = []
-          let pointChart = this.$refs.pointTenChar.chart;
-          if(response.length>0){
-            this.drawChart(response,pointData)
-          pointChart.update({
-            series: [{
-              data: pointData,
-            }],
-          });
-          this.pointFlag = false;
-          }else{
             this.pointFlag = false;
-            pointChart.series[0].setData(pointData,true)
-          }
-        break
-        case 'sex':
-          let sexData = []
-          let sexChart = this.$refs.sexPie.chart;
-          if(response.length>0){
-            for(let i = 0; i < response.length; i++){
-              if(i==0){
-                sexData.push({'name':response[i].display_name,'y':parseInt(response[i].count),'sliced': true,'selected': true,color: '#5eb6c8'})
-              }else{
-                sexData.push({'name':response[i].display_name, color: '#ffd259',y:parseInt(response[i].count)})
-              }
-            }
-          sexChart.update({
-            series: [{
-              data: sexData,
-            }],
-          });
-          this.sexFlag = false;
-          }else{
-            this.sexFlag = false;
-            sexChart.series[0].setData(sexData,true)
-          }
-        break
-        case 'age':
-          let ageData = []
-          let ageChart = this.$refs.agePie.chart;
-          if(response.length > 0){
-            this.drawChart(response, ageData)
-          ageChart.update({
-            series: [{
-              data: ageData,
-            }],
-          });
-          this.ageFlag = false;
-          }else{
-            this.ageFlag = false;
-            ageChart.series[0].setData(ageData,true)
-          }
-        break
-        case 'lookers':
-          let lookersData = []
-          let lookerChart = this.$refs.pointChar.chart;
-          if(response.length>0){
-            this.drawChart(response,lookersData)
-          lookerChart.update({
-            series: [{
-              type: 'area',
-              lineWidth: 1,
-              color: '#e09f91',
-              fillOpacity: 0.5,
-              zIndex: 0,
-              marker: {
-                enabled: true
+          break
+          case 'sex':
+            let sexData = []
+            let sexChart = this.$refs.sexPie.chart;
+            this.drawSingleChart(response, sexData)
+            let that = this
+            sexChart.update({
+              plotOptions: {
+                pie: {
+                  innerSize: '20%',
+                  allowPointSelect: true,
+                  cursor: 'pointer',
+                  dataLabels: {
+                    enabled: true,
+                    format: '{point.name} {point.y} 占比{point.percentage:.1f}% '
+                  },
+                  showInLegend: true
+                },
+                series: {
+                  cursor: 'pointer',
+                  events: {
+                    click: function (event) {
+                      let name = event.point.name
+                      if ( name === '女') {
+                        that.maleFlag = true
+                        that.genderDialogFlag = true
+                        that.getSingleGender('female')
+                      } else {
+                        that.femaleFlag = true
+                        that.getSingleGender('male')
+                        that.genderDialogFlag = false
+                      }
+                      that.dialogVisible = true
+                    }
+                  }
+                }
               },
-              data: lookersData,
-            },
-            ],
-          });
-          this.lookerFlag = false;
-          }else{
-            this.lookerFlag = false;
+              series: [{
+                data: sexData,
+              }],
+            });
+            this.sexFlag = false;
+          break
+          case 'age':
+            let ageMaleData = []
+            let ageFemaleData = []
+            let ageCategories = []
+            let ageChart = this.$refs.agePie.chart;
+            this.drawGenderChart(response, ageMaleData, ageFemaleData, ageCategories)
+            ageChart.update({
+              xAxis: {
+                categories: ageCategories
+              },
+              series: [{
+                name: '女',
+                data: ageFemaleData,
+              },{
+                name: '男',
+                data: ageMaleData,
+              }],
+            });
+            this.ageFlag = false;
+          break
+          case 'lookers':
+            let lookersData = []
+            let lookerChart = this.$refs.pointChar.chart;
+            this.drawSingleChart(response,lookersData)
             lookerChart.update({
               series: [{
+                type: 'area',
+                lineWidth: 1,
+                color: '#e09f91',
+                fillOpacity: 0.5,
+                zIndex: 0,
+                marker: {
+                  enabled: true
+                },
                 data: lookersData,
-              }],
+              },
+              ],
             });
-          }
-        break
-      }
+            this.lookerFlag = false;
+          break
+        }
       }).catch(err => {
         switch(type) {
-          case 'project':
+          case 'scene':
             this.projectFlag = false;
           break
           case 'point':
@@ -767,13 +826,20 @@ export default {
         }
       })
     },
-    drawChart(response,data) {
-      for(let j = 0; j < response.length; j++){
-        if(j==0){
-          data.push({'name':response[j].display_name,'y':parseInt(response[j].count)})
-        }else{
-          data.push([response[j].display_name,parseInt(response[j].count)])
-        }
+    drawGenderChart(response, dataMale, dataFemale, categories) {
+      if (response.length > 0) {
+        response.map((value, key) => {
+          categories.push(value.display_name)
+          dataMale.push(parseInt(value.count.male))
+          dataFemale.push(parseInt(value.count.female))
+        })
+      }
+    },
+    drawSingleChart(response, data) {
+      if (response.length > 0) {
+        response.map((value, key) => {
+          data.push({'name': value.display_name, y: parseInt(value.count)})
+        })
       }
     },
     handleDateTransform (valueDate) {
@@ -799,9 +865,6 @@ export default {
     }
     .tendency-wrap, .ranking-wrap, .age-gender-wrap{
       margin-bottom: 15px;
-    }
-    .age-gender-wrap{
-
     }
   }
 </style>
