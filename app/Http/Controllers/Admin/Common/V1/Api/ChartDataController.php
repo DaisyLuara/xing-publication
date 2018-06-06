@@ -36,11 +36,12 @@ class ChartDataController extends Controller
     ];
 
     protected $totalMapping = [
-        'looknum' => '围观总数',
-        'playernum' => '互动总数',
-        'lovenum' => '扫码拉新',
-        'outnum' => '生成数',
-        'scannum' => '扫码数',
+        'exposurenum' => '曝光人数',//围观人数(todo)
+        'looknum' => '大屏围观参与人数',
+        'player7num' => '大屏活跃玩家人数', //互动超过7秒(todo)
+        'playernum' => '大屏铁杆玩家人数',//游戏玩结束
+        'lovenum' => '扫码拉新会员注册总数',//最终转化
+        'palyertime' => '人均互动有效时长',//推算
     ];
 
     public function index(Request $request)
@@ -311,7 +312,7 @@ class ChartDataController extends Controller
     private function getTotal(ChartDataRequest $request, Builder $query)
     {
         $this->handleQuery($request, $query);
-        $data = $query->selectRaw("sum(looknum) AS looknum,sum(playernum) AS playernum,sum(outnum)  AS outnum,sum(outnum)  AS scannum,sum(scannum)  AS scannum,sum(lovenum)  AS lovenum")
+        $data = $query->selectRaw("sum(looknum) AS looknum,sum(playernum) AS playernum,sum(lovenum)  AS lovenum")
             ->first()->toArray();
 
         $output = [];
