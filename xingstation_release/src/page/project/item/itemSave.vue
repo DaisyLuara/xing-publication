@@ -2,7 +2,7 @@
   <div class="item-wrap-template">
     <div class="topbar">
       <el-breadcrumb separator="/">
-        <el-breadcrumb-item :to="{ path: '/project/item/index' }">节目投放管理</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/project/item' }">节目投放管理</el-breadcrumb-item>
         <el-breadcrumb-item>添加</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
@@ -167,18 +167,10 @@ export default {
     this.getModuleList()
     this.getAreaList()
     this.setting.loading = false
-    
-    // Promise.all([moduleList, areaList]).then(() => {
-    //   this.setting.loading = false
-    // }).catch((err) => {
-    //   console.log(err)
-    //   this.setting.loading = false
-    // })
   },
   methods: {
   
     projectChangeHandle() {
-      console.log(this.projectForm.project)
     },
     getProject(query) {
       this.searchLoading = true
@@ -209,7 +201,6 @@ export default {
       })
     },
     areaChangeHandle() {
-      console.log(this.projectForm.area)
       this.projectForm.market = ''
       this.projectForm.point = []
       this.getMarket(this.projectForm.market)
@@ -224,12 +215,10 @@ export default {
       })
     },
     marketChangeHandle() {
-      console.log(this.projectForm.market)
       this.projectForm.point = []
       this.getPoint()
     },
     pointChangeHandle() {
-      console.log(this.projectForm.point)
     },
     getPoint() {
       let args = {
@@ -269,7 +258,6 @@ export default {
         if(valid){
         this.setting.loading = true
           let edate = (new Date(this.projectForm.edate).getTime() + ((((23*60+59)*60)+59)*1000)) / 1000
-          console.log(edate)
           let args = {
             sdate: new Date(this.projectForm.sdate).getTime() / 1000,
             edate: edate,
@@ -288,13 +276,11 @@ export default {
             this.$router.push({
               path: "/project/item"
             })
-            console.log(response)
           }).catch((err) => {
             this.setting.loading = false
             console.log(err)
           })
         }else{
-          console.log('error submit');
           return;
         }
       })

@@ -344,11 +344,19 @@ export default {
         {
           value: 'marketing',
           label: '营销成果数据'
+        },
+        {
+          value: 'marketing_top',
+          label: '营销成果Top100'
+        },
+        {
+          value: 'daily_average',
+          label: '日均数据'
+        },
+        {
+          value: 'project_point',
+          label: '节目数据'
         }
-        // ,{
-        //   value: 'daily_average',
-        //   label: '日均数据'
-        // }
       ],
       reportValue: 'point',
       area_id: '',
@@ -816,19 +824,26 @@ export default {
         } else {
           this.getExcelData()
         }
+      } else if (this.reportValue === 'project_point') {
+        if (!this.projectSelect) {
+          this.$message({
+            message: '节目数据下载，请选择节目',
+            type: 'warning'
+          })
+        } else {
+          this.getExcelData()
+        }
       } else {
         this.getExcelData()
       }
     },
     getExcelData() {
-      console.log(this.reportValue)
       let args = this.setArgs()
       args.type = this.reportValue
       delete args.id
       return chart
         .getExcelData(this, args)
         .then(response => {
-          console.log('下载成功')
           const a = document.createElement('a')
           a.href = response
           a.download = 'download'
@@ -859,7 +874,6 @@ export default {
       return stats
         .getStaus(this, args)
         .then(response => {
-          console.log(response)
           this.tableData = response.data
           this.pagination.total = response.meta.pagination.total
           this.setting.loading = false
@@ -878,7 +892,6 @@ export default {
         include: 'area',
         area_id: this.area_id
       }
-      console.log(args)
       return search
         .getMarketList(this, args)
         .then(response => {
@@ -954,7 +967,6 @@ export default {
     },
     projectChangeHandle() {
       this.projectAlias = this.projectSelect
-      console.log(this.projectAlias)
     },
     userChangeHandle() {
       this.arUserId = this.userSelect
@@ -1119,7 +1131,7 @@ export default {
         area_id: this.area_id,
         point_id: this.point_id
       }
-      if (!this.projectSelect) {
+      if (!this.projectAlias) {
         delete args.alias
       }
       if (!this.arUserId) {

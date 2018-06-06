@@ -9,8 +9,8 @@ $api->version('v1', [
         'expires' => config('api.rate_limits.access.expires'),
     ], function ($api) {
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
-
         });
+        $api->get('test', 'FaceCountController@test');
     });
 
 });

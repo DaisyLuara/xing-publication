@@ -117,7 +117,6 @@ export default {
           let rolesNameCombined = thisRoles.data[0].display_name
           this.userList[i].role = rolesNameCombined
         }
-        console.log(this.userList)
       }
     },
     deleteUsers (users) {

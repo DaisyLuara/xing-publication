@@ -2,12 +2,13 @@
 
 namespace App\Providers;
 
-use App\Exports\ProjectByPointExport;
-use Illuminate\Support\ServiceProvider;
-use App\Exports\PointExport;
 use App\Exports\MarketingExport;
-use App\Exports\ProjectExport;
+use App\Exports\MarketingTopExport;
 use App\Exports\PointDailyAverageExport;
+use App\Exports\PointExport;
+use App\Exports\ProjectByPointExport;
+use App\Exports\ProjectExport;
+use Illuminate\Support\ServiceProvider;
 
 class ExcelServiceProvider extends ServiceProvider
 {
@@ -46,6 +47,10 @@ class ExcelServiceProvider extends ServiceProvider
 
         $this->app->bind('project_point', function ($app) {
             return new ProjectByPointExport($app->request);
+        });
+
+        $this->app->bind('marketing_top', function ($app) {
+            return new MarketingTopExport($app->request);
         });
     }
 }

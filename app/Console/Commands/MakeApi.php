@@ -39,12 +39,12 @@ class MakeApi extends Command
      */
     public function handle()
     {
-        //
+        $model = $this->ask('输入模型名');
         $defaultNameSpace = [
-            '0' => '\Http\Controllers\Api\V1',
-            '1' => '\Http\Requests\Api\V1',
-            '2' => '\Models',
-            '3' => '\Transformers',
+            '0' => '\Http\Controllers\Admin\\' . $model . '\V1\Api',
+            '1' => '\Http\Controllers\Admin\\' . $model . '\V1\Request',
+            '2' => '\Http\Controllers\Admin\\' . $model . '\V1\Models',
+            '3' => '\Http\Controllers\Admin\\' . $model . '\V1\Transformer',
         ];
         $stub = [
             '0' => __DIR__ . '/stubs/controller.stub',
@@ -52,8 +52,6 @@ class MakeApi extends Command
             '2' => __DIR__ . '/stubs/model.stub',
             '3' => __DIR__ . '/stubs/transformer.stub',
         ];
-
-        $model = $this->ask('输入模型名');
 
         for ($i = 0; $i < 4; $i++) {
 
