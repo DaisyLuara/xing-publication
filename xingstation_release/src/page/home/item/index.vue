@@ -302,7 +302,7 @@ export default {
           enabled: false
         },
         series: [{
-          color: '#abce5b',
+          color: '#00a99d',
           name: '数量'
         }]
       },
