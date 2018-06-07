@@ -17,6 +17,7 @@
     "babel-polyfill": "^6.26.0",
     "element-ui": "^2.3.7",
     "highcharts": "^v5.0.14",
+    "js-md5": "^0.7.3",
     "mapv": "^2.0.20",
     "vue": "2.5.9",
     "vue-cookie": "^1.1.3",
