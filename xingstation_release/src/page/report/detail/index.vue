@@ -1,5 +1,6 @@
 <template>
-  <div class="point-data-wrapper" :element-loading-text="setting.loadingText" v-loading="setting.loading">
+  <div
+    class="point-data-wrapper" :element-loading-text="setting.loadingText" v-loading="setting.loading">
     <!-- 搜索 -->
     <div class="search-wrap">
       <el-form ref="searchForm" class="search-form">
@@ -109,22 +110,41 @@
     <!-- 主要图表部分 -->
     <div class="content-wrapper" v-loading="poepleCountFlag">
       <ul class="btns-wrapper">
-        <li v-for="(item, key) in peopleCount" :key="key" v-if="item.index !== 'outnum'">
+        <li v-for="(item, key) in peopleCount.concat([{ index: 'cph', display_name: 'CPH转化率' }, { index: 'cpa', display_name:'CPA转化率' }, { index: 'cpl', display_name:'CPL转化率' }])" 
+          :key="key" 
+          v-if="item.index !== 'outnum'">
           <a 
             :class="'btn color-'+ key" 
             @hover="handleHover(key)"
-            @click="lineDataHandle(item)">
+            >
             <i class="title" >
               {{item.display_name}}
             </i>
-            <span class="count" v-if="item.index === 'scannum'">
-              {{item.count == null ? 0 : item.count}} / {{(peopleCount[key-1].count == null) ? 0 : new Number((item.count/peopleCount[key-1].count)*100).toFixed(1)}}%
+            <span class="count" v-if="item.index === 'looknum'">
+              {{circleLooknum}}
             </span>
-            <span class="count" v-if="item.index !== 'scannum'">
-              {{item.count == null ? 0 : item.count}}
+            <span class="count" v-if="item.index === 'playernum'">
+              {{circlePlayernum}}
+            </span>
+            <span class="count" v-if="item.index === 'lovenum'">
+              {{circleLovenum}}
+            </span>
+            <span class="count" v-if="item.index === 'cph'">
+              {{computedCPH}}
+            </span>
+            <span class="count" v-if="item.index === 'cpa'">
+              {{computedCPA}}
+            </span>
+            <span class="count" v-if="item.index === 'cpl'">
+              {{computedCPL}}
             </span>
             <i :class="'arrow-icon color-' + key"></i>
-            <i class="right-arrow-icon" v-if="key != peopleCountLength -1">{{(peopleCount[key+1].count == null) ? 0 : (item.index !== 'playernum' ? new Number((peopleCount[key+1].count/item.count)*100).toFixed(1) : new Number((peopleCount[key+2].count/item.count)*100).toFixed(1))}}%</i>
+            <i class="right-arrow-icon" v-if="item.index === 'looknum'">
+              {{playernumDivideLookNum}}
+            </i>
+            <i class="right-arrow-icon" v-if="item.index === 'playernum'">
+              {{lovenumDivideLookNum}}
+            </i>
           </a>
         </li>
       </ul>
@@ -137,25 +157,64 @@
     </div>
     
     <!-- 漏斗图和年龄分布 -->
-    <div class="transfer-sex-wrapper">
+    <div class="transfer-sex-wrapper"  v-loading="sexFlag">
           <div class="transfer">
             <img style="width: 100%" src="~assets/images/data-bg.png" />
+
+            <div
+              :style="style.chartFont" 
+              class="looknum">
+              {{circleLooknum}}人
+            </div>
+
+            <div
+              :style="style.chartFont" 
+              class="playernum">
+              {{circlePlayernum}}人
+            </div>
+
+            <div
+              :style="style.chartFont" 
+              class="lovenum">
+              {{circleLovenum}}人
+            </div>
+
+            <div
+              :style="style.chartFont" 
+              class="cpa">
+              {{computedCPA}}
+            </div>
+
+            <div
+              :style="style.chartFont" 
+              class="cph">
+              {{computedCPH}}
+            </div>
+
+            <div
+              :style="style.chartFont" 
+              class="cpl">
+              {{computedCPL}}
+            </div>
+
           </div>
           <div class="sex-age">
             <chart 
               ref="pieChart"
+              @click="onClick"
               :options="pieChart" 
               auto-resize />
           </div>
     </div>
 
     <!-- 年龄分布图 -->
-    <div class="age-wrapper">
+    <div class="age-wrapper"  v-loading="ageFlag"> 
       <chart
         ref="ageChart"
         :options="ageChart"
         auto-resize />
     </div>
+
     <!-- 报表部分 -->
     <div v-loading="tableSetting.loading" class="table-wrap">
       <div class="actions-wrap">
@@ -186,21 +245,29 @@
               <el-form-item label="点位">
                   {{ scope.row.area_name }} {{scope.row.market_name}} {{scope.row.point_name}}
               </el-form-item>
-              <el-form-item label="历史节目">
+              <el-form-item label="节目">
                   {{ scope.row.projects }}
               </el-form-item>
               <el-form-item label="围观">
                 <span>{{ scope.row.looknum }}</span>
               </el-form-item>
-              <el-form-item label="互动">
-                <span>{{ scope.row.playernum }}</span>
+              <el-form-item label="活跃">
+                <!-- <span>{{ scope.row.looknum }}</span> -->
               </el-form-item>
-              <el-form-item label="输出">
-                <span>扫码/生成数：{{ scope.row.scannum }} / {{ scope.row.outnum }} 扫码率：{{scope.row.outnum !== 0 ? new Number((scope.row.scannum / scope.row.outnum )*100).toFixed(1): 0 }}%</span>
+              <el-form-item label="铁杆">
+                <span>{{ scope.row.playernum }}</span>
               </el-form-item>
               <el-form-item label="拉新">
                 <span>{{ scope.row.lovenum }}</span>
               </el-form-item>
+              <el-form-item label="输出">
+                <span>
+                  CPH: {{computedCPH}}
+                  CPA：{{computedCPA}}
+                  CPL： {{computedCPL}}
+                </span>
+              </el-form-item>
+              
               <el-form-item label="时间">
                 <span>{{ scope.row.min_date }} - {{scope.row.max_date}}</span>
               </el-form-item>
@@ -222,7 +289,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="历史节目"
+          label="节目"
           prop="projects"
           min-width="130"
           :show-overflow-tooltip="true">
@@ -233,18 +300,11 @@
           min-width="90">
         </el-table-column>
         <el-table-column
-          label="互动"
-          prop="playernum"
+          label="活跃"
           min-width="90"
           :show-overflow-tooltip="true">
-        </el-table-column>
-        <el-table-column
-          label="输出"
-          prop="scannum"
-          min-width="120"
-          :show-overflow-tooltip="true">
-          <template slot-scope="props">
-            <span>扫码/生成数：{{ props.row.scannum }} / {{ props.row.outnum }} <br/> 扫码率：{{props.row.outnum !== 0 ? new Number((props.row.scannum / props.row.outnum) *100).toFixed(1): 0}}%</span>
+          <template slot-scope="scope">
+            暂无
           </template>
         </el-table-column>
         <el-table-column
@@ -252,6 +312,27 @@
           prop="lovenum"
           min-width="90"
           :show-overflow-tooltip="true">
+        </el-table-column>
+        <el-table-column
+          label="平均有效时长"
+          min-width="90"
+          :show-overflow-tooltip="true">
+          <template slot-scope="scope">
+            暂无
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="输出"
+          prop="scannum"
+          min-width="120"
+          :show-overflow-tooltip="true">
+          <template slot-scope="props">
+            <div>
+              <div>CPH: {{computedCPH}}</div>
+              <div>CPA：{{computedCPA}}</div>
+              <div>CPL： {{computedCPL}}</div>
+            </div>  
+          </template>
         </el-table-column>
         <el-table-column
           label="时间"
@@ -265,14 +346,31 @@
       </el-table>
       <div class="pagination-wrap">
         <el-pagination
-        layout="prev, pager, next, jumper, total"
-        :total="pagination.total"
-        :page-size="pagination.pageSize"
-        :current-page="pagination.currentPage"
-        @current-change="changePage"
-        >
-        </el-pagination>
+          layout="prev, pager, next, jumper, total"
+          :total="pagination.total"
+          :page-size="pagination.pageSize"
+          :current-page="pagination.currentPage"
+          @current-change="changePage"
+        />
       </div>
+    </div>
+
+    <!-- 弹窗 -->
+    <div  
+      class="chart-dialog"
+      v-loading="dialogLoading"
+      v-show="shouldDialogShow"
+      >
+      <div 
+        class="dialog-close"
+        @click="handleDialogClose"
+        >
+        关闭
+      </div>
+      <chart 
+        ref="pieChart2"
+        :options="sexAndAgeChart" 
+        auto-resize />
     </div>
   </div>
 </template>
@@ -332,6 +430,11 @@ export default {
       data.push([r, i])
     }
     return {
+      style: {
+        chartFont: {
+          fontSize: window.innerWidth / 80 + 'px'
+        }
+      },
       tableSetting: {
         loading: false,
         loadingText: '拼命加载中'
@@ -358,6 +461,7 @@ export default {
           label: '节目数据'
         }
       ],
+      shouldDialogShow: false,
       reportValue: 'point',
       area_id: '',
       market_id: '',
@@ -429,156 +533,14 @@ export default {
       searchLoading: false,
       projectList: [],
       active: '围观总数',
-      splineOptions: {
-        chart: {
-          type: 'area'
-        },
-        title: {
-          text: null
-        },
-        xAxis: {
-          title: {
-            text: '日期'
-          },
-          type: 'category'
-        },
-        yAxis: [
-          {
-            title: {
-              text: null
-            },
-            floor: 0,
-            tickAmount: 5
-          }
-        ],
-        legend: {
-          enabled: false
-        },
-        credits: {
-          enabled: false
-        },
-        plotOptions: {
-          area: {
-            dataLabels: {
-              enabled: true
-            },
-            marker: {
-              enabled: false,
-              symbol: 'circle',
-              radius: 2,
-              states: {
-                hover: {
-                  enabled: true
-                }
-              }
-            }
-          }
-        },
-        series: [
-          {
-            color: '#517ebb',
-            name: '数量'
-          }
-        ]
-      },
-      agePieOptions: {
-        chart: {
-          type: 'column'
-        },
-        title: {
-          text: '年龄分布',
-          align: 'left'
-        },
-        xAxis: {
-          title: {
-            text: '范围'
-          },
-          type: 'category'
-        },
-        plotOptions: {
-          column: {
-            dataLabels: {
-              enabled: true
-            }
-          }
-        },
-        yAxis: [
-          {
-            title: {
-              text: '年龄统计'
-            },
-            tickAmount: 5
-          }
-        ],
-        legend: {
-          enabled: false
-        },
-        credits: {
-          enabled: false
-        },
-        series: [
-          {
-            color: '#7cb5ec',
-            name: '年龄统计'
-          }
-        ]
-      },
-      sexPieOptions: {
-        chart: {
-          type: 'pie',
-          plotBackgroundColor: null,
-          plotBorderWidth: null,
-          plotShadow: false
-        },
-        title: {
-          text: '性别分布',
-          align: 'left'
-        },
-        tooltip: {
-          headerFormat: '{性别访问数}<br>',
-          pointFormat:
-            '{point.name}: <b>{point.y} 占比{point.percentage:.1f}%</b>'
-        },
-        colors: ['#5eb6c8', '#ffd259'],
-        plotOptions: {
-          pie: {
-            innerSize: '20%',
-            allowPointSelect: true,
-            cursor: 'pointer',
-            // depth: 40,
-            dataLabels: {
-              enabled: true,
-              format: '{point.name} {point.y} 占比{point.percentage:.1f}% '
-            },
-            showInLegend: true
-          }
-        },
-        legend: {
-          align: 'right',
-          verticalAlign: 'middle',
-          layout: 'vertical',
-          symbolHeight: 12,
-          symbolWidth: 20,
-          symbolRadius: 2,
-          squareSymbol: false
-        },
-        credits: {
-          enabled: false
-        },
-        series: [
-          {
-            type: 'pie',
-            name: '性别访问数'
-          }
-        ]
-      },
       pagination: {
         total: 0,
         pageSize: 5,
         currentPage: 1
       },
       tableData: [],
-      peopleCount: [],
+      tempAgeData: null,
+      peopleCount: [0, 0, 0],
       type: '',
       userList: [],
       ageType: false,
@@ -590,7 +552,7 @@ export default {
       sexFlag: false,
       userSelect: '',
       projectAlias: '',
-      mainChart: {
+      mainChart2: {
         title: {
           text: '堆叠区域图'
         },
@@ -611,41 +573,21 @@ export default {
             saveAsImage: {}
           }
         },
-        grid: [
-          {
-            left: 50,
-            right: 50,
-            height: '35%'
-          },
-          {
-            left: 50,
-            right: 50,
-            top: '47%',
-            height: '35%'
-          }
-        ],
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
         xAxis: [
           {
             type: 'category',
             boundaryGap: false,
-            data: ['周一', '周二', '周三', '周四', '周五', '周六']
-          },
-          {
-            show: false,
-            gridIndex: 1,
-            type: 'category',
-            boundaryGap: false,
-            axisLine: { onZero: true },
-            data: ['周一', '周二', '周三', '周四', '周五', '周六'],
-            position: 'top'
+            data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
           }
         ],
         yAxis: [
           {
-            type: 'value'
-          },
-          {
-            gridIndex: 1,
             type: 'value'
           }
         ],
@@ -654,35 +596,135 @@ export default {
             name: '邮件营销',
             type: 'line',
             stack: '总量',
-            areaStyle: { normal: {} }
+            areaStyle: { normal: {} },
+            data: [120, 132, 101, 134, 90, 230, 210]
           },
           {
             name: '联盟广告',
             type: 'line',
-            xAxisIndex: 1,
-            yAxisIndex: 1,
             stack: '总量',
             areaStyle: { normal: {} },
-            data: []
+            data: [220, 182, 191, 234, 290, 330, 310]
+          },
+          {
+            name: '视频广告',
+            type: 'line',
+            stack: '总量',
+            areaStyle: { normal: {} },
+            data: [150, 232, 201, 154, 190, 330, 410]
+          },
+          {
+            name: '直接访问',
+            type: 'line',
+            stack: '总量',
+            areaStyle: { normal: {} },
+            data: [320, 332, 301, 334, 390, 330, 320]
+          },
+          {
+            name: '搜索引擎',
+            type: 'line',
+            stack: '总量',
+            label: {
+              normal: {
+                show: true,
+                position: 'top'
+              }
+            },
+            areaStyle: { normal: {} },
+            data: [820, 932, 901, 934, 1290, 1330, 1320]
           }
         ]
       },
+
+      mainChart: {
+        color: [
+          '#E83828',
+          '#F8B62D',
+          '#0099FF',
+          '#197748',
+          '#F8B62D',
+          '#BC1313'
+        ],
+        title: {
+          text: '堆叠区域图'
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross',
+            label: {
+              backgroundColor: '#6a7985'
+            }
+          }
+        },
+        legend: {
+          data: [
+            '大屏围观参与人数',
+            '大屏铁杆玩家人数',
+            '扫码拉新会员注册总数',
+            'CPH转化率',
+            'CPA转化率',
+            'CPL转化率'
+          ]
+        },
+        grid: [
+          {
+            left: 50,
+            right: 50,
+            height: '35%',
+            containLabel: true
+          },
+          {
+            left: 50,
+            right: 50,
+            top: '47%',
+            height: '35%',
+            containLabel: true
+          }
+        ],
+        xAxis: [
+          {
+            type: 'category',
+            boundaryGap: false,
+            data: null
+          },
+          {
+            // show: false,
+            gridIndex: 1,
+            type: 'category',
+            boundaryGap: false,
+            axisLine: { onZero: true },
+            data: null,
+            position: 'top'
+          }
+        ],
+        yAxis: [
+          {
+            gridIndex: 0,
+            type: 'value'
+          },
+          {
+            inverse: true,
+            gridIndex: 1,
+            type: 'value'
+          }
+        ],
+        series: []
+      },
       pieChart: {
+        color: ['#0071BC', '#ED1E79'],
         title: {
           text: '天气情况统计',
           subtext: '虚构数据',
           left: 'center'
         },
         tooltip: {
-          trigger: 'item',
-          formatter: '{a} <br/>{b} : {c} ({d}%)'
+          trigger: 'item'
         },
         legend: {
-          // orient: 'vertical',
-          // top: 'middle',
           bottom: 10,
           left: 'center',
-          data: ['西凉', '益州', '兖州', '荆州', '幽州']
+          data: ['女', '男']
         },
         series: [
           {
@@ -690,14 +732,7 @@ export default {
             radius: '65%',
             center: ['50%', '50%'],
             selectedMode: 'single',
-            data: [
-              {
-                value: 1548,
-                name: '幽州'
-              },
-
-              { value: 735, name: '西凉', selected: true }
-            ],
+            data: null,
             itemStyle: {
               emphasis: {
                 shadowBlur: 10,
@@ -709,15 +744,15 @@ export default {
         ]
       },
       ageChart: {
+        color: ['#0071BC', '#ED1E79'],
         tooltip: {
           trigger: 'axis',
           axisPointer: {
-            // 坐标轴指示器，坐标轴触发有效
-            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+            type: 'shadow'
           }
         },
         legend: {
-          data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎']
+          data: ['男', '女']
         },
         grid: {
           left: '3%',
@@ -734,67 +769,63 @@ export default {
         },
         series: [
           {
-            name: '直接访问',
+            name: '男',
             type: 'bar',
             stack: '总量',
             label: {
               normal: {
                 show: true,
-                position: 'insideRight'
+                position: 'inside'
               }
             },
-            data: [320, 302, 301, 334, 390, 330, 320]
+            data: null
           },
           {
-            name: '邮件营销',
+            name: '女',
             type: 'bar',
             stack: '总量',
             label: {
               normal: {
                 show: true,
-                position: 'insideRight'
+                position: 'inside'
               }
             },
-            data: [120, 132, 101, 134, 90, 230, 210]
-          },
-          {
-            name: '联盟广告',
-            type: 'bar',
-            stack: '总量',
-            label: {
-              normal: {
-                show: true,
-                position: 'insideRight'
-              }
-            },
-            data: [220, 182, 191, 234, 290, 330, 310]
-          },
-          {
-            name: '视频广告',
-            type: 'bar',
-            stack: '总量',
-            label: {
-              normal: {
-                show: true,
-                position: 'insideRight'
-              }
-            },
-            data: [150, 212, 201, 154, 190, 330, 410]
-          },
-          {
-            name: '搜索引擎',
-            type: 'bar',
-            stack: '总量',
-            label: {
-              normal: {
-                show: true,
-                position: 'insideRight'
-              }
-            },
-            data: [820, 832, 901, 934, 1290, 1330, 1320]
+            data: null
           }
         ]
-      }
+      },
+      sexAndAgeChart: {
+        title: {
+          text: '性别年龄分布'
+        },
+        tooltip: {
+          trigger: 'item'
+        },
+        legend: {
+          orient: 'horizontal',
+          right: 10,
+          top: 'bottom',
+          bottom: 10,
+          data: null
+        },
+        series: [
+          {
+            type: 'pie',
+            radius: '65%',
+            center: ['50%', '50%'],
+            selectedMode: 'single',
+            data: null,
+            itemStyle: {
+              emphasis: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
+      },
+      dialogLoading: false
     }
   },
   created() {
@@ -811,6 +842,46 @@ export default {
       let user_info = JSON.parse(localStorage.getItem('user_info'))
       let roles = user_info.roles.data[0].name
       return roles == 'user' ? false : true
+    },
+    circleLooknum: function() {
+      return this.peopleCount[0].count === null ? 0 : this.peopleCount[0].count
+    },
+    circlePlayernum: function() {
+      return this.peopleCount[1].count === null ? 0 : this.peopleCount[1].count
+    },
+    circleLovenum: function() {
+      return this.peopleCount[2].count === null ? 0 : this.peopleCount[2].count
+    },
+    playernumDivideLookNum: function() {
+      let result = (
+        this.peopleCount[1].count / this.peopleCount[0].count
+      ).toFixed(2)
+      return result === 0 || result === NaN ? 0 : result + '%'
+    },
+    lovenumDivideLookNum: function() {
+      let result = (
+        this.peopleCount[2].count / this.peopleCount[1].count
+      ).toFixed(2)
+      return result === 0 || result === NaN ? 0 : result + '%'
+    },
+    computedCPH: function() {
+      return '暂无'
+    },
+    computedCPA: function() {
+      let result = (
+        this.peopleCount[1].count /
+        this.peopleCount[0].count *
+        100
+      ).toFixed(2)
+      return String(result) + '%'
+    },
+    computedCPL: function() {
+      let result = (
+        this.peopleCount[2].count /
+        this.peopleCount[1].count *
+        100
+      ).toFixed(2)
+      return String(result) + '%'
     }
   },
   methods: {
@@ -836,6 +907,9 @@ export default {
       } else {
         this.getExcelData()
       }
+    },
+    handleDialogClose() {
+      this.shouldDialogShow = false
     },
     getExcelData() {
       let args = this.setArgs()
@@ -874,6 +948,7 @@ export default {
       return stats
         .getStaus(this, args)
         .then(response => {
+          args.index = 'looknum,playernum,lovenum'
           this.tableData = response.data
           this.pagination.total = response.meta.pagination.total
           this.setting.loading = false
@@ -978,8 +1053,8 @@ export default {
     allPromise() {
       this.getPointList()
       this.getPeopleCount()
-      // this.getAge()
-      // this.getGender()
+      this.getAge()
+      this.getGender()
       this.setting.loading = false
     },
     getUser(query) {
@@ -1052,7 +1127,7 @@ export default {
         .getChartData(this, args)
         .then(response => {
           this.peopleCount = response
-          this.type = this.peopleCount[0].index
+          this.type = 'looknum,playernum,lovenum'
           this.getLineData()
         })
         .catch(err => {
@@ -1066,15 +1141,46 @@ export default {
       return chart
         .getChartData(this, args)
         .then(response => {
-          let ageChart = this.$refs.agePie.chart
-          let dataAge = []
-          for (let i = 0; i < response.length; i++) {
-            dataAge.push({
-              name: response[i].display_name,
-              y: parseInt(response[i].count)
-            })
-          }
-          ageChart.series[0].setData(dataAge, true)
+          this.tempAgeData = response
+          let chart = this.$refs.ageChart
+          chart.mergeOptions({
+            xAxis: {
+              type: 'category',
+              data: response.map(r => {
+                return r.display_name
+              })
+            },
+            series: [
+              {
+                name: '男',
+                type: 'bar',
+                stack: '总量',
+                label: {
+                  normal: {
+                    show: true,
+                    position: 'inside'
+                  }
+                },
+                data: response.map(r => {
+                  return r.count.male
+                })
+              },
+              {
+                name: '女',
+                type: 'bar',
+                stack: '总量',
+                label: {
+                  normal: {
+                    show: true,
+                    position: 'inside'
+                  }
+                },
+                data: response.map(r => {
+                  return r.count.female
+                })
+              }
+            ]
+          })
           this.ageFlag = false
         })
         .catch(err => {
@@ -1092,30 +1198,86 @@ export default {
       return chart
         .getChartData(this, args)
         .then(response => {
-          let genderChat = this.$refs.sexPie.chart
-          let dataGender = []
-          for (let i = 0; i < response.length; i++) {
-            if (i == 0) {
-              dataGender.push({
-                name: response[i].display_name,
-                y: parseInt(response[i].count),
-                sliced: true,
-                selected: true
-              })
-            } else {
-              dataGender.push([
-                response[i].display_name,
-                parseInt(response[i].count)
-              ])
-            }
-          }
-          genderChat.series[0].setData(dataGender, true)
+          let chart = this.$refs.pieChart
+          chart.mergeOptions({
+            series: [
+              {
+                data: [
+                  {
+                    name: '男',
+                    value: response[1].count === null ? 0 : response[1].count,
+                    selected: true
+                  },
+                  {
+                    name: '女',
+                    value: response[0].count === null ? 0 : response[0].count
+                  }
+                ]
+              }
+            ]
+          })
           this.sexFlag = false
         })
         .catch(err => {
           this.sexFlag = false
           console.log(err)
         })
+    },
+    onClick(event, instance, echarts) {
+      this.dialogLoading = true
+      this.shouldDialogShow = true
+      let args = this.setArgs('4')
+      chart.getChartData(this, args).then(response => {
+        let that = this
+        let mergeChart = this.$refs.pieChart2
+        mergeChart.mergeOptions({
+          color:
+            event.name === '男'
+              ? [
+                  '#B6CEF9',
+                  '#92B5F9',
+                  '#649DFA',
+                  '#4188F1',
+                  '#397AD8',
+                  '#3269B8'
+                ].reverse()
+              : [
+                  '#F38DD0',
+                  '#F19AB9',
+                  '#EF70A0',
+                  '#E3508B',
+                  '#CA477B',
+                  '#AE3E6C'
+                ].reverse(),
+          legend: {
+            data: response.map(r => {
+              return r.display_name
+            })
+          },
+          series: [
+            {
+              type: 'pie',
+              radius: '65%',
+              center: ['50%', '50%'],
+              selectedMode: 'single',
+              data: response.map(r => {
+                return {
+                  name: r.display_name,
+                  value: event.name === '男' ? r.count.male : r.count.female
+                }
+              }),
+              itemStyle: {
+                emphasis: {
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+              }
+            }
+          ]
+        })
+        this.dialogLoading = false
+      })
     },
     setArgs(id) {
       let args = {
@@ -1161,14 +1323,6 @@ export default {
           let dataLine = []
           let chart = this.$refs.mainChart
           chart.mergeOptions(this.processChartData(response))
-          console.dir(chart)
-          // for (let k = 0; k < response.length; k++) {
-          //   dataLine.push({
-          //     y: parseInt(response[k].count),
-          //     name: response[k].display_name
-          //   })
-          // }
-          // chart.series[0].setData(dataLine, true)
           this.poepleCountFlag = false
         })
         .catch(err => {
@@ -1189,11 +1343,67 @@ export default {
         ],
         series: [
           {
-            name: '数量',
+            name: '扫码拉新会员注册总数',
             type: 'line',
+            stack: '总量',
             areaStyle: { normal: {} },
             data: res.map(r => {
-              return r.count
+              return r.lovenum
+            })
+          },
+          {
+            name: '大屏铁杆玩家人数',
+            type: 'line',
+            stack: '总量',
+            areaStyle: { normal: {} },
+            data: res.map(r => {
+              return r.playernum
+            })
+          },
+          {
+            name: '大屏围观参与人数',
+            type: 'line',
+            stack: '总量',
+            areaStyle: { normal: {} },
+            data: res.map(r => {
+              return r.looknum
+            })
+          },
+          {
+            xAxisIndex: 1,
+            yAxisIndex: 1,
+            name: 'CPH转化率',
+            type: 'line',
+            lineStyle: {
+              color: '#197748'
+            },
+            data: res.map(r => {
+              return 0
+            })
+          },
+          {
+            xAxisIndex: 1,
+            yAxisIndex: 1,
+            name: 'CPA转化率',
+            type: 'line',
+            lineStyle: {
+              color: '#F8B62D'
+            },
+            data: res.map(r => {
+              return (r.playernum / r.looknum * 100).toFixed(2)
+            })
+          },
+          {
+            xAxisIndex: 1,
+            yAxisIndex: 1,
+            name: 'CPL转化率',
+            type: 'line',
+            type: 'line',
+            lineStyle: {
+              color: '#BC1313'
+            },
+            data: res.map(r => {
+              return (r.lovenum / r.looknum * 100).toFixed(2)
             })
           }
         ]
@@ -1224,7 +1434,30 @@ export default {
 </script>
 <style lang="less" scoped>
 .point-data-wrapper {
-  // padding: 10px;
+  .chart-dialog {
+    position: fixed;
+    z-index: 10000;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    width: 600px;
+    height: 620px;
+    background-color: white;
+    border: 1px solid black;
+    .dialog-close {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      cursor: pointer;
+    }
+    .echarts {
+      margin-top: 10%;
+      height: 90%;
+      width: 100%;
+    }
+  }
   .search-wrap {
     padding: 30px;
     background: #fff;
@@ -1265,10 +1498,36 @@ export default {
       li {
         padding-right: 95px;
         padding-top: 20px;
+        padding-bottom: 10px;
       }
-      .btn:hover {
+
+      .btn {
         .title {
           color: #fff;
+        }
+        &.color-0 {
+          background: url('~assets/images/program/circle.png') center 35px
+            no-repeat #8fe5b8;
+        }
+        &.color-1 {
+          background: url('~assets/images/program/circle.png') center 35px
+            no-repeat #0099ff;
+        }
+        &.color-2 {
+          background: url('~assets/images/program/circle.png') center 35px
+            no-repeat #22b573;
+        }
+        &.color-3 {
+          background: url('~assets/images/program/circle.png') center 35px
+            no-repeat #f8b62d;
+        }
+        &.color-4 {
+          background: url('~assets/images/program/circle.png') center 35px
+            no-repeat #e83828;
+        }
+        &.color-5 {
+          background: url('~assets/images/program/circle.png') center 35px
+            no-repeat #93278f;
         }
         .arrow-icon {
           position: absolute;
@@ -1298,33 +1557,6 @@ export default {
             border-color: #93278f #ffffff #ffffff #ffffff;
           }
         }
-        &.color-0 {
-          background: url('~assets/images/program/circle.png') center 35px
-            no-repeat #8fe5b8;
-        }
-        &.color-1 {
-          background: url('~assets/images/program/circle.png') center 35px
-            no-repeat #0099ff;
-        }
-        &.color-2 {
-          background: url('~assets/images/program/circle.png') center 35px
-            no-repeat #22b573;
-        }
-        &.color-3 {
-          background: url('~assets/images/program/circle.png') center 35px
-            no-repeat #f8b62d;
-        }
-        &.color-4 {
-          background: url('~assets/images/program/circle.png') center 35px
-            no-repeat #e83828;
-        }
-        &.color-5 {
-          background: url('~assets/images/program/circle.png') center 35px
-            no-repeat #93278f;
-        }
-        // background-color: #517ebb;
-      }
-      .btn {
         cursor: pointer;
         width: 145px;
         height: 145px;
@@ -1340,7 +1572,7 @@ export default {
           line-height: 35px;
           padding-left: 20px;
           font-size: 14px;
-          color: #999;
+          color: white;
           font-weight: 600;
           font-style: normal;
         }
@@ -1466,12 +1698,72 @@ export default {
       background-color: #fff;
       width: 50%;
       padding: 10px;
+      position: relative;
+      .looknum {
+        position: absolute;
+        width: 80%;
+        left: 10%;
+        z-index: 11;
+        top: 31%;
+        text-align: center;
+        color: white;
+        font-weight: 800;
+      }
+      .playernum {
+        position: absolute;
+        width: 80%;
+        left: 10%;
+        z-index: 11;
+        top: 62%;
+        text-align: center;
+        color: white;
+        font-weight: 800;
+      }
+      .lovenum {
+        position: absolute;
+        width: 80%;
+        left: 10%;
+        z-index: 11;
+        top: 77%;
+        text-align: center;
+        color: white;
+        font-weight: 800;
+      }
+      .cpa {
+        position: absolute;
+        width: 20%;
+        left: 3%;
+        top: 65%;
+        font-weight: 800;
+        text-align: center;
+        color: white;
+      }
+      .cph {
+        position: absolute;
+        width: 15%;
+        right: 12%;
+        top: 54%;
+        font-weight: 800;
+        text-align: center;
+        color: white;
+      }
+      .cpl {
+        position: absolute;
+        width: 23%;
+        right: 5%;
+        top: 85%;
+        font-weight: 800;
+        text-align: center;
+        color: white;
+      }
     }
     .sex-age {
+      position: relative;
       padding: 10px;
       background-color: #fff;
       width: 50%;
       min-height: 600px;
+      z-index: 10;
       .echarts {
         height: 600px;
         width: 100%;
