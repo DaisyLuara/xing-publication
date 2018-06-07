@@ -358,9 +358,6 @@ export default {
       },
       sexOptions: {
         chart:{
-          animation: {
-            duration: 1000
-          },
           type: 'pie',
           plotBackgroundColor: null,
           plotBorderWidth: null,
@@ -368,7 +365,7 @@ export default {
         },
         tooltip: {
           headerFormat: '{性别访问数}<br>',
-          pointFormat: '{point.name}: <b>{point.y} 占比{point.percentage:.1f}%</b>'
+          pointFormat: '{point.name}:{point.y}'
         },
         colors: ['#ed1e79', '#0071bc'],
         plotOptions: {
@@ -377,7 +374,6 @@ export default {
             zMin: 0,
             innerSize: '20%',
             allowPointSelect: true,
-            cursor: 'pointer',
             dataLabels: {
               enabled: true,
               format: '{point.name} {point.y} 占比{point.percentage:.1f}% '
@@ -630,38 +626,53 @@ export default {
           case 'scene':
             let projectData = []
             let projectChart = this.$refs.projectFiveChar.chart;
+            let _this = this
             if ( response.length > 0 ){
               response.map((value, key) => {
                 projectData.push({'name': value.display_name, 'y': parseInt(value.count), 'id': value.attribute_id})
               })
-              this.getAgeChartData(response[0].attribute_id, response[0].display_name)
-            } else {
-              this.userFlag = false
-            }
-            let _this = this
-            projectChart.update({
-              plotOptions: {
-                bar: {
-                  dataLabels: {
-                    enabled: true
-                  }
-                },
-                series: {
-                  cursor: 'pointer',
-                  events: {
-                    click: function (event) {
-                      let attribute_id = event.point.id
-                      let name = event.point.name
-                      _this.getAgeChartData(attribute_id, name)
+              projectChart.update({
+                plotOptions: {
+                  bar: {
+                    dataLabels: {
+                      enabled: true
+                    }
+                  },
+                  series: {
+                    cursor: 'pointer',
+                    events: {
+                      click: function (event) {
+                        let attribute_id = event.point.id
+                        let name = event.point.name
+                        _this.getAgeChartData(attribute_id, name)
+                      }
                     }
                   }
-                }
-              },
-              series: [{
-                data: projectData,
-              }]
-            });
-            this.projectFlag = false
+                },
+                series: [{
+                  data: projectData
+                }]
+              });
+              this.getAgeChartData(response[0].attribute_id, response[0].display_name)
+              this.projectFlag = false
+            } else {
+              this.projectFlag = false
+              this.userFlag = false
+              projectChart.update({
+                series: [{
+                  data: projectData
+                }]
+              });
+              this.$refs.userChar.chart.update({
+                title: {
+                  text: '业态场景用户结构'
+                },
+                series: [{
+                  name: '数量',
+                  data: [],
+                }]
+              });
+            }
           break
           case 'user':
             let userChart = this.$refs.userChar.chart;
@@ -733,7 +744,6 @@ export default {
                 pie: {
                   innerSize: '20%',
                   allowPointSelect: true,
-                  cursor: 'pointer',
                   dataLabels: {
                     enabled: true,
                     format: '{point.name} {point.y} 占比{point.percentage:.1f}% '
@@ -761,8 +771,8 @@ export default {
               },
               series: [{
                 data: sexData,
-              }],
-            });
+              }]
+            })
             this.sexFlag = false;
           break
           case 'age':
