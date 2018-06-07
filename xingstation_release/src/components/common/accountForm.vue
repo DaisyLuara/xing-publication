@@ -99,56 +99,65 @@
 <script>
 import auth from 'service/auth'
 import validate from '../../utils/validate.js'
-import md5 from 'js-md5'
-import { Button, Input, Form, FormItem, Checkbox, CheckboxGroup, Col, Select, Option } from 'element-ui'
+import {
+  Button,
+  Input,
+  Form,
+  FormItem,
+  Checkbox,
+  CheckboxGroup,
+  Col,
+  Select,
+  Option
+} from 'element-ui'
 import axios from 'axios'
 export default {
   name: 'account-form',
-  props: ["type"],
+  props: ['type'],
   data() {
     let va = (rule, value, callback) => {
       console.log(value)
-      let validateResult = validate.account(value);
-      if(!validateResult.validate){
-        this.validateError.account = true;
-        this.validateErrorText.account = validateResult.errorText;
-        return false;
+      let validateResult = validate.account(value)
+      if (!validateResult.validate) {
+        this.validateError.account = true
+        this.validateErrorText.account = validateResult.errorText
+        return false
       }
 
-      this.validateError.account = false;
-      callback();
+      this.validateError.account = false
+      callback()
     }
     let vp = (rule, value, callback) => {
-      let validateResult = validate.password(value);
-      if(!validateResult.validate){
-        this.validateError.password = true;
-        this.validateErrorText.password = validateResult.errorText;
-        return false;
+      let validateResult = validate.password(value)
+      if (!validateResult.validate) {
+        this.validateError.password = true
+        this.validateErrorText.password = validateResult.errorText
+        return false
       }
 
-      this.validateError.password = false;
-      callback();
+      this.validateError.password = false
+      callback()
     }
     let vic = (rule, value, callback) => {
-      let validateResult = validate.imageCaptcha(value);
-      if(!validateResult.validate){
-        this.validateError.imageCaptcha = true;
-        this.validateErrorText.imageCaptcha = validateResult.errorText;
-        return false;
+      let validateResult = validate.imageCaptcha(value)
+      if (!validateResult.validate) {
+        this.validateError.imageCaptcha = true
+        this.validateErrorText.imageCaptcha = validateResult.errorText
+        return false
       }
-      this.validateError.imageCaptcha = false;
-      callback();
+      this.validateError.imageCaptcha = false
+      callback()
     }
-    let vs= (rule, value, callback) => {
-      let validateResult = validate.smsCaptcha(value);
-      if(!validateResult.validate){
-        this.validateError.smsCaptcha = true;
-        this.validateErrorText.smsCaptcha = validateResult.errorText;
-        return false;
+    let vs = (rule, value, callback) => {
+      let validateResult = validate.smsCaptcha(value)
+      if (!validateResult.validate) {
+        this.validateError.smsCaptcha = true
+        this.validateErrorText.smsCaptcha = validateResult.errorText
+        return false
       }
 
-      this.validateError.smsCaptcha = false;
-      callback();
+      this.validateError.smsCaptcha = false
+      callback()
     }
     return {
       accountForm: {
@@ -166,7 +175,7 @@ export default {
       setting: {
         remember: true,
         submiting: false,
-        smsCaptchaText: "获取验证码",
+        smsCaptchaText: '获取验证码',
         sendingSmsCaptcha: false, //发送验证码60s重置为false,
         sendingSmsCaptchaTimer: 60, //发送验证码计时器,
         sendingVoiceCaptcha: false,
@@ -180,18 +189,10 @@ export default {
         redirect_url: '/home/item'
       },
       rules: {
-        account: [
-          { validator: va, trigger: 'blur' },
-        ],
-        password: [
-          { validator: vp, trigger: 'submit'},
-        ],
-        'imageCaptcha.value': [
-          { validator: vic, trigger: 'blur' },
-        ],
-        smsCaptcha: [
-          { validator: vs, trigger: 'submit' },
-        ]
+        account: [{ validator: va, trigger: 'blur' }],
+        password: [{ validator: vp, trigger: 'submit' }],
+        'imageCaptcha.value': [{ validator: vic, trigger: 'blur' }],
+        smsCaptcha: [{ validator: vs, trigger: 'submit' }]
       },
       showImageCaptcha: false,
       validateError: {
@@ -214,18 +215,17 @@ export default {
       }
     }
   },
-  created(){
+  created() {
     // 从localstorage中取 记住密码的配置
-
   },
   methods: {
     onSubmit(type) {
-      this[type]();
+      this[type]()
     },
     login() {
       // todo 验证码一并发送给后台
-      if(!this.setting.submiting){
-        this.$refs.accountForm.validate((valid) => {
+      if (!this.setting.submiting) {
+        this.$refs.accountForm.validate(valid => {
           if (valid) {
             let loginParams = {
               username: this.accountForm.account,
@@ -235,27 +235,29 @@ export default {
             }
             auth.login(this, loginParams, this.setting.redirect_url)
           } else {
-            return false;
+            return false
           }
-        });
+        })
       }
     },
     phoneSuccessHandle() {
-      if(!this.validateError.account && this.accountForm.account) {
+      if (!this.validateError.account && this.accountForm.account) {
         this.ImageCaptchaHandle()
       } else {
         this.showImageCaptcha = false
       }
     },
     getSmsCaptcha() {
-      if(!this.validateError.imageCaptcha & (this.accountForm.imageCaptcha.value.length == 5)){
+      if (
+        !this.validateError.imageCaptcha &
+        (this.accountForm.imageCaptcha.value.length == 5)
+      ) {
         this.showSmsCaptcha = true
         this.sendSmsCaptcha()
       }
-    }, 
+    },
     ImageCaptchaHandle() {
-      this.getImageCaptcha();
-     
+      this.getImageCaptcha()
     },
     linkToLogin() {
       this.$router.push({
@@ -263,24 +265,28 @@ export default {
       })
     },
     resetForm(formName) {
-      this.$refs[formName].resetFields();
+      this.$refs[formName].resetFields()
     },
     getImageCaptcha() {
       let args = {
         phone: this.accountForm.account
       }
-      auth.getImageCaptcha(this, args).then(result => {
-        if (result) {
-          let imageCaptchaObj = result;
-          this.accountForm.imageCaptcha.key = imageCaptchaObj.captcha_key;
-          this.setting.imageCaptcha.image_url = imageCaptchaObj.captcha_image_content
-          this.showImageCaptcha = true
-        } else {
-           this.showImageCaptcha = false
-        }
-      }).catch(error => {
-        console.log(error)
-      })
+      auth
+        .getImageCaptcha(this, args)
+        .then(result => {
+          if (result) {
+            let imageCaptchaObj = result
+            this.accountForm.imageCaptcha.key = imageCaptchaObj.captcha_key
+            this.setting.imageCaptcha.image_url =
+              imageCaptchaObj.captcha_image_content
+            this.showImageCaptcha = true
+          } else {
+            this.showImageCaptcha = false
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        })
     },
 
     sendSmsCaptcha() {
@@ -289,45 +295,47 @@ export default {
         captcha_key: this.accountForm.imageCaptcha.key,
         captcha_code: this.accountForm.imageCaptcha.value
       }
-      auth.sendSmsCaptcha(this, args).then(sendResult => {
-        console.log(sendResult)
-        this.accountForm.verification_key = sendResult.key
-          let that = this;
+      auth
+        .sendSmsCaptcha(this, args)
+        .then(sendResult => {
+          console.log(sendResult)
+          this.accountForm.verification_key = sendResult.key
+          let that = this
           // 改变发送验证码的文字，倒计时,开启语音验证码
-          this.setting.sendingSmsCaptcha = true;
-          this.setting.smsCaptchaText = "重新获取"
-          let smsIntervel = function(){
-          // 倒计时结束： 改变发送验证码的文字为重新获取
-            if(that.setting.sendingSmsCaptchaTimer == 0){
-              window.clearInterval('smsIntervel');
-              that.setting.sendingSmsCaptchaTimer = 59;
-              that.setting.sendingSmsCaptcha = false;
-              return false;
+          this.setting.sendingSmsCaptcha = true
+          this.setting.smsCaptchaText = '重新获取'
+          let smsIntervel = function() {
+            // 倒计时结束： 改变发送验证码的文字为重新获取
+            if (that.setting.sendingSmsCaptchaTimer == 0) {
+              window.clearInterval('smsIntervel')
+              that.setting.sendingSmsCaptchaTimer = 59
+              that.setting.sendingSmsCaptcha = false
+              return false
             }
-            that.setting.sendingSmsCaptchaTimer--;
+            that.setting.sendingSmsCaptchaTimer--
             setTimeout(smsIntervel, 1000)
           }
-          smsIntervel();
-      }).catch(error => {
-        this.getImageCaptcha();
-        this.validateError.imageCaptcha = true;
-        this.validateErrorText.imageCaptcha = '输入验证码不正确';
+          smsIntervel()
+        })
+        .catch(error => {
+          this.getImageCaptcha()
+          this.validateError.imageCaptcha = true
+          this.validateErrorText.imageCaptcha = '输入验证码不正确'
           console.log(error)
-      })
-    },
+        })
+    }
   },
-  computed: {
-  },
+  computed: {},
   components: {
-    "el-col": Col,
-    "el-button": Button,
-    "el-input": Input,
-    "el-form": Form,
-    "el-form-item": FormItem,
-    "el-checkbox": Checkbox,
-    "el-checkbox-group": CheckboxGroup,
-    "el-select": Select,
-    "el-option": Option
+    'el-col': Col,
+    'el-button': Button,
+    'el-input': Input,
+    'el-form': Form,
+    'el-form-item': FormItem,
+    'el-checkbox': Checkbox,
+    'el-checkbox-group': CheckboxGroup,
+    'el-select': Select,
+    'el-option': Option
   }
 }
 </script>
@@ -335,22 +343,22 @@ export default {
 @import '../../assets/css/accountForm.less';
 </style>
 <style lang="less" scoped>
-.account-form-wrap{
-  .account-form-container{
-    .account-form-header{
-      .header-link{
-        .register-label{
+.account-form-wrap {
+  .account-form-container {
+    .account-form-header {
+      .header-link {
+        .register-label {
           color: #474747;
           font-size: 12px;
-          .sub-label{
-            color: #20A0FF;
+          .sub-label {
+            color: #20a0ff;
             cursor: pointer;
           }
         }
       }
     }
     .account-form-body {
-      .account-form-submit{
+      .account-form-submit {
         margin-top: 32px;
       }
     }
