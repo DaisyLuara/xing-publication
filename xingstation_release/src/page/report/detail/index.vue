@@ -3,6 +3,11 @@
     class="point-data-wrapper" :element-loading-text="setting.loadingText" v-loading="setting.loading">
     <!-- 搜索 -->
     <div class="search-wrap">
+      <el-button
+        @click="handlePicShow"
+        class="more-pic">
+        漏斗图
+      </el-button>
       <el-form ref="searchForm" class="search-form">
         <el-row :gutter="20">
           <el-col :span="8" v-if="showUser">
@@ -156,63 +161,21 @@
       </div>
     </div>
     
-    <!-- 漏斗图和年龄分布 -->
-    <div class="transfer-sex-wrapper"  v-loading="sexFlag">
-          <div class="transfer">
-            <img style="width: 100%" src="~assets/images/data-bg.png" />
-
-            <div
-              :style="style.chartFont" 
-              class="looknum">
-              {{circleLooknum}}人
-            </div>
-
-            <div
-              :style="style.chartFont" 
-              class="playernum">
-              {{circlePlayernum}}人
-            </div>
-
-            <div
-              :style="style.chartFont" 
-              class="lovenum">
-              {{circleLovenum}}人
-            </div>
-
-            <div
-              :style="style.chartFont" 
-              class="cpa">
-              {{computedCPA}}
-            </div>
-
-            <div
-              :style="style.chartFont" 
-              class="cph">
-              {{computedCPH}}
-            </div>
-
-            <div
-              :style="style.chartFont" 
-              class="cpl">
-              {{computedCPL}}
-            </div>
-
-          </div>
-          <div class="sex-age">
-            <chart 
-              ref="pieChart"
-              @click="onClick"
-              :options="pieChart" 
-              auto-resize />
-          </div>
-    </div>
-
     <!-- 年龄分布图 -->
-    <div class="age-wrapper"  v-loading="ageFlag"> 
-      <chart
+    <div class="age-sex-wrapper"  v-loading="ageFlag"> 
+      <div class="sex-part">
+        <chart 
+          ref="pieChart"
+          @click="onClick"
+          :options="pieChart" 
+          auto-resize />
+      </div>
+      <div class="age-part">
+        <chart
         ref="ageChart"
         :options="ageChart"
         auto-resize />
+      </div>
     </div>
 
     <!-- 报表部分 -->
@@ -355,7 +318,7 @@
       </div>
     </div>
 
-    <!-- 弹窗 -->
+    <!-- 弹窗for 性别细节 -->
     <div  
       class="chart-dialog"
       v-loading="dialogLoading"
@@ -371,6 +334,56 @@
         ref="pieChart2"
         :options="sexAndAgeChart" 
         auto-resize />
+    </div>
+
+    <!-- dialog for 漏斗 -->
+    <div 
+      v-loading="sexFlag"
+      v-show="shouldPicDialogShow"
+      class="pic-dialog">
+      <img style="width: 100%" src="~assets/images/data-bg.png" />
+            <div 
+              class="dialog-close"
+              @click="handlePicShow"
+              >
+              关闭
+            </div>
+            <div
+              :style="style.chartFont" 
+              class="looknum">
+              {{circleLooknum}}人
+            </div>
+
+            <div
+              :style="style.chartFont" 
+              class="playernum">
+              {{circlePlayernum}}人
+            </div>
+
+            <div
+              :style="style.chartFont" 
+              class="lovenum">
+              {{circleLovenum}}人
+            </div>
+
+            <div
+              :style="style.chartFont" 
+              class="cpa">
+              {{computedCPA}}
+            </div>
+
+            <div
+              :style="style.chartFont" 
+              class="cph">
+              {{computedCPH}}
+            </div>
+
+            <div
+              :style="style.chartFont" 
+              class="cpl">
+              {{computedCPL}}
+            </div>
+
     </div>
   </div>
 </template>
@@ -548,99 +561,16 @@ export default {
       pointName: '',
       arUserId: '',
       poepleCountFlag: false,
+      shouldPicDialogShow: false,
       ageFlag: false,
       sexFlag: false,
       userSelect: '',
       projectAlias: '',
-      mainChart2: {
-        title: {
-          text: '堆叠区域图'
-        },
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'cross',
-            label: {
-              backgroundColor: '#6a7985'
-            }
-          }
-        },
-        legend: {
-          data: ['邮件营销', '联盟广告', '视频广告', '直接访问', '搜索引擎']
-        },
-        toolbox: {
-          feature: {
-            saveAsImage: {}
-          }
-        },
-        grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
-          containLabel: true
-        },
-        xAxis: [
-          {
-            type: 'category',
-            boundaryGap: false,
-            data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-          }
-        ],
-        yAxis: [
-          {
-            type: 'value'
-          }
-        ],
-        series: [
-          {
-            name: '邮件营销',
-            type: 'line',
-            stack: '总量',
-            areaStyle: { normal: {} },
-            data: [120, 132, 101, 134, 90, 230, 210]
-          },
-          {
-            name: '联盟广告',
-            type: 'line',
-            stack: '总量',
-            areaStyle: { normal: {} },
-            data: [220, 182, 191, 234, 290, 330, 310]
-          },
-          {
-            name: '视频广告',
-            type: 'line',
-            stack: '总量',
-            areaStyle: { normal: {} },
-            data: [150, 232, 201, 154, 190, 330, 410]
-          },
-          {
-            name: '直接访问',
-            type: 'line',
-            stack: '总量',
-            areaStyle: { normal: {} },
-            data: [320, 332, 301, 334, 390, 330, 320]
-          },
-          {
-            name: '搜索引擎',
-            type: 'line',
-            stack: '总量',
-            label: {
-              normal: {
-                show: true,
-                position: 'top'
-              }
-            },
-            areaStyle: { normal: {} },
-            data: [820, 932, 901, 934, 1290, 1330, 1320]
-          }
-        ]
-      },
-
       mainChart: {
         color: [
-          '#E83828',
-          '#F8B62D',
           '#0099FF',
+          '#F8B62D',
+          '#E83828',
           '#197748',
           '#F8B62D',
           '#BC1313'
@@ -671,21 +601,22 @@ export default {
           {
             left: 50,
             right: 50,
-            height: '35%',
-            containLabel: true
+            height: '50%'
+            // containLabel: true
           },
           {
             left: 50,
             right: 50,
-            top: '47%',
-            height: '35%',
-            containLabel: true
+            top: '61%',
+            height: '33%'
+            // containLabel: true
           }
         ],
         xAxis: [
           {
             type: 'category',
             boundaryGap: false,
+            axisLine: { onZero: true },
             data: null
           },
           {
@@ -771,6 +702,8 @@ export default {
           {
             name: '男',
             type: 'bar',
+            barGap: '30%',
+            barWidth: '60%',
             stack: '总量',
             label: {
               normal: {
@@ -854,13 +787,17 @@ export default {
     },
     playernumDivideLookNum: function() {
       let result = (
-        this.peopleCount[1].count / this.peopleCount[0].count
+        this.peopleCount[1].count /
+        this.peopleCount[0].count *
+        100
       ).toFixed(2)
       return result === 0 || result === NaN ? 0 : result + '%'
     },
     lovenumDivideLookNum: function() {
       let result = (
-        this.peopleCount[2].count / this.peopleCount[1].count
+        this.peopleCount[2].count /
+        this.peopleCount[1].count *
+        100
       ).toFixed(2)
       return result === 0 || result === NaN ? 0 : result + '%'
     },
@@ -1332,6 +1269,16 @@ export default {
     },
     processChartData(res) {
       let newOption = {
+        legend: {
+          data: [
+            '大屏围观参与人数',
+            '大屏铁杆玩家人数',
+            '扫码拉新会员注册总数',
+            'CPH转化率',
+            'CPA转化率',
+            'CPL转化率'
+          ]
+        },
         xAxis: [
           {
             type: 'category',
@@ -1339,36 +1286,47 @@ export default {
             data: res.map(r => {
               return r.display_name
             })
+          },
+          {
+            show: false,
+            gridIndex: 1,
+            type: 'category',
+            boundaryGap: false,
+            data: res.map(r => {
+              return r.display_name
+            }),
+            position: 'top'
           }
         ],
         series: [
           {
-            name: '扫码拉新会员注册总数',
+            symbol: 'circle',
+            name: '大屏围观参与人数',
             type: 'line',
-            stack: '总量',
             areaStyle: { normal: {} },
             data: res.map(r => {
-              return r.lovenum
+              return r.looknum
             })
           },
           {
+            symbol: 'circle',
             name: '大屏铁杆玩家人数',
             type: 'line',
-            stack: '总量',
             areaStyle: { normal: {} },
             data: res.map(r => {
               return r.playernum
             })
           },
           {
-            name: '大屏围观参与人数',
+            symbol: 'circle',
+            name: '扫码拉新会员注册总数',
             type: 'line',
-            stack: '总量',
             areaStyle: { normal: {} },
             data: res.map(r => {
-              return r.looknum
+              return r.lovenum
             })
           },
+
           {
             xAxisIndex: 1,
             yAxisIndex: 1,
@@ -1428,6 +1386,9 @@ export default {
     },
     handleHover(key) {
       console.log(key)
+    },
+    handlePicShow() {
+      this.shouldPicDialogShow = !this.shouldPicDialogShow
     }
   }
 }
@@ -1458,6 +1419,82 @@ export default {
       width: 100%;
     }
   }
+  .pic-dialog {
+    position: fixed;
+    z-index: 10000;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    width: 600px;
+    height: 700px;
+    background-color: white;
+    border: 1px solid black;
+    .dialog-close {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      cursor: pointer;
+    }
+    .looknum {
+      position: absolute;
+      width: 80%;
+      left: 10%;
+      z-index: 11;
+      top: 31%;
+      text-align: center;
+      color: white;
+      font-weight: 800;
+    }
+    .playernum {
+      position: absolute;
+      width: 80%;
+      left: 10%;
+      z-index: 11;
+      top: 62%;
+      text-align: center;
+      color: white;
+      font-weight: 800;
+    }
+    .lovenum {
+      position: absolute;
+      width: 80%;
+      left: 10%;
+      z-index: 11;
+      top: 77%;
+      text-align: center;
+      color: white;
+      font-weight: 800;
+    }
+    .cpa {
+      position: absolute;
+      width: 20%;
+      left: 3%;
+      top: 65%;
+      font-weight: 800;
+      text-align: center;
+      color: white;
+    }
+    .cph {
+      position: absolute;
+      width: 15%;
+      right: 12%;
+      top: 54%;
+      font-weight: 800;
+      text-align: center;
+      color: white;
+    }
+    .cpl {
+      position: absolute;
+      width: 23%;
+      right: 5%;
+      top: 85%;
+      font-weight: 800;
+      text-align: center;
+      color: white;
+    }
+  }
   .search-wrap {
     padding: 30px;
     background: #fff;
@@ -1466,6 +1503,12 @@ export default {
     justify-content: space-between;
     font-size: 16px;
     align-items: center;
+    position: relative;
+    .more-pic {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
     .el-form-item {
       margin-bottom: 10px;
     }
@@ -1502,32 +1545,35 @@ export default {
       }
 
       .btn {
-        .title {
-          color: #fff;
-        }
         &.color-0 {
-          background: url('~assets/images/program/circle.png') center 35px
-            no-repeat #8fe5b8;
+          background: url('~assets/images/program/circle.png') center 39px
+            no-repeat #0099ff;
+          background-size: 80px;
         }
         &.color-1 {
-          background: url('~assets/images/program/circle.png') center 35px
-            no-repeat #0099ff;
+          background: url('~assets/images/program/circle.png') center 39px
+            no-repeat #f8b62d;
+          background-size: 80px;
         }
         &.color-2 {
-          background: url('~assets/images/program/circle.png') center 35px
-            no-repeat #22b573;
+          background: url('~assets/images/program/circle.png') center 39px
+            no-repeat #e83828;
+          background-size: 80px;
         }
         &.color-3 {
-          background: url('~assets/images/program/circle.png') center 35px
-            no-repeat #f8b62d;
+          background: url('~assets/images/program/circle.png') center 39px
+            no-repeat #197748;
+          background-size: 80px;
         }
         &.color-4 {
-          background: url('~assets/images/program/circle.png') center 35px
-            no-repeat #e83828;
+          background: url('~assets/images/program/circle.png') center 39px
+            no-repeat #f8b62d;
+          background-size: 80px;
         }
         &.color-5 {
-          background: url('~assets/images/program/circle.png') center 35px
-            no-repeat #93278f;
+          background: url('~assets/images/program/circle.png') center 39px
+            no-repeat #bc1313;
+          background-size: 80px;
         }
         .arrow-icon {
           position: absolute;
@@ -1539,27 +1585,27 @@ export default {
           border-width: 13px 10px;
           border-style: solid;
           &.color-0 {
-            border-color: #8fe5b8 #ffffff #ffffff #ffffff;
-          }
-          &.color-1 {
             border-color: #0099ff #ffffff #ffffff #ffffff;
           }
-          &.color-2 {
-            border-color: #22b573 #ffffff #ffffff #ffffff;
-          }
-          &.color-3 {
+          &.color-1 {
             border-color: #f8b62d #ffffff #ffffff #ffffff;
           }
-          &.color-4 {
+          &.color-2 {
             border-color: #e83828 #ffffff #ffffff #ffffff;
           }
+          &.color-3 {
+            border-color: #197748 #ffffff #ffffff #ffffff;
+          }
+          &.color-4 {
+            border-color: #f8b62d #ffffff #ffffff #ffffff;
+          }
           &.color-5 {
-            border-color: #93278f #ffffff #ffffff #ffffff;
+            border-color: #bc1313 #ffffff #ffffff #ffffff;
           }
         }
         cursor: pointer;
-        width: 145px;
-        height: 145px;
+        width: 130px;
+        height: 130px;
         display: block;
         border-radius: 5px;
         background: url('~assets/images/program/circle.png') center 35px
@@ -1569,8 +1615,8 @@ export default {
         .title {
           display: block;
           height: 35px;
-          line-height: 35px;
           padding-left: 20px;
+          padding-top: 9px;
           font-size: 14px;
           color: white;
           font-weight: 600;
@@ -1587,8 +1633,8 @@ export default {
         .arrow-icon {
           position: absolute;
           z-index: 2;
-          top: 145px;
-          left: 66px;
+          top: 130px;
+          left: 55px;
           width: 0;
           height: 0;
           border-width: 13px 10px;
@@ -1699,63 +1745,6 @@ export default {
       width: 50%;
       padding: 10px;
       position: relative;
-      .looknum {
-        position: absolute;
-        width: 80%;
-        left: 10%;
-        z-index: 11;
-        top: 31%;
-        text-align: center;
-        color: white;
-        font-weight: 800;
-      }
-      .playernum {
-        position: absolute;
-        width: 80%;
-        left: 10%;
-        z-index: 11;
-        top: 62%;
-        text-align: center;
-        color: white;
-        font-weight: 800;
-      }
-      .lovenum {
-        position: absolute;
-        width: 80%;
-        left: 10%;
-        z-index: 11;
-        top: 77%;
-        text-align: center;
-        color: white;
-        font-weight: 800;
-      }
-      .cpa {
-        position: absolute;
-        width: 20%;
-        left: 3%;
-        top: 65%;
-        font-weight: 800;
-        text-align: center;
-        color: white;
-      }
-      .cph {
-        position: absolute;
-        width: 15%;
-        right: 12%;
-        top: 54%;
-        font-weight: 800;
-        text-align: center;
-        color: white;
-      }
-      .cpl {
-        position: absolute;
-        width: 23%;
-        right: 5%;
-        top: 85%;
-        font-weight: 800;
-        text-align: center;
-        color: white;
-      }
     }
     .sex-age {
       position: relative;
@@ -1770,11 +1759,27 @@ export default {
       }
     }
   }
-  .age-wrapper {
+  .age-sex-wrapper {
     margin-top: 15px;
     background-color: #fff;
     height: 600px;
     padding: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    .sex-part {
+      width: 25%;
+      height: 100%;
+      .echarts {
+        height: 80%;
+        width: 100%;
+      }
+    }
+    .age-part {
+      width: 72%;
+      left: 3%;
+      height: 100%;
+    }
   }
   .echarts {
     height: 100%;
