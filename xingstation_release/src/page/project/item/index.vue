@@ -550,12 +550,12 @@ export default {
       this.setting.loading = true
       let searchArgs = {
         page: this.pagination.currentPage,
-        include: 'point.scene,point.market,point.area,project',
+        include: 'point.scene,point.market,point.area,project,template',
         project_name: this.filters.name,
         area_id: this.filters.area,
         market_id: this.filters.market,
         scene_id: this.filters.scene,
-        div_tvid: this.filters.define
+        defined_id: this.filters.define
       }
       project
         .getProjectList(this, searchArgs)
