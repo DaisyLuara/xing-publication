@@ -55,6 +55,10 @@ class ProjectLaunchController extends Controller
             });
         }
 
+        if ($request->defined_id) {
+            $query->where('div_tvid', '=', $request->defined_id);
+        }
+
         if ($request->ids) {
             $ids = explode(',', $request->ids);
             $query->whereIn('tvoid', $ids);
