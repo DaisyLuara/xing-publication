@@ -45,15 +45,17 @@ class MakeApi extends Command
             '1' => '\Http\Controllers\Admin\\' . $model . '\V1\Request',
             '2' => '\Http\Controllers\Admin\\' . $model . '\V1\Models',
             '3' => '\Http\Controllers\Admin\\' . $model . '\V1\Transformer',
+            '4' => '\Http\Controllers\Admin\\' . $model . '\V1',
         ];
         $stub = [
             '0' => __DIR__ . '/stubs/controller.stub',
             '1' => __DIR__ . '/stubs/request.stub',
             '2' => __DIR__ . '/stubs/model.stub',
             '3' => __DIR__ . '/stubs/transformer.stub',
+            '4' => __DIR__ . '/stubs/routes.stub'
         ];
 
-        for ($i = 0; $i < 4; $i++) {
+        for ($i = 0; $i < 5; $i++) {
 
             $this->files = new Filesystem();
             if ($i == 0) {
@@ -62,6 +64,8 @@ class MakeApi extends Command
                 $name = $model . 'Request';
             } else if ($i == 3) {
                 $name = $model . 'Transformer';
+            } else if ($i == 4) {
+                $name = 'routes';
             } else {
                 $name = $model;
             }
