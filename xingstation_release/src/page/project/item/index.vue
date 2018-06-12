@@ -555,7 +555,7 @@ export default {
         area_id: this.filters.area,
         market_id: this.filters.market,
         scene_id: this.filters.scene,
-        define: this.filters.define
+        div_tvid: this.filters.define
       }
       project
         .getProjectList(this, searchArgs)
