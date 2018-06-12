@@ -33,7 +33,9 @@ class ProjectLaunchTransformer extends TransformerAbstract
 
     public function includeTemplate(ProjectLaunch $projectLaunch)
     {
-        return $this->item($projectLaunch->template, new ProjectLaunchTplTransformer());
+        if ($projectLaunch->template) {
+            return $this->item($projectLaunch->template, new ProjectLaunchTplTransformer());
+        }
     }
 
 }
