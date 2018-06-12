@@ -128,6 +128,9 @@
                 <el-form-item label="自定义结束时间">
                   <span>{{ scope.row.end_date }}</span>
                 </el-form-item>
+                <el-form-item label="自定义模版">
+                  <span>{{typeof(scope.row.template) === 'undefined' ? '' : scope.row.template.name }}</span>
+                </el-form-item>
               </el-form>
             </template>
           </el-table-column>
@@ -194,6 +197,16 @@
             >
             <template slot-scope="scope">
               {{scope.row.point.name}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="define"
+            label="自定义模版"
+            min-width="100"
+            :show-overflow-tooltip="true"
+            >
+            <template slot-scope="scope">
+              {{typeof(scope.row.template) === 'undefined' ? '' : scope.row.template.name }}
             </template>
           </el-table-column>
           <el-table-column
@@ -550,12 +563,12 @@ export default {
       this.setting.loading = true
       let searchArgs = {
         page: this.pagination.currentPage,
-        include: 'point.scene,point.market,point.area,project',
+        include: 'point.scene,point.market,point.area,project,template',
         project_name: this.filters.name,
         area_id: this.filters.area,
         market_id: this.filters.market,
         scene_id: this.filters.scene,
-        define: this.filters.define
+        defined_id: this.filters.define
       }
       project
         .getProjectList(this, searchArgs)
@@ -689,7 +702,7 @@ export default {
         font-size: 16px;
         align-items: center;
         margin-bottom: 10px;
-        .el-form-item{
+        .el-form-item {
           margin-bottom: 10px;
         }
         .el-select {

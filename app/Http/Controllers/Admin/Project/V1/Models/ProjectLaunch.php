@@ -42,5 +42,4 @@ class ProjectLaunch extends Model
         return $this->belongsTo(Project::class, 'default_plid', 'id');
     }
 
-
 }
