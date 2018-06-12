@@ -10,7 +10,6 @@ $api->version('v1', [
     ], function ($api) {
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
         });
-        $api->get('test', 'FaceCountController@test');
     });
 
 });
