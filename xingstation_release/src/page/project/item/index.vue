@@ -128,6 +128,9 @@
                 <el-form-item label="自定义结束时间">
                   <span>{{ scope.row.end_date }}</span>
                 </el-form-item>
+                <el-form-item label="自定义模版">
+                  <span>{{typeof(scope.row.template) === 'undefined' ? '' : scope.row.template.name }}</span>
+                </el-form-item>
               </el-form>
             </template>
           </el-table-column>
@@ -194,6 +197,16 @@
             >
             <template slot-scope="scope">
               {{scope.row.point.name}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="define"
+            label="自定义模版"
+            min-width="100"
+            :show-overflow-tooltip="true"
+            >
+            <template slot-scope="scope">
+              {{typeof(scope.row.template) === 'undefined' ? '' : scope.row.template.name }}
             </template>
           </el-table-column>
           <el-table-column
