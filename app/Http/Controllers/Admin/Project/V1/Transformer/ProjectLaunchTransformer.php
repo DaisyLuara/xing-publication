@@ -8,7 +8,7 @@ use League\Fractal\TransformerAbstract;
 
 class ProjectLaunchTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['point', 'project'];
+    protected $availableIncludes = ['point', 'project', 'template'];
 
     public function transform(ProjectLaunch $projectLaunch)
     {
@@ -29,6 +29,11 @@ class ProjectLaunchTransformer extends TransformerAbstract
     public function includeProject(ProjectLaunch $projectLaunch)
     {
         return $this->item($projectLaunch->project, new ProjectTransformer());
+    }
+
+    public function includeTemplate(ProjectLaunch $projectLaunch)
+    {
+        return $this->item($projectLaunch->template, new ProjectLaunchTplTransformer());
     }
 
 }
