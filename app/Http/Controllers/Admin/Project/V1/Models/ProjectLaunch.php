@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin\Project\V1\Models;
 use App\Http\Controllers\Admin\Point\V1\Models\Point;
 use App\Models\Model;
 
-
 class ProjectLaunch extends Model
 {
     protected $connection = 'ar';
@@ -20,6 +19,13 @@ class ProjectLaunch extends Model
         'default_plid',
         'weekday_tvid',
         'weekend_tvid',
+        'day1_tvid',
+        'day2_tvid',
+        'day3_tvid',
+        'day4_tvid',
+        'day5_tvid',
+        'day6_tvid',
+        'day7_tvid',
         'sdate',
         'edate',
         'div_tvid',
@@ -35,4 +41,6 @@ class ProjectLaunch extends Model
     {
         return $this->belongsTo(Project::class, 'default_plid', 'id');
     }
+
+
 }

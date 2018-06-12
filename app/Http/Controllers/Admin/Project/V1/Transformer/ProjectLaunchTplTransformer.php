@@ -7,6 +7,9 @@ use League\Fractal\TransformerAbstract;
 
 class ProjectLaunchTplTransformer extends TransformerAbstract
 {
+
+    protected $availableIncludes = ['schedules'];
+
     public function transform(ProjectLaunchTpl $projectLaunchTpl)
     {
         return [
@@ -15,4 +18,8 @@ class ProjectLaunchTplTransformer extends TransformerAbstract
         ];
     }
 
+    public function includeSchedules(ProjectLaunchTpl $projectLaunchTpl)
+    {
+        return $this->collection($projectLaunchTpl->schedules, new ProjectLaunchTplScheduleTransformer());
+    }
 }

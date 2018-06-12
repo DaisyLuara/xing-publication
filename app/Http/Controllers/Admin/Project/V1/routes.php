@@ -23,6 +23,7 @@ $api->version('v1', [
             $api->get('projects/launch', 'ProjectLaunchController@index');
             $api->post('projects/launch', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectLaunchController@store']);
             $api->patch('projects/launches', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectLaunchController@update']);
+            $api->get('projects/launches/tpl', 'ProjectLaunchTplController@index');
 
             //产品
             $api->get('product', 'ProductController@index');
@@ -31,7 +32,7 @@ $api->version('v1', [
             $api->get('project_template', 'ProjectTemplateController@index');
 
 
-//            //广告数据统计
+            //广告数据统计
             $api->get('project_ad_log', 'ProjectAdLogController@index');
         });
     });
