@@ -55,8 +55,8 @@ class ProjectLaunchController extends Controller
             });
         }
 
-        if ($request->defind_id) {
-            $query->where('div_tvid', '=', $request->defind_id);
+        if ($request->defined_id) {
+            $query->where('div_tvid', '=', $request->defined_id);
         }
 
         if ($request->ids) {
