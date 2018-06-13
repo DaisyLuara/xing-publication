@@ -51,9 +51,9 @@
               </el-col>
               <el-col :span="8">
                 <el-form-item label="" prop="define">
-                  <el-select v-model="filters.define" placeholder="请选择自定义模版" filterable :loading="marketLoading" clearable>
+                  <el-select v-model="filters.define" placeholder="请选择模版" filterable :loading="marketLoading" clearable>
                     <el-option
-                      v-for="item in defineList"
+                      v-for="item in templateList"
                       :key="item.id"
                       :label="item.name"
                       :value="item.id">
@@ -62,10 +62,20 @@
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-button @click="search('searchForm')" type="primary" size="small">搜索</el-button>
-                <el-button @click="resetSearch" type="default" size="small">重置</el-button>
+                <el-form-item label="" prop="define">
+                  <el-select v-model="filters.define" placeholder="请选择模版名" filterable :loading="marketLoading" clearable>
+                    <el-option
+                      v-for="item in templateNameList"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
               </el-col>
             </el-row>
+            <el-button @click="search('searchForm')" type="primary" size="small">搜索</el-button>
+            <el-button @click="resetSearch" type="default" size="small">重置</el-button>
           </el-form>
         </div>
         <!-- 批量修改选项 -->
@@ -333,6 +343,49 @@ export default {
         scene: '',
         define: ''
       },
+      templateList: [
+        {
+          id: 'day1_tvid',
+          name: '星期一模板'
+        },
+        {
+          id: 'day2_tvid',
+          name: '星期二模板'
+        },
+        {
+          id: 'day3_tvid',
+          name: '星期三模板'
+        },
+        {
+          id: 'day4_tvid',
+          name: '星期四模板'
+        },
+        {
+          id: 'day5_tvid',
+          name: '星期五模板'
+        },
+        {
+          id: 'day6_tvid',
+          name: '星期六模板'
+        },
+        {
+          id: 'day7_tvid',
+          name: '星期日模板'
+        },
+        {
+          id: 'weekday_tvid',
+          name: '工作日模板'
+        },
+        {
+          id: 'weekend_tvid',
+          name: '周末模板'
+        },
+        {
+          id: 'div_tvid',
+          name: '自定义模版'
+        }
+      ],
+      templateNameList: [],
       editCondition: {
         conditionList: []
       },
@@ -549,6 +602,7 @@ export default {
         .getModuleList(this)
         .then(response => {
           let data = response.data
+          this.templateNameList = data
           this.weekdayList = data
           this.weekendList = data
           this.defineList = data
