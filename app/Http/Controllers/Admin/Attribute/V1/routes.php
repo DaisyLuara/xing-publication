@@ -12,6 +12,7 @@ $api->version('v1', [
             $api->get('attribute', 'AttributeController@index');
             $api->post('attribute', 'AttributeController@store');
             $api->patch('attribute', 'AttributeController@update');
+            $api->get('test', 'AttributeController@test');
         });
     });
 
