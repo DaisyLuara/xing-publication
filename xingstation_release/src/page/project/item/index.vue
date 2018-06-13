@@ -39,7 +39,7 @@
             <el-row :gutter="20">
               <el-col :span="8">
                 <el-form-item label="" prop="market">
-                  <el-select v-model="filters.market" placeholder="请选择商场" filterable :loading="marketLoading" remote :remote-method="getMarket" @change="marketChangeHandle" clearable>
+                  <el-select v-model="filters.market" placeholder="请选择商场" filterable :loading="marketLoading" remote :remote-method="getMarket" clearable>
                     <el-option
                       v-for="item in marketList"
                       :key="item.id"
@@ -50,8 +50,8 @@
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item label="" prop="define">
-                  <el-select v-model="filters.define" placeholder="请选择模版" filterable :loading="marketLoading" clearable>
+                <el-form-item label="" prop="tpl_name">
+                  <el-select v-model="filters.tpl_name" placeholder="请选择模板" filterable :loading="marketLoading" clearable>
                     <el-option
                       v-for="item in templateList"
                       :key="item.id"
@@ -62,8 +62,8 @@
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item label="" prop="define">
-                  <el-select v-model="filters.define" placeholder="请选择模版名" filterable :loading="marketLoading" clearable>
+                <el-form-item label="" prop="tpl_id">
+                  <el-select v-model="filters.tpl_id" placeholder="请选择模板名" filterable :loading="marketLoading" clearable>
                     <el-option
                       v-for="item in templateNameList"
                       :key="item.id"
@@ -84,11 +84,9 @@
             <el-form-item label="修改投放选项" style="margin-bottom: 0;">
               <el-checkbox-group v-model="editCondition.conditionList">
                 <el-checkbox label="节目名称"></el-checkbox>
-                <el-checkbox label="工作日模版"></el-checkbox>
-                <el-checkbox label="周末模版"></el-checkbox>
+                <el-checkbox label="模板"></el-checkbox>
                 <el-checkbox label="自定义开始时间"></el-checkbox>
                 <el-checkbox label="自定义结束时间" ></el-checkbox>
-                <el-checkbox label="自定义模版" ></el-checkbox>
               </el-checkbox-group>
             </el-form-item>
             <el-button @click="modifyEdit" type="danger" size="small">修改</el-button>
@@ -244,7 +242,7 @@
         ref="projectForm"
         :model="projectForm" label-width="150px">
           <el-form-item label="节目名称" prop="project"  v-if="modifyOptionFlag.project" :rules="[{ type: 'number', required: true, message: '请输入节目', trigger: 'submit' }]">
-            <el-select v-model="projectForm.project" filterable placeholder="请搜索" remote :remote-method="getProject" @change="projectChangeHandle" clearable>
+            <el-select v-model="projectForm.project" filterable placeholder="请搜索" remote :remote-method="getProject" clearable>
               <el-option
                 v-for="item in projectList"
                 :key="item.id"
@@ -253,17 +251,87 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="工作日模版" prop="weekday" v-if="modifyOptionFlag.weekday" :rules="[{ type: 'number', required: true, message: '请选择工作日模版', trigger: 'submit' }]">
-            <el-select v-model="projectForm.weekday" placeholder="请选择" filterable clearable>
-              <el-option
-                v-for="item in weekdayList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-              </el-option>
+          <el-form-item label="星期一模版"  v-if="modifyOptionFlag.template" prop="day1_tvid">
+          <el-select v-model="projectForm.day1_tvid" placeholder="请选择" filterable clearable>
+            <el-option
+              v-for="item in monList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="星期二模版" v-if="modifyOptionFlag.template" prop="day2_tvid">
+          <el-select v-model="projectForm.day2_tvid" placeholder="请选择" filterable clearable>
+            <el-option
+              v-for="item in tueList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="星期三模版" v-if="modifyOptionFlag.template" prop="day3_tvid">
+          <el-select v-model="projectForm.day3_tvid" placeholder="请选择" filterable clearable>
+            <el-option
+              v-for="item in wedList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="星期四模版" v-if="modifyOptionFlag.template" prop="day4_tvid">
+          <el-select v-model="projectForm.day4_tvid" placeholder="请选择" filterable clearable>
+            <el-option
+              v-for="item in thursList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="星期五模版" v-if="modifyOptionFlag.template" prop="day5_tvid">
+          <el-select v-model="projectForm.day5_tvid" placeholder="请选择" filterable clearable>
+            <el-option
+              v-for="item in friList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="星期六模版" v-if="modifyOptionFlag.template" prop="day6_tvid">
+          <el-select v-model="projectForm.day6_tvid" placeholder="请选择" filterable clearable>
+            <el-option
+              v-for="item in satList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="星期日模版" v-if="modifyOptionFlag.template" prop="day7_tvid">
+          <el-select v-model="projectForm.day7_tvid" placeholder="请选择" filterable clearable>
+            <el-option
+              v-for="item in sunList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="工作日模版" prop="weekday" v-if="modifyOptionFlag.template">
+          <el-select v-model="projectForm.weekday" placeholder="请选择" filterable clearable>
+            <el-option
+              v-for="item in weekdayList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="周末模版" prop="weekend" v-if="modifyOptionFlag.weekend" :rules="[{ type: 'number', required: true, message: '请选择周末模版', trigger: 'submit' }]">
+          <el-form-item label="周末模版" prop="weekend" v-if="modifyOptionFlag.template">
             <el-select v-model="projectForm.weekend" placeholder="请选择" filterable clearable>
               <el-option
                 v-for="item in weekendList"
@@ -273,7 +341,7 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="自定义模版" prop="define" v-if="modifyOptionFlag.define">
+          <el-form-item label="自定义模版" prop="define" v-if="modifyOptionFlag.template">
             <el-select v-model="projectForm.define" placeholder="请选择" filterable clearable>
               <el-option
                 v-for="item in defineList"
@@ -341,7 +409,8 @@ export default {
         market: '',
         area: '',
         scene: '',
-        define: ''
+        tpl_name: '',
+        tpl_id: ''
       },
       templateList: [
         {
@@ -385,6 +454,13 @@ export default {
           name: '自定义模版'
         }
       ],
+      monList: [],
+      tueList: [],
+      wedList: [],
+      thursList: [],
+      friList: [],
+      satList: [],
+      sunList: [],
       templateNameList: [],
       editCondition: {
         conditionList: []
@@ -415,14 +491,19 @@ export default {
         weekend: '',
         define: '',
         sdate: '',
-        edate: ''
+        edate: '',
+        day1_tvid: '',
+        day2_tvid: '',
+        day3_tvid: '',
+        day4_tvid: '',
+        day5_tvid: '',
+        day6_tvid: '',
+        day7_tvid: ''
       },
       loading: true,
       modifyOptionFlag: {
         project: false,
-        weekday: false,
-        weekend: false,
-        define: false,
+        template: false,
         sdate: false,
         edate: false
       },
@@ -431,7 +512,6 @@ export default {
       selectAll: []
     }
   },
-  mounted() {},
   created() {
     this.getProjectList()
     this.getAreaList()
@@ -477,7 +557,14 @@ export default {
             weekend: '',
             define: '',
             sdate: '',
-            edate: ''
+            edate: '',
+            day1_tvid: '',
+            day2_tvid: '',
+            day3_tvid: '',
+            day4_tvid: '',
+            day5_tvid: '',
+            day6_tvid: '',
+            day7_tvid: ''
           }
           this.tvoids = []
           let optionModify = this.editCondition.conditionList
@@ -486,31 +573,23 @@ export default {
             this.tvoids.push(id)
           }
           this.modifyOptionFlag.project = false
-          this.modifyOptionFlag.weekend = false
-          this.modifyOptionFlag.weekday = false
+          this.modifyOptionFlag.template = false
           this.modifyOptionFlag.sdate = false
           this.modifyOptionFlag.edate = false
-          this.modifyOptionFlag.define = false
           for (let k = 0; k < optionModify.length; k++) {
             let type = optionModify[k]
             switch (type) {
               case '节目名称':
                 this.modifyOptionFlag.project = true
                 break
-              case '周末模版':
-                this.modifyOptionFlag.weekend = true
-                break
-              case '工作日模版':
-                this.modifyOptionFlag.weekday = true
+              case '模板':
+                this.modifyOptionFlag.template = true
                 break
               case '自定义开始时间':
                 this.modifyOptionFlag.sdate = true
                 break
               case '自定义结束时间':
                 this.modifyOptionFlag.edate = true
-                break
-              case '自定义模版':
-                this.modifyOptionFlag.define = true
                 break
             }
           }
@@ -523,12 +602,12 @@ export default {
       this.filters.area = ''
       this.filters.name = ''
       this.filters.scene = ''
-      this.filters.define = ''
+      this.filters.tpl_name = ''
+      this.filters.tpl_id = ''
       this.pagination.currentPage = 1
       this.editCondition.conditionList = []
       this.getProjectList()
     },
-    projectChangeHandle() {},
     getProject(query) {
       this.searchLoading = true
       let args = {
@@ -564,12 +643,16 @@ export default {
             edate: edate,
             weekday_tvid: this.projectForm.weekday,
             weekend_tvid: this.projectForm.weekend,
-            div_tvid: this.projectForm.define
+            div_tvid: this.projectForm.define,
+            day1_tvid: this.projectForm.day1_tvid,
+            day2_tvid: this.projectForm.day2_tvid,
+            day3_tvid: this.projectForm.day3_tvid,
+            day4_tvid: this.projectForm.day4_tvid,
+            day5_tvid: this.projectForm.day5_tvid,
+            day6_tvid: this.projectForm.day6_tvid,
+            day7_tvid: this.projectForm.day7_tvid
           }
           this.modifyOptionFlag.project ? args : delete args.default_plid
-          this.modifyOptionFlag.weekday ? args : delete args.weekday_tvid
-          this.modifyOptionFlag.weekend ? args : delete args.weekend_tvid
-          this.modifyOptionFlag.define ? args : delete args.div_tvid
           this.modifyOptionFlag.sdate ? args : delete args.sdate
           this.modifyOptionFlag.edate ? args : delete args.edate
           this.loading = false
@@ -606,6 +689,13 @@ export default {
           this.weekdayList = data
           this.weekendList = data
           this.defineList = data
+          this.monList = data
+          this.tueList = data
+          this.wedList = data
+          this.thursList = data
+          this.friList = data
+          this.satList = data
+          this.sunList = data
         })
         .catch(error => {
           console.log(error)
@@ -622,7 +712,8 @@ export default {
         area_id: this.filters.area,
         market_id: this.filters.market,
         scene_id: this.filters.scene,
-        defined_id: this.filters.define
+        tpl_name: this.filters.tpl_name,
+        tpl_id: this.filters.tpl_id
       }
       project
         .getProjectList(this, searchArgs)
@@ -637,7 +728,6 @@ export default {
           this.setting.loading = false
         })
     },
-    marketChangeHandle() {},
     areaChangeHandle() {
       this.filters.market = ''
       this.getMarket(this.filters.market)
