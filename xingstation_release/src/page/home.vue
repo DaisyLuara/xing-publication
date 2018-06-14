@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { Menu, MenuItem, Popover, Button, Badge, Icon} from 'element-ui'
+import { Menu, MenuItem, Popover, Button, Badge, Icon } from 'element-ui'
 import auth from 'service/auth'
 import notice from 'service/notice'
 
@@ -96,6 +96,9 @@ export default {
               case 'report':
                 m.src = require('../assets/images/icons/report-icon.png')
                 break
+              case 'resource':
+                m.src = require('../assets/images/icons/resource-icon.png')
+                break
               default:
                 m.src = ''
                 break
@@ -137,23 +140,24 @@ export default {
       return this.$store.state.notificationCount.noticeCount
     }
   },
-  mounted() {
-    
-  },
+  mounted() {},
   methods: {
     logout() {
       this.visible = false
       auth.logout(this)
     },
     notificationStats() {
-      return notice.notificationStats(this).then((response) => {
-        response.setIntervalValue = this.setIntervalValue
-        this.$store.commit('saveNotificationState', response)
-      }).catch(err => {
-        console.log(err)
-      })
+      return notice
+        .notificationStats(this)
+        .then(response => {
+          response.setIntervalValue = this.setIntervalValue
+          this.$store.commit('saveNotificationState', response)
+        })
+        .catch(err => {
+          console.log(err)
+        })
     },
-    handleUser(){
+    handleUser() {
       this.$router.push({
         path: '/account/account'
       })
@@ -165,7 +169,7 @@ export default {
     'el-popover': Popover,
     'el-button': Button,
     'el-badge': Badge
-  },
+  }
 }
 </script>
 
@@ -176,7 +180,7 @@ export default {
   flex-direction: row;
   align-items: center;
 }
-.el-badge__content{
+.el-badge__content {
   border: none;
 }
 .el-badge__content.is-fixed {
@@ -221,7 +225,7 @@ export default {
   // background: #20a0ff url(../assets/images/user-bg.png) no-repeat center 5px;
   color: #fff;
   cursor: pointer;
-  .avatar{
+  .avatar {
     width: 100%;
   }
 }

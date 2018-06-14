@@ -19,7 +19,7 @@
       </div>
     </div>
     <!-- 模板排期列表 -->
-    <el-collapse v-model="activeNames">
+    <el-collapse v-model="activeNames" accordion>
       <el-collapse-item :name="index" v-for="(item, index) in tableData" :key="item.id" >
         <template slot="title">
           {{item.name}} <el-button type="primary" icon="el-icon-edit" circle size="mini" @click="modifyTemplateName"></el-button>
@@ -210,7 +210,7 @@ export default {
   },
   data() {
     return {
-      activeNames: ['1'],
+      activeNames: 0,
       templateVisible: false,
       loading: false,
       title: '',
@@ -243,6 +243,7 @@ export default {
   },
   created() {
     this.getModuleList()
+    this.getAreaList()
     this.getScheduleList()
   },
   methods: {
