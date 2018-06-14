@@ -10,13 +10,11 @@ use Illuminate\Http\Request;
 class ProjectLaunchTplController extends Controller
 {
 
-    public function index(Request $request,ProjectLaunchTpl $projectLaunchTpl)
+    public function index(Request $request, ProjectLaunchTpl $projectLaunchTpl)
     {
         $query = $projectLaunchTpl->query();
-        if ($request->project_id) {
-            $query->whereHas('project', function ($q) use ($request) {
-                $q->where('id', '=', $request->project_id);
-            });
+        if ($request->name) {
+            $query->where('name', 'like', "%" . $request->name . "%");
         }
 
         $projectLaunchTpl = $query->paginate(10);
