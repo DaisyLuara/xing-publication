@@ -50,6 +50,7 @@ class ProjectController extends Controller
     {
         $data = $request->all();
         $ids = $request->ids;
+        unset($data['ids']);
         $query = $project->query();
         $query->where('id', '=', $data['id'])->update($data);
         ProjectAttribute::where('project_id', $data['id'])->delete();
