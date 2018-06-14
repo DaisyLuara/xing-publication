@@ -14,13 +14,19 @@ class ProjectLaunchTplScheduleTransformer extends TransformerAbstract
     {
         return [
             'id' => $projectLaunchTplSchedule->tvid,
-            'date_start' => $projectLaunchTplSchedule->shm,
-            'date_end' => $projectLaunchTplSchedule->ehm,
+            'date_start' => $this->formatTime($projectLaunchTplSchedule->shm),
+            'date_end' => $this->formatTime($projectLaunchTplSchedule->ehm),
         ];
     }
 
     public function includeProject(ProjectLaunchTplSchedule $projectLaunchTplSchedule)
     {
         return $this->item($projectLaunchTplSchedule->project, new ProjectTransformer());
+    }
+
+    private function formatTime($time)
+    {
+        $time = str_pad($time, 4, '0', STR_PAD_LEFT);
+        return substr_replace($time, ':', 2, 0);
     }
 }
