@@ -285,7 +285,7 @@ class ChartDataController extends Controller
         $data = $query->selectRaw("sum(looknum) AS count,xs_attributes.name,xs_attributes.id as attribute_id")
             ->join('xs_project_attributes', 'xs_project_attributes.belong', '=', "$table.belong")
             ->join('xs_attributes', 'xs_attributes.id', '=', 'xs_project_attributes.attribute_id')
-            ->where('xs_attributes.pid', '=', 5)
+            ->where('xs_attributes.parent_id', '=', 5)
             ->groupBy('xs_attributes.id')
             ->orderBy('count', 'desc')
             ->limit(5)
