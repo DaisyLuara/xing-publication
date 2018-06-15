@@ -1825,7 +1825,7 @@
 							"name": "节目投放列表",
 							"request": {
 								"url": {
-									"raw": "http://{{host}}/api/projects/launch?include=point.scene,point.market,point.area,project&scene_id=1",
+									"raw": "http://{{host}}/api/projects/launch?include=point.scene,point.market,point.area,project,template",
 									"protocol": "http",
 									"host": [
 										"{{host}}"
@@ -1838,7 +1838,7 @@
 									"query": [
 										{
 											"key": "include",
-											"value": "point.scene,point.market,point.area,project",
+											"value": "point.scene,point.market,point.area,project,template",
 											"equals": true,
 											"description": ""
 										},
@@ -1857,8 +1857,8 @@
 											"disabled": true
 										},
 										{
-											"key": "scene_id",
-											"value": "1",
+											"key": "",
+											"value": "7",
 											"equals": true,
 											"description": ""
 										}
@@ -1876,6 +1876,169 @@
 								"body": {
 									"mode": "raw",
 									"raw": ""
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "投放模板列表",
+							"request": {
+								"url": {
+									"raw": "{{host}}/api/projects/launches/tpl?include=schedules.project&page=2",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"projects",
+										"launches",
+										"tpl"
+									],
+									"query": [
+										{
+											"key": "include",
+											"value": "schedules.project",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "page",
+											"value": "2",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_admin}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "修改投放模板",
+							"request": {
+								"url": "{{host}}/api/projects/launches/tpl/12",
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_admin}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\":\"我还是该个名字\"\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "新增投放模板",
+							"request": {
+								"url": "{{host}}/api/projects/launches/tpl",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_admin}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\":\"这还是是一个测试me\"\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "新增排期",
+							"request": {
+								"url": "{{host}}/api/projects/schedules",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_admin}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"tpl_id\":\"15\",\n\t\"project_id\":20,\n\t\"date_start\":\"23:12\",\n\t\"date_end\":\"23:29\"\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "修改排期",
+							"request": {
+								"url": {
+									"raw": "{{host}}/api/projects/schedules/44?include=project",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"projects",
+										"schedules",
+										"44"
+									],
+									"query": [
+										{
+											"key": "include",
+											"value": "project",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_admin}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"project_id\":2,\n\t\"date_start\":\"23:12\",\n\t\"date_end\":\"23:29\"\n}"
 								},
 								"description": ""
 							},
@@ -2505,7 +2668,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\"start_date\":\"2018-04-16\",\"end_date\":\"2018-05-12\",\"home_page\":true,\"id\":\"7\",\"index\":\"looknum\"}"
+									"raw": "{\"start_date\":\"2018-01-16\",\"end_date\":\"2018-05-12\",\"home_page\":true,\"id\":\"7\",\"index\":\"looknum,playernum,lovenum\"}"
 								},
 								"description": "id = 1 分天/分时数据\nid = 2 点位 top10\nid = 3 节目 top10"
 							},
