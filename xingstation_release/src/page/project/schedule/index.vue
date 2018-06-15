@@ -372,7 +372,7 @@ export default {
         })
     },
     addSchedule(index) {
-      let tpl_id = this.tableData[index].schedules.data[0].tpl_id
+      let tpl_id = this.tableData[index].id
       let td = {
         date_start: '',
         date_end: '',
@@ -399,7 +399,6 @@ export default {
         .then(response => {
           this.projectList = response.data
           if (this.projectList.length == 0) {
-            // this.scheduleForm.project = ''
             this.projectList = []
           }
           this.searchLoading = false
