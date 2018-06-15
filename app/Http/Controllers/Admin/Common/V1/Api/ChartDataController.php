@@ -249,10 +249,12 @@ class ChartDataController extends Controller
      */
     private function getTopPoints(ChartDataRequest $request, Builder $query)
     {
+
         $this->handleQuery($request, $query, true, true);
-        $data = $query->selectRaw("sum(looknum) AS count")
-            ->groupBy('face_count_log.oid')
-            ->orderBy('count', 'desc')
+        $table = $query->getModel()->getTable();
+        $data = $query->selectRaw("sum($table.allnum) AS total,sum($table.gnum) as female_count,sum($table.bnum) as male_count")
+            ->groupBy("$table.oid")
+            ->orderBy('total', 'desc')
             ->limit(10)
             ->get();
 
