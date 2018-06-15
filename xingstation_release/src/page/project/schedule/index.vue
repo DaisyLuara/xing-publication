@@ -30,7 +30,7 @@
           </span>
           <div>
             <el-button size="small" @click="addSchedule(index)">增加</el-button>
-            <el-button size="small" type="warning" @click="editSchedule(index)">修改</el-button>
+            <!-- <el-button size="small" type="warning" @click="editSchedule(index)">修改</el-button> -->
           </div>
         </div>
         <el-table :data="item.schedules.data" style="width: 100%">
@@ -45,7 +45,7 @@
                   v-for="item in projectList"
                   :key="item.id"
                   :label="item.name"
-                  :value="item.alias">
+                  :value="item.id">
                 </el-option>
               </el-select>
             </template>
@@ -110,9 +110,9 @@
           </el-table-column>
           <el-table-column label="操作" min-width="100">
             <template slot-scope="scope">
-              <el-button size="mini" type="danger" v-if="scope.row.project.icon">删除</el-button>
+              <el-button size="mini" type="warning" v-if="scope.row.project.icon" @click="editSchedule(scope.row)">编辑</el-button>
               <el-button size="mini" type="danger" icon="el-icon-delete" v-if="!scope.row.project.icon" @click="deleteAddSchedule(index, scope.$index, scope.row)"></el-button>
-              <el-button size="mini" style="background-color: #8bc34a;border-color: #8bc34a; color: #fff;" v-if="!scope.row.project.icon">保存</el-button>
+              <el-button size="mini" style="background-color: #8bc34a;border-color: #8bc34a; color: #fff;" v-if="!scope.row.project.icon" @click="saveSchedule(scope.row)">保存</el-button>
             </template>
           </el-table-column>
         </el-table> 
@@ -187,6 +187,7 @@ import {
   TableColumn,
   Dialog,
   TimeSelect,
+  MessageBox,
   Input
 } from 'element-ui'
 import search from 'service/search'
@@ -252,10 +253,75 @@ export default {
       this.title = '修改模板'
     },
     projectChangeHandle(pIndex, index, val) {
-      this.tableData[pIndex].schedules.data[index].project.alias = val
+      this.tableData[pIndex].schedules.data[index].project.id = val
     },
-    editSchedule(index) {
-      console.log(this.tableData[index].schedules.data)
+    editSchedule(row) {
+      this.setting.loading = true
+      let id = row.id
+      let date_end = row.date_end
+      let date_start = row.date_start
+      let project_id = row.project.id
+      if (date_end && date_start && project_id) {
+        let args = {
+          include:'project',
+          project_id: project_id,
+          date_end: date_end,
+          date_start: date_start
+        }
+        schedule
+          .modifySchedule(this, id, args)
+          .then(response => {
+            this.setting.loading = false
+            this.$message({
+              message: '修改成功',
+              type: 'success'
+            })
+            this.getScheduleList()
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      } else {
+        this.setting.loading = false
+        this.$message({
+          message: '节目名称，开始时间，结束时间不能为空',
+          type: 'warning'
+        })
+      }
+    },
+    saveSchedule(row) {
+      this.setting.loading = true
+      let date_end = row.date_end
+      let date_start = row.date_start
+      let tpl_id = row.tpl_id
+      let project_id = row.project.id
+      if (date_end && date_start && project_id) {
+        let args = {
+          tpl_id: tpl_id,
+          project_id: project_id,
+          date_end: date_end,
+          date_start: date_start
+        }
+        schedule
+          .saveSchedule(this, args)
+          .then(response => {
+            this.setting.loading = false
+            this.$message({
+              message: '添加成功',
+              type: 'success'
+            })
+            this.getScheduleList()
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      } else {
+        this.setting.loading = false
+        this.$message({
+          message: '节目名称，开始时间，结束时间不能为空',
+          type: 'warning'
+        })
+      }
     },
     addTemplate() {
       this.templateVisible = true
@@ -284,15 +350,17 @@ export default {
         })
     },
     addSchedule(index) {
+      let tpl_id = this.tableData[index].schedules.data[0].tpl_id
       let td = {
         date_start: '',
         date_end: '',
         project: {
-          alias: '',
+          id: '',
           info: '',
           icon: '',
           created_at: ''
-        }
+        },
+        tpl_id: tpl_id
       }
       this.tableData[index].schedules.data.push(td)
     },
