@@ -15,6 +15,9 @@ class ProjectLaunchTplTransformer extends TransformerAbstract
         return [
             'id' => $projectLaunchTpl->tvid,
             'name' => $projectLaunchTpl->name,
+            'point_name' => $projectLaunchTpl->point_name,
+            'area_name' => $projectLaunchTpl->area_name,
+            'market_name' => $projectLaunchTpl->market_name,
         ];
     }
 

@@ -171,7 +171,7 @@ class ChartDataController extends Controller
     private function getTopPoints(ChartDataRequest $request, Builder $query)
     {
         $this->handleQuery($request, $query);
-        $data = $query->selectRaw("sum(looknum) AS count,avr_official.name,avr_official_market.name as market_name")
+        $data = $query->selectRaw("sum(looknum) AS count")
             ->groupBy('face_count_log.oid')
             ->orderBy('count', 'desc')
             ->limit(10)

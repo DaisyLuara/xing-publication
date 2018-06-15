@@ -11,8 +11,6 @@ class ProjectLaunchTplObserver
 {
     public function saving(ProjectLaunchTpl $tpl)
     {
-
-
         $tpl->cid = 1007;
         $tpl->pid = 4;
         $tpl->date = date('Y-m-d H:i:s');
