@@ -15,14 +15,14 @@
       </span>
       <!-- 模板增加 -->
       <div>
-        <el-button size="small" type="success" @click="addTemplate">新增模板</el-button>
+        <el-button size="small" type="success" @click="addTemplate('templateForm')">新增模板</el-button>
       </div>
     </div>
     <!-- 模板排期列表 -->
     <el-collapse v-model="activeNames" accordion>
       <el-collapse-item :name="index" v-for="(item, index) in tableData" :key="item.id" >
         <template slot="title">
-          {{item.name}} <el-button type="primary" icon="el-icon-edit" circle size="mini" @click="modifyTemplateName"></el-button>
+          {{item.name }} ( {{item.area.name + item.market.name + item.point.name}} ) <el-button type="primary" icon="el-icon-edit" circle size="mini" @click="modifyTemplateName(item)"></el-button>
         </template>
         <div class="actions-wrap">
           <span class="label">
@@ -129,10 +129,10 @@
       </el-pagination>
     </div>
     <!-- 新增，修改 -->
-    <el-dialog :title="title" :visible.sync="templateVisible" @close="dialogClose" v-loading="loading">
+    <el-dialog :title="title" :visible.sync="templateVisible" @close="dialogClose" >
       <el-form
       ref="templateForm"
-      :model="templateForm" label-width="150px">
+      :model="templateForm" label-width="150px" v-loading="loading">
         <el-form-item label="区域" prop="area_id" :rules="[{ type: 'number', required: true, message: '请选择区域', trigger: 'submit' }]">
           <el-select v-model="templateForm.area_id" placeholder="请选择区域" filterable clearable @change="areaChangeHandle" class="item-select">
             <el-option
@@ -163,7 +163,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="模板名" :rules="[{ required: true, message: '请输入名称', trigger: 'submit' }]">
+        <el-form-item label="模板名" prop="name" :rules="[{ type: 'string', required: true, message: '请输入名称', trigger: 'submit' }]">
           <el-input v-model="templateForm.name" placeholder="请输入名称" class="item-input"></el-input>
         </el-form-item>
         <el-form-item>
@@ -217,6 +217,7 @@ export default {
       title: '',
       templateList: [],
       templateForm: {
+        tpl_id: '',
         name: '',
         area_id: '',
         market_id: '',
@@ -248,9 +249,23 @@ export default {
     this.getScheduleList()
   },
   methods: {
-    modifyTemplateName() {
-      this.templateVisible = true
+    modifyTemplateName(item) {
+      this.loading = true
       this.title = '修改模板'
+      let name = item.name
+      let area_id = item.area.id
+      let market_id = item.market.id
+      let point_id = item.point.id
+      this.templateForm = {
+        tpl_id: item.id,
+        name: name,
+        area_id: area_id,
+        market_id: market_id,
+        point_id: point_id
+      }
+      this.getMarket()
+      this.getPoint()
+      this.templateVisible = true
     },
     projectChangeHandle(pIndex, index, val) {
       this.tableData[pIndex].schedules.data[index].project.id = val
@@ -263,7 +278,7 @@ export default {
       let project_id = row.project.id
       if (date_end && date_start && project_id) {
         let args = {
-          include:'project',
+          include: 'project',
           project_id: project_id,
           date_end: date_end,
           date_start: date_start
@@ -280,6 +295,7 @@ export default {
           })
           .catch(err => {
             console.log(err)
+            this.setting.loading = false
           })
       } else {
         this.setting.loading = false
@@ -314,6 +330,7 @@ export default {
           })
           .catch(err => {
             console.log(err)
+            this.setting.loading = false
           })
       } else {
         this.setting.loading = false
@@ -324,6 +341,11 @@ export default {
       }
     },
     addTemplate() {
+      this.templateForm.name = ''
+      this.templateForm.area_id = ''
+      this.templateForm.market_id = ''
+      this.templateForm.point_id = ''
+      this.templateForm.tpl_id = ''
       this.templateVisible = true
       this.title = '增加模板'
     },
@@ -444,11 +466,58 @@ export default {
         .then(response => {
           this.pointList = response.data
           this.searchLoading = false
+          this.loading = false
         })
         .catch(err => {
           this.searchLoading = false
+          this.loading = false
           console.log(err)
         })
+    },
+    submit(formName) {
+      console.log(this.templateForm)
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          let args = {
+            point_id: this.templateForm.point_id,
+            name: this.templateForm.name
+          }
+          let id = this.templateForm.tpl_id
+          if (this.templateForm.tpl_id) {
+            schedule
+              .modifyTemplate(this, id, args)
+              .then(response => {
+                console.log(response)
+                this.$message({
+                  message: '修改成功',
+                  type: 'success'
+                })
+                this.templateVisible = false
+                this.getScheduleList()
+              })
+              .catch(err => {
+                this.templateVisible = false
+                console.log(err)
+              })
+          } else {
+            schedule
+              .saveTemplate(this, args)
+              .then(response => {
+                console.log(response)
+                this.$message({
+                  message: '添加成功',
+                  type: 'success'
+                })
+                this.templateVisible = false
+                this.getScheduleList()
+              })
+              .catch(err => {
+                this.templateVisible = false
+                console.log(err)
+              })
+          }
+        }
+      })
     },
     areaChangeHandle() {
       this.templateForm.market_id = ''
