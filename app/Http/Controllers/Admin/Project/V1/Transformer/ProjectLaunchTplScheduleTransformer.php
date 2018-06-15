@@ -13,7 +13,8 @@ class ProjectLaunchTplScheduleTransformer extends TransformerAbstract
     public function transform(ProjectLaunchTplSchedule $projectLaunchTplSchedule)
     {
         return [
-            'id' => $projectLaunchTplSchedule->tvid,
+            'id' => $projectLaunchTplSchedule->tviid,
+            'tpl_id' => $projectLaunchTplSchedule->tvid,
             'date_start' => $this->formatTime($projectLaunchTplSchedule->shm),
             'date_end' => $this->formatTime($projectLaunchTplSchedule->ehm),
         ];
@@ -21,7 +22,10 @@ class ProjectLaunchTplScheduleTransformer extends TransformerAbstract
 
     public function includeProject(ProjectLaunchTplSchedule $projectLaunchTplSchedule)
     {
-        return $this->item($projectLaunchTplSchedule->project, new ProjectTransformer());
+        $project = $projectLaunchTplSchedule->project;
+        if ($project) {
+            return $this->item($projectLaunchTplSchedule->project, new ProjectTransformer());
+        }
     }
 
     private function formatTime($time)
