@@ -475,7 +475,6 @@ export default {
         })
     },
     submit(formName) {
-      console.log(this.templateForm)
       this.$refs[formName].validate(valid => {
         if (valid) {
           let args = {
@@ -487,7 +486,6 @@ export default {
             schedule
               .modifyTemplate(this, id, args)
               .then(response => {
-                console.log(response)
                 this.$message({
                   message: '修改成功',
                   type: 'success'
@@ -503,7 +501,6 @@ export default {
             schedule
               .saveTemplate(this, args)
               .then(response => {
-                console.log(response)
                 this.$message({
                   message: '添加成功',
                   type: 'success'
