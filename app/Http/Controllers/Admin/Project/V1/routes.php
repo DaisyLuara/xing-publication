@@ -24,6 +24,11 @@ $api->version('v1', [
             $api->post('projects/launch', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectLaunchController@store']);
             $api->patch('projects/launches', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectLaunchController@update']);
             $api->get('projects/launches/tpl', 'ProjectLaunchTplController@index');
+            $api->post('projects/launches/tpl', 'ProjectLaunchTplController@store');
+            $api->patch('projects/launches/tpl/{projectLaunchTpl}', 'ProjectLaunchTplController@update');
+            $api->post('projects/schedules', 'ProjectLaunchTplScheduleController@store');
+            $api->patch('projects/schedules/{projectLaunchTplSchedule}', 'ProjectLaunchTplScheduleController@update');
+            $api->get('projects/launches/tpl', 'ProjectLaunchTplController@index');
 
             //产品
             $api->get('product', 'ProductController@index');

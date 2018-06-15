@@ -10,6 +10,7 @@ import equipment from 'router/pc/equipment'
 // import point from 'router/pc/point'
 import home from 'router/pc/home'
 import report from 'router/pc/report'
+import resource from 'router/pc/resource'
 
 export default {
   path: '/',
@@ -28,6 +29,7 @@ export default {
     account,
     ad,
     equipment,
+    resource,
     team,
     report
   ],
