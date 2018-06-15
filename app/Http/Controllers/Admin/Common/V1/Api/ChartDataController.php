@@ -170,7 +170,7 @@ class ChartDataController extends Controller
      */
     private function getTopPoints(ChartDataRequest $request, Builder $query)
     {
-        $this->handleQuery($request, $query);
+        $this->handleQuery($request, $query, true, true);
         $data = $query->selectRaw("sum(looknum) AS count")
             ->groupBy('face_count_log.oid')
             ->orderBy('count', 'desc')
@@ -290,7 +290,7 @@ class ChartDataController extends Controller
         return $output;
     }
 
-    private function handleQuery(Request $request, Builder $query, $selectByAlias = true)
+    private function handleQuery(Request $request, Builder $query, $selectByAlias = true, bool $selectPoint = false)
     {
         $user = $this->user();
         $table = $query->getModel()->getTable();
