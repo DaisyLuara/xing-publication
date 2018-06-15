@@ -42,9 +42,6 @@ class PushController extends Controller
             ->orderBy('avr_official.marketid', 'desc')
             ->orderBy('push.clientdate', 'desc')
             ->paginate(10, ['push.*',
-                'avr_official.name as point_name',
-                'avr_official_area.name as area_name',
-                'avr_official_market.name as market_name',
                 'ar_product_list.icon as product_img']);
 
         return $this->response->paginator($pushes, new PushTransformer());

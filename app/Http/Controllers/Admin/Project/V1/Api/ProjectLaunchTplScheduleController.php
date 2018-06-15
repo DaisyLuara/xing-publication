@@ -6,7 +6,6 @@ use App\Http\Controllers\Admin\Project\V1\Transformer\ProjectLaunchTplScheduleTr
 use App\Http\Controllers\Admin\Project\V1\Request\ProjectLaunchTplScheduleRequest;
 use App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTplSchedule;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Collection;
 
 class ProjectLaunchTplScheduleController extends Controller
 {
