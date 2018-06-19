@@ -20,7 +20,7 @@ class ShortUrl extends Model
 
     public function shortUrlRecords()
     {
-        return $this->hasMany(ShortUrlRecords::class, 'short_url_id', 'id');
+        return $this->hasMany(PeopleViewRecords::class, 'short_url_id', 'id');
     }
 
 }
