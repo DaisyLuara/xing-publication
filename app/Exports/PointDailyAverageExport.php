@@ -23,8 +23,8 @@ class PointDailyAverageExport extends AbstractExport
     public function collection()
     {
         $data = collect();
-        $header1 = ['点位', '围观数', '围观日均', '玩家总数', '玩家日均', '会员总数', '会员日均', '二维码生成数', '扫码数', '有效天数', '时间'];
-        $header2 = ['', '', '', '', '', '', '', '', '', '', ''];
+        $header1 = ['点位', '场景', 'BD', '围观数', '围观日均', '玩家总数', '玩家日均', '会员总数', '会员日均', '二维码生成数', '扫码数', '有效天数', '时间'];
+        $header2 = ['', '', '', '', '', '', '', '', '', '', '', '', ''];
         $data->push($header1);
         $data->push($header2);
 
@@ -40,13 +40,16 @@ class PointDailyAverageExport extends AbstractExport
         $faceCount = $query->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
             ->join('avr_official_area as aoa', 'ao.areaid', '=', 'aoa.areaid')
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
+            ->join('avr_official_scene as aos', 'ao.sid', '=', 'aos.sid')
+            ->join('admin_per_oid as apo', 'fcl.oid', '=', 'apo.oid')
+            ->join('admin_staff as as', 'apo.uid', '=', 'as.uid')
             ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '{$this->startDate}' and '{$this->endDate}' ")
             ->whereNotIn('fcl.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
             ->groupBy('fcl.oid')
             ->orderBy('aoa.areaid', 'desc')
             ->orderBy('aom.marketid', 'desc')
             ->orderBy('ao.oid', 'desc')
-            ->selectRaw("aoa.name as areaName,aom.name as marketName,ao.name as pointName,count(*) as days, sum(looknum) as looknum,sum(playernum) as playernum,sum(lovenum) as lovenum,sum(outnum) as outnum,sum(scannum) as scannum,concat_ws(',', date_format(min(fcl.date), '%Y-%m-%d'), date_format(max(fcl.date), '%Y-%m-%d')) as date")
+            ->selectRaw("aoa.name as areaName,aom.name as marketName,ao.name as pointName,aos.name as scene,as.realname as BDName,count(*) as days, sum(looknum) as looknum,sum(playernum) as playernum,sum(lovenum) as lovenum,sum(outnum) as outnum,sum(scannum) as scannum,concat_ws(',', date_format(min(fcl.date), '%Y-%m-%d'), date_format(max(fcl.date), '%Y-%m-%d')) as date")
             ->get();
         $total = [
             'total' => 'Total',
@@ -64,6 +67,8 @@ class PointDailyAverageExport extends AbstractExport
         $faceCount->each(function ($item) use (&$data, &$total) {
             $aa = [
                 'pointName' => $item->areaName . '-' . $item->marketName . '-' . $item->pointName,
+                'scene' => $item->scene,
+                'BDName' => $item->BDName,
                 'lookNum' => $item->looknum,
                 'lookNumAver' => round($item->looknum / $item->days, 0),
                 'playerNum' => $item->playernum,
@@ -84,6 +89,8 @@ class PointDailyAverageExport extends AbstractExport
             $data->push($aa);
             $total = [
                 'total' => '总计',
+                'BDName' => '',
+                'scene' => '',
                 'lookSum' => $total['lookSum'] + $aa['lookNum'],
                 'lookAverSum' => $total['lookAverSum'] + $aa['lookNumAver'],
                 'playerSum' => $total['playerSum'] + $aa['playerNum'],
@@ -109,13 +116,13 @@ class PointDailyAverageExport extends AbstractExport
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $cellArray = ['A1:A2', 'B1:B2', 'C1:C2', 'D1:D2', 'E1:E2', 'F1:F2', 'G1:G2', 'H1:H2', 'I1:I2', 'J1:J2', 'K1:K2'];
+                $cellArray = ['A1:A2', 'B1:B2', 'C1:C2', 'D1:D2', 'E1:E2', 'F1:F2', 'G1:G2', 'H1:H2', 'I1:I2', 'J1:J2', 'K1:K2', 'L1:L2', 'M1:M2'];
 
                 //合并单元格
                 $event->sheet->getDelegate()->setMergeCells($cellArray);
 
                 //黑线框
-                $event->sheet->getDelegate()->getStyle('A1:K' . $this->data->count())->applyFromArray([
+                $event->sheet->getDelegate()->getStyle('A1:M' . $this->data->count())->applyFromArray([
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' => Border::BORDER_THIN,
@@ -125,14 +132,14 @@ class PointDailyAverageExport extends AbstractExport
 
                 //水平居中 垂直居中
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:K' . $this->data->count())
+                    ->getStyle('A1:M' . $this->data->count())
                     ->getAlignment()
                     ->setVertical(Alignment::VERTICAL_CENTER)
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
                 //表头加粗
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:K2')
+                    ->getStyle('A1:M2')
                     ->applyFromArray([
                         'font' => [
                             'bold' => 'true'
@@ -140,7 +147,7 @@ class PointDailyAverageExport extends AbstractExport
                     ]);
 
                 $event->sheet->getDelegate()
-                    ->getStyle('A' . $this->data->count() . ':K' . $this->data->count())
+                    ->getStyle('A' . $this->data->count() . ':M' . $this->data->count())
                     ->applyFromArray([
                         'font' => [
                             'bold' => 'true'
