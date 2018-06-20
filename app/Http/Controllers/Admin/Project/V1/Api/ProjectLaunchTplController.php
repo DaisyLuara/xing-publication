@@ -14,13 +14,15 @@ class ProjectLaunchTplController extends Controller
     public function index(Request $request, ProjectLaunchTpl $projectLaunchTpl)
     {
         $query = $projectLaunchTpl->query();
+        $table = $query->getModel()->getTable();
+
         $arUserID = getArUserID($this->user(), $request);
         handPointQuery($request, $query, $arUserID, true);
         if ($request->name) {
-            $query->where('name', 'like', "%" . $request->name . "%");
+            $query->where("$table.name", 'like', "%" . $request->name . "%");
         }
 
-        $projectLaunchTpl = $query->selectRaw($query->getModel()->getTable() . ".*")->paginate(10);
+        $projectLaunchTpl = $query->selectRaw($query->getModel()->getTable() . ".*")->orderBy('tvid', 'desc')->paginate(10);
 
         return $this->response->paginator($projectLaunchTpl, new ProjectLaunchTplTransformer());
 
