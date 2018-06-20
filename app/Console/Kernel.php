@@ -71,7 +71,7 @@ class Kernel extends ConsoleKernel
             ->join('avr_official_area as aoa', 'ao.areaid', '=', 'aoa.areaid')
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
             ->whereRaw(" date_format(fcl.date,'%Y-%m-%d') between '$startDate' and '$endDate' ")
-            ->where('belong', '<>', 'all')
+            ->where('belong', '=', 'all')
             ->whereNotIn('fcl.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
             ->groupBy('fcl.oid')
             ->orderBy('looknum')

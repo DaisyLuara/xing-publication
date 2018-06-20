@@ -15,15 +15,18 @@ class PayController extends Controller
             'total_amount' => 1,
             'subject' => 'test subject'
         ];
-
-        return Pay::alipay()->web($order);
+        /** @var \Yansongda\Pay\Gateways\Alipay $alipay */
+        $alipay = Pay::alipay();
+        return $alipay->web($order);
     }
 
     public function notify()
     {
+        /** @var \Yansongda\Pay\Gateways\Alipay $alipay */
         $alipay = Pay::alipay();
         try {
             $data = $alipay->verify();
+            //业务逻辑
             Log::debug('Alipay notify', $data->all());
         } catch (Exception $e) {
 
