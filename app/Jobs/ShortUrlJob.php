@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Http\Controllers\Admin\ShortUrl\V1\Models\PeopleViewRecords;
 use App\Http\Controllers\Admin\ShortUrl\V1\Models\ShortUrlRecords;
 use App\Http\Controllers\Admin\ShortUrl\V1\Models\ShortUrl;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -42,7 +43,9 @@ class ShortUrlJob implements ShouldQueue
         $queryParams = parse_query(parse_url($shortUrl->target_url, PHP_URL_QUERY));
 
         if (isset($queryParams['id'])) {
-            ShortUrlRecords::where('id', '=', $queryParams['id'])->update(['share' => 1]);
+            PeopleViewRecords::where('id', '=', $queryParams['id'])->update(['share' => 1]);
+        } else {
+            ShortUrlRecords::create(array_merge(['short_url_id' => $shortUrl->id], $this->browserInfo));
         }
 
 

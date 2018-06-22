@@ -249,9 +249,10 @@ class ChartDataController extends Controller
      */
     private function getTopPoints(ChartDataRequest $request, Builder $query)
     {
-        $this->handleQuery($request, $query);
+
+        $this->handleQuery($request, $query, true, true);
         $table = $query->getModel()->getTable();
-        $data = $query->selectRaw("sum($table.allnum) AS total,sum($table.gnum) as female_count,sum($table.bnum) as male_count,avr_official.name,avr_official_market.name as market_name")
+        $data = $query->selectRaw("sum($table.allnum) AS total,sum($table.gnum) as female_count,sum($table.bnum) as male_count")
             ->groupBy("$table.oid")
             ->orderBy('total', 'desc')
             ->limit(10)
@@ -285,7 +286,7 @@ class ChartDataController extends Controller
         $data = $query->selectRaw("sum(looknum) AS count,xs_attributes.name,xs_attributes.id as attribute_id")
             ->join('xs_project_attributes', 'xs_project_attributes.belong', '=', "$table.belong")
             ->join('xs_attributes', 'xs_attributes.id', '=', 'xs_project_attributes.attribute_id')
-            ->where('xs_attributes.pid', '=', 5)
+            ->where('xs_attributes.parent_id', '=', 5)
             ->groupBy('xs_attributes.id')
             ->orderBy('count', 'desc')
             ->limit(5)
@@ -371,7 +372,7 @@ class ChartDataController extends Controller
         return $output;
     }
 
-    private function handleQuery(Request $request, Builder $query, $selectByAlias = true)
+    private function handleQuery(Request $request, Builder $query, $selectByAlias = true, bool $selectPoint = false)
     {
         $user = $this->user();
         $table = $query->getModel()->getTable();

@@ -6,9 +6,13 @@ use App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch;
 use App\Http\Controllers\Admin\Project\V1\Models\AdminProject;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Ad\V1\Models\AdLaunch;
+use App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTpl;
+use App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTplSchedule;
 use App\Models\User;
 use App\Observers\ProjectLaunchObserver;
 use App\Observers\AdminProjectObserver;
+use App\Observers\ProjectLaunchTplObserver;
+use App\Observers\ProjectLaunchTplScheduleObserver;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use App\Observers\AdLaunchObserver;
@@ -49,6 +53,8 @@ class AppServiceProvider extends ServiceProvider
         AdminProject::observe(AdminProjectObserver::class);
         ProjectLaunch::observe(ProjectLaunchObserver::class);
         AdLaunch::observe(AdLaunchObserver::class);
+        ProjectLaunchTpl::observe(ProjectLaunchTplObserver::class);
+        ProjectLaunchTplSchedule::observe(ProjectLaunchTplScheduleObserver::class);
 
         \Carbon\Carbon::setLocale('zh');
         $this->bootTowerSocialite();

@@ -53,6 +53,76 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="星期一模版">
+          <el-select v-model="projectForm.day1_tvid" placeholder="请选择" filterable clearable>
+            <el-option
+              v-for="item in monList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="星期二模版">
+          <el-select v-model="projectForm.day2_tvid" placeholder="请选择" filterable clearable>
+            <el-option
+              v-for="item in tueList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="星期三模版">
+          <el-select v-model="projectForm.day3_tvid" placeholder="请选择" filterable clearable>
+            <el-option
+              v-for="item in wedList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="星期四模版">
+          <el-select v-model="projectForm.day4_tvid" placeholder="请选择" filterable clearable>
+            <el-option
+              v-for="item in thursList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="星期五模版">
+          <el-select v-model="projectForm.day5_tvid" placeholder="请选择" filterable clearable>
+            <el-option
+              v-for="item in friList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="星期六模版">
+          <el-select v-model="projectForm.day6_tvid" placeholder="请选择" filterable clearable>
+            <el-option
+              v-for="item in satList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="星期日模版">
+          <el-select v-model="projectForm.day7_tvid" placeholder="请选择" filterable clearable>
+            <el-option
+              v-for="item in sunList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="工作日模版">
           <el-select v-model="projectForm.weekday" placeholder="请选择" filterable clearable>
             <el-option
@@ -119,7 +189,7 @@ import {
   Button,
   Input,
   DatePicker,
-  MessageBox,
+  MessageBox
 } from 'element-ui'
 
 export default {
@@ -130,15 +200,22 @@ export default {
     ElFormItem: FormItem,
     ElButton: Button,
     ElInput: Input,
-    ElDatePicker: DatePicker,
+    ElDatePicker: DatePicker
   },
   data() {
     return {
       setting: {
         isOpenSelectAll: true,
         loading: false,
-        loadingText: "拼命加载中"
+        loadingText: '拼命加载中'
       },
+      monList: [],
+      tueList: [],
+      wedList: [],
+      thursList: [],
+      friList: [],
+      satList: [],
+      sunList: [],
       marketList: [],
       weekdayList: [],
       weekendList: [],
@@ -147,6 +224,13 @@ export default {
       projectList: [],
       searchLoading: false,
       projectForm: {
+        day1_tvid: '',
+        day2_tvid: '',
+        day3_tvid: '',
+        day4_tvid: '',
+        day5_tvid: '',
+        day6_tvid: '',
+        day7_tvid: '',
         project: '',
         area: '',
         market: '',
@@ -155,13 +239,12 @@ export default {
         weekend: '',
         define: '',
         sdate: '',
-        edate: '',
+        edate: ''
       },
-      areaList: [],
+      areaList: []
     }
   },
-  mounted() {
-  },
+  mounted() {},
   created() {
     this.setting.loading = true
     this.getModuleList()
@@ -169,70 +252,86 @@ export default {
     this.setting.loading = false
   },
   methods: {
-  
-    projectChangeHandle() {
-    },
+    projectChangeHandle() {},
     getProject(query) {
       this.searchLoading = true
       let args = {
-        name: query,
+        name: query
       }
-      return search.getProjectList(this,args).then((response) => {
-        this.projectList = response.data
-        if(this.projectList.length == 0) {
-          this.projectForm.project = ''
-          this.projectList = []
-        }
-        this.searchLoading = false
-      }).catch(err => {
-        console.log(err)
-        this.searchLoading = false
-      })
+      return search
+        .getProjectList(this, args)
+        .then(response => {
+          this.projectList = response.data
+          if (this.projectList.length == 0) {
+            this.projectForm.project = ''
+            this.projectList = []
+          }
+          this.searchLoading = false
+        })
+        .catch(err => {
+          console.log(err)
+          this.searchLoading = false
+        })
     },
     getModuleList() {
-      return search.getModuleList(this).then((response) => {
-       let data = response.data
-       this.weekdayList = data
-       this.weekendList = data
-       this.defineList = data
-      }).catch(error => {
-        console.log(error)
-      this.setting.loading = false;
-      })
+      return search
+        .getModuleList(this)
+        .then(response => {
+          let data = response.data
+          this.weekdayList = data
+          this.weekendList = data
+          this.monList = data
+          this.tueList = data
+          this.wedList = data
+          this.thursList = data
+          this.friList = data
+          this.satList = data
+          this.sunList = data
+          this.defineList = data
+        })
+        .catch(error => {
+          console.log(error)
+          this.setting.loading = false
+        })
     },
     areaChangeHandle() {
       this.projectForm.market = ''
       this.projectForm.point = []
       this.getMarket(this.projectForm.market)
     },
-    getAreaList () {
-      return search.getAeraList(this).then((response) => {
-       let data = response.data
-       this.areaList = data
-      }).catch(error => {
-        console.log(error)
-      this.setting.loading = false;
-      })
+    getAreaList() {
+      return search
+        .getAeraList(this)
+        .then(response => {
+          let data = response.data
+          this.areaList = data
+        })
+        .catch(error => {
+          console.log(error)
+          this.setting.loading = false
+        })
     },
     marketChangeHandle() {
       this.projectForm.point = []
       this.getPoint()
     },
-    pointChangeHandle() {
-    },
+    pointChangeHandle() {},
     getPoint() {
       let args = {
         include: 'market',
         market_id: this.projectForm.market
       }
       this.searchLoading = true
-      return search.gePointList(this, args).then((response) => {
-        this.pointList = response.data
-        this.searchLoading = false
-      }).catch(err => {
-        this.searchLoading = false
-        console.log(err)
-      })
+      return search
+        .gePointList(this, args)
+        .then(response => {
+          this.pointList = response.data
+          this.searchLoading = false
+        })
+        .catch(err => {
+          this.searchLoading = false
+          console.log(err)
+        })
     },
     getMarket(query) {
       this.searchLoading = true
@@ -241,23 +340,29 @@ export default {
         include: 'area',
         area_id: this.projectForm.area
       }
-      return search.getMarketList(this,args).then((response) => {
-        this.marketList = response.data
-        if(this.marketList.length == 0) {
-          this.projectForm.market = ''
-          this.projectForm.marketList = []
-        }
-        this.searchLoading = false
-      }).catch(err => {
-        console.log(err)
-        this.searchLoading = false
-      })
+      return search
+        .getMarketList(this, args)
+        .then(response => {
+          this.marketList = response.data
+          if (this.marketList.length == 0) {
+            this.projectForm.market = ''
+            this.projectForm.marketList = []
+          }
+          this.searchLoading = false
+        })
+        .catch(err => {
+          console.log(err)
+          this.searchLoading = false
+        })
     },
     submit(formName) {
-      this.$refs[formName].validate((valid) => {
-        if(valid){
-        this.setting.loading = true
-          let edate = (new Date(this.projectForm.edate).getTime() + ((((23*60+59)*60)+59)*1000)) / 1000
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.setting.loading = true
+          let edate =
+            (new Date(this.projectForm.edate).getTime() +
+              ((23 * 60 + 59) * 60 + 59) * 1000) /
+            1000
           let args = {
             sdate: new Date(this.projectForm.sdate).getTime() / 1000,
             edate: edate,
@@ -265,53 +370,65 @@ export default {
             weekday_tvid: this.projectForm.weekday,
             weekend_tvid: this.projectForm.weekend,
             div_tvid: this.projectForm.define,
-            oids: this.projectForm.point
+            oids: this.projectForm.point,
+            day1_tvid: this.projectForm.day1_tvid,
+            day2_tvid: this.projectForm.day2_tvid,
+            day3_tvid: this.projectForm.day3_tvid,
+            day4_tvid: this.projectForm.day4_tvid,
+            day5_tvid: this.projectForm.day5_tvid,
+            day6_tvid: this.projectForm.day6_tvid,
+            day7_tvid: this.projectForm.day7_tvid
           }
-          return project.savePorjectLaunch(this, args).then((response) => {
-            this.setting.loading = false
-            this.$message({
-              message: "添加成功",
-              type: "success"
+          return project
+            .savePorjectLaunch(this, args)
+            .then(response => {
+              this.setting.loading = false
+              this.$message({
+                message: '添加成功',
+                type: 'success'
+              })
+              this.$router.push({
+                path: '/project/item'
+              })
             })
-            this.$router.push({
-              path: "/project/item"
+            .catch(err => {
+              this.setting.loading = false
+              console.log(err)
             })
-          }).catch((err) => {
-            this.setting.loading = false
-            console.log(err)
-          })
-        }else{
-          return;
+        } else {
+          return
         }
       })
-    },
-  },
+    }
+  }
 }
 </script>
 
 <style lang="less" scoped>
-  .item-wrap-template {
-    .pane {
-      border-radius: 5px;
-      background-color: white;
-      padding: 20px 40px 80px;
+.item-wrap-template {
+  .pane {
+    border-radius: 5px;
+    background-color: white;
+    padding: 20px 40px 80px;
 
-      .el-select,.item-input,.el-date-editor.el-input{
-        width: 380px;
-      }
-      .item-list{
-        .program-title{
-          color: #555;
-          font-size: 14px;
-        }
-      }
-      .pane-title {
-        padding-bottom: 20px;
-        font-size: 18px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
+    .el-select,
+    .item-input,
+    .el-date-editor.el-input {
+      width: 380px;
+    }
+    .item-list {
+      .program-title {
+        color: #555;
+        font-size: 14px;
       }
     }
+    .pane-title {
+      padding-bottom: 20px;
+      font-size: 18px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
   }
+}
 </style>

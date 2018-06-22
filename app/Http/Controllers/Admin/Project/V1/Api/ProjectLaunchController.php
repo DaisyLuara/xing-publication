@@ -55,6 +55,10 @@ class ProjectLaunchController extends Controller
             });
         }
 
+        if ($request->tpl_name && $request->tpl_id) {
+            $query->where($request->tpl_name, '=', $request->tpl_id);
+        }
+
         if ($request->ids) {
             $ids = explode(',', $request->ids);
             $query->whereIn('tvoid', $ids);
