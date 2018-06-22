@@ -56,7 +56,7 @@ class PointDailyAverageExport extends AbstractExport
             ->join('avr_official_area as aoa', 'ao.areaid', '=', 'aoa.areaid')
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
             ->join('avr_official_scene as aos', 'ao.sid', '=', 'aos.sid')
-            ->join(DB::raw("({$arUser->toSql()}) d"), 'fcl.oid', '=', 'd.oid')
+            ->leftJoin(DB::raw("({$arUser->toSql()}) d"), 'fcl.oid', '=', 'd.oid')
             ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '{$this->startDate}' and '{$this->endDate}' ")
             ->whereNotIn('fcl.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
             ->groupBy('fcl.oid')
