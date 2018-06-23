@@ -90,6 +90,9 @@ class ChartDataController extends Controller
             case 7:
                 $data = $this->getTotalByDate($request, $faceCountQuery);
                 break;
+            case 8:
+                $data = $this->getCharacterByTime($request);
+                break;
             default:
                 return null;
 
@@ -159,8 +162,8 @@ class ChartDataController extends Controller
     {
         $table = $query->getModel()->getTable();
         $data = $query->selectRaw('sum(age10b+age10g+age18b+age18g) as century00,sum(age30b+age30g) as century90,sum(age40b+age40g) as century80,sum(age60b+age60g) as century70')
-            ->join('xs_project_attributes', 'xs_project_attributes.belong', '=', "$table.belong")
-            ->where('xs_project_attributes.attribute_id', '=', $attribute_id)
+            ->join('xs_point_attributes', 'xs_point_attributes.point_id', '=', "$table.oid")
+            ->where('xs_point_attributes.attribute_id', '=', $attribute_id)
             ->where('face_log.type', '=', 'looker')
             ->first()->toArray();
         $output = [];
@@ -274,7 +277,7 @@ class ChartDataController extends Controller
     }
 
     /**
-     * 节目排行榜(根据业态排行)
+     * 点位排行榜(根据业态排行)
      * @param $startDate
      * @param $endDate
      * @return array
@@ -284,8 +287,8 @@ class ChartDataController extends Controller
         $this->handleQuery($request, $query, false);
         $table = $query->getModel()->getTable();
         $data = $query->selectRaw("sum(looknum) AS count,xs_attributes.name,xs_attributes.id as attribute_id")
-            ->join('xs_project_attributes', 'xs_project_attributes.belong', '=', "$table.belong")
-            ->join('xs_attributes', 'xs_attributes.id', '=', 'xs_project_attributes.attribute_id')
+            ->join('xs_point_attributes', 'xs_point_attributes.point_id', '=', "$table.oid")
+            ->join('xs_attributes', 'xs_attributes.id', '=', 'xs_point_attributes.attribute_id')
             ->where('xs_attributes.parent_id', '=', 5)
             ->groupBy('xs_attributes.id')
             ->orderBy('count', 'desc')
@@ -370,6 +373,40 @@ class ChartDataController extends Controller
         });
 
         return $output;
+    }
+
+    public function getCharacterByTime(ChartDataRequest $request)
+    {
+        $startDate = $request->start_date;
+        $endDate = $request->end_date;
+
+        $time1 = "when date_format( date, '%H:%i:%s') < '10:00:00' then '10:00' ";
+        $time2 = "when date_format( date, '%H:%i:%s') between '10:00:00' and '12:00:00' then '12:00' ";
+        $time3 = "when date_format( date, '%H:%i:%s') between '12:00:00' and '14:00:00' then '14:00' ";
+        $time4 = "when date_format( date, '%H:%i:%s') between '14:00:00' and '16:00:00' then '16:00' ";
+        $time5 = "when date_format( date, '%H:%i:%s') between '16:00:00' and '18:00:00' then '18:00' ";
+        $time6 = "when date_format( date, '%H:%i:%s') between '18:00:00' and '20:00:00' then '20:00' ";
+        $time7 = "when date_format( date, '%H:%i:%s') between '20:00:00' and '22:00:00' then '22:00' ";
+        $time8 = "when date_format( date, '%H:%i:%s') > '22:00:00' then '24:00' ";
+        $time = $time1 . $time2 . $time3 . $time4 . $time5 . $time6 . $time7 . $time8;
+
+        $gender = DB::connection('ar')->table('face_people')
+            ->selectRaw(" case " . $time . "else 0 end as time,count(*) as num")
+            ->whereRaw("date_format(date,'%Y-%m-%d') between '$startDate' and '$endDate'")
+            ->groupBy('time')
+            ->groupBy('gender')
+            ->get();
+
+        $century00 = "when age<18 then '00'";
+        $century90 = "when age>18 and age<=28 then '90' ";
+        $century80 = "when age>18 and age<=38 then '80' ";
+        $century70 = "when age>38 and age<=48 then '70' ";
+        $century = $century00 . $century90 . $century80 . $century70;
+        $character = DB::connection('ar')->table('face_people')
+            ->selectRaw("case " . $time . "else 0 end as time,case " . $century . "else 0 end as century,count(*) as num")
+            ->groupBy('time')
+            ->groupBy('century')
+            ->get();
     }
 
     private function handleQuery(Request $request, Builder $query, $selectByAlias = true, bool $selectPoint = false)
