@@ -67,7 +67,7 @@ class Kernel extends ConsoleKernel
                 ->groupBy(DB::raw('oid'))
                 ->groupBy(DB::raw('belong'))
                 ->groupBy(DB::raw('fpid'))
-                ->whereRaw("date_format(date,'%Y-%m') = '$date' and playtime > 7")
+                ->whereRaw("date_format(date,'%Y-%m') = '$date' and playtime > 7000")
                 ->selectRaw("oid,belong");
             $mau = DB::connection('ar')->table(DB::raw("({$data->toSql()}) as a"))
                 ->groupBy(DB::raw('a.oid'))
