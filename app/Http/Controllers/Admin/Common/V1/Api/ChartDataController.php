@@ -93,6 +93,9 @@ class ChartDataController extends Controller
             case 8:
                 $data = $this->getCharacterByTime($request);
                 break;
+            case 9:
+                $data = $this->getActivePlayerByMonth($request);
+                break;
             default:
                 return null;
 
@@ -375,6 +378,12 @@ class ChartDataController extends Controller
         return $output;
     }
 
+    /**
+     * 获取时间段与人群特征
+     * @param ChartDataRequest $request
+     * @param Builder $query
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|static[]
+     */
     public function getCharacterByTime(ChartDataRequest $request)
     {
         $startDate = $request->start_date;
@@ -407,6 +416,41 @@ class ChartDataController extends Controller
             ->groupBy('time')
             ->groupBy('century')
             ->get();
+    }
+
+    /**
+     * 月活用户指数MAU
+     * @param ChartDataRequest $request
+     * @param Builder $query
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|static[]
+     */
+    public function getActivePlayerByMonth(ChartDataRequest $request)
+    {
+        $data = DB::connection('ar')->table('face_people_time_count')
+            ->groupBy("month")
+            ->selectRaw("sum(playernum) as playernum,date_format(date,'%Y-%m') as month")
+            ->get();
+
+        $output = [
+            ["month" => "2017-12", "playernum" => 46],
+            ["month" => "2018-01", "playernum" => 43],
+            ["month" => "2018-02", "playernum" => 13],
+            ["month" => "2018-03", "playernum" => 35],
+            ["month" => "2018-04", "playernum" => 49],
+            ["month" => "2018-05", "playernum" => 64],
+        ];
+        foreach ($data as $item) {
+            $output[] = [
+                "month" => $item->month,
+                "playernum" => round($item->playernum * 3 / 10000, 0)
+            ];
+        }
+
+        for ($i = 1; $i < count($output); $i++) {
+            $output[$i]["rate"] = round(($output[$i]['playernum'] - $output[$i - 1]['playernum']) / $output[$i - 1]['playernum'], 2);
+        }
+        array_splice($output, 0, 1);
+        return $output;
     }
 
     private function handleQuery(Request $request, Builder $query, $selectByAlias = true, bool $selectPoint = false)

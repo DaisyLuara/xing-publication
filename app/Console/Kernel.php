@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use DB;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Http\Controllers\Admin\Face\V1\Models\FacePeopleTimeRecord;
 
 class Kernel extends ConsoleKernel
 {
@@ -34,6 +35,31 @@ class Kernel extends ConsoleKernel
                 WeekRankingJob::dispatch($data[$i], $openId[$i])->onQueue('weekRanking');
             }
         })->weekly()->fridays()->at('10:00');
+
+        $schedule->call(function () {
+            $max_id = FacePeopleTimeRecord::query()->max('max_id');
+            $data = DB::connection('ar')->table('face_people_time')
+                ->where('id', '>', $max_id)
+                ->groupBy('oid')
+                ->groupBy('belong')
+                ->groupBy(DB::raw("date_format(date,'%Y-%m-%d')"))
+                ->orderBy('date')
+                ->orderBy('oid')
+                ->selectRaw("oid,belong,count(*) as playernum,sum(playtime) as playtime,date_format(date,'%Y-%m-%d') as date")
+                ->get();
+            $count = [];
+            foreach ($data as $item) {
+                $item = json_decode(json_encode($item), true);
+                $count[] = $item;
+            }
+            DB::connection('ar')->table('face_people_time_count')
+                ->insert($count);
+
+            $max_id = DB::connection('ar')->table('face_people_time')
+                ->max('id');
+
+            FacePeopleTimeRecord::create(['max_id' => $max_id]);
+        })->daily()->at('12:00');
     }
 
     /**
