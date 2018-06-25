@@ -405,19 +405,12 @@ import {
   Pagination,
   MessageBox
 } from 'element-ui'
-import Highcharts from 'highcharts'
-import loadExporting from 'highcharts/modules/exporting'
-import loadExportData from 'highcharts/modules/export-data'
-import reportViewVue from '../reportView.vue'
 import ECharts from 'vue-echarts/components/ECharts'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/chart/pie'
 import 'echarts/lib/chart/bar'
 import 'echarts/lib/component/tooltip'
 import 'echarts/lib/component/legend'
-
-loadExporting(Highcharts)
-loadExportData(Highcharts)
 
 export default {
   components: {
