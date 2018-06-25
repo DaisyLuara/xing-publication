@@ -74,7 +74,7 @@ if (!function_exists('distance')) {
  * 处理点位查询
  */
 if (!function_exists('handPointQuery')) {
-    function handPointQuery(Request $request, Builder $builder, $arUserID)
+    function handPointQuery(Request $request, Builder $builder, $arUserID, bool $selectPoint = false)
     {
         $table = $builder->getModel()->getTable();
         //查询时间范围
@@ -118,5 +118,10 @@ if (!function_exists('handPointQuery')) {
         $builder->join('avr_official', 'avr_official.oid', '=', "$table.oid")
             ->join('avr_official_market', 'avr_official_market.marketid', '=', 'avr_official.marketid')
             ->join('avr_official_area', 'avr_official_area.areaid', '=', 'avr_official.areaid');
+
+        if ($selectPoint) {
+            $builder->selectRaw("avr_official.name as point_name,avr_official_market.name as market_name,avr_official_area.name as area_name");
+            $builder->selectRaw("avr_official.oid as point_id,avr_official_market.marketid as market_id,avr_official_area.areaid as area_id");
+        }
     }
 }

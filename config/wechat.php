@@ -42,7 +42,7 @@ return [
      */
     'route' => [
 
-        'enabled' => true,
+        'enabled' => false,
 
         /*
          * 开放平台第三方平台路由配置

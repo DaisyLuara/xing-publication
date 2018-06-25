@@ -40,6 +40,48 @@ let router = {
         },
       ],
     },
+    // {
+    //   path: 'template',
+    //   name: '节目模板',
+    //   redirect: 'template',
+    //   meta: {
+    //     title: '节目模板',
+    //   },
+    //   component: () =>
+    //     import(/* webpackChunkName: "page/project/ptemplate/routerView" */ 'page/project/ptemplate/routerView'),
+    //   children: [
+    //     {
+    //       path: '/',
+    //       name: '模板列表',
+    //       meta: {
+    //         title: '模板列表',
+    //       },
+    //       component: () =>
+    //         import(/* webpackChunkName: "page/project/ptemplate/index" */ 'page/project/ptemplate/index'),
+    //     },
+    //   ],
+    // },
+    {
+      path: 'schedule',
+      name: '模板排期',
+      redirect: 'schedule',
+      meta: {
+        title: '模板排期',
+      },
+      component: () =>
+        import(/* webpackChunkName: "page/project/schedule/routerView" */ 'page/project/schedule/routerView'),
+      children: [
+        {
+          path: '/',
+          name: '模板排期列表',
+          meta: {
+            title: '模板排期列表',
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/project/schedule/index" */ 'page/project/schedule/index'),
+        }
+      ],
+    },
     {
       path: 'list',
       name: '节目列表',
