@@ -60,7 +60,34 @@ class Kernel extends ConsoleKernel
 
             FacePeopleTimeRecord::create(['max_id' => $max_id]);
         })->daily()->at('12:00');
+
+        $schedule->call(function () {
+            $date = Carbon::now()->addMonth(-1)->format('Y-m');
+            $data = DB::connection('ar')->table('face_people_time')
+                ->groupBy(DB::raw('oid'))
+                ->groupBy(DB::raw('belong'))
+                ->groupBy(DB::raw('fpid'))
+                ->whereRaw("date_format(date,'%Y-%m') = '$date' and playtime > 7")
+                ->selectRaw("oid,belong");
+            $mau = DB::connection('ar')->table(DB::raw("({$data->toSql()}) as a"))
+                ->groupBy(DB::raw('a.oid'))
+                ->groupBy(DB::raw('a.belong'))
+                ->selectRaw("a.oid as oid,a.belong as belong,count(*) as playernum")
+                ->get();
+
+            $date = Carbon::now()->addMonth(-1)->format('Y-m-d');
+            $count = [];
+            foreach ($mau as $item) {
+                $item = json_decode(json_encode($item), true);
+                $item['date'] = $date;
+                $count[] = $item;
+            }
+
+            DB::connection('ar')->table('face_people_time_mau')
+                ->insert($count);
+        })->monthlyOn(1, '8:00');
     }
+
 
     /**
      * Register the commands for the application.
