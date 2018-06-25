@@ -1,5 +1,6 @@
 <template>
   <div class="home-wrap" v-loading="loading">
+    <!-- 搜索 -->
     <div class="search-wrap">
       <el-date-picker
       v-model="dataValue"
@@ -12,37 +13,45 @@
       :clearable="false"
       :picker-options="pickerOptions2"
       @change="dateChangeHandle">
-    </el-date-picker>
+      </el-date-picker>
     </div>
+    <!-- 围观数 -->
     <div class="tendency-wrap">
       <el-card shadow="always" v-loading="lookerFlag">
         <highcharts :options="pointOptions" class="highchart" ref="pointChar"></highcharts>
       </el-card>
     </div>
+    <!-- 点位前10 -->
     <div class="ranking-wrap">
       <el-card shadow="always" v-loading="pointFlag">
         <highcharts :options="pointTenOptions" class="highchart" ref="pointTenChar"></highcharts> 
       </el-card>
     </div>
+    <!-- 行业块 -->
     <div class="ranking-wrap">
       <el-card>
         <el-row :gutter="20">
+          <!-- 行业前5 -->
           <el-col :span="16" v-loading="projectFlag">
             <highcharts :options="projectFiveOptions" class="highchart" ref="projectFiveChar"></highcharts>
           </el-col>
+          <!-- 业态年龄场景 -->
           <el-col :span="8" v-loading="userFlag">
             <highcharts :options="userOptions" class="highchart" ref="userChar"></highcharts>
           </el-col>
         </el-row>
       </el-card>
     </div>
+    <!-- 性别年龄表格块 -->
     <div class="age-gender-wrap">
       <el-row :gutter="20">
+        <!-- 性别表格 -->
         <el-col :span="12">
           <el-card shadow="always"  v-loading="sexFlag">
               <highcharts :options="sexOptions" class="highchart" ref="sexPie"></highcharts>
           </el-card>
         </el-col>
+        <!-- 年龄表格 -->
         <el-col :span="12">
           <el-card shadow="always" v-loading="ageFlag">
             <highcharts :options="ageOptions" class="highchart" ref="agePie" ></highcharts>
@@ -50,6 +59,7 @@
         </el-col>
       </el-row>
     </div>
+    <!-- 性别详情弹出框 -->
     <el-dialog
       title="性别详情"
       :visible="dialogVisible"
@@ -75,9 +85,9 @@ import {
   DatePicker,
   Dialog
 } from 'element-ui'
-import Vue from 'vue';
+import Vue from 'vue'
 import Highcharts from 'highcharts'
-import VueHighcharts from 'vue-highcharts';
+import VueHighcharts from 'vue-highcharts'
 Vue.use(VueHighcharts)
 
 import chartData from 'service/chart'
@@ -610,6 +620,7 @@ export default {
       this.getAgeChartData()
       this.getLookersChartData()
     },
+    // 业态前5
     getSceneFiveChartData() {
       this.getChartData('scene', '3')
     },
@@ -620,10 +631,12 @@ export default {
       this.getChartData('sex', '5')
     },
     getSingleGender(gender) {
+      // 单个性别
       this.getChartData('singleGender', '5', gender)
     },
     getAgeChartData(attributeId, name) {
       if (attributeId) {
+        // 行业年龄
         this.getChartData('user', '4', attributeId, name)
       } else {
         this.getChartData('age', '4')
@@ -641,18 +654,22 @@ export default {
         home_page: true
       }
       switch (id) {
+        // 围观
         case '1':
           args.id = '1'
           this.lookerFlag = true
           break
+        // 点位
         case '2':
           args.id = '2'
           this.pointFlag = true
           break
+        //行业前5
         case '3':
           args.id = '3'
           this.projectFlag = true
           break
+        // 年龄
         case '4':
           args.id = '4'
           args.attribute_id = charType
@@ -660,9 +677,11 @@ export default {
             delete args.attribute_id
             this.ageFlag = true
           } else {
+            //行业年龄
             this.userFlag = true
           }
           break
+        // 性别
         case '5':
           args.id = '5'
           args.gender = charType
@@ -670,6 +689,7 @@ export default {
             delete args.gender
             this.sexFlag = true
           } else {
+            //性别详情
             this.maleFlag = true
             this.femaleFlag = true
           }
