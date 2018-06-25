@@ -1,4 +1,4 @@
-import md5 from 'js-md5'
+// import md5 from 'js-md5'
 
 let validate = {
   account(value) {
@@ -135,14 +135,14 @@ function checkPassword(value) {
   }
 }
 
-function checkImageCaptcha(value, md5Val) {
-  console.log(md5(md5(value.toLowerCase())))
-  if (md5(md5(value.toLowerCase())) == md5Val) {
-    return true
-  } else {
-    return false
-  }
-}
+// function checkImageCaptcha(value, md5Val) {
+//   console.log(md5(md5(value.toLowerCase())))
+//   if (md5(md5(value.toLowerCase())) == md5Val) {
+//     return true
+//   } else {
+//     return false
+//   }
+// }
 
 function checkLength(value, len) {
   if (value.length != len) {

@@ -75,11 +75,10 @@ import {
   DatePicker,
   Dialog
 } from 'element-ui'
+import Vue from 'vue';
 import Highcharts from 'highcharts'
-import loadExporting from 'highcharts/modules/exporting'
-import loadExportData from 'highcharts/modules/export-data'
-loadExporting(Highcharts)
-loadExportData(Highcharts)
+import VueHighcharts from 'vue-highcharts';
+Vue.use(VueHighcharts)
 
 import chartData from 'service/chart'
 
