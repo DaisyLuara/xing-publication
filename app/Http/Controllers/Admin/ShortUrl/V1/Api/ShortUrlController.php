@@ -12,6 +12,12 @@ use Hashids\Hashids;
 
 class ShortUrlController extends Controller
 {
+    protected $applications = [
+        'AlipayClient' => 'alipay_client',
+        'AliApp(TB' => 'aliapp_taobao',
+        'MicroMessenger' => 'weixin',
+    ];
+
     public function index(Request $request, ShortUrl $push)
     {
     }
@@ -30,12 +36,20 @@ class ShortUrlController extends Controller
     {
         $hashIds = new Hashids();
         $shortUrl = ShortUrl::findOrFail($hashIds->decode($short_path)[0]);
+        $application = '';
+        foreach ($this->applications as $key => $value) {
+            if (Agent::match($key)) {
+                $application = $value;
+            }
+        }
+
         ShortUrlJob::dispatch($shortUrl->id, [
             'ua' => $request->userAgent(),
             'ip' => $request->getClientIp(),
             'browser' => Agent::browser(),
             'device' => Agent::device(),
             'platform' => Agent::platform(),
+            'app' => $application,
         ])->onQueue('short_url');
 
         return redirect($shortUrl['target_url']);
