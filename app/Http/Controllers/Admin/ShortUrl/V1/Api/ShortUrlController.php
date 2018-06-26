@@ -14,7 +14,7 @@ class ShortUrlController extends Controller
 {
     protected $applications = [
         'AlipayClient' => 'alipay_client',
-        'AliApp(TB' => 'aliapp_taobao',
+        'AliApp' => 'aliapp_taobao',
         'MicroMessenger' => 'weixin',
     ];
 
@@ -40,6 +40,7 @@ class ShortUrlController extends Controller
         foreach ($this->applications as $key => $value) {
             if (Agent::match($key)) {
                 $application = $value;
+                break;
             }
         }
 
