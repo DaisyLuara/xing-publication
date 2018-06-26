@@ -13,7 +13,6 @@ class UpdateAttributeTable extends Migration
      */
     public function up()
     {
-        //
         Schema::connection('ar')->table('xs_attributes', function (Blueprint $table) {
             $table->renameColumn('pid', 'parent_id');
             $table->integer('lft')->nullable();
