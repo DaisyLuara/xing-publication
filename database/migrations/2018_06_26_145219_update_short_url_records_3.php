@@ -29,9 +29,15 @@ class UpdateShortUrlRecords3 extends Migration
     public function down()
     {
         Schema::table('short_url_records', function (Blueprint $table) {
-            $table->dropColumn('browser');
-            $table->dropColumn('device');
-            $table->dropColumn('platform');
+            if (Schema::hasColumn('short_url_records', 'browser')) {
+                $table->dropColumn('browser');
+            }
+            if (Schema::hasColumn('short_url_records', 'device')) {
+                $table->dropColumn('device');
+            }
+            if (Schema::hasColumn('short_url_records', 'platform')) {
+                $table->dropColumn('platform');
+            }
             if (Schema::hasColumn('short_url_records', 'app')) {
                 $table->dropColumn('app');
             }
