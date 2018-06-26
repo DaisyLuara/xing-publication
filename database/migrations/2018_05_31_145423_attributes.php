@@ -13,13 +13,15 @@ class Attributes extends Migration
      */
     public function up()
     {
-        Schema::connection('ar')->create('xs_attributes', function (Blueprint $table) {
-            $table->increments('id')->comment('属性配置');
-            $table->integer('pid')->default(0)->comment('分类父节点');
-            $table->string('name')->default('')->comment('属性名称');
-            $table->string('desc')->default('')->comment('属性描述');
-            $table->timestamps();
-        });
+        if (!Schema::connection('ar')->hasTable('xs_attributes')) {
+            Schema::connection('ar')->create('xs_attributes', function (Blueprint $table) {
+                $table->increments('id')->comment('属性配置');
+                $table->integer('pid')->default(0)->comment('分类父节点');
+                $table->string('name')->default('')->comment('属性名称');
+                $table->string('desc')->default('')->comment('属性描述');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

@@ -13,13 +13,16 @@ class PointAttributes extends Migration
      */
     public function up()
     {
-        Schema::connection('ar')->create('xs_point_attributes', function (Blueprint $table) {
-            $table->integer('attribute_id')->comment('属性主键');
-            $table->integer('point_id')->comment('点位主键');
-            $table->index(['attribute_id', 'point_id']);
-            $table->unique(['attribute_id', 'point_id']);
-        });
+        if (!Schema::connection('ar')->hasTable('xs_point_attributes')) {
+            Schema::connection('ar')->create('xs_point_attributes', function (Blueprint $table) {
+                $table->integer('attribute_id')->comment('属性主键');
+                $table->integer('point_id')->comment('点位主键');
+                $table->index(['attribute_id', 'point_id']);
+                $table->unique(['attribute_id', 'point_id']);
+            });
+        }
     }
+
 
     /**
      * Reverse the migrations.

@@ -13,14 +13,16 @@ class CreateFacePeopleTimeMauTable extends Migration
      */
     public function up()
     {
-        Schema::connection('ar')->create('face_people_time_mau', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('oid');
-            $table->string('belong');
-            $table->integer('playernum');
-            $table->timestamp('date')->nullable();
-            $table->index(['id', 'oid', 'belong', 'date']);
-        });
+        if (!Schema::connection('ar')->hasTable('face_people_time_mau')) {
+            Schema::connection('ar')->create('face_people_time_mau', function (Blueprint $table) {
+                $table->increments('id');
+                $table->integer('oid');
+                $table->string('belong');
+                $table->integer('playernum');
+                $table->timestamp('date')->nullable();
+                $table->index(['id', 'oid', 'belong', 'date']);
+            });
+        }
     }
 
     /**
