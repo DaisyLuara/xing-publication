@@ -17,6 +17,7 @@ class UpdateShortUrlRecords3 extends Migration
             $table->string('browser')->default('');
             $table->string('device')->default('');
             $table->string('platform')->default('');
+            $table->string('app')->default('');
         });
     }
 
@@ -31,6 +32,7 @@ class UpdateShortUrlRecords3 extends Migration
             $table->dropColumn('browser');
             $table->dropColumn('device');
             $table->dropColumn('platform');
+            $table->dropColumn('app');
         });
     }
 }
