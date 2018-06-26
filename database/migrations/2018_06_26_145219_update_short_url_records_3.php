@@ -32,7 +32,9 @@ class UpdateShortUrlRecords3 extends Migration
             $table->dropColumn('browser');
             $table->dropColumn('device');
             $table->dropColumn('platform');
-            $table->dropColumn('app');
+            if (Schema::table('short_url_records')->hasColumn('app')) {
+                $table->dropColumn('app');
+            }
         });
     }
 }
