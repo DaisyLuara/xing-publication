@@ -389,33 +389,41 @@ class ChartDataController extends Controller
         $startDate = $request->start_date;
         $endDate = $request->end_date;
 
-        $time1 = "when date_format( date, '%H:%i:%s') < '10:00:00' then '10:00' ";
-        $time2 = "when date_format( date, '%H:%i:%s') between '10:00:00' and '12:00:00' then '12:00' ";
-        $time3 = "when date_format( date, '%H:%i:%s') between '12:00:00' and '14:00:00' then '14:00' ";
-        $time4 = "when date_format( date, '%H:%i:%s') between '14:00:00' and '16:00:00' then '16:00' ";
-        $time5 = "when date_format( date, '%H:%i:%s') between '16:00:00' and '18:00:00' then '18:00' ";
-        $time6 = "when date_format( date, '%H:%i:%s') between '18:00:00' and '20:00:00' then '20:00' ";
-        $time7 = "when date_format( date, '%H:%i:%s') between '20:00:00' and '22:00:00' then '22:00' ";
-        $time8 = "when date_format( date, '%H:%i:%s') > '22:00:00' then '24:00' ";
-        $time = $time1 . $time2 . $time3 . $time4 . $time5 . $time6 . $time7 . $time8;
-
-        $gender = DB::connection('ar')->table('face_people')
-            ->selectRaw(" case " . $time . "else 0 end as time,count(*) as num")
+        $data = DB::connection('ar')->table('face_collect_character')
             ->whereRaw("date_format(date,'%Y-%m-%d') between '$startDate' and '$endDate'")
-            ->groupBy('time')
-            ->groupBy('gender')
-            ->get();
-
-        $century00 = "when age<18 then '00'";
-        $century90 = "when age>18 and age<=28 then '90' ";
-        $century80 = "when age>18 and age<=38 then '80' ";
-        $century70 = "when age>38 and age<=48 then '70' ";
-        $century = $century00 . $century90 . $century80 . $century70;
-        $character = DB::connection('ar')->table('face_people')
-            ->selectRaw("case " . $time . "else 0 end as time,case " . $century . "else 0 end as century,count(*) as num")
+            ->where('century', '<>', '0')
             ->groupBy('time')
             ->groupBy('century')
+            ->selectRaw("time,century,sum(looknum) as count")
             ->get();
+        $output = [];
+        foreach ($data as $item) {
+            if ($item->time == "10:00") {
+                $output["10:00"][$item->century] = $item->count;
+            }
+            if ($item->time == "12:00") {
+                $output["12:00"][$item->century] = $item->count;
+            }
+            if ($item->time == "14:00") {
+                $output["14:00"][$item->century] = $item->count;
+            }
+            if ($item->time == "16:00") {
+                $output["16:00"][$item->century] = $item->count;
+            }
+            if ($item->time == "18:00") {
+                $output["18:00"][$item->century] = $item->count;
+            }
+            if ($item->time == "20:00") {
+                $output["20:00"][$item->century] = $item->count;
+            }
+            if ($item->time == "22:00") {
+                $output["22:00"][$item->century] = $item->count;
+            }
+            if ($item->time == "24:00") {
+                $output["24:00"][$item->century] = $item->count;
+            }
+        }
+        return $output;
     }
 
     /**
@@ -432,12 +440,12 @@ class ChartDataController extends Controller
             ->get();
 
         $output = [
-            ["month" => "2017-12", "playernum" => 46],
-            ["month" => "2018-01", "playernum" => 43],
-            ["month" => "2018-02", "playernum" => 13],
-            ["month" => "2018-03", "playernum" => 35],
-            ["month" => "2018-04", "playernum" => 49],
-            ["month" => "2018-05", "playernum" => 64],
+            ["month" => "2017-12", "playernum" => 36],
+            ["month" => "2018-01", "playernum" => 33],
+            ["month" => "2018-02", "playernum" => 7],
+            ["month" => "2018-03", "playernum" => 25],
+            ["month" => "2018-04", "playernum" => 39],
+            ["month" => "2018-05", "playernum" => 54],
         ];
         foreach ($data as $item) {
             $output[] = [
