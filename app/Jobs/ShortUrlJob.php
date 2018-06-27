@@ -42,11 +42,12 @@ class ShortUrlJob implements ShouldQueue
     {
         $shortUrl = ShortUrl::query()->findOrFail($this->shortUrlID);
         $queryParams = parse_query(parse_url($shortUrl->target_url, PHP_URL_QUERY));
+        Log::info('browser_info', $queryParams);
 
         if (isset($queryParams['id'])) {
             PeopleViewRecords::where('id', '=', $queryParams['id'])->update(['share' => 1]);
         }
-       
+
         ShortUrlRecords::create(array_merge(['short_url_id' => $shortUrl->id], $this->browserInfo));
 
 
