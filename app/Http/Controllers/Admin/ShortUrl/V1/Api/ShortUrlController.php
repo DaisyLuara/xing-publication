@@ -9,6 +9,7 @@ use Jenssegers\Agent\Facades\Agent;
 use Illuminate\Http\Request;
 use App\Jobs\ShortUrlJob;
 use Hashids\Hashids;
+use Log;
 
 class ShortUrlController extends Controller
 {
@@ -43,6 +44,8 @@ class ShortUrlController extends Controller
                 break;
             }
         }
+
+        Log::info('short_url_app', [$application]);
 
         ShortUrlJob::dispatch($shortUrl->id, [
             'ua' => $request->userAgent(),
