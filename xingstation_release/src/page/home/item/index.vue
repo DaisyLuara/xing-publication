@@ -1,5 +1,6 @@
 <template>
   <div class="home-wrap" v-loading="loading">
+    <!-- 搜索 -->
     <div class="search-wrap">
       <el-date-picker
       v-model="dataValue"
@@ -12,8 +13,9 @@
       :clearable="false"
       :picker-options="pickerOptions2"
       @change="dateChangeHandle">
-    </el-date-picker>
+      </el-date-picker>
     </div>
+    <!-- 围观数据 -->
     <div class="tendency-wrap">
       <el-card shadow="always" v-loading="lookerFlag">
         <highcharts :options="pointOptions" class="highchart" ref="pointChar"></highcharts>
@@ -21,11 +23,13 @@
     </div>
     <div class="ranking-wrap">
       <el-row :gutter="20">
+        <!-- 点位 -->
         <el-col :span="12">
           <el-card shadow="always" v-loading="pointFlag">
             <highcharts :options="pointTenOptions" class="highchart" ref="pointTenChar"></highcharts>
           </el-card>
         </el-col>
+        <!-- 节目 -->
         <el-col :span="12">
           <el-card shadow="always" v-loading="projectFlag">
             <highcharts :options="projectTenOptions" class="highchart" ref="projectTenChar"></highcharts>
@@ -35,11 +39,13 @@
     </div>
     <div class="age-gender-wrap">
       <el-row :gutter="20">
+        <!-- 性别 -->
         <el-col :span="12">
           <el-card shadow="always"  v-loading="sexFlag">
               <highcharts :options="sexOptions" class="highchart" ref="sexPie"></highcharts>
           </el-card>
         </el-col>
+        <!-- 年龄 -->
         <el-col :span="12">
           <el-card shadow="always" v-loading="ageFlag">
             <highcharts :options="ageOptions" class="highchart" ref="agePie" ></highcharts>
@@ -50,14 +56,12 @@
   </div>
 </template>
 <script>
-import { Tabs, TabPane, Button, Row, Col, Card, DatePicker} from 'element-ui'
-import Highcharts from 'highcharts';
-import loadExporting from 'highcharts/modules/exporting';
-import loadExportData from 'highcharts/modules/export-data';
-loadExporting(Highcharts);
-loadExportData(Highcharts);
 
+import { Tabs, TabPane, Button, Row, Col, Card, DatePicker} from 'element-ui'
+import Vue from 'vue'
+import VueHighcharts from 'vue-highcharts'
 import chartData from 'service/chart'
+Vue.use(VueHighcharts)
 
 export default {
   components: {

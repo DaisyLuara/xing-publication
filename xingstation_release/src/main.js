@@ -18,16 +18,12 @@ import {
   MessageBox
 } from 'element-ui'
 
-import VueHighcharts from 'vue-highcharts'
-
 Vue.use(utils)
 Vue.use(VueAxios)
 Vue.use(VueCookie)
 Vue.use(Loading.directive)
 Vue.use(Breadcrumb)
 Vue.use(BreadcrumbItem)
-
-Vue.use(VueHighcharts)
 
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm
