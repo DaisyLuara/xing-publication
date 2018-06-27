@@ -15,6 +15,9 @@ class ShortUrlRecords extends Model
         'utm_content',
         'ua',
         'ip',
-        'face_id'
+        'face_id',
+        'browser',
+        'platform',
+        'device'
     ];
 }
