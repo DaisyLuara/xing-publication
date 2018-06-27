@@ -5,12 +5,20 @@ namespace App\Http\Controllers\Admin\ShortUrl\V1\Api;
 use App\Http\Controllers\Admin\ShortUrl\V1\Request\ShortUrlRequest;
 use App\Http\Controllers\Admin\ShortUrl\V1\Models\ShortUrl;
 use App\Http\Controllers\Controller;
+use Jenssegers\Agent\Facades\Agent;
 use Illuminate\Http\Request;
 use App\Jobs\ShortUrlJob;
 use Hashids\Hashids;
+use Log;
 
 class ShortUrlController extends Controller
 {
+    protected $applications = [
+        'AlipayClient' => 'alipay_client',
+        'AliApp' => 'aliapp_taobao',
+        'MicroMessenger' => 'weixin',
+    ];
+
     public function index(Request $request, ShortUrl $push)
     {
     }
@@ -29,7 +37,24 @@ class ShortUrlController extends Controller
     {
         $hashIds = new Hashids();
         $shortUrl = ShortUrl::findOrFail($hashIds->decode($short_path)[0]);
-        ShortUrlJob::dispatch($shortUrl->id, ['ua' => $request->userAgent(), 'ip' => $request->getClientIp()])->onQueue('short_url');
+        $application = '';
+        foreach ($this->applications as $key => $value) {
+            if (Agent::match($key)) {
+                $application = $value;
+                break;
+            }
+        }
+
+        Log::info('short_url_app', [$application]);
+
+        ShortUrlJob::dispatch($shortUrl->id, [
+            'ua' => $request->userAgent(),
+            'ip' => $request->getClientIp(),
+            'browser' => Agent::browser(),
+            'device' => Agent::device(),
+            'platform' => Agent::platform(),
+            'app' => $application,
+        ])->onQueue('short_url');
 
         return redirect($shortUrl['target_url']);
     }
