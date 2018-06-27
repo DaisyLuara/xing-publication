@@ -268,12 +268,10 @@ import stats from 'service/stats'
 import search from 'service/search'
 import chart from 'service/chart'
 import { Row, Col, DatePicker, Select, Option, Button, Form, FormItem, Table, TableColumn,Pagination, MessageBox} from 'element-ui'
-import Highcharts from 'highcharts';
-import loadExporting from 'highcharts/modules/exporting';
-import loadExportData from 'highcharts/modules/export-data';
-import reportViewVue from '../reportView.vue';
-loadExporting(Highcharts);
-loadExportData(Highcharts);
+import Vue from 'vue'
+import VueHighcharts from 'vue-highcharts'
+
+Vue.use(VueHighcharts)
 
 export default {
   components:{

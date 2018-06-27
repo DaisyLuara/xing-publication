@@ -99,7 +99,6 @@
 <script>
 import auth from 'service/auth'
 import validate from '../../utils/validate.js'
-import md5 from 'js-md5'
 import { Button, Input, Form, FormItem, Checkbox, CheckboxGroup, Col, Select, Option } from 'element-ui'
 import axios from 'axios'
 export default {
