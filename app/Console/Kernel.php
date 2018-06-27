@@ -66,7 +66,6 @@ class Kernel extends ConsoleKernel
         $limitNum = floor($totalPoint->count() / 10);
 
         $faceCount = DB::connection('ar')->table('face_count_log as fcl')
-            ->join('admin_per_oid as apo', 'fcl.oid', '=', 'apo.oid')
             ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
             ->join('avr_official_area as aoa', 'ao.areaid', '=', 'aoa.areaid')
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
@@ -76,7 +75,7 @@ class Kernel extends ConsoleKernel
             ->groupBy('fcl.oid')
             ->orderBy('looknum')
             ->limit($limitNum)
-            ->selectRaw("  apo.uid as uid,fcl.oid as oid,aoa.name as areaName,aom.name as marketName,ao.name as pointName,sum(looknum) as looknum")
+            ->selectRaw("  ao.bd_uid as uid,fcl.oid as oid,aoa.name as areaName,aom.name as marketName,ao.name as pointName,sum(looknum) as looknum")
             ->get();
 
         $data = [];

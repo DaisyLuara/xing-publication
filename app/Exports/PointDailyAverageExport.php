@@ -39,31 +39,31 @@ class PointDailyAverageExport extends AbstractExport
         }
 
         //同一点位对应多个DB 取最近授权
-        $arUser1 = DB::connection('ar')->table('admin_per_oid')
-            ->join('admin_staff', 'admin_per_oid.uid', '=', 'admin_staff.uid')
-            ->orderBy('oid')
-            ->orderBy('admin_per_oid.date', 'desc')
-            ->selectRaw("oid,admin_staff.realname as name");
-
-        $arUser2 = DB::connection('ar')->table(DB::raw("({$arUser1->toSql()}) a,(select @gn := 0)  b"))
-            ->selectRaw("@gn := case when @oid = oid then @gn + 1 else 1 end gn,@oid := oid oid,name");
-
-        $arUser = DB::connection('ar')->table(DB::raw("({$arUser2->toSql()}) c"))
-            ->whereRaw("gn=1")
-            ->selectRaw("oid,name");
+//        $arUser1 = DB::connection('ar')->table('admin_per_oid')
+//            ->join('admin_staff', 'admin_per_oid.uid', '=', 'admin_staff.uid')
+//            ->orderBy('oid')
+//            ->orderBy('admin_per_oid.date', 'desc')
+//            ->selectRaw("oid,admin_staff.realname as name");
+//
+//        $arUser2 = DB::connection('ar')->table(DB::raw("({$arUser1->toSql()}) a,(select @gn := 0)  b"))
+//            ->selectRaw("@gn := case when @oid = oid then @gn + 1 else 1 end gn,@oid := oid oid,name");
+//
+//        $arUser = DB::connection('ar')->table(DB::raw("({$arUser2->toSql()}) c"))
+//            ->whereRaw("gn=1")
+//            ->selectRaw("oid,name");
 
         $faceCount = $query->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
             ->join('avr_official_area as aoa', 'ao.areaid', '=', 'aoa.areaid')
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
             ->join('avr_official_scene as aos', 'ao.sid', '=', 'aos.sid')
-            ->leftJoin(DB::raw("({$arUser->toSql()}) d"), 'fcl.oid', '=', 'd.oid')
+            ->join('admin_staff', 'ao.bd_uid', '=', 'admin_staff.uid')
             ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '{$this->startDate}' and '{$this->endDate}' ")
             ->whereNotIn('fcl.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
             ->groupBy('fcl.oid')
             ->orderBy('aoa.areaid', 'desc')
             ->orderBy('aom.marketid', 'desc')
             ->orderBy('ao.oid', 'desc')
-            ->selectRaw("aoa.name as areaName,aom.name as marketName,ao.name as pointName,aos.name as scene,d.name as BDName,count(*) as days, sum(looknum) as looknum,sum(playernum) as playernum,sum(lovenum) as lovenum,sum(outnum) as outnum,sum(scannum) as scannum,concat_ws(',', date_format(min(fcl.date), '%Y-%m-%d'), date_format(max(fcl.date), '%Y-%m-%d')) as date")
+            ->selectRaw("aoa.name as areaName,aom.name as marketName,ao.name as pointName,aos.name as scene,admin_staff.realname as BDName,count(*) as days, sum(looknum) as looknum,sum(playernum) as playernum,sum(lovenum) as lovenum,sum(outnum) as outnum,sum(scannum) as scannum,concat_ws(',', date_format(min(fcl.date), '%Y-%m-%d'), date_format(max(fcl.date), '%Y-%m-%d')) as date")
             ->get();
         $total = [
             'total' => 'Total',

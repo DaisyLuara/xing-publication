@@ -34,6 +34,7 @@ class PushController extends Controller
             $query->where('alias', '=', $request->alias);
         }
 
+        $query->selectRaw('push.*,ar_product_list.icon as product_img');
         $pushes = $query->join('ar_product_list', 'ar_product_list.versionname', '=', "push.alias")
             ->where('push.oid', '>', 0)
             ->where('avr_official.visiable', '=', 1)
@@ -41,8 +42,7 @@ class PushController extends Controller
             ->orderBy('avr_official.areaid', 'desc')
             ->orderBy('avr_official.marketid', 'desc')
             ->orderBy('push.clientdate', 'desc')
-            ->paginate(10, ['push.*',
-                'ar_product_list.icon as product_img']);
+            ->paginate(10);
 
         return $this->response->paginator($pushes, new PushTransformer());
     }
