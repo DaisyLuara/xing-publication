@@ -42,9 +42,9 @@ class ShortUrlJob implements ShouldQueue
     {
         $shortUrl = ShortUrl::query()->findOrFail($this->shortUrlID);
         $queryParams = parse_query(parse_url($shortUrl->target_url, PHP_URL_QUERY));
-        Log::info('browser_info', $queryParams);
 
         if (isset($queryParams['id'])) {
+            $queryParams['third_id'] = $queryParams['id'];
             PeopleViewRecords::where('id', '=', $queryParams['id'])->update(['share' => 1]);
         }
 
