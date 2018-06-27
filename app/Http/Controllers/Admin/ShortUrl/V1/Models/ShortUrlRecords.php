@@ -18,6 +18,7 @@ class ShortUrlRecords extends Model
         'face_id',
         'browser',
         'platform',
-        'device'
+        'device',
+        'app'
     ];
 }
