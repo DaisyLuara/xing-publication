@@ -78,7 +78,7 @@ class QueryController extends Controller
         $user = $this->user();
         $arUserId = getArUserID($user, $request);
         if ($arUserId) {
-            $q->where('bd_uid', '=', $arUserId);
+            $query->where('bd_uid', '=', $arUserId);
         }
 
         $points = $query->get();
