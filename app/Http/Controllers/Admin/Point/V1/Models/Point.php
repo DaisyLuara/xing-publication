@@ -15,7 +15,7 @@ class Point extends Model
 
     public function arUsers()
     {
-        return $this->belongsToMany(ArUser::class, 'admin_per_oid', 'oid', 'uid');
+        return $this->belongsTo(ArUser::class, 'oid', 'bd_uid');
     }
 
     public function projects()

@@ -19,9 +19,7 @@ class ProjectLaunchController extends Controller
 
         if ($ar_user_id) {
             $query->whereHas('point', function ($query) use ($ar_user_id) {
-                $query->whereHas('arUsers', function ($query) use ($ar_user_id) {
-                    $query->where('admin_staff.uid', '=', $ar_user_id);
-                });
+                    $query->where('bd_uid', '=', $ar_user_id);
             });
         }
 
