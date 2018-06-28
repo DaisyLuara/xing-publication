@@ -89,10 +89,9 @@ if (!function_exists('handPointQuery')) {
             $builder->selectRaw("sum(" . $request->index . ") as count");
         }
 
-        //按账号查询
+        //BD
         if ($arUserID) {
-            $builder->join('admin_per_oid', 'admin_per_oid.oid', '=', "$table.oid")
-                ->where('admin_per_oid.uid', '=', $arUserID);
+            $builder->where('avr_official.bd_uid', '=', $arUserID);
         }
 
         //按场景查询
