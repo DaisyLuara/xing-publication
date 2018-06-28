@@ -16,13 +16,15 @@ class CreateFaceCollectCharacterTable extends Migration
         Schema::connection('ar')->create('face_collect_character', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('oid');
-            $table->string('belong');
-            $table->string('time');
-            $table->string('century')->comment('00:00后,90:90后,80:80后,70:70后,0:其他年龄段');
-            $table->string('gender');
+            $table->string('belong', 20);
+            $table->string('time', 20);
+            $table->string('century', 20)->comment('00:00后,90:90后,80:80后,70:70后,0:其他年龄段');
+            $table->string('gender', 20);
             $table->integer('looknum');
-            $table->timestamp('date');
-            $table->index(['oid', 'belong', 'date']);
+            $table->timestamp('date')->nullable();
+            $table->index('oid');
+            $table->index('belong');
+            $table->index('date');
         });
     }
 

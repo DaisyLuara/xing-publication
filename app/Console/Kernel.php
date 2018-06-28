@@ -60,10 +60,10 @@ class Kernel extends ConsoleKernel
                 ->max('id');
 
             FacePeopleTimeRecord::create(['max_id' => $max_id]);
-        })->daily()->at('12:00');
+        })->daily()->at('8:00');
 
         $schedule->call(function () {
-            $date = Carbon::now()->addMonth(-1)->format('Y-m');
+            $date = Carbon::now()->format('Y-m');
             $sql = DB::connection('ar')->table('face_people_time')
                 ->groupBy(DB::raw('oid'))
                 ->groupBy(DB::raw('belong'))
@@ -77,7 +77,7 @@ class Kernel extends ConsoleKernel
                 ->selectRaw("a.oid as oid,a.belong as belong,count(*) as playernum")
                 ->get();
 
-            $date = Carbon::now()->addMonth(-1)->format('Y-m-d');
+            $date = Carbon::now()->format('Y-m-d');
             $count = [];
             foreach ($data as $item) {
                 $item = json_decode(json_encode($item), true);
@@ -87,7 +87,7 @@ class Kernel extends ConsoleKernel
 
             DB::connection('ar')->table('face_people_time_mau')
                 ->insert($count);
-        })->monthlyOn(1, '9:00');
+        })->monthlyOn(1, '8:00');
 
         $schedule->call(function () {
             $date = FaceCollectRecord::query()->max('date');
@@ -149,7 +149,7 @@ class Kernel extends ConsoleKernel
                 $date = (new Carbon($date))->addDay(1)->toDateString();
             }
             FaceCollectRecord::create(['date' => $currentDate]);
-        })->daily()->at('8:00');
+        })->daily()->at('14:23');
     }
 
 

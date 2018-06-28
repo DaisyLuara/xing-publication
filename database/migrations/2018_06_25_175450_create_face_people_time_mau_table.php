@@ -20,7 +20,9 @@ class CreateFacePeopleTimeMauTable extends Migration
                 $table->string('belong');
                 $table->integer('playernum');
                 $table->timestamp('date')->nullable();
-                $table->index(['id', 'oid', 'belong', 'date']);
+                $table->index('oid');
+                $table->index('belong');
+                $table->index('date');
             });
         }
     }

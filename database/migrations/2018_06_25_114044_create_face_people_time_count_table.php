@@ -17,11 +17,13 @@ class CreateFacePeopleTimeCountTable extends Migration
             Schema::connection('ar')->create('face_people_time_count', function (Blueprint $table) {
                 $table->increments('id');
                 $table->integer('oid');
-                $table->string('belong');
+                $table->string('belong', 20);
                 $table->integer('playernum');
                 $table->integer('playtime');
                 $table->timestamp('date')->nullable();
-                $table->index(['id', 'oid', 'belong', 'date']);
+                $table->index('oid');
+                $table->index('belong');
+                $table->index('date');
             });
         }
     }
