@@ -78,9 +78,7 @@ class QueryController extends Controller
         $user = $this->user();
         $arUserId = getArUserID($user, $request);
         if ($arUserId) {
-            $query->whereHas('arUsers', function ($q) use ($arUserId) {
-                $q->where('admin_staff.uid', '=', $arUserId);
-            });
+            $q->where('bd_uid', '=', $arUserId);
         }
 
         $points = $query->get();
@@ -95,9 +93,7 @@ class QueryController extends Controller
         $query = $project->query();
         if ($arUserId) {
             $query->whereHas('points', function ($q) use ($arUserId) {
-                $q->whereHas('arUsers', function ($q) use ($arUserId) {
-                    $q->where('admin_staff.uid', '=', $arUserId);
-                });
+                $q->where('bd_uid', '=', $arUserId);
             });
         }
 
