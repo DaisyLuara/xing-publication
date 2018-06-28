@@ -16,3 +16,4 @@ supervisord.pid
 .DS_Store
 _ide_helper.php
 /storage/debugbar
+.phpstorm.meta.php
