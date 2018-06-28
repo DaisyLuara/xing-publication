@@ -21,7 +21,7 @@ class CreateFaceCollectCharacterTable extends Migration
             $table->string('century', 20)->comment('00:00后,90:90后,80:80后,70:70后,0:其他年龄段');
             $table->string('gender', 20);
             $table->integer('looknum');
-            $table->timestamp('date')->nullable();
+            $table->timestamp('date');
             $table->index('oid');
             $table->index('belong');
             $table->index('date');

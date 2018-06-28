@@ -63,7 +63,7 @@ class Kernel extends ConsoleKernel
         })->daily()->at('8:00');
 
         $schedule->call(function () {
-            $date = Carbon::now()->format('Y-m');
+            $date = Carbon::now()->addMonth(-1)->format('Y-m');
             $sql = DB::connection('ar')->table('face_people_time')
                 ->groupBy(DB::raw('oid'))
                 ->groupBy(DB::raw('belong'))
@@ -77,7 +77,7 @@ class Kernel extends ConsoleKernel
                 ->selectRaw("a.oid as oid,a.belong as belong,count(*) as playernum")
                 ->get();
 
-            $date = Carbon::now()->format('Y-m-d');
+            $date = Carbon::now()->addMonth(-1)->format('Y-m-d');
             $count = [];
             foreach ($data as $item) {
                 $item = json_decode(json_encode($item), true);
@@ -98,28 +98,14 @@ class Kernel extends ConsoleKernel
                 $startDate = strtotime($date . " 00:00:00") * 1000;
                 $endDate = strtotime($date . " 23:59:59") * 1000;
 
-                $clientDate1 = strtotime($date . " 10:00:00") * 1000;
-                $clientDate2 = strtotime($date . " 11:59:59") * 1000;
-                $clientDate3 = strtotime($date . " 12:00:00") * 1000;
-                $clientDate4 = strtotime($date . " 13:59:59") * 1000;
-                $clientDate5 = strtotime($date . " 14:00:00") * 1000;
-                $clientDate6 = strtotime($date . " 15:59:59") * 1000;
-                $clientDate7 = strtotime($date . " 16:00:00") * 1000;
-                $clientDate8 = strtotime($date . " 17:59:59") * 1000;
-                $clientDate9 = strtotime($date . " 18:00:00") * 1000;
-                $clientDate10 = strtotime($date . " 19:59:59") * 1000;
-                $clientDate11 = strtotime($date . " 20:00:00") * 1000;
-                $clientDate12 = strtotime($date . " 21:59:59") * 1000;
-                $clientDate13 = strtotime($date . " 22:00:00") * 1000;
-
-                $time1 = "when clientdate < '$clientDate1' then '10:00' ";
-                $time2 = "when clientdate between '$clientDate1' and '$clientDate2' then '12:00' ";
-                $time3 = "when clientdate between '$clientDate3' and '$clientDate4' then '14:00' ";
-                $time4 = "when clientdate between '$clientDate5' and '$clientDate6' then '16:00' ";
-                $time5 = "when clientdate between '$clientDate7' and '$clientDate8' then '18:00' ";
-                $time6 = "when clientdate between '$clientDate9' and '$clientDate10' then '20:00' ";
-                $time7 = "when clientdate between '$clientDate11' and '$clientDate12' then '22:00' ";
-                $time8 = "when clientdate > '$clientDate13' then '24:00' ";
+                $time1 = "when date_format(date, '%H:%i:%s') < '10:00:00' then '10:00' ";
+                $time2 = "when date_format(date, '%H:%i:%s') between '10:00:00' and '11:59:59' then '12:00' ";
+                $time3 = "when date_format(date, '%H:%i:%s') between '12:00:00' and '13:59:59' then '14:00' ";
+                $time4 = "when date_format(date, '%H:%i:%s') between '14:00:00' and '15:59:59' then '16:00' ";
+                $time5 = "when date_format(date, '%H:%i:%s') between '16:00:00' and '17:59:59' then '18:00' ";
+                $time6 = "when date_format(date, '%H:%i:%s') between '18:00:00' and '19:59:59' then '20:00' ";
+                $time7 = "when date_format(date, '%H:%i:%s') between '20:00:00' and '21:59:59' then '22:00' ";
+                $time8 = "when date_format(date, '%H:%i:%s') > '22:00:00' then '24:00' ";
                 $time = $time1 . $time2 . $time3 . $time4 . $time5 . $time6 . $time7 . $time8;
 
                 $century00 = "when age>8 and age<=18 then '00'";
@@ -149,7 +135,7 @@ class Kernel extends ConsoleKernel
                 $date = (new Carbon($date))->addDay(1)->toDateString();
             }
             FaceCollectRecord::create(['date' => $currentDate]);
-        })->daily()->at('14:23');
+        })->daily()->at('16:03');
     }
 
 
