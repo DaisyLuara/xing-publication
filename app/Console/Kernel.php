@@ -28,15 +28,15 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        //点位排名通知
         $schedule->call(function () {
-            $data = $this->getTenUser();
-            for ($i = 0; $i < 2; $i++) {
-                //yq,cz
-                $openId = ['oNN6q0sZDI_OSTV6rl0rPeHjPgH8', 'oNN6q0pq-f0-Z2E2gb0QeOmY4r-M'];
-                WeekRankingJob::dispatch($data[$i], $openId[$i])->onQueue('weekRanking');
+            $data = $this->getRankingData();
+            for ($i = 0; $i < count($data); $i++) {
+                WeekRankingJob::dispatch($data[$i])->onQueue('weekRanking');
             }
-        })->weekly()->fridays()->at('10:00');
+        })->weekly()->fridays()->at('14:20');
 
+        //玩家互动时间清洗
         $schedule->call(function () {
             $max_id = FacePeopleTimeRecord::query()->max('max_id');
             $data = DB::connection('ar')->table('face_people_time')
@@ -62,6 +62,7 @@ class Kernel extends ConsoleKernel
             FacePeopleTimeRecord::create(['max_id' => $max_id]);
         })->daily()->at('8:00');
 
+        //月活玩家清洗
         $schedule->call(function () {
             $date = Carbon::now()->addMonth(-1)->format('Y-m');
             $sql = DB::connection('ar')->table('face_people_time')
@@ -89,6 +90,7 @@ class Kernel extends ConsoleKernel
                 ->insert($count);
         })->monthlyOn(1, '8:00');
 
+        //时间段与人群特征数据清洗
         $schedule->call(function () {
             $date = FaceCollectRecord::query()->max('date');
             $date = (new Carbon($date))->format('Y-m-d');
@@ -135,7 +137,7 @@ class Kernel extends ConsoleKernel
                 $date = (new Carbon($date))->addDay(1)->toDateString();
             }
             FaceCollectRecord::create(['date' => $currentDate]);
-        })->daily()->at('16:03');
+        })->daily()->at('8:00');
     }
 
 
@@ -151,52 +153,146 @@ class Kernel extends ConsoleKernel
         require base_path('routes/console.php');
     }
 
-    protected function getTenUser()
+    protected function getRankingData()
     {
 
-        //$startDate = Carbon::now()->addDay(-12)->toDateString();
-        //$endDate = Carbon::now()->addDay(-5)->toDateString();
+//        $startDate = Carbon::now()->addDay(-7)->toDateString();
+//        $endDate = Carbon::now()->addDay(-1)->toDateString();
         $startDate = '2018-04-01';
         $endDate = '2018-04-07';
-
-        $totalPoint = DB::connection('ar')->table('face_count_log')
-            ->whereRaw(" date_format(date,'%Y-%m-%d') between '$startDate' and '$endDate' ")
+        $marketPoint = DB::connection('ar')->table('face_count_log as fcl')
+            ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
+            ->whereRaw(" date_format(fcl.date,'%Y-%m-%d') between '$startDate' and '$endDate' ")
             ->where('belong', '<>', 'all')
-            ->whereNotIn('oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
-            ->groupBy('oid')
-            ->selectRaw("oid")
+            ->where('sid', '=', 1)
+            ->whereNotIn('fcl.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
+            ->groupBy('fcl.oid')
+            ->selectRaw("fcl.oid")
             ->get();
-        $limitNum = floor($totalPoint->count() / 10);
-
-        $faceCount = DB::connection('ar')->table('face_count_log as fcl')
-            ->join('admin_per_oid as apo', 'fcl.oid', '=', 'apo.oid')
+        $limitMarket = (floor($marketPoint->count() / 100) + 1) * 10;
+        $faceCountMarket = DB::connection('ar')->table('face_count_log as fcl')
             ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
             ->join('avr_official_area as aoa', 'ao.areaid', '=', 'aoa.areaid')
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
+            ->join('avr_official_scene as aos', 'ao.sid', '=', 'aos.sid')
+            ->join('admin_staff as as', 'ao.bd_uid', '=', 'as.uid')
             ->whereRaw(" date_format(fcl.date,'%Y-%m-%d') between '$startDate' and '$endDate' ")
             ->where('belong', '<>', 'all')
+            ->where('ao.sid', '=', 1)
             ->whereNotIn('fcl.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
             ->groupBy('fcl.oid')
             ->orderBy('looknum')
-            ->limit($limitNum)
-            ->selectRaw("  apo.uid as uid,fcl.oid as oid,aoa.name as areaName,aom.name as marketName,ao.name as pointName,sum(looknum) as looknum")
+            ->limit($limitMarket)
+            ->selectRaw("  ao.bd_uid as uid,as.realname as userName,aos.sid as sceneId,aos.name as sceneName,fcl.oid as oid,aoa.name as areaName,aom.name as marketName,ao.name as pointName,sum(looknum) as looknum")
+            ->get();
+
+        $cinemaPoint = DB::connection('ar')->table('face_count_log as fcl')
+            ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
+            ->whereRaw(" date_format(fcl.date,'%Y-%m-%d') between '$startDate' and '$endDate' ")
+            ->where('belong', '<>', 'all')
+            ->where('sid', '=', 8)
+            ->whereNotIn('fcl.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
+            ->groupBy('fcl.oid')
+            ->selectRaw("fcl.oid")
+            ->get();
+        $limitCinema = (floor($cinemaPoint->count() / 100) + 1) * 10;
+        $faceCountCinema = DB::connection('ar')->table('face_count_log as fcl')
+            ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
+            ->join('avr_official_area as aoa', 'ao.areaid', '=', 'aoa.areaid')
+            ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
+            ->join('avr_official_scene as aos', 'ao.sid', '=', 'aos.sid')
+            ->join('admin_staff as as', 'ao.bd_uid', '=', 'as.uid')
+            ->whereRaw(" date_format(fcl.date,'%Y-%m-%d') between '$startDate' and '$endDate' ")
+            ->where('belong', '<>', 'all')
+            ->where('ao.sid', '=', 8)
+            ->whereNotIn('fcl.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
+            ->groupBy('fcl.oid')
+            ->orderBy('looknum')
+            ->limit($limitCinema)
+            ->selectRaw("  ao.bd_uid as uid,as.realname as userName,aos.sid as sceneId,aos.name as sceneName,fcl.oid as oid,aoa.name as areaName,aom.name as marketName,ao.name as pointName,sum(looknum) as looknum")
+            ->get();
+
+        $otherPoint = DB::connection('ar')->table('face_count_log as fcl')
+            ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
+            ->whereRaw(" date_format(fcl.date,'%Y-%m-%d') between '$startDate' and '$endDate' ")
+            ->where('belong', '<>', 'all')
+            ->where('sid', '=', 8)
+            ->whereNotIn('fcl.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
+            ->groupBy('fcl.oid')
+            ->selectRaw("fcl.oid")
+            ->get();
+        $limitOther = (floor($otherPoint->count() / 100) + 1) * 10;
+        $faceCount_other = DB::connection('ar')->table('face_count_log as fcl')
+            ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
+            ->join('avr_official_area as aoa', 'ao.areaid', '=', 'aoa.areaid')
+            ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
+            ->join('avr_official_scene as aos', 'ao.sid', '=', 'aos.sid')
+            ->join('admin_staff as as', 'ao.bd_uid', '=', 'as.uid')
+            ->whereRaw(" date_format(fcl.date,'%Y-%m-%d') between '$startDate' and '$endDate' ")
+            ->where('belong', '<>', 'all')
+            ->whereNotIn('ao.sid', [1, 8])
+            ->whereNotIn('fcl.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
+            ->groupBy('fcl.oid')
+            ->orderBy('looknum')
+            ->limit($limitOther)
+            ->selectRaw("  ao.bd_uid as uid,as.realname as userName,aos.sid as sceneId,aos.name as sceneName,fcl.oid as oid,aoa.name as areaName,aom.name as marketName,ao.name as pointName,sum(looknum) as looknum")
             ->get();
 
         $data = [];
-        $faceCount->each(function ($item) use (&$data, $startDate, $endDate) {
-            WeekRanking::create([
-                'ar_user_id' => $item->uid,
-                'point_id' => $item->oid,
-                'looknum_average' => round($item->looknum / 7, 0),
-                'start_date' => $startDate,
-                'end_date' => $endDate
-            ]);
+        $i = 1;
+        $faceCountMarket->each(function ($item) use (&$data, $startDate, $endDate, &$i) {
             $data[] = [
-                'uid' => $item->uid,
-                'pointName' => $item->areaName . '-' . $item->marketName . '-' . $item->pointName,
-                'looknum' => round($item->looknum / 7, 0)
+                'ar_user_id' => $item->uid,
+                'ar_user_name' => $item->userName,
+                'point_id' => $item->oid,
+                'point_name' => $item->areaName . '-' . $item->marketName . '-' . $item->pointName,
+                'scene_id' => $item->sceneId,
+                'scene_name' => $item->sceneName,
+                'looknum_average' => round($item->looknum / 7, 0),
+                'ranking' => $i,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'date' => Carbon::now()->toDateString(),
             ];
+            $i++;
         });
+
+        $i = 1;
+        $faceCountCinema->each(function ($item) use (&$data, $startDate, $endDate, &$i) {
+            $data[] = [
+                'ar_user_id' => $item->uid,
+                'ar_user_name' => $item->userName,
+                'point_id' => $item->oid,
+                'point_name' => $item->areaName . '-' . $item->marketName . '-' . $item->pointName,
+                'scene_id' => $item->sceneId,
+                'scene_name' => $item->sceneName,
+                'looknum_average' => round($item->looknum / 7, 0),
+                'ranking' => $i,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'date' => Carbon::now()->toDateString(),
+            ];
+            $i++;
+        });
+
+        $i = 1;
+        $faceCount_other->each(function ($item) use (&$data, $startDate, $endDate, &$i) {
+            $data[] = [
+                'ar_user_id' => $item->uid,
+                'ar_user_name' => $item->userName,
+                'point_id' => $item->oid,
+                'point_name' => $item->areaName . '-' . $item->marketName . '-' . $item->pointName,
+                'scene_id' => $item->sceneId,
+                'scene_name' => $item->sceneName,
+                'looknum_average' => round($item->looknum / 7, 0),
+                'ranking' => $i,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'date' => Carbon::now()->toDateString(),
+            ];
+            $i++;
+        });
+        WeekRanking::query()->insert($data);
         return $data;
     }
 }

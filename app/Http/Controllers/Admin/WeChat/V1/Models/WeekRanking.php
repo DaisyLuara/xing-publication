@@ -13,12 +13,17 @@ use App\Models\Model;
 
 class WeekRanking extends Model
 {
-    protected $table = 'week_ranking';
     protected $fillable = [
         'ar_user_id',
+        'ar_user_name',
         'point_id',
+        'point_name',
+        'scene_id',
+        'scene_name',
         'looknum_average',
+        'ranking',
         'start_date',
-        'end_date'
+        'end_date',
+        'date'
     ];
 }
