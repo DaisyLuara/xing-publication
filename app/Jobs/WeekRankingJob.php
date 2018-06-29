@@ -45,7 +45,7 @@ class WeekRankingJob implements ShouldQueue
             'data' => [
                 'first' => '你好，你的上周点位排名情况如下。',
                 'keyword1' => "点位名称 【" . $data['point_name'] . "】",
-                'keyword2' => "日均围观数 【" . $data['looknum_average'] . "】" . "\r\n" . "           点位排名 【倒数第" . $data['ranking'] . "】" . "\r\n" . "            场景分类 【" . $data['scene_name'] . "】" . "\r\n" . "            时间区间 【" . $data['start_date'] . " 至 " . $data['end_date'] . "】",
+                'keyword2' => "日均围观数 【" . $data['looknum_average'] . "】" . "\r\n" . "           点位排名 【倒数第" . $data['ranking'] . "】" . "\r\n" . "           场景分类 【" . $data['scene_name'] . "】" . "\r\n" . "           时间区间 【" . $data['start_date'] . " 至 " . $data['end_date'] . "】",
                 'remark' => '再接再厉！',
             ]
         ];
