@@ -13,15 +13,18 @@ class CaptchasController extends Controller
     {
         $phone = $request->phone;
 
-        //管理员登陆 需要图形验证码
-        $query = $user->query();
+        if ($request->has('type') && $request->type == 'login') {
 
-        $user = $query->whereHas('roles', function ($q) {
-            $q->where('name', '=', 'super-admin');
-        })->where('phone', '=', $phone)->first();
+            //管理员登陆 需要图形验证码
+            $query = $user->query();
 
-        if (!$user) {
-            return $this->response->noContent();
+            $user = $query->whereHas('roles', function ($q) {
+                $q->where('name', '=', 'super-admin');
+            })->where('phone', '=', $phone)->first();
+
+            if (!$user) {
+                return $this->response->noContent();
+            }
         }
 
         $key = 'captcha-' . str_random(15);

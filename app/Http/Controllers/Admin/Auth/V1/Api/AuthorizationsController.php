@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin\Auth\V1\Api;
 
 use App\Http\Controllers\Admin\Auth\V1\Request\AuthorizationRequest;
+use App\Http\Controllers\Admin\Auth\V1\Request\SocialBindRequest;
+use Illuminate\Support\Facades\Cookie;
 use App\Http\Controllers\Controller;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Http\Request;
@@ -112,5 +114,34 @@ class AuthorizationsController extends Controller
             'token_type' => 'Bearer',
             'expires_in' => Auth::guard('api')->factory()->getTTL() * 60
         ]);
+    }
+
+    public function bind(SocialBindRequest $request, User $user)
+    {
+        //管理员登陆 使用短信+验证码登陆
+        $verifyData = \Cache::get($request->verification_key);
+
+        if (!$verifyData) {
+            return $this->response->error('验证码已失效', 422);
+        }
+
+        /**
+         * hash_equals 防止时序攻击
+         */
+        if (!hash_equals($verifyData['code'], $request->verification_code)) {
+            // 返回401
+            return $this->response->errorUnauthorized('验证码错误');
+        }
+
+        $query = $user->query();
+        $DBUser = $query->where('phone', '=', $verifyData['phone'])->first();
+        if (!$DBUser) {
+            return $this->response->error('您还未注册，请联系管理员，注册用户！');
+        }
+
+        $DBUser->update(['weixin_openid' => Cookie::get('openid')]);
+
+        return $this->response->noContent();
+
     }
 }

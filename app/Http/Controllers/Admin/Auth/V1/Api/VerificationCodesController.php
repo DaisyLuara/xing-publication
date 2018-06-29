@@ -34,7 +34,7 @@ class VerificationCodesController extends Controller
 
             try {
                 $result = $easySms->send($phone, [
-                    'content' => "【EXE颜镜店】您正在注册EXE颜镜店商城，短信验证码：{$code} 有效期为600秒，感谢您注册使用！",
+                    'content' => "【星视度】您正在使用星视度广告系统，短信验证码：{$code} 有效期为600秒，感谢您注册使用！",
                 ]);
             } catch (\GuzzleHttp\Exception\ClientException $exception) {
                 $response = $exception->getResponse();

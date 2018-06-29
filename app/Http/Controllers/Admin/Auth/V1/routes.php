@@ -12,6 +12,7 @@ $api->version('v1', [
         //第三方集成
         $api->get('login/tower', 'TowerLoginController@redirectToProvider');
         $api->get('login/tower/callback', 'TowerLoginController@handleProviderCallback');
+        $api->post('user/bind/{driver}', 'AuthorizationsController@bind');
 
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
