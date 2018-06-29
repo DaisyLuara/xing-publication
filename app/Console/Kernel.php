@@ -283,7 +283,7 @@ class Kernel extends ConsoleKernel
                 'point_id' => $item->oid,
                 'point_name' => $item->areaName . '-' . $item->marketName . '-' . $item->pointName,
                 'scene_id' => $item->sceneId,
-                'scene_name' => $item->sceneName,
+                'scene_name' => "其他场景",
                 'looknum_average' => round($item->looknum / 7, 0),
                 'ranking' => $i,
                 'start_date' => $startDate,
