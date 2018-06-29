@@ -141,7 +141,7 @@ class AuthorizationsController extends Controller
         }
 
         Log::info('bind_openid', [Cookie::get('openid')]);
-        $query->where('id', '=', $DBUser->id)->update(['weixin_openid' => Cookie::get('openid')]);
+        User::where('id', '=', $DBUser->id)->update(['weixin_openid' => Cookie::get('openid')]);
 
         return $this->response->noContent();
 
