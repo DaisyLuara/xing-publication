@@ -216,7 +216,7 @@ class Kernel extends ConsoleKernel
             ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
             ->whereRaw(" date_format(fcl.date,'%Y-%m-%d') between '$startDate' and '$endDate' ")
             ->where('belong', '<>', 'all')
-            ->where('sid', '=', 8)
+            ->whereNotIn('ao.sid', [0, 1, 3, 8, 14, 15])
             ->whereNotIn('fcl.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
             ->groupBy('fcl.oid')
             ->selectRaw("fcl.oid")
@@ -230,7 +230,7 @@ class Kernel extends ConsoleKernel
             ->join('admin_staff as as', 'ao.bd_uid', '=', 'as.uid')
             ->whereRaw(" date_format(fcl.date,'%Y-%m-%d') between '$startDate' and '$endDate' ")
             ->where('belong', '<>', 'all')
-            ->whereNotIn('ao.sid', [1, 8])
+            ->whereNotIn('ao.sid', [0, 1, 3, 8, 14, 15])
             ->whereNotIn('fcl.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
             ->groupBy('fcl.oid')
             ->orderBy('looknum')
@@ -283,7 +283,7 @@ class Kernel extends ConsoleKernel
                 'point_id' => $item->oid,
                 'point_name' => $item->areaName . '-' . $item->marketName . '-' . $item->pointName,
                 'scene_id' => $item->sceneId,
-                'scene_name' => $item->sceneName,
+                'scene_name' => "其他场景",
                 'looknum_average' => round($item->looknum / 7, 0),
                 'ranking' => $i,
                 'start_date' => $startDate,
