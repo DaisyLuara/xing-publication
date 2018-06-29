@@ -10,6 +10,7 @@ use Illuminate\Auth\Events\Login;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Auth;
+use Log;
 
 class AuthorizationsController extends Controller
 {
@@ -139,7 +140,8 @@ class AuthorizationsController extends Controller
             return $this->response->error('您还未注册，请联系管理员，注册用户！');
         }
 
-        $DBUser->update(['weixin_openid' => Cookie::get('openid')]);
+        Log::info('bind_openid', [Cookie::get('openid')]);
+        $query->where('id', '=', $DBUser->id)->update(['weixin_openid' => Cookie::get('openid')]);
 
         return $this->response->noContent();
 
