@@ -396,33 +396,67 @@ class ChartDataController extends Controller
             ->groupBy('century')
             ->selectRaw("time,century,sum(looknum) as count")
             ->get();
-        $output = [];
         foreach ($data as $item) {
             if ($item->time == "10:00") {
-                $output["10:00"][$item->century] = $item->count;
+                $count10[$item->century] = $item->count;
             }
             if ($item->time == "12:00") {
-                $output["12:00"][$item->century] = $item->count;
+                $count12[$item->century] = $item->count;
             }
             if ($item->time == "14:00") {
-                $output["14:00"][$item->century] = $item->count;
+                $count14[$item->century] = $item->count;
             }
             if ($item->time == "16:00") {
-                $output["16:00"][$item->century] = $item->count;
+                $count16[$item->century] = $item->count;
             }
             if ($item->time == "18:00") {
-                $output["18:00"][$item->century] = $item->count;
+                $count18[$item->century] = $item->count;
             }
             if ($item->time == "20:00") {
-                $output["20:00"][$item->century] = $item->count;
+                $count20[$item->century] = $item->count;
             }
             if ($item->time == "22:00") {
-                $output["22:00"][$item->century] = $item->count;
+                $count22[$item->century] = $item->count;
             }
             if ($item->time == "24:00") {
-                $output["24:00"][$item->century] = $item->count;
+                $count24[$item->century] = $item->count;
             }
         }
+        $output = [
+            [
+                'count' => $count10,
+                'display_name' => '10:00'
+            ],
+            [
+                'count' => $count12,
+                'display_name' => '12:00'
+            ],
+            [
+                'count' => $count14,
+                'display_name' => '14:00'
+            ],
+            [
+                'count' => $count16,
+                'display_name' => '16:00'
+            ],
+            [
+                'count' => $count18,
+                'display_name' => '18:00'
+            ],
+            [
+                'count' => $count20,
+                'display_name' => '20:00'
+            ],
+            [
+                'count' => $count22,
+                'display_name' => '22:00'
+            ],
+            [
+                'count' => $count24,
+                'display_name' => '24:00'
+            ],
+        ];
+
         return $output;
     }
 
