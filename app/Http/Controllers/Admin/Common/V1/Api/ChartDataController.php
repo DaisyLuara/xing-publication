@@ -425,35 +425,35 @@ class ChartDataController extends Controller
         $output = [
             [
                 'count' => $count10,
-                'display_name' => '10:00'
+                'time' => '10:00'
             ],
             [
                 'count' => $count12,
-                'display_name' => '12:00'
+                'time' => '12:00'
             ],
             [
                 'count' => $count14,
-                'display_name' => '14:00'
+                'time' => '14:00'
             ],
             [
                 'count' => $count16,
-                'display_name' => '16:00'
+                'time' => '16:00'
             ],
             [
                 'count' => $count18,
-                'display_name' => '18:00'
+                'time' => '18:00'
             ],
             [
                 'count' => $count20,
-                'display_name' => '20:00'
+                'time' => '20:00'
             ],
             [
                 'count' => $count22,
-                'display_name' => '22:00'
+                'time' => '22:00'
             ],
             [
                 'count' => $count24,
-                'display_name' => '24:00'
+                'time' => '24:00'
             ],
         ];
 
