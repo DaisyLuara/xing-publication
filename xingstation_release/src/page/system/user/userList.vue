@@ -23,7 +23,11 @@
       <el-table-column prop="name" label="姓名"></el-table-column>
       <el-table-column prop="phone" label="手机号码"></el-table-column>
       <el-table-column prop="role" label="角色"></el-table-column>
-      <el-table-column prop="bind_weixin" label="是否绑定微信"></el-table-column>
+      <el-table-column prop="bind_weixin" label="是否绑定微信">
+        <template slot-scope="scope">
+           <span>{{scope.row.bind_weixin === true ? '是' : '否'}}</span>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="created_at"
         label="创建时间"
