@@ -139,7 +139,7 @@ class AuthorizationsController extends Controller
             return $this->response->error('您还未注册，请联系管理员，注册用户！');
         }
 
-        $DBUser->update(['weixin_openid' => Cookie::get('openid')]);
+        $DBUser->update(['weixin_openid' => $request->openid]);
 
         return $this->response->noContent();
 
