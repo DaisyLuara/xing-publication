@@ -25,7 +25,7 @@
       <el-table-column prop="role" label="角色"></el-table-column>
       <el-table-column prop="bind_weixin" label="是否绑定微信">
         <template slot-scope="scope">
-           <span>{{scope.row.bind_weixin === 'true' ? '是': '否'}}</span>
+           <span>{{scope.row.bind_weixin === true ? '是' : '否'}}</span>
         </template>
       </el-table-column>
       <el-table-column
