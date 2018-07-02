@@ -26,6 +26,7 @@ class SocialBindRequest extends FormRequest
         return [
             'verification_key' => 'required|string',
             'verification_code' => 'required|string',
+            'openid' => 'required|string',
         ];
     }
 
