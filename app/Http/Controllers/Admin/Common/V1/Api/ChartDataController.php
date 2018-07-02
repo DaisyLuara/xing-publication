@@ -474,18 +474,18 @@ class ChartDataController extends Controller
 //            ->get();
 
         $output = [
-            ["month" => "2017-12", "playernum" => 12.7],
-            ["month" => "2018-01", "playernum" => 11.6],
-            ["month" => "2018-02", "playernum" => 9.8],
-            ["month" => "2018-03", "playernum" => 8.7],
-            ["month" => "2018-04", "playernum" => 12.8],
-            ["month" => "2018-05", "playernum" => 14.7],
-            ["month" => '2018-06', "playernum" => 22]
+            ["month" => "2017-12", "playernum" => 22.5],
+            ["month" => "2018-01", "playernum" => 21.7],
+            ["month" => "2018-02", "playernum" => 17.4],
+            ["month" => "2018-03", "playernum" => 16],
+            ["month" => "2018-04", "playernum" => 23.3],
+            ["month" => "2018-05", "playernum" => 26.2],
+            ["month" => '2018-06', "playernum" => 40.3]
         ];
 //        foreach ($data as $item) {
 //            $output[] = [
 //                "month" => $item->month,
-//                "playernum" => round($item->playernum * 3 / 10000, 0)
+//                "playernum" => round($item->playernum / 10000, 1)
 //            ];
 //        }
 
