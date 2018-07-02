@@ -181,7 +181,7 @@ class ChartDataController extends Controller
         $data->each(function ($item) use (&$output) {
             $output[] = [
                 'count' => $item->count,
-                'display_name' => $item->market_name . ' ' . $item->name
+                'display_name' => $item->market_name . ' ' . $item->point_name
             ];
         });
 
