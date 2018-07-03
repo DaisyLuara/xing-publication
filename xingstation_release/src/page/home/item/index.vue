@@ -15,10 +15,10 @@
       @change="dateChangeHandle">
       </el-date-picker>
     </div>
-    <!-- 围观数 -->
+    <!-- 活跃数 -->
     <div class="tendency-wrap">
-      <el-card shadow="always" v-loading="lookerFlag">
-        <highcharts :options="pointOptions" class="highchart" ref="pointChar"></highcharts>
+      <el-card shadow="always" v-loading="activeFlag">
+        <highcharts :options="activeOptions" class="highchart" ref="activeChar"></highcharts>
       </el-card>
     </div>
     <!-- 点位前10 -->
@@ -42,36 +42,12 @@
         </el-row>
       </el-card>
     </div>
-    <!-- 性别年龄表格块 -->
-    <div class="age-gender-wrap">
-      <el-row :gutter="20">
-        <!-- 性别表格 -->
-        <el-col :span="12">
-          <el-card shadow="always"  v-loading="sexFlag">
-              <highcharts :options="sexOptions" class="highchart" ref="sexPie"></highcharts>
-          </el-card>
-        </el-col>
-        <!-- 年龄表格 -->
-        <el-col :span="12">
-          <el-card shadow="always" v-loading="ageFlag">
-            <highcharts :options="ageOptions" class="highchart" ref="agePie" ></highcharts>
-          </el-card>
-        </el-col>
-      </el-row>
+    <!-- 时间段与人群特征 -->
+    <div class="ranking-wrap">
+      <el-card shadow="always" v-loading="timeFlag">
+        <highcharts :options="timeOptions" class="highchart" ref="timeChar"></highcharts> 
+      </el-card>
     </div>
-    <!-- 性别详情弹出框 -->
-    <el-dialog
-      title="性别详情"
-      :visible="dialogVisible"
-      width="50%"
-      :before-close="handleClose">
-        <el-card shadow="always" v-show="!genderDialogFlag">
-          <highcharts :options="maleOptions" class="highchart" ref="malePie" v-loading="maleFlag"></highcharts>
-        </el-card>
-        <el-card shadow="always" v-show="genderDialogFlag">
-          <highcharts :options="femaleOptions" class="highchart" ref="femalePie" v-loading="femaleFlag"></highcharts>
-        </el-card>
-    </el-dialog>
   </div>
 </template>
 <script>
@@ -161,69 +137,76 @@ export default {
           }
         ]
       },
-      pointOptions: {
+      activeOptions: {
+        chart: {
+          zoomType: 'xy'
+        },
         title: {
-          text: '围观人数',
-          style: { fontSize: '20px' },
+          text: '月活用户指数MAU',
           align: 'left'
-        },
-        xAxis: {
-          title: {
-            text: ''
-          },
-          type: 'category'
-        },
-        yAxis: [
-          {
-            title: {
-              text: null
-            }
-          }
-        ],
-        legend: {
-          enabled: false
         },
         credits: {
           enabled: false
         },
-        tooltip: {
-          shared: true,
-          formatter: function() {
-            var s = ''
-            let percent = 0
-            if (this.points[1]) {
-              percent = new Number(
-                (this.points[1].y - this.points[0].y) / this.points[0].y * 100
-              ).toFixed(2)
-              s = '<b>' + percent + '%' + '</b>'
-            }
-            for (let i = 0; i < this.points.length; i++) {
-              s += '<br/>' + this.points[i].point.name + ': ' + this.y
-            }
-            return s
+        xAxis: [
+          {
+            type: 'category',
+            crosshair: true
           }
-        },
-        plotOptions: {
-          area: {
-            dataLabels: {
-              enabled: true
+        ],
+        colors: ['#E4AB00', '#1AB1CE'],
+        yAxis: [
+          {
+            // Primary yAxis
+            labels: {
+              format: '{value} %',
+              style: {
+                color: '#1AB1CE'
+              }
             },
-            marker: {
-              enabled: true,
-              symbol: 'circle',
-              radius: 2,
-              lineWidth: 1,
-              states: {
-                hover: {
-                  enabled: true
-                }
+            title: {
+              text: '环比变量',
+              style: {
+                color: '#1AB1CE'
               }
             }
+          },
+          {
+            // Secondary yAxis
+            title: {
+              text: '月活用户数',
+              style: {
+                color: '#E4AB00'
+              }
+            },
+            labels: {
+              format: '{value}',
+              style: {
+                color: '#E4AB00'
+              }
+            },
+            opposite: true
           }
+        ],
+        tooltip: {
+          shared: true
+        },
+        legend: {
+          align: 'left',
+          verticalAlign: 'top',
+          y: 30
         },
         series: [
           {
-            name: '围观人数'
+            name: '月活用户数',
+            type: 'column',
+            yAxis: 1,
+            data: []
+          },
+          {
+            name: '环比变量',
+            type: 'spline',
+            data: []
           }
         ]
       },
@@ -232,23 +215,24 @@ export default {
           type: 'bar'
         },
         title: {
-          text: '点位前10名',
+          text: '点位人气TOP10',
           align: 'left',
           style: { fontSize: '20px' }
         },
         subtitle: {},
         colors: ['#ed1e79', '#0071bc'],
         xAxis: {
+          crosshair: true,
           title: {
             text: ''
           },
           labels: {
-            autoRotationLimit: 40,
-            formatter: function() {
-              if (typeof this.value !== 'number') {
-                return this.value.substring(0, 5) + '...'
-              }
-            }
+            autoRotationLimit: 40
+            // formatter: function() {
+            //   if (typeof this.value !== 'number') {
+            //     return this.value.substring(0, 5) + '...'
+            //   }
+            // }
           }
         },
         yAxis: {
@@ -278,6 +262,9 @@ export default {
           }
         },
         legend: {
+          align: 'left',
+          verticalAlign: 'top',
+          y: 30,
           reversed: true
         },
         credits: {
@@ -305,6 +292,7 @@ export default {
         },
         subtitle: {},
         xAxis: {
+          crosshair: true,
           type: 'category',
           title: {
             text: ''
@@ -375,6 +363,9 @@ export default {
           align: 'left'
         },
         legend: {
+          align: 'left',
+          verticalAlign: 'top',
+          y: 30,
           reversed: false
         },
         credits: {
@@ -394,214 +385,106 @@ export default {
           }
         ]
       },
-      sexOptions: {
-        chart: {
-          type: 'pie',
-          plotBackgroundColor: null,
-          plotBorderWidth: null,
-          plotShadow: false
-        },
-        tooltip: {
-          headerFormat: '{性别访问数}<br>',
-          pointFormat: '{point.name}:{point.y}'
-        },
-        colors: ['#ed1e79', '#0071bc'],
-        plotOptions: {
-          pie: {
-            minPointSize: 10,
-            zMin: 0,
-            innerSize: '20%',
-            allowPointSelect: true,
-            dataLabels: {
-              enabled: true,
-              format: '{point.name} {point.y} 占比{point.percentage:.1f}% '
-            },
-            showInLegend: true
-          }
-        },
+      timeOptions: {
         title: {
-          text: '性别趋势',
-          style: { fontSize: '20px' },
+          text: '时间段与人群特征',
           align: 'left'
         },
-        legend: {
-          align: 'right',
-          verticalAlign: 'middle',
-          layout: 'vertical',
-          symbolHeight: 12,
-          symbolWidth: 20,
-          symbolRadius: 2,
-          squareSymbol: false
-        },
-        credits: {
-          enabled: false
+        xAxis: {
+          type: 'category',
+          crosshair: true
         },
         yAxis: [
           {
+            // Primary yAxis
+            labels: {
+              format: '{value}',
+              style: {
+                color: Highcharts.getOptions().colors[1]
+              }
+            },
             title: {
-              text: ''
+              text: '年龄数量',
+              style: {
+                color: Highcharts.getOptions().colors[1]
+              }
             }
+          },
+          {
+            // Secondary yAxis
+            title: {
+              text: '女性百分比',
+              style: {
+                color: '#ED1E79'
+              }
+            },
+            labels: {
+              format: '{value}%',
+              style: {
+                color: '#ED1E79'
+              }
+            },
+            opposite: true
           }
         ],
-        series: [
-          {
-            type: 'pie',
-            name: '性别访问数'
-          }
-        ]
-      },
-      ageOptions: {
-        chart: {
-          type: 'column'
-        },
-        title: {
-          text: '年龄趋势'
-        },
-        xAxis: {},
-        yAxis: {
-          min: 0,
-          title: {
-            text: ''
-          },
-          stackLabels: {
-            enabled: true,
-            style: {
-              fontWeight: 'bold',
-              color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
-            }
-          }
-        },
-        colors: ['#ed1e79', '#0071bc'],
         legend: {
-          align: 'right',
-          x: -30,
+          align: 'left',
           verticalAlign: 'top',
-          y: 25,
-          floating: true,
-          backgroundColor:
-            (Highcharts.theme && Highcharts.theme.background2) || 'white',
-          borderColor: '#CCC',
-          borderWidth: 1,
-          shadow: false
+          y: 30
+        },
+        plotOptions: {
+          series: {
+            stacking: 'normal'
+          }
         },
         credits: {
           enabled: false
         },
-        tooltip: {
-          headerFormat: '<b>{point.x}</b><br/>',
-          pointFormat:
-            '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>'
-        },
-        plotOptions: {
-          column: {
-            stacking: 'normal',
-            dataLabels: {
-              enabled: false
-            }
-          }
-        },
         series: [
           {
-            name: '男',
+            type: 'column',
+            name: '00后',
+            color: '#8CC63F',
             data: []
           },
           {
-            name: '女',
+            type: 'column',
+            color: '#FBB03B',
+            name: '90后',
             data: []
-          }
-        ]
-      },
-      maleOptions: {
-        chart: {
-          plotBackgroundColor: null,
-          plotBorderWidth: null,
-          plotShadow: false,
-          type: 'pie'
-        },
-        colors: [
-          '#b6cef9',
-          '#3269b8',
-          '#397ad8',
-          '#4188f1',
-          '#649dfa',
-          '#92b5f9'
-        ],
-        title: {
-          text: '男生年龄比例详情'
-        },
-        tooltip: {
-          pointFormat: '{series.name}:{point.y}'
-        },
-        plotOptions: {
-          pie: {
-            allowPointSelect: true,
-            cursor: 'pointer',
-            showInLegend: true,
-            dataLabels: {
-              enabled: true,
-              format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+          },
+          {
+            type: 'column',
+            name: '80后',
+            color: '#F15A24',
+            data: []
+          },
+          {
+            type: 'column',
+            name: '70后',
+            color: '#662D91',
+            data: []
+          },
+          {
+            type: 'spline',
+            name: '女',
+            color: '#ED1E79',
+            data: [],
+            yAxis: 1,
+            marker: {
+              lineWidth: 2,
+              lineColor: Highcharts.getOptions().colors[3],
+              fillColor: '#ED1E79'
             }
           }
-        },
-        credits: {
-          enabled: false
-        },
-        series: [
-          {
-            name: '男'
-          }
         ]
       },
-      femaleOptions: {
-        chart: {
-          plotBackgroundColor: null,
-          plotBorderWidth: null,
-          plotShadow: false,
-          type: 'pie'
-        },
-        title: {
-          text: '女生年龄比例详情'
-        },
-        tooltip: {
-          pointFormat: '{series.name}: {point.y}'
-        },
-        legend: {
-          reversed: true
-        },
-        credits: {
-          enabled: false
-        },
-        colors: [
-          '#f3bdd0',
-          '#ae3e6c',
-          '#ca477b',
-          '#e3508b',
-          '#ef70a0',
-          '#f19ab9'
-        ],
-        plotOptions: {
-          pie: {
-            allowPointSelect: true,
-            cursor: 'pointer',
-            showInLegend: true,
-            dataLabels: {
-              enabled: true,
-              format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-            }
-          }
-        },
-        series: [
-          {
-            name: '女'
-          }
-        ]
-      },
+      timeFlag: false,
       userFlag: false,
       ageFlag: false,
-      sexFlag: false,
       projectFlag: false,
       pointFlag: false,
-      lookerFlag: false
+      activeFlag: false
     }
   },
   mounted() {},
@@ -616,9 +499,9 @@ export default {
       this.userFlag = true
       this.getSceneFiveChartData()
       this.getPointTenChartData()
-      this.getSexChartData()
+      this.getTimeChartData()
       this.getAgeChartData()
-      this.getLookersChartData()
+      this.getActiveChartData()
     },
     // 业态前5
     getSceneFiveChartData() {
@@ -627,12 +510,8 @@ export default {
     getPointTenChartData() {
       this.getChartData('point', '2')
     },
-    getSexChartData() {
-      this.getChartData('sex', '5')
-    },
-    getSingleGender(gender) {
-      // 单个性别
-      this.getChartData('singleGender', '5', gender)
+    getTimeChartData() {
+      this.getChartData('time', '8')
     },
     getAgeChartData(attributeId, name) {
       if (attributeId) {
@@ -642,8 +521,8 @@ export default {
         this.getChartData('age', '4')
       }
     },
-    getLookersChartData() {
-      this.getChartData('lookers', '1')
+    getActiveChartData() {
+      this.getChartData('active', '9')
     },
     getChartData(type, id, charType, name) {
       let args = {
@@ -654,10 +533,10 @@ export default {
         home_page: true
       }
       switch (id) {
-        // 围观
-        case '1':
-          args.id = '1'
-          this.lookerFlag = true
+        // 活跃度
+        case '9':
+          args.id = '9'
+          this.activeFlag = true
           break
         // 点位
         case '2':
@@ -669,6 +548,11 @@ export default {
           args.id = '3'
           this.projectFlag = true
           break
+        //时间
+        case '8':
+          args.id = '8'
+          this.timeFlag = true
+          break
         // 年龄
         case '4':
           args.id = '4'
@@ -679,19 +563,6 @@ export default {
           } else {
             //行业年龄
             this.userFlag = true
-          }
-          break
-        // 性别
-        case '5':
-          args.id = '5'
-          args.gender = charType
-          if (!charType) {
-            delete args.gender
-            this.sexFlag = true
-          } else {
-            //性别详情
-            this.maleFlag = true
-            this.femaleFlag = true
           }
           break
       }
@@ -780,34 +651,83 @@ export default {
               })
               this.userFlag = false
               break
-            case 'singleGender':
-              this.femaleFlag = true
-              this.maleFlag = true
-              let singleGenderData = []
-              let maleChart = this.$refs.malePie.chart
-              let femaleChart = this.$refs.femalePie.chart
-              this.drawSingleChart(response, singleGenderData)
-              if (charType === 'female') {
-                femaleChart.update({
-                  series: [
-                    {
-                      name: '数量',
-                      data: singleGenderData
-                    }
-                  ]
+            case 'time':
+              let femalData = []
+              let sevenData = []
+              let zeroData = []
+              let nineData = []
+              let eightData = []
+              let timeChart = this.$refs.timeChar.chart
+              if (response.length > 0) {
+                response.map((value, key) => {
+                  femalData.push({
+                    name: value.time,
+                    y: parseFloat(value.rate)
+                  })
+                  zeroData.push({
+                    name: value.time,
+                    // y: parseFloat(value.count['00'])
+                    y: parseFloat(value.count.century00)
+                  })
+                  nineData.push({
+                    name: value.time,
+                    // y: parseFloat(value.count['90'])
+                    y: parseFloat(value.count.century90)
+                  })
+                  sevenData.push({
+                    name: value.time,
+                    // y: parseFloat(value.count['70'])
+                    y: parseFloat(value.count.century70)
+                  })
+                  eightData.push({
+                    name: value.time,
+                    // y: parseFloat(value.count['80'])
+                    y: parseFloat(value.count.century80)
+                  })
                 })
-                this.femaleFlag = false
-              } else {
-                maleChart.update({
-                  series: [
-                    {
-                      name: '数量',
-                      data: singleGenderData
-                    }
-                  ]
-                })
-                this.maleFlag = false
               }
+              timeChart.update({
+                series: [
+                  {
+                  type: 'column',
+                  name: '00后',
+                  color: '#8CC63F',
+                  data: zeroData
+                },
+                {
+                  type: 'column',
+                  color: '#FBB03B',
+                  name: '90后',
+                  data: nineData
+                },
+                {
+                  type: 'column',
+                  name: '80后',
+                  color: '#F15A24',
+                  data: eightData
+                },
+                {
+                  type: 'column',
+                  name: '70后',
+                  color: '#662D91',
+                  data: sevenData
+                },
+                {
+                  type: 'spline',
+                  name: '女',
+                  color: '#ED1E79',
+                  data: femalData,
+                  yAxis: 1,
+                  marker: {
+                    lineWidth: 2,
+                    lineColor: '#ED1E79',
+                    fillColor: '#ED1E79'
+                  }
+                }
+                ]
+              })
+              this.timeFlag = false
+              console.log(response)
               break
             case 'point':
               let pointMaleData = []
@@ -837,98 +757,38 @@ export default {
               })
               this.pointFlag = false
               break
-            case 'sex':
-              let sexData = []
-              let sexChart = this.$refs.sexPie.chart
-              this.drawSingleChart(response, sexData)
-              let that = this
-              sexChart.update({
-                plotOptions: {
-                  pie: {
-                    innerSize: '20%',
-                    allowPointSelect: true,
-                    dataLabels: {
-                      enabled: true,
-                      format:
-                        '{point.name} {point.y} 占比{point.percentage:.1f}% '
-                    },
-                    showInLegend: true
-                  },
-                  series: {
-                    cursor: 'pointer',
-                    events: {
-                      click: function(event) {
-                        let name = event.point.name
-                        if (name === '女') {
-                          that.maleFlag = true
-                          that.genderDialogFlag = true
-                          that.getSingleGender('female')
-                        } else {
-                          that.femaleFlag = true
-                          that.getSingleGender('male')
-                          that.genderDialogFlag = false
-                        }
-                        that.dialogVisible = true
-                      }
-                    }
-                  }
-                },
+            case 'active':
+              let columnData = []
+              let splineData = []
+              let activeChart = this.$refs.activeChar.chart
+              if (response.length > 0) {
+                response.map((value, key) => {
+                  columnData.push({
+                    name: value.month,
+                    y: parseFloat(value.playernum)
+                  })
+                  splineData.push({
+                    name: value.month,
+                    y: parseFloat(value.rate)
+                  })
+                })
+              }
+              activeChart.update({
                 series: [
                   {
-                    data: sexData
-                  }
-                ]
-              })
-              this.sexFlag = false
-              break
-            case 'age':
-              let ageMaleData = []
-              let ageFemaleData = []
-              let ageCategories = []
-              let ageChart = this.$refs.agePie.chart
-              this.drawGenderChart(
-                response,
-                ageMaleData,
-                ageFemaleData,
-                ageCategories
-              )
-              ageChart.update({
-                xAxis: {
-                  categories: ageCategories
-                },
-                series: [
-                  {
-                    name: '女',
-                    data: ageFemaleData
+                    name: '月活用户数',
+                    type: 'column',
+                    yAxis: 1,
+                    data: columnData
                   },
                   {
-                    name: '男',
-                    data: ageMaleData
+                    name: '环比变量',
+                    type: 'spline',
+                    data: splineData
                   }
                 ]
               })
-              this.ageFlag = false
-              break
-            case 'lookers':
-              let lookersData = []
-              let lookerChart = this.$refs.pointChar.chart
-              this.drawSingleChart(response, lookersData)
-              lookerChart.update({
-                series: [
-                  {
-                    type: 'area',
-                    lineWidth: 1,
-                    color: '#649dfa',
-                    fillOpacity: 0.5,
-                    zIndex: 0,
-                    marker: {
-                      enabled: true
-                    },
-                    data: lookersData
-                  }
-                ]
-              })
-              this.lookerFlag = false
+              this.activeFlag = false
               break
           }
         })
@@ -940,14 +800,14 @@ export default {
             case 'point':
               this.pointFlag = false
               break
-            case 'sex':
-              this.sexFlag = false
+            case 'time':
+              this.timeFlag = false
               break
-            case 'age':
-              this.ageFlag = false
+            case 'user':
+              this.userFlag = false
               break
-            case 'lookers':
-              this.lookerFlag = false
+            case 'active':
+              this.activeFlag = false
               break
           }
         })
