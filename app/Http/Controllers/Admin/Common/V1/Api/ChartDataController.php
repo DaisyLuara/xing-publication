@@ -398,28 +398,28 @@ class ChartDataController extends Controller
             ->get();
         foreach ($data as $item) {
             if ($item->time == "10:00") {
-                $count10[$item->century] = $item->count;
+                $count[0][$item->century] = $item->count;
             }
             if ($item->time == "12:00") {
-                $count12[$item->century] = $item->count;
+                $count[1][$item->century] = $item->count;
             }
             if ($item->time == "14:00") {
-                $count14[$item->century] = $item->count;
+                $count[2][$item->century] = $item->count;
             }
             if ($item->time == "16:00") {
-                $count16[$item->century] = $item->count;
+                $count[3][$item->century] = $item->count;
             }
             if ($item->time == "18:00") {
-                $count18[$item->century] = $item->count;
+                $count[4][$item->century] = $item->count;
             }
             if ($item->time == "20:00") {
-                $count20[$item->century] = $item->count;
+                $count[5][$item->century] = $item->count;
             }
             if ($item->time == "22:00") {
-                $count22[$item->century] = $item->count;
+                $count[6][$item->century] = $item->count;
             }
             if ($item->time == "24:00") {
-                $count24[$item->century] = $item->count;
+                $count[7][$item->century] = $item->count;
             }
         }
 
@@ -440,49 +440,14 @@ class ChartDataController extends Controller
         for ($i = 0; $i < $girlNum->count(); $i++) {
             $rate[] = round($girlNum[$i]->count / $totalNum[$i]->count, 3) * 100 . '%';
         }
-        $output = [
-            [
-                'count' => $count10,
-                'rate' => $rate[0],
-                'time' => '10:00'
-            ],
-            [
-                'count' => $count12,
-                'rate' => $rate[1],
-                'time' => '12:00'
-            ],
-            [
-                'count' => $count14,
-                'rate' => $rate[2],
-                'time' => '14:00'
-            ],
-            [
-                'count' => $count16,
-                'rate' => $rate[3],
-                'time' => '16:00'
-            ],
-            [
-                'count' => $count18,
-                'rate' => $rate[4],
-                'time' => '18:00'
-            ],
-            [
-                'count' => $count20,
-                'rate' => $rate[5],
-                'time' => '20:00'
-            ],
-            [
-                'count' => $count22,
-                'rate' => $rate[6],
-                'time' => '22:00'
-            ],
-            [
-                'count' => $count24,
-                'rate' => $rate[7],
-                'time' => '24:00'
-            ],
-        ];
-
+        $times = ['10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', '24:00'];
+        for ($i = 0; $i < count($times); $i++) {
+            $output[] = [
+                'count' => $count[$i],
+                'rate' => $rate[$i],
+                'time' => $times[$i]
+            ];
+        }
         return $output;
     }
 
