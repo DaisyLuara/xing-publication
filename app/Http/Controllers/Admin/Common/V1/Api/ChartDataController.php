@@ -396,30 +396,45 @@ class ChartDataController extends Controller
             ->groupBy('century')
             ->selectRaw("time,century,sum(looknum) as count")
             ->get();
+        $count = [];
+        for ($i = 0; $i < 8; $i++) {
+            $count[$i] = [
+                'century00' => 0,
+                'century90' => 0,
+                'century80' => 0,
+                'century70' => 0,
+            ];
+        }
+        $mapping = [
+            '00' => 'century00',
+            '90' => 'century90',
+            '80' => 'century80',
+            '70' => 'century70'
+        ];
         foreach ($data as $item) {
             if ($item->time == "10:00") {
-                $count[0][$item->century] = $item->count;
+                $count[0][$mapping[$item->century]] = $item->count;
             }
             if ($item->time == "12:00") {
-                $count[1][$item->century] = $item->count;
+                $count[1][$mapping[$item->century]] = $item->count;
             }
             if ($item->time == "14:00") {
-                $count[2][$item->century] = $item->count;
+                $count[2][$mapping[$item->century]] = $item->count;
             }
             if ($item->time == "16:00") {
-                $count[3][$item->century] = $item->count;
+                $count[3][$mapping[$item->century]] = $item->count;
             }
             if ($item->time == "18:00") {
-                $count[4][$item->century] = $item->count;
+                $count[4][$mapping[$item->century]] = $item->count;
             }
             if ($item->time == "20:00") {
-                $count[5][$item->century] = $item->count;
+                $count[5][$mapping[$item->century]] = $item->count;
             }
             if ($item->time == "22:00") {
-                $count[6][$item->century] = $item->count;
+                $count[6][$mapping[$item->century]] = $item->count;
             }
             if ($item->time == "24:00") {
-                $count[7][$item->century] = $item->count;
+                $count[7][$mapping[$item->century]] = $item->count;
             }
         }
 
@@ -434,17 +449,31 @@ class ChartDataController extends Controller
             ->whereRaw("date_format(date,'%Y-%m-%d') between '$startDate' and '$endDate'")
             ->where('century', '<>', '0')
             ->groupBy('time')
-            ->selectRaw('sum(looknum) as count')
+            ->selectRaw('time,sum(looknum) as count')
             ->get();
-        $rate = [];
-        for ($i = 0; $i < $girlNum->count(); $i++) {
-            $rate[] = round($girlNum[$i]->count / $totalNum[$i]->count, 3) * 100 . '%';
+        $rate = [
+            '10:00' => 0,
+            '12:00' => 0,
+            '14:00' => 0,
+            '16:00' => 0,
+            '18:00' => 0,
+            '20:00' => 0,
+            '22:00' => 0,
+            '24:00' => 0,
+        ];
+        $total = [];
+        foreach ($totalNum as $item) {
+            $total[$item->time] = $item->count;
+        }
+        foreach ($girlNum as $item) {
+            $rate[$item->time] = round($item->count / $total[$item->time], 3) * 100 . '%';
         }
         $times = ['10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', '24:00'];
+        $output = [];
         for ($i = 0; $i < count($times); $i++) {
             $output[] = [
                 'count' => $count[$i],
-                'rate' => $rate[$i],
+                'rate' => $rate[$times[$i]],
                 'time' => $times[$i]
             ];
         }
