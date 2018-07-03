@@ -422,37 +422,63 @@ class ChartDataController extends Controller
                 $count24[$item->century] = $item->count;
             }
         }
+
+        $girlNum = DB::connection('ar')->table('face_collect_character')
+            ->whereRaw("date_format(date,'%Y-%m-%d') between '$startDate' and '$endDate'")
+            ->where('century', '<>', '0')
+            ->groupBy('time')
+            ->where('gender', '=', 'Female')
+            ->selectRaw('time,sum(looknum) as count')
+            ->get();
+        $totalNum = DB::connection('ar')->table('face_collect_character')
+            ->whereRaw("date_format(date,'%Y-%m-%d') between '$startDate' and '$endDate'")
+            ->where('century', '<>', '0')
+            ->groupBy('time')
+            ->selectRaw('sum(looknum) as count')
+            ->get();
+        $rate = [];
+        for ($i = 0; $i < $girlNum->count(); $i++) {
+            $rate[] = round($girlNum[$i]->count / $totalNum[$i]->count, 3) * 100 . '%';
+        }
         $output = [
             [
                 'count' => $count10,
+                'rate' => $rate[0],
                 'time' => '10:00'
             ],
             [
                 'count' => $count12,
+                'rate' => $rate[1],
                 'time' => '12:00'
             ],
             [
                 'count' => $count14,
+                'rate' => $rate[2],
                 'time' => '14:00'
             ],
             [
                 'count' => $count16,
+                'rate' => $rate[3],
                 'time' => '16:00'
             ],
             [
                 'count' => $count18,
+                'rate' => $rate[4],
                 'time' => '18:00'
             ],
             [
                 'count' => $count20,
+                'rate' => $rate[5],
                 'time' => '20:00'
             ],
             [
                 'count' => $count22,
+                'rate' => $rate[6],
                 'time' => '22:00'
             ],
             [
                 'count' => $count24,
+                'rate' => $rate[7],
                 'time' => '24:00'
             ],
         ];
