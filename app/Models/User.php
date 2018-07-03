@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Traits\CausesActivity;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -16,6 +17,7 @@ class User extends Authenticatable implements JWTSubject
 
     use HasRoles;
     use CausesActivity;
+    use SoftDeletes;
 
     use Notifiable {
         notify as protected laravelNotify;
