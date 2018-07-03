@@ -64,29 +64,53 @@ class Kernel extends ConsoleKernel
 
         //月活玩家清洗
         $schedule->call(function () {
-            $date = Carbon::now()->addMonth(-1)->format('Y-m');
-            $sql = DB::connection('ar')->table('face_people_time')
-                ->groupBy(DB::raw('oid'))
-                ->groupBy(DB::raw('belong'))
-                ->groupBy(DB::raw('fpid'))
-                ->groupBy(DB::raw('month'))
-                ->whereRaw("date_format(date,'%Y-%m') = '$date' and playtime > 7000")
-                ->selectRaw("oid,belong,date_format(date,'%Y-%m') as month");
-            $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
-                ->groupBy(DB::raw('a.oid'))
-                ->groupBy(DB::raw('a.belong'))
-                ->selectRaw("a.oid as oid,a.belong as belong,count(*) as playernum")
-                ->get();
+            $startDate = Carbon::now()->addMonth(-1)->toDateString();
+            $endDate = Carbon::now()->addDay(-1)->toDateString();
+            $startClientDate = strtotime($startDate . ' 00:00:00') * 1000;
+            $endClientDate = strtotime($endDate . ' 23:59:59') * 1000;
 
+            $sql = DB::connection('ar')->table('face_people_time')
+                ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and playtime > 7000 and oid not in (16, 19, 30, 31, 335, 334, 329, 328, 327)")
+                ->groupBy(DB::raw('fpid * 10000 + oid'))
+                ->selectRaw("*");
+            $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
+                ->selectRaw("count(*) as playernum")
+                ->first();
             $date = Carbon::now()->addMonth(-1)->format('Y-m-d');
+            $count = [
+                'playernum' => $data->playernum,
+                'date' => $date
+            ];
+            DB::connection('ar')->table('face_people_time_mau')
+                ->insert($count);
+        })->monthlyOn(1, '8:00');
+
+        //按点位月活玩家
+        $schedule->call(function () {
+            $startDate = Carbon::now()->addMonth(-1)->toDateString();
+            $endDate = Carbon::now()->addDay(-1)->toDateString();
+            $startClientDate = strtotime($startDate . ' 00:00:00') * 1000;
+            $endClientDate = strtotime($endDate . ' 23:59:59') * 1000;
+
+            $sql = DB::connection('ar')->table('face_people_time')
+                ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and playtime > 7000 and oid not in (16, 19, 30, 31, 335, 334, 329, 328, 327)")
+                ->groupBy(DB::raw('oid,fpid * 10000 + oid'))
+                ->selectRaw("*");
+            $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
+                ->selectRaw("oid,count(*) as playernum")
+                ->groupBy('oid')
+                ->get();
+            $date = Carbon::now()->addMonth(-1)->format('Y-m-d');
+
             $count = [];
             foreach ($data as $item) {
-                $item = json_decode(json_encode($item), true);
-                $item['date'] = $date;
-                $count[] = $item;
+                $count[] = [
+                    'playernum' => $item->playernum,
+                    'oid' => $item->oid,
+                    'date' => $date
+                ];
             }
-
-            DB::connection('ar')->table('face_people_time_mau')
+            DB::connection('ar')->table('face_people_time_mau_point')
                 ->insert($count);
         })->monthlyOn(1, '8:00');
 

@@ -469,8 +469,7 @@ class ChartDataController extends Controller
     public function getActivePlayerByMonth(ChartDataRequest $request)
     {
 //        $data = DB::connection('ar')->table('face_people_time_mau')
-//            ->groupBy("month")
-//            ->selectRaw("sum(playernum) as playernum,date_format(date,'%Y-%m') as month")
+//            ->selectRaw("playernum,date_format(date,'%Y-%m') as month")
 //            ->get();
 
         $output = [
