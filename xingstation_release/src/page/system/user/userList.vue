@@ -38,7 +38,7 @@
         label="修改时间"
         >
       </el-table-column>
-      <el-table-column label="操作" width="100">
+      <el-table-column label="操作" width="150">
         <template slot-scope="scope">
           <el-button size="small" @click="linkToEdit(scope.row)" type="warning">修改</el-button>
           <el-button size="small" @click="deleteUsers(scope.row)" type="danger">删除</el-button>
