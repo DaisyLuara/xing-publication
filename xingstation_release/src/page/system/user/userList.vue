@@ -137,7 +137,6 @@ export default {
       }
     },
     deleteUsers(users) {
-      console.log(users)
       let id = users.id
       MessageBox.confirm('确认删除选中用户?', '提示', {
         confirmButtonText: '确定',
@@ -150,7 +149,6 @@ export default {
           user
             .deleteUser(this, id)
             .then(response => {
-              console.log(response)
               this.setting.loading = false
               this.$message({
                 type: 'success',
