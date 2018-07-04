@@ -38,9 +38,10 @@
         label="修改时间"
         >
       </el-table-column>
-      <el-table-column label="操作" width="100">
+      <el-table-column label="操作" width="150">
         <template slot-scope="scope">
           <el-button size="small" @click="linkToEdit(scope.row)" type="warning">修改</el-button>
+          <el-button size="small" @click="deleteUsers(scope.row)" type="danger">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -136,43 +137,34 @@ export default {
       }
     },
     deleteUsers(users) {
-      let submitDelete = []
-      if (users.id) {
-        submitDelete.push(users.id)
-      } else {
-        for (let i = 0, sL = users.length; i < sL; i++) {
-          submitDelete.push(users[i].id)
-        }
-      }
-      if (submitDelete.length < 1) {
-        this.$message.error('请先选择一个要删除的用户')
-      } else {
-        MessageBox.confirm('确认删除选中用户?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
+      let id = users.id
+      MessageBox.confirm('确认删除选中用户?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.setting.loadingText = '删除中'
+          this.setting.loading = true
+          user
+            .deleteUser(this, id)
+            .then(response => {
+              this.setting.loading = false
+              this.$message({
+                type: 'success',
+                message: '删除成功！'
+              })
+              this.pagination.currentPage = 1
+              this.getUserList()
+            })
+            .catch(error => {
+              this.setting.loading = false
+              console.log(error)
+            })
         })
-          .then(() => {
-            this.setting.loadingText = '删除中'
-            this.setting.loading = true
-            user
-              .deleteUsers(this, { ids: submitDelete })
-              .then(response => {
-                this.setting.loading = false
-                this.$message({
-                  type: 'success',
-                  message: '删除成功！'
-                })
-
-                this.getUserList()
-              })
-              .catch(error => {
-                this.setting.loading = false
-                console.log(error)
-              })
-          })
-          .catch(() => {})
-      }
+        .catch(e => {
+          console.log(e)
+        })
     },
     changePage(currentPage) {
       this.pagination.currentPage = currentPage
