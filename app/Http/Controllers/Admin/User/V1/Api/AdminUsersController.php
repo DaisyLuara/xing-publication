@@ -116,4 +116,17 @@ class AdminUsersController extends Controller
             }
         })->where('id', '=', $user_id)->first();
     }
+
+    public function destroy($user_id)
+    {
+        $user = User::findOrFail($user_id);
+        $currentUser = $this->user();
+
+        if ($currentUser->id == $user_id) {
+            abort(403);
+        }
+
+        $user->delete();
+        return $this->response->noContent();
+    }
 }
