@@ -58,50 +58,42 @@
 </div>
 </template>
 <script>
+
 import user from 'service/user'
 import auth from 'service/auth'
-import {
-  Button,
-  Input,
-  Table,
-  TableColumn,
-  Pagination,
-  Form,
-  FormItem,
-  MessageBox
-} from 'element-ui'
+import { Button, Input, Table, TableColumn, Pagination, Form, FormItem, MessageBox } from 'element-ui'
 
 export default {
   name: 'userList',
-  data() {
+  data () {
     return {
       userList: [],
       setting: {
         loading: false,
-        loadingText: '拼命加载中'
+        loadingText: "拼命加载中"
       },
       filters: {
-        phone: ''
+        phone: ""
       },
       pagination: {
         total: 100,
         pageSize: 10,
         currentPage: 1
-      }
+      },
     }
   },
-  created() {
+  created () {
     this.getUserList()
   },
   methods: {
-    linkToEdit(currentUser) {
+    linkToEdit (currentUser) {
       this.$router.push({
         path: '/system/user/edit/' + currentUser.id
       })
     },
-    getUserList() {
-      if (this.setting.loading == true) {
-        return false
+    getUserList () {
+      if(this.setting.loading == true){
+        return false;
       }
       let pageNum = this.pagination.currentPage
       let args = {
@@ -110,24 +102,21 @@ export default {
         phone: this.filters.phone,
         name: this.filters.name
       }
-      this.setting.loadingText = '拼命加载中'
-      this.setting.loading = true
-      return user
-        .getUserList(this, args)
-        .then(response => {
-          this.setting.loading = false
-          this.userList = response.data
-          this.pagination.total = response.meta.pagination.total
-          this.handleRole()
-        })
-        .catch(error => {
-          this.setting.loading = false
-        })
+      this.setting.loadingText = "拼命加载中"
+      this.setting.loading = true;
+      return user.getUserList(this, args).then(response => {
+        this.setting.loading = false;
+        this.userList = response.data;
+        this.pagination.total = response.meta.pagination.total;
+        this.handleRole();
+      }).catch(error => {
+        this.setting.loading = false;
+      })
     },
     handleRole() {
-      if (this.userList.length != 0) {
+      if(this.userList.length != 0) {
         let userListLen = this.userList.length
-        for (let i = 0; i < userListLen; i++) {
+        for(let i = 0; i < userListLen; i++) {
           let thisUser = this.userList[i]
           let thisRoles = thisUser.roles
           let rolesNameCombined = thisRoles.data[0].display_name
@@ -136,88 +125,78 @@ export default {
       }
     },
     deleteUsers(users) {
-      let submitDelete = []
-      if (users.id) {
-        submitDelete.push(users.id)
-      } else {
-        for (let i = 0, sL = users.length; i < sL; i++) {
-          submitDelete.push(users[i].id)
-        }
-      }
-      if (submitDelete.length < 1) {
-        this.$message.error('请先选择一个要删除的用户')
-      } else {
-        MessageBox.confirm('确认删除选中用户?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
+      let id = users.id
+      MessageBox.confirm('确认删除选中用户?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.setting.loadingText = '删除中'
+          this.setting.loading = true
+          user
+            .deleteUser(this, id)
+            .then(response => {
+              this.setting.loading = false
+              this.$message({
+                type: 'success',
+                message: '删除成功！'
+              })
+              this.getUserList()
+            })
+            .catch(error => {
+              this.setting.loading = false
+              console.log(error)
+            })
         })
-          .then(() => {
-            this.setting.loadingText = '删除中'
-            this.setting.loading = true
-            user
-              .deleteUsers(this, { ids: submitDelete })
-              .then(response => {
-                this.setting.loading = false
-                this.$message({
-                  type: 'success',
-                  message: '删除成功！'
-                })
-
-                this.getUserList()
-              })
-              .catch(error => {
-                this.setting.loading = false
-                console.log(error)
-              })
-          })
-          .catch(() => {})
-      }
+        .catch(e => {
+          console.log(e)
+        })
     },
-    changePage(currentPage) {
+    changePage (currentPage) {
       this.pagination.currentPage = currentPage
       this.getUserList()
     },
-    search() {
-      this.pagination.currentPage = 1
-      this.getUserList()
+    search (){
+      this.pagination.currentPage = 1;
+      this.getUserList();
     },
-    resetSearch() {
+    resetSearch () {
       this.filters.phone = ''
       this.filters.name = ''
-      this.pagination.currentPage = 1
-      this.getUserList()
+      this.pagination.currentPage = 1;
+      this.getUserList();
     },
-    linkToAddUser() {
+    linkToAddUser () {
       this.$router.push({
         path: '/system/user/add'
       })
     }
   },
   components: {
-    'el-table': Table,
-    'el-table-column': TableColumn,
-    'el-button': Button,
-    'el-input': Input,
-    'el-pagination': Pagination,
-    'el-form': Form,
-    'el-form-item': FormItem
+    "el-table": Table,
+    "el-table-column":  TableColumn,
+    "el-button": Button,
+    "el-input": Input,
+    "el-pagination": Pagination,
+    "el-form": Form,
+    "el-form-item": FormItem
   }
 }
 </script>
 
 <style lang="less" scoped>
-.user-list-wrap {
-  h1 {
+.user-list-wrap{
+  h1{
     text-align: center;
   }
 }
-.user-list-content {
-  .photo_img {
+.user-list-content{
+  .photo_img{
     width: 100%;
     padding: 5px;
   }
-  .actions-wrap {
+  .actions-wrap{
     margin-top: 5px;
     display: flex;
     flex-direction: row;
@@ -229,7 +208,7 @@ export default {
       font-size: 14px;
     }
   }
-  .pagination-wrap {
+  .pagination-wrap{
     margin: 10px auto;
     text-align: right;
   }
