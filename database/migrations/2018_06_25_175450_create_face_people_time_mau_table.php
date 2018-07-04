@@ -16,7 +16,7 @@ class CreateFacePeopleTimeMauTable extends Migration
         if (!Schema::connection('ar')->hasTable('face_people_time_mau')) {
             Schema::connection('ar')->create('face_people_time_mau', function (Blueprint $table) {
                 $table->increments('id');
-                $table->integer('playernum');
+                $table->integer('active_player');
                 $table->timestamp('date')->nullable();
             });
         }

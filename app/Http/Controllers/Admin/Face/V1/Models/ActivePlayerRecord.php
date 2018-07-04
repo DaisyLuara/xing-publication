@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: yangqiang
- * Date: 2018/6/25
- * Time: 15:00
+ * Date: 2018/7/4
+ * Time: 15:58
  */
 
 namespace App\Http\Controllers\Admin\Face\V1\Models;
@@ -11,7 +11,9 @@ namespace App\Http\Controllers\Admin\Face\V1\Models;
 
 use App\Models\Model;
 
-class FacePeopleTimeRecord extends Model
+class ActivePlayerRecord extends Model
 {
-    protected $fillable = ['max_id'];
+    protected $fillable = [
+        'date'
+    ];
 }

@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Http\Controllers\Admin\Face\V1\Models\ActivePlayerRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceCollectRecord;
 use App\Http\Controllers\Admin\WeChat\V1\Models\WeekRanking;
 use App\Jobs\WeekRankingJob;
@@ -36,31 +37,39 @@ class Kernel extends ConsoleKernel
             }
         })->weekly()->fridays()->at('14:20');
 
-        //玩家互动时间清洗
+
+        //节目点位活跃玩家清洗
         $schedule->call(function () {
-            $max_id = FacePeopleTimeRecord::query()->max('max_id');
-            $data = DB::connection('ar')->table('face_people_time')
-                ->where('id', '>', $max_id)
-                ->groupBy('oid')
-                ->groupBy('belong')
-                ->groupBy(DB::raw("date_format(date,'%Y-%m-%d')"))
-                ->orderBy('date')
-                ->orderBy('oid')
-                ->selectRaw("oid,belong,count(*) as playernum,sum(playtime) as playtime,date_format(date,'%Y-%m-%d') as date")
-                ->get();
-            $count = [];
-            foreach ($data as $item) {
-                $item = json_decode(json_encode($item), true);
-                $count[] = $item;
+            $date = ActivePlayerRecord::query()->max('date');
+            $date = (new Carbon($date))->format('Y-m-d');
+            $currentDate = Carbon::now()->toDateString();
+            while ($date < $currentDate) {
+                $startClientDate = strtotime($date . ' 00:00:00') * 1000;
+                $endClientDate = strtotime($date . ' 23:59:59') * 1000;
+                $sql = DB::connection('ar')->table('face_people_time')
+                    ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and fpid<>0 and playtime>7000")
+                    ->groupBy(DB::raw('oid,belong,fpid * 10000 + oid'))
+                    ->selectRaw("oid,belong,fpid");
+                $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
+                    ->selectRaw("oid,belong,count(*) as active_player")
+                    ->groupBy(DB::raw('oid,belong'))
+                    ->get();
+
+                $count = [];
+                foreach ($data as $item) {
+                    $count[] = [
+                        'oid' => $item->oid,
+                        'belong' => $item->belong,
+                        'active_player' => $item->active_player,
+                        'date' => $date
+                    ];
+                }
+                DB::connection('ar')->table('face_people_time_active_player')
+                    ->insert($count);
+                $date = (new Carbon($date))->addDay(1)->toDateString();
             }
-            DB::connection('ar')->table('face_people_time_count')
-                ->insert($count);
-
-            $max_id = DB::connection('ar')->table('face_people_time')
-                ->max('id');
-
-            FacePeopleTimeRecord::create(['max_id' => $max_id]);
-        })->daily()->at('8:00');
+            ActivePlayerRecord::create(['date' => $currentDate]);
+        })->daily()->at('17:44');
 
         //月活玩家清洗
         $schedule->call(function () {
@@ -78,39 +87,40 @@ class Kernel extends ConsoleKernel
                 ->first();
             $date = Carbon::now()->addMonth(-1)->format('Y-m-d');
             $count = [
-                'playernum' => $data->playernum,
+                'active_player' => $data->playernum,
                 'date' => $date
             ];
             DB::connection('ar')->table('face_people_time_mau')
                 ->insert($count);
         })->monthlyOn(1, '8:00');
 
-        //按点位月活玩家
+        //按商场去重月活玩家
         $schedule->call(function () {
             $startDate = Carbon::now()->addMonth(-1)->toDateString();
             $endDate = Carbon::now()->addDay(-1)->toDateString();
             $startClientDate = strtotime($startDate . ' 00:00:00') * 1000;
             $endClientDate = strtotime($endDate . ' 23:59:59') * 1000;
 
-            $sql = DB::connection('ar')->table('face_people_time')
-                ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and playtime > 7000 and oid not in (16, 19, 30, 31, 335, 334, 329, 328, 327)")
-                ->groupBy(DB::raw('oid,fpid * 10000 + oid'))
-                ->selectRaw("*");
+            $sql = DB::connection('ar')->table('face_people_time as fpt')
+                ->join('avr_official as ao', 'fpt.oid', '=', 'ao.oid')
+                ->whereRaw("fpt.clientdate between '$startClientDate' and '$endClientDate' and playtime > 7000 and fpt.oid not in (16, 19, 30, 31, 335, 334, 329, 328, 327)")
+                ->groupBy(DB::raw('ao.marketid,fpid * 10000 + fpt.oid'))
+                ->selectRaw("marketid,fpid");
             $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
-                ->selectRaw("oid,count(*) as playernum")
-                ->groupBy('oid')
+                ->selectRaw("marketid,count(*) as playernum")
+                ->groupBy('marketid')
                 ->get();
             $date = Carbon::now()->addMonth(-1)->format('Y-m-d');
 
             $count = [];
             foreach ($data as $item) {
                 $count[] = [
-                    'playernum' => $item->playernum,
-                    'oid' => $item->oid,
+                    'active_player' => $item->playernum,
+                    'marketid' => $item->marketid,
                     'date' => $date
                 ];
             }
-            DB::connection('ar')->table('face_people_time_mau_point')
+            DB::connection('ar')->table('face_people_time_mau_market')
                 ->insert($count);
         })->monthlyOn(1, '8:00');
 

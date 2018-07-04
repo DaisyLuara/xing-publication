@@ -3,9 +3,9 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use App\Http\Controllers\Admin\Face\V1\Models\FacePeopleTimeRecord;
+use App\Http\Controllers\Admin\Face\V1\Models\ActivePlayerRecord;
 
-class CreateFacePeopleTimeRecordTable extends Migration
+class CreateActivePlayerRecordTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,12 +14,12 @@ class CreateFacePeopleTimeRecordTable extends Migration
      */
     public function up()
     {
-        Schema::create('face_people_time_records', function (Blueprint $table) {
+        Schema::create('active_player_records', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('max_id');
+            $table->timestamp('date')->nullable();
             $table->timestamps();
         });
-        FacePeopleTimeRecord::create(['max_id' => 0]);
+        ActivePlayerRecord::create(['date' => '2018-06-13']);
     }
 
     /**
@@ -29,6 +29,6 @@ class CreateFacePeopleTimeRecordTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('face_people_time_records');
+        Schema::dropIfExists('active_player_records');
     }
 }

@@ -325,8 +325,6 @@ class ChartDataController extends Controller
         //大屏活跃玩家
         $startDate = $request->start_date;
         $endDate = $request->end_date;
-        $startClientDate = strtotime($startDate . ' 00:00:00') * 1000;
-        $endClientDate = strtotime($endDate . ' 23:59:59') * 1000;
         $sceneId = $request->scene_id;
         $areaId = $request->area_id;
         $marketId = $request->market_id;
@@ -334,11 +332,9 @@ class ChartDataController extends Controller
         $alias = $request->alias;
         $user = $this->user();
         $arUserID = $request->home_page ? 0 : getArUserID($user, $request);
-        $sql = DB::connection('ar')->table('face_people_time as fpt')
-            ->join('avr_official as ao', 'fpt.oid', '=', "ao.oid")
-            ->join('avr_official_market as aom', 'aom.marketid', '=', 'ao.marketid')
-            ->join('avr_official_area as aoa', 'aoa.areaid', '=', 'ao.areaid')
-            ->join('ar_product_list as apl', 'fpt.belong', '=', 'apl.versionname')
+        $activePlayer = DB::connection('ar')->table('face_people_time_active_player as fpta')
+            ->leftjoin('avr_official as ao', 'fpta.oid', '=', "ao.oid")
+            ->leftjoin('ar_product_list as apl', 'fpta.belong', '=', 'apl.versionname')
             ->when($sceneId, function ($q) use ($sceneId) {
                 return $q->whereRaw("ao.sid = '$sceneId'");
             })
@@ -357,16 +353,12 @@ class ChartDataController extends Controller
             ->when($arUserID, function ($q) use ($arUserID) {
                 return $q->whereRaw("ao.bd_uid = '$arUserID'");
             })
-            ->whereRaw("fpt . clientdate between '$startClientDate' and '$endClientDate' and fpid <> 0 and playtime > 7000 and fpt . oid not in(16, 19, 30, 31, 335, 334, 329, 328, 327)")
-            ->groupBy(DB::raw("fpt . fpid * 100 + fpt . oid,date_format(fpt . date, '%Y-%m-%d')"))
-            ->selectRaw("fpid,fpt . date");
-
-        $data1 = DB::connection('ar')->table(DB::raw("({$sql->toSql()})  a"))
-            ->selectRaw('count(*) as player7num')
+            ->whereRaw("date_format(fpta.date,'%Y-%m-%d') between '$startDate' and '$endDate' and fpta.oid not in (16, 19, 30, 31, 335, 334, 329, 328, 327)")
+            ->selectRaw("sum(active_player) as player7num")
             ->first();
         $output = [];
         $output[] = [
-            'count' => $data1->player7num,
+            'count' => $activePlayer->player7num,
             'display_name' => $this->totalMapping['player7num'],
             'index' => 'player7num'
         ];
@@ -439,6 +431,7 @@ class ChartDataController extends Controller
         $data = DB::connection('ar')->table('face_collect_character')
             ->whereRaw("date_format(date, '%Y-%m-%d') between '$startDate' and '$endDate'")
             ->where('century', '<>', '0')
+            ->whereNotIn('oid', ['16', '19', '30', '31', '335', '334', '329', '328', '327'])
             ->groupBy('time')
             ->groupBy('century')
             ->selectRaw("time,century,sum(looknum) as count")
@@ -488,12 +481,14 @@ class ChartDataController extends Controller
         $girlNum = DB::connection('ar')->table('face_collect_character')
             ->whereRaw("date_format(date, '%Y-%m-%d') between '$startDate' and '$endDate'")
             ->where('century', '<>', '0')
+            ->whereNotIn('oid', ['16', '19', '30', '31', '335', '334', '329', '328', '327'])
             ->groupBy('time')
             ->where('gender', '=', 'Female')
             ->selectRaw('time,sum(looknum) as count')
             ->get();
         $totalNum = DB::connection('ar')->table('face_collect_character')
             ->whereRaw("date_format(date, '%Y-%m-%d') between '$startDate' and '$endDate'")
+            ->whereNotIn('oid', ['16', '19', '30', '31', '335', '334', '329', '328', '327'])
             ->where('century', '<>', '0')
             ->groupBy('time')
             ->selectRaw('time,sum(looknum) as count')
@@ -535,24 +530,46 @@ class ChartDataController extends Controller
      */
     public function getActivePlayerByMonth(ChartDataRequest $request)
     {
-        $data = DB::connection('ar')->table('face_people_time_mau')
-            ->selectRaw("playernum,date_format(date, '%Y-%m') as month")
-            ->orderBy('month')
+        $startDate = $request->start_date;
+        $endDate = $request->end_date;
+        $startMonth = (new Carbon($startDate))->format('Y-m');
+        $endMonth = (new Carbon($endDate))->format('Y-m');
+        $data = DB::connection('ar')->table('face_people_time_mau_market as fptmm')
+            ->join('avr_official_market as aom', 'fptmm.marketid', '=', 'aom.marketid')
+            ->whereRaw("date_format(fptmm.date,'%Y-%m') between '$startMonth' and '$endMonth'")
+            ->groupBy('fptmm.marketid')
+            ->orderBy('playernum', 'desc')
+            ->selectRaw("aom.name as name,sum(active_player) as playernum")
+            ->limit(10)
             ->get();
+
         $output = [];
         foreach ($data as $item) {
             $output[] = [
-                "month" => $item->month,
-                "playernum" => round($item->playernum / 10000, 1)
+                'market_name' => $item->name,
+                'playernum' => $item->playernum
             ];
         }
-        if (count($output) != 0) {
-            $output[0]['rate'] = 0;
-        }
-        for ($i = 1; $i < count($output); $i++) {
-            $output[$i]["rate"] = round(($output[$i]['playernum'] - $output[$i - 1]['playernum']) / $output[$i - 1]['playernum'], 2);
-        }
+
         return $output;
+//        $data = DB::connection('ar')->table('face_people_time_mau_market')
+//            ->selectRaw("playernum,date_format(date, '%Y-%m') as month")
+//            ->orderBy('month')
+//            ->get();
+//        $output = [];
+//        foreach ($data as $item) {
+//            $output[] = [
+//                "month" => $item->month,
+//                "playernum" => round($item->playernum / 10000, 1)
+//            ];
+//        }
+//        if (count($output) != 0) {
+//            $output[0]['rate'] = 0;
+//        }
+//        for ($i = 1; $i < count($output); $i++) {
+//            $output[$i]["rate"] = round(($output[$i]['playernum'] - $output[$i - 1]['playernum']) / $output[$i - 1]['playernum'], 2);
+//        }
+//        return $output;
     }
 
     private function handleQuery(Request $request, Builder $query, $selectByAlias = true, bool $selectPoint = false)
