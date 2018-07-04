@@ -322,7 +322,54 @@ class ChartDataController extends Controller
         $data = $query->selectRaw("sum(looknum) AS looknum,sum(playernum) AS playernum,sum(lovenum)  AS lovenum")
             ->first()->toArray();
 
+        //大屏活跃玩家
+        $startDate = $request->start_date;
+        $endDate = $request->end_date;
+        $startClientDate = strtotime($startDate . ' 00:00:00') * 1000;
+        $endClientDate = strtotime($endDate . ' 23:59:59') * 1000;
+        $sceneId = $request->scene_id;
+        $areaId = $request->area_id;
+        $marketId = $request->market_id;
+        $pointId = $request->point_id;
+        $alias = $request->alias;
+        $user = $this->user();
+        $arUserID = $request->home_page ? 0 : getArUserID($user, $request);
+        $sql = DB::connection('ar')->table('face_people_time as fpt')
+            ->join('avr_official as ao', 'fpt.oid', '=', "ao.oid")
+            ->join('avr_official_market as aom', 'aom.marketid', '=', 'ao.marketid')
+            ->join('avr_official_area as aoa', 'aoa.areaid', '=', 'ao.areaid')
+            ->join('ar_product_list as apl', 'fpt.belong', '=', 'apl.versionname')
+            ->when($sceneId, function ($q) use ($sceneId) {
+                return $q->whereRaw("ao.sid = '$sceneId'");
+            })
+            ->when($areaId, function ($q) use ($areaId) {
+                return $q->whereRaw("ao.areaid = '$areaId'");
+            })
+            ->when($marketId, function ($q) use ($marketId) {
+                return $q->whereRaw("ao.areaid = '$marketId'");
+            })
+            ->when($pointId, function ($q) use ($pointId) {
+                return $q->whereRaw("ao.areaid = '$pointId'");
+            })
+            ->when($alias, function ($q) use ($alias) {
+                return $q->whereRaw("ao.areaid = '$alias'");
+            })
+            ->when($arUserID, function ($q) use ($arUserID) {
+                return $q->whereRaw("ao.bd_uid = '$arUserID'");
+            })
+            ->whereRaw("fpt . clientdate between '$startClientDate' and '$endClientDate' and fpid <> 0 and playtime > 7000 and fpt . oid not in(16, 19, 30, 31, 335, 334, 329, 328, 327)")
+            ->groupBy(DB::raw("fpt . fpid * 100 + fpt . oid,date_format(fpt . date, '%Y-%m-%d')"))
+            ->selectRaw("fpid,fpt . date");
+
+        $data1 = DB::connection('ar')->table(DB::raw("({$sql->toSql()})  a"))
+            ->selectRaw('count(*) as player7num')
+            ->first();
         $output = [];
+        $output[] = [
+            'count' => $data1->player7num,
+            'display_name' => $this->totalMapping['player7num'],
+            'index' => 'player7num'
+        ];
         foreach ($data as $key => $value) {
             $output[] = [
                 'count' => $value,
@@ -348,7 +395,7 @@ class ChartDataController extends Controller
         $format = $days <= 31 ? '%Y-%m-%d' : '%Y-%m';
 
         $this->handleQuery($request, $query);
-        return $query->selectRaw("date_format(face_count_log.date,'$format') as display_name")
+        return $query->selectRaw("date_format(face_count_log . date, '$format') as display_name")
             ->groupBy('display_name')
             ->get();
 
@@ -360,9 +407,9 @@ class ChartDataController extends Controller
             ->selectRaw("sum(looknum) AS looknum,
                          sum(playernum) AS playernum,
                          sum(lovenum)  AS lovenum,
-                         max(face_count_log.clientdate) as max,
-                         min(face_count_log.clientdate) as min,
-                         face_count_log.oid")
+                         max(face_count_log . clientdate) as max,
+                         min(face_count_log . clientdate) as min,
+                         face_count_log . oid")
             ->where('belong', '=', 'all')
             ->groupBy('face_count_log.oid')
             ->orderBy('looknum', 'desc')
@@ -390,7 +437,7 @@ class ChartDataController extends Controller
         $endDate = $request->end_date;
 
         $data = DB::connection('ar')->table('face_collect_character')
-            ->whereRaw("date_format(date,'%Y-%m-%d') between '$startDate' and '$endDate'")
+            ->whereRaw("date_format(date, '%Y-%m-%d') between '$startDate' and '$endDate'")
             ->where('century', '<>', '0')
             ->groupBy('time')
             ->groupBy('century')
@@ -439,14 +486,14 @@ class ChartDataController extends Controller
         }
 
         $girlNum = DB::connection('ar')->table('face_collect_character')
-            ->whereRaw("date_format(date,'%Y-%m-%d') between '$startDate' and '$endDate'")
+            ->whereRaw("date_format(date, '%Y-%m-%d') between '$startDate' and '$endDate'")
             ->where('century', '<>', '0')
             ->groupBy('time')
             ->where('gender', '=', 'Female')
             ->selectRaw('time,sum(looknum) as count')
             ->get();
         $totalNum = DB::connection('ar')->table('face_collect_character')
-            ->whereRaw("date_format(date,'%Y-%m-%d') between '$startDate' and '$endDate'")
+            ->whereRaw("date_format(date, '%Y-%m-%d') between '$startDate' and '$endDate'")
             ->where('century', '<>', '0')
             ->groupBy('time')
             ->selectRaw('time,sum(looknum) as count')
@@ -488,30 +535,23 @@ class ChartDataController extends Controller
      */
     public function getActivePlayerByMonth(ChartDataRequest $request)
     {
-//        $data = DB::connection('ar')->table('face_people_time_mau')
-//            ->selectRaw("playernum,date_format(date,'%Y-%m') as month")
-//            ->get();
-
-        $output = [
-            ["month" => "2017-12", "playernum" => 22.5],
-            ["month" => "2018-01", "playernum" => 21.7],
-            ["month" => "2018-02", "playernum" => 17.4],
-            ["month" => "2018-03", "playernum" => 16],
-            ["month" => "2018-04", "playernum" => 23.3],
-            ["month" => "2018-05", "playernum" => 26.2],
-            ["month" => '2018-06', "playernum" => 40.3]
-        ];
-//        foreach ($data as $item) {
-//            $output[] = [
-//                "month" => $item->month,
-//                "playernum" => round($item->playernum / 10000, 1)
-//            ];
-//        }
-
+        $data = DB::connection('ar')->table('face_people_time_mau')
+            ->selectRaw("playernum,date_format(date, '%Y-%m') as month")
+            ->orderBy('month')
+            ->get();
+        $output = [];
+        foreach ($data as $item) {
+            $output[] = [
+                "month" => $item->month,
+                "playernum" => round($item->playernum / 10000, 1)
+            ];
+        }
+        if (count($output) != 0) {
+            $output[0]['rate'] = 0;
+        }
         for ($i = 1; $i < count($output); $i++) {
             $output[$i]["rate"] = round(($output[$i]['playernum'] - $output[$i - 1]['playernum']) / $output[$i - 1]['playernum'], 2);
         }
-        array_splice($output, 0, 1);
         return $output;
     }
 
@@ -527,7 +567,7 @@ class ChartDataController extends Controller
             $alias = $request->alias ? $request->alias : 'all';
             $query->where("belong", '=', $alias);
         } else {
-            $query->join('ar_product_list', 'ar_product_list.versionname', '=', "$table.belong");
+            $query->join('ar_product_list', 'ar_product_list.versionname', '=', "$table . belong");
         }
 
     }
