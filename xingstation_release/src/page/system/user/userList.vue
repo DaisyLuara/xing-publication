@@ -41,6 +41,7 @@
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
           <el-button size="small" @click="linkToEdit(scope.row)" type="warning">修改</el-button>
+          <el-button size="small" @click="deleteUsers(scope.row)" type="danger">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
