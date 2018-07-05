@@ -13,14 +13,22 @@ class CreateWeekRankingTable extends Migration
      */
     public function up()
     {
-        Schema::create('week_ranking', function (Blueprint $table) {
+        Schema::create('week_rankings', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('ar_user_id');
+            $table->string('ar_user_name');
             $table->integer('point_id');
+            $table->string('point_name');
+            $table->integer('scene_id');
+            $table->string('scene_name');
             $table->integer('looknum_average');
-            $table->string('start_date', 20);
-            $table->string('end_date', 20);
-            $table->timestamps();
+            $table->integer('ranking');
+            $table->timestamp('start_date')->nullable();
+            $table->timestamp('end_date')->nullable();
+            $table->timestamp('date')->nullable();
+            $table->index('ar_user_id');
+            $table->index('point_id');
+            $table->index('scene_id');
         });
     }
 
@@ -31,6 +39,6 @@ class CreateWeekRankingTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('week_ranking');
+        Schema::dropIfExists('week_rankings');
     }
 }
