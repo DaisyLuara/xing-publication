@@ -32,7 +32,7 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             $ranks = $this->getRankingData();
             foreach ($ranks as $rank) {
-                WeekRankingJob::dispatch($rank)->onQueue('weekRanking');
+                WeekRankingJob::dispatch($rank);
             }
         })->weekly()->fridays()->at('14:20');
     }
