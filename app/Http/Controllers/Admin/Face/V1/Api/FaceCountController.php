@@ -41,7 +41,7 @@ class FaceCountController extends Controller
         WeekRanking::query()->insert($ranks);
 
         foreach ($ranks as $rank) {
-            WeekRankingJob::dispatch($rank)->onQueue('weekRanking');
+            WeekRankingJob::dispatch($rank);
         }
     }
 }
