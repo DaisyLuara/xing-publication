@@ -329,12 +329,12 @@ class ChartDataController extends Controller
         $areaId = $request->area_id;
         $marketId = $request->market_id;
         $pointId = $request->point_id;
-        $alias = $request->alias;
+        $alias = $request->alias ? $request->alias : 'all';
         $user = $this->user();
         $arUserID = $request->home_page ? 0 : getArUserID($user, $request);
-        $activePlayer = DB::connection('ar')->table('face_people_time_active_player as fpta')
-            ->leftjoin('avr_official as ao', 'fpta.oid', '=', "ao.oid")
-            ->leftjoin('ar_product_list as apl', 'fpta.belong', '=', 'apl.versionname')
+        $activePlayer = DB::connection('ar')->table('face_people_time_active_player as fptap')
+            ->leftjoin('avr_official as ao', 'fptap.oid', '=', "ao.oid")
+            ->leftjoin('ar_product_list as apl', 'fptap.belong', '=', 'apl.versionname')
             ->when($sceneId, function ($q) use ($sceneId) {
                 return $q->whereRaw("ao.sid = '$sceneId'");
             })
@@ -342,18 +342,15 @@ class ChartDataController extends Controller
                 return $q->whereRaw("ao.areaid = '$areaId'");
             })
             ->when($marketId, function ($q) use ($marketId) {
-                return $q->whereRaw("ao.areaid = '$marketId'");
+                return $q->whereRaw("ao.marketid = '$marketId'");
             })
             ->when($pointId, function ($q) use ($pointId) {
-                return $q->whereRaw("ao.areaid = '$pointId'");
-            })
-            ->when($alias, function ($q) use ($alias) {
-                return $q->whereRaw("ao.areaid = '$alias'");
+                return $q->whereRaw("ao.oid = '$pointId'");
             })
             ->when($arUserID, function ($q) use ($arUserID) {
                 return $q->whereRaw("ao.bd_uid = '$arUserID'");
             })
-            ->whereRaw("date_format(fpta.date,'%Y-%m-%d') between '$startDate' and '$endDate' and fpta.oid not in (16, 19, 30, 31, 335, 334, 329, 328, 327)")
+            ->whereRaw("fptap.date between '$startDate' and '$endDate' and belong='$alias' and fptap.oid not in (16, 19, 30, 31, 335, 334, 329, 328, 327)")
             ->selectRaw("sum(active_player) as player7num")
             ->first();
         $output = [];
@@ -427,14 +424,24 @@ class ChartDataController extends Controller
     {
         $startDate = $request->start_date;
         $endDate = $request->end_date;
+        $time1 = " when time >'00:00' and time <='10:00' then '10:00'";
+        $time2 = " when time >'10:00' and time <='12:00' then '12:00'";
+        $time3 = " when time >'12:00' and time <='14:00' then '14:00'";
+        $time4 = " when time >'14:00' and time <='16:00' then '16:00'";
+        $time5 = " when time >'16:00' and time <='18:00' then '18:00'";
+        $time6 = " when time >'18:00' and time <='20:00' then '20:00'";
+        $time7 = " when time >'20:00' and time <='22:00' then '22:00'";
+        $time8 = " when time >'22:00' or time ='00:00' then '24:00'";
+        $timeSql = $time1 . $time2 . $time3 . $time4 . $time5 . $time6 . $time7 . $time8;
 
         $data = DB::connection('ar')->table('face_collect_character')
-            ->whereRaw("date_format(date, '%Y-%m-%d') between '$startDate' and '$endDate'")
+            ->whereRaw("date between '$startDate' and '$endDate'")
+            ->where('belong', '=', 'all')
             ->where('century', '<>', '0')
             ->whereNotIn('oid', ['16', '19', '30', '31', '335', '334', '329', '328', '327'])
-            ->groupBy('time')
+            ->groupBy('times')
             ->groupBy('century')
-            ->selectRaw("time,century,sum(looknum) as count")
+            ->selectRaw("case" . $timeSql . " else 0 end as times,century,sum(looknum) as count")
             ->get();
         $count = [];
         for ($i = 0; $i < 8; $i++) {
@@ -452,46 +459,48 @@ class ChartDataController extends Controller
             '70' => 'century70'
         ];
         foreach ($data as $item) {
-            if ($item->time == "10:00") {
+            if ($item->times == "10:00") {
                 $count[0][$mapping[$item->century]] = $item->count;
             }
-            if ($item->time == "12:00") {
+            if ($item->times == "12:00") {
                 $count[1][$mapping[$item->century]] = $item->count;
             }
-            if ($item->time == "14:00") {
+            if ($item->times == "14:00") {
                 $count[2][$mapping[$item->century]] = $item->count;
             }
-            if ($item->time == "16:00") {
+            if ($item->times == "16:00") {
                 $count[3][$mapping[$item->century]] = $item->count;
             }
-            if ($item->time == "18:00") {
+            if ($item->times == "18:00") {
                 $count[4][$mapping[$item->century]] = $item->count;
             }
-            if ($item->time == "20:00") {
+            if ($item->times == "20:00") {
                 $count[5][$mapping[$item->century]] = $item->count;
             }
-            if ($item->time == "22:00") {
+            if ($item->times == "22:00") {
                 $count[6][$mapping[$item->century]] = $item->count;
             }
-            if ($item->time == "24:00") {
+            if ($item->times == "24:00") {
                 $count[7][$mapping[$item->century]] = $item->count;
             }
         }
 
         $girlNum = DB::connection('ar')->table('face_collect_character')
-            ->whereRaw("date_format(date, '%Y-%m-%d') between '$startDate' and '$endDate'")
+            ->whereRaw("date between '$startDate' and '$endDate'")
             ->where('century', '<>', '0')
             ->whereNotIn('oid', ['16', '19', '30', '31', '335', '334', '329', '328', '327'])
-            ->groupBy('time')
             ->where('gender', '=', 'Female')
-            ->selectRaw('time,sum(looknum) as count')
+            ->where('belong', '=', 'all')
+            ->groupBy('times')
+            ->selectRaw("case" . $timeSql . " else 0 end as times,sum(looknum) as count")
             ->get();
         $totalNum = DB::connection('ar')->table('face_collect_character')
-            ->whereRaw("date_format(date, '%Y-%m-%d') between '$startDate' and '$endDate'")
+            ->whereRaw("date between '$startDate' and '$endDate'")
             ->whereNotIn('oid', ['16', '19', '30', '31', '335', '334', '329', '328', '327'])
             ->where('century', '<>', '0')
-            ->groupBy('time')
-            ->selectRaw('time,sum(looknum) as count')
+            ->where('belong', '=', 'all')
+            ->groupBy('times')
+            ->selectRaw("case" . $timeSql . " else 0 end as times,sum(looknum) as count")
             ->get();
         $rate = [
             '10:00' => 0,
@@ -505,10 +514,10 @@ class ChartDataController extends Controller
         ];
         $total = [];
         foreach ($totalNum as $item) {
-            $total[$item->time] = $item->count;
+            $total[$item->times] = $item->count;
         }
         foreach ($girlNum as $item) {
-            $rate[$item->time] = round($item->count / $total[$item->time], 3) * 100 . '%';
+            $rate[$item->times] = round($item->count / $total[$item->times], 3) * 100 . '%';
         }
         $times = ['10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', '24:00'];
         $output = [];

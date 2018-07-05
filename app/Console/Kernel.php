@@ -46,16 +46,44 @@ class Kernel extends ConsoleKernel
             while ($date < $currentDate) {
                 $startClientDate = strtotime($date . ' 00:00:00') * 1000;
                 $endClientDate = strtotime($date . ' 23:59:59') * 1000;
+
                 $sql = DB::connection('ar')->table('face_people_time')
-                    ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and fpid<>0 and playtime>7000")
-                    ->groupBy(DB::raw('oid,belong,fpid * 10000 + oid'))
+                    ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and fpid>0 and playtime>=7000")
                     ->selectRaw("oid,belong,fpid");
-                $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
+
+                //按所有人去重 belong='all'
+                if ($date < '2018-07-01') {
+                    $sql1 = $sql->groupBy(DB::raw('fpid*100+oid'));
+                } else {
+                    $sql1 = $sql->groupBy(DB::raw('fpid*10000+oid'));
+                }
+                $allData = DB::connection('ar')->table(DB::raw("({$sql1->toSql()}) as a"))
+                    ->selectRaw("oid,belong,count(*) as active_player")
+                    ->groupBy(DB::raw('oid'))
+                    ->get();
+
+                //按节目去重
+                if ($date < '2018-07-01') {
+                    $sql2 = $sql->groupBy(DB::raw('fpid*100+oid,belong'));
+                } else {
+                    $sql2 = $sql->groupBy(DB::raw('fpid*10000+oid,belong'));
+                }
+
+                $data = DB::connection('ar')->table(DB::raw("({$sql2->toSql()}) as a"))
                     ->selectRaw("oid,belong,count(*) as active_player")
                     ->groupBy(DB::raw('oid,belong'))
                     ->get();
 
                 $count = [];
+                foreach ($allData as $item) {
+                    $count[] = [
+                        'oid' => $item->oid,
+                        'belong' => 'all',
+                        'active_player' => $item->active_player,
+                        'date' => $date
+                    ];
+                }
+
                 foreach ($data as $item) {
                     $count[] = [
                         'oid' => $item->oid,
@@ -69,7 +97,7 @@ class Kernel extends ConsoleKernel
                 $date = (new Carbon($date))->addDay(1)->toDateString();
             }
             ActivePlayerRecord::create(['date' => $currentDate]);
-        })->daily()->at('17:44');
+        })->daily()->at('15:36');
 
         //月活玩家清洗
         $schedule->call(function () {
@@ -134,16 +162,6 @@ class Kernel extends ConsoleKernel
                 $startDate = strtotime($date . " 00:00:00") * 1000;
                 $endDate = strtotime($date . " 23:59:59") * 1000;
 
-                $time1 = "when date_format(date, '%H:%i:%s') < '10:00:00' then '10:00' ";
-                $time2 = "when date_format(date, '%H:%i:%s') between '10:00:00' and '11:59:59' then '12:00' ";
-                $time3 = "when date_format(date, '%H:%i:%s') between '12:00:00' and '13:59:59' then '14:00' ";
-                $time4 = "when date_format(date, '%H:%i:%s') between '14:00:00' and '15:59:59' then '16:00' ";
-                $time5 = "when date_format(date, '%H:%i:%s') between '16:00:00' and '17:59:59' then '18:00' ";
-                $time6 = "when date_format(date, '%H:%i:%s') between '18:00:00' and '19:59:59' then '20:00' ";
-                $time7 = "when date_format(date, '%H:%i:%s') between '20:00:00' and '21:59:59' then '22:00' ";
-                $time8 = "when date_format(date, '%H:%i:%s') > '22:00:00' then '24:00' ";
-                $time = $time1 . $time2 . $time3 . $time4 . $time5 . $time6 . $time7 . $time8;
-
                 $century00 = "when age>8 and age<=18 then '00'";
                 $century90 = "when age>18 and age<=28 then '90' ";
                 $century80 = "when age>18 and age<=38 then '80' ";
@@ -151,27 +169,56 @@ class Kernel extends ConsoleKernel
                 $century = $century00 . $century90 . $century80 . $century70;
 
                 $sql = DB::connection('ar')->table('face_collect')
-                    ->selectRaw("case " . $time . "else 0 end as time,case " . $century . "else 0 end as century,gender,oid,belong")
-                    ->whereRaw("clientdate between '$startDate' and '$endDate'")
-                    ->groupBy(DB::raw('oid,belong,fpid'));
-                $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
+                    ->selectRaw("date_format(concat(date(date), ' ', hour(date), ':', floor(minute(date) / 30) * 30 ),'%Y-%m-%d %H:%i') as time,case " . $century . "else 0 end as century,gender,oid,belong")
+                    ->whereRaw("clientdate between '$startDate' and '$endDate' and fpid>0 and type='play' ")
+                    ->orderBy('isold');
+
+                //按所有人去重 belong='all'
+                if ($date < '2018-07-01') {
+                    $sql1 = $sql->groupBy(DB::raw('fpid*100+oid'));
+                } else {
+                    $sql1 = $sql->groupBy(DB::raw('fpid*10000+oid'));
+                }
+                $allData = DB::connection('ar')->table(DB::raw("({$sql1->toSql()}) as a"))
+                    ->groupBy(DB::raw("oid,time,century,gender"))
+                    ->orderBy(DB::raw("oid,time,century,gender"))
+                    ->selectRaw("oid,time,century,gender,count(*) as looknum")
+                    ->get();
+
+                //按节目去重
+                if ($date < '2018-07-01') {
+                    $sql2 = $sql->groupBy(DB::raw('fpid*100+oid,belong'));
+                } else {
+                    $sql2 = $sql->groupBy(DB::raw('fpid*10000+oid,belong'));
+                }
+                $data = DB::connection('ar')->table(DB::raw("({$sql2->toSql()}) as a"))
                     ->groupBy(DB::raw("oid,belong,time,century,gender"))
                     ->orderBy(DB::raw("oid,belong,time,century,gender"))
                     ->selectRaw("oid,belong,time,century,gender,count(*) as looknum")
                     ->get();
 
                 $count = [];
-                foreach ($data as $item) {
+                foreach ($allData as $item) {
                     $item = json_decode(json_encode($item), true);
+                    $item['belong'] = 'all';
+                    $item['time'] = (new Carbon($item['time']))->addMinutes(30)->format('H:i');
                     $item['date'] = $date;
                     $count[] = $item;
                 }
-                DB::connection('ar')->table('face_collect_character')
-                    ->insert($count);
+                foreach ($data as $item) {
+                    $item = json_decode(json_encode($item), true);
+                    $item['time'] = (new Carbon($item['time']))->addMinutes(30)->format('H:i');
+                    $item['date'] = $date;
+                    $count[] = $item;
+                }
+                $count = array_chunk($count, 8000);
+                for ($i = 0; $i < count($count); $i++) {
+                    DB::connection('ar')->table('face_collect_character')->insert($count[$i]);
+                }
                 $date = (new Carbon($date))->addDay(1)->toDateString();
             }
             FaceCollectRecord::create(['date' => $currentDate]);
-        })->daily()->at('8:00');
+        })->daily()->at('13:52');
     }
 
 
