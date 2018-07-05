@@ -180,20 +180,22 @@ if (!function_exists('getFaceCountByScene')) {
             ->get();
 
         $data = [];
-        $faceCount->each(function ($item, $index) use (&$data, $startDate, $endDate) {
-            $data[] = [
-                'ar_user_id' => $item->uid,
-                'ar_user_name' => $item->userName,
-                'point_id' => $item->oid,
-                'point_name' => $item->areaName . '-' . $item->marketName . '-' . $item->pointName,
-                'scene_id' => $item->sceneId,
-                'scene_name' => $item->sceneName,
-                'looknum_average' => round($item->looknum / 7, 0),
-                'ranking' => $index + 1,
-                'start_date' => $startDate,
-                'end_date' => $endDate,
-                'date' => Carbon::now()->toDateString(),
-            ];
+        $faceCount->each(function ($item, $index) use (&$data, $startDate, $endDate, $scene) {
+            if (round($item->looknum / 7, 0) < $scene['avg']) {
+                $data[] = [
+                    'ar_user_id' => $item->uid,
+                    'ar_user_name' => $item->userName,
+                    'point_id' => $item->oid,
+                    'point_name' => $item->areaName . '-' . $item->marketName . '-' . $item->pointName,
+                    'scene_id' => $item->sceneId,
+                    'scene_name' => $item->sceneName,
+                    'looknum_average' => round($item->looknum / 7, 0),
+                    'ranking' => $index + 1,
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
+                    'date' => Carbon::now()->toDateString(),
+                ];
+            }
         });
         return $data;
     }

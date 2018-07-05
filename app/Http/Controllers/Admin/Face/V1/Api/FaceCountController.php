@@ -17,19 +17,36 @@ class FaceCountController extends Controller
         $points = getPointsByScene($startDate, $endDate);
         $selectScenes = [
             [
-                'sid' => [0, 1, 3, 8, 14, 15],
-                'limit' => (floor($points->whereNotIn('sid', [1, 8])->sum() / 100) + 1) * 10,
-                'name' => 'other'
+                'sid' => 16,
+                'limit' => (floor($points->where('sid', 16)->sum('total') / 50) + 1) * 5,
+                'name' => 'electrical_market',
+                'avg' => 100
+            ],
+            [
+                'sid' => 11,
+                'limit' => (floor($points->where('sid', 11)->sum('total') / 50) + 1) * 5,
+                'name' => 'gym',
+                'avg' => 35
             ],
             [
                 'sid' => 8,
-                'limit' => (floor($points->where('sid', 8)->sum() / 100) + 1) * 10,
-                'name' => 'cinema'
+                'limit' => (floor($points->where('sid', 8)->sum('total') / 50) + 1) * 5,
+                'name' => 'cinema',
+                'avg' => 50
+
+            ],
+            [
+                'sid' => 5,
+                'limit' => (floor($points->where('sid', 5)->sum('total') / 50) + 1) * 5,
+                'name' => 'merchant',
+                'avg' => 100
+
             ],
             [
                 'sid' => 1,
-                'limit' => (floor($points->where('sid', 1)->sum() / 100) + 1) * 10,
-                'name' => 'market'
+                'limit' => (floor($points->where('sid', 1)->sum('total') / 50) + 1) * 5,
+                'name' => 'market',
+                'avg' => 100
             ],
         ];
 
