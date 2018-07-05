@@ -40,7 +40,7 @@ class WeekRankingJob implements ShouldQueue
         //$user = User::query()->where('ar_user_id', $data->uid)->first();
         $officialAccount = EasyWeChat::officialAccount();
         $message = [
-            'touser' => "oNN6q0sZDI_OSTV6rl0rPeHjPgH8",
+            'touser' => "oNN6q0pq-f0-Z2E2gb0QeOmY4r-M",
             'template_id' => 'siyJMjigeMMNpXrFSsvz6rvrKQh9Gf5RcfbiVYFQFyY',
             'data' => [
                 'first' => '你好，你的上周点位排名情况如下',
