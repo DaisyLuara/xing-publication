@@ -13,13 +13,16 @@ class CreateFacePeopleTimeMauMarketTable extends Migration
      */
     public function up()
     {
-        Schema::connection('ar')->create('face_people_time_mau_market', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('marketid');
-            $table->integer('active_player');
-            $table->timestamp('date')->nullable();
-            $table->index('marketid');
-        });
+
+        if (!Schema::connection('ar')->hasTable('face_people_time_mau_market')) {
+            Schema::connection('ar')->create('face_people_time_mau_market', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('marketid');
+                $table->integer('active_player');
+                $table->timestamp('date')->nullable();
+                $table->index('marketid');
+            });
+        }
     }
 
     /**
