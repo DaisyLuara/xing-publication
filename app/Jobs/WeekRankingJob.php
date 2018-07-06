@@ -37,10 +37,10 @@ class WeekRankingJob implements ShouldQueue
         //yq,cz
         //$openId = ['oNN6q0sZDI_OSTV6rl0rPeHjPgH8', 'oNN6q0pq-f0-Z2E2gb0QeOmY4r-M'];
         $data = $this->data;
-        //$user = User::query()->where('ar_user_id', $data->uid)->first();
+        $user = User::query()->where('ar_user_id', $data['ar_user_id'])->first();
         $officialAccount = EasyWeChat::officialAccount();
         $message = [
-            'touser' => "oNN6q0pq-f0-Z2E2gb0QeOmY4r-M",
+            'touser' => $user->weixin_openid,
             'template_id' => 'siyJMjigeMMNpXrFSsvz6rvrKQh9Gf5RcfbiVYFQFyY',
             'data' => [
                 'first' => '你好，你的上周点位排名情况如下',
