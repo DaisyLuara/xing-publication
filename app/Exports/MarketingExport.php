@@ -31,6 +31,7 @@ class MarketingExport extends AbstractExport
             ->whereRaw("date_format(face_count_log.date, '%Y-%m-%d') BETWEEN '{$this->startDate}' AND '{$this->endDate}'")
             ->whereNotIn('face_count_log.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
             ->groupby('face_count_log.belong')
+            ->orderBy('ar_product_list.name')
             ->selectRaw('ar_product_list.name as name,count(face_count_log.oid) as pushNum ,sum(looknum) as lookNum ,sum(playernum7) as playerNum7,sum(playernum20) as playerNum20 ,sum(lovenum) as loveNum,sum(outnum) as outNum,sum(scannum) as scanNum')
             ->get();
         $data = collect();

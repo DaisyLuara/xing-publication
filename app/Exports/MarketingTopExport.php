@@ -38,13 +38,13 @@ class MarketingTopExport extends AbstractExport
             ->groupBy(DB::raw("fcl.oid,fcl.belong"))
             ->orderBy('apl.id')
             ->orderBy('looknum', 'desc')
-            ->selectRaw("apl.name as name,count(*) as days,sum(looknum) as lookNum ,sum(playernum7)as playerNum7,sum(playernum20) as playerNum20 ,sum(lovenum) as loveNum,sum(outnum) as outNum,sum(scannum) as scanNum");
+            ->selectRaw("apl.name as name,count(*) as days,sum(looknum) as looknum ,sum(playernum7)as playernum7,sum(playernum20) as playernum20 ,sum(lovenum) as lovenum,sum(outnum) as outnum,sum(scannum) as scannum");
 
         $faceCount2 = DB::connection('ar')->table(DB::raw("({$faceCount1->toSql()}) a,(select @gn := 0)  b"))
-            ->selectRaw("  @gn := case when @name = name then @gn + 1 else 1 end gn,@name := name name,days,looknum,playernum,lovenum,outnum,scannum");
+            ->selectRaw("  @gn := case when @name = name then @gn + 1 else 1 end gn,@name := name name,days,looknum,playernum7,playernum20,lovenum,outnum,scannum");
 
         $faceCount = DB::connection('ar')->table(DB::raw("({$faceCount2->toSql()}) c"))
-            ->selectRaw("name,sum(days) as pushNum,sum(looknum) as lookNum,sum(playernum) as playerNum,sum(lovenum) as loveNum,sum(outnum) as outNum,sum(scannum) as scanNum")
+            ->selectRaw("name,sum(days) as pushNum,sum(looknum) as lookNum,sum(playernum7) as playerNum7,sum(playernum20) as playerNum20,sum(lovenum) as loveNum,sum(outnum) as outNum,sum(scannum) as scanNum")
             ->whereRaw("gn<=100")
             ->groupBy('name')
             ->get();
