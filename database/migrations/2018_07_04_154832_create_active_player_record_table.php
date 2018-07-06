@@ -14,14 +14,12 @@ class CreateActivePlayerRecordTable extends Migration
      */
     public function up()
     {
-        if (!Schema::connection('ar')->hasTable('active_player_records')) {
-            Schema::create('active_player_records', function (Blueprint $table) {
-                $table->increments('id');
-                $table->timestamp('date')->nullable();
-                $table->timestamps();
-            });
-            ActivePlayerRecord::create(['date' => '2018-06-13']);
-        }
+        Schema::create('active_player_records', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestamp('date')->nullable();
+            $table->timestamps();
+        });
+        ActivePlayerRecord::create(['date' => '2018-06-13']);
     }
 
     /**

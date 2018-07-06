@@ -14,7 +14,6 @@ class UpdateFacePeopleTimeTable extends Migration
     public function up()
     {
         Schema::connection('ar')->table('face_people_time', function (Blueprint $table) {
-            //
             if (!collect(DB::connection('ar')->select("SHOW INDEXES FROM face_people_time"))->pluck('clientdate')) {
                 $table->index('clientdate');
             }
