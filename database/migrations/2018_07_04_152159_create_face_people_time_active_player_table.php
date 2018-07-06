@@ -17,7 +17,9 @@ class CreateFacePeopleTimeActivePlayerTable extends Migration
             $table->increments('id');
             $table->integer('oid');
             $table->string('belong');
-            $table->integer('active_player');
+            $table->integer('playernum7');
+            $table->integer('playernum20');
+            $table->integer('playernum30');
             $table->timestamp('date')->nullable();
             $table->index('oid');
             $table->index('belong');
