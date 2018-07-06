@@ -38,7 +38,7 @@ class ChartDataController extends Controller
     protected $totalMapping = [
         'exposurenum' => '曝光人数',//围观人数(todo)
         'looknum' => '大屏围观参与人数',
-        'player7num' => '大屏活跃玩家人数', //互动超过7秒(todo)
+        'playernum7' => '大屏活跃玩家人数', //互动超过7秒(todo)
         'playernum' => '大屏铁杆玩家人数',//游戏玩结束
         'lovenum' => '扫码拉新会员注册总数',//最终转化
         'palyertime' => '人均互动有效时长',//推算
@@ -319,46 +319,14 @@ class ChartDataController extends Controller
     private function getTotal(ChartDataRequest $request, Builder $query)
     {
         $this->handleQuery($request, $query);
-        $data = $query->selectRaw("sum(looknum) AS looknum,sum(playernum) AS playernum,sum(lovenum)  AS lovenum")
+        $data = $query->join('face_people_time_active_player', function ($join) {
+            $join->on('face_count_log.oid', '=', 'face_people_time_active_player.oid')
+                ->on('face_count_log.belong', '=', 'face_people_time_active_player.belong')
+                ->whereRaw("date_format(face_count_log.date,'%Y-%m-%d')=date_format(face_people_time_active_player.date,'%Y-%m-%d')");
+        }, null, null, 'left')
+            ->selectRaw("sum(looknum) AS looknum,sum(playernum7)as playernum7,sum(playernum) AS playernum,sum(lovenum)  AS lovenum")
             ->first()->toArray();
-
-        //大屏活跃玩家
-        $startDate = $request->start_date;
-        $endDate = $request->end_date;
-        $sceneId = $request->scene_id;
-        $areaId = $request->area_id;
-        $marketId = $request->market_id;
-        $pointId = $request->point_id;
-        $alias = $request->alias ? $request->alias : 'all';
-        $user = $this->user();
-        $arUserID = $request->home_page ? 0 : getArUserID($user, $request);
-        $activePlayer = DB::connection('ar')->table('face_people_time_active_player as fptap')
-            ->leftjoin('avr_official as ao', 'fptap.oid', '=', "ao.oid")
-            ->leftjoin('ar_product_list as apl', 'fptap.belong', '=', 'apl.versionname')
-            ->when($sceneId, function ($q) use ($sceneId) {
-                return $q->whereRaw("ao.sid = '$sceneId'");
-            })
-            ->when($areaId, function ($q) use ($areaId) {
-                return $q->whereRaw("ao.areaid = '$areaId'");
-            })
-            ->when($marketId, function ($q) use ($marketId) {
-                return $q->whereRaw("ao.marketid = '$marketId'");
-            })
-            ->when($pointId, function ($q) use ($pointId) {
-                return $q->whereRaw("ao.oid = '$pointId'");
-            })
-            ->when($arUserID, function ($q) use ($arUserID) {
-                return $q->whereRaw("ao.bd_uid = '$arUserID'");
-            })
-            ->whereRaw("fptap.date between '$startDate' and '$endDate' and belong='$alias' and fptap.oid not in (16, 19, 30, 31, 335, 334, 329, 328, 327)")
-            ->selectRaw("sum(active_player) as player7num")
-            ->first();
         $output = [];
-        $output[] = [
-            'count' => $activePlayer->player7num,
-            'display_name' => $this->totalMapping['player7num'],
-            'index' => 'player7num'
-        ];
         foreach ($data as $key => $value) {
             $output[] = [
                 'count' => $value,
@@ -591,7 +559,7 @@ class ChartDataController extends Controller
         //节目搜索-注意业务逻辑
         if ($selectByAlias) {
             $alias = $request->alias ? $request->alias : 'all';
-            $query->where("belong", '=', $alias);
+            $query->where("face_count_log.belong", '=', $alias);
         } else {
             $query->join('ar_product_list', 'ar_product_list.versionname', '=', "$table . belong");
         }

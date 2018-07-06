@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\WeChat\V1\Models\WeekRanking;
 use App\Jobs\WeekRankingJob;
 use Carbon\Carbon;
 use DB;
+use function foo\func;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Http\Controllers\Admin\Face\V1\Models\FacePeopleTimeRecord;
@@ -35,7 +36,7 @@ class Kernel extends ConsoleKernel
             for ($i = 0; $i < count($data); $i++) {
                 WeekRankingJob::dispatch($data[$i])->onQueue('weekRanking');
             }
-        })->weekly()->fridays()->at('14:20');
+        })->weekly()->fridays()->at('8:00');
 
 
         //节目点位活跃玩家清洗
@@ -47,48 +48,83 @@ class Kernel extends ConsoleKernel
                 $startClientDate = strtotime($date . ' 00:00:00') * 1000;
                 $endClientDate = strtotime($date . ' 23:59:59') * 1000;
 
-                $sql = DB::connection('ar')->table('face_people_time')
-                    ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and fpid>0 and playtime>=7000")
-                    ->selectRaw("oid,belong,fpid");
-
+                $timeArray = [7, 20, 30];
                 //按所有人去重 belong='all'
-                if ($date < '2018-07-01') {
-                    $sql1 = $sql->groupBy(DB::raw('fpid*100+oid'));
-                } else {
-                    $sql1 = $sql->groupBy(DB::raw('fpid*10000+oid'));
+                $sql1 = [];
+                for ($i = 0; $i < count($timeArray); $i++) {
+                    $sql = DB::connection('ar')->table('face_people_time')
+                        ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and fpid>0 and playtime>='$timeArray[$i]000'")
+                        ->selectRaw("oid as oid" . $timeArray[$i] . ", belong as belong" . $timeArray[$i] . ", fpid as fpid" . $timeArray[$i]);
+                    //按所有人去重 belong='all'
+                    if ($date < '2018-07-01') {
+                        $sql1[$i] = $sql->groupBy(DB::raw('fpid*100+oid'));
+                    } else {
+                        $sql1[$i] = $sql->groupBy(DB::raw('fpid*10000+oid'));
+                    }
                 }
-                $allData = DB::connection('ar')->table(DB::raw("({$sql1->toSql()}) as a"))
-                    ->selectRaw("oid,belong,count(*) as active_player")
-                    ->groupBy(DB::raw('oid'))
-                    ->get();
 
                 //按节目去重
-                if ($date < '2018-07-01') {
-                    $sql2 = $sql->groupBy(DB::raw('fpid*100+oid,belong'));
-                } else {
-                    $sql2 = $sql->groupBy(DB::raw('fpid*10000+oid,belong'));
+                $sql2 = [];
+                for ($i = 0; $i < count($timeArray); $i++) {
+                    $sql = DB::connection('ar')->table('face_people_time')
+                        ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and fpid>0 and playtime>='$timeArray[$i]000'")
+                        ->selectRaw("oid as oid" . $timeArray[$i] . ", belong as belong" . $timeArray[$i] . ", fpid as fpid" . $timeArray[$i]);
+                    //按所有人去重 belong='all'
+                    if ($date < '2018-07-01') {
+                        $sql2[$i] = $sql->groupBy(DB::raw('fpid*100+oid,belong'));
+                    } else {
+                        $sql2[$i] = $sql->groupBy(DB::raw('fpid*10000+oid,belong'));
+                    }
                 }
 
-                $data = DB::connection('ar')->table(DB::raw("({$sql2->toSql()}) as a"))
-                    ->selectRaw("oid,belong,count(*) as active_player")
-                    ->groupBy(DB::raw('oid,belong'))
-                    ->get();
+                //按所有人去重 belong='all'
+                $query = DB::connection('ar')->table(DB::raw("({$sql1[0]->toSql()}) as a"));
+                for ($i = 1; $i < count($timeArray); $i++) {
+                    $query = $query->join(DB::raw("({$sql1[$i]->toSql()}) as a" . $i), function ($join) use ($i, $timeArray) {
+                        $join->on('a.fpid' . $timeArray[0], '=', 'a' . $i . '.fpid' . $timeArray[$i])
+                            ->on('a.oid' . $timeArray[0], '=', 'a' . $i . '.oid' . $timeArray[$i])
+                            ->on('a.belong' . $timeArray[0], '=', 'a' . $i . '.belong' . $timeArray[$i]);
+                    }, null, null, 'left');
+                }
+                $query = $query->selectRaw("oid" . $timeArray[0] . " as oid,belong" . $timeArray[0] . " as belong");
+                for ($i = 0; $i < count($timeArray); $i++) {
+                    $query->selectRaw("count(fpid" . "$timeArray[$i]" . ") as playernum" . $timeArray[$i]);
+                }
+                $allData = $query->groupBy(DB::raw('oid' . $timeArray[0]))->get();
+
+                //按节目去重
+                $query = DB::connection('ar')->table(DB::raw("({$sql2[0]->toSql()}) as a"));
+                for ($i = 1; $i < count($timeArray); $i++) {
+                    $query = $query->join(DB::raw("({$sql2[$i]->toSql()}) as a" . $i), function ($join) use ($i, $timeArray) {
+                        $join->on('a.fpid' . $timeArray[0], '=', 'a' . $i . '.fpid' . $timeArray[$i])
+                            ->on('a.oid' . $timeArray[0], '=', 'a' . $i . '.oid' . $timeArray[$i])
+                            ->on('a.belong' . $timeArray[0], '=', 'a' . $i . '.belong' . $timeArray[$i]);
+                    }, null, null, 'left');
+                }
+                $query = $query->selectRaw("oid" . $timeArray[0] . " as oid,belong" . $timeArray[0] . " as belong");
+                for ($i = 0; $i < count($timeArray); $i++) {
+                    $query->selectRaw("count(fpid" . "$timeArray[$i]" . ") as playernum" . $timeArray[$i]);
+                }
+                $data = $query->groupBy(DB::raw('oid' . $timeArray[0] . ',belong' . $timeArray[0]))->get();
 
                 $count = [];
                 foreach ($allData as $item) {
                     $count[] = [
                         'oid' => $item->oid,
                         'belong' => 'all',
-                        'active_player' => $item->active_player,
+                        'playernum7' => $item->playernum7,
+                        'playernum20' => $item->playernum20,
+                        'playernum30' => $item->playernum30,
                         'date' => $date
                     ];
                 }
-
                 foreach ($data as $item) {
                     $count[] = [
                         'oid' => $item->oid,
                         'belong' => $item->belong,
-                        'active_player' => $item->active_player,
+                        'playernum7' => $item->playernum7,
+                        'playernum20' => $item->playernum20,
+                        'playernum30' => $item->playernum30,
                         'date' => $date
                     ];
                 }
@@ -97,7 +133,7 @@ class Kernel extends ConsoleKernel
                 $date = (new Carbon($date))->addDay(1)->toDateString();
             }
             ActivePlayerRecord::create(['date' => $currentDate]);
-        })->daily()->at('15:36');
+        })->daily()->at('13:11');
 
         //月活玩家清洗
         $schedule->call(function () {
@@ -107,9 +143,9 @@ class Kernel extends ConsoleKernel
             $endClientDate = strtotime($endDate . ' 23:59:59') * 1000;
 
             $sql = DB::connection('ar')->table('face_people_time')
-                ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and playtime > 7000 and oid not in (16, 19, 30, 31, 335, 334, 329, 328, 327)")
+                ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and playtime > 7000 and oid not in(16, 19, 30, 31, 335, 334, 329, 328, 327)")
                 ->groupBy(DB::raw('fpid * 10000 + oid'))
-                ->selectRaw("*");
+                ->selectRaw(" * ");
             $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
                 ->selectRaw("count(*) as playernum")
                 ->first();
@@ -131,7 +167,7 @@ class Kernel extends ConsoleKernel
 
             $sql = DB::connection('ar')->table('face_people_time as fpt')
                 ->join('avr_official as ao', 'fpt.oid', '=', 'ao.oid')
-                ->whereRaw("fpt.clientdate between '$startClientDate' and '$endClientDate' and playtime > 7000 and fpt.oid not in (16, 19, 30, 31, 335, 334, 329, 328, 327)")
+                ->whereRaw("fpt . clientdate between '$startClientDate' and '$endClientDate' and playtime > 7000 and fpt . oid not in(16, 19, 30, 31, 335, 334, 329, 328, 327)")
                 ->groupBy(DB::raw('ao.marketid,fpid * 10000 + fpt.oid'))
                 ->selectRaw("marketid,fpid");
             $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
@@ -162,15 +198,15 @@ class Kernel extends ConsoleKernel
                 $startDate = strtotime($date . " 00:00:00") * 1000;
                 $endDate = strtotime($date . " 23:59:59") * 1000;
 
-                $century00 = "when age>8 and age<=18 then '00'";
-                $century90 = "when age>18 and age<=28 then '90' ";
-                $century80 = "when age>18 and age<=38 then '80' ";
-                $century70 = "when age>38 and age<=48 then '70' ";
+                $century00 = "when age > 8 and age <= 18 then '00'";
+                $century90 = "when age > 18 and age <= 28 then '90' ";
+                $century80 = "when age > 18 and age <= 38 then '80' ";
+                $century70 = "when age > 38 and age <= 48 then '70' ";
                 $century = $century00 . $century90 . $century80 . $century70;
 
                 $sql = DB::connection('ar')->table('face_collect')
-                    ->selectRaw("date_format(concat(date(date), ' ', hour(date), ':', floor(minute(date) / 30) * 30 ),'%Y-%m-%d %H:%i') as time,case " . $century . "else 0 end as century,gender,oid,belong")
-                    ->whereRaw("clientdate between '$startDate' and '$endDate' and fpid>0 and type='play' ")
+                    ->selectRaw("date_format(concat(date(date), ' ', hour(date), ':', floor(minute(date) / 30) * 30), '%Y-%m-%d %H:%i') as time,case " . $century . "else 0 end as century,gender,oid,belong")
+                    ->whereRaw("clientdate between '$startDate' and '$endDate' and fpid > 0 and type = 'play' ")
                     ->orderBy('isold');
 
                 //按所有人去重 belong='all'
@@ -243,12 +279,12 @@ class Kernel extends ConsoleKernel
         $endDate = '2018-04-07';
         $marketPoint = DB::connection('ar')->table('face_count_log as fcl')
             ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
-            ->whereRaw(" date_format(fcl.date,'%Y-%m-%d') between '$startDate' and '$endDate' ")
+            ->whereRaw(" date_format(fcl . date, '%Y-%m-%d') between '$startDate' and '$endDate' ")
             ->where('belong', '<>', 'all')
             ->where('sid', '=', 1)
             ->whereNotIn('fcl.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
             ->groupBy('fcl.oid')
-            ->selectRaw("fcl.oid")
+            ->selectRaw("fcl . oid")
             ->get();
         $limitMarket = (floor($marketPoint->count() / 100) + 1) * 10;
         $faceCountMarket = DB::connection('ar')->table('face_count_log as fcl')
@@ -257,24 +293,24 @@ class Kernel extends ConsoleKernel
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
             ->join('avr_official_scene as aos', 'ao.sid', '=', 'aos.sid')
             ->join('admin_staff as as', 'ao.bd_uid', '=', 'as.uid')
-            ->whereRaw(" date_format(fcl.date,'%Y-%m-%d') between '$startDate' and '$endDate' ")
+            ->whereRaw(" date_format(fcl . date, '%Y-%m-%d') between '$startDate' and '$endDate' ")
             ->where('belong', '<>', 'all')
             ->where('ao.sid', '=', 1)
             ->whereNotIn('fcl.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
             ->groupBy('fcl.oid')
             ->orderBy('looknum')
             ->limit($limitMarket)
-            ->selectRaw("  ao.bd_uid as uid,as.realname as userName,aos.sid as sceneId,aos.name as sceneName,fcl.oid as oid,aoa.name as areaName,aom.name as marketName,ao.name as pointName,sum(looknum) as looknum")
+            ->selectRaw("  ao . bd_uid as uid,as.realname as userName,aos . sid as sceneId,aos . name as sceneName,fcl . oid as oid,aoa . name as areaName,aom . name as marketName,ao . name as pointName,sum(looknum) as looknum")
             ->get();
 
         $cinemaPoint = DB::connection('ar')->table('face_count_log as fcl')
             ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
-            ->whereRaw(" date_format(fcl.date,'%Y-%m-%d') between '$startDate' and '$endDate' ")
+            ->whereRaw(" date_format(fcl . date, '%Y-%m-%d') between '$startDate' and '$endDate' ")
             ->where('belong', '<>', 'all')
             ->where('sid', '=', 8)
             ->whereNotIn('fcl.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
             ->groupBy('fcl.oid')
-            ->selectRaw("fcl.oid")
+            ->selectRaw("fcl . oid")
             ->get();
         $limitCinema = (floor($cinemaPoint->count() / 100) + 1) * 10;
         $faceCountCinema = DB::connection('ar')->table('face_count_log as fcl')
@@ -283,24 +319,24 @@ class Kernel extends ConsoleKernel
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
             ->join('avr_official_scene as aos', 'ao.sid', '=', 'aos.sid')
             ->join('admin_staff as as', 'ao.bd_uid', '=', 'as.uid')
-            ->whereRaw(" date_format(fcl.date,'%Y-%m-%d') between '$startDate' and '$endDate' ")
+            ->whereRaw(" date_format(fcl . date, '%Y-%m-%d') between '$startDate' and '$endDate' ")
             ->where('belong', '<>', 'all')
             ->where('ao.sid', '=', 8)
             ->whereNotIn('fcl.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
             ->groupBy('fcl.oid')
             ->orderBy('looknum')
             ->limit($limitCinema)
-            ->selectRaw("  ao.bd_uid as uid,as.realname as userName,aos.sid as sceneId,aos.name as sceneName,fcl.oid as oid,aoa.name as areaName,aom.name as marketName,ao.name as pointName,sum(looknum) as looknum")
+            ->selectRaw("  ao . bd_uid as uid,as.realname as userName,aos . sid as sceneId,aos . name as sceneName,fcl . oid as oid,aoa . name as areaName,aom . name as marketName,ao . name as pointName,sum(looknum) as looknum")
             ->get();
 
         $otherPoint = DB::connection('ar')->table('face_count_log as fcl')
             ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
-            ->whereRaw(" date_format(fcl.date,'%Y-%m-%d') between '$startDate' and '$endDate' ")
+            ->whereRaw(" date_format(fcl . date, '%Y-%m-%d') between '$startDate' and '$endDate' ")
             ->where('belong', '<>', 'all')
             ->whereNotIn('ao.sid', [0, 1, 3, 8, 14, 15])
             ->whereNotIn('fcl.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
             ->groupBy('fcl.oid')
-            ->selectRaw("fcl.oid")
+            ->selectRaw("fcl . oid")
             ->get();
         $limitOther = (floor($otherPoint->count() / 100) + 1) * 10;
         $faceCount_other = DB::connection('ar')->table('face_count_log as fcl')
@@ -309,14 +345,14 @@ class Kernel extends ConsoleKernel
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
             ->join('avr_official_scene as aos', 'ao.sid', '=', 'aos.sid')
             ->join('admin_staff as as', 'ao.bd_uid', '=', 'as.uid')
-            ->whereRaw(" date_format(fcl.date,'%Y-%m-%d') between '$startDate' and '$endDate' ")
+            ->whereRaw(" date_format(fcl . date, '%Y-%m-%d') between '$startDate' and '$endDate' ")
             ->where('belong', '<>', 'all')
             ->whereNotIn('ao.sid', [0, 1, 3, 8, 14, 15])
             ->whereNotIn('fcl.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
             ->groupBy('fcl.oid')
             ->orderBy('looknum')
             ->limit($limitOther)
-            ->selectRaw("  ao.bd_uid as uid,as.realname as userName,aos.sid as sceneId,aos.name as sceneName,fcl.oid as oid,aoa.name as areaName,aom.name as marketName,ao.name as pointName,sum(looknum) as looknum")
+            ->selectRaw("  ao . bd_uid as uid,as.realname as userName,aos . sid as sceneId,aos . name as sceneName,fcl . oid as oid,aoa . name as areaName,aom . name as marketName,ao . name as pointName,sum(looknum) as looknum")
             ->get();
 
         $data = [];
