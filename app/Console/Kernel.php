@@ -34,7 +34,7 @@ class Kernel extends ConsoleKernel
             foreach ($ranks as $rank) {
                 WeekRankingJob::dispatch($rank);
             }
-        })->weekly()->fridays()->at('14:20');
+        })->weekly()->fridays()->at('10:25');
     }
 
 
