@@ -69,7 +69,7 @@ class Kernel extends ConsoleKernel
                     $sql = DB::connection('ar')->table('face_people_time')
                         ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and fpid>0 and playtime>='$timeArray[$i]000'")
                         ->selectRaw("oid as oid" . $timeArray[$i] . ", belong as belong" . $timeArray[$i] . ", fpid as fpid" . $timeArray[$i]);
-                    //按所有人去重 belong='all'
+                    //按节目去重
                     if ($date < '2018-07-01') {
                         $sql2[$i] = $sql->groupBy(DB::raw('fpid*100+oid,belong'));
                     } else {
@@ -133,7 +133,7 @@ class Kernel extends ConsoleKernel
                 $date = (new Carbon($date))->addDay(1)->toDateString();
             }
             ActivePlayerRecord::create(['date' => $currentDate]);
-        })->daily()->at('13:11');
+        })->daily()->at('8:00');
 
         //月活玩家清洗
         $schedule->call(function () {
@@ -143,7 +143,7 @@ class Kernel extends ConsoleKernel
             $endClientDate = strtotime($endDate . ' 23:59:59') * 1000;
 
             $sql = DB::connection('ar')->table('face_people_time')
-                ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and playtime > 7000 and oid not in(16, 19, 30, 31, 335, 334, 329, 328, 327)")
+                ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and playtime >= 7000 and oid not in(16, 19, 30, 31, 335, 334, 329, 328, 327)")
                 ->groupBy(DB::raw('fpid * 10000 + oid'))
                 ->selectRaw(" * ");
             $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
@@ -167,7 +167,7 @@ class Kernel extends ConsoleKernel
 
             $sql = DB::connection('ar')->table('face_people_time as fpt')
                 ->join('avr_official as ao', 'fpt.oid', '=', 'ao.oid')
-                ->whereRaw("fpt . clientdate between '$startClientDate' and '$endClientDate' and playtime > 7000 and fpt . oid not in(16, 19, 30, 31, 335, 334, 329, 328, 327)")
+                ->whereRaw("fpt . clientdate between '$startClientDate' and '$endClientDate' and playtime >= 7000 and fpt . oid not in(16, 19, 30, 31, 335, 334, 329, 328, 327)")
                 ->groupBy(DB::raw('ao.marketid,fpid * 10000 + fpt.oid'))
                 ->selectRaw("marketid,fpid");
             $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
@@ -254,7 +254,7 @@ class Kernel extends ConsoleKernel
                 $date = (new Carbon($date))->addDay(1)->toDateString();
             }
             FaceCollectRecord::create(['date' => $currentDate]);
-        })->daily()->at('13:52');
+        })->daily()->at('8:00');
     }
 
 
