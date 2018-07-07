@@ -128,6 +128,9 @@
             <span class="count" v-if="item.index === 'looknum'">
               {{circleLooknum}}
             </span>
+            <span class="count" v-if="item.index === 'playernum7'">
+              {{circlePlayernum7}}
+            </span>
             <span class="count" v-if="item.index === 'playernum'">
               {{circlePlayernum}}
             </span>
@@ -145,6 +148,9 @@
             </span>
             <i :class="'arrow-icon color-' + key"></i>
             <i class="right-arrow-icon" v-if="item.index === 'looknum'">
+              {{playernum7DivideLookNum}}
+            </i>
+            <i class="right-arrow-icon" v-if="item.index === 'playernum7'">
               {{playernumDivideLookNum}}
             </i>
             <i class="right-arrow-icon" v-if="item.index === 'playernum'">
@@ -164,6 +170,7 @@
     <!-- 年龄分布图 -->
     <div class="age-sex-wrapper"  v-loading="ageFlag"> 
       <div class="sex-part">
+        <div class="title">用户渗透率</div>
         <chart 
           ref="pieChart"
           @click="onClick"
@@ -177,12 +184,21 @@
         auto-resize />
       </div>
     </div>
-
+    <!-- 时间段与人群特征 -->
+    <div class="time-crowd-wrapper"  v-loading="crowdFlag"> 
+      <div class="crowd-part">
+        <div class="title">时间段与人群特征</div>
+        <chart
+        ref="crowdChart"
+        :options="timeAndCrowdChart"
+        auto-resize />
+      </div>
+    </div>
     <!-- 报表部分 -->
     <div v-loading="tableSetting.loading" class="table-wrap">
       <div class="actions-wrap">
         <span class="label">
-          数量: {{pagination.total}}
+          <span class="point-title">点位列表 </span> 数量: {{pagination.total}}
         </span>
         <div>
           <el-select v-model="reportValue" placeholder="请选择导出报表类型">
@@ -353,7 +369,11 @@
               class="looknum">
               {{circleLooknum}}人
             </div>
-
+            <div
+              :style="style.chartFont" 
+              class="playernum7">
+              {{circlePlayernum7}}人
+            </div>
             <div
               :style="style.chartFont" 
               class="playernum">
@@ -428,13 +448,13 @@ export default {
     chart: ECharts
   },
   data() {
-    let data = []
+    // let data = []
 
-    for (let i = 0; i <= 360; i++) {
-      let t = i / 180 * Math.PI
-      let r = Math.sin(2 * t) * Math.cos(2 * t)
-      data.push([r, i])
-    }
+    // for (let i = 0; i <= 360; i++) {
+    //   let t = i / 180 * Math.PI
+    //   let r = Math.sin(2 * t) * Math.cos(2 * t)
+    //   data.push([r, i])
+    // }
     return {
       style: {
         chartFont: {
@@ -546,7 +566,7 @@ export default {
       },
       tableData: [],
       tempAgeData: null,
-      peopleCount: [0, 0, 0],
+      peopleCount: [0, 0, 0, 0],
       type: '',
       userList: [],
       ageType: false,
@@ -557,11 +577,13 @@ export default {
       shouldPicDialogShow: false,
       ageFlag: false,
       sexFlag: false,
+      crowdFlag: false,
       userSelect: '',
       projectAlias: '',
       mainChart: {
         color: [
           '#0099FF',
+          '#22b572',
           '#F8B62D',
           '#E83828',
           '#197748',
@@ -583,6 +605,7 @@ export default {
         legend: {
           data: [
             '大屏围观参与人数',
+            '大屏活跃玩家人数',
             '大屏铁杆玩家人数',
             '扫码拉新会员注册总数',
             'CPH转化率',
@@ -675,9 +698,9 @@ export default {
             type: 'shadow'
           }
         },
-        legend: {
-          data: ['男', '女']
-        },
+        // legend: {
+        //   data: ['男', '女']
+        // },
         grid: {
           left: '3%',
           right: '4%',
@@ -716,6 +739,89 @@ export default {
                 position: 'inside'
               }
             },
+            data: null
+          }
+        ]
+      },
+      timeAndCrowdChart: {
+        title: {
+          text: '时间段与人群特征',
+          align: 'center'
+        },
+        color: ['#8CC63F', '#FBB03B', '#F15A24', '#662D91', '#ED1E79'],
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross',
+            crossStyle: {
+              color: '#999'
+            }
+          }
+        },
+        legend: {
+          data: ['00后', '90后', '80后', '70后', '女'],
+          align: 'left',
+          left: 10
+        },
+        grid: {
+          left: '5%',
+          right: '5%',
+          bottom: '4%'
+        },
+        xAxis: [
+          {
+            type: 'category',
+            data: [],
+            axisPointer: {
+              type: 'shadow'
+            }
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value',
+            name: '年龄数量',
+            axisLabel: {
+              formatter: '{value}'
+            }
+          },
+          {
+            type: 'value',
+            name: '女性百分比',
+            axisLabel: {
+              formatter: '{value} %'
+            }
+          }
+        ],
+        series: [
+          {
+            name: '00后',
+            type: 'bar',
+            stack: '总量',
+            data: null
+          },
+          {
+            name: '90后',
+            type: 'bar',
+            stack: '总量',
+            data: null
+          },
+          {
+            name: '80后',
+            type: 'bar',
+            stack: '总量',
+            data: null
+          },
+          {
+            name: '70后',
+            type: 'bar',
+            stack: '总量',
+            data: null
+          },
+          {
+            name: '平均温度',
+            type: 'line',
+            yAxisIndex: 1,
             data: null
           }
         ]
@@ -772,13 +878,16 @@ export default {
     circleLooknum: function() {
       return this.peopleCount[0].count === null ? 0 : this.peopleCount[0].count
     },
-    circlePlayernum: function() {
+    circlePlayernum7: function() {
       return this.peopleCount[1].count === null ? 0 : this.peopleCount[1].count
     },
-    circleLovenum: function() {
+    circlePlayernum: function() {
       return this.peopleCount[2].count === null ? 0 : this.peopleCount[2].count
     },
-    playernumDivideLookNum: function() {
+    circleLovenum: function() {
+      return this.peopleCount[3].count === null ? 0 : this.peopleCount[3].count
+    },
+    playernum7DivideLookNum: function() {
       let result = (
         this.peopleCount[1].count /
         this.peopleCount[0].count *
@@ -786,7 +895,7 @@ export default {
       ).toFixed(2)
       return result === 0 || result === NaN ? 0 : result + '%'
     },
-    lovenumDivideLookNum: function() {
+    playernumDivideLookNum: function() {
       let result = (
         this.peopleCount[2].count /
         this.peopleCount[1].count *
@@ -794,10 +903,15 @@ export default {
       ).toFixed(2)
       return result === 0 || result === NaN ? 0 : result + '%'
     },
-    computedCPH: function() {
-      return '暂无'
+    lovenumDivideLookNum: function() {
+      let result = (
+        this.peopleCount[3].count /
+        this.peopleCount[2].count *
+        100
+      ).toFixed(2)
+      return result === 0 || result === NaN ? 0 : result + '%'
     },
-    computedCPA: function() {
+    computedCPH: function() {
       let result = (
         this.peopleCount[1].count /
         this.peopleCount[0].count *
@@ -805,10 +919,18 @@ export default {
       ).toFixed(2)
       return String(result) + '%'
     },
-    computedCPL: function() {
+    computedCPA: function() {
       let result = (
         this.peopleCount[2].count /
-        this.peopleCount[1].count *
+        this.peopleCount[0].count *
+        100
+      ).toFixed(2)
+      return String(result) + '%'
+    },
+    computedCPL: function() {
+      let result = (
+        this.peopleCount[3].count /
+        this.peopleCount[0].count *
         100
       ).toFixed(2)
       return String(result) + '%'
@@ -984,8 +1106,73 @@ export default {
       this.getPointList()
       this.getPeopleCount()
       this.getAge()
+      this.getCrowdTime()
       this.getGender()
       this.setting.loading = false
+    },
+    getCrowdTime() {
+      this.crowdFlag = true
+      let args = this.setArgs('8')
+      return chart
+        .getChartData(this, args)
+        .then(response => {
+          let chart = this.$refs.crowdChart
+          chart.mergeOptions({
+            xAxis: {
+              type: 'category',
+              data: response.map(r => {
+                return r.time
+              })
+            },
+            series: [
+              {
+                name: '00后',
+                type: 'bar',
+                stack: '总量',
+                data: response.map(r => {
+                  return r.count.century00
+                })
+              },
+              {
+                name: '90后',
+                type: 'bar',
+                stack: '总量',
+                data: response.map(r => {
+                  return r.count.century90
+                })
+              },
+              {
+                name: '80后',
+                type: 'bar',
+                stack: '总量',
+                data: response.map(r => {
+                  return r.count.century80
+                })
+              },
+              {
+                name: '70后',
+                type: 'bar',
+                stack: '总量',
+                data: response.map(r => {
+                  return r.count.century70
+                })
+              },
+              {
+                name: '女',
+                type: 'line',
+                yAxisIndex: 1,
+                data: response.map(r => {
+                  return r.rate
+                })
+              }
+            ]
+          })
+          this.crowdFlag = false
+        })
+        .catch(err => {
+          this.crowdFlag = false
+          console.log(err)
+        })
     },
     getUser(query) {
       let args = {
@@ -1265,6 +1452,7 @@ export default {
         legend: {
           data: [
             '大屏围观参与人数',
+            '大屏活跃玩家人数',
             '大屏铁杆玩家人数',
             '扫码拉新会员注册总数',
             'CPH转化率',
@@ -1299,6 +1487,15 @@ export default {
             areaStyle: { normal: {} },
             data: res.map(r => {
               return r.looknum
+            })
+          },
+          {
+            symbol: 'circle',
+            name: '大屏活跃玩家人数',
+            type: 'line',
+            areaStyle: { normal: {} },
+            data: res.map(r => {
+              return r.playernum
             })
           },
           {
@@ -1440,6 +1637,16 @@ export default {
       color: white;
       font-weight: 800;
     }
+    .playernum7 {
+      position: absolute;
+      width: 80%;
+      left: 10%;
+      z-index: 11;
+      top: 45.5%;
+      text-align: center;
+      color: white;
+      font-weight: 800;
+    }
     .playernum {
       position: absolute;
       width: 80%;
@@ -1545,25 +1752,30 @@ export default {
         }
         &.color-1 {
           background: url('~assets/images/program/circle.png') center 39px
-            no-repeat #f8b62d;
+            no-repeat #22b572;
           background-size: 80px;
         }
         &.color-2 {
           background: url('~assets/images/program/circle.png') center 39px
-            no-repeat #e83828;
+            no-repeat #f8b62d;
           background-size: 80px;
         }
         &.color-3 {
           background: url('~assets/images/program/circle.png') center 39px
-            no-repeat #197748;
+            no-repeat #e83828;
           background-size: 80px;
         }
         &.color-4 {
           background: url('~assets/images/program/circle.png') center 39px
-            no-repeat #f8b62d;
+            no-repeat #197748;
           background-size: 80px;
         }
         &.color-5 {
+          background: url('~assets/images/program/circle.png') center 39px
+            no-repeat #f8b62d;
+          background-size: 80px;
+        }
+        &.color-6 {
           background: url('~assets/images/program/circle.png') center 39px
             no-repeat #bc1313;
           background-size: 80px;
@@ -1581,18 +1793,21 @@ export default {
             border-color: #0099ff #ffffff #ffffff #ffffff;
           }
           &.color-1 {
-            border-color: #f8b62d #ffffff #ffffff #ffffff;
+            border-color: #22b572 #ffffff #ffffff #ffffff;
           }
           &.color-2 {
-            border-color: #e83828 #ffffff #ffffff #ffffff;
-          }
-          &.color-3 {
-            border-color: #197748 #ffffff #ffffff #ffffff;
-          }
-          &.color-4 {
             border-color: #f8b62d #ffffff #ffffff #ffffff;
           }
+          &.color-3 {
+            border-color: #e83828 #ffffff #ffffff #ffffff;
+          }
+          &.color-4 {
+            border-color: #197748 #ffffff #ffffff #ffffff;
+          }
           &.color-5 {
+            border-color: #f8b62d #ffffff #ffffff #ffffff;
+          }
+          &.color-6 {
             border-color: #bc1313 #ffffff #ffffff #ffffff;
           }
         }
@@ -1653,15 +1868,17 @@ export default {
       padding-top: 30px;
       width: 100%;
       height: 800px;
-      .highcharts-container {
-        // width: 100%;
-      }
     }
   }
   .table-wrap {
     padding: 15px;
     background: #fff;
     margin: 15px 0;
+    .point-title {
+      font-size: 18px;
+      color: #000;
+      font-weight: 600;
+    }
     .demo-table-expand {
       font-size: 0;
     }
@@ -1688,41 +1905,6 @@ export default {
     margin-bottom: 10px;
     .label {
       font-size: 14px;
-    }
-  }
-  .pie-content-wrapper {
-    margin-top: 15px;
-    .pie-sex-wrapper {
-      background-color: #fff;
-      width: 100%;
-      .headline-wrapper {
-        padding: 20px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        font-size: 16px;
-        background-color: #fff;
-        color: #444;
-      }
-      .pie-sex-content {
-        .highchart {
-          .highcharts-container {
-            overflow: hidden !important;
-          }
-        }
-      }
-    }
-    .pie-age-wrapper {
-      background-color: #fff;
-      .headline-wrapper {
-        padding: 20px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        font-size: 16px;
-        background-color: #fff;
-        color: #444;
-      }
     }
   }
   .transfer-sex-wrapper {
@@ -1760,9 +1942,17 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+
     .sex-part {
       width: 25%;
       height: 100%;
+      .title {
+        position: relative;
+        left: 1%;
+        font-weight: 600;
+        color: #000;
+        margin-bottom: 5px;
+      }
       .echarts {
         height: 80%;
         width: 100%;
@@ -1772,6 +1962,30 @@ export default {
       width: 72%;
       left: 3%;
       height: 100%;
+    }
+  }
+  .time-crowd-wrapper {
+    margin-top: 15px;
+    background-color: #fff;
+    height: 600px;
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    .crowd-part {
+      width: 100%;
+      height: 100%;
+      .title {
+        position: relative;
+        left: 1%;
+        font-weight: 600;
+        color: #000;
+        margin-bottom: 5px;
+      }
+      .echarts {
+        height: 90%;
+        width: 100%;
+      }
     }
   }
   .echarts {

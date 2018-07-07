@@ -36,12 +36,12 @@
         </el-row>
       </el-card>
     </div>
-    <!-- 时间段与人群特征 -->
+    <!-- 时间段与人群特征
     <div class="ranking-wrap">
       <el-card shadow="always" v-loading="timeFlag">
         <highcharts :options="timeOptions" class="highchart" ref="timeChar"></highcharts> 
       </el-card>
-    </div>
+    </div> -->
     <!-- 活跃数 -->
     <div class="tendency-wrap">
       <el-card shadow="always" v-loading="activeFlag">
@@ -139,10 +139,10 @@ export default {
       },
       activeOptions: {
         chart: {
-          zoomType: 'xy'
+          type: 'column'
         },
         title: {
-          text: '场地月活指数MAU TOP15 (共 129 个场地)',
+          text: '场地月活指数MAU TOP15 (共 0 个场地)',
           align: 'left'
         },
         credits: {
@@ -157,35 +157,10 @@ export default {
         colors: ['#E4AB00', '#1AB1CE'],
         yAxis: [
           {
-            // Primary yAxis
-            labels: {
-              format: '{value} %',
-              style: {
-                color: '#1AB1CE'
-              }
-            },
+            min: 0,
             title: {
-              text: '环比变量',
-              style: {
-                color: '#1AB1CE'
-              }
+              text: '月活用户数'
             }
-          },
-          {
-            // Secondary yAxis
-            title: {
-              text: '月活用户数',
-              style: {
-                color: '#E4AB00'
-              }
-            },
-            labels: {
-              format: '{value}',
-              style: {
-                color: '#E4AB00'
-              }
-            },
-            opposite: true
           }
         ],
         tooltip: {
@@ -199,13 +174,6 @@ export default {
         series: [
           {
             name: '月活用户数',
-            type: 'column',
-            yAxis: 1,
-            data: []
-          },
-          {
-            name: '环比变量',
-            type: 'spline',
             data: []
           }
         ]
@@ -499,7 +467,7 @@ export default {
       this.userFlag = true
       this.getSceneFiveChartData()
       this.getPointTenChartData()
-      this.getTimeChartData()
+      // this.getTimeChartData()
       this.getAgeChartData()
       this.getActiveChartData()
     },
@@ -611,7 +579,6 @@ export default {
                   response[0].display_name
                 )
                 this.projectFlag = false
-                this.userFlag = false
               } else {
                 this.projectFlag = false
                 this.userFlag = false
@@ -667,22 +634,18 @@ export default {
                   })
                   zeroData.push({
                     name: value.time,
-                    // y: parseFloat(value.count['00'])
                     y: parseFloat(value.count.century00)
                   })
                   nineData.push({
                     name: value.time,
-                    // y: parseFloat(value.count['90'])
                     y: parseFloat(value.count.century90)
                   })
                   sevenData.push({
                     name: value.time,
-                    // y: parseFloat(value.count['70'])
                     y: parseFloat(value.count.century70)
                   })
                   eightData.push({
                     name: value.time,
-                    // y: parseFloat(value.count['80'])
                     y: parseFloat(value.count.century80)
                   })
                 })
@@ -759,33 +722,27 @@ export default {
               this.pointFlag = false
               break
             case 'active':
-              let columnData = []
-              let splineData = []
+              let monthData = []
               let activeChart = this.$refs.activeChar.chart
-              if (response.length > 0) {
-                response.map((value, key) => {
-                  columnData.push({
-                    name: value.month,
+              let data = response.data
+              let market_num = response.market_num
+              if (data.length > 0) {
+                data.map((value, key) => {
+                  monthData.push({
+                    name: value.market_name,
                     y: parseFloat(value.playernum)
-                  })
-                  splineData.push({
-                    name: value.month,
-                    y: parseFloat(value.rate)
                   })
                 })
               }
               activeChart.update({
+                title: {
+                  text: '场地月活指数MAU TOP15 (共' + market_num + '个场地)',
+                  align: 'left'
+                },
                 series: [
                   {
                     name: '月活用户数',
-                    type: 'column',
-                    yAxis: 1,
-                    data: columnData
-                  },
-                  {
-                    name: '环比变量',
-                    type: 'spline',
-                    data: splineData
+                    data: monthData
                   }
                 ]
               })
