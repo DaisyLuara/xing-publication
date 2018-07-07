@@ -482,7 +482,7 @@ class ChartDataController extends Controller
             '24:00' => 0,
         ];
         foreach ($genderData as $item) {
-            $rate[$item->times] = round($item->femalenum / ($item->malenum + $item->femalenum), 3) * 100 . '%';
+            $rate[$item->times] = round($item->femalenum / ($item->malenum + $item->femalenum), 3) * 100;
         }
         $times = ['10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', '24:00'];
         $output = [];
