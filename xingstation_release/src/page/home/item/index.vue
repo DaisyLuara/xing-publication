@@ -729,8 +729,8 @@ export default {
               if (data.length > 0) {
                 data.map((value, key) => {
                   monthData.push({
-                    name: value.market_name,
-                    y: parseFloat(value.playernum)
+                    name: value.display_name,
+                    y: parseFloat(value.count)
                   })
                 })
               }

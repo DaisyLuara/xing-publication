@@ -1495,7 +1495,7 @@ export default {
             type: 'line',
             areaStyle: { normal: {} },
             data: res.map(r => {
-              return r.playernum
+              return r.playernum7
             })
           },
           {
