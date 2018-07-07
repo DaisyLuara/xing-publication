@@ -272,7 +272,7 @@ class ChartDataController extends Controller
                     'female' => $item->female_count,
                     'total' => $item->total,
                 ],
-                'display_name' => $item->market_name . ' ' . $item->name,
+                'display_name' => $item->area_name . $item->market_name . ' ' . $item->name,
             ];
         });
 
@@ -511,18 +511,20 @@ class ChartDataController extends Controller
         $endDate = $request->end_date;
         $startMonth = (new Carbon($startDate))->format('Y-m');
         $endMonth = (new Carbon($endDate))->format('Y-m');
-        $data = DB::connection('ar')->table('face_people_time_mau_market as fptmm')
+        $sql = DB::connection('ar')->table('face_people_time_mau_market as fptmm')
             ->join('avr_official_market as aom', 'fptmm.marketid', '=', 'aom.marketid')
             ->whereRaw("date_format(fptmm.date,'%Y-%m') between '$startMonth' and '$endMonth'")
             ->groupBy('fptmm.marketid')
             ->orderBy('playernum', 'desc')
-            ->selectRaw("aom.name as name,sum(active_player) as playernum")
-            ->limit(10)
-            ->get();
+            ->selectRaw("aom.name as name,sum(active_player) as playernum");
 
-        $output = [];
+        $marketnum = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
+            ->count();
+        $data = $sql->limit(10)->get();
+        $output['market_num'] = $marketnum;
+        $output['data'] = [];
         foreach ($data as $item) {
-            $output[] = [
+            $output['data'][] = [
                 'market_name' => $item->name,
                 'playernum' => $item->playernum
             ];
@@ -559,9 +561,9 @@ class ChartDataController extends Controller
         //节目搜索-注意业务逻辑
         if ($selectByAlias) {
             $alias = $request->alias ? $request->alias : 'all';
-            $query->where("face_count_log.belong", '=', $alias);
+            $query->where("$table.belong", '=', $alias);
         } else {
-            $query->join('ar_product_list', 'ar_product_list.versionname', '=', "$table . belong");
+            $query->join('ar_product_list', 'ar_product_list.versionname', '=', "$table.belong");
         }
 
     }
