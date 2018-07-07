@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\Face\V1\Transformer\FaceCountTransformer;
 use App\Http\Controllers\Admin\Common\V1\Request\ChartDataRequest;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceCount;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceLog;
+use function GuzzleHttp\Psr7\str;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -352,7 +353,12 @@ class ChartDataController extends Controller
         $format = $days <= 31 ? '%Y-%m-%d' : '%Y-%m';
 
         $this->handleQuery($request, $query);
-        return $query->selectRaw("date_format(face_count_log . date, '$format') as display_name")
+        return $query->join('face_people_time_active_player', function ($join) {
+            $join->on('face_count_log.oid', '=', 'face_people_time_active_player.oid')
+                ->on('face_count_log.belong', '=', 'face_people_time_active_player.belong')
+                ->whereRaw("date_format(face_count_log.date,'%Y-%m-%d')=date_format(face_people_time_active_player.date,'%Y-%m-%d')");
+        }, null, null, 'left')
+            ->selectRaw("date_format(face_count_log . date, '$format') as display_name")
             ->groupBy('display_name')
             ->get();
 
@@ -392,6 +398,9 @@ class ChartDataController extends Controller
     {
         $startDate = $request->start_date;
         $endDate = $request->end_date;
+        $startClientDate = strtotime($startDate) * 1000;
+        $endClientDate = strtotime($endDate) * 1000;
+
         $time1 = " when time >'00:00' and time <='10:00' then '10:00'";
         $time2 = " when time >'10:00' and time <='12:00' then '12:00'";
         $time3 = " when time >'12:00' and time <='14:00' then '14:00'";
@@ -403,7 +412,7 @@ class ChartDataController extends Controller
         $timeSql = $time1 . $time2 . $time3 . $time4 . $time5 . $time6 . $time7 . $time8;
 
         $data = DB::connection('ar')->table('face_collect_character')
-            ->whereRaw("date between '$startDate' and '$endDate'")
+            ->whereRaw("clientdate between '$startClientDate' and '$endClientDate'")
             ->where('belong', '=', 'all')
             ->where('century', '<>', '0')
             ->whereNotIn('oid', ['16', '19', '30', '31', '335', '334', '329', '328', '327'])
@@ -411,6 +420,7 @@ class ChartDataController extends Controller
             ->groupBy('century')
             ->selectRaw("case" . $timeSql . " else 0 end as times,century,sum(looknum) as count")
             ->get();
+
         $count = [];
         for ($i = 0; $i < 8; $i++) {
             $count[$i] = [
@@ -452,23 +462,14 @@ class ChartDataController extends Controller
                 $count[7][$mapping[$item->century]] = $item->count;
             }
         }
-
-        $girlNum = DB::connection('ar')->table('face_collect_character')
-            ->whereRaw("date between '$startDate' and '$endDate'")
-            ->where('century', '<>', '0')
-            ->whereNotIn('oid', ['16', '19', '30', '31', '335', '334', '329', '328', '327'])
-            ->where('gender', '=', 'Female')
-            ->where('belong', '=', 'all')
+        $sql = DB::connection('ar')->table('face_collect_character')
+            ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and belong = 'all' and century <> 0 and oid not in ('16', '19', '30', '31', '335', '334', '329', '328', '327')")
             ->groupBy('times')
-            ->selectRaw("case" . $timeSql . " else 0 end as times,sum(looknum) as count")
-            ->get();
-        $totalNum = DB::connection('ar')->table('face_collect_character')
-            ->whereRaw("date between '$startDate' and '$endDate'")
-            ->whereNotIn('oid', ['16', '19', '30', '31', '335', '334', '329', '328', '327'])
-            ->where('century', '<>', '0')
-            ->where('belong', '=', 'all')
+            ->groupBy('gender')
+            ->selectRaw("case" . $timeSql . " else 0 end as times,gender,sum(looknum) as count");
+        $genderData = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
             ->groupBy('times')
-            ->selectRaw("case" . $timeSql . " else 0 end as times,sum(looknum) as count")
+            ->selectRaw("  times,sum(if(gender = 'Male', count, 0))as malenum,sum(if(gender = 'Female', count, 0)) as femalenum")
             ->get();
         $rate = [
             '10:00' => 0,
@@ -480,12 +481,8 @@ class ChartDataController extends Controller
             '22:00' => 0,
             '24:00' => 0,
         ];
-        $total = [];
-        foreach ($totalNum as $item) {
-            $total[$item->times] = $item->count;
-        }
-        foreach ($girlNum as $item) {
-            $rate[$item->times] = round($item->count / $total[$item->times], 3) * 100 . '%';
+        foreach ($genderData as $item) {
+            $rate[$item->times] = round($item->femalenum / ($item->malenum + $item->femalenum), 3) * 100 . '%';
         }
         $times = ['10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', '24:00'];
         $output = [];
@@ -493,7 +490,7 @@ class ChartDataController extends Controller
             $output[] = [
                 'count' => $count[$i],
                 'rate' => $rate[$times[$i]],
-                'time' => $times[$i]
+                'display_name' => $times[$i]
             ];
         }
         return $output;
@@ -525,8 +522,8 @@ class ChartDataController extends Controller
         $output['data'] = [];
         foreach ($data as $item) {
             $output['data'][] = [
-                'market_name' => $item->name,
-                'playernum' => $item->playernum
+                'display_name' => $item->name,
+                'count' => $item->playernum
             ];
         }
 

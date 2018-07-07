@@ -22,9 +22,10 @@ class CreateFacePeopleTimeActivePlayerTable extends Migration
                 $table->integer('playernum20');
                 $table->integer('playernum30');
                 $table->timestamp('date')->nullable();
+                $table->bigInteger('clientdate');
                 $table->index('oid');
                 $table->index('belong');
-                $table->index('date');
+                $table->index('clientdate');
             });
 
         }

@@ -115,7 +115,8 @@ class Kernel extends ConsoleKernel
                         'playernum7' => $item->playernum7,
                         'playernum20' => $item->playernum20,
                         'playernum30' => $item->playernum30,
-                        'date' => $date
+                        'date' => $date,
+                        'clientdate' => strtotime($date) * 1000
                     ];
                 }
                 foreach ($data as $item) {
@@ -125,7 +126,8 @@ class Kernel extends ConsoleKernel
                         'playernum7' => $item->playernum7,
                         'playernum20' => $item->playernum20,
                         'playernum30' => $item->playernum30,
-                        'date' => $date
+                        'date' => $date,
+                        'clientdate' => strtotime($date) * 1000
                     ];
                 }
                 DB::connection('ar')->table('face_people_time_active_player')
@@ -133,7 +135,7 @@ class Kernel extends ConsoleKernel
                 $date = (new Carbon($date))->addDay(1)->toDateString();
             }
             ActivePlayerRecord::create(['date' => $currentDate]);
-        })->daily()->at('8:00');
+        })->daily()->at('13:21');
 
         //月活玩家清洗
         $schedule->call(function () {
@@ -239,12 +241,14 @@ class Kernel extends ConsoleKernel
                     $item['belong'] = 'all';
                     $item['time'] = (new Carbon($item['time']))->addMinutes(30)->format('H:i');
                     $item['date'] = $date;
+                    $item['clientdate'] = strtotime($date) * 1000;
                     $count[] = $item;
                 }
                 foreach ($data as $item) {
                     $item = json_decode(json_encode($item), true);
                     $item['time'] = (new Carbon($item['time']))->addMinutes(30)->format('H:i');
                     $item['date'] = $date;
+                    $item['clientdate'] = strtotime($date) * 1000;
                     $count[] = $item;
                 }
                 $count = array_chunk($count, 8000);
@@ -254,7 +258,7 @@ class Kernel extends ConsoleKernel
                 $date = (new Carbon($date))->addDay(1)->toDateString();
             }
             FaceCollectRecord::create(['date' => $currentDate]);
-        })->daily()->at('8:00');
+        })->daily()->at('12:01');
     }
 
 

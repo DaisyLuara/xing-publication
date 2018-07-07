@@ -23,9 +23,10 @@ class CreateFaceCollectCharacterTable extends Migration
                 $table->string('gender', 20);
                 $table->integer('looknum');
                 $table->timestamp('date');
+                $table->bigInteger('clientdate');
                 $table->index('oid');
                 $table->index('belong');
-                $table->index('date');
+                $table->index('clientdate');
             });
         }
     }
