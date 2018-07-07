@@ -15,19 +15,13 @@
       @change="dateChangeHandle">
       </el-date-picker>
     </div>
-    <!-- 活跃数 -->
-    <div class="tendency-wrap">
-      <el-card shadow="always" v-loading="activeFlag">
-        <highcharts :options="activeOptions" class="highchart" ref="activeChar"></highcharts>
-      </el-card>
-    </div>
     <!-- 点位前10 -->
     <div class="ranking-wrap">
       <el-card shadow="always" v-loading="pointFlag">
         <highcharts :options="pointTenOptions" class="highchart" ref="pointTenChar"></highcharts> 
       </el-card>
     </div>
-    <!-- 行业块 -->
+    <!-- 行业模块 -->
     <div class="ranking-wrap">
       <el-card>
         <el-row :gutter="20">
@@ -42,10 +36,10 @@
         </el-row>
       </el-card>
     </div>
-    <!-- 时间段与人群特征 -->
-    <div class="ranking-wrap">
-      <el-card shadow="always" v-loading="timeFlag">
-        <highcharts :options="timeOptions" class="highchart" ref="timeChar"></highcharts> 
+    <!-- 活跃数 -->
+    <div class="tendency-wrap">
+      <el-card shadow="always" v-loading="activeFlag">
+        <highcharts :options="activeOptions" class="highchart" ref="activeChar"></highcharts>
       </el-card>
     </div>
   </div>
@@ -139,10 +133,10 @@ export default {
       },
       activeOptions: {
         chart: {
-          zoomType: 'xy'
+          type: 'column'
         },
         title: {
-          text: '月活用户指数MAU',
+          text: '场地月活指数MAU TOP15 (共 0 个场地)',
           align: 'left'
         },
         credits: {
@@ -157,35 +151,10 @@ export default {
         colors: ['#E4AB00', '#1AB1CE'],
         yAxis: [
           {
-            // Primary yAxis
-            labels: {
-              format: '{value} %',
-              style: {
-                color: '#1AB1CE'
-              }
-            },
+            min: 0,
             title: {
-              text: '环比变量',
-              style: {
-                color: '#1AB1CE'
-              }
+              text: '月活用户数'
             }
-          },
-          {
-            // Secondary yAxis
-            title: {
-              text: '月活用户数',
-              style: {
-                color: '#E4AB00'
-              }
-            },
-            labels: {
-              format: '{value}',
-              style: {
-                color: '#E4AB00'
-              }
-            },
-            opposite: true
           }
         ],
         tooltip: {
@@ -199,13 +168,6 @@ export default {
         series: [
           {
             name: '月活用户数',
-            type: 'column',
-            yAxis: 1,
-            data: []
-          },
-          {
-            name: '环比变量',
-            type: 'spline',
             data: []
           }
         ]
@@ -215,7 +177,7 @@ export default {
           type: 'bar'
         },
         title: {
-          text: '点位人气TOP10',
+          text: '人气TOP10',
           align: 'left',
           style: { fontSize: '20px' }
         },
@@ -286,7 +248,7 @@ export default {
           type: 'bar'
         },
         title: {
-          text: '场景行业结构前5位',
+          text: '场景业态热度TOP5',
           align: 'left',
           style: { fontSize: '20px' }
         },
@@ -358,7 +320,7 @@ export default {
           }
         },
         title: {
-          text: '业态场景用户结构',
+          text: '场景业态用户构成',
           style: { fontSize: '20px' },
           align: 'left'
         },
@@ -479,7 +441,6 @@ export default {
           }
         ]
       },
-      timeFlag: false,
       userFlag: false,
       ageFlag: false,
       projectFlag: false,
@@ -499,7 +460,7 @@ export default {
       this.userFlag = true
       this.getSceneFiveChartData()
       this.getPointTenChartData()
-      this.getTimeChartData()
+      // this.getTimeChartData()
       this.getAgeChartData()
       this.getActiveChartData()
     },
@@ -547,11 +508,6 @@ export default {
         case '3':
           args.id = '3'
           this.projectFlag = true
-          break
-        //时间
-        case '8':
-          args.id = '8'
-          this.timeFlag = true
           break
         // 年龄
         case '4':
@@ -623,7 +579,7 @@ export default {
                 })
                 this.$refs.userChar.chart.update({
                   title: {
-                    text: '业态场景用户结构'
+                    text: '场景业态用户构成'
                   },
                   series: [
                     {
@@ -640,7 +596,7 @@ export default {
               this.drawSingleChart(response, userData)
               userChart.update({
                 title: {
-                  text: '业态场景用户结构' + '(' + name + ')'
+                  text: '场景业态用户构成' + '(' + name + ')'
                 },
                 series: [
                   {
@@ -650,84 +606,6 @@ export default {
                 ]
               })
               this.userFlag = false
-              break
-            case 'time':
-              let femalData = []
-              let sevenData = []
-              let zeroData = []
-              let nineData = []
-              let eightData = []
-              let timeChart = this.$refs.timeChar.chart
-              if (response.length > 0) {
-                response.map((value, key) => {
-                  femalData.push({
-                    name: value.time,
-                    y: parseFloat(value.rate)
-                  })
-                  zeroData.push({
-                    name: value.time,
-                    // y: parseFloat(value.count['00'])
-                    y: parseFloat(value.count.century00)
-                  })
-                  nineData.push({
-                    name: value.time,
-                    // y: parseFloat(value.count['90'])
-                    y: parseFloat(value.count.century90)
-                  })
-                  sevenData.push({
-                    name: value.time,
-                    // y: parseFloat(value.count['70'])
-                    y: parseFloat(value.count.century70)
-                  })
-                  eightData.push({
-                    name: value.time,
-                    // y: parseFloat(value.count['80'])
-                    y: parseFloat(value.count.century80)
-                  })
-                })
-              }
-              timeChart.update({
-                series: [
-                  {
-                  type: 'column',
-                  name: '00后',
-                  color: '#8CC63F',
-                  data: zeroData
-                },
-                {
-                  type: 'column',
-                  color: '#FBB03B',
-                  name: '90后',
-                  data: nineData
-                },
-                {
-                  type: 'column',
-                  name: '80后',
-                  color: '#F15A24',
-                  data: eightData
-                },
-                {
-                  type: 'column',
-                  name: '70后',
-                  color: '#662D91',
-                  data: sevenData
-                },
-                {
-                  type: 'spline',
-                  name: '女',
-                  color: '#ED1E79',
-                  data: femalData,
-                  yAxis: 1,
-                  marker: {
-                    lineWidth: 2,
-                    lineColor: '#ED1E79',
-                    fillColor: '#ED1E79'
-                  }
-                }
-                ]
-              })
-              this.timeFlag = false
-              console.log(response)
               break
             case 'point':
               let pointMaleData = []
@@ -758,33 +636,27 @@ export default {
               this.pointFlag = false
               break
             case 'active':
-              let columnData = []
-              let splineData = []
+              let monthData = []
               let activeChart = this.$refs.activeChar.chart
-              if (response.length > 0) {
-                response.map((value, key) => {
-                  columnData.push({
-                    name: value.month,
-                    y: parseFloat(value.playernum)
-                  })
-                  splineData.push({
-                    name: value.month,
-                    y: parseFloat(value.rate)
+              let data = response.data
+              let market_num = response.market_num
+              if (data.length > 0) {
+                data.map((value, key) => {
+                  monthData.push({
+                    name: value.display_name,
+                    y: parseFloat(value.count)
                   })
                 })
               }
               activeChart.update({
+                title: {
+                  text: '场地月活指数MAU TOP15 (共' + market_num + '个场地)',
+                  align: 'left'
+                },
                 series: [
                   {
                     name: '月活用户数',
-                    type: 'column',
-                    yAxis: 1,
-                    data: columnData
-                  },
-                  {
-                    name: '环比变量',
-                    type: 'spline',
-                    data: splineData
+                    data: monthData
                   }
                 ]
               })
@@ -796,12 +668,10 @@ export default {
           switch (type) {
             case 'scene':
               this.projectFlag = false
+              this.userFlag = false
               break
             case 'point':
               this.pointFlag = false
-              break
-            case 'time':
-              this.timeFlag = false
               break
             case 'user':
               this.userFlag = false
