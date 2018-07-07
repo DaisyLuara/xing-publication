@@ -27,7 +27,7 @@
         <highcharts :options="pointTenOptions" class="highchart" ref="pointTenChar"></highcharts> 
       </el-card>
     </div>
-    <!-- 行业块 -->
+    <!-- 行业模块 -->
     <div class="ranking-wrap">
       <el-card>
         <el-row :gutter="20">
