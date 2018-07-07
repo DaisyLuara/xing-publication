@@ -460,7 +460,6 @@ export default {
       this.userFlag = true
       this.getSceneFiveChartData()
       this.getPointTenChartData()
-      // this.getTimeChartData()
       this.getAgeChartData()
       this.getActiveChartData()
     },
@@ -470,9 +469,6 @@ export default {
     },
     getPointTenChartData() {
       this.getChartData('point', '2')
-    },
-    getTimeChartData() {
-      this.getChartData('time', '8')
     },
     getAgeChartData(attributeId, name) {
       if (attributeId) {

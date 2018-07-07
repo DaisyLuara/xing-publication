@@ -1162,7 +1162,7 @@ export default {
                 type: 'line',
                 yAxisIndex: 1,
                 data: response.map(r => {
-                  return r.rate
+                  return r.rate.toFixed(1)
                 })
               }
             ]
