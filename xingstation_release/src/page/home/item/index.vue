@@ -15,12 +15,6 @@
       @change="dateChangeHandle">
       </el-date-picker>
     </div>
-    <!-- 活跃数 -->
-    <div class="tendency-wrap">
-      <el-card shadow="always" v-loading="activeFlag">
-        <highcharts :options="activeOptions" class="highchart" ref="activeChar"></highcharts>
-      </el-card>
-    </div>
     <!-- 点位前10 -->
     <div class="ranking-wrap">
       <el-card shadow="always" v-loading="pointFlag">
@@ -46,6 +40,12 @@
     <div class="ranking-wrap">
       <el-card shadow="always" v-loading="timeFlag">
         <highcharts :options="timeOptions" class="highchart" ref="timeChar"></highcharts> 
+      </el-card>
+    </div>
+    <!-- 活跃数 -->
+    <div class="tendency-wrap">
+      <el-card shadow="always" v-loading="activeFlag">
+        <highcharts :options="activeOptions" class="highchart" ref="activeChar"></highcharts>
       </el-card>
     </div>
   </div>
@@ -142,7 +142,7 @@ export default {
           zoomType: 'xy'
         },
         title: {
-          text: '月活用户指数MAU',
+          text: '场地月活指数MAU TOP15 (共 129 个场地)',
           align: 'left'
         },
         credits: {
@@ -215,7 +215,7 @@ export default {
           type: 'bar'
         },
         title: {
-          text: '点位人气TOP10',
+          text: '人气TOP10',
           align: 'left',
           style: { fontSize: '20px' }
         },
@@ -286,7 +286,7 @@ export default {
           type: 'bar'
         },
         title: {
-          text: '场景行业结构前5位',
+          text: '场景业态热度TOP5',
           align: 'left',
           style: { fontSize: '20px' }
         },
@@ -358,7 +358,7 @@ export default {
           }
         },
         title: {
-          text: '业态场景用户结构',
+          text: '场景业态用户构成',
           style: { fontSize: '20px' },
           align: 'left'
         },
@@ -611,6 +611,7 @@ export default {
                   response[0].display_name
                 )
                 this.projectFlag = false
+                this.userFlag = false
               } else {
                 this.projectFlag = false
                 this.userFlag = false
@@ -623,7 +624,7 @@ export default {
                 })
                 this.$refs.userChar.chart.update({
                   title: {
-                    text: '业态场景用户结构'
+                    text: '场景业态用户构成'
                   },
                   series: [
                     {
@@ -640,7 +641,7 @@ export default {
               this.drawSingleChart(response, userData)
               userChart.update({
                 title: {
-                  text: '业态场景用户结构' + '(' + name + ')'
+                  text: '场景业态用户构成' + '(' + name + ')'
                 },
                 series: [
                   {
@@ -689,41 +690,41 @@ export default {
               timeChart.update({
                 series: [
                   {
-                  type: 'column',
-                  name: '00后',
-                  color: '#8CC63F',
-                  data: zeroData
-                },
-                {
-                  type: 'column',
-                  color: '#FBB03B',
-                  name: '90后',
-                  data: nineData
-                },
-                {
-                  type: 'column',
-                  name: '80后',
-                  color: '#F15A24',
-                  data: eightData
-                },
-                {
-                  type: 'column',
-                  name: '70后',
-                  color: '#662D91',
-                  data: sevenData
-                },
-                {
-                  type: 'spline',
-                  name: '女',
-                  color: '#ED1E79',
-                  data: femalData,
-                  yAxis: 1,
-                  marker: {
-                    lineWidth: 2,
-                    lineColor: '#ED1E79',
-                    fillColor: '#ED1E79'
+                    type: 'column',
+                    name: '00后',
+                    color: '#8CC63F',
+                    data: zeroData
+                  },
+                  {
+                    type: 'column',
+                    color: '#FBB03B',
+                    name: '90后',
+                    data: nineData
+                  },
+                  {
+                    type: 'column',
+                    name: '80后',
+                    color: '#F15A24',
+                    data: eightData
+                  },
+                  {
+                    type: 'column',
+                    name: '70后',
+                    color: '#662D91',
+                    data: sevenData
+                  },
+                  {
+                    type: 'spline',
+                    name: '女',
+                    color: '#ED1E79',
+                    data: femalData,
+                    yAxis: 1,
+                    marker: {
+                      lineWidth: 2,
+                      lineColor: '#ED1E79',
+                      fillColor: '#ED1E79'
+                    }
                   }
-                }
                 ]
               })
               this.timeFlag = false
@@ -796,6 +797,7 @@ export default {
           switch (type) {
             case 'scene':
               this.projectFlag = false
+              this.userFlag = false
               break
             case 'point':
               this.pointFlag = false
