@@ -36,12 +36,6 @@
         </el-row>
       </el-card>
     </div>
-    <!-- 时间段与人群特征
-    <div class="ranking-wrap">
-      <el-card shadow="always" v-loading="timeFlag">
-        <highcharts :options="timeOptions" class="highchart" ref="timeChar"></highcharts> 
-      </el-card>
-    </div> -->
     <!-- 活跃数 -->
     <div class="tendency-wrap">
       <el-card shadow="always" v-loading="activeFlag">
@@ -447,7 +441,6 @@ export default {
           }
         ]
       },
-      timeFlag: false,
       userFlag: false,
       ageFlag: false,
       projectFlag: false,
@@ -515,11 +508,6 @@ export default {
         case '3':
           args.id = '3'
           this.projectFlag = true
-          break
-        //时间
-        case '8':
-          args.id = '8'
-          this.timeFlag = true
           break
         // 年龄
         case '4':
@@ -619,80 +607,6 @@ export default {
               })
               this.userFlag = false
               break
-            case 'time':
-              let femalData = []
-              let sevenData = []
-              let zeroData = []
-              let nineData = []
-              let eightData = []
-              let timeChart = this.$refs.timeChar.chart
-              if (response.length > 0) {
-                response.map((value, key) => {
-                  femalData.push({
-                    name: value.time,
-                    y: parseFloat(value.rate)
-                  })
-                  zeroData.push({
-                    name: value.time,
-                    y: parseFloat(value.count.century00)
-                  })
-                  nineData.push({
-                    name: value.time,
-                    y: parseFloat(value.count.century90)
-                  })
-                  sevenData.push({
-                    name: value.time,
-                    y: parseFloat(value.count.century70)
-                  })
-                  eightData.push({
-                    name: value.time,
-                    y: parseFloat(value.count.century80)
-                  })
-                })
-              }
-              timeChart.update({
-                series: [
-                  {
-                    type: 'column',
-                    name: '00后',
-                    color: '#8CC63F',
-                    data: zeroData
-                  },
-                  {
-                    type: 'column',
-                    color: '#FBB03B',
-                    name: '90后',
-                    data: nineData
-                  },
-                  {
-                    type: 'column',
-                    name: '80后',
-                    color: '#F15A24',
-                    data: eightData
-                  },
-                  {
-                    type: 'column',
-                    name: '70后',
-                    color: '#662D91',
-                    data: sevenData
-                  },
-                  {
-                    type: 'spline',
-                    name: '女',
-                    color: '#ED1E79',
-                    data: femalData,
-                    yAxis: 1,
-                    marker: {
-                      lineWidth: 2,
-                      lineColor: '#ED1E79',
-                      fillColor: '#ED1E79'
-                    }
-                  }
-                ]
-              })
-              this.timeFlag = false
-              console.log(response)
-              break
             case 'point':
               let pointMaleData = []
               let pointFemaleData = []
@@ -758,9 +672,6 @@ export default {
               break
             case 'point':
               this.pointFlag = false
-              break
-            case 'time':
-              this.timeFlag = false
               break
             case 'user':
               this.userFlag = false

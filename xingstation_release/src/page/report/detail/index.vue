@@ -1121,7 +1121,7 @@ export default {
             xAxis: {
               type: 'category',
               data: response.map(r => {
-                return r.time
+                return r.display_name
               })
             },
             series: [
@@ -1244,7 +1244,7 @@ export default {
         .getChartData(this, args)
         .then(response => {
           this.peopleCount = response
-          this.type = 'looknum,playernum,lovenum'
+          this.type = 'looknum,playernum,lovenum,playernum7'
           this.getLineData()
         })
         .catch(err => {
