@@ -51,63 +51,64 @@ class Kernel extends ConsoleKernel
                 $endClientDate = strtotime($date . ' 23:59:59') * 1000;
 
                 $timeArray = [7, 20, 30];
+
                 //按所有人去重 belong='all'
                 $sql1 = [];
                 for ($i = 0; $i < count($timeArray); $i++) {
                     $sql = DB::connection('ar')->table('face_people_time')
                         ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and fpid>0 and playtime>='$timeArray[$i]000'")
-                        ->selectRaw("oid as oid" . $timeArray[$i] . ", belong as belong" . $timeArray[$i] . ", fpid as fpid" . $timeArray[$i]);
-                    //按所有人去重 belong='all'
+                        ->selectRaw("oid ");
                     if ($date < '2018-07-01') {
-                        $sql1[$i] = $sql->groupBy(DB::raw('fpid*100+oid'));
+                        $sql = $sql->groupBy(DB::raw('fpid*100+oid'));
                     } else {
-                        $sql1[$i] = $sql->groupBy(DB::raw('fpid*10000+oid'));
+                        $sql = $sql->groupBy(DB::raw('fpid*10000+oid'));
                     }
+
+                    $sql1[] = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a" . $timeArray[$i]))
+                        ->groupBy('oid' . $timeArray[$i])
+                        ->selectRaw("oid as oid" . $timeArray[$i] . ",count(*) as playernum" . $timeArray[$i]);
                 }
+                $query = DB::connection('ar')->table(DB::raw("({$sql1[0]->toSql()}) as b"));
+                for ($i = 1; $i < count($timeArray); $i++) {
+                    $query = $query->join(DB::raw("({$sql1[$i]->toSql()}) as b" . $i), function ($join) use ($i, $timeArray) {
+                        $join->on('b.oid' . $timeArray[0], '=', 'b' . $i . '.oid' . $timeArray[$i]);
+                    }, null, null, 'left');
+                }
+                $query->selectRaw("oid" . $timeArray[0] . " as oid");
+                for ($i = 0; $i < count($timeArray); $i++) {
+                    $query->selectRaw("playernum" . $timeArray[$i]);
+                }
+                $allData = $query->get();
 
                 //按节目去重
                 $sql2 = [];
                 for ($i = 0; $i < count($timeArray); $i++) {
+
                     $sql = DB::connection('ar')->table('face_people_time')
                         ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and fpid>0 and playtime>='$timeArray[$i]000'")
-                        ->selectRaw("oid as oid" . $timeArray[$i] . ", belong as belong" . $timeArray[$i] . ", fpid as fpid" . $timeArray[$i]);
-                    //按节目去重
+                        ->selectRaw("oid,belong");
                     if ($date < '2018-07-01') {
-                        $sql2[$i] = $sql->groupBy(DB::raw('fpid*100+oid,belong'));
+                        $sql = $sql->groupBy(DB::raw('fpid*100+oid,belong'));
                     } else {
-                        $sql2[$i] = $sql->groupBy(DB::raw('fpid*10000+oid,belong'));
+                        $sql = $sql->groupBy(DB::raw('fpid*10000+oid,belong'));
                     }
+                    $sql2[] = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a" . $timeArray[$i]))
+                        ->groupBy(DB::raw("oid" . $timeArray[$i] . ",belong" . $timeArray[$i]))
+                        ->selectRaw("oid as oid" . $timeArray[$i] . ",belong as belong" . $timeArray[$i] . ",count(*) as playernum" . $timeArray[$i]);
                 }
-
-                //按所有人去重 belong='all'
-                $query = DB::connection('ar')->table(DB::raw("({$sql1[0]->toSql()}) as a"));
+                $query = DB::connection('ar')->table(DB::raw("({$sql2[0]->toSql()}) as b"));
                 for ($i = 1; $i < count($timeArray); $i++) {
-                    $query = $query->join(DB::raw("({$sql1[$i]->toSql()}) as a" . $i), function ($join) use ($i, $timeArray) {
-                        $join->on('a.fpid' . $timeArray[0], '=', 'a' . $i . '.fpid' . $timeArray[$i])
-                            ->on('a.oid' . $timeArray[0], '=', 'a' . $i . '.oid' . $timeArray[$i])
-                            ->on('a.belong' . $timeArray[0], '=', 'a' . $i . '.belong' . $timeArray[$i]);
+                    $query = $query->join(DB::raw("({$sql2[$i]->toSql()}) as b" . $i), function ($join) use ($i, $timeArray) {
+                        $join->on('b.oid' . $timeArray[0], '=', 'b' . $i . '.oid' . $timeArray[$i])
+                            ->on('b.belong' . $timeArray[0], '=', 'b' . $i . '.belong' . $timeArray[$i]);
                     }, null, null, 'left');
                 }
                 $query = $query->selectRaw("oid" . $timeArray[0] . " as oid,belong" . $timeArray[0] . " as belong");
                 for ($i = 0; $i < count($timeArray); $i++) {
-                    $query->selectRaw("count(fpid" . "$timeArray[$i]" . ") as playernum" . $timeArray[$i]);
+                    $query->selectRaw("playernum" . $timeArray[$i]);
                 }
-                $allData = $query->groupBy(DB::raw('oid' . $timeArray[0]))->get();
+                $data = $query->get();
 
-                //按节目去重
-                $query = DB::connection('ar')->table(DB::raw("({$sql2[0]->toSql()}) as a"));
-                for ($i = 1; $i < count($timeArray); $i++) {
-                    $query = $query->join(DB::raw("({$sql2[$i]->toSql()}) as a" . $i), function ($join) use ($i, $timeArray) {
-                        $join->on('a.fpid' . $timeArray[0], '=', 'a' . $i . '.fpid' . $timeArray[$i])
-                            ->on('a.oid' . $timeArray[0], '=', 'a' . $i . '.oid' . $timeArray[$i])
-                            ->on('a.belong' . $timeArray[0], '=', 'a' . $i . '.belong' . $timeArray[$i]);
-                    }, null, null, 'left');
-                }
-                $query = $query->selectRaw("oid" . $timeArray[0] . " as oid,belong" . $timeArray[0] . " as belong");
-                for ($i = 0; $i < count($timeArray); $i++) {
-                    $query->selectRaw("count(fpid" . "$timeArray[$i]" . ") as playernum" . $timeArray[$i]);
-                }
-                $data = $query->groupBy(DB::raw('oid' . $timeArray[0] . ',belong' . $timeArray[0]))->get();
 
                 $count = [];
                 foreach ($allData as $item) {
