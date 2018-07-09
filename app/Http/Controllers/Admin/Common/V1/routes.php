@@ -11,6 +11,10 @@ $api->version('v1', [
 
         $api->post('captchas', 'CaptchasController@store');// 图片验证码
 
+        $api->get('coupon/status', 'CouponController@getCouponStatus');
+        $api->post('coupon', 'CouponController@createCoupon');
+        $api->get('coupons/{coupon_id}', 'CouponController@getCoupon');
+
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
             //远程搜索
@@ -38,7 +42,6 @@ $api->version('v1', [
             $api->get('stats', 'ChartDataController@index');//列表
             $api->post('chart_data', 'ChartDataController@chart');//图表
             $api->get('export', 'ExportController@store');//导出
-
         });
     });
 

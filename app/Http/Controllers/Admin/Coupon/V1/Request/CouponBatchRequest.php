@@ -10,7 +10,7 @@ namespace App\Http\Controllers\Admin\Coupon\V1\Request;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CouponRequest extends FormRequest
+class CouponBatchRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -30,7 +30,8 @@ class CouponRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'company_id' => 'required',
+            'name' => 'required|string'
         ];
     }
 }
