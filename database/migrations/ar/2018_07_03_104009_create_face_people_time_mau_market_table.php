@@ -14,8 +14,8 @@ class CreateFacePeopleTimeMauMarketTable extends Migration
     public function up()
     {
 
-        if (!Schema::connection('ar')->hasTable('xs_mau_market')) {
-            Schema::connection('ar')->create('xs_mau_market', function (Blueprint $table) {
+        if (!Schema::connection('ar')->hasTable('xs_face_mau_market')) {
+            Schema::connection('ar')->create('xs_face_mau_market', function (Blueprint $table) {
                 $table->increments('id');
                 $table->string('marketid');
                 $table->integer('active_player');
@@ -32,6 +32,6 @@ class CreateFacePeopleTimeMauMarketTable extends Migration
      */
     public function down()
     {
-        Schema::connection('ar')->dropIfExists('xs_mau_market');
+        Schema::connection('ar')->dropIfExists('xs_face_mau_market');
     }
 }

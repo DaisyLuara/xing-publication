@@ -13,8 +13,8 @@ class CreateFacePeopleTimeActivePlayerTable extends Migration
      */
     public function up()
     {
-        if (!Schema::connection('ar')->hasTable('xs_active_player')) {
-            Schema::connection('ar')->create('xs_active_player', function (Blueprint $table) {
+        if (!Schema::connection('ar')->hasTable('xs_face_active_player')) {
+            Schema::connection('ar')->create('xs_face_active_player', function (Blueprint $table) {
                 $table->increments('id');
                 $table->integer('oid');
                 $table->string('belong');
@@ -38,6 +38,6 @@ class CreateFacePeopleTimeActivePlayerTable extends Migration
      */
     public function down()
     {
-        Schema::connection('ar')->dropIfExists('xs_active_player');
+        Schema::connection('ar')->dropIfExists('xs_face_active_player');
     }
 }

@@ -14,14 +14,14 @@ class FaceCollectCharacter extends Command
      *
      * @var string
      */
-    protected $signature = 'xingstation:face_collect';
+    protected $signature = 'xingstation:face_character';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'face_collect 数据清洗';
+    protected $description = '清洗人群时间性别年龄特征';
 
     /**
      * Create a new command instance.
@@ -101,7 +101,7 @@ class FaceCollectCharacter extends Command
             }
             $count = array_chunk($count, 8000);
             for ($i = 0; $i < count($count); $i++) {
-                DB::connection('ar')->table('face_collect_character')->insert($count[$i]);
+                DB::connection('ar')->table('xs_face_collect_character')->insert($count[$i]);
             }
             $date = (new Carbon($date))->addDay(1)->toDateString();
         }

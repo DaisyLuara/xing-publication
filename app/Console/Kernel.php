@@ -4,6 +4,8 @@ namespace App\Console;
 
 use App\Http\Controllers\Admin\Face\V1\Models\ActivePlayerRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceCollectRecord;
+use App\Http\Controllers\Admin\Face\V1\Models\FaceMauMarketRecord;
+use App\Http\Controllers\Admin\Face\V1\Models\FaceMauRecord;
 use App\Http\Controllers\Admin\WeChat\V1\Models\WeekRanking;
 use App\Jobs\WeekRankingJob;
 use Carbon\Carbon;
@@ -130,64 +132,73 @@ class Kernel extends ConsoleKernel
                         'clientdate' => strtotime($date) * 1000
                     ];
                 }
-                DB::connection('ar')->table('face_people_time_active_player')
+                DB::connection('ar')->table('xs_face_active_player')
                     ->insert($count);
                 $date = (new Carbon($date))->addDay(1)->toDateString();
             }
             ActivePlayerRecord::create(['date' => $currentDate]);
-        })->daily()->at('13:21');
+        })->daily()->at('10:15');
 
         //月活玩家清洗
         $schedule->call(function () {
-            $startDate = Carbon::now()->addMonth(-1)->toDateString();
-            $endDate = Carbon::now()->addDay(-1)->toDateString();
-            $startClientDate = strtotime($startDate . ' 00:00:00') * 1000;
-            $endClientDate = strtotime($endDate . ' 23:59:59') * 1000;
+            $date = FaceMauRecord::query()->max('date');
+            $currentDate = Carbon::now()->toDateString();
+            while ((new Carbon($date))->format('Y-m') < (new Carbon($currentDate))->format('Y-m')) {
+                $startDate = $date;
+                $endDate = (new Carbon($date))->endOfMonth()->toDateString();
+                $startClientDate = strtotime($startDate . ' 00:00:00') * 1000;
+                $endClientDate = strtotime($endDate . ' 23:59:59') * 1000;
 
-            $sql = DB::connection('ar')->table('face_people_time')
-                ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and playtime >= 7000 and oid not in(16, 19, 30, 31, 335, 334, 329, 328, 327)")
-                ->groupBy(DB::raw('fpid * 10000 + oid'))
-                ->selectRaw(" * ");
-            $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
-                ->selectRaw("count(*) as playernum")
-                ->first();
-            $date = Carbon::now()->addMonth(-1)->format('Y-m-d');
-            $count = [
-                'active_player' => $data->playernum,
-                'date' => $date
-            ];
-            DB::connection('ar')->table('face_people_time_mau')
-                ->insert($count);
+                $sql = DB::connection('ar')->table('face_people_time')
+                    ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and playtime >= 7000 and oid not in(16, 19, 30, 31, 335, 334, 329, 328, 327)")
+                    ->groupBy(DB::raw('fpid * 10000 + oid'))
+                    ->selectRaw(" * ");
+                $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
+                    ->selectRaw("count(*) as playernum")
+                    ->first();
+                $count = [
+                    'active_player' => $data->playernum,
+                    'date' => $date
+                ];
+                DB::connection('ar')->table('xs_face_mau')
+                    ->insert($count);
+                $date = (new Carbon($date))->addMonth(1)->toDateString();
+            }
+            FaceMauRecord::create(['date' => $date]);
         })->monthlyOn(1, '8:00');
 
         //按商场去重月活玩家
         $schedule->call(function () {
-            $startDate = Carbon::now()->addMonth(-1)->toDateString();
-            $endDate = Carbon::now()->addDay(-1)->toDateString();
-            $startClientDate = strtotime($startDate . ' 00:00:00') * 1000;
-            $endClientDate = strtotime($endDate . ' 23:59:59') * 1000;
+            $date = FaceMauMarketRecord::query()->max('date');
+            $currentDate = Carbon::now()->toDateString();
+            while ((new Carbon($date))->format('Y-m') < (new Carbon($currentDate))->format('Y-m')) {
+                $startDate = $date;
+                $endDate = (new Carbon($date))->endOfMonth()->toDateString();
+                $startClientDate = strtotime($startDate . ' 00:00:00') * 1000;
+                $endClientDate = strtotime($endDate . ' 23:59:59') * 1000;
 
-            $sql = DB::connection('ar')->table('face_people_time as fpt')
-                ->join('avr_official as ao', 'fpt.oid', '=', 'ao.oid')
-                ->whereRaw("fpt . clientdate between '$startClientDate' and '$endClientDate' and playtime >= 7000 and fpt . oid not in(16, 19, 30, 31, 335, 334, 329, 328, 327)")
-                ->groupBy(DB::raw('ao.marketid,fpid * 10000 + fpt.oid'))
-                ->selectRaw("marketid,fpid");
-            $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
-                ->selectRaw("marketid,count(*) as playernum")
-                ->groupBy('marketid')
-                ->get();
-            $date = Carbon::now()->addMonth(-1)->format('Y-m-d');
-
-            $count = [];
-            foreach ($data as $item) {
-                $count[] = [
-                    'active_player' => $item->playernum,
-                    'marketid' => $item->marketid,
-                    'date' => $date
-                ];
+                $sql = DB::connection('ar')->table('face_people_time as fpt')
+                    ->join('avr_official as ao', 'fpt.oid', '=', 'ao.oid')
+                    ->whereRaw("fpt . clientdate between '$startClientDate' and '$endClientDate' and playtime >= 7000 and fpt . oid not in(16, 19, 30, 31, 335, 334, 329, 328, 327)")
+                    ->groupBy(DB::raw('ao.marketid,fpid * 10000 + fpt.oid'))
+                    ->selectRaw("marketid,fpid");
+                $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
+                    ->selectRaw("marketid,count(*) as playernum")
+                    ->groupBy('marketid')
+                    ->get();
+                $count = [];
+                foreach ($data as $item) {
+                    $count[] = [
+                        'active_player' => $item->playernum,
+                        'marketid' => $item->marketid,
+                        'date' => $date
+                    ];
+                }
+                DB::connection('ar')->table('xs_face_mau_market')
+                    ->insert($count);
+                $date = (new Carbon($date))->addMonth(1)->toDateString();
             }
-            DB::connection('ar')->table('face_people_time_mau_market')
-                ->insert($count);
+            FaceMauMarketRecord::create(['date' => $date]);
         })->monthlyOn(1, '8:00');
 
         //时间段与人群特征数据清洗
@@ -253,12 +264,12 @@ class Kernel extends ConsoleKernel
                 }
                 $count = array_chunk($count, 8000);
                 for ($i = 0; $i < count($count); $i++) {
-                    DB::connection('ar')->table('face_collect_character')->insert($count[$i]);
+                    DB::connection('ar')->table('xs_face_collect_character')->insert($count[$i]);
                 }
                 $date = (new Carbon($date))->addDay(1)->toDateString();
             }
             FaceCollectRecord::create(['date' => $currentDate]);
-        })->daily()->at('12:01');
+        })->daily()->at('8:00');
     }
 
 

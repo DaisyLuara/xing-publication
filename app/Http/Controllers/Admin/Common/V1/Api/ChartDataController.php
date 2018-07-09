@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Common\V1\Api;
 
-use App\Http\Controllers\Admin\Face\V1\Api\FaceCollectCharacter;
+use App\Http\Controllers\Admin\Face\V1\Models\FaceCollectCharacter;
 use App\Http\Controllers\Admin\Face\V1\Transformer\FaceCountTransformer;
 use App\Http\Controllers\Admin\Common\V1\Request\ChartDataRequest;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceCount;
@@ -322,10 +322,10 @@ class ChartDataController extends Controller
     private function getTotal(ChartDataRequest $request, Builder $query)
     {
         $this->handleQuery($request, $query);
-        $data = $query->join('face_people_time_active_player', function ($join) {
-            $join->on('face_count_log.oid', '=', 'face_people_time_active_player.oid')
-                ->on('face_count_log.belong', '=', 'face_people_time_active_player.belong')
-                ->whereRaw("date_format(face_count_log.date,'%Y-%m-%d')=date_format(face_people_time_active_player.date,'%Y-%m-%d')");
+        $data = $query->join('xs_face_active_player', function ($join) {
+            $join->on('face_count_log.oid', '=', 'xs_face_active_player.oid')
+                ->on('face_count_log.belong', '=', 'xs_face_active_player.belong')
+                ->whereRaw("date_format(face_count_log.date,'%Y-%m-%d')=date_format(xs_face_active_player.date,'%Y-%m-%d')");
         }, null, null, 'left')
             ->selectRaw("sum(looknum) AS looknum,sum(playernum7)as playernum7,sum(playernum) AS playernum,sum(lovenum)  AS lovenum")
             ->first()->toArray();
@@ -355,10 +355,10 @@ class ChartDataController extends Controller
         $format = $days <= 31 ? '%Y-%m-%d' : '%Y-%m';
 
         $this->handleQuery($request, $query);
-        return $query->join('face_people_time_active_player', function ($join) {
-            $join->on('face_count_log.oid', '=', 'face_people_time_active_player.oid')
-                ->on('face_count_log.belong', '=', 'face_people_time_active_player.belong')
-                ->whereRaw("date_format(face_count_log.date,'%Y-%m-%d')=date_format(face_people_time_active_player.date,'%Y-%m-%d')");
+        return $query->join('xs_face_active_player', function ($join) {
+            $join->on('face_count_log.oid', '=', 'xs_face_active_player.oid')
+                ->on('face_count_log.belong', '=', 'xs_face_active_player.belong')
+                ->whereRaw("date_format(face_count_log.date,'%Y-%m-%d')=date_format(xs_face_active_player.date,'%Y-%m-%d')");
         }, null, null, 'left')
             ->selectRaw("date_format(face_count_log . date, '$format') as display_name")
             ->groupBy('display_name')
@@ -414,9 +414,9 @@ class ChartDataController extends Controller
         $timeSql = $time1 . $time2 . $time3 . $time4 . $time5 . $time6 . $time7 . $time8;
 
         $this->handleQuery($request, $query);
-        $data = $query->whereRaw("face_collect_character.clientdate between '$startClientDate' and '$endClientDate'")
+        $data = $query->whereRaw("xs_face_collect_character.clientdate between '$startClientDate' and '$endClientDate'")
             ->where('century', '<>', '0')
-            ->whereNotIn('face_collect_character.oid', ['16', '19', '30', '31', '335', '334', '329', '328', '327'])
+            ->whereNotIn('xs_face_collect_character.oid', ['16', '19', '30', '31', '335', '334', '329', '328', '327'])
             ->groupBy('times')
             ->groupBy('century')
             ->selectRaw("case" . $timeSql . " else 0 end as times,century,sum(looknum) as count")
@@ -463,7 +463,7 @@ class ChartDataController extends Controller
                 $count[7][$mapping[$item->century]] = $item->count;
             }
         }
-        $sql = DB::connection('ar')->table('face_collect_character')
+        $sql = DB::connection('ar')->table('xs_face_collect_character')
             ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and belong = 'all' and century <> 0 and oid not in ('16', '19', '30', '31', '335', '334', '329', '328', '327')")
             ->groupBy('times')
             ->groupBy('gender')
@@ -509,7 +509,7 @@ class ChartDataController extends Controller
         $endDate = $request->end_date;
         $startMonth = (new Carbon($startDate))->format('Y-m');
         $endMonth = (new Carbon($endDate))->format('Y-m');
-        $sql = DB::connection('ar')->table('face_people_time_mau_market as fptmm')
+        $sql = DB::connection('ar')->table('xs_face_mau_market as fptmm')
             ->join('avr_official_market as aom', 'fptmm.marketid', '=', 'aom.marketid')
             ->whereRaw("date_format(fptmm.date,'%Y-%m') between '$startMonth' and '$endMonth'")
             ->groupBy('fptmm.marketid')
@@ -529,24 +529,6 @@ class ChartDataController extends Controller
         }
 
         return $output;
-//        $data = DB::connection('ar')->table('face_people_time_mau_market')
-//            ->selectRaw("playernum,date_format(date, '%Y-%m') as month")
-//            ->orderBy('month')
-//            ->get();
-//        $output = [];
-//        foreach ($data as $item) {
-//            $output[] = [
-//                "month" => $item->month,
-//                "playernum" => round($item->playernum / 10000, 1)
-//            ];
-//        }
-//        if (count($output) != 0) {
-//            $output[0]['rate'] = 0;
-//        }
-//        for ($i = 1; $i < count($output); $i++) {
-//            $output[$i]["rate"] = round(($output[$i]['playernum'] - $output[$i - 1]['playernum']) / $output[$i - 1]['playernum'], 2);
-//        }
-//        return $output;
     }
 
     private function handleQuery(Request $request, Builder $query, $selectByAlias = true, bool $selectPoint = false)

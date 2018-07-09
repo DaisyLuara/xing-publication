@@ -6,7 +6,7 @@
  * Time: 17:58
  */
 
-namespace App\Http\Controllers\Admin\Face\V1\Api;
+namespace App\Http\Controllers\Admin\Face\V1\Models;
 
 
 use App\Models\Model;
@@ -14,5 +14,5 @@ use App\Models\Model;
 class FaceCollectCharacter extends Model
 {
     protected $connection = 'ar';
-    protected $table = 'face_collect_character';
+    protected $table = 'xs_face_collect_character';
 }

@@ -13,8 +13,8 @@ class CreateFacePeopleTimeMauTable extends Migration
      */
     public function up()
     {
-        if (!Schema::connection('ar')->hasTable('xs_mau')) {
-            Schema::connection('ar')->create('xs_mau', function (Blueprint $table) {
+        if (!Schema::connection('ar')->hasTable('xs_face_mau')) {
+            Schema::connection('ar')->create('xs_face_mau', function (Blueprint $table) {
                 $table->increments('id');
                 $table->integer('active_player');
                 $table->timestamp('date')->nullable();
@@ -29,6 +29,6 @@ class CreateFacePeopleTimeMauTable extends Migration
      */
     public function down()
     {
-        Schema::connection('ar')->dropIfExists('xs_mau');
+        Schema::connection('ar')->dropIfExists('xs_face_mau');
     }
 }
