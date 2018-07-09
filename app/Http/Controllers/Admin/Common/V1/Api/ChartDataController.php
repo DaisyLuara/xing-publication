@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Common\V1\Api;
 
+use App\Http\Controllers\Admin\Face\V1\Api\FaceCollectCharacter;
 use App\Http\Controllers\Admin\Face\V1\Transformer\FaceCountTransformer;
 use App\Http\Controllers\Admin\Common\V1\Request\ChartDataRequest;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceCount;
@@ -69,6 +70,7 @@ class ChartDataController extends Controller
     {
         $faceLogQuery = FaceLog::query();
         $faceCountQuery = FaceCount::query();
+        $faceCollectCharacterQuery = FaceCollectCharacter::query();
         switch ($request->id) {
             case 1:
                 $data = $this->getLookNumber($request, $faceLogQuery);
@@ -92,7 +94,7 @@ class ChartDataController extends Controller
                 $data = $this->getTotalByDate($request, $faceCountQuery);
                 break;
             case 8:
-                $data = $this->getCharacterByTime($request);
+                $data = $this->getCharacterByTime($request, $faceCollectCharacterQuery);
                 break;
             case 9:
                 $data = $this->getActivePlayerByMonth($request);
@@ -394,7 +396,7 @@ class ChartDataController extends Controller
      * @param Builder $query
      * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|static[]
      */
-    public function getCharacterByTime(ChartDataRequest $request)
+    public function getCharacterByTime(ChartDataRequest $request, Builder $query)
     {
         $startDate = $request->start_date;
         $endDate = $request->end_date;
@@ -411,11 +413,10 @@ class ChartDataController extends Controller
         $time8 = " when time >'22:00' or time ='00:00' then '24:00'";
         $timeSql = $time1 . $time2 . $time3 . $time4 . $time5 . $time6 . $time7 . $time8;
 
-        $data = DB::connection('ar')->table('face_collect_character')
-            ->whereRaw("clientdate between '$startClientDate' and '$endClientDate'")
-            ->where('belong', '=', 'all')
+        $this->handleQuery($request, $query);
+        $data = $query->whereRaw("face_collect_character.clientdate between '$startClientDate' and '$endClientDate'")
             ->where('century', '<>', '0')
-            ->whereNotIn('oid', ['16', '19', '30', '31', '335', '334', '329', '328', '327'])
+            ->whereNotIn('face_collect_character.oid', ['16', '19', '30', '31', '335', '334', '329', '328', '327'])
             ->groupBy('times')
             ->groupBy('century')
             ->selectRaw("case" . $timeSql . " else 0 end as times,century,sum(looknum) as count")
