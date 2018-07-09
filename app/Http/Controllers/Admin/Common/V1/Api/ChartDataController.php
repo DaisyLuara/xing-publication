@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Common\V1\Api;
 
 use App\Http\Controllers\Admin\Face\V1\Models\FaceCollectCharacter;
+use App\Http\Controllers\Admin\Face\V1\Models\XsFaceCountLog;
 use App\Http\Controllers\Admin\Face\V1\Transformer\FaceCountTransformer;
 use App\Http\Controllers\Admin\Common\V1\Request\ChartDataRequest;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceCount;
@@ -71,6 +72,7 @@ class ChartDataController extends Controller
         $faceLogQuery = FaceLog::query();
         $faceCountQuery = FaceCount::query();
         $faceCollectCharacterQuery = FaceCollectCharacter::query();
+        $xsFaceCountLog = XsFaceCountLog::query();
         switch ($request->id) {
             case 1:
                 $data = $this->getLookNumber($request, $faceLogQuery);
@@ -88,10 +90,10 @@ class ChartDataController extends Controller
                 $data = $this->getGender($request, $faceLogQuery);
                 break;
             case 6:
-                $data = $this->getTotal($request, $faceCountQuery);
+                $data = $this->getTotal($request, $xsFaceCountLog);
                 break;
             case 7:
-                $data = $this->getTotalByDate($request, $faceCountQuery);
+                $data = $this->getTotalByDate($request, $xsFaceCountLog);
                 break;
             case 8:
                 $data = $this->getCharacterByTime($request, $faceCollectCharacterQuery);
@@ -322,12 +324,7 @@ class ChartDataController extends Controller
     private function getTotal(ChartDataRequest $request, Builder $query)
     {
         $this->handleQuery($request, $query);
-        $data = $query->join('xs_face_active_player', function ($join) {
-            $join->on('face_count_log.oid', '=', 'xs_face_active_player.oid')
-                ->on('face_count_log.belong', '=', 'xs_face_active_player.belong')
-                ->whereRaw("date_format(face_count_log.date,'%Y-%m-%d')=date_format(xs_face_active_player.date,'%Y-%m-%d')");
-        }, null, null, 'left')
-            ->selectRaw("sum(looknum) AS looknum,sum(playernum7)as playernum7,sum(playernum) AS playernum,sum(lovenum)  AS lovenum")
+        $data = $query->selectRaw("sum(looknum) AS looknum,sum(playernum7)as playernum7,sum(playernum) AS playernum,sum(lovenum)  AS lovenum")
             ->first()->toArray();
         $output = [];
         foreach ($data as $key => $value) {
@@ -355,12 +352,7 @@ class ChartDataController extends Controller
         $format = $days <= 31 ? '%Y-%m-%d' : '%Y-%m';
 
         $this->handleQuery($request, $query);
-        return $query->join('xs_face_active_player', function ($join) {
-            $join->on('face_count_log.oid', '=', 'xs_face_active_player.oid')
-                ->on('face_count_log.belong', '=', 'xs_face_active_player.belong')
-                ->whereRaw("date_format(face_count_log.date,'%Y-%m-%d')=date_format(xs_face_active_player.date,'%Y-%m-%d')");
-        }, null, null, 'left')
-            ->selectRaw("date_format(face_count_log . date, '$format') as display_name")
+        return $query->selectRaw("date_format(xs_face_count_log . date, '$format') as display_name")
             ->groupBy('display_name')
             ->get();
 
