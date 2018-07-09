@@ -18,21 +18,16 @@ class MarketingExport extends AbstractExport
 
     public function collection()
     {
-        $faceCount = DB::connection('ar')->table('face_count_log')
+        $faceCount = DB::connection('ar')->table('xs_face_count_log')
             ->join('ar_product_list', 'belong', '=', 'versionname')
-            ->join('avr_official', 'face_count_log.oid', '=', 'avr_official.oid')
+            ->join('avr_official', 'xs_face_count_log.oid', '=', 'avr_official.oid')
             ->join('avr_official_market', 'avr_official.marketid', '=', 'avr_official_market.marketid')
-            ->join('xs_face_active_player', function ($join) {
-                $join->on('face_count_log.oid', '=', 'xs_face_active_player.oid')
-                    ->on('face_count_log.belong', '=', 'xs_face_active_player.belong')
-                    ->whereRaw("date_format(face_count_log.date,'%Y-%m-%d')=date_format(xs_face_active_player.date,'%Y-%m-%d')");
-            }, null, null, 'left')
             ->where('avr_official_market.marketid', '<>', 15)
-            ->whereRaw("date_format(face_count_log.date, '%Y-%m-%d') BETWEEN '{$this->startDate}' AND '{$this->endDate}'")
-            ->whereNotIn('face_count_log.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
-            ->groupby('face_count_log.belong')
+            ->whereRaw("date_format(xs_face_count_log.date, '%Y-%m-%d') BETWEEN '{$this->startDate}' AND '{$this->endDate}'")
+            ->whereNotIn('xs_face_count_log.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
+            ->groupby('xs_face_count_log.belong')
             ->orderBy('ar_product_list.name')
-            ->selectRaw('ar_product_list.name as name,count(face_count_log.oid) as pushNum ,sum(looknum) as lookNum ,sum(playernum7) as playerNum7,sum(playernum20) as playerNum20 ,sum(lovenum) as loveNum,sum(outnum) as outNum,sum(scannum) as scanNum')
+            ->selectRaw('ar_product_list.name as name,count(xs_face_count_log.oid) as pushNum ,sum(looknum) as lookNum ,sum(playernum7) as playerNum7,sum(playernum20) as playerNum20 ,sum(lovenum) as loveNum,sum(outnum) as outNum,sum(scannum) as scanNum')
             ->get();
         $data = collect();
         $header1 = ['节目名称', 'CPF', '', 'oCPF', '', 'CPR', '', '生成数', 'CPA', '扫码率', 'CPL', '', '1', '2', '5', '4', '10', '20', '合计'];

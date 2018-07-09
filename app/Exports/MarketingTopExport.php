@@ -25,15 +25,10 @@ class MarketingTopExport extends AbstractExport
 
     public function collection()
     {
-        $faceCount1 = DB::connection('ar')->table('face_count_log as fcl')
+        $faceCount1 = DB::connection('ar')->table('xs_face_count_log as fcl')
             ->join('ar_product_list as apl', 'belong', '=', 'versionname')
             ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
-            ->join('xs_face_active_player', function ($join) {
-                $join->on('fcl.oid', '=', 'xs_face_active_player.oid')
-                    ->on('fcl.belong', '=', 'xs_face_active_player.belong')
-                    ->whereRaw("date_format(fcl.date,'%Y-%m-%d')=date_format(xs_face_active_player.date,'%Y-%m-%d')");
-            }, null, null, 'left')
             ->whereRaw("date_format(fcl.date, '%Y-%m-%d') BETWEEN '{$this->startDate}' AND '{$this->endDate}' and fcl.oid not in ('16', '19', '30', '31', '335', '334', '329', '328', '327') and aom.marketid <> '15'")
             ->groupBy(DB::raw("fcl.oid,fcl.belong"))
             ->orderBy('apl.id')
