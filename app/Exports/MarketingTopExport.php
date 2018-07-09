@@ -29,10 +29,10 @@ class MarketingTopExport extends AbstractExport
             ->join('ar_product_list as apl', 'belong', '=', 'versionname')
             ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
-            ->join('face_people_time_active_player', function ($join) {
-                $join->on('fcl.oid', '=', 'face_people_time_active_player.oid')
-                    ->on('fcl.belong', '=', 'face_people_time_active_player.belong')
-                    ->whereRaw("date_format(fcl.date,'%Y-%m-%d')=date_format(face_people_time_active_player.date,'%Y-%m-%d')");
+            ->join('xs_face_active_player', function ($join) {
+                $join->on('fcl.oid', '=', 'xs_face_active_player.oid')
+                    ->on('fcl.belong', '=', 'xs_face_active_player.belong')
+                    ->whereRaw("date_format(fcl.date,'%Y-%m-%d')=date_format(xs_face_active_player.date,'%Y-%m-%d')");
             }, null, null, 'left')
             ->whereRaw("date_format(fcl.date, '%Y-%m-%d') BETWEEN '{$this->startDate}' AND '{$this->endDate}' and fcl.oid not in ('16', '19', '30', '31', '335', '334', '329', '328', '327') and aom.marketid <> '15'")
             ->groupBy(DB::raw("fcl.oid,fcl.belong"))
