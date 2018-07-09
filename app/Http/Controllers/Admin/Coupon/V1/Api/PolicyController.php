@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Admin\Coupon\V1\Api;
 
 
+use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\PolicyTransformer;
@@ -26,16 +27,16 @@ class PolicyController extends Controller
         return $this->response->paginator($couponPolicy, new PolicyTransformer());
     }
 
-    public function store(Policy $policy, PolicyRequest $request)
+    public function store(Company $company, Policy $policy, PolicyRequest $request)
     {
-        $policy->fill($request->all())->save();
+        $policy->fill(array_merge(['company_id' => $company->id, 'create_user_id' => $this->user->id], $request->all()))->save();
         return $this->response->item($policy, new PolicyTransformer())
             ->setStatusCode(201);
     }
 
-    public function update(Policy $policy, Request $request)
+    public function update(Policy $policy, PolicyRequest $request)
     {
-        $policy = $policy->update($request->all());
+        $policy->update($request->all());
         return $this->response->item($policy, new PolicyTransformer())
             ->setStatusCode(201);
     }
@@ -50,6 +51,13 @@ class PolicyController extends Controller
     public function updateBatchPolicy(Policy $policy, $batch_policy_id, PolicyBatchesRequest $request)
     {
         $policy->batches()->updateExistingPivot($batch_policy_id, $this->convert($request));
+        return $this->response->item($policy, new PolicyTransformer())
+            ->setStatusCode(201);
+    }
+
+    public function destroyBatchPolicy(Policy $policy, $batch_policy_id)
+    {
+        $policy->batches()->detach($batch_policy_id);
         return $this->response->item($policy, new PolicyTransformer())
             ->setStatusCode(201);
     }

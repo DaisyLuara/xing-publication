@@ -23,6 +23,7 @@ class CreateCouponPolicyTable extends Migration
         });
 
         Schema::create('coupon_batch_policy', function (Blueprint $table) {
+            $table->increments('id');
             $table->integer('policy_id');
             $table->integer('coupon_batch_id');
             $table->integer('min_age')->default(0);

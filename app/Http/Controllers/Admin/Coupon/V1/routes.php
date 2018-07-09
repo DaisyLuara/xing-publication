@@ -11,15 +11,15 @@ $api->version('v1', [
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
             $api->get('coupon/policies', 'PolicyController@index');
-            $api->post('coupon/policy', 'PolicyController@store');
-            $api->patch('coupon/policy', 'PolicyController@update');
+            $api->post('company/{company}/coupon/policy', 'PolicyController@store');
+            $api->patch('coupon/policy/{policy}', 'PolicyController@update');
+            $api->post('policy/{policy}/batch/{couponBatch}', 'PolicyController@storeBatchPolicy');
+            $api->patch('policy/{policy}/batch_policy/{batch_policy_id}', 'PolicyController@updateBatchPolicy');
+            $api->delete('policy/{policy}/batch_policy/{batch_policy_id}', 'PolicyController@destroyBatchPolicy');
 
             $api->get('coupon/batches', 'CouponBatchController@index');
             $api->post('coupon/batch', 'CouponBatchController@store');
             $api->patch('coupon/batch', 'CouponBatchController@update');
-
-            $api->post('policy/{policy}/batch/{couponBatch}', 'PolicyController@storeBatchPolicy');
-            $api->patch('policy/{policy}/batch/{id}', 'PolicyController@updateBatchPolicy');
         });
 
 

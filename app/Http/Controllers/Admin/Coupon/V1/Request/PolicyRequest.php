@@ -29,7 +29,16 @@ class PolicyRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-        ];
+        switch ($this->method()) {
+            case 'POST':
+                return [
+                    'name' => 'required',
+                ];
+                break;
+            case 'PATCH':
+                return [
+                ];
+                break;
+        }
     }
 }

@@ -14,11 +14,14 @@ use App\Models\Model;
 class Policy extends Model
 {
     protected $fillable = [
-
+        'name',
+        'desc',
+        'company_id',
+        'create_user_id',
     ];
 
     public function batches()
     {
-        return $this->belongsToMany(CouponBatch::class)->withPivot(['rate', 'min_age', 'max_age', 'gender', 'type']);
+        return $this->belongsToMany(CouponBatch::class)->withPivot(['rate', 'min_age', 'max_age', 'gender', 'type', 'id']);
     }
 }
