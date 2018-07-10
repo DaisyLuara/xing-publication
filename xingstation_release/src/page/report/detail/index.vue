@@ -788,6 +788,7 @@ export default {
           {
             type: 'value',
             name: '女性百分比',
+            max: 100,
             axisLabel: {
               formatter: '{value} %'
             }
@@ -1526,7 +1527,7 @@ export default {
               color: '#197748'
             },
             data: res.map(r => {
-              return 0
+              return (r.playernum7 / r.looknum * 100).toFixed(2)
             })
           },
           {
