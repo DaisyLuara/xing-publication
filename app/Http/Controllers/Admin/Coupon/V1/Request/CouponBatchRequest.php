@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Admin\Coupon\V1\Request;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CouponBatchRequest extends FormRequest
 {
@@ -31,8 +32,20 @@ class CouponBatchRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-            'start_date' => 'date_format:Y-m-d H:i:s',
-            'end_date' => 'date_format:Y-m-d H:i:s',
+            'description' => 'string',
+            'image_url' => 'url',
+            'start_date' => 'date|before:yesterday',
+            'end_date' => 'date|after:start_date',
+            'amount' => 'alpha_num',
+            'count' => 'alpha_num',
+            'stock' => 'alpha_num',
+            'people_max_get' => 'alpha_num',
+            'pmg_status' => Rule::in([0, 1]),
+            'day_max_get' => 'alpha_num',
+            'dmg_status' => Rule::in([0, 1]),
+            'is_fixed_date' => Rule::in([0, 1]),
+            'delay_effective_day' => 'alpha_num',
+            'effective_day' => 'alpha_num',
         ];
     }
 }
