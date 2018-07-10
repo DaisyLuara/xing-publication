@@ -25,6 +25,15 @@ class CouponBatchController extends Controller
 
     public function index(CouponBatch $couponBatch, Request $request)
     {
+//        $mall_coo = app('mall_coo');
+//        $sUrl = 'https://openapi10.mallcoo.cn/Coupon/PutIn/v1/GetAll/';
+//        $result = $mall_coo->send($sUrl);
+//        if ($result['Code'] == 1) {
+//            return $result['Data'];
+//        }
+
+//        return $result['Message'];
+
         $query = $couponBatch->query();
         if ($request->name) {
             $query->where('name', 'like', '%' . $request->name . '%');

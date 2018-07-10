@@ -49,6 +49,8 @@ class PolicyController extends Controller
 
     public function storeBatchPolicy(Policy $policy, CouponBatch $couponBatch, PolicyBatchesRequest $request)
     {
+        $couponBatch = $couponBatch->query()->findOrFail($request->coupon_batch_id);
+
         $policy->batches()->save($couponBatch, $this->convert($request));
         return $this->response->item($policy, new PolicyTransformer())
             ->setStatusCode(201);
