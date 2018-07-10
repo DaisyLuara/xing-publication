@@ -50,16 +50,16 @@
                   <span>{{scope.row.people_max_get}}</span> 
                 </el-form-item>
                 <el-form-item label="是否开启没人无限领取">
-                  <span>{{scope.row.pmg_status === '1' ? '开启' : '关闭'}}</span> 
+                  <span>{{scope.row.pmg_status === 1 ? '开启' : '关闭'}}</span> 
                 </el-form-item>
                 <el-form-item label="每天最大获取数">
                   <span>{{scope.row.day_max_get}}</span> 
                 </el-form-item>
                 <el-form-item label="是否开启每天无限领取">
-                  <span>{{scope.row.dmg_status ==='1' ? '固定' : '不固定'}}</span> 
+                  <span>{{scope.row.dmg_status === 1 ? '固定' : '不固定'}}</span> 
                 </el-form-item>
                 <el-form-item label="是否固定日期">
-                  <span>{{scope.row.is_fixed_date === '1' ? '固定' : '不固定'}}</span> 
+                  <span>{{scope.row.is_fixed_date === 1 ? '固定' : '不固定'}}</span> 
                 </el-form-item>
                 <el-form-item label="延后生效天数">
                   <span>{{scope.row.delay_effective_day}}</span> 
@@ -74,7 +74,7 @@
                   <span>{{ scope.row.end_date }}</span>
                 </el-form-item>
                 <el-form-item label="状态">
-                  <span>{{ scope.row.is_active === '1' ? '启用' :'停用' }}</span>
+                  <span>{{ scope.row.is_active === 1 ? '启用' :'停用' }}</span>
                 </el-form-item>
               </el-form>
             </template>
@@ -151,7 +151,6 @@
           <el-table-column label="操作" min-width="150">
             <template slot-scope="scope">
               <el-button size="small" type="warning" @click='linkToEdit(scope.row)'>编辑</el-button>
-              <!-- <el-button size="small" type="danger" @click="deleteCoupon(scope.row)">删除</el-button> -->
             </template>
           </el-table-column>
         </el-table>
@@ -172,7 +171,6 @@
 
 <script>
 import coupon from 'service/coupon'
-// import search from 'service/search'
 
 import {
   Button,
@@ -234,36 +232,6 @@ export default {
         .catch(error => {
           console.log(error)
           this.setting.loading = false
-        })
-    },
-    deleteCoupon(currentCoupon) {
-      let id = currentCoupon.id
-      MessageBox.confirm('确认删除选中优惠券?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          this.setting.loadingText = '删除中'
-          this.setting.loading = true
-          // coupon
-          //   .deleteCoupon(this, id)
-          //   .then(response => {
-          //     this.setting.loading = false
-          //     this.$message({
-          //       type: 'success',
-          //       message: '删除成功！'
-          //     })
-          //     this.pagination.currentPage = 1
-          //     this.getCouponList()
-          //   })
-          //   .catch(error => {
-          //     this.setting.loading = false
-          //     console.log(error)
-          //   })
-        })
-        .catch(e => {
-          console.log(e)
         })
     },
     addCoupon() {

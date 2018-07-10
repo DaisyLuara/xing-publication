@@ -110,7 +110,7 @@
       <el-form
       ref="templateForm"
       :model="templateForm" label-width="150px" v-loading="loading">
-        <el-form-item label="公司" prop="point_id" :rules="[{ type: 'number', required: true, message: '请选择公司', trigger: 'submit' }]">
+        <el-form-item label="公司" prop="company_id" :rules="[{ type: 'number', required: true, message: '请选择公司', trigger: 'submit' }]">
           <el-select v-model="templateForm.company_id" placeholder="请选择公司" filterable :loading="searchLoading" clearable class="item-select">
             <el-option
               v-for="item in companyList"
@@ -175,15 +175,18 @@ export default {
       templateList: [],
       templateForm: {
         company_id: '',
-        name: '',
+        name: ''
       },
-      genderList: [{
-        id: 'female',
-        name: '女'
-      },{
-        id: 'male',
-        name: '男'
-      }],
+      genderList: [
+        {
+          id: 'female',
+          name: '女'
+        },
+        {
+          id: 'male',
+          name: '男'
+        }
+      ],
       projectList: [],
       tableData: [],
       pagination: {
@@ -203,9 +206,20 @@ export default {
     }
   },
   created() {
+    this.getCompanyList()
     this.getPoliciesList()
   },
   methods: {
+    getCompanyList() {
+      search
+        .getCompanyList(this)
+        .then(result => {
+          this.companyList = result.data
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
     modifyTemplateName(item) {
       // this.loading = true
       this.title = '修改策略'
@@ -213,7 +227,7 @@ export default {
       let company_id = item.company.id
       this.templateForm = {
         name: name,
-        company_id: company_id,
+        company_id: company_id
       }
       this.templateVisible = true
     },
@@ -341,42 +355,41 @@ export default {
     submit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+          // let company_id 
           let args = {
-            point_id: this.templateForm.point_id,
             name: this.templateForm.name
           }
-          let id = this.templateForm.tpl_id
-          if (this.templateForm.tpl_id) {
-            schedule
-              .modifyTemplate(this, id, args)
-              .then(response => {
-                this.$message({
-                  message: '修改成功',
-                  type: 'success'
-                })
-                this.templateVisible = false
-                this.getScheduleList()
-              })
-              .catch(err => {
-                this.templateVisible = false
-                console.log(err)
-              })
-          } else {
-            schedule
-              .saveTemplate(this, args)
-              .then(response => {
-                this.$message({
-                  message: '添加成功',
-                  type: 'success'
-                })
-                this.templateVisible = false
-                this.getScheduleList()
-              })
-              .catch(err => {
-                this.templateVisible = false
-                console.log(err)
-              })
-          }
+          // if (this.templateForm.tpl_id) {
+          //   schedule
+          //     .modifyTemplate(this, id, args)
+          //     .then(response => {
+          //       this.$message({
+          //         message: '修改成功',
+          //         type: 'success'
+          //       })
+          //       this.templateVisible = false
+          //       this.getScheduleList()
+          //     })
+          //     .catch(err => {
+          //       this.templateVisible = false
+          //       console.log(err)
+          //     })
+          // } else {
+          //   schedule
+          //     .saveTemplate(this, args)
+          //     .then(response => {
+          //       this.$message({
+          //         message: '添加成功',
+          //         type: 'success'
+          //       })
+          //       this.templateVisible = false
+          //       this.getScheduleList()
+          //     })
+          //     .catch(err => {
+          //       this.templateVisible = false
+          //       console.log(err)
+          //     })
+          // }
         }
       })
     },
