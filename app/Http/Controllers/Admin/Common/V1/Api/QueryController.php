@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin\Common\V1\Api;
 
+use App\Http\Controllers\Admin\Company\V1\Models\Company;
+use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\AreaTransformer;
@@ -203,6 +205,18 @@ class QueryController extends Controller
 
         $couponBatches = $query->get();
         return $this->response->collection($couponBatches, new CouponBatchTransformer());
+    }
+
+    public function companyQuery(Company $company, Request $request)
+    {
+        $query = $company->query();
+
+        if ($request->name) {
+            $query->where('name', 'like', '%' . $request->name . '%')->get();
+        }
+
+        $companies = $query->get();
+        return $this->response->collection($companies, new CompanyTransformer());
     }
 
 }

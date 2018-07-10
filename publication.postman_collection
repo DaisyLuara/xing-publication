@@ -1199,6 +1199,98 @@
 					"response": []
 				},
 				{
+					"name": "优惠券搜索",
+					"request": {
+						"url": {
+							"raw": "http://{{host}}/api/coupon_batch/query?company_id=9&name=谢谢",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"coupon_batch",
+								"query"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "9",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "name",
+									"value": "谢谢",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_admin}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "关联 点位信息\ninclude=points\n关联 点位，用户信息\ninclude=points.user\n"
+					},
+					"response": []
+				},
+				{
+					"name": "公司搜索",
+					"request": {
+						"url": {
+							"raw": "http://{{host}}/api/coupon_batch/query?company_id=9&name=谢谢",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"coupon_batch",
+								"query"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "9",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "name",
+									"value": "谢谢",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_admin}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "关联 点位信息\ninclude=points\n关联 点位，用户信息\ninclude=points.user\n"
+					},
+					"response": []
+				},
+				{
 					"name": "星视度用户搜索",
 					"request": {
 						"url": {
@@ -2856,10 +2948,92 @@
 					"description": "",
 					"item": [
 						{
+							"name": "策略条目",
+							"description": "",
+							"item": [
+								{
+									"name": "新增策略条目",
+									"request": {
+										"url": "http://{{host}}/api/policy/2/batch/3",
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"description": ""
+											},
+											{
+												"key": "Authorization",
+												"value": "{{jwt_admin}}",
+												"description": ""
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"rate\": \"88\"\n}"
+										},
+										"description": ""
+									},
+									"response": []
+								},
+								{
+									"name": "修改策略条目",
+									"request": {
+										"url": "http://{{host}}/api/policy/1/batch_policy/1",
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{jwt_admin}}",
+												"description": ""
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"description": ""
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"rate\":\"10\"\n}"
+										},
+										"description": ""
+									},
+									"response": []
+								},
+								{
+									"name": "删除策略条目",
+									"request": {
+										"url": "http://{{host}}/api/policy/1/batch_policy/2",
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{jwt_admin}}",
+												"description": ""
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"description": ""
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"rate\":\"20\"\n}"
+										},
+										"description": ""
+									},
+									"response": []
+								}
+							],
+							"_postman_isSubFolder": true
+						},
+						{
 							"name": "优惠券策略列表",
 							"request": {
 								"url": {
-									"raw": "http://{{host}}/api/coupon/policies?include=batches,company,user",
+									"raw": "http://{{host}}/api/coupon/policies?include=batches,company",
 									"protocol": "http",
 									"host": [
 										"{{host}}"
@@ -2872,7 +3046,7 @@
 									"query": [
 										{
 											"key": "include",
-											"value": "batches,company,user",
+											"value": "batches,company",
 											"equals": true,
 											"description": ""
 										}
@@ -2888,31 +3062,6 @@
 									}
 								],
 								"body": {},
-								"description": ""
-							},
-							"response": []
-						},
-						{
-							"name": "新增策略条目",
-							"request": {
-								"url": "http://{{host}}/api/policy/2/batch/3",
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"description": ""
-									},
-									{
-										"key": "Authorization",
-										"value": "{{jwt_admin}}",
-										"description": ""
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"rate\": \"88\"\n}"
-								},
 								"description": ""
 							},
 							"response": []
@@ -2968,26 +3117,39 @@
 							"response": []
 						},
 						{
-							"name": "删除策略条目",
+							"name": "优惠券策略详情",
 							"request": {
-								"url": "http://{{host}}/api/policy/1/batch_policy/2",
-								"method": "DELETE",
+								"url": {
+									"raw": "http://{{host}}/api/coupon/policies/1?include=company",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"coupon",
+										"policies",
+										"1"
+									],
+									"query": [
+										{
+											"key": "include",
+											"value": "company",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
 								"header": [
 									{
 										"key": "Authorization",
 										"value": "{{jwt_admin}}",
 										"description": ""
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"description": ""
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"rate\":\"20\"\n}"
-								},
+								"body": {},
 								"description": ""
 							},
 							"response": []
@@ -3037,6 +3199,44 @@
 							"response": []
 						},
 						{
+							"name": "规则详情",
+							"request": {
+								"url": {
+									"raw": "http://{{host}}/api/coupon/batches/2?include=user,company",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"coupon",
+										"batches",
+										"2"
+									],
+									"query": [
+										{
+											"key": "include",
+											"value": "user,company",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_admin}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						},
+						{
 							"name": "生成规则",
 							"request": {
 								"url": "http://{{host}}/api/company/2/coupon/batch",
@@ -3055,7 +3255,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"name\" :\"好孩子B券修改\"\n}"
+									"raw": "{\n\t\"name\": \"测试券\",\n\t\"description\": \"111\",\n\t\"amount\": 0,\n\t\"count\": \"10\",\n\t\"stock\": \"10\",\n\t\"people_max_get\": \"1\",\n\t\"pmg_status\": 0,\n\t\"day_max_get\": 0,\n\t\"dmg_status\": 0,\n\t\"is_fixed_date\": 0,\n\t\"delay_effective_day\": \"1\",\n\t\"effective_day\": \"2\",\n\t\"start_date\": \"2018-07-02 16:00:00\",\n\t\"end_date\": \"2018-07-17 16:00:00\",\n\t\"is_active\": 1\n}"
 								},
 								"description": ""
 							},

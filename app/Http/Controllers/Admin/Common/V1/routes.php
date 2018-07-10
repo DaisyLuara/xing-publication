@@ -27,6 +27,7 @@ $api->version('v1', [
             $api->get('advertisement/query', 'QueryController@advertisementQuery');//广告搜索
             $api->get('projects/query', 'QueryController@projectQuery');
             $api->get('coupon_batch/query', 'QueryController@couponBatchQuery');
+            $api->get('company/query', 'QueryController@companyQuery');
             $api->get('staffs', 'QueryController@arUserQueryIndex');
 
             //消息通知
