@@ -20,11 +20,17 @@ use App\Http\Controllers\Admin\Coupon\V1\Request\PolicyBatchesRequest;
 
 class PolicyController extends Controller
 {
-    public function index(Policy $couponPolicy)
+
+    public function show(Policy $policy)
     {
-        $query = $couponPolicy->query();
-        $couponPolicy = $query->paginate(10);
-        return $this->response->paginator($couponPolicy, new PolicyTransformer());
+        return $this->response->item($policy, new PolicyTransformer());
+    }
+
+    public function index(Policy $policy)
+    {
+        $query = $policy->query();
+        $policy = $query->paginate(10);
+        return $this->response->paginator($policy, new PolicyTransformer());
     }
 
     public function store(Company $company, Policy $policy, PolicyRequest $request)

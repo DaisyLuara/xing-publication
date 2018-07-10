@@ -18,6 +18,11 @@ use Illuminate\Http\Request;
 
 class CouponBatchController extends Controller
 {
+    public function show(CouponBatch $couponBatch)
+    {
+        return $this->response->item($couponBatch, new CouponBatchTransformer());
+    }
+
     public function index(CouponBatch $couponBatch, Request $request)
     {
         $query = $couponBatch->query();
