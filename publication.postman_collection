@@ -78,12 +78,53 @@
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/json"
+								"value": "application/json",
+								"description": ""
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n   \"captcha_key\":\"captcha-V4cbVoRiKDErr9X\",\n   \"captcha_code\":\"436rs\"\n}"
+							"raw": "{\n   \"captcha_key\":\"captcha-cB5yt9sKS6o1Z9d\",\n   \"captcha_code\":\"xl1j4\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "微信登陆",
+					"request": {
+						"url": "{{host}}/api/socials/weixin/authorizations",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"code\":\"001GQej01SKRH0236Ij01S0fj01GQejJ\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "微信绑定",
+					"request": {
+						"url": "{{host}}/api/user/bind/weixin",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"verification_key\":\"verificationCode_2LKvdoRJTGGNtdO\",\n\t\"verification_code\":\"1234\"\n}\n"
 						},
 						"description": ""
 					},
@@ -1084,6 +1125,32 @@
 						"description": ""
 					},
 					"response": []
+				},
+				{
+					"name": "删除用户",
+					"request": {
+						"url": "http://{{host}}/api/system/users/23",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_admin}}",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vcGFwaS5qaW5nZnJlZS50b3AvYXBpL2F1dGhvcml6YXRpb25zIiwiaWF0IjoxNTI3NTExMDYzLCJleHAiOjE1Mjc1MTgyNjMsIm5iZiI6MTUyNzUxMTA2MywianRpIjoicFE0RW5yYkxBcWRmQ2xPTCIsInN1YiI6NTEsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.zRn2IZ8UGizY_HgzKIgMwfG9EWjjht6huEUAWos7Zq0",
+								"description": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
 				}
 			]
 		},
@@ -1885,7 +1952,7 @@
 							"name": "投放模板列表",
 							"request": {
 								"url": {
-									"raw": "{{host}}/api/projects/launches/tpl?include=schedules.project&page=2",
+									"raw": "{{host}}/api/projects/launches/tpl?include=schedules.project&page=1",
 									"host": [
 										"{{host}}"
 									],
@@ -1904,7 +1971,7 @@
 										},
 										{
 											"key": "page",
-											"value": "2",
+											"value": "1",
 											"equals": true,
 											"description": ""
 										}
@@ -2094,7 +2161,7 @@
 									},
 									{
 										"key": "Origin",
-										"value": " http://devad.jingfree.top",
+										"value": "http://devad.jingfree.top",
 										"description": "",
 										"disabled": true
 									}
@@ -2668,7 +2735,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\"start_date\":\"2018-01-16\",\"end_date\":\"2018-05-12\",\"home_page\":true,\"id\":\"7\",\"index\":\"looknum,playernum,lovenum\"}"
+									"raw": "{\"start_date\":\"2018-01-16\",\"end_date\":\"2018-05-12\",\"home_page\":true,\"id\":\"8\"}"
 								},
 								"description": "id = 1 分天/分时数据\nid = 2 点位 top10\nid = 3 节目 top10"
 							},
@@ -2751,6 +2818,454 @@
 						}
 					],
 					"_postman_isSubFolder": true
+				}
+			]
+		},
+		{
+			"name": "短链接",
+			"description": "",
+			"item": [
+				{
+					"name": "生成短链接",
+					"request": {
+						"url": "{{host}}/api/short_urls",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"url\":\"https://pages.tmall.com/wow/jinkou/act/activity?_wvUseWKWebView=YES?&id=2861829&utm_source=406&utm_campaign=ColorRun&face_id=3395bh7k04ZCvFqQ\"}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "优惠券",
+			"description": "",
+			"item": [
+				{
+					"name": "策略",
+					"description": "",
+					"item": [
+						{
+							"name": "优惠券策略列表",
+							"request": {
+								"url": {
+									"raw": "http://{{host}}/api/coupon/policies?include=batches",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"coupon",
+										"policies"
+									],
+									"query": [
+										{
+											"key": "include",
+											"value": "batches",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_admin}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "新增策略条目",
+							"request": {
+								"url": "http://{{host}}/api/policy/2/batch/3",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									},
+									{
+										"key": "Authorization",
+										"value": "{{jwt_admin}}",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"rate\": \"88\"\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "生成策略",
+							"request": {
+								"url": "http://{{host}}/api/company/1/coupon/policy",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									},
+									{
+										"key": "Authorization",
+										"value": "{{jwt_admin}}",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\":\"优惠券投放1\"\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "修改策略",
+							"request": {
+								"url": "http://{{host}}/api/coupon/policy/1",
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_admin}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\":\"接口测试\"\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "删除策略条目",
+							"request": {
+								"url": "http://{{host}}/api/policy/1/batch_policy/2",
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_admin}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"rate\":\"20\"\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "规则",
+					"description": "",
+					"item": [
+						{
+							"name": "规则列表",
+							"request": {
+								"url": {
+									"raw": "http://{{host}}/api/coupon/batches?include=user,company",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"coupon",
+										"batches"
+									],
+									"query": [
+										{
+											"key": "include",
+											"value": "user,company",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_admin}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "生成规则",
+							"request": {
+								"url": "http://{{host}}/api/company/2/coupon/batch",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_admin}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\" :\"好孩子B券修改\"\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "修改规则",
+							"request": {
+								"url": "http://{{host}}/api/coupon/batches/1",
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_admin}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "领取",
+					"description": "",
+					"item": [
+						{
+							"name": "获取优惠券状态",
+							"request": {
+								"url": {
+									"raw": "http://{{host}}/api/get_coupon_status?company_id=1",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"get_coupon_status"
+									],
+									"query": [
+										{
+											"key": "company_id",
+											"value": "1"
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "生成优惠券",
+							"request": {
+								"url": "http://{{host}}/api/coupon/status",
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "领取优惠券",
+							"request": {
+								"url": {
+									"raw": "http://{{host}}/api/get_coupon?mobile=&coupon_batch_id=&coupon_id=",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"get_coupon"
+									],
+									"query": [
+										{
+											"key": "mobile",
+											"value": ""
+										},
+										{
+											"key": "coupon_batch_id",
+											"value": ""
+										},
+										{
+											"key": "coupon_id",
+											"value": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"description": ""
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			]
+		},
+		{
+			"name": "Attribute",
+			"description": "",
+			"item": [
+				{
+					"name": "属性列表",
+					"request": {
+						"url": "http://{{host}}/api/attribute",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "新增属性",
+					"request": {
+						"url": "http://{{host}}/api/attribute",
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "parent_id",
+									"value": "60",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "测试色3",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "desc",
+									"value": "test",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "属性修改",
+					"request": {
+						"url": "http://{{host}}/api/attribute",
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "id",
+									"value": "65",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "parent_id",
+									"value": "60",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "测试色2",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "desc",
+									"value": "update",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
 				}
 			]
 		}
