@@ -32,7 +32,7 @@ class CreateCouponBatchTable extends Migration
             $table->integer('effective_day')->comment('有效天数')->default(0);
             $table->timestamp('start_date')->comment('开始日期')->nullable();
             $table->timestamp('end_date')->comment('结束日期')->nullable();
-            $table->enum('is_active', [0, 1])->default(1)->comment('1 启用,0 停用');
+            $table->tinyInteger('is_active')->default(1)->comment('1 启用,0 停用');
             $table->timestamps();
         });
     }

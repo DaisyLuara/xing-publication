@@ -59,14 +59,14 @@ class MallCooProvider extends AbstractProvider implements ProviderInterface
         ]);
     }
 
-    protected function getTokenFields($code)
-    {
-        return [
-            'client_id' => $this->clientId, 'client_secret' => $this->clientSecret,
-            'code' => $code, 'redirect_uri' => $this->redirectUrl,
-            'grant_type' => 'authorization_code',
-        ];
-    }
+//    protected function getTokenFields($code)
+//    {
+//        return [
+//            'client_id' => $this->clientId, 'client_secret' => $this->clientSecret,
+//            'code' => $code, 'redirect_uri' => $this->redirectUrl,
+//            'grant_type' => 'authorization_code',
+//        ];
+//    }
 
     /**
      * Get the default options for an HTTP request.
@@ -82,22 +82,4 @@ class MallCooProvider extends AbstractProvider implements ProviderInterface
         ];
     }
 
-    public function refresh($accessToken, $refreshToken)
-    {
-        $options = [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-                'Authorization' => 'Bearer ' . $accessToken,
-            ],
-            'json' => [
-                'refresh_token' => $refreshToken,
-                'grant_type' => 'refresh_token',
-            ]
-        ];
-
-        $response = $this->getHttpClient()->request('POST', $this->getTokenUrl(), $options);
-
-        return json_decode($response->getBody(), true);
-    }
 }
