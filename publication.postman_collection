@@ -2859,7 +2859,7 @@
 							"name": "优惠券策略列表",
 							"request": {
 								"url": {
-									"raw": "http://{{host}}/api/coupon/policies?include=batches",
+									"raw": "http://{{host}}/api/coupon/policies?include=batches,company,user",
 									"protocol": "http",
 									"host": [
 										"{{host}}"
@@ -2872,7 +2872,7 @@
 									"query": [
 										{
 											"key": "include",
-											"value": "batches",
+											"value": "batches,company,user",
 											"equals": true,
 											"description": ""
 										}

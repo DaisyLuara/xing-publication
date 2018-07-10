@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Admin\Coupon\V1\Models;
 
 
 use App\Models\Model;
+use App\Http\Controllers\Admin\Company\V1\Models\Company;
 
 class Policy extends Model
 {
@@ -23,5 +24,10 @@ class Policy extends Model
     public function batches()
     {
         return $this->belongsToMany(CouponBatch::class)->withPivot(['rate', 'min_age', 'max_age', 'gender', 'type', 'id']);
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
     }
 }

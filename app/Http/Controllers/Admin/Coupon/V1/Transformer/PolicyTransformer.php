@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers\Admin\Coupon\V1\Transformer;
 
+use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use League\Fractal\TransformerAbstract;
 
@@ -29,4 +30,11 @@ class PolicyTransformer extends TransformerAbstract
     {
         return $this->collection($policy->batches, new CouponBatchTransformer());
     }
+
+    public function includeCompany(Policy $policy)
+    {
+        return $this->item($policy->company, new CompanyTransformer());
+    }
+
+
 }
