@@ -32,7 +32,7 @@ class CouponController extends Controller
             ->get();
 
         if ($couponBatches->isEmpty()) {
-            return $this->response->error('优惠券领完了',200);
+            return $this->response->error('优惠券领完了', 200);
         }
 
         $status = 0;
@@ -49,7 +49,7 @@ class CouponController extends Controller
         }
 
         if ($status == $couponBatches->count()) {
-            return $this->response->error('优惠券领完了',200);
+            return $this->response->error('优惠券领完了', 200);
         }
 
         return $this->response->collection($couponBatches);
@@ -58,6 +58,10 @@ class CouponController extends Controller
 
     public function createCoupon(Request $request)
     {
+        //@todo 根据优惠券渠道 发送不同优惠券
+//        return $this->sendMallCooCoupon(13818403072, '2mdpr0KMmEfsM4rEH+IiPympCmt2Piq4K8lhd0JGSRs=');
+
+
         $companyId = $request->company_id;
         $couponBatches = CouponBatch::query()
             ->where('company_id', $companyId)
@@ -90,6 +94,33 @@ class CouponController extends Controller
 
         return $this->response->item($coupon, new CouponTransformer());
 
+    }
+
+    private function sendMallCooCoupon($mobile, $picmID)
+    {
+        $mall_coo = app('mall_coo');
+        $sUrl = 'https://openapi10.mallcoo.cn/Coupon/v1/Send/ByMobile/';
+
+        $data = [
+            'UserList' => [
+                [
+                    'BussinessID' => null,
+                    'TraceID' => uniqid() . config('mall_coo.app_id'),
+                    'PICMID' => $picmID,
+                    'Mobile' => $mobile,
+                ]
+            ]
+        ];
+
+        $result = $mall_coo->send($sUrl, $data);
+        if ($result['Code'] != 1) {
+            return $this->sendError($result['Message']);
+        }
+
+        if (!$result['Data'][0]['IsSuccess']) {
+            return $result['Data'][0]['FailReason'];
+        }
+        return $result['Data'][0];
     }
 
     public function getCoupon(CouponRequest $request, EasySms $easySms)

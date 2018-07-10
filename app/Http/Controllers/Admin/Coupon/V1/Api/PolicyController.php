@@ -26,9 +26,12 @@ class PolicyController extends Controller
         return $this->response->item($policy, new PolicyTransformer());
     }
 
-    public function index(Policy $policy)
+    public function index(Policy $policy, Request $request)
     {
         $query = $policy->query();
+        if ($request->name) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
         $policy = $query->paginate(10);
         return $this->response->paginator($policy, new PolicyTransformer());
     }
