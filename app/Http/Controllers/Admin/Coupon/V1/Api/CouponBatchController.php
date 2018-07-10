@@ -26,6 +26,9 @@ class CouponBatchController extends Controller
     public function index(CouponBatch $couponBatch, Request $request)
     {
         $query = $couponBatch->query();
+        if ($request->name) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
         $couponBatch = $query->paginate(10);
         return $this->response->paginator($couponBatch, new CouponBatchTransformer());
     }

@@ -196,7 +196,7 @@ class QueryController extends Controller
         $query = $couponBatch->query();
 
         if ($request->name) {
-            $query->where('name', 'like', '%' . $request->name . '%')->get();
+            $query->where('name', 'like', '%' . $request->name . '%');
         }
 
         if ($request->company_id) {

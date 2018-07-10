@@ -29,6 +29,7 @@ $api->version('v1', [
             $api->get('coupon_batch/query', 'QueryController@couponBatchQuery');
             $api->get('company/query', 'QueryController@companyQuery');
             $api->get('staffs', 'QueryController@arUserQueryIndex');
+            $api->get('scene/query', 'QueryController@sceneQueryIndex');
 
             //消息通知
             $api->get('user/notifications', 'NotificationsController@index');
