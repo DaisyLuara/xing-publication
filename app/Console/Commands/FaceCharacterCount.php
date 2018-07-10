@@ -55,7 +55,7 @@ class FaceCharacterCount extends Command
             $time8 = " when time >'22:00' or time ='00:00' then '24:00'";
             $timeSql = $time1 . $time2 . $time3 . $time4 . $time5 . $time6 . $time7 . $time8;
 
-            $sql = DB::table('xs_face_character')
+            $sql = DB::connection('ar')->table('xs_face_character')
                 ->whereRaw("clientdate='$clientDate'")
                 ->groupBy(DB::raw("oid,belong,times,century,gender"))
                 ->selectRaw("oid,belong,case" . $timeSql . " else 0 end as times,century,gender,sum(looknum) as looknum");

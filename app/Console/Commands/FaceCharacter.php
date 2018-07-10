@@ -101,7 +101,7 @@ class FaceCharacter extends Command
             }
             $count = array_chunk($count, 8000);
             for ($i = 0; $i < count($count); $i++) {
-                DB::table('xs_face_character')->insert($count[$i]);
+                DB::connection('ar')->table('xs_face_character')->insert($count[$i]);
             }
             $date = (new Carbon($date))->addDay(1)->toDateString();
         }
