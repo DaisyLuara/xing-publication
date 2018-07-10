@@ -36,10 +36,17 @@
           <el-table-column
             prop="name"
             label="优惠券名称"
-            width="150"
+            min-width="150"
             >
             <template slot-scope="scope">
-              {{scope.row.name}}
+              <el-select v-model="scope.row.pivot.coupon_batch_id" placeholder="请选择优惠券" filterable :loading="searchLoading" clearable class="item-select">
+                <el-option
+                  v-for="item in couponList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
             </template>
           </el-table-column>
           <el-table-column
@@ -175,7 +182,8 @@ export default {
       templateList: [],
       templateForm: {
         company_id: '',
-        name: ''
+        name: '',
+        id: ''
       },
       genderList: [
         {
@@ -198,6 +206,7 @@ export default {
       searchForm: {
         name: ''
       },
+      couponList: [],
       setting: {
         loading: false,
         loadingText: '拼命加载中'
@@ -208,13 +217,25 @@ export default {
   created() {
     this.getCompanyList()
     this.getPoliciesList()
+    this.getCouponList()
   },
   methods: {
+    getCouponList() {
+      search
+        .getCouponList(this)
+        .then(result => {
+          this.couponList = result.data
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
     getCompanyList() {
       search
         .getCompanyList(this)
         .then(result => {
           this.companyList = result.data
+          console.log(this.companyList)
         })
         .catch(error => {
           console.log(error)
@@ -224,11 +245,15 @@ export default {
       // this.loading = true
       this.title = '修改策略'
       let name = item.name
+      console.log(item)
       let company_id = item.company.id
+      let id = item.id
       this.templateForm = {
         name: name,
+        id: id,
         company_id: company_id
       }
+      console.log(this.templateForm)
       this.templateVisible = true
     },
     genderChangeHandle(pIndex, index, val) {
@@ -355,51 +380,53 @@ export default {
     submit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          // let company_id 
+          let company_id = this.templateForm.company_id
           let args = {
             name: this.templateForm.name
           }
-          // if (this.templateForm.tpl_id) {
-          //   schedule
-          //     .modifyTemplate(this, id, args)
-          //     .then(response => {
-          //       this.$message({
-          //         message: '修改成功',
-          //         type: 'success'
-          //       })
-          //       this.templateVisible = false
-          //       this.getScheduleList()
-          //     })
-          //     .catch(err => {
-          //       this.templateVisible = false
-          //       console.log(err)
-          //     })
-          // } else {
-          //   schedule
-          //     .saveTemplate(this, args)
-          //     .then(response => {
-          //       this.$message({
-          //         message: '添加成功',
-          //         type: 'success'
-          //       })
-          //       this.templateVisible = false
-          //       this.getScheduleList()
-          //     })
-          //     .catch(err => {
-          //       this.templateVisible = false
-          //       console.log(err)
-          //     })
-          // }
+          console.log(args + company_id)
+          if (this.title !== '增加策略') {
+            let id = this.templateForm.id
+            policies
+              .modifyPolicy(this, id, args)
+              .then(response => {
+                this.$message({
+                  message: '修改成功',
+                  type: 'success'
+                })
+                this.templateVisible = false
+                this.getPoliciesList()
+              })
+              .catch(err => {
+                this.templateVisible = false
+                console.log(err)
+              })
+          } else {
+            policies
+              .savePolicy(this, company_id, args)
+              .then(response => {
+                this.$message({
+                  message: '添加成功',
+                  type: 'success'
+                })
+                this.templateVisible = false
+                this.getPoliciesList()
+              })
+              .catch(err => {
+                this.templateVisible = false
+                console.log(err)
+              })
+          }
         }
       })
     },
     search() {
       this.pagination.currentPage = 1
-      this.getScheduleList()
+      this.getPoliciesList()
     },
     changePage(currentPage) {
       this.pagination.currentPage = currentPage
-      this.getScheduleList()
+      this.getPoliciesList()
     }
   }
 }
