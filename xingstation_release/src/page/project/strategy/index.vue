@@ -22,25 +22,24 @@
     <el-collapse v-model="activeNames" accordion>
       <el-collapse-item :name="index" v-for="(item, index) in tableData" :key="item.id" >
         <template slot="title">
-          <!-- {{item.name }} ( {{item.area.name + item.market.name + item.point.name}} ) <el-button type="primary" icon="el-icon-edit" circle size="mini" @click="modifyTemplateName(item)"></el-button> -->
-          {{test }} ( 测试公司 ) <el-button type="primary" icon="el-icon-edit" circle size="mini" @click="modifyTemplateName(item)"></el-button>
+          {{item.name }} ( {{item.company.name}} ) <el-button type="primary" icon="el-icon-edit" circle size="mini" @click="modifyTemplateName(item)"></el-button>
         </template>
         <div class="actions-wrap">
           <span class="label">
-            数目: {{item.schedules.data.length}}
+            数目: {{item.batches.data.length}}
           </span>
           <div>
-            <el-button size="small" @click="addSchedule(index)">增加</el-button>
+            <el-button size="small" @click="addbatch(index)">增加</el-button>
           </div>
         </div>
-        <el-table :data="item.schedules.data" style="width: 100%">
+        <el-table :data="item.batches.data" style="width: 100%">
           <el-table-column
             prop="name"
             label="优惠券名称"
-            width="100"
+            width="150"
             >
             <template slot-scope="scope">
-              测试券
+              {{scope.row.name}}
             </template>
           </el-table-column>
           <el-table-column
@@ -49,7 +48,7 @@
             min-width="150"
             >
             <template slot-scope="scope">
-              <el-select v-model="scope.row.name" filterable placeholder="请搜索" clearable :loading="searchLoading" style="width: 180px;" @change="projectChangeHandle(index, scope.$index, scope.row.project.name)" >
+              <el-select v-model="scope.row.pivot.gender" filterable placeholder="请搜索" clearable :loading="searchLoading" style="width: 180px;" @change="genderChangeHandle(index, scope.$index, scope.row.pivot.gender)" >
                 <el-option
                   v-for="item in genderList"
                   :key="item.id"
@@ -60,38 +59,37 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="age"
-            label="年龄"
+            prop="max_age"
+            label="最大年龄"
             min-width="120"
             >
             <template slot-scope="scope">
-              <el-input v-model="scope.row.age" ></el-input>
+              <el-input v-model="scope.row.pivot.max_age" ></el-input>
             </template>
           </el-table-column>
           <el-table-column
-            prop="probability"
+            prop="min_age"
+            label="最小年龄"
+            min-width="120"
+            >
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.pivot.min_age" ></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="rate"
             label="概率"
             min-width="120"
             >
             <template slot-scope="scope">
-              <el-input v-model="scope.row.age" ></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="time"
-            label="时间"
-            min-width="100"
-            :show-overflow-tooltip="true"
-            >
-            <template slot-scope="scope">
-              {{scope.row.created_at}}
+              <el-input v-model="scope.row.pivot.rate" ></el-input>
             </template>
           </el-table-column>
           <el-table-column label="操作" min-width="100">
             <template slot-scope="scope">
-              <el-button size="mini" type="warning" v-if="scope.row.project.icon" @click="editSchedule(scope.row)">编辑</el-button>
-              <el-button size="mini" type="danger" icon="el-icon-delete" v-if="!scope.row.project.icon" @click="deleteAddSchedule(index, scope.$index, scope.row)"></el-button>
-              <el-button size="mini" style="background-color: #8bc34a;border-color: #8bc34a; color: #fff;" v-if="!scope.row.project.icon" @click="saveSchedule(scope.row)">保存</el-button>
+              <el-button size="mini" type="warning" v-if="!scope.row.addStauts" @click="editSchedule(scope.row)">编辑</el-button>
+              <el-button size="mini" type="danger" icon="el-icon-delete" v-if="scope.row.addStauts" @click="deleteAddBatch(index, scope.$index, scope.row)"></el-button>
+              <el-button size="mini" style="background-color: #8bc34a;border-color: #8bc34a; color: #fff;" v-if="scope.row.addStauts" @click="saveSchedule(scope.row)">保存</el-button>
             </template>
           </el-table-column>
         </el-table> 
@@ -150,7 +148,7 @@ import {
   Input
 } from 'element-ui'
 import search from 'service/search'
-import schedule from 'service/schedule'
+import policies from 'service/policies'
 
 export default {
   components: {
@@ -205,22 +203,23 @@ export default {
     }
   },
   created() {
-    // this.getScheduleList()
+    this.getPoliciesList()
   },
   methods: {
     modifyTemplateName(item) {
-      this.loading = true
+      // this.loading = true
       this.title = '修改策略'
       let name = item.name
-      let company_id = item.point.id
+      let company_id = item.company.id
       this.templateForm = {
         name: name,
         company_id: company_id,
       }
       this.templateVisible = true
     },
-    projectChangeHandle(pIndex, index, val) {
-      this.tableData[pIndex].schedules.data[index].project.id = val
+    genderChangeHandle(pIndex, index, val) {
+      console.log(val)
+      this.tableData[pIndex].batches.data[index].gender = val
     },
     editSchedule(row) {
       this.setting.loading = true
@@ -298,19 +297,20 @@ export default {
       this.templateVisible = true
       this.title = '增加策略'
     },
-    deleteAddSchedule(pIndex, index, r) {
-      this.tableData[pIndex].schedules.data.splice(index, 1)
+    deleteAddBatch(pIndex, index, r) {
+      this.tableData[pIndex].batches.data.splice(index, 1)
     },
-    getScheduleList() {
+    getPoliciesList() {
       this.setting.loading = true
       let args = {
         page: this.pagination.currentPage,
-        include: 'schedules.project',
+        include: 'batches,company',
         name: this.searchForm.name
       }
-      return schedule
-        .getScheduleList(this, args)
+      return policies
+        .getPoliciesList(this, args)
         .then(response => {
+          console.log(response.data)
           this.tableData = response.data
           this.pagination.total = response.meta.pagination.total
           this.setting.loading = false
@@ -320,20 +320,20 @@ export default {
           this.setting.loading = false
         })
     },
-    addSchedule(index) {
-      let tpl_id = this.tableData[index].id
+    addbatch(index) {
+      let company_id = this.tableData[index].id
       let td = {
-        date_start: '',
-        date_end: '',
-        project: {
-          id: '',
-          info: '',
-          icon: '',
-          created_at: ''
+        name: '',
+        addStauts: true,
+        pivot: {
+          min_age: '',
+          rate: '',
+          max_age: '',
+          gender: ''
         },
-        tpl_id: tpl_id
+        company_id: company_id
       }
-      this.tableData[index].schedules.data.push(td)
+      this.tableData[index].batches.data.push(td)
     },
     dialogClose() {
       this.templateVisible = false

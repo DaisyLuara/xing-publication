@@ -1,9 +1,10 @@
 import { router } from '../main'
-const COUPON_API = '/api/system/users'
+const COUPON_API = '/api/coupon/batches'
+const ADD_COUPON_API = '/api/company/'
 const HOST = process.env.SERVER_URL
 
 export default {
-  saveCoupon(context, args, uid) {
+  saveCoupon(context, args, uid, companyId) {
     if (uid) {
       let promise = new Promise(function(resolve, reject) {
         context.$http
@@ -19,7 +20,7 @@ export default {
     } else {
       let promise = new Promise(function(resolve, reject) {
         context.$http
-          .post(HOST + COUPON_API, args)
+          .post(HOST + ADD_COUPON_API + companyId + '/coupon/batch', args)
           .then(response => {
             resolve(response.data.data)
           })

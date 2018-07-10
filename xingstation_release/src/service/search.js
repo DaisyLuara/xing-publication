@@ -9,6 +9,7 @@ const AD_TRADE_API = '/api/ad_trade/query'
 const ADVERTISER_API='/api/advertiser/query'
 const ADVERTISEMENT_API = '/api/advertisement/query'
 const SENCE_API = '/api/scene/query'
+const COMPANY_API = '/api/company/query'
 const HOST = process.env.SERVER_URL
 
 export default {
@@ -96,6 +97,15 @@ export default {
   getSceneList(context) {
     return new Promise(function(resolve, reject){
       context.$http.get(HOST + SENCE_API).then(response => {
+        resolve(response.data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+  getCompanyList(context) {
+    return new Promise(function(resolve, reject){
+      context.$http.get(HOST + COMPANY_API).then(response => {
         resolve(response.data)
       }).catch(error => {
         reject(error)
