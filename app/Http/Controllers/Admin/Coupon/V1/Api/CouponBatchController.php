@@ -25,15 +25,6 @@ class CouponBatchController extends Controller
 
     public function index(CouponBatch $couponBatch, Request $request)
     {
-//        $mall_coo = app('mall_coo');
-//        $sUrl = 'https://openapi10.mallcoo.cn/Coupon/PutIn/v1/GetAll/';
-//        $result = $mall_coo->send($sUrl);
-//        if ($result['Code'] == 1) {
-//            return $result['Data'];
-//        }
-
-//        return $result['Message'];
-
         $query = $couponBatch->query();
         if ($request->name) {
             $query->where('name', 'like', '%' . $request->name . '%');
@@ -58,5 +49,23 @@ class CouponBatchController extends Controller
         $couponBatch->update($request->all());
         return $this->response->item($couponBatch, new CouponBatchTransformer())
             ->setStatusCode(201);
+    }
+
+    public function syncMallCooCouponBatch(Request $request)
+    {
+        $mall_coo = app('mall_coo');
+        $sUrl = 'https://openapi10.mallcoo.cn/Coupon/PutIn/v1/GetAll/';
+        $result = $mall_coo->send($sUrl);
+        if ($result['Code'] == 1) {
+            foreach ($result['Data'] as $data) {
+                CouponBatch::query()->updateOrCreate(['third_code' => $data['PICMID']], [
+                    'name' => $data['CouponName'],
+                    'description' => $data['CouponDesc'],
+                    'company_id' => $request->company_id,
+                    'create_user_id' => $this->user->id,
+                ]);
+            }
+        }
+
     }
 }

@@ -34,6 +34,7 @@ class CouponBatch extends Model
         'is_active',
         'name',
         'description',
+        'third_code',
     ];
 
     public function coupon()

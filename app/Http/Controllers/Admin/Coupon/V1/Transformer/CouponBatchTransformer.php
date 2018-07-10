@@ -37,6 +37,7 @@ class CouponBatchTransformer extends TransformerAbstract
             'start_date' => $couponBatch->start_date,
             'end_date' => $couponBatch->end_date,
             'is_active' => $couponBatch->is_active,
+            'third_code' => $couponBatch->third_code,
             'pivot' => $couponBatch->pivot,
         ];
     }

@@ -23,6 +23,10 @@ $api->version('v1', [
             $api->get('coupon/batches', 'CouponBatchController@index');
             $api->post('company/{company}/coupon/batch', 'CouponBatchController@store');
             $api->patch('coupon/batches/{couponBatch}', 'CouponBatchController@update');
+
+            //同步猫酷优惠券规则
+            $api->get('coupon/sync', 'CouponBatchController@syncMallCooCouponBatch');
+
         });
 
 
