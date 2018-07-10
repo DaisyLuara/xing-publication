@@ -31,6 +31,7 @@ class PolicyBatchesRequest extends FormRequest
     public function rules()
     {
         return [
+            'coupon_batch_id' => 'required',
             'gender' => ['required_without_all:rate,min_age,max_age', Rule::in(['female', 'male', 'none'])],
             'rate' => ['digits_between:1,3', 'required_without_all:gender,min_age,max_age'],
             'min_age' => ['digits_between:1,2', 'required_without_all:rate,gender,max_age', 'required_with:max_age'],

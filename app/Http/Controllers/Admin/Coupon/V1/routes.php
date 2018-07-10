@@ -15,7 +15,7 @@ $api->version('v1', [
             $api->post('company/{company}/coupon/policy', 'PolicyController@store');
             $api->patch('coupon/policy/{policy}', 'PolicyController@update');
 
-            $api->post('policy/{policy}/batch/{couponBatch}', 'PolicyController@storeBatchPolicy');
+            $api->post('policy/{policy}', 'PolicyController@storeBatchPolicy');
             $api->patch('policy/{policy}/batch_policy/{batch_policy_id}', 'PolicyController@updateBatchPolicy');
             $api->delete('policy/{policy}/batch_policy/{batch_policy_id}', 'PolicyController@destroyBatchPolicy');
 
