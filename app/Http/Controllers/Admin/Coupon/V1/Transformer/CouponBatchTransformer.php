@@ -22,6 +22,7 @@ class CouponBatchTransformer extends TransformerAbstract
         return [
             'id' => $couponBatch->id,
             'name' => $couponBatch->name,
+            'description' => $couponBatch->description,
             'image_url' => $couponBatch->image_url,
             'amount' => $couponBatch->amount,
             'count' => $couponBatch->count,
@@ -30,6 +31,8 @@ class CouponBatchTransformer extends TransformerAbstract
             'pmg_status' => $couponBatch->pmg_status,
             'day_max_get' => $couponBatch->day_max_get,
             'dmg_status' => $couponBatch->dmg_status,
+            'is_fixed_date' => $couponBatch->is_fixed_date,
+            'delay_effective_day' => $couponBatch->delay_effective_day,
             'effective_day' => $couponBatch->effective_day,
             'start_date' => $couponBatch->start_date,
             'end_date' => $couponBatch->end_date,
