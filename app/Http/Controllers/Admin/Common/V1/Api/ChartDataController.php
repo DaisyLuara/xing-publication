@@ -455,7 +455,7 @@ class ChartDataController extends Controller
 
         $marketnum = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
             ->count();
-        $data = $sql->limit(10)->get();
+        $data = $sql->limit(15)->get();
         $output['market_num'] = $marketnum;
         $output['data'] = [];
         foreach ($data as $item) {
