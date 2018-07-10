@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\Admin\Common\V1\Api;
 
-use App\Http\Controllers\Admin\Face\V1\Models\FaceCollectCharacter;
+use App\Http\Controllers\Admin\Face\V1\Models\FaceCharacter;
+use App\Http\Controllers\Admin\Face\V1\Models\FaceCharacterCount;
 use App\Http\Controllers\Admin\Face\V1\Models\XsFaceCountLog;
 use App\Http\Controllers\Admin\Face\V1\Transformer\FaceCountTransformer;
 use App\Http\Controllers\Admin\Common\V1\Request\ChartDataRequest;
@@ -71,7 +72,8 @@ class ChartDataController extends Controller
     {
         $faceLogQuery = FaceLog::query();
         $faceCountQuery = FaceCount::query();
-        $faceCollectCharacterQuery = FaceCollectCharacter::query();
+        $faceCharacterQuery = FaceCharacter::query();
+        $faceCharacterCount = FaceCharacterCount::query();
         $xsFaceCountLog = XsFaceCountLog::query();
         switch ($request->id) {
             case 1:
@@ -96,7 +98,7 @@ class ChartDataController extends Controller
                 $data = $this->getTotalByDate($request, $xsFaceCountLog);
                 break;
             case 8:
-                $data = $this->getCharacterByTime($request, $faceCollectCharacterQuery);
+                $data = $this->getCharacterByTime($request, $faceCharacterCount);
                 break;
             case 9:
                 $data = $this->getActivePlayerByMonth($request);
@@ -395,96 +397,39 @@ class ChartDataController extends Controller
         $startClientDate = strtotime($startDate) * 1000;
         $endClientDate = strtotime($endDate) * 1000;
 
-        $time1 = " when time >'00:00' and time <='10:00' then '10:00'";
-        $time2 = " when time >'10:00' and time <='12:00' then '12:00'";
-        $time3 = " when time >'12:00' and time <='14:00' then '14:00'";
-        $time4 = " when time >'14:00' and time <='16:00' then '16:00'";
-        $time5 = " when time >'16:00' and time <='18:00' then '18:00'";
-        $time6 = " when time >'18:00' and time <='20:00' then '20:00'";
-        $time7 = " when time >'20:00' and time <='22:00' then '22:00'";
-        $time8 = " when time >'22:00' or time ='00:00' then '24:00'";
-        $timeSql = $time1 . $time2 . $time3 . $time4 . $time5 . $time6 . $time7 . $time8;
-
         $this->handleQuery($request, $query);
-        $data = $query->whereRaw("xs_face_collect_character.clientdate between '$startClientDate' and '$endClientDate'")
-            ->where('century', '<>', '0')
-            ->whereNotIn('xs_face_collect_character.oid', ['16', '19', '30', '31', '335', '334', '329', '328', '327'])
-            ->groupBy('times')
-            ->groupBy('century')
-            ->selectRaw("case" . $timeSql . " else 0 end as times,century,sum(looknum) as count")
+        $data = $query->whereRaw("xs_face_character_count.clientdate between '$startClientDate' and '$endClientDate'")
+            ->whereNotIn('xs_face_character_count.oid', ['16', '19', '30', '31', '335', '334', '329', '328', '327'])
+            ->groupBy('time')
+            ->selectRaw("time,sum(century00_bnum + century00_gnum) as century00,sum(century90_bnum + century90_gnum) as century90,sum(century80_bnum + century80_gnum) as century80,sum(century70_bnum + century70_gnum) as century70")
+            ->selectRaw("sum(century00_gnum+century90_gnum+century80_gnum+century70_gnum) as gnum,sum(century00_gnum+century00_bnum+century90_gnum+century90_bnum+century80_gnum+century80_bnum+century70_gnum+century70_bnum) as totalnum")
             ->get();
 
-        $count = [];
-        for ($i = 0; $i < 8; $i++) {
-            $count[$i] = [
-                'century00' => 0,
-                'century90' => 0,
-                'century80' => 0,
-                'century70' => 0,
-            ];
-        }
-        $mapping = [
-            '00' => 'century00',
-            '90' => 'century90',
-            '80' => 'century80',
-            '70' => 'century70'
-        ];
-        foreach ($data as $item) {
-            if ($item->times == "10:00") {
-                $count[0][$mapping[$item->century]] = $item->count;
-            }
-            if ($item->times == "12:00") {
-                $count[1][$mapping[$item->century]] = $item->count;
-            }
-            if ($item->times == "14:00") {
-                $count[2][$mapping[$item->century]] = $item->count;
-            }
-            if ($item->times == "16:00") {
-                $count[3][$mapping[$item->century]] = $item->count;
-            }
-            if ($item->times == "18:00") {
-                $count[4][$mapping[$item->century]] = $item->count;
-            }
-            if ($item->times == "20:00") {
-                $count[5][$mapping[$item->century]] = $item->count;
-            }
-            if ($item->times == "22:00") {
-                $count[6][$mapping[$item->century]] = $item->count;
-            }
-            if ($item->times == "24:00") {
-                $count[7][$mapping[$item->century]] = $item->count;
-            }
-        }
-        $sql = DB::connection('ar')->table('xs_face_collect_character')
-            ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and belong = 'all' and century <> 0 and oid not in ('16', '19', '30', '31', '335', '334', '329', '328', '327')")
-            ->groupBy('times')
-            ->groupBy('gender')
-            ->selectRaw("case" . $timeSql . " else 0 end as times,gender,sum(looknum) as count");
-        $genderData = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
-            ->groupBy('times')
-            ->selectRaw("  times,sum(if(gender = 'Male', count, 0))as malenum,sum(if(gender = 'Female', count, 0)) as femalenum")
-            ->get();
-        $rate = [
-            '10:00' => 0,
-            '12:00' => 0,
-            '14:00' => 0,
-            '16:00' => 0,
-            '18:00' => 0,
-            '20:00' => 0,
-            '22:00' => 0,
-            '24:00' => 0,
-        ];
-        foreach ($genderData as $item) {
-            $rate[$item->times] = round($item->femalenum / ($item->malenum + $item->femalenum), 3) * 100;
-        }
         $times = ['10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', '24:00'];
         $output = [];
-        for ($i = 0; $i < count($times); $i++) {
+        for ($i = 0; $i < 8; $i++) {
             $output[] = [
-                'count' => $count[$i],
-                'rate' => $rate[$times[$i]],
-                'display_name' => $times[$i]
+                'display_name' => $times[$i],
+                'rate' => 0,
+                'count' =>
+                    [
+                        'century00' => 0,
+                        'century90' => 0,
+                        'century80' => 0,
+                        'century70' => 0,
+                    ]
             ];
+        }
+        foreach ($data as $index => $item) {
+            if ($item->time = $times[$index]) {
+                $output[$index]['count'] = [
+                    'century00' => $item->century00,
+                    'century90' => $item->century90,
+                    'century80' => $item->century80,
+                    'century70' => $item->century70,
+                ];
+                $output[$index]['rate'] = round($item->gnum / $item->totalnum, 3) * 100;
+            }
         }
         return $output;
     }

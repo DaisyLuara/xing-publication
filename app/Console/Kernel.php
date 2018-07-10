@@ -2,18 +2,12 @@
 
 namespace App\Console;
 
-use App\Http\Controllers\Admin\Face\V1\Models\ActivePlayerRecord;
-use App\Http\Controllers\Admin\Face\V1\Models\FaceCollectRecord;
-use App\Http\Controllers\Admin\Face\V1\Models\FaceMauMarketRecord;
-use App\Http\Controllers\Admin\Face\V1\Models\FaceMauRecord;
 use App\Http\Controllers\Admin\WeChat\V1\Models\WeekRanking;
 use App\Jobs\WeekRankingJob;
 use Carbon\Carbon;
 use DB;
-use function foo\func;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use App\Http\Controllers\Admin\Face\V1\Models\FaceCountRecord;
 
 class Kernel extends ConsoleKernel
 {
@@ -43,7 +37,7 @@ class Kernel extends ConsoleKernel
 
         //活跃玩家清洗
         $schedule->call(function () {
-            $date = ActivePlayerRecord::query()->max('date');
+            $date = DB::table('face_active_player_records')->max('date');
             $date = (new Carbon($date))->format('Y-m-d');
             $currentDate = Carbon::now()->toDateString();
             while ($date < $currentDate) {
@@ -137,12 +131,12 @@ class Kernel extends ConsoleKernel
                     ->insert($count);
                 $date = (new Carbon($date))->addDay(1)->toDateString();
             }
-            ActivePlayerRecord::create(['date' => $currentDate]);
+            DB::table('face_active_player_records')->insert(['date' => $currentDate]);
         })->daily()->at('8:00');
 
         //聚合face_count_log和active_player
         $schedule->call(function () {
-            $date = FaceCountRecord::query()->max('date');
+            $date = DB::table('face_count_log_records')->max('date');
             $date = (new Carbon($date))->format('Y-m-d');
             $currentDate = Carbon::now()->toDateString();
             while ($date < $currentDate) {
@@ -175,17 +169,18 @@ class Kernel extends ConsoleKernel
                         'outnum' => $item->outnum,
                         'scannum' => $item->scannum,
                         'lovenum' => $item->lovenum,
-                        'date' => $date
+                        'date' => $date,
+                        'clientdate' => strtotime($date) * 1000
                     ];
                 }
                 DB::connection('ar')->table('xs_face_count_log')->insert($count);
                 $date = (new Carbon($date))->addDay(1)->toDateString();
             }
-            FaceCountRecord::create(['date' => $currentDate]);
+            DB::table('face_count_log_records')->insert(['date' => $currentDate]);
         })->daily()->at('8:00');
         //月活玩家清洗
         $schedule->call(function () {
-            $date = FaceMauRecord::query()->max('date');
+            $date = DB::table('face_mau_records')->max('date');
             $currentDate = Carbon::now()->toDateString();
             while ((new Carbon($date))->format('Y-m') < (new Carbon($currentDate))->format('Y-m')) {
                 $startDate = $date;
@@ -208,12 +203,12 @@ class Kernel extends ConsoleKernel
                     ->insert($count);
                 $date = (new Carbon($date))->addMonth(1)->toDateString();
             }
-            FaceMauRecord::create(['date' => $date]);
+            DB::table('face_mau_records')->insert(['date' => $date]);
         })->monthlyOn(1, '8:00');
 
         //按商场去重月活玩家
         $schedule->call(function () {
-            $date = FaceMauMarketRecord::query()->max('date');
+            $date = DB::table('face_mau_market_records')->max('date');
             $currentDate = Carbon::now()->toDateString();
             while ((new Carbon($date))->format('Y-m') < (new Carbon($currentDate))->format('Y-m')) {
                 $startDate = $date;
@@ -242,12 +237,12 @@ class Kernel extends ConsoleKernel
                     ->insert($count);
                 $date = (new Carbon($date))->addMonth(1)->toDateString();
             }
-            FaceMauMarketRecord::create(['date' => $date]);
+            DB::table('face_mau_market_records')->insert(['date' => $date]);
         })->monthlyOn(1, '8:00');
 
         //时间段与人群特征数据清洗
         $schedule->call(function () {
-            $date = FaceCollectRecord::query()->max('date');
+            $date = DB::table('face_character_records')->max('date');
             $date = (new Carbon($date))->format('Y-m-d');
             $currentDate = Carbon::now()->toDateString();
 
@@ -308,11 +303,11 @@ class Kernel extends ConsoleKernel
                 }
                 $count = array_chunk($count, 8000);
                 for ($i = 0; $i < count($count); $i++) {
-                    DB::connection('ar')->table('xs_face_collect_character')->insert($count[$i]);
+                    DB::connection('ar')->table('xs_face_character')->insert($count[$i]);
                 }
                 $date = (new Carbon($date))->addDay(1)->toDateString();
             }
-            FaceCollectRecord::create(['date' => $currentDate]);
+            DB::table('face_character_records')->insert(['date' => $currentDate]);
         })->daily()->at('8:00');
     }
 

@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use DB;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceCountRecord;
 use Carbon\Carbon;
+use DB;
+use Illuminate\Console\Command;
 
 class FaceCount extends Command
 {
@@ -40,7 +40,7 @@ class FaceCount extends Command
      */
     public function handle()
     {
-        $date = FaceCountRecord::query()->max('date');
+        $date = DB::table('face_count_log_records')->max('date');
         $date = (new Carbon($date))->format('Y-m-d');
         $currentDate = Carbon::now()->toDateString();
         while ($date < $currentDate) {
@@ -73,12 +73,13 @@ class FaceCount extends Command
                     'outnum' => $item->outnum,
                     'scannum' => $item->scannum,
                     'lovenum' => $item->lovenum,
-                    'date' => $date
+                    'date' => $date,
+                    'clientdate' => strtotime($date) * 1000
                 ];
             }
             DB::connection('ar')->table('xs_face_count_log')->insert($count);
             $date = (new Carbon($date))->addDay(1)->toDateString();
         }
-        FaceCountRecord::create(['date' => $currentDate]);
+        DB::table('face_count_log_records')->insert(['date' => $currentDate]);
     }
 }

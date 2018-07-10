@@ -14,12 +14,11 @@ class CreateActivePlayerRecordTable extends Migration
      */
     public function up()
     {
-        Schema::create('active_player_records', function (Blueprint $table) {
+        Schema::create('face_active_player_records', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamp('date')->nullable();
-            $table->timestamps();
         });
-        ActivePlayerRecord::create(['date' => '2018-06-13']);
+        DB::table('face_active_player_records')->insert(['date' => '2018-06-13']);
     }
 
     /**
@@ -29,6 +28,6 @@ class CreateActivePlayerRecordTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('active_player_records');
+        Schema::dropIfExists('face_active_player_records');
     }
 }

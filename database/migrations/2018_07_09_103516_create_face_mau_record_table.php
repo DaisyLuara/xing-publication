@@ -17,9 +17,8 @@ class CreateFaceMauRecordTable extends Migration
         Schema::create('face_mau_records', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamp('date')->nullable();
-            $table->timestamps();
         });
-        FaceMauRecord::create(['date' => '2018-06-01']);
+        DB::table('face_mau_records')->insert(['date' => '2018-06-01']);
     }
 
     /**

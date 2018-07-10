@@ -14,12 +14,11 @@ class CreateFaceCollectRecordTable extends Migration
      */
     public function up()
     {
-        Schema::create('face_collect_records', function (Blueprint $table) {
+        Schema::create('face_character_records', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamp('date')->nullable();
-            $table->timestamps();
         });
-        FaceCollectRecord::create(['date' => "2017-04-21"]);
+        DB::table('face_character_records')->insert(['date' => "2017-04-21"]);
     }
 
     /**
@@ -29,6 +28,6 @@ class CreateFaceCollectRecordTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('face_collect_records');
+        Schema::dropIfExists('face_character_records');
     }
 }

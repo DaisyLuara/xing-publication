@@ -2,12 +2,12 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceCollectRecord;
-use DB;
 use Carbon\Carbon;
+use DB;
+use Illuminate\Console\Command;
 
-class FaceCollectCharacter extends Command
+class FaceCharacter extends Command
 {
     /**
      * The name and signature of the console command.
@@ -40,7 +40,7 @@ class FaceCollectCharacter extends Command
      */
     public function handle()
     {
-        $date = FaceCollectRecord::query()->max('date');
+        $date = DB::table('face_character_records')->max('date');
         $date = (new Carbon($date))->format('Y-m-d');
         $currentDate = Carbon::now()->toDateString();
 
@@ -101,10 +101,10 @@ class FaceCollectCharacter extends Command
             }
             $count = array_chunk($count, 8000);
             for ($i = 0; $i < count($count); $i++) {
-                DB::connection('ar')->table('xs_face_collect_character')->insert($count[$i]);
+                DB::table('xs_face_character')->insert($count[$i]);
             }
             $date = (new Carbon($date))->addDay(1)->toDateString();
         }
-        FaceCollectRecord::create(['date' => $currentDate]);
+        DB::table('face_character_records')->insert(['date' => $currentDate]);
     }
 }

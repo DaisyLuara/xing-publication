@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceMauRecord;
-use DB;
 use Carbon\Carbon;
+use DB;
+use Illuminate\Console\Command;
 
 class FaceMau extends Command
 {
@@ -40,7 +40,7 @@ class FaceMau extends Command
      */
     public function handle()
     {
-        $date = FaceMauRecord::query()->max('date');
+        $date = DB::table('face_mau_records')->max('date');
         $currentDate = Carbon::now()->toDateString();
         while ((new Carbon($date))->format('Y-m') < (new Carbon($currentDate))->format('Y-m')) {
             $startDate = $date;
@@ -63,6 +63,6 @@ class FaceMau extends Command
                 ->insert($count);
             $date = (new Carbon($date))->addMonth(1)->toDateString();
         }
-        FaceMauRecord::create(['date' => $date]);
+        DB::table('face_mau_records')->insert(['date' => $date]);
     }
 }

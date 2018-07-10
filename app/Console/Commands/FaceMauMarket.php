@@ -40,7 +40,7 @@ class FaceMauMarket extends Command
      */
     public function handle()
     {
-        $date = FaceMauMarketRecord::query()->max('date');
+        $date = DB::table('face_mau_market_records')->max('date');
         $currentDate = Carbon::now()->toDateString();
         while ((new Carbon($date))->format('Y-m') < (new Carbon($currentDate))->format('Y-m')) {
             $startDate = $date;
@@ -69,6 +69,6 @@ class FaceMauMarket extends Command
                 ->insert($count);
             $date = (new Carbon($date))->addMonth(1)->toDateString();
         }
-        FaceMauMarketRecord::create(['date' => $date]);
+        DB::table('face_mau_market_records')->insert(['date' => $date]);
     }
 }

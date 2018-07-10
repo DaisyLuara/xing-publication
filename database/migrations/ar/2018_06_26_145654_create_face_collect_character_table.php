@@ -13,8 +13,8 @@ class CreateFaceCollectCharacterTable extends Migration
      */
     public function up()
     {
-        if (!Schema::connection('ar')->hasTable('xs_face_collect_character')) {
-            Schema::connection('ar')->create('xs_face_collect_character', function (Blueprint $table) {
+        if (!Schema::connection('ar')->hasTable('xs_face_character')) {
+            Schema::connection('ar')->create('xs_face_character', function (Blueprint $table) {
                 $table->increments('id');
                 $table->integer('oid');
                 $table->string('belong', 20);
@@ -38,6 +38,6 @@ class CreateFaceCollectCharacterTable extends Migration
      */
     public function down()
     {
-        Schema::connection('ar')->dropIfExists('xs_face_collect_character');
+        Schema::connection('ar')->dropIfExists('xs_face_character');
     }
 }

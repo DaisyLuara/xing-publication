@@ -11,8 +11,8 @@ namespace App\Http\Controllers\Admin\Face\V1\Models;
 
 use App\Models\Model;
 
-class FaceCollectCharacter extends Model
+class FaceCharacter extends Model
 {
     protected $connection = 'ar';
-    protected $table = 'xs_face_collect_character';
+    protected $table = 'xs_face_character';
 }

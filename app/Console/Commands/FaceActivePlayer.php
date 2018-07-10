@@ -40,7 +40,7 @@ class FaceActivePlayer extends Command
      */
     public function handle()
     {
-        $date = ActivePlayerRecord::query()->max('date');
+        $date = DB::table('face_active_player_records')->max('date');
         $date = (new Carbon($date))->format('Y-m-d');
         $currentDate = Carbon::now()->toDateString();
         while ($date < $currentDate) {
@@ -134,6 +134,6 @@ class FaceActivePlayer extends Command
                 ->insert($count);
             $date = (new Carbon($date))->addDay(1)->toDateString();
         }
-        ActivePlayerRecord::create(['date' => $currentDate]);
+        DB::table('face_active_player_records')->insert(['date' => $currentDate]);
     }
 }
