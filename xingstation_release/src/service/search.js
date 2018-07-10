@@ -10,6 +10,7 @@ const ADVERTISER_API='/api/advertiser/query'
 const ADVERTISEMENT_API = '/api/advertisement/query'
 const SENCE_API = '/api/scene/query'
 const COMPANY_API = '/api/company/query'
+const COUPON_API = '/api/coupon_batch/query'
 const HOST = process.env.SERVER_URL
 
 export default {
@@ -106,6 +107,15 @@ export default {
   getCompanyList(context) {
     return new Promise(function(resolve, reject){
       context.$http.get(HOST + COMPANY_API).then(response => {
+        resolve(response.data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+  getCouponList(context) {
+    return new Promise(function(resolve, reject){
+      context.$http.get(HOST + COUPON_API).then(response => {
         resolve(response.data)
       }).catch(error => {
         reject(error)

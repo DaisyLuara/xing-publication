@@ -36,10 +36,17 @@
           <el-table-column
             prop="name"
             label="优惠券名称"
-            width="150"
+            min-width="150"
             >
             <template slot-scope="scope">
-              {{scope.row.name}}
+              <el-select v-model="scope.row.pivot.coupon_batch_id" placeholder="请选择优惠券" filterable :loading="searchLoading" class="item-select">
+                <el-option
+                  v-for="item in couponList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
             </template>
           </el-table-column>
           <el-table-column
@@ -87,9 +94,10 @@
           </el-table-column>
           <el-table-column label="操作" min-width="100">
             <template slot-scope="scope">
-              <el-button size="mini" type="warning" v-if="!scope.row.addStauts" @click="editSchedule(scope.row)">编辑</el-button>
+              <el-button size="mini" type="warning" v-if="!scope.row.addStauts" @click="editBatch(scope.row)">编辑</el-button>
+              <el-button size="mini" type="info" v-if="!scope.row.addStauts" @click="deleteBatch(scope.row)">删除</el-button>
               <el-button size="mini" type="danger" icon="el-icon-delete" v-if="scope.row.addStauts" @click="deleteAddBatch(index, scope.$index, scope.row)"></el-button>
-              <el-button size="mini" style="background-color: #8bc34a;border-color: #8bc34a; color: #fff;" v-if="scope.row.addStauts" @click="saveSchedule(scope.row)">保存</el-button>
+              <el-button size="mini" style="background-color: #8bc34a;border-color: #8bc34a; color: #fff;" v-if="scope.row.addStauts" @click="saveBatch(scope.row)">保存</el-button>
             </template>
           </el-table-column>
         </el-table> 
@@ -175,7 +183,8 @@ export default {
       templateList: [],
       templateForm: {
         company_id: '',
-        name: ''
+        name: '',
+        id: ''
       },
       genderList: [
         {
@@ -198,6 +207,7 @@ export default {
       searchForm: {
         name: ''
       },
+      couponList: [],
       setting: {
         loading: false,
         loadingText: '拼命加载中'
@@ -208,8 +218,19 @@ export default {
   created() {
     this.getCompanyList()
     this.getPoliciesList()
+    this.getCouponList()
   },
   methods: {
+    getCouponList() {
+      search
+        .getCouponList(this)
+        .then(result => {
+          this.couponList = result.data
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
     getCompanyList() {
       search
         .getCompanyList(this)
@@ -220,90 +241,179 @@ export default {
           console.log(error)
         })
     },
+    deleteBatch(row) {
+      let id = row.id
+      let company_id = row.pivot.policy_id
+      MessageBox.confirm('确认删除选中策略条目?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.setting.loadingText = '删除中'
+          this.setting.loading = true
+          policies
+            .deleteBatchPolicy(this,company_id, id)
+            .then(response => {
+              this.setting.loading = false
+              this.$message({
+                type: 'success',
+                message: '删除成功！'
+              })
+              this.pagination.currentPage = 1
+              this.getPoliciesList()
+            })
+            .catch(error => {
+              this.setting.loading = false
+              console.log(error)
+            })
+        })
+        .catch(e => {
+          console.log(e)
+        })
+    },
     modifyTemplateName(item) {
-      // this.loading = true
       this.title = '修改策略'
       let name = item.name
       let company_id = item.company.id
+      let id = item.id
       this.templateForm = {
         name: name,
+        id: id,
         company_id: company_id
       }
       this.templateVisible = true
     },
     genderChangeHandle(pIndex, index, val) {
-      console.log(val)
       this.tableData[pIndex].batches.data[index].gender = val
     },
-    editSchedule(row) {
-      this.setting.loading = true
+    editBatch(row) {
       let id = row.id
-      let date_end = row.date_end
-      let date_start = row.date_start
-      let project_id = row.project.id
-      if (date_end && date_start && project_id) {
-        let args = {
-          include: 'project',
-          project_id: project_id,
-          date_end: date_end,
-          date_start: date_start
-        }
-        schedule
-          .modifySchedule(this, id, args)
-          .then(response => {
-            this.setting.loading = false
-            this.$message({
-              message: '修改成功',
-              type: 'success'
-            })
-            this.getScheduleList()
-          })
-          .catch(err => {
-            console.log(err)
-            this.setting.loading = false
-          })
-      } else {
-        this.setting.loading = false
+      let company_id = row.pivot.policy_id
+      let max_age = row.pivot.max_age
+      let min_age = row.pivot.min_age
+      let gender = row.pivot.gender
+      let rate = row.pivot.rate
+      let coupon_batch_id = row.pivot.coupon_batch_id
+      if (max_age === '' && min_age === '' && gender == '' && rate === '') {
         this.$message({
-          message: '节目名称，开始时间，结束时间不能为空',
+          message: '概率，性别，最大年龄，最小年龄不能都为空',
           type: 'warning'
         })
+        return
       }
-    },
-    saveSchedule(row) {
+      if (
+        (max_age !== '' && min_age === '') ||
+        (max_age === '' && min_age !== '')
+      ) {
+        this.$message({
+          message: '最大年龄，最小年龄必须都填写',
+          type: 'warning'
+        })
+        return
+      }
       this.setting.loading = true
-      let date_end = row.date_end
-      let date_start = row.date_start
-      let tpl_id = row.tpl_id
-      let project_id = row.project.id
-      if (date_end && date_start && project_id) {
-        let args = {
-          tpl_id: tpl_id,
-          project_id: project_id,
-          date_end: date_end,
-          date_start: date_start
-        }
-        schedule
-          .saveSchedule(this, args)
-          .then(response => {
-            this.setting.loading = false
-            this.$message({
-              message: '添加成功',
-              type: 'success'
-            })
-            this.getScheduleList()
+      let args = {
+        min_age: min_age,
+        max_age: max_age,
+        gender: gender,
+        rate: rate,
+        coupon_batch_id: coupon_batch_id
+      }
+      if (!min_age) {
+        delete args.min_age
+      }
+      if (!max_age) {
+        delete args.max_age
+      }
+      if (!rate) {
+        delete args.rate
+      }
+      if (!gender) {
+        delete args.gender
+      }
+      policies
+        .modifyBatchPolicy(this, company_id, args, id)
+        .then(response => {
+          this.$message({
+            message: '修改成功',
+            type: 'success'
           })
-          .catch(err => {
-            console.log(err)
-            this.setting.loading = false
-          })
-      } else {
-        this.setting.loading = false
+          this.getPoliciesList()
+          this.setting.loading = false
+        })
+        .catch(err => {
+          console.log(err)
+          this.getPoliciesList()
+          this.setting.loading = false
+        })
+    },
+    saveBatch(row) {
+      let company_id = row.pivot.policy_id
+      let max_age = row.pivot.max_age
+      let min_age = row.pivot.min_age
+      let gender = row.pivot.gender
+      let rate = row.pivot.rate
+      let coupon_batch_id = row.pivot.coupon_batch_id
+      if (max_age === '' && min_age === '' && gender == '' && rate === '') {
         this.$message({
-          message: '节目名称，开始时间，结束时间不能为空',
+          message: '概率，性别，最大年龄，最小年龄不能都为空',
           type: 'warning'
         })
+        return
       }
+      if (coupon_batch_id === '') {
+        this.$message({
+          message: '优惠券必须填写',
+          type: 'warning'
+        })
+        return
+      }
+      if (
+        (max_age !== '' && min_age === '') ||
+        (max_age === '' && min_age !== '')
+      ) {
+        this.$message({
+          message: '最大年龄，最小年龄必须都填写',
+          type: 'warning'
+        })
+        return
+      }
+      this.setting.loading = true
+      let args = {
+        min_age: min_age,
+        max_age: max_age,
+        gender: gender,
+        rate: rate,
+        coupon_batch_id: coupon_batch_id
+      }
+      if (!min_age) {
+        delete args.min_age
+      }
+      if (!max_age) {
+        delete args.max_age
+      }
+      if (!rate) {
+        delete args.rate
+      }
+      if (!gender) {
+        delete args.gender
+      }
+      policies
+        .saveBatchPolicy(this, company_id, args)
+        .then(response => {
+          this.$message({
+            message: '添加成功',
+            type: 'success'
+          })
+          this.getPoliciesList()
+          this.setting.loading = false
+        })
+        .catch(err => {
+          console.log(err)
+          this.getPoliciesList()
+          this.setting.loading = false
+        })
     },
     addTemplate() {
       this.templateForm.name = ''
@@ -324,7 +434,6 @@ export default {
       return policies
         .getPoliciesList(this, args)
         .then(response => {
-          console.log(response.data)
           this.tableData = response.data
           this.pagination.total = response.meta.pagination.total
           this.setting.loading = false
@@ -335,17 +444,18 @@ export default {
         })
     },
     addbatch(index) {
-      let company_id = this.tableData[index].id
+      let policy_id = this.tableData[index].id
       let td = {
         name: '',
         addStauts: true,
         pivot: {
+          coupon_batch_id: '',
           min_age: '',
           rate: '',
           max_age: '',
-          gender: ''
-        },
-        company_id: company_id
+          gender: '',
+          policy_id: policy_id
+        }
       }
       this.tableData[index].batches.data.push(td)
     },
@@ -355,51 +465,52 @@ export default {
     submit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          // let company_id 
+          let company_id = this.templateForm.company_id
           let args = {
             name: this.templateForm.name
           }
-          // if (this.templateForm.tpl_id) {
-          //   schedule
-          //     .modifyTemplate(this, id, args)
-          //     .then(response => {
-          //       this.$message({
-          //         message: '修改成功',
-          //         type: 'success'
-          //       })
-          //       this.templateVisible = false
-          //       this.getScheduleList()
-          //     })
-          //     .catch(err => {
-          //       this.templateVisible = false
-          //       console.log(err)
-          //     })
-          // } else {
-          //   schedule
-          //     .saveTemplate(this, args)
-          //     .then(response => {
-          //       this.$message({
-          //         message: '添加成功',
-          //         type: 'success'
-          //       })
-          //       this.templateVisible = false
-          //       this.getScheduleList()
-          //     })
-          //     .catch(err => {
-          //       this.templateVisible = false
-          //       console.log(err)
-          //     })
-          // }
+          if (this.title !== '增加策略') {
+            let id = this.templateForm.id
+            policies
+              .modifyPolicy(this, id, args)
+              .then(response => {
+                this.$message({
+                  message: '修改成功',
+                  type: 'success'
+                })
+                this.templateVisible = false
+                this.getPoliciesList()
+              })
+              .catch(err => {
+                this.templateVisible = false
+                console.log(err)
+              })
+          } else {
+            policies
+              .savePolicy(this, company_id, args)
+              .then(response => {
+                this.$message({
+                  message: '添加成功',
+                  type: 'success'
+                })
+                this.templateVisible = false
+                this.getPoliciesList()
+              })
+              .catch(err => {
+                this.templateVisible = false
+                console.log(err)
+              })
+          }
         }
       })
     },
     search() {
       this.pagination.currentPage = 1
-      this.getScheduleList()
+      this.getPoliciesList()
     },
     changePage(currentPage) {
       this.pagination.currentPage = currentPage
-      this.getScheduleList()
+      this.getPoliciesList()
     }
   }
 }
