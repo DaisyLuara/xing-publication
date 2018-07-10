@@ -137,7 +137,7 @@ export default {
         loadingText: '拼命加载中'
       },
       rules: {
-        'couponForm.end_date': [{ validator: checkEndDate, trigger: 'submit' }],
+        'end_date': [{ validator: checkEndDate, trigger: 'submit' }],
       },
       user_name: '',
       couponForm: {

@@ -5,14 +5,7 @@
         <div class="search-wrap">
           <el-form :model="filters" :inline="true" ref="searchForm" >
             <el-form-item label="" prop="company_id">
-               <el-select v-model="filters.company_id" placeholder="请选择公司" clearable>
-                <el-option
-                  v-for="item in companyList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
+              <el-input v-model="filters.name"  placeholder="请输入优惠券名称" clearable></el-input>
             </el-form-item>
             <el-button @click="search()" type="primary" size="small">搜索</el-button>
           </el-form>
@@ -227,7 +220,7 @@ export default {
       let args = {
         include: 'user,company',
         page: this.pagination.currentPage,
-        company_id: this.filters.company_id
+        name: this.filters.name
       }
       coupon
         .getCouponList(this, args)
