@@ -18,8 +18,8 @@ $api->version('v1', [
             $api->delete('policy/{policy}/batch_policy/{batch_policy_id}', 'PolicyController@destroyBatchPolicy');
 
             $api->get('coupon/batches', 'CouponBatchController@index');
-            $api->post('coupon/batch', 'CouponBatchController@store');
-            $api->patch('coupon/batch', 'CouponBatchController@update');
+            $api->post('company/{company}/coupon/batch', 'CouponBatchController@store');
+            $api->patch('coupon/batches/{couponBatch}', 'CouponBatchController@update');
         });
 
 

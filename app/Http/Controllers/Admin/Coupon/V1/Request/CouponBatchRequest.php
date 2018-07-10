@@ -30,7 +30,6 @@ class CouponBatchRequest extends FormRequest
     public function rules()
     {
         return [
-            'company_id' => 'required',
             'name' => 'required|string'
         ];
     }
