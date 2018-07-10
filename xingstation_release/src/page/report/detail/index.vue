@@ -115,7 +115,7 @@
     <!-- 主要图表部分 -->
     <div class="content-wrapper" v-loading="poepleCountFlag">
       <ul class="btns-wrapper">
-        <li v-for="(item, key) in peopleCount.concat([{ index: 'cph', display_name: 'CPH转化率' }, { index: 'cpa', display_name:'CPA转化率' }, { index: 'cpl', display_name:'CPL转化率' }])" 
+        <li v-for="(item, key) in peopleCount.concat([{ index: 'cpf', display_name: 'CPF转化率' }, { index: 'cpa', display_name:'CPA转化率' }, { index: 'cpl', display_name:'CPL转化率' }])" 
           :key="key" 
           v-if="item.index !== 'outnum'">
           <a 
@@ -137,8 +137,8 @@
             <span class="count" v-if="item.index === 'lovenum'">
               {{circleLovenum}}
             </span>
-            <span class="count" v-if="item.index === 'cph'">
-              {{computedCPH}}
+            <span class="count" v-if="item.index === 'cpf'">
+              {{computedCPF}}
             </span>
             <span class="count" v-if="item.index === 'cpa'">
               {{computedCPA}}
@@ -241,7 +241,7 @@
               </el-form-item>
               <el-form-item label="输出">
                 <span>
-                  CPH: {{computedCPH}}
+                  CPF: {{computedCPF}}
                   CPA：{{computedCPA}}
                   CPL： {{computedCPL}}
                 </span>
@@ -307,7 +307,7 @@
           :show-overflow-tooltip="true">
           <template slot-scope="props">
             <div>
-              <div>CPH: {{computedCPH}}</div>
+              <div>CPF: {{computedCPF}}</div>
               <div>CPA：{{computedCPA}}</div>
               <div>CPL： {{computedCPL}}</div>
             </div>  
@@ -395,7 +395,7 @@
             <div
               :style="style.chartFont" 
               class="cph">
-              {{computedCPH}}
+              {{computedCPF}}
             </div>
 
             <div
@@ -608,7 +608,7 @@ export default {
             '大屏活跃玩家人数',
             '大屏铁杆玩家人数',
             '扫码拉新会员注册总数',
-            'CPH转化率',
+            'CPF转化率',
             'CPA转化率',
             'CPL转化率'
           ]
@@ -911,7 +911,7 @@ export default {
       ).toFixed(2)
       return result === 0 || result === NaN ? 0 : result + '%'
     },
-    computedCPH: function() {
+    computedCPF: function() {
       let result = (
         this.peopleCount[1].count /
         this.peopleCount[0].count *
@@ -1455,7 +1455,7 @@ export default {
             '大屏活跃玩家人数',
             '大屏铁杆玩家人数',
             '扫码拉新会员注册总数',
-            'CPH转化率',
+            'CPF转化率',
             'CPA转化率',
             'CPL转化率'
           ]
@@ -1520,7 +1520,7 @@ export default {
           {
             xAxisIndex: 1,
             yAxisIndex: 1,
-            name: 'CPH转化率',
+            name: 'CPF转化率',
             type: 'line',
             lineStyle: {
               color: '#197748'
