@@ -31,7 +31,6 @@ class CouponBatchController extends Controller
         $couponBatch->fill(array_merge([
             'company_id' => $company->id,
             'create_user_id' => $this->user->id,
-            'date' => Carbon::now()->toDateTimeString()
         ], $request->all()))->save();
 
         return $this->response->item($couponBatch, new CouponBatchTransformer())

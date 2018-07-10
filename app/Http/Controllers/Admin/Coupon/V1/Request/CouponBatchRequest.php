@@ -30,7 +30,9 @@ class CouponBatchRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string'
+            'name' => 'required|string',
+            'start_date' => 'date_format:Y-m-d H:i:s',
+            'end_date' => 'date_format:Y-m-d H:i:s',
         ];
     }
 }

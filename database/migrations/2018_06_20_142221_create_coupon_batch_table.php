@@ -17,9 +17,9 @@ class CreateCouponBatchTable extends Migration
             $table->increments('id');
             $table->integer('company_id');
             $table->integer('create_user_id')->comment('创建人ID');
-            $table->string('image_url')->default('');
-            $table->string('name')->default('');
-            $table->string('description')->default('');
+            $table->string('image_url')->default('')->nullable();
+            $table->string('name')->default('')->nullable();
+            $table->string('description')->default('')->nullable();
             $table->integer('amount')->comment('金额')->default(0);
             $table->integer('count')->comment('库存总数')->default(0);
             $table->integer('stock')->comment('剩余库存')->default(0);
