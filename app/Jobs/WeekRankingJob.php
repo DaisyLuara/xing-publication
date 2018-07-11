@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -38,16 +37,16 @@ class WeekRankingJob implements ShouldQueue
         //yq,cz
         //$openId = ['oNN6q0sZDI_OSTV6rl0rPeHjPgH8', 'oNN6q0pq-f0-Z2E2gb0QeOmY4r-M'];
         $data = $this->data;
-        //$user = User::query()->where('ar_user_id', $data->uid)->first();
+        $user = User::query()->where('ar_user_id', $data['ar_user_id'])->first();
         $officialAccount = EasyWeChat::officialAccount();
         $message = [
-            'touser' => "oNN6q0sZDI_OSTV6rl0rPeHjPgH8",
+            'touser' => $user->weixin_openid,
             'template_id' => 'siyJMjigeMMNpXrFSsvz6rvrKQh9Gf5RcfbiVYFQFyY',
             'data' => [
-                'first' => '你好，你的上周点位排名情况如下。',
-                'keyword1' => "点位名称 【" . $data['point_name'] . "】",
-                'keyword2' => "日均围观 【" . $data['looknum_average'] . "】" . "\r\n" . "           点位排名 【倒数第" . $data['ranking'] . "】" . "\r\n" . "           场景分类 【" . $data['scene_name'] . "】" . "\r\n" . "           时间区间 【" . (new Carbon($data['start_date']))->format('m-d') . " 至 " . (new Carbon($data['end_date']))->format('m-d') . "】",
-                'remark' => '再接再厉！',
+                'first' => '你好，你的上周点位排名情况如下',
+                'keyword1' => $data['point_name'],
+                'keyword2' => "日均围观数：" . $data['looknum_average'] . "\r\n" . "点位排名：倒数第" . $data['ranking'] . "\r\n" . "场景分类：" . $data['scene_name'] . "\r\n" . "时间区间：" . $data['start_date'] . "至" . $data['end_date'],
+                'remark' => '再接再厉',
             ]
         ];
         $officialAccount->template_message->send($message);

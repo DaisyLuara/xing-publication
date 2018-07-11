@@ -18,9 +18,7 @@ class ProjectController extends Controller
         $query = $project->query();
         if ($arUserId) {
             $query->whereHas('points', function ($q) use ($arUserId) {
-                $q->whereHas('arUsers', function ($q) use ($arUserId) {
-                    $q->where('admin_staff.uid', '=', $arUserId);
-                });
+                $q->where('bd_uid', '=', $arUserId);
             });
         }
 

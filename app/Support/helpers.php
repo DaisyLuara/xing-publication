@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use App\Http\Controllers\Admin\Face\V1\Models\FaceCount;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\Face\V1\Models\FaceActivePlayerRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceMauRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceCharacterRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceCountRecord;
+use App\Models\User;
 
 /**
  *求两个已知经纬度之间的距离,单位为千米
@@ -97,10 +98,9 @@ if (!function_exists('handPointQuery')) {
             }
         }
 
-        //按账号查询
+        //BD
         if ($arUserID) {
-            $builder->join('admin_per_oid', 'admin_per_oid.oid', '=', "$table.oid")
-                ->where('admin_per_oid.uid', '=', $arUserID);
+            $builder->where('avr_official.bd_uid', '=', $arUserID);
         }
 
         //按场景查询
@@ -475,4 +475,77 @@ function faceCharacterCountClean()
         $date = (new Carbon($date))->addDay(1)->toDateString();
     }
     FaceCharacterRecord::create(['date' => $currentDate]);
+}
+/**
+ * @param $startDate
+ * @param $endDate
+ * @param Builder $faceCountQuery
+ * @return mixed
+ */
+if (!function_exists('getPointsByScene')) {
+    function getPointsByScene($startDate, $endDate)
+    {
+        $faceCountQuery = FaceCount::query();
+        $table = $faceCountQuery->getModel()->getTable();
+        return $faceCountQuery->join('avr_official', 'avr_official.oid', '=', "$table.oid")
+            ->whereRaw(" date_format($table.date,'%Y-%m-%d') between '$startDate' and '$endDate' ")
+            ->where('belong', '<>', 'all')
+            ->selectRaw("count(distinct($table.oid)) as total,sid")
+            ->groupBy('sid')
+            ->get();
+    }
+}
+
+/**
+ * @param $startDate
+ * @param $endDate
+ * @param array $scene
+ * @return array
+ */
+if (!function_exists('getFaceCountByScene')) {
+
+    function getFaceCountByScene($startDate, $endDate, $scene = [])
+    {
+
+        $faceCountQuery = FaceCount::query();
+        $table = $faceCountQuery->getModel()->getTable();
+        if ($scene['name'] == 'other') {
+            $faceCountQuery->whereNotIn('ao.sid', $scene['sid']);
+        } else {
+            $faceCountQuery->where('ao.sid', '=', $scene['sid']);
+        }
+
+        $faceCount = $faceCountQuery->join('avr_official as ao', "$table.oid", '=', 'ao.oid')
+            ->join('avr_official_area as aoa', 'ao.areaid', '=', 'aoa.areaid')
+            ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
+            ->join('avr_official_scene as aos', 'ao.sid', '=', 'aos.sid')
+            ->join('admin_staff as as', 'ao.bd_uid', '=', 'as.uid')
+            ->whereRaw(" date_format($table.date,'%Y-%m-%d') between '$startDate' and '$endDate' ")
+            ->where('belong', '<>', 'all')
+            ->groupBy("$table.oid")
+            ->orderBy('looknum')
+            ->limit($scene['limit'])
+            ->selectRaw("  ao.bd_uid as uid,as.realname as userName,aos.sid as sceneId,aos.name as sceneName,$table.oid as oid,aoa.name as areaName,aom.name as marketName,ao.name as pointName,sum(looknum) as looknum")
+            ->get();
+
+        $data = [];
+        $faceCount->each(function ($item, $index) use (&$data, $startDate, $endDate, $scene) {
+            if (round($item->looknum / 7, 0) < $scene['avg']) {
+                $data[] = [
+                    'ar_user_id' => $item->uid,
+                    'ar_user_name' => $item->userName,
+                    'point_id' => $item->oid,
+                    'point_name' => $item->areaName . '-' . $item->marketName . '-' . $item->pointName,
+                    'scene_id' => $item->sceneId,
+                    'scene_name' => $item->sceneName,
+                    'looknum_average' => round($item->looknum / 7, 0),
+                    'ranking' => $index + 1,
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
+                    'date' => Carbon::now()->toDateString(),
+                ];
+            }
+        });
+        return $data;
+    }
 }

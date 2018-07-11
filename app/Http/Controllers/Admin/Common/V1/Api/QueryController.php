@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers\Admin\Common\V1\Api;
 
+use App\Http\Controllers\Admin\Company\V1\Models\Company;
+use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
+use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
+use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\AreaTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\MarketTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\PointTransformer;
@@ -78,9 +82,7 @@ class QueryController extends Controller
         $user = $this->user();
         $arUserId = getArUserID($user, $request);
         if ($arUserId) {
-            $query->whereHas('arUsers', function ($q) use ($arUserId) {
-                $q->where('admin_staff.uid', '=', $arUserId);
-            });
+            $query->where('bd_uid', '=', $arUserId);
         }
 
         $points = $query->get();
@@ -95,9 +97,7 @@ class QueryController extends Controller
         $query = $project->query();
         if ($arUserId) {
             $query->whereHas('points', function ($q) use ($arUserId) {
-                $q->whereHas('arUsers', function ($q) use ($arUserId) {
-                    $q->where('admin_staff.uid', '=', $arUserId);
-                });
+                $q->where('bd_uid', '=', $arUserId);
             });
         }
 
@@ -189,6 +189,34 @@ class QueryController extends Controller
             }
             return $this->response->collection($arUsers, new ArUserTransformer());
         }
+    }
+
+    public function couponBatchQuery(CouponBatch $couponBatch, Request $request)
+    {
+        $query = $couponBatch->query();
+
+        if ($request->name) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        if ($request->company_id) {
+            $query->where('company_id', '=', $request->company_id);
+        }
+
+        $couponBatches = $query->get();
+        return $this->response->collection($couponBatches, new CouponBatchTransformer());
+    }
+
+    public function companyQuery(Company $company, Request $request)
+    {
+        $query = $company->query();
+
+        if ($request->name) {
+            $query->where('name', 'like', '%' . $request->name . '%')->get();
+        }
+
+        $companies = $query->get();
+        return $this->response->collection($companies, new CompanyTransformer());
     }
 
 }

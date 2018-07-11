@@ -29,6 +29,34 @@ class ProjectLaunchObserver
             $projectLaunch->div_tvid = 0;
         }
 
+        if (!$projectLaunch->day1_tvid) {
+            $projectLaunch->day1_tvid = 0;
+        }
+
+        if (!$projectLaunch->day2_tvid) {
+            $projectLaunch->day2_tvid = 0;
+        }
+
+        if (!$projectLaunch->day3_tvid) {
+            $projectLaunch->day3_tvid = 0;
+        }
+
+        if (!$projectLaunch->day4_tvid) {
+            $projectLaunch->day4_tvid = 0;
+        }
+
+        if (!$projectLaunch->day5_tvid) {
+            $projectLaunch->day5_tvid = 0;
+        }
+
+        if (!$projectLaunch->day6_tvid) {
+            $projectLaunch->day6_tvid = 0;
+        }
+
+        if (!$projectLaunch->day7_tvid) {
+            $projectLaunch->day7_tvid = 0;
+        }
+
         if (!$projectLaunch->sdate) {
             $projectLaunch->sdate = Carbon::now()->startOfDay()->timestamp;
         }

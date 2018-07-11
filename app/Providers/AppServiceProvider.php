@@ -20,6 +20,7 @@ use App\Observers\CompanyObserver;
 use App\Observers\UserObserver;
 use Laravel\Horizon\Horizon;
 use Studio\Totem\Totem;
+use App\Support\MallCoo;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -58,6 +59,7 @@ class AppServiceProvider extends ServiceProvider
 
         \Carbon\Carbon::setLocale('zh');
         $this->bootTowerSocialite();
+        $this->bootMallCoo();
     }
 
     /**
@@ -86,5 +88,12 @@ class AppServiceProvider extends ServiceProvider
                 return $socialite->buildProvider(TowerProvider::class, $config);
             }
         );
+    }
+
+    private function bootMallCoo()
+    {
+        $this->app->singleton('mall_coo', function () {
+            return new MallCoo(config('mall_coo.mall_id'), config('mall_coo.app_id'), config('mall_coo.public_key'), config('mall_coo.private_key'));
+        });
     }
 }

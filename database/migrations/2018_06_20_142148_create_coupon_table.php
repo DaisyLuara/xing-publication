@@ -3,9 +3,8 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use App\Http\Controllers\Admin\Face\V1\Models\FaceCountRecord;
 
-class CreateFaceCountRecordTable extends Migration
+class CreateCouponTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,12 +13,13 @@ class CreateFaceCountRecordTable extends Migration
      */
     public function up()
     {
-        Schema::create('face_count_records', function (Blueprint $table) {
+        Schema::create('coupons', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamp('date')->nullable();
+            $table->integer('coupon_batch_id');
+            $table->string('mobile');
+            $table->tinyInteger('status')->default(0)->comment('0 未领取, 1 已使用, 2 停用, 3 未使用');
             $table->timestamps();
         });
-        FaceCountRecord::create(['date' => '2017-04-21']);
     }
 
     /**
@@ -29,6 +29,6 @@ class CreateFaceCountRecordTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('face_count_records');
+        Schema::dropIfExists('coupons');
     }
 }
