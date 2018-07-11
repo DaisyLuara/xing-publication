@@ -76,7 +76,7 @@ class CouponController extends Controller
         $couponBatchPolicies = $query->where('policy_id', '=', $policy->id)->get();
 
         if ($couponBatchPolicies->isEmpty()) {
-            return $this->response->error('无可用优惠券', 200);
+            return $this->response->error('无可用优惠券', 500);
         }
 
         $targetCouponBatch = getRand($couponBatchPolicies->toArray());
@@ -93,11 +93,11 @@ class CouponController extends Controller
         if ($couponBatch->third_code) {
             $result = $this->sendMallCooCoupon($mobile, $couponBatch->third_code);
             if ($result['Code'] != 1) {
-                return $this->response->error($result['Message'], 200);
+                return $this->response->error($result['Message'], 500);
             }
 
             if (!$result['Data'][0]['IsSuccess']) {
-                return $this->response->error($result['Data'][0]['FailReason'], 200);
+                return $this->response->error($result['Data'][0]['FailReason'], 500);
             }
             $coupon = Coupon::create([
                 'code' => $result[0]['VCode'],
