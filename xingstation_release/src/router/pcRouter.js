@@ -29,7 +29,7 @@ export default {
     account,
     ad,
     equipment,
-    resource,
+    // resource,
     team,
     report
   ],
