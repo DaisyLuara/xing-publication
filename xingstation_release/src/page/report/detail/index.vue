@@ -170,7 +170,6 @@
     <!-- 年龄分布图 -->
     <div class="age-sex-wrapper"  v-loading="ageFlag"> 
       <div class="sex-part">
-        <div class="title">用户渗透率</div>
         <chart 
           ref="pieChart"
           @click="onClick"
@@ -187,7 +186,6 @@
     <!-- 时间段与人群特征 -->
     <div class="time-crowd-wrapper"  v-loading="crowdFlag"> 
       <div class="crowd-part">
-        <div class="title">时间段与人群特征</div>
         <chart
         ref="crowdChart"
         :options="timeAndCrowdChart"
@@ -427,8 +425,10 @@ import {
 } from 'element-ui'
 import ECharts from 'vue-echarts/components/ECharts'
 import 'echarts/lib/chart/line'
+import 'echarts/lib/component/markLine'
 import 'echarts/lib/chart/pie'
 import 'echarts/lib/chart/bar'
+import 'echarts/lib/component/title'
 import 'echarts/lib/component/tooltip'
 import 'echarts/lib/component/legend'
 
@@ -591,7 +591,7 @@ export default {
           '#BC1313'
         ],
         title: {
-          text: '堆叠区域图'
+          text: ''
         },
         tooltip: {
           trigger: 'axis',
@@ -661,9 +661,8 @@ export default {
       pieChart: {
         color: ['#0071BC', '#ED1E79'],
         title: {
-          text: '天气情况统计',
-          subtext: '虚构数据',
-          left: 'center'
+          text: '用户渗透率',
+          left: 'left'
         },
         tooltip: {
           trigger: 'item'
@@ -753,7 +752,7 @@ export default {
       timeAndCrowdChart: {
         title: {
           text: '时间段与人群特征',
-          align: 'center'
+          align: 'left'
         },
         color: ['#8CC63F', '#FBB03B', '#F15A24', '#662D91', '#ED1E79'],
         tooltip: {
@@ -768,7 +767,8 @@ export default {
         legend: {
           data: ['00后', '90后', '80后', '70后', '女'],
           align: 'left',
-          left: 10
+          left: 10,
+          top: 30
         },
         grid: {
           left: '5%',
@@ -778,7 +778,7 @@ export default {
         xAxis: [
           {
             type: 'category',
-            data: [],
+            // data: [],
             axisPointer: {
               type: 'shadow'
             }
@@ -787,15 +787,17 @@ export default {
         yAxis: [
           {
             type: 'value',
-            name: '年龄数量',
+            // name: '年龄数量',
+            min: 0,
             axisLabel: {
               formatter: '{value}'
             }
           },
           {
             type: 'value',
-            name: '女性百分比',
+            // name: '女性百分比',
             max: 100,
+            min: 0,
             axisLabel: {
               formatter: '{value} %'
             }
@@ -827,9 +829,17 @@ export default {
             data: null
           },
           {
-            name: '平均温度',
+            name: '女',
             type: 'line',
             yAxisIndex: 1,
+            markLine: {
+              data: [
+                {
+                  name: 'Y 轴值为 50 的水平线',
+                  yAxis: 50
+                }
+              ]
+            },
             data: null
           }
         ]
@@ -1171,7 +1181,15 @@ export default {
                 yAxisIndex: 1,
                 data: response.map(r => {
                   return r.rate.toFixed(1)
-                })
+                }),
+                markLine: {
+                  data: [
+                    {
+                      name: 'Y 轴值为 50 的水平线',
+                      yAxis: 50
+                    }
+                  ]
+                }
               }
             ]
           })
@@ -1954,13 +1972,7 @@ export default {
     .sex-part {
       width: 25%;
       height: 100%;
-      .title {
-        position: relative;
-        left: 1%;
-        font-weight: 600;
-        color: #000;
-        margin-bottom: 5px;
-      }
+      
       .echarts {
         height: 80%;
         width: 100%;
@@ -1983,13 +1995,6 @@ export default {
     .crowd-part {
       width: 100%;
       height: 100%;
-      .title {
-        position: relative;
-        left: 1%;
-        font-weight: 600;
-        color: #000;
-        margin-bottom: 5px;
-      }
       .echarts {
         height: 90%;
         width: 100%;
