@@ -18,6 +18,7 @@ class CouponBatch extends Model
     protected $fillable = [
         'company_id',
         'create_user_id',
+        'bd_user_id',
         'image_url',
         'amount',
         'count',
