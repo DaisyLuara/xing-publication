@@ -29,9 +29,6 @@ $api->version('v1', [
             $api->post('projects/schedules', 'ProjectLaunchTplScheduleController@store');
             $api->patch('projects/schedules/{projectLaunchTplSchedule}', 'ProjectLaunchTplScheduleController@update');
 
-            //产品
-            $api->get('product', 'ProductController@index');
-
             //节目模板
             $api->get('project_template', 'ProjectTemplateController@index');
 

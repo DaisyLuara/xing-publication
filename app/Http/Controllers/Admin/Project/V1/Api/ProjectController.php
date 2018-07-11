@@ -49,9 +49,8 @@ class ProjectController extends Controller
         $ids = $request->ids;
         unset($data['ids']);
 
-        $query = $project->query();
         foreach ($ids as $id) {
-            $query->where('id', '=', $id)->update($data);
+            $project->query()->where('id', '=', $id)->update($data);
         }
         return $this->response->noContent();
     }

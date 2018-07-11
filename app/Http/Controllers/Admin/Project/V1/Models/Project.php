@@ -28,7 +28,8 @@ class Project extends Model
         'scan',
         'linkall',
         'date',
-        'clientdate'
+        'clientdate',
+        'policy_id',
     ];
 
     public function points()
