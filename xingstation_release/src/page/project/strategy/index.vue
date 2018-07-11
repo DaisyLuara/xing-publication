@@ -19,8 +19,8 @@
       </div>
     </div>
     <!-- 模板排期列表 -->
-    <el-collapse v-model="activeNames" accordion>
-      <el-collapse-item :name="index" v-for="(item, index) in tableData" :key="item.id" >
+    <el-collapse v-model="activeNames" accordion @change="policyChange($event)">
+      <el-collapse-item :name="index" v-for="(item, index) in tableData" :key="item.id">
         <template slot="title">
           {{item.name }} ( {{item.company.name}} ) <el-button type="primary" icon="el-icon-edit" circle size="mini" @click="modifyTemplateName(item)"></el-button>
         </template>
@@ -36,10 +36,10 @@
           <el-table-column
             prop="name"
             label="优惠券名称"
-            min-width="150"
+            min-width="180"
             >
             <template slot-scope="scope">
-              <el-select v-model="scope.row.pivot.coupon_batch_id" placeholder="请选择优惠券" filterable :loading="searchLoading" class="item-select">
+              <el-select v-model="scope.row.pivot.coupon_batch_id" placeholder="请选择优惠券" filterable :loading="searchLoading" style="width: 180px;">
                 <el-option
                   v-for="item in couponList"
                   :key="item.id"
@@ -52,10 +52,10 @@
           <el-table-column
             prop="name"
             label="性别"
-            min-width="150"
+            min-width="100"
             >
             <template slot-scope="scope">
-              <el-select v-model="scope.row.pivot.gender" filterable placeholder="请搜索" clearable :loading="searchLoading" style="width: 180px;" @change="genderChangeHandle(index, scope.$index, scope.row.pivot.gender)" >
+              <el-select v-model="scope.row.pivot.gender" filterable placeholder="请搜索" clearable :loading="searchLoading" style="width: 100px;" @change="genderChangeHandle(index, scope.$index, scope.row.pivot.gender)" >
                 <el-option
                   v-for="item in genderList"
                   :key="item.id"
@@ -71,7 +71,7 @@
             min-width="120"
             >
             <template slot-scope="scope">
-              <el-input v-model="scope.row.pivot.max_age" ></el-input>
+              <el-input v-model="scope.row.pivot.max_age"  style="width: 100px;"></el-input>
             </template>
           </el-table-column>
           <el-table-column
@@ -80,7 +80,7 @@
             min-width="120"
             >
             <template slot-scope="scope">
-              <el-input v-model="scope.row.pivot.min_age" ></el-input>
+              <el-input v-model="scope.row.pivot.min_age"  style="width: 100px;"></el-input>
             </template>
           </el-table-column>
           <el-table-column
@@ -89,10 +89,10 @@
             min-width="120"
             >
             <template slot-scope="scope">
-              <el-input v-model="scope.row.pivot.rate" ></el-input>
+              <el-input v-model="scope.row.pivot.rate"  style="width: 100px;"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="操作" min-width="100">
+          <el-table-column label="操作" min-width="150">
             <template slot-scope="scope">
               <el-button size="mini" type="warning" v-if="!scope.row.addStauts" @click="editBatch(scope.row)">编辑</el-button>
               <el-button size="mini" type="info" v-if="!scope.row.addStauts" @click="deleteBatch(scope.row)">删除</el-button>
@@ -218,12 +218,22 @@ export default {
   created() {
     this.getCompanyList()
     this.getPoliciesList()
-    this.getCouponList()
   },
   methods: {
-    getCouponList() {
+    policyChange(index) {
+      if (index !== '') {
+        if (this.tableData.length !== 0) {
+          let company_id = this.tableData[index].company.id
+          this.getCouponList(company_id)
+        }
+      }
+    },
+    getCouponList(company_id) {
+      let args = {
+        company_id: company_id
+      }
       search
-        .getCouponList(this)
+        .getCouponList(this, args)
         .then(result => {
           this.couponList = result.data
         })
@@ -253,7 +263,7 @@ export default {
           this.setting.loadingText = '删除中'
           this.setting.loading = true
           policies
-            .deleteBatchPolicy(this,company_id, id)
+            .deleteBatchPolicy(this, company_id, id)
             .then(response => {
               this.setting.loading = false
               this.$message({
@@ -435,6 +445,10 @@ export default {
         .getPoliciesList(this, args)
         .then(response => {
           this.tableData = response.data
+          if (this.tableData.length !== 0) {
+            let company_id = this.tableData[0].company.id
+            this.getCouponList(company_id)
+          }
           this.pagination.total = response.meta.pagination.total
           this.setting.loading = false
         })
