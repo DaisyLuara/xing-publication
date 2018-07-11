@@ -24,10 +24,7 @@ class CompanyTransformer extends TransformerAbstract
 
     public function includeUser(Company $company)
     {
-        $user = $company->user;
-        if ($user) {
-            return $this->item($company->user, new UserTransformer());
-        }
+        return $this->item($company->user, new UserTransformer());
     }
 
     public function includeCustomers(Company $company)
