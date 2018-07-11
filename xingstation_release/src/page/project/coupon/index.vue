@@ -9,6 +9,9 @@
             </el-form-item>
             <el-button @click="search()" type="primary" size="small">搜索</el-button>
           </el-form>
+          <div>
+            <el-button type="default" size="small" @click="thirdParty">导入第三方优惠券</el-button>
+          </div>
         </div>
         <div class="total-wrap">
           <span class="label">
@@ -166,11 +169,32 @@
         </div>
       </div>  
     </div>
+    <!-- 导入第三方优惠券 -->
+    <el-dialog title="导入第三方优惠券" :visible.sync="templateVisible" @close="dialogClose" >
+      <el-form
+      ref="templateForm"
+      :model="templateForm" label-width="150px" v-loading="loading">
+        <el-form-item label="公司" prop="company_id" :rules="[{ type: 'number', required: true, message: '请选择公司', trigger: 'submit' }]">
+          <el-select v-model="templateForm.company_id" placeholder="请选择公司" filterable clearable class="item-select">
+            <el-option
+              v-for="item in companyList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" size="small" @click="thirdSubmit('templateForm')">完成</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import coupon from 'service/coupon'
+import search from 'service/search'
 
 import {
   Button,
@@ -181,6 +205,7 @@ import {
   TableColumn,
   Pagination,
   Form,
+  Dialog,
   FormItem,
   MessageBox
 } from 'element-ui'
@@ -188,6 +213,12 @@ import {
 export default {
   data() {
     return {
+      loading: true,
+      companyList: [],
+      templateForm: {
+        company_id: null
+      },
+      templateVisible: false,
       filters: {
         name: ''
       },
@@ -206,8 +237,45 @@ export default {
   },
   created() {
     this.getCouponList()
+    this.getCompanyList()
   },
   methods: {
+    thirdSubmit(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          let args = {
+            company_id: this.templateForm.company_id
+          }
+          coupon
+            .getSyncCoupon(this, args)
+            .then(result => {
+              this.getCouponList()
+              this.templateVisible = false
+            })
+            .catch(err => {
+              this.templateVisible = false
+              console.log(err)
+            })
+        }
+      })
+    },
+    getCompanyList() {
+      search
+        .getCompanyList(this)
+        .then(result => {
+          this.companyList = result.data
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+    thirdParty() {
+      this.loading = false
+      this.templateVisible = true
+    },
+    dialogClose() {
+      this.templateVisible = false
+    },
     linkToEdit(currentCoupon) {
       this.$router.push({
         path: '/project/coupon/edit/' + currentCoupon.id
@@ -257,7 +325,8 @@ export default {
     'el-form': Form,
     'el-select': Select,
     'el-option': Option,
-    'el-form-item': FormItem
+    'el-form-item': FormItem,
+    'el-dialog': Dialog
   }
 }
 </script>
