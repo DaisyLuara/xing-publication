@@ -19,7 +19,7 @@
       </div>
     </div>
     <!-- 模板排期列表 -->
-    <el-collapse v-model="activeNames" accordion @change="test($event)">
+    <el-collapse v-model="activeNames" accordion @change="policyChange($event)">
       <el-collapse-item :name="index" v-for="(item, index) in tableData" :key="item.id">
         <template slot="title">
           {{item.name }} ( {{item.company.name}} ) <el-button type="primary" icon="el-icon-edit" circle size="mini" @click="modifyTemplateName(item)"></el-button>
@@ -220,7 +220,7 @@ export default {
     this.getPoliciesList()
   },
   methods: {
-    test(index) {
+    policyChange(index) {
       if (index !== '') {
         if (this.tableData.length !== 0) {
           let company_id = this.tableData[index].company.id
