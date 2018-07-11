@@ -1,6 +1,7 @@
 import { router } from '../main'
 const COUPON_API = '/api/coupon/batches'
 const ADD_COUPON_API = '/api/company/'
+const SYNC_COUPON_API = '/api/coupon/sync'
 const HOST = process.env.SERVER_URL
 
 export default {
@@ -64,6 +65,19 @@ export default {
     let promise = new Promise(function(resolve, reject) {
       context.$http
         .delete(HOST + COUPON_API + '/' + id)
+        .then(response => {
+          resolve(response)
+        })
+        .catch(error => {
+          reject(error)
+        })
+    })
+    return promise
+  },
+  getSyncCoupon(context, args) {
+    let promise = new Promise(function(resolve, reject) {
+      context.$http
+        .get(HOST + SYNC_COUPON_API, { params: args })
         .then(response => {
           resolve(response)
         })

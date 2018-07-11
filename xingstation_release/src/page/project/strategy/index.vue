@@ -260,7 +260,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          this.setting.loadingText = '删除中'
+          this.setting.loadingText = '拼命加载中'
           this.setting.loading = true
           policies
             .deleteBatchPolicy(this, company_id, id)
@@ -324,8 +324,8 @@ export default {
       }
       this.setting.loading = true
       let args = {
-        min_age: min_age,
-        max_age: max_age,
+        min_age: parseInt(min_age),
+        max_age: parseInt(max_age),
         gender: gender,
         rate: rate,
         coupon_batch_id: coupon_batch_id
@@ -391,8 +391,8 @@ export default {
       }
       this.setting.loading = true
       let args = {
-        min_age: min_age,
-        max_age: max_age,
+        min_age: parseInt(min_age),
+        max_age: parseInt(max_age),
         gender: gender,
         rate: rate,
         coupon_batch_id: coupon_batch_id
@@ -444,6 +444,7 @@ export default {
       return policies
         .getPoliciesList(this, args)
         .then(response => {
+          this.activeNames = 0
           this.tableData = response.data
           if (this.tableData.length !== 0) {
             let company_id = this.tableData[0].company.id
@@ -459,6 +460,8 @@ export default {
     },
     addbatch(index) {
       let policy_id = this.tableData[index].id
+      // let company_id = this.tableData[index].company.id
+      // this.getCouponList(company_id)
       let td = {
         name: '',
         addStauts: true,
