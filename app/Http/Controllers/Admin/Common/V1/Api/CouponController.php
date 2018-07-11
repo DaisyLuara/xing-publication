@@ -11,10 +11,13 @@ namespace App\Http\Controllers\Admin\Common\V1\Api;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponCountLog;
-use App\Http\Controllers\Admin\Coupon\V1\Request\CouponRequest;
+use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
+use App\Http\Controllers\Admin\Common\V1\Request\CouponRequest;
+use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponTransformer;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use DB;
 use Illuminate\Http\Request;
 use Response;
 use Overtrue\EasySms\EasySms;
@@ -56,82 +59,69 @@ class CouponController extends Controller
 
     }
 
-    public function createCoupon(Request $request)
+    public function getCouponBatch(CouponRequest $request)
     {
-        //@todo 根据优惠券渠道 发送不同优惠券
-//        return $this->sendMallCooCoupon(13818403072, '2mdpr0KMmEfsM4rEH+IiPympCmt2Piq4K8lhd0JGSRs=');
+        $policy = Policy::query()->findOrFail($request->policy_id);
 
-
-        $companyId = $request->company_id;
-        $couponBatches = CouponBatch::query()
-            ->where('company_id', $companyId)
-            ->where('is_active', '=', 1)
-            ->where('stock', '<>', 0)
-            ->get();
-
-        $proArr = [];
-
-        foreach ($couponBatches as $couponBatch) {
-            $proArr[] = ['id' => $couponBatch->id, 'v' => $couponBatch->couponPolicy->rate];
+        $query = DB::table('coupon_batch_policy');
+        if ($request->age) {
+            $query->where('max_age', '>=', $request->age)->where('min_age', '<=', $request->age);
         }
 
-        $result = getRand($proArr);
-        $couponBatch = CouponBatch::findOrFail($result['id']);
+        if ($request->gender) {
+            $gender = $request->gender ? 'female' : 'male';
+            $query->where('gender', '=', $gender);
+        }
 
-        $coupon = Coupon::create(['coupon_batch_id' => $couponBatch->id, 'status' => 0]);
+        $couponBatchPolicies = $query->where('policy_id', '=', $policy->id)->get();
 
-        $date = Carbon::now()->toDateString();
+        if ($couponBatchPolicies->isEmpty()) {
+            return $this->response->error('无可用优惠券', 200);
+        }
 
-        CouponCountLog::query()
-            ->where('coupon_batch_id', $couponBatch->id)
-            ->whereRaw(" date_format(date,'%Y-%m-%d') = '$date' ")
-            ->increment('create_num');
+        $targetCouponBatch = getRand($couponBatchPolicies->toArray());
+        $couponBatch = CouponBatch::findOrFail($targetCouponBatch->coupon_batch_id);
 
-        CouponCountLog::query()
-            ->where('coupon_batch_id', $couponBatch->id)
-            ->whereRaw(" date_format(date,'%Y-%m-%d') = '$date' ")
-            ->increment('unreceived_num');
-
-        return $this->response->item($coupon, new CouponTransformer());
+        return $this->response->item($couponBatch, new CouponBatchTransformer());
 
     }
 
-    private function sendMallCooCoupon($mobile, $picmID)
-    {
-        $mall_coo = app('mall_coo');
-        $sUrl = 'https://openapi10.mallcoo.cn/Coupon/v1/Send/ByMobile/';
-
-        $data = [
-            'UserList' => [
-                [
-                    'BussinessID' => null,
-                    'TraceID' => uniqid() . config('mall_coo.app_id'),
-                    'PICMID' => $picmID,
-                    'Mobile' => $mobile,
-                ]
-            ]
-        ];
-
-        $result = $mall_coo->send($sUrl, $data);
-        if ($result['Code'] != 1) {
-            return $this->sendError($result['Message']);
-        }
-
-        if (!$result['Data'][0]['IsSuccess']) {
-            return $result['Data'][0]['FailReason'];
-        }
-        return $result['Data'][0];
-    }
-
-    public function getCoupon(CouponRequest $request, EasySms $easySms)
+    public function generateCoupon(CouponBatch $couponBatch, CouponRequest $request, EasySms $easySms)
     {
         $mobile = $request->mobile;
-        $couponId = $request->coupon_id;
-        $couponBatchId = $request->coupon_batch_id;
 
-        $coupon = Coupon::findOrFail($couponId);
-        $couponBatch = CouponBatch::findOrFail($couponBatchId);
+        if ($couponBatch->third_code) {
+            $result = $this->sendMallCooCoupon($mobile, $couponBatch->third_code);
+            if ($result['Code'] != 1) {
+                return $this->response->error($result['Message'], 200);
+            }
 
+            if (!$result['Data'][0]['IsSuccess']) {
+                return $this->response->error($result['Data'][0]['FailReason'], 200);
+            }
+            $coupon = Coupon::create([
+                'code' => $result[0]['VCode'],
+                'mobile' => $mobile,
+                'coupon_batch_id' => $couponBatch->id,
+                'picm_id' => $result[0]['PICMID'],
+                'trace_id' => $result[0]['TraceID'],
+                'status' => 3,
+            ]);
+        } else {
+            //@todo 添加库存和数量校验
+            $coupon = Coupon::create([
+                'code' => uniqid(),
+                'mobile' => $mobile,
+                'coupon_batch_id' => $couponBatch->id,
+                'status' => 3,
+            ]);
+        }
+
+        return $this->response->item($coupon, new CouponTransformer());
+    }
+
+    private function sendCoupon($mobile)
+    {
         $coupons = Coupon::query()->where('mobile', $mobile)->where('coupon_batch_id', $couponBatchId)->get();
         $couponCountLog = CouponCountLog::query()->where('coupon_batch_id', $couponBatchId)->first();
 
@@ -155,8 +145,26 @@ class CouponController extends Controller
         CouponCountLog::query()->where('coupon_batch_id', $couponBatchId)
             ->whereRaw(" date_format(date,'%Y-%m-%d') = '$date' ")
             ->decrement('unreceived_num');
+    }
 
-        return $this->response->item($coupon, new CouponTransformer());
+    private function sendMallCooCoupon($mobile, $picmID)
+    {
+        $mall_coo = app('mall_coo');
+        $sUrl = 'https://openapi10.mallcoo.cn/Coupon/v1/Send/ByMobile/';
+
+        $data = [
+            'UserList' => [
+                [
+                    'BussinessID' => null,
+                    'TraceID' => uniqid() . config('mall_coo.app_id'),
+                    'PICMID' => $picmID,
+                    'Mobile' => $mobile,
+                ]
+            ]
+        ];
+
+        return $mall_coo->send($sUrl, $data);
+
     }
 
 }

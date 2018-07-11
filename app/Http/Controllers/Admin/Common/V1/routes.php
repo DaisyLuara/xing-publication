@@ -11,9 +11,9 @@ $api->version('v1', [
 
         $api->post('captchas', 'CaptchasController@store');// 图片验证码
 
-        $api->get('coupon/status', 'CouponController@getCouponStatus');
-        $api->post('coupon', 'CouponController@createCoupon');
-        $api->get('coupons/{coupon_id}', 'CouponController@getCoupon');
+        $api->get('open/coupon/status', 'CouponController@getCouponStatus');
+        $api->get('open/coupon/batches', 'CouponController@getCouponBatch');
+        $api->post('open/coupons/{couponBatch}', 'CouponController@generateCoupon');
 
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 

@@ -124,9 +124,11 @@ class CouponBatchSeeder extends Seeder
         $couponBatches = CouponBatch::query()->get();
         foreach ($couponBatches as $couponBatch) {
             $couponBatch->policy()->attach($policy->id, [
+                    'gender' => 'female',
                     'min_age' => 0 + rand(1, 10),
                     'max_age' => 10 + rand(1, 10),
-                    'type' => 'age'
+                    'type' => 'age',
+                    'rate' => rand(1, 100),
                 ]
             );
         }
