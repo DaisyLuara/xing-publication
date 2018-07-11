@@ -16,7 +16,7 @@ class CreateFaceCountRecordTable extends Migration
     {
         Schema::create('face_count_log_records', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamp('date')->nullabel();
+            $table->timestamp('date')->nullable();
         });
         DB::table('face_count_log_records')->insert(['date' => '2017-04-21']);
     }
