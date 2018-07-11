@@ -40,7 +40,7 @@ class FaceCharacter extends Command
      */
     public function handle()
     {
-        //faceCharacterClean();
+        faceCharacterClean();
         faceCharacterCountClean();
     }
 }
