@@ -702,6 +702,32 @@ export default {
           trigger: 'axis',
           axisPointer: {
             type: 'shadow'
+          },
+          formatter: function(data) {
+            let male = (
+              parseInt(data[0].value) /
+              (parseInt(data[0].value) + parseInt(data[1].value)) *
+              100
+            ).toFixed(2)
+            let female = (
+              parseInt(data[1].value) /
+              (parseInt(data[0].value) + parseInt(data[1].value)) *
+              100
+            ).toFixed(2)
+            return (
+              data[0].axisValue +
+              ': <br/>' +
+              data[0].marker +
+              data[0].seriesName +
+              ':' +
+              male +
+              '%<br/>' +
+              data[1].marker +
+              data[1].seriesName +
+              ':' +
+              female +
+              '%'
+            )
           }
         },
         // legend: {
@@ -1972,7 +1998,7 @@ export default {
     .sex-part {
       width: 25%;
       height: 100%;
-      
+
       .echarts {
         height: 80%;
         width: 100%;
