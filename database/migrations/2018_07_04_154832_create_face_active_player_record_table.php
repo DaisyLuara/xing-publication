@@ -3,9 +3,9 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use App\Http\Controllers\Admin\Face\V1\Models\ActivePlayerRecord;
+use App\Http\Controllers\Admin\Face\V1\Models\FaceActivePlayerRecord;
 
-class CreateActivePlayerRecordTable extends Migration
+class CreateFaceActivePlayerRecordTable extends Migration
 {
     /**
      * Run the migrations.
@@ -17,8 +17,9 @@ class CreateActivePlayerRecordTable extends Migration
         Schema::create('face_active_player_records', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamp('date')->nullable();
+            $table->timestamps();
         });
-        DB::table('face_active_player_records')->insert(['date' => '2018-06-13']);
+        FaceActivePlayerRecord::create(['date' => '2018-06-13']);
     }
 
     /**

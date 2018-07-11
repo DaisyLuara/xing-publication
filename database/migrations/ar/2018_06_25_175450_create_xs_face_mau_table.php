@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateFacePeopleTimeMauTable extends Migration
+class CreateXsFaceMauTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,11 @@ class CreateFacePeopleTimeMauTable extends Migration
      */
     public function up()
     {
-        if (!Schema::connection('ar')->hasTable('xs_face_mau')) {
-            Schema::connection('ar')->create('xs_face_mau', function (Blueprint $table) {
-                $table->increments('id');
-                $table->integer('active_player');
-                $table->timestamp('date')->nullable();
-            });
-        }
+        Schema::connection('ar')->create('xs_face_mau', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('active_player');
+            $table->timestamp('date')->nullable();
+        });
     }
 
     /**

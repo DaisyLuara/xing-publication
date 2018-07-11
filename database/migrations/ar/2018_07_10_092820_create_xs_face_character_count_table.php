@@ -16,8 +16,8 @@ class CreateXsFaceCharacterCountTable extends Migration
         Schema::connection('ar')->create('xs_face_character_count', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('oid');
-            $table->string('belong');
-            $table->string('time');
+            $table->string('belong', 20);
+            $table->string('time', 20);
             $table->integer('century00_bnum');
             $table->integer('century00_gnum');
             $table->integer('century90_bnum');

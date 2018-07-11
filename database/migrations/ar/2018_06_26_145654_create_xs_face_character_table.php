@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateXsFaceCountLogTable extends Migration
+class CreateXsFaceCharacterTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,19 +13,15 @@ class CreateXsFaceCountLogTable extends Migration
      */
     public function up()
     {
-        Schema::connection('ar')->create('xs_face_count_log', function (Blueprint $table) {
+        Schema::connection('ar')->create('xs_face_character', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('oid');
             $table->string('belong', 20);
+            $table->string('time', 20);
+            $table->string('century', 20)->comment('00:00后,90:90后,80:80后,70:70后,0:其他年龄段');
+            $table->string('gender', 20);
             $table->integer('looknum');
-            $table->integer('playernum7');
-            $table->integer('playernum20');
-            $table->integer('playernum30');
-            $table->integer('playernum');
-            $table->integer('outnum');
-            $table->integer('scannum');
-            $table->integer('lovenum');
-            $table->timestamp('date')->nullable();
+            $table->timestamp('date');
             $table->bigInteger('clientdate');
             $table->index('oid');
             $table->index('belong');
@@ -40,6 +36,6 @@ class CreateXsFaceCountLogTable extends Migration
      */
     public function down()
     {
-        Schema::connection('ar')->dropIfExists('xs_face_count_log');
+        Schema::connection('ar')->dropIfExists('xs_face_character');
     }
 }

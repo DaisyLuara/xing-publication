@@ -3,9 +3,8 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use App\Http\Controllers\Admin\Face\V1\Models\FaceCountRecord;
 
-class CreateFaceCountRecordTable extends Migration
+class CreateXsFaceMauMarketTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,11 +13,14 @@ class CreateFaceCountRecordTable extends Migration
      */
     public function up()
     {
-        Schema::create('face_count_log_records', function (Blueprint $table) {
+
+        Schema::connection('ar')->create('xs_face_mau_market', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamp('date')->nullabel();
+            $table->integer('marketid');
+            $table->integer('active_player');
+            $table->timestamp('date')->nullable();
+            $table->index('marketid');
         });
-        DB::table('face_count_log_records')->insert(['date' => '2017-04-21']);
     }
 
     /**
@@ -28,6 +30,6 @@ class CreateFaceCountRecordTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('face_count_log_records');
+        Schema::connection('ar')->dropIfExists('xs_face_mau_market');
     }
 }

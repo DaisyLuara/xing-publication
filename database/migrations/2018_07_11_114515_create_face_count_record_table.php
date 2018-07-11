@@ -3,9 +3,9 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use App\Http\Controllers\Admin\Face\V1\Models\FaceCollectRecord;
+use App\Http\Controllers\Admin\Face\V1\Models\FaceCountRecord;
 
-class CreateFaceCollectRecordTable extends Migration
+class CreateFaceCountRecordTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,11 +14,12 @@ class CreateFaceCollectRecordTable extends Migration
      */
     public function up()
     {
-        Schema::create('face_character_records', function (Blueprint $table) {
+        Schema::create('face_count_records', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamp('date')->nullable();
+            $table->timestamp('date');
+            $table->timestamps();
         });
-        DB::table('face_character_records')->insert(['date' => "2017-04-21"]);
+        FaceCountRecord::create(['date' => '2017-04-21']);
     }
 
     /**
@@ -28,6 +29,6 @@ class CreateFaceCollectRecordTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('face_character_records');
+        Schema::dropIfExists('face_count_records');
     }
 }

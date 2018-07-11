@@ -11,8 +11,8 @@ class FaceCountController extends Controller
 {
     public function aaa()
     {
-        $startDate = '2018-03-01 00:00:00';
-        $endDate = '2018-03-30 23:59:59';
+        $startDate = '2018-06-14 00:00:00';
+        $endDate = '2018-06-20 23:59:59';
         dd(strtotime($startDate) * 1000, strtotime($endDate) * 1000);
     }
 }
