@@ -60,6 +60,8 @@ class CouponBatchController extends Controller
 
     public function syncMallCooCouponBatch(Request $request)
     {
+        $company = Company::findOrFail($request->company_id);
+
         $mall_coo = app('mall_coo');
         $sUrl = 'https://openapi10.mallcoo.cn/Coupon/PutIn/v1/GetAll/';
         $result = $mall_coo->send($sUrl);
@@ -68,8 +70,9 @@ class CouponBatchController extends Controller
                 CouponBatch::query()->updateOrCreate(['third_code' => $data['PICMID']], [
                     'name' => $data['CouponName'],
                     'description' => $data['CouponDesc'],
-                    'company_id' => $request->company_id,
+                    'company_id' => $company->id,
                     'create_user_id' => $this->user->id,
+                    'bd_user_id' => $company->user_id,
                 ]);
             }
         }
