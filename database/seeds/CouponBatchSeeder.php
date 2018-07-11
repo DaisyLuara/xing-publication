@@ -16,11 +16,13 @@ class CouponBatchSeeder extends Seeder
     public function run()
     {
         //根据BD生成公司
-        $user = User::query()->where("name", "=", "陈重")->first();
+        $user = User::query()->whereHas('roles', function ($query) {
+            $query->where('name', '=', 'user');
+        })->first();
 
         $companyID = Company::query()->insertGetId([
             'user_id' => $user->id,
-            'name' => '测试',
+            'name' => '星视度',
             'address' => '上海市浦东新区浦东南路1118号',
             'status' => 3,
             'created_at' => date('Y-m-d H:i:s'),
@@ -33,6 +35,7 @@ class CouponBatchSeeder extends Seeder
             [
                 'company_id' => $companyID,
                 'create_user_id' => $user->id,
+                'bd_user_id' => $user->id,
                 'amount' => 0,
                 'count' => 40,
                 'stock' => 40,
@@ -53,6 +56,7 @@ class CouponBatchSeeder extends Seeder
             [
                 'company_id' => $companyID,
                 'create_user_id' => $user->id,
+                'bd_user_id' => $user->id,
                 'amount' => 0,
                 'count' => 100000,
                 'stock' => 100000,
@@ -73,6 +77,7 @@ class CouponBatchSeeder extends Seeder
             [
                 'company_id' => $companyID,
                 'create_user_id' => $user->id,
+                'bd_user_id' => $user->id,
                 'amount' => 0,
                 'count' => 200,
                 'stock' => 200,
@@ -93,6 +98,7 @@ class CouponBatchSeeder extends Seeder
             [
                 'company_id' => $companyID,
                 'create_user_id' => $user->id,
+                'bd_user_id' => $user->id,
                 'amount' => 0,
                 'count' => 100000,
                 'stock' => 100000,
@@ -113,7 +119,7 @@ class CouponBatchSeeder extends Seeder
         ]);
 
         //生成优惠券策略
-        $policy = Policy::query()->create(['create_user_id' => 22, 'company_id' => $companyID, 'name' => '龙虾刑警']);
+        $policy = Policy::query()->create(['create_user_id' => $user->id, 'bd_user_id' => $user->id, 'company_id' => $companyID, 'name' => '龙虾刑警']);
 
         $couponBatches = CouponBatch::query()->get();
         foreach ($couponBatches as $couponBatch) {

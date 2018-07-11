@@ -19,6 +19,7 @@ class Policy extends Model
         'desc',
         'company_id',
         'create_user_id',
+        'bd_user_id',
     ];
 
     public function batches()

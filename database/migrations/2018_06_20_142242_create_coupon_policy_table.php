@@ -16,7 +16,8 @@ class CreateCouponPolicyTable extends Migration
         Schema::create('policies', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('company_id');
-            $table->integer('create_user_id');
+            $table->integer('create_user_id')->comment('创建人');
+            $table->integer('bd_user_id')->comment('关联BD');
             $table->string('name')->default('')->comment('投放策略');
             $table->string('desc', 1024)->default('')->comment('描述');
             $table->timestamps();

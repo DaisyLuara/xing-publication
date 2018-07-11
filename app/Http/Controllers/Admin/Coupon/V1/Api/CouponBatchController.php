@@ -26,6 +26,12 @@ class CouponBatchController extends Controller
     public function index(CouponBatch $couponBatch, Request $request)
     {
         $query = $couponBatch->query();
+        $loginUser = $this->user;
+
+        if (!$loginUser->isAdmin()) {
+            $query->where('bd_user_id', '=', $loginUser->id);
+        }
+
         if ($request->name) {
             $query->where('name', 'like', '%' . $request->name . '%');
         }
@@ -38,6 +44,7 @@ class CouponBatchController extends Controller
         $couponBatch->fill(array_merge([
             'company_id' => $company->id,
             'create_user_id' => $this->user->id,
+            'bd_user_id' => $company->user_id,
         ], $request->all()))->save();
 
         return $this->response->item($couponBatch, new CouponBatchTransformer())

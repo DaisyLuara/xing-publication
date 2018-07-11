@@ -29,6 +29,13 @@ class PolicyController extends Controller
     public function index(Policy $policy, Request $request)
     {
         $query = $policy->query();
+
+        $loginUser = $this->user;
+
+        if (!$loginUser->isAdmin()) {
+            $query->where('bd_user_id', '=', $loginUser->id);
+        }
+
         if ($request->name) {
             $query->where('name', 'like', '%' . $request->name . '%');
         }
@@ -38,7 +45,11 @@ class PolicyController extends Controller
 
     public function store(Company $company, Policy $policy, PolicyRequest $request)
     {
-        $policy->fill(array_merge(['company_id' => $company->id, 'create_user_id' => $this->user->id], $request->all()))->save();
+        $policy->fill(array_merge([
+            'company_id' => $company->id,
+            'create_user_id' => $this->user->id,
+            'bd_user_id' => $company->user_id,
+        ], $request->all()))->save();
         return $this->response->item($policy, new PolicyTransformer())
             ->setStatusCode(201);
     }
