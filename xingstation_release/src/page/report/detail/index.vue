@@ -675,6 +675,13 @@ export default {
         },
         series: [
           {
+            label: {
+              normal: {
+                // show: true,
+                formatter: '{d}%',
+                position: 'inner'
+              }
+            },
             type: 'pie',
             radius: '65%',
             center: ['50%', '50%'],
