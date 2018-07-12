@@ -82,7 +82,7 @@ export default {
                 m.src = require('../assets/images/icons/advertisement-icon.png')
                 break
               case 'equipment':
-                m.src = require('../assets/images/icons/setting-icon.png')
+                m.src = require('../assets/images/icons/device-icon.png')
                 break
               case 'team':
                 m.src = require('../assets/images/icons/team-icon.png')
@@ -98,6 +98,9 @@ export default {
                 break
               case 'resource':
                 m.src = require('../assets/images/icons/resource-icon.png')
+                break
+              case 'setting':
+                m.src = require('../assets/images/icons/setting-icon.png')
                 break
               default:
                 m.src = ''

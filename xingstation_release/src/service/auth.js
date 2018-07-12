@@ -13,7 +13,6 @@ export default {
     context.setting.submiting = true;
     console.log(creds)
     context.$http.post(HOST + LOGIN_API, creds).then(response => {
-      console.log(response)
         //  将token与权限存储到cookie和localstorage中,取的时候从localstorage中取
         let loginResult = response.data;
         this.setToken(context, loginResult);
@@ -22,10 +21,17 @@ export default {
           type: "success"
         })
         context.setting.submiting = false;
-        this.refreshUserInfo(context).then(() => {
-          context.$router.push({
-            path: redirect ? redirect : '/'
-          })
+        this.refreshUserInfo(context).then((res) => {
+          console.log(localStorage.getItem('permissions').indexOf('setting'))
+          if( localStorage.getItem('permissions').indexOf('setting') > -1) {
+            context.$router.push({
+              path: '/'
+            })
+          } else {
+            context.$router.push({
+              path: redirect ? redirect : '/'
+            })
+          }
         })
       })
       .catch(err => {
@@ -86,7 +92,6 @@ export default {
     return new Promise((resolve, reject) => {
       context.$http.get(HOST + USERINFO_API).then(response => {
           let result = response.data;
-          console.log(result)
           localStorage.setItem('permissions',JSON.stringify(result.permissions))
           localStorage.removeItem('user_info')
           localStorage.setItem("user_info", JSON.stringify(result))

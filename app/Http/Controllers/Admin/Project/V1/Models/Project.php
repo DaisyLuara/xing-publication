@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Admin\Project\V1\Models;
 
+use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Point\V1\Models\Point;
+use App\Http\Controllers\Admin\Company\V1\Models\CompanyProject;
 use App\Models\Model;
 
 class Project extends Model
@@ -28,11 +30,23 @@ class Project extends Model
         'scan',
         'linkall',
         'date',
-        'clientdate'
+        'clientdate',
+        'policy_id',
     ];
 
     public function points()
     {
         return $this->belongsToMany(Point::class, 'istar_tv_oid', 'default_plid', 'oid');
     }
+
+    public function policy()
+    {
+        return $this->setConnection('mysql')->hasOne(Policy::class, 'id', 'policy_id');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(CompanyProject::class, 'id', 'project_id');
+    }
+
 }

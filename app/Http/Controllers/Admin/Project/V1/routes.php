@@ -18,8 +18,8 @@ $api->version('v1', [
 
             //节目投放
             $api->get('projects', 'ProjectController@index');
-            $api->post('projects', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectController@store']);
-            $api->patch('projects', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectController@update']);
+//            $api->post('projects', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectController@store']);
+            $api->patch('projects', ['middleware' => ['role:super-admin|admin|user|project-manager|market_owner'], 'uses' => 'ProjectController@update']);
             $api->get('projects/launch', 'ProjectLaunchController@index');
             $api->post('projects/launch', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectLaunchController@store']);
             $api->patch('projects/launches', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectLaunchController@update']);
@@ -28,9 +28,6 @@ $api->version('v1', [
             $api->patch('projects/launches/tpl/{projectLaunchTpl}', 'ProjectLaunchTplController@update');
             $api->post('projects/schedules', 'ProjectLaunchTplScheduleController@store');
             $api->patch('projects/schedules/{projectLaunchTplSchedule}', 'ProjectLaunchTplScheduleController@update');
-
-            //产品
-            $api->get('product', 'ProductController@index');
 
             //节目模板
             $api->get('project_template', 'ProjectTemplateController@index');
