@@ -252,7 +252,7 @@ export default {
         })
     },
     deleteBatch(row) {
-      let id = row.pivot.id
+      let id = row.id
       let company_id = row.pivot.policy_id
       MessageBox.confirm('确认删除选中策略条目?', '提示', {
         confirmButtonText: '确定',
@@ -298,7 +298,7 @@ export default {
       this.tableData[pIndex].batches.data[index].gender = val
     },
     editBatch(row) {
-      let id = row.pivot.id
+      let id = row.id
       let policy_id = row.pivot.policy_id
       let max_age = row.pivot.max_age
       let min_age = row.pivot.min_age
