@@ -12,7 +12,17 @@ use App\Models\Model;
 
 class Coupon extends Model
 {
-    public function couponBatch(){
-        return $this->belongsTo(CouponBatch::class,'id','coupon_batch_id');
+    protected $fillable = [
+        'mobile',
+        'coupon_batch_id',
+        'code',
+        'picm_id',
+        'trace_id',
+        'status',
+    ];
+
+    public function couponBatch()
+    {
+        return $this->belongsTo(CouponBatch::class, 'coupon_batch_id', 'id');
     }
 }

@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin\Common\V1\Api;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
+use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
+use App\Http\Controllers\Admin\Coupon\V1\Transformer\PolicyTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\AreaTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\MarketTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\PointTransformer;
@@ -217,6 +219,24 @@ class QueryController extends Controller
 
         $companies = $query->get();
         return $this->response->collection($companies, new CompanyTransformer());
+    }
+
+    public function policyQuery(Policy $policy, Request $request)
+    {
+        $query = $policy->query();
+
+        $loginUser = $this->user;
+
+        if (!$loginUser->isAdmin()) {
+            $query->where('bd_user_id', '=', $loginUser->id);
+        }
+
+        if ($request->name) {
+            $query->where('name', 'like', '%' . $request->name . '%')->get();
+        }
+
+        $policies = $query->get();
+        return $this->response->collection($policies, new PolicyTransformer());
     }
 
 }
