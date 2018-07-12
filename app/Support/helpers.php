@@ -551,115 +551,31 @@ if (!function_exists('getFaceCountByScene')) {
     }
 }
 
+if (!function_exists('getRand')) {
 
-//function testClean()
-//{
-//    $date = FaceCharacterRecord::query()->max('date');
-//    $date = (new Carbon($date))->format('Y-m-d');
-//    $currentDate = Carbon::now()->toDateString();
-//    while ($date < $currentDate) {
-//        $startDate = strtotime($date . " 00:00:00") * 1000;
-//        $endDate = strtotime($date . " 23:59:59") * 1000;
-//
-//        $century00 = "when age > 8 and age <= 18 then '00'";
-//        $century90 = "when age > 18 and age <= 28 then '90' ";
-//        $century80 = "when age > 18 and age <= 38 then '80' ";
-//        $century70 = "when age > 38 and age <= 48 then '70' ";
-//        $century = $century00 . $century90 . $century80 . $century70;
-//
-//        $sql = DB::connection('ar')->table('face_collect')
-//            ->selectRaw("date_format(concat(date(date), ' ', hour(date), ':', floor(minute(date) / 30) * 30), '%Y-%m-%d %H:%i') as time,case " . $century . "else 0 end as century,gender,oid,belong")
-//            ->whereRaw("clientdate between '$startDate' and '$endDate' and fpid > 0 and type = 'play' ")
-//            ->orderBy('isold');
-//
-//        //按所有人去重 belong='all'
-//        if ($date < '2018-07-01') {
-//            $sql1 = $sql->groupBy(DB::raw('fpid*100+oid'));
-//        } else {
-//            $sql1 = $sql->groupBy(DB::raw('fpid*10000+oid'));
-//        }
-//        $allsql = DB::connection('ar')->table(DB::raw("({$sql1->toSql()}) as a"))
-//            ->groupBy(DB::raw("oid,time,century,gender"))
-//            ->orderBy(DB::raw("oid,time,century,gender"))
-//            ->selectRaw("oid,time,century,gender,count(*) as looknum");
-//
-//        $sum1 = "sum(if(century = '00' and gender = 'Male', looknum, 0))   as century00_bnum,";
-//        $sum2 = " sum(if(century = '00' and gender = 'Female', looknum, 0)) as century00_gnum,";
-//        $sum3 = " sum(if(century = '90' and gender = 'Male', looknum, 0))   as century90_bnum,";
-//        $sum4 = " sum(if(century = '90' and gender = 'Female', looknum, 0)) as century90_gnum,";
-//        $sum5 = " sum(if(century = '80' and gender = 'Male', looknum, 0))   as century80_bnum,";
-//        $sum6 = " sum(if(century = '80' and gender = 'Female', looknum, 0)) as century80_gnum,";
-//        $sum7 = " sum(if(century = '70' and gender = 'Male', looknum, 0))   as century70_bnum,";
-//        $sum8 = " sum(if(century = '70' and gender = 'Female', looknum, 0)) as century70_gnum,";
-//        $sum9 = " sum(if(century = '0' and gender = 'Male', looknum, 0))    as century0_bnum,";
-//        $sum10 = " sum(if(century = '0' and gender = 'Female', looknum, 0)) as century0_gnum";
-//        $sum = $sum1 . $sum2 . $sum3 . $sum4 . $sum5 . $sum6 . $sum7 . $sum8 . $sum9 . $sum10;
-//        $allData = DB::connection('ar')->table(DB::raw("({$allsql->toSql()}) as a"))
-//            ->groupBy(DB::raw('oid,time'))
-//            ->selectRaw("oid,time," . $sum)
-//            ->get();
-//
-//        //按节目去重
-//        if ($date < '2018-07-01') {
-//            $sql2 = $sql->groupBy(DB::raw('fpid*100+oid,belong'));
-//        } else {
-//            $sql2 = $sql->groupBy(DB::raw('fpid*10000+oid,belong'));
-//        }
-//
-//        $belongsql = DB::connection('ar')->table(DB::raw("({$sql2->toSql()}) as a"))
-//            ->groupBy(DB::raw("oid,belong,time,century,gender"))
-//            ->orderBy(DB::raw("oid,belong,time,century,gender"))
-//            ->selectRaw("oid,belong,time,century,gender,count(*) as looknum");
-//        $data = DB::connection('ar')->table(DB::raw("({$belongsql->toSql()}) as a"))
-//            ->groupBy(DB::raw('oid,belong,time'))
-//            ->selectRaw("oid,belong,time," . $sum)
-//            ->get();
-//
-//        $count = [];
-//        foreach ($allData as $item) {
-//            $count[] = [
-//                'oid' => $item->oid,
-//                'belong' => 'all',
-//                'time' => (new Carbon($item->time))->addMinutes(30)->format('H:i'),
-//                'century00_bnum' => $item->century00_bnum ? $item->century00_bnum : 0,
-//                'century00_gnum' => $item->century00_gnum ? $item->century00_gnum : 0,
-//                'century90_bnum' => $item->century90_bnum ? $item->century90_bnum : 0,
-//                'century90_gnum' => $item->century90_gnum ? $item->century90_gnum : 0,
-//                'century80_bnum' => $item->century80_bnum ? $item->century80_bnum : 0,
-//                'century80_gnum' => $item->century80_gnum ? $item->century80_gnum : 0,
-//                'century70_bnum' => $item->century70_bnum ? $item->century70_bnum : 0,
-//                'century70_gnum' => $item->century70_gnum ? $item->century70_gnum : 0,
-//                'century0_bnum' => $item->century0_bnum ? $item->century0_bnum : 0,
-//                'century0_gnum' => $item->century0_gnum ? $item->century0_gnum : 0,
-//                'date' => $date,
-//                'clientdate' => strtotime($date) * 1000
-//            ];
-//        }
-//        foreach ($data as $item) {
-//            $count[] = [
-//                'oid' => $item->oid,
-//                'belong' => $item->belong,
-//                'time' => (new Carbon($item->time))->addMinutes(30)->format('H:i'),
-//                'century00_bnum' => $item->century00_bnum ? $item->century00_bnum : 0,
-//                'century00_gnum' => $item->century00_gnum ? $item->century00_gnum : 0,
-//                'century90_bnum' => $item->century90_bnum ? $item->century90_bnum : 0,
-//                'century90_gnum' => $item->century90_gnum ? $item->century90_gnum : 0,
-//                'century80_bnum' => $item->century80_bnum ? $item->century80_bnum : 0,
-//                'century80_gnum' => $item->century80_gnum ? $item->century80_gnum : 0,
-//                'century70_bnum' => $item->century70_bnum ? $item->century70_bnum : 0,
-//                'century70_gnum' => $item->century70_gnum ? $item->century70_gnum : 0,
-//                'century0_bnum' => $item->century0_bnum ? $item->century0_bnum : 0,
-//                'century0_gnum' => $item->century0_gnum ? $item->century0_gnum : 0,
-//                'date' => $date,
-//                'clientdate' => strtotime($date) * 1000
-//            ];
-//        }
-//        $count = array_chunk($count, 4000);
-//        for ($i = 0; $i < count($count); $i++) {
-//            DB::connection('ar')->table('xs_face_character_count')
-//                ->insert($count[$i]);
-//        }
-//        $date = (new Carbon($date))->addDay(1)->toDateString();
-//    }
-//    FaceCharacterRecord::create(['date' => $currentDate]);
-//}
+    function getRand($proArr)
+    {
+        $result = array();
+        foreach ($proArr as $key => $val) {
+            if (is_object($val)) {
+                $val = get_object_vars($val);
+            }
+            $arr[$key] = $val['rate'];
+        }
+        // 概率数组的总概率
+        $proSum = array_sum($arr);
+        asort($arr);
+        // 概率数组循环
+        // 检查奖品容量
+        foreach ($arr as $k => $v) {
+            $randNum = mt_rand(1, $proSum);
+            if ($randNum <= $v) {
+                $result = $proArr[$k];
+                break;
+            } else {
+                $proSum -= $v;
+            }
+        }
+        return $result;
+    }
+}
