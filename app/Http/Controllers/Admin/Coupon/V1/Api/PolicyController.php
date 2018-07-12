@@ -81,7 +81,8 @@ class PolicyController extends Controller
 
     public function destroyBatchPolicy(Policy $policy, $batch_policy_id)
     {
-        $policy->batches()->detach($batch_policy_id);
+        $query = DB::table('coupon_batch_policy');
+        $query->delete($batch_policy_id);
         return $this->response->item($policy, new PolicyTransformer())
             ->setStatusCode(201);
     }
