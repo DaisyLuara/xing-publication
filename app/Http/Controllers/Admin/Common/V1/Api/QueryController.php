@@ -213,6 +213,12 @@ class QueryController extends Controller
     {
         $query = $company->query();
 
+        $loginUser = $this->user;
+
+        if (!$loginUser->isAdmin()) {
+            $query->where('user_id', '=', $loginUser->id);
+        }
+
         if ($request->name) {
             $query->where('name', 'like', '%' . $request->name . '%')->get();
         }

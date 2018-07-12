@@ -4,6 +4,7 @@ use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\User;
+use App\Http\Controllers\Admin\Company\V1\Models\Company;
 
 class AddNewRoleSeeder extends Seeder
 {
@@ -48,5 +49,14 @@ class AddNewRoleSeeder extends Seeder
         if ($user->hasRole('market_owner')) {
             $user->assignRole('market_owner');
         }
+
+        Company::updateOrCreate(['name' => '华地百货'], [
+            'user_id' => $user->id,
+            'name' => '华地百货',
+            'address' => '江苏省无锡市县前东街1号无锡金陵大饭店26层',
+            'status' => 3,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
     }
 }
