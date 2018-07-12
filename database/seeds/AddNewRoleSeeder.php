@@ -46,7 +46,7 @@ class AddNewRoleSeeder extends Seeder
             'password' => bcrypt('password'),
         ]);
 
-        if ($user->hasRole('market_owner')) {
+        if (!$user->hasRole('market_owner')) {
             $user->assignRole('market_owner');
         }
 
