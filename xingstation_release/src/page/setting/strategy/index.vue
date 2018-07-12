@@ -298,8 +298,8 @@ export default {
       this.tableData[pIndex].batches.data[index].gender = val
     },
     editBatch(row) {
-      let id = row.id
-      let company_id = row.pivot.policy_id
+      let id = row.pivot.id
+      let policy_id = row.pivot.policy_id
       let max_age = row.pivot.max_age
       let min_age = row.pivot.min_age
       let gender = row.pivot.gender
@@ -343,7 +343,7 @@ export default {
       //   delete args.gender
       // }
       policies
-        .modifyBatchPolicy(this, company_id, args, id)
+        .modifyBatchPolicy(this, policy_id, args, id)
         .then(response => {
           this.$message({
             message: '修改成功',
@@ -359,7 +359,7 @@ export default {
         })
     },
     saveBatch(row) {
-      let company_id = row.pivot.policy_id
+      let policy_id = row.pivot.policy_id
       let max_age = row.pivot.max_age
       let min_age = row.pivot.min_age
       let gender = row.pivot.gender
@@ -410,7 +410,7 @@ export default {
       //   delete args.gender
       // }
       policies
-        .saveBatchPolicy(this, company_id, args)
+        .saveBatchPolicy(this, policy_id, args)
         .then(response => {
           this.$message({
             message: '添加成功',
