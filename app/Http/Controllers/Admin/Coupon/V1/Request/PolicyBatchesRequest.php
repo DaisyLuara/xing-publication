@@ -36,7 +36,7 @@ class PolicyBatchesRequest extends FormRequest
             case 'POST':
                 return [
                     'coupon_batch_id' => 'required',
-                    'gender' => ['required_without_all:rate,min_age,max_age', Rule::in(['female', 'male', 'none'])],
+                    'gender' => ['required_without_all:rate,min_age,max_age', Rule::in([0, 1])],
                     'rate' => ['digits_between:1,3', 'required_without_all:gender,min_age,max_age'],
                     'min_age' => ['digits_between:1,2', 'required_without_all:rate,gender,max_age', 'required_with:max_age'],
                     'max_age' => ['digits_between:1,2', 'required_without_all:rate,gender,min_age', 'required_with:min_age'],
@@ -44,7 +44,7 @@ class PolicyBatchesRequest extends FormRequest
                 break;
             case 'PATCH':
                 return [
-                    'gender' => ['required_without_all:rate,min_age,max_age', Rule::in(['female', 'male', 'none'])],
+                    'gender' => ['required_without_all:rate,min_age,max_age', Rule::in([0, 1])],
                     'rate' => ['digits_between:1,3', 'required_without_all:gender,min_age,max_age'],
                     'min_age' => ['digits_between:1,2', 'required_without_all:rate,gender,max_age', 'required_with:max_age'],
                     'max_age' => ['digits_between:1,2', 'required_without_all:rate,gender,min_age', 'required_with:min_age'],

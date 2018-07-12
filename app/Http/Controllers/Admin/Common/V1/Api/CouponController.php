@@ -69,8 +69,7 @@ class CouponController extends Controller
         }
 
         if ($request->gender) {
-            $gender = $request->gender ? 'female' : 'male';
-            $query->where('gender', '=', $gender);
+            $query->where('gender', '=', $request->gender);
         }
 
         $couponBatchPolicies = $query->where('policy_id', '=', $policy->id)->get();
