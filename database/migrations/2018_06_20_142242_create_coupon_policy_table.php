@@ -33,6 +33,8 @@ class CreateCouponPolicyTable extends Migration
             $table->integer('rate')->default(100);
             $table->enum('type', ['age', 'gender', 'rate', 'mix'])->default('age')->comment('类型');
             $table->timestamps();
+
+            $table->unique(['policy_id', 'coupon_batch_id']);
         });
     }
 
