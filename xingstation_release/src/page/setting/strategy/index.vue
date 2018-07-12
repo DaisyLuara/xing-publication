@@ -339,9 +339,9 @@ export default {
       if (!rate) {
         delete args.rate
       }
-      if (!gender) {
-        delete args.gender
-      }
+      // if (!gender) {
+      //   delete args.gender
+      // }
       policies
         .modifyBatchPolicy(this, company_id, args, id)
         .then(response => {
@@ -406,9 +406,9 @@ export default {
       if (!rate) {
         delete args.rate
       }
-      if (!gender) {
-        delete args.gender
-      }
+      // if (!gender) {
+      //   delete args.gender
+      // }
       policies
         .saveBatchPolicy(this, company_id, args)
         .then(response => {
