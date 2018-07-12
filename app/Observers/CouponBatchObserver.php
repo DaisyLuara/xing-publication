@@ -7,7 +7,7 @@ use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 // creating, created, updating, updated, saving,
 // saved,  deleting, deleted, restoring, restored
 
-class UserObserver
+class CouponBatchObserver
 {
     public function saving(CouponBatch $couponBatch)
     {
