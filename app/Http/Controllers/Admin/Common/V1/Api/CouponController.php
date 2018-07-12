@@ -99,14 +99,19 @@ class CouponController extends Controller
             if (!$result['Data'][0]['IsSuccess']) {
                 return $this->response->error($result['Data'][0]['FailReason'], 500);
             }
+
+            $data = $result['Data'];
             $coupon = Coupon::create([
-                'code' => $result[0]['VCode'],
+                'code' => $data[0]['VCode'],
                 'mobile' => $mobile,
                 'coupon_batch_id' => $couponBatch->id,
-                'picm_id' => $result[0]['PICMID'],
-                'trace_id' => $result[0]['TraceID'],
+                'picm_id' => $data[0]['PICMID'],
+                'trace_id' => $data[0]['TraceID'],
                 'status' => 3,
             ]);
+
+            $stock = $couponBatch->stock - 1;
+            $couponBatch->update(['stock' => $stock]);
         } else {
             //@todo 添加库存和数量校验
             $coupon = Coupon::create([
