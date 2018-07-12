@@ -91,7 +91,7 @@ class PolicyController extends Controller
             $type = 'age';
         } else if ($request->rate > 0) {
             $type = 'rate';
-        } else if ($request->gender) {
+        } else if ($request->has('gender')) {
             $type = 'gender';
         }
 
