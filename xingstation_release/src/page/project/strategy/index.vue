@@ -252,7 +252,7 @@ export default {
         })
     },
     deleteBatch(row) {
-      let id = row.id
+      let id = row.pivot.id
       let company_id = row.pivot.policy_id
       MessageBox.confirm('确认删除选中策略条目?', '提示', {
         confirmButtonText: '确定',
@@ -305,7 +305,7 @@ export default {
       let gender = row.pivot.gender
       let rate = row.pivot.rate
       let coupon_batch_id = row.pivot.coupon_batch_id
-      if (max_age === '' && min_age === '' && gender == '' && rate === '') {
+      if (max_age === '' && min_age === '' && gender === '' && rate === '') {
         this.$message({
           message: '概率，性别，最大年龄，最小年龄不能都为空',
           type: 'warning'
@@ -365,7 +365,7 @@ export default {
       let gender = row.pivot.gender
       let rate = row.pivot.rate
       let coupon_batch_id = row.pivot.coupon_batch_id
-      if (max_age === '' && min_age === '' && gender == '' && rate === '') {
+      if (max_age === '' && min_age === '' && gender === '' && rate === '') {
         this.$message({
           message: '概率，性别，最大年龄，最小年龄不能都为空',
           type: 'warning'
