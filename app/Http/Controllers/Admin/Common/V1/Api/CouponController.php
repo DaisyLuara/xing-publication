@@ -64,11 +64,11 @@ class CouponController extends Controller
         $policy = Policy::query()->findOrFail($request->policy_id);
 
         $query = DB::table('coupon_batch_policy');
-        if ($request->age) {
+        if ($request->has('age')) {
             $query->where('max_age', '>=', $request->age)->where('min_age', '<=', $request->age);
         }
 
-        if ($request->gender) {
+        if ($request->has('gender')) {
             $query->where('gender', '=', $request->gender);
         }
 
