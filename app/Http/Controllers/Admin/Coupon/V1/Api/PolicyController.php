@@ -73,16 +73,14 @@ class PolicyController extends Controller
 
     public function updateBatchPolicy(Policy $policy, $batch_policy_id, PolicyBatchesRequest $request)
     {
-        $query = DB::table('coupon_batch_policy');
-        $query->where('id', '=', $batch_policy_id)->update($this->convert($request));
+        $policy->batches()->updateExistingPivot($batch_policy_id, $this->convert($request));
         return $this->response->item($policy, new PolicyTransformer())
             ->setStatusCode(201);
     }
 
     public function destroyBatchPolicy(Policy $policy, $batch_policy_id)
     {
-        $query = DB::table('coupon_batch_policy');
-        $query->delete($batch_policy_id);
+        $policy->batches()->detach($batch_policy_id);
         return $this->response->item($policy, new PolicyTransformer())
             ->setStatusCode(201);
     }
