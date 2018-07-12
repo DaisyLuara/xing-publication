@@ -188,11 +188,11 @@ export default {
       },
       genderList: [
         {
-          id: 'female',
+          id: 1,
           name: '女'
         },
         {
-          id: 'male',
+          id: 0,
           name: '男'
         }
       ],
@@ -326,7 +326,7 @@ export default {
       let args = {
         min_age: parseInt(min_age),
         max_age: parseInt(max_age),
-        gender: gender,
+        gender: parseInt(gender),
         rate: rate,
         coupon_batch_id: coupon_batch_id
       }
@@ -393,7 +393,7 @@ export default {
       let args = {
         min_age: parseInt(min_age),
         max_age: parseInt(max_age),
-        gender: gender,
+        gender: parseInt(gender),
         rate: rate,
         coupon_batch_id: coupon_batch_id
       }
@@ -470,7 +470,7 @@ export default {
           min_age: '',
           rate: '',
           max_age: '',
-          gender: '',
+          gender: 0,
           policy_id: policy_id
         }
       }
