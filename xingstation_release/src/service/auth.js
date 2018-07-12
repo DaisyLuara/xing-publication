@@ -11,7 +11,6 @@ const TOWER_OUTH_TOKEN = '/api/oauth/token?include=permissions,roles'
 export default {
   login(context, creds, redirect) {
     context.setting.submiting = true;
-    console.log(creds)
     context.$http.post(HOST + LOGIN_API, creds).then(response => {
         //  将token与权限存储到cookie和localstorage中,取的时候从localstorage中取
         let loginResult = response.data;
@@ -22,7 +21,6 @@ export default {
         })
         context.setting.submiting = false;
         this.refreshUserInfo(context).then((res) => {
-          console.log(localStorage.getItem('permissions').indexOf('setting'))
           if( localStorage.getItem('permissions').indexOf('setting') > -1) {
             context.$router.push({
               path: '/'

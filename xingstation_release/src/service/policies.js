@@ -45,10 +45,10 @@ export default {
     })
     return promise
   },
-  modifyBatchPolicy(context, companyId, args, id) {
+  modifyBatchPolicy(context, policyId, args, id) {
     let promise = new Promise(function(resolve, reject) {
       context.$http
-        .patch(HOST + BATCH_API + companyId + '/batch_policy/' + id, args)
+        .patch(HOST + BATCH_API + policyId + '/batch_policy/' + id, args)
         .then(response => {
           resolve(response.data)
         })
@@ -71,10 +71,10 @@ export default {
     })
     return promise
   },
-  deleteBatchPolicy(context, companyId, id) {
+  deleteBatchPolicy(context, policyId, id) {
     let promise = new Promise(function(resolve, reject) {
       context.$http
-        .delete(HOST + BATCH_API + companyId + '/batch_policy/' + id)
+        .delete(HOST + BATCH_API + policyId + '/batch_policy/' + id)
         .then(response => {
           resolve(response.data)
         })

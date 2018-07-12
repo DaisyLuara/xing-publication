@@ -24,6 +24,7 @@ class ProjectTransformer extends TransformerAbstract
             'version_code' => $project->versioncode,
             'link' => $project->link,
             'created_at' => $project->date,
+            'policy_id' => $project->policy_id,
             'updated_at' => formatClientDate($project->clientdate),
         ];
     }
