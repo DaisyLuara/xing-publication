@@ -13,7 +13,13 @@ class CreateCompanyProject extends Migration
      */
     public function up()
     {
-        //
+        Schema::connection('ar')->create('xs_company_project', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('company_id');
+            $table->integer('project_id');
+            $table->integer('user_id');
+            $table->unique(['company_id', 'project_id']);
+        });
     }
 
     /**
@@ -23,6 +29,6 @@ class CreateCompanyProject extends Migration
      */
     public function down()
     {
-        //
+        Schema::connection('ar')->dropIfExists('xs_company_project');
     }
 }
