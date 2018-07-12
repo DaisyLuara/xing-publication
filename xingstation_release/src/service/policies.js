@@ -58,10 +58,10 @@ export default {
     })
     return promise
   },
-  saveBatchPolicy(context, companyId, args) {
+  saveBatchPolicy(context, policyId, args) {
     let promise = new Promise(function(resolve, reject) {
       context.$http
-        .post(HOST + BATCH_API + companyId, args)
+        .post(HOST + BATCH_API + policyId, args)
         .then(response => {
           resolve(response.data)
         })
