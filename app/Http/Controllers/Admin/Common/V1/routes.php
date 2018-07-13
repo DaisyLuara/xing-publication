@@ -11,9 +11,10 @@ $api->version('v1', [
 
         $api->post('captchas', 'CaptchasController@store');// 图片验证码
 
-        $api->get('coupon/status', 'CouponController@getCouponStatus');
-        $api->post('coupon', 'CouponController@createCoupon');
-        $api->get('coupons/{coupon_id}', 'CouponController@getCoupon');
+        $api->get('open/coupon/status', 'CouponController@getCouponStatus');
+        $api->get('open/coupon/batches', 'CouponController@getCouponBatch');//获取优惠券规则
+        $api->post('open/coupons/{couponBatch}', 'CouponController@generateCoupon');//发送优惠券
+        $api->get('open/project/policy', 'ProjectController@show');//根据节目获取优惠券投放策略
 
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
@@ -30,6 +31,7 @@ $api->version('v1', [
             $api->get('company/query', 'QueryController@companyQuery');
             $api->get('staffs', 'QueryController@arUserQueryIndex');
             $api->get('scene/query', 'QueryController@sceneQueryIndex');
+            $api->get('policy/query', 'QueryController@policyQuery');
 
             //消息通知
             $api->get('user/notifications', 'NotificationsController@index');

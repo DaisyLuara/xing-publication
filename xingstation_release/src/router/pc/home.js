@@ -6,7 +6,7 @@ let router = {
   name: '首页',
   meta: {
     title: '首页',
-    permission: '',
+    permission: 'home',
   },
   component: () =>
     import(/* webpackChunkName: "page/home/homeView" */ 'page/home/homeView'),

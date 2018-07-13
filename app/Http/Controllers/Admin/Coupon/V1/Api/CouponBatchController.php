@@ -73,6 +73,8 @@ class CouponBatchController extends Controller
                     'company_id' => $company->id,
                     'create_user_id' => $this->user->id,
                     'bd_user_id' => $company->user_id,
+                    'count' => $data['StoreCount'],
+                    'stock' => $data['StoreOverGount'],
                 ]);
             }
         }

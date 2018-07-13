@@ -253,7 +253,7 @@ export default {
     },
     deleteBatch(row) {
       let id = row.id
-      let company_id = row.pivot.policy_id
+      let policy_id = row.pivot.policy_id
       MessageBox.confirm('确认删除选中策略条目?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -263,7 +263,7 @@ export default {
           this.setting.loadingText = '拼命加载中'
           this.setting.loading = true
           policies
-            .deleteBatchPolicy(this, company_id, id)
+            .deleteBatchPolicy(this, policy_id, id)
             .then(response => {
               this.setting.loading = false
               this.$message({

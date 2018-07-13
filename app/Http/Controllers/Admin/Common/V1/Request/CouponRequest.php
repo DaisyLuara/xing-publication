@@ -13,8 +13,6 @@ class CouponRequest extends FormRequest
 
     public function rules()
     {
-        return [
-            'campany_id'=>'required'
-        ];
+        return [];
     }
 }

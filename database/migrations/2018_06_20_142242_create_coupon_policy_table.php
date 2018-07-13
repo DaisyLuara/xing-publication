@@ -29,8 +29,8 @@ class CreateCouponPolicyTable extends Migration
             $table->integer('coupon_batch_id');
             $table->integer('min_age')->default(0);
             $table->integer('max_age')->default(0);
-            $table->enum('gender', ['male', 'female', 'none'])->default('none');
-            $table->integer('rate')->default(0);
+            $table->tinyInteger('gender')->default(0)->comment('1:女 0:男');
+            $table->integer('rate')->default(100);
             $table->enum('type', ['age', 'gender', 'rate', 'mix'])->default('age')->comment('类型');
             $table->timestamps();
 

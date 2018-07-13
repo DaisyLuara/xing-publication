@@ -11,6 +11,7 @@ const ADVERTISEMENT_API = '/api/advertisement/query'
 const SENCE_API = '/api/scene/query'
 const COMPANY_API = '/api/company/query'
 const COUPON_API = '/api/coupon_batch/query'
+const POLICY_API= '/api/policy/query'
 const HOST = process.env.SERVER_URL
 
 export default {
@@ -150,6 +151,18 @@ export default {
     return new Promise(function(resolve, reject) {
       context.$http
         .get(HOST + COUPON_API, { params: args })
+        .then(response => {
+          resolve(response.data)
+        })
+        .catch(error => {
+          reject(error)
+        })
+    })
+  },
+  getPolicyList(context) {
+    return new Promise(function(resolve, reject) {
+      context.$http
+        .get(HOST + POLICY_API)
         .then(response => {
           resolve(response.data)
         })

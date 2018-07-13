@@ -17,6 +17,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Admin\Coupon\V1\Request\PolicyRequest;
 use App\Http\Controllers\Admin\Coupon\V1\Request\PolicyBatchesRequest;
+use DB;
 
 class PolicyController extends Controller
 {
@@ -90,7 +91,7 @@ class PolicyController extends Controller
             $type = 'age';
         } else if ($request->rate > 0) {
             $type = 'rate';
-        } else if ($request->gender) {
+        } else if ($request->has('gender')) {
             $type = 'gender';
         }
 
