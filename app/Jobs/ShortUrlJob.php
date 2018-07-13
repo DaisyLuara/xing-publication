@@ -11,7 +11,6 @@ use function GuzzleHttp\Psr7\parse_query;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Bus\Queueable;
-use Log;
 
 class ShortUrlJob implements ShouldQueue
 {

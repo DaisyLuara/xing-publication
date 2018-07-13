@@ -37,6 +37,7 @@ class ProjectLaunch extends Model
         return $this->belongsTo(Point::class, 'oid', 'oid');
     }
 
+
     public function project()
     {
         return $this->belongsTo(Project::class, 'default_plid', 'id');
@@ -46,4 +47,5 @@ class ProjectLaunch extends Model
     {
         return $this->belongsTo(ProjectLaunchTpl::class, 'div_tvid', 'tvid');
     }
+
 }

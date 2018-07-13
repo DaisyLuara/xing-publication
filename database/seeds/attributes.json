@@ -1,7 +1,7 @@
 {
   "scene": {
     "name": "场景",
-    "desc": "",
+    "desc": "点位属性",
     "children": [
       {
         "name": "商场",
@@ -19,7 +19,7 @@
   },
   "trade": {
     "name": "业态",
-    "desc": "",
+    "desc": "点位、节目 属性",
     "children": [
       {
         "name": "餐饮",
@@ -94,6 +94,14 @@
         "desc": ""
       },
       {
+        "name": "展览",
+        "desc": ""
+      },
+      {
+        "name": "会议",
+        "desc": ""
+      },
+      {
         "name": "游戏",
         "desc": ""
       },
@@ -109,7 +117,7 @@
   },
   "style": {
     "name": "风格",
-    "desc": "",
+    "desc": "节目属性",
     "children": [
       {
         "name": "复古",
@@ -151,7 +159,7 @@
   },
   "color": {
     "name": "色彩",
-    "desc": "",
+    "desc": "节目属性",
     "children": [
       {
         "name": "褐色",
@@ -197,10 +205,10 @@
   },
   "play": {
     "name": "玩法",
-    "desc": "",
+    "desc": "节目属性",
     "children": [
       {
-        "name": "贴图、、、、、、、、",
+        "name": "贴图",
         "desc": ""
       },
       {
@@ -239,7 +247,7 @@
   },
   "welfare": {
     "name": "福利",
-    "desc": "",
+    "desc": "节目属性",
     "children": [
       {
         "name": "照片",

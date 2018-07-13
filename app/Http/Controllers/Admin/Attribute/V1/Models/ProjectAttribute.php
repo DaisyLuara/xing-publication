@@ -9,6 +9,6 @@ class ProjectAttribute extends Model
     protected $connection = 'ar';
     public $table = 'xs_project_attributes';
     public $timestamps = false;
-    protected $fillable = ['project_id', 'attribute_id'];
+    protected $fillable = ['project_id', 'attribute_id', 'belong'];
 
 }
