@@ -152,7 +152,7 @@ function activePlayerClean()
             $sql = DB::connection('ar')->table('face_people_time')
                 ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and fpid>0 and playtime>='$timeArray[$i]000'")
                 ->selectRaw("oid ");
-            if ($date < '2018-07-01') {
+            if ($date <= '2018-07-01') {
                 $sql = $sql->groupBy(DB::raw('fpid*100+oid'));
             } else {
                 $sql = $sql->groupBy(DB::raw('fpid*10000+oid'));
@@ -181,7 +181,7 @@ function activePlayerClean()
             $sql = DB::connection('ar')->table('face_people_time')
                 ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and fpid>0 and playtime>='$timeArray[$i]000'")
                 ->selectRaw("oid,belong");
-            if ($date < '2018-07-01') {
+            if ($date <= '2018-07-01') {
                 $sql = $sql->groupBy(DB::raw('fpid*100+oid,belong'));
             } else {
                 $sql = $sql->groupBy(DB::raw('fpid*10000+oid,belong'));
@@ -356,16 +356,17 @@ function faceCharacterClean()
         $century70 = "when age > 38 and age <= 48 then '70' ";
         $century = $century00 . $century90 . $century80 . $century70;
 
-        $sql = DB::connection('ar')->table('face_collect')
-            ->selectRaw("date_format(concat(date(date), ' ', hour(date), ':', floor(minute(date) / 30) * 30), '%Y-%m-%d %H:%i') as time,case " . $century . "else 0 end as century,gender,oid,belong")
-            ->whereRaw("clientdate between '$startDate' and '$endDate' and fpid > 0 and type = 'play' ")
+        $sql = DB::connection('ar')->table('face_collect as fc')
+            ->join('avr_official as ao', 'ao.oid', '=', 'fc.oid')
+            ->selectRaw("date_format(concat(date(fc.date), ' ', hour(fc.date), ':', floor(minute(fc.date) / 30) * 30), '%Y-%m-%d %H:%i') as time,case " . $century . "else 0 end as century,gender,fc.oid as oid,belong")
+            ->whereRaw("fc.clientdate between '$startDate' and '$endDate' and fpid > 0 and fc.type = 'play' ")
             ->orderBy('isold');
 
         //按所有人去重 belong='all'
-        if ($date < '2018-07-01') {
-            $sql1 = $sql->groupBy(DB::raw('fpid*100+oid'));
+        if ($date <= '2018-07-01') {
+            $sql1 = $sql->groupBy(DB::raw('fpid*100+fc.oid'));
         } else {
-            $sql1 = $sql->groupBy(DB::raw('fpid*10000+oid'));
+            $sql1 = $sql->groupBy(DB::raw('fpid*10000+fc.oid'));
         }
         $allData = DB::connection('ar')->table(DB::raw("({$sql1->toSql()}) as a"))
             ->groupBy(DB::raw("oid,time,century,gender"))
@@ -374,10 +375,10 @@ function faceCharacterClean()
             ->get();
 
         //按节目去重
-        if ($date < '2018-07-01') {
-            $sql2 = $sql->groupBy(DB::raw('fpid*100+oid,belong'));
+        if ($date <= '2018-07-01') {
+            $sql2 = $sql->groupBy(DB::raw('fpid*100+fc.oid,belong'));
         } else {
-            $sql2 = $sql->groupBy(DB::raw('fpid*10000+oid,belong'));
+            $sql2 = $sql->groupBy(DB::raw('fpid*10000+fc.oid,belong'));
         }
         $data = DB::connection('ar')->table(DB::raw("({$sql2->toSql()}) as a"))
             ->groupBy(DB::raw("oid,belong,time,century,gender"))
