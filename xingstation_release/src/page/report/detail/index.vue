@@ -702,33 +702,33 @@ export default {
           trigger: 'axis',
           axisPointer: {
             type: 'shadow'
-          },
-          formatter: function(data) {
-            let male = (
-              parseInt(data[0].value) /
-              (parseInt(data[0].value) + parseInt(data[1].value)) *
-              100
-            ).toFixed(2)
-            let female = (
-              parseInt(data[1].value) /
-              (parseInt(data[0].value) + parseInt(data[1].value)) *
-              100
-            ).toFixed(2)
-            return (
-              data[0].axisValue +
-              ': <br/>' +
-              data[0].marker +
-              data[0].seriesName +
-              ':' +
-              male +
-              '%<br/>' +
-              data[1].marker +
-              data[1].seriesName +
-              ':' +
-              female +
-              '%'
-            )
           }
+          // formatter: function(data) {
+          //   let male = (
+          //     parseInt(data[0].value) /
+          //     (parseInt(data[0].value) + parseInt(data[1].value)) *
+          //     100
+          //   ).toFixed(2)
+          //   let female = (
+          //     parseInt(data[1].value) /
+          //     (parseInt(data[0].value) + parseInt(data[1].value)) *
+          //     100
+          //   ).toFixed(2)
+          //   return (
+          //     data[0].axisValue +
+          //     ': <br/>' +
+          //     data[0].marker +
+          //     data[0].seriesName +
+          //     ':' +
+          //     male +
+          //     '%<br/>' +
+          //     data[1].marker +
+          //     data[1].seriesName +
+          //     ':' +
+          //     female +
+          //     '%'
+          //   )
+          // }
         },
         // legend: {
         //   data: ['男', '女']
@@ -753,12 +753,12 @@ export default {
             barGap: '30%',
             barWidth: '60%',
             stack: '总量',
-            label: {
-              normal: {
-                show: true,
-                position: 'inside'
-              }
-            },
+            // label: {
+            //   normal: {
+            //     show: true,
+            //     position: 'inside'
+            //   }
+            // },
             data: null
           },
           {
@@ -768,7 +768,7 @@ export default {
             label: {
               normal: {
                 show: true,
-                position: 'inside'
+                position: 'top'
               }
             },
             data: null
@@ -1324,12 +1324,6 @@ export default {
                 name: '男',
                 type: 'bar',
                 stack: '总量',
-                label: {
-                  normal: {
-                    show: true,
-                    position: 'inside'
-                  }
-                },
                 data: response.map(r => {
                   return r.count.male
                 })
@@ -1341,7 +1335,23 @@ export default {
                 label: {
                   normal: {
                     show: true,
-                    position: 'inside'
+                    position: 'top',
+                    color: '#000',
+                    fontSize: 16,
+                    formatter: function(data) {
+                      let content = ''
+                      let index = data.dataIndex
+                      let singleSum = parseInt(
+                        parseInt(response[index].count.female) +
+                        parseInt(response[index].count.male)
+                      )
+                      let sum = 0
+                      response.map(r => {
+                        sum += parseInt(r.count.male) + parseInt(r.count.female)
+                      })
+                      let percent = (singleSum / sum * 100).toFixed(1) + '%'
+                      return percent + '\n' + singleSum
+                    }
                   }
                 },
                 data: response.map(r => {
