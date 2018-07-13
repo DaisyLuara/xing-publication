@@ -41,7 +41,7 @@ class ProjectByPointExport extends AbstractExport
         $totalNum = DB::connection('ar')->table('face_count_log as fcl')
             ->join('ar_product_list as apl', 'fcl.belong', '=', 'apl.versionname')
             ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '{$this->startDate}' and '{$this->endDate}' ")
-            ->whereNotIn('fcl.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
+            ->whereNotIn('fcl.oid', [16, 19, 30, 31, 177, 182, 327, 328, 329, 334, 335])
             ->where('fcl.belong', '=', $this->alias)
             ->selectRaw("sum(looknum) as looknum,sum(playernum) as playernum,sum(outnum) as outnum,sum(scannum) as scannum,sum(lovenum) as lovenum")
             ->first();
@@ -64,7 +64,7 @@ class ProjectByPointExport extends AbstractExport
             ->join('avr_official_area as aoa', 'ao.areaid', '=', 'aoa.areaid')
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
             ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '{$this->startDate}' and '{$this->endDate}'")
-            ->whereNotIn('fcl.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
+            ->whereNotIn('fcl.oid', [16, 19, 30, 31, 177, 182, 327, 328, 329, 334, 335])
             ->where('fcl.belong', '=', $this->alias)
             ->groupBy('fcl.oid')
             ->selectRaw("aoa.name as areaName,aom.name as marketName,ao.name as pointName,sum(looknum) as looknum,sum(playernum) as playernum,sum(outnum) as outnum,sum(scannum) as scannum,sum(lovenum) as lovenum")

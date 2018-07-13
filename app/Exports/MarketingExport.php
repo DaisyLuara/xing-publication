@@ -24,7 +24,7 @@ class MarketingExport extends AbstractExport
             ->join('avr_official_market', 'avr_official.marketid', '=', 'avr_official_market.marketid')
             ->where('avr_official_market.marketid', '<>', 15)
             ->whereRaw("date_format(xs_face_count_log.date, '%Y-%m-%d') BETWEEN '{$this->startDate}' AND '{$this->endDate}'")
-            ->whereNotIn('xs_face_count_log.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
+            ->whereNotIn('xs_face_count_log.oid', [16, 19, 30, 31, 177, 182, 327, 328, 329, 334, 335])
             ->groupby('xs_face_count_log.belong')
             ->orderBy('ar_product_list.name')
             ->selectRaw('ar_product_list.name as name,count(xs_face_count_log.oid) as pushNum ,sum(looknum) as lookNum ,sum(playernum7) as playerNum7,sum(playernum20) as playerNum20 ,sum(lovenum) as loveNum,sum(outnum) as outNum,sum(scannum) as scanNum')

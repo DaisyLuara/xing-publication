@@ -41,7 +41,7 @@ class PointDailyAverageExport extends AbstractExport
             ->join('avr_official_area as aoa', 'ao.areaid', '=', 'aoa.areaid')
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
             ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '{$this->startDate}' and '{$this->endDate}' ")
-            ->whereNotIn('fcl.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
+            ->whereNotIn('fcl.oid', [16, 19, 30, 31, 177, 182, 327, 328, 329, 334, 335])
             ->groupBy('fcl.oid')
             ->orderBy('aoa.areaid', 'desc')
             ->orderBy('aom.marketid', 'desc')
