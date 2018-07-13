@@ -11,7 +11,6 @@ class FaceCountController extends Controller
 {
     public function weekRanking(Request $request)
     {
-
         $startDate = $request->start_date;
         $endDate = $request->end_date;
 
