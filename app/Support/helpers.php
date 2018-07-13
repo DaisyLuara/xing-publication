@@ -290,7 +290,7 @@ function mauClean()
         $endClientDate = strtotime($endDate . ' 23:59:59') * 1000;
 
         $sql = DB::connection('ar')->table('face_people_time')
-            ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and playtime >= 7000 and oid not in(16, 19, 30, 31, 335, 334, 329, 328, 327)")
+            ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and playtime >= 7000 and oid not in(16, 19, 30, 31, 177, 182, 327, 328, 329, 334, 335)")
             ->groupBy(DB::raw('fpid * 10000 + oid'))
             ->selectRaw(" * ");
         $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
@@ -318,7 +318,7 @@ function mauCleanByMarket()
 
         $sql = DB::connection('ar')->table('face_people_time as fpt')
             ->join('avr_official as ao', 'fpt.oid', '=', 'ao.oid')
-            ->whereRaw("fpt . clientdate between '$startClientDate' and '$endClientDate' and playtime >= 7000 and fpt . oid not in(16, 19, 30, 31, 335, 334, 329, 328, 327)")
+            ->whereRaw("fpt . clientdate between '$startClientDate' and '$endClientDate' and playtime >= 7000 and fpt . oid not in(16, 19, 30, 31, 177, 182, 327, 328, 329, 334, 335)")
             ->groupBy(DB::raw('ao.marketid,fpid * 10000 + fpt.oid'))
             ->selectRaw("marketid,fpid");
         $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
