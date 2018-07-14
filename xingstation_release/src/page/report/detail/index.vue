@@ -448,13 +448,6 @@ export default {
     chart: ECharts
   },
   data() {
-    // let data = []
-
-    // for (let i = 0; i <= 360; i++) {
-    //   let t = i / 180 * Math.PI
-    //   let r = Math.sin(2 * t) * Math.cos(2 * t)
-    //   data.push([r, i])
-    // }
     return {
       style: {
         chartFont: {
@@ -702,37 +695,38 @@ export default {
           trigger: 'axis',
           axisPointer: {
             type: 'shadow'
+          },
+          formatter: function(data) {
+            let male = (
+              parseInt(data[0].value) /
+              (parseInt(data[0].value) + parseInt(data[1].value)) *
+              100
+            ).toFixed(2)
+            let female = (
+              parseInt(data[1].value) /
+              (parseInt(data[0].value) + parseInt(data[1].value)) *
+              100
+            ).toFixed(2)
+            return (
+              data[0].axisValue +
+              ': <br/>' +
+              data[0].marker +
+              data[0].seriesName +
+              ':' +
+              data[0].value +
+              ' ' +
+              male +
+              '%<br/>' +
+              data[1].marker +
+              data[1].seriesName +
+              ':' +
+              data[1].value +
+              ' ' +
+              female +
+              '%'
+            )
           }
-          // formatter: function(data) {
-          //   let male = (
-          //     parseInt(data[0].value) /
-          //     (parseInt(data[0].value) + parseInt(data[1].value)) *
-          //     100
-          //   ).toFixed(2)
-          //   let female = (
-          //     parseInt(data[1].value) /
-          //     (parseInt(data[0].value) + parseInt(data[1].value)) *
-          //     100
-          //   ).toFixed(2)
-          //   return (
-          //     data[0].axisValue +
-          //     ': <br/>' +
-          //     data[0].marker +
-          //     data[0].seriesName +
-          //     ':' +
-          //     male +
-          //     '%<br/>' +
-          //     data[1].marker +
-          //     data[1].seriesName +
-          //     ':' +
-          //     female +
-          //     '%'
-          //   )
-          // }
         },
-        // legend: {
-        //   data: ['男', '女']
-        // },
         grid: {
           left: '3%',
           right: '4%',
@@ -1343,7 +1337,7 @@ export default {
                       let index = data.dataIndex
                       let singleSum = parseInt(
                         parseInt(response[index].count.female) +
-                        parseInt(response[index].count.male)
+                          parseInt(response[index].count.male)
                       )
                       let sum = 0
                       response.map(r => {
