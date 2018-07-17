@@ -41,6 +41,8 @@ return [
 
     'debug' => env('APP_DEBUG', false),
 
+    'log_level' => env('APP_LOG_LEVEL', 'info'),
+
     /*
     |--------------------------------------------------------------------------
     | Application URL
