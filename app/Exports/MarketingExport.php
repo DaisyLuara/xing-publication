@@ -20,10 +20,13 @@ class MarketingExport extends AbstractExport
     {
         $faceCount = DB::connection('ar')->table('face_count_log')
             ->join('ar_product_list', 'belong', '=', 'versionname')
+            ->join('avr_official', 'face_count_log.oid', '=', 'avr_official.oid')
+            ->join('avr_official_market', 'avr_official.marketid', '=', 'avr_official_market.marketid')
+            ->where('avr_official_market.marketid', '<>', 15)
             ->whereRaw("date_format(face_count_log.date, '%Y-%m-%d') BETWEEN '{$this->startDate}' AND '{$this->endDate}'")
-            ->whereNotIn('oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
+            ->whereNotIn('face_count_log.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
             ->groupby('belong')
-            ->selectRaw('ar_product_list.name as name,count(oid) as pushNum ,sum(looknum) as lookNum ,sum(playernum) as playerNum ,sum(lovenum) as loveNum,sum(outnum) as outNum,sum(scannum) as scanNum')
+            ->selectRaw('ar_product_list.name as name,count(face_count_log.oid) as pushNum ,sum(looknum) as lookNum ,sum(playernum) as playerNum ,sum(lovenum) as loveNum,sum(outnum) as outNum,sum(scannum) as scanNum')
             ->get();
         $data = collect();
         $header1 = ['节目名称', '围观数', '', '活跃用户', '玩家数', '', '会员数', '', '生成数', '扫码数', '扫码率', '1', '2', '5', '7', '10', '20', '合计'];

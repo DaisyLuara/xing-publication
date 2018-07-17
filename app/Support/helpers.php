@@ -3,8 +3,12 @@
 use App\Http\Controllers\Admin\Face\V1\Models\FaceCount;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use App\Models\User;
 use Carbon\Carbon;
+use App\Http\Controllers\Admin\Face\V1\Models\FaceActivePlayerRecord;
+use App\Http\Controllers\Admin\Face\V1\Models\FaceMauRecord;
+use App\Http\Controllers\Admin\Face\V1\Models\FaceCharacterRecord;
+use App\Http\Controllers\Admin\Face\V1\Models\FaceCountRecord;
+use App\Models\User;
 
 /**
  *求两个已知经纬度之间的距离,单位为千米
@@ -88,7 +92,10 @@ if (!function_exists('handPointQuery')) {
 
         //按指标查询
         if ($request->index) {
-            $builder->selectRaw("sum(" . $request->index . ") as count");
+            $indexes = explode(',', $request->index);
+            foreach ($indexes as $index) {
+                $builder->selectRaw("sum($index) as $index");
+            }
         }
 
         //BD
@@ -435,7 +442,7 @@ function faceCharacterCountClean()
         $sum9 = " sum(if(century = '0' and gender = 'Male', looknum, 0))    as century0_bnum,";
         $sum10 = " sum(if(century = '0' and gender = 'Female', looknum, 0)) as century0_gnum";
         $sum = $sum1 . $sum2 . $sum3 . $sum4 . $sum5 . $sum6 . $sum7 . $sum8 . $sum9 . $sum10;
-        $data = DB::table(DB::raw("({$sql->toSql()}) as a"))
+        $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
             ->groupBy(DB::raw('oid,belong,times'))
             ->selectRaw("oid,belong,times," . $sum)
             ->get();

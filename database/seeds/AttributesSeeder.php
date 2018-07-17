@@ -24,7 +24,7 @@ class AttributesSeeder extends Seeder
         foreach ($attributes as $attribute) {
             $parentAttribute = Attribute::query()->updateOrCreate(['name' => $attribute['name']], ['name' => $attribute['name'], 'desc' => $attribute['desc']]);
             foreach ($attribute['children'] as $child) {
-                Attribute::query()->updateOrCreate(['name' => $child['name']], ['name' => $child['name'], 'desc' => $child['desc'], 'pid' => $parentAttribute->id]);
+                Attribute::query()->updateOrCreate(['name' => $child['name']], ['name' => $child['name'], 'desc' => $child['desc'], 'parent_id' => $parentAttribute->id]);
             }
         }
 

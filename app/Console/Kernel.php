@@ -2,14 +2,15 @@
 
 namespace App\Console;
 
-use App\Http\Controllers\Admin\Face\V1\Models\FaceCollectRecord;
 use App\Http\Controllers\Admin\WeChat\V1\Models\WeekRanking;
+use App\Jobs\ActivePlayerJob;
+use App\Jobs\CharacterJob;
+use App\Jobs\MauJob;
 use App\Jobs\WeekRankingJob;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use App\Http\Controllers\Admin\Face\V1\Models\FacePeopleTimeRecord;
 
 class Kernel extends ConsoleKernel
 {
@@ -30,11 +31,27 @@ class Kernel extends ConsoleKernel
     {
         //点位排名通知
         $schedule->call(function () {
-            $ranks = $this->getRankingData();
-            foreach ($ranks as $rank) {
-                WeekRankingJob::dispatch($rank);
+            $data = $this->getRankingData();
+            for ($i = 0; $i < count($data); $i++) {
+                WeekRankingJob::dispatch($data[$i])->onQueue('weekRanking');
             }
         })->weekly()->fridays()->at('10:25');
+
+        //活跃玩家清洗
+        $schedule->call(function () {
+            ActivePlayerJob::dispatch()->onQueue('activePlayer');
+        })->daily()->at('10:32');
+
+        //月活玩家清洗(按人和商场去重)
+        $schedule->call(function () {
+            MauJob::dispatch()->onQueue('mau');
+        })->monthlyOn(1, '8:00');
+
+        //时间段与人群特征数据清洗
+        $schedule->call(function () {
+            CharacterJob::dispatch()->onQueue('character');
+        })->daily()->at('8:00');
+
     }
 
 
@@ -52,7 +69,6 @@ class Kernel extends ConsoleKernel
 
     protected function getRankingData()
     {
-
         $startDate = Carbon::now()->addDay(-7)->toDateString();
         $endDate = Carbon::now()->addDay(-1)->toDateString();
 

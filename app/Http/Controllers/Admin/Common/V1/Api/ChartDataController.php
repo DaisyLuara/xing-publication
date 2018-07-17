@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers\Admin\Common\V1\Api;
 
+use App\Http\Controllers\Admin\Face\V1\Models\FaceCharacter;
+use App\Http\Controllers\Admin\Face\V1\Models\FaceCharacterCount;
+use App\Http\Controllers\Admin\Face\V1\Models\XsFaceCountLog;
 use App\Http\Controllers\Admin\Face\V1\Transformer\FaceCountTransformer;
 use App\Http\Controllers\Admin\Common\V1\Request\ChartDataRequest;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceCount;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceLog;
+use function GuzzleHttp\Psr7\str;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -14,6 +18,36 @@ use DB;
 
 class ChartDataController extends Controller
 {
+    protected $ageMapping = [
+        'age10' => '0-10岁',
+        'age18' => '11-18岁',
+        'age30' => '19-30岁',
+        'age40' => '31-40岁',
+        'age60' => '41-60岁',
+        'age61' => '60岁以上',
+    ];
+
+    protected $centuryMapping = [
+        'century00' => '00后',
+        'century90' => '90后',
+        'century80' => '80后',
+        'century70' => '70后',
+    ];
+
+    protected $genderMapping = [
+        'male' => '男',
+        'female' => '女',
+    ];
+
+    protected $totalMapping = [
+        'exposurenum' => '曝光人数',//围观人数(todo)
+        'looknum' => '大屏围观参与人数',
+        'playernum7' => '大屏活跃玩家人数', //互动超过7秒(todo)
+        'playernum' => '大屏铁杆玩家人数',//游戏玩结束
+        'lovenum' => '扫码拉新会员注册总数',//最终转化
+        'palyertime' => '人均互动有效时长',//推算
+    ];
+
     public function index(Request $request)
     {
 
@@ -38,12 +72,15 @@ class ChartDataController extends Controller
     {
         $faceLogQuery = FaceLog::query();
         $faceCountQuery = FaceCount::query();
+        $faceCharacterQuery = FaceCharacter::query();
+        $faceCharacterCount = FaceCharacterCount::query();
+        $xsFaceCountLog = XsFaceCountLog::query();
         switch ($request->id) {
             case 1:
                 $data = $this->getLookNumber($request, $faceLogQuery);
                 break;
             case 2:
-                $data = $this->getTopPoints($request, $faceCountQuery);
+                $data = $this->getTopPoints($request, $faceLogQuery);
                 break;
             case 3:
                 $data = $this->getTopProjects($request, $faceCountQuery);
@@ -55,10 +92,16 @@ class ChartDataController extends Controller
                 $data = $this->getGender($request, $faceLogQuery);
                 break;
             case 6:
-                $data = $this->getTotal($request, $faceCountQuery);
+                $data = $this->getTotal($request, $xsFaceCountLog);
                 break;
             case 7:
-                $data = $this->getTotalByDate($request, $faceCountQuery);
+                $data = $this->getTotalByDate($request, $xsFaceCountLog);
+                break;
+            case 8:
+                $data = $this->getCharacterByTime($request, $faceCharacterCount);
+                break;
+            case 9:
+                $data = $this->getActivePlayerByMonth($request);
                 break;
             default:
                 return null;
@@ -114,23 +157,54 @@ class ChartDataController extends Controller
      */
     private function getAge(ChartDataRequest $request, Builder $query)
     {
-        $this->handleQuery($request, $query);
-        $data = $query->selectRaw('sum(age10b+age10g) as age10,sum(age18b+age18g) as age18,sum(age30b+age30g) as age30,sum(age40b+age40g) as age40,sum(age60b+age60g) as age60,sum(age61b+age61g) as age61')
+        //根据属性查询
+        if ($request->attribute_id) {
+            $this->handleQuery($request, $query, false);
+            return $this->getAgeGroupByAttribute($request->attribute_id, $query);
+        } else {
+            $this->handleQuery($request, $query);
+            return $this->getAgeGroupByGender($query);
+        }
+
+    }
+
+    private function getAgeGroupByAttribute($attribute_id, Builder $query)
+    {
+        $table = $query->getModel()->getTable();
+        $data = $query->selectRaw('sum(age10b+age10g+age18b+age18g) as century00,sum(age30b+age30g) as century90,sum(age40b+age40g) as century80,sum(age60b+age60g) as century70')
+            ->join('xs_point_attributes', 'xs_point_attributes.point_id', '=', "$table.oid")
+            ->where('xs_point_attributes.attribute_id', '=', $attribute_id)
             ->where('face_log.type', '=', 'looker')
             ->first()->toArray();
         $output = [];
-        $ageMapping = [
-            'age10' => '0-10岁',
-            'age18' => '11-18岁',
-            'age30' => '19-30岁',
-            'age40' => '31-40岁',
-            'age60' => '41-60岁',
-            'age61' => '60岁以上',
-        ];
         foreach ($data as $key => $value) {
             $output[] = [
                 'count' => $value,
-                'display_name' => $ageMapping[$key],
+                'display_name' => $this->centuryMapping[$key],
+            ];
+        }
+        return $output;
+
+    }
+
+    private function getAgeGroupByGender(Builder $query)
+    {
+        $data = $query->selectRaw('sum(age10b) as age10_male ,sum(age10g) as age10_female,sum(age18b) as age18_male,sum(age18g) as age18_female,sum(age30b) as age30_male,sum(age30g) as age30_female,sum(age40b) as age40_male,sum(age40g) as age40_female,sum(age60b) as age60_male,sum(age60g) as age60_female,sum(age61b) as age61_male,sum(age61g) as age61_female')
+            ->where('face_log.type', '=', 'looker')
+            ->first()->toArray();
+        $output = [];
+
+
+        $merge = [];
+        foreach ($data as $key => $value) {
+            $keys = explode('_', $key);
+            $merge[$keys[0]][$keys[1]] = $value;
+        }
+
+        foreach ($merge as $key => $value) {
+            $output[] = [
+                'count' => $value,
+                'display_name' => $this->ageMapping[$key],
             ];
         }
         return $output;
@@ -145,21 +219,39 @@ class ChartDataController extends Controller
     private function getGender(ChartDataRequest $request, Builder $query)
     {
         $this->handleQuery($request, $query);
-        $data = $query->selectRaw("sum(gnum) as female,sum(bnum) as male")
-            ->where('face_log.type', '=', 'looker')
-            ->first()->toArray();
+        if ($request->gender) {
+            $mapping = $this->ageMapping;
+            $data = $this->getGenderGroupByAge($request->gender, $query);
+        } else {
+            $mapping = $this->genderMapping;
+
+            $data = $this->getGenderAll($query);
+        }
+
         $output = [];
-        $genderMapping = [
-            'male' => '男',
-            'female' => '女',
-        ];
         foreach ($data as $key => $value) {
             $output[] = [
                 'count' => $value,
-                'display_name' => $genderMapping[$key],
+                'display_name' => $mapping[$key],
             ];
         }
         return $output;
+    }
+
+    private function getGenderAll(Builder $query)
+    {
+        return $query->selectRaw("sum(gnum) as female,sum(bnum) as male")
+            ->where('face_log.type', '=', 'looker')
+            ->first()->toArray();
+    }
+
+    private function getGenderGroupByAge(string $gender, Builder $query)
+    {
+        $suffix = $gender == 'male' ? 'b' : 'g';
+        return $query->selectRaw("sum(age10$suffix) as age10,sum(age18$suffix) as age18,sum(age30$suffix) as age30,sum(age40$suffix) as age40,sum(age60$suffix) as age60,sum(age61$suffix) as age61")
+            ->where('face_log.type', '=', 'looker')
+            ->first()->toArray();
+
     }
 
     /**
@@ -170,18 +262,24 @@ class ChartDataController extends Controller
      */
     private function getTopPoints(ChartDataRequest $request, Builder $query)
     {
+
         $this->handleQuery($request, $query, true, true);
-        $data = $query->selectRaw("sum(looknum) AS count")
-            ->groupBy('face_count_log.oid')
-            ->orderBy('count', 'desc')
+        $table = $query->getModel()->getTable();
+        $data = $query->selectRaw("sum($table.allnum) AS total,sum($table.gnum) as female_count,sum($table.bnum) as male_count")
+            ->groupBy("$table.oid")
+            ->orderBy('total', 'desc')
             ->limit(10)
             ->get();
 
         $output = [];
         $data->each(function ($item) use (&$output) {
             $output[] = [
-                'count' => $item->count,
-                'display_name' => $item->market_name . ' ' . $item->point_name
+                'count' => [
+                    'male' => $item->male_count,
+                    'female' => $item->female_count,
+                    'total' => $item->total,
+                ],
+                'display_name' => $item->area_name . $item->market_name . ' ' . $item->name,
             ];
         });
 
@@ -189,7 +287,7 @@ class ChartDataController extends Controller
     }
 
     /**
-     * 节目排行榜
+     * 点位排行榜(根据业态排行)
      * @param $startDate
      * @param $endDate
      * @return array
@@ -197,17 +295,22 @@ class ChartDataController extends Controller
     private function getTopProjects(ChartDataRequest $request, Builder $query)
     {
         $this->handleQuery($request, $query, false);
-        $data = $query->selectRaw("sum(looknum) AS count,ar_product_list.name")
-            ->groupBy('belong')
+        $table = $query->getModel()->getTable();
+        $data = $query->selectRaw("sum(looknum) AS count,xs_attributes.name,xs_attributes.id as attribute_id")
+            ->join('xs_point_attributes', 'xs_point_attributes.point_id', '=', "$table.oid")
+            ->join('xs_attributes', 'xs_attributes.id', '=', 'xs_point_attributes.attribute_id')
+            ->where('xs_attributes.parent_id', '=', 5)
+            ->groupBy('xs_attributes.id')
             ->orderBy('count', 'desc')
-            ->limit(10)
+            ->limit(5)
             ->get();
 
         $output = [];
         $data->each(function ($item) use (&$output) {
             $output[] = [
                 'count' => $item->count,
-                'display_name' => $item->name
+                'display_name' => $item->name,
+                'attribute_id' => $item->attribute_id,
             ];
         });
 
@@ -223,22 +326,13 @@ class ChartDataController extends Controller
     private function getTotal(ChartDataRequest $request, Builder $query)
     {
         $this->handleQuery($request, $query);
-        $data = $query->selectRaw("sum(looknum) AS looknum,sum(playernum) AS playernum,sum(outnum)  AS outnum,sum(outnum)  AS scannum,sum(scannum)  AS scannum,sum(lovenum)  AS lovenum")
+        $data = $query->selectRaw("sum(looknum) AS looknum,sum(playernum7)as playernum7,sum(playernum) AS playernum,sum(lovenum)  AS lovenum")
             ->first()->toArray();
         $output = [];
-
-        $totalMapping = [
-            'looknum' => '围观总数',
-            'playernum' => '互动总数',
-            'lovenum' => '扫码拉新',
-            'outnum' => '生成数',
-            'scannum' => '扫码数',
-        ];
-
         foreach ($data as $key => $value) {
             $output[] = [
                 'count' => $value,
-                'display_name' => $totalMapping[$key],
+                'display_name' => $this->totalMapping[$key],
                 'index' => $key,
             ];
         }
@@ -260,7 +354,7 @@ class ChartDataController extends Controller
         $format = $days <= 31 ? '%Y-%m-%d' : '%Y-%m';
 
         $this->handleQuery($request, $query);
-        return $query->selectRaw("date_format(face_count_log.date,'$format') as display_name")
+        return $query->selectRaw("date_format(xs_face_count_log . date, '$format') as display_name")
             ->groupBy('display_name')
             ->get();
 
@@ -272,9 +366,9 @@ class ChartDataController extends Controller
             ->selectRaw("sum(looknum) AS looknum,
                          sum(playernum) AS playernum,
                          sum(lovenum)  AS lovenum,
-                         max(face_count_log.clientdate) as max,
-                         min(face_count_log.clientdate) as min,
-                         face_count_log.oid")
+                         max(face_count_log . clientdate) as max,
+                         min(face_count_log . clientdate) as min,
+                         face_count_log . oid")
             ->where('belong', '=', 'all')
             ->groupBy('face_count_log.oid')
             ->orderBy('looknum', 'desc')
@@ -290,6 +384,90 @@ class ChartDataController extends Controller
         return $output;
     }
 
+    /**
+     * 获取时间段与人群特征
+     * @param ChartDataRequest $request
+     * @param Builder $query
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|static[]
+     */
+    public function getCharacterByTime(ChartDataRequest $request, Builder $query)
+    {
+        $startDate = $request->start_date;
+        $endDate = $request->end_date;
+        $startClientDate = strtotime($startDate) * 1000;
+        $endClientDate = strtotime($endDate) * 1000;
+
+        $this->handleQuery($request, $query);
+        $data = $query->whereRaw("xs_face_character_count.clientdate between '$startClientDate' and '$endClientDate'")
+            ->whereNotIn('xs_face_character_count.oid', ['16', '19', '30', '31', '335', '334', '329', '328', '327'])
+            ->groupBy('time')
+            ->selectRaw("time,sum(century00_bnum + century00_gnum) as century00,sum(century90_bnum + century90_gnum) as century90,sum(century80_bnum + century80_gnum) as century80,sum(century70_bnum + century70_gnum) as century70")
+            ->selectRaw("sum(century00_gnum+century90_gnum+century80_gnum+century70_gnum) as gnum,sum(century00_gnum+century00_bnum+century90_gnum+century90_bnum+century80_gnum+century80_bnum+century70_gnum+century70_bnum) as totalnum")
+            ->get();
+
+        $times = ['10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', '24:00'];
+        $output = [];
+        for ($i = 0; $i < 8; $i++) {
+            $output[] = [
+                'display_name' => $times[$i],
+                'rate' => 0,
+                'count' =>
+                    [
+                        'century00' => 0,
+                        'century90' => 0,
+                        'century80' => 0,
+                        'century70' => 0,
+                    ]
+            ];
+        }
+        foreach ($data as $index => $item) {
+            if ($item->time = $times[$index]) {
+                $output[$index]['count'] = [
+                    'century00' => $item->century00,
+                    'century90' => $item->century90,
+                    'century80' => $item->century80,
+                    'century70' => $item->century70,
+                ];
+                $output[$index]['rate'] = round($item->gnum / $item->totalnum, 3) * 100;
+            }
+        }
+        return $output;
+    }
+
+    /**
+     * 月活用户指数MAU
+     * @param ChartDataRequest $request
+     * @param Builder $query
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|static[]
+     */
+    public function getActivePlayerByMonth(ChartDataRequest $request)
+    {
+        $startDate = $request->start_date;
+        $endDate = $request->end_date;
+        $startMonth = (new Carbon($startDate))->format('Y-m');
+        $endMonth = (new Carbon($endDate))->format('Y-m');
+        $sql = DB::connection('ar')->table('xs_face_mau_market as fptmm')
+            ->join('avr_official_market as aom', 'fptmm.marketid', '=', 'aom.marketid')
+            ->whereRaw("date_format(fptmm.date,'%Y-%m') between '$startMonth' and '$endMonth'")
+            ->groupBy('fptmm.marketid')
+            ->orderBy('playernum', 'desc')
+            ->selectRaw("aom.name as name,sum(active_player) as playernum");
+
+        $marketnum = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
+            ->count();
+        $data = $sql->limit(15)->get();
+        $output['market_num'] = $marketnum;
+        $output['data'] = [];
+        foreach ($data as $item) {
+            $output['data'][] = [
+                'display_name' => $item->name,
+                'count' => $item->playernum
+            ];
+        }
+
+        return $output;
+    }
+
     private function handleQuery(Request $request, Builder $query, $selectByAlias = true, bool $selectPoint = false)
     {
         $user = $this->user();
@@ -300,10 +478,11 @@ class ChartDataController extends Controller
         //节目搜索-注意业务逻辑
         if ($selectByAlias) {
             $alias = $request->alias ? $request->alias : 'all';
-            $query->where("belong", '=', $alias);
+            $query->where("$table.belong", '=', $alias);
         } else {
             $query->join('ar_product_list', 'ar_product_list.versionname', '=', "$table.belong");
         }
+
     }
 
 }
