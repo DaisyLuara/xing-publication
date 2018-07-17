@@ -85,7 +85,7 @@ class ChartDataController extends Controller
                 $data = $this->getTopProjects($request, $faceCountQuery);
                 break;
             case 4:
-                $data = $this->getAge($request, $faceLogQuery);
+                $data = $this->getAge($request, $faceLogQuery, $faceCharacterCount);
                 break;
             case 5:
                 $data = $this->getGender($request, $faceLogQuery);
@@ -154,12 +154,12 @@ class ChartDataController extends Controller
      * @param $endDate
      * @return array
      */
-    private function getAge(ChartDataRequest $request, Builder $query)
+    private function getAge(ChartDataRequest $request, Builder $query, Builder $query2)
     {
         //根据属性查询
         if ($request->attribute_id) {
-            $this->handleQuery($request, $query, false);
-            return $this->getAgeGroupByAttribute($request->attribute_id, $query);
+            $this->handleQuery($request, $query2, false);
+            return $this->getAgeGroupByAttribute($request->attribute_id, $query2);
         } else {
             $this->handleQuery($request, $query);
             return $this->getAgeGroupByGender($query);
@@ -170,10 +170,9 @@ class ChartDataController extends Controller
     private function getAgeGroupByAttribute($attribute_id, Builder $query)
     {
         $table = $query->getModel()->getTable();
-        $data = $query->selectRaw('sum(age10b+age10g+age18b+age18g) as century00,sum(age30b+age30g) as century90,sum(age40b+age40g) as century80,sum(age60b+age60g) as century70')
+        $data = $query->selectRaw('sum(century00_bnum+century00_gnum) as century00,sum(century90_bnum+century90_gnum) as century90,sum(century80_bnum+century80_gnum) as century80,sum(century70_bnum+century70_gnum) as century70')
             ->join('xs_point_attributes', 'xs_point_attributes.point_id', '=', "$table.oid")
             ->where('xs_point_attributes.attribute_id', '=', $attribute_id)
-            ->where('face_log.type', '=', 'looker')
             ->first()->toArray();
         $output = [];
         foreach ($data as $key => $value) {
