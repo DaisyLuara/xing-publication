@@ -39,18 +39,18 @@ class Kernel extends ConsoleKernel
 
         //活跃玩家清洗
         $schedule->call(function () {
-            ActivePlayerJob::dispatch()->onQueue('activePlayer');
-        })->daily()->at('10:32');
+            ActivePlayerJob::dispatch()->onQueue('data-clean');
+        })->daily()->at('7:00');
 
         //月活玩家清洗(按人和商场去重)
         $schedule->call(function () {
-            MauJob::dispatch()->onQueue('mau');
-        })->monthlyOn(1, '8:00');
+            MauJob::dispatch()->onQueue('data-clean');
+        })->monthlyOn(1, '7:00');
 
         //时间段与人群特征数据清洗
         $schedule->call(function () {
-            CharacterJob::dispatch()->onQueue('character');
-        })->daily()->at('8:00');
+            CharacterJob::dispatch()->onQueue('data-clean');
+        })->daily()->at('7:00');
 
     }
 
