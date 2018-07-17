@@ -33,7 +33,7 @@ class ProjectExport extends AbstractExport
             ->join('avr_official', 'face_count_log.oid', '=', 'avr_official.oid')
             ->join('avr_official_area', 'avr_official.areaid', '=', 'avr_official_area.areaid')
             ->join('avr_official_market', 'avr_official.marketid', '=', 'avr_official_market.marketid')
-            ->whereRaw("date_format(face_count_log.date, '%Y-%m') BETWEEN '$this->start_date' AND '$this->end_date' and avr_official.oid not in ('16', '19', '30', '31', '335', '334', '329', '328', '327')")
+            ->whereRaw("date_format(face_count_log.date, '%Y-%m') BETWEEN '$this->start_date' AND '$this->end_date' and avr_official.oid not in ('16', '19', '30', '31', '177','182','327','328','329','334','335')")
             ->groupby(DB::raw("belong,date_format(face_count_log.date,'%Y-%m')"))
             ->selectRaw("ar_product_list.name as projectName,date_format(face_count_log.date,'%Y-%m') as date, sum(looknum) as lookNum ,sum(playernum) as playerNum ,sum(lovenum) as loveNum,sum(outnum) as outNum,sum(scannum) as scanNum");
 

@@ -149,13 +149,14 @@ function activePlayerClean()
         //按所有人去重 belong='all'
         $sql1 = [];
         for ($i = 0; $i < count($timeArray); $i++) {
-            $sql = DB::connection('ar')->table('face_people_time')
-                ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and fpid>0 and playtime>='$timeArray[$i]000'")
-                ->selectRaw("oid ");
-            if ($date < '2018-07-01') {
-                $sql = $sql->groupBy(DB::raw('fpid*100+oid'));
+            $sql = DB::connection('ar')->table('face_people_time as fpt')
+                ->join('avr_official as ao','ao.oid','=','fpt.oid')
+                ->whereRaw("fpt.clientdate between '$startClientDate' and '$endClientDate' and fpid>0 and playtime>='$timeArray[$i]000'")
+                ->selectRaw("fpt.oid as oid");
+            if ($date <= '2018-07-01') {
+                $sql = $sql->groupBy(DB::raw('fpid*100+fpt.oid'));
             } else {
-                $sql = $sql->groupBy(DB::raw('fpid*10000+oid'));
+                $sql = $sql->groupBy(DB::raw('fpid*10000+fpt.oid'));
             }
 
             $sql1[] = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a" . $timeArray[$i]))
@@ -178,13 +179,14 @@ function activePlayerClean()
         $sql2 = [];
         for ($i = 0; $i < count($timeArray); $i++) {
 
-            $sql = DB::connection('ar')->table('face_people_time')
-                ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and fpid>0 and playtime>='$timeArray[$i]000'")
-                ->selectRaw("oid,belong");
-            if ($date < '2018-07-01') {
-                $sql = $sql->groupBy(DB::raw('fpid*100+oid,belong'));
+            $sql = DB::connection('ar')->table('face_people_time as fpt')
+                ->join('avr_official as ao','ao.oid','=','fpt.oid')
+                ->whereRaw("fpt.clientdate between '$startClientDate' and '$endClientDate' and fpid>0 and playtime>='$timeArray[$i]000'")
+                ->selectRaw("fpt.oid as oid,belong");
+            if ($date <= '2018-07-01') {
+                $sql = $sql->groupBy(DB::raw('fpid*100+fpt.oid,belong'));
             } else {
-                $sql = $sql->groupBy(DB::raw('fpid*10000+oid,belong'));
+                $sql = $sql->groupBy(DB::raw('fpid*10000+fpt.oid,belong'));
             }
             $sql2[] = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a" . $timeArray[$i]))
                 ->groupBy(DB::raw("oid" . $timeArray[$i] . ",belong" . $timeArray[$i]))
@@ -289,10 +291,11 @@ function mauClean()
         $startClientDate = strtotime($startDate . ' 00:00:00') * 1000;
         $endClientDate = strtotime($endDate . ' 23:59:59') * 1000;
 
-        $sql = DB::connection('ar')->table('face_people_time')
-            ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and playtime >= 7000 and oid not in(16, 19, 30, 31, 335, 334, 329, 328, 327)")
-            ->groupBy(DB::raw('fpid * 10000 + oid'))
-            ->selectRaw(" * ");
+        $sql = DB::connection('ar')->table('face_people_time as fpt')
+            ->join('avr_official as ao', 'fpt.oid', '=', 'ao.oid')
+            ->whereRaw("fpt.clientdate between '$startClientDate' and '$endClientDate' and playtime >= 7000 and fpt.oid not in(16, 19, 30, 31, 177, 182, 327, 328, 329, 334, 335)")
+            ->groupBy(DB::raw('fpid * 10000 + fpt.oid'))
+            ->selectRaw(" fpid ");
         $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
             ->selectRaw("count(*) as playernum")
             ->first();
@@ -318,7 +321,7 @@ function mauCleanByMarket()
 
         $sql = DB::connection('ar')->table('face_people_time as fpt')
             ->join('avr_official as ao', 'fpt.oid', '=', 'ao.oid')
-            ->whereRaw("fpt . clientdate between '$startClientDate' and '$endClientDate' and playtime >= 7000 and fpt . oid not in(16, 19, 30, 31, 335, 334, 329, 328, 327)")
+            ->whereRaw("fpt . clientdate between '$startClientDate' and '$endClientDate' and playtime >= 7000 and fpt . oid not in(16, 19, 30, 31, 177, 182, 327, 328, 329, 334, 335)")
             ->groupBy(DB::raw('ao.marketid,fpid * 10000 + fpt.oid'))
             ->selectRaw("marketid,fpid");
         $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
@@ -356,16 +359,17 @@ function faceCharacterClean()
         $century70 = "when age > 38 and age <= 48 then '70' ";
         $century = $century00 . $century90 . $century80 . $century70;
 
-        $sql = DB::connection('ar')->table('face_collect')
-            ->selectRaw("date_format(concat(date(date), ' ', hour(date), ':', floor(minute(date) / 30) * 30), '%Y-%m-%d %H:%i') as time,case " . $century . "else 0 end as century,gender,oid,belong")
-            ->whereRaw("clientdate between '$startDate' and '$endDate' and fpid > 0 and type = 'play' ")
-            ->orderBy('isold');
+        $sql = DB::connection('ar')->table('face_collect as fc')
+            ->join('avr_official as ao', 'ao.oid', '=', 'fc.oid')
+            ->selectRaw("date_format(concat(date(fc.date), ' ', hour(fc.date), ':', floor(minute(fc.date) / 30) * 30), '%Y-%m-%d %H:%i') as time,case " . $century . "else 0 end as century,gender,fc.oid as oid,belong")
+            ->whereRaw("fc.clientdate between '$startDate' and '$endDate' and fpid > 0 and fc.type = 'play' ")
+            ->orderBy('isold','desc');
 
         //按所有人去重 belong='all'
-        if ($date < '2018-07-01') {
-            $sql1 = $sql->groupBy(DB::raw('fpid*100+oid'));
+        if ($date <= '2018-07-01') {
+            $sql1 = $sql->groupBy(DB::raw('fpid*100+fc.oid'));
         } else {
-            $sql1 = $sql->groupBy(DB::raw('fpid*10000+oid'));
+            $sql1 = $sql->groupBy(DB::raw('fpid*10000+fc.oid'));
         }
         $allData = DB::connection('ar')->table(DB::raw("({$sql1->toSql()}) as a"))
             ->groupBy(DB::raw("oid,time,century,gender"))
@@ -374,10 +378,10 @@ function faceCharacterClean()
             ->get();
 
         //按节目去重
-        if ($date < '2018-07-01') {
-            $sql2 = $sql->groupBy(DB::raw('fpid*100+oid,belong'));
+        if ($date <= '2018-07-01') {
+            $sql2 = $sql->groupBy(DB::raw('fpid*100+fc.oid,belong'));
         } else {
-            $sql2 = $sql->groupBy(DB::raw('fpid*10000+oid,belong'));
+            $sql2 = $sql->groupBy(DB::raw('fpid*10000+fc.oid,belong'));
         }
         $data = DB::connection('ar')->table(DB::raw("({$sql2->toSql()}) as a"))
             ->groupBy(DB::raw("oid,belong,time,century,gender"))

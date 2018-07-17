@@ -11,6 +11,6 @@ class ExceptPointsScope implements Scope
     public function apply(Builder $builder, Model $model)
     {
         $table = $model->getTable();
-        $builder->whereNotIn("$table.oid", [16, 19, 30, 31, 335, 334, 329, 328, 327]);
+        $builder->whereNotIn("$table.oid", [16, 19, 30, 31, 177, 182, 327, 328, 329, 334, 335]);
     }
 }

@@ -448,13 +448,6 @@ export default {
     chart: ECharts
   },
   data() {
-    // let data = []
-
-    // for (let i = 0; i <= 360; i++) {
-    //   let t = i / 180 * Math.PI
-    //   let r = Math.sin(2 * t) * Math.cos(2 * t)
-    //   data.push([r, i])
-    // }
     return {
       style: {
         chartFont: {
@@ -720,19 +713,20 @@ export default {
               data[0].marker +
               data[0].seriesName +
               ':' +
+              data[0].value +
+              ' ' +
               male +
               '%<br/>' +
               data[1].marker +
               data[1].seriesName +
               ':' +
+              data[1].value +
+              ' ' +
               female +
               '%'
             )
           }
         },
-        // legend: {
-        //   data: ['男', '女']
-        // },
         grid: {
           left: '3%',
           right: '4%',
@@ -753,12 +747,12 @@ export default {
             barGap: '30%',
             barWidth: '60%',
             stack: '总量',
-            label: {
-              normal: {
-                show: true,
-                position: 'inside'
-              }
-            },
+            // label: {
+            //   normal: {
+            //     show: true,
+            //     position: 'inside'
+            //   }
+            // },
             data: null
           },
           {
@@ -768,7 +762,7 @@ export default {
             label: {
               normal: {
                 show: true,
-                position: 'inside'
+                position: 'top'
               }
             },
             data: null
@@ -1324,12 +1318,6 @@ export default {
                 name: '男',
                 type: 'bar',
                 stack: '总量',
-                label: {
-                  normal: {
-                    show: true,
-                    position: 'inside'
-                  }
-                },
                 data: response.map(r => {
                   return r.count.male
                 })
@@ -1341,7 +1329,23 @@ export default {
                 label: {
                   normal: {
                     show: true,
-                    position: 'inside'
+                    position: 'top',
+                    color: '#000',
+                    fontSize: 16,
+                    formatter: function(data) {
+                      let content = ''
+                      let index = data.dataIndex
+                      let singleSum = parseInt(
+                        parseInt(response[index].count.female) +
+                          parseInt(response[index].count.male)
+                      )
+                      let sum = 0
+                      response.map(r => {
+                        sum += parseInt(r.count.male) + parseInt(r.count.female)
+                      })
+                      let percent = (singleSum / sum * 100).toFixed(1) + '%'
+                      return percent + '\n' + singleSum
+                    }
                   }
                 },
                 data: response.map(r => {

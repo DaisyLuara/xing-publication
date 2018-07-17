@@ -72,7 +72,6 @@ class ChartDataController extends Controller
     {
         $faceLogQuery = FaceLog::query();
         $faceCountQuery = FaceCount::query();
-        $faceCharacterQuery = FaceCharacter::query();
         $faceCharacterCount = FaceCharacterCount::query();
         $xsFaceCountLog = XsFaceCountLog::query();
         switch ($request->id) {
@@ -399,7 +398,6 @@ class ChartDataController extends Controller
 
         $this->handleQuery($request, $query);
         $data = $query->whereRaw("xs_face_character_count.clientdate between '$startClientDate' and '$endClientDate'")
-            ->whereNotIn('xs_face_character_count.oid', ['16', '19', '30', '31', '335', '334', '329', '328', '327'])
             ->groupBy('time')
             ->selectRaw("time,sum(century00_bnum + century00_gnum) as century00,sum(century90_bnum + century90_gnum) as century90,sum(century80_bnum + century80_gnum) as century80,sum(century70_bnum + century70_gnum) as century70")
             ->selectRaw("sum(century00_gnum+century90_gnum+century80_gnum+century70_gnum) as gnum,sum(century00_gnum+century00_bnum+century90_gnum+century90_bnum+century80_gnum+century80_bnum+century70_gnum+century70_bnum) as totalnum")

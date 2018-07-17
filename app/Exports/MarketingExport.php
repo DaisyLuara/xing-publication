@@ -18,20 +18,21 @@ class MarketingExport extends AbstractExport
 
     public function collection()
     {
-        $faceCount = DB::connection('ar')->table('face_count_log')
+        $faceCount = DB::connection('ar')->table('xs_face_count_log')
             ->join('ar_product_list', 'belong', '=', 'versionname')
-            ->join('avr_official', 'face_count_log.oid', '=', 'avr_official.oid')
+            ->join('avr_official', 'xs_face_count_log.oid', '=', 'avr_official.oid')
             ->join('avr_official_market', 'avr_official.marketid', '=', 'avr_official_market.marketid')
             ->where('avr_official_market.marketid', '<>', 15)
-            ->whereRaw("date_format(face_count_log.date, '%Y-%m-%d') BETWEEN '{$this->startDate}' AND '{$this->endDate}'")
-            ->whereNotIn('face_count_log.oid', [16, 19, 30, 31, 335, 334, 329, 328, 327])
-            ->groupby('belong')
-            ->selectRaw('ar_product_list.name as name,count(face_count_log.oid) as pushNum ,sum(looknum) as lookNum ,sum(playernum) as playerNum ,sum(lovenum) as loveNum,sum(outnum) as outNum,sum(scannum) as scanNum')
+            ->whereRaw("date_format(xs_face_count_log.date, '%Y-%m-%d') BETWEEN '{$this->startDate}' AND '{$this->endDate}'")
+            ->whereNotIn('xs_face_count_log.oid', [16, 19, 30, 31, 177, 182, 327, 328, 329, 334, 335])
+            ->groupby('xs_face_count_log.belong')
+            ->orderBy('ar_product_list.name')
+            ->selectRaw('ar_product_list.name as name,count(xs_face_count_log.oid) as pushNum ,sum(looknum) as lookNum ,sum(playernum7) as playerNum7,sum(playernum20) as playerNum20 ,sum(lovenum) as loveNum,sum(outnum) as outNum,sum(scannum) as scanNum')
             ->get();
         $data = collect();
-        $header1 = ['节目名称', '围观数', '', '活跃用户', '玩家数', '', '会员数', '', '生成数', '扫码数', '扫码率', '1', '2', '5', '7', '10', '20', '合计'];
-        $header2 = ['', '总数', '平均数', '总数', '总数', '平均数', '总数', '平均数', '', '', '', '刷脸', '活跃用户', '大玩家', '生成数', '扫码', '会员', ''];
-        $header3 = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+        $header1 = ['节目名称', 'CPF', '', 'oCPF', '', 'CPR', '', '生成数', 'CPA', '扫码率', 'CPL', '', '1', '2', '5', '4', '10', '20', '合计'];
+        $header2 = ['', '总数', '平均数', '总数', '平均数', '总数', '平均数', '', '', '', '总数', '平均数', 'CPF', 'oCPF', 'CPR', '生成数', 'CPA', 'CPL', ''];
+        $header3 = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
         $data->push($header1);
         $data->push($header2);
         $data->push($header3);
@@ -41,28 +42,28 @@ class MarketingExport extends AbstractExport
                 'name' => $item['name'],
                 'lookNum' => $item['lookNum'],
                 'look_average' => round($item['lookNum'] / $item['pushNum'], 0),
-                'activeNum' => ($item['playerNum'] * 2 > $item['lookNum']) ? $item['lookNum'] : $item['playerNum'] * 2,
-                'playerNum' => $item['playerNum'],
-                'player_average' => round(($item['playerNum'] / $item['pushNum']), 0),
-                'loveNum' => $item['loveNum'],
-                'love_average' => round(($item['loveNum'] / $item['pushNum']), 0),
+                'player7' => $item['playerNum7'] ? $item['playerNum7'] : 0,
+                'player7_average' => round(($item['playerNum7'] / $item['pushNum']), 0),
+                'player20' => $item['playerNum20'] ? $item['playerNum20'] : 0,
+                'player20_average' => round(($item['playerNum20'] / $item['pushNum']), 0),
                 'outNum' => $item['outNum'],
                 'scanNum' => $item['scanNum'],
                 'rate' => (round(($item['outNum'] == 0) ? 0 : $item['scanNum'] / $item['outNum'], 2) * 100) . '%',
-
+                'loveNum' => $item['loveNum'],
+                'love_average' => round(($item['loveNum'] / $item['pushNum']), 0),
             ];
             $faceMoney = round($item['lookNum'] * 0.01, 0);
-            $activeMoney = round($item['activeNum'] * 0.02, 0);
-            $playerMoney = round($item['playerNum'] * 0.05, 0);
-            $outMoney = round($item['outNum'] * 0.07, 0);
+            $player7Money = round($item['player7'] * 0.02, 0);
+            $player20Money = round($item['player20'] * 0.05, 0);
+            $outMoney = round($item['outNum'] * 0.04, 0);
             $scanMoney = round($item['scanNum'] * 0.1, 0);
             $loveMoney = round($item['loveNum'] * 0.2, 0);
-            $totalMoney = $faceMoney + $activeMoney + $playerMoney + $outMoney + $scanMoney + $loveMoney;
+            $totalMoney = $faceMoney + $player7Money + $player20Money + $outMoney + $scanMoney + $loveMoney;
 
 
             $item['face_money'] = $faceMoney;
-            $item['active_money'] = $activeMoney;
-            $item['player_money'] = $playerMoney;
+            $item['playerNum7_money'] = $player7Money;
+            $item['playerNum20_money'] = $player20Money;
             $item['out_money'] = $outMoney;
             $item['scan_money'] = $scanMoney;
             $item['love_money'] = $loveMoney;
@@ -78,17 +79,23 @@ class MarketingExport extends AbstractExport
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $cellArray = ['A1:A3', 'B1:C1', 'B2:B3', 'C2:C3', 'D2:D3', 'E1:F1', 'E2:E3', 'F2:F3', 'G1:H1', 'G2:G3', 'H2:H3', 'I1:I3', 'J1:J3', 'K1:K3', 'L2:L3', 'M2:M3', 'N2:N3', 'O2:O3', 'P2:P3', 'Q2:Q3', 'R1:R3'];
+                $cellArray = [
+                    'A1:A3', 'B1:C1', 'D1:E1', 'F1:G1', 'K1:L1',
+                    'B2:B3', 'C2:C3', 'D2:D3', 'E2:E3', 'F2:F3',
+                    'G2:G3', 'H1:H3', 'I1:I3', 'J1:J3', 'K2:K3',
+                    'L2:L3', 'M2:M3', 'N2:N3', 'O2:O3', 'P2:P3',
+                    'Q2:Q3', 'R2:R3', 'S1:S3'
+                ];
                 $event->sheet->getDelegate()->setMergeCells($cellArray);
 
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:R' . $this->data->count())
+                    ->getStyle('A1:S' . $this->data->count())
                     ->getAlignment()
                     ->setVertical(Alignment::VERTICAL_CENTER)
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:R2')
+                    ->getStyle('A1:S3')
                     ->applyFromArray([
                         'font' => [
                             'bold' => 'true'
@@ -96,7 +103,7 @@ class MarketingExport extends AbstractExport
                     ]);
 
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:R' . $this->data->count())
+                    ->getStyle('A1:S' . $this->data->count())
                     ->applyFromArray([
                         'borders' => [
                             'allBorders' => [
