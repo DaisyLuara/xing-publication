@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Admin\Face\V1\Transformer;
 
 use App\Http\Controllers\Admin\Face\V1\Models\FaceCount;
+use App\Http\Controllers\Admin\Face\V1\Models\XsFaceCountLog;
 use League\Fractal\TransformerAbstract;
 
 class FaceCountTransformer extends TransformerAbstract
 {
-    public function transform(FaceCount $faceCount)
+    public function transform(XsFaceCountLog $faceCount)
     {
         return [
             'id' => $faceCount->id,
@@ -15,6 +16,7 @@ class FaceCountTransformer extends TransformerAbstract
             'market_name' => $faceCount->market_name,
             'area_name' => $faceCount->area_name,
             'looknum' => $faceCount->looknum,
+            'playernum7' => $faceCount->playernum7,
             'playernum' => $faceCount->playernum,
             'lovenum' => $faceCount->lovenum,
             'outnum' => $faceCount->outnum,
