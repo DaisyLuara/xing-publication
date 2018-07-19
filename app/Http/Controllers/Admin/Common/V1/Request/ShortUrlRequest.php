@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\ShortUrl\V1\Request;
+namespace App\Http\Controllers\Admin\Common\V1\Request;
 
 use Dingo\Api\Http\FormRequest;
 
@@ -17,7 +17,7 @@ class ShortUrlRequest extends FormRequest
         switch ($this->method()) {
             case 'POST':
                 return [
-                    'target_url' => 'required|url',
+                    'url' => 'required|url',
                 ];
                 break;
             default:
