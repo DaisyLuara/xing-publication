@@ -55,7 +55,7 @@ class ShortUrlController extends Controller
         $queryString = $request->getQueryString();
         $url = $shortUrl['target_url'];
 
-        $url = preg_replace('/(.*)(?|&)' . $key . '=[^&]+?(&)(.*)/i', '$1$2$4', $url);
+        $url = preg_replace('/(.*)(?|&)' . $key . '=[^&]+?(&)(.*)/i', '$1$2$4', $url.'&');
         $url = substr($url, 0, -1);
         if (strpos($url, '?') === false) {
             $url = $url . '?' . $queryString;
