@@ -103,7 +103,6 @@ router.beforeEach((to, from, next) => {
     next({ path: '/' })
     return
   }
-console.log(to)
   // 权限白名单(不受权限限制)
   // let permissioness = ['/login', '/findPassword']
   let hasPathPermission = auth.checkPathPermission(to)

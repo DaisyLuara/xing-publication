@@ -40,6 +40,35 @@ let router = {
         },
       ]
     },
+    {
+      path: 'url',
+      name: '短链接',
+      redirect: 'url',
+      meta: {
+        title: '短链接',
+      },
+      component: () =>
+        import(/* webpackChunkName: "page/ad/url/routerView" */ 'page/ad/url/routerView'),
+      children: [
+        {
+          path: '/',
+          name: '短链接列表',
+          meta: {
+            title: '短链接列表',
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/ad/url/index" */ 'page/ad/url/index'),
+        },
+        {
+          path: 'add',
+          component: () =>
+            import(/* webpackChunkName: "page/ad/url/add" */ 'page/ad/url/add'),
+          name: '短链接增加',
+          meta: {
+          },
+        },
+      ]
+    },
   ],
 }
 
