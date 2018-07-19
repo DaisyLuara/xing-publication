@@ -15,6 +15,8 @@ $api->version('v1', [
         $api->get('open/coupon/batches', 'CouponController@getCouponBatch');//获取优惠券规则
         $api->post('open/coupons/{couponBatch}', 'CouponController@generateCoupon');//发送优惠券
         $api->get('open/project/policy', 'ProjectController@show');//根据节目获取优惠券投放策略
+        $api->get('s/{url_path}', 'ShortUrlController@redirect');//短链接跳转
+        $api->post('open/short_urls', 'ShortUrlController@store');//短链接生成
 
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
