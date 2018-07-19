@@ -14,6 +14,10 @@
         <el-table-column
           prop="url"
           label="短链接" min-width="200">
+          <template slot-scope="scope">
+            {{scope.row.url}}
+            <span class="copy-link" v-clipboard="scope.row.url" @success="copyUrlSucess" @error="copyUrlError">复制</span>
+          </template>
         </el-table-column>
         <el-table-column
           prop="created_at"
@@ -43,6 +47,9 @@
 </template>
 <script>
 import url from 'service/url'
+import VueClipboards from 'vue-clipboards'
+import Vue from 'vue'
+Vue.use(VueClipboards);
 import {
   Input,
   Button,
@@ -91,8 +98,8 @@ export default {
       tableData: [],
       setting: {
         loading: false,
-        loadingText: "拼命加载中"
-      },
+        loadingText: '拼命加载中'
+      }
     }
   },
   created() {
@@ -123,6 +130,18 @@ export default {
       this.$router.push({
         path: '/ad/url/add'
       })
+    },
+    copyUrlSucess: function(e) {
+      this.$message({
+        message: '链接复制成功',
+        type: 'success'
+      })
+    },
+    copyUrlError: function(e) {
+      this.$message({
+        message: '链接复制失败',
+        type: 'error'
+      })
     }
   }
 }
@@ -142,6 +161,9 @@ export default {
     .label {
       font-size: 14px;
     }
+  }
+  .copy-link {
+    color: #03A9F4;
   }
 }
 </style>
