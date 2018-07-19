@@ -150,7 +150,7 @@ function activePlayerClean()
         $sql1 = [];
         for ($i = 0; $i < count($timeArray); $i++) {
             $sql = DB::connection('ar')->table('face_people_time as fpt')
-                ->join('avr_official as ao','ao.oid','=','fpt.oid')
+                ->join('avr_official as ao', 'ao.oid', '=', 'fpt.oid')
                 ->whereRaw("fpt.clientdate between '$startClientDate' and '$endClientDate' and fpid>0 and playtime>='$timeArray[$i]000'")
                 ->selectRaw("fpt.oid as oid");
             if ($date <= '2018-07-01') {
@@ -180,7 +180,7 @@ function activePlayerClean()
         for ($i = 0; $i < count($timeArray); $i++) {
 
             $sql = DB::connection('ar')->table('face_people_time as fpt')
-                ->join('avr_official as ao','ao.oid','=','fpt.oid')
+                ->join('avr_official as ao', 'ao.oid', '=', 'fpt.oid')
                 ->whereRaw("fpt.clientdate between '$startClientDate' and '$endClientDate' and fpid>0 and playtime>='$timeArray[$i]000'")
                 ->selectRaw("fpt.oid as oid,belong");
             if ($date <= '2018-07-01') {
@@ -363,7 +363,7 @@ function faceCharacterClean()
             ->join('avr_official as ao', 'ao.oid', '=', 'fc.oid')
             ->selectRaw("date_format(concat(date(fc.date), ' ', hour(fc.date), ':', floor(minute(fc.date) / 30) * 30), '%Y-%m-%d %H:%i') as time,case " . $century . "else 0 end as century,gender,fc.oid as oid,belong")
             ->whereRaw("fc.clientdate between '$startDate' and '$endDate' and fpid > 0 and fc.type = 'play' ")
-            ->orderBy('isold','desc');
+            ->orderBy('isold', 'desc');
 
         //按所有人去重 belong='all'
         if ($date <= '2018-07-01') {

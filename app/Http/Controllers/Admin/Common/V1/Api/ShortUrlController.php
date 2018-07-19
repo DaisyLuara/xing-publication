@@ -52,7 +52,18 @@ class ShortUrlController extends Controller
             'app' => $application,
         ], $request->all()))->onQueue('short_url');
 
-        return redirect($shortUrl['target_url']);
+        $queryString = $request->getQueryString();
+        $url = $shortUrl['target_url'];
+
+        $url = preg_replace('/(.*)(?|&)' . $key . '=[^&]+?(&)(.*)/i', '$1$2$4', $url);
+        $url = substr($url, 0, -1);
+        if (strpos($url, '?') === false) {
+            $url = $url . '?' . $queryString;
+        } else {
+            $url = $url . '&' . $queryString;
+        }
+
+        return redirect($url);
     }
 
 }
