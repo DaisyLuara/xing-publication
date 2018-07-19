@@ -43,14 +43,14 @@ class ShortUrlController extends Controller
 
         Log::info('short_url_app', [$application]);
 
-        ShortUrlJob::dispatch($shortUrl->id, [
+        ShortUrlJob::dispatch($shortUrl->id, array_merge([
             'ua' => $request->userAgent(),
             'ip' => $request->getClientIp(),
             'browser' => Agent::browser(),
             'device' => Agent::device(),
             'platform' => Agent::platform(),
             'app' => $application,
-        ])->onQueue('short_url');
+        ], $request->all()))->onQueue('short_url');
 
         return redirect($shortUrl['target_url']);
     }
