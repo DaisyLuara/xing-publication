@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\Face\V1\Models\FaceMauRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceCharacterRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceCountRecord;
 use App\Models\User;
+use App\Http\Controllers\Admin\Face\V1\Models\FaceOmoRecord;
 
 /**
  *求两个已知经纬度之间的距离,单位为千米
@@ -150,7 +151,7 @@ function activePlayerClean()
         $sql1 = [];
         for ($i = 0; $i < count($timeArray); $i++) {
             $sql = DB::connection('ar')->table('face_people_time as fpt')
-                ->join('avr_official as ao','ao.oid','=','fpt.oid')
+                ->join('avr_official as ao', 'ao.oid', '=', 'fpt.oid')
                 ->whereRaw("fpt.clientdate between '$startClientDate' and '$endClientDate' and fpid>0 and playtime>='$timeArray[$i]000'")
                 ->selectRaw("fpt.oid as oid");
             if ($date <= '2018-07-01') {
@@ -180,7 +181,7 @@ function activePlayerClean()
         for ($i = 0; $i < count($timeArray); $i++) {
 
             $sql = DB::connection('ar')->table('face_people_time as fpt')
-                ->join('avr_official as ao','ao.oid','=','fpt.oid')
+                ->join('avr_official as ao', 'ao.oid', '=', 'fpt.oid')
                 ->whereRaw("fpt.clientdate between '$startClientDate' and '$endClientDate' and fpid>0 and playtime>='$timeArray[$i]000'")
                 ->selectRaw("fpt.oid as oid,belong");
             if ($date <= '2018-07-01') {
@@ -236,6 +237,75 @@ function activePlayerClean()
     FaceActivePlayerRecord::create(['date' => $currentDate]);
 }
 
+function omoClean()
+{
+    $date = FaceOmoRecord::query()->max('date');
+    $date = (new Carbon($date))->format('Y-m-d');
+    $currentDate = Carbon::now()->toDateString();
+    while ($date < $currentDate) {
+        $sql = DB::table('short_url_records')
+            ->whereRaw("date_format(created_at,'%Y-%m-%d')='$date' and face_id <> '' ")
+            ->groupBy(DB::raw(" oid, belong, utm_term "))
+            ->selectRaw("utm_source as oid,utm_campaign as belong,utm_term,count(*) as num");
+
+        $scanAndShareSql = DB::table(DB::raw("({$sql->toSql()}) as a"))
+            ->groupBy(DB::raw("oid,belong"))
+            ->selectRaw("oid,belong,sum(if(utm_term = '', num, 0)) as omo_scannum,sum(if(utm_term = 'wechat_share', num, 0)) as omo_sharenum");
+
+        $sql1 = DB::table('short_url_records')
+            ->whereRaw(" date_format(created_at,'%Y-%m-%d')='$date' and face_id <> '' ")
+            ->groupBy(DB::raw(" oid, belong, face_id "))
+            ->selectRaw("utm_source as oid,utm_campaign as belong,face_id");
+
+        $outSql = DB::table(DB::raw("({$sql1->toSql()}) as b"))
+            ->groupBy(DB::raw("oid,belong"))
+            ->selectRaw("oid,belong,count(*) as omo_outnum");
+
+        $data = DB::table(DB::raw("({$scanAndShareSql->toSql()}) as a1"))
+            ->join(DB::raw("({$outSql->toSql()}) as b1"), function ($join) {
+                $join->on('a1.oid', '=', 'b1.oid');
+                $join->on('a1.belong', '=', 'b1.belong');
+            })
+            ->selectRaw("a1.oid as oid,a1.belong as belong ,b1.omo_outnum as omo_outnum,a1.omo_scannum as omo_scannum ,a1.omo_sharenum as omo_sharenum")
+            ->get();
+        $count = [];
+        foreach ($data as $item) {
+            $count[] = [
+                'oid' => $item->oid,
+                'belong' => $item->belong,
+                'omo_outnum' => $item->omo_outnum,
+                'omo_scannum' => $item->omo_scannum,
+                'omo_sharenum' => $item->omo_sharenum,
+                'date' => $date,
+                'clientdate' => strtotime($date) * 1000
+            ];
+        }
+        DB::connection('ar')->table('xs_face_omo')->insert($count);
+
+        $clientDate = strtotime($date) * 1000;
+        $allData = DB::connection('ar')->table('xs_face_omo')
+            ->whereRaw("clientdate='$clientDate'")
+            ->groupBy('oid')
+            ->selectRaw(" oid,sum(omo_outnum) as omo_outnum,sum(omo_scannum) as omo_scannum,sum(omo_sharenum) as omo_sharenum,date,clientdate")
+            ->get();
+        $count = [];
+        foreach ($allData as $item) {
+            $count[] = [
+                'oid' => $item->oid,
+                'belong' => 'all',
+                'omo_outnum' => $item->omo_outnum,
+                'omo_scannum' => $item->omo_scannum,
+                'omo_sharenum' => $item->omo_sharenum,
+                'date' => $item->date,
+                'clientdate' => $item->clientdate,
+            ];
+        }
+        DB::connection('ar')->table('xs_face_omo')->insert($count);
+        $date = (new Carbon($date))->addDay(1)->toDateString();
+    }
+    FaceOmoRecord::create(['date' => $currentDate]);
+}
+
 function mergeActiveAndLook()
 {
     $date = FaceCountRecord::query()->max('date');
@@ -251,12 +321,20 @@ function mergeActiveAndLook()
             ->whereRaw("clientdate='$clientDate'")
             ->selectRaw("oid,belong,playernum7,playernum20,playernum30");
 
+        $sql3 = DB::connection('ar')->table('xs_face_omo')
+            ->whereRaw("clientdate='$clientDate'")
+            ->selectRaw("oid,belong,omo_outnum,omo_scannum,omo_sharenum");
+
         $data = DB::connection('ar')->table(DB::raw("({$sql1->toSql()}) as a"))
             ->join(DB::raw("({$sql2->toSql()}) as b"), function ($join) {
                 $join->on('a.oid', '=', 'b.oid');
                 $join->on('a.belong', '=', 'b.belong');
             }, null, null, 'left')
-            ->selectRaw("a.oid as oid,a.belong as belong,looknum,playernum7,playernum20,playernum30,playernum,outnum,scannum,lovenum")
+            ->join(DB::raw("({$sql3->toSql()}) as c"), function ($join) {
+                $join->on('a.oid', '=', 'c.oid');
+                $join->on('a.belong', '=', 'c.belong');
+            }, null, null, 'left')
+            ->selectRaw("a.oid as oid,a.belong as belong,looknum,playernum7,playernum20,playernum30,playernum,outnum,scannum,omo_outnum,omo_scannum,omo_sharenum,lovenum")
             ->get();
         $count = [];
         foreach ($data as $item) {
@@ -270,6 +348,9 @@ function mergeActiveAndLook()
                 'playernum' => $item->playernum,
                 'outnum' => $item->outnum,
                 'scannum' => $item->scannum,
+                'omo_outnum' => $item->omo_outnum,
+                'omo_scannum' => $item->omo_scannum,
+                'omo_sharenum' => $item->omo_sharenum,
                 'lovenum' => $item->lovenum,
                 'date' => $date,
                 'clientdate' => strtotime($date) * 1000
@@ -363,7 +444,7 @@ function faceCharacterClean()
             ->join('avr_official as ao', 'ao.oid', '=', 'fc.oid')
             ->selectRaw("date_format(concat(date(fc.date), ' ', hour(fc.date), ':', floor(minute(fc.date) / 30) * 30), '%Y-%m-%d %H:%i') as time,case " . $century . "else 0 end as century,gender,fc.oid as oid,belong")
             ->whereRaw("fc.clientdate between '$startDate' and '$endDate' and fpid > 0 and fc.type = 'play' ")
-            ->orderBy('isold','desc');
+            ->orderBy('isold', 'desc');
 
         //按所有人去重 belong='all'
         if ($date <= '2018-07-01') {
