@@ -348,9 +348,9 @@ function mergeActiveAndLook()
                 'playernum' => $item->playernum,
                 'outnum' => $item->outnum,
                 'scannum' => $item->scannum,
-                'omo_outnum' => $item->omo_outnum,
-                'omo_scannum' => $item->omo_scannum,
-                'omo_sharenum' => $item->omo_sharenum,
+                'omo_outnum' => $item->omo_outnum ? $item->omo_outnum : 0,
+                'omo_scannum' => $item->omo_scannum ? $item->omo_scannum : 0,
+                'omo_sharenum' => $item->omo_sharenum ? $item->omo_sharenum : 0,
                 'lovenum' => $item->lovenum,
                 'date' => $date,
                 'clientdate' => strtotime($date) * 1000
