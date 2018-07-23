@@ -102,7 +102,7 @@ class PointDailyAverageExport extends AbstractExport
         ];
         $omoData = [];
         foreach (array_column($total, 'omo') as $item) {
-            $omo = explode($item, '|');
+            $omo = explode('|', $item);
             $omoData[] = $omo;
         }
         $totalData['omo'] = array_sum(array_column($omoData, '0')) . '|' . array_sum(array_column($omoData, '1'));
