@@ -425,7 +425,7 @@ class ChartDataController extends Controller
                     'century80' => $item->century80,
                     'century70' => $item->century70,
                 ];
-                $output[$index]['rate'] = strval(round($item->gnum / $item->totalnum, 3) * 100);
+                $output[$index]['rate'] = $item->totalnum == 0 ? 0 : strval(round($item->gnum / $item->totalnum, 3) * 100);
             }
         }
         return $output;
