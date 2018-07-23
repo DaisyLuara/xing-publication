@@ -27,7 +27,7 @@ class MarketingExport extends AbstractExport
             ->whereNotIn('xs_face_count_log.oid', [16, 19, 30, 31, 177, 182, 327, 328, 329, 334, 335])
             ->groupby('xs_face_count_log.belong')
             ->orderBy('ar_product_list.name')
-            ->selectRaw('ar_product_list.name as name,count(xs_face_count_log.oid) as pushNum ,sum(looknum) as lookNum ,sum(playernum7) as playerNum7,sum(playernum20) as playerNum20 ,sum(playernum) as playerNum,sum(outnum) as outNum,sum(scannum) as scanNum,sum(lovenum) as loveNum')
+            ->selectRaw('ar_product_list.name as name,count(xs_face_count_log.oid) as pushNum ,sum(looknum) as lookNum ,sum(playernum7) as playerNum7,sum(playernum20) as playerNum20 ,sum(playernum) as playerNum,sum(outnum) as outNum,sum(omo_outnum) as omo_outnum,sum(omo_scannum) as omo_scannum,sum(lovenum) as loveNum')
             ->get();
         $data = collect();
         $header1 = ['节目名称', 'CPF', '', 'oCPF', '', 'CPR', '', '铁杆玩家', '', '生成数', 'CPA', '扫码率', 'CPL', '', '1', '2', '5', '4', '10', '20', '合计'];
@@ -38,7 +38,7 @@ class MarketingExport extends AbstractExport
         $data->push($header3);
         $faceCount->each(function ($item) use (&$data) {
             $item = json_decode(json_encode($item), true);
-            $item = [
+            $aa = [
                 'name' => $item['name'],
                 'lookNum' => $item['lookNum'],
                 'look_average' => round($item['lookNum'] / $item['pushNum'], 0),
@@ -49,29 +49,29 @@ class MarketingExport extends AbstractExport
                 'playerNum' => $item['playerNum'],
                 'player_average' => round(($item['playerNum'] / $item['pushNum']), 0),
                 'outNum' => $item['outNum'],
-                'scanNum' => $item['scanNum'],
-                'rate' => (round(($item['outNum'] == 0) ? 0 : $item['scanNum'] / $item['outNum'], 2) * 100) . '%',
+                'omo' => $item['omo_outnum'] . '|' . $item['omo_scannum'],
+                'rate' => (round(($item['outNum'] == 0) ? 0 : $item['omo_outnum'] / $item['outNum'], 2) * 100) . '%',
                 'loveNum' => $item['loveNum'],
                 'love_average' => round(($item['loveNum'] / $item['pushNum']), 0),
             ];
-            $faceMoney = round($item['lookNum'] * 0.01, 0);
-            $player7Money = round($item['player7'] * 0.02, 0);
-            $player20Money = round($item['player20'] * 0.05, 0);
-            $outMoney = round($item['outNum'] * 0.04, 0);
-            $scanMoney = round($item['scanNum'] * 0.1, 0);
-            $loveMoney = round($item['loveNum'] * 0.2, 0);
+            $faceMoney = round($aa['lookNum'] * 0.01, 0);
+            $player7Money = round($aa['player7'] * 0.02, 0);
+            $player20Money = round($aa['player20'] * 0.05, 0);
+            $outMoney = round($aa['outNum'] * 0.04, 0);
+            $scanMoney = round($item['omo_scannum'] * 0.1, 0);
+            $loveMoney = round($aa['loveNum'] * 0.2, 0);
             $totalMoney = $faceMoney + $player7Money + $player20Money + $outMoney + $scanMoney + $loveMoney;
 
 
-            $item['face_money'] = $faceMoney;
-            $item['playerNum7_money'] = $player7Money;
-            $item['playerNum20_money'] = $player20Money;
-            $item['out_money'] = $outMoney;
-            $item['scan_money'] = $scanMoney;
-            $item['love_money'] = $loveMoney;
-            $item['total_money'] = $totalMoney;
+            $aa['face_money'] = $faceMoney;
+            $aa['playerNum7_money'] = $player7Money;
+            $aa['playerNum20_money'] = $player20Money;
+            $aa['out_money'] = $outMoney;
+            $aa['scan_money'] = $scanMoney;
+            $aa['love_money'] = $loveMoney;
+            $aa['total_money'] = $totalMoney;
 
-            $data->push($item);
+            $data->push($aa);
         });
         $this->data = $data;
         return $data;

@@ -51,7 +51,7 @@ class PointDailyAverageExport extends AbstractExport
             ->orderBy('aoa.areaid', 'desc')
             ->orderBy('aom.marketid', 'desc')
             ->orderBy('ao.oid', 'desc')
-            ->selectRaw("aoa.name as areaName,aom.name as marketName,ao.name as pointName,aos.name as scene,admin_staff.realname as BDName,count(*) as days, sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum20) as playernum20,sum(outnum) as outnum,sum(scannum) as scannum,sum(lovenum) as lovenum,concat_ws(',', date_format(min(fcl.date), '%Y-%m-%d'), date_format(max(fcl.date), '%Y-%m-%d')) as date")
+            ->selectRaw("aoa.name as areaName,aom.name as marketName,ao.name as pointName,aos.name as scene,admin_staff.realname as BDName,count(*) as days, sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum20) as playernum20,sum(outnum) as outnum,sum(omo_outnum) as omo_outnum,sum(omo_scannum) as omo_scannum,sum(lovenum) as lovenum,concat_ws(',', date_format(min(fcl.date), '%Y-%m-%d'), date_format(max(fcl.date), '%Y-%m-%d')) as date")
             ->get();
         $total = [];
         $faceCount->each(function ($item) use (&$data, &$total) {
@@ -66,8 +66,8 @@ class PointDailyAverageExport extends AbstractExport
                 'playernum20' => $item->playernum20,
                 'playernum20Aver' => round($item->playernum20 / $item->days, 0),
                 'outnum' => $item->outnum,
-                'scannum' => $item->scannum,
-                'rate' => (round(($item->outnum == 0) ? 0 : $item->scannum / $item->outnum, 2) * 100) . '%',
+                'omo' => $item->omo_outnum . '|' . $item->omo_scannum,
+                'rate' => (round(($item->outnum == 0) ? 0 : $item->omo_outnum / $item->outnum, 2) * 100) . '%',
                 'lovenum' => $item->lovenum,
                 'lovenumAver' => round($item->lovenum / $item->days, 0),
                 'days' => $item->days
@@ -93,14 +93,20 @@ class PointDailyAverageExport extends AbstractExport
             'playernum20' => array_sum(array_column($total, 'playernum20')),
             'playernum20Aver' => floor(array_sum(array_column($total, 'playernum20Aver')) / $faceCount->count()),
             'outnum' => array_sum(array_column($total, 'outnum')),
-            'scannum' => array_sum(array_column($total, 'scannum')),
+            'omo' => 0,
             'rate' => 0,
             'lovenum' => array_sum(array_column($total, 'lovenum')),
             'lovenumAver' => floor(array_sum(array_column($total, 'lovenumAver')) / $faceCount->count()),
             'days' => (new Carbon($this->endDate))->diffInDays(new Carbon($this->startDate)) + 1,
             'date' => $this->startDate . '|' . $this->endDate
         ];
-        $totalData['rate'] = (round(($totalData['outnum'] == 0) ? 0 : $totalData['scannum'] / $totalData['outnum'], 2) * 100) . '%';
+        $omoData = [];
+        foreach (array_column($total, 'omo') as $item) {
+            $omo = explode($item, '|');
+            $omoData[] = $omo;
+        }
+        $totalData['omo'] = array_sum(array_column($omoData, '0')) . '|' . array_sum(array_column($omoData, '1'));
+        $totalData['rate'] = (round(($totalData['outnum'] == 0) ? 0 : array_sum(array_column($omoData, '0')) / $totalData['outnum'], 2) * 100) . '%';
         $data->push($totalData);
         $this->data = $data;
         return $data;
@@ -115,7 +121,7 @@ class PointDailyAverageExport extends AbstractExport
                     'A1:A3', 'B1:B3', 'C1:C3', 'D1:E1', 'D2:D3', 'E2:E3',
                     'F1:G1', 'F2:F3', 'G2:G3', 'H1:I1', 'H2:H3', 'I2:I3',
                     'J1:J3', 'K1:K3', 'L1:L3', 'M1:N1', 'M2:M3', 'N2:N3',
-                    'O1:O3', 'P1"P3'
+                    'O1:O3', 'P1:P3'
                 ];
 
                 //合并单元格
