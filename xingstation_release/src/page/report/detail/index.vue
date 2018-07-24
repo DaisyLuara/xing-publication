@@ -1200,7 +1200,7 @@ export default {
                 type: 'line',
                 yAxisIndex: 1,
                 data: response.map(r => {
-                  return r.rate.toFixed(1)
+                  return r.rate
                 }),
                 markLine: {
                   data: [
