@@ -53,7 +53,7 @@ module.exports = {
   build: {
     env: require('./prod.env'),
     // Template for index.html
-    index: path.resolve(__dirname, '../dist/index.html'),
+    index: path.resolve(__dirname, '../predist/index.html'),
 
     // Paths
     assetsRoot: path.resolve(__dirname, '../predist'),
@@ -64,6 +64,7 @@ module.exports = {
      */
 
     productionSourceMap: true,
+    // productionSourceMap: false,
     // https://webpack.js.org/configuration/devtool/#production
     devtool: '#source-map',
 
