@@ -30,6 +30,7 @@ class ActivePlayerJob implements ShouldQueue
     public function handle()
     {
         activePlayerClean();
-        mergeActiveAndLook();
+        omoClean();
+        mergeActiveOmoLook();
     }
 }

@@ -306,7 +306,7 @@ function omoClean()
     FaceOmoRecord::create(['date' => $currentDate]);
 }
 
-function mergeActiveAndLook()
+function mergeActiveOmoLook()
 {
     $date = FaceCountRecord::query()->max('date');
     $date = (new Carbon($date))->format('Y-m-d');
