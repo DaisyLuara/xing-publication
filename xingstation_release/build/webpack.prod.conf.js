@@ -12,7 +12,6 @@ const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin')
 
-
 const env =
   process.env.NODE_ENV === 'test'
     ? require('../config/test.env')
@@ -60,10 +59,10 @@ const webpackConfig = merge(baseWebpackConfig, {
         },
         compress: {
           // 在UglifyJs删除没有用到的代码时不输出警告
-          warnings: true,
-          drop_debugger: false,
+          warnings: process.argv[2] === 'test' ? true : false,
+          drop_debugger: process.argv[2] === 'test' ? false : true,
           // 删除所有的 `console` 语句，可以兼容ie浏览器
-          drop_console: false
+          drop_console: process.argv[2] === 'test' ? false : true
         }
       }
     }),
