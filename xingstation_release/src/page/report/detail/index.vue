@@ -774,7 +774,7 @@ export default {
           text: '时间段与人群特征',
           align: 'left'
         },
-        color: ['#8CC63F', '#FBB03B', '#F15A24', '#662D91', '#ED1E79'],
+        color: ['#3b9aca', '#8CC63F', '#FBB03B', '#F15A24', '#662D91', '#ED1E79'],
         tooltip: {
           trigger: 'axis',
           axisPointer: {
@@ -785,7 +785,7 @@ export default {
           }
         },
         legend: {
-          data: ['00后', '90后', '80后', '70后', '女'],
+          data: ['10后', '00后', '90后', '80后', '70后', '女'],
           align: 'left',
           left: 10,
           top: 30
@@ -824,6 +824,12 @@ export default {
           }
         ],
         series: [
+          {
+            name: '10后',
+            type: 'bar',
+            stack: '总量',
+            data: null
+          },
           {
             name: '00后',
             type: 'bar',
@@ -1163,6 +1169,14 @@ export default {
               })
             },
             series: [
+              {
+                name: '10后',
+                type: 'bar',
+                stack: '总量',
+                data: response.map(r => {
+                  return r.count.century10
+                })
+              },
               {
                 name: '00后',
                 type: 'bar',
