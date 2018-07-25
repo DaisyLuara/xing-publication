@@ -398,8 +398,8 @@ class ChartDataController extends Controller
         $this->handleQuery($request, $query);
         $data = $query->whereRaw("xs_face_character_count.clientdate between '$startClientDate' and '$endClientDate'")
             ->groupBy('time')
-            ->selectRaw("time,sum(century00_bnum + century00_gnum) as century00,sum(century90_bnum + century90_gnum) as century90,sum(century80_bnum + century80_gnum) as century80,sum(century70_bnum + century70_gnum) as century70")
-            ->selectRaw("sum(century00_gnum+century90_gnum+century80_gnum+century70_gnum) as gnum,sum(century00_gnum+century00_bnum+century90_gnum+century90_bnum+century80_gnum+century80_bnum+century70_gnum+century70_bnum) as totalnum")
+            ->selectRaw("time,sum(century10_bnum+century10_gnum) as century10, sum(century00_bnum + century00_gnum) as century00,sum(century90_bnum + century90_gnum) as century90,sum(century80_bnum + century80_gnum) as century80,sum(century70_bnum + century70_gnum) as century70")
+            ->selectRaw("sum(century10_gnum+century00_gnum+century90_gnum+century80_gnum+century70_gnum) as gnum,sum(century10_bnum+century10_gnum+century00_gnum+century00_bnum+century90_gnum+century90_bnum+century80_gnum+century80_bnum+century70_gnum+century70_bnum) as totalnum")
             ->get();
 
         $times = ['10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', '24:00'];
@@ -410,6 +410,7 @@ class ChartDataController extends Controller
                 'rate' => 0,
                 'count' =>
                     [
+                        'century10' => 0,
                         'century00' => 0,
                         'century90' => 0,
                         'century80' => 0,
@@ -420,6 +421,7 @@ class ChartDataController extends Controller
         foreach ($data as $index => $item) {
             if ($item->time = $times[$index]) {
                 $output[$index]['count'] = [
+                    'century10' => $item->century10,
                     'century00' => $item->century00,
                     'century90' => $item->century90,
                     'century80' => $item->century80,
