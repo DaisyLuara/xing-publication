@@ -7,8 +7,8 @@
             <el-form-item label="" prop="name">
               <el-input v-model="filters.name" placeholder="请输入节目名称" style="width: 250px;"></el-input>
             </el-form-item>
-            <el-button @click="search()" type="primary">搜索</el-button>
-            <el-button @click="resetSearch" type="default">重置</el-button>
+            <el-button @click="search()" type="primary" size="small">搜索</el-button>
+            <el-button @click="resetSearch" type="default" size="small">重置</el-button>
           </el-form>
         </div>
       <div class="total-wrap">
