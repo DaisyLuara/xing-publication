@@ -60,10 +60,10 @@ const webpackConfig = merge(baseWebpackConfig, {
         },
         compress: {
           // 在UglifyJs删除没有用到的代码时不输出警告
-          warnings: true,
-          drop_debugger: false,
+          warnings: false,
+          drop_debugger: true,
           // 删除所有的 `console` 语句，可以兼容ie浏览器
-          drop_console: false
+          drop_console: true
         }
       }
     }),
