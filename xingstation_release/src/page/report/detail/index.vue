@@ -785,7 +785,7 @@ export default {
           }
         },
         legend: {
-          data: ['10后', '00后', '90后', '80后', '70后', '女'],
+          data: ['10后', '00后', '90后', '80后', '70前/后', '女'],
           align: 'left',
           left: 10,
           top: 30
@@ -849,7 +849,7 @@ export default {
             data: null
           },
           {
-            name: '70后',
+            name: '70前/后',
             type: 'bar',
             stack: '总量',
             data: null
@@ -1202,7 +1202,7 @@ export default {
                 })
               },
               {
-                name: '70后',
+                name: '70前/后',
                 type: 'bar',
                 stack: '总量',
                 data: response.map(r => {
