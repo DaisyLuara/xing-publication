@@ -10,6 +10,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin')
 
 const env =
   process.env.NODE_ENV === 'test'
@@ -35,17 +36,37 @@ const webpackConfig = merge(baseWebpackConfig, {
     new webpack.DefinePlugin({
       'process.env': env
     }),
-    new UglifyJsPlugin({
-      uglifyOptions: {
+    // new UglifyJsPlugin({
+    //   uglifyOptions: {
+    //     compress: {
+    //       warnings: false,
+    //       drop_debugger: true,
+    //       drop_console: true
+    //     }
+    //   },
+    //   sourceMap: config.build.productionSourceMap,
+    //   parallel: true
+    // }),
+
+    new ParallelUglifyPlugin({
+      // 传递给 UglifyJS 的参数
+      uglifyES: {
+        output: {
+          // 最紧凑的输出
+          beautify: false,
+          // 删除所有的注释
+          comments: false
+        },
         compress: {
-          warnings: false,
-          drop_debugger: true,
-          drop_console: true
+          // 在UglifyJs删除没有用到的代码时不输出警告
+          warnings: process.argv[2] === 'test' ? true : false,
+          drop_debugger: process.argv[2] === 'test' ? false : true,
+          // 删除所有的 `console` 语句，可以兼容ie浏览器
+          drop_console: process.argv[2] === 'test' ? false : true
         }
-      },
-      sourceMap: config.build.productionSourceMap,
-      parallel: true
+      }
     }),
+
     // extract css into its own file
     new ExtractTextPlugin({
       filename: utils.assetsPath('css/[name].[contenthash].css'),

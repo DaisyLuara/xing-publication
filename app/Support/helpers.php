@@ -353,11 +353,26 @@ function faceCharacterClean()
         $startDate = strtotime($date . " 00:00:00") * 1000;
         $endDate = strtotime($date . " 23:59:59") * 1000;
 
-        $century00 = "when age > 8 and age <= 18 then '00'";
-        $century90 = "when age > 18 and age <= 28 then '90' ";
-        $century80 = "when age > 18 and age <= 38 then '80' ";
-        $century70 = "when age > 38 and age <= 48 then '70' ";
-        $century = $century00 . $century90 . $century80 . $century70;
+        if ($date < '2018-01-01') {
+            $century10 = "when age<=7 then '10' ";
+            $century00 = "when age > 7 and age <= 17 then '00' ";
+            $century90 = "when age > 17 and age <= 27 then '90' ";
+            $century80 = "when age > 17 and age <= 37 then '80' ";
+            $century70 = "when age > 37 then '70' ";
+            $century = $century10 . $century00 . $century90 . $century80 . $century70;
+        } else {
+            $age1 = (new Carbon($currentDate))->diffInYears('2010-01-01');
+            $age2 = (new Carbon($currentDate))->diffInYears('2000-01-01');
+            $age3 = (new Carbon($currentDate))->diffInYears('1990-01-01');
+            $age4 = (new Carbon($currentDate))->diffInYears('1980-01-01');
+            $century10 = "when age<='$age1' then '10' ";
+            $century00 = "when age > '$age1' and age <= '$age2' then '00' ";
+            $century90 = "when age > '$age2' and age <= '$age3' then '90' ";
+            $century80 = "when age > '$age3' and age <= '$age4' then '80' ";
+            $century70 = "when age > '$age4' then '70' ";
+            $century = $century10 . $century00 . $century90 . $century80 . $century70;
+        }
+
 
         $sql = DB::connection('ar')->table('face_collect as fc')
             ->join('avr_official as ao', 'ao.oid', '=', 'fc.oid')
@@ -443,8 +458,8 @@ function faceCharacterCountClean()
         $sum6 = " sum(if(century = '80' and gender = 'Female', looknum, 0)) as century80_gnum,";
         $sum7 = " sum(if(century = '70' and gender = 'Male', looknum, 0))   as century70_bnum,";
         $sum8 = " sum(if(century = '70' and gender = 'Female', looknum, 0)) as century70_gnum,";
-        $sum9 = " sum(if(century = '0' and gender = 'Male', looknum, 0))    as century0_bnum,";
-        $sum10 = " sum(if(century = '0' and gender = 'Female', looknum, 0)) as century0_gnum";
+        $sum9 = " sum(if(century = '10' and gender = 'Male', looknum, 0))    as century10_bnum,";
+        $sum10 = " sum(if(century = '10' and gender = 'Female', looknum, 0)) as century10_gnum";
         $sum = $sum1 . $sum2 . $sum3 . $sum4 . $sum5 . $sum6 . $sum7 . $sum8 . $sum9 . $sum10;
         $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
             ->groupBy(DB::raw('oid,belong,times'))
@@ -465,8 +480,8 @@ function faceCharacterCountClean()
                 'century80_gnum' => $item->century80_gnum ? $item->century80_gnum : 0,
                 'century70_bnum' => $item->century70_bnum ? $item->century70_bnum : 0,
                 'century70_gnum' => $item->century70_gnum ? $item->century70_gnum : 0,
-                'century0_bnum' => $item->century0_bnum ? $item->century0_bnum : 0,
-                'century0_gnum' => $item->century0_gnum ? $item->century0_gnum : 0,
+                'century10_bnum' => $item->century10_bnum ? $item->century10_bnum : 0,
+                'century10_gnum' => $item->century10_gnum ? $item->century10_gnum : 0,
                 'date' => $date,
                 'clientdate' => strtotime($date) * 1000
             ];
