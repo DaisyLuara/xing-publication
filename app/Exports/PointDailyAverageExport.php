@@ -87,17 +87,17 @@ class PointDailyAverageExport extends AbstractExport
             'BDName' => '',
             'scene' => '',
             'looknum' => array_sum(array_column($total, 'looknum')),
-            'looknumAver' => floor(array_sum(array_column($total, 'looknumAver')) / $faceCount->count()),
+            'looknumAver' => array_sum(array_column($total, 'days')) == 0 ? 0 : floor(array_sum(array_column($total, 'looknum')) / array_sum(array_column($total, 'days'))),
             'playernum7' => array_sum(array_column($total, 'playernum7')),
-            'playernum7Aver' => floor(array_sum(array_column($total, 'playernum7Aver')) / $faceCount->count()),
+            'playernum7Aver' => array_sum(array_column($total, 'days')) == 0 ? 0 : floor(array_sum(array_column($total, 'playernum7')) / array_sum(array_column($total, 'days'))),
             'playernum20' => array_sum(array_column($total, 'playernum20')),
-            'playernum20Aver' => floor(array_sum(array_column($total, 'playernum20Aver')) / $faceCount->count()),
+            'playernum20Aver' => array_sum(array_column($total, 'days')) == 0 ? 0 : floor(array_sum(array_column($total, 'playernum20')) / array_sum(array_column($total, 'days'))),
             'outnum' => array_sum(array_column($total, 'outnum')),
             'omo' => 0,
             'rate' => 0,
             'lovenum' => array_sum(array_column($total, 'lovenum')),
-            'lovenumAver' => floor(array_sum(array_column($total, 'lovenumAver')) / $faceCount->count()),
-            'days' => (new Carbon($this->endDate))->diffInDays(new Carbon($this->startDate)) + 1,
+            'lovenumAver' => array_sum(array_column($total, 'days')) == 0 ? 0 : floor(array_sum(array_column($total, 'lovenum')) / array_sum(array_column($total, 'days'))),
+            'days' => array_sum(array_column($total, 'days')),
             'date' => $this->startDate . '|' . $this->endDate
         ];
         $omoData = [];
