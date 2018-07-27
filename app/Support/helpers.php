@@ -244,7 +244,7 @@ function omoClean()
     $currentDate = Carbon::now()->toDateString();
     while ($date < $currentDate) {
         $sql = DB::table('short_url_records')
-            ->whereRaw("date_format(created_at,'%Y-%m-%d')='$date' and face_id <> '' ")
+            ->whereRaw("date_format(created_at,'%Y-%m-%d')='$date' and face_id <> '' and utm_source <> '' ")
             ->groupBy(DB::raw(" oid, belong, utm_term "))
             ->selectRaw("utm_source as oid,utm_campaign as belong,utm_term,count(*) as num");
 
@@ -253,7 +253,7 @@ function omoClean()
             ->selectRaw("oid,belong,sum(if(utm_term = '', num, 0)) as omo_scannum,sum(if(utm_term = 'wechat_share', num, 0)) as omo_sharenum");
 
         $sql1 = DB::table('short_url_records')
-            ->whereRaw(" date_format(created_at,'%Y-%m-%d')='$date' and face_id <> '' ")
+            ->whereRaw(" date_format(created_at,'%Y-%m-%d')='$date' and face_id <> '' and utm_source <> '' ")
             ->groupBy(DB::raw(" oid, belong, face_id "))
             ->selectRaw("utm_source as oid,utm_campaign as belong,face_id");
 
