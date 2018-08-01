@@ -1,8 +1,10 @@
 <template>
-  <div class="main">
+  <div 
+    class="main">
     <div>页面不存在</div>
     <div>
-      <router-link :to="{ path: '/' }">返回首页</router-link>
+      <router-link 
+        :to="{ path: '/' }">返回首页</router-link>
     </div>
   </div>
 </template>

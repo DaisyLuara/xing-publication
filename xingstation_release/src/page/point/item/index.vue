@@ -1,6 +1,10 @@
 <template>
-  <div class="root">
-    <div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
+  <div 
+    class="root">
+    <div  
+    v-loading="setting.loading"
+    :element-loading-text="setting.loadingText" 
+    class="item-list-wrap">
       <div class="item-content-wrap">
         <div class="search-wrap">
           <el-form :model="filters" :inline="true" ref="searchForm" >

@@ -1,52 +1,98 @@
 <template>
-  <div class="schedule-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
+  <div  
+    v-loading="setting.loading"
+    :element-loading-text="setting.loadingText" 
+    class="schedule-wrap">
     <!-- 搜索 -->
-    <div class="search-wrap">
-      <el-form :model="searchForm" :inline="true" ref="searchForm" >
-        <el-form-item label="" prop="name">
-          <el-input v-model="searchForm.name" placeholder="请输入模板名称" class="item-input" clearable></el-input>
+    <div 
+      class="search-wrap">
+      <el-form 
+        ref="searchForm"
+        :model="searchForm" 
+        :inline="true" >
+        <el-form-item 
+          label="" 
+          prop="name">
+          <el-input 
+            v-model="searchForm.name"
+            placeholder="请输入模板名称" 
+            clearable
+            class="item-input" 
+          />
         </el-form-item>
-        <el-button @click="search" type="primary" size="small">搜索</el-button>
+        <el-button  
+          type="primary" 
+          size="small" 
+          @click="search">搜索</el-button>
       </el-form>
     </div>
-    <div class="actions-wrap">
-      <span class="label">
-        数量: {{pagination.total}}
+    <div 
+      class="actions-wrap">
+      <span 
+        class="label">
+        数量: {{ pagination.total }}
       </span>
       <!-- 模板增加 -->
       <div>
-        <el-button size="small" type="success" @click="addTemplate('templateForm')">新增模板</el-button>
+        <el-button 
+          size="small" 
+          type="success" 
+          @click="addTemplate('templateForm')">新增模板</el-button>
       </div>
     </div>
     <!-- 模板排期列表 -->
-    <el-collapse v-model="activeNames" accordion>
-      <el-collapse-item :name="index" v-for="(item, index) in tableData" :key="item.id" >
-        <template slot="title">
-          {{item.name }} ( {{item.area.name + item.market.name + item.point.name}} ) <el-button type="primary" icon="el-icon-edit" circle size="mini" @click="modifyTemplateName(item)"></el-button>
+    <el-collapse 
+      v-model="activeNames" 
+      accordion>
+      <el-collapse-item 
+        v-for="(item, index) in tableData" 
+        :name="index" 
+        :key="item.id" >
+        <template 
+          slot="title">
+          {{ item.name }} ( {{ item.area.name + item.market.name + item.point.name }} ) 
+          <el-button 
+            type="primary" 
+            icon="el-icon-edit" 
+            circle 
+            size="mini" 
+            @click="modifyTemplateName(item)"/>
         </template>
         <div class="actions-wrap">
           <span class="label">
-            数目: {{item.schedules.data.length}}
+            数目: {{ item.schedules.data.length }}
           </span>
           <div>
-            <el-button size="small" @click="addSchedule(index)">增加</el-button>
-            <!-- <el-button size="small" type="warning" @click="editSchedule(index)">修改</el-button> -->
+            <el-button 
+              size="small" 
+              @click="addSchedule(index)">增加</el-button>
           </div>
         </div>
-        <el-table :data="item.schedules.data" style="width: 100%">
+        <el-table 
+          :data="item.schedules.data" 
+          style="width: 100%">
           <el-table-column
             prop="name"
             label="节目名称"
             min-width="150"
-            >
-            <template slot-scope="scope">
-              <el-select v-model="scope.row.project.name" filterable placeholder="请搜索" remote :remote-method="getProject" clearable :loading="searchLoading" style="width: 180px;" @change="projectChangeHandle(index, scope.$index, scope.row.project.name)" >
+          >
+            <template 
+              slot-scope="scope">
+              <el-select 
+                v-model="scope.row.project.name" 
+                :loading="searchLoading" 
+                :remote-method="getProject" 
+                filterable 
+                placeholder="请搜索"
+                remote 
+                clearable 
+                style="width: 180px;"
+                @change="projectChangeHandle(index, scope.$index, scope.row.project.name)" >
                 <el-option
                   v-for="item in projectList"
                   :key="item.id"
                   :label="item.name"
-                  :value="item.id">
-                </el-option>
+                  :value="item.id"/>
               </el-select>
             </template>
           </el-table-column>
@@ -54,39 +100,41 @@
             prop="icon"
             label="节目图标"
             width="100"
-            >
-            <template slot-scope="scope">
-              <img :src="scope.row.project.icon" style="width: 50%"/>
+          >
+            <template 
+              slot-scope="scope">
+              <img 
+                :src="scope.row.project.icon" 
+                style="width: 50%">
             </template>
           </el-table-column>
           <el-table-column
             prop="stime"
             label="开始时间"
             min-width="120"
-            >
-            <template slot-scope="scope">
+          >
+            <template 
+              slot-scope="scope">
               <el-time-select
-                placeholder="开始时间"
-                format="HH:mm"
                 v-model="scope.row.date_start"
                 :picker-options="{
                   start: '10:00',
                   step: '02:00',
                   end: '22:00'
                 }"
-                style="width: 150px">
-              </el-time-select>
+                placeholder="开始时间"
+                format="HH:mm"
+                style="width: 150px"/>
             </template>
           </el-table-column>
           <el-table-column
             prop="etime"
             label="结束时间"
             min-width="120"
-            >
-            <template slot-scope="scope">
+          >
+            <template 
+              slot-scope="scope">
               <el-time-select
-                placeholder="结束时间"
-                format="HH:mm"
                 v-model="scope.row.date_end"
                 :picker-options="{
                   start: '10:00',
@@ -94,80 +142,139 @@
                   end: '22:00',
                   minTime: scope.row.date_start
                 }"
-                style="width: 150px">
-              </el-time-select>
+                placeholder="结束时间"
+                format="HH:mm"
+                style="width: 150px"/>
             </template>
           </el-table-column>
           <el-table-column
+            :show-overflow-tooltip="true"
             prop="time"
             label="时间"
             min-width="100"
-            :show-overflow-tooltip="true"
-            >
-            <template slot-scope="scope">
-              {{scope.row.project.created_at}}
+          >
+            <template 
+              slot-scope="scope">
+              {{ scope.row.project.created_at }}
             </template>
           </el-table-column>
-          <el-table-column label="操作" min-width="100">
-            <template slot-scope="scope">
-              <el-button size="mini" type="warning" v-if="scope.row.project.icon" @click="editSchedule(scope.row)">编辑</el-button>
-              <el-button size="mini" type="danger" icon="el-icon-delete" v-if="!scope.row.project.icon" @click="deleteAddSchedule(index, scope.$index, scope.row)"></el-button>
-              <el-button size="mini" style="background-color: #8bc34a;border-color: #8bc34a; color: #fff;" v-if="!scope.row.project.icon" @click="saveSchedule(scope.row)">保存</el-button>
+          <el-table-column 
+            label="操作" 
+            min-width="100">
+            <template 
+              slot-scope="scope">
+              <el-button 
+                v-if="scope.row.project.icon"
+                size="mini"
+                type="warning"
+                @click="editSchedule(scope.row)">编辑</el-button>
+              <el-button 
+                v-if="!scope.row.project.icon" 
+                size="mini" 
+                type="danger" 
+                icon="el-icon-delete" 
+                @click="deleteAddSchedule(index, scope.$index, scope.row)"/>
+              <el-button 
+                v-if="!scope.row.project.icon" 
+                size="mini" 
+                style="background-color: #8bc34a;border-color: #8bc34a; color: #fff;"
+                @click="saveSchedule(scope.row)">保存</el-button>
             </template>
           </el-table-column>
         </el-table> 
       </el-collapse-item>
     </el-collapse>
-    <div class="pagination-wrap">
+    <div 
+      class="pagination-wrap">
       <el-pagination
-      layout="prev, pager, next, jumper, total"
-      :total="pagination.total"
-      :page-size="pagination.pageSize"
-      :current-page="pagination.currentPage"
-      @current-change="changePage"
-      >
-      </el-pagination>
+        :total="pagination.total"
+        :page-size="pagination.pageSize"
+        :current-page="pagination.currentPage"
+        layout="prev, pager, next, jumper, total"
+        @current-change="changePage"
+      />
     </div>
     <!-- 新增，修改 -->
-    <el-dialog :title="title" :visible.sync="templateVisible" @close="dialogClose" >
+    <el-dialog 
+      :title="title"
+      :visible.sync="templateVisible" 
+      @close="dialogClose" >
       <el-form
-      ref="templateForm"
-      :model="templateForm" label-width="150px" v-loading="loading">
-        <el-form-item label="区域" prop="area_id" :rules="[{ type: 'number', required: true, message: '请选择区域', trigger: 'submit' }]">
-          <el-select v-model="templateForm.area_id" placeholder="请选择区域" filterable clearable @change="areaChangeHandle" class="item-select">
+        v-loading="loading"
+        ref="templateForm"
+        :model="templateForm" 
+        label-width="150px" >
+        <el-form-item 
+          :rules="[{ type: 'number', required: true, message: '请选择区域', trigger: 'submit' }]"
+          label="区域" 
+          prop="area_id" >
+          <el-select 
+            v-model="templateForm.area_id" 
+            placeholder="请选择区域" 
+            filterable 
+            clearable 
+            class="item-select"
+            @change="areaChangeHandle">
             <el-option
               v-for="item in areaList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="商场" prop="market_id" :rules="[{ type: 'number', required: true, message: '请搜索商场', trigger: 'submit' }]">
-          <el-select v-model="templateForm.market_id" placeholder="请搜索商场" filterable :loading="searchLoading" remote :remote-method="getMarket"  @change="marketChangeHandle" clearable class="item-select">
+        <el-form-item 
+          :rules="[{ type: 'number', required: true, message: '请搜索商场', trigger: 'submit' }]"
+          label="商场" 
+          prop="market_id">
+          <el-select 
+            v-model="templateForm.market_id" 
+            :loading="searchLoading" 
+            :remote-method="getMarket" 
+            placeholder="请搜索商场" 
+            filterable 
+            remote 
+            clearable 
+            class="item-select"
+            @change="marketChangeHandle" >
             <el-option
               v-for="item in marketList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="点位" prop="point_id" :rules="[{ type: 'number', required: true, message: '请选择点位', trigger: 'submit' }]">
-          <el-select v-model="templateForm.point_id" placeholder="请选择点位" filterable :loading="searchLoading" clearable class="item-select">
+        <el-form-item 
+          :rules="[{ type: 'number', required: true, message: '请选择点位', trigger: 'submit' }]"
+          label="点位" 
+          prop="point_id" >
+          <el-select 
+            v-model="templateForm.point_id" 
+            :loading="searchLoading" 
+            filterable 
+            placeholder="请选择点位" 
+            clearable
+            class="item-select">
             <el-option
               v-for="item in pointList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="模板名" prop="name" :rules="[{ type: 'string', required: true, message: '请输入名称', trigger: 'submit' }]">
-          <el-input v-model="templateForm.name" placeholder="请输入名称" class="item-input"></el-input>
+        <el-form-item 
+          :rules="[{ type: 'string', required: true, message: '请输入名称', trigger: 'submit' }]"
+          label="模板名" 
+          prop="name" >
+          <el-input 
+            v-model="templateForm.name" 
+            placeholder="请输入名称" 
+            class="item-input"/>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submit('templateForm')" size="small">完成</el-button>
+          <el-button 
+            type="primary" 
+            size="small"
+            @click="submit('templateForm')" >完成</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>

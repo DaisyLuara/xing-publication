@@ -14,7 +14,8 @@ module.exports = {
   // required to lint *.vue files
   plugins: [
     // 使用的插件eslint-plugin-html. 写配置文件的时候，可以省略eslint-plugin-
-    'html',
+    // 'html',
+    'vue'
   ],
   extends: [
     // add more generic rulesets here, such as:
@@ -27,5 +28,6 @@ module.exports = {
   rules: {
     // override/add rules settings here, such as:
     // 'vue/no-unused-vars': 'error'
+    'generator-star-spacing': 'off',
   },
 }

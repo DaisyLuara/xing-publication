@@ -1,15 +1,15 @@
 <template>
   <div class="project-root">
-    <second-sidebar module="project"></second-sidebar>
+    <second-sidebar module="project"/>
     <div class="topbar">
-      {{this.$route.meta.title}}
+      {{ this.$route.meta.title }}
     </div>
-    <router-view></router-view>
+    <router-view />
   </div>
 </template>
 <script>
 export default {
-  name: 'projectView',
+  name: 'ProjectView',
   data() {
     return {
     }

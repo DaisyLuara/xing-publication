@@ -1,51 +1,97 @@
 <template>
-  <div class="schedule-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
+  <div 
+    v-loading="setting.loading"
+    :element-loading-text="setting.loadingText" 
+    class="schedule-wrap">
     <!-- 搜索 -->
-    <div class="search-wrap">
-      <el-form :model="searchForm" :inline="true" ref="searchForm" >
-        <el-form-item label="" prop="name">
-          <el-input v-model="searchForm.name" placeholder="请输入模板名称" class="item-input" clearable></el-input>
+    <div 
+      class="search-wrap">
+      <el-form 
+        ref="searchForm" 
+        :model="searchForm" 
+        :inline="true" >
+        <el-form-item 
+          label="" 
+          prop="name">
+          <el-input 
+            v-model="searchForm.name" 
+            placeholder="请输入模板名称" 
+            clearable
+            class="item-input" 
+          />
         </el-form-item>
-        <el-button @click="search" type="primary" size="small">搜索</el-button>
+        <el-button  
+          type="primary" 
+          size="small" 
+          @click="search">搜索</el-button>
       </el-form>
     </div>
-    <div class="actions-wrap">
-      <span class="label">
-        数量: {{pagination.total}}
+    <div 
+      class="actions-wrap">
+      <span 
+        class="label">
+        数量: {{ pagination.total }}
       </span>
       <!-- 模板增加 -->
       <div>
-        <el-button size="small" type="success" @click="addTemplate('templateForm')">新增策略</el-button>
+        <el-button 
+          size="small"
+          type="success" 
+          @click="addTemplate('templateForm')">新增策略</el-button>
       </div>
     </div>
     <!-- 模板排期列表 -->
-    <el-collapse v-model="activeNames" accordion @change="policyChange($event)">
-      <el-collapse-item :name="index" v-for="(item, index) in tableData" :key="item.id">
-        <template slot="title">
-          {{item.name }} ( {{item.company.name}} ) <el-button type="primary" icon="el-icon-edit" circle size="mini" @click="modifyTemplateName(item)"></el-button>
+    <el-collapse 
+      v-model="activeNames" 
+      accordion 
+      @change="policyChange($event)">
+      <el-collapse-item 
+        v-for="(item, index) in tableData" 
+        :key="item.id" 
+        :name="index" >
+        <template 
+          slot="title">
+          {{ item.name }} ( {{ item.company.name }} ) 
+          <el-button 
+            type="primary"
+            icon="el-icon-edit" 
+            circle 
+            size="mini"
+            @click="modifyTemplateName(item)"/>
         </template>
-        <div class="actions-wrap">
-          <span class="label">
-            数目: {{item.batches.data.length}}
+        <div 
+          class="actions-wrap">
+          <span 
+            class="label">
+            数目: {{ item.batches.data.length }}
           </span>
           <div>
-            <el-button size="small" @click="addbatch(index)">增加</el-button>
+            <el-button 
+              size="small" 
+              @click="addbatch(index)">增加</el-button>
           </div>
         </div>
-        <el-table :data="item.batches.data" style="width: 100%">
+        <el-table 
+          :data="item.batches.data" 
+          style="width: 100%">
           <el-table-column
             prop="name"
             label="优惠券名称"
             min-width="180"
-            >
-            <template slot-scope="scope">
-              <el-select v-model="scope.row.pivot.coupon_batch_id" placeholder="请选择优惠券" filterable :loading="searchLoading" style="width: 180px;">
+          >
+            <template 
+              slot-scope="scope">
+              <el-select 
+                v-model="scope.row.pivot.coupon_batch_id" 
+                :loading="searchLoading" 
+                placeholder="请选择优惠券" 
+                filterable 
+                style="width: 180px;">
                 <el-option
                   v-for="item in couponList"
                   :key="item.id"
                   :label="item.name"
-                  :value="item.id">
-                </el-option>
+                  :value="item.id"/>
               </el-select>
             </template>
           </el-table-column>
@@ -53,15 +99,22 @@
             prop="name"
             label="性别"
             min-width="100"
-            >
-            <template slot-scope="scope">
-              <el-select v-model="scope.row.pivot.gender" filterable placeholder="请搜索" clearable :loading="searchLoading" style="width: 100px;" @change="genderChangeHandle(index, scope.$index, scope.row.pivot.gender)" >
+          >
+            <template 
+              slot-scope="scope">
+              <el-select 
+                v-model="scope.row.pivot.gender" 
+                :loading="searchLoading" 
+                filterable 
+                placeholder="请搜索" 
+                clearable 
+                style="width: 100px;"
+                @change="genderChangeHandle(index, scope.$index, scope.row.pivot.gender)" >
                 <el-option
                   v-for="item in genderList"
                   :key="item.id"
                   :label="item.name"
-                  :value="item.id">
-                </el-option>
+                  :value="item.id"/>
               </el-select>
             </template>
           </el-table-column>
@@ -69,70 +122,121 @@
             prop="max_age"
             label="最大年龄"
             min-width="120"
-            >
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.pivot.max_age"  style="width: 100px;"></el-input>
+          >
+            <template 
+              slot-scope="scope">
+              <el-input 
+                v-model="scope.row.pivot.max_age"  
+                style="width: 100px;"/>
             </template>
           </el-table-column>
           <el-table-column
             prop="min_age"
             label="最小年龄"
             min-width="120"
-            >
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.pivot.min_age"  style="width: 100px;"></el-input>
+          >
+            <template 
+              slot-scope="scope">
+              <el-input 
+                v-model="scope.row.pivot.min_age"  
+                style="width: 100px;"/>
             </template>
           </el-table-column>
           <el-table-column
             prop="rate"
             label="概率"
             min-width="120"
-            >
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.pivot.rate"  style="width: 100px;"></el-input>
+          >
+            <template 
+              slot-scope="scope">
+              <el-input 
+                v-model="scope.row.pivot.rate"  
+                style="width: 100px;"/>
             </template>
           </el-table-column>
-          <el-table-column label="操作" min-width="150">
-            <template slot-scope="scope">
-              <el-button size="mini" type="warning" v-if="!scope.row.addStauts" @click="editBatch(scope.row)">编辑</el-button>
-              <el-button size="mini" type="info" v-if="!scope.row.addStauts" @click="deleteBatch(scope.row)">删除</el-button>
-              <el-button size="mini" type="danger" icon="el-icon-delete" v-if="scope.row.addStauts" @click="deleteAddBatch(index, scope.$index, scope.row)"></el-button>
-              <el-button size="mini" style="background-color: #8bc34a;border-color: #8bc34a; color: #fff;" v-if="scope.row.addStauts" @click="saveBatch(scope.row)">保存</el-button>
+          <el-table-column 
+            label="操作" 
+            min-width="150">
+            <template 
+              slot-scope="scope">
+              <el-button 
+                v-if="!scope.row.addStauts" 
+                size="mini" 
+                type="warning" 
+                @click="editBatch(scope.row)">编辑</el-button>
+              <el-button 
+                v-if="!scope.row.addStauts"
+                size="mini" 
+                type="info" 
+                @click="deleteBatch(scope.row)">删除</el-button>
+              <el-button 
+                v-if="scope.row.addStauts" 
+                size="mini" 
+                type="danger" 
+                icon="el-icon-delete"
+                @click="deleteAddBatch(index, scope.$index, scope.row)"/>
+              <el-button 
+                v-if="scope.row.addStauts" 
+                size="mini" 
+                style="background-color: #8bc34a;border-color: #8bc34a; color: #fff;" 
+                @click="saveBatch(scope.row)">保存</el-button>
             </template>
           </el-table-column>
         </el-table> 
       </el-collapse-item>
     </el-collapse>
-    <div class="pagination-wrap">
+    <div 
+      class="pagination-wrap">
       <el-pagination
-      layout="prev, pager, next, jumper, total"
-      :total="pagination.total"
-      :page-size="pagination.pageSize"
-      :current-page="pagination.currentPage"
-      @current-change="changePage"
-      >
-      </el-pagination>
+        :total="pagination.total"
+        :page-size="pagination.pageSize"
+        :current-page="pagination.currentPage"
+        layout="prev, pager, next, jumper, total"
+        @current-change="changePage"
+      />
     </div>
     <!-- 新增，修改 -->
-    <el-dialog :title="title" :visible.sync="templateVisible" @close="dialogClose" >
+    <el-dialog 
+      :title="title" 
+      :visible.sync="templateVisible" 
+      @close="dialogClose" >
       <el-form
-      ref="templateForm"
-      :model="templateForm" label-width="150px" v-loading="loading">
-        <el-form-item label="公司" prop="company_id" :rules="[{ type: 'number', required: true, message: '请选择公司', trigger: 'submit' }]">
-          <el-select v-model="templateForm.company_id" placeholder="请选择公司" filterable :loading="searchLoading" clearable class="item-select">
+        v-loading="loading"
+        ref="templateForm"
+        :model="templateForm" 
+        label-width="150px">
+        <el-form-item 
+          :rules="[{ type: 'number', required: true, message: '请选择公司', trigger: 'submit' }]"
+          label="公司" 
+          prop="company_id">
+          <el-select 
+            v-model="templateForm.company_id" 
+            :loading="searchLoading"
+            placeholder="请选择公司" 
+            filterable 
+            clearable 
+            class="item-select">
             <el-option
               v-for="item in companyList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="策略名" prop="name" :rules="[{ type: 'string', required: true, message: '请输入名称', trigger: 'submit' }]">
-          <el-input v-model="templateForm.name" placeholder="请输入名称" class="item-input"></el-input>
+        <el-form-item 
+          :rules="[{ type: 'string', required: true, message: '请输入名称', trigger: 'submit' }]"
+          label="策略名" 
+          prop="name" >
+          <el-input 
+            v-model="templateForm.name" 
+            placeholder="请输入名称" 
+            class="item-input"/>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submit('templateForm')" size="small">完成</el-button>
+          <el-button 
+            type="primary" 
+            size="small"
+            @click="submit('templateForm')" >完成</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
