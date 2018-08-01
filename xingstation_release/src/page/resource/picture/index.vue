@@ -1,46 +1,97 @@
 <template>
   <div>
     <div class="topbar">
-    <el-breadcrumb separator="/">
-      <el-breadcrumb-item>图片管理</el-breadcrumb-item>
-    </el-breadcrumb>
+      <el-breadcrumb separator="/">
+        <el-breadcrumb-item>图片管理</el-breadcrumb-item>
+      </el-breadcrumb>
     </div>
-    <div class="picture-manage" v-loading="loading">
+    <div 
+      v-loading="loading"
+      class="picture-manage">
       <div class="grouping-image-wrap">
         <div class="image-warp">
           <div class="image-title-group">
-            <el-checkbox v-model="checkbox.allChecked" size="small" @change="allCheckedHandle">全选</el-checkbox>
-            <el-popover ref="delete-image" placement="bottom" width="260" v-model="mediaImage.mediaDelete" :disabled="mediaGroup.disabledFlag">
+            <el-checkbox 
+              v-model="checkbox.allChecked" 
+              size="small" 
+              @change="allCheckedHandle">全选</el-checkbox>
+            <el-popover 
+              ref="delete-image" 
+              v-model="mediaImage.mediaDelete" 
+              :disabled="mediaGroup.disabledFlag"
+              placement="bottom" 
+              width="260">
               <p>确定删除该图片?</p>
               <p class="hint">若删除，不会对目前已使用该图片的相关业务造成影响。</p>
               <div class="btn-wrap">
-                <el-button type="primary" size="small" @click="imageDeleteHandle">确定</el-button>
-                <el-button size="small" @click="mediaImage.mediaDelete = false,setModelFlag(mediaImage.mediaList)">取消</el-button>
+                <el-button 
+                  type="primary" 
+                  size="small" 
+                  @click="imageDeleteHandle">确定</el-button>
+                <el-button 
+                  size="small" 
+                  @click="mediaImage.mediaDelete = false, setModelFlag(mediaImage.mediaList)">取消</el-button>
               </div>
             </el-popover>
-            <a v-popover:delete-image :class="{haveChooseImage : !mediaGroup.disabledFlag}">删除</a>
+            <a 
+              v-popover:delete-image 
+              :class="{haveChooseImage : !mediaGroup.disabledFlag}">删除</a>
           </div>
           <ul class="image-list">
-            <div class="hint-message" v-show="mediaImage.mediaList.length == 0">暂无数据，可点击左下角“上传图片”按钮添加</div>
-            <li v-for="(imageItem, index) in mediaImage.mediaList" :key="imageItem.id">
-              <img class="image-file" :src="imageItem.media_url" @click="mediaImage.imageVisible = true, mediaImage.mediaImageUrl = imageItem.media_url">
-              <p class="item-text"><el-checkbox size="small" v-model="checkbox" @change="checkBoxChange(index,imageItem.id)">{{imageItem.media_name}}</el-checkbox></p>
+            <div  
+              v-show="mediaImage.mediaList.length == 0"
+              class="hint-message">暂无数据，可点击左下角“上传图片”按钮添加</div>
+            <li 
+              v-for="(imageItem, index) in mediaImage.mediaList" 
+              :key="imageItem.id">
+              <img 
+                :src="imageItem.media_url" 
+                class="image-file" 
+                @click="mediaImage.imageVisible = true, mediaImage.mediaImageUrl = imageItem.media_url">
+              <p 
+                class="item-text">
+                <el-checkbox 
+                  v-model="checkbox" 
+                  size="small" 
+                  @change="checkBoxChange(index,imageItem.id)">
+                  {{ imageItem.media_name }}
+                </el-checkbox>
+              </p>
               <div class="image-operation">
-                <el-popover placement="bottom" width="260" v-model="operate">
+                <el-popover 
+                  v-model="operate"
+                  placement="bottom" 
+                  width="260" >
                   <p>编辑名称</p>
-                  <el-input v-model="operate" placeholder="请输入名称" class="rename-input"></el-input>
+                  <el-input 
+                    v-model="operate" 
+                    placeholder="请输入名称" 
+                    class="rename-input"/>
                   <div class="btn-wrap">
-                    <el-button type="primary" size="small" @click="mediaRenameHandle(index,imageItem.id)">确定</el-button>
-                    <el-button size="small" @click="handleOperationButtonClick(index, 'rename', imageItem.id)">取消</el-button>
+                    <el-button 
+                      type="primary" 
+                      size="small" 
+                      @click="mediaRenameHandle(index,imageItem.id)">确定</el-button>
+                    <el-button 
+                      size="small" 
+                      @click="handleOperationButtonClick(index, 'rename', imageItem.id)">取消</el-button>
                   </div>
                   <a slot="reference">重命名</a>
                 </el-popover>
-                <el-popover placement="bottom" width="260" v-model="operate">
+                <el-popover 
+                  v-model="operate"
+                  placement="bottom" 
+                  width="260" >
                   <p>确定删除该图片?</p>
                   <p class="hint">若删除，不会对目前已使用该图片的相关业务造成影响。</p>
                   <div class="btn-wrap">
-                    <el-button type="primary" size="small" @click="imageDeleteHandle(index,imageItem.id)">确定</el-button>
-                    <el-button size="small" @click="handleOperationButtonClick(index, '', imageItem.id)">取消</el-button>
+                    <el-button 
+                      type="primary" 
+                      size="small" 
+                      @click="imageDeleteHandle(index,imageItem.id)">确定</el-button>
+                    <el-button 
+                      size="small" 
+                      @click="handleOperationButtonClick(index, '', imageItem.id)">取消</el-button>
                   </div>
                   <a slot="reference">删除</a>
                 </el-popover>
@@ -48,25 +99,45 @@
             </li>
           </ul>
           <div class="submit-warp">
-            <el-upload class="upload" :action="mediaBase + '/api/media/media'" :data="{media_group_id: mediaGroup.media_group_id}" :headers="formHeader" :before-upload="beforeUpload" :on-success="handleSuccess" :multiple="true" :auto-upload="true" :show-file-list="false" list-type="picture">
-              <el-button size="small" type="success">上传图片</el-button>
+            <el-upload  
+              :action="mediaBase + '/api/media/media'" 
+              :data="{media_group_id: mediaGroup.media_group_id}" 
+              :headers="formHeader" 
+              :before-upload="beforeUpload" 
+              :on-success="handleSuccess" 
+              :multiple="true"
+              :auto-upload="true" 
+              :show-file-list="false" 
+              list-type="picture" 
+              class="upload">
+              <el-button 
+                size="small" 
+                type="success">上传图片</el-button>
             </el-upload>
             <span class="image-type">仅支持jpg、gif、png三种格式</span>
             <div class="pagination">
-              <el-pagination layout="total,prev, pager, next" :page-size="pagination.limit" :total="pagination.count" :current-page.sync="pagination.page_num" @current-change="getMediaListByGroupId('')">
-              </el-pagination>
+              <el-pagination 
+                :page-size="pagination.limit" 
+                :total="pagination.count" 
+                :current-page.sync="pagination.page_num" 
+                layout="total,prev, pager, next" 
+                @current-change="getMediaListByGroupId('')"/>
             </div>
-            </span>
           </div>
         </div>
       </div>
     </div>
-    <div class="widget-image" v-show="mediaImage.imageVisible">
-      <div class="shade-image"></div>
+    <div 
+      v-show="mediaImage.imageVisible"
+      class="widget-image">
+      <div class="shade-image"/>
       <div class="widget-content">
-        <img :src="mediaBase + mediaImage.mediaImageUrl" />
+        <img 
+          :src="mediaBase + mediaImage.mediaImageUrl" >
       </div>
-      <div class="widget-close" @click="handleImageClose">
+      <div 
+        class="widget-close" 
+        @click="handleImageClose">
         <i class="widget-icon">X</i>
       </div>
     </div>
@@ -89,10 +160,17 @@ import {
 } from 'element-ui'
 import auth from 'service/auth'
 
-// const MEDIA_API = '/api/media/media'
-// const MEDIA_GROUP_API = '/api/media/mediaGroups'
-
 export default {
+  components: {
+    'el-button': Button,
+    'el-popover': Popover,
+    'el-input': Input,
+    'el-checkbox': Checkbox,
+    'el-upload': Upload,
+    'el-pagination': Pagination,
+    'el-radio': Radio,
+    'el-dialog': Dialog
+  },
   data() {
     return {
       loading: true,
@@ -131,142 +209,142 @@ export default {
         mediaRename: false,
         mediaImageUrl: '',
         mediaList: [
-        {
-          id: 4,
-          media_name: 'WechatIMG9.jpeg',
-          media_type: 10,
-          media_size: 193003,
-          media_url:
-            'http://o9xrbl1oc.bkt.clouddn.com/1007/image/234_istar2_icon.png',
-          tenant_id: 3,
-          media_group_id: 1,
-          image_height: 873,
-          image_width: 476,
-          deleted_at: null,
-          created_at: '2018-01-30 10:42:08',
-          updated_at: '2018-01-30 10:42:08'
-        },
-        {
-          id: 5,
-          media_name: 'TH980oN9b.jpeg',
-          media_type: 10,
-          media_size: 193003,
-          media_url:
-            'http://o9xrbl1oc.bkt.clouddn.com/1007/image/100_icon.png',
-          tenant_id: 0,
-          media_group_id: 1,
-          image_height: 873,
-          image_width: 476,
-          deleted_at: null,
-          created_at: '2018-01-30 10:42:20',
-          updated_at: '2018-01-30 10:42:20'
-        },
-        {
-          id: 6,
-          media_name: 'icon2.png',
-          media_type: 10,
-          media_size: 106671,
-          media_url:
-            'http://o9xrbl1oc.bkt.clouddn.com/1007/image/234_istar2_icon.png',
-          tenant_id: 1,
-          media_group_id: 1,
-          image_height: 300,
-          image_width: 300,
-          deleted_at: null,
-          created_at: '2018-02-05 10:20:41',
-          updated_at: '2018-02-05 10:20:41'
-        },
-        {
-          id: 7,
-          media_name: 'new.png',
-          media_type: 10,
-          media_size: 2395635,
-          media_url:
-            'http://o9xrbl1oc.bkt.clouddn.com/1007/image/234_istar2_icon.png',
-          tenant_id: 1,
-          media_group_id: 1,
-          image_height: 1980,
-          image_width: 1080,
-          deleted_at: null,
-          created_at: '2018-02-05 10:25:14',
-          updated_at: '2018-02-05 10:25:14'
-        },
-        {
-          id: 8,
-          media_name: 'WechatIMG10.png',
-          media_type: 10,
-          media_size: 26449,
-          media_url:
-            'http://o9xrbl1oc.bkt.clouddn.com/1007/image/234_istar2_icon.png',
-          tenant_id: 1,
-          media_group_id: 1,
-          image_height: 300,
-          image_width: 300,
-          deleted_at: null,
-          created_at: '2018-02-05 10:39:22',
-          updated_at: '2018-02-05 10:39:22'
-        },
-        {
-          id: 9,
-          media_name: 'WechatIM.jpeg',
-          media_type: 10,
-          media_size: 277532,
-          media_url:
-            'http://o9xrbl1oc.bkt.clouddn.com/1007/image/234_istar2_icon.png',
-          tenant_id: 1,
-          media_group_id: 1,
-          image_height: 1920,
-          image_width: 1080,
-          deleted_at: null,
-          created_at: '2018-02-05 10:39:29',
-          updated_at: '2018-02-05 10:39:29'
-        },
-        {
-          id: 10,
-          media_name: '042.png',
-          media_type: 10,
-          media_size: 2425727,
-          media_url:
-            'http://o9xrbl1oc.bkt.clouddn.com/1007/image/234_istar2_icon.png',
-          tenant_id: 1,
-          media_group_id: 1,
-          image_height: 1980,
-          image_width: 1080,
-          deleted_at: null,
-          created_at: '2018-02-06 15:18:52',
-          updated_at: '2018-02-06 15:18:52'
-        },
-        {
-          id: 11,
-          media_name: 'timg-300x244.jpeg',
-          media_type: 10,
-          media_size: 14390,
-          media_url:
-            'http://o9xrbl1oc.bkt.clouddn.com/1007/image/234_istar2_icon.png',
-          tenant_id: 0,
-          media_group_id: 1,
-          image_height: 244,
-          image_width: 300,
-          deleted_at: null,
-          created_at: '2018-04-24 09:43:30',
-          updated_at: '2018-04-24 09:43:30'
-        },
-        {
-          id: 12,
-          media_name: 'dockerlnmp.png',
-          media_type: 10,
-          media_size: 21981,
-          media_url:
-            'http://o9xrbl1oc.bkt.clouddn.com/1007/image/234_istar2_icon.png',
-          tenant_id: 0,
-          media_group_id: 1,
-          image_height: 337,
-          image_width: 337,
-          deleted_at: null,
-          created_at: '2018-05-06 11:23:22',
-          updated_at: '2018-05-06 11:23:22'
-        }
-      ]
+          {
+            id: 4,
+            media_name: 'WechatIMG9.jpeg',
+            media_type: 10,
+            media_size: 193003,
+            media_url:
+              'http://o9xrbl1oc.bkt.clouddn.com/1007/image/234_istar2_icon.png',
+            tenant_id: 3,
+            media_group_id: 1,
+            image_height: 873,
+            image_width: 476,
+            deleted_at: null,
+            created_at: '2018-01-30 10:42:08',
+            updated_at: '2018-01-30 10:42:08'
+          },
+          {
+            id: 5,
+            media_name: 'TH980oN9b.jpeg',
+            media_type: 10,
+            media_size: 193003,
+            media_url:
+              'http://o9xrbl1oc.bkt.clouddn.com/1007/image/100_icon.png',
+            tenant_id: 0,
+            media_group_id: 1,
+            image_height: 873,
+            image_width: 476,
+            deleted_at: null,
+            created_at: '2018-01-30 10:42:20',
+            updated_at: '2018-01-30 10:42:20'
+          },
+          {
+            id: 6,
+            media_name: 'icon2.png',
+            media_type: 10,
+            media_size: 106671,
+            media_url:
+              'http://o9xrbl1oc.bkt.clouddn.com/1007/image/234_istar2_icon.png',
+            tenant_id: 1,
+            media_group_id: 1,
+            image_height: 300,
+            image_width: 300,
+            deleted_at: null,
+            created_at: '2018-02-05 10:20:41',
+            updated_at: '2018-02-05 10:20:41'
+          },
+          {
+            id: 7,
+            media_name: 'new.png',
+            media_type: 10,
+            media_size: 2395635,
+            media_url:
+              'http://o9xrbl1oc.bkt.clouddn.com/1007/image/234_istar2_icon.png',
+            tenant_id: 1,
+            media_group_id: 1,
+            image_height: 1980,
+            image_width: 1080,
+            deleted_at: null,
+            created_at: '2018-02-05 10:25:14',
+            updated_at: '2018-02-05 10:25:14'
+          },
+          {
+            id: 8,
+            media_name: 'WechatIMG10.png',
+            media_type: 10,
+            media_size: 26449,
+            media_url:
+              'http://o9xrbl1oc.bkt.clouddn.com/1007/image/234_istar2_icon.png',
+            tenant_id: 1,
+            media_group_id: 1,
+            image_height: 300,
+            image_width: 300,
+            deleted_at: null,
+            created_at: '2018-02-05 10:39:22',
+            updated_at: '2018-02-05 10:39:22'
+          },
+          {
+            id: 9,
+            media_name: 'WechatIM.jpeg',
+            media_type: 10,
+            media_size: 277532,
+            media_url:
+              'http://o9xrbl1oc.bkt.clouddn.com/1007/image/234_istar2_icon.png',
+            tenant_id: 1,
+            media_group_id: 1,
+            image_height: 1920,
+            image_width: 1080,
+            deleted_at: null,
+            created_at: '2018-02-05 10:39:29',
+            updated_at: '2018-02-05 10:39:29'
+          },
+          {
+            id: 10,
+            media_name: '042.png',
+            media_type: 10,
+            media_size: 2425727,
+            media_url:
+              'http://o9xrbl1oc.bkt.clouddn.com/1007/image/234_istar2_icon.png',
+            tenant_id: 1,
+            media_group_id: 1,
+            image_height: 1980,
+            image_width: 1080,
+            deleted_at: null,
+            created_at: '2018-02-06 15:18:52',
+            updated_at: '2018-02-06 15:18:52'
+          },
+          {
+            id: 11,
+            media_name: 'timg-300x244.jpeg',
+            media_type: 10,
+            media_size: 14390,
+            media_url:
+              'http://o9xrbl1oc.bkt.clouddn.com/1007/image/234_istar2_icon.png',
+            tenant_id: 0,
+            media_group_id: 1,
+            image_height: 244,
+            image_width: 300,
+            deleted_at: null,
+            created_at: '2018-04-24 09:43:30',
+            updated_at: '2018-04-24 09:43:30'
+          },
+          {
+            id: 12,
+            media_name: 'dockerlnmp.png',
+            media_type: 10,
+            media_size: 21981,
+            media_url:
+              'http://o9xrbl1oc.bkt.clouddn.com/1007/image/234_istar2_icon.png',
+            tenant_id: 0,
+            media_group_id: 1,
+            image_height: 337,
+            image_width: 337,
+            deleted_at: null,
+            created_at: '2018-05-06 11:23:22',
+            updated_at: '2018-05-06 11:23:22'
+          }
+        ]
       },
       formHeader: {
         Authorization: ''
@@ -274,10 +352,6 @@ export default {
       mediaBase: process.env.SERVER_URL,
       defaultGroupId: ''
     }
-  },
-  created: function() {
-    // this.getGroupsList()
-    this.loading = false
   },
   computed: {
     maxlength: function() {
@@ -288,6 +362,11 @@ export default {
       return this.mediaImage.mediaList.length > 0 ? booleanFlag : !booleanFlag
     }
   },
+  created: function() {
+    // this.getGroupsList()
+    this.loading = false
+  },
+
   methods: {
     handleImageClose() {
       this.mediaImage.imageVisible = false
@@ -514,17 +593,7 @@ export default {
         this.checkbox.checkedList = []
         this.mediaGroup.disabledFlag = true
       }
-    },
-  },
-  components: {
-    'el-button': Button,
-    'el-popover': Popover,
-    'el-input': Input,
-    'el-checkbox': Checkbox,
-    'el-upload': Upload,
-    'el-pagination': Pagination,
-    'el-radio': Radio,
-    'el-dialog': Dialog
+    }
   }
 }
 </script>
@@ -697,7 +766,6 @@ export default {
   margin-right: 10px;
 }
 
-
 .image-operation a {
   color: #20a0ff;
   cursor: pointer;
@@ -722,7 +790,6 @@ export default {
 .groupRadioList li {
   padding: 5px 0;
 }
-
 
 .picture-group-title .serachTitle {
   color: rgb(51, 136, 255);

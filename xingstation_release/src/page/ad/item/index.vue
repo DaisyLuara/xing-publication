@@ -140,7 +140,7 @@
                 :span="6">
                 <el-form-item>
                   <el-button 
-                    type="primary" 
+                    type="primary"
                     @click="search('adSearchForm')">搜索</el-button>
                   <el-button 
                     @click="resetSearch('adSearchForm')">重置</el-button>

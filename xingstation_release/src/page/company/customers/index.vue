@@ -6,7 +6,7 @@
     <div 
       class="customer-list-wrap">
       <div 
-        lass="customer-content-wrap">
+        class="customer-content-wrap">
         <div 
           class="search-wrap">
           <el-form 
@@ -87,7 +87,7 @@
               slot-scope="scope">
               <el-button 
                 size="small" 
-                type="primary" 
+                type="primary"
                 @click="linkToEdit(scope.row.id)">修改</el-button>
               <el-button 
                 size="small" 

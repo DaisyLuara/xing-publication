@@ -6,7 +6,7 @@
       <el-breadcrumb 
         separator="/">
         <el-breadcrumb-item 
-          :to="{ path: '/customer/customers' }">联系人管理</el-breadcrumb-item>
+          :to="{ path: '/company/customers/contacts?id=' + pid +'&name=' + contactName }">联系人管理</el-breadcrumb-item>
         <el-breadcrumb-item>{{ contactID ? '修改' : '添加' }}</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
@@ -41,9 +41,11 @@
         <el-form-item>
           <el-button 
             :loading="loading"  
-            type="primary" 
+            type="primary"
+            size="small"
             @click="onSubmit('contactForm')">保存</el-button>
           <el-button 
+            size="small"
             @click="resetForm('contactForm')">取消</el-button>
         </el-form-item>
       </el-form>

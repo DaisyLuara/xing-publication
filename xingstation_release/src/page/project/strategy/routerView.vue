@@ -10,7 +10,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.schedule-root {
+.strategy-root {
   height: 100%;
   margin: 10px;
   background-color: #eff2f7;

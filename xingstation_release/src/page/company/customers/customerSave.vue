@@ -56,9 +56,11 @@
         <el-form-item>
           <el-button 
             :loading="loading"  
-            type="primary" 
+            type="primary"
+            size="small" 
             @click="onSubmit('customerForm')">保存</el-button>
           <el-button 
+            size="small" 
             @click="historyBack()">取消</el-button>
         </el-form-item>
       </el-form>

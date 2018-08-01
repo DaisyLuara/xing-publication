@@ -403,6 +403,7 @@ export default {
 .root {
   font-size: 14px;
   color: #5e6d82;
+  
   .item-list-wrap {
     background: #fff;
     padding: 30px;
