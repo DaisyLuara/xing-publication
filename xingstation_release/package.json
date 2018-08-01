@@ -9,7 +9,6 @@
     "start": "npm run dev",
     "production": "npm run build",
     "build": "node build/build.js",
-    "lint": "eslint --ext .js,.vue src",
     "test": "npm run production test && cp -r ./predist/* ./dist",
     "release": "npm run production && cp -r ./predist/* ./dist"
   },
