@@ -1,97 +1,260 @@
 <template>
-  <div class='account-form'>
-    <div class="account-form__container">
-      <div class="account-form__header clearfix">
-        <div class="header-logo-wrap">
-          <span class="title-header">用户登录</span>
+  <div 
+    class="account-form">
+    <div 
+      class="account-form__container">
+      <div 
+        class="account-form__header clearfix">
+        <div 
+          class="header-logo-wrap">
+          <span 
+            class="title-header">用户登录</span>
         </div>
       </div>
-      <div class="account-form__body">
-        <el-form @submit.native.prevent :model="accountForm" :rules="rules" ref="accountForm" label-position="top" label-width="0px" >
-          <el-form-item prop="account" class="account-form-item mobile" :class="{'error': validateError.account,'active': itemFocus.account}">
-            <el-col :xs="10" :sm="8" :md="8" :lg="8">
-              <div class="account-form-item-label">
-                <span class="lable-text">手机号码</span>
-                <span class="lable-prefix">+86</span>
+      <div 
+        class="account-form__body">
+        <el-form 
+          ref="accountForm" 
+          :model="accountForm" 
+          :rules="rules" 
+          label-position="top" 
+          label-width="0px" 
+          @submit.native.prevent >
+          <el-form-item 
+            :class="{'error': validateError.account,'active': itemFocus.account}" 
+            prop="account" 
+            class="account-form-item mobile" >
+            <el-col 
+              :xs="10" 
+              :sm="8" 
+              :md="8" 
+              :lg="8">
+              <div 
+                class="account-form-item-label">
+                <span 
+                  class="lable-text">手机号码</span>
+                <span 
+                  class="lable-prefix">+86</span>
               </div>
             </el-col>
-            <el-col :xs="14" :sm="16" :md="16" :lg="16">
-              <el-col :xs="16" :sm="16" :md="16" :lg="16">
-                <el-input type="text" :maxlength="11" v-model="accountForm.account" auto-complete="off" placeholder="请输入手机号"></el-input>
+            <el-col 
+              :xs="14" 
+              :sm="16" 
+              :md="16" 
+              :lg="16">
+              <el-col 
+                :xs="16" 
+                :sm="16" 
+                :md="16" 
+                :lg="16">
+                <el-input 
+                  v-model="accountForm.account"
+                  :maxlength="11" 
+                  type="text"  
+                  auto-complete="off"
+                  placeholder="请输入手机号"/>
               </el-col>
-              <el-col :xs="8" :sm="8" :md="8" :lg="8">
-              <div class="btn-code-wrap" @click="phoneSuccessHandle()">
-                <span class="btn-code-label__countdown">点击验证</span>
-              </div>
-            </el-col>
-                
-            </el-col>
-            <div class="error-tip" v-show="validateError.account">{{validateErrorText.account}}</div>
-          </el-form-item>
-          <el-form-item prop="imageCaptcha.value" v-if="showImageCaptcha" class="account-form-item image-code" :class="{'error': validateError.imageCaptcha,'active': itemFocus.imageCaptcha}">
-            <el-col :xs="4" :sm="5" :md="5" :lg="5">
-              <div class="account-form-item-label">
-                <span class="lable-text">验证码</span>
-              </div>
-            </el-col>
-            <el-col :xs="20" :sm="19" :md="19" :lg="19">
-              <el-col :xs="12" :sm="13" :md="13" :lg="13">
-                <el-input type="text" :maxlength="5" @focus="itemFocus.imageCaptcha=true;validateError.imageCaptcha=false" @change="getSmsCaptcha" @blur="itemFocus.imageCaptcha=false" v-model="accountForm.imageCaptcha.value" auto-complete="off" placeholder="请输入验证码"></el-input>
-              </el-col>
-              <el-col :xs="12" :sm="11" :md="11" :lg="11">
-                <div class="image-code-wrap">
-                  <img class="image-code" :src="setting.imageCaptcha.image_url" @click="getImageCaptcha()" alt="验证码图片">
-                  <!-- <img class="check-image-code" src="../../assets/images/icon_check_image_code.png"> -->
+              <el-col 
+                :xs="8" 
+                :sm="8" 
+                :md="8" 
+                :lg="8">
+                <div 
+                  class="btn-code-wrap" 
+                  @click="phoneSuccessHandle()">
+                  <span 
+                    class="btn-code-label__countdown">点击验证</span>
                 </div>
               </el-col>
             </el-col>
-            <div class="error-tip" v-show="validateError.imageCaptcha">{{validateErrorText.imageCaptcha}}</div>
+            <div 
+              v-show="validateError.account"
+              class="error-tip" 
+            >{{ validateErrorText.account }}</div>
           </el-form-item>
-          <el-form-item prop="smsCaptcha" v-if="showSmsCaptcha" class="account-form-item sms-code" :class="{'error': validateError.smsCaptcha,'active': itemFocus.smsCaptcha}">
-            <el-col :xs="7" :sm="7" :md="7" :lg="7">
-              <div class="account-form-item-label">
-                <span class="lable-text">短信验证码</span>
+          <el-form-item 
+            v-if="showImageCaptcha"
+            :class="{'error': validateError.imageCaptcha,'active': itemFocus.imageCaptcha}"
+            prop="imageCaptcha.value" 
+            class="account-form-item image-code" 
+          >
+            <el-col 
+              :xs="4" 
+              :sm="5" 
+              :md="5" 
+              :lg="5">
+              <div 
+                class="account-form-item-label">
+                <span 
+                  class="lable-text">验证码</span>
               </div>
             </el-col>
-            <el-col :xs="17" :sm="17" :md="17" :lg="17">
-              <el-col :xs="15" :sm="14" :md="14" :lg="14">
-                <el-input type="text" :maxlength="5" @focus="itemFocus.smsCaptcha=true;validateError.smsCaptcha=false" @blur="itemFocus.smsCaptcha=false" v-model="accountForm.smsCaptcha" auto-complete="off" placeholder="请输入验证码"></el-input>
+            <el-col 
+              :xs="20" 
+              :sm="19" 
+              :md="19" 
+              :lg="19">
+              <el-col 
+                :xs="12" 
+                :sm="13" 
+                :md="13" 
+                :lg="13">
+                <el-input 
+                  v-model="accountForm.imageCaptcha.value" 
+                  :maxlength="5" 
+                  type="text" 
+                  placeholder="请输入验证码"
+                  auto-complete="off"
+                  @focus="itemFocus.imageCaptcha=true;validateError.imageCaptcha=false" 
+                  @change="getSmsCaptcha" 
+                  @blur="itemFocus.imageCaptcha=false"/>
               </el-col>
-              <el-col :xs="9" :sm="10" :md="10" :lg="10">
-                <div class="sms-code-wrap">
-                  <span class="sms-code-label" @click="sendSmsCaptcha()" v-show="!setting.sendingSmsCaptcha">{{ setting.smsCaptchaText }}</span>
-                  <span class="sms-code-label__countdown" v-show="setting.sendingSmsCaptcha">重新获取({{setting.sendingSmsCaptchaTimer}}s)</span>
+              <el-col 
+                :xs="12" 
+                :sm="11" 
+                :md="11" 
+                :lg="11">
+                <div 
+                  class="image-code-wrap">
+                  <img 
+                    :src="setting.imageCaptcha.image_url" 
+                    class="image-code" 
+                    alt="验证码图片"
+                    @click="getImageCaptcha()" >
                 </div>
               </el-col>
             </el-col>
-            <div class="error-tip" v-show="validateError.smsCaptcha">{{validateErrorText.smsCaptcha}}</div>
+            <div 
+              v-show="validateError.imageCaptcha"
+              class="error-tip">{{ validateErrorText.imageCaptcha }}</div>
           </el-form-item>
-          <el-form-item prop="password" class="account-form-item password" :class="{'error': validateError.password,'active': itemFocus.password}">
-            <el-col :xs="6" :sm="5" :md="5" :lg="5">
-              <div class="account-form-item-label password">
-                <div class="lable-text">登录密码</div>
+          <el-form-item 
+            v-if="showSmsCaptcha"
+            :class="{'error': validateError.smsCaptcha,'active': itemFocus.smsCaptcha}"
+            prop="smsCaptcha"
+            class="account-form-item sms-code">
+            <el-col 
+              :xs="7" 
+              :sm="7" 
+              :md="7" 
+              :lg="7">
+              <div 
+                class="account-form-item-label">
+                <span 
+                  class="lable-text">短信验证码</span>
               </div>
             </el-col>
-            <el-col :xs="18" :sm="19" :md="19" :lg="19">
-              <el-col :xs="20" :sm="21" :md="21" :lg="21">
-                <el-input @keyup.enter.native="onSubmit(type)" :type="setting.showPassword ? 'text' : 'password'" :maxlength="20" @focus="itemFocus.password=true;validateError.password=false" @blur="itemFocus.password=false" v-model="accountForm.password" auto-complete="off" placeholder="请输入密码"></el-input>
+            <el-col 
+              :xs="17" 
+              :sm="17" 
+              :md="17" 
+              :lg="17">
+              <el-col 
+                :xs="15" 
+                :sm="14" 
+                :md="14" 
+                :lg="14">
+                <el-input 
+                  v-model="accountForm.smsCaptcha" 
+                  :maxlength="5" 
+                  type="text" 
+                  auto-complete="off" 
+                  placeholder="请输入验证码"
+                  @focus="itemFocus.smsCaptcha=true;validateError.smsCaptcha=false" 
+                  @blur="itemFocus.smsCaptcha=false"/>
               </el-col>
-              <el-col :xs="4" :sm="3" :md="3" :lg="3">
-                <div class="switch-show-off-password">
-                  <img src="../../assets/images/icon_show_pwd.png" @click="setting.showPassword = !setting.showPassword" v-show="setting.showPassword">
-                  <img src="../../assets/images/icon_hide_pwd.png" @click="setting.showPassword = !setting.showPassword" v-show="!setting.showPassword">
+              <el-col
+                :xs="9" 
+                :sm="10" 
+                :md="10" 
+                :lg="10">
+                <div 
+                  class="sms-code-wrap">
+                  <span 
+                    v-show="!setting.sendingSmsCaptcha"
+                    class="sms-code-label" 
+                    @click="sendSmsCaptcha()" >{{ setting.smsCaptchaText }}</span>
+                  <span 
+                    v-show="setting.sendingSmsCaptcha"
+                    class="sms-code-label__countdown" >重新获取({{ setting.sendingSmsCaptchaTimer }}s)</span>
                 </div>
               </el-col>
             </el-col>
-            <div class="error-tip" v-show="validateError.password">{{validateErrorText.password}}</div>
+            <div 
+              v-show="validateError.smsCaptcha"
+              class="error-tip" >{{ validateErrorText.smsCaptcha }}</div>
           </el-form-item>
-          <el-form-item style="width:100%;" class="account-form-submit">
-            <el-button class="btn-login" @click="onSubmit(type)" :loading="setting.submiting">登录</el-button>
+          <el-form-item  
+            :class="{'error': validateError.password,'active': itemFocus.password}"
+            prop="password" 
+            class="account-form-item password">
+            <el-col 
+              :xs="6" 
+              :sm="5"
+              :md="5"
+              :lg="5">
+              <div 
+                class="account-form-item-label password">
+                <div 
+                  class="lable-text">登录密码</div>
+              </div>
+            </el-col>
+            <el-col 
+              :xs="18" 
+              :sm="19" 
+              :md="19" 
+              :lg="19">
+              <el-col 
+                :xs="20" 
+                :sm="21" 
+                :md="21" 
+                :lg="21">
+                <el-input 
+                  v-model="accountForm.password"
+                  :type="setting.showPassword ? 'text' : 'password'" 
+                  :maxlength="20" 
+                  auto-complete="off"
+                  placeholder="请输入密码"
+                  @keyup.enter.native="onSubmit(type)" 
+                  @focus="itemFocus.password=true;validateError.password=false" 
+                  @blur="itemFocus.password=false" />
+              </el-col>
+              <el-col 
+                :xs="4" 
+                :sm="3" 
+                :md="3" 
+                :lg="3">
+                <div 
+                  class="switch-show-off-password">
+                  <img 
+                    v-show="setting.showPassword"
+                    src="../../assets/images/icon_show_pwd.png" 
+                    @click="setting.showPassword = !setting.showPassword" >
+                  <img 
+                    v-show="!setting.showPassword"
+                    src="../../assets/images/icon_hide_pwd.png"
+                    @click="setting.showPassword = !setting.showPassword" >
+                </div>
+              </el-col>
+            </el-col>
+            <div 
+              v-show="validateError.password"
+              class="error-tip" >{{ validateErrorText.password }}</div>
+          </el-form-item>
+          <el-form-item 
+            style="width:100%;" 
+            class="account-form-submit">
+            <el-button 
+              :loading="setting.submiting"
+              class="btn-login" 
+              @click="onSubmit(type)" 
+            >登录</el-button>
           </el-form-item>
         </el-form>
       </div>
     </div>
-    <div class="icp">
+    <div 
+      class="icp">
       Copyright©2018 星视度 版权所有   沪ICP备15015485号-1
     </div>
   </div>
@@ -112,8 +275,24 @@ import {
 } from 'element-ui'
 import axios from 'axios'
 export default {
-  name: 'account-form',
-  props: ['type'],
+  name: 'AccountForm',
+  components: {
+    'el-col': Col,
+    'el-button': Button,
+    'el-input': Input,
+    'el-form': Form,
+    'el-form-item': FormItem,
+    'el-checkbox': Checkbox,
+    'el-checkbox-group': CheckboxGroup,
+    'el-select': Select,
+    'el-option': Option
+  },
+  props: {
+    type: {
+      type: String,
+      required: true
+    }
+  },
   data() {
     let va = (rule, value, callback) => {
       console.log(value)
@@ -324,18 +503,6 @@ export default {
           console.log(error)
         })
     }
-  },
-  computed: {},
-  components: {
-    'el-col': Col,
-    'el-button': Button,
-    'el-input': Input,
-    'el-form': Form,
-    'el-form-item': FormItem,
-    'el-checkbox': Checkbox,
-    'el-checkbox-group': CheckboxGroup,
-    'el-select': Select,
-    'el-option': Option
   }
 }
 </script>

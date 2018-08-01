@@ -1,17 +1,11 @@
 <template>
   <div class="operate-root">
-    <router-view></router-view>
+    <router-view/>
   </div>
 </template>
 <script>
 export default {
-  name: 'operateView',
-  data() {
-    return {
-    }
-  },
-  methods: {
-  }
+  name: 'OperateView'
 }
 </script>
 

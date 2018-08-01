@@ -1,17 +1,12 @@
 <template>
-  <account-form :type="'login'"></account-form>
+  <account-form 
+    :type="'login'"/>
 </template>
 <script>
 import accountForm from '../components/common/accountForm'
 import auth from 'service/auth'
 export default {
-  name: 'login',
-  created(){
-  },
-  methods: {
-  },
-  computed:{
-  },
+  name: 'Login',
   components: {
     accountForm
   }

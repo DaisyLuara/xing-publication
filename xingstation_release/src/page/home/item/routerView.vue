@@ -1,17 +1,11 @@
 <template>
   <div class="item-root">
-    <router-view></router-view>
+    <router-view/>
   </div>
 </template>
 <script>
 export default {
-  name: 'itemView',
-  data() {
-    return {
-    }
-  },
-  methods: {
-  }
+  name: 'ItemView'
 }
 </script>
 

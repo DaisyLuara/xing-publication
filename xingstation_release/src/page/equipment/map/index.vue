@@ -1,18 +1,25 @@
 <template>
-  <div class="root">
-    <div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
-      <div class="func">
-        <div></div>
+  <div 
+    class="root">
+    <div  
+      v-loading="setting.loading"
+      :element-loading-text="setting.loadingText"
+      class="item-list-wrap">
+      <div 
+        class="func">
+        <div/>
         <el-switch
           v-if="controlReady === true"
           v-model="requestToday"
-          @change="handleTimeSwitch"
           active-text="当天"
-          inactive-text="所有">
-        </el-switch>
+          inactive-text="所有"
+          @change="handleTimeSwitch"/>
       </div>
-      <div id="container" style="width: 100%; height: 80vh;"></div>
-      <canvas id="canvas"></canvas>
+      <div 
+        id="container" 
+        style="width: 100%; height: 80vh;"/>
+      <canvas 
+        id="canvas"/>
     </div>
   </div>
 </template>

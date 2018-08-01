@@ -1,24 +1,19 @@
 <template>
-<div class="module-system">
-  <second-sidebar module="system"></second-sidebar>
-  <div class="content">
-    <router-view></router-view>
+  <div 
+    class="module-system">
+    <second-sidebar 
+      module="system"/>
+    <div 
+      class="content">
+      <router-view/>
+    </div>
   </div>
-</div>
 </template>
 <script>
-
 export default {
-  name: 'systemHome',
-  data () {
-    return {
-    }
-  },
-  methods: {
-  }
+  name: 'SystemHome'
 }
 </script>
 
 <style lang="less">
-
 </style>

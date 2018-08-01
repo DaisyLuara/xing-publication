@@ -1,177 +1,268 @@
 <template>
-  <div class="item-wrap-template">
-    <div class="topbar">
-      <el-breadcrumb separator="/">
-        <el-breadcrumb-item :to="{ path: '/project/item' }">节目投放管理</el-breadcrumb-item>
+  <div 
+    class="item-wrap-template">
+    <div 
+      class="topbar">
+      <el-breadcrumb 
+        separator="/">
+        <el-breadcrumb-item 
+          :to="{ path: '/project/item' }">节目投放管理</el-breadcrumb-item>
         <el-breadcrumb-item>添加</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
-    <div class="pane"  :element-loading-text="setting.loadingText" v-loading="setting.loading">
-      <div class="pane-title">
+    <div 
+      v-loading="setting.loading"
+      :element-loading-text="setting.loadingText" 
+      class="pane">
+      <div 
+        class="pane-title">
         新增节目投放
       </div>
       <el-form
         ref="projectForm"
-        :model="projectForm" label-width="150px">
-        <el-form-item label="节目名称" prop="project" :rules="[{ required: true, message: '请输入节目名称', trigger: 'submit',type: 'number'}]">
-          <el-select v-model="projectForm.project" filterable placeholder="请搜索" remote :remote-method="getProject" @change="projectChangeHandle" clearable :loading="searchLoading">
+        :model="projectForm" 
+        label-width="150px">
+        <el-form-item 
+          :rules="[{ required: true, message: '请输入节目名称', trigger: 'submit',type: 'number'}]"
+          label="节目名称" 
+          prop="project">
+          <el-select
+            v-model="projectForm.project" 
+            :loading="searchLoading"
+            :remote-method="getProject" 
+            filterable 
+            placeholder="请搜索"
+            remote 
+            clearable
+            @change="projectChangeHandle">
             <el-option
               v-for="item in projectList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="区域" prop="area"  :rules="[{ required: true, message: '请输入区域', trigger: 'submit' ,type: 'number'}]">
-          <el-select v-model="projectForm.area" placeholder="请选择" filterable @change="areaChangeHandle" clearable>
+        <el-form-item 
+          :rules="[{ required: true, message: '请输入区域', trigger: 'submit' ,type: 'number'}]"
+          label="区域" 
+          prop="area" >
+          <el-select 
+            v-model="projectForm.area" 
+            placeholder="请选择" 
+            filterable 
+            clearable
+            @change="areaChangeHandle">
             <el-option
               v-for="item in areaList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="商场" prop="market" :rules="[{ required: true, message: '请输入商场', trigger: 'submit' ,type: 'number'}]">
-          <el-select v-model="projectForm.market"  placeholder="请搜索" filterable :loading="searchLoading" remote :remote-method="getMarket" @change="marketChangeHandle" clearable>
+        <el-form-item 
+          :rules="[{ required: true, message: '请输入商场', trigger: 'submit' ,type: 'number'}]"
+          label="商场" 
+          prop="market">
+          <el-select 
+            v-model="projectForm.market"  
+            :remote-method="getMarket" 
+            :loading="searchLoading" 
+            placeholder="请搜索" 
+            filterable 
+            remote 
+            clearable
+            @change="marketChangeHandle">
             <el-option
               v-for="item in marketList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="点位" prop="point" :rules="[{ required: true, message: '请输入点位', trigger: 'submit',type: 'array'}]">
-          <el-select v-model="projectForm.point" placeholder="请选择"  multiple filterable @change="pointChangeHandle" :loading="searchLoading" :multiple-limit="10" clearable>
+        <el-form-item 
+          :rules="[{ required: true, message: '请输入点位', trigger: 'submit',type: 'array'}]"
+          label="点位" 
+          prop="point">
+          <el-select 
+            v-model="projectForm.point" 
+            :loading="searchLoading" 
+            :multiple-limit="10" 
+            placeholder="请选择"  
+            multiple 
+            filterable
+            clearable
+            @change="pointChangeHandle" >
             <el-option
               v-for="item in pointList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="星期一模版">
-          <el-select v-model="projectForm.day1_tvid" placeholder="请选择" filterable clearable>
+        <el-form-item 
+          label="星期一模版">
+          <el-select 
+            v-model="projectForm.day1_tvid" 
+            placeholder="请选择" 
+            filterable 
+            clearable>
             <el-option
               v-for="item in monList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="星期二模版">
-          <el-select v-model="projectForm.day2_tvid" placeholder="请选择" filterable clearable>
+        <el-form-item 
+          label="星期二模版">
+          <el-select 
+            v-model="projectForm.day2_tvid" 
+            placeholder="请选择" 
+            filterable
+            clearable>
             <el-option
               v-for="item in tueList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="星期三模版">
-          <el-select v-model="projectForm.day3_tvid" placeholder="请选择" filterable clearable>
+        <el-form-item 
+          label="星期三模版">
+          <el-select 
+            v-model="projectForm.day3_tvid"
+            placeholder="请选择" 
+            filterable 
+            clearable>
             <el-option
               v-for="item in wedList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="星期四模版">
-          <el-select v-model="projectForm.day4_tvid" placeholder="请选择" filterable clearable>
+        <el-form-item 
+          label="星期四模版">
+          <el-select 
+            v-model="projectForm.day4_tvid" 
+            placeholder="请选择" 
+            filterable 
+            clearable>
             <el-option
               v-for="item in thursList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="星期五模版">
-          <el-select v-model="projectForm.day5_tvid" placeholder="请选择" filterable clearable>
+        <el-form-item 
+          label="星期五模版">
+          <el-select 
+            v-model="projectForm.day5_tvid"
+            placeholder="请选择" 
+            filterable 
+            clearable>
             <el-option
               v-for="item in friList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="星期六模版">
-          <el-select v-model="projectForm.day6_tvid" placeholder="请选择" filterable clearable>
+        <el-form-item 
+          label="星期六模版">
+          <el-select 
+            v-model="projectForm.day6_tvid"
+            placeholder="请选择"
+            filterable 
+            clearable>
             <el-option
               v-for="item in satList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="星期日模版">
-          <el-select v-model="projectForm.day7_tvid" placeholder="请选择" filterable clearable>
+        <el-form-item 
+          label="星期日模版">
+          <el-select 
+            v-model="projectForm.day7_tvid" 
+            placeholder="请选择" 
+            filterable 
+            clearable>
             <el-option
               v-for="item in sunList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="工作日模版">
-          <el-select v-model="projectForm.weekday" placeholder="请选择" filterable clearable>
+        <el-form-item 
+          label="工作日模版">
+          <el-select 
+            v-model="projectForm.weekday"
+            placeholder="请选择" 
+            filterable 
+            clearable>
             <el-option
               v-for="item in weekdayList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="周末模版">
-          <el-select v-model="projectForm.weekend" placeholder="请选择" filterable clearable>
+        <el-form-item 
+          label="周末模版">
+          <el-select 
+            v-model="projectForm.weekend"
+            placeholder="请选择"
+            filterable
+            clearable>
             <el-option
               v-for="item in weekendList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="自定义模版">
-          <el-select v-model="projectForm.define" placeholder="请选择" filterable clearable>
+        <el-form-item 
+          label="自定义模版">
+          <el-select 
+            v-model="projectForm.define" 
+            placeholder="请选择" 
+            filterable 
+            clearable>
             <el-option
               v-for="item in defineList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="自定义开始时间" prop="sdate" >
+        <el-form-item 
+          label="自定义开始时间" 
+          prop="sdate" >
           <el-date-picker
-          v-model="projectForm.sdate"
-          type="date"
-          placeholder="请选择自定义开始时间" :editable="false">
-          </el-date-picker>
+            v-model="projectForm.sdate"
+            :editable="false"
+            type="date"
+            placeholder="请选择自定义开始时间" />
         </el-form-item>
-        <el-form-item label="自定义结束时间" prop="edate">
+        <el-form-item 
+          label="自定义结束时间" 
+          prop="edate">
           <el-date-picker
-          v-model="projectForm.edate"
-          type="date"
-          placeholder="请选择自定义结束时间"
-          :editable="false"
-          value-format="yyyy-MM-dd"
-          >
-          </el-date-picker>
+            v-model="projectForm.edate"
+            :editable="false"
+            type="date"
+            placeholder="请选择自定义结束时间"
+            value-format="yyyy-MM-dd"
+          />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submit('projectForm')">完成</el-button>
+          <el-button 
+            type="primary" 
+            @click="submit('projectForm')">完成</el-button>
         </el-form-item>
       </el-form>
     </div>

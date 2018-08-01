@@ -1,11 +1,12 @@
 <template>
-  <div class="account-root">
-    <router-view></router-view>
+  <div 
+    class="account-root">
+    <router-view/>
   </div>
 </template>
 <script>
 export default {
-  name: 'accountView',
+  name: 'AccountView',
   data() {
     return {
     }

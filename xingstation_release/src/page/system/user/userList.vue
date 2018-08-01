@@ -1,62 +1,110 @@
 <template>
-<div class="user-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
-  <div class="user-list-content">
-    <div class="search-wrap">
-      <el-form  :model="filters" :inline="true">
-        <el-form-item label="">
-          <el-input v-model="filters.phone" style="width:200px" placeholder="请输入搜索的手机号" clearable></el-input>
-        </el-form-item>
-        <el-form-item label="">
-          <el-input v-model="filters.name" style="width:200px" placeholder="请输入搜索的名字" clearable></el-input>
-        </el-form-item>
-        <el-button @click="search" type="primary" size="small">搜索</el-button>
-        <el-button @click="resetSearch" type="default" size="small">重置</el-button>
-      </el-form>
-    </div>
-    <div class="actions-wrap">
-      <span class="label">
-        用户数量: {{pagination.total}}
-      </span>
-      <el-button size="small" type="success" @click="linkToAddUser">新增用户</el-button>
-    </div>
-    <el-table :data="userList" highlight-current-row ref="userTable" style="width: 100%">
-      <el-table-column prop="name" label="姓名"></el-table-column>
-      <el-table-column prop="phone" label="手机号码"></el-table-column>
-      <el-table-column prop="role" label="角色"></el-table-column>
-      <el-table-column prop="bind_weixin" label="是否绑定微信">
-        <template slot-scope="scope">
-           <span>{{scope.row.bind_weixin === true ? '是' : '否'}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="created_at"
-        label="创建时间"
-        >
-      </el-table-column>
-      <el-table-column
-        prop="updated_at"
-        label="修改时间"
-        >
-      </el-table-column>
-      <el-table-column label="操作" width="150">
-        <template slot-scope="scope">
-          <el-button size="small" @click="linkToEdit(scope.row)" type="warning">修改</el-button>
-          <el-button size="small" @click="deleteUsers(scope.row)" type="danger">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <div class="pagination-wrap">
-      <el-pagination
-      layout="prev, pager, next, jumper, total"
-      :total="pagination.total"
-      :page-size="pagination.pageSize"
-      :current-page="pagination.currentPage"
-      @current-change="changePage"
-      >
-      </el-pagination>
+  <div 
+    v-loading="setting.loading"
+    :element-loading-text="setting.loadingText" 
+    class="user-list-wrap" >
+    <div 
+      class="user-list-content">
+      <div 
+        class="search-wrap">
+        <el-form 
+          :model="filters"
+          :inline="true">
+          <el-form-item 
+            label="">
+            <el-input 
+              v-model="filters.phone" 
+              style="width:200px" 
+              placeholder="请输入搜索的手机号" 
+              clearable/>
+          </el-form-item>
+          <el-form-item 
+            label="">
+            <el-input 
+              v-model="filters.name" 
+              style="width:200px"
+              placeholder="请输入搜索的名字" 
+              clearable/>
+          </el-form-item>
+          <el-button 
+            type="primary" 
+            size="small"
+            @click="search" >搜索</el-button>
+          <el-button 
+            type="default" 
+            size="small"
+            @click="resetSearch" >重置</el-button>
+        </el-form>
+      </div>
+      <div 
+        class="actions-wrap">
+        <span
+          class="label">
+          用户数量: {{ pagination.total }}
+        </span>
+        <el-button 
+          size="small" 
+          type="success"
+          @click="linkToAddUser">新增用户</el-button>
+      </div>
+      <el-table 
+        ref="userTable" 
+        :data="userList" 
+        highlight-current-row
+        style="width: 100%">
+        <el-table-column 
+          prop="name" 
+          label="姓名"/>
+        <el-table-column 
+          prop="phone" 
+          label="手机号码"/>
+        <el-table-column 
+          prop="role" 
+          label="角色"/>
+        <el-table-column 
+          prop="bind_weixin" 
+          label="是否绑定微信">
+          <template 
+            slot-scope="scope">
+            <span>{{ scope.row.bind_weixin === true ? '是' : '否' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="created_at"
+          label="创建时间"
+        />
+        <el-table-column
+          prop="updated_at"
+          label="修改时间"
+        />
+        <el-table-column 
+          label="操作" 
+          width="150">
+          <template 
+            slot-scope="scope">
+            <el-button 
+              size="small" 
+              type="warning"
+              @click="linkToEdit(scope.row)">修改</el-button>
+            <el-button 
+              size="small" 
+              type="danger"
+              @click="deleteUsers(scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div 
+        class="pagination-wrap">
+        <el-pagination
+          :total="pagination.total"
+          :page-size="pagination.pageSize"
+          :current-page="pagination.currentPage"
+          layout="prev, pager, next, jumper, total"
+          @current-change="changePage"
+        />
+      </div>
     </div>
   </div>
-</div>
 </template>
 <script>
 import user from 'service/user'
@@ -73,7 +121,16 @@ import {
 } from 'element-ui'
 
 export default {
-  name: 'userList',
+  name: 'UserList',
+  components: {
+    'el-table': Table,
+    'el-table-column': TableColumn,
+    'el-button': Button,
+    'el-input': Input,
+    'el-pagination': Pagination,
+    'el-form': Form,
+    'el-form-item': FormItem
+  },
   data() {
     return {
       userList: [],
@@ -185,15 +242,6 @@ export default {
         path: '/system/user/add'
       })
     }
-  },
-  components: {
-    'el-table': Table,
-    'el-table-column': TableColumn,
-    'el-button': Button,
-    'el-input': Input,
-    'el-pagination': Pagination,
-    'el-form': Form,
-    'el-form-item': FormItem
   }
 }
 </script>

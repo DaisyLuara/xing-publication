@@ -1,12 +1,11 @@
 <template>
   <div class="item-root">
-    <router-view></router-view>
+    <router-view/>
   </div>
 </template>
 <script>
 export default {
-  name: 'mapView',
-  methods: {}
+  name: 'MapView'
 }
 </script>
 

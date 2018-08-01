@@ -1,42 +1,78 @@
 <template>
-  <div class="main">
-    <div class="first-sidebar">
-      <div class="logo-wrap">
-        <div class="logo">
-          <img src="../assets/images/exe-logo-white-circle.png" />
+  <div 
+    class="main">
+    <div 
+      class="first-sidebar">
+      <div 
+        class="logo-wrap">
+        <div 
+          class="logo">
+          <img 
+            src="../assets/images/exe-logo-white-circle.png" >
         </div>
       </div>
-      <el-menu router :default-active="'/' + currModule">
-        <el-menu-item v-for="m in modules" :key="m.path" :index="'/' + m.path" class="menu-item" v-if="m.path != 'inform'">
-          <img :src="m.src" class="first-sidebar-icon"/>
-          {{m.meta.title}}
+      <el-menu 
+        :default-active="'/' + currModule" 
+        router >
+        <el-menu-item 
+          v-for="m in modules"
+          v-if="m.path != 'inform'"
+          :key="m.path" 
+          :index="'/' + m.path" 
+          class="menu-item" >
+          <img 
+            :src="m.src" 
+            class="first-sidebar-icon">
+          {{ m.meta.title }}
         </el-menu-item>
-        <el-menu-item class="menu-item" index="/inform">
-          <el-badge :value="noticeCount" :max="99" class="item">
-          <img src="../assets/images/icons/notification-icon.png" class="first-sidebar-icon" style="padding-right: 3px;"/>
+        <el-menu-item 
+          class="menu-item" 
+          index="/inform">
+          <el-badge 
+            :value="noticeCount" 
+            :max="99" 
+            class="item">
+            <img 
+              src="../assets/images/icons/notification-icon.png" 
+              class="first-sidebar-icon" 
+              style="padding-right: 3px;">
             通知
           </el-badge>
         </el-menu-item>
       </el-menu>
       <el-popover
         ref="popover"
+        v-model="visible"
         placement="top"
         width="80"
-        v-model="visible"
         trigger="hover"
         popper-class="popper-logout">
-        <span class="logout-btn" @click="logout">登出</span>
+        <span 
+          class="logout-btn"
+          @click="logout">登出</span>
       </el-popover>
-      <div class="sidebar-user" v-popover:popover @click="handleUser">
-        <img src="../assets/images/user-default-icon.png" alt="" class="avatar"/>
-        <div class="sidebar-user-block">
-          <p class="sidebar-user-item sidebar-user-item-main" style="font-size: 18px;">{{name}}</p>
-          <p class="sidebar-user-item sidebar-user-item-sub" style="font-size: 14px;">{{role}}</p>
+      <div 
+        v-popover:popover 
+        class="sidebar-user" 
+        @click="handleUser">
+        <img 
+          src="../assets/images/user-default-icon.png" 
+          alt="" 
+          class="avatar">
+        <div 
+          class="sidebar-user-block">
+          <p 
+            class="sidebar-user-item sidebar-user-item-main" 
+            style="font-size: 18px;">{{ name }}</p>
+          <p 
+            class="sidebar-user-item sidebar-user-item-sub"
+            style="font-size: 14px;">{{ role }}</p>
         </div>
       </div>
     </div>
-    <div class="modules">
-      <router-view></router-view>
+    <div 
+      class="modules">
+      <router-view/>
     </div>
   </div>
 </template>
@@ -47,17 +83,19 @@ import auth from 'service/auth'
 import notice from 'service/notice'
 
 export default {
-  name: 'home',
+  name: 'Home',
+  components: {
+    'el-menu': Menu,
+    'el-menu-item': MenuItem,
+    'el-popover': Popover,
+    'el-button': Button,
+    'el-badge': Badge
+  },
   data() {
     return {
       visible: false,
       setIntervalValue: ''
     }
-  },
-  created() {
-    let userInfo = JSON.parse(localStorage.getItem('user_info'))
-    this.$store.commit('setCurUserInfo', userInfo)
-    this.notificationStats()
   },
   computed: {
     modules() {
@@ -116,11 +154,6 @@ export default {
       let path = this.$store.getters.currRoute.path
       for (let m of this.modules) {
         if (path.indexOf('/' + m.path) == 0) {
-          if (m.path === 'marketing') {
-            this.memuFlag = true
-          } else {
-            this.memuFlag = false
-          }
           return m.path
         }
       }
@@ -143,7 +176,11 @@ export default {
       return this.$store.state.notificationCount.noticeCount
     }
   },
-  mounted() {},
+  created() {
+    let userInfo = JSON.parse(localStorage.getItem('user_info'))
+    this.$store.commit('setCurUserInfo', userInfo)
+    this.notificationStats()
+  },
   methods: {
     logout() {
       this.visible = false
@@ -165,13 +202,6 @@ export default {
         path: '/account/account'
       })
     }
-  },
-  components: {
-    'el-menu': Menu,
-    'el-menu-item': MenuItem,
-    'el-popover': Popover,
-    'el-button': Button,
-    'el-badge': Badge
   }
 }
 </script>

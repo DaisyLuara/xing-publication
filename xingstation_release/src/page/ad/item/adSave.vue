@@ -1,100 +1,169 @@
 <template>
-  <div class="item-wrap-template" >
-    <div class="topbar">
-      <el-breadcrumb separator="/">
-        <el-breadcrumb-item :to="{ path: '/ad/item' }">广告投放管理</el-breadcrumb-item>
+  <div 
+    class="item-wrap-template" >
+    <div 
+      class="topbar">
+      <el-breadcrumb 
+        separator="/">
+        <el-breadcrumb-item 
+          :to="{ path: '/ad/item' }">广告投放管理</el-breadcrumb-item>
         <el-breadcrumb-item>添加</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
-    <div class="pane" :element-loading-text="setting.loadingText" v-loading="setting.loading">
-      <div class="pane-title">
+    <div 
+      v-loading="setting.loading"
+      :element-loading-text="setting.loadingText"
+      class="pane" >
+      <div 
+        class="pane-title">
         新增广告投放
       </div>
       <el-form
         ref="adForm"
-        :model="adForm" label-width="150px">
-        <el-form-item label="广告行业" prop="adTrade" :rules="[{ required: true, message: '请输入广告行业名称', trigger: 'submit',type: 'number'}]">
-          <el-select v-model="adForm.adTrade" filterable placeholder="请搜索" @change="adTradeChangeHandle" clearable>
+        :model="adForm" 
+        label-width="150px">
+        <el-form-item 
+          :rules="[{ required: true, message: '请输入广告行业名称', trigger: 'submit',type: 'number'}]"
+          label="广告行业"
+          prop="adTrade" >
+          <el-select 
+            v-model="adForm.adTrade" 
+            filterable 
+            placeholder="请搜索" 
+            clearable
+            @change="adTradeChangeHandle">
             <el-option
               v-for="item in adTradeList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="广告主" prop="advertiser" :rules="[{ required: true, message: '请输入广告主名称', trigger: 'submit',type: 'number'}]">
-          <el-select v-model="adForm.advertiser" filterable placeholder="请搜索" @change="advertiserChangeHandle" :loading="searchLoading" clearable>
+        <el-form-item 
+          :rules="[{ required: true, message: '请输入广告主名称', trigger: 'submit',type: 'number'}]"
+          label="广告主"
+          prop="advertiser">
+          <el-select 
+            v-model="adForm.advertiser" 
+            :loading="searchLoading" 
+            filterable 
+            placeholder="请搜索" 
+            clearable
+            @change="advertiserChangeHandle" >
             <el-option
               v-for="item in advertiserList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-         <el-form-item label="广告" prop="advertisement" :rules="[{ required: true, message: '请输入广告名称', trigger: 'submit',type: 'number'}]">
-          <el-select v-model="adForm.advertisement" filterable  placeholder="请搜索" :loading="searchLoading" @change="advertisementChangeHandle" clearable>
+        <el-form-item 
+          :rules="[{ required: true, message: '请输入广告名称', trigger: 'submit',type: 'number'}]"
+          label="广告" 
+          prop="advertisement" >
+          <el-select 
+            v-model="adForm.advertisement" 
+            :loading="searchLoading"
+            filterable  
+            placeholder="请搜索" 
+            clearable
+            @change="advertisementChangeHandle" >
             <el-option
               v-for="item in advertisementList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="区域" prop="area"  :rules="[{ required: true, message: '请输入区域', trigger: 'submit' ,type: 'number'}]" >
-          <el-select v-model="adForm.area" placeholder="请选择" filterable @change="areaChangeHandle" clearable>
+        <el-form-item 
+          :rules="[{ required: true, message: '请输入区域', trigger: 'submit' ,type: 'number'}]"
+          label="区域" 
+          prop="area">
+          <el-select 
+            v-model="adForm.area" 
+            placeholder="请选择" 
+            filterable 
+            clearable
+            @change="areaChangeHandle" >
             <el-option
               v-for="item in areaList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="商场" prop="market" :rules="[{ required: true, message: '请输入商场', trigger: 'submit' ,type: 'number'}]" >
-          <el-select v-model="adForm.market"  placeholder="请搜索" filterable :loading="searchLoading" remote :remote-method="getMarket" @change="marketChangeHandle" clearable>
+        <el-form-item 
+          :rules="[{ required: true, message: '请输入商场', trigger: 'submit' ,type: 'number'}]" 
+          label="商场" 
+          prop="market">
+          <el-select
+            v-model="adForm.market"  
+            :remote-method="getMarket" 
+            :loading="searchLoading" 
+            placeholder="请搜索" 
+            filterable
+            remote
+            clearable
+            @change="marketChangeHandle" >
             <el-option
               v-for="item in marketList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="点位" prop="point" :rules="[{ required: true, message: '请输入点位', trigger: 'submit',type: 'array'}]">
-          <el-select v-model="adForm.point" placeholder="请选择"  multiple filterable :loading="searchLoading" :multiple-limit="10" clearable>
+        <el-form-item 
+          :rules="[{ required: true, message: '请输入点位', trigger: 'submit',type: 'array'}]"
+          label="点位" 
+          prop="point">
+          <el-select 
+            v-model="adForm.point"  
+            :loading="searchLoading" 
+            :multiple-limit="10" 
+            placeholder="请选择"  
+            multiple 
+            filterable
+            clearable>
             <el-option
               v-for="item in pointList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="周期(s)">
-          <el-input v-model="adForm.cycle" placeholder="请输入周期" style="width:380px;"></el-input>
+        <el-form-item 
+          label="周期(s)">
+          <el-input 
+            v-model="adForm.cycle" 
+            placeholder="请输入周期" 
+            style="width:380px;"/>
         </el-form-item>
-        <el-form-item label="开始时间" prop="sdate">
+        <el-form-item 
+          label="开始时间" 
+          prop="sdate">
           <el-date-picker
-          v-model="adForm.sdate"
-          type="date"
-          placeholder="选择开始时间" :editable="false"  :clearable="false">
-          </el-date-picker>
+            v-model="adForm.sdate"
+            :editable="false"  
+            :clearable="false"
+            type="date"
+            placeholder="选择开始时间" 
+          />
         </el-form-item>
-        <el-form-item label="结束时间" prop="edate">
+        <el-form-item 
+          label="结束时间" 
+          prop="edate">
           <el-date-picker
-          v-model="adForm.edate"
-          type="date"
-          placeholder="选择结束时间"
-          :editable="false"
-          :clearable="false"
-          >
-          </el-date-picker>
+            v-model="adForm.edate"
+            :editable="false"
+            :clearable="false"
+            type="date"
+            placeholder="选择结束时间"
+          />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submit('adForm')">完成</el-button>
+          <el-button 
+            type="primary" 
+            @click="submit('adForm')">完成</el-button>
         </el-form-item>
       </el-form>
     </div>
