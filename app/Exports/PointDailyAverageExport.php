@@ -23,12 +23,14 @@ class PointDailyAverageExport extends AbstractExport
     public function collection()
     {
         $data = collect();
-        $header1 = ['点位', '场景', 'BD', '围观数', '围观日均', '玩家总数', '玩家日均', '会员总数', '会员日均', '二维码生成数', '扫码数', '有效天数', '时间'];
-        $header2 = ['', '', '', '', '', '', '', '', '', '', '', '', ''];
+        $header1 = ['点位', '场景', 'BD', 'CPF', '', 'oCPF', '', 'CPR', '', '生成数', 'CPA', '扫码率', 'CPL', '', '有效天数', '时间'];
+        $header2 = ['', '', '', '总数', '平均数', '总数', '平均数', '总数', '平均数', '', '', '', '总数', '平均数', '', ''];
+        $header3 = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
         $data->push($header1);
         $data->push($header2);
+        $data->push($header3);
 
-        $query = DB::connection('ar')->table('face_count_log as fcl');
+        $query = DB::connection('ar')->table('xs_face_count_log as fcl');
         if ($this->alias) {
             $query->where('fcl.belong', '=', $this->alias);
         } else {
@@ -37,20 +39,6 @@ class PointDailyAverageExport extends AbstractExport
         if ($this->sceneId) {
             $query->where('ao.sid', '=', $this->sceneId);
         }
-
-        //同一点位对应多个DB 取最近授权
-//        $arUser1 = DB::connection('ar')->table('admin_per_oid')
-//            ->join('admin_staff', 'admin_per_oid.uid', '=', 'admin_staff.uid')
-//            ->orderBy('oid')
-//            ->orderBy('admin_per_oid.date', 'desc')
-//            ->selectRaw("oid,admin_staff.realname as name");
-//
-//        $arUser2 = DB::connection('ar')->table(DB::raw("({$arUser1->toSql()}) a,(select @gn := 0)  b"))
-//            ->selectRaw("@gn := case when @oid = oid then @gn + 1 else 1 end gn,@oid := oid oid,name");
-//
-//        $arUser = DB::connection('ar')->table(DB::raw("({$arUser2->toSql()}) c"))
-//            ->whereRaw("gn=1")
-//            ->selectRaw("oid,name");
 
         $faceCount = $query->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
             ->join('avr_official_area as aoa', 'ao.areaid', '=', 'aoa.areaid')
@@ -63,34 +51,25 @@ class PointDailyAverageExport extends AbstractExport
             ->orderBy('aoa.areaid', 'desc')
             ->orderBy('aom.marketid', 'desc')
             ->orderBy('ao.oid', 'desc')
-            ->selectRaw("aoa.name as areaName,aom.name as marketName,ao.name as pointName,aos.name as scene,admin_staff.realname as BDName,count(*) as days, sum(looknum) as looknum,sum(playernum) as playernum,sum(lovenum) as lovenum,sum(outnum) as outnum,sum(scannum) as scannum,concat_ws(',', date_format(min(fcl.date), '%Y-%m-%d'), date_format(max(fcl.date), '%Y-%m-%d')) as date")
+            ->selectRaw("aoa.name as areaName,aom.name as marketName,ao.name as pointName,aos.name as scene,admin_staff.realname as BDName,count(*) as days, sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum20) as playernum20,sum(outnum) as outnum,sum(scannum) as scannum,sum(lovenum) as lovenum,concat_ws(',', date_format(min(fcl.date), '%Y-%m-%d'), date_format(max(fcl.date), '%Y-%m-%d')) as date")
             ->get();
-        $total = [
-            'total' => 'Total',
-            'lookSum' => 0,
-            'lookAverSum' => 0,
-            'playerSum' => 0,
-            'playerAverSum' => 0,
-            'loveSum' => 0,
-            'loveAverSum' => 0,
-            'outSum' => 0,
-            'scanSum' => 0,
-            'days' => 0,
-            'date' => $this->startDate . '|' . $this->endDate
-        ];
+        $total = [];
         $faceCount->each(function ($item) use (&$data, &$total) {
             $aa = [
                 'pointName' => $item->areaName . '-' . $item->marketName . '-' . $item->pointName,
                 'scene' => $item->scene,
                 'BDName' => $item->BDName,
-                'lookNum' => $item->looknum,
-                'lookNumAver' => round($item->looknum / $item->days, 0),
-                'playerNum' => $item->playernum,
-                'playerNumAver' => round($item->playernum / $item->days, 0),
-                'loveNum' => $item->lovenum,
-                'loveNumAver' => round($item->lovenum / $item->days, 0),
-                'outNum' => $item->outnum,
-                'scanNum' => $item->scannum,
+                'looknum' => $item->looknum,
+                'looknumAver' => round($item->looknum / $item->days, 0),
+                'playernum7' => $item->playernum7,
+                'playernum7Aver' => round($item->playernum7 / $item->days, 0),
+                'playernum20' => $item->playernum20,
+                'playernum20Aver' => round($item->playernum20 / $item->days, 0),
+                'outnum' => $item->outnum,
+                'scannum' => $item->scannum,
+                'rate' => (round(($item->outnum == 0) ? 0 : $item->scannum / $item->outnum, 2) * 100) . '%',
+                'lovenum' => $item->lovenum,
+                'lovenumAver' => round($item->lovenum / $item->days, 0),
                 'days' => $item->days
             ];
 
@@ -101,26 +80,27 @@ class PointDailyAverageExport extends AbstractExport
                 $aa['date'] = $date[0] . '|' . $date[1];
             }
             $data->push($aa);
-            $total = [
-                'total' => '总计',
-                'BDName' => '',
-                'scene' => '',
-                'lookSum' => $total['lookSum'] + $aa['lookNum'],
-                'lookAverSum' => $total['lookAverSum'] + $aa['lookNumAver'],
-                'playerSum' => $total['playerSum'] + $aa['playerNum'],
-                'playerAverSum' => $total['playerAverSum'] + $aa['playerNumAver'],
-                'loveSum' => $total['loveSum'] + $aa['loveNum'],
-                'loveAverSum' => $total['loveAverSum'] + $aa['loveNumAver'],
-                'outSum' => $total['outSum'] + $aa['outNum'],
-                'scanSum' => $total['scanSum'] + $aa['scanNum'],
-                'days' => (new Carbon($this->endDate))->diffInDays(new Carbon($this->startDate)) + 1,
-                'date' => $total['date']
-            ];
+            $total[] = $aa;
         });
-        $total['lookAverSum'] = floor($total['lookAverSum'] / $faceCount->count());
-        $total['playerAverSum'] = floor($total['playerAverSum'] / $faceCount->count());
-        $total['loveAverSum'] = floor($total['loveAverSum'] / $faceCount->count());
-        $data->push($total);
+        $totalData = [
+            'total' => '总计',
+            'BDName' => '',
+            'scene' => '',
+            'looknum' => array_sum(array_column($total, 'looknum')),
+            'looknumAver' => array_sum(array_column($total, 'days')) == 0 ? 0 : floor(array_sum(array_column($total, 'looknum')) / array_sum(array_column($total, 'days'))),
+            'playernum7' => array_sum(array_column($total, 'playernum7')),
+            'playernum7Aver' => array_sum(array_column($total, 'days')) == 0 ? 0 : floor(array_sum(array_column($total, 'playernum7')) / array_sum(array_column($total, 'days'))),
+            'playernum20' => array_sum(array_column($total, 'playernum20')),
+            'playernum20Aver' => array_sum(array_column($total, 'days')) == 0 ? 0 : floor(array_sum(array_column($total, 'playernum20')) / array_sum(array_column($total, 'days'))),
+            'outnum' => array_sum(array_column($total, 'outnum')),
+            'scannum' => array_sum(array_column($total, 'scannum')),
+            'rate' => array_sum(array_column($total, 'outnum')) == 0 ? 0 : round(array_sum(array_column($total, 'scannum')) / array_sum(array_column($total, 'outnum')), 2) * 100 . '%',
+            'lovenum' => array_sum(array_column($total, 'lovenum')),
+            'lovenumAver' => array_sum(array_column($total, 'days')) == 0 ? 0 : floor(array_sum(array_column($total, 'lovenum')) / array_sum(array_column($total, 'days'))),
+            'days' => array_sum(array_column($total, 'days')),
+            'date' => $this->startDate . '|' . $this->endDate
+        ];
+        $data->push($totalData);
         $this->data = $data;
         return $data;
     }
@@ -130,13 +110,18 @@ class PointDailyAverageExport extends AbstractExport
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $cellArray = ['A1:A2', 'B1:B2', 'C1:C2', 'D1:D2', 'E1:E2', 'F1:F2', 'G1:G2', 'H1:H2', 'I1:I2', 'J1:J2', 'K1:K2', 'L1:L2', 'M1:M2'];
+                $cellArray = [
+                    'A1:A3', 'B1:B3', 'C1:C3', 'D1:E1', 'D2:D3', 'E2:E3',
+                    'F1:G1', 'F2:F3', 'G2:G3', 'H1:I1', 'H2:H3', 'I2:I3',
+                    'J1:J3', 'K1:K3', 'L1:L3', 'M1:N1', 'M2:M3', 'N2:N3',
+                    'O1:O3', 'P1:P3'
+                ];
 
                 //合并单元格
                 $event->sheet->getDelegate()->setMergeCells($cellArray);
 
                 //黑线框
-                $event->sheet->getDelegate()->getStyle('A1:M' . $this->data->count())->applyFromArray([
+                $event->sheet->getDelegate()->getStyle('A1:P' . $this->data->count())->applyFromArray([
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' => Border::BORDER_THIN,
@@ -146,14 +131,14 @@ class PointDailyAverageExport extends AbstractExport
 
                 //水平居中 垂直居中
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:M' . $this->data->count())
+                    ->getStyle('A1:P' . $this->data->count())
                     ->getAlignment()
                     ->setVertical(Alignment::VERTICAL_CENTER)
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
                 //表头加粗
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:M2')
+                    ->getStyle('A1:P3')
                     ->applyFromArray([
                         'font' => [
                             'bold' => 'true'
@@ -161,7 +146,7 @@ class PointDailyAverageExport extends AbstractExport
                     ]);
 
                 $event->sheet->getDelegate()
-                    ->getStyle('A' . $this->data->count() . ':M' . $this->data->count())
+                    ->getStyle('A' . $this->data->count() . ':P' . $this->data->count())
                     ->applyFromArray([
                         'font' => [
                             'bold' => 'true'
@@ -169,7 +154,7 @@ class PointDailyAverageExport extends AbstractExport
                     ]);
 
                 //冻结表头
-                $event->sheet->getDelegate()->freezePane('A3');
+                $event->sheet->getDelegate()->freezePane('A4');
             }
         ];
     }
