@@ -324,7 +324,7 @@ export default {
           plotBorderWidth: null,
           plotShadow: false
         },
-        colors: ['#8cc63f', '#fbb03b', '#ed1e79', '#662d91'],
+        colors: ['#3b9aca','#8cc63f', '#fbb03b', '#ed1e79', '#662d91'],
         tooltip: {
           headerFormat: '{性别访问数}<br>',
           pointFormat:
@@ -430,6 +430,12 @@ export default {
         series: [
           {
             type: 'column',
+            name: '10后',
+            color: '#3b9aca',
+            data: []
+          },
+          {
+            type: 'column',
             name: '00后',
             color: '#8CC63F',
             data: []
@@ -448,7 +454,7 @@ export default {
           },
           {
             type: 'column',
-            name: '70后',
+            name: '70前/后',
             color: '#662D91',
             data: []
           },
