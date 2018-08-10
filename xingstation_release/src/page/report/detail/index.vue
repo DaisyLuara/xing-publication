@@ -1806,7 +1806,6 @@ export default {
             symbol: 'circle',
             name: '大屏围观参与人数',
             type: 'line',
-            stack: '总量',
             areaStyle: { normal: {} },
             data: res.map(r => {
               return r.looknum
@@ -1816,7 +1815,6 @@ export default {
             symbol: 'circle',
             name: '大屏活跃玩家人数',
             type: 'line',
-            stack: '总量',
             areaStyle: { normal: {} },
             data: res.map(r => {
               return r.playernum7
@@ -1826,7 +1824,6 @@ export default {
             symbol: 'circle',
             name: '大屏铁杆玩家人数',
             type: 'line',
-            stack: '总量',
             areaStyle: { normal: {} },
             data: res.map(r => {
               return r.playernum
@@ -1836,7 +1833,6 @@ export default {
             symbol: 'circle',
             name: '扫码拉新会员注册总数',
             type: 'line',
-            stack: '总量',
             areaStyle: { normal: {} },
             data: res.map(r => {
               return r.lovenum
