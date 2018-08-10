@@ -918,6 +918,92 @@ export default {
             crossStyle: {
               color: '#999'
             }
+          },
+          formatter: function(data) {
+            let century10 = (
+              parseInt(data[0].value) /
+              (parseInt(data[0].value) +
+                parseInt(data[1].value) +
+                parseInt(data[2].value) +
+                parseInt(data[3].value) +
+                parseInt(data[4].value)) *
+              100
+            ).toFixed(2)
+            let century00 = (
+              parseInt(data[1].value) /
+              (parseInt(data[0].value) +
+                parseInt(data[1].value) +
+                parseInt(data[2].value) +
+                parseInt(data[3].value) +
+                parseInt(data[4].value)) *
+              100
+            ).toFixed(2)
+            let century90 = (
+              parseInt(data[2].value) /
+              (parseInt(data[0].value) +
+                parseInt(data[1].value) +
+                parseInt(data[2].value) +
+                parseInt(data[3].value) +
+                parseInt(data[4].value)) *
+              100
+            ).toFixed(2)
+            let century80 = (
+              parseInt(data[3].value) /
+              (parseInt(data[0].value) +
+                parseInt(data[1].value) +
+                parseInt(data[2].value) +
+                parseInt(data[3].value) +
+                parseInt(data[4].value)) *
+              100
+            ).toFixed(2)
+            let century70 = (
+              parseInt(data[4].value) /
+              (parseInt(data[0].value) +
+                parseInt(data[1].value) +
+                parseInt(data[2].value) +
+                parseInt(data[3].value) +
+                parseInt(data[4].value)) *
+              100
+            ).toFixed(2)
+            return (
+              data[0].axisValue +
+              ': <br/>' +
+              data[0].marker +
+              data[0].seriesName +
+              ':' +
+              data[0].value +
+              ' ' +
+              century10 +
+              '%<br/>' +
+              data[1].marker +
+              data[1].seriesName +
+              ':' +
+              data[1].value +
+              ' ' +
+              century00 +
+              '%<br/>' +
+              data[2].marker +
+              data[2].seriesName +
+              ':' +
+              data[2].value +
+              ' ' +
+              century90 +
+              '%<br/>' +
+              data[3].marker +
+              data[3].seriesName +
+              ':' +
+              data[3].value +
+              ' ' +
+              century80 +
+              '%<br/>' +
+              data[4].marker +
+              data[4].seriesName +
+              ':' +
+              data[4].value +
+              ' ' +
+              century70 +
+              '%'
+            )
           }
         },
         legend: {
@@ -1341,6 +1427,36 @@ export default {
                 name: '70前/后',
                 type: 'bar',
                 stack: '总量',
+                label: {
+                  normal: {
+                    show: true,
+                    position: 'top',
+                    color: '#000',
+                    fontSize: 16,
+                    formatter: function(data) {
+                      let content = ''
+                      let index = data.dataIndex
+                      let singleSum = parseInt(
+                        parseInt(response[index].count.century10) +
+                          parseInt(response[index].count.century00) +
+                          parseInt(response[index].count.century90) +
+                          parseInt(response[index].count.century80) +
+                          parseInt(response[index].count.century70)
+                      )
+                      let sum = 0
+                      response.map(r => {
+                        sum +=
+                          parseInt(r.count.century10) +
+                          parseInt(r.count.century00) +
+                          parseInt(r.count.century90) +
+                          parseInt(r.count.century80) +
+                          parseInt(r.count.century70)
+                      })
+                      let percent = (singleSum / sum * 100).toFixed(1) + '%'
+                      return percent + '\n' + singleSum
+                    }
+                  }
+                },
                 data: response.map(r => {
                   return r.count.century70
                 })
@@ -1690,6 +1806,7 @@ export default {
             symbol: 'circle',
             name: '大屏围观参与人数',
             type: 'line',
+            stack: '总量',
             areaStyle: { normal: {} },
             data: res.map(r => {
               return r.looknum
@@ -1699,6 +1816,7 @@ export default {
             symbol: 'circle',
             name: '大屏活跃玩家人数',
             type: 'line',
+            stack: '总量',
             areaStyle: { normal: {} },
             data: res.map(r => {
               return r.playernum7
@@ -1708,6 +1826,7 @@ export default {
             symbol: 'circle',
             name: '大屏铁杆玩家人数',
             type: 'line',
+            stack: '总量',
             areaStyle: { normal: {} },
             data: res.map(r => {
               return r.playernum
@@ -1717,12 +1836,12 @@ export default {
             symbol: 'circle',
             name: '扫码拉新会员注册总数',
             type: 'line',
+            stack: '总量',
             areaStyle: { normal: {} },
             data: res.map(r => {
               return r.lovenum
             })
           },
-
           {
             xAxisIndex: 1,
             yAxisIndex: 1,
