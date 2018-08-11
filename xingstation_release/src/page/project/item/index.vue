@@ -1,143 +1,251 @@
 <template>
-  <div class="root">
-    <div class="item-list-wrap" :element-loading-text="setting.loadingText" v-loading="setting.loading">
-      <div class="item-content-wrap">
+  <div 
+    class="root">
+    <div 
+      v-loading="setting.loading"
+      :element-loading-text="setting.loadingText" 
+      class="item-list-wrap" >
+      <div 
+        class="item-content-wrap">
         <!-- 搜索 -->
-        <div class="search-wrap">
-          <el-form :model="filters" :inline="true" ref="searchForm" >
-            <el-row :gutter="20">
-              <el-col :span="8">
-                <el-form-item label="" prop="name">
-                  <el-input v-model="filters.name" placeholder="请输入节目名称" style="width: 180px;" clearable></el-input>
+        <div 
+          class="search-wrap">
+          <el-form 
+            ref="searchForm"
+            :model="filters" 
+            :inline="true">
+            <el-row 
+              :gutter="20">
+              <el-col 
+                :span="8">
+                <el-form-item 
+                  label="" 
+                  prop="name">
+                  <el-input 
+                    v-model="filters.name" 
+                    placeholder="请输入节目名称" 
+                    style="width: 180px;" 
+                    clearable/>
                 </el-form-item>
               </el-col>
-              <el-col :span="8">
-                <el-form-item label="" prop="scene">
-                  <el-select v-model="filters.scene" placeholder="请选择场景" filterable clearable>
+              <el-col 
+                :span="8">
+                <el-form-item
+                  label="" 
+                  prop="scene">
+                  <el-select 
+                    v-model="filters.scene" 
+                    placeholder="请选择场景" 
+                    filterable 
+                    clearable>
                     <el-option
                       v-for="item in sceneList"
                       :key="item.id"
                       :label="item.name"
-                      :value="item.id">
-                    </el-option>
+                      :value="item.id"/>
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="8">
-                <el-form-item label="" prop="area">
-                  <el-select v-model="filters.area" placeholder="请选择区域" @change="areaChangeHandle" filterable clearable>
+              <el-col 
+                :span="8">
+                <el-form-item 
+                  label="" 
+                  prop="area">
+                  <el-select 
+                    v-model="filters.area" 
+                    placeholder="请选择区域" 
+                    filterable 
+                    clearable
+                    @change="areaChangeHandle">
                     <el-option
                       v-for="item in areaList"
                       :key="item.id"
                       :label="item.name"
-                      :value="item.id">
-                    </el-option>
+                      :value="item.id"/>
                   </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-row :gutter="20">
-              <el-col :span="8">
-                <el-form-item label="" prop="market">
-                  <el-select v-model="filters.market" placeholder="请选择商场" filterable :loading="marketLoading" remote :remote-method="getMarket" clearable>
+            <el-row 
+              :gutter="20">
+              <el-col 
+                :span="8">
+                <el-form-item 
+                  label=""
+                  prop="market">
+                  <el-select 
+                    v-model="filters.market" 
+                    :loading="marketLoading"
+                    :remote-method="getMarket"
+                    placeholder="请选择商场" 
+                    filterable 
+                    remote 
+                    clearable>
                     <el-option
                       v-for="item in marketList"
                       :key="item.id"
                       :label="item.name"
-                      :value="item.id">
-                    </el-option>
+                      :value="item.id"/>
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="8">
-                <el-form-item label="" prop="tpl_name">
-                  <el-select v-model="filters.tpl_name" placeholder="请选择模板" filterable :loading="marketLoading" clearable>
+              <el-col 
+                :span="8">
+                <el-form-item 
+                  label="" 
+                  prop="tpl_name">
+                  <el-select 
+                    v-model="filters.tpl_name" 
+                    :loading="marketLoading" 
+                    placeholder="请选择模板" 
+                    filterable
+                    clearable>
                     <el-option
                       v-for="item in templateList"
                       :key="item.id"
                       :label="item.name"
-                      :value="item.id">
-                    </el-option>
+                      :value="item.id"/>
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="8">
-                <el-form-item label="" prop="tpl_id">
-                  <el-select v-model="filters.tpl_id" placeholder="请选择模板名" filterable :loading="marketLoading" clearable>
+              <el-col 
+                :span="8">
+                <el-form-item 
+                  label="" 
+                  prop="tpl_id">
+                  <el-select 
+                    v-model="filters.tpl_id" 
+                    :loading="marketLoading"
+                    placeholder="请选择模板名" 
+                    filterable 
+                    clearable>
                     <el-option
                       v-for="item in templateNameList"
                       :key="item.id"
                       :label="item.name"
-                      :value="item.id">
-                    </el-option>
+                      :value="item.id"/>
                   </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-button @click="search('searchForm')" type="primary" size="small">搜索</el-button>
-            <el-button @click="resetSearch" type="default" size="small">重置</el-button>
+            <el-button 
+              type="primary" 
+              size="small"
+              @click="search('searchForm')" >搜索</el-button>
+            <el-button 
+              type="default" 
+              size="small"
+              @click="resetSearch">重置</el-button>
           </el-form>
         </div>
         <!-- 批量修改选项 -->
-        <div class="editCondition-wrap" style="padding: 0 0 15px;">
-          <el-form :model="editCondition" :inline="true" ref="editForm" >
-            <el-form-item label="修改投放选项" style="margin-bottom: 0;">
-              <el-checkbox-group v-model="editCondition.conditionList">
-                <el-checkbox label="节目名称"></el-checkbox>
-                <el-checkbox label="模板"></el-checkbox>
-                <el-checkbox label="自定义开始时间"></el-checkbox>
-                <el-checkbox label="自定义结束时间" ></el-checkbox>
+        <div 
+          class="editCondition-wrap" 
+          style="padding: 0 0 15px;">
+          <el-form 
+            ref="editForm" 
+            :model="editCondition" 
+            :inline="true" 
+          >
+            <el-form-item 
+              label="修改投放选项" 
+              style="margin-bottom: 0;">
+              <el-checkbox-group 
+                v-model="editCondition.conditionList">
+                <el-checkbox 
+                  label="节目名称"/>
+                <el-checkbox 
+                  label="模板"/>
+                <el-checkbox 
+                  label="自定义开始时间"/>
+                <el-checkbox 
+                  label="自定义结束时间" />
               </el-checkbox-group>
             </el-form-item>
-            <el-button @click="modifyEdit" type="danger" size="small">修改</el-button>
+            <el-button 
+              type="danger"
+              size="small"
+              @click="modifyEdit" >修改</el-button>
           </el-form>
         </div>
-        <div class="actions-wrap">
-          <span class="label">
-            节目数量: {{pagination.total}}
+        <div 
+          class="actions-wrap">
+          <span 
+            class="label">
+            节目数量: {{ pagination.total }}
           </span>
           <div>
-            <el-button size="small" type="success" @click="linkToAddItem">新增投放</el-button>
+            <el-button 
+              size="small" 
+              type="success" 
+              @click="linkToAddItem">新增投放</el-button>
           </div>
         </div>
         <!-- 节目投放列表 -->
-        <el-table :data="tableData" style="width: 100%" highlight-current-row  @selection-change="handleSelectionChange" ref="multipleTable" type="expand">
-          <el-table-column type="selection" width="45" ></el-table-column>
-          <el-table-column type="expand">
-            <template slot-scope="scope">
-              <el-form label-position="left" inline class="demo-table-expand">
-                <el-form-item label="节目名称">
-                  <span>{{scope.row.project.name}}</span>
+        <el-table 
+          ref="multipleTable" 
+          :data="tableData" 
+          style="width: 100%" 
+          highlight-current-row  
+          type="expand"
+          @selection-change="handleSelectionChange">
+          <el-table-column 
+            type="selection"
+            width="45" />
+          <el-table-column 
+            type="expand">
+            <template 
+              slot-scope="scope">
+              <el-form 
+                label-position="left" 
+                inline
+                class="demo-table-expand">
+                <el-form-item 
+                  label="节目名称">
+                  <span>{{ scope.row.project.name }}</span>
                 </el-form-item>
-                <el-form-item label="节目icon">
-                  <a :href="scope.row.project.icon" target="_blank" style="color: blue">查看</a>
+                <el-form-item 
+                  label="节目icon">
+                  <a 
+                    :href="scope.row.project.icon" 
+                    target="_blank" 
+                    style="color: blue">查看</a>
                 </el-form-item>
-                <el-form-item label="场景">
-                  <span>{{scope.row.point.scene.name}}</span>
+                <el-form-item 
+                  label="场景">
+                  <span>{{ scope.row.point.scene.name }}</span>
                 </el-form-item>
-                <el-form-item label="区域">
-                  <span>{{scope.row.point.area.name}}</span>
+                <el-form-item 
+                  label="区域">
+                  <span>{{ scope.row.point.area.name }}</span>
                 </el-form-item>
-                <el-form-item label="商场">
-                  <span>{{scope.row.point.market.name}}</span>
+                <el-form-item 
+                  label="商场">
+                  <span>{{ scope.row.point.market.name }}</span>
                 </el-form-item>
-                <el-form-item label="点位">
-                  <span>{{scope.row.point.name}}</span>
+                <el-form-item 
+                  label="点位">
+                  <span>{{ scope.row.point.name }}</span>
                 </el-form-item>
-                <el-form-item label="创建时间">
+                <el-form-item 
+                  label="创建时间">
                   <span>{{ scope.row.created_at }}</span>
                 </el-form-item>
-                <el-form-item label="修改时间">
+                <el-form-item 
+                  label="修改时间">
                   <span>{{ scope.row.updated_at }}</span>
                 </el-form-item>
-                <el-form-item label="自定义开始时间">
+                <el-form-item 
+                  label="自定义开始时间">
                   <span>{{ scope.row.start_date }}</span>
                 </el-form-item>
-                <el-form-item label="自定义结束时间">
+                <el-form-item 
+                  label="自定义结束时间">
                   <span>{{ scope.row.end_date }}</span>
                 </el-form-item>
-                <el-form-item label="自定义模版">
-                  <span>{{typeof(scope.row.template) === 'undefined' ? '' : scope.row.template.name }}</span>
+                <el-form-item 
+                  label="自定义模版">
+                  <span>{{ typeof(scope.row.template) === 'undefined' ? '' : scope.row.template.name }}</span>
                 </el-form-item>
               </el-form>
             </template>
@@ -146,231 +254,322 @@
             prop="id"
             label="ID"
             width="80"
-            >
-          </el-table-column>
+          />
           <el-table-column
+            :show-overflow-tooltip="true"
             prop="name"
             label="节目名称"
             min-width="150"
-            :show-overflow-tooltip="true"
-            >
-            <template slot-scope="scope">
-              {{scope.row.project.name}}
+          >
+            <template
+              slot-scope="scope">
+              {{ scope.row.project.name }}
             </template>
           </el-table-column>
           <el-table-column
             prop="icon"
             label="节目icon"
             min-width="100"
-            >
-            <template slot-scope="scope">
-              <img :src="scope.row.project.icon" alt="" class="icon-item"/>
+          >
+            <template 
+              slot-scope="scope">
+              <img 
+                :src="scope.row.project.icon"
+                alt=""
+                class="icon-item">
             </template>
           </el-table-column>
           <el-table-column
+            :show-overflow-tooltip="true"
             prop="scene"
             label="区域"
             min-width="100"
-            :show-overflow-tooltip="true"
-            >
-            <template slot-scope="scope">
-              {{scope.row.point.area.name}}
+          >
+            <template 
+              slot-scope="scope">
+              {{ scope.row.point.area.name }}
             </template>
           </el-table-column>
           <el-table-column
+            :show-overflow-tooltip="true"
             prop="scene"
             label="场景"
             min-width="100"
-            :show-overflow-tooltip="true"
-            >
-            <template slot-scope="scope">
-              {{scope.row.point.scene.name}}
+          >
+            <template 
+              slot-scope="scope">
+              {{ scope.row.point.scene.name }}
             </template>
           </el-table-column>
           <el-table-column
+            :show-overflow-tooltip="true"
             prop="market_name"
             label="商场"
             min-width="100"
-            :show-overflow-tooltip="true"
-            >
-            <template slot-scope="scope">
-              {{scope.row.point.market.name}}
+          >
+            <template 
+              slot-scope="scope">
+              {{ scope.row.point.market.name }}
             </template>
           </el-table-column>
           <el-table-column
+            :show-overflow-tooltip="true"
             prop="point_name"
             label="点位"
             min-width="100"
-            :show-overflow-tooltip="true"
-            >
-            <template slot-scope="scope">
-              {{scope.row.point.name}}
+          >
+            <template 
+              slot-scope="scope">
+              {{ scope.row.point.name }}
             </template>
           </el-table-column>
           <el-table-column
+            :show-overflow-tooltip="true"
             prop="define"
             label="自定义模版"
             min-width="100"
-            :show-overflow-tooltip="true"
-            >
-            <template slot-scope="scope">
-              {{typeof(scope.row.template) === 'undefined' ? '' : scope.row.template.name }}
+          >
+            <template 
+              slot-scope="scope">
+              {{ typeof(scope.row.template) === 'undefined' ? '' : scope.row.template.name }}
             </template>
           </el-table-column>
           <el-table-column
+            :show-overflow-tooltip="true"
             prop="created_at"
             label="创建时间"
             min-width="150"
-            :show-overflow-tooltip="true"
-            >
-          </el-table-column>
+          />
         </el-table>
-        <div class="pagination-wrap">
+        <div 
+          class="pagination-wrap">
           <el-pagination
-          layout="prev, pager, next, jumper, total"
-          :total="pagination.total"
-          :page-size="pagination.pageSize"
-          :current-page="pagination.currentPage"
-          @current-change="changePage"
-          >
-          </el-pagination>
+            :total="pagination.total"
+            :page-size="pagination.pageSize"
+            :current-page="pagination.currentPage"
+            layout="prev, pager, next, jumper, total"
+            @current-change="changePage"
+          />
         </div>
       </div>
       <!-- 批量修改 -->
-      <el-dialog title="批量修改" :visible.sync="editVisible" @close="dialogClose" v-loading="loading">
+      <el-dialog 
+        v-loading="loading"
+        :visible.sync="editVisible" 
+        title="批量修改" 
+        @close="dialogClose">
         <el-form
-        ref="projectForm"
-        :model="projectForm" label-width="150px">
-          <el-form-item label="节目名称" prop="project"  v-if="modifyOptionFlag.project" :rules="[{ type: 'number', required: true, message: '请输入节目', trigger: 'submit' }]">
-            <el-select v-model="projectForm.project" filterable placeholder="请搜索" remote :remote-method="getProject" clearable>
+          ref="projectForm"
+          :model="projectForm"
+          label-width="150px">
+          <el-form-item 
+            v-if="modifyOptionFlag.project"
+            :rules="[{ type: 'number', required: true, message: '请输入节目', trigger: 'submit' }]"
+            label="节目名称" 
+            prop="project" >
+            <el-select 
+              v-model="projectForm.project" 
+              :remote-method="getProject"
+              filterable 
+              placeholder="请搜索" 
+              remote 
+              clearable>
               <el-option
                 v-for="item in projectList"
                 :key="item.id"
                 :label="item.name"
-                :value="item.id">
-              </el-option>
+                :value="item.id"/>
             </el-select>
           </el-form-item>
-          <el-form-item label="星期一模版"  v-if="modifyOptionFlag.template" prop="day1_tvid">
-          <el-select v-model="projectForm.day1_tvid" placeholder="请选择" filterable clearable>
-            <el-option
-              v-for="item in monList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="星期二模版" v-if="modifyOptionFlag.template" prop="day2_tvid">
-          <el-select v-model="projectForm.day2_tvid" placeholder="请选择" filterable clearable>
-            <el-option
-              v-for="item in tueList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="星期三模版" v-if="modifyOptionFlag.template" prop="day3_tvid">
-          <el-select v-model="projectForm.day3_tvid" placeholder="请选择" filterable clearable>
-            <el-option
-              v-for="item in wedList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="星期四模版" v-if="modifyOptionFlag.template" prop="day4_tvid">
-          <el-select v-model="projectForm.day4_tvid" placeholder="请选择" filterable clearable>
-            <el-option
-              v-for="item in thursList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="星期五模版" v-if="modifyOptionFlag.template" prop="day5_tvid">
-          <el-select v-model="projectForm.day5_tvid" placeholder="请选择" filterable clearable>
-            <el-option
-              v-for="item in friList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="星期六模版" v-if="modifyOptionFlag.template" prop="day6_tvid">
-          <el-select v-model="projectForm.day6_tvid" placeholder="请选择" filterable clearable>
-            <el-option
-              v-for="item in satList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="星期日模版" v-if="modifyOptionFlag.template" prop="day7_tvid">
-          <el-select v-model="projectForm.day7_tvid" placeholder="请选择" filterable clearable>
-            <el-option
-              v-for="item in sunList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="工作日模版" prop="weekday" v-if="modifyOptionFlag.template">
-          <el-select v-model="projectForm.weekday" placeholder="请选择" filterable clearable>
-            <el-option
-              v-for="item in weekdayList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
+          <el-form-item 
+            v-if="modifyOptionFlag.template" 
+            label="星期一模版"  
+            prop="day1_tvid">
+            <el-select 
+              v-model="projectForm.day1_tvid" 
+              placeholder="请选择" 
+              filterable 
+              clearable>
+              <el-option
+                v-for="item in monList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"/>
             </el-select>
           </el-form-item>
-          <el-form-item label="周末模版" prop="weekend" v-if="modifyOptionFlag.template">
-            <el-select v-model="projectForm.weekend" placeholder="请选择" filterable clearable>
+          <el-form-item 
+            v-if="modifyOptionFlag.template" 
+            label="星期二模版" 
+            prop="day2_tvid">
+            <el-select 
+              v-model="projectForm.day2_tvid"
+              placeholder="请选择" 
+              filterable 
+              clearable>
+              <el-option
+                v-for="item in tueList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"/>
+            </el-select>
+          </el-form-item>
+          <el-form-item 
+            v-if="modifyOptionFlag.template" 
+            label="星期三模版" 
+            prop="day3_tvid">
+            <el-select 
+              v-model="projectForm.day3_tvid" 
+              placeholder="请选择"
+              filterable 
+              clearable>
+              <el-option
+                v-for="item in wedList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"/>
+            </el-select>
+          </el-form-item>
+          <el-form-item 
+            v-if="modifyOptionFlag.template" 
+            label="星期四模版" 
+            prop="day4_tvid">
+            <el-select 
+              v-model="projectForm.day4_tvid" 
+              placeholder="请选择" 
+              filterable 
+              clearable>
+              <el-option
+                v-for="item in thursList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"/>
+            </el-select>
+          </el-form-item>
+          <el-form-item 
+            v-if="modifyOptionFlag.template" 
+            label="星期五模版" 
+            prop="day5_tvid">
+            <el-select 
+              v-model="projectForm.day5_tvid"
+              placeholder="请选择" 
+              filterable 
+              clearable>
+              <el-option
+                v-for="item in friList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"/>
+            </el-select>
+          </el-form-item>
+          <el-form-item 
+            v-if="modifyOptionFlag.template" 
+            label="星期六模版"
+            prop="day6_tvid">
+            <el-select 
+              v-model="projectForm.day6_tvid" 
+              placeholder="请选择" 
+              filterable 
+              clearable>
+              <el-option
+                v-for="item in satList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"/>
+            </el-select>
+          </el-form-item>
+          <el-form-item 
+            v-if="modifyOptionFlag.template" 
+            label="星期日模版" 
+            prop="day7_tvid">
+            <el-select 
+              v-model="projectForm.day7_tvid"
+              placeholder="请选择" 
+              filterable 
+              clearable>
+              <el-option
+                v-for="item in sunList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"/>
+            </el-select>
+          </el-form-item>
+          <el-form-item 
+            v-if="modifyOptionFlag.template"
+            label="工作日模版"
+            prop="weekday" >
+            <el-select 
+              v-model="projectForm.weekday" 
+              placeholder="请选择" 
+              filterable 
+              clearable>
+              <el-option
+                v-for="item in weekdayList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"/>
+            </el-select>
+          </el-form-item>
+          <el-form-item 
+            v-if="modifyOptionFlag.template"
+            label="周末模版" 
+            prop="weekend">
+            <el-select 
+              v-model="projectForm.weekend" 
+              placeholder="请选择" 
+              filterable 
+              clearable>
               <el-option
                 v-for="item in weekendList"
                 :key="item.id"
                 :label="item.name"
-                :value="item.id">
-              </el-option>
+                :value="item.id"/>
             </el-select>
           </el-form-item>
-          <el-form-item label="自定义模版" prop="define" v-if="modifyOptionFlag.template">
-            <el-select v-model="projectForm.define" placeholder="请选择" filterable clearable>
+          <el-form-item 
+            v-if="modifyOptionFlag.template"
+            label="自定义模版" 
+            prop="define" >
+            <el-select
+              v-model="projectForm.define" 
+              placeholder="请选择" 
+              filterable 
+              clearable>
               <el-option
                 v-for="item in defineList"
                 :key="item.id"
                 :label="item.name"
-                :value="item.id">
-              </el-option>
+                :value="item.id"/>
             </el-select>
           </el-form-item>
-          <el-form-item label="自定义开始时间" prop="sdate" v-if="modifyOptionFlag.sdate" :rules="[{ type: 'date', required: true, message: '请输入自定义开始时间', trigger: 'submit' }]">
+          <el-form-item  
+            v-if="modifyOptionFlag.sdate" 
+            :rules="[{ type: 'date', required: true, message: '请输入自定义开始时间', trigger: 'submit' }]"
+            label="自定义开始时间" 
+            prop="sdate">
             <el-date-picker
-            v-model="projectForm.sdate"
-            type="date"
-            placeholder="选择自定义开始时间" :editable="false">
-            </el-date-picker>
+              v-model="projectForm.sdate"
+              :editable="false"
+              type="date"
+              placeholder="选择自定义开始时间" />
           </el-form-item>
-          <el-form-item label="自定义结束时间" prop="edate" v-if="modifyOptionFlag.edate" :rules="[{ type: 'date', required: true, message: '请输入自定义结束时间', trigger: 'submit' }]">
+          <el-form-item 
+            v-if="modifyOptionFlag.edate" 
+            :rules="[{ type: 'date', required: true, message: '请输入自定义结束时间', trigger: 'submit' }]"
+            label="自定义结束时间" 
+            prop="edate">
             <el-date-picker
-            v-model="projectForm.edate"
-            type="date"
-            placeholder="选择自定义结束时间"
-            :editable="false"
-            >
-            </el-date-picker>
+              v-model="projectForm.edate"
+              :editable="false"
+              type="date"
+              placeholder="选择自定义结束时间"
+            />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="submitModify('projectForm')">完成</el-button>
+            <el-button 
+              type="primary" 
+              @click="submitModify('projectForm')">完成</el-button>
           </el-form-item>
-         </el-form>
+        </el-form>
       </el-dialog>
     </div>
   </div>
@@ -400,6 +599,23 @@ import {
 } from 'element-ui'
 
 export default {
+  components: {
+    'el-row': Row,
+    'el-col': Col,
+    'el-table': Table,
+    'el-date-picker': DatePicker,
+    'el-table-column': TableColumn,
+    'el-button': Button,
+    'el-input': Input,
+    'el-pagination': Pagination,
+    'el-form': Form,
+    'el-form-item': FormItem,
+    'el-select': Select,
+    'el-option': Option,
+    'el-checkbox-group': CheckboxGroup,
+    'el-checkbox': Checkbox,
+    'el-dialog': Dialog
+  },
   data() {
     return {
       editVisible: false,
@@ -500,7 +716,6 @@ export default {
         day6_tvid: '',
         day7_tvid: ''
       },
-      loading: true,
       modifyOptionFlag: {
         project: false,
         template: false,
@@ -788,23 +1003,6 @@ export default {
         path: '/project/item/edit'
       })
     }
-  },
-  components: {
-    'el-row': Row,
-    'el-col': Col,
-    'el-table': Table,
-    'el-date-picker': DatePicker,
-    'el-table-column': TableColumn,
-    'el-button': Button,
-    'el-input': Input,
-    'el-pagination': Pagination,
-    'el-form': Form,
-    'el-form-item': FormItem,
-    'el-select': Select,
-    'el-option': Option,
-    'el-checkbox-group': CheckboxGroup,
-    'el-checkbox': Checkbox,
-    'el-dialog': Dialog
   }
 }
 </script>

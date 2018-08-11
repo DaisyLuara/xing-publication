@@ -1,15 +1,18 @@
 <template>
-  <div class="account-root">
-    <second-sidebar module="account"></second-sidebar>
-    <div class="topbar">
-      {{this.$route.meta.title}}
+  <div 
+    class="account-root">
+    <second-sidebar 
+      module="account"/>
+    <div 
+      class="topbar">
+      {{ this.$route.meta.title }}
     </div>
-    <router-view></router-view>
+    <router-view/>
   </div>
 </template>
 <script>
 export default {
-  name: 'accountView',
+  name: 'AccountView',
   data() {
     return {
     }

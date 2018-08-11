@@ -28,10 +28,11 @@ class ChartDataController extends Controller
     ];
 
     protected $centuryMapping = [
+        'century10' => '10后',
         'century00' => '00后',
         'century90' => '90后',
         'century80' => '80后',
-        'century70' => '70后',
+        'century70' => '70前/后',
     ];
 
     protected $genderMapping = [
@@ -170,7 +171,7 @@ class ChartDataController extends Controller
     private function getAgeGroupByAttribute($attribute_id, Builder $query)
     {
         $table = $query->getModel()->getTable();
-        $data = $query->selectRaw('sum(century00_bnum+century00_gnum) as century00,sum(century90_bnum+century90_gnum) as century90,sum(century80_bnum+century80_gnum) as century80,sum(century70_bnum+century70_gnum) as century70')
+        $data = $query->selectRaw('sum(century10_bnum+century10_gnum) as century10,sum(century00_bnum+century00_gnum) as century00,sum(century90_bnum+century90_gnum) as century90,sum(century80_bnum+century80_gnum) as century80,sum(century70_bnum+century70_gnum) as century70')
             ->join('xs_point_attributes', 'xs_point_attributes.point_id', '=', "$table.oid")
             ->where('xs_point_attributes.attribute_id', '=', $attribute_id)
             ->first()->toArray();

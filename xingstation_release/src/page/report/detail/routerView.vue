@@ -1,15 +1,12 @@
 <template>
-  <div class="detail-root">
-    <router-view></router-view>
+  <div 
+    class="detail-root">
+    <router-view/>
   </div>
 </template>
 <script>
 export default {
-  name: 'detailView',
-  data() {
-    return {}
-  },
-  methods: {}
+  name: 'DetailView'
 }
 </script>
 

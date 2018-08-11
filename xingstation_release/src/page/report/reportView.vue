@@ -1,15 +1,17 @@
 <template>
-  <div class="report-root">
-    <second-sidebar module="report"></second-sidebar>
+  <div 
+    class="report-root">
+    <second-sidebar 
+      module="report"/>
     <div class="topbar">
-      {{this.$route.meta.title}}
+      {{ this.$route.meta.title }}
     </div>
-    <router-view></router-view>
+    <router-view/>
   </div>
 </template>
 <script>
 export default {
-  name: 'reportView',
+  name: 'ReportView',
   data() {
     return {
     }

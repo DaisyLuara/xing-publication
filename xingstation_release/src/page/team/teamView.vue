@@ -1,15 +1,15 @@
 <template>
   <div class="team-root">
-    <second-sidebar module="team"></second-sidebar>
+    <second-sidebar module="team" />
     <div class="topbar">
-      {{this.$route.meta.title}}
+      {{ this.$route.meta.title }}
     </div>
-    <router-view></router-view>
+    <router-view />
   </div>
 </template>
 <script>
 export default {
-  name: 'teamView',
+  name: 'TeamView',
   data() {
     return {
     }

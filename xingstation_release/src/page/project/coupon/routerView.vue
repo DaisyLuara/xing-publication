@@ -1,24 +1,18 @@
 <template>
   <div class="coupon-root">
-    <router-view></router-view>
+    <router-view/>
   </div>
 </template>
 <script>
 export default {
-  name: 'couponView',
-  data() {
-    return {
-    }
-  },
-  methods: {
-  }
+  name: 'CouponView'
 }
 </script>
 
 <style lang="less" scoped>
-  .list-root {
-    height: 100%;
-    margin: 10px;
-    background-color: #EFF2F7;
-  }
+.coupon-root {
+  height: 100%;
+  margin: 10px;
+  background-color: #eff2f7;
+}
 </style>

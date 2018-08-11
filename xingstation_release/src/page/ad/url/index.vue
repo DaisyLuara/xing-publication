@@ -1,55 +1,69 @@
 <template>
-  <div class="page-list-template" :element-loading-text="setting.loadingText" v-loading="setting.loading">
-    <div class="actions-wrap">
-      <span class="label">
-        短链数量: {{total}}
+  <div  
+    v-loading="setting.loading" 
+    :element-loading-text="setting.loadingText" 
+    class="page-list-template">
+    <div 
+      class="actions-wrap">
+      <span 
+        class="label">
+        短链数量: {{ total }}
       </span>
-      <el-button type="success" size="small" @click="addUrl">新增</el-button>
+      <el-button 
+        type="success" 
+        size="small" 
+        @click="addUrl">新增</el-button>
     </div>
 
-    <div class="table-area">
+    <div 
+      class="table-area">
       <el-table
         :data="tableData"
         style="width: 100%">
         <el-table-column
           prop="url"
-          label="短链接" min-width="200">
-          <template slot-scope="scope">
-            {{scope.row.url}}
-            <span class="copy-link" v-clipboard="scope.row.url" @success="copyUrlSucess" @error="copyUrlError">复制</span>
+          label="短链接" 
+          min-width="200">
+          <template 
+            slot-scope="scope">
+            {{ scope.row.url }}
+            <span  
+              v-clipboard="scope.row.url"
+              class="copy-link"
+              @success="copyUrlSucess"
+              @error="copyUrlError"
+            >复制</span>
           </template>
         </el-table-column>
         <el-table-column
           prop="created_at"
-          label="生成时间" width="180">
-        </el-table-column>
+          label="生成时间" 
+          width="180"/>
         <el-table-column
           prop="target_url"
-          label="原始链接" min-width="280">
-        </el-table-column>
+          label="原始链接" 
+          min-width="280"/>
         <el-table-column
           prop="description"
-          label="备注">
-        </el-table-column>
+          label="备注"/>
       </el-table>
     </div>
-    <div class="pagination">
+    <div 
+      class="pagination">
       <el-pagination
         :current-page="currentPage"
         :page-size="pageSize"
-        layout="total, prev, pager, next, jumper"
         :total="total" 
-        @current-change="currentChange">
-        </el-pagination>
-      </div>
+        layout="total, prev, pager, next, jumper"
+        @current-change="currentChange"/>
     </div>
-
+  </div>
 </template>
 <script>
 import url from 'service/url'
 import VueClipboards from 'vue-clipboards'
 import Vue from 'vue'
-Vue.use(VueClipboards);
+Vue.use(VueClipboards)
 import {
   Input,
   Button,
@@ -163,7 +177,7 @@ export default {
     }
   }
   .copy-link {
-    color: #03A9F4;
+    color: #03a9f4;
   }
 }
 </style>
