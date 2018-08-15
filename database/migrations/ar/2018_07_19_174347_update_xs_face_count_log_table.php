@@ -17,6 +17,7 @@ class UpdateXsFaceCountLogTable extends Migration
             $table->integer('omo_outnum')->after('scannum');
             $table->integer('omo_scannum')->after('omo_outnum');
             $table->integer('omo_sharenum')->after('omo_scannum');
+            $table->integer('phonenum')->after('lovenum');
         });
     }
 
@@ -31,6 +32,7 @@ class UpdateXsFaceCountLogTable extends Migration
             $table->dropColumn('omo_outnum');
             $table->dropColumn('omo_scannum');
             $table->dropColumn('omo_sharenum');
+            $table->dropColumn('phonenum');
         });
     }
 }

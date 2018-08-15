@@ -42,6 +42,7 @@ class FaceActivePlayer extends Command
     {
         activePlayerClean();
         omoClean();
+        phoneClean();
         mergeActiveOmoLook();
     }
 }
