@@ -405,9 +405,9 @@ class ChartDataController extends Controller
 
         $times = ['10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', '24:00'];
         $output = [];
-        for ($i = 0; $i < 8; $i++) {
+        foreach ($times as $key => $value) {
             $output[] = [
-                'display_name' => $times[$i],
+                'display_name' => $value,
                 'rate' => 0,
                 'count' =>
                     [
