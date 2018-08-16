@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin\Face\V1\Transformer;
 
-use App\Http\Controllers\Admin\Face\V1\Models\FaceCount;
 use App\Http\Controllers\Admin\Face\V1\Models\XsFaceCountLog;
 use League\Fractal\TransformerAbstract;
 

@@ -1,45 +1,71 @@
 <template>
-  <div class="home-wrap" v-loading="loading">
+  <div 
+    v-loading="loading"
+    class="home-wrap">
     <!-- 搜索 -->
-    <div class="search-wrap">
+    <div 
+      class="search-wrap">
       <el-date-picker
-      v-model="dataValue"
-      type="daterange"
-      align="right"
-      unlink-panels
-      start-placeholder="开始日期"
-      end-placeholder="结束日期"
-      :default-value="dataValue"
-      :clearable="false"
-      :picker-options="pickerOptions2"
-      @change="dateChangeHandle">
-      </el-date-picker>
+        v-model="dataValue"
+        :default-value="dataValue"
+        :clearable="false"
+        :picker-options="pickerOptions2"
+        type="daterange"
+        align="right"
+        unlink-panels
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        @change="dateChangeHandle"/>
     </div>
     <!-- 点位前10 -->
-    <div class="ranking-wrap">
-      <el-card shadow="always" v-loading="pointFlag">
-        <highcharts :options="pointTenOptions" class="highchart" ref="pointTenChar"></highcharts> 
+    <div 
+      class="ranking-wrap">
+      <el-card 
+        v-loading="pointFlag"
+        shadow="always" >
+        <highcharts 
+          ref="pointTenChar"
+          :options="pointTenOptions" 
+          class="highchart"/>
       </el-card>
     </div>
     <!-- 行业模块 -->
-    <div class="ranking-wrap">
+    <div 
+      class="ranking-wrap">
       <el-card>
-        <el-row :gutter="20">
+        <el-row 
+          :gutter="20">
           <!-- 行业前5 -->
-          <el-col :span="16" v-loading="projectFlag">
-            <highcharts :options="projectFiveOptions" class="highchart" ref="projectFiveChar"></highcharts>
+          <el-col 
+            v-loading="projectFlag"
+            :span="16" >
+            <highcharts 
+              ref="projectFiveChar"
+              :options="projectFiveOptions" 
+              class="highchart" />
           </el-col>
           <!-- 业态年龄场景 -->
-          <el-col :span="8" v-loading="userFlag">
-            <highcharts :options="userOptions" class="highchart" ref="userChar"></highcharts>
+          <el-col 
+            v-loading="userFlag"
+            :span="8" >
+            <highcharts 
+              ref="userChar"
+              :options="userOptions" 
+              class="highchart"/>
           </el-col>
         </el-row>
       </el-card>
     </div>
     <!-- 活跃数 -->
-    <div class="tendency-wrap">
-      <el-card shadow="always" v-loading="activeFlag">
-        <highcharts :options="activeOptions" class="highchart" ref="activeChar"></highcharts>
+    <div 
+      class="tendency-wrap">
+      <el-card 
+        v-loading="activeFlag"
+        shadow="always">
+        <highcharts 
+          ref="activeChar"
+          :options="activeOptions" 
+          class="highchart" />
       </el-card>
     </div>
   </div>
@@ -70,7 +96,6 @@ export default {
     ElDialog: Dialog,
     ElDatePicker: DatePicker
   },
-  computed: {},
   data() {
     return {
       dialogVisible: false,
@@ -299,7 +324,7 @@ export default {
           plotBorderWidth: null,
           plotShadow: false
         },
-        colors: ['#8cc63f', '#fbb03b', '#ed1e79', '#662d91'],
+        colors: ['#3b9aca','#8cc63f', '#fbb03b', '#ed1e79', '#662d91'],
         tooltip: {
           headerFormat: '{性别访问数}<br>',
           pointFormat:
@@ -405,6 +430,12 @@ export default {
         series: [
           {
             type: 'column',
+            name: '10后',
+            color: '#3b9aca',
+            data: []
+          },
+          {
+            type: 'column',
             name: '00后',
             color: '#8CC63F',
             data: []
@@ -423,7 +454,7 @@ export default {
           },
           {
             type: 'column',
-            name: '70后',
+            name: '70前/后',
             color: '#662D91',
             data: []
           },
@@ -448,7 +479,6 @@ export default {
       activeFlag: false
     }
   },
-  mounted() {},
   created() {
     this.dateChangeHandle()
   },

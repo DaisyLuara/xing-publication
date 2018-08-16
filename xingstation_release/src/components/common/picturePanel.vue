@@ -1,66 +1,159 @@
 <template>
-<div class="picture-panel">
-  <el-dialog :visible.sync="panelVisible" @open="handleOpen()" size="large" :before-close="cancel">
-    <div slot="title">
-      <span class="picture-panel__title" v-show="!serch.searchFlag">图片管理</span>
-      <span class="picture-panel__title" v-show="serch.searchFlag"><a class="backImgPanel" href="javascript:;" @click="serch.searchFlag=false,pagination.page_num = 1">< 我的图片 </a> | 搜索结果</span>
-      <input class="picture-panel__search" @keyup.enter="searchMedia()" v-model="serch.searchText" placeholder="搜索">
-    </div>
-    <div>
-      <el-tabs type="card" v-model="activeTabName" @tab-click="handleTabsClick" v-loading="loading" v-show="!serch.searchFlag">
-        <el-tab-pane v-for="item in mediaGroup.mediaGroupList" :name="item.media_group_name" :mediaGroupId="item.id" :key="item.id">
-          <span slot="label" :mediaGroupId="item.id">{{item.media_group_name}}<span class="number">{{item.media_count}}</span></span>
-          <div class="picture-panel__body">
-            <li v-for="obj in item.data" class="picture-panel__img-item"  @click="selectImg(obj)">
-              <img class="picture-panel__img" :src="mediaBase + obj.media_url">
-              <div class='picture-panel__img-size'>{{obj.image_width}} * {{obj.image_height}}</div>
-              <div class='picture-panel__img-name'>{{obj.media_name}}</div>
-              <div v-for="selectedObj in selectedImgs">
-                <div v-if="obj.id == selectedObj.id">
-                  <div class="picture-panel__arrow-wrap"></div><i class="picture-panel__arrow"></i>
+  <div 
+    class="picture-panel">
+    <el-dialog 
+      :visible.sync="panelVisible" 
+      :before-close="cancel"
+      size="large" 
+      @open="handleOpen()">
+      <div 
+        slot="title">
+        <span 
+          v-show="!serch.searchFlag"
+          class="picture-panel__title">图片管理</span>
+        <span 
+          v-show="serch.searchFlag">
+          <a 
+            class="backImgPanel" 
+            href="javascript:;" 
+            @click="serch.searchFlag=false,pagination.page_num = 1">  我的图片 </a> | 搜索结果</span>
+        <input 
+          v-model="serch.searchText" 
+          placeholder="搜索"
+          class="picture-panel__search" 
+          @keyup.enter="searchMedia()">
+      </div>
+      <div>
+        <el-tabs 
+          v-loading="loading" 
+          v-show="!serch.searchFlag"
+          v-model="activeTabName"
+          type="card" 
+          @tab-click="handleTabsClick">
+          <el-tab-pane 
+            v-for="item in mediaGroup.mediaGroupList" 
+            :name="item.media_group_name" 
+            :media-group-id="item.id" 
+            :key="item.id">
+            <span 
+              slot="label"
+              :mediaGroupId="item.id"> 
+              {{ item.media_group_name }}
+              <span 
+                class="number">
+                {{ item.media_count }}
+              </span>
+            </span>
+            <div 
+              class="picture-panel__body">
+              <li 
+                v-for="obj in item.data" 
+                :key="obj.id"
+                class="picture-panel__img-item"  
+                @click="selectImg(obj)" >
+                <img 
+                  :src="mediaBase + obj.media_url"
+                  class="picture-panel__img">
+                <div 
+                  class="picture-panel__img-size">{{ obj.image_width }} * {{ obj.image_height }}</div>
+                <div 
+                  class="picture-panel__img-name">{{ obj.media_name }}</div>
+                <div 
+                  v-for="selectedObj in selectedImgs" 
+                  :key="selectedObj.id">
+                  <div 
+                    v-if="obj.id == selectedObj.id">
+                    <div 
+                      class="picture-panel__arrow-wrap"/>
+                    <i 
+                      class="picture-panel__arrow"/>
+                  </div>
+                </div>
+              </li>
+            </div>
+          </el-tab-pane>
+        </el-tabs>
+        <div 
+          v-loading="loading" 
+          v-show="serch.searchFlag">
+          <div 
+            class="picture-panel__searched-body">
+            <li 
+              v-for="obj in searchedMediaList" 
+              :key="obj.id" 
+              class="picture-panel__img-item"  
+              @click="selectImg(obj)">
+              <img 
+                :src="mediaBase + obj.media_url"
+                class="picture-panel__img" >
+              <div 
+                class="picture-panel__img-size">{{ obj.image_width }} * {{ obj.image_height }}</div>
+              <div 
+                class="picture-panel__img-name">{{ obj.media_name }}</div>
+              <div 
+                v-for="selectedObj in selectedImgs" 
+                :key="selectedObj.id">
+                <div  
+                  v-show="obj.id==selectedObj.id">
+                  <div 
+                    class="picture-panel__arrow-wrap"/>
+                  <i 
+                    class="picture-panel__arrow"/>
                 </div>
               </div>
             </li>
           </div>
-        </el-tab-pane>
-      </el-tabs>
-      <div v-loading="loading" v-show="serch.searchFlag">
-        <div class="picture-panel__searched-body">
-          <li v-for="obj in searchedMediaList" class="picture-panel__img-item"  @click="selectImg(obj)">
-            <img class="picture-panel__img" :src="mediaBase + obj.media_url">
-            <div class='picture-panel__img-size'>{{obj.image_width}} * {{obj.image_height}}</div>
-            <div class='picture-panel__img-name'>{{obj.media_name}}</div>
-            <div v-for="selectedObj in selectedImgs">
-              <!--{{obj.id==selectedObj.id}}-->
-              <div  v-show="obj.id==selectedObj.id">
-                <div class="picture-panel__arrow-wrap"></div><i class="picture-panel__arrow"></i>
-              </div>
-            </div>
-          </li>
+        </div>
+        <div 
+          class="picture-panel__footer">
+          <el-upload 
+            :action="mediaBase + '/api/media/media'" 
+            :data="form" 
+            :headers="formHeader" 
+            :before-upload="beforeUpload" 
+            :on-success="handleSuccess" 
+            :multiple="true" 
+            :auto-upload="true" 
+            :show-file-list="false" 
+            :disabled="uploadDisabled"
+            list-type="picture" 
+            class="picture-panel__upload">
+            <el-button 
+              size="small" 
+              type="primary"
+              class="picture-panep__upload-btn" >点击上传</el-button>
+          </el-upload>
+          <span 
+            class="image-type">仅支持jpg、gif、png三种格式</span>
+          <div 
+            class="picture-panel__page">
+            <el-pagination 
+              :total="pagination.count" 
+              :page-size="pagination.limit" 
+              :current-page.sync="pagination.page_num"
+              layout="total, prev, pager, next" 
+              @current-change="getMedia('')"/>
+          </div>
         </div>
       </div>
-      <div class="picture-panel__footer">
-        <el-upload class="picture-panel__upload" :action="mediaBase + '/api/media/media'" :data="form" :headers="formHeader" :before-upload="beforeUpload" :on-success="handleSuccess" :multiple="true" :auto-upload="true" :show-file-list="false" list-type="picture" :disabled="uploadDisabled">
-          <el-button class="picture-panep__upload-btn" size="small" type="primary">点击上传</el-button>
-        </el-upload>
-        <span class="image-type">仅支持jpg、gif、png三种格式</span>
-        <div class="picture-panel__page">
-          <el-pagination layout="total, prev, pager, next" :total="pagination.count" :page-size="pagination.limit" :current-page.sync="pagination.page_num" @current-change="getMedia('')">
-          </el-pagination>
+      <div 
+        slot="footer">
+        <div 
+          name="footer" 
+          class="footer">
+          <div 
+            class="picture-panel__choose-num">
+            已选择{{ selectedImgs.length }}张图片
+          </div>
+          <el-button 
+            @click="cancel()">取 消</el-button>
+          <el-button 
+            type="primary" 
+            @click="confirm()">确 定</el-button>
         </div>
       </div>
-    </div>
-    <div slot="footer">
-        <div name="footer" class="footer">
-            <div class="picture-panel__choose-num">
-                已选择{{selectedImgs.length}}张图片
-            </div>
-            <el-button @click="cancel()">取 消</el-button>
-            <el-button type="primary" @click="confirm()">确 定</el-button>
-        </div>
-    </div>
-  </el-dialog>
-</div>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -72,42 +165,58 @@ import {
   TabPane,
   Upload,
   Pagination,
-  MessageBox,
+  MessageBox
 } from 'element-ui'
 import auth from 'service/auth'
 
 export default {
-  name: 'picture-panel',
-  props: ['panelVisible', 'singleFlag'],
+  name: 'PicturePanel',
+  components: {
+    'el-dialog': Dialog,
+    'el-button': Button,
+    'el-tabs': Tabs,
+    'el-tab-pane': TabPane,
+    'el-upload': Upload,
+    'el-pagination': Pagination
+  },
+  props: {
+    panelVisible: {
+      type: Boolean,
+      required: true
+    },
+    singleFlag: {
+      type: Boolean,
+      required: true
+    }
+  },
   data() {
     return {
       loading: true,
       mediaGroup: {
-        mediaGroupList: [],
+        mediaGroupList: []
       },
       activeTabName: '',
       searchedMediaList: [],
       serch: {
         searchText: '',
-        searchFlag: false,
+        searchFlag: false
       },
       formHeader: {
-        Authorization: '',
+        Authorization: ''
       },
       form: {
-        media_group_id: null,
+        media_group_id: null
       },
       pagination: {
         limit: 15,
         page_num: 1,
-        count: 0,
+        count: 0
       },
       selectedImgs: [],
       mediaBase: process.env.SERVER_URL,
-      uploadDisabled: false,
+      uploadDisabled: false
     }
   },
-  computed: {},
   methods: {
     handleOpen() {
       this.loading = true
@@ -168,7 +277,7 @@ export default {
         media_group_id:
           mediaGroupId === undefined ? mediaGroupId : this.form.media_group_id,
         limit: this.pagination.limit,
-        page_num: this.pagination.page_num,
+        page_num: this.pagination.page_num
       }
       picture.getMediaListById(this, params, '')
     },
@@ -177,7 +286,7 @@ export default {
       let params = {
         media_name: this.serch.searchText,
         limit: this.pagination.limit,
-        page_num: this.pagination.page_num,
+        page_num: this.pagination.page_num
       }
       picture.searchHandle(this, params, '')
     },
@@ -213,16 +322,8 @@ export default {
       } else {
         picture.beforeUploadImage(this, mediaGroupId, auth)
       }
-    },
-  },
-  components: {
-    'el-dialog': Dialog,
-    'el-button': Button,
-    'el-tabs': Tabs,
-    'el-tab-pane': TabPane,
-    'el-upload': Upload,
-    'el-pagination': Pagination,
-  },
+    }
+  }
 }
 </script>
 

@@ -17,7 +17,7 @@ class ShortUrlRequest extends FormRequest
         switch ($this->method()) {
             case 'POST':
                 return [
-                    'url' => 'required|url',
+                    'target_url' => 'required|url',
                 ];
                 break;
             default:

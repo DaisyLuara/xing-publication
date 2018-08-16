@@ -19,6 +19,7 @@ class ShortUrlRecords extends Model
         'browser',
         'platform',
         'device',
-        'app'
+        'app',
+        'third_id'
     ];
 }

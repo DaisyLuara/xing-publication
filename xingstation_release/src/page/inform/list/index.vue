@@ -1,8 +1,16 @@
 <template>
-  <div class="root">
-    <el-tabs class="tabs" v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="全部" name="all">
-        <All ref="all" :active="activeName" />
+  <div 
+    class="root">
+    <el-tabs 
+      v-model="activeName"
+      class="tabs" 
+      @tab-click="handleClick">
+      <el-tab-pane 
+        label="全部" 
+        name="all">
+        <All 
+          ref="all" 
+          :active="activeName" />
       </el-tab-pane>
     </el-tabs>
   </div>  
@@ -16,17 +24,17 @@ export default {
     ElTabs: Tabs,
     ElTabPane: TabPane,
     ElButton: Button,
-    All: () => import('./com/all'),
-  },
-  computed: {
-    ...mapState({
-      lastClickTab: state => state.appState.lastClickTab,
-    }),
+    All: () => import('./com/all')
   },
   data() {
     return {
-      activeName: 'all',
+      activeName: 'all'
     }
+  },
+  computed: {
+    ...mapState({
+      lastClickTab: state => state.appState.lastClickTab
+    })
   },
   mounted() {
     this.activeName =
@@ -38,11 +46,11 @@ export default {
       let state = {
         page: 1,
         tab: tab.name,
-        searchValue: '',
+        searchValue: ''
       }
       this.$store.commit('appState/saveCurrentState', state)
-    },
-  },
+    }
+  }
 }
 </script>
 

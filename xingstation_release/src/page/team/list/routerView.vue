@@ -1,11 +1,11 @@
 <template>
   <div class="list-root">
-    <router-view></router-view>
+    <router-view />
   </div>
 </template>
 <script>
 export default {
-  name: 'listView',
+  name: 'ListView',
   data() {
     return {
     }

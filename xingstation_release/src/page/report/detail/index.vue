@@ -1,111 +1,177 @@
 <template>
   <div
-    class="point-data-wrapper" :element-loading-text="setting.loadingText" v-loading="setting.loading">
+    v-loading="setting.loading"
+    :element-loading-text="setting.loadingText"
+    class="point-data-wrapper" >
     <!-- 搜索 -->
-    <div class="search-wrap">
+    <div 
+      class="search-wrap">
       <el-button
-        @click="handlePicShow"
-        class="more-pic">
+        class="more-pic"
+        @click="handlePicShow">
         漏斗图
       </el-button>
-      <el-form ref="searchForm" class="search-form">
-        <el-row :gutter="20">
-          <el-col :span="8" v-if="showUser">
-            <el-form-item label="" prop="user" >
-              <el-select v-model="userSelect" filterable placeholder="请选择用户(可搜索)"  :loading="searchLoading" remote :remote-method="getUser" @change="userChangeHandle" clearable>
+      <el-form 
+        ref="searchForm" 
+        class="search-form">
+        <el-row 
+          :gutter="20">
+          <el-col
+            v-if="showUser"
+            :span="8">
+            <el-form-item 
+              label="" 
+              prop="user" >
+              <el-select
+                v-model="userSelect"
+                :remote-method="getUser" 
+                :loading="searchLoading" 
+                filterable 
+                placeholder="请选择用户(可搜索)" 
+                remote
+                clearable
+                @change="userChangeHandle">
                 <el-option
                   v-for="item in userList"
                   :key="item.id"
                   :label="item.name"
-                  :value="item.id">
-                </el-option>
+                  :value="item.id"/>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="" prop="project" >
-              <el-select v-model="projectSelect" filterable placeholder="请选择节目(可搜索)" :loading="searchLoading" remote :remote-method="getProject" @change="projectChangeHandle" clearable>
+          <el-col 
+            :span="8">
+            <el-form-item 
+              label="" 
+              prop="project" >
+              <el-select 
+                v-model="projectSelect" 
+                :remote-method="getProject"
+                :loading="searchLoading" 
+                filterable 
+                placeholder="请选择节目(可搜索)" 
+                remote 
+                clearable
+                @change="projectChangeHandle">
                 <el-option
                   v-for="item in projectList"
                   :key="item.id"
                   :label="item.name"
-                  :value="item.alias">
-                </el-option>
+                  :value="item.alias"/>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="" prop="scene" >
-              <el-select v-model="sceneSelect" placeholder="请选择场景" filterable  clearable>
+          <el-col 
+            :span="8">
+            <el-form-item 
+              label="" 
+              prop="scene" >
+              <el-select
+                v-model="sceneSelect" 
+                placeholder="请选择场景" 
+                filterable  
+                clearable>
                 <el-option
                   v-for="item in sceneList"
                   :key="item.id"
                   :label="item.name"
-                  :value="item.id">
-                </el-option>
+                  :value="item.id"/>
               </el-select>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row :gutter="20">
-          <el-col :span="8">
-            <el-form-item label="" prop="area_id" >
-              <el-select v-model="area_id" placeholder="请选择区域" filterable  clearable  @change="areaChangeHandle">
+        <el-row 
+          :gutter="20">
+          <el-col 
+            :span="8">
+            <el-form-item 
+              label="" 
+              prop="area_id" >
+              <el-select 
+                v-model="area_id"
+                placeholder="请选择区域"
+                filterable 
+                clearable 
+                @change="areaChangeHandle">
                 <el-option
                   v-for="item in areaList"
                   :key="item.id"
                   :label="item.name"
-                  :value="item.id">
-                </el-option>
+                  :value="item.id"/>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="" prop="market_id" >
-              <el-select v-model="market_id" placeholder="请搜索商场" filterable :loading="searchLoading" remote :remote-method="getMarket"  @change="marketChangeHandle" clearable>
+          <el-col 
+            :span="8">
+            <el-form-item 
+              label="" 
+              prop="market_id" >
+              <el-select 
+                v-model="market_id" 
+                :loading="searchLoading"
+                :remote-method="getMarket" 
+                placeholder="请搜索商场" 
+                filterable 
+                remote 
+                clearable
+                @change="marketChangeHandle" >
                 <el-option
                   v-for="item in marketList"
                   :key="item.id"
                   :label="item.name"
-                  :value="item.id">
-                </el-option>
+                  :value="item.id"/>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="" prop="point_id" >
-              <el-select v-model="point_id" placeholder="请选择点位"   filterable :loading="searchLoading" clearable>
+          <el-col 
+            :span="8">
+            <el-form-item 
+              label=""
+              prop="point_id" >
+              <el-select 
+                v-model="point_id" 
+                :loading="searchLoading"
+                placeholder="请选择点位"   
+                filterable 
+                clearable>
                 <el-option
                   v-for="item in pointList"
                   :key="item.id"
                   :label="item.name"
-                  :value="item.id">
-                </el-option>
+                  :value="item.id"/>
               </el-select>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row :gutter="20">
-          <el-col :span="14">
-            <el-form-item label="" prop="date" >
+        <el-row 
+          :gutter="20">
+          <el-col 
+            :span="14">
+            <el-form-item 
+              label="" 
+              prop="date" >
               <el-date-picker
-              v-model="dateTime"
-              type="daterange"
-              align="right"
-              unlink-panels
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :default-value="dateTime"
-              :clearable="false"
-              :picker-options="pickerOptions2"
-              >
-              </el-date-picker>
+                v-model="dateTime"
+                :default-value="dateTime"
+                :clearable="false"
+                :picker-options="pickerOptions2"
+                type="daterange"
+                align="right"
+                unlink-panels
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"/>
             </el-form-item>
           </el-col>
-          <el-col :span="10">
+          <el-col 
+            :span="10">
             <el-form-item>
-              <el-button @click="searchHandle" type="primary" size="small">搜索</el-button>
-              <el-button @click="resetSearch" size="small">重置</el-button>
+              <el-button 
+                type="primary" 
+                size="small"
+                @click="searchHandle">搜索</el-button>
+              <el-button 
+                size="small"
+                @click="resetSearch">重置</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -113,53 +179,78 @@
     </div>
 
     <!-- 主要图表部分 -->
-    <div class="content-wrapper" v-loading="poepleCountFlag">
-      <ul class="btns-wrapper">
-        <li v-for="(item, key) in peopleCount.concat([{ index: 'cpf', display_name: 'CPF转化率' }, { index: 'cpa', display_name:'CPA转化率' }, { index: 'cpl', display_name:'CPL转化率' }])" 
-          :key="key" 
-          v-if="item.index !== 'outnum'">
+    <div 
+      v-loading="poepleCountFlag"
+      class="content-wrapper">
+      <ul
+        class="btns-wrapper">
+        <li 
+          v-for="(item, key) in peopleCount.concat([{ index: 'cpf', display_name: 'CPF转化率' }, { index: 'cpa', display_name:'CPA转化率' }, { index: 'cpl', display_name:'CPL转化率' }])" 
+          v-if="item.index !== 'outnum'"
+          :key="key">
           <a 
             :class="'btn color-'+ key" 
-            @hover="handleHover(key)"
-            >
+            @hover="handleHover(key)">
             <i class="title" >
-              {{item.display_name}}
+              {{ item.display_name }}
             </i>
-            <span class="count" v-if="item.index === 'looknum'">
-              {{circleLooknum}}
+            <span  
+              v-if="item.index === 'looknum'"
+              class="count">
+              {{ circleLooknum }}
             </span>
-            <span class="count" v-if="item.index === 'playernum7'">
-              {{circlePlayernum7}}
+            <span 
+              v-if="item.index === 'playernum7'"
+              class="count" >
+              {{ circlePlayernum7 }}
             </span>
-            <span class="count" v-if="item.index === 'playernum'">
-              {{circlePlayernum}}
+            <span 
+              v-if="item.index === 'playernum'"
+              class="count">
+              {{ circlePlayernum }}
             </span>
-            <span class="count" v-if="item.index === 'lovenum'">
-              {{circleLovenum}}
+            <span 
+              v-if="item.index === 'lovenum'"
+              class="count" >
+              {{ circleLovenum }}
             </span>
-            <span class="count" v-if="item.index === 'cpf'">
-              {{computedCPF}}
+            <span 
+              v-if="item.index === 'cpf'"
+              class="count" >
+              {{ computedCPF }}
             </span>
-            <span class="count" v-if="item.index === 'cpa'">
-              {{computedCPA}}
+            <span  
+              v-if="item.index === 'cpa'" 
+              class="count">
+              {{ computedCPA }}
             </span>
-            <span class="count" v-if="item.index === 'cpl'">
-              {{computedCPL}}
+            <span 
+              v-if="item.index === 'cpl'" 
+              class="count" >
+              {{ computedCPL }}
             </span>
-            <i :class="'arrow-icon color-' + key"></i>
-            <i class="right-arrow-icon" v-if="item.index === 'looknum'">
-              {{playernum7DivideLookNum}}
+            <i 
+              :class="'arrow-icon color-' + key" />
+            <i 
+              v-if="item.index === 'looknum'"
+              class="right-arrow-icon">
+              {{ playernum7DivideLookNum }}
             </i>
-            <i class="right-arrow-icon" v-if="item.index === 'playernum7'">
-              {{playernumDivideLookNum}}
+            <i
+              v-if="item.index === 'playernum7'"
+              class="right-arrow-icon">
+              {{ playernumDivideLookNum }}
             </i>
-            <i class="right-arrow-icon" v-if="item.index === 'playernum'">
-              {{lovenumDivideLookNum}}
+            <i 
+              v-if="item.index === 'playernum'"
+              class="right-arrow-icon" >
+              {{ lovenumDivideLookNum }}
             </i>
           </a>
         </li>
       </ul>
-      <div class="chart-wrapper">
+      <div 
+        class="chart-wrapper">
         <chart 
           ref="mainChart"
           :options="mainChart" 
@@ -168,85 +259,114 @@
     </div>
     
     <!-- 年龄分布图 -->
-    <div class="age-sex-wrapper"  v-loading="ageFlag"> 
-      <div class="sex-part">
+    <div 
+      v-loading="ageFlag"
+      class="age-sex-wrapper" > 
+      <div 
+        class="sex-part">
         <chart 
           ref="pieChart"
-          @click="onClick"
           :options="pieChart" 
-          auto-resize />
+          auto-resize
+          @click="onClick"
+        />
       </div>
-      <div class="age-part">
+      <div 
+        class="age-part">
         <chart
-        ref="ageChart"
-        :options="ageChart"
-        auto-resize />
+          ref="ageChart"
+          :options="ageChart"
+          auto-resize />
       </div>
     </div>
     <!-- 时间段与人群特征 -->
-    <div class="time-crowd-wrapper"  v-loading="crowdFlag"> 
-      <div class="crowd-part">
+    <div  
+      v-loading="crowdFlag"
+      class="time-crowd-wrapper" > 
+      <div 
+        class="crowd-part">
         <chart
-        ref="crowdChart"
-        :options="timeAndCrowdChart"
-        auto-resize />
+          ref="crowdChart"
+          :options="timeAndCrowdChart"
+          auto-resize />
       </div>
     </div>
     <!-- 报表部分 -->
-    <div v-loading="tableSetting.loading" class="table-wrap">
-      <div class="actions-wrap">
-        <span class="label">
-          <span class="point-title">点位列表 </span> 数量: {{pagination.total}}
+    <div 
+      v-loading="tableSetting.loading"
+      class="table-wrap">
+      <div 
+        class="actions-wrap">
+        <span 
+          class="label">
+          <span 
+            class="point-title">点位列表 
+          </span> 数量: {{ pagination.total }}
         </span>
         <div>
-          <el-select v-model="reportValue" placeholder="请选择导出报表类型">
+          <el-select 
+            v-model="reportValue" 
+            placeholder="请选择导出报表类型">
             <el-option
               v-for="item in reportList"
               :key="item.value"
               :label="item.label"
-              :value="item.value">
-            </el-option>
+              :value="item.value"/>
           </el-select>
-          <el-button type="success" size="small"  @click="changeReportType">下载</el-button>
+          <el-button 
+            type="success"
+            size="small" 
+            @click="changeReportType">下载</el-button>
         </div>
       </div>
       <el-table
         :data="tableData"
         style="width: 100%">
-        <el-table-column type="expand">
-          <template slot-scope="scope">
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="ID">
+        <el-table-column 
+          type="expand">
+          <template 
+            slot-scope="scope">
+            <el-form 
+              label-position="left" 
+              inline 
+              class="demo-table-expand">
+              <el-form-item 
+                label="ID">
                 <span>{{ scope.row.id }}</span>
               </el-form-item>
-              <el-form-item label="点位">
-                  {{ scope.row.area_name }} {{scope.row.market_name}} {{scope.row.point_name}}
+              <el-form-item 
+                label="点位">
+                {{ scope.row.area_name }} {{ scope.row.market_name }} {{ scope.row.point_name }}
               </el-form-item>
-              <el-form-item label="节目">
-                  {{ scope.row.projects }}
+              <el-form-item 
+                label="节目">
+                {{ scope.row.projects }}
               </el-form-item>
-              <el-form-item label="围观">
+              <el-form-item 
+                label="围观">
                 <span>{{ scope.row.looknum }}</span>
               </el-form-item>
-              <el-form-item label="活跃">
-                <!-- <span>{{ scope.row.looknum }}</span> -->
-              </el-form-item>
-              <el-form-item label="铁杆">
+              <el-form-item 
+                label="活跃"/>
+              <el-form-item 
+                label="铁杆">
                 <span>{{ scope.row.playernum }}</span>
               </el-form-item>
-              <el-form-item label="拉新">
+              <el-form-item 
+                label="拉新">
                 <span>{{ scope.row.lovenum }}</span>
               </el-form-item>
-              <el-form-item label="输出">
+              <el-form-item 
+                label="输出">
                 <span>
-                  CPF: {{computedCPF}}
-                  CPA：{{computedCPA}}
-                  CPL： {{computedCPL}}
+                  CPF: {{ computedCPF }}
+                  CPA：{{ computedCPA }}
+                  CPL： {{ computedCPL }}
                 </span>
               </el-form-item>
-              
-              <el-form-item label="时间">
-                <span>{{ scope.row.min_date }} - {{scope.row.max_date}}</span>
+              <el-form-item 
+                label="时间">
+                <span>{{ scope.row.min_date }} - {{ scope.row.max_date }}</span>
               </el-form-item>
             </el-form>
           </template>
@@ -254,79 +374,87 @@
         <el-table-column
           label="ID"
           prop="id"
-          width="100">
-        </el-table-column>
+          width="100"/>
         <el-table-column
+          :show-overflow-tooltip="true"
           label="点位"
           prop="point"
-          min-width="130"
-          :show-overflow-tooltip="true">
-          <template slot-scope="props">
-            {{ props.row.area_name }} {{props.row.market_name}} {{props.row.point_name}}
+          min-width="130">
+          <template 
+            slot-scope="props">
+            {{ props.row.area_name }} {{ props.row.market_name }} {{ props.row.point_name }}
           </template>
         </el-table-column>
         <el-table-column
+          :show-overflow-tooltip="true"
           label="节目"
           prop="projects"
           min-width="130"
-          :show-overflow-tooltip="true">
-        </el-table-column>
+        />
         <el-table-column
           label="围观"
           prop="looknum"
-          min-width="90">
-        </el-table-column>
+          min-width="90"/>
         <el-table-column
+          :show-overflow-tooltip="true"
           label="活跃"
           min-width="90"
-          :show-overflow-tooltip="true">
-          <template slot-scope="scope">
+        >
+          <template 
+            slot-scope="scope">
             暂无
           </template>
         </el-table-column>
         <el-table-column
+          :show-overflow-tooltip="true"
           label="拉新"
           prop="lovenum"
           min-width="90"
-          :show-overflow-tooltip="true">
-        </el-table-column>
+        />
         <el-table-column
+          :show-overflow-tooltip="true"
           label="平均有效时长"
           min-width="90"
-          :show-overflow-tooltip="true">
-          <template slot-scope="scope">
+        >
+          <template 
+            slot-scope="scope">
             暂无
           </template>
         </el-table-column>
         <el-table-column
+          :show-overflow-tooltip="true"
           label="输出"
           prop="scannum"
           min-width="120"
-          :show-overflow-tooltip="true">
-          <template slot-scope="props">
+        >
+          <template 
+            slot-scope="props">*
             <div>
-              <div>CPF: {{computedCPF}}</div>
-              <div>CPA：{{computedCPA}}</div>
-              <div>CPL： {{computedCPL}}</div>
+              <div>CPF: {{ ((props.row.playernum7 / props.row.looknum) * 100).toFixed(2) }}%</div>
+              <div>CPA：{{ ((props.row.playernum / props.row.looknum) * 100).toFixed(2) }}%</div>
+              <div>CPL：{{ ((props.row.lovenum / props.row.looknum) * 100).toFixed(2) }}%</div>
             </div>  
           </template>
         </el-table-column>
         <el-table-column
+          :show-overflow-tooltip="true"
           label="时间"
           min-width="120"
           prop="created_at"
-          :show-overflow-tooltip="true">
-          <template slot-scope="props">
-            <span>{{ props.row.min_date }} - {{props.row.max_date}}</span>
+        >
+          <template 
+            slot-scope="props">
+            <span>{{ props.row.min_date }} - {{ props.row.max_date }}</span>
           </template>
         </el-table-column>
       </el-table>
-      <div class="pagination-wrap">
+      <div 
+        class="pagination-wrap">
         <el-pagination
-          layout="prev, pager, next, jumper, total"
           :total="pagination.total"
           :page-size="pagination.pageSize"
           :current-page="pagination.currentPage"
+          layout="prev, pager, next, jumper, total"
           @current-change="changePage"
         />
       </div>
@@ -334,19 +462,19 @@
 
     <!-- 弹窗for 性别细节 -->
     <div  
-      class="chart-dialog"
       v-loading="dialogLoading"
       v-show="shouldDialogShow"
-      >
+      class="chart-dialog"
+    >
       <div 
         class="dialog-close"
         @click="handleDialogClose"
-        >
+      >
         关闭
       </div>
       <chart 
         ref="pieChart2"
-        :options="sexAndAgeChart" 
+        :options="sexAndAgeChart"
         auto-resize />
     </div>
 
@@ -355,53 +483,54 @@
       v-loading="sexFlag"
       v-show="shouldPicDialogShow"
       class="pic-dialog">
-      <img style="width: 100%" src="~assets/images/data-bg.png" />
-            <div 
-              class="dialog-close"
-              @click="handlePicShow"
-              >
-              关闭
-            </div>
-            <div
-              :style="style.chartFont" 
-              class="looknum">
-              {{circleLooknum}}人
-            </div>
-            <div
-              :style="style.chartFont" 
-              class="playernum7">
-              {{circlePlayernum7}}人
-            </div>
-            <div
-              :style="style.chartFont" 
-              class="playernum">
-              {{circlePlayernum}}人
-            </div>
+      <img 
+        style="width: 100%" 
+        src="~assets/images/data-bg.png" >
+      <div 
+        class="dialog-close"
+        @click="handlePicShow"
+      >
+        关闭
+      </div>
+      <div
+        :style="style.chartFont" 
+        class="looknum">
+        {{ circleLooknum }}人
+      </div>
+      <div
+        :style="style.chartFont" 
+        class="playernum7">
+        {{ circlePlayernum7 }}人
+      </div>
+      <div
+        :style="style.chartFont" 
+        class="playernum">
+        {{ circlePlayernum }}人
+      </div>
 
-            <div
-              :style="style.chartFont" 
-              class="lovenum">
-              {{circleLovenum}}人
-            </div>
+      <div
+        :style="style.chartFont" 
+        class="lovenum">
+        {{ circleLovenum }}人
+      </div>
 
-            <div
-              :style="style.chartFont" 
-              class="cpa">
-              {{computedCPA}}
-            </div>
+      <div
+        :style="style.chartFont" 
+        class="cpa">
+        {{ computedCPA }}
+      </div>
 
-            <div
-              :style="style.chartFont" 
-              class="cph">
-              {{computedCPF}}
-            </div>
+      <div
+        :style="style.chartFont" 
+        class="cph">
+        {{ computedCPF }}
+      </div>
 
-            <div
-              :style="style.chartFont" 
-              class="cpl">
-              {{computedCPL}}
-            </div>
-
+      <div
+        :style="style.chartFont" 
+        class="cpl">
+        {{ computedCPL }}
+      </div>
     </div>
   </div>
 </template>
@@ -774,7 +903,14 @@ export default {
           text: '时间段与人群特征',
           align: 'left'
         },
-        color: ['#8CC63F', '#FBB03B', '#F15A24', '#662D91', '#ED1E79'],
+        color: [
+          '#3b9aca',
+          '#8CC63F',
+          '#FBB03B',
+          '#F15A24',
+          '#662D91',
+          '#ED1E79'
+        ],
         tooltip: {
           trigger: 'axis',
           axisPointer: {
@@ -782,10 +918,96 @@ export default {
             crossStyle: {
               color: '#999'
             }
+          },
+          formatter: function(data) {
+            let century10 = (
+              parseInt(data[0].value) /
+              (parseInt(data[0].value) +
+                parseInt(data[1].value) +
+                parseInt(data[2].value) +
+                parseInt(data[3].value) +
+                parseInt(data[4].value)) *
+              100
+            ).toFixed(2)
+            let century00 = (
+              parseInt(data[1].value) /
+              (parseInt(data[0].value) +
+                parseInt(data[1].value) +
+                parseInt(data[2].value) +
+                parseInt(data[3].value) +
+                parseInt(data[4].value)) *
+              100
+            ).toFixed(2)
+            let century90 = (
+              parseInt(data[2].value) /
+              (parseInt(data[0].value) +
+                parseInt(data[1].value) +
+                parseInt(data[2].value) +
+                parseInt(data[3].value) +
+                parseInt(data[4].value)) *
+              100
+            ).toFixed(2)
+            let century80 = (
+              parseInt(data[3].value) /
+              (parseInt(data[0].value) +
+                parseInt(data[1].value) +
+                parseInt(data[2].value) +
+                parseInt(data[3].value) +
+                parseInt(data[4].value)) *
+              100
+            ).toFixed(2)
+            let century70 = (
+              parseInt(data[4].value) /
+              (parseInt(data[0].value) +
+                parseInt(data[1].value) +
+                parseInt(data[2].value) +
+                parseInt(data[3].value) +
+                parseInt(data[4].value)) *
+              100
+            ).toFixed(2)
+            return (
+              data[0].axisValue +
+              ': <br/>' +
+              data[0].marker +
+              data[0].seriesName +
+              ':' +
+              data[0].value +
+              ' ' +
+              century10 +
+              '%<br/>' +
+              data[1].marker +
+              data[1].seriesName +
+              ':' +
+              data[1].value +
+              ' ' +
+              century00 +
+              '%<br/>' +
+              data[2].marker +
+              data[2].seriesName +
+              ':' +
+              data[2].value +
+              ' ' +
+              century90 +
+              '%<br/>' +
+              data[3].marker +
+              data[3].seriesName +
+              ':' +
+              data[3].value +
+              ' ' +
+              century80 +
+              '%<br/>' +
+              data[4].marker +
+              data[4].seriesName +
+              ':' +
+              data[4].value +
+              ' ' +
+              century70 +
+              '%'
+            )
           }
         },
         legend: {
-          data: ['00后', '90后', '80后', '70后', '女'],
+          data: ['10后', '00后', '90后', '80后', '70前/后', '女'],
           align: 'left',
           left: 10,
           top: 30
@@ -825,6 +1047,12 @@ export default {
         ],
         series: [
           {
+            name: '10后',
+            type: 'bar',
+            stack: '总量',
+            data: null
+          },
+          {
             name: '00后',
             type: 'bar',
             stack: '总量',
@@ -843,7 +1071,7 @@ export default {
             data: null
           },
           {
-            name: '70后',
+            name: '70前/后',
             type: 'bar',
             stack: '总量',
             data: null
@@ -897,12 +1125,6 @@ export default {
       },
       dialogLoading: false
     }
-  },
-  created() {
-    this.setting.loading = true
-    this.getSceneList()
-    this.getAreaList()
-    this.allPromise()
   },
   computed: {
     peopleCountLength: function() {
@@ -973,6 +1195,12 @@ export default {
       ).toFixed(2)
       return String(result) + '%'
     }
+  },
+  created() {
+    this.setting.loading = true
+    this.getSceneList()
+    this.getAreaList()
+    this.allPromise()
   },
   methods: {
     changeReportType() {
@@ -1164,6 +1392,14 @@ export default {
             },
             series: [
               {
+                name: '10后',
+                type: 'bar',
+                stack: '总量',
+                data: response.map(r => {
+                  return r.count.century10
+                })
+              },
+              {
                 name: '00后',
                 type: 'bar',
                 stack: '总量',
@@ -1188,9 +1424,39 @@ export default {
                 })
               },
               {
-                name: '70后',
+                name: '70前/后',
                 type: 'bar',
                 stack: '总量',
+                label: {
+                  normal: {
+                    show: true,
+                    position: 'top',
+                    color: '#000',
+                    fontSize: 16,
+                    formatter: function(data) {
+                      let content = ''
+                      let index = data.dataIndex
+                      let singleSum = parseInt(
+                        parseInt(response[index].count.century10) +
+                          parseInt(response[index].count.century00) +
+                          parseInt(response[index].count.century90) +
+                          parseInt(response[index].count.century80) +
+                          parseInt(response[index].count.century70)
+                      )
+                      let sum = 0
+                      response.map(r => {
+                        sum +=
+                          parseInt(r.count.century10) +
+                          parseInt(r.count.century00) +
+                          parseInt(r.count.century90) +
+                          parseInt(r.count.century80) +
+                          parseInt(r.count.century70)
+                      })
+                      let percent = (singleSum / sum * 100).toFixed(1) + '%'
+                      return percent + '\n' + singleSum
+                    }
+                  }
+                },
                 data: response.map(r => {
                   return r.count.century70
                 })
@@ -1200,7 +1466,7 @@ export default {
                 type: 'line',
                 yAxisIndex: 1,
                 data: response.map(r => {
-                  return r.rate.toFixed(1)
+                  return r.rate
                 }),
                 markLine: {
                   data: [
@@ -1572,7 +1838,6 @@ export default {
               return r.lovenum
             })
           },
-
           {
             xAxisIndex: 1,
             yAxisIndex: 1,

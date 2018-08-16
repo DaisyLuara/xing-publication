@@ -11,6 +11,7 @@ use function GuzzleHttp\Psr7\parse_query;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Bus\Queueable;
+use Log;
 
 class ShortUrlJob implements ShouldQueue
 {
@@ -42,12 +43,14 @@ class ShortUrlJob implements ShouldQueue
         $shortUrl = ShortUrl::query()->findOrFail($this->shortUrlID);
         $queryParams = parse_query(parse_url($shortUrl->target_url, PHP_URL_QUERY));
 
-        if (isset($queryParams['id'])) {
-            $queryParams['third_id'] = $queryParams['id'];
-            PeopleViewRecords::where('id', '=', $queryParams['id'])->update(['share' => 1]);
+        $insertData = ['short_url_id' => $shortUrl->id];
+        if (isset($this->browserInfo['id'])) {
+            $id = $this->browserInfo['id'];
+            $insertData['third_id'] = $id;
+            PeopleViewRecords::where('id', '=', $id)->update(['share' => 1]);
         }
 
-        ShortUrlRecords::create(array_merge($queryParams, array_merge(['short_url_id' => $shortUrl->id], $this->browserInfo)));
+        ShortUrlRecords::create(array_merge($insertData, $queryParams, $this->browserInfo));
 
 
     }
