@@ -18,6 +18,9 @@ class UpdateXsFaceCountLogTable extends Migration
             $table->integer('omo_scannum')->after('omo_outnum');
             $table->integer('omo_sharenum')->after('omo_scannum');
             $table->integer('phonenum')->after('lovenum');
+            $table->integer('playtimes7')->after('phonenum');
+            $table->integer('playtimes15')->after('playtimes7');
+            $table->integer('playtimes21')->after('playtimes15');
         });
     }
 
@@ -33,6 +36,9 @@ class UpdateXsFaceCountLogTable extends Migration
             $table->dropColumn('omo_scannum');
             $table->dropColumn('omo_sharenum');
             $table->dropColumn('phonenum');
+            $table->dropColumn('playtimes7');
+            $table->dropColumn('playtimes15');
+            $table->dropColumn('playtimes21');
         });
     }
 }

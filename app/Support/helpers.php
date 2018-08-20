@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\Face\V1\Models\FaceCountRecord;
 use App\Models\User;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceOmoRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FacePhoneRecord;
+use App\Http\Controllers\Admin\Face\V1\Models\FaceActivePlaytimesRecord;
 
 /**
  *求两个已知经纬度之间的距离,单位为千米
@@ -238,6 +239,93 @@ function activePlayerClean()
     FaceActivePlayerRecord::create(['date' => $currentDate]);
 }
 
+function activePlayTimesClean()
+{
+    $date = FaceActivePlaytimesRecord::query()->max('date');
+    $date = (new Carbon($date))->format('Y-m-d');
+    $currentDate = Carbon::now()->toDateString();
+    while ($date < $currentDate) {
+        $startClientDate = strtotime($date . ' 00:00:00') * 1000;
+        $endClientDate = strtotime($date . ' 23:59:59') * 1000;
+
+        $sql = DB::connection('ar')->table("face_collect as fc")
+            ->join('avr_official as ao', 'fc.oid', '=', 'ao.oid')
+            ->join('face_people_time as fpt', function ($join) {
+                $join->on('fc.oid', '=', 'fpt.oid');
+                $join->on('fc.belong', '=', 'fpt.belong');
+                $join->on('fc.fpid', '=', 'fpt.fpid');
+            }, null, null, 'left')
+            ->whereRaw("fc.clientdate between '$startClientDate' and '$endClientDate' and fpt.clientdate between '$startClientDate' AND '$endClientDate' and fc.fpid>0")
+            ->selectRaw("fc.oid as oid ,fc.belong as belong,fc.fpid as fpid,group_concat(fc.clientdate) as clientdate,playtime");
+        if ($date <= '2018-07-01') {
+            $sql = $sql->groupBy(DB::raw('fc.fpid*100+fc.oid,fc.belong'));
+        } else {
+            $sql = $sql->groupBy(DB::raw('fc.fpid*10000+fc.oid,fc.belong'));
+        }
+        $data = $sql->get();
+        $count = [];
+        foreach ($data as $item) {
+            $clientDates = explode(',', $item->clientdate);
+            sort($clientDates);
+            $m = 0;
+            $n = 1;
+            //$num7 = dateRecursion($m, $n, $clientDates, 7000) + 1;
+            $num15 = dateRecursion($m, $n, $clientDates, 15000) + 1;
+            //$num21 = dateRecursion($m, $n, $clientDates, 21000);
+
+            $count[] = [
+                'oid' => $item->oid,
+                'belong' => $item->belong,
+                'fpid' => $item->fpid,
+                'playtimes7' => 0,//($num7 > ceil($item->playtime / 7000)) ? $num7 : ceil($item->playtime / 7000),
+                'playtimes15' => ($num15 > ceil($item->playtime / 15000)) ? $num15 : ceil($item->playtime / 15000),
+                'playtimes21' => 0,//($num21 > ceil($item->playtime / 21000)) ? $num21 : ceil($item->playtime / 21000),
+                'clientdate' => strtotime($date) * 1000
+            ];
+        }
+        $count = array_chunk($count, 8000);
+        foreach ($count as $item) {
+            DB::table('face_active_playtimes')->insert($item);
+        }
+        $data = DB::table('face_active_playtimes')
+            ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' ")
+            ->groupBy('oid')
+            ->groupBy('belong')
+            ->selectRaw("oid,belong,sum(playtimes7) as playtimes7 ,sum(playtimes15) as playtimes15, sum(playtimes21) as playtimes21")
+            ->get();
+        $count = [];
+        foreach ($data as $item) {
+            $count[] = [
+                'oid' => $item->oid,
+                'belong' => $item->belong,
+                'playtimes7' => $item->playtimes7,
+                'playtimes15' => $item->playtimes15,
+                'playtimes21' => $item->playtimes21,
+                'date' => $date,
+                'clientdate' => strtotime($date) * 1000
+            ];
+        }
+        DB::connection('ar')->table("xs_face_active_playtimes")->insert($count);
+        $date = (new Carbon($date))->addDay(1)->toDateString();
+    }
+    FaceActivePlaytimesRecord::create(['date' => $currentDate]);
+}
+
+//clientdate递归
+function dateRecursion($i, $j, $date, $time)
+{
+    if ($j < count($date)) {
+        if ($date[$j] - $date[$i] > $time) {
+            $i = $j;
+            $j++;
+            return 1 + dateRecursion($i, $j, $date, $time);
+        }
+        $j++;
+        return 0 + dateRecursion($i, $j, $date, $time);
+    }
+    return 0;
+}
+
 function omoClean()
 {
     $date = FaceOmoRecord::query()->max('date');
@@ -393,6 +481,9 @@ function mergeActiveOmoLook()
         $sql4 = DB::connection('ar')->table('xs_face_phone')
             ->whereRaw("clientdate='$clientDate'")
             ->selectRaw("oid,belong,phonenum");
+        $sql5 = DB::connection('ar')->table('xs_face_active_playtimes')
+            ->whereRaw("clientdate='$clientDate'")
+            ->selectRaw("oid,belong,playtimes7,playtimes15,playtimes21");
 
         $data = DB::connection('ar')->table(DB::raw("({$sql1->toSql()}) as a"))
             ->join(DB::raw("({$sql2->toSql()}) as b"), function ($join) {
@@ -407,7 +498,11 @@ function mergeActiveOmoLook()
                 $join->on('a.oid', '=', 'd.oid');
                 $join->on('a.belong', '=', 'd.belong');
             }, null, null, 'left')
-            ->selectRaw("a.oid as oid,a.belong as belong,looknum,playernum7,playernum20,playernum30,playernum,outnum,scannum,omo_outnum,omo_scannum,omo_sharenum,lovenum,phonenum")
+            ->join(DB::raw("({$sql5->toSql()}) as e"), function ($join) {
+                $join->on('a.oid', '=', 'e.oid');
+                $join->on('a.belong', '=', 'e.belong');
+            }, null, null, 'left')
+            ->selectRaw("a.oid as oid,a.belong as belong,looknum,playernum7,playernum20,playernum30,playernum,outnum,scannum,omo_outnum,omo_scannum,omo_sharenum,lovenum,phonenum,playtimes7,playtimes15,playtimes21")
             ->get();
         $count = [];
         foreach ($data as $item) {
@@ -426,6 +521,9 @@ function mergeActiveOmoLook()
                 'omo_sharenum' => $item->omo_sharenum ? $item->omo_sharenum : 0,
                 'lovenum' => $item->lovenum,
                 'phonenum' => $item->phonenum,
+                'playtimes7' => $item->playtimes7,
+                'playtimes15' => $item->playtimes15,
+                'playtimes21' => $item->playtimes21,
                 'date' => $date,
                 'clientdate' => strtotime($date) * 1000
             ];
