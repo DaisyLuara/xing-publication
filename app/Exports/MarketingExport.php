@@ -24,7 +24,7 @@ class MarketingExport extends AbstractExport
             ->join('avr_official_market', 'avr_official.marketid', '=', 'avr_official_market.marketid')
             ->where('avr_official_market.marketid', '<>', 15)
             ->whereRaw("date_format(xs_face_count_log.date, '%Y-%m-%d') BETWEEN '{$this->startDate}' AND '{$this->endDate}'")
-            ->whereNotIn('xs_face_count_log.oid', [16, 19, 30, 31, 177, 182, 327, 328, 329, 334, 335])
+            ->whereNotIn('xs_face_count_log.oid', [16, 19, 30, 31, 177, 182, 327, 328, 329, 334, 335, 540])
             ->groupby('xs_face_count_log.belong')
             ->orderBy('ar_product_list.name')
             ->selectRaw('ar_product_list.name as name,count(xs_face_count_log.oid) as pushNum ,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(looknum) as lookNum ,sum(playernum7) as playerNum7,sum(playernum20) as playerNum20 ,sum(playernum) as playerNum,sum(outnum) as outNum,sum(omo_outnum) as omo_outnum,sum(omo_scannum) as omo_scannum,sum(phonenum) as phoneNum')
@@ -91,20 +91,20 @@ class MarketingExport extends AbstractExport
                     'A1:A3', 'B1:C1', 'B2:B3', 'C2:C3', 'D1:E1', 'D2:D3', 'E2:E3',
                     'F1:G1', 'F2:F3', 'G2:G3', 'H1:I1', 'H2:H3', 'I2:I3',
                     'J1:K1', 'J2:J3', 'K2:K3', 'L1:M1', 'L2:L3', 'M2:M3',
-                    'N1:O1', 'N2:N3', 'O2:O3', 'P1:P3', 'Q2:Q3', 'R2:R3',
+                    'N1:O1', 'N2:N3', 'O2:O3', 'P1:P3', 'Q1:Q3', 'R1:R3',
                     'S1:T1', 'S2:S3', 'T2:T3', 'U2:U3', 'V2:V3', 'W2:W3',
                     'X2:X3', 'Y2:Y3', 'Z2:Z3', 'AA1:AA3'
                 ];
                 $event->sheet->getDelegate()->setMergeCells($cellArray);
 
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:U' . $this->data->count())
+                    ->getStyle('A1:AA' . $this->data->count())
                     ->getAlignment()
                     ->setVertical(Alignment::VERTICAL_CENTER)
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:U3')
+                    ->getStyle('A1:AA3')
                     ->applyFromArray([
                         'font' => [
                             'bold' => 'true'
@@ -112,7 +112,7 @@ class MarketingExport extends AbstractExport
                     ]);
 
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:U' . $this->data->count())
+                    ->getStyle('A1:AA' . $this->data->count())
                     ->applyFromArray([
                         'borders' => [
                             'allBorders' => [
