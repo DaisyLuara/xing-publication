@@ -29,7 +29,7 @@ class MarketingTopExport extends AbstractExport
             ->join('ar_product_list as apl', 'belong', '=', 'versionname')
             ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
-            ->whereRaw("date_format(fcl.date, '%Y-%m-%d') BETWEEN '{$this->startDate}' AND '{$this->endDate}' and fcl.oid not in ('16', '19', '30', '31', '177','182','327','328','329','334','335') and aom.marketid <> '15'")
+            ->whereRaw("date_format(fcl.date, '%Y-%m-%d') BETWEEN '{$this->startDate}' AND '{$this->endDate}' and fcl.oid not in ('16', '19', '30', '31', '177','182','327','328','329','334','335','540') and aom.marketid <> '15'")
             ->groupBy(DB::raw("fcl.oid,fcl.belong"))
             ->orderBy('apl.id')
             ->orderBy('looknum', 'desc')
