@@ -428,11 +428,11 @@
           min-width="120"
         >
           <template 
-            slot-scope="props">
+            slot-scope="props">*
             <div>
-              <div>CPF: {{ computedCPF }}</div>
-              <div>CPA：{{ computedCPA }}</div>
-              <div>CPL：{{ computedCPL }}</div>
+              <div>CPF: {{ ((props.row.playernum7 / props.row.looknum) * 100).toFixed(2) }}%</div>
+              <div>CPA：{{ ((props.row.playernum / props.row.looknum) * 100).toFixed(2) }}%</div>
+              <div>CPL：{{ ((props.row.lovenum / props.row.looknum) * 100).toFixed(2) }}%</div>
             </div>  
           </template>
         </el-table-column>
