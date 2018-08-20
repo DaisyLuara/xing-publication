@@ -44,9 +44,9 @@ class MarketingTopExport extends AbstractExport
             ->groupBy('name')
             ->get();
         $data = collect();
-        $header1 = ['节目名称', '7″CPF', '', '15″CPF', '', '21″CPF', '', 'CPF', '', 'oCPF', '', 'CPR', '', '铁杆玩家', '', '生成数', 'CPA', '扫码率', 'CPL', '', '1', '2', '5', '4', '10', '20', '合计'];
-        $header2 = ['', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', '', '', '', '总数', '平均数', 'CPF', 'oCPF', 'CPR', '生成数', 'CPA', 'CPL', ''];
-        $header3 = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+        $header1 = ['节目名称', '7″CPF', '', '15″CPF', '', '21″CPF', '', 'CPF', '', 'oCPF', '', 'CPR', '', '铁杆玩家', '', '生成数', 'CPA(去重)', 'CPA(不去重)', '扫码率', 'CPL', '', '1', '2', '5', '4', '10', '20', '合计'];
+        $header2 = ['', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', '', '', '', '', '总数', '平均数', 'CPF', 'oCPF', 'CPR', '生成数', 'CPA', 'CPL', ''];
+        $header3 = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
         $data->push($header1);
         $data->push($header2);
         $data->push($header3);
@@ -69,7 +69,8 @@ class MarketingTopExport extends AbstractExport
                 'playerNum' => $item['playerNum'],
                 'player_average' => round(($item['playerNum'] / $item['pushNum']), 0),
                 'outNum' => $item['outNum'],
-                'omo' => $item['omo_outnum'] . '|' . $item['omo_scannum'],
+                'omo_outnum' => $item['omo_outnum'],
+                'omo_scannum' => $item['omo_scannum'],
                 'rate' => (round(($item['outNum'] == 0) ? 0 : $item['omo_outnum'] / $item['outNum'], 2) * 100) . '%',
                 'phoneNum' => $item['phoneNum'],
                 'love_average' => round(($item['phoneNum'] / $item['pushNum']), 0),
@@ -107,19 +108,19 @@ class MarketingTopExport extends AbstractExport
                     'F1:G1', 'F2:F3', 'G2:G3', 'H1:I1', 'H2:H3', 'I2:I3',
                     'J1:K1', 'J2:J3', 'K2:K3', 'L1:M1', 'L2:L3', 'M2:M3',
                     'N1:O1', 'N2:N3', 'O2:O3', 'P1:P3', 'Q1:Q3', 'R1:R3',
-                    'S1:T1', 'S2:S3', 'T2:T3', 'U2:U3', 'V2:V3', 'W2:W3',
-                    'X2:X3', 'Y2:Y3', 'Z2:Z3', 'AA1:AA3'
+                    'S1:S3', 'T1:U1', 'T2:T3', 'U2:U3', 'V2:V3', 'W2:W3',
+                    'X2:X3', 'Y2:Y3', 'Z2:Z3', 'AA2:AA3', 'AB1:AB3'
                 ];
                 $event->sheet->getDelegate()->setMergeCells($cellArray);
 
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:AA' . $this->data->count())
+                    ->getStyle('A1:AB' . $this->data->count())
                     ->getAlignment()
                     ->setVertical(Alignment::VERTICAL_CENTER)
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:AA3')
+                    ->getStyle('A1:AB3')
                     ->applyFromArray([
                         'font' => [
                             'bold' => 'true'
@@ -127,7 +128,7 @@ class MarketingTopExport extends AbstractExport
                     ]);
 
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:AA' . $this->data->count())
+                    ->getStyle('A1:AB' . $this->data->count())
                     ->applyFromArray([
                         'borders' => [
                             'allBorders' => [
