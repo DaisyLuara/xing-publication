@@ -269,17 +269,17 @@ function activePlayTimesClean()
             sort($clientDates);
             $m = 0;
             $n = 1;
-            //$num7 = dateRecursion($m, $n, $clientDates, 7000) + 1;
-            $num15 = dateRecursion($m, $n, $clientDates, 15000) + 1;
-            //$num21 = dateRecursion($m, $n, $clientDates, 21000);
+            $num7 = dateRecursion($m, $n, $clientDates, 7000);
+            $num15 = dateRecursion($m, $n, $clientDates, 15000);
+            $num21 = dateRecursion($m, $n, $clientDates, 21000);
 
             $count[] = [
                 'oid' => $item->oid,
                 'belong' => $item->belong,
                 'fpid' => $item->fpid,
-                'playtimes7' => 0,//($num7 > ceil($item->playtime / 7000)) ? $num7 : ceil($item->playtime / 7000),
+                'playtimes7' => ($num7 > ceil($item->playtime / 7000)) ? $num7 : ceil($item->playtime / 7000),
                 'playtimes15' => ($num15 > ceil($item->playtime / 15000)) ? $num15 : ceil($item->playtime / 15000),
-                'playtimes21' => 0,//($num21 > ceil($item->playtime / 21000)) ? $num21 : ceil($item->playtime / 21000),
+                'playtimes21' => ($num21 > ceil($item->playtime / 21000)) ? $num21 : ceil($item->playtime / 21000),
                 'clientdate' => strtotime($date) * 1000
             ];
         }
