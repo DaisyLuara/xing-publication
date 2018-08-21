@@ -56,7 +56,8 @@
       "App\\": "app/"
     },
     "files": [
-      "app/Support/helpers.php"
+      "app/Support/helpers.php",
+      "app/Support/SimpleDict.php"
     ]
   },
   "autoload-dev": {
