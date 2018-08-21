@@ -147,7 +147,7 @@ function activePlayerClean()
         $startClientDate = strtotime($date . ' 00:00:00') * 1000;
         $endClientDate = strtotime($date . ' 23:59:59') * 1000;
 
-        $timeArray = [7, 20, 30];
+        $timeArray = [7, 21, 30];
 
         //按所有人去重 belong='all'
         $sql1 = [];
@@ -215,7 +215,7 @@ function activePlayerClean()
                 'oid' => $item->oid,
                 'belong' => 'all',
                 'playernum7' => $item->playernum7,
-                'playernum20' => $item->playernum20,
+                'playernum20' => $item->playernum21,
                 'playernum30' => $item->playernum30,
                 'date' => $date,
                 'clientdate' => strtotime($date) * 1000
@@ -226,7 +226,7 @@ function activePlayerClean()
                 'oid' => $item->oid,
                 'belong' => $item->belong,
                 'playernum7' => $item->playernum7,
-                'playernum20' => $item->playernum20,
+                'playernum20' => $item->playernum21,
                 'playernum30' => $item->playernum30,
                 'date' => $date,
                 'clientdate' => strtotime($date) * 1000
