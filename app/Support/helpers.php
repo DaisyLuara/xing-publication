@@ -293,11 +293,27 @@ function activePlayTimesClean()
             ->groupBy('belong')
             ->selectRaw("oid,belong,sum(playtimes7) as playtimes7 ,sum(playtimes15) as playtimes15, sum(playtimes21) as playtimes21")
             ->get();
+        $allData = DB::table("face_active_playtimes")
+            ->whereRaw("clientdate between '$startClientDate' and '$endClientDate'")
+            ->groupBy('oid')
+            ->selectRaw("oid,sum(playtimes7) as playtimes7 ,sum(playtimes15) as playtimes15, sum(playtimes21) as playtimes21")
+            ->get();
         $count = [];
         foreach ($data as $item) {
             $count[] = [
                 'oid' => $item->oid,
                 'belong' => $item->belong,
+                'playtimes7' => $item->playtimes7,
+                'playtimes15' => $item->playtimes15,
+                'playtimes21' => $item->playtimes21,
+                'date' => $date,
+                'clientdate' => strtotime($date) * 1000
+            ];
+        }
+        foreach ($allData as $item) {
+            $count[] = [
+                'oid' => $item->oid,
+                'belong' => 'all',
                 'playtimes7' => $item->playtimes7,
                 'playtimes15' => $item->playtimes15,
                 'playtimes21' => $item->playtimes21,
