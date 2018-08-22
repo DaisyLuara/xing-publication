@@ -41,6 +41,9 @@ class FaceActivePlayer extends Command
     public function handle()
     {
         activePlayerClean();
-        mergeActiveAndLook();
+        activePlayTimesClean();
+        omoClean();
+        phoneClean();
+        mergeActiveOmoLook();
     }
 }
