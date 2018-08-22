@@ -790,8 +790,8 @@ export default {
           trigger: 'item'
         },
         legend: {
-          bottom: 10,
-          left: 'center',
+          top: 30,
+          left: '0',
           data: ['女', '男']
         },
         series: [
@@ -800,6 +800,7 @@ export default {
               normal: {
                 // show: true,
                 formatter: '{d}%',
+                fontSize: 18,
                 position: 'inner'
               }
             },
@@ -824,6 +825,9 @@ export default {
           trigger: 'axis',
           axisPointer: {
             type: 'shadow'
+          },
+          textStyle: {
+            fontSize: 16
           },
           formatter: function(data) {
             let male = (
@@ -1597,7 +1601,7 @@ export default {
                     show: true,
                     position: 'top',
                     color: '#000',
-                    fontSize: 16,
+                    fontSize: 18,
                     formatter: function(data) {
                       let content = ''
                       let index = data.dataIndex
@@ -2263,13 +2267,11 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-
     .sex-part {
       width: 25%;
       height: 100%;
-
       .echarts {
-        height: 80%;
+        height: 100%;
         width: 100%;
       }
     }
