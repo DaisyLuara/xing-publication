@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Exports\MarketingExport;
 use App\Exports\MarketingTopExport;
+use App\Exports\OldMarketingExport;
 use App\Exports\PointDailyAverageExport;
 use App\Exports\PointExport;
 use App\Exports\ProjectByPointExport;
@@ -51,6 +52,9 @@ class ExcelServiceProvider extends ServiceProvider
 
         $this->app->bind('marketing_top', function ($app) {
             return new MarketingTopExport($app->request);
+        });
+        $this->app->bind('old_marketing', function ($app) {
+            return new OldMarketingExport($app->request);
         });
     }
 }
