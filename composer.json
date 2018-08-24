@@ -50,7 +50,8 @@
   "autoload": {
     "classmap": [
       "database/seeds",
-      "database/factories"
+      "database/factories",
+      "app/Support/Jenner/Zebra/ArrayGroupBy.php"
     ],
     "psr-4": {
       "App\\": "app/"
