@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceOmoRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FacePhoneRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceActivePlaytimesRecord;
+use app\Support\Jenner\Zebra\ArrayGroupBy;
 
 /**
  *求两个已知经纬度之间的距离,单位为千米
@@ -280,48 +281,97 @@ function activePlayTimesClean()
                 'playtimes7' => ($num7 > floor($item->playtime / 7000)) ? floor($item->playtime / 7000) : $num7,
                 'playtimes15' => ($num15 > floor($item->playtime / 15000)) ? floor($item->playtime / 15000) : $num15,
                 'playtimes21' => ($num21 > floor($item->playtime / 21000)) ? floor($item->playtime / 21000) : $num21,
-                'clientdate' => strtotime($date) * 1000
-            ];
-        }
-        $count = array_chunk($count, 8000);
-        foreach ($count as $item) {
-            DB::table('face_active_playtimes')->insert($item);
-        }
-        $data = DB::table('face_active_playtimes')
-            ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' ")
-            ->groupBy('oid')
-            ->groupBy('belong')
-            ->selectRaw("oid,belong,sum(playtimes7) as playtimes7 ,sum(playtimes15) as playtimes15, sum(playtimes21) as playtimes21")
-            ->get();
-        $allData = DB::table("face_active_playtimes")
-            ->whereRaw("clientdate between '$startClientDate' and '$endClientDate'")
-            ->groupBy('oid')
-            ->selectRaw("oid,sum(playtimes7) as playtimes7 ,sum(playtimes15) as playtimes15, sum(playtimes21) as playtimes21")
-            ->get();
-        $count = [];
-        foreach ($data as $item) {
-            $count[] = [
-                'oid' => $item->oid,
-                'belong' => $item->belong,
-                'playtimes7' => $item->playtimes7,
-                'playtimes15' => $item->playtimes15,
-                'playtimes21' => $item->playtimes21,
                 'date' => $date,
                 'clientdate' => strtotime($date) * 1000
             ];
         }
-        foreach ($allData as $item) {
-            $count[] = [
-                'oid' => $item->oid,
-                'belong' => 'all',
-                'playtimes7' => $item->playtimes7,
-                'playtimes15' => $item->playtimes15,
-                'playtimes21' => $item->playtimes21,
-                'date' => $date,
-                'clientdate' => strtotime($date) * 1000
-            ];
-        }
-        DB::connection('ar')->table("xs_face_active_playtimes")->insert($count);
+        $group_by_fields = [
+            'oid' => function ($value) {
+                return $value;
+            },
+            'belong' => function ($value) {
+                return $value;
+            }
+        ];
+        $group_by_value = [
+            'oid' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['oid'];
+                },
+                'as' => 'oid'
+            ],
+            'belong' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['belong'];
+                },
+                'as' => 'belong'
+            ],
+            'playtimes7' => function ($data) {
+                return array_sum(array_column($data, 'playtimes7'));
+            },
+            'playtimes15' => function ($data) {
+                return array_sum(array_column($data, 'playtimes15'));
+            },
+            'playtimes21' => function ($data) {
+                return array_sum(array_column($data, 'playtimes21'));
+            },
+            'date' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['date'];
+                },
+                'as' => 'date'
+            ],
+            'clientdate' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['clientdate'];
+                },
+                'as' => 'clientdate'
+            ]
+        ];
+        $data = ArrayGroupBy::groupBy($count, $group_by_fields, $group_by_value);
+
+        $group_by_fields = [
+            'oid' => function ($value) {
+                return $value;
+            }
+        ];
+        $group_by_value = [
+            'oid' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['oid'];
+                },
+                'as' => 'oid'
+            ],
+            'belong' => [
+                'callback' => function ($value_array) {
+                    return 'all';
+                },
+                'as' => 'belong'
+            ],
+            'playtimes7' => function ($data) {
+                return array_sum(array_column($data, 'playtimes7'));
+            },
+            'playtimes15' => function ($data) {
+                return array_sum(array_column($data, 'playtimes15'));
+            },
+            'playtimes21' => function ($data) {
+                return array_sum(array_column($data, 'playtimes21'));
+            },
+            'date' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['date'];
+                },
+                'as' => 'date'
+            ],
+            'clientdate' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['clientdate'];
+                },
+                'as' => 'clientdate'
+            ]
+        ];
+        $allData = ArrayGroupBy::groupBy($data, $group_by_fields, $group_by_value);
+        DB::connection('ar')->table('xs_face_active_playtimes')->insert(array_merge($data, $allData));
         $date = (new Carbon($date))->addDay(1)->toDateString();
     }
     FaceActivePlaytimesRecord::create(['date' => $currentDate]);
@@ -331,7 +381,7 @@ function activePlayTimesClean()
 function dateRecursion($i, $j, $date, $time)
 {
     if ($j < count($date)) {
-        if ($date[$j] - $date[$i] > $time) {
+        if ($date[$j] - $date[$i] >= $time) {
             $i = $j;
             $j++;
             return 1 + dateRecursion($i, $j, $date, $time);
