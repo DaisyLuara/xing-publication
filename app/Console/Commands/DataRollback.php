@@ -45,7 +45,7 @@ class DataRollback extends Command
     public function handle()
     {
         $date = $this->ask("输入回滚时间：");
-        if ($date < '2017-04-21' || $date > Carbon::now()->toDateString()) {
+        if ($date < '2017-04-21' || $date >= Carbon::now()->toDateString()) {
             return $this->error('时间输入有误！');
         }
 
