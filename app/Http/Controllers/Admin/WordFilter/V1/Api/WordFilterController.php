@@ -12,7 +12,7 @@ class WordFilterController extends Controller
         $dict = new \SimpleDict(app_path("/Http/Controllers/Admin/WordFilter/V1/Lexicon/Lexicon.txt"));
 
         // 简单替换
-        $replaced = $dict->replace($request->str, " ** ");
+        $replaced = $dict->replace($request->str, " ❤️❤️ ");
         return $replaced;
     }
 }
