@@ -8,9 +8,6 @@ $api->version('v1', [
         'limit' => config('api.rate_limits.access.limit'),
         'expires' => config('api.rate_limits.access.expires'),
     ], function ($api) {
-        $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
-
-        });
         $api->get("word_filter", 'WordFilterController@filter');
     });
 
