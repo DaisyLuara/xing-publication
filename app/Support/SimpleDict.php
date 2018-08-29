@@ -65,9 +65,9 @@ class SimpleDict
     {
         $this->file = fopen($file, 'r');
         $unpack = unpack("n3", fread($this->file, 6));
-        $count  = $unpack[1];
+        $count = $unpack[1];
         $this->valueLength = $unpack[2];
-        $this->rowLength   = $unpack[3];
+        $this->rowLength = $unpack[3];
         foreach ($this->readLine(6, $count) as $line) {
             list($fChar, $fCount, $fOffset, $fValue) = $line;
             $this->start[$fChar] = array($fCount, $fOffset, $fValue);
@@ -91,11 +91,11 @@ class SimpleDict
      */
     public function search($str)
     {
-        $ret   = array();
-        $itr   = new CharIterator($str);
+        $ret = array();
+        $itr = new CharIterator($str);
         $stops = self::CHAR_STOP;
 
-        $buff  = array();
+        $buff = array();
         foreach ($itr as $char) {
             if (strpos($stops, $char) !== false) {
                 $buff = array();
@@ -103,7 +103,7 @@ class SimpleDict
             }
 
             foreach ($buff as $prefix => $next) {
-                $newPrefix = $prefix.$char;
+                $newPrefix = $prefix . $char;
                 list($count, $offset, $value) = $this->findWord($char, $next[0], $next[1]);
                 if (!empty($value)) {
                     if (isset($ret[$newPrefix])) {
@@ -150,21 +150,22 @@ class SimpleDict
      */
     public function replace($str, $to)
     {
-        $ret   = '';
-        $itr   = new CharIterator($str);
+        $ret = '';
+        $itr = new CharIterator($str);
         $stops = self::CHAR_STOP;
 
         $buff = '';
-        $size   = 0;
+        $size = 0;
         $offset = 0;
         $buffValue = array();
         foreach ($itr as $char) {
             if (strpos($stops, $char) !== false) {
                 if (empty($buffValue)) {
-                    $ret .= $buff.$char;
+                    $ret .= $buff . $char;
                 } else {
-                    $ret .= $this->replaceTo($buffValue[0], $buffValue[1], $to)
-                        .substr($buff, strlen($buffValue[0])).$char;
+                    return '';
+//                    $ret .= $this->replaceTo($buffValue[0], $buffValue[1], $to)
+//                        .substr($buff, strlen($buffValue[0])).$char;
                 }
                 $buff = '';
                 $buffValue = array();
@@ -179,23 +180,25 @@ class SimpleDict
                     if (empty($buffValue)) {
                         $ret .= $buff;
                     } else {
-                        $ret .= $this->replaceTo($buffValue[0], $buffValue[1], $to)
-                            .substr($buff, strlen($buffValue[0]));
+                        return '';
+//                        $ret .= $this->replaceTo($buffValue[0], $buffValue[1], $to)
+//                            .substr($buff, strlen($buffValue[0]));
                     }
                     $buff = '';
                     $buffValue = array();
                 } else {
                     if ($fCount > 0) {
-                        $buff  .= $char;
-                        $size   = $fCount;
+                        $buff .= $char;
+                        $size = $fCount;
                         $offset = $fOffset;
                         if (!empty($fValue)) {
                             $buffValue = array($buff, $fValue);
                         }
                     } else {
-                        $ret .= $this->replaceTo($buff.$char, $fValue, $to);
-                        $buff = '';
-                        $buffValue = array();
+                        return '';
+//                        $ret .= $this->replaceTo($buff.$char, $fValue, $to);
+//                        $buff = '';
+//                        $buffValue = array();
                     }
                     continue;
                 }
@@ -204,30 +207,34 @@ class SimpleDict
             if (isset($this->start[$char])) {
                 list($fCount, $fOffset, $fValue) = $this->start[$char];
                 if ($fCount > 0) {
-                    $buff   = $char;
-                    $size   = $fCount;
+                    $buff = $char;
+                    $size = $fCount;
                     $offset = $fOffset;
-                    if(!empty($fValue))
+                    if (!empty($fValue))
                         $buffValue = array($buff, $fValue);
                 } else {
-                    $ret .= $this->replaceTo($char, $fValue, $to);
+                    return '';
+//                    $ret .= $this->replaceTo($char, $fValue, $to);
                 }
             } else {
                 $ret .= $char;
             }
         }
 
-        if($buff !== '') {
-            if(empty($buffValue))
+        if ($buff !== '') {
+            if (empty($buffValue)) {
                 $ret .= $buff;
-            else
-                $ret .= $this->replaceTo($buffValue[0], $buffValue[1], $to) . substr($buff, strlen($buffValue[0]));
+            } else {
+                return '';
+//                $ret .= $this->replaceTo($buffValue[0], $buffValue[1], $to) . substr($buff, strlen($buffValue[0]));
+            }
         }
 
         return $ret;
     }
 
-    public function replaceTo($word, $value, $to) {
+    public function replaceTo($word, $value, $to)
+    {
         return is_callable($to)
             ? call_user_func($to, $word, $value)
             : $to;
@@ -243,20 +250,20 @@ class SimpleDict
     public function findWord($char, $count, $offset)
     {
         fseek($this->file, $offset);
-        $len  = $this->rowLength;
+        $len = $this->rowLength;
         $data = fread($this->file, $count * $len);
         for ($i = 0; $i < $count; $i++) {
             $row = substr($data, $i * $len, $len);
-            $un  = unpack("c3char/ncount/Noffset/c*value", $row);
-            $fChar   = rtrim(chr($un['char1']).chr($un['char2']).chr($un['char3']));
+            $un = unpack("c3char/ncount/Noffset/c*value", $row);
+            $fChar = rtrim(chr($un['char1']) . chr($un['char2']) . chr($un['char3']));
             if ($fChar !== $char) {
                 continue;
             }
-            $fCount  = $un['count'];
+            $fCount = $un['count'];
             $fOffset = $un['offset'];
-            $fValue  = '';
-            for ($j = 1; $j <= $this->rowLength-9; $j++) {
-                $v = $un['value'.$j];
+            $fValue = '';
+            for ($j = 1; $j <= $this->rowLength - 9; $j++) {
+                $v = $un['value' . $j];
                 if ($v == 32) {
                     break;
                 }
@@ -271,16 +278,16 @@ class SimpleDict
     {
         $ret = array();
         fseek($this->file, $offset);
-        $data   = fread($this->file, $size * $this->rowLength);
-        for ($i =0; $i < $size; $i++) {
+        $data = fread($this->file, $size * $this->rowLength);
+        for ($i = 0; $i < $size; $i++) {
             $row = substr($data, $i * $this->rowLength, $this->rowLength);
-            $un  = unpack("c3char/ncount/Noffset/c*value", $row);
-            $fChar   = rtrim(chr($un['char1']).chr($un['char2']).chr($un['char3']));
-            $fCount  = $un['count'];
+            $un = unpack("c3char/ncount/Noffset/c*value", $row);
+            $fChar = rtrim(chr($un['char1']) . chr($un['char2']) . chr($un['char3']));
+            $fCount = $un['count'];
             $fOffset = $un['offset'];
-            $fValue  = '';
-            for ($j = 1; $j <= $this->rowLength-9; $j++) {
-                $v = $un['value'.$j];
+            $fValue = '';
+            for ($j = 1; $j <= $this->rowLength - 9; $j++) {
+                $v = $un['value' . $j];
                 if ($v == 32) {
                     break;
                 }
@@ -299,7 +306,7 @@ class SimpleDict
     public static function make($input, $output)
     {
         $data = array();
-        $fp   = fopen($input, 'r');
+        $fp = fopen($input, 'r');
         $vLen = 0;
         while ($line = fgets($fp, 1024)) {
             list($word, $value) = explode("\t", rtrim($line));
@@ -320,11 +327,11 @@ class SimpleDict
         fclose($fp);
 
         sort($data['']['next'], SORT_STRING);
-        $stack  = array(array_fill_keys($data['']['next'], 0));
+        $stack = array(array_fill_keys($data['']['next'], 0));
         $prefix = array();
         $fp = fopen($output, 'w');
         // header: count, valueLength, rowLength
-        $line = pack("nnn", count($stack[0]), $vLen, $vLen+9);
+        $line = pack("nnn", count($stack[0]), $vLen, $vLen + 9);
         fwrite($fp, $line);
         $offset = strlen($line);
         do {
@@ -333,8 +340,8 @@ class SimpleDict
                     continue;
                 }
                 $line = str_pad($char, 3, self::CHAR_PAD)
-                    .pack("nN", 0, 0)
-                    .str_repeat(self::CHAR_PAD, $vLen);
+                    . pack("nN", 0, 0)
+                    . str_repeat(self::CHAR_PAD, $vLen);
                 fwrite($fp, $line);
                 $addr = $offset;
                 $offset += strlen($line);
@@ -342,11 +349,11 @@ class SimpleDict
 
             $nextKeys = array_keys($stack[0]);
             $nextChar = $nextKeys[0];
-            $next     = $data[implode('', $prefix).$nextChar];
+            $next = $data[implode('', $prefix) . $nextChar];
             $nextSize = isset($next['next']) ? count($next['next']) : 0;
-            $nextVal  = isset($next['value']) ? $next['value'] : '';
-            $line     = pack("nN", $nextSize, $offset)
-                .str_pad($nextVal, $vLen, self::CHAR_PAD);
+            $nextVal = isset($next['value']) ? $next['value'] : '';
+            $line = pack("nN", $nextSize, $offset)
+                . str_pad($nextVal, $vLen, self::CHAR_PAD);
             fseek($fp, $stack[0][$nextChar] + 3);
             fwrite($fp, $line);
             fseek($fp, $offset);
@@ -400,7 +407,8 @@ class CharIterator implements Iterator
      */
     private $offset = 0;
 
-    public function __construct($str) {
+    public function __construct($str)
+    {
         $this->str = $str;
     }
 
@@ -421,19 +429,19 @@ class CharIterator implements Iterator
             return false;
         }
 
-        $i   = $this->offset;
-        $c   = $this->str[$i];
+        $i = $this->offset;
+        $c = $this->str[$i];
         $ord = ord($c);
         if ($ord < 128) {
             $this->char = $c;
         } elseif ($ord < 224) {
-            $this->char = $c.$this->str[++$i];
+            $this->char = $c . $this->str[++$i];
         } elseif ($ord < 240) {
-            $this->char = $c.$this->str[++$i].$this->str[++$i];
+            $this->char = $c . $this->str[++$i] . $this->str[++$i];
         } else {
-            $this->char = $c.$this->str[++$i].$this->str[++$i].$this->str[++$i];
+            $this->char = $c . $this->str[++$i] . $this->str[++$i] . $this->str[++$i];
         }
-        $this->offset = $i+1;
+        $this->offset = $i + 1;
         $this->index += 1;
         return true;
     }
@@ -441,9 +449,9 @@ class CharIterator implements Iterator
     public function rewind()
     {
         $this->offset = 0;
-        $this->index  = 0;
+        $this->index = 0;
         $this->length = strlen($this->str);
-        $this->char   = '';
+        $this->char = '';
         $this->next();
     }
 
