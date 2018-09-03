@@ -45,8 +45,9 @@ class ChartDataController extends Controller
         'looknum' => '大屏围观参与人数',
         'playernum7' => '大屏活跃玩家人数', //互动超过7秒(todo)
         'playernum' => '大屏铁杆玩家人数',//游戏玩结束
+        'omo_outnum' => 'OMO有效跳转人数',
         'lovenum' => '扫码拉新会员注册总数',//最终转化
-        'palyertime' => '人均互动有效时长',//推算
+        'playertime' => '人均互动有效时长',//推算
     ];
 
     public function index(Request $request)
@@ -102,6 +103,9 @@ class ChartDataController extends Controller
                 break;
             case 9:
                 $data = $this->getActivePlayerByMonth($request);
+                break;
+            case 10:
+                $data = $this->getFunnelChart($request, $xsFaceCountLog);
                 break;
             default:
                 return null;
@@ -464,6 +468,54 @@ class ChartDataController extends Controller
                 'count' => $item->playernum
             ];
         }
+
+        return $output;
+    }
+
+    public function getFunnelChart(ChartDataRequest $request, Builder $query)
+    {
+        $startDate = $request->start_date;
+        $endDate = $request->end_date;
+
+        $this->handleQuery($request, $query);
+
+        $data = $query->selectRaw("sum(looknum) as looknum ,sum(playernum7) as playernum7,sum(playernum) as playernum ,sum(omo_outnum) as omo_outnum,sum(lovenum) as lovenum")
+            ->first()->toArray();
+
+        $allData = XsFaceCountLog::query()
+            ->selectRaw("sum(looknum) as looknum ,sum(playernum7) as playernum7,sum(playernum) as playernum ,sum(omo_outnum) as omo_outnum,sum(lovenum) as lovenum")
+            ->whereRaw("date_format(date,'%Y-%m-%d') between '$startDate' and '$endDate'")
+            ->first();
+
+        $query = XsFaceCountLog::query();
+        $this->handleQuery($request, $query);
+        $count = $query->selectRaw("count(distinct avr_official.oid) as oid_count,count(distinct avr_official.marketid) as market_count")
+            ->first();
+
+        $output = [];
+        foreach ($data as $key => $value) {
+            $output['data'][] = [
+                'count' => $value,
+                'display_name' => $this->totalMapping[$key],
+                'index' => $key,
+            ];
+        }
+        $output['rate']['total_rate'] = [
+            'CPF' => $allData->looknum ? strval(round($allData->playernum7 / $allData->looknum, 3) * 100) : 0,
+            'CPR' => $allData->looknum ? strval(round($allData->playernum / $allData->looknum, 3) * 100) : 0,
+            'CPA' => $allData->looknum ? strval(round($allData->omo_outnum / $allData->looknum, 3) * 100) : 0,
+            'CPL' => $allData->looknum ? strval(round($allData->lovenum / $allData->looknum, 3) * 100) : 0,
+        ];
+        $output['rate']['rate'] = [
+            'CPF' => $data['looknum'] ? strval(round($data['playernum7'] / $data['looknum'], 3) * 100) : 0,
+            'CPR' => $data['looknum'] ? strval(round($data['playernum'] / $data['looknum'], 3) * 100) : 0,
+            'CPA' => $data['looknum'] ? strval(round($data['omo_outnum'] / $data['looknum'], 3) * 100) : 0,
+            'CPL' => $data['looknum'] ? strval(round($data['lovenum'] / $data['looknum'], 3) * 100) : 0
+        ];
+
+        $output['oid_count'] = $count->oid_count;
+        $output['market_count'] = $count->market_count;
+        $output['day'] = (new Carbon($endDate))->diffInDays((new Carbon($startDate)));
 
         return $output;
     }
