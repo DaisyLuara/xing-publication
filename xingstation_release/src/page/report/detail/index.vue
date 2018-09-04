@@ -185,7 +185,7 @@
       <ul
         class="btns-wrapper">
         <li 
-          v-for="(item, key) in peopleCount.concat([{ index: 'cpf', display_name: 'CPF转化率' }, { index: 'cpa', display_name:'CPA转化率' }, { index: 'cpl', display_name:'CPL转化率' }])" 
+          v-for="(item, key) in peopleCount.concat([{ index: 'cpf', display_name: 'CPF转化率' }, { index: 'cpr', display_name:'CPR转化率' }, { index: 'cpl', display_name:'CPL转化率' }])" 
           v-if="item.index !== 'outnum'"
           :key="key">
           <a 
@@ -220,9 +220,9 @@
               {{ computedCPF }}
             </span>
             <span  
-              v-if="item.index === 'cpa'" 
+              v-if="item.index === 'cpr'" 
               class="count">
-              {{ computedCPA }}
+              {{ computedCPR }}
             </span>
             <span 
               v-if="item.index === 'cpl'" 
@@ -360,7 +360,7 @@
                 label="输出">
                 <span>
                   CPF: {{ computedCPF }}
-                  CPA：{{ computedCPA }}
+                  CPA：{{ computedCPR }}
                   CPL： {{ computedCPL }}
                 </span>
               </el-form-item>
@@ -516,8 +516,8 @@
 
       <div
         :style="style.chartFont" 
-        class="cpa">
-        {{ computedCPA }}
+        class="cpr">
+        {{ computedCPR }}
       </div>
 
       <div
@@ -547,7 +547,7 @@
           class="actions-wrap-pic">
           <div 
             class="label">
-            <span class="date">2018-08-21  -  2018-08-28</span>
+            <span class="date">{{handleDateTransform(dateTime[0])}}  -  {{handleDateTransform(dateTime[1])}}</span>
           </div>
           <div class="label" style="text-align: right;">
             <span class="icon-wrap">
@@ -574,7 +574,7 @@
                 <span class="legend-text" @click="legendFour"><span class="legend-text-four"></span>铁杆</span>
                 <span class="legend-text" @click="legendFive"><span class="legend-text-five"></span>跳转</span>
                 <span class="legend-text" @click="legendSix"><span class="legend-text-six"></span>拉新</span>
-                <span class="legend-text" @click="legendSeven"><span class="legend-text-seven"></span>转发</span>
+                <!-- <span class="legend-text" @click="legendSeven"><span class="legend-text-seven"></span>转发</span> -->
               </div>
               <PicChart :chartdata="chartdata" :dataOptions="dataOptions" :width="width"/>
             </div>
@@ -595,6 +595,7 @@
 import stats from 'service/stats'
 import search from 'service/search'
 import chart from 'service/chart'
+import Vue from 'vue'
 import PicChart from './com/chart'
 import {
   Row,
@@ -639,7 +640,7 @@ export default {
     return {
       chartdata: [90291, 9078, 7461, 5463, 3258, 2434, 834],
       dataOptions: [true, true, true, true, true, true, true],
-      width: (window.innerWidth - 60 + 20) * 0.5 - 20,
+      width: ((window.innerWidth - 60 + 20) * 0.5 - 20) * 0.6,
       style: {
         chartFont: {
           fontSize: window.innerWidth / 80 + 'px'
@@ -682,19 +683,19 @@ export default {
         loadingText: '拼命加载中'
       },
       dateTime: [
-        new Date().getTime() - 3600 * 1000 * 24 * 6,
-        new Date().getTime()
+        new Date().getTime() - 3600 * 1000 * 24 * 7,
+        new Date().getTime() - 3600 * 1000 * 24
       ],
       pickerOptions2: {
         shortcuts: [
-          {
-            text: '今天',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              picker.$emit('pick', [start, end])
-            }
-          },
+          // {
+          //   text: '今天',
+          //   onClick(picker) {
+          //     const end = new Date()
+          //     const start = new Date()
+          //     picker.$emit('pick', [start, end])
+          //   }
+          // },
           {
             text: '昨天',
             onClick(picker) {
@@ -708,16 +709,16 @@ export default {
           {
             text: '最近一周',
             onClick(picker) {
-              const end = new Date()
+              const end = new Date().getTime() - 3600 * 1000 * 24
               const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 6)
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
               picker.$emit('pick', [start, end])
             }
           },
           {
             text: '最近一个月',
             onClick(picker) {
-              const end = new Date()
+              const end = new Date() - 3600 * 1000 * 24
               const start = new Date()
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
               picker.$emit('pick', [start, end])
@@ -726,7 +727,7 @@ export default {
           {
             text: '最近三个月',
             onClick(picker) {
-              const end = new Date()
+              const end = new Date() - 3600 * 1000 * 24
               const start = new Date()
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
               picker.$emit('pick', [start, end])
@@ -734,8 +735,7 @@ export default {
           }
         ],
         disabledDate: time => {
-          console.log(time)
-          return time.getTime() === new Date().getTime()
+          return time.getTime() > Date.now() - 8.64e7
         }
       },
       rateOption: {
@@ -743,7 +743,10 @@ export default {
           text: ''
         },
         tooltip: {
-          trigger: 'axis'
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          }
         },
         legend: {
           data: ['当前范围各级转化率', '总体各级平均转化率'],
@@ -766,7 +769,9 @@ export default {
             type: 'value',
             axisLabel: {
               formatter: '{value} %'
-            }
+            },
+            max: 100,
+            min: 0
           }
         ],
         series: [
@@ -774,7 +779,53 @@ export default {
             name: '当前范围各级转化率',
             type: 'bar',
             barGap: 0,
-            data: [60, 40, 28, 15]
+            data: [60, 40, 28, 15],
+            label: {
+              normal: {
+                show: true,
+                position: 'top',
+                color: '#cb0017',
+                rich: {
+                  a: {
+                    color: 'red',
+                    fontSize: 16,
+                    fontWeight: 600
+                  },
+                  b: {
+                    color: 'green',
+                    fontSize: 16,
+                    fontWeight: 600
+                  }
+                },
+                formatter: function(data) {
+                  if (parseInt(data.value) - 40 > 0) {
+                    return '{a|' + (parseInt(data.value) - 40) + '%}'
+                  } else {
+                    return '{b|' + -(parseInt(data.value) - 40) + '%}'
+                  }
+                  // let content = ''
+                  // let index = data.dataIndex
+                  // let singleSum = parseInt(
+                  //   parseInt(response[index].count.century10) +
+                  //     parseInt(response[index].count.century00) +
+                  //     parseInt(response[index].count.century90) +
+                  //     parseInt(response[index].count.century80) +
+                  //     parseInt(response[index].count.century70)
+                  // )
+                  // let sum = 0
+                  // response.map(r => {
+                  //   sum +=
+                  //     parseInt(r.count.century10) +
+                  //     parseInt(r.count.century00) +
+                  //     parseInt(r.count.century90) +
+                  //     parseInt(r.count.century80) +
+                  //     parseInt(r.count.century70)
+                  // })
+                  // let percent = (singleSum / sum * 100).toFixed(1) + '%'
+                  // return percent + '\n' + singleSum
+                }
+              }
+            }
           },
           {
             name: '总体各级平均转化率',
@@ -1294,7 +1345,7 @@ export default {
       ).toFixed(2)
       return String(result) + '%'
     },
-    computedCPA: function() {
+    computedCPR: function() {
       let result = (
         this.peopleCount[2].count /
         this.peopleCount[0].count *
@@ -1312,8 +1363,12 @@ export default {
     }
   },
   mounted() {
-    let width = (window.innerWidth - 60 + 20) * 0.3333333 - 20
-    this.width = width
+    let that = this
+    window.onresize = function() {
+      if (window.innerWidth > 1200) {
+        that.width = ((window.innerWidth - 60 + 20) * 0.5 - 20) * 0.6
+      }
+    }
   },
   created() {
     this.setting.loading = true
@@ -1323,44 +1378,32 @@ export default {
   },
   methods: {
     legendOne() {
-      console.log(this.dataOptions)
       this.dataOptions[0] = !this.dataOptions[0]
-      console.log(this.dataOptions)
+      Vue.set(this.dataOptions, 0, this.dataOptions[0])
     },
     legendTwo() {
-      console.log(this.dataOptions)
       this.dataOptions[1] = !this.dataOptions[1]
-      console.log(this.dataOptions)
+      Vue.set(this.dataOptions, 1, this.dataOptions[1])
     },
     legendThree() {
-      console.log(this.dataOptions)
-
       this.dataOptions[2] = !this.dataOptions[2]
-      console.log(this.dataOptions)
+      Vue.set(this.dataOptions, 2, this.dataOptions[2])
     },
     legendFour() {
-      console.log(this.dataOptions)
-
       this.dataOptions[3] = !this.dataOptions[3]
-      console.log(this.dataOptions)
+      Vue.set(this.dataOptions, 3, this.dataOptions[3])
     },
     legendFive() {
-      console.log(this.dataOptions)
-
       this.dataOptions[4] = !this.dataOptions[4]
-      console.log(this.dataOptions)
+      Vue.set(this.dataOptions, 4, this.dataOptions[4])
     },
     legendSix() {
-      console.log(this.dataOptions)
-
       this.dataOptions[5] = !this.dataOptions[5]
-      console.log(this.dataOptions)
+      Vue.set(this.dataOptions, 5, this.dataOptions[5])
     },
     legendSeven() {
-      console.log(this.dataOptions)
-
       this.dataOptions[6] = !this.dataOptions[6]
-      console.log(this.dataOptions)
+      Vue.set(this.dataOptions, 6, this.dataOptions[6])
     },
     changeReportType() {
       if (this.reportValue === 'point') {
@@ -2187,7 +2230,7 @@ export default {
       .rate-chart {
         height: 100%;
         width: 100%;
-        min-height: 600px;
+        min-height: 550px;
       }
     }
     .looknum {
@@ -2230,7 +2273,7 @@ export default {
       color: white;
       font-weight: 800;
     }
-    .cpa {
+    .cpr {
       position: absolute;
       width: 20%;
       left: 3%;

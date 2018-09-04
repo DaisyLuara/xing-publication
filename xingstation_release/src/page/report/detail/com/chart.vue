@@ -4,9 +4,11 @@
     :style="style.root"
     class="root"
   >
+  
     <div
       v-for="(item, index) in chartdata"
       v-show="dataOptions[index] && index !== chartdata.length - 1"
+      :class="[index === 0 ? 'active' : '']"
       :key="index"
       :style="bindStyle[index]"
     >
@@ -80,7 +82,7 @@ export default {
         '大瓶活跃玩家人数',
         '大屏铁杆玩家人数',
         'OMO有效跳转人数',
-        '扫码啦心会员注册总数',
+        '扫码拉新会员注册总数',
         '完成转发分享人数'
       ],
       // dataOptions: [true, true, true, true, true, true, true],
@@ -143,10 +145,11 @@ export default {
       this.calculateStyles()
     },
     width: function() {
-      this.risizeCanvas()
+      //this.risizeCanvas()
       this.calculate()
       this.calculateStyles()
-    }
+    },
+    deep: true
   },
   created() {
     // set canvas map
@@ -159,6 +162,7 @@ export default {
   mounted() {},
   methods: {
     risizeCanvas() {
+      console.log(this.width)
       this.height = this.width * this.hvw
       this.style.root = {
         height: this.height + 'px'
@@ -459,6 +463,9 @@ export default {
     .add-margin {
       margin-bottom: 30%;
     }
+  }
+  .active {
+    display: none;
   }
   .percent {
     color: white;
