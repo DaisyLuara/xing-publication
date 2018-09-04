@@ -13,7 +13,9 @@ class UpdateXsFacePhoneTable extends Migration
      */
     public function up()
     {
-        //
+        Schema::connection('ar')->table('xs_face_phone', function (Blueprint $table) {
+            $table->integer('oanum')->after('phonenum');
+        });
     }
 
     /**
@@ -23,6 +25,8 @@ class UpdateXsFacePhoneTable extends Migration
      */
     public function down()
     {
-        //
+        Schema::connection('ar')->table('xs_face_phone', function (Blueprint $table) {
+            $table->dropColumn('oanum');
+        });
     }
 }

@@ -472,8 +472,8 @@ function phoneClean()
 
         //belong='all'
         $sql = DB::connection('ar')->table('face_ad_log')
-            ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and fpid <> 0 and length(unionid)=11")
-            ->selectRaw("oid");
+            ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and fpid <> 0")
+            ->selectRaw("oid,unionid");
         if ($date <= '2018-07-01') {
             $sql = $sql->groupBy(DB::raw('fpid*100+oid'));
         } else {
@@ -481,14 +481,14 @@ function phoneClean()
         }
 
         $allData = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
-            ->selectRaw("oid,count(*) as phonenum")
+            ->selectRaw("oid,count(length(unionid)=11 or null) as phonenum,count(length(unionid)<>11 or null) as oanum")
             ->groupBy("oid")
             ->get();
 
         //按节目去重
         $sql1 = DB::connection('ar')->table('face_ad_log')
-            ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and fpid <> 0 and length(unionid)=11")
-            ->selectRaw("oid,belong");
+            ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and fpid <> 0")
+            ->selectRaw("oid,belong,unionid");
         if ($date <= '2018-07-01') {
             $sql1 = $sql1->groupBy(DB::raw('fpid*100+oid,belong'));
         } else {
@@ -496,7 +496,7 @@ function phoneClean()
         }
 
         $data = DB::connection('ar')->table(DB::raw("({$sql1->toSql()}) as a"))
-            ->selectRaw("oid,belong,count(*) as phonenum")
+            ->selectRaw("oid,belong,count(length(unionid)=11 or null) as phonenum,count(length(unionid)<>11 or null) oanum")
             ->groupBy(DB::raw("oid,belong"))
             ->get();
         $count = [];
@@ -505,6 +505,7 @@ function phoneClean()
                 'oid' => $item->oid,
                 'belong' => 'all',
                 'phonenum' => $item->phonenum,
+                'oanum' => $item->oanum,
                 'date' => $date,
                 'clientdate' => strtotime($date) * 1000
             ];
@@ -514,13 +515,51 @@ function phoneClean()
                 'oid' => $item->oid,
                 'belong' => $item->belong,
                 'phonenum' => $item->phonenum,
+                'oanum' => $item->oanum,
                 'date' => $date,
                 'clientdate' => strtotime($date) * 1000
             ];
         }
         DB::connection('ar')->table('xs_face_phone')
             ->insert($count);
+
+
+        //不去重
+        $times = DB::connection('ar')->table('face_ad_log')
+            ->selectRaw("oid,belong,count(length(unionid)=11 or null) as phonetimes,count(length(unionid)<>11 or null) oatimes")
+            ->groupBy('oid')
+            ->groupBy('belong')
+            ->get();
+        $allTimes = DB::connection('ar')->table('face_ad_log')
+            ->selectRaw("oid,belong,count(length(unionid)=11 or null) as phonetimes,count(length(unionid)<>11 or null) oatimes")
+            ->groupBy('oid')
+            ->groupBy('belong')
+            ->get();
+        $count = [];
+        foreach ($times as $item) {
+            $count[] = [
+                'oid' => $item->oid,
+                'belong' => $item->belong,
+                'phonetimes' => $item->phonetimes,
+                'oatimes' => $item->oatimes,
+                'date' => $date,
+                'clientdate' => strtotime($date) * 1000
+            ];
+        }
+        foreach ($allTimes as $item) {
+            $count[] = [
+                'oid' => $item->oid,
+                'belong' => 'all',
+                'phonetimes' => $item->phonetimes,
+                'oatimes' => $item->oatimes,
+                'date' => $date,
+                'clientdate' => strtotime($date) * 1000
+            ];
+        }
+        DB::connection('ar')->table('xs_face_phone_times')->insert($count);
+
         $date = (new Carbon($date))->addDay(1)->toDateString();
+
     }
     FacePhoneRecord::create(['date' => $currentDate]);
 }
@@ -546,8 +585,11 @@ function mergeActiveOmoLook()
 
         $sql4 = DB::connection('ar')->table('xs_face_phone')
             ->whereRaw("clientdate='$clientDate'")
-            ->selectRaw("oid,belong,phonenum");
-        $sql5 = DB::connection('ar')->table('xs_face_active_playtimes')
+            ->selectRaw("oid,belong,phonenum,oanum");
+        $sql5 = DB::connection('ar')->table('xs_face_phone_times')
+            ->whereRaw("clientdate='$clientDate'")
+            ->selectRaw("oid,belong,phonetimes,oatimes");
+        $sql6 = DB::connection('ar')->table('xs_face_active_playtimes')
             ->whereRaw("clientdate='$clientDate'")
             ->selectRaw("oid,belong,playtimes7,playtimes15,playtimes21");
 
@@ -568,7 +610,11 @@ function mergeActiveOmoLook()
                 $join->on('a.oid', '=', 'e.oid');
                 $join->on('a.belong', '=', 'e.belong');
             }, null, null, 'left')
-            ->selectRaw("a.oid as oid,a.belong as belong,looknum,playernum7,playernum15,playernum21,playernum,outnum,scannum,omo_outnum,omo_scannum,omo_sharenum,lovenum,phonenum,playtimes7,playtimes15,playtimes21")
+            ->join(DB::raw("({$sql6->toSql()}) as f"), function ($join) {
+                $join->on('a.oid', '=', 'f.oid');
+                $join->on('a.belong', '=', 'f.belong');
+            }, null, null, 'left')
+            ->selectRaw("a.oid as oid,a.belong as belong,looknum,playernum7,playernum15,playernum21,playernum,outnum,scannum,omo_outnum,omo_scannum,omo_sharenum,lovenum,phonenum,oanum,phonetimes,oatimes,playtimes7,playtimes15,playtimes21")
             ->get();
         $count = [];
         foreach ($data as $item) {
@@ -587,6 +633,9 @@ function mergeActiveOmoLook()
                 'omo_sharenum' => $item->omo_sharenum ? $item->omo_sharenum : 0,
                 'lovenum' => $item->lovenum,
                 'phonenum' => $item->phonenum,
+                'oanum' => $item->oanum,
+                'phonetimes' => $item->phonetimes,
+                'oatimes' => $item->oatimes,
                 'playtimes7' => $item->playtimes7,
                 'playtimes15' => $item->playtimes15,
                 'playtimes21' => $item->playtimes21,

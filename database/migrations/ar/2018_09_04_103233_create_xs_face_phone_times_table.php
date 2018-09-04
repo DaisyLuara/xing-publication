@@ -13,9 +13,17 @@ class CreateXsFacePhoneTimesTable extends Migration
      */
     public function up()
     {
-        Schema::create('xs_face_phone_times', function (Blueprint $table) {
+        Schema::connection('ar')->create('xs_face_phone_times', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamps();
+            $table->string('oid', 20);
+            $table->string('belong', 20);
+            $table->integer('phonetimes');
+            $table->integer('oatimes');
+            $table->timestamp('date')->nullable();
+            $table->bigInteger('clientdate');
+            $table->index('oid');
+            $table->index('belong');
+            $table->index('clientdate');
         });
     }
 
