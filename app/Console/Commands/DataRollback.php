@@ -78,6 +78,7 @@ class DataRollback extends Command
         DB::connection('ar')->table('xs_face_active_playtimes')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
         DB::connection('ar')->table('xs_face_omo')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
         DB::connection('ar')->table('xs_face_phone')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
+        DB::connection('ar')->table('xs_face_phone_times')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
         DB::connection('ar')->table('xs_face_count_log')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
     }
 }

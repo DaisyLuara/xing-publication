@@ -471,13 +471,14 @@ function phoneClean()
         $endClientDate = strtotime($date . ' 23:59:59') * 1000;
 
         //belong='all'
-        $sql = DB::connection('ar')->table('face_ad_log')
-            ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and fpid <> 0")
-            ->selectRaw("oid,unionid");
+        $sql = DB::connection('ar')->table('face_ad_log as fal')
+            ->join('avr_official as ao', 'fal.oid', '=', 'ao.oid')
+            ->whereRaw("fal.clientdate between '$startClientDate' and '$endClientDate' and fpid <> 0")
+            ->selectRaw("fal.oid as oid,unionid");
         if ($date <= '2018-07-01') {
-            $sql = $sql->groupBy(DB::raw('fpid*100+oid'));
+            $sql = $sql->groupBy(DB::raw('fpid*100+fal.oid'));
         } else {
-            $sql = $sql->groupBy(DB::raw('fpid*10000+oid'));
+            $sql = $sql->groupBy(DB::raw('fpid*10000+fal.oid'));
         }
 
         $allData = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
@@ -486,17 +487,18 @@ function phoneClean()
             ->get();
 
         //按节目去重
-        $sql1 = DB::connection('ar')->table('face_ad_log')
-            ->whereRaw("clientdate between '$startClientDate' and '$endClientDate' and fpid <> 0")
-            ->selectRaw("oid,belong,unionid");
+        $sql1 = DB::connection('ar')->table('face_ad_log as fal')
+            ->join('avr_official as ao', 'fal.oid', '=', 'ao.oid')
+            ->whereRaw("fal.clientdate between '$startClientDate' and '$endClientDate' and fpid <> 0")
+            ->selectRaw("fal.oid as oid,belong,unionid");
         if ($date <= '2018-07-01') {
-            $sql1 = $sql1->groupBy(DB::raw('fpid*100+oid,belong'));
+            $sql1 = $sql1->groupBy(DB::raw('fpid*100+fal.oid,belong'));
         } else {
-            $sql1 = $sql1->groupBy(DB::raw('fpid*10000+oid,belong'));
+            $sql1 = $sql1->groupBy(DB::raw('fpid*10000+fal.oid,belong'));
         }
 
         $data = DB::connection('ar')->table(DB::raw("({$sql1->toSql()}) as a"))
-            ->selectRaw("oid,belong,count(length(unionid)=11 or null) as phonenum,count(length(unionid)<>11 or null) oanum")
+            ->selectRaw("oid,belong,count(length(unionid)=11 or null) as phonenum,count(length(unionid)<>11 or null) as oanum")
             ->groupBy(DB::raw("oid,belong"))
             ->get();
         $count = [];
@@ -525,15 +527,17 @@ function phoneClean()
 
 
         //不去重
-        $times = DB::connection('ar')->table('face_ad_log')
-            ->selectRaw("oid,belong,count(length(unionid)=11 or null) as phonetimes,count(length(unionid)<>11 or null) oatimes")
-            ->groupBy('oid')
-            ->groupBy('belong')
+        $times = DB::connection('ar')->table('face_ad_log as fal')
+            ->join('avr_official as ao', 'fal.oid', '=', 'ao.oid')
+            ->whereRaw("fal.clientdate between '$startClientDate' and '$endClientDate'")
+            ->groupBy(DB::raw("fal.oid,belong"))
+            ->selectRaw("fal.oid as oid,belong,count(length(unionid)=11 or null) as phonetimes,count(length(unionid)<>11 or null) as oatimes")
             ->get();
-        $allTimes = DB::connection('ar')->table('face_ad_log')
-            ->selectRaw("oid,belong,count(length(unionid)=11 or null) as phonetimes,count(length(unionid)<>11 or null) oatimes")
-            ->groupBy('oid')
-            ->groupBy('belong')
+        $allTimes = DB::connection('ar')->table('face_ad_log as fal')
+            ->join('avr_official as ao', 'fal.oid', '=', 'ao.oid')
+            ->whereRaw("fal.clientdate between '$startClientDate' and '$endClientDate'")
+            ->groupBy('fal.oid')
+            ->selectRaw("fal.oid as oid,count(length(unionid)=11 or null) as phonetimes,count(length(unionid)<>11 or null) as oatimes")
             ->get();
         $count = [];
         foreach ($times as $item) {
