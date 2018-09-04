@@ -479,7 +479,7 @@
     </div>
 
     <!-- dialog for 漏斗 -->
-    <div 
+    <!-- <div 
       v-loading="sexFlag"
       v-show="shouldPicDialogShow"
       class="pic-dialog">
@@ -531,6 +531,63 @@
         class="cpl">
         {{ computedCPL }}
       </div>
+    </div> -->
+    <div
+      v-loading="sexFlag"
+      v-show="shouldPicDialogShow"
+      class="pic-dialog">
+      <div 
+        class="dialog-close"
+        @click="handlePicShow"
+      >
+        关闭
+      </div>
+      <div class="pic-content">
+        <div 
+          class="actions-wrap-pic">
+          <div 
+            class="label">
+            <span class="date">2018-08-21  -  2018-08-28</span>
+          </div>
+          <div class="label" style="text-align: right;">
+            <span class="icon-wrap">
+              <span class="icon-num">7<sub>天</sub></span>
+              <img src="~assets/images/icons/date_icon.png">
+            </span>
+            <span class="icon-wrap">
+              <span class="icon-num">45<sub>个场地</sub></span>
+              <img src="~assets/images/icons/tower_icon.png">
+            </span>
+            <span class="icon-wrap">
+              <span class="icon-num">130<sub>座大屏</sub></span>
+              <img src="~assets/images/icons/machine_icon.png">
+            </span>
+          </div>
+        </div>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <div class="funnel">
+              <div class="legend">
+                <!-- <span class="legend-text" @click="legendOne"><span class="legend-text-one"></span>爆光</span> -->
+                <span class="legend-text" @click="legendTwo"><span class="legend-text-two"></span>围观</span>
+                <span class="legend-text" @click="legendThree"><span class="legend-text-three"></span>活跃</span>
+                <span class="legend-text" @click="legendFour"><span class="legend-text-four"></span>铁杆</span>
+                <span class="legend-text" @click="legendFive"><span class="legend-text-five"></span>跳转</span>
+                <span class="legend-text" @click="legendSix"><span class="legend-text-six"></span>拉新</span>
+                <span class="legend-text" @click="legendSeven"><span class="legend-text-seven"></span>转发</span>
+              </div>
+              <PicChart :chartdata="chartdata" :dataOptions="dataOptions" :width="width"/>
+            </div>
+          </el-col>
+          <el-col :span="12">
+            <chart 
+              ref="rateChart"
+              :options="rateOption"
+              auto-resize 
+              class="rate-chart"/>
+          </el-col>
+        </el-row>
+      </div>
     </div>
   </div>
 </template>
@@ -538,6 +595,7 @@
 import stats from 'service/stats'
 import search from 'service/search'
 import chart from 'service/chart'
+import PicChart from './com/chart'
 import {
   Row,
   Col,
@@ -574,10 +632,14 @@ export default {
     'el-table': Table,
     'el-table-column': TableColumn,
     'el-pagination': Pagination,
-    chart: ECharts
+    chart: ECharts,
+    PicChart
   },
   data() {
     return {
+      chartdata: [90291, 9078, 7461, 5463, 3258, 2434, 834],
+      dataOptions: [true, true, true, true, true, true, true],
+      width: (window.innerWidth - 60 + 20) * 0.5 - 20,
       style: {
         chartFont: {
           fontSize: window.innerWidth / 80 + 'px'
@@ -620,7 +682,7 @@ export default {
         loadingText: '拼命加载中'
       },
       dateTime: [
-        new Date().getTime() - 3600 * 1000 * 24 * 7,
+        new Date().getTime() - 3600 * 1000 * 24 * 6,
         new Date().getTime()
       ],
       pickerOptions2: {
@@ -648,7 +710,7 @@ export default {
             onClick(picker) {
               const end = new Date()
               const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 6)
               picker.$emit('pick', [start, end])
             }
           },
@@ -669,6 +731,55 @@ export default {
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
               picker.$emit('pick', [start, end])
             }
+          }
+        ],
+        disabledDate: time => {
+          console.log(time)
+          return time.getTime() === new Date().getTime()
+        }
+      },
+      rateOption: {
+        title: {
+          text: ''
+        },
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          data: ['当前范围各级转化率', '总体各级平均转化率'],
+          bottom: 0,
+          left: 'center'
+        },
+        toolbox: {
+          show: true
+        },
+        calculable: true,
+        color: ['#5687f8', '#74bd66'],
+        xAxis: [
+          {
+            type: 'category',
+            data: ['CPF转化率', 'CPA转化率', 'CPR转化率', 'CPL转化率']
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value',
+            axisLabel: {
+              formatter: '{value} %'
+            }
+          }
+        ],
+        series: [
+          {
+            name: '当前范围各级转化率',
+            type: 'bar',
+            barGap: 0,
+            data: [60, 40, 28, 15]
+          },
+          {
+            name: '总体各级平均转化率',
+            type: 'bar',
+            data: [48, 40, 38, 15]
           }
         ]
       },
@@ -1200,6 +1311,10 @@ export default {
       return String(result) + '%'
     }
   },
+  mounted() {
+    let width = (window.innerWidth - 60 + 20) * 0.3333333 - 20
+    this.width = width
+  },
   created() {
     this.setting.loading = true
     this.getSceneList()
@@ -1207,6 +1322,46 @@ export default {
     this.allPromise()
   },
   methods: {
+    legendOne() {
+      console.log(this.dataOptions)
+      this.dataOptions[0] = !this.dataOptions[0]
+      console.log(this.dataOptions)
+    },
+    legendTwo() {
+      console.log(this.dataOptions)
+      this.dataOptions[1] = !this.dataOptions[1]
+      console.log(this.dataOptions)
+    },
+    legendThree() {
+      console.log(this.dataOptions)
+
+      this.dataOptions[2] = !this.dataOptions[2]
+      console.log(this.dataOptions)
+    },
+    legendFour() {
+      console.log(this.dataOptions)
+
+      this.dataOptions[3] = !this.dataOptions[3]
+      console.log(this.dataOptions)
+    },
+    legendFive() {
+      console.log(this.dataOptions)
+
+      this.dataOptions[4] = !this.dataOptions[4]
+      console.log(this.dataOptions)
+    },
+    legendSix() {
+      console.log(this.dataOptions)
+
+      this.dataOptions[5] = !this.dataOptions[5]
+      console.log(this.dataOptions)
+    },
+    legendSeven() {
+      console.log(this.dataOptions)
+
+      this.dataOptions[6] = !this.dataOptions[6]
+      console.log(this.dataOptions)
+    },
     changeReportType() {
       if (this.reportValue === 'point') {
         if (!this.point_id) {
@@ -1935,15 +2090,15 @@ export default {
     }
   }
   .pic-dialog {
-    position: fixed;
+    position: absolute;
     z-index: 10000;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     margin: auto;
-    width: 600px;
-    height: 700px;
+    min-width: 1200px;
+    overflow-x: scroll;
     background-color: white;
     border: 1px solid black;
     .dialog-close {
@@ -1951,6 +2106,89 @@ export default {
       top: 5px;
       right: 5px;
       cursor: pointer;
+      z-index: 200;
+    }
+    .pic-content {
+      padding: 30px;
+      height: 100%;
+      .actions-wrap-pic {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        font-size: 16px;
+        align-items: center;
+        margin-top: 40px;
+        margin-bottom: 30px;
+        .label {
+          flex: 1;
+          font-size: 14px;
+          .date {
+            padding: 10px 20px;
+            border: 1px solid #969292;
+            border-radius: 4px;
+          }
+          .icon-wrap {
+            display: inline;
+            margin-right: 30px;
+            img {
+              width: 3%;
+            }
+            .icon-num {
+              font-size: 30px;
+              color: #444;
+              font-weight: 600;
+              display: inline-block;
+              sub {
+                font-size: 14px;
+                font-weight: 500;
+              }
+            }
+          }
+        }
+      }
+      .funnel {
+        .legend {
+          margin-bottom: 30px;
+          .legend-text {
+            font-size: 12px;
+            color: #222;
+            cursor: pointer;
+            span {
+              height: 11px;
+              margin-right: 5px;
+              width: 25px;
+              display: inline-block;
+              border-radius: 5px;
+            }
+            .legend-text-one {
+              background: #8fe5b8;
+            }
+            .legend-text-two {
+              background: #0099ff;
+            }
+            .legend-text-three {
+              background: #22b573;
+            }
+            .legend-text-four {
+              background: #f8b62d;
+            }
+            .legend-text-five {
+              background: #e80f9b;
+            }
+            .legend-text-six {
+              background: #e83828;
+            }
+            .legend-text-seven {
+              background: #9e8047;
+            }
+          }
+        }
+      }
+      .rate-chart {
+        height: 100%;
+        width: 100%;
+        min-height: 600px;
+      }
     }
     .looknum {
       position: absolute;
@@ -2227,7 +2465,8 @@ export default {
     justify-content: space-between;
     font-size: 16px;
     align-items: center;
-    margin-bottom: 10px;
+    margin-top: 40px;
+    margin-bottom: 30px;
     .label {
       font-size: 14px;
     }
