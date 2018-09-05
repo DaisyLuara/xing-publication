@@ -501,16 +501,40 @@ class ChartDataController extends Controller
             ];
         }
         $output['rate']['total_rate'] = [
-            'CPF' => $allData->looknum ? strval(round($allData->playernum7 / $allData->looknum, 3) * 100) : 0,
-            'CPR' => $allData->looknum ? strval(round($allData->playernum / $allData->looknum, 3) * 100) : 0,
-            'CPA' => $allData->looknum ? strval(round($allData->omo_outnum / $allData->looknum, 3) * 100) : 0,
-            'CPL' => $allData->looknum ? strval(round($allData->lovenum / $allData->looknum, 3) * 100) : 0,
+            [
+                'CPF' => $allData->looknum ? strval(round($allData->playernum7 / $allData->looknum, 3) * 100) : 0,
+                'display_name' => 'CPF转化率',
+            ],
+            [
+                'CPR' => $allData->looknum ? strval(round($allData->playernum / $allData->looknum, 3) * 100) : 0,
+                'display_name' => 'CPR转化率',
+            ],
+            [
+                'CPA' => $allData->looknum ? strval(round($allData->omo_outnum / $allData->looknum, 3) * 100) : 0,
+                'display_name' => 'CPA转化率',
+            ],
+            [
+                'CPL' => $allData->looknum ? strval(round($allData->lovenum / $allData->looknum, 3) * 100) : 0,
+                'display_name' => 'CPL转化率',
+            ],
         ];
         $output['rate']['rate'] = [
-            'CPF' => $data['looknum'] ? strval(round($data['playernum7'] / $data['looknum'], 3) * 100) : 0,
-            'CPR' => $data['looknum'] ? strval(round($data['playernum'] / $data['looknum'], 3) * 100) : 0,
-            'CPA' => $data['looknum'] ? strval(round($data['omo_outnum'] / $data['looknum'], 3) * 100) : 0,
-            'CPL' => $data['looknum'] ? strval(round($data['lovenum'] / $data['looknum'], 3) * 100) : 0
+            [
+                'CPF' => $data['looknum'] ? strval(round($data['playernum7'] / $data['looknum'], 3) * 100) : 0,
+                'display_name' => 'CPF转化率',
+            ],
+            [
+                'CPR' => $data['looknum'] ? strval(round($data['playernum'] / $data['looknum'], 3) * 100) : 0,
+                'display_name' => 'CPR转化率',
+            ],
+            [
+                'CPA' => $data['looknum'] ? strval(round($data['omo_outnum'] / $data['looknum'], 3) * 100) : 0,
+                'display_name' => 'CPA转化率',
+            ],
+            [
+                'CPL' => $data['looknum'] ? strval(round($data['lovenum'] / $data['looknum'], 3) * 100) : 0,
+                'display_name' => 'CPL转化率',
+            ],
         ];
 
         $output['oid_count'] = $count->oid_count;
