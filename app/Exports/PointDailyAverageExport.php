@@ -51,7 +51,7 @@ class PointDailyAverageExport extends AbstractExport
             ->orderBy('aoa.areaid', 'desc')
             ->orderBy('aom.marketid', 'desc')
             ->orderBy('ao.oid', 'desc')
-            ->selectRaw("aoa.name as areaName,aom.name as marketName,ao.name as pointName,aos.name as scene,admin_staff.realname as BDName,count(*) as days, sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum20) as playernum20,sum(outnum) as outnum,sum(omo_outnum) as omo_outnum,sum(omo_scannum) as omo_scannum,sum(lovenum) as lovenum,concat_ws(',', date_format(min(fcl.date), '%Y-%m-%d'), date_format(max(fcl.date), '%Y-%m-%d')) as date")
+            ->selectRaw("aoa.name as areaName,aom.name as marketName,ao.name as pointName,aos.name as scene,admin_staff.realname as BDName,count(*) as days, sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum21) as playernum21,sum(outnum) as outnum,sum(omo_outnum) as omo_outnum,sum(omo_scannum) as omo_scannum,sum(lovenum) as lovenum,concat_ws(',', date_format(min(fcl.date), '%Y-%m-%d'), date_format(max(fcl.date), '%Y-%m-%d')) as date")
             ->get();
         $total = [];
         $faceCount->each(function ($item) use (&$data, &$total) {
@@ -69,8 +69,8 @@ class PointDailyAverageExport extends AbstractExport
                 'looknumAver' => round($item->looknum / $item->days, 0),
                 'playernum7' => $item->playernum7,
                 'playernum7Aver' => round($item->playernum7 / $item->days, 0),
-                'playernum20' => $item->playernum20,
-                'playernum20Aver' => round($item->playernum20 / $item->days, 0),
+                'playernum21' => $item->playernum21,
+                'playernum21Aver' => round($item->playernum21 / $item->days, 0),
                 'outnum' => $item->outnum,
                 'omo_outnum' => $item->omo_outnum,
                 'omo_scannum' => $item->omo_scannum,
@@ -103,8 +103,8 @@ class PointDailyAverageExport extends AbstractExport
             'looknumAver' => array_sum(array_column($total, 'days')) == 0 ? 0 : floor(array_sum(array_column($total, 'looknum')) / array_sum(array_column($total, 'days'))),
             'playernum7' => array_sum(array_column($total, 'playernum7')),
             'playernum7Aver' => array_sum(array_column($total, 'days')) == 0 ? 0 : floor(array_sum(array_column($total, 'playernum7')) / array_sum(array_column($total, 'days'))),
-            'playernum20' => array_sum(array_column($total, 'playernum20')),
-            'playernum20Aver' => array_sum(array_column($total, 'days')) == 0 ? 0 : floor(array_sum(array_column($total, 'playernum20')) / array_sum(array_column($total, 'days'))),
+            'playernum21' => array_sum(array_column($total, 'playernum21')),
+            'playernum21Aver' => array_sum(array_column($total, 'days')) == 0 ? 0 : floor(array_sum(array_column($total, 'playernum21')) / array_sum(array_column($total, 'days'))),
             'outnum' => array_sum(array_column($total, 'outnum')),
             'omo_outnum' => array_sum(array_column($total, 'omo_outnum')),
             'omo_scannum' => array_sum(array_column($total, 'omo_scannum')),

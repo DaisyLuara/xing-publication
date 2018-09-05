@@ -30,7 +30,7 @@ class MarketingExport extends AbstractExport
             ->selectRaw('ar_product_list.name as name,count(xs_face_count_log.oid) as pushnum ,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(playernum7) as playernum7,sum(playernum15) as playernum15 ,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum,sum(omo_scannum) as omo_scannum,sum(phonenum) as phonenum,sum(oanum) as oanum,sum(phonetimes) as phonetimes,sum(oatimes) as oatimes')
             ->get();
         $data = collect();
-        $header1 = ['节目名称', '7″fCPE', '', '15″fCPE', '', '21″fCPE', '', '7″uCPE', '', '15″uCPE', '', '21″uCPE', '', 'uCPA(去重)', '', '', 'uCPA(不去重)', '', '', '1', '2', '5', '20', '合计'];
+        $header1 = ['节目名称', '7″fCPE', '', '15″fCPE', '', '21″fCPE', '', '7″uCPE', '', '15″uCPE', '', '21″uCPE', '', 'uCPA(去重)', '', '', 'fCPA(不去重)', '', '', '1', '2', '5', '20', '合计'];
         $header2 = ['', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', 'omo', '公众号', '手机号', 'omo', '公众号', '手机号', '7″uCPE', '15″uCPE', '21″uCPE', 'uCPA', ''];
         $header3 = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
         $data->push($header1);
