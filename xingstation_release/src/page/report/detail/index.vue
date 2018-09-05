@@ -568,13 +568,13 @@
           <el-col :span="12">
             <div class="funnel">
               <div class="legend">
-                <!-- <span class="legend-text" @click="legendOne"><span class="legend-text-one"></span>爆光</span> -->
-                <span class="legend-text" @click="legendTwo"><span class="legend-text-two"></span>围观</span>
-                <span class="legend-text" @click="legendThree"><span class="legend-text-three"></span>活跃</span>
-                <span class="legend-text" @click="legendFour"><span class="legend-text-four"></span>铁杆</span>
-                <span class="legend-text" @click="legendFive"><span class="legend-text-five"></span>跳转</span>
-                <span class="legend-text" @click="legendSix"><span class="legend-text-six"></span>拉新</span>
-                <!-- <span class="legend-text" @click="legendSeven"><span class="legend-text-seven"></span>转发</span> -->
+                <!-- <span class="legend-text" @click="legendHandle('0')"><span class="legend-text-one"></span>爆光</span> -->
+                <span class="legend-text" @click="legendHandle('1')"><span class="legend-text-two"></span>围观</span>
+                <span class="legend-text" @click="legendHandle('2')"><span class="legend-text-three"></span>活跃</span>
+                <span class="legend-text" @click="legendHandle('3')"><span class="legend-text-four"></span>铁杆</span>
+                <span class="legend-text" @click="legendHandle('4')"><span class="legend-text-five"></span>跳转</span>
+                <span class="legend-text" @click="legendHandle('5')"><span class="legend-text-six"></span>拉新</span>
+                <!-- <span class="legend-text" @click="legendHandle('6')"><span class="legend-text-seven"></span>转发</span> -->
               </div>
               <PicChart :chartdata="chartdata" :dataOptions="dataOptions" :width="width"/>
             </div>
@@ -779,6 +779,7 @@ export default {
             name: '当前范围各级转化率',
             type: 'bar',
             barGap: 0,
+            barWidth: 40,
             data: [60, 40, 28, 15],
             label: {
               normal: {
@@ -830,6 +831,7 @@ export default {
           {
             name: '总体各级平均转化率',
             type: 'bar',
+            barWidth: 40,
             data: [48, 40, 38, 15]
           }
         ]
@@ -1365,7 +1367,7 @@ export default {
   mounted() {
     let that = this
     window.onresize = function() {
-      if (window.innerWidth > 1200) {
+      if (window.innerWidth > 1300) {
         that.width = ((window.innerWidth - 60 + 20) * 0.5 - 20) * 0.6
       }
     }
@@ -1377,34 +1379,66 @@ export default {
     this.allPromise()
   },
   methods: {
-    legendOne() {
-      this.dataOptions[0] = !this.dataOptions[0]
-      Vue.set(this.dataOptions, 0, this.dataOptions[0])
+    legendHandle(index) {
+      switch (index) {
+        case '0':
+          this.dataOptions[0] = !this.dataOptions[0]
+          Vue.set(this.dataOptions, 0, this.dataOptions[0])
+          break
+        case '1':
+          this.dataOptions[1] = !this.dataOptions[1]
+          Vue.set(this.dataOptions, 1, this.dataOptions[1])
+          break
+        case '2':
+          this.dataOptions[2] = !this.dataOptions[2]
+          Vue.set(this.dataOptions, 2, this.dataOptions[2])
+          break
+        case '3':
+          this.dataOptions[3] = !this.dataOptions[3]
+          Vue.set(this.dataOptions, 3, this.dataOptions[3])
+          break
+        case '4':
+          this.dataOptions[4] = !this.dataOptions[4]
+          Vue.set(this.dataOptions, 4, this.dataOptions[4])
+          break
+        case '5':
+          this.dataOptions[5] = !this.dataOptions[5]
+          Vue.set(this.dataOptions, 5, this.dataOptions[5])
+          break
+        case '6':
+          this.dataOptions[6] = !this.dataOptions[6]
+          Vue.set(this.dataOptions, 6, this.dataOptions[6])
+          break
+      }
     },
-    legendTwo() {
-      this.dataOptions[1] = !this.dataOptions[1]
-      Vue.set(this.dataOptions, 1, this.dataOptions[1])
-    },
-    legendThree() {
-      this.dataOptions[2] = !this.dataOptions[2]
-      Vue.set(this.dataOptions, 2, this.dataOptions[2])
-    },
-    legendFour() {
-      this.dataOptions[3] = !this.dataOptions[3]
-      Vue.set(this.dataOptions, 3, this.dataOptions[3])
-    },
-    legendFive() {
-      this.dataOptions[4] = !this.dataOptions[4]
-      Vue.set(this.dataOptions, 4, this.dataOptions[4])
-    },
-    legendSix() {
-      this.dataOptions[5] = !this.dataOptions[5]
-      Vue.set(this.dataOptions, 5, this.dataOptions[5])
-    },
-    legendSeven() {
-      this.dataOptions[6] = !this.dataOptions[6]
-      Vue.set(this.dataOptions, 6, this.dataOptions[6])
-    },
+    // legendOne() {
+    //   this.dataOptions[0] = !this.dataOptions[0]
+    //   Vue.set(this.dataOptions, 0, this.dataOptions[0])
+    // },
+    // legendTwo() {
+    //   this.dataOptions[1] = !this.dataOptions[1]
+    //   Vue.set(this.dataOptions, 1, this.dataOptions[1])
+    // },
+    // legendThree() {
+    //   this.dataOptions[2] = !this.dataOptions[2]
+    //   Vue.set(this.dataOptions, 2, this.dataOptions[2])
+    // },
+    // legendFour() {
+    //   this.dataOptions[3] = !this.dataOptions[3]
+    //   Vue.set(this.dataOptions, 3, this.dataOptions[3])
+    // },
+    // legendFive() {
+    //   this.dataOptions[4] = !this.dataOptions[4]
+    //   Vue.set(this.dataOptions, 4, this.dataOptions[4])
+    // },
+    // legendSix() {
+    //   this.dataOptions[5] = !this.dataOptions[5]
+    //   Vue.set(this.dataOptions, 5, this.dataOptions[5])
+    // },
+    // legendSeven() {
+    //   this.dataOptions[6] = !this.dataOptions[6]
+    //   Vue.set(this.dataOptions, 6, this.dataOptions[6])
+    // },
     changeReportType() {
       if (this.reportValue === 'point') {
         if (!this.point_id) {
@@ -2102,6 +2136,9 @@ export default {
     },
     handlePicShow() {
       this.shouldPicDialogShow = !this.shouldPicDialogShow
+      if (window.innerWidth > 1300) {
+        this.width = ((window.innerWidth - 60 + 20) * 0.5 - 20) * 0.6
+      }
     }
   }
 }

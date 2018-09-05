@@ -4,7 +4,6 @@
     :style="style.root"
     class="root"
   >
-  
     <div
       v-for="(item, index) in chartdata"
       v-show="dataOptions[index] && index !== chartdata.length - 1"
@@ -145,11 +144,10 @@ export default {
       this.calculateStyles()
     },
     width: function() {
-      //this.risizeCanvas()
+      this.risizeCanvas()
       this.calculate()
       this.calculateStyles()
-    },
-    deep: true
+    }
   },
   created() {
     // set canvas map
@@ -162,7 +160,6 @@ export default {
   mounted() {},
   methods: {
     risizeCanvas() {
-      console.log(this.width)
       this.height = this.width * this.hvw
       this.style.root = {
         height: this.height + 'px'
@@ -220,10 +217,10 @@ export default {
 
         // innerText
         let innerTextStyle = {
-          height: String(this.calStore[i].height.toFixed(1)) + 'px',
+          height: String(this.calStore[i].height) + 'px',
           width: this.calStore[i].bottomWidth + 'px',
           position: 'absolute',
-          top: '-' + String(this.calStore[i].height.toFixed(1)) + 'px',
+          top: '-' + String(this.calStore[i].height) + 'px',
           left: 0,
           color: 'white'
         }
@@ -235,18 +232,18 @@ export default {
         if (i % 2 === 0) {
           circleAreaObj = {
             width: this.width / 2 + 'px',
-            height: String(this.calStore[i].height.toFixed(1)) + 'px',
+            height: String(this.calStore[i].height) + 'px',
             position: 'absolute',
             right: '-' + this.width / 2 + 'px',
-            top: '-' + String(this.calStore[i].height.toFixed(1)) + 'px'
+            top: '-' + String(this.calStore[i].height) + 'px'
           }
         } else {
           circleAreaObj = {
             width: this.width / 2 + 'px',
-            height: String(this.calStore[i].height.toFixed(1)) + 'px',
+            height: String(this.calStore[i].height) + 'px',
             position: 'absolute',
             left: '-' + this.width / 2 + 'px',
-            top: '-' + String(this.calStore[i].height.toFixed(1)) + 'px'
+            top: '-' + String(this.calStore[i].height) + 'px'
           }
         }
 
@@ -255,7 +252,7 @@ export default {
         let smallCirlceObj = {}
         // innerCircle
         if (i > 0) {
-          let w = String(this.calStore[i].height.toFixed(1))
+          let w = String(this.calStore[i].height)
           innerCircleObj = {
             height: w + 'px',
             width: w + 'px',
@@ -274,7 +271,7 @@ export default {
             innerCircleObj.left = '0'
           }
 
-          let w2 = w - 4
+          let w2 = w - 2
           whiteCircleObj = {
             height: w2 + 'px',
             width: w2 + 'px',
@@ -286,7 +283,7 @@ export default {
             justifyContent: 'center'
           }
 
-          let w3 = w2 - 4
+          let w3 = w2 - 2
           smallCirlceObj = {
             height: w3 + 'px',
             width: w3 + 'px',
@@ -306,7 +303,7 @@ export default {
         // line
         let lineObj = {}
         if (i > 0) {
-          let w = String(this.calStore[i].height.toFixed(1))
+          let w = String(this.calStore[i].height)
           lineObj = {
             width: w * 1 / 3 + 'px',
             position: 'absolute',
@@ -345,8 +342,7 @@ export default {
         if (i === 0) {
           bindStyleObject.width = this.width + 'px'
           bindStyleObject.color = this.bindColors[i]
-          bindStyleObject.height =
-            String(this.calStore[i].height.toFixed(1)) + 'px'
+          bindStyleObject.height = String(this.calStore[i].height) + 'px'
           bindStyleObject.backgroundColor = this.bindColors[0]
 
           delete innerTextStyle.top
@@ -357,53 +353,45 @@ export default {
         if (i === 1) {
           bindStyleObject.width = this.calStore[i].topWidth + 'px'
           bindStyleObject.color = this.bindColors[i]
-          bindStyleObject.height =
-            String(this.calStore[i].height.toFixed(1)) + 'px'
+          bindStyleObject.height = String(this.calStore[i].height) + 'px'
           bindStyleObject.borderTop =
             bindStyleObject.height + ' solid ' + this.bindColors[i]
-          let cutWidth = (
-            (this.calStore[i].topWidth - this.calStore[i].bottomWidth) /
-            2
-          ).toFixed(1)
+          let cutWidth =
+            (this.calStore[i].topWidth - this.calStore[i].bottomWidth) / 2
           bindStyleObject.borderLeft = String(cutWidth) + 'px solid white'
           bindStyleObject.borderRight = bindStyleObject.borderLeft
         }
         if (i > 1 && i < this.chartdata.length - 2) {
           bindStyleObject.width = this.calStore[i].topWidth + 'px'
           bindStyleObject.color = this.bindColors[i]
-          bindStyleObject.height =
-            String(this.calStore[i].height.toFixed(1)) + 'px'
+          bindStyleObject.height = String(this.calStore[i].height) + 'px'
           bindStyleObject.borderTop =
             bindStyleObject.height + ' solid ' + this.bindColors[i]
-          let cutWidth = (
-            (this.calStore[i].topWidth - this.calStore[i].bottomWidth) /
-            2
-          ).toFixed(1)
+          let cutWidth =
+            (this.calStore[i].topWidth - this.calStore[i].bottomWidth) / 2
           bindStyleObject.borderLeft = String(cutWidth) + 'px solid white'
           bindStyleObject.borderRight = bindStyleObject.borderLeft
         }
         if (i === this.chartdata.length - 2 && i > 2) {
           bindStyleObject.width = this.calStore[i].topWidth + 'px'
           bindStyleObject.backgroundColor = this.bindColors[i]
-          bindStyleObject.height =
-            String(this.calStore[i].height.toFixed(1)) + 'px'
+          bindStyleObject.height = String(this.calStore[i].height) + 'px'
 
           let childStyle = {
             width: this.calStore[i].topWidth + 'px',
-            height: String((this.calStore[i].height / 2).toFixed(1)) + 'px',
+            height: String(this.calStore[i].height / 2) + 'px',
             position: 'absolute',
             bottom: 0,
             left: 0,
             borderLeft: this.calStore[i].topWidth / 2 + 'px solid white',
             borderRight: this.calStore[i].topWidth / 2 + 'px solid white',
             borderTop:
-              String((this.calStore[i].height / 2).toFixed(1)) +
+              String(this.calStore[i].height / 2) +
               'px solid ' +
               this.bindColors[i]
           }
           this.childStyles.push({ ...childStyle })
-          innerTextStyle.height =
-            String(this.calStore[i].height.toFixed(1)) + 'px'
+          innerTextStyle.height = String(this.calStore[i].height) + 'px'
           delete innerTextStyle.top
 
           circleAreaObj.top = '0'
@@ -411,31 +399,29 @@ export default {
         if (i === this.chartdata.length - 1 && i > 3) {
           bindStyleObject.width = this.calStore[i].topWidth + 'px'
           bindStyleObject.backgroundColor = this.bindColors[i]
-          bindStyleObject.height =
-            String(this.calStore[i].height.toFixed(1)) + 'px'
+          bindStyleObject.height = String(this.calStore[i].height) + 'px'
 
           let childStyle = {
             width: this.calStore[i].topWidth + 'px',
-            height: String((this.calStore[i].height / 2).toFixed(1)) + 'px',
+            height: String(this.calStore[i].height / 2) + 'px',
             position: 'absolute',
             top: 0,
             left: 0,
             borderLeft: this.calStore[i].topWidth / 2 + 'px solid white',
             borderRight: this.calStore[i].topWidth / 2 + 'px solid white',
             borderBottom:
-              String((this.calStore[i].height / 2).toFixed(1)) +
+              String(this.calStore[i].height / 2) +
               'px solid ' +
               this.bindColors[i]
           }
           this.childStyles.push({ ...childStyle })
-          innerTextStyle.height =
-            String(this.calStore[i].height.toFixed(1)) + 'px'
+          innerTextStyle.height = String(this.calStore[i].height) + 'px'
           delete innerTextStyle.top
           circleAreaObj.top = '0'
         }
         delete bindStyleObject.color
         bindStyleObject.marginBottom =
-          String((this.sp / 1500 * this.width).toFixed(1)) + 'px'
+          String(this.sp / 1500 * this.width) + 'px'
         bindStyleObject.position = 'relative'
         this.bindStyle.push(bindStyleObject)
         this.innerTextStyles.push({ ...innerTextStyle })
