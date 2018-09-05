@@ -360,7 +360,7 @@
                 label="输出">
                 <span>
                   CPF: {{ computedCPF }}
-                  CPA：{{ computedCPR }}
+                  CPR：{{ computedCPR }}
                   CPL： {{ computedCPL }}
                 </span>
               </el-form-item>
@@ -431,7 +431,7 @@
             slot-scope="props">*
             <div>
               <div>CPF: {{ ((props.row.playernum7 / props.row.looknum) * 100).toFixed(2) }}%</div>
-              <div>CPA：{{ ((props.row.playernum / props.row.looknum) * 100).toFixed(2) }}%</div>
+              <div>CPR：{{ ((props.row.playernum / props.row.looknum) * 100).toFixed(2) }}%</div>
               <div>CPL：{{ ((props.row.lovenum / props.row.looknum) * 100).toFixed(2) }}%</div>
             </div>  
           </template>
@@ -479,61 +479,8 @@
     </div>
 
     <!-- dialog for 漏斗 -->
-    <!-- <div 
-      v-loading="sexFlag"
-      v-show="shouldPicDialogShow"
-      class="pic-dialog">
-      <img 
-        style="width: 100%" 
-        src="~assets/images/data-bg.png" >
-      <div 
-        class="dialog-close"
-        @click="handlePicShow"
-      >
-        关闭
-      </div>
-      <div
-        :style="style.chartFont" 
-        class="looknum">
-        {{ circleLooknum }}人
-      </div>
-      <div
-        :style="style.chartFont" 
-        class="playernum7">
-        {{ circlePlayernum7 }}人
-      </div>
-      <div
-        :style="style.chartFont" 
-        class="playernum">
-        {{ circlePlayernum }}人
-      </div>
-
-      <div
-        :style="style.chartFont" 
-        class="lovenum">
-        {{ circleLovenum }}人
-      </div>
-
-      <div
-        :style="style.chartFont" 
-        class="cpr">
-        {{ computedCPR }}
-      </div>
-
-      <div
-        :style="style.chartFont" 
-        class="cph">
-        {{ computedCPF }}
-      </div>
-
-      <div
-        :style="style.chartFont" 
-        class="cpl">
-        {{ computedCPL }}
-      </div>
-    </div> -->
     <div
-      v-loading="sexFlag"
+      v-loading="rateDialog"
       v-show="shouldPicDialogShow"
       class="pic-dialog">
       <div 
@@ -551,15 +498,15 @@
           </div>
           <div class="label" style="text-align: right;">
             <span class="icon-wrap">
-              <span class="icon-num">7<sub>天</sub></span>
+              <span class="icon-num">{{rateDay}}<sub>天</sub></span>
               <img src="~assets/images/icons/date_icon.png">
             </span>
             <span class="icon-wrap">
-              <span class="icon-num">45<sub>个场地</sub></span>
+              <span class="icon-num">{{marketCount}}<sub>个场地</sub></span>
               <img src="~assets/images/icons/tower_icon.png">
             </span>
             <span class="icon-wrap">
-              <span class="icon-num">130<sub>座大屏</sub></span>
+              <span class="icon-num">{{screenCount}}<sub>座大屏</sub></span>
               <img src="~assets/images/icons/machine_icon.png">
             </span>
           </div>
@@ -638,7 +585,11 @@ export default {
   },
   data() {
     return {
-      chartdata: [90291, 9078, 7461, 5463, 3258, 2434, 834],
+      rateDay: 0,
+      marketCount: 0,
+      screenCount: 0,
+      // chartdata: [90291, 9078, 7461, 5463, 3258, 2434, 834],
+      chartdata: [],
       dataOptions: [true, true, true, true, true, true, true],
       width: ((window.innerWidth - 60 + 20) * 0.5 - 20) * 0.6,
       style: {
@@ -761,7 +712,7 @@ export default {
         xAxis: [
           {
             type: 'category',
-            data: ['CPF转化率', 'CPA转化率', 'CPR转化率', 'CPL转化率']
+            data: ['CPF转化率', 'CPR转化率', 'CPL转化率']
           }
         ],
         yAxis: [
@@ -780,59 +731,13 @@ export default {
             type: 'bar',
             barGap: 0,
             barWidth: 40,
-            data: [60, 40, 28, 15],
-            label: {
-              normal: {
-                show: true,
-                position: 'top',
-                color: '#cb0017',
-                rich: {
-                  a: {
-                    color: 'red',
-                    fontSize: 16,
-                    fontWeight: 600
-                  },
-                  b: {
-                    color: 'green',
-                    fontSize: 16,
-                    fontWeight: 600
-                  }
-                },
-                formatter: function(data) {
-                  if (parseInt(data.value) - 40 > 0) {
-                    return '{a|' + (parseInt(data.value) - 40) + '%}'
-                  } else {
-                    return '{b|' + -(parseInt(data.value) - 40) + '%}'
-                  }
-                  // let content = ''
-                  // let index = data.dataIndex
-                  // let singleSum = parseInt(
-                  //   parseInt(response[index].count.century10) +
-                  //     parseInt(response[index].count.century00) +
-                  //     parseInt(response[index].count.century90) +
-                  //     parseInt(response[index].count.century80) +
-                  //     parseInt(response[index].count.century70)
-                  // )
-                  // let sum = 0
-                  // response.map(r => {
-                  //   sum +=
-                  //     parseInt(r.count.century10) +
-                  //     parseInt(r.count.century00) +
-                  //     parseInt(r.count.century90) +
-                  //     parseInt(r.count.century80) +
-                  //     parseInt(r.count.century70)
-                  // })
-                  // let percent = (singleSum / sum * 100).toFixed(1) + '%'
-                  // return percent + '\n' + singleSum
-                }
-              }
-            }
+            data: null
           },
           {
             name: '总体各级平均转化率',
             type: 'bar',
             barWidth: 40,
-            data: [48, 40, 38, 15]
+            data: null
           }
         ]
       },
@@ -862,7 +767,7 @@ export default {
       poepleCountFlag: false,
       shouldPicDialogShow: false,
       ageFlag: false,
-      sexFlag: false,
+      rateDialog: false,
       crowdFlag: false,
       userSelect: '',
       projectAlias: '',
@@ -895,7 +800,7 @@ export default {
             '大屏铁杆玩家人数',
             '扫码拉新会员注册总数',
             'CPF转化率',
-            'CPA转化率',
+            'CPR转化率',
             'CPL转化率'
           ]
         },
@@ -1044,12 +949,6 @@ export default {
             barGap: '30%',
             barWidth: '60%',
             stack: '总量',
-            // label: {
-            //   normal: {
-            //     show: true,
-            //     position: 'inside'
-            //   }
-            // },
             data: null
           },
           {
@@ -1411,34 +1310,6 @@ export default {
           break
       }
     },
-    // legendOne() {
-    //   this.dataOptions[0] = !this.dataOptions[0]
-    //   Vue.set(this.dataOptions, 0, this.dataOptions[0])
-    // },
-    // legendTwo() {
-    //   this.dataOptions[1] = !this.dataOptions[1]
-    //   Vue.set(this.dataOptions, 1, this.dataOptions[1])
-    // },
-    // legendThree() {
-    //   this.dataOptions[2] = !this.dataOptions[2]
-    //   Vue.set(this.dataOptions, 2, this.dataOptions[2])
-    // },
-    // legendFour() {
-    //   this.dataOptions[3] = !this.dataOptions[3]
-    //   Vue.set(this.dataOptions, 3, this.dataOptions[3])
-    // },
-    // legendFive() {
-    //   this.dataOptions[4] = !this.dataOptions[4]
-    //   Vue.set(this.dataOptions, 4, this.dataOptions[4])
-    // },
-    // legendSix() {
-    //   this.dataOptions[5] = !this.dataOptions[5]
-    //   Vue.set(this.dataOptions, 5, this.dataOptions[5])
-    // },
-    // legendSeven() {
-    //   this.dataOptions[6] = !this.dataOptions[6]
-    //   Vue.set(this.dataOptions, 6, this.dataOptions[6])
-    // },
     changeReportType() {
       if (this.reportValue === 'point') {
         if (!this.point_id) {
@@ -1868,7 +1739,6 @@ export default {
       this.getPointList()
     },
     getGender() {
-      this.sexFlag = true
       let args = this.setArgs('5')
       return chart
         .getChartData(this, args)
@@ -1891,10 +1761,8 @@ export default {
               }
             ]
           })
-          this.sexFlag = false
         })
         .catch(err => {
-          this.sexFlag = false
           console.log(err)
         })
     },
@@ -2014,7 +1882,7 @@ export default {
             '大屏铁杆玩家人数',
             '扫码拉新会员注册总数',
             'CPF转化率',
-            'CPA转化率',
+            'CPR转化率',
             'CPL转化率'
           ]
         },
@@ -2089,7 +1957,7 @@ export default {
           {
             xAxisIndex: 1,
             yAxisIndex: 1,
-            name: 'CPA转化率',
+            name: 'CPR转化率',
             type: 'line',
             lineStyle: {
               color: '#F8B62D'
@@ -2134,8 +2002,107 @@ export default {
     handleHover(key) {
       console.log(key)
     },
+    getConversionRate() {
+      this.rateDialog = true
+      let args = this.setArgs('10')
+      return chart
+        .getChartData(this, args)
+        .then(response => {
+          this.chartdata = []
+          let chart = this.$refs.rateChart
+          this.chartdata.push(0)
+          response.data.map(r => {
+            let value = r.count === null ? 0 : r.count
+            this.chartdata.push(value)
+          })
+          this.chartdata.push(0)
+          this.rateDay = response.day
+          this.marketCount = response.market_count
+          this.screenCount = response.oid_count
+          chart.mergeOptions({
+            xAxis: {
+              type: 'category',
+              data: response.rate.rate.map(r => {
+                return r.display_name
+              })
+            },
+            series: [
+              {
+                name: '当前范围各级转化率',
+                type: 'bar',
+                barGap: 0,
+                barWidth: 40,
+                data: response.rate.rate.map(r => {
+                  return r.count
+                }),
+                label: {
+                  normal: {
+                    show: true,
+                    position: 'top',
+                    color: '#cb0017',
+                    rich: {
+                      a: {
+                        color: 'red',
+                        fontSize: 16,
+                        fontWeight: 600
+                      },
+                      b: {
+                        color: 'green',
+                        fontSize: 16,
+                        fontWeight: 600
+                      }
+                    },
+                    formatter: function(data) {
+                      let index = data.dataIndex
+                      if (
+                        parseFloat(data.value) -
+                          parseFloat(response.rate.total_rate[index].count) >
+                        0
+                      ) {
+                        return (
+                          '{a|' +
+                          (
+                            parseFloat(data.value) -
+                            parseFloat(response.rate.total_rate[index].count)
+                          ).toFixed(1) +
+                          '%}'
+                        )
+                      } else {
+                        return (
+                          '{b|' +
+                          -(
+                            parseFloat(data.value) -
+                            parseFloat(response.rate.total_rate[index].count)
+                          ).toFixed(1) +
+                          '%}'
+                        )
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                name: '总体各级平均转化率',
+                type: 'bar',
+                barWidth: 40,
+                data: response.rate.total_rate.map(r => {
+                  return r.count
+                })
+              }
+            ]
+          })
+          this.rateDialog = false
+        })
+        .catch(err => {
+          this.rateDialog = false
+          console.log(err)
+        })
+    },
     handlePicShow() {
       this.shouldPicDialogShow = !this.shouldPicDialogShow
+      if (this.shouldPicDialogShow) {
+        this.getConversionRate()
+      }
       if (window.innerWidth > 1300) {
         this.width = ((window.innerWidth - 60 + 20) * 0.5 - 20) * 0.6
       }
