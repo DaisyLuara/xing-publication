@@ -74,7 +74,7 @@ class MarketingTopExport extends AbstractExport
                 'phonetimes' => $item['phonetimes'],
             ];
             $player7Money = round($aa['playernum7'] * 0.01, 0);
-            $player15Money = round($aa['playernum15'] * 0.2, 0);
+            $player15Money = round($aa['playernum15'] * 0.02, 0);
             $player21Money = round($aa['playernum21'] * 0.05, 0);
             $uCPAMoney = round(($aa['omo_outnum'] + $aa['oanum'] + $aa['phonenum']) * 0.2, 0);
             $totalMoney = $player7Money + $player15Money + $player21Money + $uCPAMoney;
