@@ -515,13 +515,13 @@
           <el-col :span="12">
             <div class="funnel">
               <div class="legend">
-                <!-- <span class="legend-text" @click="legendHandle('0')"><span class="legend-text-one"></span>爆光</span> -->
-                <span class="legend-text" @click="legendHandle('1')"><span class="legend-text-two"></span>围观</span>
-                <span class="legend-text" @click="legendHandle('2')"><span class="legend-text-three"></span>活跃</span>
-                <span class="legend-text" @click="legendHandle('3')"><span class="legend-text-four"></span>铁杆</span>
-                <span class="legend-text" @click="legendHandle('4')"><span class="legend-text-five"></span>跳转</span>
-                <span class="legend-text" @click="legendHandle('5')"><span class="legend-text-six"></span>拉新</span>
-                <!-- <span class="legend-text" @click="legendHandle('6')"><span class="legend-text-seven"></span>转发</span> -->
+                <!-- <span class="legend-text" @click="legendHandle('0')"><span class="legend-text-one" :class="{'label-gray': !dataOptions[0]}"></span>爆光</span> -->
+                <span class="legend-text" @click="legendHandle('1')"><span class="legend-text-two" :class="{'label-gray': !dataOptions[1]}"></span>围观</span>
+                <span class="legend-text" @click="legendHandle('2')"><span class="legend-text-three" :class="{'label-gray': !dataOptions[2]}"></span>活跃</span>
+                <span class="legend-text" @click="legendHandle('3')"><span class="legend-text-four" :class="{'label-gray': !dataOptions[3]}"></span>铁杆</span>
+                <span class="legend-text" @click="legendHandle('4')"><span class="legend-text-five" :class="{'label-gray': !dataOptions[4]}"></span>跳转</span>
+                <span class="legend-text" @click="legendHandle('5')"><span class="legend-text-six" :class="{'label-gray': !dataOptions[5]}"></span>拉新</span>
+                <span class="legend-text" @click="legendHandle('6')"><span class="legend-text-seven " :class="{'label-gray': !dataOptions[6]}"></span>转发</span>
               </div>
               <PicChart :chartdata="chartdata" :dataOptions="dataOptions" :width="width"/>
             </div>
@@ -590,7 +590,7 @@ export default {
       screenCount: 0,
       // chartdata: [90291, 9078, 7461, 5463, 3258, 2434, 834],
       chartdata: [],
-      dataOptions: [true, true, true, true, true, true, true],
+      dataOptions: [true, true, true, true, true, true, false],
       width: ((window.innerWidth - 60 + 20) * 0.5 - 20) * 0.6,
       style: {
         chartFont: {
@@ -2166,6 +2166,7 @@ export default {
         align-items: center;
         margin-top: 40px;
         margin-bottom: 30px;
+
         .label {
           flex: 1;
           font-size: 14px;
@@ -2174,6 +2175,7 @@ export default {
             border: 1px solid #969292;
             border-radius: 4px;
           }
+
           .icon-wrap {
             display: inline;
             margin-right: 30px;
@@ -2207,6 +2209,7 @@ export default {
               display: inline-block;
               border-radius: 5px;
             }
+
             .legend-text-one {
               background: #8fe5b8;
             }
@@ -2227,6 +2230,9 @@ export default {
             }
             .legend-text-seven {
               background: #9e8047;
+            }
+            .label-gray {
+              background: #aba6a6;
             }
           }
         }
