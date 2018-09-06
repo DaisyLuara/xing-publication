@@ -23,8 +23,8 @@ class PointDailyAverageExport extends AbstractExport
     public function collection()
     {
         $data = collect();
-        $header1 = ['点位', '场景', 'BD', '7″CPF', '', '15″CPF', '', '21″CPF', '', 'CPF', '', 'oCPF', '', 'CPR', '', '生成数', 'CPA(去重)', 'CPA(不去重)', '扫码率', 'CPL', '', '有效天数', '时间'];
-        $header2 = ['', '', '', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', '', '', '', '', '总数', '平均数', '', ''];
+        $header1 = ['点位', '场景', 'BD', '7″fCPE', '', '15″fCPE', '', '21″fCPE', '', '7″uCPE', '', '15″uCPE', '', '21″uCPE', '', 'uCPA(去重)', '', '', 'fCPA(不去重)', '', '', '有效天数', '时间'];
+        $header2 = ['', '', '', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', 'omo', '公众号', '手机号', 'omo', '公众号', '手机号', '', ''];
         $header3 = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
         $data->push($header1);
         $data->push($header2);
@@ -51,7 +51,7 @@ class PointDailyAverageExport extends AbstractExport
             ->orderBy('aoa.areaid', 'desc')
             ->orderBy('aom.marketid', 'desc')
             ->orderBy('ao.oid', 'desc')
-            ->selectRaw("aoa.name as areaName,aom.name as marketName,ao.name as pointName,aos.name as scene,admin_staff.realname as BDName,count(*) as days, sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum20) as playernum20,sum(outnum) as outnum,sum(omo_outnum) as omo_outnum,sum(omo_scannum) as omo_scannum,sum(lovenum) as lovenum,concat_ws(',', date_format(min(fcl.date), '%Y-%m-%d'), date_format(max(fcl.date), '%Y-%m-%d')) as date")
+            ->selectRaw("aoa.name as areaName,aom.name as marketName,ao.name as pointName,aos.name as scene,admin_staff.realname as BDName,count(*) as days, sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(playernum7) as playernum7,sum(playernum15) as playernum15,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum,sum(oanum) as oanum,sum(phonenum) as phonenum,sum(omo_scannum) as omo_scannum,sum(oatimes) as oatimes,sum(phonetimes) as phonetimes,concat_ws(',', date_format(min(fcl.date), '%Y-%m-%d'), date_format(max(fcl.date), '%Y-%m-%d')) as date")
             ->get();
         $total = [];
         $faceCount->each(function ($item) use (&$data, &$total) {
@@ -65,18 +65,18 @@ class PointDailyAverageExport extends AbstractExport
                 'playtimes15Aver' => round($item->playtimes15 / $item->days, 0),
                 'playtimes21' => $item->playtimes21,
                 'playtimes21Aver' => round($item->playtimes21 / $item->days, 0),
-                'looknum' => $item->looknum,
-                'looknumAver' => round($item->looknum / $item->days, 0),
                 'playernum7' => $item->playernum7,
                 'playernum7Aver' => round($item->playernum7 / $item->days, 0),
-                'playernum20' => $item->playernum20,
-                'playernum20Aver' => round($item->playernum20 / $item->days, 0),
-                'outnum' => $item->outnum,
+                'playernum15' => $item->playernum15,
+                'playernum15Aver' => round($item->playernum15 / $item->days, 0),
+                'playernum21' => $item->playernum21,
+                'playernum21Aver' => round($item->playernum21 / $item->days, 0),
                 'omo_outnum' => $item->omo_outnum,
+                'oanum' => $item->oanum,
+                'phonenum' => $item->phonenum,
                 'omo_scannum' => $item->omo_scannum,
-                'rate' => (round(($item->outnum == 0) ? 0 : $item->omo_outnum / $item->outnum, 2) * 100) . '%',
-                'lovenum' => $item->lovenum,
-                'lovenumAver' => round($item->lovenum / $item->days, 0),
+                'oatimes' => $item->oatimes,
+                'phonetimes' => $item->phonetimes,
                 'days' => $item->days
             ];
 
@@ -99,22 +99,21 @@ class PointDailyAverageExport extends AbstractExport
             'playtimes15Aver' => array_sum(array_column($total, 'days')) == 0 ? 0 : floor(array_sum(array_column($total, 'playtimes15')) / array_sum(array_column($total, 'days'))),
             'playtimes21' => array_sum(array_column($total, 'playtimes21')),
             'playtimes21Aver' => array_sum(array_column($total, 'days')) == 0 ? 0 : floor(array_sum(array_column($total, 'playtimes21')) / array_sum(array_column($total, 'days'))),
-            'looknum' => array_sum(array_column($total, 'looknum')),
-            'looknumAver' => array_sum(array_column($total, 'days')) == 0 ? 0 : floor(array_sum(array_column($total, 'looknum')) / array_sum(array_column($total, 'days'))),
             'playernum7' => array_sum(array_column($total, 'playernum7')),
             'playernum7Aver' => array_sum(array_column($total, 'days')) == 0 ? 0 : floor(array_sum(array_column($total, 'playernum7')) / array_sum(array_column($total, 'days'))),
-            'playernum20' => array_sum(array_column($total, 'playernum20')),
-            'playernum20Aver' => array_sum(array_column($total, 'days')) == 0 ? 0 : floor(array_sum(array_column($total, 'playernum20')) / array_sum(array_column($total, 'days'))),
-            'outnum' => array_sum(array_column($total, 'outnum')),
+            'playernum15' => array_sum(array_column($total, 'playernum15')),
+            'playernum15Aver' => array_sum(array_column($total, 'days')) == 0 ? 0 : floor(array_sum(array_column($total, 'playernum15')) / array_sum(array_column($total, 'days'))),
+            'playernum21' => array_sum(array_column($total, 'playernum21')),
+            'playernum21Aver' => array_sum(array_column($total, 'days')) == 0 ? 0 : floor(array_sum(array_column($total, 'playernum21')) / array_sum(array_column($total, 'days'))),
             'omo_outnum' => array_sum(array_column($total, 'omo_outnum')),
+            'oanum' => array_sum(array_column($total, 'oanum')),
+            'phonenum' => array_sum(array_column($total, 'phonenum')),
             'omo_scannum' => array_sum(array_column($total, 'omo_scannum')),
-            'rate' => 0,
-            'lovenum' => array_sum(array_column($total, 'lovenum')),
-            'lovenumAver' => array_sum(array_column($total, 'days')) == 0 ? 0 : floor(array_sum(array_column($total, 'lovenum')) / array_sum(array_column($total, 'days'))),
+            'oatimes' => array_sum(array_column($total, 'oatimes')),
+            'phonetimes' => array_sum(array_column($total, 'phonetimes')),
             'days' => array_sum(array_column($total, 'days')),
             'date' => $this->startDate . '|' . $this->endDate
         ];
-        $totalData['rate'] = (round(($totalData['outnum'] == 0) ? 0 : $totalData['omo_outnum'] / $totalData['outnum'], 2) * 100) . '%';
         $data->push($totalData);
         $this->data = $data;
         return $data;
@@ -129,8 +128,9 @@ class PointDailyAverageExport extends AbstractExport
                     'A1:A3', 'B1:B3', 'C1:C3', 'D1:E1', 'D2:D3', 'E2:E3',
                     'F1:G1', 'F2:F3', 'G2:G3', 'H1:I1', 'H2:H3', 'I2:I3',
                     'J1:K1', 'J2:J3', 'K2:K3', 'L1:M1', 'L2:L3', 'M2:M3',
-                    'N1:O1', 'N2:N3', 'O2:O3', 'P1:P3', 'Q1:Q3', 'R1:R3',
-                    'S1:S3', 'T1:U1', 'T2:T3', 'U2:U3', 'V1:V3', 'W1:W3'
+                    'N1:O1', 'N2:N3', 'O2:O3', 'P1:R1', 'P2:P3', 'Q2:Q3',
+                    'R2:R3', 'S1:U1', 'S2:S3', 'T2:T3', 'U2:U3', 'V1:V3',
+                    'W1:W3'
                 ];
 
                 //合并单元格
