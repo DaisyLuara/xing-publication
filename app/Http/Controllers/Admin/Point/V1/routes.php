@@ -17,6 +17,9 @@ $api->version('v1', [
 
             //场地
             $api->get('markets', 'MarketController@index');
+
+            //点位
+            $api->get('points', 'PointController@index');
         });
     });
 
