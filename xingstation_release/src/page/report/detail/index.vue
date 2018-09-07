@@ -494,7 +494,11 @@
           class="actions-wrap-pic">
           <div 
             class="label">
-            <span class="date">{{handleDateTransform(dateTime[0])}}  -  {{handleDateTransform(dateTime[1])}}</span>
+            <!-- <div class="date">{{handleDateTransform(dateTime[0])}}  -  {{handleDateTransform(dateTime[1])}}</div> -->
+            <div class="item-text">时间：{{handleDateTransform(dateTime[0])}}  -  {{handleDateTransform(dateTime[1])}}</div>
+            <div class="item-text" v-if="sceneInfo">场景：{{sceneInfo}}</div>
+            <div class="item-text" v-if="projectInfo">节目：{{projectInfo}}</div>
+            <div class="item-text" v-if="addressInfo">地址：{{addressInfo}}</div>
           </div>
           <div class="label" style="text-align: right;">
             <span class="icon-wrap">
@@ -588,10 +592,12 @@ export default {
       rateDay: 0,
       marketCount: 0,
       screenCount: 0,
-      // chartdata: [90291, 9078, 7461, 5463, 3258, 2434, 834],
       chartdata: [],
       dataOptions: [true, true, true, true, true, true, false],
       width: ((window.innerWidth - 60 + 20) * 0.5 - 20) * 0.6,
+      sceneInfo: '',
+      projectInfo: '',
+      addressInfo: '',
       style: {
         chartFont: {
           fontSize: window.innerWidth / 80 + 'px'
@@ -1481,6 +1487,7 @@ export default {
       this.getAge()
       this.getCrowdTime()
       this.getGender()
+
       this.setting.loading = false
     },
     getCrowdTime() {
@@ -2102,6 +2109,47 @@ export default {
       this.shouldPicDialogShow = !this.shouldPicDialogShow
       if (this.shouldPicDialogShow) {
         this.getConversionRate()
+        let that = this
+        if (that.sceneSelect) {
+          let scene = this.sceneList.find(function(r) {
+            if (r.id === that.sceneSelect) {
+              return r.name
+            }
+          })
+          this.sceneInfo = scene.name
+        }
+        if (that.projectSelect) {
+          let project = this.projectList.find(function(r) {
+            if (r.alias === that.projectSelect) {
+              return r.name
+            }
+          })
+          this.projectInfo = project.name
+        }
+        if (that.area_id) {
+          let area = this.areaList.find(function(r) {
+            if (r.id === that.area_id) {
+              return r.name
+            }
+          })
+          this.addressInfo = area.name
+        }
+        if (that.market_id) {
+          let market = this.marketList.find(function(r) {
+            if (r.id === that.market_id) {
+              return r.name
+            }
+          })
+          this.addressInfo = this.addressInfo + market.name
+        }
+        if (that.point_id) {
+          let point = this.pointList.find(function(r) {
+            if (r.id === that.point_id) {
+              return r.name
+            }
+          })
+          this.addressInfo = this.addressInfo + point.name
+        }
       }
       if (window.innerWidth > 1300) {
         this.width = ((window.innerWidth - 60 + 20) * 0.5 - 20) * 0.6
@@ -2174,6 +2222,10 @@ export default {
             padding: 10px 20px;
             border: 1px solid #969292;
             border-radius: 4px;
+            width: 205px;
+          }
+          .item-text {
+            margin: 10px 0;
           }
 
           .icon-wrap {
