@@ -60,7 +60,7 @@ class PointTransformer extends TransformerAbstract
 
     public function includeShare(Point $point)
     {
-        $share = $point->contract;
+        $share = $point->share;
         if ($share) {
             return $this->item($share, new PointShareTransformer());
         }

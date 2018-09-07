@@ -38,4 +38,9 @@ class PointController extends Controller
         $points = $point->paginate(10);
         return $this->response->paginator($points, new PointTransformer());
     }
+
+    public function show(Point $point)
+    {
+        return $this->response->item($point, new PointTransformer());
+    }
 }

@@ -15,4 +15,9 @@ class MarketController extends Controller
         return $this->response->paginator($markets, new MarketTransformer());
     }
 
+    public function show(Market $market)
+    {
+        return $this->response->item($market, new MarketTransformer());
+    }
+
 }
