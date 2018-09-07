@@ -15,4 +15,14 @@ class Market extends Model
     {
         return $this->belongsTo(Area::class, 'areaid', 'areaid');
     }
+
+    public function contract()
+    {
+        return $this->hasOne(MarketContract::class, 'marketid', 'marketid');
+    }
+
+    public function share()
+    {
+        return $this->hasOne(MarketShare::class, 'marketid', 'marketid');
+    }
 }

@@ -14,6 +14,9 @@ $api->version('v1', [
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
             //热力地图
             $api->get('point/map', 'PointController@map');
+
+            //场地
+            $api->get('markets', 'MarketController@index');
         });
     });
 
