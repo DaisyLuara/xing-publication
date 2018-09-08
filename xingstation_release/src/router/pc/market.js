@@ -34,6 +34,13 @@ let router = {
             import(/* webpackChunkName: "page/market/site/save" */ 'page/market/site/save'),
           name: '新增场地',
           meta: {}
+        },
+        {
+          path: 'edit/:uid',
+          component: () =>
+            import(/* webpackChunkName: "page/market/site/save" */ 'page/market/site/save'),
+          name: '修改',
+          meta: {}
         }
       ]
     },
@@ -61,6 +68,13 @@ let router = {
           component: () =>
             import(/* webpackChunkName: "page/market/point/save" */ 'page/market/point/save'),
           name: '新增点位',
+          meta: {}
+        },
+        {
+          path: 'edit/:uid',
+          component: () =>
+            import(/* webpackChunkName: "page/market/point/save" */ 'page/market/point/save'),
+          name: '修改',
           meta: {}
         }
       ]

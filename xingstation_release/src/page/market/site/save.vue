@@ -55,7 +55,7 @@
             <el-form-item 
               label="场地类型" 
               prop="type" >
-              <el-radio-group v-model="siteForm.type" >
+              <el-radio-group v-model="siteForm.contract.type" >
                 <el-radio 
                   v-for="item in typeList"
                   :label="item.id"  
@@ -66,17 +66,17 @@
               label="合同" 
               prop="contract" >
               <el-radio  
-                v-model="siteForm.contract" 
+                v-model="siteForm.contract.contract" 
                 :label="0" >无</el-radio>
               <el-radio  
-                v-model="siteForm.contract" 
+                v-model="siteForm.contract.contract" 
                 :label="1" >有</el-radio>
             </el-form-item>
             <el-form-item 
               label="合同公司" 
               prop="contract_company" >
               <el-input 
-                v-model="siteForm.contract_company" 
+                v-model="siteForm.contract.contract_company" 
                 placeholder="请输入合同公司" 
                 class="item-input"/>
             </el-form-item>
@@ -84,7 +84,7 @@
               label="合同编号" 
               prop="contract_num" >
               <el-input 
-                v-model="siteForm.contract_num" 
+                v-model="siteForm.contract.contract_num" 
                 placeholder="请输入合同编号" 
                 class="item-input"/>
             </el-form-item>
@@ -92,7 +92,7 @@
               label="合同联系人" 
               prop="contract_user" >
               <el-input 
-                v-model="siteForm.contract_user" 
+                v-model="siteForm.contract.contract_user" 
                 placeholder="请输入合同联系人" 
                 class="item-input"/>
             </el-form-item>
@@ -100,7 +100,7 @@
               label="联系方式" 
               prop="contract_phone" >
               <el-input 
-                v-model="siteForm.contract_phone" 
+                v-model="siteForm.contract.contract_phone" 
                 placeholder="请输入联系方式" 
                 class="item-input"/>
             </el-form-item>
@@ -108,7 +108,7 @@
               label="租金" 
               prop="pay" >
               <el-input 
-                v-model="siteForm.pay" 
+                v-model="siteForm.contract.pay" 
                 placeholder="请输入租金" 
                 class="item-input">
                 <template slot="append">元／年</template>
@@ -118,7 +118,7 @@
               label="入驻开始时间" 
               prop="enter_sdate">
               <el-date-picker
-                v-model="siteForm.enter_sdate"
+                v-model="siteForm.contract.enter_sdate"
                 type="date"
                 placeholder="选择日期"
                 class="coupon-form-date"
@@ -128,7 +128,7 @@
               label="入驻结束时间"
               prop="enter_edate">
               <el-date-picker
-                v-model="siteForm.enter_edate"
+                v-model="siteForm.contract.enter_edate"
                 type="date"
                 placeholder="选择日期"
                 class="coupon-form-date"
@@ -139,7 +139,7 @@
               label="运营开始时间" 
               prop="oper_sdate">
               <el-date-picker
-                v-model="siteForm.oper_sdate"
+                v-model="siteForm.contract.oper_sdate"
                 type="date"
                 placeholder="选择日期"
                 class="coupon-form-date"
@@ -149,7 +149,7 @@
               label="运营结束时间"
               prop="oper_edate">
               <el-date-picker
-                v-model="siteForm.oper_edate"
+                v-model="siteForm.contract.oper_edate"
                 type="date"
                 placeholder="选择日期"
                 class="coupon-form-date"
@@ -159,7 +159,7 @@
             <el-form-item 
               label="合约模式" 
               prop="mode" >
-              <el-radio-group v-model="siteForm.mode" >
+              <el-radio-group v-model="siteForm.contract.mode" >
                 <el-radio 
                   v-for="item in modeList"
                   :label="item.id"  
@@ -170,7 +170,7 @@
               label="A类广告分成" 
               prop="ad_istar" >
               <el-input 
-                v-model="siteForm.ad_istar" 
+                v-model="siteForm.contract.ad_istar" 
                 placeholder="请输入A类广告分成" 
                 class="item-input">
                 <template slot="append">%(星视度引入)</template>
@@ -180,7 +180,7 @@
               label="B类广告分成" 
               prop="ad_ads" >
               <el-input 
-                v-model="siteForm.ad_ads" 
+                v-model="siteForm.contract.ad_ads" 
                 placeholder="请输入B类广告分成" 
                 class="item-input">
                 <template slot="append">%(非星视度引入)</template>
@@ -190,7 +190,7 @@
               label="置换节目数量" 
               prop="exchange_num" >
               <el-input 
-                v-model="siteForm.exchange_num" 
+                v-model="siteForm.contract.exchange_num" 
                 placeholder="请输入置换节目数量" 
                 class="item-input">
                 <template slot="append">套</template>
@@ -212,17 +212,27 @@
               label="报刊价" 
               prop="offer" >
               <el-input 
-                v-model="siteForm.offer" 
+                v-model="siteForm.share.offer" 
                 placeholder="请输入报刊价" 
                 class="item-input">
-                <template slot="append">分/屏/次</template>
+                <template slot="append">
+                  <el-tooltip  
+                    effect="dark" 
+                    content="每个屏幕每次的价钱" 
+                    placement="right"
+                    class="item">
+                    <div>
+                      分/屏/次
+                    </div>
+                  </el-tooltip>
+                </template>
               </el-input>
             </el-form-item>
             <el-form-item 
               label="报刊价系数" 
               prop="offer_off" >
               <el-input 
-                v-model="siteForm.offer_off" 
+                v-model="siteForm.share.offer_off" 
                 placeholder="请输入报刊价系数" 
                 class="item-input">
                 <template slot="append">%</template>
@@ -232,17 +242,27 @@
               label="曝光价" 
               prop="mad" >
               <el-input 
-                v-model="siteForm.mad" 
+                v-model="siteForm.share.mad" 
                 placeholder="请输入曝光价" 
                 class="item-input">
-                <template slot="append">分/屏/次</template>
+                <template slot="append">
+                  <el-tooltip  
+                    effect="dark" 
+                    content="每个屏幕每次的价钱" 
+                    placement="right"
+                    class="item">
+                    <div>
+                      分/屏/次
+                    </div>
+                  </el-tooltip>
+                </template>
               </el-input>
             </el-form-item>
             <el-form-item 
               label="曝光价" 
               prop="mad_off" >
               <el-input 
-                v-model="siteForm.mad_off" 
+                v-model="siteForm.share.mad_off" 
                 placeholder="请输入曝光价系数" 
                 class="item-input">
                 <template slot="append">%</template>
@@ -252,17 +272,27 @@
               label="冠名价" 
               prop="play" >
               <el-input 
-                v-model="siteForm.play" 
+                v-model="siteForm.share.play" 
                 placeholder="请输入冠名价" 
                 class="item-input">
-                <template slot="append">分/屏/次</template>
+                <template slot="append">
+                  <el-tooltip  
+                    effect="dark" 
+                    content="每个屏幕每次的价钱" 
+                    placement="right"
+                    class="item">
+                    <div>
+                      分/屏/次
+                    </div>
+                  </el-tooltip>
+                </template>
               </el-input>
             </el-form-item>
             <el-form-item 
               label="冠名价系数" 
               prop="play_off" >
               <el-input 
-                v-model="siteForm.play_off" 
+                v-model="siteForm.share.play_off" 
                 placeholder="请输入冠名价系数" 
                 class="item-input">
                 <template slot="append">%</template>
@@ -272,17 +302,27 @@
               label="链接跳转" 
               prop="qrcode" >
               <el-input 
-                v-model="siteForm.qrcode" 
+                v-model="siteForm.share.qrcode" 
                 placeholder="请输入" 
                 class="item-input">
-                <template slot="append">分/场地/天</template>
+                <template slot="append">
+                  <el-tooltip  
+                    effect="dark" 
+                    content="每个场地每天的价钱" 
+                    placement="right"
+                    class="item">
+                    <div>
+                      分/场地/天
+                    </div>
+                  </el-tooltip>
+                </template>
               </el-input>
             </el-form-item>
             <el-form-item 
               label="链接跳转系数" 
               prop="qrcode_off" >
               <el-input 
-                v-model="siteForm.qrcode_off" 
+                v-model="siteForm.share.qrcode_off" 
                 placeholder="请输入链接跳转系数" 
                 class="item-input">
                 <template slot="append">%</template>
@@ -292,17 +332,16 @@
               label="订阅/公众号" 
               prop="wx_pa" >
               <el-input 
-                v-model="siteForm.wx_pa" 
+                v-model="siteForm.share.wx_pa" 
                 placeholder="请输入" 
                 class="item-input">
-                <template slot="append">分/场地/天</template>
               </el-input>
             </el-form-item>
             <el-form-item 
               label="订阅/公众号系数" 
               prop="wx_pa_off" >
               <el-input 
-                v-model="siteForm.wx_pa_off" 
+                v-model="siteForm.share.wx_pa_off" 
                 placeholder="请输入订阅/公众号系数" 
                 class="item-input">
                 <template slot="append">%</template>
@@ -312,17 +351,27 @@
               label="小程序" 
               prop="wx_mp" >
               <el-input 
-                v-model="siteForm.wx_mp" 
+                v-model="siteForm.share.wx_mp" 
                 placeholder="请输入" 
                 class="item-input">
-                <template slot="append">分/场地/天</template>
+                <template slot="append">
+                  <el-tooltip  
+                    effect="dark" 
+                    content="每个场地每天的价钱" 
+                    placement="right"
+                    class="item">
+                    <div>
+                      分/场地/天
+                    </div>
+                  </el-tooltip>
+                </template>
               </el-input>
             </el-form-item>
             <el-form-item 
               label="小程序系数" 
               prop="wx_mp_off" >
               <el-input 
-                v-model="siteForm.wx_mp_off" 
+                v-model="siteForm.share.wx_mp_off" 
                 placeholder="请输入小程序系数" 
                 class="item-input">
                 <template slot="append">%</template>
@@ -332,16 +381,26 @@
               label="APP下载" 
               prop="app" >
               <el-input 
-                v-model="siteForm.app" 
+                v-model="siteForm.share.app" 
                 placeholder="请输入" 
                 class="item-input">
-                <template slot="append">分/场地/天</template>
+                <template slot="append">
+                  <el-tooltip  
+                    effect="dark" 
+                    content="每个场地每天的价钱" 
+                    placement="right"
+                    class="item">
+                    <div>
+                      分/场地/天
+                    </div>
+                  </el-tooltip>
+                </template>
               </el-input>
             </el-form-item><el-form-item 
               label="APP系数" 
               prop="app_off" >
               <el-input 
-                v-model="siteForm.app_off" 
+                v-model="siteForm.share.app_off" 
                 placeholder="请输入APP系数" 
                 class="item-input">
                 <template slot="append">%</template>
@@ -351,17 +410,27 @@
               label="手机号提取" 
               prop="phone" >
               <el-input 
-                v-model="siteForm.phone" 
+                v-model="siteForm.share.phone" 
                 placeholder="请输入" 
                 class="item-input">
-                <template slot="append">分/场地/天</template>
+                <template slot="append">
+                  <el-tooltip  
+                    effect="dark" 
+                    content="每个场地每天的价钱" 
+                    placement="right"
+                    class="item">
+                    <div>
+                      分/场地/天
+                    </div>
+                  </el-tooltip>
+                </template>
               </el-input>
             </el-form-item>
             <el-form-item 
               label="手机号系数" 
               prop="phone_off" >
               <el-input 
-                v-model="siteForm.phone_off" 
+                v-model="siteForm.share.phone_off" 
                 placeholder="请输入手机号系数" 
                 class="item-input">
                 <template slot="append">%</template>
@@ -371,17 +440,27 @@
               label="优惠券" 
               prop="coupon" >
               <el-input 
-                v-model="siteForm.coupon" 
+                v-model="siteForm.share.coupon" 
                 placeholder="请输入" 
                 class="item-input">
-                <template slot="append">分/场地/天</template>
+                <template slot="append">
+                  <el-tooltip  
+                    effect="dark" 
+                    content="每个场地每天的价钱" 
+                    placement="right"
+                    class="item">
+                    <div>
+                      分/场地/天
+                    </div>
+                  </el-tooltip>
+                </template>
               </el-input>
             </el-form-item>
             <el-form-item 
               label="卷系数" 
               prop="coupon_off" >
               <el-input 
-                v-model="siteForm.coupon_off" 
+                v-model="siteForm.share.coupon_off" 
                 placeholder="请输入卷系数" 
                 class="item-input">
                 <template slot="append">%</template>
@@ -401,7 +480,7 @@
 
 <script>
 import search from 'service/search'
-import project from 'service/project'
+import market from 'service/market'
 import {
   Form,
   Select,
@@ -414,7 +493,8 @@ import {
   Tabs,
   TabPane,
   RadioGroup,
-  Radio
+  Radio,
+  Tooltip
 } from 'element-ui'
 
 export default {
@@ -429,7 +509,8 @@ export default {
     ElTabs: Tabs,
     ElTabPane: TabPane,
     ElRadioGroup: RadioGroup,
-    ElRadio: Radio
+    ElRadio: Radio,
+    ElTooltip: Tooltip
   },
   data() {
     let checkEnterEndDate = (rule, value, callback) => {
@@ -531,39 +612,43 @@ export default {
         area_id: '',
         name: '',
         type: 'free',
-        contract: 1,
-        contract_company: '',
-        contract_num: '',
-        contract_user: '',
-        contract_phone: '',
-        pay: 0,
-        enter_sdate: '',
-        enter_edate: '',
-        oper_sdate: '',
-        oper_edate: '',
-        mode: 'none',
-        ad_istar: 5,
-        ad_ads: 5,
-        exchange_num: 0,
+        contract: {
+          contract: 1,
+          contract_company: '',
+          contract_num: '',
+          contract_user: '',
+          contract_phone: '',
+          pay: 0,
+          enter_sdate: '',
+          enter_edate: '',
+          oper_sdate: '',
+          oper_edate: '',
+          mode: 'none',
+          ad_istar: 5,
+          ad_ads: 5,
+          exchange_num: 0
+        },
         permission: 1,
-        offer: 2000,
-        offer_off: 100,
-        mad: 50,
-        mad_off: 100,
-        play: 300,
-        play_off: 100,
-        qrcode: 1000,
-        qrcode_off: 100,
-        wx_pa: 1000,
-        wx_pa_off: 100,
-        wx_mp: 2000,
-        wx_mp_off: 100,
-        app: 5000,
-        app_off: 100,
-        phone: 5000,
-        phone_off: 100,
-        coupon: 2000,
-        coupon_off: 100
+        share: {
+          offer: 2000,
+          offer_off: 100,
+          mad: 50,
+          mad_off: 100,
+          play: 300,
+          play_off: 100,
+          qrcode: 1000,
+          qrcode_off: 100,
+          wx_pa: 1000,
+          wx_pa_off: 100,
+          wx_mp: 2000,
+          wx_mp_off: 100,
+          app: 5000,
+          app_off: 100,
+          phone: 5000,
+          phone_off: 100,
+          coupon: 2000,
+          coupon_off: 100
+        }
       },
       areaList: [],
       rules: {
@@ -649,11 +734,59 @@ export default {
       }
     }
   },
-  mounted() {},
   created() {
+    this.siteID = this.$route.params.uid
+    if (this.siteID) {
+      this.getMarketDetail()
+    }
     this.getAreaList()
   },
   methods: {
+    getMarketDetail() {
+      this.setting.loading = true
+      let id = this.siteID
+      let args = {
+        include: 'share,contract,area'
+      }
+      market
+        .getMarketDetail(this, args, id)
+        .then(res => {
+          this.siteForm.name = res.name
+          this.siteForm.area_id = res.area.id
+          this.siteForm.contract = res.contract
+          this.siteForm.share = res.share
+          if (
+            res.share.site === 0 &&
+            res.share.vipad === 0 &&
+            res.share.ad === 0 &&
+            res.share.agent === 0
+          ) {
+            this.siteForm.permission = ''
+          } else {
+            if (res.share.site === 1) {
+              this.setting.loading = false
+              return (this.siteForm.permission = 1)
+            }
+            if (res.share.vipad === 1) {
+              this.setting.loading = false
+              return (this.siteForm.permission = 3)
+            }
+            if (res.share.ad === 1) {
+              this.setting.loading = false
+              return (this.siteForm.permission = 2)
+            }
+            if (res.share.agent === 1) {
+              this.setting.loading = false
+              return (this.siteForm.permission = 0)
+            }
+          }
+          this.setting.loading = false
+        })
+        .catch(err => {
+          console.log(err)
+          this.setting.loading = false
+        })
+    },
     getAreaList() {
       return search
         .getAeraList(this)

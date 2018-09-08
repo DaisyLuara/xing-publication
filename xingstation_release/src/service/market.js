@@ -26,5 +26,29 @@ export default {
           reject(err)
         })
     })
+  },
+  getMarketDetail(context, params, id) {
+    return new Promise(function(resolve, reject) {
+      context.$http
+        .get(HOST + MARKET_API + '/' + id, { params: params })
+        .then(res => {
+          resolve(res.data)
+        })
+        .catch(err => {
+          reject(err)
+        })
+    })
+  },
+  getPointDetail(context, params, id) {
+    return new Promise(function(resolve, reject) {
+      context.$http
+        .get(HOST + POINT_API + '/' + id, { params: params })
+        .then(res => {
+          resolve(res.data)
+        })
+        .catch(err => {
+          reject(err)
+        })
+    })
   }
 }
