@@ -7,6 +7,7 @@
       class="item-list-wrap">
       <div 
         class="item-content-wrap">
+        <!-- 搜素条件 -->
         <div 
           class="search-wrap">
           <el-form 
@@ -116,6 +117,7 @@
             </el-row>
           </el-form>
         </div>
+        <!-- 场地列表 -->
         <div 
           class="total-wrap">
           <span 
@@ -464,7 +466,11 @@ export default {
         path: '/market/site/add'
       })
     },
-    editSite(data) {},
+    editSite(data) {
+      this.$router.push({
+        path: '/market/site/edit/' + data.id
+      })
+    },
     getMarketList() {
       this.setting.loading = true
       let args = {
