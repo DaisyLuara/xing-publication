@@ -8,7 +8,7 @@ use League\Fractal\TransformerAbstract;
 class MarketTransformer extends TransformerAbstract
 {
 
-    protected $availableIncludes = ['area'];
+    protected $availableIncludes = ['area', 'contract', 'share'];
 
     public function transform(Market $market)
     {
@@ -21,5 +21,21 @@ class MarketTransformer extends TransformerAbstract
     public function includeArea(Market $market)
     {
         return $this->item($market->area, new AreaTransformer());
+    }
+
+    public function includeContract(Market $market)
+    {
+        $contract = $market->contract;
+        if ($contract) {
+            return $this->item($market->contract, new MarketContractTransformer());
+        }
+    }
+
+    public function includeShare(Market $market)
+    {
+        $share = $market->share;
+        if ($share) {
+            return $this->item($market->share, new MarketShareTransformer());
+        }
     }
 }

@@ -38,4 +38,14 @@ class Point extends Model
         return $this->belongsTo(Area::class, 'areaid', 'areaid');
     }
 
+    public function share()
+    {
+        return $this->hasOne(PointShare::class, 'oid', 'oid');
+    }
+
+    public function contract()
+    {
+        return $this->hasOne(PointContract::class, 'oid', 'oid');
+    }
+
 }

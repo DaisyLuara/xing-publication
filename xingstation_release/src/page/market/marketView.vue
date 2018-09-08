@@ -1,23 +1,20 @@
 <template>
-  <div 
-    class="point-root">
-    <second-sidebar 
-      module="point"/>
-    <div 
-      class="topbar">
+  <div class="market-root">
+    <second-sidebar module="market"/>
+    <div class="topbar">
       {{ this.$route.meta.title }}
     </div>
-    <router-view/>
+    <router-view />
   </div>
 </template>
 <script>
 export default {
-  name: 'PointView'
+  name: 'MarketView'
 }
 </script>
 
 <style lang="less" scoped>
-.point-root {
+.market-root {
   height: 100%;
   background-color: #eff2f7;
   .topbar {

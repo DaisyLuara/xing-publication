@@ -8,7 +8,7 @@ use League\Fractal\TransformerAbstract;
 
 class PointTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['projects', 'arUsers', 'market', 'scene', 'area'];
+    protected $availableIncludes = ['projects', 'arUsers', 'market', 'scene', 'area', 'contract', 'share'];
 
     public function transform(Point $point)
     {
@@ -48,6 +48,22 @@ class PointTransformer extends TransformerAbstract
     public function includeScene(Point $point)
     {
         return $this->item($point->scene, new SceneTransformer());
+    }
+
+    public function includeContract(Point $point)
+    {
+        $contract = $point->contract;
+        if ($contract) {
+            return $this->item($contract, new PointContractTransformer());
+        }
+    }
+
+    public function includeShare(Point $point)
+    {
+        $share = $point->share;
+        if ($share) {
+            return $this->item($share, new PointShareTransformer());
+        }
     }
 
 }
