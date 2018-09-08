@@ -1,4 +1,3 @@
-import { router } from '../main'
 const PROJECT_API = '/api/projects/launch'
 const MODIFY_PROJECT_API = '/api/projects/launches'
 const PROJECTLIST_API = '/api/projects'
