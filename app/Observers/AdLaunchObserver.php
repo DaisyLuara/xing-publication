@@ -25,7 +25,7 @@ class AdLaunchObserver
 
     }
 
-    public function updating(ProjectLaunch $adLaunch)
+    public function updating(AdLaunch $adLaunch)
     {
         $adLaunch->clientdate = time() * 1000;
     }

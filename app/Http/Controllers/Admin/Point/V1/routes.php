@@ -18,6 +18,8 @@ $api->version('v1', [
             //场地
             $api->get('markets', 'MarketController@index');
             $api->get('markets/{market}', 'MarketController@show');
+            $api->post('market', 'MarketController@store');
+            $api->patch('market/{market}', 'MarketController@update');
 
             //点位
             $api->get('points', 'PointController@index');
