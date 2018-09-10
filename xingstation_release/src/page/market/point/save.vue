@@ -56,12 +56,13 @@
               prop="site_id" >
               <el-select 
                 v-model="pointForm.site_id" 
-                placeholder="请选择"
                 :remote-method="getMarket"
                 :loading="searchLoading" 
+                placeholder="请选择"
                 filterable
                 remote 
-                clearable>
+                clearable
+                @change="siteHandle">
                 <el-option
                   v-for="item in siteList"
                   :key="item.id"
@@ -70,7 +71,7 @@
               </el-select>
             </el-form-item>
           </el-tab-pane>
-          <el-tab-pane label="合约配置" name="second">
+          <el-tab-pane label="合约配置" name="second" v-loading="contractFlag">
             <el-form-item 
               label="点位类型" 
               prop="contract.type" >
@@ -223,7 +224,7 @@
               </el-form-item>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="共享配置" name="third">
+          <el-tab-pane label="共享配置" name="third" v-loading="contractFlag">
             <el-form-item 
               label="点位权限" 
               prop="permission" >
@@ -592,6 +593,7 @@ export default {
       }
     }
     return {
+      contractFlag: false,
       modeNone: false,
       modeFlag: true,
       searchLoading: false,
@@ -854,6 +856,55 @@ export default {
     this.getAreaList()
   },
   methods: {
+    siteHandle() {
+      if (!this.pointID) {
+        this.getMarketDetail(this.pointForm.site_id)
+      }
+    },
+    getMarketDetail(id) {
+      this.contractFlag = true
+      let args = {
+        include: 'share,contract,area'
+      }
+      market
+        .getMarketDetail(this, args, id)
+        .then(res => {
+          this.getMarket()
+          if (res.contract) {
+            this.pointForm.contract = res.contract
+          }
+          if (res.share) {
+            this.pointForm.permission = []
+            this.pointForm.share = res.share
+            if (
+              res.share.site === 0 &&
+              res.share.vipad === 0 &&
+              res.share.ad === 0 &&
+              res.share.agent === 0
+            ) {
+              this.pointForm.permission = []
+            } else {
+              if (res.share.site === 1) {
+                this.pointForm.permission.push(1)
+              }
+              if (res.share.vipad === 1) {
+                this.pointForm.permission.push(3)
+              }
+              if (res.share.ad === 1) {
+                this.pointForm.permission.push(2)
+              }
+              if (res.share.agent === 1) {
+                this.pointForm.permission.push(0)
+              }
+            }
+          }
+          this.contractFlag = false
+        })
+        .catch(err => {
+          console.log(err)
+          this.contractFlag = false
+        })
+    },
     getPointDetail() {
       this.setting.loading = true
       let id = this.pointID

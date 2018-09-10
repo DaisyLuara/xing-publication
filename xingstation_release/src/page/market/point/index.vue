@@ -34,10 +34,11 @@
                   label="" 
                   prop="area">
                   <el-select 
-                    v-model="searchForm.area" 
+                    v-model="searchForm.area_id" 
                     placeholder="区域" 
                     filterable 
-                    clearable>
+                    clearable
+                    @change="areaHandle">
                     <el-option
                       v-for="item in areaList"
                       :key="item.id"
@@ -53,7 +54,10 @@
                   prop="mode">
                   <el-select 
                     v-model="searchForm.site" 
-                    placeholder="场地名称" 
+                    :remote-method="getMarket"
+                    :loading="searchLoading" 
+                    placeholder="场地名称"
+                    remote
                     filterable 
                     clearable>
                     <el-option
@@ -343,6 +347,7 @@ export default {
         loading: false,
         loadingText: '拼命加载中'
       },
+      searchLoading: false,
       pagination: {
         total: 0,
         pageSize: 10,
@@ -366,6 +371,32 @@ export default {
         path: '/market/point/edit/' + data.id
       })
     },
+    areaHandle() {
+      this.searchForm.site = ''
+      this.getMarket(this.searchForm.site)
+    },
+    getMarket(query) {
+      this.searchLoading = true
+      let args = {
+        name: query,
+        include: 'area',
+        area_id: this.searchForm.area_id
+      }
+      return search
+        .getMarketList(this, args)
+        .then(response => {
+          this.siteList = response.data
+          if (this.siteList.length == 0) {
+            this.searchForm.site = ''
+            this.siteList = []
+          }
+          this.searchLoading = false
+        })
+        .catch(err => {
+          console.log(err)
+          this.searchLoading = false
+        })
+    },
     getPointList() {
       this.setting.loading = true
       let args = {
@@ -375,7 +406,6 @@ export default {
       market
         .getPointList(this, args)
         .then(res => {
-          console.log(res)
           this.tableData = res.data
           this.pagination.total = res.meta.pagination.total
           this.setting.loading = false
