@@ -6,7 +6,7 @@
       <el-breadcrumb 
         separator="/">
         <el-breadcrumb-item 
-          :to="{ path: '/market/site' }">点位管理</el-breadcrumb-item>
+          :to="{ path: '/market/point' }">点位管理</el-breadcrumb-item>
         <el-breadcrumb-item>{{ pointID ? '修改' : '添加' }}</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
