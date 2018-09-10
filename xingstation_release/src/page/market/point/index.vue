@@ -146,10 +146,10 @@
             总数:{{ pagination.total }} 
           </span>
           <div>
-          <el-button 
-            size="small" 
-            type="success"
-            @click="addPoint">新建点位</el-button>
+            <el-button 
+              size="small" 
+              type="success"
+              @click="addPoint">新建点位</el-button>
           </div>
         </div>
         <el-table 
@@ -188,16 +188,14 @@
             :show-overflow-tooltip="true"
             prop="name"
             label="点位名称"
-            min-width="100"
-          >
-          </el-table-column>
+            min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="area"
             label="区域"
             min-width="80">
             <template slot-scope="scope">
-              {{scope.row.area.name}}
+              {{ scope.row.area.name }}
             </template>
           </el-table-column>
           <el-table-column
@@ -206,7 +204,7 @@
             label="场地名称"
             min-width="80">
             <template slot-scope="scope">
-              {{scope.row.market.name}}
+              {{ scope.row.market.name }}
             </template>
           </el-table-column>
           <el-table-column 

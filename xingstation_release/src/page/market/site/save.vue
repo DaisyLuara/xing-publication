@@ -26,7 +26,9 @@
         <el-tabs 
           v-model="activeName" 
           type="card">
-          <el-tab-pane label="场地配置" name="first">
+          <el-tab-pane 
+            label="场地配置" 
+            name="first">
             <el-form-item 
               label="场地名称" 
               prop="name" >
@@ -51,7 +53,9 @@
               </el-select>
             </el-form-item>
           </el-tab-pane>
-          <el-tab-pane label="合约配置" name="second">
+          <el-tab-pane 
+            label="合约配置" 
+            name="second">
             <el-form-item 
               label="场地类型" 
               prop="contract.type" >
@@ -192,7 +196,7 @@
                 </el-input>
               </el-form-item>
               <el-form-item
-                 v-show="!modeFlag" 
+                v-show="!modeFlag" 
                 label="置换节目数量" 
                 prop="contract.exchange_num">
                 <el-input 
@@ -204,7 +208,9 @@
               </el-form-item>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="共享配置" name="third">
+          <el-tab-pane 
+            label="共享配置" 
+            name="third">
             <el-form-item 
               label="场地权限" 
               prop="permission" >

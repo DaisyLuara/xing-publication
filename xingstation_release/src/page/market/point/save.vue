@@ -26,7 +26,9 @@
         <el-tabs 
           v-model="activeName" 
           type="card">
-          <el-tab-pane label="点位配置" name="first">
+          <el-tab-pane 
+            label="点位配置" 
+            name="first">
             <el-form-item 
               label="点位名称" 
               prop="name" >
@@ -71,7 +73,10 @@
               </el-select>
             </el-form-item>
           </el-tab-pane>
-          <el-tab-pane label="合约配置" name="second" v-loading="contractFlag">
+          <el-tab-pane
+            v-loading="contractFlag" 
+            label="合约配置" 
+            name="second">
             <el-form-item 
               label="点位类型" 
               prop="contract.type" >
@@ -224,11 +229,15 @@
               </el-form-item>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="共享配置" name="third" v-loading="contractFlag">
+          <el-tab-pane
+            v-loading="contractFlag" 
+            label="共享配置" 
+            name="third">
             <el-form-item 
               label="点位权限" 
               prop="permission" >
-              <el-checkbox-group v-model="pointForm.permission" >
+              <el-checkbox-group 
+                v-model="pointForm.permission" >
                 <el-checkbox 
                   v-for="item in permissionList"
                   :label="item.id"  
@@ -302,17 +311,17 @@
                 v-model="pointForm.share.play" 
                 placeholder="请输入冠名价" 
                 class="item-input">
-                  <template slot="append">
-                    <el-tooltip  
-                      effect="dark" 
-                      content="每个屏每次的价钱" 
-                      placement="right"
-                      class="item">
-                      <div>
-                        ¥／分
-                      </div>
-                    </el-tooltip>
-                  </template>
+                <template slot="append">
+                  <el-tooltip  
+                    effect="dark" 
+                    content="每个屏每次的价钱" 
+                    placement="right"
+                    class="item">
+                    <div>
+                      ¥／分
+                    </div>
+                  </el-tooltip>
+                </template>
               </el-input>
             </el-form-item>
             <el-form-item 

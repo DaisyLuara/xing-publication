@@ -8,6 +8,7 @@
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "production": "npm run build",
+    "lint": "eslint --ext .js,.vue src",
     "build": "node build/build.js",
     "test": "npm run production test && cp -r ./predist/* ./dist",
     "release": "npm run production && cp -r ./predist/* ./dist"
