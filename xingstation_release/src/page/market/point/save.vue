@@ -73,7 +73,7 @@
           <el-tab-pane label="合约配置" name="second">
             <el-form-item 
               label="点位类型" 
-              prop="type" >
+              prop="contract.type" >
               <el-radio-group v-model="pointForm.contract.type" >
                 <el-radio 
                   v-for="item in typeList"
@@ -83,7 +83,7 @@
             </el-form-item>
             <el-form-item 
               label="合同" 
-              prop="contract" >
+              prop="contract.contract" >
               <el-radio  
                 v-model="pointForm.contract.contract" 
                 :label="0" >无</el-radio>
@@ -93,7 +93,7 @@
             </el-form-item>
             <el-form-item 
               label="合同公司" 
-              prop="contract_company" >
+              prop="contract.contract_company" >
               <el-input 
                 v-model="pointForm.contract.contract_company" 
                 placeholder="请输入合同公司" 
@@ -101,7 +101,7 @@
             </el-form-item>
             <el-form-item 
               label="合同编号" 
-              prop="contract_num" >
+              prop="contract.contract_num" >
               <el-input 
                 v-model="pointForm.contract.contract_num" 
                 placeholder="请输入合同编号" 
@@ -109,7 +109,7 @@
             </el-form-item>
             <el-form-item 
               label="合同联系人" 
-              prop="contract_user" >
+              prop="contract.contract_user" >
               <el-input 
                 v-model="pointForm.contract.contract_user" 
                 placeholder="请输入合同联系人" 
@@ -117,7 +117,7 @@
             </el-form-item>
             <el-form-item 
               label="联系方式" 
-              prop="contract_phone" >
+              prop="contract.contract_phone" >
               <el-input 
                 v-model="pointForm.contract.contract_phone" 
                 placeholder="请输入联系方式" 
@@ -125,7 +125,7 @@
             </el-form-item>
             <el-form-item 
               label="租金" 
-              prop="pay" >
+              prop="contract.pay" >
               <el-input 
                 v-model="pointForm.contract.pay" 
                 placeholder="请输入租金" 
@@ -134,8 +134,8 @@
               </el-input>
             </el-form-item>
             <el-form-item 
-              label="入驻开始时间" 
-              prop="enter_sdate">
+              label="合同开始时间" 
+              prop="contract.enter_sdate">
               <el-date-picker
                 v-model="pointForm.contract.enter_sdate"
                 type="date"
@@ -144,8 +144,8 @@
                 value-format="yyyy-MM-dd HH:mm:ss"/>
             </el-form-item>
             <el-form-item 
-              label="入驻结束时间"
-              prop="enter_edate">
+              label="合同结束时间"
+              prop="contract.enter_edate">
               <el-date-picker
                 v-model="pointForm.contract.enter_edate"
                 type="date"
@@ -155,8 +155,8 @@
               />
             </el-form-item>
             <el-form-item 
-              label="运营开始时间" 
-              prop="oper_sdate">
+              label="实际入驻开始时间" 
+              prop="contract.oper_sdate">
               <el-date-picker
                 v-model="pointForm.contract.oper_sdate"
                 type="date"
@@ -165,8 +165,8 @@
                 value-format="yyyy-MM-dd HH:mm:ss"/>
             </el-form-item>
             <el-form-item 
-              label="运营结束时间"
-              prop="oper_edate">
+              label="实际入驻结束时间"
+              prop="contract.oper_edate">
               <el-date-picker
                 v-model="pointForm.contract.oper_edate"
                 type="date"
@@ -177,59 +177,66 @@
             </el-form-item>
             <el-form-item 
               label="合约模式" 
-              prop="mode" >
-              <el-radio-group v-model="pointForm.contract.mode" >
+              prop="contract.mode" >
+              <el-radio-group 
+                v-model="pointForm.contract.mode" 
+                @change="modeHandle">
                 <el-radio 
                   v-for="item in modeList"
                   :label="item.id"  
                   :key="item.id">{{ item.name }}</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item 
-              label="A类广告分成" 
-              prop="ad_istar" >
-              <el-input 
-                v-model="pointForm.contract.ad_istar" 
-                placeholder="请输入A类广告分成" 
-                class="item-input">
-                <template slot="append">%(星视度引入)</template>
-              </el-input>
-            </el-form-item>
-            <el-form-item 
-              label="B类广告分成" 
-              prop="ad_ads" >
-              <el-input 
-                v-model="pointForm.contract.ad_ads" 
-                placeholder="请输入B类广告分成" 
-                class="item-input">
-                <template slot="append">%(非星视度引入)</template>
-              </el-input>
-            </el-form-item>
-            <el-form-item 
-              label="置换节目数量" 
-              prop="exchange_num" >
-              <el-input 
-                v-model="pointForm.contract.exchange_num" 
-                placeholder="请输入置换节目数量" 
-                class="item-input">
-                <template slot="append">套</template>
-              </el-input>
-            </el-form-item>
+            <div v-if="modeNone">
+              <el-form-item 
+                v-if="modeFlag"
+                label="A类广告分成" 
+                prop="contract.ad_istar" >
+                <el-input 
+                  v-model="pointForm.contract.ad_istar" 
+                  placeholder="请输入A类广告分成" 
+                  class="item-input">
+                  <template slot="append">%(星视度引入)</template>
+                </el-input>
+              </el-form-item>
+              <el-form-item 
+                v-if="modeFlag"
+                label="B类广告分成" 
+                prop="contract.ad_ads" >
+                <el-input 
+                  v-model="pointForm.contract.ad_ads" 
+                  placeholder="请输入B类广告分成" 
+                  class="item-input">
+                  <template slot="append">%(非星视度引入)</template>
+                </el-input>
+              </el-form-item>
+              <el-form-item
+                v-if="!modeFlag" 
+                label="置换节目数量" 
+                prop="contract.exchange_num" >
+                <el-input 
+                  v-model="pointForm.contract.exchange_num" 
+                  placeholder="请输入置换节目数量" 
+                  class="item-input">
+                  <template slot="append">套</template>
+                </el-input>
+              </el-form-item>
+            </div>
           </el-tab-pane>
           <el-tab-pane label="共享配置" name="third">
             <el-form-item 
               label="点位权限" 
               prop="permission" >
-              <el-radio-group v-model="pointForm.permission" >
-                <el-radio 
+              <el-checkbox-group v-model="pointForm.permission" >
+                <el-checkbox 
                   v-for="item in permissionList"
                   :label="item.id"  
-                  :key="item.id">{{ item.name }}</el-radio>
-              </el-radio-group>
+                  :key="item.id">{{ item.name }}</el-checkbox>
+              </el-checkbox-group>
             </el-form-item>
             <el-form-item 
               label="报刊价" 
-              prop="offer" >
+              prop="share.offer" >
               <el-input 
                 v-model="pointForm.share.offer" 
                 placeholder="请输入报刊价" 
@@ -249,7 +256,7 @@
             </el-form-item>
             <el-form-item 
               label="报刊价系数" 
-              prop="offer_off" >
+              prop="share.offer_off" >
               <el-input 
                 v-model="pointForm.share.offer_off" 
                 placeholder="请输入报刊价系数" 
@@ -259,7 +266,7 @@
             </el-form-item>
             <el-form-item 
               label="曝光价" 
-              prop="mad" >
+              prop="share.mad" >
               <el-input 
                 v-model="pointForm.share.mad" 
                 placeholder="请输入曝光价" 
@@ -278,8 +285,8 @@
               </el-input>
             </el-form-item>
             <el-form-item 
-              label="曝光价" 
-              prop="mad_off" >
+              label="曝光价系数" 
+              prop="share.mad_off" >
               <el-input 
                 v-model="pointForm.share.mad_off" 
                 placeholder="请输入曝光价系数" 
@@ -289,7 +296,7 @@
             </el-form-item>
             <el-form-item 
               label="冠名价" 
-              prop="play" >
+              prop="share.play" >
               <el-input 
                 v-model="pointForm.share.play" 
                 placeholder="请输入冠名价" 
@@ -309,7 +316,7 @@
             </el-form-item>
             <el-form-item 
               label="冠名价系数" 
-              prop="play_off" >
+              prop="share.play_off" >
               <el-input 
                 v-model="pointForm.share.play_off" 
                 placeholder="请输入冠名价系数" 
@@ -319,7 +326,7 @@
             </el-form-item>
             <el-form-item 
               label="链接跳转" 
-              prop="qrcode" >
+              prop="share.qrcode" >
               <el-input 
                 v-model="pointForm.share.qrcode" 
                 placeholder="请输入" 
@@ -339,7 +346,7 @@
             </el-form-item>
             <el-form-item 
               label="链接跳转系数" 
-              prop="qrcode_off" >
+              prop="share.qrcode_off" >
               <el-input 
                 v-model="pointForm.share.qrcode_off" 
                 placeholder="请输入链接跳转系数" 
@@ -349,7 +356,7 @@
             </el-form-item>
             <el-form-item 
               label="订阅/公众号" 
-              prop="wx_pa" >
+              prop="share.wx_pa" >
               <el-input 
                 v-model="pointForm.share.wx_pa" 
                 placeholder="请输入" 
@@ -369,7 +376,7 @@
             </el-form-item>
             <el-form-item 
               label="订阅/公众号系数" 
-              prop="wx_pa_off" >
+              prop="share.wx_pa_off" >
               <el-input 
                 v-model="pointForm.share.wx_pa_off" 
                 placeholder="请输入订阅/公众号系数" 
@@ -379,7 +386,7 @@
             </el-form-item>
             <el-form-item 
               label="小程序" 
-              prop="wx_mp" >
+              prop="share.wx_mp" >
               <el-input 
                 v-model="pointForm.share.wx_mp" 
                 placeholder="请输入" 
@@ -399,7 +406,7 @@
             </el-form-item>
             <el-form-item 
               label="小程序系数" 
-              prop="wx_mp_off" >
+              prop="share.wx_mp_off" >
               <el-input 
                 v-model="pointForm.share.wx_mp_off" 
                 placeholder="请输入小程序系数" 
@@ -409,7 +416,7 @@
             </el-form-item>
             <el-form-item 
               label="APP下载" 
-              prop="app" >
+              prop="share.app" >
               <el-input 
                 v-model="pointForm.share.app" 
                 placeholder="请输入" 
@@ -428,7 +435,7 @@
               </el-input>
             </el-form-item><el-form-item 
               label="APP系数" 
-              prop="app_off" >
+              prop="share.app_off" >
               <el-input 
                 v-model="pointForm.share.app_off" 
                 placeholder="请输入APP系数" 
@@ -438,7 +445,7 @@
             </el-form-item>
             <el-form-item 
               label="手机号提取" 
-              prop="phone" >
+              prop="share.phone" >
               <el-input 
                 v-model="pointForm.share.phone" 
                 placeholder="请输入" 
@@ -458,7 +465,7 @@
             </el-form-item>
             <el-form-item 
               label="手机号系数" 
-              prop="phone_off" >
+              prop="share.phone_off" >
               <el-input 
                 v-model="pointForm.share.phone_off" 
                 placeholder="请输入手机号系数" 
@@ -468,7 +475,7 @@
             </el-form-item>
             <el-form-item 
               label="优惠券" 
-              prop="coupon" >
+              prop="share.coupon" >
               <el-input 
                 v-model="pointForm.share.coupon" 
                 placeholder="请输入" 
@@ -488,7 +495,7 @@
             </el-form-item>
             <el-form-item 
               label="卷系数" 
-              prop="coupon_off" >
+              prop="share.coupon_off" >
               <el-input 
                 v-model="pointForm.share.coupon_off" 
                 placeholder="请输入卷系数" 
@@ -500,8 +507,10 @@
         </el-tabs>
         <el-form-item>
           <el-button 
-            type="primary">保存</el-button>
-          <el-button >返回</el-button>
+            type="primary"
+            @click="submit('pointForm')">保存</el-button>
+          <el-button 
+            @click="historyBack" >返回</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -511,6 +520,8 @@
 <script>
 import search from 'service/search'
 import market from 'service/market'
+import router from 'router'
+
 import {
   Form,
   Select,
@@ -524,7 +535,9 @@ import {
   TabPane,
   RadioGroup,
   Radio,
-  Tooltip
+  Tooltip,
+  Checkbox,
+  CheckboxGroup
 } from 'element-ui'
 
 export default {
@@ -540,12 +553,14 @@ export default {
     ElTabPane: TabPane,
     ElRadioGroup: RadioGroup,
     ElRadio: Radio,
-    ElTooltip: Tooltip
+    ElTooltip: Tooltip,
+    ElCheckboxGroup: CheckboxGroup,
+    ElCheckbox: Checkbox
   },
   data() {
     let checkEnterEndDate = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error('入驻结束时间不能为空'))
+        return callback(new Error('合同结束时间不能为空'))
       }
       if (
         new Date(value).getTime() <
@@ -558,7 +573,7 @@ export default {
     }
     let checkOperEndDate = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error('运营结束时间不能为空'))
+        return callback(new Error('实际入驻结束时间不能为空'))
       }
       if (
         new Date(value).getTime() <
@@ -569,7 +584,16 @@ export default {
         callback()
       }
     }
+    let checkNumber = (rule, value, callback) => {
+      if (value < 0) {
+        callback(new Error('不能小于0'))
+      } else {
+        callback()
+      }
+    }
     return {
+      modeNone: false,
+      modeFlag: true,
       searchLoading: false,
       modeList: [
         {
@@ -645,8 +669,8 @@ export default {
         site_id: '',
         area_id: '',
         name: '',
-        type: 'free',
         contract: {
+          type: 'free',
           contract: 1,
           contract_company: '',
           contract_num: '',
@@ -662,7 +686,7 @@ export default {
           ad_ads: 5,
           exchange_num: 0
         },
-        permission: 1,
+        permission: [1],
         share: {
           offer: 2000,
           offer_off: 100,
@@ -689,52 +713,136 @@ export default {
         name: [{ required: true, message: '请输入名称', trigger: 'submit' }],
         area_id: [{ required: true, message: '请选择区域', trigger: 'submit' }],
         site_id: [{ required: true, message: '请选择场地', trigger: 'submit' }],
-        type: [
+        'contract.type': [
           { required: true, message: '请选择场地类型', trigger: 'submit' }
         ],
-        contract: [
+        'contract.contract': [
           { required: true, message: '请选择是否有无合同', trigger: 'submit' }
         ],
-        pay: [
+        'contract.pay': [
           { required: true, message: '请输入金额', trigger: 'submit' },
-          { type: 'number', message: '金额必须为数字', trigger: 'submit' }
+          { type: 'number', message: '金额必须为数字', trigger: 'submit' },
+          { validator: checkNumber, trigger: 'submit' }
         ],
-        enter_sdate: [
-          { required: true, message: '请选择入驻开始时间', trigger: 'submit' }
+        'contract.enter_sdate': [
+          { required: true, message: '请选择合同开始时间', trigger: 'submit' }
         ],
-        enter_edate: [
+        'contract.enter_edate': [
           { required: true, validator: checkEnterEndDate, trigger: 'submit' }
         ],
-        oper_sdate: [
-          { required: true, message: '请选择运营开始时间', trigger: 'submit' }
+        'contract.oper_sdate': [
+          { required: true, message: '请选择入驻开始时间', trigger: 'submit' }
         ],
-        oper_edate: [
+        'contract.oper_edate': [
           { required: true, validator: checkOperEndDate, trigger: 'submit' }
         ],
-        mode: [
+        'contract.mode': [
           { required: true, message: '请选择合作模式', trigger: 'submit' }
         ],
-        ad_istar: [
-          { required: true, message: '请输入A类广告分成', trigger: 'submit' }
+        'contract.ad_istar': [
+          { required: true, message: '请输入A类广告分成', trigger: 'submit' },
+          { type: 'number', message: '必须为数字', trigger: 'submit' },
+          { validator: checkNumber, trigger: 'submit' }
         ],
-        ad_ads: [
-          { required: true, message: '请输入B类广告分成', trigger: 'submit' }
+        'contract.ad_ads': [
+          { required: true, message: '请输入B类广告分成', trigger: 'submit' },
+          { type: 'number', message: '必须为数字', trigger: 'submit' },
+          { validator: checkNumber, trigger: 'submit' }
         ],
-        exchange_num: [
-          { required: true, message: '请输入置换节目数量', trigger: 'submit' }
+        'contract.exchange_num': [
+          { required: true, message: '请输入置换节目数量', trigger: 'submit' },
+          { type: 'number', message: '必须为数字', trigger: 'submit' },
+          { validator: checkNumber, trigger: 'submit' }
         ],
         permission: [
-          { required: true, message: '请选择场地权限', trigger: 'submit' }
+          {
+            required: true,
+            message: '请选择场地权限',
+            trigger: 'submit',
+            type: 'array'
+          }
         ],
-        offer: [{ required: true, message: '请输入报刊价', trigger: 'submit' }],
-        mad: [{ required: true, message: '请输入曝光价', trigger: 'submit' }],
-        play: [{ required: true, message: '请输入冠名价', trigger: 'submit' }],
-        qrcode: [{ required: true, message: '请输入', trigger: 'submit' }],
-        wx_pa: [{ required: true, message: '请输入', trigger: 'submit' }],
-        wx_mp: [{ required: true, message: '请输入', trigger: 'submit' }],
-        app: [{ required: true, message: '请输入', trigger: 'submit' }],
-        phone: [{ required: true, message: '请输入', trigger: 'submit' }],
-        coupon: [{ required: true, message: '请输入', trigger: 'submit' }]
+        'share.offer': [
+          { required: true, message: '请输入报刊价', trigger: 'submit' },
+          { type: 'number', message: '必须为数字', trigger: 'submit' },
+          { validator: checkNumber, trigger: 'submit' }
+        ],
+        'share.offer_off': [
+          { type: 'number', message: '必须为数字', trigger: 'submit' },
+          { validator: checkNumber, trigger: 'submit' }
+        ],
+        'share.mad': [
+          { required: true, message: '请输入曝光价', trigger: 'submit' },
+          { type: 'number', message: '必须为数字', trigger: 'submit' },
+          { validator: checkNumber, trigger: 'submit' }
+        ],
+        'share.mad_off': [
+          { type: 'number', message: '必须为数字', trigger: 'submit' },
+          { validator: checkNumber, trigger: 'submit' }
+        ],
+        'share.play': [
+          { required: true, message: '请输入冠名价', trigger: 'submit' },
+          { type: 'number', message: '必须为数字', trigger: 'submit' },
+          { validator: checkNumber, trigger: 'submit' }
+        ],
+        'share.play_off': [
+          { type: 'number', message: '必须为数字', trigger: 'submit' },
+          { validator: checkNumber, trigger: 'submit' }
+        ],
+        'share.qrcode': [
+          { required: true, message: '请输入', trigger: 'submit' },
+          { type: 'number', message: '必须为数字', trigger: 'submit' },
+          { validator: checkNumber, trigger: 'submit' }
+        ],
+        'share.qrcode_off': [
+          { type: 'number', message: '必须为数字', trigger: 'submit' },
+          { validator: checkNumber, trigger: 'submit' }
+        ],
+        'share.wx_pa': [
+          { required: true, message: '请输入', trigger: 'submit' },
+          { type: 'number', message: '必须为数字', trigger: 'submit' },
+          { validator: checkNumber, trigger: 'submit' }
+        ],
+        'share.wx_pa_off': [
+          { type: 'number', message: '必须为数字', trigger: 'submit' },
+          { validator: checkNumber, trigger: 'submit' }
+        ],
+        'share.wx_mp': [
+          { required: true, message: '请输入', trigger: 'submit' },
+          { type: 'number', message: '必须为数字', trigger: 'submit' },
+          { validator: checkNumber, trigger: 'submit' }
+        ],
+        'share.wx_mp_off': [
+          { type: 'number', message: '必须为数字', trigger: 'submit' },
+          { validator: checkNumber, trigger: 'submit' }
+        ],
+        'share.app': [
+          { required: true, message: '请输入', trigger: 'submit' },
+          { type: 'number', message: '必须为数字', trigger: 'submit' },
+          { validator: checkNumber, trigger: 'submit' }
+        ],
+        'share.app_off': [
+          { type: 'number', message: '必须为数字', trigger: 'submit' },
+          { validator: checkNumber, trigger: 'submit' }
+        ],
+        'share.phone': [
+          { required: true, message: '请输入', trigger: 'submit' },
+          { type: 'number', message: '必须为数字', trigger: 'submit' },
+          { validator: checkNumber, trigger: 'submit' }
+        ],
+        'share.phone_off': [
+          { type: 'number', message: '必须为数字', trigger: 'submit' },
+          { validator: checkNumber, trigger: 'submit' }
+        ],
+        'share.coupon': [
+          { required: true, message: '请输入', trigger: 'submit' },
+          { type: 'number', message: '必须为数字', trigger: 'submit' },
+          { validator: checkNumber, trigger: 'submit' }
+        ],
+        'share.coupon_off': [
+          { type: 'number', message: '必须为数字', trigger: 'submit' },
+          { validator: checkNumber, trigger: 'submit' }
+        ]
       }
     }
   },
@@ -763,6 +871,7 @@ export default {
             this.pointForm.contract = res.contract
           }
           if (res.share) {
+            this.pointForm.permission = []
             this.pointForm.share = res.share
             if (
               res.share.site === 0 &&
@@ -770,24 +879,19 @@ export default {
               res.share.ad === 0 &&
               res.share.agent === 0
             ) {
-              this.pointForm.permission = ''
+              this.pointForm.permission = []
             } else {
               if (res.share.site === 1) {
-                this.setting.loading = false
-                return (this.pointForm.permission = 1)
+                this.pointForm.permission.push(1)
               }
               if (res.share.vipad === 1) {
-                this.setting.loading = false
-                return (this.pointForm.permission = 3)
+                this.pointForm.permission.push(3)
               }
               if (res.share.ad === 1) {
-                this.setting.loading = false
-
-                return (this.pointForm.permission = 2)
+                this.pointForm.permission.push(2)
               }
               if (res.share.agent === 1) {
-                this.setting.loading = false
-                return (this.pointForm.permission = 0)
+                this.pointForm.permission.push(0)
               }
             }
           }
@@ -833,6 +937,26 @@ export default {
           console.log(err)
           this.searchLoading = false
         })
+    },
+    modeHandle() {
+      if (this.pointForm.contract.mode === 'none') {
+        this.modeNone = false
+        this.pointForm.contract.ad_istar = 5
+        this.pointForm.contract.ad_ads = 5
+        this.pointForm.contract.exchange_num = 0
+      } else if (this.pointForm.contract.mode === 'part') {
+        this.modeNone = true
+        this.modeFlag = true
+        this.pointForm.contract.exchange_num = 0
+      } else if (this.pointForm.contract.mode === 'exchange') {
+        this.modeNone = true
+        this.modeFlag = false
+        this.pointForm.contract.ad_istar = 5
+        this.pointForm.contract.ad_ads = 5
+      }
+    },
+    historyBack() {
+      router.back()
     },
     submit(formName) {
       this.$refs[formName].validate(valid => {

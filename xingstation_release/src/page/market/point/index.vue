@@ -76,6 +76,7 @@
                   <el-select 
                     v-model="searchForm.permission" 
                     placeholder="点位权限" 
+                    multiple
                     filterable 
                     clearable>
                     <el-option
@@ -271,7 +272,7 @@ export default {
         area_id: '',
         type: '',
         mode: '',
-        permission: '',
+        permission: [],
         site: ''
       },
       modeList: [
@@ -360,7 +361,7 @@ export default {
         path: '/market/point/add'
       })
     },
-    editPoint(data){
+    editPoint(data) {
       this.$router.push({
         path: '/market/point/edit/' + data.id
       })

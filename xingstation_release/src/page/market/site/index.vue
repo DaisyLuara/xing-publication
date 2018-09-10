@@ -75,6 +75,7 @@
                   <el-select 
                     v-model="searchForm.permission" 
                     placeholder="场地权限" 
+                    multiple
                     filterable 
                     clearable>
                     <el-option
@@ -379,7 +380,7 @@ export default {
         area_id: '',
         type: '',
         mode: '',
-        permission: ''
+        permission: []
       },
       modeList: [
         {
@@ -494,18 +495,20 @@ export default {
       let vipad = data.share.vipad
       let ad = data.share.ad
       let agent = data.share.agent
+      let permission = []
       if (site === 1) {
-        return '场地主'
+        permission.push('场地主')
       }
       if (vipad === 1) {
-        return 'VIP广告主'
+        permission.push('VIP广告主')
       }
       if (ad === 1) {
-        return '广告主'
+        permission.push('广告主')
       }
       if (agent === 1) {
-        return '代理'
+        permission.push('代理')
       }
+      return permission.join(',')
     },
     getAeraList() {
       search
