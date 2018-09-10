@@ -43,4 +43,45 @@ class PointController extends Controller
     {
         return $this->response->item($point, new PointTransformer());
     }
+
+    public function store(PointRequest $request, Point $point)
+    {
+        /**
+         * @todo check market area
+         */
+        $point->fill($request->all())->saveOrFail();
+
+        if ($request->has('contract')) {
+            $point->contract()->create($request->contract);
+        }
+
+        if ($request->has('share')) {
+            $point->share()->create($request->share);
+        }
+
+        return $this->response->item($point, new PointTransformer());
+    }
+
+    public function update(PointRequest $request, Point $point)
+    {
+        $point->update($request->all());
+        if ($request->has('contract')) {
+            $contract = $request->contract;
+            if (isset($contract['oid'])) {
+                unset($contract['oid']);
+            }
+
+            $point->contract()->getResults()->update($contract);
+        }
+
+        if ($request->has('share')) {
+            $share = $request->share;
+            if (isset($share['oid'])) {
+                unset($share['oid']);
+            }
+            $point->share()->getResults()->update($share);
+        }
+
+        return $this->response->item($point, new PointTransformer());
+    }
 }

@@ -36,7 +36,6 @@ class MarketRequest extends FormRequest
                     'share.phone' => 'required',
                     'share.coupon' => 'required',
                 ];
-                break;
             default:
                 return [];
         }

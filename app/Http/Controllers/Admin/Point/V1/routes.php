@@ -24,6 +24,8 @@ $api->version('v1', [
             //点位
             $api->get('points', 'PointController@index');
             $api->get('points/{point}', 'PointController@show');
+            $api->post('point', 'PointController@store');
+            $api->patch('points/{point}', 'PointController@update');
         });
     });
 
