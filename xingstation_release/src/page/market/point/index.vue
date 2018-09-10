@@ -34,10 +34,11 @@
                   label="" 
                   prop="area">
                   <el-select 
-                    v-model="searchForm.area" 
+                    v-model="searchForm.area_id" 
                     placeholder="区域" 
                     filterable 
-                    clearable>
+                    clearable
+                    @change="areaHandle">
                     <el-option
                       v-for="item in areaList"
                       :key="item.id"
@@ -53,7 +54,10 @@
                   prop="mode">
                   <el-select 
                     v-model="searchForm.site" 
-                    placeholder="场地名称" 
+                    :remote-method="getMarket"
+                    :loading="searchLoading" 
+                    placeholder="场地名称"
+                    remote
                     filterable 
                     clearable>
                     <el-option
@@ -76,6 +80,7 @@
                   <el-select 
                     v-model="searchForm.permission" 
                     placeholder="点位权限" 
+                    multiple
                     filterable 
                     clearable>
                     <el-option
@@ -141,10 +146,10 @@
             总数:{{ pagination.total }} 
           </span>
           <div>
-          <el-button 
-            size="small" 
-            type="success"
-            @click="addPoint">新建点位</el-button>
+            <el-button 
+              size="small" 
+              type="success"
+              @click="addPoint">新建点位</el-button>
           </div>
         </div>
         <el-table 
@@ -183,16 +188,14 @@
             :show-overflow-tooltip="true"
             prop="name"
             label="点位名称"
-            min-width="100"
-          >
-          </el-table-column>
+            min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="area"
             label="区域"
             min-width="80">
             <template slot-scope="scope">
-              {{scope.row.area.name}}
+              {{ scope.row.area.name }}
             </template>
           </el-table-column>
           <el-table-column
@@ -201,7 +204,7 @@
             label="场地名称"
             min-width="80">
             <template slot-scope="scope">
-              {{scope.row.market.name}}
+              {{ scope.row.market.name }}
             </template>
           </el-table-column>
           <el-table-column 
@@ -271,7 +274,7 @@ export default {
         area_id: '',
         type: '',
         mode: '',
-        permission: '',
+        permission: [],
         site: ''
       },
       modeList: [
@@ -342,6 +345,7 @@ export default {
         loading: false,
         loadingText: '拼命加载中'
       },
+      searchLoading: false,
       pagination: {
         total: 0,
         pageSize: 10,
@@ -360,10 +364,36 @@ export default {
         path: '/market/point/add'
       })
     },
-    editPoint(data){
+    editPoint(data) {
       this.$router.push({
         path: '/market/point/edit/' + data.id
       })
+    },
+    areaHandle() {
+      this.searchForm.site = ''
+      this.getMarket(this.searchForm.site)
+    },
+    getMarket(query) {
+      this.searchLoading = true
+      let args = {
+        name: query,
+        include: 'area',
+        area_id: this.searchForm.area_id
+      }
+      return search
+        .getMarketList(this, args)
+        .then(response => {
+          this.siteList = response.data
+          if (this.siteList.length == 0) {
+            this.searchForm.site = ''
+            this.siteList = []
+          }
+          this.searchLoading = false
+        })
+        .catch(err => {
+          console.log(err)
+          this.searchLoading = false
+        })
     },
     getPointList() {
       this.setting.loading = true
@@ -374,7 +404,6 @@ export default {
       market
         .getPointList(this, args)
         .then(res => {
-          console.log(res)
           this.tableData = res.data
           this.pagination.total = res.meta.pagination.total
           this.setting.loading = false

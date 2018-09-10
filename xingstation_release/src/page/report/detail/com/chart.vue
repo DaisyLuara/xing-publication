@@ -43,7 +43,8 @@
               v-if="index > 0"
               :style="smallCirlce[index]" 
               class="percent">
-              {{ computedRate[index - 1] }} %
+              <span>{{ computedRate[index - 1] }} %</span>
+              <span>{{ rateName[index - 2] }}</span>
             </div>
           </div>
         </div>
@@ -83,6 +84,13 @@ export default {
         'OMO有效跳转人数',
         '扫码啦心会员注册总数',
         '完成转发分享人数'
+      ],
+      rateName: [
+        'CPF转化率',
+        'CPR转化率',
+        'CPA转化率',
+        'CPL转化率',
+        'CPF∙S转化率'
       ],
       // dataOptions: [true, true, true, true, true, true, true],
       bindColors: [
@@ -234,7 +242,8 @@ export default {
           position: 'absolute',
           top: '-' + String(this.calStore[i].height) + 'px',
           left: 0,
-          color: 'white'
+          color: 'white',
+          fontSize: this.width * 0.04 + 'px'
         }
 
         // lineStyle
@@ -247,7 +256,8 @@ export default {
             height: String(this.calStore[i].height) + 'px',
             position: 'absolute',
             right: '-' + this.width / 2 + 'px',
-            top: '-' + String(this.calStore[i].height) + 'px'
+            top: '-' + String(this.calStore[i].height) + 'px',
+            fontSize: this.width * 0.035 + 'px'
           }
         } else {
           circleAreaObj = {
@@ -255,7 +265,8 @@ export default {
             height: String(this.calStore[i].height) + 'px',
             position: 'absolute',
             left: '-' + this.width / 2 + 'px',
-            top: '-' + String(this.calStore[i].height) + 'px'
+            top: '-' + String(this.calStore[i].height) + 'px',
+            fontSize: this.width * 0.035 + 'px'
           }
         }
 
@@ -468,6 +479,9 @@ export default {
   }
   .percent {
     color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 }
 </style>

@@ -75,6 +75,7 @@
                   <el-select 
                     v-model="searchForm.permission" 
                     placeholder="场地权限" 
+                    multiple
                     filterable 
                     clearable>
                     <el-option
@@ -125,10 +126,10 @@
             总数:{{ pagination.total }} 
           </span>
           <div>
-          <el-button 
-            size="small" 
-            type="success"
-            @click="addSite">新建场地</el-button>
+            <el-button 
+              size="small" 
+              type="success"
+              @click="addSite">新建场地</el-button>
           </div>
         </div>
         <el-table 
@@ -158,23 +159,22 @@
                   label="场地类型:">
                   <span>
                     {{ scope.row.contract ? (scope.row.contract.type === 'free' ? '免费入驻'
-                      : scope.row.contract.type === 'pay'? '付费入驻'
-                      : scope.row.contract.type === 'sell'? '出售'
-                      : scope.row.contract.type === 'lease'? '租借'
-                      : scope.row.contract.type === 'activity'? '活动'
-                      : scope.row.contract.type === 'agent'? '代理'
-                      : scope.row.contract.type === 'tmp'? '过桥'
-                      :''):'' }}
+                    : scope.row.contract.type === 'pay'? '付费入驻'
+                    : scope.row.contract.type === 'sell'? '出售'
+                    : scope.row.contract.type === 'lease'? '租借'
+                    : scope.row.contract.type === 'activity'? '活动'
+                    : scope.row.contract.type === 'agent'? '代理'
+                    : scope.row.contract.type === 'tmp'? '过桥'
+                    :''):'' }}
                   </span> 
                 </el-form-item>
                 <el-form-item 
                   label="场地权限:">
                   <span>
-                    {{ scope.row.share ? 
-                      ((scope.row.share.site === 0
+                    {{ scope.row.share ? ((scope.row.share.site === 0
                       && scope.row.share.vipad === 0
                       && scope.row.share.ad === 0
-                      && scope.row.share.agent === 0) ? '无' : permissionHandle(scope.row)) : '' }}
+                    && scope.row.share.agent === 0) ? '无' : permissionHandle(scope.row)) : '' }}
                   </span> 
                 </el-form-item>
                 <el-form-item 
@@ -186,34 +186,34 @@
                 <el-form-item 
                   label="合同公司:">
                   <span>
-                    {{ scope.row.contract.contract_company}}
+                    {{ scope.row.contract.contract_company }}
                   </span> 
                 </el-form-item>
                 <el-form-item 
                   label="合同编号:">
                   <span>
-                    {{ scope.row.contract.contract_num}}
+                    {{ scope.row.contract.contract_num }}
                   </span> 
                 </el-form-item>
                 <el-form-item 
                   label="合同联系人:">
                   <span>
-                    {{ scope.row.contract.contract_user}}
+                    {{ scope.row.contract.contract_user }}
                   </span> 
                 </el-form-item>
                 <el-form-item 
                   label="合同联系方式:">
                   <span>
-                    {{ scope.row.contract.contract_phone}}
+                    {{ scope.row.contract.contract_phone }}
                   </span> 
                 </el-form-item>
                 <el-form-item 
                   label="合作模式:">
                   <span>
                     {{ scope.row.contract ? (scope.row.contract.mode === 'none' ? '无要求'
-                      : scope.row.contract.mode === 'part'? '分成'
-                      : scope.row.contract.mode === 'exchange'? '置换'
-                      :''):'' }}
+                    : scope.row.contract.mode === 'part'? '分成'
+                    : scope.row.contract.mode === 'exchange'? '置换'
+                    :''):'' }}
                   </span> 
                 </el-form-item>
                 <el-form-item 
@@ -225,13 +225,13 @@
                 <el-form-item 
                   label="入驻时间:">
                   <span>
-                    {{ scope.row.contract ? (scope.row.contract.enter_sdate + '~' +  scope.row.contract.enter_edate) : '' }}
+                    {{ scope.row.contract ? (scope.row.contract.enter_sdate + '~' + scope.row.contract.enter_edate) : '' }}
                   </span> 
                 </el-form-item>
                 <el-form-item 
                   label="运营时间:">
                   <span>
-                    {{ scope.row.contract ? (scope.row.contract.oper_sdate + '~' +  scope.row.contract.oper_edate) : '' }}
+                    {{ scope.row.contract ? (scope.row.contract.oper_sdate + '~' + scope.row.contract.oper_edate) : '' }}
                   </span> 
                 </el-form-item>
               </el-form>
@@ -241,22 +241,19 @@
             :show-overflow-tooltip="true"
             prop="id"
             label="ID"
-            width="80"
-          />
+            width="80"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="name"
             label="场地名称"
-            min-width="100"
-          >
-          </el-table-column>
+            min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="area"
             label="区域"
             min-width="80">
             <template slot-scope="scope">
-              {{scope.row.area.name}}
+              {{ scope.row.area.name }}
             </template>
           </el-table-column>
           <el-table-column
@@ -281,11 +278,10 @@
             label="场地权限"
             min-width="100">
             <template slot-scope="scope">
-              {{ scope.row.share ? 
-                ((scope.row.share.site === 0
+              {{ scope.row.share ? ((scope.row.share.site === 0
                 && scope.row.share.vipad === 0
                 && scope.row.share.ad === 0
-                && scope.row.share.agent === 0) ? '无' : permissionHandle(scope.row)) : '' }}
+              && scope.row.share.agent === 0) ? '无' : permissionHandle(scope.row)) : '' }}
             </template>
           </el-table-column>
           <el-table-column
@@ -295,9 +291,9 @@
             min-width="100">
             <template slot-scope="scope">
               {{ scope.row.contract ? (scope.row.contract.mode === 'none' ? '无要求'
-                : scope.row.contract.mode === 'part'? '分成'
-                : scope.row.contract.mode === 'exchange'? '置换'
-                :''):'' }}
+              : scope.row.contract.mode === 'part'? '分成'
+              : scope.row.contract.mode === 'exchange'? '置换'
+              :''):'' }}
             </template>
           </el-table-column>
           <el-table-column
@@ -379,7 +375,7 @@ export default {
         area_id: '',
         type: '',
         mode: '',
-        permission: ''
+        permission: []
       },
       modeList: [
         {
@@ -480,7 +476,6 @@ export default {
       market
         .getMarketList(this, args)
         .then(res => {
-          console.log(res)
           this.tableData = res.data
           this.pagination.total = res.meta.pagination.total
           this.setting.loading = false
@@ -494,18 +489,20 @@ export default {
       let vipad = data.share.vipad
       let ad = data.share.ad
       let agent = data.share.agent
+      let permission = []
       if (site === 1) {
-        return '场地主'
+        permission.push('场地主')
       }
       if (vipad === 1) {
-        return 'VIP广告主'
+        permission.push('VIP广告主')
       }
       if (ad === 1) {
-        return '广告主'
+        permission.push('广告主')
       }
       if (agent === 1) {
-        return '代理'
+        permission.push('代理')
       }
+      return permission.join(',')
     },
     getAeraList() {
       search
