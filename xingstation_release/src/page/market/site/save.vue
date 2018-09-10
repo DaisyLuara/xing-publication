@@ -229,7 +229,7 @@
                     placement="right"
                     class="item">
                     <div>
-                      分/屏/次
+                      ¥／分
                     </div>
                   </el-tooltip>
                 </template>
@@ -259,7 +259,7 @@
                     placement="right"
                     class="item">
                     <div>
-                      分/屏/次
+                      ¥／分
                     </div>
                   </el-tooltip>
                 </template>
@@ -289,7 +289,7 @@
                     placement="right"
                     class="item">
                     <div>
-                      分/屏/次
+                      ¥／分
                     </div>
                   </el-tooltip>
                 </template>
@@ -319,7 +319,7 @@
                     placement="right"
                     class="item">
                     <div>
-                      分/场地/天
+                      ¥／分
                     </div>
                   </el-tooltip>
                 </template>
@@ -342,6 +342,17 @@
                 v-model="siteForm.share.wx_pa" 
                 placeholder="请输入" 
                 class="item-input">
+                <template slot="append">
+                  <el-tooltip  
+                    effect="dark" 
+                    content="每个场地每天的价钱" 
+                    placement="right"
+                    class="item">
+                    <div>
+                      ¥／分
+                    </div>
+                  </el-tooltip>
+                </template>
               </el-input>
             </el-form-item>
             <el-form-item 
@@ -368,7 +379,7 @@
                     placement="right"
                     class="item">
                     <div>
-                      分/场地/天
+                      ¥／分
                     </div>
                   </el-tooltip>
                 </template>
@@ -398,7 +409,7 @@
                     placement="right"
                     class="item">
                     <div>
-                      分/场地/天
+                      ¥／分
                     </div>
                   </el-tooltip>
                 </template>
@@ -427,7 +438,7 @@
                     placement="right"
                     class="item">
                     <div>
-                      分/场地/天
+                      ¥／分
                     </div>
                   </el-tooltip>
                 </template>
@@ -457,7 +468,7 @@
                     placement="right"
                     class="item">
                     <div>
-                      分/场地/天
+                      ¥／分
                     </div>
                   </el-tooltip>
                 </template>
