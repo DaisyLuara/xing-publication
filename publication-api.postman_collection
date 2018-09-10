@@ -3752,6 +3752,56 @@
 								"description": ""
 							},
 							"response": []
+						},
+						{
+							"name": "新增场地",
+							"request": {
+								"url": "http://{{host}}/api/market",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_admin}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": 21,\n    \"name\": \"世博园\",\n    \"areaid\":2,\n    \"area\": {\n        \"id\": 2,\n        \"name\": \"上海\"\n    },\n    \"contract\": {\n        \"marketid\": 21,\n        \"type\": \"free\",\n        \"contract\": 1,\n        \"contract_company\": \"\",\n        \"contract_num\": \"\",\n        \"contract_user\": \"\",\n        \"contract_phone\": \"\",\n        \"pay\": 0,\n        \"enter_sdate\": \"2018-09-06 17:09:58\",\n        \"enter_edate\": \"2018-09-06 17:09:58\",\n        \"oper_sdate\": \"2018-09-06 17:09:58\",\n        \"oper_edate\": \"2018-09-06 17:09:58\",\n        \"mode\": \"none\",\n        \"ad_istar\": 0,\n        \"ad_ads\": 0,\n        \"exchange_num\": 0\n    },\n    \"share\": {\n        \"marketid\": 21,\n        \"site\": 0,\n        \"vipad\": 0,\n        \"ad\": 0,\n        \"agent\": 0,\n        \"offer\": 2000,\n        \"offer_off\": 100,\n        \"mad\": 50,\n        \"mad_off\": 100,\n        \"play\": 300,\n        \"play_off\": 100,\n        \"qrcode\": 1000,\n        \"qrcode_off\": 100,\n        \"wx_pa\": 1000,\n        \"wx_pa_off\": 100,\n        \"wx_mp\": 2000,\n        \"wx_mp_off\": 100,\n        \"app\": 5000,\n        \"app_off\": 100,\n        \"phone\": 5000,\n        \"phone_off\": 100,\n        \"coupon\": 2000,\n        \"coupon_off\": 100\n    }\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "修改场地",
+							"request": {
+								"url": "http://{{host}}/api/market/220",
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_admin}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"世博园点位试啊\",\n    \"areaid\":2,\n    \"area\": {\n        \"id\": 2,\n        \"name\": \"上海\"\n    },\n    \"contract\": {\n        \"marketid\": 21,\n        \"type\": \"play\",\n        \"contract\": 1,\n        \"contract_company\": \"\",\n        \"contract_num\": \"\",\n        \"contract_user\": \"\",\n        \"contract_phone\": \"\",\n        \"pay\": 0,\n        \"enter_sdate\": \"2018-09-11 17:09:58\",\n        \"enter_edate\": \"2018-09-11 17:09:58\",\n        \"oper_sdate\": \"2018-09-10 17:09:58\",\n        \"oper_edate\": \"2018-09-11 17:09:58\",\n        \"mode\": \"none\",\n        \"ad_istar\": 1,\n        \"ad_ads\": 0,\n        \"exchange_num\": 0\n    },\n    \"share\": {\n        \"marketid\": 21,\n        \"site\": 1,\n        \"vipad\": 0,\n        \"ad\": 0,\n        \"agent\": 0,\n        \"offer\": 2001,\n        \"offer_off\": 99,\n        \"mad\": 51,\n        \"mad_off\": 99,\n        \"play\": 301,\n        \"play_off\": 99,\n        \"qrcode\": 1001,\n        \"qrcode_off\": 99,\n        \"wx_pa\": 1001,\n        \"wx_pa_off\": 99,\n        \"wx_mp\": 2001,\n        \"wx_mp_off\": 99,\n        \"app\": 5002,\n        \"app_off\": 99,\n        \"phone\": 5001,\n        \"phone_off\": 99,\n        \"coupon\": 2001,\n        \"coupon_off\": 99\n    }\n}"
+								},
+								"description": ""
+							},
+							"response": []
 						}
 					],
 					"_postman_isSubFolder": true
@@ -3799,7 +3849,7 @@
 							"name": "点位详情",
 							"request": {
 								"url": {
-									"raw": "{{host}}/api/points/402?include=share,contract,area",
+									"raw": "{{host}}/api/points/402?include=share,contract,area,market",
 									"host": [
 										"{{host}}"
 									],
@@ -3811,7 +3861,7 @@
 									"query": [
 										{
 											"key": "include",
-											"value": "share,contract,area",
+											"value": "share,contract,area,market",
 											"equals": true,
 											"description": ""
 										}
@@ -3827,6 +3877,56 @@
 									}
 								],
 								"body": {},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "新增点位",
+							"request": {
+								"url": "http://{{host}}/api/point",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_admin}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"二楼扶梯口5-测试\",\n    \"info\": \"说明\",\n    \"icon\": \"http://o9xrbl1oc.bkt.clouddn.com/1007/image/446_161_167_exe.png\",\n    \"image\": \"\",\n    \"type\": \"free\",\n    \"lat\": \"31.232913567882918\",\n    \"lng\": \"121.52161940330083\",\n    \"count\": 0,\n    \"marketid\":15,\n    \"contract\": {\n        \"type\": \"free\",\n        \"contract\": 1,\n        \"contract_company\": \"\",\n        \"contract_num\": \"\",\n        \"contract_user\": \"\",\n        \"contract_phone\": \"\",\n        \"pay\": 0,\n        \"enter_sdate\": \"2018-09-11 17:09:20\",\n        \"enter_edate\": \"2018-09-06 17:09:20\",\n        \"oper_sdate\": \"2018-09-06 17:09:20\",\n        \"oper_edate\": \"2018-09-06 17:09:20\",\n        \"mode\": \"none\",\n        \"ad_istar\": 0,\n        \"ad_ads\": 0,\n        \"exchange_num\": 0\n    },\n    \"share\": {\n        \"site\": 1,\n        \"vipad\": 1,\n        \"ad\": 1,\n        \"agent\": 1,\n        \"offer\": 2000,\n        \"offer_off\": 100,\n        \"mad\": 50,\n        \"mad_off\": 100,\n        \"play\": 300,\n        \"play_off\": 100,\n        \"qrcode\": 1000,\n        \"qrcode_off\": 100,\n        \"wx_pa\": 1000,\n        \"wx_pa_off\": 100,\n        \"wx_mp\": 2000,\n        \"wx_mp_off\": 100,\n        \"app\": 5000,\n        \"app_off\": 100,\n        \"phone\": 5000,\n        \"phone_off\": 100,\n        \"coupon\": 2000,\n        \"coupon_off\": 99\n    }\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "修改点位",
+							"request": {
+								"url": "http://{{host}}/api/points/402",
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_admin}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"二楼扶梯口5-测试\",\n    \"info\": \"说明\",\n    \"icon\": \"http://o9xrbl1oc.bkt.clouddn.com/1007/image/446_161_167_exe.png\",\n    \"image\": \"\",\n    \"type\": \"free\",\n    \"lat\": \"31.232913567882918\",\n    \"lng\": \"121.52161940330083\",\n    \"count\": 0,\n    \"marketid\":15,\n    \"contract\": {\n        \"type\": \"free\",\n        \"contract\": 1,\n        \"contract_company\": \"\",\n        \"contract_num\": \"\",\n        \"contract_user\": \"\",\n        \"contract_phone\": \"\",\n        \"pay\": 0,\n        \"enter_sdate\": \"2018-09-11 17:09:20\",\n        \"enter_edate\": \"2018-09-06 17:09:20\",\n        \"oper_sdate\": \"2018-09-06 17:09:20\",\n        \"oper_edate\": \"2018-09-06 17:09:20\",\n        \"mode\": \"none\",\n        \"ad_istar\": 0,\n        \"ad_ads\": 0,\n        \"exchange_num\": 0\n    },\n    \"share\": {\n        \"site\": 1,\n        \"vipad\": 1,\n        \"ad\": 1,\n        \"agent\": 1,\n        \"offer\": 2000,\n        \"offer_off\": 100,\n        \"mad\": 50,\n        \"mad_off\": 100,\n        \"play\": 300,\n        \"play_off\": 100,\n        \"qrcode\": 1000,\n        \"qrcode_off\": 100,\n        \"wx_pa\": 1000,\n        \"wx_pa_off\": 100,\n        \"wx_mp\": 2000,\n        \"wx_mp_off\": 100,\n        \"app\": 5000,\n        \"app_off\": 100,\n        \"phone\": 5000,\n        \"phone_off\": 100,\n        \"coupon\": 2000,\n        \"coupon_off\": 99\n    }\n}"
+								},
 								"description": ""
 							},
 							"response": []
