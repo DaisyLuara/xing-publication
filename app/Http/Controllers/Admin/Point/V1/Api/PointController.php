@@ -37,7 +37,15 @@ class PointController extends Controller
 
     public function index(Request $request, Point $point)
     {
+        $user = $this->user();
+        $arUserId = getArUserID($user, $request);
+
         $query = $point->query();
+
+        //根据
+        if ($arUserId) {
+            $query->where('bd_uid', '=', $arUserId);
+        }
 
         //点位名称
         if ($request->has('point_name')) {
@@ -83,8 +91,22 @@ class PointController extends Controller
         return $this->response->paginator($points, new PointTransformer());
     }
 
-    public function show(Point $point)
+    public function show($id, Request $request)
     {
+        $query = Point::query();
+
+        $user = $this->user();
+        $arUserId = getArUserID($user, $request);
+
+        if ($arUserId) {
+            $query->where('bd_uid', '=', $arUserId);
+        }
+
+        $point = $query->where('oid', $id)->first();
+        if (!$point) {
+            abort(404);
+        }
+
         return $this->response->item($point, new PointTransformer());
     }
 

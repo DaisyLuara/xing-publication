@@ -11,7 +11,7 @@ class PointShare extends ArModel
     protected $primaryKey = 'oid';
 
     protected $fillable = [
-        'marketid', 'site', 'vipad', 'ad', 'agent', 'offer', 'offer_off',
+        'site', 'vipad', 'ad', 'agent', 'offer', 'offer_off',
         'mad', 'mad_off', 'play', 'play_off', 'qrcode', 'qrcode_off', 'wx_pa',
         'wx_pa_off', 'wx_mp', 'wx_mp_off', 'app', 'app_off', 'phone', 'phone_off',
         'coupon', 'coupon_off', 'date', 'clientdate'

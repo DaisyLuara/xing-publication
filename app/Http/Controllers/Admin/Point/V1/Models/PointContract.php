@@ -11,7 +11,7 @@ class PointContract extends ArModel
     protected $primaryKey = 'oid';
 
     protected $fillable = [
-        'marketid', 'type', 'contract', 'contract_company', 'contract_num', 'contract_user', 'contract_phone', 'mode', 'ad_istar',
+        'type', 'contract', 'contract_company', 'contract_num', 'contract_user', 'contract_phone', 'mode', 'ad_istar',
         'enter_sdate', 'enter_edate', 'oper_sdate', 'oper_edate',
         'ad_ads', 'exchange_num', 'date', 'clientdate'
     ];
