@@ -16,6 +16,10 @@ class Market extends ArModel
     ];
 
 
+    public function points()
+    {
+        return $this->hasMany(Point::class, 'marketid', 'marketid');
+    }
 
     public function area()
     {

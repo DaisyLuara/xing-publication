@@ -14,6 +14,16 @@ class MarketController extends Controller
     public function index(Request $request, Market $market)
     {
         $query = $market->query();
+        $user = $this->user();
+        $arUserId = getArUserID($user, $request);
+
+        //根据角色筛选
+        if ($arUserId) {
+            $query->whereHas('points', function ($query) use ($arUserId) {
+                $query->where('bd_uid', '=', $arUserId);
+            });
+        }
+
         //场地名称
         if ($request->has('market_name')) {
             $query->where('name', 'like', '%' . $request->market_name . '%');
