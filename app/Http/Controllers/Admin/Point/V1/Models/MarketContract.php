@@ -10,9 +10,9 @@ class MarketContract extends ArModel
     public $table = 'avr_official_market_contract';
     protected $primaryKey = 'marketid';
     protected $fillable = [
-        'marketid', 'type', 'contract', 'contract_company', 'contract_num', 'contract_user', 'contract_phone', 'mode', 'ad_istar',
+        'marketid', 'type', 'contract', 'contract_company', 'contract_num', 'contract_user', 'contract_phone', 'pay',
         'enter_sdate', 'enter_edate', 'oper_sdate', 'oper_edate',
-        'ad_ads', 'exchange_num', 'date', 'clientdate'
+        'mode', 'ad_istar', 'ad_ads', 'exchange_num', 'date', 'clientdate',
     ];
 
     public function setEnterSdateAttribute($value)
