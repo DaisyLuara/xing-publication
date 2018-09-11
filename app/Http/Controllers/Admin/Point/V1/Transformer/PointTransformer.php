@@ -42,7 +42,10 @@ class PointTransformer extends TransformerAbstract
 
     public function includeArea(Point $point)
     {
-        return $this->item($point->area, new AreaTransformer());
+        $area = $point->area;
+        if($area){
+            return $this->item($point->area, new AreaTransformer());
+        }
     }
 
     public function includeScene(Point $point)

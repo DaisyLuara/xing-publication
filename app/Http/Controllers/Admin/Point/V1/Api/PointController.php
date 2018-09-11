@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\Point\V1\Request\PointRequest;
 use App\Http\Controllers\Admin\Point\V1\Models\Point;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class PointController extends Controller
 {
@@ -33,9 +34,54 @@ class PointController extends Controller
 
     }
 
-    public function index(Point $point)
+    public function index(Request $request, Point $point)
     {
-        $points = $point->paginate(10);
+        $query = $point->query();
+
+        //点位名称
+        if ($request->has('point_name')) {
+            $query->where('name', 'like', '%' . $request->point_name . '%');
+        }
+
+        //场地名称
+        if ($request->has('market_name')) {
+            $marketName = $request->market_name;
+            $query->whereHas('market', function ($query) use ($marketName) {
+                $query->where('name', 'like', '%' . $marketName . '%');
+            });
+        }
+
+        //区域
+        if ($request->has('areaid')) {
+            $query->where('areaid', '=', $request->areaid);
+        }
+
+        //点位类型
+        if ($request->has('contract_type')) {
+            $contractType = $request->contract_type;
+            $query->whereHas('contract', function ($query) use ($contractType) {
+                $query->where('type', '=', $contractType);
+            });
+        }
+
+        //合作模式
+        if ($request->has('contract_mode')) {
+            $contractMode = $request->contract_mode;
+            $query->whereHas('contract', function ($query) use ($contractMode) {
+                $query->where('mode', '=', $contractMode);
+            });
+        }
+
+        //点位权限
+        if ($request->has('share_users')) {
+            $shareUsers = explode(',', $request->share_users);
+            $query->whereHas('share', function ($query) use ($shareUsers) {
+                foreach ($shareUsers as $shareUser) {
+                    $query->where("$shareUser", '=', 1);
+                }
+            });
+        }
+        $points = $query->paginate(10);
         return $this->response->paginator($points, new PointTransformer());
     }
 
