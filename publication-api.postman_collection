@@ -3751,14 +3751,14 @@
 							"name": "场地详情",
 							"request": {
 								"url": {
-									"raw": "{{host}}/api/markets/21?include=share,contract,area",
+									"raw": "{{host}}/api/markets/225?include=share,contract,area",
 									"host": [
 										"{{host}}"
 									],
 									"path": [
 										"api",
 										"markets",
-										"21"
+										"225"
 									],
 									"query": [
 										{
@@ -3844,7 +3844,7 @@
 							"name": "点位列表",
 							"request": {
 								"url": {
-									"raw": "{{host}}/api/points?include=share,contract,area,market&market_name=周浦万达&areaid=7&contract_type=lease&contract_mode=part&share_users=site&point_name=通用点位",
+									"raw": "{{host}}/api/points?include=share,contract,area,market&marketid=22",
 									"host": [
 										"{{host}}"
 									],
@@ -3860,8 +3860,8 @@
 											"description": ""
 										},
 										{
-											"key": "market_name",
-											"value": "周浦万达",
+											"key": "marketid",
+											"value": "22",
 											"equals": true,
 											"description": ""
 										},
@@ -3869,31 +3869,36 @@
 											"key": "areaid",
 											"value": "7",
 											"equals": true,
-											"description": ""
+											"description": "",
+											"disabled": true
 										},
 										{
 											"key": "contract_type",
 											"value": "lease",
 											"equals": true,
-											"description": ""
+											"description": "",
+											"disabled": true
 										},
 										{
 											"key": "contract_mode",
 											"value": "part",
 											"equals": true,
-											"description": ""
+											"description": "",
+											"disabled": true
 										},
 										{
 											"key": "share_users",
 											"value": "site",
 											"equals": true,
-											"description": ""
+											"description": "",
+											"disabled": true
 										},
 										{
 											"key": "point_name",
 											"value": "通用点位",
 											"equals": true,
-											"description": ""
+											"description": "",
+											"disabled": true
 										}
 									],
 									"variable": []
