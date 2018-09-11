@@ -22,6 +22,8 @@ class PointTransformer extends TransformerAbstract
             'lat' => (string)$point->lat,
             'lng' => (string)$point->lng,
             'count' => (int)$point->count,
+            'marketid' => (int)$point->marketid,
+            'areaid' => (int)$point->areaid,
         ];
     }
 
@@ -43,7 +45,7 @@ class PointTransformer extends TransformerAbstract
     public function includeArea(Point $point)
     {
         $area = $point->area;
-        if($area){
+        if ($area) {
             return $this->item($point->area, new AreaTransformer());
         }
     }

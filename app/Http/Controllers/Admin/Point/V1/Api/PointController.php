@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Point\V1\Api;
 
+use App\Http\Controllers\Admin\Point\V1\Models\Market;
 use App\Http\Controllers\Admin\Point\V1\Transformer\PointTransformer;
 use App\Http\Controllers\Admin\Point\V1\Request\PointRequest;
 use App\Http\Controllers\Admin\Point\V1\Models\Point;
@@ -89,10 +90,13 @@ class PointController extends Controller
 
     public function store(PointRequest $request, Point $point)
     {
-        /**
-         * @todo check market area
-         */
-        $point->fill($request->all())->saveOrFail();
+        $market = Market::find($request->marketid);
+        $area = $market->area;
+
+        $insertData = $request->all();
+        $insertData['areaid'] = $area->areaid;
+
+        $point->fill($insertData)->saveOrFail();
 
         if ($request->has('contract')) {
             $point->contract()->create($request->contract);
@@ -107,6 +111,12 @@ class PointController extends Controller
 
     public function update(PointRequest $request, Point $point)
     {
+        $market = Market::find($request->marketid);
+        $area = $market->area;
+
+        $insertData = $request->all();
+        $insertData['areaid'] = $area->areaid;
+
         $point->update($request->all());
         if ($request->has('contract')) {
             $contract = $request->contract;
