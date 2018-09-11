@@ -3686,7 +3686,7 @@
 							"name": "场地列表",
 							"request": {
 								"url": {
-									"raw": "{{host}}/api/markets?include=share,contract,area",
+									"raw": "{{host}}/api/markets?include=share,contract,area&market_name=周浦万达&areaid=7&contract_type=lease&contract_mode=part&share_users=ad",
 									"host": [
 										"{{host}}"
 									],
@@ -3700,6 +3700,36 @@
 											"value": "share,contract,area",
 											"equals": true,
 											"description": ""
+										},
+										{
+											"key": "market_name",
+											"value": "周浦万达",
+											"equals": true,
+											"description": "场地名称"
+										},
+										{
+											"key": "areaid",
+											"value": "7",
+											"equals": true,
+											"description": "区域"
+										},
+										{
+											"key": "contract_type",
+											"value": "lease",
+											"equals": true,
+											"description": "场地类型  free, pay,sell,lease,activity,agent,tmp"
+										},
+										{
+											"key": "contract_mode",
+											"value": "part",
+											"equals": true,
+											"description": "合作模式  none,part,exchange"
+										},
+										{
+											"key": "share_users",
+											"value": "ad",
+											"equals": true,
+											"description": "场地权限 以逗号分隔 site,vipad,ad,agent"
 										}
 									],
 									"variable": []
@@ -3814,7 +3844,7 @@
 							"name": "点位列表",
 							"request": {
 								"url": {
-									"raw": "{{host}}/api/points?include=share,contract,area",
+									"raw": "{{host}}/api/points?include=share,contract,area,market&market_name=周浦万达&areaid=7&contract_type=lease&contract_mode=part&share_users=site&point_name=通用点位",
 									"host": [
 										"{{host}}"
 									],
@@ -3825,7 +3855,43 @@
 									"query": [
 										{
 											"key": "include",
-											"value": "share,contract,area",
+											"value": "share,contract,area,market",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "market_name",
+											"value": "周浦万达",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "areaid",
+											"value": "7",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "contract_type",
+											"value": "lease",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "contract_mode",
+											"value": "part",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "share_users",
+											"value": "site",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "point_name",
+											"value": "通用点位",
 											"equals": true,
 											"description": ""
 										}
@@ -3849,14 +3915,14 @@
 							"name": "点位详情",
 							"request": {
 								"url": {
-									"raw": "{{host}}/api/points/402?include=share,contract,area,market",
+									"raw": "{{host}}/api/points/572?include=share,contract,area,market",
 									"host": [
 										"{{host}}"
 									],
 									"path": [
 										"api",
 										"points",
-										"402"
+										"572"
 									],
 									"query": [
 										{
