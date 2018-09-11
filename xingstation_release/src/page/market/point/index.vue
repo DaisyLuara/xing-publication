@@ -32,9 +32,9 @@
                 :span="8">
                 <el-form-item 
                   label="" 
-                  prop="area">
+                  prop="areaid">
                   <el-select 
-                    v-model="searchForm.area_id" 
+                    v-model="searchForm.areaid"
                     placeholder="区域" 
                     filterable 
                     clearable
@@ -51,7 +51,7 @@
                 :span="8">
                 <el-form-item 
                   label="" 
-                  prop="mode">
+                  prop="site">
                   <el-select 
                     v-model="searchForm.site" 
                     :remote-method="getMarket"
@@ -271,7 +271,7 @@ export default {
     return {
       searchForm: {
         name: '',
-        area_id: '',
+        areaid: '',
         type: '',
         mode: '',
         permission: [],
@@ -294,19 +294,19 @@ export default {
       siteList: [],
       permissionList: [
         {
-          id: '0',
+          id: 'agent',
           name: '代理'
         },
         {
-          id: '1',
+          id: 'site',
           name: '场地主'
         },
         {
-          id: '2',
+          id: 'ad',
           name: '广告主'
         },
         {
-          id: '3',
+          id: 'vipad',
           name: 'VIP广告主'
         }
       ],
@@ -351,18 +351,37 @@ export default {
         pageSize: 10,
         currentPage: 1
       },
+      marketid: null,
+      areaid: null,
       tableData: []
     }
   },
   created() {
+    this.marketid = this.$route.query.marketid
+    this.areaid = this.$route.query.areaid
+    if (this.marketid && this.areaid) {
+      this.searchForm.site = parseInt(this.marketid)
+      this.searchForm.areaid = parseInt(this.areaid)
+      this.getMarket()
+    }
     this.getAeraList()
     this.getPointList()
   },
   methods: {
     addPoint() {
-      this.$router.push({
-        path: '/market/point/add'
-      })
+      if (this.marketid && this.areaid) {
+        this.$router.push({
+          path: '/market/point/add',
+          query: {
+            marketid: this.marketid,
+            areaid: this.areaid
+          }
+        })
+      } else {
+        this.$router.push({
+          path: '/market/point/add'
+        })
+      }
     },
     editPoint(data) {
       this.$router.push({
@@ -378,7 +397,7 @@ export default {
       let args = {
         name: query,
         include: 'area',
-        area_id: this.searchForm.area_id
+        area_id: this.searchForm.areaid
       }
       return search
         .getMarketList(this, args)
@@ -399,7 +418,31 @@ export default {
       this.setting.loading = true
       let args = {
         page: this.pagination.currentPage,
-        include: 'share,contract,area,market'
+        include: 'share,contract,area,market',
+        point_name: this.searchForm.name,
+        marketid: this.searchForm.site,
+        areaid: this.searchForm.areaid,
+        contract_type: this.searchForm.type,
+        contract_mode: this.searchForm.mode,
+        share_users: this.searchForm.permission.join(',')
+      }
+      if (!this.searchForm.site) {
+        delete args.marketid
+      }
+      if (!this.searchForm.name) {
+        delete args.point_name
+      }
+      if (!this.searchForm.areaid) {
+        delete args.areaid
+      }
+      if (!this.searchForm.type) {
+        delete args.contract_type
+      }
+      if (!this.searchForm.mode) {
+        delete args.contract_mode
+      }
+      if (this.searchForm.permission.length === 0) {
+        delete args.share_users
       }
       market
         .getPointList(this, args)
@@ -451,6 +494,7 @@ export default {
     resetSearch(formName) {
       this.$refs[formName].resetFields()
       this.pagination.currentPage = 1
+      this.getPointList()
     }
   }
 }

@@ -39,9 +39,9 @@
             </el-form-item>
             <el-form-item 
               label="区域" 
-              prop="area_id" >
+              prop="areaid" >
               <el-select 
-                v-model="siteForm.area_id" 
+                v-model="siteForm.areaid" 
                 placeholder="请选择" 
                 filterable 
                 clearable>
@@ -108,7 +108,8 @@
                 placeholder="请输入联系方式" 
                 class="item-input"/>
             </el-form-item>
-            <el-form-item 
+            <el-form-item
+              v-if="payFlag" 
               label="租金" 
               prop="contract.pay" >
               <el-input 
@@ -573,6 +574,8 @@ export default {
     let checkNumber = (rule, value, callback) => {
       if (value < 0) {
         callback(new Error('不能小于0'))
+      } else if (typeof parseFloat(value) !== 'number') {
+        callback(new Error('必须是数字'))
       } else {
         callback()
       }
@@ -596,19 +599,19 @@ export default {
       ],
       permissionList: [
         {
-          id: 0,
+          id: 'agent',
           name: '代理'
         },
         {
-          id: 1,
+          id: 'site',
           name: '场地主'
         },
         {
-          id: 2,
+          id: 'ad',
           name: '广告主'
         },
         {
-          id: 3,
+          id: 'vipad',
           name: 'VIP广告主'
         }
       ],
@@ -650,7 +653,7 @@ export default {
       },
       siteID: '',
       siteForm: {
-        area_id: '',
+        areaid: '',
         name: '',
         contract: {
           type: 'free',
@@ -669,7 +672,7 @@ export default {
           ad_ads: 5,
           exchange_num: 0
         },
-        permission: [1],
+        permission: ['场地主'],
         share: {
           offer: 2000,
           offer_off: 100,
@@ -694,7 +697,7 @@ export default {
       areaList: [],
       rules: {
         name: [{ required: true, message: '请输入名称', trigger: 'submit' }],
-        area_id: [{ required: true, message: '请选择区域', trigger: 'submit' }],
+        areaid: [{ required: true, message: '请选择区域', trigger: 'submit' }],
         'contract.type': [
           { required: true, message: '请选择场地类型', trigger: 'submit' }
         ],
@@ -703,7 +706,6 @@ export default {
         ],
         'contract.pay': [
           { required: true, message: '请输入金额', trigger: 'submit' },
-          { type: 'number', message: '金额必须为数字', trigger: 'submit' },
           { validator: checkNumber, trigger: 'submit' }
         ],
         'contract.enter_sdate': [
@@ -723,17 +725,14 @@ export default {
         ],
         'contract.ad_istar': [
           { required: true, message: '请输入A类广告分成', trigger: 'submit' },
-          { type: 'number', message: '必须为数字', trigger: 'submit' },
           { validator: checkNumber, trigger: 'submit' }
         ],
         'contract.ad_ads': [
           { required: true, message: '请输入B类广告分成', trigger: 'submit' },
-          { type: 'number', message: '必须为数字', trigger: 'submit' },
           { validator: checkNumber, trigger: 'submit' }
         ],
         'contract.exchange_num': [
           { required: true, message: '请输入置换节目数量', trigger: 'submit' },
-          { type: 'number', message: '必须为数字', trigger: 'submit' },
           { validator: checkNumber, trigger: 'submit' }
         ],
         permission: [
@@ -746,50 +745,51 @@ export default {
         ],
         'share.offer': [
           { required: true, message: '请输入报刊价', trigger: 'submit' },
-          { type: 'number', message: '必须为数字', trigger: 'submit' },
           { validator: checkNumber, trigger: 'submit' }
         ],
+        'share.offer_off': [{ validator: checkNumber, trigger: 'submit' }],
         'share.mad': [
           { required: true, message: '请输入曝光价', trigger: 'submit' },
-          { type: 'number', message: '必须为数字', trigger: 'submit' },
           { validator: checkNumber, trigger: 'submit' }
         ],
+        'share.mad_off': [{ validator: checkNumber, trigger: 'submit' }],
         'share.play': [
           { required: true, message: '请输入冠名价', trigger: 'submit' },
-          { type: 'number', message: '必须为数字', trigger: 'submit' },
           { validator: checkNumber, trigger: 'submit' }
         ],
+        'share.play_off': [{ validator: checkNumber, trigger: 'submit' }],
         'share.qrcode': [
           { required: true, message: '请输入', trigger: 'submit' },
-          { type: 'number', message: '必须为数字', trigger: 'submit' },
           { validator: checkNumber, trigger: 'submit' }
         ],
+        'share.qrcode_off': [{ validator: checkNumber, trigger: 'submit' }],
         'share.wx_pa': [
           { required: true, message: '请输入', trigger: 'submit' },
-          { type: 'number', message: '必须为数字', trigger: 'submit' },
           { validator: checkNumber, trigger: 'submit' }
         ],
+        'share.wx_pa_off': [{ validator: checkNumber, trigger: 'submit' }],
         'share.wx_mp': [
           { required: true, message: '请输入', trigger: 'submit' },
-          { type: 'number', message: '必须为数字', trigger: 'submit' },
           { validator: checkNumber, trigger: 'submit' }
         ],
+        'share.wx_mp_off': [{ validator: checkNumber, trigger: 'submit' }],
         'share.app': [
           { required: true, message: '请输入', trigger: 'submit' },
-          { type: 'number', message: '必须为数字', trigger: 'submit' },
           { validator: checkNumber, trigger: 'submit' }
         ],
+        'share.app_off': [{ validator: checkNumber, trigger: 'submit' }],
         'share.phone': [
           { required: true, message: '请输入', trigger: 'submit' },
-          { type: 'number', message: '必须为数字', trigger: 'submit' },
           { validator: checkNumber, trigger: 'submit' }
         ],
+        'share.phone_off': [{ validator: checkNumber, trigger: 'submit' }],
         'share.coupon': [
           { required: true, message: '请输入', trigger: 'submit' },
-          { type: 'number', message: '必须为数字', trigger: 'submit' },
           { validator: checkNumber, trigger: 'submit' }
-        ]
-      }
+        ],
+        'share.coupon_off': [{ validator: checkNumber, trigger: 'submit' }]
+      },
+      payFlag: false
     }
   },
   created() {
@@ -798,6 +798,14 @@ export default {
       this.getMarketDetail()
     }
     this.getAreaList()
+    this.getAreaList()
+    let roles = JSON.parse(localStorage.getItem('user_info')).roles.data
+    roles.map(r => {
+      if (r.display_name === '管理员') {
+        this.payFlag = true
+        return
+      }
+    })
   },
   methods: {
     getMarketDetail() {
@@ -810,9 +818,18 @@ export default {
         .getMarketDetail(this, args, id)
         .then(res => {
           this.siteForm.name = res.name
-          this.siteForm.area_id = res.area.id
+          this.siteForm.areaid = res.area.id
           if (res.contract) {
             this.siteForm.contract = res.contract
+            if (res.contract.mode === 'part') {
+              this.modeNone = true
+              this.modeFlag = true
+            } else if (res.contract.mode === 'exchange') {
+              this.modeNone = true
+              this.modeFlag = false
+            } else {
+              this.modeNone = false
+            }
           }
           if (res.share) {
             this.siteForm.share = res.share
@@ -826,16 +843,16 @@ export default {
               this.siteForm.permission = []
             } else {
               if (res.share.site === 1) {
-                this.siteForm.permission.push(1)
+                this.siteForm.permission.push('site')
               }
               if (res.share.vipad === 1) {
-                this.siteForm.permission.push(3)
+                this.siteForm.permission.push('vipad')
               }
               if (res.share.ad === 1) {
-                this.siteForm.permission.push(2)
+                this.siteForm.permission.push('ad')
               }
               if (res.share.agent === 1) {
-                this.siteForm.permission.push(0)
+                this.siteForm.permission.push('agent')
               }
             }
           }
@@ -859,18 +876,12 @@ export default {
     modeHandle() {
       if (this.siteForm.contract.mode === 'none') {
         this.modeNone = false
-        this.siteForm.contract.ad_istar = 5
-        this.siteForm.contract.ad_ads = 5
-        this.siteForm.contract.exchange_num = 0
       } else if (this.siteForm.contract.mode === 'part') {
         this.modeNone = true
         this.modeFlag = true
-        this.siteForm.contract.exchange_num = 0
       } else if (this.siteForm.contract.mode === 'exchange') {
         this.modeNone = true
         this.modeFlag = false
-        this.siteForm.contract.ad_istar = 5
-        this.siteForm.contract.ad_ads = 5
       }
     },
     historyBack() {
@@ -879,8 +890,68 @@ export default {
     submit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+          delete this.siteForm.contract.date
+          delete this.siteForm.share.date
+          this.siteForm.share.site = 0
+          this.siteForm.share.vipad = 0
+          this.siteForm.share.ad = 0
+          this.siteForm.share.agent = 0
+          for (let i = 0; i < this.siteForm.permission.length; i++) {
+            let value = this.siteForm.permission[i]
+            if (value === 'site') {
+              this.siteForm.share.site = 1
+            }
+            if (value === 'vipad') {
+              this.siteForm.share.vipad = 1
+            }
+            if (value === 'ad') {
+              this.siteForm.share.ad = 1
+            }
+            if (value === 'agent') {
+              this.siteForm.share.agent = 1
+            }
+          }
+
+          let args = this.siteForm
+          delete args.permission
+          if (this.siteID) {
+            market
+              .modifyMarket(this, args, this.siteID)
+              .then(res => {
+                this.$message({
+                  message: '修改场地成功',
+                  type: 'success'
+                })
+                this.$router.push({
+                  path: '/market/site'
+                })
+              })
+              .catch(err => {
+                console.log(err)
+              })
+          } else {
+            market
+              .saveMarket(this, args)
+              .then(res => {
+                this.$message({
+                  message: '新建场地成功',
+                  type: 'success'
+                })
+                this.$router.push({
+                  path: '/market/site'
+                })
+              })
+              .catch(err => {
+                console.log(err)
+              })
+          }
         } else {
-          return
+          this.$message({
+            showClose: true,
+            message: '请填写完表单必填项，在提交',
+            type: 'error',
+            duration: 5000
+          })
         }
       })
     }
