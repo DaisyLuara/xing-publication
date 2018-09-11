@@ -44,11 +44,8 @@ class PointController extends Controller
         }
 
         //场地名称
-        if ($request->has('market_name')) {
-            $marketName = $request->market_name;
-            $query->whereHas('market', function ($query) use ($marketName) {
-                $query->where('name', 'like', '%' . $marketName . '%');
-            });
+        if ($request->has('marketid')) {
+            $query->where('marketid', '=', $request->marketid);
         }
 
         //区域
