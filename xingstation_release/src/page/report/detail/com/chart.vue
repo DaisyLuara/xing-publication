@@ -8,8 +8,8 @@
       v-for="(item, index) in chartdata"
       v-show="dataOptions[index] "
       :key="index"
-      :class="[index === 0 ? 'active' : '']"
       :style="bindStyle[index]"
+      :class="[index === 0 ? 'active' : '']"
     >
       <!-- end special process -->
       <div 
@@ -43,7 +43,8 @@
               v-if="index > 0"
               :style="smallCirlce[index]" 
               class="percent">
-              {{ computedRate[index - 1] }} %
+              <span>{{ computedRate[index - 1] }} %</span>
+              <span>{{ rateName[index - 2] }}</span>
             </div>
           </div>
         </div>
@@ -83,6 +84,13 @@ export default {
         'OMO有效跳转人数',
         '扫码啦心会员注册总数',
         '完成转发分享人数'
+      ],
+      rateName: [
+        'CPF转化率',
+        'CPR转化率',
+        'CPA转化率',
+        'CPL转化率',
+        'CPF∙S转化率'
       ],
       // dataOptions: [true, true, true, true, true, true, true],
       bindColors: [
@@ -234,7 +242,8 @@ export default {
           position: 'absolute',
           top: '-' + String(this.calStore[i].height) + 'px',
           left: 0,
-          color: 'white'
+          color: 'white',
+          fontSize: this.width * 0.04 + 'px'
         }
 
         // lineStyle
@@ -247,7 +256,8 @@ export default {
             height: String(this.calStore[i].height) + 'px',
             position: 'absolute',
             right: '-' + this.width / 2 + 'px',
-            top: '-' + String(this.calStore[i].height) + 'px'
+            top: '-' + String(this.calStore[i].height) + 'px',
+            fontSize: this.width * 0.035 + 'px'
           }
         } else {
           circleAreaObj = {
@@ -255,7 +265,8 @@ export default {
             height: String(this.calStore[i].height) + 'px',
             position: 'absolute',
             left: '-' + this.width / 2 + 'px',
-            top: '-' + String(this.calStore[i].height) + 'px'
+            top: '-' + String(this.calStore[i].height) + 'px',
+            fontSize: this.width * 0.035 + 'px'
           }
         }
 
@@ -277,10 +288,20 @@ export default {
             justifyContent: 'center'
           }
 
-          if (i % 2 === 0) {
-            innerCircleObj.right = '0'
+          let cutWidth =
+            (this.calStore[i].topWidth - this.calStore[i].bottomWidth) / 2
+          if (i < this.chartdata.length - 2) {
+            if (i % 2 === 0) {
+              innerCircleObj.left = cutWidth * 2 + 'px'
+            } else {
+              innerCircleObj.right = cutWidth * 2 + 'px'
+            }
           } else {
-            innerCircleObj.left = '0'
+            if (i % 2 === 0) {
+              innerCircleObj.right = '0'
+            } else {
+              innerCircleObj.left = '0'
+            }
           }
 
           let w2 = w - 2
@@ -468,6 +489,9 @@ export default {
   }
   .percent {
     color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 }
 </style>

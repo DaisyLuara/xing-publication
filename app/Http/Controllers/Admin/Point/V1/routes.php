@@ -18,10 +18,14 @@ $api->version('v1', [
             //场地
             $api->get('markets', 'MarketController@index');
             $api->get('markets/{market}', 'MarketController@show');
+            $api->post('market', ['middleware' => ['role:super-admin|admin|project-manager'], 'uses' => 'MarketController@store']);
+            $api->patch('market/{market}', ['middleware' => ['role:super-admin|admin|project-manager'], 'uses' => 'MarketController@update']);
 
             //点位
             $api->get('points', 'PointController@index');
             $api->get('points/{point}', 'PointController@show');
+            $api->post('point', ['middleware' => ['role:super-admin|admin|project-manager'], 'uses' => 'PointController@store']);
+            $api->patch('points/{point}', ['middleware' => ['role:super-admin|admin|project-manager'], 'uses' => 'PointController@update']);
         });
     });
 

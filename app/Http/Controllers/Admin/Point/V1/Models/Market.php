@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers\Admin\Point\V1\Models;
 
-use App\Models\Model;
+use App\Models\ArModel;
 
 
-class Market extends Model
+class Market extends ArModel
 {
-    protected $connection = 'ar';
     public $table = 'avr_official_market';
     protected $primaryKey = 'marketid';
+
+    protected $fillable = [
+        'name', 'info', 'icon', 'image', 'type', 'lat', 'lng', 'count', 'areaid', 'date',
+        'clientdate'
+    ];
+
+
 
     public function area()
     {

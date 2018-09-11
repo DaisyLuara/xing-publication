@@ -32,12 +32,13 @@
                 :span="8">
                 <el-form-item 
                   label="" 
-                  prop="area">
+                  prop="areaid">
                   <el-select 
-                    v-model="searchForm.area" 
+                    v-model="searchForm.areaid"
                     placeholder="区域" 
                     filterable 
-                    clearable>
+                    clearable
+                    @change="areaHandle">
                     <el-option
                       v-for="item in areaList"
                       :key="item.id"
@@ -50,10 +51,13 @@
                 :span="8">
                 <el-form-item 
                   label="" 
-                  prop="mode">
+                  prop="site">
                   <el-select 
                     v-model="searchForm.site" 
-                    placeholder="场地名称" 
+                    :remote-method="getMarket"
+                    :loading="searchLoading" 
+                    placeholder="场地名称"
+                    remote
                     filterable 
                     clearable>
                     <el-option
@@ -76,6 +80,7 @@
                   <el-select 
                     v-model="searchForm.permission" 
                     placeholder="点位权限" 
+                    multiple
                     filterable 
                     clearable>
                     <el-option
@@ -141,10 +146,10 @@
             总数:{{ pagination.total }} 
           </span>
           <div>
-          <el-button 
-            size="small" 
-            type="success"
-            @click="addPoint">新建点位</el-button>
+            <el-button 
+              size="small" 
+              type="success"
+              @click="addPoint">新建点位</el-button>
           </div>
         </div>
         <el-table 
@@ -183,16 +188,14 @@
             :show-overflow-tooltip="true"
             prop="name"
             label="点位名称"
-            min-width="100"
-          >
-          </el-table-column>
+            min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="area"
             label="区域"
             min-width="80">
             <template slot-scope="scope">
-              {{scope.row.area.name}}
+              {{ scope.row.area.name }}
             </template>
           </el-table-column>
           <el-table-column
@@ -201,7 +204,7 @@
             label="场地名称"
             min-width="80">
             <template slot-scope="scope">
-              {{scope.row.market.name}}
+              {{ scope.row.market.name }}
             </template>
           </el-table-column>
           <el-table-column 
@@ -268,10 +271,10 @@ export default {
     return {
       searchForm: {
         name: '',
-        area_id: '',
+        areaid: '',
         type: '',
         mode: '',
-        permission: '',
+        permission: [],
         site: ''
       },
       modeList: [
@@ -291,19 +294,19 @@ export default {
       siteList: [],
       permissionList: [
         {
-          id: '0',
+          id: 'agent',
           name: '代理'
         },
         {
-          id: '1',
+          id: 'site',
           name: '场地主'
         },
         {
-          id: '2',
+          id: 'ad',
           name: '广告主'
         },
         {
-          id: '3',
+          id: 'vipad',
           name: 'VIP广告主'
         }
       ],
@@ -342,39 +345,108 @@ export default {
         loading: false,
         loadingText: '拼命加载中'
       },
+      searchLoading: false,
       pagination: {
         total: 0,
         pageSize: 10,
         currentPage: 1
       },
+      marketid: null,
+      areaid: null,
       tableData: []
     }
   },
   created() {
+    this.marketid = this.$route.query.marketid
+    this.areaid = this.$route.query.areaid
+    if (this.marketid && this.areaid) {
+      this.searchForm.site = parseInt(this.marketid)
+      this.searchForm.areaid = parseInt(this.areaid)
+      this.getMarket()
+    }
     this.getAeraList()
     this.getPointList()
   },
   methods: {
     addPoint() {
-      this.$router.push({
-        path: '/market/point/add'
-      })
+      if (this.marketid && this.areaid) {
+        this.$router.push({
+          path: '/market/point/add',
+          query: {
+            marketid: this.marketid,
+            areaid: this.areaid
+          }
+        })
+      } else {
+        this.$router.push({
+          path: '/market/point/add'
+        })
+      }
     },
-    editPoint(data){
+    editPoint(data) {
       this.$router.push({
         path: '/market/point/edit/' + data.id
       })
+    },
+    areaHandle() {
+      this.searchForm.site = ''
+      this.getMarket(this.searchForm.site)
+    },
+    getMarket(query) {
+      this.searchLoading = true
+      let args = {
+        name: query,
+        include: 'area',
+        area_id: this.searchForm.areaid
+      }
+      return search
+        .getMarketList(this, args)
+        .then(response => {
+          this.siteList = response.data
+          if (this.siteList.length == 0) {
+            this.searchForm.site = ''
+            this.siteList = []
+          }
+          this.searchLoading = false
+        })
+        .catch(err => {
+          console.log(err)
+          this.searchLoading = false
+        })
     },
     getPointList() {
       this.setting.loading = true
       let args = {
         page: this.pagination.currentPage,
-        include: 'share,contract,area,market'
+        include: 'share,contract,area,market',
+        point_name: this.searchForm.name,
+        marketid: this.searchForm.site,
+        areaid: this.searchForm.areaid,
+        contract_type: this.searchForm.type,
+        contract_mode: this.searchForm.mode,
+        share_users: this.searchForm.permission.join(',')
+      }
+      if (!this.searchForm.site) {
+        delete args.marketid
+      }
+      if (!this.searchForm.name) {
+        delete args.point_name
+      }
+      if (!this.searchForm.areaid) {
+        delete args.areaid
+      }
+      if (!this.searchForm.type) {
+        delete args.contract_type
+      }
+      if (!this.searchForm.mode) {
+        delete args.contract_mode
+      }
+      if (this.searchForm.permission.length === 0) {
+        delete args.share_users
       }
       market
         .getPointList(this, args)
         .then(res => {
-          console.log(res)
           this.tableData = res.data
           this.pagination.total = res.meta.pagination.total
           this.setting.loading = false
@@ -422,6 +494,7 @@ export default {
     resetSearch(formName) {
       this.$refs[formName].resetFields()
       this.pagination.currentPage = 1
+      this.getPointList()
     }
   }
 }

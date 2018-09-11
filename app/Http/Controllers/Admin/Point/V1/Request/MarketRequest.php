@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin\Point\V1\Request;
 
 use Dingo\Api\Http\FormRequest;
 
-class PointRequest extends FormRequest
+class MarketRequest extends FormRequest
 {
     public function authorize()
     {
@@ -15,14 +15,9 @@ class PointRequest extends FormRequest
     public function rules()
     {
         switch ($this->method()) {
-            case 'GET':
-                return [
-                    'lat' => 'required',
-                    'lng' => 'required',
-                ];
             case 'POST':
                 return [
-                    'marketid' => 'required',
+                    'areaid' => 'required',
                     'name' => 'required',
                     'contract.type' => 'required',
                     'contract.pay' => 'required',
@@ -45,6 +40,5 @@ class PointRequest extends FormRequest
                 return [];
         }
     }
-
 
 }

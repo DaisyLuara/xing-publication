@@ -494,23 +494,30 @@
           class="actions-wrap-pic">
           <div 
             class="label">
-            <!-- <div class="date">{{handleDateTransform(dateTime[0])}}  -  {{handleDateTransform(dateTime[1])}}</div> -->
-            <div class="item-text">时间：{{handleDateTransform(dateTime[0])}}  -  {{handleDateTransform(dateTime[1])}}</div>
-            <div class="item-text" v-if="sceneInfo">场景：{{sceneInfo}}</div>
-            <div class="item-text" v-if="projectInfo">节目：{{projectInfo}}</div>
-            <div class="item-text" v-if="addressInfo">地址：{{addressInfo}}</div>
+            <div class="item-text">时间：{{ handleDateTransform(dateTime[0]) }}  -  {{ handleDateTransform(dateTime[1]) }}</div>
+            <div
+              v-if="sceneInfo" 
+              class="item-text">场景：{{ sceneInfo }}</div>
+            <div 
+              v-if="projectInfo"
+              class="item-text" >节目：{{ projectInfo }}</div>
+            <div 
+              v-if="addressInfo"
+              class="item-text" >地址：{{ addressInfo }}</div>
           </div>
-          <div class="label" style="text-align: right;">
+          <div
+            style="text-align: right;" 
+            class="label">
             <span class="icon-wrap">
-              <span class="icon-num">{{rateDay}}<sub>天</sub></span>
+              <span class="icon-num">{{ rateDay }}<sub>天</sub></span>
               <img src="~assets/images/icons/date_icon.png">
             </span>
             <span class="icon-wrap">
-              <span class="icon-num">{{marketCount}}<sub>个场地</sub></span>
+              <span class="icon-num">{{ marketCount }}<sub>个场地</sub></span>
               <img src="~assets/images/icons/tower_icon.png">
             </span>
             <span class="icon-wrap">
-              <span class="icon-num">{{screenCount}}<sub>座大屏</sub></span>
+              <span class="icon-num">{{ screenCount }}<sub>座大屏</sub></span>
               <img src="~assets/images/icons/machine_icon.png">
             </span>
           </div>
@@ -519,15 +526,53 @@
           <el-col :span="12">
             <div class="funnel">
               <div class="legend">
-                <!-- <span class="legend-text" @click="legendHandle('0')"><span class="legend-text-one" :class="{'label-gray': !dataOptions[0]}"></span>爆光</span> -->
-                <span class="legend-text" @click="legendHandle('1')"><span class="legend-text-two" :class="{'label-gray': !dataOptions[1]}"></span>围观</span>
-                <span class="legend-text" @click="legendHandle('2')"><span class="legend-text-three" :class="{'label-gray': !dataOptions[2]}"></span>活跃</span>
-                <span class="legend-text" @click="legendHandle('3')"><span class="legend-text-four" :class="{'label-gray': !dataOptions[3]}"></span>铁杆</span>
-                <span class="legend-text" @click="legendHandle('4')"><span class="legend-text-five" :class="{'label-gray': !dataOptions[4]}"></span>跳转</span>
-                <span class="legend-text" @click="legendHandle('5')"><span class="legend-text-six" :class="{'label-gray': !dataOptions[5]}"></span>拉新</span>
-                <span class="legend-text" @click="legendHandle('6')"><span class="legend-text-seven " :class="{'label-gray': !dataOptions[6]}"></span>转发</span>
+                <!-- <span 
+                  class="legend-text" 
+                  @click="legendHandle('0')">
+                  <span 
+                    :class="{'label-gray': !dataOptions[0]}"
+                    class="legend-text-one"/>爆光</span> -->
+                <span 
+                  class="legend-text" 
+                  @click="legendHandle('1')">
+                  <span
+                    :class="{'label-gray': !dataOptions[1]}" 
+                    class="legend-text-two"/>围观</span>
+                <span 
+                  class="legend-text" 
+                  @click="legendHandle('2')">
+                  <span 
+                    :class="{'label-gray': !dataOptions[2]}"
+                    class="legend-text-three" />活跃</span>
+                <span 
+                  class="legend-text" 
+                  @click="legendHandle('3')">
+                  <span 
+                    :class="{'label-gray': !dataOptions[3]}"
+                    class="legend-text-four" />铁杆</span>
+                <span 
+                  class="legend-text" 
+                  @click="legendHandle('4')">
+                  <span 
+                    :class="{'label-gray': !dataOptions[4]}"
+                    class="legend-text-five" />跳转</span>
+                <span 
+                  class="legend-text" 
+                  @click="legendHandle('5')">
+                  <span 
+                    :class="{'label-gray': !dataOptions[5]}"
+                    class="legend-text-six" />拉新</span>
+                <span 
+                  class="legend-text" 
+                  @click="legendHandle('6')">
+                  <span 
+                    :class="{'label-gray': !dataOptions[6]}"
+                    class="legend-text-seven " />转发</span>
               </div>
-              <PicChart :chartdata="chartdata" :dataOptions="dataOptions" :width="width"/>
+              <PicChart 
+                :chartdata="chartdata" 
+                :data-options="dataOptions" 
+                :width="width"/>
             </div>
           </el-col>
           <el-col :span="12">

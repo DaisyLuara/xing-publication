@@ -14,8 +14,8 @@ module.exports = {
   // required to lint *.vue files
   plugins: [
     // 使用的插件eslint-plugin-html. 写配置文件的时候，可以省略eslint-plugin-
-    'html',
-    // 'vue'
+    // 'html',
+    'vue'
   ],
   extends: [
     // add more generic rulesets here, such as:
