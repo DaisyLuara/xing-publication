@@ -32,9 +32,9 @@
                 :span="8">
                 <el-form-item 
                   label="" 
-                  prop="area">
+                  prop="area_id">
                   <el-select 
-                    v-model="searchForm.area" 
+                    v-model="searchForm.area_id" 
                     placeholder="区域" 
                     filterable 
                     clearable>
@@ -299,7 +299,7 @@
           <el-table-column
             :show-overflow-tooltip="true"
             prop="date"
-            label="修改时间"
+            label="时间"
             min-width="100">
             <template slot-scope="scope">
               {{ scope.row.contract ? scope.row.contract.date:'' }}
@@ -316,7 +316,8 @@
                 @click="editSite(scope.row)">编辑</el-button>
               <el-button 
                 size="small" 
-                type="primary">点位</el-button>
+                type="primary"
+                @click="pointLink(scope.row)">点位</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -393,19 +394,19 @@ export default {
       ],
       permissionList: [
         {
-          id: '0',
+          id: 'agent',
           name: '代理'
         },
         {
-          id: '1',
+          id: 'site',
           name: '场地主'
         },
         {
-          id: '2',
+          id: 'ad',
           name: '广告主'
         },
         {
-          id: '3',
+          id: 'vipad',
           name: 'VIP广告主'
         }
       ],
@@ -467,11 +468,40 @@ export default {
         path: '/market/site/edit/' + data.id
       })
     },
+    pointLink(data) {
+      this.$router.push({
+        path: '/market/point',
+        query: {
+          marketid: data.id,
+          areaid: data.area.id
+        }
+      })
+    },
     getMarketList() {
       this.setting.loading = true
       let args = {
         page: this.pagination.currentPage,
-        include: 'share,contract,area'
+        include: 'share,contract,area',
+        market_name: this.searchForm.name,
+        areaid: this.searchForm.area_id,
+        contract_type: this.searchForm.type,
+        contract_mode: this.searchForm.mode,
+        share_users: this.searchForm.permission.join(',')
+      }
+      if (!this.searchForm.name) {
+        delete args.market_name
+      }
+      if (!this.searchForm.area_id) {
+        delete args.areaid
+      }
+      if (!this.searchForm.type) {
+        delete args.contract_type
+      }
+      if (!this.searchForm.mode) {
+        delete args.contract_mode
+      }
+      if (this.searchForm.permission.length === 0) {
+        delete args.share_users
       }
       market
         .getMarketList(this, args)
@@ -525,6 +555,7 @@ export default {
     resetSearch(formName) {
       this.$refs[formName].resetFields()
       this.pagination.currentPage = 1
+      this.getMarketList()
     }
   }
 }
