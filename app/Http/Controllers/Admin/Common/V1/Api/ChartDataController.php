@@ -539,7 +539,7 @@ class ChartDataController extends Controller
 
         $output['oid_count'] = $count->oid_count;
         $output['market_count'] = $count->market_count;
-        $output['day'] = (new Carbon($endDate))->diffInDays((new Carbon($startDate)));
+        $output['day'] = (new Carbon($endDate))->diffInDays((new Carbon($startDate))) + 1;
 
         return $output;
     }

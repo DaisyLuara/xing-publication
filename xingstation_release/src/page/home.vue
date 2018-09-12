@@ -125,17 +125,14 @@ export default {
               case 'team':
                 m.src = require('../assets/images/icons/team-icon.png')
                 break
-              case 'point':
-                m.src = require('../assets/images/icons/point-icon.png')
+              case 'market':
+                m.src = require('../assets/images/icons/market-icon.png')
                 break
               case 'home':
                 m.src = require('../assets/images/icons/home-icon.png')
                 break
               case 'report':
                 m.src = require('../assets/images/icons/report-icon.png')
-                break
-              case 'resource':
-                m.src = require('../assets/images/icons/resource-icon.png')
                 break
               case 'setting':
                 m.src = require('../assets/images/icons/setting-icon.png')

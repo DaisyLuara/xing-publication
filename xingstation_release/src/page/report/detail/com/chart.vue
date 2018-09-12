@@ -6,10 +6,10 @@
   >
     <div
       v-for="(item, index) in chartdata"
-      v-show="dataOptions[index] && index !== chartdata.length - 1"
-      :class="[index === 0 ? 'active' : '']"
+      v-show="dataOptions[index] "
       :key="index"
       :style="bindStyle[index]"
+      :class="[index === 0 ? 'active' : '']"
     >
       <!-- end special process -->
       <div 
@@ -43,7 +43,8 @@
               v-if="index > 0"
               :style="smallCirlce[index]" 
               class="percent">
-              {{ computedRate[index - 1] }} %
+              <span>{{ computedRate[index - 1] }} %</span>
+              <span>{{ rateName[index - 2] }}</span>
             </div>
           </div>
         </div>
@@ -81,8 +82,15 @@ export default {
         '大瓶活跃玩家人数',
         '大屏铁杆玩家人数',
         'OMO有效跳转人数',
-        '扫码拉新会员注册总数',
+        '扫码啦心会员注册总数',
         '完成转发分享人数'
+      ],
+      rateName: [
+        'CPF转化率',
+        'CPR转化率',
+        'CPA转化率',
+        'CPL转化率',
+        'CPF∙S转化率'
       ],
       // dataOptions: [true, true, true, true, true, true, true],
       bindColors: [
@@ -182,14 +190,26 @@ export default {
           dataObj.height = this.height * this.sh / 1500
         }
         if (i === 1) {
-          dataObj.topWidth = this.width
-          dataObj.bottomWidth = this.width * this.bvt1
-          dataObj.height = this.height * this.sh / 1500
+          if (!this.dataOptions[i]) {
+            dataObj.topWidth = this.width
+            dataObj.bottomWidth = this.width
+            dataObj.height = this.height * this.sh / 1500
+          } else {
+            dataObj.topWidth = this.width
+            dataObj.bottomWidth = this.width * this.bvt1
+            dataObj.height = this.height * this.sh / 1500
+          }
         }
         if (i > 1 && i < this.chartdata.length - 2) {
-          dataObj.topWidth = this.calStore[i - 1].bottomWidth
-          dataObj.bottomWidth = dataObj.topWidth * this.bvt
-          dataObj.height = this.height * this.sh / 1500
+          if (!this.dataOptions[i]) {
+            dataObj.topWidth = this.calStore[i - 1].bottomWidth
+            dataObj.bottomWidth = this.calStore[i - 1].bottomWidth
+            dataObj.height = this.height * this.sh / 1500
+          } else {
+            dataObj.topWidth = this.calStore[i - 1].bottomWidth
+            dataObj.bottomWidth = dataObj.topWidth * this.bvt
+            dataObj.height = this.height * this.sh / 1500
+          }
         }
         if (i === this.chartdata.length - 2 && i > 2) {
           dataObj.topWidth = this.calStore[i - 1].bottomWidth
@@ -222,7 +242,8 @@ export default {
           position: 'absolute',
           top: '-' + String(this.calStore[i].height) + 'px',
           left: 0,
-          color: 'white'
+          color: 'white',
+          fontSize: this.width * 0.04 + 'px'
         }
 
         // lineStyle
@@ -235,7 +256,8 @@ export default {
             height: String(this.calStore[i].height) + 'px',
             position: 'absolute',
             right: '-' + this.width / 2 + 'px',
-            top: '-' + String(this.calStore[i].height) + 'px'
+            top: '-' + String(this.calStore[i].height) + 'px',
+            fontSize: this.width * 0.035 + 'px'
           }
         } else {
           circleAreaObj = {
@@ -243,7 +265,8 @@ export default {
             height: String(this.calStore[i].height) + 'px',
             position: 'absolute',
             left: '-' + this.width / 2 + 'px',
-            top: '-' + String(this.calStore[i].height) + 'px'
+            top: '-' + String(this.calStore[i].height) + 'px',
+            fontSize: this.width * 0.035 + 'px'
           }
         }
 
@@ -265,10 +288,20 @@ export default {
             justifyContent: 'center'
           }
 
-          if (i % 2 === 0) {
-            innerCircleObj.right = '0'
+          let cutWidth =
+            (this.calStore[i].topWidth - this.calStore[i].bottomWidth) / 2
+          if (i < this.chartdata.length - 2) {
+            if (i % 2 === 0) {
+              innerCircleObj.left = cutWidth * 2 + 'px'
+            } else {
+              innerCircleObj.right = cutWidth * 2 + 'px'
+            }
           } else {
-            innerCircleObj.left = '0'
+            if (i % 2 === 0) {
+              innerCircleObj.right = '0'
+            } else {
+              innerCircleObj.left = '0'
+            }
           }
 
           let w2 = w - 2
@@ -438,6 +471,7 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  text-align: center;
   .text-inner {
     display: flex;
     flex-direction: column;
@@ -455,6 +489,9 @@ export default {
   }
   .percent {
     color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 }
 </style>

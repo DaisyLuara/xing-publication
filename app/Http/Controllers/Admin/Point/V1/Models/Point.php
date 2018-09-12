@@ -4,14 +4,20 @@ namespace App\Http\Controllers\Admin\Point\V1\Models;
 
 use App\Http\Controllers\Admin\Project\V1\Models\Project;
 use App\Http\Controllers\Admin\User\V1\Models\ArUser;
-use App\Models\Model;
+use App\Models\ArModel;
 
-class Point extends Model
+class Point extends ArModel
 {
 
-    protected $connection = 'ar';
     public $table = 'avr_official';
     protected $primaryKey = 'oid';
+
+    protected $fillable = [
+        'areaid', 'marketid', 'sid', 'bd_uid', 'site_uid',
+        'hours', 'shours', 'ehours', 'weekday', 'weekend',
+        'visiable', 'name', 'info', 'icon', 'type', 'date',
+        'clientdate', 'lat', 'lng', 'geo_hash'
+    ];
 
     public function arUsers()
     {
@@ -36,6 +42,16 @@ class Point extends Model
     public function area()
     {
         return $this->belongsTo(Area::class, 'areaid', 'areaid');
+    }
+
+    public function share()
+    {
+        return $this->hasOne(PointShare::class, 'oid', 'oid');
+    }
+
+    public function contract()
+    {
+        return $this->hasOne(PointContract::class, 'oid', 'oid');
     }
 
 }

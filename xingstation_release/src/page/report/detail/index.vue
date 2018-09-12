@@ -494,19 +494,30 @@
           class="actions-wrap-pic">
           <div 
             class="label">
-            <span class="date">{{handleDateTransform(dateTime[0])}}  -  {{handleDateTransform(dateTime[1])}}</span>
+            <div class="item-text">时间：{{ handleDateTransform(dateTime[0]) }}  -  {{ handleDateTransform(dateTime[1]) }}</div>
+            <div
+              v-if="sceneInfo" 
+              class="item-text">场景：{{ sceneInfo }}</div>
+            <div 
+              v-if="projectInfo"
+              class="item-text" >节目：{{ projectInfo }}</div>
+            <div 
+              v-if="addressInfo"
+              class="item-text" >地址：{{ addressInfo }}</div>
           </div>
-          <div class="label" style="text-align: right;">
+          <div
+            style="text-align: right;" 
+            class="label">
             <span class="icon-wrap">
-              <span class="icon-num">{{rateDay}}<sub>天</sub></span>
+              <span class="icon-num">{{ rateDay }}<sub>天</sub></span>
               <img src="~assets/images/icons/date_icon.png">
             </span>
             <span class="icon-wrap">
-              <span class="icon-num">{{marketCount}}<sub>个场地</sub></span>
+              <span class="icon-num">{{ marketCount }}<sub>个场地</sub></span>
               <img src="~assets/images/icons/tower_icon.png">
             </span>
             <span class="icon-wrap">
-              <span class="icon-num">{{screenCount}}<sub>座大屏</sub></span>
+              <span class="icon-num">{{ screenCount }}<sub>座大屏</sub></span>
               <img src="~assets/images/icons/machine_icon.png">
             </span>
           </div>
@@ -515,15 +526,53 @@
           <el-col :span="12">
             <div class="funnel">
               <div class="legend">
-                <!-- <span class="legend-text" @click="legendHandle('0')"><span class="legend-text-one"></span>爆光</span> -->
-                <span class="legend-text" @click="legendHandle('1')"><span class="legend-text-two"></span>围观</span>
-                <span class="legend-text" @click="legendHandle('2')"><span class="legend-text-three"></span>活跃</span>
-                <span class="legend-text" @click="legendHandle('3')"><span class="legend-text-four"></span>铁杆</span>
-                <span class="legend-text" @click="legendHandle('4')"><span class="legend-text-five"></span>跳转</span>
-                <span class="legend-text" @click="legendHandle('5')"><span class="legend-text-six"></span>拉新</span>
-                <!-- <span class="legend-text" @click="legendHandle('6')"><span class="legend-text-seven"></span>转发</span> -->
+                <!-- <span 
+                  class="legend-text" 
+                  @click="legendHandle('0')">
+                  <span 
+                    :class="{'label-gray': !dataOptions[0]}"
+                    class="legend-text-one"/>爆光</span> -->
+                <span 
+                  class="legend-text" 
+                  @click="legendHandle('1')">
+                  <span
+                    :class="{'label-gray': !dataOptions[1]}" 
+                    class="legend-text-two"/>围观</span>
+                <span 
+                  class="legend-text" 
+                  @click="legendHandle('2')">
+                  <span 
+                    :class="{'label-gray': !dataOptions[2]}"
+                    class="legend-text-three" />活跃</span>
+                <span 
+                  class="legend-text" 
+                  @click="legendHandle('3')">
+                  <span 
+                    :class="{'label-gray': !dataOptions[3]}"
+                    class="legend-text-four" />铁杆</span>
+                <span 
+                  class="legend-text" 
+                  @click="legendHandle('4')">
+                  <span 
+                    :class="{'label-gray': !dataOptions[4]}"
+                    class="legend-text-five" />跳转</span>
+                <span 
+                  class="legend-text" 
+                  @click="legendHandle('5')">
+                  <span 
+                    :class="{'label-gray': !dataOptions[5]}"
+                    class="legend-text-six" />拉新</span>
+                <span 
+                  class="legend-text" 
+                  @click="legendHandle('6')">
+                  <span 
+                    :class="{'label-gray': !dataOptions[6]}"
+                    class="legend-text-seven " />转发</span>
               </div>
-              <PicChart :chartdata="chartdata" :dataOptions="dataOptions" :width="width"/>
+              <PicChart 
+                :chartdata="chartdata" 
+                :data-options="dataOptions" 
+                :width="width"/>
             </div>
           </el-col>
           <el-col :span="12">
@@ -588,10 +637,12 @@ export default {
       rateDay: 0,
       marketCount: 0,
       screenCount: 0,
-      // chartdata: [90291, 9078, 7461, 5463, 3258, 2434, 834],
       chartdata: [],
-      dataOptions: [true, true, true, true, true, true, true],
+      dataOptions: [true, true, true, true, true, true, false],
       width: ((window.innerWidth - 60 + 20) * 0.5 - 20) * 0.6,
+      sceneInfo: '',
+      projectInfo: '',
+      addressInfo: '',
       style: {
         chartFont: {
           fontSize: window.innerWidth / 80 + 'px'
@@ -1481,6 +1532,7 @@ export default {
       this.getAge()
       this.getCrowdTime()
       this.getGender()
+
       this.setting.loading = false
     },
     getCrowdTime() {
@@ -2102,6 +2154,47 @@ export default {
       this.shouldPicDialogShow = !this.shouldPicDialogShow
       if (this.shouldPicDialogShow) {
         this.getConversionRate()
+        let that = this
+        if (that.sceneSelect) {
+          let scene = this.sceneList.find(function(r) {
+            if (r.id === that.sceneSelect) {
+              return r.name
+            }
+          })
+          this.sceneInfo = scene.name
+        }
+        if (that.projectSelect) {
+          let project = this.projectList.find(function(r) {
+            if (r.alias === that.projectSelect) {
+              return r.name
+            }
+          })
+          this.projectInfo = project.name
+        }
+        if (that.area_id) {
+          let area = this.areaList.find(function(r) {
+            if (r.id === that.area_id) {
+              return r.name
+            }
+          })
+          this.addressInfo = area.name
+        }
+        if (that.market_id) {
+          let market = this.marketList.find(function(r) {
+            if (r.id === that.market_id) {
+              return r.name
+            }
+          })
+          this.addressInfo = this.addressInfo + market.name
+        }
+        if (that.point_id) {
+          let point = this.pointList.find(function(r) {
+            if (r.id === that.point_id) {
+              return r.name
+            }
+          })
+          this.addressInfo = this.addressInfo + point.name
+        }
       }
       if (window.innerWidth > 1300) {
         this.width = ((window.innerWidth - 60 + 20) * 0.5 - 20) * 0.6
@@ -2166,6 +2259,7 @@ export default {
         align-items: center;
         margin-top: 40px;
         margin-bottom: 30px;
+
         .label {
           flex: 1;
           font-size: 14px;
@@ -2173,7 +2267,12 @@ export default {
             padding: 10px 20px;
             border: 1px solid #969292;
             border-radius: 4px;
+            width: 205px;
           }
+          .item-text {
+            margin: 10px 0;
+          }
+
           .icon-wrap {
             display: inline;
             margin-right: 30px;
@@ -2207,6 +2306,7 @@ export default {
               display: inline-block;
               border-radius: 5px;
             }
+
             .legend-text-one {
               background: #8fe5b8;
             }
@@ -2227,6 +2327,9 @@ export default {
             }
             .legend-text-seven {
               background: #9e8047;
+            }
+            .label-gray {
+              background: #aba6a6;
             }
           }
         }

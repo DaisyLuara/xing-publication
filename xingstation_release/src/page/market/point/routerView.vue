@@ -1,16 +1,16 @@
 <template>
-  <div class="picture-root">
+  <div class="point-root">
     <router-view/>
   </div>
 </template>
 <script>
 export default {
-  name: 'PictureView'
+  name: 'PointView'
 }
 </script>
 
 <style lang="less" scoped>
-.picture-root {
+.point-root {
   height: 100%;
   margin: 10px;
   background-color: #eff2f7;
