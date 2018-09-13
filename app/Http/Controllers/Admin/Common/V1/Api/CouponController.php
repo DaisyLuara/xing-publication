@@ -59,6 +59,11 @@ class CouponController extends Controller
 
     }
 
+    /**
+     * 根据策略获取优惠券规则
+     * @param CouponRequest $request
+     * @return mixed
+     */
     public function getCouponBatch(CouponRequest $request)
     {
         $policy = Policy::query()->findOrFail($request->policy_id);
@@ -85,6 +90,13 @@ class CouponController extends Controller
 
     }
 
+    /**
+     * 发送优惠券
+     * @param CouponBatch $couponBatch
+     * @param CouponRequest $request
+     * @param EasySms $easySms
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function generateCoupon(CouponBatch $couponBatch, CouponRequest $request, EasySms $easySms)
     {
         $mobile = $request->mobile;
@@ -112,43 +124,39 @@ class CouponController extends Controller
             $stock = $couponBatch->stock - 1;
             $couponBatch->update(['stock' => $stock]);
         } else {
-            //@todo 添加库存和数量校验
+
+            $couponBatchId = $couponBatch->id;
+
+            $now = Carbon::now()->toDateString();
+            if ($couponBatch->dmg_status == 0) {
+                $coupon = Coupon::query()->where('coupon_batch_id', $couponBatchId)
+                    ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
+                    ->selectRaw("count(coupon_batch_id) as day_receive")->first();
+
+                if ($coupon->day_receive >= $couponBatch->day_max_get) {
+                    return $this->response->error('该券今日已发完，明天再来领取吧！', 200);
+                }
+            }
+
+            if ($couponBatch->pmg_status == 0) {
+                $coupons = Coupon::query()->where('mobile', $mobile)->where('coupon_batch_id', $couponBatchId)->get();
+                if ($coupons->count() >= $couponBatch->people_max_get) {
+                    return $this->response->error('该优惠券每人最多领取' . $couponBatch->people_max_get . '张', 200);
+                }
+            }
+
             $coupon = Coupon::create([
                 'code' => uniqid(),
                 'mobile' => $mobile,
                 'coupon_batch_id' => $couponBatch->id,
                 'status' => 3,
             ]);
+
+            CouponBatch::query()->where('id', $couponBatch->id)->decrement('stock');
+
         }
 
         return $this->response->item($coupon, new CouponTransformer());
-    }
-
-    private function sendCoupon($mobile)
-    {
-        $coupons = Coupon::query()->where('mobile', $mobile)->where('coupon_batch_id', $couponBatchId)->get();
-        $couponCountLog = CouponCountLog::query()->where('coupon_batch_id', $couponBatchId)->first();
-
-        if ($couponBatch->dmg_status == 0 && $couponCountLog->receive_num >= $couponBatch->day_max_get) {
-            return Response::json('该券今日已发完，明天再来领取吧！', 200);
-        }
-
-        if ($couponBatch->pmg_status == 0 && $coupons->count() >= $couponBatch->people_max_get) {
-            return Response::json('该优惠券每人最多领取' . $couponBatch->people_max_get . '张', 200);
-        }
-
-        Coupon::query()->where('id', $couponId)->update(['code' => str_random(6) . date('YmdHis'), 'mobile' => $mobile, 'status' => 3]);
-
-        CouponBatch::query()->where('id', $couponBatch->id)->decrement('stock');
-        $date = Carbon::now()->toDateString();
-
-        CouponCountLog::query()->where('coupon_batch_id', $couponBatchId)
-            ->whereRaw(" date_format(date,'%Y-%m-%d') = '$date' ")
-            ->increment('receive_num');
-
-        CouponCountLog::query()->where('coupon_batch_id', $couponBatchId)
-            ->whereRaw(" date_format(date,'%Y-%m-%d') = '$date' ")
-            ->decrement('unreceived_num');
     }
 
     private function sendMallCooCoupon($mobile, $picmID)
