@@ -21,7 +21,6 @@ use DB;
 use Log;
 use Illuminate\Http\Request;
 use Overtrue\EasySms\EasySms;
-use Overtrue\EasySms\Exceptions\GatewayErrorException;
 
 
 class CouponController extends Controller
