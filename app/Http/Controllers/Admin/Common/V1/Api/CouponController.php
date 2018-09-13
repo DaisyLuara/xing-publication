@@ -18,9 +18,11 @@ use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponTransformer;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use DB;
+use Log;
 use Illuminate\Http\Request;
-use Response;
 use Overtrue\EasySms\EasySms;
+use Overtrue\EasySms\Exceptions\GatewayErrorException;
+
 
 class CouponController extends Controller
 {
@@ -101,6 +103,7 @@ class CouponController extends Controller
     {
         $mobile = $request->mobile;
 
+        $this->sendCouponMsg($mobile, $couponBatch, $easySms);
         if ($couponBatch->third_code) {
             $result = $this->sendMallCooCoupon($mobile, $couponBatch->third_code);
             if ($result['Code'] != 1) {
@@ -154,6 +157,7 @@ class CouponController extends Controller
 
             CouponBatch::query()->where('id', $couponBatch->id)->decrement('stock');
 
+            $this->sendCouponMsg($mobile, $couponBatch, $easySms);
         }
 
         return $this->response->item($coupon, new CouponTransformer());
@@ -176,6 +180,43 @@ class CouponController extends Controller
         ];
 
         return $mall_coo->send($sUrl, $data);
+
+    }
+
+    private function sendCouponMsg($mobile, CouponBatch $couponBatch, EasySms $easySms)
+    {
+        if (!app()->environment('production')) {
+            $allowed = [15921145624, 13818403072, 13052361619, 18616348089, 15856363087, 16602119264];
+            if (!in_array($mobile, $allowed)) {
+                abort(422, '非法手机号码');
+            }
+        }
+
+        switch ($couponBatch->name) {
+            case '平安符':
+                $content = "【星视度】恭喜您获得“平安符”一枚，凭此短信到服务台免费领取，快快领取使用吧。";
+                break;
+            case '西树泡芙5元代金券':
+                $content = '【星视度】恭喜您获得“西树泡芙5元代金券”，凭此短信到服务台免费领取。使用期限10月31日，快快领取使用吧。';
+                break;
+            case '熊本熊水杯':
+                $content = '【星视度】恭喜您获得“熊本熊水杯”一个，凭此短信到服务台免费领取，快快领取使用吧。';
+                break;
+            case '苏小柳100元代金券':
+                $content = '【星视度】恭喜您获得“苏小柳100元代金券”，凭此短信到服务台免费领取。使用期限10月31日，快快领取使用吧。';
+                break;
+        }
+
+        try {
+            $result = $easySms->send($mobile, [
+                'content' => $content,
+            ]);
+            Log::info('send_coupon_msg', $result);
+
+        } catch (\Exception $exception) {
+            $exceptions = $exception->getExceptions();
+            Log::info('send_msg_exceptions', $exceptions);
+        }
 
     }
 
