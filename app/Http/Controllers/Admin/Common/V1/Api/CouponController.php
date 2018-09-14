@@ -118,7 +118,7 @@ class CouponController extends Controller
 
             $now = Carbon::now()->toDateString();
             if ($couponBatch->dmg_status == 0) {
-                $coupon = Coupon::query()->whereIn('coupon_batch_id', [3, 4, 5, 6])
+                $coupon = Coupon::query()->where('coupon_batch_id', $couponBatchId)
                     ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
                     ->selectRaw("count(coupon_batch_id) as day_receive")->first();
 
@@ -128,9 +128,9 @@ class CouponController extends Controller
             }
 
             if ($couponBatch->pmg_status == 0) {
-                $coupons = Coupon::query()->where('mobile', $mobile)->where('coupon_batch_id', $couponBatchId)->get();
+                $coupons = Coupon::query()->where('mobile', $mobile)->whereIn('coupon_batch_id', [3, 4, 5, 6])->get();
                 if ($coupons->count() >= $couponBatch->people_max_get) {
-                    abort(500, '该优惠券每人最多领取' . $couponBatch->people_max_get . '张');
+                    abort(500, '优惠券每人最多领取' . $couponBatch->people_max_get . '张');
                 }
             }
 
