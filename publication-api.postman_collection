@@ -1320,27 +1320,7 @@
 				{
 					"name": "区域搜索",
 					"request": {
-						"url": {
-							"raw": "http://{{host}}/api/areas/query?name=上海",
-							"protocol": "http",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"areas",
-								"query"
-							],
-							"query": [
-								{
-									"key": "name",
-									"value": "上海",
-									"equals": true,
-									"description": ""
-								}
-							],
-							"variable": []
-						},
+						"url": "http://{{host}}/api/areas/query",
 						"method": "GET",
 						"header": [
 							{
@@ -3488,7 +3468,7 @@
 						{
 							"name": "根据手机号码发送优惠券",
 							"request": {
-								"url": "http://{{host}}/api/open/coupons/1",
+								"url": "http://{{host}}/api/open/coupons/4",
 								"method": "POST",
 								"header": [
 									{
@@ -3499,7 +3479,27 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"mobile\":13818403072\n}"
+									"raw": "{\n\t\"mobile\":13818403069\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "优惠券规则详情",
+							"request": {
+								"url": "http://{{host}}/api/open/coupon/batches/4",
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"mobile\":15921145621\n}"
 								},
 								"description": ""
 							},
@@ -3686,7 +3686,7 @@
 							"name": "场地列表",
 							"request": {
 								"url": {
-									"raw": "{{host}}/api/markets?include=share,contract,area&market_name=周浦万达&areaid=7&contract_type=lease&contract_mode=part&share_users=ad",
+									"raw": "{{host}}/api/markets?include=share,contract,area",
 									"host": [
 										"{{host}}"
 									],
@@ -3705,31 +3705,36 @@
 											"key": "market_name",
 											"value": "周浦万达",
 											"equals": true,
-											"description": "场地名称"
+											"description": "场地名称",
+											"disabled": true
 										},
 										{
 											"key": "areaid",
 											"value": "7",
 											"equals": true,
-											"description": "区域"
+											"description": "区域",
+											"disabled": true
 										},
 										{
 											"key": "contract_type",
 											"value": "lease",
 											"equals": true,
-											"description": "场地类型  free, pay,sell,lease,activity,agent,tmp"
+											"description": "场地类型  free, pay,sell,lease,activity,agent,tmp",
+											"disabled": true
 										},
 										{
 											"key": "contract_mode",
 											"value": "part",
 											"equals": true,
-											"description": "合作模式  none,part,exchange"
+											"description": "合作模式  none,part,exchange",
+											"disabled": true
 										},
 										{
 											"key": "share_users",
 											"value": "ad",
 											"equals": true,
-											"description": "场地权限 以逗号分隔 site,vipad,ad,agent"
+											"description": "场地权限 以逗号分隔 site,vipad,ad,agent",
+											"disabled": true
 										}
 									],
 									"variable": []
@@ -3738,7 +3743,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_admin}}",
+										"value": "{{jwt_gao}}",
 										"description": ""
 									}
 								],
@@ -3791,7 +3796,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_admin}}",
+										"value": "{{jwt_gao}}",
 										"description": ""
 									},
 									{
@@ -3816,7 +3821,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_admin}}",
+										"value": "{{jwt_gao}}",
 										"description": ""
 									},
 									{
@@ -3844,7 +3849,7 @@
 							"name": "点位列表",
 							"request": {
 								"url": {
-									"raw": "{{host}}/api/points?include=share,contract,area,market&marketid=22",
+									"raw": "{{host}}/api/points?include=share,contract,area,market",
 									"host": [
 										"{{host}}"
 									],
@@ -3863,7 +3868,8 @@
 											"key": "marketid",
 											"value": "22",
 											"equals": true,
-											"description": ""
+											"description": "",
+											"disabled": true
 										},
 										{
 											"key": "areaid",
@@ -3907,7 +3913,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_admin}}",
+										"value": "{{jwt_gao}}",
 										"description": ""
 									}
 								],
@@ -3920,14 +3926,14 @@
 							"name": "点位详情",
 							"request": {
 								"url": {
-									"raw": "{{host}}/api/points/572?include=share,contract,area,market",
+									"raw": "{{host}}/api/points/575?include=share,contract,area,market",
 									"host": [
 										"{{host}}"
 									],
 									"path": [
 										"api",
 										"points",
-										"572"
+										"575"
 									],
 									"query": [
 										{
@@ -3943,7 +3949,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_admin}}",
+										"value": "{{jwt_gao}}",
 										"description": ""
 									}
 								],
@@ -3960,7 +3966,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_admin}}",
+										"value": "{{jwt_gao}}",
 										"description": ""
 									},
 									{
@@ -3985,7 +3991,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_admin}}",
+										"value": "{{jwt_gao}}",
 										"description": ""
 									},
 									{
