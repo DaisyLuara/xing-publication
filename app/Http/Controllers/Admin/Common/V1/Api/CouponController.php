@@ -25,38 +25,24 @@ use Overtrue\EasySms\EasySms;
 
 class CouponController extends Controller
 {
-    public function getCouponStatus(Request $request)
+    public function getCouponBatch(CouponBatch $couponBatch)
     {
-        $companyId = $request->company_id;
-
-        $couponBatches = CouponBatch::query()
-            ->where('company_id', $companyId)
-            ->where('is_active', '=', 1)
-            ->where('stock', '<>', 0)
-            ->get();
-
-        if ($couponBatches->isEmpty()) {
-            return $this->response->error('优惠券领完了', 200);
+        if ($couponBatch->stock <= 0) {
+            abort(500, '优惠券已发完');
         }
 
-        $status = 0;
-        foreach ($couponBatches as $couponBatch) {
-            $date = Carbon::now()->toDateString();
-            $couponCountLog = CouponCountLog::query()
-                ->where('coupon_batch_id', $couponBatch->id)
-                ->whereRaw("date_format(date,'%Y-%m-%d') ='$date'")
-                ->first();
+        $now = Carbon::now()->toDateString();
+        if ($couponBatch->dmg_status == 0) {
+            $coupon = Coupon::query()->where('coupon_batch_id', $couponBatch->id)
+                ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
+                ->selectRaw("count(coupon_batch_id) as day_receive")->first();
 
-            if ($couponBatch->dmg_status == 0 && $couponCountLog->receive_num >= $couponBatch->day_max_get) {
-                $status += 1;
+            if ($coupon->day_receive >= $couponBatch->day_max_get) {
+                abort(500, '该券今日已发完，明天再来领取吧！');
             }
         }
 
-        if ($status == $couponBatches->count()) {
-            return $this->response->error('优惠券领完了', 200);
-        }
-
-        return $this->response->collection($couponBatches);
+        return $this->response->item($couponBatch,new CouponBatchTransformer());
 
     }
 
@@ -65,7 +51,7 @@ class CouponController extends Controller
      * @param CouponRequest $request
      * @return mixed
      */
-    public function getCouponBatch(CouponRequest $request)
+    public function getCouponBatches(CouponRequest $request)
     {
         $policy = Policy::query()->findOrFail($request->policy_id);
 
