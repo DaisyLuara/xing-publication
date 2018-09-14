@@ -42,7 +42,7 @@ class CouponController extends Controller
             }
         }
 
-        return $this->response->item($couponBatch,new CouponBatchTransformer());
+        return $this->response->item($couponBatch, new CouponBatchTransformer());
 
     }
 
@@ -118,7 +118,7 @@ class CouponController extends Controller
 
             $now = Carbon::now()->toDateString();
             if ($couponBatch->dmg_status == 0) {
-                $coupon = Coupon::query()->where('coupon_batch_id', $couponBatchId)
+                $coupon = Coupon::query()->whereIn('coupon_batch_id', [3, 4, 5, 6])
                     ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
                     ->selectRaw("count(coupon_batch_id) as day_receive")->first();
 
