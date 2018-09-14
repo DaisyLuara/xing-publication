@@ -42,7 +42,7 @@ class CouponController extends Controller
             }
         }
 
-        return $this->response->item($couponBatch,new CouponBatchTransformer());
+        return $this->response->item($couponBatch, new CouponBatchTransformer());
 
     }
 
@@ -128,9 +128,9 @@ class CouponController extends Controller
             }
 
             if ($couponBatch->pmg_status == 0) {
-                $coupons = Coupon::query()->where('mobile', $mobile)->where('coupon_batch_id', $couponBatchId)->get();
+                $coupons = Coupon::query()->where('mobile', $mobile)->whereIn('coupon_batch_id', [3, 4, 5, 6])->get();
                 if ($coupons->count() >= $couponBatch->people_max_get) {
-                    abort(500, '该优惠券每人最多领取' . $couponBatch->people_max_get . '张');
+                    abort(500, '优惠券每人最多领取' . $couponBatch->people_max_get . '张');
                 }
             }
 
