@@ -1437,26 +1437,30 @@ export default {
         })
     },
     getMarket(query) {
-      this.searchLoading = true
-      let args = {
-        name: query,
-        include: 'area',
-        area_id: this.area_id
+      if (query !== '') {
+        this.searchLoading = true
+        let args = {
+          name: query,
+          include: 'area',
+          area_id: this.area_id
+        }
+        return search
+          .getMarketList(this, args)
+          .then(response => {
+            this.marketList = response.data
+            if (this.marketList.length == 0) {
+              this.market_id = ''
+              this.marketList = []
+            }
+            this.searchLoading = false
+          })
+          .catch(err => {
+            console.log(err)
+            this.searchLoading = false
+          })
+      } else {
+        this.marketList = []
       }
-      return search
-        .getMarketList(this, args)
-        .then(response => {
-          this.marketList = response.data
-          if (this.marketList.length == 0) {
-            this.market_id = ''
-            this.marketList = []
-          }
-          this.searchLoading = false
-        })
-        .catch(err => {
-          console.log(err)
-          this.searchLoading = false
-        })
     },
     getPoint() {
       let args = {
@@ -1672,40 +1676,44 @@ export default {
       }
     },
     getProject(query) {
-      let args = {
-        ar_user_id: this.arUserId,
-        name: query
-      }
-      if (this.showUser) {
-        this.searchLoading = true
-        if (!this.arUserId) {
-          delete args.ar_user_id
+      if (query !== '') {
+        let args = {
+          ar_user_id: this.arUserId,
+          name: query
         }
-        return search
-          .getProjectList(this, args)
-          .then(response => {
-            this.projectList = response.data
-            this.searchLoading = false
-          })
-          .catch(err => {
-            console.log(err)
-            this.searchLoading = false
-          })
+        if (this.showUser) {
+          this.searchLoading = true
+          if (!this.arUserId) {
+            delete args.ar_user_id
+          }
+          return search
+            .getProjectList(this, args)
+            .then(response => {
+              this.projectList = response.data
+              this.searchLoading = false
+            })
+            .catch(err => {
+              console.log(err)
+              this.searchLoading = false
+            })
+        } else {
+          let user_info = JSON.parse(localStorage.getItem('user_info'))
+          this.arUserId = user_info.ar_user_id
+          args.ar_user_id = this.arUserId
+          this.searchLoading = true
+          return search
+            .getProjectList(this, args)
+            .then(response => {
+              this.projectList = response.data
+              this.searchLoading = false
+            })
+            .catch(err => {
+              console.log(err)
+              this.searchLoading = false
+            })
+        }
       } else {
-        let user_info = JSON.parse(localStorage.getItem('user_info'))
-        this.arUserId = user_info.ar_user_id
-        args.ar_user_id = this.arUserId
-        this.searchLoading = true
-        return search
-          .getProjectList(this, args)
-          .then(response => {
-            this.projectList = response.data
-            this.searchLoading = false
-          })
-          .catch(err => {
-            console.log(err)
-            this.searchLoading = false
-          })
+        this.projectList = []
       }
     },
     getPeopleCount() {

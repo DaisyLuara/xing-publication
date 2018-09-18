@@ -970,7 +970,7 @@ export default {
             this.marketLoading = false
           })
       } else {
-        this.filters.market = ''
+        this.marketList = []
       }
     },
     search(formName) {
