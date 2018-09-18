@@ -7,6 +7,7 @@
         separator="/">
         <el-breadcrumb-item>用户管理</el-breadcrumb-item>
       </el-breadcrumb>
+      <headModule/>
     </div>
     <router-view/>
   </div>

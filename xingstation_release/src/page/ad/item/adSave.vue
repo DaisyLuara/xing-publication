@@ -100,6 +100,8 @@
             v-model="adForm.market"  
             :remote-method="getMarket" 
             :loading="searchLoading" 
+            :multiple-limit="1"
+            multiple
             placeholder="请搜索" 
             filterable
             remote
@@ -358,7 +360,7 @@ export default {
             this.searchLoading = false
           })
       } else {
-        this.adForm.marketList = []
+        this.marketList = []
       }
     },
     submit(formName) {
