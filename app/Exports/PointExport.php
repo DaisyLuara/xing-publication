@@ -36,19 +36,19 @@ class PointExport extends AbstractExport
         $Max = "";
         $projectName->each(function ($item) use (&$Max) {
             $name = $item->name;
-            $Max = $Max . ",max(case a.name when '$name' then concat_ws(',', cast(a.looknum as char), cast(a.playernum7 as char),cast(a.playernum20 as char), concat_ws('|',cast(a.omo_outnum as char),cast(a.omo_scannum as char)),cast(a.lovenum as char))else 0 end) '$name'";
+            $Max = $Max . ",max(case a.name when '$name' then concat_ws(',',cast(a.playernum7 as char),cast(a.playernum15 as char),cast(a.playernum21 as char), concat_ws('|',cast(a.omo_outnum as char),cast(a.omo_scannum as char)),cast(a.lovenum as char))else 0 end) '$name'";
         });
 
         $faceCount = DB::connection('ar')
             ->table('xs_face_count_log as fcl')
             ->join('ar_product_list as apl', 'fcl.belong', '=', 'apl.versionname')
             ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '$this->startDate' and '$this->endDate' and oid='$this->pointId'")
-            ->selectRaw("apl.name as name,date_format(fcl.date,'%Y-%m-%d') as date,sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum20) as playernum20,sum(omo_outnum) as omo_outnum,sum(omo_scannum) as omo_scannum,sum(lovenum) as lovenum")
+            ->selectRaw("apl.name as name,date_format(fcl.date,'%Y-%m-%d') as date,sum(playernum7) as playernum7,sum(playernum15) as playernum15,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum,sum(omo_scannum) as omo_scannum,sum(lovenum) as lovenum")
             ->groupBy(DB::raw("belong,date_format(fcl.date,'%Y-%m-%d')"));
 
         $faceCount = DB::connection('ar')
             ->table(DB::raw("({$faceCount->toSql()}) as a"))
-            ->selectRaw("a.date,sum(a.looknum) as looknum,sum(a.playernum7) as playernum7,sum(playernum20) as playernum20,concat_ws('|',sum(omo_outnum),sum(omo_scannum)) as omonum,sum(a.lovenum) as lovenum" . $Max)
+            ->selectRaw("a.date,sum(a.playernum7) as playernum7,sum(a.playernum15) as playernum15,sum(playernum21) as playernum21,concat_ws('|',sum(omo_outnum),sum(omo_scannum)) as omonum,sum(a.lovenum) as lovenum" . $Max)
             ->groupBy('a.date')
             ->get();
 
@@ -71,7 +71,7 @@ class PointExport extends AbstractExport
         }
         $header3 = [''];
         for ($i = 0; $i < $projectNum + 1; $i++) {
-            $header3 = array_merge($header3, ['CPF', 'oCPF', 'CPR', 'CPA', 'CPL']);
+            $header3 = array_merge($header3, ['7″uCPE', '15″uCPE', '21″uCPE', 'CPA', 'CPL']);
         }
         $totalByDay = DB::connection('ar')
             ->table('xs_face_count_log as fcl')
@@ -79,14 +79,14 @@ class PointExport extends AbstractExport
             ->where('oid', '=', $this->pointId)
             ->where('belong', '<>', 'all')
             ->groupBy('belong')
-            ->selectRaw("sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum20) as playernum20,concat_ws('|',sum(omo_outnum) ,sum(omo_scannum) ) as omonum ,sum(lovenum) as lovenum")
+            ->selectRaw("sum(playernum7) as playernum7,sum(playernum15) as playernum15,sum(playernum21) as playernum21,concat_ws('|',sum(omo_outnum) ,sum(omo_scannum) ) as omonum ,sum(lovenum) as lovenum")
             ->get();
         $total = DB::connection('ar')
             ->table('xs_face_count_log as fcl')
             ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
             ->where('oid', '=', $this->pointId)
             ->where('belong', '<>', 'all')
-            ->selectRaw("sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum20) as playernum20,concat_ws('|',sum(omo_outnum) ,sum(omo_scannum) ) as omonum,sum(lovenum) as lovenum")
+            ->selectRaw("sum(playernum7) as playernum7,sum(playernum15) as playernum15,sum(playernum21) as playernum21,concat_ws('|',sum(omo_outnum) ,sum(omo_scannum) ) as omonum,sum(lovenum) as lovenum")
             ->get();
         $totalNum = json_decode(json_encode($total), true);
         $totalNum = collect($totalNum)->flatten()->all();
@@ -105,20 +105,20 @@ class PointExport extends AbstractExport
         $faceCount->each(function ($item) use (&$data) {
             $aa = [];
             foreach ($item as $key => $value) {
-                if ($key == 'date' || $key == 'looknum' || $key == 'playernum7' || $key == 'playernum20' || $key == 'omonum' || $key == 'lovenum') {
+                if ($key == 'date' || $key == 'playernum7' || $key == 'playernum15' || $key == 'playernum21' || $key == 'omonum' || $key == 'lovenum') {
                     $aa[$key] = $value;
                 } else {
                     if ($value == 0) {
-                        $aa[$key . '-' . 'looknum'] = 0;
                         $aa[$key . '-' . 'playernum7'] = 0;
-                        $aa[$key . '-' . 'playernum20'] = 0;
+                        $aa[$key . '-' . 'playernum15'] = 0;
+                        $aa[$key . '-' . 'playernum21'] = 0;
                         $aa[$key . '-' . 'omonum'] = 0 . '|' . 0;
                         $aa[$key . '-' . 'lovenum'] = 0;
                     } else {
                         $num = explode(',', $value);
-                        $aa[$key . '-' . 'looknum'] = $num[0];
-                        $aa[$key . '-' . 'playernum7'] = $num[1];
-                        $aa[$key . '-' . 'playernum20'] = $num[2];
+                        $aa[$key . '-' . 'playernum7'] = $num[0];
+                        $aa[$key . '-' . 'playernum15'] = $num[1];
+                        $aa[$key . '-' . 'playernum21'] = $num[2];
                         $aa[$key . '-' . 'omonum'] = $num[3];
                         $aa[$key . '-' . 'lovenum'] = $num[4];
                     }
