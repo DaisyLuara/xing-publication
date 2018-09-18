@@ -29,7 +29,9 @@
           <el-select
             v-model="projectForm.project" 
             :loading="searchLoading"
-            :remote-method="getProject" 
+            :remote-method="getProject"
+            :multiple-limit="1"
+            multiple  
             filterable 
             placeholder="请搜索"
             remote 
@@ -60,13 +62,15 @@
           </el-select>
         </el-form-item>
         <el-form-item 
-          :rules="[{ required: true, message: '请输入商场', trigger: 'submit' ,type: 'number'}]"
+          :rules="[{ required: true, message: '请输入商场', trigger: 'submit'}]"
           label="商场" 
           prop="market">
           <el-select 
             v-model="projectForm.market"  
             :remote-method="getMarket" 
-            :loading="searchLoading" 
+            :loading="searchLoading"
+            :multiple-limit="1"
+            multiple  
             placeholder="请搜索" 
             filterable 
             remote 
@@ -451,7 +455,7 @@ export default {
             this.searchLoading = false
           })
       } else {
-        this.projectForm.marketList = []
+        this.marketList = []
       }
     },
     submit(formName) {

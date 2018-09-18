@@ -81,7 +81,9 @@
               <el-select 
                 v-model="scope.row.project.name" 
                 :loading="searchLoading" 
-                :remote-method="getProject" 
+                :remote-method="getProject"
+                :multiple-limit="1"
+                multiple  
                 filterable 
                 placeholder="请搜索"
                 remote 
@@ -230,6 +232,8 @@
             v-model="templateForm.market_id" 
             :loading="searchLoading" 
             :remote-method="getMarket" 
+            :multiple-limit="1"
+            multiple 
             placeholder="请搜索商场" 
             filterable 
             remote 

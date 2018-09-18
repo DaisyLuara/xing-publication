@@ -26,6 +26,8 @@
                 v-model="userSelect"
                 :remote-method="getUser" 
                 :loading="searchLoading" 
+                :multiple-limit="1"
+                multiple 
                 filterable 
                 placeholder="请选择用户(可搜索)" 
                 remote
@@ -47,10 +49,12 @@
               <el-select 
                 v-model="projectSelect" 
                 :remote-method="getProject"
-                :loading="searchLoading" 
+                :loading="searchLoading"
+                :multiple-limit="1"
                 filterable 
                 placeholder="请选择节目(可搜索)" 
-                remote 
+                remote
+                multiple 
                 clearable
                 @change="projectChangeHandle">
                 <el-option
@@ -107,11 +111,13 @@
               label="" 
               prop="market_id" >
               <el-select 
-                v-model="market_id" 
+                v-model="market_id"
+                :multiple-limit="1"
                 :loading="searchLoading"
                 :remote-method="getMarket" 
                 placeholder="请搜索商场" 
                 filterable 
+                multiple
                 remote 
                 clearable
                 @change="marketChangeHandle" >

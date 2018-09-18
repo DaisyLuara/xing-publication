@@ -104,6 +104,8 @@
                     v-model="adSearchForm.market_id"
                     :remote-method="getMarket"
                     :loading="searchLoading" 
+                    :multiple-limit="1"
+                    multiple
                     placeholder="请搜索商场" 
                     filterable 
                     remote 
@@ -697,7 +699,7 @@ export default {
             this.searchLoading = false
           })
       } else {
-        this.adSearchForm.marketList = []
+        this.marketList = []
       }
     },
     getAdList() {

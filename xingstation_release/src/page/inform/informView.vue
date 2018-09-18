@@ -3,6 +3,7 @@
     <second-sidebar module="inform"/>
     <div class="topbar">
       {{ this.$route.meta.title }}
+      <headModule/>
     </div>
     <router-view/>
   </div>

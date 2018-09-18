@@ -77,6 +77,8 @@
                     v-model="filters.market" 
                     :loading="marketLoading"
                     :remote-method="getMarket"
+                    :multiple-limit="1"
+                    multiple 
                     placeholder="请选择商场" 
                     filterable 
                     remote 
@@ -370,6 +372,8 @@
             <el-select 
               v-model="projectForm.project" 
               :remote-method="getProject"
+              :multiple-limit="1"
+              multiple 
               filterable 
               placeholder="请搜索" 
               remote 
@@ -824,24 +828,28 @@ export default {
       this.getProjectList()
     },
     getProject(query) {
-      this.searchLoading = true
-      let args = {
-        name: query
+      if (query !== '') {
+        this.searchLoading = true
+        let args = {
+          name: query
+        }
+        return search
+          .getProjectList(this, args)
+          .then(response => {
+            this.projectList = response.data
+            if (this.projectList.length == 0) {
+              this.projectForm.project = ''
+              this.projectList = []
+            }
+            this.searchLoading = false
+          })
+          .catch(err => {
+            console.log(err)
+            this.searchLoading = false
+          })
+      } else {
+        this.projectList = []
       }
-      return search
-        .getProjectList(this, args)
-        .then(response => {
-          this.projectList = response.data
-          if (this.projectList.length == 0) {
-            this.projectForm.project = ''
-            this.projectList = []
-          }
-          this.searchLoading = false
-        })
-        .catch(err => {
-          console.log(err)
-          this.searchLoading = false
-        })
     },
     submitModify(formName) {
       this.$refs[formName].validate(valid => {

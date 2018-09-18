@@ -10,6 +10,7 @@ import VueCookie from 'vue-cookie'
 // import auth from 'service/auth'
 
 import secondSidebar from 'components/common/secondSidebar'
+import headModule from 'components/common/headModule'
 import {
   Message,
   Loading,
@@ -29,6 +30,7 @@ Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm
 Vue.prototype.$loading = Loading.service
 Vue.component('second-sidebar', secondSidebar)
+Vue.component('headModule', headModule)
 
 /*重新生成一个vue实例Et--为了同级组件之间的传值*/
 window.Et = new Vue()
