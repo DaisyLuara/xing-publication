@@ -365,7 +365,7 @@ export default {
             this.searchLoading = false
           })
       } else {
-        this.projectForm.project = ''
+        this.projectList = []
       }
     },
     getModuleList() {
@@ -451,7 +451,7 @@ export default {
             this.searchLoading = false
           })
       } else {
-        this.projectForm.market = ''
+        this.projectForm.marketList = []
       }
     },
     submit(formName) {
