@@ -345,24 +345,28 @@ export default {
   methods: {
     projectChangeHandle() {},
     getProject(query) {
-      this.searchLoading = true
-      let args = {
-        name: query
+      if (query !== '') {
+        this.searchLoading = true
+        let args = {
+          name: query
+        }
+        return search
+          .getProjectList(this, args)
+          .then(response => {
+            this.projectList = response.data
+            if (this.projectList.length == 0) {
+              this.projectForm.project = ''
+              this.projectList = []
+            }
+            this.searchLoading = false
+          })
+          .catch(err => {
+            console.log(err)
+            this.searchLoading = false
+          })
+      } else {
+        this.projectForm.project = ''
       }
-      return search
-        .getProjectList(this, args)
-        .then(response => {
-          this.projectList = response.data
-          if (this.projectList.length == 0) {
-            this.projectForm.project = ''
-            this.projectList = []
-          }
-          this.searchLoading = false
-        })
-        .catch(err => {
-          console.log(err)
-          this.searchLoading = false
-        })
     },
     getModuleList() {
       return search
@@ -425,26 +429,30 @@ export default {
         })
     },
     getMarket(query) {
-      this.searchLoading = true
-      let args = {
-        name: query,
-        include: 'area',
-        area_id: this.projectForm.area
+      if (query !== '') {
+        this.searchLoading = true
+        let args = {
+          name: query,
+          include: 'area',
+          area_id: this.projectForm.area
+        }
+        return search
+          .getMarketList(this, args)
+          .then(response => {
+            this.marketList = response.data
+            if (this.marketList.length == 0) {
+              this.projectForm.market = ''
+              this.projectForm.marketList = []
+            }
+            this.searchLoading = false
+          })
+          .catch(err => {
+            console.log(err)
+            this.searchLoading = false
+          })
+      } else {
+        this.projectForm.market = ''
       }
-      return search
-        .getMarketList(this, args)
-        .then(response => {
-          this.marketList = response.data
-          if (this.marketList.length == 0) {
-            this.projectForm.market = ''
-            this.projectForm.marketList = []
-          }
-          this.searchLoading = false
-        })
-        .catch(err => {
-          console.log(err)
-          this.searchLoading = false
-        })
     },
     submit(formName) {
       this.$refs[formName].validate(valid => {
