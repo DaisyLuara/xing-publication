@@ -948,26 +948,30 @@ export default {
       this.getMarket(this.filters.market)
     },
     getMarket(query) {
-      this.marketLoading = true
-      let args = {
-        name: query,
-        include: 'area',
-        area_id: this.filters.area
+      if (query !== '') {
+        this.marketLoading = true
+        let args = {
+          name: query,
+          include: 'area',
+          area_id: this.filters.area
+        }
+        return search
+          .getMarketList(this, args)
+          .then(response => {
+            this.marketList = response.data
+            if (this.marketList.length == 0) {
+              this.filters.market = ''
+              this.marketList = []
+            }
+            this.marketLoading = false
+          })
+          .catch(err => {
+            console.log(err)
+            this.marketLoading = false
+          })
+      } else {
+        this.filters.market = ''
       }
-      return search
-        .getMarketList(this, args)
-        .then(response => {
-          this.marketList = response.data
-          if (this.marketList.length == 0) {
-            this.filters.market = ''
-            this.marketList = []
-          }
-          this.marketLoading = false
-        })
-        .catch(err => {
-          console.log(err)
-          this.marketLoading = false
-        })
     },
     search(formName) {
       this.pagination.currentPage = 1
