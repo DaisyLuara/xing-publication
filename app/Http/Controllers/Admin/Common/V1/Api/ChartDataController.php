@@ -484,7 +484,7 @@ class ChartDataController extends Controller
 
         $allData = XsFaceCountLog::query()
             ->selectRaw("sum(looknum) as looknum ,sum(playernum7) as playernum7,sum(playernum) as playernum ,sum(omo_outnum) as omo_outnum,sum(lovenum) as lovenum")
-            ->whereRaw("date_format(date,'%Y-%m-%d') between '$startDate' and '$endDate'")
+            ->whereRaw("date_format(date,'%Y-%m-%d') between '$startDate' and '$endDate' and belong='all'")
             ->first();
 
         $query = XsFaceCountLog::query();
