@@ -1378,7 +1378,7 @@ export default {
           this.getExcelData()
         }
       } else if (this.reportValue === 'project_point') {
-        if (!this.projectSelect) {
+        if (this.projectSelect.length === 0) {
           this.$message({
             message: '节目数据下载，请选择节目',
             type: 'warning'
@@ -1917,7 +1917,7 @@ export default {
       if (!this.point_id) {
         delete args.point_id
       }
-      if (!this.market_id) {
+      if (this.market_id.length === 0) {
         delete args.market_id
       }
       return args
@@ -2177,7 +2177,7 @@ export default {
           })
           this.sceneInfo = scene.name
         }
-        if (that.projectSelect) {
+        if (that.projectSelect.length !== 0) {
           let project = this.projectList.find(function(r) {
             if (r.alias === that.projectSelect) {
               return r.name
@@ -2193,7 +2193,7 @@ export default {
           })
           this.addressInfo = area.name
         }
-        if (that.market_id) {
+        if (that.market_id.length !== 0) {
           let market = this.marketList.find(function(r) {
             if (r.id === that.market_id) {
               return r.name
