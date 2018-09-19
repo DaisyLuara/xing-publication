@@ -683,7 +683,7 @@ export default {
       shouldDialogShow: false,
       reportValue: 'point',
       area_id: '',
-      market_id: '',
+      market_id: [],
       point_id: '',
       setting: {
         isOpenSelectAll: true,
@@ -802,7 +802,7 @@ export default {
       marketList: [],
       pointList: [],
       sceneList: [],
-      projectSelect: '',
+      projectSelect: [],
       sceneSelect: '',
       searchLoading: false,
       projectList: [],
@@ -826,7 +826,7 @@ export default {
       ageFlag: false,
       rateDialog: false,
       crowdFlag: false,
-      userSelect: '',
+      userSelect: [],
       projectAlias: '',
       mainChart: {
         color: [
@@ -1455,7 +1455,7 @@ export default {
           .then(response => {
             this.marketList = response.data
             if (this.marketList.length == 0) {
-              this.market_id = ''
+              this.market_id = []
               this.marketList = []
             }
             this.searchLoading = false
@@ -1471,7 +1471,7 @@ export default {
     getPoint() {
       let args = {
         include: 'market',
-        market_id: this.market_id
+        market_id: this.market_id[0]
       }
       this.searchLoading = true
       return search
@@ -1486,7 +1486,7 @@ export default {
         })
     },
     areaChangeHandle() {
-      this.market_id = ''
+      this.market_id = []
       this.point_id = ''
       this.getMarket()
     },
@@ -1507,17 +1507,17 @@ export default {
     searchHandle() {
       this.pagination.currentPage = 1
       this.active = '围观总数'
-      this.projectAlias = this.projectSelect
+      this.projectAlias = this.projectSelect[0]
       this.setting.loading = true
       this.allPromise()
     },
     resetSearch() {
       if (this.showUser) {
-        this.userSelect = ''
-        this.arUserId = this.userSelect
+        this.userSelect = []
+        this.arUserId = this.userSelect[0]
         this.projectSelect = ''
         this.area_id = ''
-        this.market_id = ''
+        this.market_id = []
         this.point_id = ''
         this.sceneSelect = ''
       } else {
@@ -1527,11 +1527,11 @@ export default {
       this.allPromise()
     },
     projectChangeHandle() {
-      this.projectAlias = this.projectSelect
+      this.projectAlias = this.projectSelect[0]
     },
     userChangeHandle() {
-      this.arUserId = this.userSelect
-      this.projectSelect = ''
+      this.arUserId = this.userSelect[0]
+      this.projectSelect = []
       if (this.arUserId) {
         this.getProject('')
       }
@@ -1667,7 +1667,7 @@ export default {
             this.userList = response.data
             if (this.userList.length == 0) {
               this.projectList = []
-              this.projectSelect = ''
+              this.projectSelect = []
             }
             this.searchLoading = false
           })
@@ -1676,12 +1676,12 @@ export default {
             this.searchLoading = false
           })
       } else {
-        this.userSelect = ''
         this.userList = []
         return false
       }
     },
     getProject(query) {
+      console.log(this.arUserId)
       if (query !== '') {
         let args = {
           ar_user_id: this.arUserId,
@@ -1897,7 +1897,7 @@ export default {
         ),
         alias: this.projectAlias,
         ar_user_id: this.arUserId,
-        market_id: this.market_id,
+        market_id: this.market_id[0],
         scene_id: this.sceneSelect,
         area_id: this.area_id,
         point_id: this.point_id
@@ -2179,7 +2179,7 @@ export default {
         }
         if (that.projectSelect.length !== 0) {
           let project = this.projectList.find(function(r) {
-            if (r.alias === that.projectSelect) {
+            if (r.alias === that.projectSelect[0]) {
               return r.name
             }
           })

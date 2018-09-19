@@ -93,7 +93,7 @@
           </el-select>
         </el-form-item>
         <el-form-item 
-          :rules="[{ required: true, message: '请输入商场', trigger: 'submit' ,type: 'number'}]" 
+          :rules="[{ required: true, message: '请输入商场', trigger: 'submit'}]" 
           label="商场" 
           prop="market">
           <el-select
@@ -218,7 +218,7 @@ export default {
         advertisement: '',
         cycle: 0,
         area: '',
-        market: '',
+        market: [],
         point: [],
         sdate: '',
         edate: ''
@@ -298,9 +298,9 @@ export default {
         })
     },
     areaChangeHandle() {
-      this.adForm.market = ''
+      this.adForm.market = []
       this.adForm.point = []
-      this.getMarket(this.adForm.market)
+      this.getMarket(this.adForm.market[0])
     },
     getAreaList() {
       this.searchLoading = true
@@ -323,7 +323,7 @@ export default {
     getPoint() {
       let args = {
         include: 'market',
-        market_id: this.adForm.market
+        market_id: this.adForm.market[0]
       }
       this.searchLoading = true
       return search
@@ -350,7 +350,7 @@ export default {
           .then(response => {
             this.marketList = response.data
             if (this.marketList.length == 0) {
-              this.adForm.market = ''
+              this.adForm.market = []
               this.adForm.marketList = []
             }
             this.searchLoading = false
@@ -377,7 +377,7 @@ export default {
             atid: this.adForm.adTrade,
             atiid: this.adForm.advertiser,
             aid: this.adForm.advertisement,
-            marketid: this.adForm.market,
+            marketid: this.adForm.market[0],
             areaid: this.adForm.area,
             oids: this.adForm.point,
             ktime: parseInt(this.adForm.cycle)
