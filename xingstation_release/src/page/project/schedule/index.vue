@@ -72,7 +72,7 @@
           :data="item.schedules.data" 
           style="width: 100%">
           <el-table-column
-            prop="name"
+            prop=""
             label="节目名称"
             min-width="150"
           >
@@ -82,8 +82,6 @@
                 v-model="scope.row.project.name" 
                 :loading="searchLoading" 
                 :remote-method="getProject"
-                :multiple-limit="1"
-                multiple  
                 filterable 
                 placeholder="请搜索"
                 remote 
@@ -225,7 +223,7 @@
           </el-select>
         </el-form-item>
         <el-form-item 
-          :rules="[{ type: 'number', required: true, message: '请搜索商场', trigger: 'submit' }]"
+          :rules="[{ required: true, message: '请搜索商场', trigger: 'submit' }]"
           label="商场" 
           prop="market_id">
           <el-select 
@@ -331,7 +329,7 @@ export default {
         tpl_id: '',
         name: '',
         area_id: '',
-        market_id: '',
+        market_id: [],
         point_id: ''
       },
       projectList: [],
@@ -454,7 +452,7 @@ export default {
     addTemplate() {
       this.templateForm.name = ''
       this.templateForm.area_id = ''
-      this.templateForm.market_id = ''
+      this.templateForm.market_id = []
       this.templateForm.point_id = ''
       this.templateForm.tpl_id = ''
       this.templateVisible = true
@@ -560,7 +558,7 @@ export default {
           .then(response => {
             this.marketList = response.data
             if (this.marketList.length == 0) {
-              this.templateForm.market_id = ''
+              this.templateForm.market_id = []
               this.marketList = []
             }
             this.searchLoading = false
@@ -576,7 +574,7 @@ export default {
     getPoint() {
       let args = {
         include: 'market',
-        market_id: this.templateForm.market_id
+        market_id: this.templateForm.market_id[0]
       }
       this.searchLoading = true
       return search
@@ -635,7 +633,7 @@ export default {
       })
     },
     areaChangeHandle() {
-      this.templateForm.market_id = ''
+      this.templateForm.market_id = []
       this.templateForm.point_id = ''
       this.getMarket()
     },
