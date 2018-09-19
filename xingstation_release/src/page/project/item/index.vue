@@ -366,7 +366,7 @@
           label-width="150px">
           <el-form-item 
             v-if="modifyOptionFlag.project"
-            :rules="[{ type: 'number', required: true, message: '请输入节目', trigger: 'submit' }]"
+            :rules="[{ required: true, message: '请输入节目', trigger: 'submit'}]"
             label="节目名称" 
             prop="project" >
             <el-select 
@@ -626,7 +626,7 @@ export default {
       eidtkList: [],
       filters: {
         name: '',
-        market: '',
+        market: [],
         area: '',
         scene: '',
         tpl_name: '',
@@ -706,7 +706,7 @@ export default {
       projectList: [],
       searchLoading: false,
       projectForm: {
-        project: '',
+        project: [],
         weekday: '',
         weekend: '',
         define: '',
@@ -771,7 +771,7 @@ export default {
           })
         } else {
           this.projectForm = {
-            project: '',
+            project: [],
             weekday: '',
             weekend: '',
             define: '',
@@ -817,7 +817,7 @@ export default {
       }
     },
     resetSearch() {
-      this.filters.market = ''
+      this.filters.market = []
       this.filters.area = ''
       this.filters.name = ''
       this.filters.scene = ''
@@ -838,7 +838,7 @@ export default {
           .then(response => {
             this.projectList = response.data
             if (this.projectList.length == 0) {
-              this.projectForm.project = ''
+              this.projectForm.project = []
               this.projectList = []
             }
             this.searchLoading = false
@@ -861,7 +861,7 @@ export default {
           this.loading = true
           let args = {
             tvoids: this.tvoids,
-            default_plid: this.projectForm.project,
+            default_plid: this.projectForm.project[0],
             sdate: new Date(this.projectForm.sdate).getTime() / 1000,
             edate: edate,
             weekday_tvid: this.projectForm.weekday,
@@ -933,7 +933,7 @@ export default {
         include: 'point.scene,point.market,point.area,project,template',
         project_name: this.filters.name,
         area_id: this.filters.area,
-        market_id: this.filters.market,
+        market_id: this.filters.market[0],
         scene_id: this.filters.scene,
         tpl_name: this.filters.tpl_name,
         tpl_id: this.filters.tpl_id
@@ -952,7 +952,7 @@ export default {
         })
     },
     areaChangeHandle() {
-      this.filters.market = ''
+      this.filters.market = []
       this.getMarket(this.filters.market)
     },
     getMarket(query) {
@@ -968,7 +968,7 @@ export default {
           .then(response => {
             this.marketList = response.data
             if (this.marketList.length == 0) {
-              this.filters.market = ''
+              this.filters.market = []
               this.marketList = []
             }
             this.marketLoading = false

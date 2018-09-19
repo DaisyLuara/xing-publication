@@ -490,7 +490,7 @@ export default {
         advertiser_id: '',
         advertisement_id: '',
         area_id: '',
-        market_id: '',
+        market_id: [],
         point_id: ''
       },
       areaList: [],
@@ -640,7 +640,7 @@ export default {
         })
     },
     areaChangeHandle() {
-      this.adSearchForm.market_id = ''
+      this.adSearchForm.market_id = []
       this.getMarket()
     },
     getAreaList() {
@@ -662,7 +662,7 @@ export default {
     getPoint() {
       let args = {
         include: 'market',
-        market_id: this.adSearchForm.market_id
+        market_id: this.adSearchForm.market_id[0]
       }
       this.searchLoading = true
       return search
@@ -711,7 +711,7 @@ export default {
         advertiser_id: this.adSearchForm.advertiser_id,
         advertisement_id: this.adSearchForm.advertisement_id,
         area_id: this.adSearchForm.area_id,
-        market_id: this.adSearchForm.market_id,
+        market_id: this.adSearchForm.market_id[0],
         point_id: this.adSearchForm.point_id
       }
       this.adSearchForm.ad_trade_id !== ''
@@ -724,7 +724,7 @@ export default {
         ? searchArgs
         : delete searchArgs.advertisement_id
       this.adSearchForm.area_id !== '' ? searchArgs : delete searchArgs.area_id
-      this.adSearchForm.market_id !== ''
+      this.adSearchForm.market_id.length !== 0
         ? searchArgs
         : delete searchArgs.market_id
       this.adSearchForm.point_id !== ''
@@ -753,7 +753,7 @@ export default {
       this.adSearchForm.advertiser_id = ''
       this.adSearchForm.advertisement_id = ''
       this.adSearchForm.area_id = ''
-      this.adSearchForm.market_id = ''
+      this.adSearchForm.market_id = []
       this.adSearchForm.point_id = ''
       this.pagination.currentPage = 1
       this.editCondition.conditionList = []

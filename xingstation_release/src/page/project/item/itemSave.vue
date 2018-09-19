@@ -23,7 +23,7 @@
         :model="projectForm" 
         label-width="150px">
         <el-form-item 
-          :rules="[{ required: true, message: '请输入节目名称', trigger: 'submit',type: 'number'}]"
+          :rules="[{ required: true, message: '请输入节目名称', trigger: 'submit'}]"
           label="节目名称" 
           prop="project">
           <el-select
@@ -326,9 +326,9 @@ export default {
         day5_tvid: '',
         day6_tvid: '',
         day7_tvid: '',
-        project: '',
+        project: [],
         area: '',
-        market: '',
+        market: [],
         point: [],
         weekday: '',
         weekend: '',
@@ -359,7 +359,7 @@ export default {
           .then(response => {
             this.projectList = response.data
             if (this.projectList.length == 0) {
-              this.projectForm.project = ''
+              this.projectForm.project = []
               this.projectList = []
             }
             this.searchLoading = false
@@ -394,7 +394,7 @@ export default {
         })
     },
     areaChangeHandle() {
-      this.projectForm.market = ''
+      this.projectForm.market = []
       this.projectForm.point = []
       this.getMarket(this.projectForm.market)
     },
@@ -445,7 +445,7 @@ export default {
           .then(response => {
             this.marketList = response.data
             if (this.marketList.length == 0) {
-              this.projectForm.market = ''
+              this.projectForm.market = []
               this.projectForm.marketList = []
             }
             this.searchLoading = false
@@ -469,7 +469,7 @@ export default {
           let args = {
             sdate: new Date(this.projectForm.sdate).getTime() / 1000,
             edate: edate,
-            default_plid: this.projectForm.project,
+            default_plid: this.projectForm.project[0],
             weekday_tvid: this.projectForm.weekday,
             weekend_tvid: this.projectForm.weekend,
             div_tvid: this.projectForm.define,
@@ -498,9 +498,7 @@ export default {
               this.setting.loading = false
               console.log(err)
             })
-        } else {
-          return
-        }
+        } 
       })
     }
   }
