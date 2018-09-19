@@ -100,6 +100,8 @@
             v-model="adForm.market"  
             :remote-method="getMarket" 
             :loading="searchLoading" 
+            :multiple-limit="1"
+            multiple
             placeholder="请搜索" 
             filterable
             remote
@@ -181,7 +183,7 @@ import {
   Button,
   Input,
   DatePicker,
-  MessageBox,
+  MessageBox
 } from 'element-ui'
 
 export default {
@@ -192,14 +194,14 @@ export default {
     ElFormItem: FormItem,
     ElButton: Button,
     ElInput: Input,
-    ElDatePicker: DatePicker,
+    ElDatePicker: DatePicker
   },
   data() {
     return {
       setting: {
         isOpenSelectAll: true,
         loading: false,
-        loadingText: "拼命加载中"
+        loadingText: '拼命加载中'
       },
       marketList: [],
       weekdayList: [],
@@ -209,7 +211,7 @@ export default {
       adTradeList: [],
       searchLoading: false,
       advertiserList: [],
-      advertisementList:[],
+      advertisementList: [],
       adForm: {
         adTrade: '',
         advertiser: '',
@@ -219,42 +221,45 @@ export default {
         market: '',
         point: [],
         sdate: '',
-        edate: '',
+        edate: ''
       },
-      areaList: [],
+      areaList: []
     }
   },
-  mounted() {
-  },
+  mounted() {},
   created() {
     this.setting.loading = true
     let areaList = this.getAreaList()
     let adTradeList = this.getAdTradeList()
-    Promise.all([areaList, adTradeList]).then(() => {
-      this.setting.loading = false
-    }).catch((err) => {
-      console.log(err)
-      this.setting.loading = false
-    })
+    Promise.all([areaList, adTradeList])
+      .then(() => {
+        this.setting.loading = false
+      })
+      .catch(err => {
+        console.log(err)
+        this.setting.loading = false
+      })
   },
   methods: {
-    getAdTradeList(){
-      return search.getAdTradeList(this).then((response) => {
-       let data = response.data
-       this.adTradeList = data
-      }).catch(error => {
-        console.log(error)
-      this.setting.loading = false;
-      })
+    getAdTradeList() {
+      return search
+        .getAdTradeList(this)
+        .then(response => {
+          let data = response.data
+          this.adTradeList = data
+        })
+        .catch(error => {
+          console.log(error)
+          this.setting.loading = false
+        })
     },
     adTradeChangeHandle() {
       this.adForm.advertiser = ''
       this.adForm.advertisement = ''
       this.getAdvertiserList()
     },
-    advertisementChangeHandle (){
-    },
-    advertiserChangeHandle(){
+    advertisementChangeHandle() {},
+    advertiserChangeHandle() {
       this.adForm.advertisement = ''
       this.getAdvertisementList()
     },
@@ -263,44 +268,53 @@ export default {
         advertiser_id: this.adForm.advertiser
       }
       this.searchLoading = true
-      return search.getAdvertisementList(this, args).then((response) => {
-        let data = response.data
-        this.advertisementList = data
-        this.searchLoading = false
-      }).catch(error => {
-        console.log(error)
-        this.searchLoading = false
-      })
+      return search
+        .getAdvertisementList(this, args)
+        .then(response => {
+          let data = response.data
+          this.advertisementList = data
+          this.searchLoading = false
+        })
+        .catch(error => {
+          console.log(error)
+          this.searchLoading = false
+        })
     },
     getAdvertiserList() {
       let args = {
         ad_trade_id: this.adForm.adTrade
       }
       this.searchLoading = true
-      return search.getAdvertiserList(this, args).then((response) => {
-        let data = response.data
-        this.advertiserList = data
-        this.searchLoading = false
-      }).catch(error => {
-        console.log(error)
-      this.searchLoading = false
-      })
+      return search
+        .getAdvertiserList(this, args)
+        .then(response => {
+          let data = response.data
+          this.advertiserList = data
+          this.searchLoading = false
+        })
+        .catch(error => {
+          console.log(error)
+          this.searchLoading = false
+        })
     },
     areaChangeHandle() {
       this.adForm.market = ''
       this.adForm.point = []
       this.getMarket(this.adForm.market)
     },
-    getAreaList () {
+    getAreaList() {
       this.searchLoading = true
-      return search.getAeraList(this).then((response) => {
-       let data = response.data
-       this.areaList = data
-        this.searchLoading = false
-      }).catch(error => {
-        console.log(error)
-        this.searchLoading = false
-      })
+      return search
+        .getAeraList(this)
+        .then(response => {
+          let data = response.data
+          this.areaList = data
+          this.searchLoading = false
+        })
+        .catch(error => {
+          console.log(error)
+          this.searchLoading = false
+        })
     },
     marketChangeHandle() {
       this.adForm.point = []
@@ -312,37 +326,50 @@ export default {
         market_id: this.adForm.market
       }
       this.searchLoading = true
-      return search.gePointList(this, args).then((response) => {
-        this.pointList = response.data
-        this.searchLoading = false
-      }).catch(err => {
-        this.searchLoading = false
-        console.log(err)
-      })
+      return search
+        .gePointList(this, args)
+        .then(response => {
+          this.pointList = response.data
+          this.searchLoading = false
+        })
+        .catch(err => {
+          this.searchLoading = false
+          console.log(err)
+        })
     },
     getMarket(query) {
-      this.searchLoading = true
-      let args = {
-        name: query,
-        include: 'area',
-        area_id: this.adForm.area
-      }
-      return search.getMarketList(this,args).then((response) => {
-        this.marketList = response.data
-        if(this.marketList.length == 0) {
-          this.adForm.market = ''
-          this.adForm.marketList = []
+      if (query !== '') {
+        this.searchLoading = true
+        let args = {
+          name: query,
+          include: 'area',
+          area_id: this.adForm.area
         }
-        this.searchLoading = false
-      }).catch(err => {
-        console.log(err)
-        this.searchLoading = false
-      })
+        return search
+          .getMarketList(this, args)
+          .then(response => {
+            this.marketList = response.data
+            if (this.marketList.length == 0) {
+              this.adForm.market = ''
+              this.adForm.marketList = []
+            }
+            this.searchLoading = false
+          })
+          .catch(err => {
+            console.log(err)
+            this.searchLoading = false
+          })
+      } else {
+        this.marketList = []
+      }
     },
     submit(formName) {
-      this.$refs[formName].validate((valid) => {
-        if(valid){
-          let edate = (new Date(this.adForm.edate).getTime() + ((((23*60+59)*60)+59)*1000)) / 1000
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          let edate =
+            (new Date(this.adForm.edate).getTime() +
+              ((23 * 60 + 59) * 60 + 59) * 1000) /
+            1000
           this.setting.loading = true
           let args = {
             sdate: new Date(this.adForm.sdate).getTime() / 1000,
@@ -355,51 +382,56 @@ export default {
             oids: this.adForm.point,
             ktime: parseInt(this.adForm.cycle)
           }
-          return ad.saveAdLaunch(this, args).then((response) => {
-            this.setting.loading = false
-            this.$message({
-              message: "添加成功",
-              type: "success"
+          return ad
+            .saveAdLaunch(this, args)
+            .then(response => {
+              this.setting.loading = false
+              this.$message({
+                message: '添加成功',
+                type: 'success'
+              })
+              this.$router.push({
+                path: '/ad/item'
+              })
             })
-            this.$router.push({
-              path: "/ad/item"
+            .catch(err => {
+              this.setting.loading = false
+              console.log(err)
             })
-          }).catch((err) => {
-            this.setting.loading = false
-            console.log(err)
-          })
-        }else{
-          return;
+        } else {
+          return
         }
       })
-    },
-  },
+    }
+  }
 }
 </script>
 
 <style lang="less" scoped>
-  .item-wrap-template {
-    .pane {
-      border-radius: 5px;
-      background-color: white;
-      padding: 20px 40px 80px;
+.item-wrap-template {
+  .pane {
+    border-radius: 5px;
+    background-color: white;
+    padding: 20px 40px 80px;
 
-      .el-select,.item-input,.el-date-editor.el-input{
-        width: 380px;
-      }
-      .item-list{
-        .program-title{
-          color: #555;
-          font-size: 14px;
-        }
-      }
-      .pane-title {
-        padding-bottom: 20px;
-        font-size: 18px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
+    .el-select,
+    .item-input,
+    .el-date-editor.el-input {
+      width: 380px;
+    }
+    .item-list {
+      .program-title {
+        color: #555;
+        font-size: 14px;
       }
     }
+    .pane-title {
+      padding-bottom: 20px;
+      font-size: 18px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
   }
+}
 </style>

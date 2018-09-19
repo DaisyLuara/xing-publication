@@ -11,8 +11,8 @@ $api->version('v1', [
 
         $api->post('captchas', 'CaptchasController@store');// 图片验证码
 
-        $api->get('open/coupon/status', 'CouponController@getCouponStatus');
-        $api->get('open/coupon/batches', 'CouponController@getCouponBatch');//获取优惠券规则
+        $api->get('open/coupon/batches', 'CouponController@getCouponBatches');//获取优惠券规则列表
+        $api->get('open/coupon/batches/{couponBatch}', 'CouponController@getCouponBatch');//获取优惠券规则
         $api->post('open/coupons/{couponBatch}', 'CouponController@generateCoupon');//发送优惠券
         $api->get('open/project/policy', 'ProjectController@show');//根据节目获取优惠券投放策略
         $api->get('s/{url_path}', 'ShortUrlController@redirect');//短链接跳转

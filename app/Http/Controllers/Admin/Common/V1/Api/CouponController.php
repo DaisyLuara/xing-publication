@@ -25,38 +25,24 @@ use Overtrue\EasySms\EasySms;
 
 class CouponController extends Controller
 {
-    public function getCouponStatus(Request $request)
+    public function getCouponBatch(CouponBatch $couponBatch)
     {
-        $companyId = $request->company_id;
-
-        $couponBatches = CouponBatch::query()
-            ->where('company_id', $companyId)
-            ->where('is_active', '=', 1)
-            ->where('stock', '<>', 0)
-            ->get();
-
-        if ($couponBatches->isEmpty()) {
-            return $this->response->error('优惠券领完了', 200);
+        if ($couponBatch->stock <= 0) {
+            abort(500, '优惠券已发完');
         }
 
-        $status = 0;
-        foreach ($couponBatches as $couponBatch) {
-            $date = Carbon::now()->toDateString();
-            $couponCountLog = CouponCountLog::query()
-                ->where('coupon_batch_id', $couponBatch->id)
-                ->whereRaw("date_format(date,'%Y-%m-%d') ='$date'")
-                ->first();
+        $now = Carbon::now()->toDateString();
+        if ($couponBatch->dmg_status == 0) {
+            $coupon = Coupon::query()->where('coupon_batch_id', $couponBatch->id)
+                ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
+                ->selectRaw("count(coupon_batch_id) as day_receive")->first();
 
-            if ($couponBatch->dmg_status == 0 && $couponCountLog->receive_num >= $couponBatch->day_max_get) {
-                $status += 1;
+            if ($coupon->day_receive >= $couponBatch->day_max_get) {
+                abort(500, '该券今日已发完，明天再来领取吧！');
             }
         }
 
-        if ($status == $couponBatches->count()) {
-            return $this->response->error('优惠券领完了', 200);
-        }
-
-        return $this->response->collection($couponBatches);
+        return $this->response->item($couponBatch, new CouponBatchTransformer());
 
     }
 
@@ -65,7 +51,7 @@ class CouponController extends Controller
      * @param CouponRequest $request
      * @return mixed
      */
-    public function getCouponBatch(CouponRequest $request)
+    public function getCouponBatches(CouponRequest $request)
     {
         $policy = Policy::query()->findOrFail($request->policy_id);
 
@@ -101,16 +87,18 @@ class CouponController extends Controller
     public function generateCoupon(CouponBatch $couponBatch, CouponRequest $request, EasySms $easySms)
     {
         $mobile = $request->mobile;
+        if ($couponBatch->stock <= 0) {
+            abort(500, '优惠券已发完!');
+        }
 
-        $this->sendCouponMsg($mobile, $couponBatch, $easySms);
         if ($couponBatch->third_code) {
             $result = $this->sendMallCooCoupon($mobile, $couponBatch->third_code);
             if ($result['Code'] != 1) {
-                return $this->response->error($result['Message'], 500);
+                abort(500, $result['Message']);
             }
 
             if (!$result['Data'][0]['IsSuccess']) {
-                return $this->response->error($result['Data'][0]['FailReason'], 500);
+                abort(500, $result['Data'][0]['FailReason']);
             }
 
             $data = $result['Data'];
@@ -122,9 +110,8 @@ class CouponController extends Controller
                 'trace_id' => $data[0]['TraceID'],
                 'status' => 3,
             ]);
+            $couponBatch->decrement('stock');
 
-            $stock = $couponBatch->stock - 1;
-            $couponBatch->update(['stock' => $stock]);
         } else {
 
             $couponBatchId = $couponBatch->id;
@@ -136,14 +123,14 @@ class CouponController extends Controller
                     ->selectRaw("count(coupon_batch_id) as day_receive")->first();
 
                 if ($coupon->day_receive >= $couponBatch->day_max_get) {
-                    return $this->response->error('该券今日已发完，明天再来领取吧！', 200);
+                    abort(500, '该券今日已发完，明天再来领取吧！');
                 }
             }
 
             if ($couponBatch->pmg_status == 0) {
-                $coupons = Coupon::query()->where('mobile', $mobile)->where('coupon_batch_id', $couponBatchId)->get();
+                $coupons = Coupon::query()->where('mobile', $mobile)->whereIn('coupon_batch_id', [3, 4, 5, 6])->get();
                 if ($coupons->count() >= $couponBatch->people_max_get) {
-                    return $this->response->error('该优惠券每人最多领取' . $couponBatch->people_max_get . '张', 200);
+                    abort(500, '优惠券每人最多领取' . $couponBatch->people_max_get . '张');
                 }
             }
 
@@ -154,7 +141,7 @@ class CouponController extends Controller
                 'status' => 3,
             ]);
 
-            CouponBatch::query()->where('id', $couponBatch->id)->decrement('stock');
+            $couponBatch->decrement('stock');
 
             $this->sendCouponMsg($mobile, $couponBatch, $easySms);
         }
@@ -204,6 +191,8 @@ class CouponController extends Controller
             case '苏小柳100元代金券':
                 $content = '【星视度】恭喜您获得“苏小柳100元代金券”，凭此短信到服务台免费领取。使用期限10月31日，快快领取使用吧。';
                 break;
+            default:
+                return;
         }
 
         try {
@@ -213,8 +202,7 @@ class CouponController extends Controller
             Log::info('send_coupon_msg', $result);
 
         } catch (\Exception $exception) {
-            $exceptions = $exception->getExceptions();
-            Log::info('send_msg_exceptions', $exceptions);
+            Log::info('send_msg_exceptions', ['msg' => $exception->getMessage()]);
         }
 
     }

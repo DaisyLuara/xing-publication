@@ -29,7 +29,9 @@
           <el-select
             v-model="projectForm.project" 
             :loading="searchLoading"
-            :remote-method="getProject" 
+            :remote-method="getProject"
+            :multiple-limit="1"
+            multiple  
             filterable 
             placeholder="请搜索"
             remote 
@@ -60,13 +62,15 @@
           </el-select>
         </el-form-item>
         <el-form-item 
-          :rules="[{ required: true, message: '请输入商场', trigger: 'submit' ,type: 'number'}]"
+          :rules="[{ required: true, message: '请输入商场', trigger: 'submit'}]"
           label="商场" 
           prop="market">
           <el-select 
             v-model="projectForm.market"  
             :remote-method="getMarket" 
-            :loading="searchLoading" 
+            :loading="searchLoading"
+            :multiple-limit="1"
+            multiple  
             placeholder="请搜索" 
             filterable 
             remote 
@@ -345,24 +349,28 @@ export default {
   methods: {
     projectChangeHandle() {},
     getProject(query) {
-      this.searchLoading = true
-      let args = {
-        name: query
+      if (query !== '') {
+        this.searchLoading = true
+        let args = {
+          name: query
+        }
+        return search
+          .getProjectList(this, args)
+          .then(response => {
+            this.projectList = response.data
+            if (this.projectList.length == 0) {
+              this.projectForm.project = ''
+              this.projectList = []
+            }
+            this.searchLoading = false
+          })
+          .catch(err => {
+            console.log(err)
+            this.searchLoading = false
+          })
+      } else {
+        this.projectList = []
       }
-      return search
-        .getProjectList(this, args)
-        .then(response => {
-          this.projectList = response.data
-          if (this.projectList.length == 0) {
-            this.projectForm.project = ''
-            this.projectList = []
-          }
-          this.searchLoading = false
-        })
-        .catch(err => {
-          console.log(err)
-          this.searchLoading = false
-        })
     },
     getModuleList() {
       return search
@@ -425,26 +433,30 @@ export default {
         })
     },
     getMarket(query) {
-      this.searchLoading = true
-      let args = {
-        name: query,
-        include: 'area',
-        area_id: this.projectForm.area
+      if (query !== '') {
+        this.searchLoading = true
+        let args = {
+          name: query,
+          include: 'area',
+          area_id: this.projectForm.area
+        }
+        return search
+          .getMarketList(this, args)
+          .then(response => {
+            this.marketList = response.data
+            if (this.marketList.length == 0) {
+              this.projectForm.market = ''
+              this.projectForm.marketList = []
+            }
+            this.searchLoading = false
+          })
+          .catch(err => {
+            console.log(err)
+            this.searchLoading = false
+          })
+      } else {
+        this.marketList = []
       }
-      return search
-        .getMarketList(this, args)
-        .then(response => {
-          this.marketList = response.data
-          if (this.marketList.length == 0) {
-            this.projectForm.market = ''
-            this.projectForm.marketList = []
-          }
-          this.searchLoading = false
-        })
-        .catch(err => {
-          console.log(err)
-          this.searchLoading = false
-        })
     },
     submit(formName) {
       this.$refs[formName].validate(valid => {

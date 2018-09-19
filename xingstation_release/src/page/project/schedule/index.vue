@@ -81,7 +81,9 @@
               <el-select 
                 v-model="scope.row.project.name" 
                 :loading="searchLoading" 
-                :remote-method="getProject" 
+                :remote-method="getProject"
+                :multiple-limit="1"
+                multiple  
                 filterable 
                 placeholder="请搜索"
                 remote 
@@ -230,6 +232,8 @@
             v-model="templateForm.market_id" 
             :loading="searchLoading" 
             :remote-method="getMarket" 
+            :multiple-limit="1"
+            multiple 
             placeholder="请搜索商场" 
             filterable 
             remote 
@@ -497,23 +501,27 @@ export default {
       this.templateVisible = false
     },
     getProject(query) {
-      this.searchLoading = true
-      let args = {
-        name: query
+      if (query !== '') {
+        this.searchLoading = true
+        let args = {
+          name: query
+        }
+        return search
+          .getProjectList(this, args)
+          .then(response => {
+            this.projectList = response.data
+            if (this.projectList.length == 0) {
+              this.projectList = []
+            }
+            this.searchLoading = false
+          })
+          .catch(err => {
+            console.log(err)
+            this.searchLoading = false
+          })
+      } else {
+        this.projectList = []
       }
-      return search
-        .getProjectList(this, args)
-        .then(response => {
-          this.projectList = response.data
-          if (this.projectList.length == 0) {
-            this.projectList = []
-          }
-          this.searchLoading = false
-        })
-        .catch(err => {
-          console.log(err)
-          this.searchLoading = false
-        })
     },
     getModuleList() {
       return search
@@ -540,26 +548,30 @@ export default {
         })
     },
     getMarket(query) {
-      this.searchLoading = true
-      let args = {
-        name: query,
-        include: 'area',
-        area_id: this.templateForm.area_id
+      if (query !== '') {
+        this.searchLoading = true
+        let args = {
+          name: query,
+          include: 'area',
+          area_id: this.templateForm.area_id
+        }
+        return search
+          .getMarketList(this, args)
+          .then(response => {
+            this.marketList = response.data
+            if (this.marketList.length == 0) {
+              this.templateForm.market_id = ''
+              this.marketList = []
+            }
+            this.searchLoading = false
+          })
+          .catch(err => {
+            console.log(err)
+            this.searchLoading = false
+          })
+      } else {
+        this.marketList = []
       }
-      return search
-        .getMarketList(this, args)
-        .then(response => {
-          this.marketList = response.data
-          if (this.marketList.length == 0) {
-            this.templateForm.market_id = ''
-            this.marketList = []
-          }
-          this.searchLoading = false
-        })
-        .catch(err => {
-          console.log(err)
-          this.searchLoading = false
-        })
     },
     getPoint() {
       let args = {
