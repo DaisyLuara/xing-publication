@@ -26,6 +26,8 @@
                 v-model="userSelect"
                 :remote-method="getUser" 
                 :loading="searchLoading" 
+                :multiple-limit="1"
+                multiple 
                 filterable 
                 placeholder="请选择用户(可搜索)" 
                 remote
@@ -47,10 +49,12 @@
               <el-select 
                 v-model="projectSelect" 
                 :remote-method="getProject"
-                :loading="searchLoading" 
+                :loading="searchLoading"
+                :multiple-limit="1"
                 filterable 
                 placeholder="请选择节目(可搜索)" 
-                remote 
+                remote
+                multiple 
                 clearable
                 @change="projectChangeHandle">
                 <el-option
@@ -107,11 +111,13 @@
               label="" 
               prop="market_id" >
               <el-select 
-                v-model="market_id" 
+                v-model="market_id"
+                :multiple-limit="1"
                 :loading="searchLoading"
                 :remote-method="getMarket" 
                 placeholder="请搜索商场" 
                 filterable 
+                multiple
                 remote 
                 clearable
                 @change="marketChangeHandle" >
@@ -1437,26 +1443,30 @@ export default {
         })
     },
     getMarket(query) {
-      this.searchLoading = true
-      let args = {
-        name: query,
-        include: 'area',
-        area_id: this.area_id
+      if (query !== '') {
+        this.searchLoading = true
+        let args = {
+          name: query,
+          include: 'area',
+          area_id: this.area_id
+        }
+        return search
+          .getMarketList(this, args)
+          .then(response => {
+            this.marketList = response.data
+            if (this.marketList.length == 0) {
+              this.market_id = ''
+              this.marketList = []
+            }
+            this.searchLoading = false
+          })
+          .catch(err => {
+            console.log(err)
+            this.searchLoading = false
+          })
+      } else {
+        this.marketList = []
       }
-      return search
-        .getMarketList(this, args)
-        .then(response => {
-          this.marketList = response.data
-          if (this.marketList.length == 0) {
-            this.market_id = ''
-            this.marketList = []
-          }
-          this.searchLoading = false
-        })
-        .catch(err => {
-          console.log(err)
-          this.searchLoading = false
-        })
     },
     getPoint() {
       let args = {
@@ -1672,40 +1682,44 @@ export default {
       }
     },
     getProject(query) {
-      let args = {
-        ar_user_id: this.arUserId,
-        name: query
-      }
-      if (this.showUser) {
-        this.searchLoading = true
-        if (!this.arUserId) {
-          delete args.ar_user_id
+      if (query !== '') {
+        let args = {
+          ar_user_id: this.arUserId,
+          name: query
         }
-        return search
-          .getProjectList(this, args)
-          .then(response => {
-            this.projectList = response.data
-            this.searchLoading = false
-          })
-          .catch(err => {
-            console.log(err)
-            this.searchLoading = false
-          })
+        if (this.showUser) {
+          this.searchLoading = true
+          if (!this.arUserId) {
+            delete args.ar_user_id
+          }
+          return search
+            .getProjectList(this, args)
+            .then(response => {
+              this.projectList = response.data
+              this.searchLoading = false
+            })
+            .catch(err => {
+              console.log(err)
+              this.searchLoading = false
+            })
+        } else {
+          let user_info = JSON.parse(localStorage.getItem('user_info'))
+          this.arUserId = user_info.ar_user_id
+          args.ar_user_id = this.arUserId
+          this.searchLoading = true
+          return search
+            .getProjectList(this, args)
+            .then(response => {
+              this.projectList = response.data
+              this.searchLoading = false
+            })
+            .catch(err => {
+              console.log(err)
+              this.searchLoading = false
+            })
+        }
       } else {
-        let user_info = JSON.parse(localStorage.getItem('user_info'))
-        this.arUserId = user_info.ar_user_id
-        args.ar_user_id = this.arUserId
-        this.searchLoading = true
-        return search
-          .getProjectList(this, args)
-          .then(response => {
-            this.projectList = response.data
-            this.searchLoading = false
-          })
-          .catch(err => {
-            console.log(err)
-            this.searchLoading = false
-          })
+        this.projectList = []
       }
     },
     getPeopleCount() {

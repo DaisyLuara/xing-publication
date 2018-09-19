@@ -40,35 +40,6 @@
           </el-badge>
         </el-menu-item>
       </el-menu>
-      <el-popover
-        ref="popover"
-        v-model="visible"
-        placement="top"
-        width="80"
-        trigger="hover"
-        popper-class="popper-logout">
-        <span 
-          class="logout-btn"
-          @click="logout">登出</span>
-      </el-popover>
-      <div 
-        v-popover:popover 
-        class="sidebar-user" 
-        @click="handleUser">
-        <img 
-          src="../assets/images/user-default-icon.png" 
-          alt="" 
-          class="avatar">
-        <div 
-          class="sidebar-user-block">
-          <p 
-            class="sidebar-user-item sidebar-user-item-main" 
-            style="font-size: 18px;">{{ name }}</p>
-          <p 
-            class="sidebar-user-item sidebar-user-item-sub"
-            style="font-size: 14px;">{{ role }}</p>
-        </div>
-      </div>
     </div>
     <div 
       class="modules">
@@ -78,7 +49,7 @@
 </template>
 
 <script>
-import { Menu, MenuItem, Popover, Button, Badge, Icon } from 'element-ui'
+import { Menu, MenuItem, Button, Badge, Icon } from 'element-ui'
 import auth from 'service/auth'
 import notice from 'service/notice'
 
@@ -87,7 +58,6 @@ export default {
   components: {
     'el-menu': Menu,
     'el-menu-item': MenuItem,
-    'el-popover': Popover,
     'el-button': Button,
     'el-badge': Badge
   },
@@ -156,19 +126,6 @@ export default {
       }
       return ''
     },
-    name() {
-      return this.$store.state.curUserInfo.name
-        ? this.$store.state.curUserInfo.name
-        : ''
-    },
-    role() {
-      if ('roles' in this.$store.state.curUserInfo) {
-        return this.$store.state.curUserInfo.roles.data.length > 0
-          ? this.$store.state.curUserInfo.roles.data[0].display_name
-          : ''
-      }
-      return ''
-    },
     noticeCount() {
       return this.$store.state.notificationCount.noticeCount
     }
@@ -179,10 +136,6 @@ export default {
     this.notificationStats()
   },
   methods: {
-    logout() {
-      this.visible = false
-      auth.logout(this)
-    },
     notificationStats() {
       return notice
         .notificationStats(this)
@@ -194,11 +147,6 @@ export default {
           console.log(err)
         })
     },
-    handleUser() {
-      this.$router.push({
-        path: '/account/account'
-      })
-    }
   }
 }
 </script>
@@ -224,20 +172,6 @@ export default {
 }
 .modules-top {
   padding-top: 0;
-}
-
-.el-popover.popper-logout {
-  padding: 0;
-  min-width: 80px;
-  text-align: center;
-}
-.logout-btn {
-  display: block;
-  width: 100%;
-  height: 35px;
-  line-height: 35px;
-  cursor: pointer;
-  font-size: 14px;
 }
 
 .first-sidebar-icon {

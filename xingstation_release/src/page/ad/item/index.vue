@@ -104,6 +104,8 @@
                     v-model="adSearchForm.market_id"
                     :remote-method="getMarket"
                     :loading="searchLoading" 
+                    :multiple-limit="1"
+                    multiple
                     placeholder="请搜索商场" 
                     filterable 
                     remote 
@@ -675,26 +677,30 @@ export default {
         })
     },
     getMarket(query) {
-      this.searchLoading = true
-      let args = {
-        name: query,
-        include: 'area',
-        area_id: this.adSearchForm.area_id
+      if (query !== '') {
+        this.searchLoading = true
+        let args = {
+          name: query,
+          include: 'area',
+          area_id: this.adSearchForm.area_id
+        }
+        return search
+          .getMarketList(this, args)
+          .then(response => {
+            this.marketList = response.data
+            if (this.marketList.length == 0) {
+              this.adSearchForm.market_id = ''
+              this.adSearchForm.marketList = []
+            }
+            this.searchLoading = false
+          })
+          .catch(err => {
+            console.log(err)
+            this.searchLoading = false
+          })
+      } else {
+        this.marketList = []
       }
-      return search
-        .getMarketList(this, args)
-        .then(response => {
-          this.marketList = response.data
-          if (this.marketList.length == 0) {
-            this.adSearchForm.market_id = ''
-            this.adSearchForm.marketList = []
-          }
-          this.searchLoading = false
-        })
-        .catch(err => {
-          console.log(err)
-          this.searchLoading = false
-        })
     },
     getAdList() {
       this.setting.loadingText = '拼命加载中'
