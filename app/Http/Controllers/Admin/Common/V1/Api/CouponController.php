@@ -64,13 +64,25 @@ class CouponController extends Controller
             $query->where('gender', '=', $request->gender);
         }
 
-        $couponBatchPolicies = $query->where('policy_id', '=', $policy->id)->get();
+        $couponBatchPolicies = $query->join('coupon_batches', 'coupon_batch_id', '=', 'coupon_batches.id')->where('policy_id', '=', $policy->id)->get();
 
         if ($couponBatchPolicies->isEmpty()) {
-            return $this->response->error('无可用优惠券', 500);
+            abort('无可用优惠券', 500);
         }
 
-        $targetCouponBatch = getRand($couponBatchPolicies->toArray());
+        $couponBatchPolicies = $couponBatchPolicies->toArray();
+        foreach ($couponBatchPolicies as $key => $couponBatchPolicy) {
+            if (!$couponBatchPolicy->pmg_status && !$couponBatchPolicy->dmg_status && $couponBatchPolicy->stock <= 0) {
+                unset($couponBatchPolicies[$key]);
+            }
+        }
+
+        if (count($couponBatchPolicies) == 0) {
+            abort('无可用优惠券', 500);
+        }
+
+
+        $targetCouponBatch = getRand($couponBatchPolicies);
         $couponBatch = CouponBatch::findOrFail($targetCouponBatch->coupon_batch_id);
 
         return $this->response->item($couponBatch, new CouponBatchTransformer());
