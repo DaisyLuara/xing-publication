@@ -27,7 +27,7 @@ class CouponController extends Controller
 {
     public function getCouponBatch(CouponBatch $couponBatch)
     {
-        if ($couponBatch->stock <= 0) {
+        if (!$couponBatch->dmg_status && !$couponBatch->pmg_status && $couponBatch->stock <= 0) {
             abort(500, '优惠券已发完');
         }
 
@@ -87,7 +87,7 @@ class CouponController extends Controller
     public function generateCoupon(CouponBatch $couponBatch, CouponRequest $request, EasySms $easySms)
     {
         $mobile = $request->mobile;
-        if ($couponBatch->stock <= 0) {
+        if (!$couponBatch->dmg_status && !$couponBatch->pmg_status && $couponBatch->stock <= 0) {
             abort(500, '优惠券已发完!');
         }
 
@@ -117,7 +117,7 @@ class CouponController extends Controller
             $couponBatchId = $couponBatch->id;
 
             $now = Carbon::now()->toDateString();
-            if ($couponBatch->dmg_status == 0) {
+            if (!$couponBatch->dmg_status) {
                 $coupon = Coupon::query()->where('coupon_batch_id', $couponBatchId)
                     ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
                     ->selectRaw("count(coupon_batch_id) as day_receive")->first();
@@ -127,7 +127,7 @@ class CouponController extends Controller
                 }
             }
 
-            if ($couponBatch->pmg_status == 0) {
+            if (!$couponBatch->pmg_status) {
                 $coupons = Coupon::query()->where('mobile', $mobile)->whereIn('coupon_batch_id', [3, 4, 5, 6])->get();
                 if ($coupons->count() >= $couponBatch->people_max_get) {
                     abort(500, '优惠券每人最多领取' . $couponBatch->people_max_get . '张');
@@ -141,7 +141,10 @@ class CouponController extends Controller
                 'status' => 3,
             ]);
 
-            $couponBatch->decrement('stock');
+            if (!$couponBatch->pmg_status && !$couponBatch->pmg_status) {
+
+                $couponBatch->decrement('stock');
+            }
 
             $this->sendCouponMsg($mobile, $couponBatch, $easySms);
         }
