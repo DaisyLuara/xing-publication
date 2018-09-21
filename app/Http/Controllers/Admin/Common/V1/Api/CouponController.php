@@ -140,7 +140,12 @@ class CouponController extends Controller
             }
 
             if (!$couponBatch->pmg_status) {
-                $coupons = Coupon::query()->where('mobile', $mobile)->whereIn('coupon_batch_id', [3, 4, 5, 6])->get();
+                if (in_array($couponBatch->id, [3, 4, 5, 6])) {
+                    $couponBatchIds = [3, 4, 5, 6];
+                } else {
+                    $couponBatchIds = [$couponBatchId];
+                }
+                $coupons = Coupon::query()->where('mobile', $mobile)->whereIn('coupon_batch_id', $couponBatchIds)->get();
                 if ($coupons->count() >= $couponBatch->people_max_get) {
                     abort(500, '优惠券每人最多领取' . $couponBatch->people_max_get . '张');
                 }
