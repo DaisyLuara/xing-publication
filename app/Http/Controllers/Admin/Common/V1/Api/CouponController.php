@@ -140,7 +140,12 @@ class CouponController extends Controller
             }
 
             if (!$couponBatch->pmg_status) {
-                $coupons = Coupon::query()->where('mobile', $mobile)->whereIn('coupon_batch_id', [3, 4, 5, 6])->get();
+                if (in_array($couponBatch->id, [3, 4, 5, 6])) {
+                    $couponBatchIds = [3, 4, 5, 6];
+                } else {
+                    $couponBatchIds = [$couponBatchId];
+                }
+                $coupons = Coupon::query()->where('mobile', $mobile)->whereIn('coupon_batch_id', $couponBatchIds)->get();
                 if ($coupons->count() >= $couponBatch->people_max_get) {
                     abort(500, '优惠券每人最多领取' . $couponBatch->people_max_get . '张');
                 }
@@ -207,7 +212,7 @@ class CouponController extends Controller
                 $content = '【星视度】恭喜您获得“苏小柳100元代金券”，凭此短信到服务台免费领取。使用期限10月31日，快快领取使用吧。';
                 break;
             case '汤姆熊币':
-                $content = '【星视度】感谢参与！您获得“汤姆熊币一份”，凭此短信和中奖截图兑换奖品！礼品当天兑换，先到先得！兑奖地点：1楼西庭';
+                $content = '【星视度】感谢参与！您获得“汤姆熊币一份”，凭此短信和中奖截图兑换奖品！礼品当天兑换，先到先得！兑奖地点：1楼西庭。';
                 break;
             case '炫彩杯子或背包任选':
                 $content = '【星视度】感谢参与！您获得“杯子或包一份”，凭此短信和中奖截图兑换奖品！礼品当天兑换，先到先得！兑奖地点：华为门店L119-2。';
