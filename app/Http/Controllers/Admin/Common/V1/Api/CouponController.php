@@ -64,13 +64,25 @@ class CouponController extends Controller
             $query->where('gender', '=', $request->gender);
         }
 
-        $couponBatchPolicies = $query->where('policy_id', '=', $policy->id)->get();
+        $couponBatchPolicies = $query->join('coupon_batches', 'coupon_batch_id', '=', 'coupon_batches.id')->where('policy_id', '=', $policy->id)->get();
 
         if ($couponBatchPolicies->isEmpty()) {
-            return $this->response->error('无可用优惠券', 500);
+            abort('无可用优惠券', 500);
         }
 
-        $targetCouponBatch = getRand($couponBatchPolicies->toArray());
+        $couponBatchPolicies = $couponBatchPolicies->toArray();
+        foreach ($couponBatchPolicies as $key => $couponBatchPolicy) {
+            if (!$couponBatchPolicy->pmg_status && !$couponBatchPolicy->dmg_status && $couponBatchPolicy->stock <= 0) {
+                unset($couponBatchPolicies[$key]);
+            }
+        }
+
+        if (count($couponBatchPolicies) == 0) {
+            abort('无可用优惠券', 500);
+        }
+
+
+        $targetCouponBatch = getRand($couponBatchPolicies);
         $couponBatch = CouponBatch::findOrFail($targetCouponBatch->coupon_batch_id);
 
         return $this->response->item($couponBatch, new CouponBatchTransformer());
@@ -193,6 +205,18 @@ class CouponController extends Controller
                 break;
             case '苏小柳100元代金券':
                 $content = '【星视度】恭喜您获得“苏小柳100元代金券”，凭此短信到服务台免费领取。使用期限10月31日，快快领取使用吧。';
+                break;
+            case '汤姆熊币':
+                $content = '【星视度】感谢参与！您获得“汤姆熊币一份”，凭此短信和中奖截图兑换奖品！礼品当天兑换，先到先得！兑奖地点：1楼西庭';
+                break;
+            case '炫彩杯子或背包任选':
+                $content = '【星视度】感谢参与！您获得“杯子或包一份”，凭此短信和中奖截图兑换奖品！礼品当天兑换，先到先得！兑奖地点：华为门店L119-2。';
+                break;
+            case '鲜肉月饼':
+                $content = '【星视度】感谢参与！您获得“鲜肉月饼一份”，凭此短信和中奖截图兑换奖品！礼品当天兑换，先到先得！兑奖地点：嘉庭L503-2。';
+                break;
+            case '精美文具礼盒':
+                $content = '【星视度】感谢参与！您获得“文具礼盒一份”，凭此短信和中奖截图兑换奖品！礼品当天兑换，先到先得！兑奖地点：Balabala 童装店L324-325。';
                 break;
             default:
                 return;
