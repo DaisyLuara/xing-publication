@@ -52,14 +52,9 @@ class AuthorizationsController extends Controller
         }
 
         $user = Auth::guard('api')->user();
-        try {
 
-            if ($user->tower_access_token && $user->tower_refresh_token) {
-                event(new Login($user, false));
-            }
-
-        } catch (Exception $exception) {
-            Log::info($exception, $exception->getMessage());
+        if ($user->tower_access_token && $user->tower_refresh_token) {
+            event(new Login($user, false));
         }
 
         activity('login')->causedBy($user)->log('登陆成功');
