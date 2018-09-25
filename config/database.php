@@ -61,6 +61,29 @@ return [
                 'NO_ENGINE_SUBSTITUTION'
             ]
         ],
+
+        'jingsaas' => [
+            'driver' => 'mysql',
+            'host' => env('JINGSAAS_DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '3306'),
+            'database' => env('JINGSAAS_DB_DATABASE', 'forge'),
+            'username' => env('JINGSAAS_DB_USERNAME', 'forge'),
+            'password' => env('JINGSAAS_DB_PASSWORD', ''),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => 'oc_',
+            'strict' => true,
+            'engine' => null,
+            'modes' => [
+                'STRICT_TRANS_TABLES',
+                'NO_ZERO_IN_DATE',
+                'NO_ZERO_DATE',
+                'ERROR_FOR_DIVISION_BY_ZERO',
+                'NO_AUTO_CREATE_USER',
+                'NO_ENGINE_SUBSTITUTION'
+            ]
+        ],
         'xs' => [
             'driver' => 'mysql',
             'host' => env('DB_HOST', '127.0.0.1'),
