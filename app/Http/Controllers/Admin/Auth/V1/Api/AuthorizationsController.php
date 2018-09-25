@@ -52,9 +52,6 @@ class AuthorizationsController extends Controller
         }
 
         $user = Auth::guard('api')->user();
-        if ($user->tower_access_token && $user->tower_refresh_token) {
-            event(new Login($user, false));
-        }
 
         activity('login')->causedBy($user)->log('登陆成功');
 
@@ -137,7 +134,7 @@ class AuthorizationsController extends Controller
         $query = $user->query();
         $DBUser = $query->where('phone', '=', $verifyData['phone'])->first();
         if (!$DBUser) {
-            return $this->response->error('您还未注册，请联系管理员，注册用户！',403);
+            return $this->response->error('您还未注册，请联系管理员，注册用户！', 403);
         }
 
         User::where('id', '=', $DBUser->id)->update(['weixin_openid' => $request->openid]);
