@@ -97,10 +97,6 @@ class CouponController extends Controller
      */
     public function generateCoupon(CouponBatch $couponBatch, CouponRequest $request, EasySms $easySms)
     {
-
-        Log::info('generate_coupon_cookie', ['user_id' => Cookie::get('user_id')]);
-        Log::info('generate_coupon_cookie',$_COOKIE);
-
         $mobile = $request->mobile;
         if (!$couponBatch->dmg_status && !$couponBatch->pmg_status && $couponBatch->stock <= 0) {
             abort(500, '优惠券已发完!');
@@ -145,7 +141,7 @@ class CouponController extends Controller
             if (!$couponBatch->pmg_status) {
                 if (in_array($couponBatch->id, [3, 4, 5, 6])) {
                     $couponBatchIds = [3, 4, 5, 6];
-                    $userID = Cookie::get('user_id');
+                    $userID = $request->get('user_id');
                     $couponBatchId = $this->scoreToCoupon($userID, ['FarmSchool', 'FarmSchoolHigh']);
                 } elseif (in_array($couponBatch->id, [7, 8, 9, 10])) {
                     $couponBatchIds = [7, 8, 9, 10];
@@ -190,7 +186,7 @@ class CouponController extends Controller
             ->leftJoin('game_attribute', 'game_attribute.id', '=', 'game_result.game_attribute_id')
             ->selectRaw('sum(oc_game_attribute.score) as score')
             ->where('user_id', '=', $userID)->first();
-       
+
         if (!$result->score) {
             abort(500, '您的积分不足,无法兑换优惠券!');
         }
