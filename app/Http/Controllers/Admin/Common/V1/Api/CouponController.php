@@ -99,6 +99,7 @@ class CouponController extends Controller
     {
 
         Log::info('generate_coupon_cookie', ['user_id' => Cookie::get('user_id')]);
+        Log::info('generate_coupon_cookie',$_COOKIE);
 
         $mobile = $request->mobile;
         if (!$couponBatch->dmg_status && !$couponBatch->pmg_status && $couponBatch->stock <= 0) {
