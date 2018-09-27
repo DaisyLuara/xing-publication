@@ -257,7 +257,8 @@ function activePlayTimesClean()
                 $join->on('fc.fpid', '=', 'fpt.fpid');
             }, null, null, 'left')
             ->whereRaw("fc.clientdate between '$startClientDate' and '$endClientDate' and fpt.clientdate between '$startClientDate' AND '$endClientDate' and fc.fpid>0")
-            ->selectRaw("fc.oid as oid ,fc.belong as belong,fc.gender as gender,fc.age as age,fc.fpid as fpid,fc.clientdate as clientdate,playtime");
+            ->selectRaw("fc.oid as oid ,fc.belong as belong,fc.fpid as fpid,fc.clientdate as clientdate,playtime");
+
         $data = $sql->get();
         $count = [];
         foreach ($data as $item) {
@@ -265,8 +266,6 @@ function activePlayTimesClean()
                 'oid' => $item->oid,
                 'belong' => $item->belong,
                 'fpid' => $item->fpid,
-                'gender' => $item->gender,
-                'age' => $item->age,
                 'clientdate' => $item->clientdate,
                 'playtime' => $item->playtime,
             ];
@@ -301,18 +300,6 @@ function activePlayTimesClean()
                     return $value_array[0]['fpid'];
                 },
                 'as' => 'fpid'
-            ],
-            'gender' => [
-                'callback' => function ($value_array) {
-                    return $value_array[0]['gender'];
-                },
-                'as' => 'gender'
-            ],
-            'age' => [
-                'callback' => function ($value_array) {
-                    return $value_array[0]['age'];
-                },
-                'as' => 'age'
             ],
             'clientdate' => [
                 'callback' => function ($data) {
