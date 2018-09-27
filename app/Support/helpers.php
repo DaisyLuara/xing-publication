@@ -257,16 +257,80 @@ function activePlayTimesClean()
                 $join->on('fc.fpid', '=', 'fpt.fpid');
             }, null, null, 'left')
             ->whereRaw("fc.clientdate between '$startClientDate' and '$endClientDate' and fpt.clientdate between '$startClientDate' AND '$endClientDate' and fc.fpid>0")
-            ->selectRaw("fc.oid as oid ,fc.belong as belong,fc.fpid as fpid,group_concat(fc.clientdate) as clientdate,playtime");
-        if ($date <= '2018-07-01') {
-            $sql = $sql->groupBy(DB::raw('fc.fpid*100+fc.oid,fc.belong'));
-        } else {
-            $sql = $sql->groupBy(DB::raw('fc.fpid*10000+fc.oid,fc.belong'));
-        }
+            ->selectRaw("fc.oid as oid ,fc.belong as belong,fc.gender as gender,fc.age as age,fc.fpid as fpid,fc.clientdate as clientdate,playtime");
         $data = $sql->get();
         $count = [];
         foreach ($data as $item) {
-            $clientDates = explode(',', $item->clientdate);
+            $count[] = [
+                'oid' => $item->oid,
+                'belong' => $item->belong,
+                'fpid' => $item->fpid,
+                'gender' => $item->gender,
+                'age' => $item->age,
+                'clientdate' => $item->clientdate,
+                'playtime' => $item->playtime,
+            ];
+        }
+        $group_by_fields = [
+            'oid' => function ($value) {
+                return $value;
+            },
+            'belong' => function ($value) {
+                return $value;
+            },
+            'fpid' => function ($value) {
+                return $value;
+            },
+
+        ];
+        $group_by_value = [
+            'oid' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['oid'];
+                },
+                'as' => 'oid'
+            ],
+            'belong' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['belong'];
+                },
+                'as' => 'belong'
+            ],
+            'fpid' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['fpid'];
+                },
+                'as' => 'fpid'
+            ],
+            'gender' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['gender'];
+                },
+                'as' => 'gender'
+            ],
+            'age' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['age'];
+                },
+                'as' => 'age'
+            ],
+            'clientdate' => [
+                'callback' => function ($data) {
+                    return join(',', array_column($data, 'clientdate'));
+                },
+                'as' => 'clientdate'
+            ],
+            'playtime' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['playtime'];
+                },
+                'as' => 'playtime'
+            ],
+        ];
+        $data = ArrayGroupBy::groupBy($count, $group_by_fields, $group_by_value);
+        $count = [];
+        foreach ($data as $item) {
+            $clientDates = explode(',', $item['clientdate']);
             sort($clientDates);
             $m = 0;
             $n = 1;
@@ -275,12 +339,12 @@ function activePlayTimesClean()
             $num21 = dateRecursion($m, $n, $clientDates, 21000) + 1;
 
             $count[] = [
-                'oid' => $item->oid,
-                'belong' => $item->belong,
-                'fpid' => $item->fpid,
-                'playtimes7' => ($num7 > floor($item->playtime / 7000)) ? floor($item->playtime / 7000) : $num7,
-                'playtimes15' => ($num15 > floor($item->playtime / 15000)) ? floor($item->playtime / 15000) : $num15,
-                'playtimes21' => ($num21 > floor($item->playtime / 21000)) ? floor($item->playtime / 21000) : $num21,
+                'oid' => $item['oid'],
+                'belong' => $item['belong'],
+                'fpid' => $item['fpid'],
+                'playtimes7' => ($num7 > floor($item['playtime'] / 7000)) ? floor($item['playtime'] / 7000) : $num7,
+                'playtimes15' => ($num15 > floor($item['playtime'] / 15000)) ? floor($item['playtime'] / 15000) : $num15,
+                'playtimes21' => ($num21 > floor($item['playtime'] / 21000)) ? floor($item['playtime'] / 21000) : $num21,
                 'date' => $date,
                 'clientdate' => strtotime($date) * 1000
             ];
