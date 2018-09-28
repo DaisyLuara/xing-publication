@@ -10,7 +10,6 @@ namespace App\Http\Controllers\Admin\Common\V1\Api;
 
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
-use App\Http\Controllers\Admin\Coupon\V1\Models\CouponCountLog;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Common\V1\Request\CouponRequest;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
@@ -19,7 +18,7 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use DB;
 use Log;
-use Illuminate\Http\Request;
+use Cookie;
 use Overtrue\EasySms\EasySms;
 
 
@@ -142,6 +141,8 @@ class CouponController extends Controller
             if (!$couponBatch->pmg_status) {
                 if (in_array($couponBatch->id, [3, 4, 5, 6])) {
                     $couponBatchIds = [3, 4, 5, 6];
+                    $userID = decrypt($request->get('sign'));
+                    $couponBatchId = $this->scoreToCoupon($userID, ['FarmSchool', 'FarmSchoolHigh']);
                 } elseif (in_array($couponBatch->id, [7, 8, 9, 10])) {
                     $couponBatchIds = [7, 8, 9, 10];
                 } else {
@@ -156,7 +157,7 @@ class CouponController extends Controller
             $coupon = Coupon::create([
                 'code' => uniqid(),
                 'mobile' => $mobile,
-                'coupon_batch_id' => $couponBatch->id,
+                'coupon_batch_id' => $couponBatchId,
                 'status' => 3,
             ]);
 
@@ -169,6 +170,35 @@ class CouponController extends Controller
         }
 
         return $this->response->item($coupon, new CouponTransformer());
+    }
+
+
+    /**
+     * 积分兑换
+     * FarmSchool  FarmSchoolHigh
+     * @param $belongs
+     * @return int
+     */
+    private function scoreToCoupon($userID, $belongs)
+    {
+
+        $result = DB::connection('jingsaas')->table('game_result')->whereIn('game_result.belong', $belongs)
+            ->leftJoin('game_attribute', 'game_attribute.id', '=', 'game_result.game_attribute_id')
+            ->selectRaw('sum(oc_game_attribute.score) as score')
+            ->where('user_id', '=', $userID)->first();
+
+        if (!$result->score) {
+            abort(500, '您的积分不足,无法兑换优惠券!');
+        }
+        if ($result->score >= 0 && $result->score <= 200) {
+            return 3;
+        } elseif ($result->score <= 400 && $result->score > 200) {
+            return 4;
+        } elseif ($result->score <= 800 && $result->score > 401) {
+            return 5;
+        } else {
+            return 6;
+        }
     }
 
     private function sendMallCooCoupon($mobile, $picmID)
