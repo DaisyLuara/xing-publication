@@ -164,6 +164,7 @@ class CouponController extends Controller
                 'mobile' => $mobile,
                 'coupon_batch_id' => $couponBatchId,
                 'status' => 3,
+                'wx_user_id' => $userID ? $userID : 0,
             ]);
 
             if (!$couponBatch->pmg_status && !$couponBatch->pmg_status) {
