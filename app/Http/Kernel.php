@@ -62,6 +62,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
         'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
-        'api_sign' => \Qbhy\LaravelApiAuth\Middleware::class,
+        'api_sign' => \SunD1ng\LaravelApiAuth\Middleware::class,
     ];
 }

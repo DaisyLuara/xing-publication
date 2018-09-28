@@ -4,54 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "1a741bbcaebcc1e435f1756417f116ed",
+    "content-hash": "587e48aa3a3b86eb4f38d3ab45c2220a",
     "packages": [
-        {
-            "name": "96qbhy/laravel-api-auth",
-            "version": "4.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/qbhy/laravel-api-auth.git",
-                "reference": "66a12cd12e0786e0c37b1a7d2a1a3469fd287537"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/qbhy/laravel-api-auth/zipball/66a12cd12e0786e0c37b1a7d2a1a3469fd287537",
-                "reference": "66a12cd12e0786e0c37b1a7d2a1a3469fd287537",
-                "shasum": ""
-            },
-            "require-dev": {
-                "laravel/laravel": "^5.5"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Qbhy\\LaravelApiAuth\\ServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Qbhy\\LaravelApiAuth\\": "src"
-                },
-                "files": [
-                    "src/fn.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "96qbhy",
-                    "email": "96qbhy@gmail.com"
-                }
-            ],
-            "description": "laravel API 鉴权",
-            "time": "2018-05-04T15:52:25+00:00"
-        },
         {
             "name": "anahkiasen/underscore-php",
             "version": "2.0.0",
@@ -4499,6 +4453,52 @@
                 "totem"
             ],
             "time": "2018-03-04T02:17:35+00:00"
+        },
+        {
+            "name": "sunding0308/laravel-api-auth",
+            "version": "v2.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sunding0308/laravel-api-auth.git",
+                "reference": "4c0453dbe4a8dd87e0bd0e2a198f6d8a77e3fdcd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sunding0308/laravel-api-auth/zipball/4c0453dbe4a8dd87e0bd0e2a198f6d8a77e3fdcd",
+                "reference": "4c0453dbe4a8dd87e0bd0e2a198f6d8a77e3fdcd",
+                "shasum": ""
+            },
+            "require-dev": {
+                "laravel/laravel": "^5.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "SunD1ng\\LaravelApiAuth\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "SunD1ng\\LaravelApiAuth\\": "src"
+                },
+                "files": [
+                    "src/fn.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "sunding0308",
+                    "email": "sunding1992@gmail.com"
+                }
+            ],
+            "description": "laravel API 鉴权",
+            "time": "2018-06-29T10:55:11+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
