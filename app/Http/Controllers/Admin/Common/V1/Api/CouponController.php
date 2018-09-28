@@ -141,7 +141,7 @@ class CouponController extends Controller
             if (!$couponBatch->pmg_status) {
                 if (in_array($couponBatch->id, [3, 4, 5, 6])) {
                     $couponBatchIds = [3, 4, 5, 6];
-                    $userID = $request->get('user_id');
+                    $userID = Cookie::get('user_id');
                     $couponBatchId = $this->scoreToCoupon($userID, ['FarmSchool', 'FarmSchoolHigh']);
                 } elseif (in_array($couponBatch->id, [7, 8, 9, 10])) {
                     $couponBatchIds = [7, 8, 9, 10];
