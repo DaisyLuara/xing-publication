@@ -138,17 +138,23 @@ class CouponController extends Controller
                 }
             }
 
+            $userID = 0;
             if (!$couponBatch->pmg_status) {
                 if (in_array($couponBatch->id, [3, 4, 5, 6])) {
                     $couponBatchIds = [3, 4, 5, 6];
                     $userID = decrypt($request->get('sign'));
+                    $coupons = Coupon::query()->where('wx_user_id', $userID)->whereIn('coupon_batch_id', $couponBatchIds)->get();
+
                     $couponBatchId = $this->scoreToCoupon($userID, ['FarmSchool', 'FarmSchoolHigh']);
+
                 } elseif (in_array($couponBatch->id, [7, 8, 9, 10])) {
                     $couponBatchIds = [7, 8, 9, 10];
+                    $coupons = Coupon::query()->where('mobile', $mobile)->whereIn('coupon_batch_id', $couponBatchIds)->get();
                 } else {
                     $couponBatchIds = [$couponBatchId];
+                    $coupons = Coupon::query()->where('mobile', $mobile)->whereIn('coupon_batch_id', $couponBatchIds)->get();
                 }
-                $coupons = Coupon::query()->where('mobile', $mobile)->whereIn('coupon_batch_id', $couponBatchIds)->get();
+
                 if ($coupons->count() >= $couponBatch->people_max_get) {
                     abort(500, '优惠券每人最多领取' . $couponBatch->people_max_get . '张');
                 }
@@ -159,6 +165,7 @@ class CouponController extends Controller
                 'mobile' => $mobile,
                 'coupon_batch_id' => $couponBatchId,
                 'status' => 3,
+                'wx_user_id' => $userID,
             ]);
 
             if (!$couponBatch->pmg_status && !$couponBatch->pmg_status) {
