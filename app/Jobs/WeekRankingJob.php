@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use EasyWeChat;
 use Log;
+use Carbon\Carbon;
 
 class WeekRankingJob implements ShouldQueue
 {
