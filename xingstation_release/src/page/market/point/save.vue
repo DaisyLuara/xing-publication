@@ -574,8 +574,8 @@ export default {
         return callback(new Error('合同结束时间不能为空'))
       }
       if (
-        new Date(value).getTime() <
-        new Date(this.pointForm.enter_sdate).getTime()
+        new Date(value.replace(/\-/g, '/')).getTime() <
+        new Date(this.pointForm.enter_sdate.replace(/\-/g, '/')).getTime()
       ) {
         callback(new Error('结束日期要大于开始日期'))
       } else {
@@ -587,8 +587,8 @@ export default {
         return callback(new Error('实际入驻结束时间不能为空'))
       }
       if (
-        new Date(value).getTime() <
-        new Date(this.pointForm.oper_edate).getTime()
+        new Date(value.replace(/\-/g, '/')).getTime() <
+        new Date(this.pointForm.oper_edate.replace(/\-/g, '/')).getTime()
       ) {
         callback(new Error('结束日期要大于开始日期'))
       } else {
