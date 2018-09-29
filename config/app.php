@@ -28,6 +28,12 @@ return [
 
     'env' => env('APP_ENV', 'production'),
 
+    /**
+     * set cookie domain
+     */
+
+    'cookie_domain' => env('COOKIE_DOMAIN', '.jingfree.top'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Debug Mode
