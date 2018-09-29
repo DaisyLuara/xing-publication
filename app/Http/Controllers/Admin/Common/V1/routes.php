@@ -11,11 +11,11 @@ $api->version('v1', [
 
         $api->post('captchas', 'CaptchasController@store');// 图片验证码
 
-//        $api->group(['middleware' => 'api_sign'], function ($api) {
+        $api->group(['middleware' => 'api_sign'], function ($api) {
             $api->post('open/coupon/batches', 'CouponController@getCouponBatches');//获取优惠券规则列表
             $api->post('open/coupon/batches/{couponBatch}', 'CouponController@getCouponBatch');//获取优惠券规则
             $api->post('open/coupons/{couponBatch}', 'CouponController@generateCoupon');//发送优惠券
-//        });
+        });
         $api->get('open/project/policy', 'ProjectController@show');//根据节目获取优惠券投放策略
         $api->get('s/{url_path}', 'ShortUrlController@redirect');//短链接跳转
         $api->post('open/short_urls', 'ShortUrlController@store');//短链接生成
