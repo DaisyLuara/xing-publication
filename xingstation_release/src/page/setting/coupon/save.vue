@@ -231,10 +231,9 @@ export default {
   data() {
     var checkEndDate = (rule, value, callback) => {
       if (
-        new Date(value).getTime() <
-        new Date(this.couponForm.start_date).getTime()
+        new Date(value.replace(/\-/g, '/')).getTime() <
+        new Date(this.couponForm.start_date.replace(/\-/g, '/')).getTime()
       ) {
-        console.log(33)
         callback(new Error('结束日期要大于开始日期'))
       } else {
         callback()
@@ -388,7 +387,8 @@ export default {
       router.back()
     },
     handleDateTransform(valueDate) {
-      let date = new Date(valueDate)
+      let dateValue = valueDate.replace(/\-/g, '/')
+      let date = new Date(dateValue)
       let year = date.getFullYear() + '-'
       let mouth =
         (date.getMonth() + 1 < 10

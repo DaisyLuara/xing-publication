@@ -53,9 +53,14 @@ class ShortUrlController extends Controller
         ], $request->all()))->onQueue('short_url');
 
         $queryString = $request->getQueryString();
+
+        //大屏跳转参数加密
+        $cookieExpire = time() + 3600 * 24 * 7;
+        setcookie('game_attribute_payload', encrypt($queryString), $cookieExpire, '/', config('app')['cookie_domain']);
+
         $url = $shortUrl['target_url'];
 
-        $url = preg_replace('/(.*)(?|&)' . $key . '=[^&]+?(&)(.*)/i', '$1$2$4', $url.'&');
+        $url = preg_replace('/(.*)(?|&)' . $key . '=[^&]+?(&)(.*)/i', '$1$2$4', $url . '&');
         $url = substr($url, 0, -1);
         if (strpos($url, '?') === false) {
             $url = $url . '?' . $queryString;
