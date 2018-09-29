@@ -176,8 +176,10 @@ class CouponController extends Controller
                 } elseif (in_array($couponBatch->id, [7, 8, 9, 10])) {
                     //按微信客户端 发送优惠券(活动期间 每天限制领取张数)
                     $couponBatchIds = [7, 8, 9, 10];
+                    $userID = decrypt($request->get('sign'));
                     $coupons = Coupon::query()->where('wx_user_id', $userID)
                         ->whereIn('coupon_batch_id', $couponBatchIds)
+                        ->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
                         ->get();
 
                     if ($coupons->count() >= $couponBatch->people_max_get) {
