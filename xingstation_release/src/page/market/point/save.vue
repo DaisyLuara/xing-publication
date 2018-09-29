@@ -575,7 +575,7 @@ export default {
       }
       if (
         new Date(value.replace(/\-/g, '/')).getTime() <
-        new Date(this.pointForm.enter_sdate.replace(/\-/g, '/')).getTime()
+        new Date(this.pointForm.contract.enter_sdate.replace(/\-/g, '/')).getTime()
       ) {
         callback(new Error('结束日期要大于开始日期'))
       } else {
@@ -588,7 +588,7 @@ export default {
       }
       if (
         new Date(value.replace(/\-/g, '/')).getTime() <
-        new Date(this.pointForm.oper_edate.replace(/\-/g, '/')).getTime()
+        new Date(this.pointForm.contract.oper_edate.replace(/\-/g, '/')).getTime()
       ) {
         callback(new Error('结束日期要大于开始日期'))
       } else {
