@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Common\V1\Request\CouponRequest;
+use App\Http\Controllers\Admin\Coupon\V1\Models\UserCouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponTransformer;
 use App\Http\Controllers\Controller;
@@ -52,6 +53,26 @@ class CouponController extends Controller
      */
     public function getCouponBatches(CouponRequest $request)
     {
+        //是否已经获取优惠券规则
+        $userID = 0;
+        //@todo policy 也要添加字段
+        if ($request->policy_id && $request->policy_id == 4) {
+            $request->validate($request, ['sign' => 'required']);
+            $userID = decrypt($request->sign);
+            $start = Carbon::now()->startOfDay();
+            $end = Carbon::now()->endOfDay();
+            $userCouponBatch = UserCouponBatch::query()->where('wx_user_id', $userID)
+                ->leftJoin('coupon_batch_policy', 'coupon_batch_policy.coupon_batch_id', '=', 'user_coupon_batches.coupon_batch_id')
+                ->where('coupon_batch_policy.policy_id', 4)
+                ->whereBetween('user_coupon_batches.created_at', [$start, $end])
+                ->first();
+            if ($userCouponBatch) {
+                $couponBatch = CouponBatch::findOrFail($userCouponBatch->coupon_batch_id);
+                $couponBatch->setAttribute('wx_user_id', $userID);
+                return $this->response->item($couponBatch, new CouponBatchTransformer());
+            }
+        }
+
         $policy = Policy::query()->findOrFail($request->policy_id);
 
         $query = DB::table('coupon_batch_policy');
@@ -83,6 +104,10 @@ class CouponController extends Controller
 
         $targetCouponBatch = getRand($couponBatchPolicies);
         $couponBatch = CouponBatch::findOrFail($targetCouponBatch->coupon_batch_id);
+        if ($userID) {
+            $data = ['wx_user_id' => $userID, 'coupon_batch_id' => $couponBatch->id];
+            UserCouponBatch::updateOrCreate($data, $data);
+        }
 
         return $this->response->item($couponBatch, new CouponBatchTransformer());
 
@@ -141,6 +166,7 @@ class CouponController extends Controller
             $userID = 0;
             if (!$couponBatch->pmg_status) {
                 if (in_array($couponBatch->id, [3, 4, 5, 6])) {
+                    //按微信客户端 发送优惠券(活动期间 限制领取张数)
                     $couponBatchIds = [3, 4, 5, 6];
                     $userID = decrypt($request->get('sign'));
                     $coupons = Coupon::query()->where('wx_user_id', $userID)->whereIn('coupon_batch_id', $couponBatchIds)->get();
@@ -148,9 +174,18 @@ class CouponController extends Controller
                     $couponBatchId = $this->scoreToCoupon($userID, ['FarmSchool', 'FarmSchoolHigh']);
 
                 } elseif (in_array($couponBatch->id, [7, 8, 9, 10])) {
+                    //按微信客户端 发送优惠券(活动期间 每天限制领取张数)
                     $couponBatchIds = [7, 8, 9, 10];
-                    $coupons = Coupon::query()->where('mobile', $mobile)->whereIn('coupon_batch_id', $couponBatchIds)->get();
+                    $coupons = Coupon::query()->where('wx_user_id', $userID)
+                        ->whereIn('coupon_batch_id', $couponBatchIds)
+                        ->get();
+
+                    if ($coupons->count() >= $couponBatch->people_max_get) {
+                        abort(500, '您今天已经领过了，请明天再来!');
+                    }
+
                 } else {
+                    //按手机号码 发送优惠券
                     $couponBatchIds = [$couponBatchId];
                     $coupons = Coupon::query()->where('mobile', $mobile)->whereIn('coupon_batch_id', $couponBatchIds)->get();
                 }
