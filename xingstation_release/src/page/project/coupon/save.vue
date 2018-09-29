@@ -388,7 +388,6 @@ export default {
     handleDateTransform(valueDate) {
       let dateValue = valueDate.replace(/\-/g, '/')
       let date = new Date(dateValue)
-      alert(date)
       let year = date.getFullYear() + '-'
       let mouth =
         (date.getMonth() + 1 < 10
