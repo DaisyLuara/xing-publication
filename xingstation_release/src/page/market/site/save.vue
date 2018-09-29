@@ -552,7 +552,7 @@ export default {
       }
       if (
         new Date(value.replace(/\-/g, '/')).getTime() <
-        new Date(this.siteForm.enter_sdate.replace(/\-/g, '/')).getTime()
+        new Date(this.siteForm.contract.enter_sdate.replace(/\-/g, '/')).getTime()
       ) {
         callback(new Error('结束日期要大于开始日期'))
       } else {
@@ -564,7 +564,7 @@ export default {
         return callback(new Error('入驻结束时间不能为空'))
       }
       if (
-        new Date(value.replace(/\-/g, '/')).getTime() < new Date(this.siteForm.oper_edate.replace(/\-/g, '/')).getTime()
+        new Date(value.replace(/\-/g, '/')).getTime() < new Date(this.siteForm.contract.oper_edate.replace(/\-/g, '/')).getTime()
       ) {
         callback(new Error('结束日期要大于开始日期'))
       } else {

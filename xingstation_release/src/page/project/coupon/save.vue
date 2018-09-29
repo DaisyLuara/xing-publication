@@ -358,8 +358,6 @@ export default {
       if (this.couponForm.end_date) {
         args.end_date = this.handleDateTransform(this.couponForm.end_date)
       }
-      alert(this.couponForm.end_date)
-      alert(JSON.stringify(args))
       this.$refs[formName].validate(valid => {
         if (valid) {
           coupon
