@@ -19,6 +19,8 @@ class Coupon extends Model
         'picm_id',
         'trace_id',
         'status',
+        'wx_user_id',
+        'taobao_user_id',
     ];
 
     public function couponBatch()
