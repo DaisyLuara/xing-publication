@@ -904,7 +904,7 @@ if (!function_exists('getFaceCountByScene')) {
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
             ->join('avr_official_scene as aos', 'ao.sid', '=', 'aos.sid')
             ->join('admin_staff as as', 'ao.bd_uid', '=', 'as.uid')
-            ->whereRaw(" date_format($table.date,'%Y-%m-%d') between '$startDate' and '$endDate' ")
+            ->whereRaw(" date_format($table.date,'%Y-%m-%d') between '$startDate' and '$endDate' and ao.marketid<>15 and as.realname<>'颜镜店'")
             ->where('belong', '<>', 'all')
             ->groupBy("$table.oid")
             ->orderBy('looknum')

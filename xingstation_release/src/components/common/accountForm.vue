@@ -253,10 +253,13 @@
         </el-form>
       </div>
     </div>
-    <div 
-      class="icp">
-      Copyright©2018 星视度 版权所有   沪ICP备15015485号-1
-    </div>
+    <div class="icp">
+      <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31011502008032" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;">
+        <p style="height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#fff;">
+          Copyright©2018 星视度 版权所有 <img src="~assets/images/reference.png"/> 沪公网安备 31011502008032号
+        </p>
+      </a>
+		</div>
   </div>
 </template>
 <script>
