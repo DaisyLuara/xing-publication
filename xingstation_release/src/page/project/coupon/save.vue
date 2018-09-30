@@ -230,6 +230,10 @@ export default {
   },
   data() {
     var checkEndDate = (rule, value, callback) => {
+      if (!value) {
+        callback()
+        return
+      }
       if (
         new Date(value.replace(/\-/g, '/')).getTime() <
         new Date(this.couponForm.start_date.replace(/\-/g, '/')).getTime()
