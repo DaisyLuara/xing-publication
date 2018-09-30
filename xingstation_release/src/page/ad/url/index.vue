@@ -3,6 +3,29 @@
     v-loading="setting.loading" 
     :element-loading-text="setting.loadingText" 
     class="page-list-template">
+     <div 
+      class="search-wrap">
+      <el-form 
+        ref="searchForm" 
+        :inline="true"
+        :model="searchForm" 
+        class="search-form">
+        <el-form-item 
+          label="" 
+          prop="description">
+          <el-input 
+            v-model="searchForm.description" 
+            placeholder="请输入备注" 
+            clearable/>
+        </el-form-item>
+        <el-form-item>
+          <el-button 
+            type="primary"
+            size="small"
+            @click="search">搜索</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
     <div 
       class="actions-wrap">
       <span 
@@ -14,7 +37,6 @@
         size="small" 
         @click="addUrl">新增</el-button>
     </div>
-
     <div 
       class="table-area">
       <el-table
@@ -99,12 +121,8 @@ export default {
       }
     }
     return {
-      linkInfo: {
-        link: '',
-        info: ''
-      },
-      rules: {
-        link: [{ validator: checkUrl, trigger: 'blur' }]
+      searchForm: {
+        description: ''
       },
       currentPage: 1,
       pageSize: 10,
@@ -120,6 +138,10 @@ export default {
     this.getUrlList()
   },
   methods: {
+    search() {
+      this.currentPage = 1
+      this.getUrlList()
+    },
     currentChange(e) {
       this.currentPage = e
       this.getUrlList()
@@ -127,7 +149,11 @@ export default {
     getUrlList() {
       this.setting.loading = true
       let args = {
-        page: this.currentPage
+        page: this.currentPage,
+        description: this.searchForm.description
+      }
+      if (!this.searchForm.description) {
+        delete args.description
       }
       url
         .getUrlList(this, args)
@@ -164,6 +190,32 @@ export default {
 <style lang="less" scoped>
 .page-list-template {
   padding: 30px;
+  .search-wrap {
+    margin-top: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 16px;
+    align-items: center;
+    margin-bottom: 10px;
+    .el-form-item {
+      margin-bottom: 10px;
+    }
+    .el-input {
+      width: 200px;
+    }
+    .warning {
+      background: #ebf1fd;
+      padding: 8px;
+      margin-left: 10px;
+      color: #444;
+      font-size: 12px;
+      i {
+        color: #4a8cf3;
+        margin-right: 5px;
+      }
+    }
+  }
   .actions-wrap {
     margin-top: 5px;
     display: flex;

@@ -18,7 +18,11 @@ class ShortUrlController extends Controller
 
     public function index(Request $request, ShortUrl $shortUrl)
     {
-        $shortUrls = $shortUrl->query()->paginate(10);
+        $query = $shortUrl->query();
+        if ($request->description) {
+            $query->where('description', 'like', '%' . $request->description . '%');
+        }
+        $shortUrls = $query->paginate(10);
         return $this->response->paginator($shortUrls, new ShortUrlTransformer());
     }
 
