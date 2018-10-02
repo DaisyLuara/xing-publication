@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers\Admin\Common\V1\Api;
 
+use App\Http\Controllers\Admin\Common\V1\Request\UserCouponRequest;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
@@ -216,6 +217,17 @@ class CouponController extends Controller
         return $this->response->item($coupon, new CouponTransformer());
     }
 
+    public function getUserCoupon(UserCouponRequest $request)
+    {
+        $userID = decrypt($request->sign);
+        $coupon = Coupon::query()->where('wx_user_id', $userID)
+            ->where('coupon_batch_id', $request->get('coupon_batch_id'))
+            ->first();
+
+        abort_if(!$coupon, 204);
+
+        return $this->response->item($coupon, new CouponTransformer());
+    }
 
     /**
      * 积分兑换
@@ -231,9 +243,9 @@ class CouponController extends Controller
             ->selectRaw('sum(oc_game_attribute.score) as score')
             ->where('user_id', '=', $userID)->first();
 
-        if (!$result->score) {
-            abort(500, '您的积分不足,无法兑换优惠券!');
-        }
+
+        abort_if(!$result->score, 500, '您的积分不足,无法兑换优惠券!');
+
         if ($result->score >= 0 && $result->score <= 200) {
             return 3;
         } elseif ($result->score <= 400 && $result->score > 200) {

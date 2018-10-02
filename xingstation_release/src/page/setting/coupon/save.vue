@@ -230,6 +230,10 @@ export default {
   },
   data() {
     var checkEndDate = (rule, value, callback) => {
+      if (!value) {
+        callback()
+        return
+      }
       if (
         new Date(value.replace(/\-/g, '/')).getTime() <
         new Date(this.couponForm.start_date.replace(/\-/g, '/')).getTime()
@@ -299,7 +303,6 @@ export default {
         coupon
           .getCouponDetial(this, this.couponID, args)
           .then(result => {
-            console.log(result)
             this.couponForm.name = result.name
             this.couponForm.description = result.description
             this.couponForm.company_id = result.company.id
@@ -358,7 +361,6 @@ export default {
       if (this.couponForm.end_date) {
         args.end_date = this.handleDateTransform(this.couponForm.end_date)
       }
-      console.log(args)
       this.$refs[formName].validate(valid => {
         if (valid) {
           coupon
