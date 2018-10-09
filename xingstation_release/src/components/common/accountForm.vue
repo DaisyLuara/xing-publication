@@ -259,7 +259,7 @@
           Copyright©2018 星视度 版权所有 <img src="~assets/images/reference.png"/> 沪公网安备 31011502008032号
         </p>
       </a>
-      <a target="_blank" href="http://www.beian.gov.cn" class="m-contact-text" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;">
+      <a target="_blank" href="http://www.miitbeian.gov.cn" class="m-contact-text" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;">
         <p style="height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#fff;">
           沪ICP备 17045724号
         </p>
