@@ -269,6 +269,7 @@ class ChartDataController extends Controller
         $this->handleQuery($request, $query, true, true);
         $table = $query->getModel()->getTable();
         $data = $query->selectRaw("sum($table.allnum) AS total,sum($table.gnum) as female_count,sum($table.bnum) as male_count")
+            ->whereRaw("$table.type='looker'")
             ->groupBy("$table.oid")
             ->orderBy('total', 'desc')
             ->limit(10)
@@ -282,7 +283,7 @@ class ChartDataController extends Controller
                     'female' => $item->female_count,
                     'total' => $item->total,
                 ],
-                'display_name' => $item->area_name . $item->market_name . ' ' . $item->name,
+                'display_name' => $item->area_name . $item->market_name . ' ' . $item->point_name,
             ];
         });
 
