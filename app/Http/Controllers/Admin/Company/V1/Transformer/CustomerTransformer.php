@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Company\V1\Transformer;
 
-use App\Http\Controllers\Admin\Company\V1\Models\Customer;
+use App\Models\Customer;
 use League\Fractal\TransformerAbstract;
 
 class CustomerTransformer extends TransformerAbstract
