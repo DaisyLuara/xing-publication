@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Admin\Common\V1\Transformer;
 
+use App\Http\Controllers\Admin\Company\V1\Transformer\CustomerTransformer;
 use App\Http\Controllers\Admin\User\V1\Transformer\UserTransformer;
+use App\Models\User;
 use League\Fractal\TransformerAbstract;
 use Spatie\Activitylog\Models\Activity;
+use App\Models\Customer;
 
 class ActivityLogTransformer extends TransformerAbstract
 {
@@ -25,6 +28,15 @@ class ActivityLogTransformer extends TransformerAbstract
 
     public function includeCauser(Activity $activity)
     {
-        return $this->item($activity->causer, new UserTransformer());
+        $causer = $activity->causer;
+        if ($causer instanceof Customer) {
+            $transfomer = new CustomerTransformer();
+        } elseif ($causer instanceof User) {
+            $transfomer = new UserTransformer();
+        } else {
+            return;
+        }
+
+        return $this->item($activity->causer, $transfomer);
     }
 }

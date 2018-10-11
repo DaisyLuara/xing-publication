@@ -12,9 +12,12 @@ namespace App\Http\Controllers\Admin\Coupon\V1\Models;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Models\Model;
 use App\Models\User;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class CouponBatch extends Model
 {
+    use LogsActivity;
+
     protected $fillable = [
         'company_id',
         'create_user_id',
