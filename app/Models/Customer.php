@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Company\V1\Models;
+namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use App\Http\Controllers\Admin\Company\V1\Models\Company;
 
 class Customer extends Authenticatable implements JWTSubject
 {
