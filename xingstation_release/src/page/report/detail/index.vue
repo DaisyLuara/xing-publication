@@ -263,209 +263,216 @@
           auto-resize />
       </div>
     </div>
-    
-    <!-- 年龄分布图 -->
-    <div 
-      v-loading="ageFlag"
-      class="age-sex-wrapper" > 
-      <div 
-        class="sex-part">
-        <chart 
-          ref="pieChart"
-          :options="pieChart" 
-          auto-resize
-          @click="onClick"
-        />
-      </div>
-      <div 
-        class="age-part">
-        <chart
-          ref="ageChart"
-          :options="ageChart"
-          auto-resize />
-      </div>
-    </div>
-    <!-- 时间段与人群特征 -->
-    <div  
-      v-loading="crowdFlag"
-      class="time-crowd-wrapper" > 
-      <div 
-        class="crowd-part">
-        <chart
-          ref="crowdChart"
-          :options="timeAndCrowdChart"
-          auto-resize />
-      </div>
-    </div>
-    <!-- 报表部分 -->
-    <div 
-      v-loading="tableSetting.loading"
-      class="table-wrap">
-      <div 
-        class="actions-wrap">
-        <span 
-          class="label">
-          <span 
-            class="point-title">点位列表 
-          </span> 数量: {{ pagination.total }}
-        </span>
-        <div>
-          <el-select 
-            v-model="reportValue" 
-            placeholder="请选择导出报表类型">
-            <el-option
-              v-for="item in reportList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"/>
-          </el-select>
-          <el-button 
-            type="success"
-            size="small" 
-            @click="changeReportType">下载</el-button>
+    <el-collapse v-model="activeNames">
+      <!-- 年龄分布图 -->
+      <el-collapse-item title="年龄分布图" name="1" class="echart-data">
+        <div 
+          v-loading="ageFlag"
+          class="age-sex-wrapper" > 
+          <div 
+            class="sex-part">
+            <chart 
+              ref="pieChart"
+              :options="pieChart" 
+              auto-resize
+              @click="onClick"
+            />
+          </div>
+          <div 
+            class="age-part">
+            <chart
+              ref="ageChart"
+              :options="ageChart"
+              auto-resize />
+          </div>
         </div>
-      </div>
-      <el-table
-        :data="tableData"
-        style="width: 100%">
-        <el-table-column 
-          type="expand">
-          <template 
-            slot-scope="scope">
-            <el-form 
-              label-position="left" 
-              inline 
-              class="demo-table-expand">
-              <el-form-item 
-                label="ID">
-                <span>{{ scope.row.id }}</span>
-              </el-form-item>
-              <el-form-item 
-                label="点位">
-                {{ scope.row.area_name }} {{ scope.row.market_name }} {{ scope.row.point_name }}
-              </el-form-item>
-              <el-form-item 
-                label="节目">
-                {{ scope.row.projects }}
-              </el-form-item>
-              <el-form-item 
-                label="围观">
-                <span>{{ scope.row.looknum }}</span>
-              </el-form-item>
-              <el-form-item 
-                label="活跃"/>
-              <el-form-item 
-                label="铁杆">
-                <span>{{ scope.row.playernum }}</span>
-              </el-form-item>
-              <el-form-item 
-                label="拉新">
-                <span>{{ scope.row.lovenum }}</span>
-              </el-form-item>
-              <el-form-item 
-                label="输出">
-                <span>
-                  CPF: {{ computedCPF }}
-                  CPR：{{ computedCPR }}
-                  CPL： {{ computedCPL }}
-                </span>
-              </el-form-item>
-              <el-form-item 
-                label="时间">
-                <span>{{ scope.row.min_date }} - {{ scope.row.max_date }}</span>
-              </el-form-item>
-            </el-form>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="ID"
-          prop="id"
-          width="100"/>
-        <el-table-column
-          :show-overflow-tooltip="true"
-          label="点位"
-          prop="point"
-          min-width="130">
-          <template 
-            slot-scope="props">
-            {{ props.row.area_name }} {{ props.row.market_name }} {{ props.row.point_name }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          :show-overflow-tooltip="true"
-          label="节目"
-          prop="projects"
-          min-width="130"
-        />
-        <el-table-column
-          label="围观"
-          prop="looknum"
-          min-width="90"/>
-        <el-table-column
-          :show-overflow-tooltip="true"
-          label="活跃"
-          min-width="90"
-        >
-          <template 
-            slot-scope="scope">
-            暂无
-          </template>
-        </el-table-column>
-        <el-table-column
-          :show-overflow-tooltip="true"
-          label="拉新"
-          prop="lovenum"
-          min-width="90"
-        />
-        <el-table-column
-          :show-overflow-tooltip="true"
-          label="平均有效时长"
-          min-width="90"
-        >
-          <template 
-            slot-scope="scope">
-            暂无
-          </template>
-        </el-table-column>
-        <el-table-column
-          :show-overflow-tooltip="true"
-          label="输出"
-          prop="scannum"
-          min-width="120"
-        >
-          <template 
-            slot-scope="props">*
-            <div>
-              <div>CPF: {{ ((props.row.playernum7 / props.row.looknum) * 100).toFixed(2) }}%</div>
-              <div>CPR：{{ ((props.row.playernum / props.row.looknum) * 100).toFixed(2) }}%</div>
-              <div>CPL：{{ ((props.row.lovenum / props.row.looknum) * 100).toFixed(2) }}%</div>
-            </div>  
-          </template>
-        </el-table-column>
-        <el-table-column
-          :show-overflow-tooltip="true"
-          label="时间"
-          min-width="120"
-          prop="created_at"
-        >
-          <template 
-            slot-scope="props">
-            <span>{{ props.row.min_date }} - {{ props.row.max_date }}</span>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div 
-        class="pagination-wrap">
-        <el-pagination
-          :total="pagination.total"
-          :page-size="pagination.pageSize"
-          :current-page="pagination.currentPage"
-          layout="prev, pager, next, jumper, total"
-          @current-change="changePage"
-        />
-      </div>
-    </div>
+      </el-collapse-item>
+      <!-- 时间段与人群特征 -->
+      <el-collapse-item title="时间段与人群特征" name="2"  class="echart-data">
+        <div  
+          v-loading="crowdFlag"
+          class="time-crowd-wrapper" > 
+          <div 
+            class="crowd-part">
+            <chart
+              ref="crowdChart"
+              :options="timeAndCrowdChart"
+              auto-resize />
+          </div>
+        </div>
+      </el-collapse-item>
 
+      <!-- 报表部分 -->
+      <el-collapse-item title="点位列表" name="3" class="echart-data">
+        <div 
+          v-loading="tableSetting.loading"
+          class="table-wrap">
+          <div 
+            class="actions-wrap">
+            <span 
+              class="label">
+              <span 
+                class="point-title">点位列表 
+              </span> 数量: {{ pagination.total }}
+            </span>
+            <div>
+              <el-select 
+                v-model="reportValue" 
+                placeholder="请选择导出报表类型">
+                <el-option
+                  v-for="item in reportList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"/>
+              </el-select>
+              <el-button 
+                type="success"
+                size="small" 
+                @click="changeReportType">下载</el-button>
+            </div>
+          </div>
+          <el-table
+            :data="tableData"
+            style="width: 100%">
+            <el-table-column 
+              type="expand">
+              <template 
+                slot-scope="scope">
+                <el-form 
+                  label-position="left" 
+                  inline 
+                  class="demo-table-expand">
+                  <el-form-item 
+                    label="ID">
+                    <span>{{ scope.row.id }}</span>
+                  </el-form-item>
+                  <el-form-item 
+                    label="点位">
+                    {{ scope.row.area_name }} {{ scope.row.market_name }} {{ scope.row.point_name }}
+                  </el-form-item>
+                  <el-form-item 
+                    label="节目">
+                    {{ scope.row.projects }}
+                  </el-form-item>
+                  <el-form-item 
+                    label="围观">
+                    <span>{{ scope.row.looknum }}</span>
+                  </el-form-item>
+                  <el-form-item 
+                    label="活跃"/>
+                  <el-form-item 
+                    label="铁杆">
+                    <span>{{ scope.row.playernum }}</span>
+                  </el-form-item>
+                  <el-form-item 
+                    label="拉新">
+                    <span>{{ scope.row.lovenum }}</span>
+                  </el-form-item>
+                  <el-form-item 
+                    label="输出">
+                    <span>
+                      CPF: {{ computedCPF }}
+                      CPR：{{ computedCPR }}
+                      CPL： {{ computedCPL }}
+                    </span>
+                  </el-form-item>
+                  <el-form-item 
+                    label="时间">
+                    <span>{{ scope.row.min_date }} - {{ scope.row.max_date }}</span>
+                  </el-form-item>
+                </el-form>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="ID"
+              prop="id"
+              width="100"/>
+            <el-table-column
+              :show-overflow-tooltip="true"
+              label="点位"
+              prop="point"
+              min-width="130">
+              <template 
+                slot-scope="props">
+                {{ props.row.area_name }} {{ props.row.market_name }} {{ props.row.point_name }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              :show-overflow-tooltip="true"
+              label="节目"
+              prop="projects"
+              min-width="130"
+            />
+            <el-table-column
+              label="围观"
+              prop="looknum"
+              min-width="90"/>
+            <el-table-column
+              :show-overflow-tooltip="true"
+              label="活跃"
+              min-width="90"
+            >
+              <template 
+                slot-scope="scope">
+                暂无
+              </template>
+            </el-table-column>
+            <el-table-column
+              :show-overflow-tooltip="true"
+              label="拉新"
+              prop="lovenum"
+              min-width="90"
+            />
+            <el-table-column
+              :show-overflow-tooltip="true"
+              label="平均有效时长"
+              min-width="90"
+            >
+              <template 
+                slot-scope="scope">
+                暂无
+              </template>
+            </el-table-column>
+            <el-table-column
+              :show-overflow-tooltip="true"
+              label="输出"
+              prop="scannum"
+              min-width="120"
+            >
+              <template 
+                slot-scope="props">*
+                <div>
+                  <div>CPF: {{ ((props.row.playernum7 / props.row.looknum) * 100).toFixed(2) }}%</div>
+                  <div>CPR：{{ ((props.row.playernum / props.row.looknum) * 100).toFixed(2) }}%</div>
+                  <div>CPL：{{ ((props.row.lovenum / props.row.looknum) * 100).toFixed(2) }}%</div>
+                </div>  
+              </template>
+            </el-table-column>
+            <el-table-column
+              :show-overflow-tooltip="true"
+              label="时间"
+              min-width="120"
+              prop="created_at"
+            >
+              <template 
+                slot-scope="props">
+                <span>{{ props.row.min_date }} - {{ props.row.max_date }}</span>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div 
+            class="pagination-wrap">
+            <el-pagination
+              :total="pagination.total"
+              :page-size="pagination.pageSize"
+              :current-page="pagination.currentPage"
+              layout="prev, pager, next, jumper, total"
+              @current-change="changePage"
+            />
+          </div>
+        </div>
+      </el-collapse-item>
+    </el-collapse>
     <!-- 弹窗for 性别细节 -->
     <div  
       v-loading="dialogLoading"
@@ -611,7 +618,9 @@ import {
   Table,
   TableColumn,
   Pagination,
-  MessageBox
+  MessageBox,
+  Collapse,
+  CollapseItem
 } from 'element-ui'
 import ECharts from 'vue-echarts/components/ECharts'
 import 'echarts/lib/chart/line'
@@ -635,11 +644,14 @@ export default {
     'el-table': Table,
     'el-table-column': TableColumn,
     'el-pagination': Pagination,
+    'el-collapse': Collapse,
+    'el-collapse-item': CollapseItem,
     chart: ECharts,
     PicChart
   },
   data() {
     return {
+      activeNames: ['1', '2', '3'],
       rateDay: 0,
       marketCount: 0,
       screenCount: 0,
@@ -957,13 +969,13 @@ export default {
           },
           formatter: function(data) {
             let male = (
-              parseInt(data[0].value) /
-              (parseInt(data[0].value) + parseInt(data[1].value)) *
+              (parseInt(data[0].value) /
+                (parseInt(data[0].value) + parseInt(data[1].value))) *
               100
             ).toFixed(2)
             let female = (
-              parseInt(data[1].value) /
-              (parseInt(data[0].value) + parseInt(data[1].value)) *
+              (parseInt(data[1].value) /
+                (parseInt(data[0].value) + parseInt(data[1].value))) *
               100
             ).toFixed(2)
             return (
@@ -1045,48 +1057,48 @@ export default {
           },
           formatter: function(data) {
             let century10 = (
-              parseInt(data[0].value) /
-              (parseInt(data[0].value) +
-                parseInt(data[1].value) +
-                parseInt(data[2].value) +
-                parseInt(data[3].value) +
-                parseInt(data[4].value)) *
+              (parseInt(data[0].value) /
+                (parseInt(data[0].value) +
+                  parseInt(data[1].value) +
+                  parseInt(data[2].value) +
+                  parseInt(data[3].value) +
+                  parseInt(data[4].value))) *
               100
             ).toFixed(2)
             let century00 = (
-              parseInt(data[1].value) /
-              (parseInt(data[0].value) +
-                parseInt(data[1].value) +
-                parseInt(data[2].value) +
-                parseInt(data[3].value) +
-                parseInt(data[4].value)) *
+              (parseInt(data[1].value) /
+                (parseInt(data[0].value) +
+                  parseInt(data[1].value) +
+                  parseInt(data[2].value) +
+                  parseInt(data[3].value) +
+                  parseInt(data[4].value))) *
               100
             ).toFixed(2)
             let century90 = (
-              parseInt(data[2].value) /
-              (parseInt(data[0].value) +
-                parseInt(data[1].value) +
-                parseInt(data[2].value) +
-                parseInt(data[3].value) +
-                parseInt(data[4].value)) *
+              (parseInt(data[2].value) /
+                (parseInt(data[0].value) +
+                  parseInt(data[1].value) +
+                  parseInt(data[2].value) +
+                  parseInt(data[3].value) +
+                  parseInt(data[4].value))) *
               100
             ).toFixed(2)
             let century80 = (
-              parseInt(data[3].value) /
-              (parseInt(data[0].value) +
-                parseInt(data[1].value) +
-                parseInt(data[2].value) +
-                parseInt(data[3].value) +
-                parseInt(data[4].value)) *
+              (parseInt(data[3].value) /
+                (parseInt(data[0].value) +
+                  parseInt(data[1].value) +
+                  parseInt(data[2].value) +
+                  parseInt(data[3].value) +
+                  parseInt(data[4].value))) *
               100
             ).toFixed(2)
             let century70 = (
-              parseInt(data[4].value) /
-              (parseInt(data[0].value) +
-                parseInt(data[1].value) +
-                parseInt(data[2].value) +
-                parseInt(data[3].value) +
-                parseInt(data[4].value)) *
+              (parseInt(data[4].value) /
+                (parseInt(data[0].value) +
+                  parseInt(data[1].value) +
+                  parseInt(data[2].value) +
+                  parseInt(data[3].value) +
+                  parseInt(data[4].value))) *
               100
             ).toFixed(2)
             return (
@@ -1273,48 +1285,42 @@ export default {
     },
     playernum7DivideLookNum: function() {
       let result = (
-        this.peopleCount[1].count /
-        this.peopleCount[0].count *
+        (this.peopleCount[1].count / this.peopleCount[0].count) *
         100
       ).toFixed(2)
       return result === 0 || result === NaN ? 0 : result + '%'
     },
     playernumDivideLookNum: function() {
       let result = (
-        this.peopleCount[2].count /
-        this.peopleCount[1].count *
+        (this.peopleCount[2].count / this.peopleCount[1].count) *
         100
       ).toFixed(2)
       return result === 0 || result === NaN ? 0 : result + '%'
     },
     lovenumDivideLookNum: function() {
       let result = (
-        this.peopleCount[3].count /
-        this.peopleCount[2].count *
+        (this.peopleCount[3].count / this.peopleCount[2].count) *
         100
       ).toFixed(2)
       return result === 0 || result === NaN ? 0 : result + '%'
     },
     computedCPF: function() {
       let result = (
-        this.peopleCount[1].count /
-        this.peopleCount[0].count *
+        (this.peopleCount[1].count / this.peopleCount[0].count) *
         100
       ).toFixed(2)
       return String(result) + '%'
     },
     computedCPR: function() {
       let result = (
-        this.peopleCount[2].count /
-        this.peopleCount[0].count *
+        (this.peopleCount[2].count / this.peopleCount[0].count) *
         100
       ).toFixed(2)
       return String(result) + '%'
     },
     computedCPL: function() {
       let result = (
-        this.peopleCount[3].count /
-        this.peopleCount[0].count *
+        (this.peopleCount[3].count / this.peopleCount[0].count) *
         100
       ).toFixed(2)
       return String(result) + '%'
@@ -1464,8 +1470,6 @@ export default {
             console.log(err)
             this.searchLoading = false
           })
-      } else {
-        this.marketList = []
       }
     },
     getPoint() {
@@ -1621,7 +1625,7 @@ export default {
                           parseInt(r.count.century80) +
                           parseInt(r.count.century70)
                       })
-                      let percent = (singleSum / sum * 100).toFixed(1) + '%'
+                      let percent = ((singleSum / sum) * 100).toFixed(1) + '%'
                       return percent + '\n' + singleSum
                     }
                   }
@@ -1681,7 +1685,6 @@ export default {
       }
     },
     getProject(query) {
-      console.log(this.arUserId)
       if (query !== '') {
         let args = {
           ar_user_id: this.arUserId,
@@ -1696,6 +1699,7 @@ export default {
             .getProjectList(this, args)
             .then(response => {
               this.projectList = response.data
+              console.log(this.projectList)
               this.searchLoading = false
             })
             .catch(err => {
@@ -1718,8 +1722,6 @@ export default {
               this.searchLoading = false
             })
         }
-      } else {
-        this.projectList = []
       }
     },
     getPeopleCount() {
@@ -1782,7 +1784,7 @@ export default {
                       response.map(r => {
                         sum += parseInt(r.count.male) + parseInt(r.count.female)
                       })
-                      let percent = (singleSum / sum * 100).toFixed(1) + '%'
+                      let percent = ((singleSum / sum) * 100).toFixed(1) + '%'
                       return percent + '\n' + singleSum
                     }
                   }
@@ -2017,7 +2019,7 @@ export default {
               color: '#197748'
             },
             data: res.map(r => {
-              return (r.playernum7 / r.looknum * 100).toFixed(2)
+              return ((r.playernum7 / r.looknum) * 100).toFixed(2)
             })
           },
           {
@@ -2029,7 +2031,7 @@ export default {
               color: '#F8B62D'
             },
             data: res.map(r => {
-              return (r.playernum / r.looknum * 100).toFixed(2)
+              return ((r.playernum / r.looknum) * 100).toFixed(2)
             })
           },
           {
@@ -2042,7 +2044,7 @@ export default {
               color: '#BC1313'
             },
             data: res.map(r => {
-              return (r.lovenum / r.looknum * 100).toFixed(2)
+              return ((r.lovenum / r.looknum) * 100).toFixed(2)
             })
           }
         ]
@@ -2166,9 +2168,9 @@ export default {
     },
     handlePicShow() {
       this.shouldPicDialogShow = !this.shouldPicDialogShow
+      let that = this
       if (this.shouldPicDialogShow) {
         this.getConversionRate()
-        let that = this
         if (that.sceneSelect) {
           let scene = this.sceneList.find(function(r) {
             if (r.id === that.sceneSelect) {
@@ -2178,12 +2180,12 @@ export default {
           this.sceneInfo = scene.name
         }
         if (that.projectSelect.length !== 0) {
-          let project = this.projectList.find(function(r) {
+          let project = that.projectList.find(function(r) {
             if (r.alias === that.projectSelect[0]) {
               return r.name
             }
           })
-          this.projectInfo = project.name
+          that.projectInfo = project.name
         }
         if (that.area_id) {
           let area = this.areaList.find(function(r) {
@@ -2194,15 +2196,15 @@ export default {
           this.addressInfo = area.name
         }
         if (that.market_id.length !== 0) {
-          let market = this.marketList.find(function(r) {
-            if (r.id === that.market_id) {
+          let market = that.marketList.find(function(r) {
+            if (r.id === that.market_id[0]) {
               return r.name
             }
           })
           this.addressInfo = this.addressInfo + market.name
         }
         if (that.point_id) {
-          let point = this.pointList.find(function(r) {
+          let point = that.pointList.find(function(r) {
             if (r.id === that.point_id) {
               return r.name
             }
@@ -2454,7 +2456,7 @@ export default {
       }
     }
   }
-
+  
   .content-wrapper {
     padding: 15px;
     background-color: #fff;
