@@ -84,7 +84,7 @@ class ChartDataController extends Controller
                 $data = $this->getTopPoints($request, $faceLogQuery);
                 break;
             case 3:
-                $data = $this->getTopProjects($request, $faceCountQuery);
+                $data = $this->getTopAttributes($request, $faceCountQuery);
                 break;
             case 4:
                 $data = $this->getAge($request, $faceLogQuery, $faceCharacterCount);
@@ -106,6 +106,9 @@ class ChartDataController extends Controller
                 break;
             case 10:
                 $data = $this->getFunnelChart($request, $xsFaceCountLog);
+                break;
+            case 11:
+                $data = $this->getTopProjects($request, $xsFaceCountLog);
                 break;
             default:
                 return null;
@@ -296,7 +299,7 @@ class ChartDataController extends Controller
      * @param $endDate
      * @return array
      */
-    private function getTopProjects(ChartDataRequest $request, Builder $query)
+    private function getTopAttributes(ChartDataRequest $request, Builder $query)
     {
         $this->handleQuery($request, $query, false);
         $table = $query->getModel()->getTable();
@@ -542,6 +545,31 @@ class ChartDataController extends Controller
         $output['market_count'] = $count->market_count;
         $output['day'] = (new Carbon($endDate))->diffInDays((new Carbon($startDate))) + 1;
 
+        return $output;
+    }
+
+    public function getTopProjects(ChartDataRequest $request, Builder $query)
+    {
+        $this->handleQuery($request, $query, false);
+        $data = $query->selectRaw("ar_product_list.name as product_name,sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum) as playernum,sum(omo_outnum) as omo_outnum, sum(lovenum) as lovenum")
+            ->groupBy('belong')
+            ->orderBy('looknum', 'desc')
+            ->limit(10)
+            ->get();
+
+        $output = [];
+        foreach ($data as $item) {
+            $output[] = [
+                'display_name' => $item->product_name,
+                'count' => [
+                    '大屏围观参与人数' => $item->looknum,
+                    '大屏活跃玩家人数' => $item->playernum7,
+                    '大屏铁杆玩家人数' => $item->playernum,
+                    'OMO有效跳转人数' => $item->omo_outnum,
+                    '扫码拉新会员注册总数' =>$item->lovenum
+                ]
+            ];
+        };
         return $output;
     }
 
