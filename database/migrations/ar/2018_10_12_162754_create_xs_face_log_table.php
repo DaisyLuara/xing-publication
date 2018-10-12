@@ -15,6 +15,8 @@ class CreateXsFaceLogTable extends Migration
     {
         Schema::connection('ar')->create('xs_face_log', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('oid');
+            $table->string('belong',20);
             $table->integer('bnum');
             $table->integer('gnum');
             $table->integer('age10b');
@@ -31,6 +33,8 @@ class CreateXsFaceLogTable extends Migration
             $table->integer('age61g');
             $table->timestamp('date');
             $table->bigInteger('clientdate');
+            $table->index('oid');
+            $table->index('belong');
             $table->index('clientdate');
         });
     }

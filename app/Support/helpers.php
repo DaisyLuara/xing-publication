@@ -96,7 +96,7 @@ if (!function_exists('handPointQuery')) {
             $workday = $request->workday;
             $weekend = $request->weekend;
             $holiday = $request->holiday;
-            $builder->join('xs_calendar', DB::raw("date_format(xs_calendar.date,'%Y-%m-%d')"), '=', DB::raw("date_format($table.date,'%Y-%m-%d')"));
+            $builder->join('xs_calendar', 'xs_calendar.clientdate', '=', "$table.clientdate");
             if ($workday == 1 && $weekend == 0 && $holiday == 0) {
                 $builder->WhereRaw("xs_calendar.workday=1");
             }else if($workday == 0 && $weekend == 1 && $holiday == 0){
@@ -938,10 +938,39 @@ function faceLogClean()
     $date = (new Carbon($date))->format('Y-m-d');
     $currentDate = Carbon::now()->toDateString();
     while ($date < $currentDate) {
-        $startClientDate = strtotime($date . ' 00:00:00') * 1000;
-        $endClientDate = strtotime($date . ' 23:59:59') * 1000;
 
+        $data=DB::connection('ar')->table('face_log')
+            ->whereRaw("date_format(date,'%Y-%m-%d')='$date' and type='looker'")
+            ->selectRaw("oid,belong,bnum,gnum,age10b,age10g,age18b,age18g,age30b,age30g,age40b,age40g,age60b,age60g,age61b,age61g")
+            ->get();
+
+        $count = [];
+        foreach ($data as $item){
+            $count[]=[
+                'oid'=>$item->oid,
+                'belong'=>$item->belong,
+                'bnum'=>$item->bnum,
+                'gnum'=>$item->gnum,
+                'age10b'=>$item->age10b,
+                'age10g'=>$item->age10g,
+                'age18b'=>$item->age18b,
+                'age18g'=>$item->age18g,
+                'age30b'=>$item->age30b,
+                'age30g'=>$item->age30g,
+                'age40b'=>$item->age40b,
+                'age40g'=>$item->age40g,
+                'age60b'=>$item->age60b,
+                'age60g'=>$item->age60g,
+                'age61b'=>$item->age61b,
+                'age61g'=>$item->age61g,
+                'date'=>$date,
+                'clientdate'=>strtotime($date) * 1000
+            ];
+        }
+        DB::connection('ar')->table('xs_face_log')->insert($count);
+        $date = (new Carbon($date))->addDay(1)->toDateString();
     }
+    FaceLogRecord::create(['date'=>$currentDate]);
 }
 /**
  * @param $startDate

@@ -90,7 +90,7 @@ class FaceCalendar extends Command
             }
             if (in_array($start_date, $date_list)) {
                 $holiday = 1;
-                $work=0;
+                $work = 0;
             }
             if ((new Carbon($start_date))->isWeekend() && in_array($start_date, $work_list)) {
                 $work = 1;
@@ -100,6 +100,7 @@ class FaceCalendar extends Command
                 'workday' => $work,
                 'weekend' => $weekend,
                 'holiday' => $holiday,
+                'clientdate' => strtotime($start_date) * 1000
             ];
             $start_date = (new Carbon($start_date))->addDay(1)->toDateString();
         }

@@ -14,7 +14,7 @@ class CreateFaceLogRecordTable extends Migration
      */
     public function up()
     {
-        Schema::create('face_log_record', function (Blueprint $table) {
+        Schema::create('face_log_records', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamp('date')->nullable();
             $table->timestamps();
@@ -29,6 +29,6 @@ class CreateFaceLogRecordTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('face_log_record');
+        Schema::dropIfExists('face_log_records');
     }
 }
