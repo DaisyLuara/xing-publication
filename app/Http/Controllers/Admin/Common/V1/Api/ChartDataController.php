@@ -110,6 +110,9 @@ class ChartDataController extends Controller
             case 11:
                 $data = $this->getTopProjects($request, $xsFaceCountLog);
                 break;
+            case 12:
+                $data = $this->getPointCharacter($request, $faceCharacterCount);
+                break;
             default:
                 return null;
 
@@ -333,7 +336,7 @@ class ChartDataController extends Controller
     private function getTotal(ChartDataRequest $request, Builder $query)
     {
         $this->handleQuery($request, $query);
-        $data = $query->selectRaw("sum(looknum) AS looknum,sum(playernum7)as playernum7,sum(playernum) AS playernum,sum(lovenum)  AS lovenum")
+        $data = $query->selectRaw("sum(looknum) AS looknum,sum(playernum7)as playernum7,sum(playernum) AS playernum,sum(omo_outnum) as omo_outnum,sum(lovenum)  AS lovenum")
             ->first()->toArray();
         $output = [];
         foreach ($data as $key => $value) {
@@ -566,10 +569,28 @@ class ChartDataController extends Controller
                     '大屏活跃玩家人数' => $item->playernum7,
                     '大屏铁杆玩家人数' => $item->playernum,
                     'OMO有效跳转人数' => $item->omo_outnum,
-                    '扫码拉新会员注册总数' =>$item->lovenum
+                    '扫码拉新会员注册总数' => $item->lovenum
                 ]
             ];
         };
+        return $output;
+    }
+
+    public function getPointCharacter(ChartDataRequest $request, Builder $query)
+    {
+        $this->handleQuery($request, $query);
+        $data = $query->selectRaw("sum(century10_bnum+century10_gnum) as century10,sum(century00_bnum+century00_gnum) as century00,sum(century90_bnum+century90_gnum) as century90,sum(century80_bnum+century80_gnum) as century80,sum(century70_bnum+century70_gnum) as century70")
+            ->get();
+        $output = [];
+        foreach ($data as $item) {
+            $output = [
+                'century10' => $item->century10,
+                'century00' => $item->century00,
+                'century90' => $item->century90,
+                'century80' => $item->century80,
+                'century70' => $item->century70,
+            ];
+        }
         return $output;
     }
 

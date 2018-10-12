@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\Face\V1\Models\FaceOmoRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FacePhoneRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceActivePlaytimesRecord;
 use app\Support\Jenner\Zebra\ArrayGroupBy;
+use App\Http\Controllers\Admin\Face\V1\Models\FaceLogRecord;
 
 /**
  *求两个已知经纬度之间的距离,单位为千米
@@ -92,6 +93,26 @@ if (!function_exists('handPointQuery')) {
             $startDate = $request->start_date;
             $endDate = $request->end_date;
             $builder->whereRaw("date_format($table.date, '%Y-%m-%d') BETWEEN '$startDate' AND '$endDate' ");
+            $workday = $request->workday;
+            $weekend = $request->weekend;
+            $holiday = $request->holiday;
+            $builder->join('xs_calendar', DB::raw("date_format(xs_calendar.date,'%Y-%m-%d')"), '=', DB::raw("date_format($table.date,'%Y-%m-%d')"));
+            if ($workday == 1 && $weekend == 0 && $holiday == 0) {
+                $builder->WhereRaw("xs_calendar.workday=1");
+            }else if($workday == 0 && $weekend == 1 && $holiday == 0){
+                $builder->WhereRaw("xs_calendar.weekend=1");
+            }else if($workday==0 && $weekend==0 && $holiday==1){
+                $builder->WhereRaw("xs_calendar.holiday=1");
+            }else if($workday==1 && $weekend==1 && $holiday==0){
+                $builder->whereRaw("xs_calendar.workday=1 or xs_calendar.weekend=1");
+            }else if($workday==0 && $weekend==1 && $holiday==1){
+                $builder->whereRaw("xs_calendar.weekend=1 or xs_calendar.holiday=1");
+            }else if($workday==1 && $weekend==0 && $holiday==1){
+                $builder->whereRaw("xs_calendar.workday=1 or xs_calendar.holiday=1");
+            }else{
+                $builder->whereRaw("xs_calendar.workday=1 or xs_calendar.weekend=1 or xs_calendar.holiday=1");
+            }
+
         }
 
         //按指标查询
@@ -911,6 +932,17 @@ function faceCharacterCountClean()
     FaceCharacterRecord::create(['date' => $currentDate]);
 }
 
+function faceLogClean()
+{
+    $date = FaceLogRecord::query()->max('date');
+    $date = (new Carbon($date))->format('Y-m-d');
+    $currentDate = Carbon::now()->toDateString();
+    while ($date < $currentDate) {
+        $startClientDate = strtotime($date . ' 00:00:00') * 1000;
+        $endClientDate = strtotime($date . ' 23:59:59') * 1000;
+
+    }
+}
 /**
  * @param $startDate
  * @param $endDate
