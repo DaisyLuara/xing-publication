@@ -15,6 +15,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use DB;
+use App\Http\Controllers\Admin\Face\V1\Models\XsFaceLog;
 
 class ChartDataController extends Controller
 {
@@ -72,25 +73,25 @@ class ChartDataController extends Controller
 
     public function chart(ChartDataRequest $request)
     {
-        $faceLogQuery = FaceLog::query();
+        $xsFaceLogQuery = XsFaceLog::query();
         $faceCountQuery = FaceCount::query();
         $faceCharacterCount = FaceCharacterCount::query();
         $xsFaceCountLog = XsFaceCountLog::query();
         switch ($request->id) {
             case 1:
-                $data = $this->getLookNumber($request, $faceLogQuery);
+                $data = $this->getLookNumber($request, $xsFaceLogQuery);
                 break;
             case 2:
-                $data = $this->getTopPoints($request, $faceLogQuery);
+                $data = $this->getTopPoints($request, $xsFaceLogQuery);
                 break;
             case 3:
-                $data = $this->getTopAttributes($request, $faceCountQuery);
+                $data = $this->getTopAttributes($request, $xsFaceCountLog);
                 break;
             case 4:
-                $data = $this->getAge($request, $faceLogQuery, $faceCharacterCount);
+                $data = $this->getAge($request, $xsFaceLogQuery, $faceCharacterCount);
                 break;
             case 5:
-                $data = $this->getGender($request, $faceLogQuery);
+                $data = $this->getGender($request, $xsFaceLogQuery);
                 break;
             case 6:
                 $data = $this->getTotal($request, $xsFaceCountLog);
@@ -199,7 +200,6 @@ class ChartDataController extends Controller
     private function getAgeGroupByGender(Builder $query)
     {
         $data = $query->selectRaw('sum(age10b) as age10_male ,sum(age10g) as age10_female,sum(age18b) as age18_male,sum(age18g) as age18_female,sum(age30b) as age30_male,sum(age30g) as age30_female,sum(age40b) as age40_male,sum(age40g) as age40_female,sum(age60b) as age60_male,sum(age60g) as age60_female,sum(age61b) as age61_male,sum(age61g) as age61_female')
-            ->where('face_log.type', '=', 'looker')
             ->first()->toArray();
         $output = [];
 
@@ -250,7 +250,6 @@ class ChartDataController extends Controller
     private function getGenderAll(Builder $query)
     {
         return $query->selectRaw("sum(gnum) as female,sum(bnum) as male")
-            ->where('face_log.type', '=', 'looker')
             ->first()->toArray();
     }
 
@@ -258,7 +257,6 @@ class ChartDataController extends Controller
     {
         $suffix = $gender == 'male' ? 'b' : 'g';
         return $query->selectRaw("sum(age10$suffix) as age10,sum(age18$suffix) as age18,sum(age30$suffix) as age30,sum(age40$suffix) as age40,sum(age60$suffix) as age60,sum(age61$suffix) as age61")
-            ->where('face_log.type', '=', 'looker')
             ->first()->toArray();
 
     }
@@ -274,8 +272,7 @@ class ChartDataController extends Controller
 
         $this->handleQuery($request, $query, true, true);
         $table = $query->getModel()->getTable();
-        $data = $query->selectRaw("sum($table.allnum) AS total,sum($table.gnum) as female_count,sum($table.bnum) as male_count")
-            ->whereRaw("$table.type='looker'")
+        $data = $query->selectRaw("sum($table.bnum+$table.gnum) AS total,sum($table.gnum) as female_count,sum($table.bnum) as male_count")
             ->groupBy("$table.oid")
             ->orderBy('total', 'desc')
             ->limit(10)

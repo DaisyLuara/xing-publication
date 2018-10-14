@@ -104,13 +104,13 @@ if (!function_exists('handPointQuery')) {
             }else if($workday==0 && $weekend==0 && $holiday==1){
                 $builder->WhereRaw("xs_calendar.holiday=1");
             }else if($workday==1 && $weekend==1 && $holiday==0){
-                $builder->whereRaw("xs_calendar.workday=1 or xs_calendar.weekend=1");
+                $builder->whereRaw("(xs_calendar.workday=1 or xs_calendar.weekend=1)");
             }else if($workday==0 && $weekend==1 && $holiday==1){
-                $builder->whereRaw("xs_calendar.weekend=1 or xs_calendar.holiday=1");
+                $builder->whereRaw("(xs_calendar.weekend=1 or xs_calendar.holiday=1)");
             }else if($workday==1 && $weekend==0 && $holiday==1){
-                $builder->whereRaw("xs_calendar.workday=1 or xs_calendar.holiday=1");
-            }else{
-                $builder->whereRaw("xs_calendar.workday=1 or xs_calendar.weekend=1 or xs_calendar.holiday=1");
+                $builder->whereRaw("(xs_calendar.workday=1 or xs_calendar.holiday=1)");
+            }else if($workday == 1 && $weekend == 1 && $holiday == 1){
+                $builder->whereRaw("(xs_calendar.workday=1 or xs_calendar.weekend=1 or xs_calendar.holiday=1)");
             }
 
         }
