@@ -551,7 +551,7 @@ class ChartDataController extends Controller
     public function getTopProjects(ChartDataRequest $request, Builder $query)
     {
         $this->handleQuery($request, $query, false);
-        $data = $query->selectRaw("ar_product_list.name as product_name,sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum) as playernum,sum(omo_outnum) as omo_outnum, sum(lovenum) as lovenum")
+        $data = $query->selectRaw("ar_product_list.name as product_name,belong,sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum) as playernum,sum(omo_outnum) as omo_outnum, sum(lovenum) as lovenum")
             ->groupBy('belong')
             ->orderBy('looknum', 'desc')
             ->limit(10)
@@ -561,12 +561,13 @@ class ChartDataController extends Controller
         foreach ($data as $item) {
             $output[] = [
                 'display_name' => $item->product_name,
+                'index'=>$item->belong,
                 'count' => [
-                    '大屏围观参与人数' => $item->looknum,
-                    '大屏活跃玩家人数' => $item->playernum7,
-                    '大屏铁杆玩家人数' => $item->playernum,
-                    'OMO有效跳转人数' => $item->omo_outnum,
-                    '扫码拉新会员注册总数' => $item->lovenum
+                    'looknum' => $item->looknum,
+                    'playernum7' => $item->playernum7,
+                    'playernum' => $item->playernum,
+                    'omo_outnum' => $item->omo_outnum,
+                    'lovenum' => $item->lovenum
                 ]
             ];
         };
