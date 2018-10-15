@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use App\Http\Controllers\Admin\Company\V1\Models\Customer;
+use App\Models\Customer;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Auth\Models\User;
 use App\Policies\CustomerPolicy;

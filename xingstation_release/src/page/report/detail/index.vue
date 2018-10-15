@@ -359,8 +359,6 @@
           </div>
         </div>
       </el-collapse-item>
-
-
       <!-- 报表部分 -->
       <el-collapse-item title="点位列表" name="4" class="echart-data">
         <div 
