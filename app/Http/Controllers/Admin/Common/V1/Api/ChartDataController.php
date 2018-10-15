@@ -571,13 +571,16 @@ class ChartDataController extends Controller
                 ]
             ];
         };
-        return $output;
+        return array_reverse($output);
     }
 
     public function getPointCharacter(ChartDataRequest $request, Builder $query)
     {
-        $this->handleQuery($request, $query);
+        $belong=$request->belong;
+        $this->handleQuery($request, $query,false);
+        $table = $query->getModel()->getTable();
         $data = $query->selectRaw("sum(century10_bnum+century10_gnum) as century10,sum(century00_bnum+century00_gnum) as century00,sum(century90_bnum+century90_gnum) as century90,sum(century80_bnum+century80_gnum) as century80,sum(century70_bnum+century70_gnum) as century70")
+            ->whereRaw("$table.belong='$belong'")
             ->get();
         $output = [];
         foreach ($data as $item) {
