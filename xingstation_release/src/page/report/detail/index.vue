@@ -299,7 +299,7 @@
           auto-resize />
       </div>
     </div>
-    <el-collapse v-model="activeNames">
+    <el-collapse v-model="activeNames" @change="handleChange">
       <!-- 年龄分布图 -->
       <el-collapse-item title="年龄分布图" name="1" class="echart-data">
         <div 
@@ -310,7 +310,6 @@
             <chart 
               ref="pieChart"
               :options="pieChart" 
-              auto-resize
               @click="onClick"
             />
           </div>
@@ -318,8 +317,7 @@
             class="age-part">
             <chart
               ref="ageChart"
-              :options="ageChart"
-              auto-resize />
+              :options="ageChart"/>
           </div>
         </div>
       </el-collapse-item>
@@ -332,8 +330,7 @@
             class="crowd-part">
             <chart
               ref="crowdChart"
-              :options="timeAndCrowdChart"
-              auto-resize />
+              :options="timeAndCrowdChart"/>
           </div>
         </div>
       </el-collapse-item>
@@ -347,7 +344,6 @@
             <chart 
               ref="projectChar"
               :options="projectOptions"
-              auto-resize
               @click="clickProject"/>
           </div>
           <div
@@ -355,8 +351,7 @@
             class="project-age-part">
             <chart
               ref="projectAgeChart"
-              :options="projectAgeChart"
-              auto-resize />
+              :options="projectAgeChart"/>
           </div>
         </div>
       </el-collapse-item>
@@ -1524,6 +1519,13 @@ export default {
   mounted() {
     let that = this
     window.onresize = function() {
+      that.$nextTick(function() {
+        that.$refs.crowdChart.resize()
+        that.$refs.ageChart.resize()
+        that.$refs.pieChart.resize()
+        that.$refs.projectChar.resize()
+        that.$refs.projectAgeChart.resize()
+      })
       if (window.innerWidth > 1300) {
         that.width = ((window.innerWidth - 60 + 20) * 0.5 - 20) * 0.6
       }
@@ -1536,6 +1538,15 @@ export default {
     this.allPromise()
   },
   methods: {
+    handleChange(val) {
+      this.$nextTick(function() {
+        this.$refs.crowdChart.resize()
+        this.$refs.ageChart.resize()
+        this.$refs.pieChart.resize()
+        this.$refs.projectChar.resize()
+        this.$refs.projectAgeChart.resize()
+      })
+    },
     legendHandle(index) {
       switch (index) {
         case '0':
@@ -1624,6 +1635,7 @@ export default {
         .then(response => {
           this.projectTop = response
           let chart = this.$refs.projectChar
+          console.log(response)
           chart.mergeOptions({
             yAxis: {
               type: 'category',
@@ -2283,7 +2295,6 @@ export default {
         delete args.market_id
       }
       return args
-
     },
     getLineData() {
       this.poepleCountFlag = true
