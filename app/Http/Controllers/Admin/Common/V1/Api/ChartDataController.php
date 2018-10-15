@@ -361,10 +361,56 @@ class ChartDataController extends Controller
         $format = $days <= 31 ? '%Y-%m-%d' : '%Y-%m';
 
         $this->handleQuery($request, $query);
-        return $query->selectRaw("date_format(xs_face_count_log . date, '$format') as display_name")
+        $data=$query->selectRaw("date_format(xs_face_count_log.date, '$format') as display_name")
             ->groupBy('display_name')
             ->get();
 
+        if ($days <= 31) {
+            $data = $data->toArray();
+            $output = [];
+            $start_date = $request->start_date;
+            $end_date = $request->end_date;
+            while ($start_date <= $end_date) {
+                if ($this->array_multi_search($start_date, $data)) {
+                    $item = array_filter($data, function ($arr) use ($start_date) {
+                        return $arr['display_name'] == $start_date;
+                    });
+                    sort($item);
+                    $item=$item[0];
+                    $output[] = [
+                        'display_name' => $item['display_name'],
+                        'looknum' => $item['looknum'],
+                        'playernum7' => $item['playernum7'],
+                        'playernum' => $item['playernum'],
+                        'omo_outnum' => $item['omo_outnum'],
+                        'lovenum' => $item['lovenum'],
+                    ];
+                } else {
+                    $output[] = [
+                        'display_name' => $start_date,
+                        'looknum' => 0,
+                        'playernum7' => 0,
+                        'playernum' => 0,
+                        'omo_outnum' => 0,
+                        'lovenum' => 0,
+                    ];
+                }
+                $start_date = (new Carbon($start_date))->addDay(1)->toDateString();
+            }
+            return $output;
+        } else {
+            return $data;
+        }
+    }
+
+    public function array_multi_search($p_needle, $p_haystack)
+    {
+        foreach ($p_haystack as $row) {
+            if (in_array($p_needle, $row)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public function getAllPeopleByPoint($arUserID = 0)
@@ -561,7 +607,7 @@ class ChartDataController extends Controller
         foreach ($data as $item) {
             $output[] = [
                 'display_name' => $item->product_name,
-                'index'=>$item->belong,
+                'index' => $item->belong,
                 'count' => [
                     'looknum' => $item->looknum,
                     'playernum7' => $item->playernum7,
@@ -576,8 +622,8 @@ class ChartDataController extends Controller
 
     public function getPointCharacter(ChartDataRequest $request, Builder $query)
     {
-        $belong=$request->belong;
-        $this->handleQuery($request, $query,false);
+        $belong = $request->belong;
+        $this->handleQuery($request, $query, false);
         $table = $query->getModel()->getTable();
         $data = $query->selectRaw("sum(century10_bnum+century10_gnum) as century10,sum(century00_bnum+century00_gnum) as century00,sum(century90_bnum+century90_gnum) as century90,sum(century80_bnum+century80_gnum) as century80,sum(century70_bnum+century70_gnum) as century70")
             ->whereRaw("$table.belong='$belong'")
