@@ -18,7 +18,7 @@
           :gutter="20">
           <el-col
             v-if="showUser"
-            :span="8">
+            :span="6">
             <el-form-item 
               label="" 
               prop="user" >
@@ -42,7 +42,7 @@
             </el-form-item>
           </el-col>
           <el-col 
-            :span="8">
+            :span="6">
             <el-form-item 
               label="" 
               prop="project" >
@@ -66,7 +66,7 @@
             </el-form-item>
           </el-col>
           <el-col 
-            :span="8">
+            :span="6">
             <el-form-item 
               label="" 
               prop="scene" >
@@ -87,7 +87,7 @@
         <el-row 
           :gutter="20">
           <el-col 
-            :span="8">
+            :span="6">
             <el-form-item 
               label="" 
               prop="area_id" >
@@ -106,7 +106,7 @@
             </el-form-item>
           </el-col>
           <el-col 
-            :span="8">
+            :span="6">
             <el-form-item 
               label="" 
               prop="market_id" >
@@ -130,7 +130,7 @@
             </el-form-item>
           </el-col>
           <el-col 
-            :span="8">
+            :span="6">
             <el-form-item 
               label=""
               prop="point_id" >
@@ -152,7 +152,7 @@
         <el-row 
           :gutter="20">
           <el-col 
-            :span="14">
+            :span="11">
             <el-form-item 
               label="" 
               prop="date" >
@@ -168,8 +168,28 @@
                 end-placeholder="结束日期"/>
             </el-form-item>
           </el-col>
+          <el-col
+            :span="6">
+            <el-form-item 
+              label=""
+              prop="timeFrame">
+              <el-select 
+                v-model="timeFrame" 
+                :loading="searchLoading"
+                placeholder="请选择时段" 
+                multiple  
+                filterable 
+                clearable>
+                <el-option
+                  v-for="item in festivalList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.name"/>
+              </el-select>
+            </el-form-item>
+          </el-col>
           <el-col 
-            :span="10">
+            :span="6">
             <el-form-item>
               <el-button 
                 type="primary" 
@@ -191,7 +211,7 @@
       <ul
         class="btns-wrapper">
         <li 
-          v-for="(item, key) in peopleCount.concat([{ index: 'cpf', display_name: 'CPF转化率' }, { index: 'cpr', display_name:'CPR转化率' }, { index: 'cpl', display_name:'CPL转化率' }])" 
+          v-for="(item, key) in peopleCount.concat([{ index: 'cpf', display_name: 'CPF转化率' }, { index: 'cpr', display_name:'CPR转化率' }, { index: 'cpa', display_name:'CPA转化率' }, { index: 'cpl', display_name:'CPL转化率' }])" 
           v-if="item.index !== 'outnum'"
           :key="key">
           <a 
@@ -216,6 +236,11 @@
               {{ circlePlayernum }}
             </span>
             <span 
+              v-if="item.index === 'omo_outnum'"
+              class="count" >
+              {{ circleOmoOutnum }}
+            </span>
+            <span 
               v-if="item.index === 'lovenum'"
               class="count" >
               {{ circleLovenum }}
@@ -229,6 +254,11 @@
               v-if="item.index === 'cpr'" 
               class="count">
               {{ computedCPR }}
+            </span>
+            <span  
+              v-if="item.index === 'cpa'" 
+              class="count">
+              {{ computedCPA }}
             </span>
             <span 
               v-if="item.index === 'cpl'" 
@@ -246,6 +276,11 @@
               v-if="item.index === 'playernum7'"
               class="right-arrow-icon">
               {{ playernumDivideLookNum }}
+            </i>
+            <i 
+              v-if="item.index === 'omo_outnum'"
+              class="right-arrow-icon" >
+              {{ lovenumDivideOmoOutnum }}
             </i>
             <i 
               v-if="item.index === 'playernum'"
@@ -301,9 +336,31 @@
           </div>
         </div>
       </el-collapse-item>
-
+      <!-- 节目日化人气 -->
+      <el-collapse-item title="节目日化人气" name="3"  class="echart-data">
+        <div 
+          class="ranking-wrap">
+          <div
+            v-loading="projectFlag"
+            class="project-part">
+            <chart 
+              ref="projectChar"
+              :options="projectOptions"
+              auto-resize
+              @click="clickProject"/>
+          </div>
+          <div
+            v-loading="userFlag"
+            class="project-age-part">
+            <chart
+              ref="projectAgeChart"
+              :options="projectAgeChart"
+              auto-resize />
+          </div>
+        </div>
+      </el-collapse-item>
       <!-- 报表部分 -->
-      <el-collapse-item title="点位列表" name="3" class="echart-data">
+      <el-collapse-item title="点位列表" name="4" class="echart-data">
         <div 
           v-loading="tableSetting.loading"
           class="table-wrap">
@@ -651,7 +708,127 @@ export default {
   },
   data() {
     return {
-      activeNames: ['1', '2', '3'],
+      projectAgeChart: {
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b}: {c}'
+        },
+        color: ['#3b9aca', '#8CC63F', '#FBB03B', '#F15A24', '#662D91'],
+        legend: {
+          x: 'left',
+          data: ['10后', '00后', '90后', '80后', '70前/后']
+        },
+        series: [
+          {
+            name: '年龄分布',
+            type: 'pie',
+            radius: ['10%', '50%'],
+            data: null
+          }
+        ]
+      },
+      projectOptions: {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          }
+        },
+        color: ['#E83828', '#E80F9B', '#F8B62D', '#22b572', '#0099FF'],
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'value'
+        },
+        yAxis: {
+          type: 'category',
+          data: null
+        },
+        series: [
+          {
+            name: '扫码拉新会员注册总数',
+            type: 'bar',
+            stack: '总量',
+            label: {
+              normal: {
+                show: true,
+                position: 'insideRight'
+              }
+            },
+            data: null
+          },
+          {
+            name: 'OMO有效跳转人数',
+            type: 'bar',
+            stack: '总量',
+            label: {
+              normal: {
+                show: true,
+                position: 'insideRight'
+              }
+            },
+            data: null
+          },
+          {
+            name: '大屏铁杆玩家人数',
+            type: 'bar',
+            stack: '总量',
+            label: {
+              normal: {
+                show: true,
+                position: 'insideRight'
+              }
+            },
+            data: null
+          },
+          {
+            name: '大屏活跃玩家人数',
+            type: 'bar',
+            stack: '总量',
+            label: {
+              normal: {
+                show: true,
+                position: 'insideRight'
+              }
+            },
+            data: null
+          },
+          {
+            name: '大屏围观参与人数',
+            type: 'bar',
+            stack: '总量',
+            label: {
+              normal: {
+                show: true,
+                position: 'insideRight'
+              }
+            },
+            data: null
+          }
+        ]
+      },
+      projectFlag: false,
+      userFlag: false,
+      timeFrame: [],
+      festivalList: [
+        {
+          id: 'workday',
+          name: '工作日'
+        },
+        {
+          id: 'weekend',
+          name: '周末'
+        },
+        {
+          id: 'holiday',
+          name: '假日'
+        }
+      ],
+      activeNames: ['1', '2', '3', '4'],
       rateDay: 0,
       marketCount: 0,
       screenCount: 0,
@@ -708,14 +885,6 @@ export default {
       ],
       pickerOptions2: {
         shortcuts: [
-          // {
-          //   text: '今天',
-          //   onClick(picker) {
-          //     const end = new Date()
-          //     const start = new Date()
-          //     picker.$emit('pick', [start, end])
-          //   }
-          // },
           {
             text: '昨天',
             onClick(picker) {
@@ -755,7 +924,10 @@ export default {
           }
         ],
         disabledDate: time => {
-          return time.getTime() > Date.now() - 8.64e7
+          return (
+            time.getTime() > Date.now() - 8.64e7 ||
+            time.getTime() < new Date('2017/04/21').getTime()
+          )
         }
       },
       rateOption: {
@@ -826,7 +998,7 @@ export default {
       },
       tableData: [],
       tempAgeData: null,
-      peopleCount: [0, 0, 0, 0],
+      peopleCount: [0, 0, 0, 0, 0],
       type: '',
       userList: [],
       ageType: false,
@@ -845,9 +1017,11 @@ export default {
           '#0099FF',
           '#22b572',
           '#F8B62D',
+          '#E80F9B',
           '#E83828',
           '#197748',
           '#F8B62D',
+          '#be136e',
           '#BC1313'
         ],
         title: {
@@ -867,9 +1041,11 @@ export default {
             '大屏围观参与人数',
             '大屏活跃玩家人数',
             '大屏铁杆玩家人数',
+            'OMO有效跳转人数',
             '扫码拉新会员注册总数',
             'CPF转化率',
             'CPR转化率',
+            'CPA转化率',
             'CPL转化率'
           ]
         },
@@ -1259,6 +1435,7 @@ export default {
           }
         ]
       },
+      projectTop: [],
       dialogLoading: false
     }
   },
@@ -1280,8 +1457,11 @@ export default {
     circlePlayernum: function() {
       return this.peopleCount[2].count === null ? 0 : this.peopleCount[2].count
     },
-    circleLovenum: function() {
+    circleOmoOutnum: function() {
       return this.peopleCount[3].count === null ? 0 : this.peopleCount[3].count
+    },
+    circleLovenum: function() {
+      return this.peopleCount[4].count === null ? 0 : this.peopleCount[4].count
     },
     playernum7DivideLookNum: function() {
       let result = (
@@ -1297,9 +1477,16 @@ export default {
       ).toFixed(2)
       return result === 0 || result === NaN ? 0 : result + '%'
     },
-    lovenumDivideLookNum: function() {
+    lovenumDivideOmoOutnum: function() {
       let result = (
         (this.peopleCount[3].count / this.peopleCount[2].count) *
+        100
+      ).toFixed(2)
+      return result === 0 || result === NaN ? 0 : result + '%'
+    },
+    lovenumDivideLookNum: function() {
+      let result = (
+        (this.peopleCount[4].count / this.peopleCount[3].count) *
         100
       ).toFixed(2)
       return result === 0 || result === NaN ? 0 : result + '%'
@@ -1318,9 +1505,16 @@ export default {
       ).toFixed(2)
       return String(result) + '%'
     },
-    computedCPL: function() {
+    computedCPA: function() {
       let result = (
         (this.peopleCount[3].count / this.peopleCount[0].count) *
+        100
+      ).toFixed(2)
+      return String(result) + '%'
+    },
+    computedCPL: function() {
+      let result = (
+        (this.peopleCount[4].count / this.peopleCount[0].count) *
         100
       ).toFixed(2)
       return String(result) + '%'
@@ -1372,6 +1566,154 @@ export default {
           Vue.set(this.dataOptions, 6, this.dataOptions[6])
           break
       }
+    },
+    getProjectAge(belong) {
+      this.userFlag = true
+      let args = this.setArgs('12')
+      args.belong = belong
+      return chart
+        .getChartData(this, args)
+        .then(response => {
+          let chart = this.$refs.projectAgeChart
+          chart.mergeOptions({
+            series: [
+              {
+                data: [
+                  {
+                    name: '10后',
+                    value: response.century10 === null ? 0 : response.century10
+                  },
+                  {
+                    name: '00后',
+                    value: response.century00 === null ? 0 : response.century00
+                  },
+                  {
+                    name: '90后',
+                    value: response.century90 === null ? 0 : response.century90
+                  },
+                  {
+                    name: '80后',
+                    value: response.century80 === null ? 0 : response.century80
+                  },
+                  {
+                    name: '70前/后',
+                    value: response.century70 === null ? 0 : response.century70
+                  }
+                ]
+              }
+            ]
+          })
+          this.userFlag = false
+        })
+        .catch(err => {
+          this.userFlag = false
+          console.log(err)
+        })
+    },
+    clickProject(event, instance, echarts) {
+      let project = this.projectTop[event.dataIndex]
+      let belong = project.index
+      this.getProjectAge(belong)
+    },
+    getProjectTop() {
+      this.projectFlag = true
+      let args = this.setArgs('11')
+      return chart
+        .getChartData(this, args)
+        .then(response => {
+          this.projectTop = response
+          let chart = this.$refs.projectChar
+          chart.mergeOptions({
+            yAxis: {
+              type: 'category',
+              data: response.map(r => {
+                return r.display_name
+              })
+            },
+            series: [
+              {
+                name: '扫码拉新会员注册总数',
+                type: 'bar',
+                stack: '总量',
+                label: {
+                  normal: {
+                    show: true,
+                    position: 'insideRight'
+                  }
+                },
+                data: response.map(r => {
+                  return r.count.lovenum
+                })
+              },
+              {
+                name: 'OMO有效跳转人数',
+                type: 'bar',
+                stack: '总量',
+                label: {
+                  normal: {
+                    show: true,
+                    position: 'insideRight'
+                  }
+                },
+                data: response.map(r => {
+                  return r.count.omo_outnum
+                })
+              },
+              {
+                name: '大屏铁杆玩家人数',
+                type: 'bar',
+                stack: '总量',
+                label: {
+                  normal: {
+                    show: true,
+                    position: 'insideRight'
+                  }
+                },
+                data: response.map(r => {
+                  return r.count.playernum
+                })
+              },
+              {
+                name: '大屏活跃玩家人数',
+                type: 'bar',
+                stack: '总量',
+                label: {
+                  normal: {
+                    show: true,
+                    position: 'insideRight'
+                  }
+                },
+                data: response.map(r => {
+                  return r.count.playernum7
+                })
+              },
+              {
+                name: '大屏围观参与人数',
+                type: 'bar',
+                stack: '总量',
+                label: {
+                  normal: {
+                    show: true,
+                    position: 'insideRight'
+                  }
+                },
+                data: response.map(r => {
+                  return r.count.looknum
+                })
+              }
+            ]
+          })
+          if (response.length > 0) {
+            this.getProjectAge(response[response.length - 1].index)
+          } else {
+            this.getProjectAge()
+          }
+          this.projectFlag = false
+        })
+        .catch(err => {
+          this.projectFlag = false
+          console.log(err)
+        })
     },
     changeReportType() {
       if (this.reportValue === 'point') {
@@ -1546,7 +1888,8 @@ export default {
       this.getAge()
       this.getCrowdTime()
       this.getGender()
-
+      this.getProjectTop()
+      // this.getProjectAge()
       this.setting.loading = false
     },
     getCrowdTime() {
@@ -1731,7 +2074,7 @@ export default {
         .getChartData(this, args)
         .then(response => {
           this.peopleCount = response
-          this.type = 'looknum,playernum,lovenum,playernum7'
+          this.type = 'looknum,playernum,lovenum,playernum7,omo_outnum'
           this.getLineData()
         })
         .catch(err => {
@@ -1902,7 +2245,23 @@ export default {
         market_id: this.market_id[0],
         scene_id: this.sceneSelect,
         area_id: this.area_id,
-        point_id: this.point_id
+        point_id: this.point_id,
+        workday: 0,
+        weekend: 0,
+        holiday: 0
+      }
+      if (this.timeFrame.length > 0) {
+        for (let i = 0; i < this.timeFrame.length; i++) {
+          if (this.timeFrame[i] === '工作日') {
+            args.workday = 1
+          }
+          if (this.timeFrame[i] === '周末') {
+            args.weekend = 1
+          }
+          if (this.timeFrame[i] === '假日') {
+            args.holiday = 1
+          }
+        }
       }
       if (!this.projectAlias) {
         delete args.alias
@@ -1923,6 +2282,7 @@ export default {
         delete args.market_id
       }
       return args
+
     },
     getLineData() {
       this.poepleCountFlag = true
@@ -1948,9 +2308,11 @@ export default {
             '大屏围观参与人数',
             '大屏活跃玩家人数',
             '大屏铁杆玩家人数',
+            'OMO有效跳转人数',
             '扫码拉新会员注册总数',
             'CPF转化率',
             'CPR转化率',
+            'CPA转化率',
             'CPL转化率'
           ]
         },
@@ -2003,6 +2365,15 @@ export default {
           },
           {
             symbol: 'circle',
+            name: 'OMO有效跳转人数',
+            type: 'line',
+            areaStyle: { normal: {} },
+            data: res.map(r => {
+              return r.omo_outnum
+            })
+          },
+          {
+            symbol: 'circle',
             name: '扫码拉新会员注册总数',
             type: 'line',
             areaStyle: { normal: {} },
@@ -2032,6 +2403,18 @@ export default {
             },
             data: res.map(r => {
               return ((r.playernum / r.looknum) * 100).toFixed(2)
+            })
+          },
+          {
+            xAxisIndex: 1,
+            yAxisIndex: 1,
+            name: 'CPA转化率',
+            type: 'line',
+            lineStyle: {
+              color: '#F8B62D'
+            },
+            data: res.map(r => {
+              return ((r.omo_outnum / r.looknum) * 100).toFixed(2)
             })
           },
           {
@@ -2433,6 +2816,9 @@ export default {
     font-size: 16px;
     align-items: center;
     position: relative;
+    .search-form {
+      width: 800px;
+    }
     .more-pic {
       position: absolute;
       top: 10px;
@@ -2456,7 +2842,7 @@ export default {
       }
     }
   }
-  
+
   .content-wrapper {
     padding: 15px;
     background-color: #fff;
@@ -2491,20 +2877,30 @@ export default {
         }
         &.color-3 {
           background: url('~assets/images/program/circle.png') center 39px
-            no-repeat #e83828;
+            no-repeat #e80f9b;
           background-size: 80px;
         }
         &.color-4 {
           background: url('~assets/images/program/circle.png') center 39px
-            no-repeat #197748;
+            no-repeat #e83828;
           background-size: 80px;
         }
         &.color-5 {
           background: url('~assets/images/program/circle.png') center 39px
-            no-repeat #f8b62d;
+            no-repeat #197748;
           background-size: 80px;
         }
         &.color-6 {
+          background: url('~assets/images/program/circle.png') center 39px
+            no-repeat #f8b62d;
+          background-size: 80px;
+        }
+        &.color-7 {
+          background: url('~assets/images/program/circle.png') center 39px
+            no-repeat #be136e;
+          background-size: 80px;
+        }
+        &.color-8 {
           background: url('~assets/images/program/circle.png') center 39px
             no-repeat #bc1313;
           background-size: 80px;
@@ -2528,15 +2924,21 @@ export default {
             border-color: #f8b62d #ffffff #ffffff #ffffff;
           }
           &.color-3 {
-            border-color: #e83828 #ffffff #ffffff #ffffff;
+            border-color: #e80f9b #ffffff #ffffff #ffffff;
           }
           &.color-4 {
-            border-color: #197748 #ffffff #ffffff #ffffff;
+            border-color: #e83828 #ffffff #ffffff #ffffff;
           }
           &.color-5 {
-            border-color: #f8b62d #ffffff #ffffff #ffffff;
+            border-color: #197748 #ffffff #ffffff #ffffff;
           }
           &.color-6 {
+            border-color: #f8b62d #ffffff #ffffff #ffffff;
+          }
+          &.color-7 {
+            border-color: #be136e #ffffff #ffffff #ffffff;
+          }
+          &.color-8 {
             border-color: #bc1313 #ffffff #ffffff #ffffff;
           }
         }
@@ -2701,6 +3103,28 @@ export default {
         height: 90%;
         width: 100%;
       }
+    }
+  }
+  .ranking-wrap {
+    margin-top: 15px;
+    background-color: #fff;
+    height: 600px;
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    .project-part {
+      width: 55%;
+      height: 100%;
+      .echarts {
+        height: 100%;
+        width: 90%;
+      }
+    }
+    .project-age-part {
+      width: 40%;
+      left: 3%;
+      height: 100%;
     }
   }
   .echarts {

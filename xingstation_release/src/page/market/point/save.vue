@@ -9,6 +9,7 @@
           :to="indexRouter">点位管理</el-breadcrumb-item>
         <el-breadcrumb-item>{{ pointID ? '修改' : '添加' }}</el-breadcrumb-item>
       </el-breadcrumb>
+      <headModule/>
     </div>
     <div 
       v-loading="setting.loading"
