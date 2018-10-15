@@ -152,7 +152,7 @@
         <el-row 
           :gutter="20">
           <el-col 
-            :span="11">
+            :span="10">
             <el-form-item 
               label="" 
               prop="date" >
@@ -169,7 +169,7 @@
             </el-form-item>
           </el-col>
           <el-col
-            :span="6">
+            :span="8">
             <el-form-item 
               label=""
               prop="timeFrame">
@@ -179,7 +179,8 @@
                 placeholder="请选择时段" 
                 multiple  
                 filterable 
-                clearable>
+                clearable
+                style="width: 100%">
                 <el-option
                   v-for="item in festivalList"
                   :key="item.id"
@@ -189,7 +190,7 @@
             </el-form-item>
           </el-col>
           <el-col 
-            :span="6">
+            :span="4">
             <el-form-item>
               <el-button 
                 type="primary" 
@@ -2817,7 +2818,7 @@ export default {
     align-items: center;
     position: relative;
     .search-form {
-      width: 800px;
+      width: 865px;
     }
     .more-pic {
       position: absolute;
