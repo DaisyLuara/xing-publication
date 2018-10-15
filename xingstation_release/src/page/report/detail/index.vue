@@ -168,7 +168,7 @@
                 end-placeholder="结束日期"/>
             </el-form-item>
           </el-col>
-          <!-- <el-col 
+          <el-col
             :span="6">
             <el-form-item 
               label=""
@@ -187,7 +187,7 @@
                   :value="item.name"/>
               </el-select>
             </el-form-item>
-          </el-col> -->
+          </el-col>
           <el-col 
             :span="6">
             <el-form-item>
@@ -346,7 +346,8 @@
             <chart 
               ref="projectChar"
               :options="projectOptions"
-              auto-resize/>
+              auto-resize
+              @click="clickProject"/>
           </div>
           <div
             v-loading="userFlag"
@@ -735,7 +736,7 @@ export default {
             type: 'shadow'
           }
         },
-        color: ['#0099FF', '#22b572', '#F8B62D', '#E80F9B', '#E83828'],
+        color: ['#E83828', '#E80F9B', '#F8B62D', '#22b572', '#0099FF'],
         grid: {
           left: '3%',
           right: '4%',
@@ -1436,6 +1437,7 @@ export default {
           }
         ]
       },
+      projectTop: [],
       dialogLoading: false
     }
   },
@@ -1574,7 +1576,6 @@ export default {
       return chart
         .getChartData(this, args)
         .then(response => {
-          console.log(response)
           let chart = this.$refs.projectAgeChart
           chart.mergeOptions({
             series: [
@@ -1611,12 +1612,18 @@ export default {
           console.log(err)
         })
     },
+    clickProject(event, instance, echarts) {
+      let project = this.projectTop[event.dataIndex]
+      let belong = project.index
+      this.getProjectAge(belong)
+    },
     getProjectTop() {
       this.projectFlag = true
       let args = this.setArgs('11')
       return chart
         .getChartData(this, args)
         .then(response => {
+          this.projectTop = response
           let chart = this.$refs.projectChar
           chart.mergeOptions({
             yAxis: {
@@ -1700,6 +1707,8 @@ export default {
           })
           if (response.length > 0) {
             this.getProjectAge(response[response.length - 1].index)
+          } else {
+            this.getProjectAge()
           }
           this.projectFlag = false
         })
@@ -2238,7 +2247,23 @@ export default {
         market_id: this.market_id[0],
         scene_id: this.sceneSelect,
         area_id: this.area_id,
-        point_id: this.point_id
+        point_id: this.point_id,
+        workday: 0,
+        weekend: 0,
+        holiday: 0
+      }
+      if (this.timeFrame.length > 0) {
+        for (let i = 0; i < this.timeFrame.length; i++) {
+          if (this.timeFrame[i] === '工作日') {
+            args.workday = 1
+          }
+          if (this.timeFrame[i] === '周末') {
+            args.weekend = 1
+          }
+          if (this.timeFrame[i] === '假日') {
+            args.holiday = 1
+          }
+        }
       }
       if (!this.projectAlias) {
         delete args.alias
@@ -2259,6 +2284,7 @@ export default {
         delete args.market_id
       }
       return args
+
     },
     getLineData() {
       this.poepleCountFlag = true
