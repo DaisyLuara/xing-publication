@@ -13,8 +13,9 @@ class Contract extends Model
         'name',
         'company_id',
         'applicant',
+        'processing_person',
         'status',
-        'handle',
+        'processing_person',
         'type',
         'receive_date',
         'content',
@@ -23,9 +24,5 @@ class Contract extends Model
 
     public function company(){
         return $this->belongsTo(Company::class,'company_id','id');
-    }
-
-    public function user(){
-        return $this->belongsTo(User::class,'applicant','id');
     }
 }

@@ -22,9 +22,15 @@ class ContractController extends Controller
         $query = $contract->query();
 
         if ($request->name) {
-            $query->whereHas('company', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->contract_company_name . '%');
-            })->orWhere('name', 'like', '%' . $request->name . '%');
+            $name = $request->name;
+            $query->where(function ($query) use ($name) {
+                $query->where('name', 'like', '%' . $name . '%')
+                    ->orWhere(function ($q) use($name){
+                        $q->whereHas('company', function ($q) use($name){
+                            $q->where('name', 'like', '%' . $name . '%');
+                        });
+                    });
+            });
         }
 
         if ($request->status) {
@@ -49,5 +55,10 @@ class ContractController extends Controller
     {
         $contract->update($request->all());
         return $this->response->item($contract, new ContractTransformer())->setStatusCode(201);
+    }
+
+    public function destroy(Contract $contract){
+        $contract->delete();
+        return $this->response->noContent();
     }
 }

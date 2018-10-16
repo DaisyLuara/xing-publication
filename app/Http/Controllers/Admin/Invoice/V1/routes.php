@@ -1,6 +1,6 @@
 <?php
 $api->version('v1', [
-    'namespace' => 'App\Http\Controllers\Admin\Contract\V1\Api',//修改test
+    'namespace' => 'App\Http\Controllers\Admin\Invoice\V1\Api',//修改test
     'middleware' => ['serializer:array', 'bindings'] //api返回数据切换. Fractal 组件默认提供  DataArraySerializer ArraySerializer
 ], function ($api) {
     $api->group([
@@ -10,11 +10,11 @@ $api->version('v1', [
     ], function ($api) {
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
-            $api->get('contract/{contract}','ContractController@show');
-            $api->get('contract','ContractController@index');
-            $api->post('contract','ContractController@store');
-            $api->patch('contract/{contract}','ContractController@update');
-            $api->delete('contract/{contract}','ContractController@destroy');
+            $api->get('invoice/{invoice}','InvoiceController@show');
+            $api->get('invoice','InvoiceController@index');
+            $api->post('invoice','InvoiceController@store');
+            $api->patch('invoice/{invoice}','InvoiceController@update');
+            $api->delete('invoice/{invoice}','InvoiceController@destroy');
         });
     });
 

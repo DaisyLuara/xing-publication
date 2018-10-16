@@ -38,3 +38,4 @@ include app_path('Http/Controllers/Admin/Pay/V1/routes.php');
 include app_path('Http/Controllers/Admin/Coupon/V1/routes.php');
 include app_path("Http/Controllers/Admin/WordFilter/V1/routes.php");
 include app_path("Http/Controllers/Admin/Contract/V1/routes.php");
+include app_path("Http/Controllers/Admin/Invoice/V1/routes.php");

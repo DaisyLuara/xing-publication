@@ -7,21 +7,29 @@ use League\Fractal\TransformerAbstract;
 
 class ContractTransformer extends TransformerAbstract
 {
-    public function transform(Contract $contract){
+    protected $statusMapping = [
+        '1' => '待审批',
+        '2' => '审批中',
+        '3' => '已审批',
+        '4' => '特批'
+    ];
+
+    public function transform(Contract $contract)
+    {
         return [
-            'id'=>$contract->id,
-            'contract_number'=>$contract->contract_number,
-            'company_name'=>$contract->company->name,
-            'name'=>$contract->name,
-            'applicant'=>$contract->user->name,
-            'status'=>$contract->status,
-            'handle'=>$contract->handle,
-            'type'=>$contract->type,
-            'receive_date'=>$contract->receive_date,
-            'content'=>$contract->content,
-            'remark'=>$contract->remark,
-            'created_at'=>$contract->created_at,
-            'update_at'=>$contract->update_at,
+            'id' => $contract->id,
+            'contract_number' => $contract->contract_number,
+            'name' => $contract->name,
+            'company_name' => $contract->company->name,
+            'applicant' => $contract->applicant,
+            'status' => $this->statusMapping[$contract->status],
+            'processing_person' => $contract->processing_person,
+            'type' => $contract->type == 0 ? '收款合同' : '付款合同',
+            'receive_date' => $contract->receive_date,
+            'content' => $contract->content,
+            'remark' => $contract->remark,
+            'created_at' => $contract->created_at,
+            'updated_at' => $contract->updated_at,
         ];
     }
 }
