@@ -13,7 +13,6 @@ use App\Http\Controllers\Admin\Face\V1\Models\FaceOmoRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FacePhoneRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceActivePlaytimesRecord;
 use app\Support\Jenner\Zebra\ArrayGroupBy;
-use App\Http\Controllers\Admin\Face\V1\Models\FaceLogRecord;
 
 /**
  *求两个已知经纬度之间的距离,单位为千米
@@ -93,26 +92,6 @@ if (!function_exists('handPointQuery')) {
             $startDate = $request->start_date;
             $endDate = $request->end_date;
             $builder->whereRaw("date_format($table.date, '%Y-%m-%d') BETWEEN '$startDate' AND '$endDate' ");
-            $workday = $request->workday;
-            $weekend = $request->weekend;
-            $holiday = $request->holiday;
-            $builder->join('xs_calendar', 'xs_calendar.clientdate', '=', "$table.clientdate");
-            if ($workday == 1 && $weekend == 0 && $holiday == 0) {
-                $builder->WhereRaw("xs_calendar.workday=1");
-            }else if($workday == 0 && $weekend == 1 && $holiday == 0){
-                $builder->WhereRaw("xs_calendar.weekend=1");
-            }else if($workday==0 && $weekend==0 && $holiday==1){
-                $builder->WhereRaw("xs_calendar.holiday=1");
-            }else if($workday==1 && $weekend==1 && $holiday==0){
-                $builder->whereRaw("(xs_calendar.workday=1 or xs_calendar.weekend=1)");
-            }else if($workday==0 && $weekend==1 && $holiday==1){
-                $builder->whereRaw("(xs_calendar.weekend=1 or xs_calendar.holiday=1)");
-            }else if($workday==1 && $weekend==0 && $holiday==1){
-                $builder->whereRaw("(xs_calendar.workday=1 or xs_calendar.holiday=1)");
-            }else if($workday == 1 && $weekend == 1 && $holiday == 1){
-                $builder->whereRaw("(xs_calendar.workday=1 or xs_calendar.weekend=1 or xs_calendar.holiday=1)");
-            }
-
         }
 
         //按指标查询
@@ -932,46 +911,6 @@ function faceCharacterCountClean()
     FaceCharacterRecord::create(['date' => $currentDate]);
 }
 
-function faceLogClean()
-{
-    $date = FaceLogRecord::query()->max('date');
-    $date = (new Carbon($date))->format('Y-m-d');
-    $currentDate = Carbon::now()->toDateString();
-    while ($date < $currentDate) {
-
-        $data=DB::connection('ar')->table('face_log')
-            ->whereRaw("date_format(date,'%Y-%m-%d')='$date' and type='looker'")
-            ->selectRaw("oid,belong,bnum,gnum,age10b,age10g,age18b,age18g,age30b,age30g,age40b,age40g,age60b,age60g,age61b,age61g")
-            ->get();
-
-        $count = [];
-        foreach ($data as $item){
-            $count[]=[
-                'oid'=>$item->oid,
-                'belong'=>$item->belong,
-                'bnum'=>$item->bnum,
-                'gnum'=>$item->gnum,
-                'age10b'=>$item->age10b,
-                'age10g'=>$item->age10g,
-                'age18b'=>$item->age18b,
-                'age18g'=>$item->age18g,
-                'age30b'=>$item->age30b,
-                'age30g'=>$item->age30g,
-                'age40b'=>$item->age40b,
-                'age40g'=>$item->age40g,
-                'age60b'=>$item->age60b,
-                'age60g'=>$item->age60g,
-                'age61b'=>$item->age61b,
-                'age61g'=>$item->age61g,
-                'date'=>$date,
-                'clientdate'=>strtotime($date) * 1000
-            ];
-        }
-        DB::connection('ar')->table('xs_face_log')->insert($count);
-        $date = (new Carbon($date))->addDay(1)->toDateString();
-    }
-    FaceLogRecord::create(['date'=>$currentDate]);
-}
 /**
  * @param $startDate
  * @param $endDate

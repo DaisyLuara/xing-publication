@@ -9,7 +9,6 @@
           :to="{ path: '/company/customers/contacts?id=' + pid +'&name=' + contactName }">联系人管理</el-breadcrumb-item>
         <el-breadcrumb-item>{{ contactID ? '修改' : '添加' }}</el-breadcrumb-item>
       </el-breadcrumb>
-      <headModule/>
     </div>
     <div
       v-loading="setting.loading" 

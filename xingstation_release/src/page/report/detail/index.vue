@@ -18,7 +18,7 @@
           :gutter="20">
           <el-col
             v-if="showUser"
-            :span="6">
+            :span="8">
             <el-form-item 
               label="" 
               prop="user" >
@@ -42,7 +42,7 @@
             </el-form-item>
           </el-col>
           <el-col 
-            :span="6">
+            :span="8">
             <el-form-item 
               label="" 
               prop="project" >
@@ -66,7 +66,7 @@
             </el-form-item>
           </el-col>
           <el-col 
-            :span="6">
+            :span="8">
             <el-form-item 
               label="" 
               prop="scene" >
@@ -87,7 +87,7 @@
         <el-row 
           :gutter="20">
           <el-col 
-            :span="6">
+            :span="8">
             <el-form-item 
               label="" 
               prop="area_id" >
@@ -106,7 +106,7 @@
             </el-form-item>
           </el-col>
           <el-col 
-            :span="6">
+            :span="8">
             <el-form-item 
               label="" 
               prop="market_id" >
@@ -130,7 +130,7 @@
             </el-form-item>
           </el-col>
           <el-col 
-            :span="6">
+            :span="8">
             <el-form-item 
               label=""
               prop="point_id" >
@@ -152,7 +152,7 @@
         <el-row 
           :gutter="20">
           <el-col 
-            :span="10">
+            :span="14">
             <el-form-item 
               label="" 
               prop="date" >
@@ -168,29 +168,8 @@
                 end-placeholder="结束日期"/>
             </el-form-item>
           </el-col>
-          <el-col
-            :span="8">
-            <el-form-item 
-              label=""
-              prop="timeFrame">
-              <el-select 
-                v-model="timeFrame" 
-                :loading="searchLoading"
-                placeholder="请选择时段" 
-                multiple  
-                filterable 
-                clearable
-                style="width: 100%">
-                <el-option
-                  v-for="item in festivalList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.name"/>
-              </el-select>
-            </el-form-item>
-          </el-col>
           <el-col 
-            :span="4">
+            :span="10">
             <el-form-item>
               <el-button 
                 type="primary" 
@@ -212,7 +191,7 @@
       <ul
         class="btns-wrapper">
         <li 
-          v-for="(item, key) in peopleCount.concat([{ index: 'cpf', display_name: 'CPF转化率' }, { index: 'cpr', display_name:'CPR转化率' }, { index: 'cpa', display_name:'CPA转化率' }, { index: 'cpl', display_name:'CPL转化率' }])" 
+          v-for="(item, key) in peopleCount.concat([{ index: 'cpf', display_name: 'CPF转化率' }, { index: 'cpr', display_name:'CPR转化率' }, { index: 'cpl', display_name:'CPL转化率' }])" 
           v-if="item.index !== 'outnum'"
           :key="key">
           <a 
@@ -237,11 +216,6 @@
               {{ circlePlayernum }}
             </span>
             <span 
-              v-if="item.index === 'omo_outnum'"
-              class="count" >
-              {{ circleOmoOutnum }}
-            </span>
-            <span 
               v-if="item.index === 'lovenum'"
               class="count" >
               {{ circleLovenum }}
@@ -255,11 +229,6 @@
               v-if="item.index === 'cpr'" 
               class="count">
               {{ computedCPR }}
-            </span>
-            <span  
-              v-if="item.index === 'cpa'" 
-              class="count">
-              {{ computedCPA }}
             </span>
             <span 
               v-if="item.index === 'cpl'" 
@@ -279,11 +248,6 @@
               {{ playernumDivideLookNum }}
             </i>
             <i 
-              v-if="item.index === 'omo_outnum'"
-              class="right-arrow-icon" >
-              {{ lovenumDivideOmoOutnum }}
-            </i>
-            <i 
               v-if="item.index === 'playernum'"
               class="right-arrow-icon" >
               {{ lovenumDivideLookNum }}
@@ -299,233 +263,209 @@
           auto-resize />
       </div>
     </div>
-    <el-collapse v-model="activeNames" @change="handleChange">
-      <!-- 年龄分布图 -->
-      <el-collapse-item title="年龄分布图" name="1" class="echart-data">
-        <div 
-          v-loading="ageFlag"
-          class="age-sex-wrapper" > 
-          <div 
-            class="sex-part">
-            <chart 
-              ref="pieChart"
-              :options="pieChart" 
-              @click="onClick"
-            />
-          </div>
-          <div 
-            class="age-part">
-            <chart
-              ref="ageChart"
-              :options="ageChart"/>
-          </div>
+    
+    <!-- 年龄分布图 -->
+    <div 
+      v-loading="ageFlag"
+      class="age-sex-wrapper" > 
+      <div 
+        class="sex-part">
+        <chart 
+          ref="pieChart"
+          :options="pieChart" 
+          auto-resize
+          @click="onClick"
+        />
+      </div>
+      <div 
+        class="age-part">
+        <chart
+          ref="ageChart"
+          :options="ageChart"
+          auto-resize />
+      </div>
+    </div>
+    <!-- 时间段与人群特征 -->
+    <div  
+      v-loading="crowdFlag"
+      class="time-crowd-wrapper" > 
+      <div 
+        class="crowd-part">
+        <chart
+          ref="crowdChart"
+          :options="timeAndCrowdChart"
+          auto-resize />
+      </div>
+    </div>
+    <!-- 报表部分 -->
+    <div 
+      v-loading="tableSetting.loading"
+      class="table-wrap">
+      <div 
+        class="actions-wrap">
+        <span 
+          class="label">
+          <span 
+            class="point-title">点位列表 
+          </span> 数量: {{ pagination.total }}
+        </span>
+        <div>
+          <el-select 
+            v-model="reportValue" 
+            placeholder="请选择导出报表类型">
+            <el-option
+              v-for="item in reportList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"/>
+          </el-select>
+          <el-button 
+            type="success"
+            size="small" 
+            @click="changeReportType">下载</el-button>
         </div>
-      </el-collapse-item>
-      <!-- 时间段与人群特征 -->
-      <el-collapse-item title="时间段与人群特征" name="2"  class="echart-data">
-        <div  
-          v-loading="crowdFlag"
-          class="time-crowd-wrapper" > 
-          <div 
-            class="crowd-part">
-            <chart
-              ref="crowdChart"
-              :options="timeAndCrowdChart"/>
-          </div>
-        </div>
-      </el-collapse-item>
-      <!-- 节目日化人气 -->
-      <el-collapse-item title="节目日化人气" name="3"  class="echart-data">
-        <div 
-          class="ranking-wrap">
-          <div
-            v-loading="projectFlag"
-            class="project-part">
-            <chart 
-              ref="projectChar"
-              :options="projectOptions"
-              @click="clickProject"/>
-          </div>
-          <div
-            v-loading="userFlag"
-            class="project-age-part">
-            <chart
-              ref="projectAgeChart"
-              :options="projectAgeChart"/>
-          </div>
-        </div>
-      </el-collapse-item>
-      <!-- 报表部分 -->
-      <el-collapse-item title="点位列表" name="4" class="echart-data">
-        <div 
-          v-loading="tableSetting.loading"
-          class="table-wrap">
-          <div 
-            class="actions-wrap">
-            <span 
-              class="label">
-              <span 
-                class="point-title">点位列表 
-              </span> 数量: {{ pagination.total }}
-            </span>
+      </div>
+      <el-table
+        :data="tableData"
+        style="width: 100%">
+        <el-table-column 
+          type="expand">
+          <template 
+            slot-scope="scope">
+            <el-form 
+              label-position="left" 
+              inline 
+              class="demo-table-expand">
+              <el-form-item 
+                label="ID">
+                <span>{{ scope.row.id }}</span>
+              </el-form-item>
+              <el-form-item 
+                label="点位">
+                {{ scope.row.area_name }} {{ scope.row.market_name }} {{ scope.row.point_name }}
+              </el-form-item>
+              <el-form-item 
+                label="节目">
+                {{ scope.row.projects }}
+              </el-form-item>
+              <el-form-item 
+                label="围观">
+                <span>{{ scope.row.looknum }}</span>
+              </el-form-item>
+              <el-form-item 
+                label="活跃"/>
+              <el-form-item 
+                label="铁杆">
+                <span>{{ scope.row.playernum }}</span>
+              </el-form-item>
+              <el-form-item 
+                label="拉新">
+                <span>{{ scope.row.lovenum }}</span>
+              </el-form-item>
+              <el-form-item 
+                label="输出">
+                <span>
+                  CPF: {{ computedCPF }}
+                  CPR：{{ computedCPR }}
+                  CPL： {{ computedCPL }}
+                </span>
+              </el-form-item>
+              <el-form-item 
+                label="时间">
+                <span>{{ scope.row.min_date }} - {{ scope.row.max_date }}</span>
+              </el-form-item>
+            </el-form>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="ID"
+          prop="id"
+          width="100"/>
+        <el-table-column
+          :show-overflow-tooltip="true"
+          label="点位"
+          prop="point"
+          min-width="130">
+          <template 
+            slot-scope="props">
+            {{ props.row.area_name }} {{ props.row.market_name }} {{ props.row.point_name }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          :show-overflow-tooltip="true"
+          label="节目"
+          prop="projects"
+          min-width="130"
+        />
+        <el-table-column
+          label="围观"
+          prop="looknum"
+          min-width="90"/>
+        <el-table-column
+          :show-overflow-tooltip="true"
+          label="活跃"
+          min-width="90"
+        >
+          <template 
+            slot-scope="scope">
+            暂无
+          </template>
+        </el-table-column>
+        <el-table-column
+          :show-overflow-tooltip="true"
+          label="拉新"
+          prop="lovenum"
+          min-width="90"
+        />
+        <el-table-column
+          :show-overflow-tooltip="true"
+          label="平均有效时长"
+          min-width="90"
+        >
+          <template 
+            slot-scope="scope">
+            暂无
+          </template>
+        </el-table-column>
+        <el-table-column
+          :show-overflow-tooltip="true"
+          label="输出"
+          prop="scannum"
+          min-width="120"
+        >
+          <template 
+            slot-scope="props">*
             <div>
-              <el-select 
-                v-model="reportValue" 
-                placeholder="请选择导出报表类型">
-                <el-option
-                  v-for="item in reportList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"/>
-              </el-select>
-              <el-button 
-                type="success"
-                size="small" 
-                @click="changeReportType">下载</el-button>
-            </div>
-          </div>
-          <el-table
-            :data="tableData"
-            style="width: 100%">
-            <el-table-column 
-              type="expand">
-              <template 
-                slot-scope="scope">
-                <el-form 
-                  label-position="left" 
-                  inline 
-                  class="demo-table-expand">
-                  <el-form-item 
-                    label="ID">
-                    <span>{{ scope.row.id }}</span>
-                  </el-form-item>
-                  <el-form-item 
-                    label="点位">
-                    {{ scope.row.area_name }} {{ scope.row.market_name }} {{ scope.row.point_name }}
-                  </el-form-item>
-                  <el-form-item 
-                    label="节目">
-                    {{ scope.row.projects }}
-                  </el-form-item>
-                  <el-form-item 
-                    label="围观">
-                    <span>{{ scope.row.looknum }}</span>
-                  </el-form-item>
-                  <el-form-item 
-                    label="活跃"/>
-                  <el-form-item 
-                    label="铁杆">
-                    <span>{{ scope.row.playernum }}</span>
-                  </el-form-item>
-                  <el-form-item 
-                    label="拉新">
-                    <span>{{ scope.row.lovenum }}</span>
-                  </el-form-item>
-                  <el-form-item 
-                    label="输出">
-                    <span>
-                      CPF: {{ computedCPF }}
-                      CPR：{{ computedCPR }}
-                      CPL： {{ computedCPL }}
-                    </span>
-                  </el-form-item>
-                  <el-form-item 
-                    label="时间">
-                    <span>{{ scope.row.min_date }} - {{ scope.row.max_date }}</span>
-                  </el-form-item>
-                </el-form>
-              </template>
-            </el-table-column>
-            <el-table-column
-              label="ID"
-              prop="id"
-              width="100"/>
-            <el-table-column
-              :show-overflow-tooltip="true"
-              label="点位"
-              prop="point"
-              min-width="130">
-              <template 
-                slot-scope="props">
-                {{ props.row.area_name }} {{ props.row.market_name }} {{ props.row.point_name }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              :show-overflow-tooltip="true"
-              label="节目"
-              prop="projects"
-              min-width="130"
-            />
-            <el-table-column
-              label="围观"
-              prop="looknum"
-              min-width="90"/>
-            <el-table-column
-              :show-overflow-tooltip="true"
-              label="活跃"
-              min-width="90"
-            >
-              <template 
-                slot-scope="scope">
-                暂无
-              </template>
-            </el-table-column>
-            <el-table-column
-              :show-overflow-tooltip="true"
-              label="拉新"
-              prop="lovenum"
-              min-width="90"
-            />
-            <el-table-column
-              :show-overflow-tooltip="true"
-              label="平均有效时长"
-              min-width="90"
-            >
-              <template 
-                slot-scope="scope">
-                暂无
-              </template>
-            </el-table-column>
-            <el-table-column
-              :show-overflow-tooltip="true"
-              label="输出"
-              prop="scannum"
-              min-width="120"
-            >
-              <template 
-                slot-scope="props">*
-                <div>
-                  <div>CPF: {{ ((props.row.playernum7 / props.row.looknum) * 100).toFixed(2) }}%</div>
-                  <div>CPR：{{ ((props.row.playernum / props.row.looknum) * 100).toFixed(2) }}%</div>
-                  <div>CPL：{{ ((props.row.lovenum / props.row.looknum) * 100).toFixed(2) }}%</div>
-                </div>  
-              </template>
-            </el-table-column>
-            <el-table-column
-              :show-overflow-tooltip="true"
-              label="时间"
-              min-width="120"
-              prop="created_at"
-            >
-              <template 
-                slot-scope="props">
-                <span>{{ props.row.min_date }} - {{ props.row.max_date }}</span>
-              </template>
-            </el-table-column>
-          </el-table>
-          <div 
-            class="pagination-wrap">
-            <el-pagination
-              :total="pagination.total"
-              :page-size="pagination.pageSize"
-              :current-page="pagination.currentPage"
-              layout="prev, pager, next, jumper, total"
-              @current-change="changePage"
-            />
-          </div>
-        </div>
-      </el-collapse-item>
-    </el-collapse>
+              <div>CPF: {{ ((props.row.playernum7 / props.row.looknum) * 100).toFixed(2) }}%</div>
+              <div>CPR：{{ ((props.row.playernum / props.row.looknum) * 100).toFixed(2) }}%</div>
+              <div>CPL：{{ ((props.row.lovenum / props.row.looknum) * 100).toFixed(2) }}%</div>
+            </div>  
+          </template>
+        </el-table-column>
+        <el-table-column
+          :show-overflow-tooltip="true"
+          label="时间"
+          min-width="120"
+          prop="created_at"
+        >
+          <template 
+            slot-scope="props">
+            <span>{{ props.row.min_date }} - {{ props.row.max_date }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div 
+        class="pagination-wrap">
+        <el-pagination
+          :total="pagination.total"
+          :page-size="pagination.pageSize"
+          :current-page="pagination.currentPage"
+          layout="prev, pager, next, jumper, total"
+          @current-change="changePage"
+        />
+      </div>
+    </div>
+
     <!-- 弹窗for 性别细节 -->
     <div  
       v-loading="dialogLoading"
@@ -671,9 +611,7 @@ import {
   Table,
   TableColumn,
   Pagination,
-  MessageBox,
-  Collapse,
-  CollapseItem
+  MessageBox
 } from 'element-ui'
 import ECharts from 'vue-echarts/components/ECharts'
 import 'echarts/lib/chart/line'
@@ -697,134 +635,11 @@ export default {
     'el-table': Table,
     'el-table-column': TableColumn,
     'el-pagination': Pagination,
-    'el-collapse': Collapse,
-    'el-collapse-item': CollapseItem,
     chart: ECharts,
     PicChart
   },
   data() {
     return {
-      projectAgeChart: {
-        tooltip: {
-          trigger: 'item',
-          formatter: '{a} <br/>{b}: {c}'
-        },
-        color: ['#3b9aca', '#8CC63F', '#FBB03B', '#F15A24', '#662D91'],
-        legend: {
-          x: 'left',
-          data: ['10后', '00后', '90后', '80后', '70前/后']
-        },
-        series: [
-          {
-            name: '年龄分布',
-            type: 'pie',
-            radius: ['10%', '50%'],
-            data: null
-          }
-        ]
-      },
-      projectOptions: {
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'shadow'
-          }
-        },
-        color: ['#E83828', '#E80F9B', '#F8B62D', '#22b572', '#0099FF'],
-        grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
-          containLabel: true
-        },
-        xAxis: {
-          type: 'value'
-        },
-        yAxis: {
-          type: 'category',
-          data: null
-        },
-        series: [
-          {
-            name: '扫码拉新会员注册总数',
-            type: 'bar',
-            stack: '总量',
-            label: {
-              normal: {
-                show: true,
-                position: 'insideRight'
-              }
-            },
-            data: null
-          },
-          {
-            name: 'OMO有效跳转人数',
-            type: 'bar',
-            stack: '总量',
-            label: {
-              normal: {
-                show: true,
-                position: 'insideRight'
-              }
-            },
-            data: null
-          },
-          {
-            name: '大屏铁杆玩家人数',
-            type: 'bar',
-            stack: '总量',
-            label: {
-              normal: {
-                show: true,
-                position: 'insideRight'
-              }
-            },
-            data: null
-          },
-          {
-            name: '大屏活跃玩家人数',
-            type: 'bar',
-            stack: '总量',
-            label: {
-              normal: {
-                show: true,
-                position: 'insideRight'
-              }
-            },
-            data: null
-          },
-          {
-            name: '大屏围观参与人数',
-            type: 'bar',
-            stack: '总量',
-            label: {
-              normal: {
-                show: true,
-                position: 'insideRight'
-              }
-            },
-            data: null
-          }
-        ]
-      },
-      projectFlag: false,
-      userFlag: false,
-      timeFrame: [],
-      festivalList: [
-        {
-          id: 'workday',
-          name: '工作日'
-        },
-        {
-          id: 'weekend',
-          name: '周末'
-        },
-        {
-          id: 'holiday',
-          name: '假日'
-        }
-      ],
-      activeNames: ['1', '2', '3', '4'],
       rateDay: 0,
       marketCount: 0,
       screenCount: 0,
@@ -881,6 +696,14 @@ export default {
       ],
       pickerOptions2: {
         shortcuts: [
+          // {
+          //   text: '今天',
+          //   onClick(picker) {
+          //     const end = new Date()
+          //     const start = new Date()
+          //     picker.$emit('pick', [start, end])
+          //   }
+          // },
           {
             text: '昨天',
             onClick(picker) {
@@ -920,10 +743,7 @@ export default {
           }
         ],
         disabledDate: time => {
-          return (
-            time.getTime() > Date.now() - 8.64e7 ||
-            time.getTime() < new Date('2017/04/21').getTime()
-          )
+          return time.getTime() > Date.now() - 8.64e7
         }
       },
       rateOption: {
@@ -994,7 +814,7 @@ export default {
       },
       tableData: [],
       tempAgeData: null,
-      peopleCount: [0, 0, 0, 0, 0],
+      peopleCount: [0, 0, 0, 0],
       type: '',
       userList: [],
       ageType: false,
@@ -1013,11 +833,9 @@ export default {
           '#0099FF',
           '#22b572',
           '#F8B62D',
-          '#E80F9B',
           '#E83828',
           '#197748',
           '#F8B62D',
-          '#be136e',
           '#BC1313'
         ],
         title: {
@@ -1037,11 +855,9 @@ export default {
             '大屏围观参与人数',
             '大屏活跃玩家人数',
             '大屏铁杆玩家人数',
-            'OMO有效跳转人数',
             '扫码拉新会员注册总数',
             'CPF转化率',
             'CPR转化率',
-            'CPA转化率',
             'CPL转化率'
           ]
         },
@@ -1141,13 +957,13 @@ export default {
           },
           formatter: function(data) {
             let male = (
-              (parseInt(data[0].value) /
-                (parseInt(data[0].value) + parseInt(data[1].value))) *
+              parseInt(data[0].value) /
+              (parseInt(data[0].value) + parseInt(data[1].value)) *
               100
             ).toFixed(2)
             let female = (
-              (parseInt(data[1].value) /
-                (parseInt(data[0].value) + parseInt(data[1].value))) *
+              parseInt(data[1].value) /
+              (parseInt(data[0].value) + parseInt(data[1].value)) *
               100
             ).toFixed(2)
             return (
@@ -1229,48 +1045,48 @@ export default {
           },
           formatter: function(data) {
             let century10 = (
-              (parseInt(data[0].value) /
-                (parseInt(data[0].value) +
-                  parseInt(data[1].value) +
-                  parseInt(data[2].value) +
-                  parseInt(data[3].value) +
-                  parseInt(data[4].value))) *
+              parseInt(data[0].value) /
+              (parseInt(data[0].value) +
+                parseInt(data[1].value) +
+                parseInt(data[2].value) +
+                parseInt(data[3].value) +
+                parseInt(data[4].value)) *
               100
             ).toFixed(2)
             let century00 = (
-              (parseInt(data[1].value) /
-                (parseInt(data[0].value) +
-                  parseInt(data[1].value) +
-                  parseInt(data[2].value) +
-                  parseInt(data[3].value) +
-                  parseInt(data[4].value))) *
+              parseInt(data[1].value) /
+              (parseInt(data[0].value) +
+                parseInt(data[1].value) +
+                parseInt(data[2].value) +
+                parseInt(data[3].value) +
+                parseInt(data[4].value)) *
               100
             ).toFixed(2)
             let century90 = (
-              (parseInt(data[2].value) /
-                (parseInt(data[0].value) +
-                  parseInt(data[1].value) +
-                  parseInt(data[2].value) +
-                  parseInt(data[3].value) +
-                  parseInt(data[4].value))) *
+              parseInt(data[2].value) /
+              (parseInt(data[0].value) +
+                parseInt(data[1].value) +
+                parseInt(data[2].value) +
+                parseInt(data[3].value) +
+                parseInt(data[4].value)) *
               100
             ).toFixed(2)
             let century80 = (
-              (parseInt(data[3].value) /
-                (parseInt(data[0].value) +
-                  parseInt(data[1].value) +
-                  parseInt(data[2].value) +
-                  parseInt(data[3].value) +
-                  parseInt(data[4].value))) *
+              parseInt(data[3].value) /
+              (parseInt(data[0].value) +
+                parseInt(data[1].value) +
+                parseInt(data[2].value) +
+                parseInt(data[3].value) +
+                parseInt(data[4].value)) *
               100
             ).toFixed(2)
             let century70 = (
-              (parseInt(data[4].value) /
-                (parseInt(data[0].value) +
-                  parseInt(data[1].value) +
-                  parseInt(data[2].value) +
-                  parseInt(data[3].value) +
-                  parseInt(data[4].value))) *
+              parseInt(data[4].value) /
+              (parseInt(data[0].value) +
+                parseInt(data[1].value) +
+                parseInt(data[2].value) +
+                parseInt(data[3].value) +
+                parseInt(data[4].value)) *
               100
             ).toFixed(2)
             return (
@@ -1431,7 +1247,6 @@ export default {
           }
         ]
       },
-      projectTop: [],
       dialogLoading: false
     }
   },
@@ -1453,64 +1268,53 @@ export default {
     circlePlayernum: function() {
       return this.peopleCount[2].count === null ? 0 : this.peopleCount[2].count
     },
-    circleOmoOutnum: function() {
-      return this.peopleCount[3].count === null ? 0 : this.peopleCount[3].count
-    },
     circleLovenum: function() {
-      return this.peopleCount[4].count === null ? 0 : this.peopleCount[4].count
+      return this.peopleCount[3].count === null ? 0 : this.peopleCount[3].count
     },
     playernum7DivideLookNum: function() {
       let result = (
-        (this.peopleCount[1].count / this.peopleCount[0].count) *
+        this.peopleCount[1].count /
+        this.peopleCount[0].count *
         100
       ).toFixed(2)
       return result === 0 || result === NaN ? 0 : result + '%'
     },
     playernumDivideLookNum: function() {
       let result = (
-        (this.peopleCount[2].count / this.peopleCount[1].count) *
-        100
-      ).toFixed(2)
-      return result === 0 || result === NaN ? 0 : result + '%'
-    },
-    lovenumDivideOmoOutnum: function() {
-      let result = (
-        (this.peopleCount[3].count / this.peopleCount[2].count) *
+        this.peopleCount[2].count /
+        this.peopleCount[1].count *
         100
       ).toFixed(2)
       return result === 0 || result === NaN ? 0 : result + '%'
     },
     lovenumDivideLookNum: function() {
       let result = (
-        (this.peopleCount[4].count / this.peopleCount[3].count) *
+        this.peopleCount[3].count /
+        this.peopleCount[2].count *
         100
       ).toFixed(2)
       return result === 0 || result === NaN ? 0 : result + '%'
     },
     computedCPF: function() {
       let result = (
-        (this.peopleCount[1].count / this.peopleCount[0].count) *
+        this.peopleCount[1].count /
+        this.peopleCount[0].count *
         100
       ).toFixed(2)
       return String(result) + '%'
     },
     computedCPR: function() {
       let result = (
-        (this.peopleCount[2].count / this.peopleCount[0].count) *
-        100
-      ).toFixed(2)
-      return String(result) + '%'
-    },
-    computedCPA: function() {
-      let result = (
-        (this.peopleCount[3].count / this.peopleCount[0].count) *
+        this.peopleCount[2].count /
+        this.peopleCount[0].count *
         100
       ).toFixed(2)
       return String(result) + '%'
     },
     computedCPL: function() {
       let result = (
-        (this.peopleCount[4].count / this.peopleCount[0].count) *
+        this.peopleCount[3].count /
+        this.peopleCount[0].count *
         100
       ).toFixed(2)
       return String(result) + '%'
@@ -1519,13 +1323,6 @@ export default {
   mounted() {
     let that = this
     window.onresize = function() {
-      that.$nextTick(function() {
-        that.$refs.crowdChart.resize()
-        that.$refs.ageChart.resize()
-        that.$refs.pieChart.resize()
-        that.$refs.projectChar.resize()
-        that.$refs.projectAgeChart.resize()
-      })
       if (window.innerWidth > 1300) {
         that.width = ((window.innerWidth - 60 + 20) * 0.5 - 20) * 0.6
       }
@@ -1538,15 +1335,6 @@ export default {
     this.allPromise()
   },
   methods: {
-    handleChange(val) {
-      this.$nextTick(function() {
-        this.$refs.crowdChart.resize()
-        this.$refs.ageChart.resize()
-        this.$refs.pieChart.resize()
-        this.$refs.projectChar.resize()
-        this.$refs.projectAgeChart.resize()
-      })
-    },
     legendHandle(index) {
       switch (index) {
         case '0':
@@ -1578,155 +1366,6 @@ export default {
           Vue.set(this.dataOptions, 6, this.dataOptions[6])
           break
       }
-    },
-    getProjectAge(belong) {
-      this.userFlag = true
-      let args = this.setArgs('12')
-      args.belong = belong
-      return chart
-        .getChartData(this, args)
-        .then(response => {
-          let chart = this.$refs.projectAgeChart
-          chart.mergeOptions({
-            series: [
-              {
-                data: [
-                  {
-                    name: '10后',
-                    value: response.century10 === null ? 0 : response.century10
-                  },
-                  {
-                    name: '00后',
-                    value: response.century00 === null ? 0 : response.century00
-                  },
-                  {
-                    name: '90后',
-                    value: response.century90 === null ? 0 : response.century90
-                  },
-                  {
-                    name: '80后',
-                    value: response.century80 === null ? 0 : response.century80
-                  },
-                  {
-                    name: '70前/后',
-                    value: response.century70 === null ? 0 : response.century70
-                  }
-                ]
-              }
-            ]
-          })
-          this.userFlag = false
-        })
-        .catch(err => {
-          this.userFlag = false
-          console.log(err)
-        })
-    },
-    clickProject(event, instance, echarts) {
-      let project = this.projectTop[event.dataIndex]
-      let belong = project.index
-      this.getProjectAge(belong)
-    },
-    getProjectTop() {
-      this.projectFlag = true
-      let args = this.setArgs('11')
-      return chart
-        .getChartData(this, args)
-        .then(response => {
-          this.projectTop = response
-          let chart = this.$refs.projectChar
-          console.log(response)
-          chart.mergeOptions({
-            yAxis: {
-              type: 'category',
-              data: response.map(r => {
-                return r.display_name
-              })
-            },
-            series: [
-              {
-                name: '扫码拉新会员注册总数',
-                type: 'bar',
-                stack: '总量',
-                label: {
-                  normal: {
-                    show: true,
-                    position: 'insideRight'
-                  }
-                },
-                data: response.map(r => {
-                  return r.count.lovenum
-                })
-              },
-              {
-                name: 'OMO有效跳转人数',
-                type: 'bar',
-                stack: '总量',
-                label: {
-                  normal: {
-                    show: true,
-                    position: 'insideRight'
-                  }
-                },
-                data: response.map(r => {
-                  return r.count.omo_outnum
-                })
-              },
-              {
-                name: '大屏铁杆玩家人数',
-                type: 'bar',
-                stack: '总量',
-                label: {
-                  normal: {
-                    show: true,
-                    position: 'insideRight'
-                  }
-                },
-                data: response.map(r => {
-                  return r.count.playernum
-                })
-              },
-              {
-                name: '大屏活跃玩家人数',
-                type: 'bar',
-                stack: '总量',
-                label: {
-                  normal: {
-                    show: true,
-                    position: 'insideRight'
-                  }
-                },
-                data: response.map(r => {
-                  return r.count.playernum7
-                })
-              },
-              {
-                name: '大屏围观参与人数',
-                type: 'bar',
-                stack: '总量',
-                label: {
-                  normal: {
-                    show: true,
-                    position: 'insideRight'
-                  }
-                },
-                data: response.map(r => {
-                  return r.count.looknum
-                })
-              }
-            ]
-          })
-          if (response.length > 0) {
-            this.getProjectAge(response[response.length - 1].index)
-          } else {
-            this.getProjectAge()
-          }
-          this.projectFlag = false
-        })
-        .catch(err => {
-          this.projectFlag = false
-          console.log(err)
-        })
     },
     changeReportType() {
       if (this.reportValue === 'point') {
@@ -1825,6 +1464,8 @@ export default {
             console.log(err)
             this.searchLoading = false
           })
+      } else {
+        this.marketList = []
       }
     },
     getPoint() {
@@ -1901,8 +1542,7 @@ export default {
       this.getAge()
       this.getCrowdTime()
       this.getGender()
-      this.getProjectTop()
-      // this.getProjectAge()
+
       this.setting.loading = false
     },
     getCrowdTime() {
@@ -1981,7 +1621,7 @@ export default {
                           parseInt(r.count.century80) +
                           parseInt(r.count.century70)
                       })
-                      let percent = ((singleSum / sum) * 100).toFixed(1) + '%'
+                      let percent = (singleSum / sum * 100).toFixed(1) + '%'
                       return percent + '\n' + singleSum
                     }
                   }
@@ -2041,6 +1681,7 @@ export default {
       }
     },
     getProject(query) {
+      console.log(this.arUserId)
       if (query !== '') {
         let args = {
           ar_user_id: this.arUserId,
@@ -2055,7 +1696,6 @@ export default {
             .getProjectList(this, args)
             .then(response => {
               this.projectList = response.data
-              console.log(this.projectList)
               this.searchLoading = false
             })
             .catch(err => {
@@ -2078,6 +1718,8 @@ export default {
               this.searchLoading = false
             })
         }
+      } else {
+        this.projectList = []
       }
     },
     getPeopleCount() {
@@ -2087,7 +1729,7 @@ export default {
         .getChartData(this, args)
         .then(response => {
           this.peopleCount = response
-          this.type = 'looknum,playernum,lovenum,playernum7,omo_outnum'
+          this.type = 'looknum,playernum,lovenum,playernum7'
           this.getLineData()
         })
         .catch(err => {
@@ -2140,7 +1782,7 @@ export default {
                       response.map(r => {
                         sum += parseInt(r.count.male) + parseInt(r.count.female)
                       })
-                      let percent = ((singleSum / sum) * 100).toFixed(1) + '%'
+                      let percent = (singleSum / sum * 100).toFixed(1) + '%'
                       return percent + '\n' + singleSum
                     }
                   }
@@ -2258,23 +1900,7 @@ export default {
         market_id: this.market_id[0],
         scene_id: this.sceneSelect,
         area_id: this.area_id,
-        point_id: this.point_id,
-        workday: 0,
-        weekend: 0,
-        holiday: 0
-      }
-      if (this.timeFrame.length > 0) {
-        for (let i = 0; i < this.timeFrame.length; i++) {
-          if (this.timeFrame[i] === '工作日') {
-            args.workday = 1
-          }
-          if (this.timeFrame[i] === '周末') {
-            args.weekend = 1
-          }
-          if (this.timeFrame[i] === '假日') {
-            args.holiday = 1
-          }
-        }
+        point_id: this.point_id
       }
       if (!this.projectAlias) {
         delete args.alias
@@ -2320,11 +1946,9 @@ export default {
             '大屏围观参与人数',
             '大屏活跃玩家人数',
             '大屏铁杆玩家人数',
-            'OMO有效跳转人数',
             '扫码拉新会员注册总数',
             'CPF转化率',
             'CPR转化率',
-            'CPA转化率',
             'CPL转化率'
           ]
         },
@@ -2377,15 +2001,6 @@ export default {
           },
           {
             symbol: 'circle',
-            name: 'OMO有效跳转人数',
-            type: 'line',
-            areaStyle: { normal: {} },
-            data: res.map(r => {
-              return r.omo_outnum
-            })
-          },
-          {
-            symbol: 'circle',
             name: '扫码拉新会员注册总数',
             type: 'line',
             areaStyle: { normal: {} },
@@ -2402,7 +2017,7 @@ export default {
               color: '#197748'
             },
             data: res.map(r => {
-              return ((r.playernum7 / r.looknum) * 100).toFixed(2)
+              return (r.playernum7 / r.looknum * 100).toFixed(2)
             })
           },
           {
@@ -2414,19 +2029,7 @@ export default {
               color: '#F8B62D'
             },
             data: res.map(r => {
-              return ((r.playernum / r.looknum) * 100).toFixed(2)
-            })
-          },
-          {
-            xAxisIndex: 1,
-            yAxisIndex: 1,
-            name: 'CPA转化率',
-            type: 'line',
-            lineStyle: {
-              color: '#F8B62D'
-            },
-            data: res.map(r => {
-              return ((r.omo_outnum / r.looknum) * 100).toFixed(2)
+              return (r.playernum / r.looknum * 100).toFixed(2)
             })
           },
           {
@@ -2439,7 +2042,7 @@ export default {
               color: '#BC1313'
             },
             data: res.map(r => {
-              return ((r.lovenum / r.looknum) * 100).toFixed(2)
+              return (r.lovenum / r.looknum * 100).toFixed(2)
             })
           }
         ]
@@ -2563,9 +2166,9 @@ export default {
     },
     handlePicShow() {
       this.shouldPicDialogShow = !this.shouldPicDialogShow
-      let that = this
       if (this.shouldPicDialogShow) {
         this.getConversionRate()
+        let that = this
         if (that.sceneSelect) {
           let scene = this.sceneList.find(function(r) {
             if (r.id === that.sceneSelect) {
@@ -2575,12 +2178,12 @@ export default {
           this.sceneInfo = scene.name
         }
         if (that.projectSelect.length !== 0) {
-          let project = that.projectList.find(function(r) {
+          let project = this.projectList.find(function(r) {
             if (r.alias === that.projectSelect[0]) {
               return r.name
             }
           })
-          that.projectInfo = project.name
+          this.projectInfo = project.name
         }
         if (that.area_id) {
           let area = this.areaList.find(function(r) {
@@ -2591,15 +2194,15 @@ export default {
           this.addressInfo = area.name
         }
         if (that.market_id.length !== 0) {
-          let market = that.marketList.find(function(r) {
-            if (r.id === that.market_id[0]) {
+          let market = this.marketList.find(function(r) {
+            if (r.id === that.market_id) {
               return r.name
             }
           })
           this.addressInfo = this.addressInfo + market.name
         }
         if (that.point_id) {
-          let point = that.pointList.find(function(r) {
+          let point = this.pointList.find(function(r) {
             if (r.id === that.point_id) {
               return r.name
             }
@@ -2828,9 +2431,6 @@ export default {
     font-size: 16px;
     align-items: center;
     position: relative;
-    .search-form {
-      width: 865px;
-    }
     .more-pic {
       position: absolute;
       top: 10px;
@@ -2889,30 +2489,20 @@ export default {
         }
         &.color-3 {
           background: url('~assets/images/program/circle.png') center 39px
-            no-repeat #e80f9b;
+            no-repeat #e83828;
           background-size: 80px;
         }
         &.color-4 {
           background: url('~assets/images/program/circle.png') center 39px
-            no-repeat #e83828;
+            no-repeat #197748;
           background-size: 80px;
         }
         &.color-5 {
           background: url('~assets/images/program/circle.png') center 39px
-            no-repeat #197748;
-          background-size: 80px;
-        }
-        &.color-6 {
-          background: url('~assets/images/program/circle.png') center 39px
             no-repeat #f8b62d;
           background-size: 80px;
         }
-        &.color-7 {
-          background: url('~assets/images/program/circle.png') center 39px
-            no-repeat #be136e;
-          background-size: 80px;
-        }
-        &.color-8 {
+        &.color-6 {
           background: url('~assets/images/program/circle.png') center 39px
             no-repeat #bc1313;
           background-size: 80px;
@@ -2936,21 +2526,15 @@ export default {
             border-color: #f8b62d #ffffff #ffffff #ffffff;
           }
           &.color-3 {
-            border-color: #e80f9b #ffffff #ffffff #ffffff;
-          }
-          &.color-4 {
             border-color: #e83828 #ffffff #ffffff #ffffff;
           }
-          &.color-5 {
+          &.color-4 {
             border-color: #197748 #ffffff #ffffff #ffffff;
           }
-          &.color-6 {
+          &.color-5 {
             border-color: #f8b62d #ffffff #ffffff #ffffff;
           }
-          &.color-7 {
-            border-color: #be136e #ffffff #ffffff #ffffff;
-          }
-          &.color-8 {
+          &.color-6 {
             border-color: #bc1313 #ffffff #ffffff #ffffff;
           }
         }
@@ -3115,28 +2699,6 @@ export default {
         height: 90%;
         width: 100%;
       }
-    }
-  }
-  .ranking-wrap {
-    margin-top: 15px;
-    background-color: #fff;
-    height: 600px;
-    padding: 20px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    .project-part {
-      width: 55%;
-      height: 100%;
-      .echarts {
-        height: 100%;
-        width: 90%;
-      }
-    }
-    .project-age-part {
-      width: 40%;
-      left: 3%;
-      height: 100%;
     }
   }
   .echarts {
