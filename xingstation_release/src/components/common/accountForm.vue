@@ -456,8 +456,7 @@ export default {
     },
     getImageCaptcha() {
       let args = {
-        phone: this.accountForm.account,
-        type: 'login'
+        phone: this.accountForm.account
       }
       auth
         .getImageCaptcha(this, args)

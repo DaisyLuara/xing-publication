@@ -15,7 +15,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use DB;
-use App\Http\Controllers\Admin\Face\V1\Models\XsFaceLog;
 
 class ChartDataController extends Controller
 {
@@ -58,7 +57,7 @@ class ChartDataController extends Controller
         $table = $query->getModel()->getTable();
         $this->handleQuery($request, $query);
 
-        $faceCount = $query->selectRaw("max($table.clientdate) as max_date,min($table.clientdate) as min_date,$table.id as id,sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum) as playernum,sum(lovenum) as lovenum,sum(outnum) as outnum,sum(scannum) as scannum,avr_official.name as point_name,avr_official_market.name as market_name,avr_official_area.name as area_name,xs_face_count_log.date as created_at")
+        $faceCount = $query->selectRaw("max($table.clientdate) as max_date,min($table.clientdate) as min_date,id as id,sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum) as playernum,sum(lovenum) as lovenum,sum(outnum) as outnum,sum(scannum) as scannum,avr_official.name as point_name,avr_official_market.name as market_name,avr_official_area.name as area_name,xs_face_count_log.date as created_at")
             ->selectRaw("(SELECT GROUP_CONCAT(DISTINCT (ar_product_list.name)) FROM xs_face_count_log AS fcl2 INNER JOIN ar_product_list ON ar_product_list.versionname = fcl2.belong WHERE fcl2.oid = $table.oid AND date_format(fcl2.date, '%Y-%m-%d') BETWEEN '$request->start_date' AND '$request->end_date' GROUP BY fcl2.oid) as projects ")
             //->where("$table.fclid", '>', 0)
             ->groupBy("$table.oid")
@@ -73,25 +72,25 @@ class ChartDataController extends Controller
 
     public function chart(ChartDataRequest $request)
     {
-        $xsFaceLogQuery = XsFaceLog::query();
+        $faceLogQuery = FaceLog::query();
         $faceCountQuery = FaceCount::query();
         $faceCharacterCount = FaceCharacterCount::query();
         $xsFaceCountLog = XsFaceCountLog::query();
         switch ($request->id) {
             case 1:
-                $data = $this->getLookNumber($request, $xsFaceLogQuery);
+                $data = $this->getLookNumber($request, $faceLogQuery);
                 break;
             case 2:
-                $data = $this->getTopPoints($request, $xsFaceLogQuery);
+                $data = $this->getTopPoints($request, $faceLogQuery);
                 break;
             case 3:
-                $data = $this->getTopAttributes($request, $xsFaceCountLog);
+                $data = $this->getTopProjects($request, $faceCountQuery);
                 break;
             case 4:
-                $data = $this->getAge($request, $xsFaceLogQuery, $faceCharacterCount);
+                $data = $this->getAge($request, $faceLogQuery, $faceCharacterCount);
                 break;
             case 5:
-                $data = $this->getGender($request, $xsFaceLogQuery);
+                $data = $this->getGender($request, $faceLogQuery);
                 break;
             case 6:
                 $data = $this->getTotal($request, $xsFaceCountLog);
@@ -107,12 +106,6 @@ class ChartDataController extends Controller
                 break;
             case 10:
                 $data = $this->getFunnelChart($request, $xsFaceCountLog);
-                break;
-            case 11:
-                $data = $this->getTopProjects($request, $xsFaceCountLog);
-                break;
-            case 12:
-                $data = $this->getPointCharacter($request, $faceCharacterCount);
                 break;
             default:
                 return null;
@@ -200,6 +193,7 @@ class ChartDataController extends Controller
     private function getAgeGroupByGender(Builder $query)
     {
         $data = $query->selectRaw('sum(age10b) as age10_male ,sum(age10g) as age10_female,sum(age18b) as age18_male,sum(age18g) as age18_female,sum(age30b) as age30_male,sum(age30g) as age30_female,sum(age40b) as age40_male,sum(age40g) as age40_female,sum(age60b) as age60_male,sum(age60g) as age60_female,sum(age61b) as age61_male,sum(age61g) as age61_female')
+            ->where('face_log.type', '=', 'looker')
             ->first()->toArray();
         $output = [];
 
@@ -250,6 +244,7 @@ class ChartDataController extends Controller
     private function getGenderAll(Builder $query)
     {
         return $query->selectRaw("sum(gnum) as female,sum(bnum) as male")
+            ->where('face_log.type', '=', 'looker')
             ->first()->toArray();
     }
 
@@ -257,6 +252,7 @@ class ChartDataController extends Controller
     {
         $suffix = $gender == 'male' ? 'b' : 'g';
         return $query->selectRaw("sum(age10$suffix) as age10,sum(age18$suffix) as age18,sum(age30$suffix) as age30,sum(age40$suffix) as age40,sum(age60$suffix) as age60,sum(age61$suffix) as age61")
+            ->where('face_log.type', '=', 'looker')
             ->first()->toArray();
 
     }
@@ -272,7 +268,8 @@ class ChartDataController extends Controller
 
         $this->handleQuery($request, $query, true, true);
         $table = $query->getModel()->getTable();
-        $data = $query->selectRaw("sum($table.bnum+$table.gnum) AS total,sum($table.gnum) as female_count,sum($table.bnum) as male_count")
+        $data = $query->selectRaw("sum($table.allnum) AS total,sum($table.gnum) as female_count,sum($table.bnum) as male_count")
+            ->whereRaw("$table.type='looker'")
             ->groupBy("$table.oid")
             ->orderBy('total', 'desc')
             ->limit(10)
@@ -299,7 +296,7 @@ class ChartDataController extends Controller
      * @param $endDate
      * @return array
      */
-    private function getTopAttributes(ChartDataRequest $request, Builder $query)
+    private function getTopProjects(ChartDataRequest $request, Builder $query)
     {
         $this->handleQuery($request, $query, false);
         $table = $query->getModel()->getTable();
@@ -333,7 +330,7 @@ class ChartDataController extends Controller
     private function getTotal(ChartDataRequest $request, Builder $query)
     {
         $this->handleQuery($request, $query);
-        $data = $query->selectRaw("sum(looknum) AS looknum,sum(playernum7)as playernum7,sum(playernum) AS playernum,sum(omo_outnum) as omo_outnum,sum(lovenum)  AS lovenum")
+        $data = $query->selectRaw("sum(looknum) AS looknum,sum(playernum7)as playernum7,sum(playernum) AS playernum,sum(lovenum)  AS lovenum")
             ->first()->toArray();
         $output = [];
         foreach ($data as $key => $value) {
@@ -361,56 +358,10 @@ class ChartDataController extends Controller
         $format = $days <= 31 ? '%Y-%m-%d' : '%Y-%m';
 
         $this->handleQuery($request, $query);
-        $data=$query->selectRaw("date_format(xs_face_count_log.date, '$format') as display_name")
+        return $query->selectRaw("date_format(xs_face_count_log . date, '$format') as display_name")
             ->groupBy('display_name')
             ->get();
 
-        if ($days <= 31) {
-            $data = $data->toArray();
-            $output = [];
-            $start_date = $request->start_date;
-            $end_date = $request->end_date;
-            while ($start_date <= $end_date) {
-                if ($this->array_multi_search($start_date, $data)) {
-                    $item = array_filter($data, function ($arr) use ($start_date) {
-                        return $arr['display_name'] == $start_date;
-                    });
-                    sort($item);
-                    $item=$item[0];
-                    $output[] = [
-                        'display_name' => $item['display_name'],
-                        'looknum' => $item['looknum'],
-                        'playernum7' => $item['playernum7'],
-                        'playernum' => $item['playernum'],
-                        'omo_outnum' => $item['omo_outnum'],
-                        'lovenum' => $item['lovenum'],
-                    ];
-                } else {
-                    $output[] = [
-                        'display_name' => $start_date,
-                        'looknum' => 0,
-                        'playernum7' => 0,
-                        'playernum' => 0,
-                        'omo_outnum' => 0,
-                        'lovenum' => 0,
-                    ];
-                }
-                $start_date = (new Carbon($start_date))->addDay(1)->toDateString();
-            }
-            return $output;
-        } else {
-            return $data;
-        }
-    }
-
-    public function array_multi_search($p_needle, $p_haystack)
-    {
-        foreach ($p_haystack as $row) {
-            if (in_array($p_needle, $row)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public function getAllPeopleByPoint($arUserID = 0)
@@ -591,53 +542,6 @@ class ChartDataController extends Controller
         $output['market_count'] = $count->market_count;
         $output['day'] = (new Carbon($endDate))->diffInDays((new Carbon($startDate))) + 1;
 
-        return $output;
-    }
-
-    public function getTopProjects(ChartDataRequest $request, Builder $query)
-    {
-        $this->handleQuery($request, $query, false);
-        $data = $query->selectRaw("ar_product_list.name as product_name,belong,sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum) as playernum,sum(omo_outnum) as omo_outnum, sum(lovenum) as lovenum")
-            ->groupBy('belong')
-            ->orderBy('looknum', 'desc')
-            ->limit(10)
-            ->get();
-
-        $output = [];
-        foreach ($data as $item) {
-            $output[] = [
-                'display_name' => $item->product_name,
-                'index' => $item->belong,
-                'count' => [
-                    'looknum' => $item->looknum,
-                    'playernum7' => $item->playernum7,
-                    'playernum' => $item->playernum,
-                    'omo_outnum' => $item->omo_outnum,
-                    'lovenum' => $item->lovenum
-                ]
-            ];
-        };
-        return array_reverse($output);
-    }
-
-    public function getPointCharacter(ChartDataRequest $request, Builder $query)
-    {
-        $belong = $request->belong;
-        $this->handleQuery($request, $query, false);
-        $table = $query->getModel()->getTable();
-        $data = $query->selectRaw("sum(century10_bnum+century10_gnum) as century10,sum(century00_bnum+century00_gnum) as century00,sum(century90_bnum+century90_gnum) as century90,sum(century80_bnum+century80_gnum) as century80,sum(century70_bnum+century70_gnum) as century70")
-            ->whereRaw("$table.belong='$belong'")
-            ->get();
-        $output = [];
-        foreach ($data as $item) {
-            $output = [
-                'century10' => $item->century10,
-                'century00' => $item->century00,
-                'century90' => $item->century90,
-                'century80' => $item->century80,
-                'century70' => $item->century70,
-            ];
-        }
         return $output;
     }
 
