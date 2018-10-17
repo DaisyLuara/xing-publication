@@ -1473,14 +1473,14 @@ export default {
       ).toFixed(2)
       return result === 0 || result === NaN ? 0 : result + '%'
     },
-    lovenumDivideOmoOutnum: function() {
+    lovenumDivideLookNum: function() {
       let result = (
         (this.peopleCount[3].count / this.peopleCount[2].count) *
         100
       ).toFixed(2)
       return result === 0 || result === NaN ? 0 : result + '%'
     },
-    lovenumDivideLookNum: function() {
+    lovenumDivideOmoOutnum: function() {
       let result = (
         (this.peopleCount[4].count / this.peopleCount[3].count) *
         100
