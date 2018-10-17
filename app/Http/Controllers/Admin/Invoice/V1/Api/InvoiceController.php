@@ -42,8 +42,8 @@ class InvoiceController extends Controller
     public function store(InvoiceRequest $request, Invoice $invoice)
     {
         $invoice = $request->all();
-        $content = $invoice['content'];
-        unset($invoice['content']);
+        $content = $invoice['invoice_content'];
+        unset($invoice['invoice_content']);
         $invoice = Invoice::query()->create($invoice);
         foreach ($content as $item) {
             $item['invoice_id'] = $invoice['id'];
@@ -54,6 +54,8 @@ class InvoiceController extends Controller
 
     public function update(InvoiceRequest $request, Invoice $invoice)
     {
+        $invoice=$request->all();
+        $content=$invoice['invoice_content'];
         $invoice->update($request->all());
         return $this->response->item($invoice, new InvoiceTransformer())->setStatusCode(201);
     }
