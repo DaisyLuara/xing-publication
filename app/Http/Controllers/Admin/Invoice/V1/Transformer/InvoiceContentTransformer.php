@@ -17,7 +17,6 @@ class InvoiceContentTransformer extends TransformerAbstract
     public function transform(InvoiceContent $invoiceContent)
     {
         return [
-            'id' => $invoiceContent->id,
             'name' => $invoiceContent->name,
             'spec_type' => $invoiceContent->spec_type,
             'unit' => $invoiceContent->unit,

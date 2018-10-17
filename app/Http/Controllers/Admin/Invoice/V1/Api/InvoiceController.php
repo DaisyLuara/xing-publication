@@ -54,14 +54,26 @@ class InvoiceController extends Controller
 
     public function update(InvoiceRequest $request, Invoice $invoice)
     {
-        $invoice=$request->all();
-        $content=$invoice['invoice_content'];
-        $invoice->update($request->all());
-        return $this->response->item($invoice, new InvoiceTransformer())->setStatusCode(201);
+        $invoice = $request->all();
+        $content = $invoice['invoice_content'];
+        unset($invoice['invoice_content']);
+
+        Invoice::query()->update($invoice);
+        InvoiceContent::query()
+            ->where('invoice_id', '=', $invoice['id'])
+            ->delete();
+        foreach ($content as $item) {
+            $item['invoice_id'] = $invoice['id'];
+            InvoiceContent::query()->create($item);
+        }
+        return $this->response->noContent();
     }
 
     public function destroy(Invoice $invoice)
     {
+        InvoiceContent::query()
+            ->where('invoice_id', '=', $invoice['id'])
+            ->delete();
         $invoice->delete();
         return $this->response->noContent();
     }
