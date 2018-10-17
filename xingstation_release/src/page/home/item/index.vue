@@ -45,14 +45,14 @@
               class="highchart" />
           </el-col>
           <!-- 业态年龄场景 -->
-          <el-col 
+          <!-- <el-col 
             v-loading="userFlag"
             :span="8" >
             <highcharts 
               ref="userChar"
               :options="userOptions" 
               class="highchart"/>
-          </el-col>
+          </el-col> -->
         </el-row>
       </el-card>
     </div>
@@ -503,7 +503,7 @@ export default {
     getAgeChartData(attributeId, name) {
       if (attributeId) {
         // 行业年龄
-        this.getChartData('user', '4', attributeId, name)
+        // this.getChartData('user', '4', attributeId, name)
       } else {
         this.getChartData('age', '4')
       }
@@ -571,16 +571,16 @@ export default {
                         enabled: true
                       }
                     },
-                    series: {
-                      cursor: 'pointer',
-                      events: {
-                        click: function(event) {
-                          let attribute_id = event.point.id
-                          let name = event.point.name
-                          _this.getAgeChartData(attribute_id, name)
-                        }
-                      }
-                    }
+                    // series: {
+                    //   cursor: 'pointer',
+                    //   events: {
+                    //     click: function(event) {
+                    //       let attribute_id = event.point.id
+                    //       let name = event.point.name
+                    //       _this.getAgeChartData(attribute_id, name)
+                    //     }
+                    //   }
+                    // }
                   },
                   series: [
                     {
@@ -588,10 +588,10 @@ export default {
                     }
                   ]
                 })
-                this.getAgeChartData(
-                  response[0].attribute_id,
-                  response[0].display_name
-                )
+                // this.getAgeChartData(
+                //   response[0].attribute_id,
+                //   response[0].display_name
+                // )
                 this.projectFlag = false
               } else {
                 this.projectFlag = false
@@ -603,17 +603,17 @@ export default {
                     }
                   ]
                 })
-                this.$refs.userChar.chart.update({
-                  title: {
-                    text: '场景业态用户构成'
-                  },
-                  series: [
-                    {
-                      name: '数量',
-                      data: []
-                    }
-                  ]
-                })
+                // this.$refs.userChar.chart.update({
+                //   title: {
+                //     text: '场景业态用户构成'
+                //   },
+                //   series: [
+                //     {
+                //       name: '数量',
+                //       data: []
+                //     }
+                //   ]
+                // })
               }
               break
             case 'user':
