@@ -9,6 +9,7 @@
           :to="{ path: '/ad/url' }">短链接管理</el-breadcrumb-item>
         <el-breadcrumb-item>添加</el-breadcrumb-item>
       </el-breadcrumb>
+      <headModule/>
     </div>
     <div 
       class="url-title">

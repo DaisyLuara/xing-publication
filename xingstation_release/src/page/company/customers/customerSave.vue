@@ -9,6 +9,7 @@
           :to="{ path: '/company/customers' }">客户管理</el-breadcrumb-item>
         <el-breadcrumb-item>{{ customerID ? '修改' : '添加' }}</el-breadcrumb-item>
       </el-breadcrumb>
+      <headModule/>
     </div>
     <div 
       v-loading="setting.loading"
