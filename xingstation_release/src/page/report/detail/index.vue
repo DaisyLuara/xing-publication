@@ -279,14 +279,14 @@
               {{ playernumDivideLookNum }}
             </i>
             <i 
-              v-if="item.index === 'omo_outnum'"
-              class="right-arrow-icon" >
-              {{ lovenumDivideOmoOutnum }}
-            </i>
-            <i 
               v-if="item.index === 'playernum'"
               class="right-arrow-icon" >
               {{ lovenumDivideLookNum }}
+            </i>
+            <i 
+              v-if="item.index === 'omo_outnum'"
+              class="right-arrow-icon" >
+              {{ lovenumDivideOmoOutnum }}
             </i>
           </a>
         </li>
