@@ -44,7 +44,7 @@ class InvoiceController extends Controller
         $invoice = $request->all();
         $content = $invoice['invoice_content'];
         unset($invoice['invoice_content']);
-        $invoice = Invoice::query()->create($invoice);
+        $invoice = Invoice::query()->create(array_merge($invoice, ['status' => 1, 'handler' => '', 'create_user_id' => $this->user()->id]));
         foreach ($content as $item) {
             $item['invoice_id'] = $invoice['id'];
             InvoiceContent::query()->create($item);

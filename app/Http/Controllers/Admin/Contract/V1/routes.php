@@ -10,11 +10,14 @@ $api->version('v1', [
     ], function ($api) {
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
-            $api->get('contract/{contract}','ContractController@show');
-            $api->get('contract','ContractController@index');
-            $api->post('contract','ContractController@store');
-            $api->patch('contract/{contract}','ContractController@update');
-            $api->delete('contract/{contract}','ContractController@destroy');
+            $api->get('contract/{contract}', 'ContractController@show');
+            $api->get('contract', 'ContractController@index');
+            $api->post('contract', 'ContractController@store');
+            $api->patch('contract/{contract}', 'ContractController@update');
+            $api->delete('contract/{contract}', 'ContractController@destroy');
+
+            $api->post('contract/auditing/{contract}', 'ContractController@auditing');
+            $api->post('contract/special_auditing/{contract}','ContractController@specialAuditing');
         });
     });
 

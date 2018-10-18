@@ -17,7 +17,7 @@ class CreateInvoiceTable extends Migration
             $table->increments('id');
             $table->integer('contract_id');
             $table->string('applicant');
-            $table->string('processing_person')->nullable();
+            $table->integer('handler')->nullable();
             $table->smallInteger('type')->comment('0:专票,1:普票');
             $table->string('taxpayer_num')->commmet('纳税人识别号');
             $table->string('phone');
@@ -29,6 +29,7 @@ class CreateInvoiceTable extends Migration
             $table->string('kind');
             $table->integer('total');
             $table->string('remark');
+            $table->integer('create_user_id');
             $table->timestamps();
             $table->index('contract_id');
         });

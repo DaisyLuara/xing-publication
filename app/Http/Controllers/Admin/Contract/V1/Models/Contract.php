@@ -13,16 +13,27 @@ class Contract extends Model
         'name',
         'company_id',
         'applicant',
-        'processing_person',
+        'handler',
         'status',
         'processing_person',
         'type',
         'receive_date',
         'content',
-        'remark'
+        'remark',
+        'create_user_id',
     ];
 
-    public function company(){
-        return $this->belongsTo(Company::class,'company_id','id');
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id', 'id');
+
+    }
+
+    public function handlerUser(){
+        return $this->belongsTo(User::class,'handler','id');
+    }
+
+    public function createUser(){
+        return $this->belongsTo(User::class,'create_user_id','id');
     }
 }

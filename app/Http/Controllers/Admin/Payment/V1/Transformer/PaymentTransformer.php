@@ -20,7 +20,7 @@ class PaymentTransformer extends TransformerAbstract
             'account_number'=>$payment->account_number,
             'receive_status'=>$payment->receive_status,
             'status'=>$payment->status,
-            'processing_person'=>$payment->processing_person,
+            'handler'=>$payment->handler,
             'created_at'=>$payment->created_at,
             'updated_at'=>$payment->updated_at
         ];

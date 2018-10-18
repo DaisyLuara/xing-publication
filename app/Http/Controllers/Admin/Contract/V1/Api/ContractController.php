@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
 use App\Http\Controllers\Admin\Contract\V1\Request\ContractRequest;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Controller;
+use Spatie\Permission\Models\Role;
+use App\Models\User;
 
 class ContractController extends Controller
 {
@@ -25,8 +27,8 @@ class ContractController extends Controller
             $name = $request->name;
             $query->where(function ($query) use ($name) {
                 $query->where('name', 'like', '%' . $name . '%')
-                    ->orWhere(function ($q) use($name){
-                        $q->whereHas('company', function ($q) use($name){
+                    ->orWhere(function ($q) use ($name) {
+                        $q->whereHas('company', function ($q) use ($name) {
                             $q->where('name', 'like', '%' . $name . '%');
                         });
                     });
@@ -47,18 +49,70 @@ class ContractController extends Controller
 
     public function store(ContractRequest $request, Contract $contract)
     {
-        $contract->fill($request->all())->save();
+        $user=$this->user();
+        $role=Role::findByName('legal-affairs');
+        $legal=$role->users()->first();
+        $contract->fill(array_merge($request->all(),['status'=>1,'handler'=>$legal->id,'create_user_id'=>$user->id]))->save();
         return $this->response->item($contract, new ContractTransformer())->setStatusCode(201);
     }
 
     public function update(ContractRequest $request, Contract $contract)
     {
-        $contract->update($request->all());
+        /**@var $user \App\Models\User */
+        $user=$this->user();
+        if($user->getRoleNames()[0]=='legal-affairs'){
+            $contract->update(array_merge($request->all(),['status'=>2,'handler'=>$contract->create_user_id]));
+        }else{
+            $role=Role::findByName('legal-affairs');
+            $legal=$role->users()->first();
+            $contract->update(array_merge($request->all(),['handler'=>$legal->id]));
+        }
         return $this->response->item($contract, new ContractTransformer())->setStatusCode(201);
     }
 
-    public function destroy(Contract $contract){
+    public function destroy(Contract $contract)
+    {
         $contract->delete();
+        return $this->response->noContent();
+    }
+
+    public function auditing(ContractRequest $request, Contract $contract)
+    {
+        /**@var $user \App\Models\User */
+        $user = $this->user();
+        $data=$user->getRoleNames();
+        switch ($data[0]) {
+            case 'legal-affairs':
+                $role=Role::findByName('legal-affairs-manager');
+                $legalManager=$role->users()->first();
+                $contract->status = 2;
+                $contract->handler = $legalManager->id;
+                $contract->update();
+                break;
+            case 'legal-affairs-manager':
+                $contract->handler = '';
+                $contract->update();
+                break;
+            case 'BD-manager':
+                $contract->status = 3;
+                $contract->handler = null;
+                $contract->update();
+                break;
+            default:
+                break;
+        }
+
+        $this->response->noContent();
+    }
+
+    public function specialAuditing(Contract $contract)
+    {
+        $role=Role::findByName('legal-affairs-manager');
+        $legalManager=$role->users()->first();
+
+        $contract->status = 4;
+        $contract->handler = $legalManager->id;
+        $contract->update();
         return $this->response->noContent();
     }
 }
