@@ -77,6 +77,16 @@
             class="coupon-form-input"/>
         </el-form-item>
         <el-form-item 
+          label="类型" 
+          prop="type">
+          <el-radio 
+            v-model="couponForm.type" 
+            :label="1">优惠券</el-radio>
+          <el-radio 
+            v-model="couponForm.type" 
+            :label="0">小样</el-radio>
+        </el-form-item>
+        <el-form-item 
           label="金额" 
           prop="amount">
           <el-input
@@ -266,6 +276,7 @@ export default {
         name: '',
         description: '',
         company_id: '',
+        type: 1,
         image_url: '',
         redirect_url: '',
         amount: 0,
@@ -331,6 +342,7 @@ export default {
             this.couponForm.end_date = result.end_date
             this.couponForm.is_active = result.is_active
             this.couponForm.redirect_url = result.redirect_url
+            this.couponForm.type = result.type
             this.setting.loading = false
           })
           .catch(error => {
@@ -359,7 +371,8 @@ export default {
         delay_effective_day: this.couponForm.delay_effective_day,
         effective_day: this.couponForm.effective_day,
         is_active: this.couponForm.is_active,
-        redirect_url: this.couponForm.redirect_url
+        redirect_url: this.couponForm.redirect_url,
+        type: this.couponForm.type
       }
       if (!this.couponForm.image_url) {
         delete args.image_url
