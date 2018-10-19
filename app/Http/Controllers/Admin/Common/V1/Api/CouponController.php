@@ -26,6 +26,12 @@ use Overtrue\EasySms\EasySms;
 
 class CouponController extends Controller
 {
+
+    /**
+     * 优惠券规则 详情
+     * @param CouponBatch $couponBatch
+     * @return mixed
+     */
     public function getCouponBatch(CouponBatch $couponBatch)
     {
         if (!$couponBatch->dmg_status && !$couponBatch->pmg_status && $couponBatch->stock <= 0) {
@@ -48,11 +54,11 @@ class CouponController extends Controller
     }
 
     /**
-     * 根据策略获取优惠券规则
+     * 根据策略 生成优惠券规则
      * @param CouponRequest $request
      * @return mixed
      */
-    public function getCouponBatches(CouponRequest $request)
+    public function generateCouponBatch(CouponRequest $request)
     {
         //是否已经获取优惠券规则
         $userID = 0;

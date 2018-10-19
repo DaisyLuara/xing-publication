@@ -39,6 +39,8 @@ class CouponBatch extends Model
         'name',
         'description',
         'third_code',
+        'type',
+        'redirect_url'
     ];
 
     public function coupon()
