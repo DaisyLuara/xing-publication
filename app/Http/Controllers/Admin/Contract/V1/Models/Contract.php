@@ -20,13 +20,11 @@ class Contract extends Model
         'receive_date',
         'content',
         'remark',
-        'create_user_id',
     ];
 
     public function company()
     {
         return $this->belongsTo(Company::class, 'company_id', 'id');
-
     }
 
     public function handlerUser(){
@@ -35,5 +33,9 @@ class Contract extends Model
 
     public function createUser(){
         return $this->belongsTo(User::class,'create_user_id','id');
+    }
+
+    public function applicantUser(){
+        return $this->belongsTo(User::class,'applicant','id');
     }
 }

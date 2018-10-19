@@ -15,6 +15,9 @@ $api->version('v1', [
             $api->post('invoice','InvoiceController@store');
             $api->patch('invoice','InvoiceController@update');
             $api->delete('invoice/{invoice}','InvoiceController@destroy');
+
+            $api->post('invoice/auditing/{invoice}', 'InvoiceController@auditing');
+            $api->post('invoice/receive/{invoice}','InvoiceController@receive');
         });
     });
 

@@ -22,6 +22,7 @@ class ContractTransformer extends TransformerAbstract
             'name' => $contract->name,
             'company_name' => $contract->company->name,
             'applicant' => $contract->applicant,
+            'applicant_name'=>$contract->applicantUser->name,
             'status' => $this->statusMapping[$contract->status],
             'handler' => $contract->handler,
             'handler_name' => $contract->handler? $contract->handlerUser->name:null,
@@ -29,7 +30,6 @@ class ContractTransformer extends TransformerAbstract
             'receive_date' => $contract->receive_date,
             'content' => $contract->content,
             'remark' => $contract->remark,
-            'create_user' => $contract->createUser->name,
             'created_at' => $contract->created_at,
             'updated_at' => $contract->updated_at,
         ];

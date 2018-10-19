@@ -16,7 +16,7 @@ class CreatePaymentTable extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('contract_id');
-            $table->string('applicant');
+            $table->integer('applicant');
             $table->string('amount');
             $table->smallInteger('status')->comment('1:待审批,2:审批中,3:已审批,4:已付款');
             $table->integer('handler')->nullable()->comment('处理人');
@@ -27,7 +27,6 @@ class CreatePaymentTable extends Migration
             $table->string("account_bank");
             $table->string('account_number');
             $table->string('remark');
-            $table->integer('create_user_id');
             $table->timestamps();
         });
     }

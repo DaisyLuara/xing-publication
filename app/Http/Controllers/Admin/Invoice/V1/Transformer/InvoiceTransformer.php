@@ -11,8 +11,9 @@ class InvoiceTransformer extends TransformerAbstract
     protected $statusMapping = [
         '1' => '待审批',
         '2' => '审批中',
-        '3' => '已开票',
-        '4' => '已认领'
+        '3' => '已审批',
+        '4' => '已开票',
+        '5' => '已认领'
     ];
     protected $availableIncludes = ['invoice_content', 'contract'];
 
@@ -24,8 +25,9 @@ class InvoiceTransformer extends TransformerAbstract
             'contract_number' => $invoice->contract->contract_number,
             'company_name' => $invoice->contract->company->name,
             'applicant' => $invoice->applicant,
+            'applicant_name' => $invoice->applicantUser->name,
             'handler' => $invoice->handler,
-            'handler_name'=>$invoice->handlerUser->name,
+            'handler_name' => $invoice->handler ? $invoice->handlerUser->name : null,
             'type' => $invoice->type == 0 ? '专票' : '普票',
             'taxpayer_num' => $invoice->taxpayer_num,
             'phone' => $invoice->phone,

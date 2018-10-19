@@ -7,7 +7,6 @@ use App\Http\Controllers\Admin\Contract\V1\Request\ContractRequest;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Controller;
 use Spatie\Permission\Models\Role;
-use App\Models\User;
 
 class ContractController extends Controller
 {
@@ -49,10 +48,9 @@ class ContractController extends Controller
 
     public function store(ContractRequest $request, Contract $contract)
     {
-        $user=$this->user();
         $role=Role::findByName('legal-affairs');
         $legal=$role->users()->first();
-        $contract->fill(array_merge($request->all(),['status'=>1,'handler'=>$legal->id,'create_user_id'=>$user->id]))->save();
+        $contract->fill(array_merge($request->all(),['status'=>1,'handler'=>$legal->id]))->save();
         return $this->response->item($contract, new ContractTransformer())->setStatusCode(201);
     }
 
@@ -61,7 +59,7 @@ class ContractController extends Controller
         /**@var $user \App\Models\User */
         $user=$this->user();
         if($user->getRoleNames()[0]=='legal-affairs'){
-            $contract->update(array_merge($request->all(),['status'=>2,'handler'=>$contract->create_user_id]));
+            $contract->update(array_merge($request->all(),['status'=>2,'handler'=>$contract->applicant]));
         }else{
             $role=Role::findByName('legal-affairs');
             $legal=$role->users()->first();
@@ -90,10 +88,10 @@ class ContractController extends Controller
                 $contract->update();
                 break;
             case 'legal-affairs-manager':
-                $contract->handler = '';
+                $contract->handler = $contract->applicantUser->parent_id;
                 $contract->update();
                 break;
-            case 'BD-manager':
+            case 'bd-manager':
                 $contract->status = 3;
                 $contract->handler = null;
                 $contract->update();

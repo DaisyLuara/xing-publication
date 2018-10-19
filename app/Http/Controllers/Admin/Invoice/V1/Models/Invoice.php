@@ -23,7 +23,6 @@ class Invoice extends Model
         'kind',
         'total',
         'remark',
-        'create_user_id',
     ];
 
     public function invoiceContent(){
@@ -36,5 +35,9 @@ class Invoice extends Model
 
     public function handlerUser(){
         return $this->belongsTo(User::class,'handler','id');
+    }
+
+    public function applicantUser(){
+        return $this->belongsTo(User::class,'applicant','id');
     }
 }
