@@ -41,22 +41,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Schema::defaultStringLength(191);
-        /**
-         * @todo 用户登录页面 优化horizon的鉴权
-         */
-        Horizon::auth(function ($request) {
-            return true;
-//            return Auth::check();
-        });
-
-
-        /**
-         * @todo 用户登录页面 优化horizon的鉴权
-         */
-        Totem::auth(function ($request) {
-            return true;
-//            return Auth::check();
-        });
 
         User::observe(UserObserver::class);
         Company::observe(CompanyObserver::class);
