@@ -81,10 +81,8 @@ class ContractController extends Controller
         $data=$user->getRoleNames();
         switch ($data[0]) {
             case 'legal-affairs':
-                $role=Role::findByName('legal-affairs-manager');
-                $legalManager=$role->users()->first();
                 $contract->status = 2;
-                $contract->handler = $legalManager->id;
+                $contract->handler = $user->parent_id;
                 $contract->update();
                 break;
             case 'legal-affairs-manager':

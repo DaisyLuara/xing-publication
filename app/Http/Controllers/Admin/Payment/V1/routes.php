@@ -10,11 +10,14 @@ $api->version('v1', [
     ], function ($api) {
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
-            $api->get('payment/{payment}','PaymentController@show');
-            $api->get('payment','PaymentController@index');
-            $api->post('payment','PaymentController@store');
-            $api->patch('payment/{payment}','PaymentController@update');
-            $api->delete('payment/{payment}','PaymentController@destroy');
+            $api->get('payment/{payment}', 'PaymentController@show');
+            $api->get('payment', 'PaymentController@index');
+            $api->post('payment', 'PaymentController@store');
+            $api->patch('payment/{payment}', 'PaymentController@update');
+            $api->delete('payment/{payment}', 'PaymentController@destroy');
+
+            $api->post('payment/auditing/{payment}', 'PaymentController@auditing');
+            $api->post('payment/receive/{payment}', 'PaymentController@receive');
         });
     });
 
