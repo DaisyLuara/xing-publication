@@ -17,11 +17,11 @@ class CreateInvoiceContentTable extends Migration
             $table->increments('id');
             $table->integer('invoice_id');
             $table->string('name');
-            $table->string('spec_type');
-            $table->string('unit');
-            $table->integer('num');
-            $table->integer('price');
-            $table->integer('total');
+            $table->string('spec_type')->comment('规格型号');
+            $table->string('unit')->comment('单位');
+            $table->integer('num')->comment('数量');
+            $table->integer('price')->comment('单价');
+            $table->integer('total')->comment('总计');
             $table->index('invoice_id');
         });
     }

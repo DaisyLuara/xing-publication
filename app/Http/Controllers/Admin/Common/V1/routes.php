@@ -39,6 +39,7 @@ $api->version('v1', [
             $api->get('staffs', 'QueryController@arUserQueryIndex');
             $api->get('scene/query', 'QueryController@sceneQueryIndex');
             $api->get('policy/query', 'QueryController@policyQuery');
+            $api->get('contract/query','QueryController@contractQuery');
 
             //消息通知
             $api->get('user/notifications', 'NotificationsController@index');

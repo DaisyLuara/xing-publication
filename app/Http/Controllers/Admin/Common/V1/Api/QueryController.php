@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin\Common\V1\Api;
 
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
+use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
+use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
@@ -267,6 +269,20 @@ class QueryController extends Controller
 
         $policies = $query->get();
         return $this->response->collection($policies, new PolicyTransformer());
+    }
+
+    public function contractQuery(Contract $contract, Request $request)
+    {
+        $query = $contract->query();
+        $user = $this->user();
+
+        if ($request->name) {
+            $query->where('name', 'like', '%', $request->name . '%');
+        }
+
+        $contracts=$query->where('applicant','=',$user->id)->get();
+
+        return $this->response->collection($contracts,new ContractTransformer());
     }
 
 }
