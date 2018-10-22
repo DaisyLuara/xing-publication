@@ -45,7 +45,7 @@ class Handler extends ExceptionHandler
     public function report(Exception $exception)
     {
 
-        if ($this->shouldReport($exception) && env('APP_ENV') == 'local') {
+        if ($this->shouldReport($exception) && env('APP_ENV') == 'production') {
             ding()->with('other')->text($exception->getMessage());
         }
 

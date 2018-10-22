@@ -36,4 +36,4 @@ include app_path('Http/Controllers/Admin/ShortUrl/V1/routes.php');
 include app_path('Http/Controllers/Admin/Attribute/V1/routes.php');
 include app_path('Http/Controllers/Admin/Pay/V1/routes.php');
 include app_path('Http/Controllers/Admin/Coupon/V1/routes.php');
-include app_path("Http/Controllers/Admin/WordFilter/V1/routes.php");
+include app_path("Http/Controllers/Admin/WordFilter/V1/route.php");
