@@ -14,6 +14,7 @@ class CustomerTransformer extends TransformerAbstract
         return [
             'id' => $customer->id,
             'name' => $customer->name,
+            'position' => $customer->position,
             'phone' => $customer->phone,
         ];
     }

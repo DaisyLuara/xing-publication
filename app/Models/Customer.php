@@ -9,7 +9,7 @@ use App\Http\Controllers\Admin\Company\V1\Models\Company;
 class Customer extends Authenticatable implements JWTSubject
 {
 
-    protected $fillable = ['name', 'phone', 'company_id', 'password'];
+    protected $fillable = ['name', 'position','phone', 'company_id', 'password'];
 
     public function company()
     {
