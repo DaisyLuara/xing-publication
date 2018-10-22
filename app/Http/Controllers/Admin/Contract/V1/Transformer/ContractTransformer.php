@@ -11,7 +11,8 @@ class ContractTransformer extends TransformerAbstract
         '1' => '待审批',
         '2' => '审批中',
         '3' => '已审批',
-        '4' => '特批'
+        '4' => '特批',
+        '5' => '驳回'
     ];
 
     public function transform(Contract $contract)

@@ -38,6 +38,7 @@ class InvoiceTransformer extends TransformerAbstract
             'receive_status' => $invoice->receive_status == 0 ? '未收款' : '已收款',
             'kind' => $invoice->kind,
             'total' => $invoice->total,
+            '$total_text'=>$invoice->total_text,
             'remark' => $invoice->remark,
             'created_at' => $invoice->created_at->toDateTimeString(),
             'updated_at' => $invoice->updated_at->toDateTimeString()

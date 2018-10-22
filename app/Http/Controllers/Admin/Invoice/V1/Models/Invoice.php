@@ -22,6 +22,7 @@ class Invoice extends Model
         'receive_status',
         'kind',
         'total',
+        'total_text',
         'remark',
     ];
 

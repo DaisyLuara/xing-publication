@@ -22,7 +22,7 @@ class InvoiceContentTransformer extends TransformerAbstract
             'unit' => $invoiceContent->unit,
             'num' => $invoiceContent->num,
             'price' => $invoiceContent->price,
-            'total' => $invoiceContent->total,
+            'money' => $invoiceContent->money,
         ];
     }
 }

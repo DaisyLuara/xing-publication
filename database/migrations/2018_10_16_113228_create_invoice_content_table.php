@@ -21,7 +21,7 @@ class CreateInvoiceContentTable extends Migration
             $table->string('unit')->comment('单位');
             $table->integer('num')->comment('数量');
             $table->integer('price')->comment('单价');
-            $table->integer('total')->comment('总计');
+            $table->integer('money')->comment('金额');
             $table->index('invoice_id');
         });
     }

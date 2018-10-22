@@ -20,7 +20,7 @@ class InvoiceContent extends Model
         'unit',
         'num',
         'price',
-        'total'
+        'money'
     ];
     public $timestamps=false;
 }

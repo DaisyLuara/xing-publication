@@ -57,14 +57,12 @@ class ContractController extends Controller
 
     public function update(ContractRequest $request, Contract $contract)
     {
-        /**@var $user \App\Models\User */
-        $user = $this->user();
-        if ($user->getRoleNames()[0] == 'legal-affairs') {
-            $contract->update(array_merge($request->all(), ['status' => 2, 'handler' => $contract->applicant]));
-        } else {
+        if ($contract->applicant == $contract->handler && $contract->status == 5) {
             $role = Role::findByName('legal-affairs');
             $legal = $role->users()->first();
-            $contract->update(array_merge($request->all(), ['handler' => $legal->id]));
+            $contract->update(array_merge($request->all(), ['status' => 1, 'handler' => $legal->id]));
+        } else {
+            $contract->update(array_merge($request->all(), ['status' => 5, 'handler' => $contract->applicant]));
         }
         return $this->response->item($contract, new ContractTransformer())->setStatusCode(201);
     }
