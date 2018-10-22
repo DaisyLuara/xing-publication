@@ -5,6 +5,7 @@ namespace App\Console;
 use App\Http\Controllers\Admin\WeChat\V1\Models\WeekRanking;
 use App\Jobs\ActivePlayerJob;
 use App\Jobs\CharacterJob;
+use App\Jobs\FaceLogJob;
 use App\Jobs\MauJob;
 use App\Jobs\WeekRankingJob;
 use Carbon\Carbon;
@@ -52,6 +53,10 @@ class Kernel extends ConsoleKernel
             CharacterJob::dispatch()->onQueue('data-clean');
         })->daily()->at('7:00');
 
+        //围观渗透率
+        $schedule->call(function () {
+            FaceLogJob::dispatch()->onQueue('data-clean');
+        })->daily()->at('7:00');
     }
 
 
