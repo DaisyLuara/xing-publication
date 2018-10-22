@@ -84,7 +84,7 @@
             :label="1">优惠券</el-radio>
           <el-radio 
             v-model="couponForm.type" 
-            :label="0">小样</el-radio>
+            :label="2">小样</el-radio>
         </el-form-item>
         <el-form-item 
           label="金额" 
