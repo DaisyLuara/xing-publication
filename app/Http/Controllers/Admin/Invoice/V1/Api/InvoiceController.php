@@ -22,10 +22,14 @@ class InvoiceController extends Controller
 
     public function index(InvoiceRequest $request, Invoice $invoice)
     {
-        $startDate = $request->start_date;
-        $endDate = $request->end_date;
 
         $query = $invoice->query();
+
+        if ($request->start_date && $request->end_date) {
+            $startDate = $request->start_date;
+            $endDate = $request->end_date;
+            $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '$startDate' and '$endDate' ");
+        }
         if ($request->name) {
             $query->whereHas('contract', function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->name . '%');
@@ -36,9 +40,7 @@ class InvoiceController extends Controller
             $query->where('status', '=', $request->status);
         }
 
-        $invoice = $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '$startDate' and '$endDate'")
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);;
+        $invoice = $query->orderBy('created_at', 'desc')->paginate(10);
         return $this->response->paginator($invoice, new InvoiceTransformer());
     }
 

@@ -40,3 +40,4 @@ include app_path("Http/Controllers/Admin/WordFilter/V1/routes.php");
 include app_path("Http/Controllers/Admin/Contract/V1/routes.php");
 include app_path("Http/Controllers/Admin/Invoice/V1/routes.php");
 include app_path("Http/Controllers/Admin/Payment/V1/routes.php");
+include app_path("Http/Controllers/Admin/Media/V1/routes.php");

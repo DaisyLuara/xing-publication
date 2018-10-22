@@ -18,10 +18,15 @@ class PaymentController extends Controller
 
     public function index(PaymentRequest $request, Payment $payment)
     {
-        $startDate = $request->start_date;
-        $endDate = $request->end_date;
 
         $query = $payment->query();
+
+        if ($request->start_date && $request->end_date) {
+            $startDate = $request->start_date;
+            $endDate = $request->end_date;
+            $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '$startDate' and '$endDate' ");
+        }
+
         if ($request->payee) {
             $query->where('payee', 'like', '%' . $request->payee . '%');
         }
@@ -31,9 +36,7 @@ class PaymentController extends Controller
         if ($request->status) {
             $query->where('status', '=', $request->status);
         }
-        $payment = $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '$startDate' and '$endDate' ")
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        $payment = $query->orderBy('created_at', 'desc')->paginate(10);
         return $this->response->paginator($payment, new PaymentTransformer());
     }
 

@@ -26,7 +26,7 @@ class CreatePaymentTable extends Migration
             $table->string('payee')->comment('申请人');
             $table->string("account_bank")->comment('开户行');
             $table->string('account_number')->comment('开户账号');
-            $table->string('remark')->comment('备注');
+            $table->string('remark')->nullable()->comment('备注');
             $table->timestamps();
         });
     }

@@ -28,7 +28,7 @@ class CreateInvoiceTable extends Migration
             $table->smallInteger('receive_status')->comment('0:未收款,1:已收款');
             $table->string('kind')->comment('种类');
             $table->integer('total')->comment('总计');
-            $table->string('remark')->comment('备注');
+            $table->string('remark')->nullable()->comment('备注');
             $table->timestamps();
             $table->index('contract_id');
         });

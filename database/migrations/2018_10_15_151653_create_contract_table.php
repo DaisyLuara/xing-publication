@@ -24,7 +24,7 @@ class CreateContractTable extends Migration
             $table->smallInteger('type')->comment('0:收款合同,1:付款合同');
             $table->string('receive_date')->nullable();
             $table->string('content');
-            $table->string('remark');
+            $table->string('remark')->nullable();
             $table->timestamps();
         });
     }
