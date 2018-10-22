@@ -39,8 +39,8 @@ class InvoiceTransformer extends TransformerAbstract
             'kind' => $invoice->kind,
             'total' => $invoice->total,
             'remark' => $invoice->remark,
-            'created_at' => $invoice->created_at,
-            'updated_at' => $invoice->updated_at
+            'created_at' => $invoice->created_at->toDateTimeString(),
+            'updated_at' => $invoice->updated_at->toDateTimeString()
         ];
     }
 

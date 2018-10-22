@@ -37,8 +37,8 @@ class PaymentTransformer extends TransformerAbstract
             'status' => $this->statusMapping[$payment->status],
             'handler' => $payment->handler,
             'handler_name' => $payment->handler? $payment->handlerUser->name:null,
-            'created_at' => $payment->created_at,
-            'updated_at' => $payment->updated_at
+            'created_at' => $payment->created_at->toDateTimeString(),
+            'updated_at' => $payment->updated_at->toDateTimeString()
         ];
     }
 }

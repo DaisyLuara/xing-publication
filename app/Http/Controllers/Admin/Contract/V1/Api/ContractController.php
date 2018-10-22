@@ -17,10 +17,13 @@ class ContractController extends Controller
 
     public function index(ContractRequest $request, Contract $contract)
     {
-        $startDate = $request->start_date;
-        $endDate = $request->end_date;
 
         $query = $contract->query();
+        if ($request->startDate && $request->end_date) {
+            $startDate = $request->start_date;
+            $endDate = $request->end_date;
+            $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '$startDate' and '$endDate' ");
+        }
 
         if ($request->name) {
             $name = $request->name;
@@ -38,9 +41,7 @@ class ContractController extends Controller
             $query->where('status', '=', $request->status);
         }
 
-        $contract = $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '$startDate' and '$endDate' ")
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        $contract = $query->orderBy('created_at', 'desc')->paginate(10);
 
         return $this->response->paginator($contract, new ContractTransformer());
 
@@ -48,22 +49,22 @@ class ContractController extends Controller
 
     public function store(ContractRequest $request, Contract $contract)
     {
-        $role=Role::findByName('legal-affairs');
-        $legal=$role->users()->first();
-        $contract->fill(array_merge($request->all(),['status'=>1,'handler'=>$legal->id]))->save();
+        $role = Role::findByName('legal-affairs');
+        $legal = $role->users()->first();
+        $contract->fill(array_merge($request->all(), ['status' => 1, 'handler' => $legal->id]))->save();
         return $this->response->item($contract, new ContractTransformer())->setStatusCode(201);
     }
 
     public function update(ContractRequest $request, Contract $contract)
     {
         /**@var $user \App\Models\User */
-        $user=$this->user();
-        if($user->getRoleNames()[0]=='legal-affairs'){
-            $contract->update(array_merge($request->all(),['status'=>2,'handler'=>$contract->applicant]));
-        }else{
-            $role=Role::findByName('legal-affairs');
-            $legal=$role->users()->first();
-            $contract->update(array_merge($request->all(),['handler'=>$legal->id]));
+        $user = $this->user();
+        if ($user->getRoleNames()[0] == 'legal-affairs') {
+            $contract->update(array_merge($request->all(), ['status' => 2, 'handler' => $contract->applicant]));
+        } else {
+            $role = Role::findByName('legal-affairs');
+            $legal = $role->users()->first();
+            $contract->update(array_merge($request->all(), ['handler' => $legal->id]));
         }
         return $this->response->item($contract, new ContractTransformer())->setStatusCode(201);
     }
@@ -78,7 +79,7 @@ class ContractController extends Controller
     {
         /**@var $user \App\Models\User */
         $user = $this->user();
-        $data=$user->getRoleNames();
+        $data = $user->getRoleNames();
         switch ($data[0]) {
             case 'legal-affairs':
                 $contract->status = 2;
@@ -103,8 +104,8 @@ class ContractController extends Controller
 
     public function specialAuditing(Contract $contract)
     {
-        $role=Role::findByName('legal-affairs-manager');
-        $legalManager=$role->users()->first();
+        $role = Role::findByName('legal-affairs-manager');
+        $legalManager = $role->users()->first();
 
         $contract->status = 4;
         $contract->handler = $legalManager->id;

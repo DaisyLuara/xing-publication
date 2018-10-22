@@ -30,8 +30,8 @@ class ContractTransformer extends TransformerAbstract
             'receive_date' => $contract->receive_date,
             'content' => $contract->content,
             'remark' => $contract->remark,
-            'created_at' => $contract->created_at,
-            'updated_at' => $contract->updated_at,
+            'created_at' => $contract->created_at->toDateTimeString(),
+            'updated_at' => $contract->updated_at->toDateTimeString(),
         ];
     }
 }
