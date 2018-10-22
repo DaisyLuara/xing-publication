@@ -19,7 +19,7 @@ class ContractController extends Controller
     {
 
         $query = $contract->query();
-        if ($request->startDate && $request->end_date) {
+        if ($request->start_date && $request->end_date) {
             $startDate = $request->start_date;
             $endDate = $request->end_date;
             $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '$startDate' and '$endDate' ");
