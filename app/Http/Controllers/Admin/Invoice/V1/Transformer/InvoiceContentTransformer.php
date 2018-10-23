@@ -27,6 +27,6 @@ class InvoiceContentTransformer extends TransformerAbstract
 
     public function includeGoodsService(InvoiceContent $invoiceContent)
     {
-        return $this->collection($invoiceContent->goodsService, new GoodsServiceTransformer());
+        return $this->item($invoiceContent->goodsService, new GoodsServiceTransformer());
     }
 }

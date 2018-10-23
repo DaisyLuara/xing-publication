@@ -14,6 +14,7 @@ use App\Models\Model;
 class GoodsService extends Model
 {
     protected $fillable = [
+        'id',
         'name',
         'spec_type',
         'unit'

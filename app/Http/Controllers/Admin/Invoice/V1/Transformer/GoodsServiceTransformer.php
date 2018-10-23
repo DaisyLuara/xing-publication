@@ -17,6 +17,7 @@ class GoodsServiceTransformer extends TransformerAbstract
     public function transform(GoodsService $goodsService)
     {
         return [
+            'id'=>$goodsService->id,
             'name' => $goodsService->name,
             'spec_type' => $goodsService->spec_type,
             'unit' => $goodsService->unit

@@ -24,6 +24,6 @@ class InvoiceContent extends Model
 
     public function goodsService()
     {
-        return $this->hasOne(GoodsService::class, 'goods_service_id', 'id');
+        return $this->belongsTo(GoodsService::class, 'goods_service_id', 'id');
     }
 }

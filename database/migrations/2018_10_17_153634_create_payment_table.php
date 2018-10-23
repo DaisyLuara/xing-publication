@@ -23,7 +23,7 @@ class CreatePaymentTable extends Migration
             $table->smallInteger('receive_status')->comment('0:已收票,1:未收票');
             $table->smallInteger('type')->comment('1:支票,2:电汇单,3:贷记凭证');
             $table->string("reason")->comment('申请事由');
-            $table->string('payee')->comment('申请人');
+            $table->string('payee')->comment('收款人');
             $table->string("account_bank")->comment('开户行');
             $table->string('account_number')->comment('开户账号');
             $table->string('remark')->nullable()->comment('备注');
