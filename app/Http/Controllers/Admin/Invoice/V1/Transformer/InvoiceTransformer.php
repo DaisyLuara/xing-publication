@@ -13,7 +13,8 @@ class InvoiceTransformer extends TransformerAbstract
         '2' => '审批中',
         '3' => '已审批',
         '4' => '已开票',
-        '5' => '已认领'
+        '5' => '已认领',
+        '6' => '驳回',
     ];
     protected $availableIncludes = ['invoice_content', 'contract'];
 
@@ -38,7 +39,7 @@ class InvoiceTransformer extends TransformerAbstract
             'receive_status' => $invoice->receive_status == 0 ? '未收款' : '已收款',
             'kind' => $invoice->kind,
             'total' => $invoice->total,
-            '$total_text'=>$invoice->total_text,
+            '$total_text' => $invoice->total_text,
             'remark' => $invoice->remark,
             'created_at' => $invoice->created_at->toDateTimeString(),
             'updated_at' => $invoice->updated_at->toDateTimeString()

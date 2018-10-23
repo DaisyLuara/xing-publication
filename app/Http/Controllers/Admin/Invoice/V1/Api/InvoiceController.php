@@ -63,10 +63,13 @@ class InvoiceController extends Controller
 
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if ($user->hasRole('user') || $user->hasRole('bd-manager')) {
+
+        if ($invoice['status'] == 6) {
             $invoice['handler'] = $user->parent_id;
+            $invoice['status'] = 1;
         } else {
             $invoice['handler'] = $invoice['applicant'];
+            $invoice['status'] = 6;
         }
         Invoice::query()->update($invoice);
         InvoiceContent::query()
@@ -90,42 +93,43 @@ class InvoiceController extends Controller
 
     public function auditing(Invoice $invoice)
     {
-
         /**@var $user \App\Models\User */
         $user = $this->user();
-        $data = $user->getRoleNames();
-        switch ($data[0]) {
-            case 'bd-manager':
-                $role = Role::findByName('legal-affairs');
-                $legal = $role->users()->first();
-                $invoice->status = 2;
-                $invoice->handler = $legal->id;
-                $invoice->update();
-                break;
-            case 'legal-affairs':
-                $invoice->handler = $user->parent_id;
-                $invoice->update();
-                break;
-            case 'legal-affairs-manager' :
-                $permission=Permission::findByName('finance_bill');
-                $finance=$permission->users()->first();
-                $invoice->status = 3;
-                $invoice->handler =$finance->id;
-                $invoice->update();
-                break;
-            case 'finance' :
-                $invoice->status=4;
-                $invoice->handler=$invoice->applicant;
-                $invoice->update();
-                break;
-            default:
-                break;
+        if (!$user->hasPermissionTo('auditing')) {
+            abort(500, "无操作权限");
         }
+        if ($user->hasRole('bd-manager')) {
+            $role = Role::findByName('legal-affairs');
+            $legals = $role->users()->get();
+            foreach ($legals as $legal){
+                if($legal->hasPermissionTo('auditing')){
+                    $invoice->status = 2;
+                    $invoice->handler = $legal->id;
+                    $invoice->update();
+                }
+            }
+        } else if ($user->hasRole('legal-affairs')) {
+            $invoice->handler = $user->parent_id;
+            $invoice->update();
+        } else if ($user->hasRole('legal-affairs-manager')) {
+            $permission = Permission::findByName('finance_bill');
+            $finance = $permission->users()->first();
+            $invoice->status = 3;
+            $invoice->handler = $finance->id;
+            $invoice->update();
+        } else if ($user->hasRole('finance')) {
+            $invoice->status = 4;
+            $invoice->handler = $invoice->applicant;
+            $invoice->update();
+        }
+
+        return $this->response->item($invoice, new InvoiceTransformer())->setStatusCode(201);
     }
 
-    public function receive(Invoice $invoice){
-        $invoice->status=5;
-        $invoice->handler=null;
+    public function receive(Invoice $invoice)
+    {
+        $invoice->status = 5;
+        $invoice->handler = null;
         $invoice->update();
         return $this->response->noContent();
     }
