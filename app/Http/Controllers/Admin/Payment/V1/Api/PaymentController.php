@@ -56,7 +56,7 @@ class PaymentController extends Controller
             $payment->status = 5;
             $payment->handler = $payment->applicant;
         }
-        Payment::query()->update($payment);
+        $payment->update();
         return $this->response->noContent();
     }
 

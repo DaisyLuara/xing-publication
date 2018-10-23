@@ -20,7 +20,7 @@ class CreatePaymentTable extends Migration
             $table->string('amount')->comment('申请金额');
             $table->smallInteger('status')->comment('1:待审批,2:审批中,3:已审批,4:已付款');
             $table->integer('handler')->nullable()->comment('处理人');
-            $table->smallInteger('receive_status')->comment('0:已收票,1:未收票');
+            $table->smallInteger('receive_status')->comment('0:未收票,1:已收票');
             $table->smallInteger('type')->comment('1:支票,2:电汇单,3:贷记凭证');
             $table->string("reason")->comment('申请事由');
             $table->string('payee')->comment('收款人');

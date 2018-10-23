@@ -33,6 +33,7 @@ class PaymentTransformer extends TransformerAbstract
             'applicant_name' => $payment->applicantUser->name,
             'amount' => $payment->amount,
             'type' => $this->typeMapping[$payment->type],
+            'reason' => $payment->reason,
             'remark' => $payment->remark,
             'account_bank' => $payment->account_bank,
             'account_number' => $payment->account_number,
