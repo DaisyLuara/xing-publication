@@ -40,6 +40,7 @@ $api->version('v1', [
             $api->get('scene/query', 'QueryController@sceneQueryIndex');
             $api->get('policy/query', 'QueryController@policyQuery');
             $api->get('contract/query','QueryController@contractQuery');
+            $api->get('goods_service/query','QueryController@goodsServiceQuery');
 
             //消息通知
             $api->get('user/notifications', 'NotificationsController@index');

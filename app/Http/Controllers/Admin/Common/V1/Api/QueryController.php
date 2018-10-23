@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\PolicyTransformer;
+use App\Http\Controllers\Admin\Invoice\V1\Models\GoodsService;
+use App\Http\Controllers\Admin\Invoice\V1\Transformer\GoodsServiceTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\AreaTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\MarketTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\PointTransformer;
@@ -280,9 +282,15 @@ class QueryController extends Controller
             $query->where('name', 'like', '%', $request->name . '%');
         }
 
-        $contracts=$query->where('applicant','=',$user->id)->get();
+        $contracts = $query->where('applicant', '=', $user->id)->get();
 
-        return $this->response->collection($contracts,new ContractTransformer());
+        return $this->response->collection($contracts, new ContractTransformer());
     }
 
+    public function goodsServiceQuery(GoodsService $goodsService, Request $request)
+    {
+        $query = $goodsService->query();
+        $contracts = $query->get();
+        return $this->response->collection($contracts, new GoodsServiceTransformer());
+    }
 }
