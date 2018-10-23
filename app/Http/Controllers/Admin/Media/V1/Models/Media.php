@@ -18,6 +18,7 @@ class Media extends Model
         'size',
         'url',
         'company_id',
+        'contract_id',
         'height',
         'width',
     ];

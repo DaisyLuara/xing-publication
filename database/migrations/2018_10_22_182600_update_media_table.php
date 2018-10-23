@@ -13,8 +13,9 @@ class UpdateMediaTable extends Migration
      */
     public function up()
     {
-        Schema::table('media',function (Blueprint $table){
+        Schema::table('media', function (Blueprint $table) {
             $table->integer('company_id')->nullable()->change();
+            $table->integer('contract_id')->nullable()->after('company_id');
         });
     }
 
@@ -25,8 +26,9 @@ class UpdateMediaTable extends Migration
      */
     public function down()
     {
-        Schema::table('media',function (Blueprint $table){
+        Schema::table('media', function (Blueprint $table) {
             $table->integer('company_id')->nullable()->change();
+            $table->dropColumn('contract_id');
         });
     }
 }

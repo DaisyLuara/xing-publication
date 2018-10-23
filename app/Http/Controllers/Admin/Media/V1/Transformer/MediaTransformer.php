@@ -12,6 +12,7 @@ class MediaTransformer extends TransformerAbstract
         return [
             'id' => $media->id,
             'company_id' => $media->company_id,
+            'contract_id' => $media->contract_id,
             'name' => $media->name,
             'type' => $media->type,
             'size' => $media->size,

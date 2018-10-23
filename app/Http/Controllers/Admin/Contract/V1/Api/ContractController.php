@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin\Contract\V1\Api;
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
 use App\Http\Controllers\Admin\Contract\V1\Request\ContractRequest;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
+use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Http\Controllers\Controller;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class ContractController extends Controller
@@ -50,25 +52,50 @@ class ContractController extends Controller
     public function store(ContractRequest $request, Contract $contract)
     {
         $role = Role::findByName('legal-affairs');
-        $legal = $role->users()->first();
-        $contract->fill(array_merge($request->all(), ['status' => 1, 'handler' => $legal->id]))->save();
-        return $this->response->item($contract, new ContractTransformer())->setStatusCode(201);
+        $legals = $role->users()->get();
+        foreach ($legals as $legal) {
+            if ($legal->hasPermissionTo('auditing')) {
+                $contract->fill(array_merge($request->all(), ['status' => 1, 'handler' => $legal->id]))->save();
+                $ids = explode(',', $request->ids);
+                foreach ($ids as $id) {
+                    Media::where('id', '=', $id)->update(['contract_id' => $contract->id]);
+                }
+                return $this->response->item($contract, new ContractTransformer())->setStatusCode(201);
+            }
+        }
+        abort(500, "无审批的法务,请联系管理员");
     }
 
     public function update(ContractRequest $request, Contract $contract)
     {
         if ($contract->applicant == $contract->handler && $contract->status == 5) {
             $role = Role::findByName('legal-affairs');
-            $legal = $role->users()->first();
-            $contract->update(array_merge($request->all(), ['status' => 1, 'handler' => $legal->id]));
+            $legals = $role->users()->get();
+            foreach ($legals as $legal) {
+                if ($legal->hasPermissionTo('auditing')) {
+                    $contract->update(array_merge($request->all(), ['status' => 1, 'handler' => $legal->id]));
+                    $ids = $request->ids;
+                    Media::query()->whereRaw(" contract_id=$contract->id and id not in ($ids)")->delete();
+                    Media::query()->whereRaw(" id in ($ids)")->update(['contract_id' => $contract->id]);
+                    return $this->response->item($contract, new ContractTransformer())->setStatusCode(201);
+                }
+            }
+            abort(500, "无审批的法务,请联系管理员");
         } else {
             $contract->update(array_merge($request->all(), ['status' => 5, 'handler' => $contract->applicant]));
+            $ids = $request->ids;
+            Media::query()->whereRaw(" contract_id=$contract->id and id not in ($ids)")->delete();
+            Media::query()->whereRaw(" id in ($ids)")->update(['contract_id' => $contract->id]);
+            return $this->response->item($contract, new ContractTransformer())->setStatusCode(201);
         }
-        return $this->response->item($contract, new ContractTransformer())->setStatusCode(201);
+
     }
 
     public function destroy(Contract $contract)
     {
+        if ($contract->status == 2) {
+            abort(500, "合同审核中无法删除");
+        }
         $contract->delete();
         return $this->response->noContent();
     }
@@ -77,27 +104,23 @@ class ContractController extends Controller
     {
         /**@var $user \App\Models\User */
         $user = $this->user();
-        $data = $user->getRoleNames();
-        switch ($data[0]) {
-            case 'legal-affairs':
-                $contract->status = 2;
-                $contract->handler = $user->parent_id;
-                $contract->update();
-                break;
-            case 'legal-affairs-manager':
-                $contract->handler = $contract->applicantUser->parent_id;
-                $contract->update();
-                break;
-            case 'bd-manager':
-                $contract->status = 3;
-                $contract->handler = null;
-                $contract->update();
-                break;
-            default:
-                break;
+        if (!$user->hasPermissionTo('auditing')) {
+            abort(500, "无操作权限");
+        }
+        if ($user->hasRole('legal-affairs')) {
+            $contract->status = 2;
+            $contract->handler = $user->parent_id;
+            $contract->update();
+        } else if ($user->hasRole('legal-affairs-manager')) {
+            $contract->handler = $contract->applicantUser->parent_id;
+            $contract->update();
+        } else if ($user->hasRole('bd-manager')) {
+            $contract->status = 3;
+            $contract->handler = null;
+            $contract->update();
         }
 
-        $this->response->noContent();
+        return $this->response->item($contract, new ContractTransformer())->setStatusCode(201);
     }
 
     public function specialAuditing(Contract $contract)
@@ -105,6 +128,9 @@ class ContractController extends Controller
         $role = Role::findByName('legal-affairs-manager');
         $legalManager = $role->users()->first();
 
+        if ($contract->status == 2) {
+            abort(500, "合同审核中无法申请特批");
+        }
         $contract->status = 4;
         $contract->handler = $legalManager->id;
         $contract->update();
