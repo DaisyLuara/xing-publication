@@ -68,7 +68,7 @@ return [
         'qiniu' => [
             'driver' => 'qiniu',
             'domains' => [
-                'default' => 'p8afu5a1q.bkt.clouddn.com', //你的七牛域名
+                'default' => 'qiniucdn.xingstation.com', //你的七牛域名
                 'https' => 'dn-yourdomain.qbox.me',         //你的HTTPS域名
                 'custom' => 'static.abc.com',                //你的自定义域名
             ],
