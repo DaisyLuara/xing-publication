@@ -16,9 +16,7 @@ class CreateInvoiceContentTable extends Migration
         Schema::create('invoice_contents', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('invoice_id');
-            $table->string('name');
-            $table->string('spec_type')->comment('规格型号');
-            $table->string('unit')->comment('单位');
+            $table->integer('goods_service_id');
             $table->integer('num')->comment('数量');
             $table->integer('price')->comment('单价');
             $table->integer('money')->comment('金额');

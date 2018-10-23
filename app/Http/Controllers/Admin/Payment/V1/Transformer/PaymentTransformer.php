@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Payment\V1\Transformer;
 
 use App\Http\Controllers\Admin\Payment\V1\Models\Payment;
 use League\Fractal\TransformerAbstract;
+use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 
 class PaymentTransformer extends TransformerAbstract
 {
@@ -20,6 +21,7 @@ class PaymentTransformer extends TransformerAbstract
         '2' => '电汇单',
         '3' => '贷记凭证'
     ];
+    protected $availableIncludes = ['contract'];
 
     public function transform(Payment $payment)
     {
@@ -41,5 +43,10 @@ class PaymentTransformer extends TransformerAbstract
             'created_at' => $payment->created_at->toDateTimeString(),
             'updated_at' => $payment->updated_at->toDateTimeString()
         ];
+    }
+
+    public function includeContract(Payment $payment)
+    {
+        return $this->item($payment->contract, new ContractTransformer());
     }
 }
