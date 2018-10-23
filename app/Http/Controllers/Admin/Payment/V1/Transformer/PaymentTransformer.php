@@ -11,7 +11,8 @@ class PaymentTransformer extends TransformerAbstract
         '1' => '待审批',
         '2' => '审批中',
         '3' => '已审批',
-        '4' => '已付款'
+        '4' => '已付款',
+        '5' => '驳回'
     ];
 
     protected $typeMapping = [
@@ -26,7 +27,7 @@ class PaymentTransformer extends TransformerAbstract
             'id' => $payment->id,
             'contract_number' => $payment->contract->contract_number,
             'payee' => $payment->payee,
-            'applicant'=>$payment->applicant,
+            'applicant' => $payment->applicant,
             'applicant_name' => $payment->applicantUser->name,
             'amount' => $payment->amount,
             'type' => $this->typeMapping[$payment->type],
@@ -36,7 +37,7 @@ class PaymentTransformer extends TransformerAbstract
             'receive_status' => $payment->receive_status == 0 ? '未收票' : '已收票',
             'status' => $this->statusMapping[$payment->status],
             'handler' => $payment->handler,
-            'handler_name' => $payment->handler? $payment->handlerUser->name:null,
+            'handler_name' => $payment->handler ? $payment->handlerUser->name : null,
             'created_at' => $payment->created_at->toDateTimeString(),
             'updated_at' => $payment->updated_at->toDateTimeString()
         ];

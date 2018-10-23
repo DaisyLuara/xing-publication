@@ -24,15 +24,15 @@ class AddRoleForProcessSeeder extends Seeder
         $finance = Role::create(['name' => 'finance', 'display_name' => '财务']);
         $auditor = Role::create(['name' => 'auditor', 'display_name' => '审计']);
 
-        $legalManager->givePermissionTo(['company', 'system', 'project', 'device', 'ad', 'point', 'team', 'report', 'home', 'contract', 'invoice', 'payments','auditing']);
-        $BDManager->givePermissionTo(['company', 'system', 'project', 'device', 'ad', 'point', 'team', 'report', 'home', 'contract', 'invoice', 'payments','auditing']);
+        $legalManager->givePermissionTo(['company', 'system', 'project', 'device', 'ad', 'point', 'team', 'report', 'home', 'contract', 'invoice', 'payments']);
+        $BDManager->givePermissionTo(['company', 'system', 'project', 'device', 'ad', 'point', 'team', 'report', 'home', 'contract', 'invoice', 'payments']);
         $finance->givePermissionTo(['invoice', 'payments']);
         $auditor->givePermissionTo(['payments']);
 
         $BD = Role::findByName('user');
         $BD->givePermissionTo(['contract', 'invoice', 'payments']);
 
-        $super_admin = Role::findByName('super-admin');
-        $super_admin->givePermissionTo(['contract', 'invoice', 'payments']);
+//        $super_admin = Role::findByName('super-admin');
+//        $super_admin->givePermissionTo(['contract', 'invoice', 'payments']);
     }
 }

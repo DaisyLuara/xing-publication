@@ -84,6 +84,9 @@ class InvoiceController extends Controller
 
     public function destroy(Invoice $invoice)
     {
+        if($invoice->status!=1){
+            abort(500,"合同审批状态已更改，不可删除");
+        }
         InvoiceContent::query()
             ->where('invoice_id', '=', $invoice['id'])
             ->delete();
@@ -95,9 +98,7 @@ class InvoiceController extends Controller
     {
         /**@var $user \App\Models\User */
         $user = $this->user();
-        if (!$user->hasPermissionTo('auditing')) {
-            abort(500, "无操作权限");
-        }
+
         if ($user->hasRole('bd-manager')) {
             $role = Role::findByName('legal-affairs');
             $legals = $role->users()->get();

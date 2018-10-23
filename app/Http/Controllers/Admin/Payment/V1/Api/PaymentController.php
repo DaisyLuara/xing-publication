@@ -48,12 +48,23 @@ class PaymentController extends Controller
 
     public function update(PaymentRequest $request, Payment $payment)
     {
-        $payment->update($request->all());
+        $user = $this->user();
+        if ($payment->status == 5) {
+            $payment->status = 1;
+            $payment->handler = $user->parent_id;
+        } else {
+            $payment->status = 5;
+            $payment->handler = $payment->applicant;
+        }
+        Payment::query()->update($payment);
         return $this->response->noContent();
     }
 
     public function destroy(Payment $payment)
     {
+        if ($payment->status != 1) {
+            abort(500, "合同审批状态已更改，不可删除");
+        }
         $payment->delete();
         return $this->response->noContent();
     }
@@ -62,39 +73,44 @@ class PaymentController extends Controller
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        $data = $user->getRoleNames();
-        switch ($data[0]) {
-            case 'bd-manager':
-                $role = Role::findByName('legal-affairs');
-                $legal = $role->users()->first();
-                $payment->status = 2;
-                $payment->handler = $legal->id;
-                $payment->update();
-                break;
-            case 'legal-affairs':
-                $payment->handler = $user->parent_id;
-                $payment->update();
-                break;
-            case 'legal-affairs-manager':
-                $role = Role::findByName('auditor');
-                $auditor = $role->users()->first();
-                $payment->handler = $auditor->id;
-                $payment->update();
-                break;
-            case 'auditor':
-                $permission = Permission::findByName('finance_pay');
-                $finance = $permission->users()->first();
-                $payment->status = 3;
-                $payment->handler = $finance->id;
-                $payment->update();
-                break;
-            case 'finance':
-                $payment->status = 4;
-                $payment->handler = null;
-                $payment->update();
-                break;
-            default:
-                break;
+
+        if ($user->hasRole('bd-manager')) {
+            $role = Role::findByName('legal-affairs');
+            $legals = $role->users()->get();
+            foreach ($legals as $legal) {
+                if ($legal->hasPermissionTo('auditing')) {
+                    $payment->status = 2;
+                    $payment->handler = $legal->id;
+                    $payment->update();
+                }
+            }
+        } else if ($user->hasRole('legal-affairs')) {
+
+            $payment->handler = $user->parent_id;
+            $payment->update();
+
+        } else if ($user->hasRole('legal-affairs-manager')) {
+
+            $role = Role::findByName('auditor');
+            $auditors = $role->users()->get();
+            foreach ($auditors as $auditor) {
+                if ($auditor->hasPermissionTo('auditing')) {
+                    $payment->handler = $auditor->id;
+                    $payment->update();
+                }
+            }
+        } else if ($user->hasRole('auditor')) {
+
+            $permission = Permission::findByName('finance_pay');
+            $finance = $permission->users()->first();
+            $payment->status = 3;
+            $payment->handler = $finance->id;
+            $payment->update();
+
+        } else if ($user->hasRole('finance')) {
+            $payment->status = 4;
+            $payment->handler = null;
+            $payment->update();
         }
         return $this->response->noContent();
     }

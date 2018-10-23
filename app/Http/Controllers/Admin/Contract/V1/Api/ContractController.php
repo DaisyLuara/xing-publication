@@ -93,8 +93,8 @@ class ContractController extends Controller
 
     public function destroy(Contract $contract)
     {
-        if ($contract->status == 2) {
-            abort(500, "合同审核中无法删除");
+        if ($contract->status != 1) {
+            abort(500, "合同审批状态已更改，不可删除");
         }
         $contract->delete();
         return $this->response->noContent();
@@ -104,9 +104,7 @@ class ContractController extends Controller
     {
         /**@var $user \App\Models\User */
         $user = $this->user();
-        if (!$user->hasPermissionTo('auditing')) {
-            abort(500, "无操作权限");
-        }
+
         if ($user->hasRole('legal-affairs')) {
             $contract->status = 2;
             $contract->handler = $user->parent_id;
