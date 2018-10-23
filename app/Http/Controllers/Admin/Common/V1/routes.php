@@ -18,6 +18,10 @@ $api->version('v1', [
             $api->post('open/user/coupon', 'CouponController@getUserCoupon');//获取用户优惠券
         });
 
+        //淘宝接口
+        $api->get('tmall/user/coupon_batch/{couponBatch}', 'TaobaoCouponController@show');//获取用户的淘宝优惠券
+        $api->post('tmall/user/coupon_batch/{couponBatch}', 'TaobaoCouponController@store');//发送淘宝优惠券
+        $api->patch('tmall/user/coupon', 'TaobaoCouponController@update');//核销
 
         $api->get('open/project/policy', 'ProjectController@show');//根据节目获取优惠券投放策略
         $api->get('s/{url_path}', 'ShortUrlController@redirect');//短链接跳转

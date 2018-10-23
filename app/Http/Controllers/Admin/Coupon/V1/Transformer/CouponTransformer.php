@@ -18,6 +18,7 @@ class CouponTransformer extends TransformerAbstract
         return [
             'code' => $coupon->code,
             'name' => $coupon->couponBatch->name,
+            'status' => (int)$coupon->status,
         ];
     }
 }
