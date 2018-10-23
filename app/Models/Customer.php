@@ -11,7 +11,7 @@ class Customer extends Authenticatable implements JWTSubject
 {
     use HasRoles;
 
-    protected $fillable = ['name', 'phone', 'company_id', 'password','ar_user_id'];
+    protected $fillable = ['name', 'phone', 'company_id', 'password'];
 
     public function company()
     {
