@@ -50,14 +50,14 @@ class PaymentController extends Controller
     {
         $user = $this->user();
         if ($payment->status == 5) {
-            $payment->status = 1;
-            $payment->handler = $user->parent_id;
+            $payment->update(array_merge($request->all(), ['status' => 1, 'handler' => $user->parent_id]));
         } else {
             $payment->status = 5;
             $payment->handler = $payment->applicant;
+            $payment->update(array_merge($request->all(), ['status' => 5, 'handler' => $user->applicant]));
         }
-        $payment->update();
-        return $this->response->noContent();
+
+        return $this->response->item($payment, new PaymentTransformer());
     }
 
     public function destroy(Payment $payment)
