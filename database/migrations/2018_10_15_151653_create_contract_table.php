@@ -22,7 +22,6 @@ class CreateContractTable extends Migration
             $table->smallInteger('status')->comment('1:待审批,2:审批中,3:已审批,4:特批,5:驳回');
             $table->integer('handler')->nullable()->comment('处理人');
             $table->smallInteger('type')->comment('0:收款合同,1:付款合同');
-            $table->string('receive_date')->nullable();
             $table->string('remark')->nullable();
             $table->timestamps();
         });

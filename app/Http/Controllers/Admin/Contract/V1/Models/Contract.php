@@ -18,7 +18,6 @@ class Contract extends Model
         'status',
         'processing_person',
         'type',
-        'receive_date',
         'remark',
     ];
 
@@ -45,5 +44,9 @@ class Contract extends Model
     public function media()
     {
         return $this->hasMany(Media::class, 'contract_id', 'id');
+    }
+
+    public function receiveDate(){
+        return $this->hasMany(ContractReceiveDate::class,'contract_id','id');
     }
 }

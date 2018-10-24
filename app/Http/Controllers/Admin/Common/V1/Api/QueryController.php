@@ -281,7 +281,10 @@ class QueryController extends Controller
         $user = $this->user();
 
         if ($request->name) {
-            $query->where('name', 'like', '%', $request->name . '%');
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+        if ($request->contract_number) {
+            $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
         }
 
         $contracts = $query->where('applicant', '=', $user->id)->get();

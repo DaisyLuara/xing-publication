@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin\Contract\V1\Transformer;
 
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
-use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Http\Controllers\Admin\Media\V1\Transformer\MediaTransformer;
 use League\Fractal\TransformerAbstract;
 
@@ -34,8 +33,8 @@ class ContractTransformer extends TransformerAbstract
             'handler' => $contract->handler,
             'handler_name' => $contract->handler ? $contract->handlerUser->name : null,
             'type' => $contract->type == 0 ? '收款合同' : '付款合同',
-            'receive_date' => $contract->receive_date,
             'remark' => $contract->remark,
+            'receive_date' => join(',', array_column($contract->receiveDate->toArray(), 'date')),
             'created_at' => $contract->created_at->toDateTimeString(),
             'updated_at' => $contract->updated_at->toDateTimeString(),
         ];
