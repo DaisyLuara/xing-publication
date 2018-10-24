@@ -16,15 +16,9 @@ class AdminCustomersController extends Controller
 
         $query = $customer->query();
 
-        $currentUser = $this->user();
-
-        if ($currentUser->isAdmin()) {
-            $customers = $query->paginate(10);
-        } else {
-            $customers = $query->whereHas('company', function ($q) use ($company) {
-                $q->where('id', $company->id);
-            })->paginate(10);
-        }
+        $customers = $query->whereHas('company', function ($q) use ($company) {
+            $q->where('id', $company->id);
+        })->orderByDesc('id')->paginate(10);
 
         return $this->response->paginator($customers, new CustomerTransformer());
     }

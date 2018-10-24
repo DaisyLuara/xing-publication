@@ -20,11 +20,11 @@ class AdminCompaniesController extends Controller
         }
 
         if ($currentUser->isAdmin()) {
-            $companies = $query->paginate(10);
+            $companies = $query->orderByDesc('id')->paginate(10);
         } else {
             $companies = $query->whereHas('user', function ($q) use ($currentUser) {
                 $q->where('id', $currentUser->id);
-            })->paginate(10);
+            })->orderByDesc('id')->paginate(10);
         }
 
         return $this->response->paginator($companies, new CompanyTransformer());
