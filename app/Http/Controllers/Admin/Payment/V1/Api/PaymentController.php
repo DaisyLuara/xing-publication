@@ -52,7 +52,7 @@ class PaymentController extends Controller
         if ($payment->status == 5) {
             $payment->update(array_merge($request->all(), ['status' => 1, 'handler' => $user->parent_id]));
         } else {
-            $payment->update(array_merge($request->all(), ['status' => 5, 'handler' => $user->applicant]));
+            $payment->update(array_merge($request->all(), ['status' => 5, 'handler' => $payment->applicant]));
         }
 
         return $this->response->item($payment, new PaymentTransformer());
