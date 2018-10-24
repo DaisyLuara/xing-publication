@@ -56,6 +56,7 @@ class AdminUsersController extends Controller
             'name' => $request->name,
             'phone' => $request->phone,
             'password' => bcrypt($request->password),
+            'parent_id'=>$request->parent_id,
         ]);
 
         $user->assignRole($role);
@@ -83,7 +84,7 @@ class AdminUsersController extends Controller
             $user->syncRoles($role);
         }
 
-        $attributes = $request->only(['name', 'phone']);
+        $attributes = $request->only(['name', 'phone','parent_id']);
         if ($request->avatar_image_id) {
             $image = Image::find($request->avatar_image_id);
 

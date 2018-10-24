@@ -52,8 +52,6 @@ class PaymentController extends Controller
         if ($payment->status == 5) {
             $payment->update(array_merge($request->all(), ['status' => 1, 'handler' => $user->parent_id]));
         } else {
-            $payment->status = 5;
-            $payment->handler = $payment->applicant;
             $payment->update(array_merge($request->all(), ['status' => 5, 'handler' => $user->applicant]));
         }
 
