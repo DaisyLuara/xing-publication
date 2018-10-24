@@ -40,6 +40,7 @@ class TaobaoCouponController extends Controller
      */
     public function store(CouponBatch $couponBatch, TaobaoCouponRequest $request)
     {
+        Log::info('taobao_coupon_store', $request->all());
         $taobaoUserID = $request->openuid;
 
         //同一种优惠券只能领取一次
