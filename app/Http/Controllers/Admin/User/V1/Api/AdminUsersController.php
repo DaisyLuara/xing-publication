@@ -33,7 +33,7 @@ class AdminUsersController extends Controller
             if (!$isSuperAdmin) {
                 $q->where('name', '<>', 'super-admin');
             }
-        })->paginate(10);
+        })->orderByDesc('id')->paginate(10);
 
         return $this->response->paginator($users, new UserTransformer());
     }

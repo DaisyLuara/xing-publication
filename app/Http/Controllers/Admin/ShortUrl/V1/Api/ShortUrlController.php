@@ -22,7 +22,7 @@ class ShortUrlController extends Controller
         if ($request->description) {
             $query->where('description', 'like', '%' . $request->description . '%');
         }
-        $shortUrls = $query->paginate(10);
+        $shortUrls = $query->orderByDesc('id')->paginate(10);
         return $this->response->paginator($shortUrls, new ShortUrlTransformer());
     }
 
