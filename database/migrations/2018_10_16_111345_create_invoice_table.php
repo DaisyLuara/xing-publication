@@ -24,7 +24,7 @@ class CreateInvoiceTable extends Migration
             $table->string('address')->comment('地址');
             $table->string('account_bank')->comment('开户银行');
             $table->string('account_number')->comment('开户账号');
-            $table->smallInteger('status')->comment('1:待审批,2:审批中,3:已审批,4:已开票,5:已认领');
+            $table->smallInteger('status')->comment('1:待审批,2:审批中,3:已审批,4:已开票,5:已认领,6:驳回');
             $table->smallInteger('receive_status')->comment('0:未收款,1:已收款');
             $table->string('kind')->comment('种类');
             $table->integer('total')->comment('总计');

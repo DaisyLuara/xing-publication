@@ -18,7 +18,7 @@ class CreatePaymentTable extends Migration
             $table->integer('contract_id')->comment('合同id');
             $table->integer('applicant')->comment('申请人');
             $table->string('amount')->comment('申请金额');
-            $table->smallInteger('status')->comment('1:待审批,2:审批中,3:已审批,4:已付款');
+            $table->smallInteger('status')->comment('1:待审批,2:审批中,3:已审批,4:已付款,5:驳回');
             $table->integer('handler')->nullable()->comment('处理人');
             $table->smallInteger('receive_status')->comment('0:未收票,1:已收票');
             $table->smallInteger('type')->comment('1:支票,2:电汇单,3:贷记凭证');
