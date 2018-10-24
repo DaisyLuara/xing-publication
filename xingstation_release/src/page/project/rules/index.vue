@@ -21,6 +21,22 @@
                 placeholder="请输入优惠券名称" 
                 clearable/>
             </el-form-item>
+            <el-form-item 
+              label="" 
+              prop="company_id">
+              <el-select
+                v-model="filters.company_id" 
+                placeholder="请选择公司" 
+                filterable 
+                clearable 
+                class="item-select">
+                <el-option
+                  v-for="item in companyList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"/>
+              </el-select>
+            </el-form-item>
             <el-button 
               type="primary" 
               size="small"
@@ -301,7 +317,8 @@ export default {
       },
       templateVisible: false,
       filters: {
-        name: ''
+        name: '',
+        company_id: ''
       },
       setting: {
         loading: false,
@@ -366,13 +383,16 @@ export default {
       let args = {
         include: 'user,company',
         page: this.pagination.currentPage,
-        name: this.filters.name
+        name: this.filters.name,
+        company_id: this.filters.company_id
+      }
+      if (this.filters.company_id === '') {
+        delete args.company_id
       }
       coupon
         .getCouponList(this, args)
         .then(response => {
           let data = response.data
-          console.log(data)
           this.tableData = data
           this.pagination.total = response.meta.pagination.total
           this.setting.loading = false
@@ -403,7 +423,7 @@ export default {
 .root {
   font-size: 14px;
   color: #5e6d82;
-  
+
   .item-list-wrap {
     background: #fff;
     padding: 30px;

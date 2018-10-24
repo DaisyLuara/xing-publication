@@ -10,16 +10,28 @@
         <div 
           class="search-wrap">
           <el-form 
-            ref="searchForm" 
+            ref="searchForm"
             :model="filters" 
-            :inline="true" >
+            :inline="true">
             <el-form-item 
-              label="" 
+              label=""
               prop="coupon_batch_id">
-              <el-input 
-                v-model="filters.coupon_batch_id"  
-                placeholder="请输入优惠券ID" 
-                clearable/>
+              <el-select 
+                v-model="filters.coupon_batch_id" 
+                :loading="searchLoading"
+                :remote-method="getCouponQuery"
+                :multiple-limit="1"
+                multiple 
+                placeholder="请选择商场" 
+                filterable 
+                remote 
+                clearable>
+                <el-option
+                  v-for="item in couponList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"/>
+              </el-select>
             </el-form-item>
             <el-form-item 
               label="" 
@@ -154,6 +166,7 @@
 
 <script>
 import coupon from 'service/coupon'
+import search from 'service/search'
 import {
   Button,
   Input,
@@ -214,21 +227,43 @@ export default {
           name: '未使用'
         }
       ],
-      tableData: []
+      tableData: [],
+      couponList: [],
+      searchLoading: false
     }
   },
   created() {
     this.putInCouponList()
   },
   methods: {
+    getCouponQuery(query) {
+      if (query !== '') {
+        this.searchLoading = true
+        let args = {
+          name: query
+        }
+        return search
+          .getCouponList(this, args)
+          .then(response => {
+            this.couponList = response.data
+            this.searchLoading = false
+          })
+          .catch(err => {
+            this.searchLoading = false
+          })
+      } else {
+        this.marketList = []
+      }
+    },
     putInCouponList() {
       this.setting.loading = true
+      console.log(this.filters)
       let args = {
         page: this.pagination.currentPage,
-        coupon_batch_id: this.filters.coupon_batch_id,
+        coupon_batch_id: this.filters.coupon_batch_id[0],
         status: this.filters.status
       }
-      if (this.filters.coupon_batch_id === '') {
+      if (this.filters.coupon_batch_id.length === 0) {
         delete args.coupon_batch_id
       }
       if (this.filters.status === '') {
