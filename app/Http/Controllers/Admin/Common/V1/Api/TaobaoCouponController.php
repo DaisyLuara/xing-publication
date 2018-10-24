@@ -102,6 +102,7 @@ class TaobaoCouponController extends Controller
      */
     public function update(TaobaoCouponRequest $request)
     {
+        Log::info('taobao_coupon_update', $request->all());
         $taobaoUserID = $request->openuid;
         $coupon = Coupon::query()->where('code', $request->code)
             ->where('taobao_user_id', $taobaoUserID)
