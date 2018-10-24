@@ -74,6 +74,10 @@
                 inline 
                 class="demo-table-expand">
                 <el-form-item 
+                  label="ID">
+                  <span>{{ scope.row.id }}</span> 
+                </el-form-item>
+                <el-form-item 
                   label="公司">
                   <span>{{ scope.row.company.name }}</span> 
                 </el-form-item>
@@ -151,6 +155,12 @@
               </el-form>
             </template>
           </el-table-column>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="id"
+            label="ID"
+            min-width="100"
+          />
           <el-table-column
             :show-overflow-tooltip="true"
             prop="company_id"
