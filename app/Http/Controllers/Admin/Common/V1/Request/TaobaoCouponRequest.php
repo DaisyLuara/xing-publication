@@ -14,7 +14,7 @@ class TaobaoCouponRequest extends FormRequest
     public function rules()
     {
         return [
-            'openuid' => 'required'
+            'openuid' => 'required|string'
         ];
     }
 }
