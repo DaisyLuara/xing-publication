@@ -29,7 +29,8 @@ class CouponController extends Controller
             $query->where('coupon_batch_id', $request->get('coupon_batch_id'));
         }
 
-        $coupon = $query->paginate(10);
+        $coupon = $query->orderByDesc('id')->paginate(10);
+
         return $this->response->paginator($coupon, new CouponTransformer());
     }
 
