@@ -87,6 +87,10 @@ class CouponController extends Controller
             $query->where('max_age', '>=', $request->age)->where('min_age', '<=', $request->age);
         }
 
+        if ($request->has('score')) {
+            $query->where('max_score', '>=', $request->age)->where('min_score', '<=', $request->age);
+        }
+
         if ($request->has('gender')) {
             $query->where('gender', '=', $request->gender);
         }
