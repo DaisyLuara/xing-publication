@@ -98,7 +98,7 @@ class CouponController extends Controller
         $couponBatchPolicies = $query->join('coupon_batches', 'coupon_batch_id', '=', 'coupon_batches.id')->where('policy_id', '=', $policy->id)->get();
 
         if ($couponBatchPolicies->isEmpty()) {
-            abort('无可用优惠券', 500);
+            abort(500, '无可用优惠券');
         }
 
         $couponBatchPolicies = $couponBatchPolicies->toArray();
@@ -109,7 +109,7 @@ class CouponController extends Controller
         }
 
         if (count($couponBatchPolicies) == 0) {
-            abort('无可用优惠券', 500);
+            abort(500, '无可用优惠券');
         }
 
 
