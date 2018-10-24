@@ -34,5 +34,8 @@ class AddRoleForProcessSeeder extends Seeder
 
         $super_admin = Role::findByName('super-admin');
         $super_admin->givePermissionTo(['invoice', 'payments']);
+
+        $legal = Role::findByName('legal-affairs');
+        $legal->givePermissionTo(['contract', 'invoice', 'payments']);
     }
 }

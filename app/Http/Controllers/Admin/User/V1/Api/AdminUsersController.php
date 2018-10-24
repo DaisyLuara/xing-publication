@@ -56,11 +56,15 @@ class AdminUsersController extends Controller
             'name' => $request->name,
             'phone' => $request->phone,
             'password' => bcrypt($request->password),
-            'parent_id'=>$request->parent_id,
+            'parent_id' => $request->parent_id
         ]);
 
         $user->assignRole($role);
 
+        if ($role->name == 'bd-manager' || $role->name == 'legal-affairs-manager') {
+            $user->parent_id = $user->id;
+            $user->update();
+        }
         activity('user')
             ->causedBy($this->user())
             ->on($user)
@@ -73,8 +77,6 @@ class AdminUsersController extends Controller
 
     public function update($user_id, UserRequest $request)
     {
-
-
         $user = $this->getUserByID($user_id);
         $currentUser = $this->user();
 
@@ -84,7 +86,7 @@ class AdminUsersController extends Controller
             $user->syncRoles($role);
         }
 
-        $attributes = $request->only(['name', 'phone','parent_id']);
+        $attributes = $request->only(['name', 'phone', 'parent_id']);
         if ($request->avatar_image_id) {
             $image = Image::find($request->avatar_image_id);
 

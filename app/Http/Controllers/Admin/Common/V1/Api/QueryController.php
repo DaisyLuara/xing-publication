@@ -32,8 +32,10 @@ use App\Http\Controllers\Admin\Ad\V1\Models\AdTrade;
 use App\Http\Controllers\Admin\Ad\V1\Models\Advertiser;
 use App\Http\Controllers\Admin\Ad\V1\Models\Advertisement;
 use App\Http\Controllers\Admin\User\V1\Models\ArUser;
+use App\Http\Controllers\Admin\User\V1\Transformer\UserTransformer;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class QueryController extends Controller
 {
@@ -292,5 +294,19 @@ class QueryController extends Controller
         $query = $goodsService->query();
         $contracts = $query->get();
         return $this->response->collection($contracts, new GoodsServiceTransformer());
+    }
+
+    public function bdManagerQuery(Request $request)
+    {
+        $role = Role::findByName('bd-manager');
+        $users = $role->users()->get();
+        return $this->response->collection($users, new UserTransformer());
+    }
+
+    public function legalManagerQuery(Request $request)
+    {
+        $role = Role::findByName('legal-affairs-manager');
+        $users = $role->users()->get();
+        return $this->response->collection($users, new UserTransformer());
     }
 }
