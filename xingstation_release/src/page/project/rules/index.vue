@@ -358,7 +358,7 @@ export default {
     },
     linkToEdit(currentCoupon) {
       this.$router.push({
-        path: '/project/coupon/edit/' + currentCoupon.id
+        path: '/project/rules/edit/' + currentCoupon.id
       })
     },
     getCouponList() {
@@ -384,7 +384,7 @@ export default {
     },
     addCoupon() {
       this.$router.push({
-        path: '/project/coupon/add'
+        path: '/project/rules/add'
       })
     },
     changePage(currentPage) {
