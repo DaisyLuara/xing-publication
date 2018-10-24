@@ -74,6 +74,12 @@
           :data="item.batches.data" 
           style="width: 100%">
           <el-table-column
+            :show-overflow-tooltip="true"
+            prop="id"
+            label="ID"
+            min-width="80"
+          />
+          <el-table-column
             prop="name"
             label="优惠券名称"
             min-width="160"

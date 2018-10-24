@@ -22,7 +22,7 @@
                 :remote-method="getCouponQuery"
                 :multiple-limit="1"
                 multiple 
-                placeholder="请选择商场" 
+                placeholder="请选择优惠规则" 
                 filterable 
                 remote 
                 clearable>
