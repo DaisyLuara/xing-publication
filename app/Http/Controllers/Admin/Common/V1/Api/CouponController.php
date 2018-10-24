@@ -15,7 +15,7 @@ use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Common\V1\Request\CouponRequest;
 use App\Http\Controllers\Admin\Coupon\V1\Models\UserCouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
-use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponTransformer;
+use App\Http\Controllers\Admin\Common\V1\Transformer\CouponTransformer;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use DB;

@@ -10,7 +10,7 @@ namespace App\Http\Controllers\Admin\Common\V1\Api;
 
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
-use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponTransformer;
+use App\Http\Controllers\Admin\Common\V1\Transformer\CouponTransformer;
 use App\Http\Controllers\Admin\Common\V1\Request\TaobaoCouponRequest;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
