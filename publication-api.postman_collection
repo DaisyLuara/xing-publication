@@ -3070,7 +3070,7 @@
 										"header": [
 											{
 												"key": "Authorization",
-												"value": "{{jwt_admin}}",
+												"value": "{{jwt_user_1}}",
 												"description": ""
 											},
 											{
@@ -3081,7 +3081,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n\t\"rate\":\"88\",\n\t\"min_age\":10,\n\t\"max_age\":20\n}"
+											"raw": "{\n\t\"rate\":\"88\",\n\t\"min_age\":10,\n\t\"max_age\":20,\n\t\"min_score\":\"95\",\n\t\"max_score\":\"94\"\n}"
 										},
 										"description": ""
 									},
@@ -3143,7 +3143,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_admin}}",
+										"value": "{{jwt_user_1}}",
 										"description": ""
 									}
 								],
@@ -3399,6 +3399,55 @@
 									{
 										"key": "Authorization",
 										"value": "{{jwt_admin}}",
+										"description": ""
+									}
+								],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "投放",
+					"description": "",
+					"item": [
+						{
+							"name": "投放列表",
+							"request": {
+								"url": {
+									"raw": "http://{{host}}/api/coupons?include=couponBatch&coupon_batch_id=3",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"coupons"
+									],
+									"query": [
+										{
+											"key": "include",
+											"value": "couponBatch",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "coupon_batch_id",
+											"value": "3",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{jwt_user_1}}",
 										"description": ""
 									}
 								],
@@ -3896,7 +3945,7 @@
 							"name": "获取优惠券规则",
 							"request": {
 								"url": {
-									"raw": "https://papi.xingstation.com/api/open/coupon/batches?policy_id=9",
+									"raw": "https://papi.xingstation.com/api/open/coupon/batches?policy_id=9&score=90",
 									"protocol": "https",
 									"host": [
 										"papi",
@@ -3913,6 +3962,12 @@
 										{
 											"key": "policy_id",
 											"value": "9",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "score",
+											"value": "90",
 											"equals": true,
 											"description": ""
 										}
@@ -4050,7 +4105,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"openuid\":\"asdfasdfadf\"\n}"
+									"raw": "{\n\t\"openuid\":\"AAGsESr6AGsOHI408ramCukB\"\n}"
 								},
 								"description": ""
 							},
@@ -4060,7 +4115,7 @@
 							"name": "获取用户淘宝优惠券",
 							"request": {
 								"url": {
-									"raw": "{{host}}/api/tmall/user/coupon_batch/3?openuid=asdfasdfadf",
+									"raw": "{{host}}/api/tmall/user/coupon_batch/3?openuid=AAGsESr6AGsOHI408ramCukB",
 									"host": [
 										"{{host}}"
 									],
@@ -4074,7 +4129,7 @@
 									"query": [
 										{
 											"key": "openuid",
-											"value": "asdfasdfadf",
+											"value": "AAGsESr6AGsOHI408ramCukB",
 											"equals": true,
 											"description": ""
 										}
@@ -4100,8 +4155,8 @@
 						{
 							"name": "核销用户淘宝优惠券",
 							"request": {
-								"url": "{{host}}/api/tmall/user/coupon",
-								"method": "PATCH",
+								"url": "http://{{host}}/api/tmall/user/coupon",
+								"method": "POST",
 								"header": [
 									{
 										"key": "Content-Type",
@@ -4111,7 +4166,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"openuid\":\"asdfasdfadf\",\n\t\"code\":\"5bcee6b670baa\"\n}"
+									"raw": "{\n\t\"openuid\":\"AAGsESr6AGsOHI408ramCukB\",\n\t\"code\":\"5bcfe39d68b85\"\n}"
 								},
 								"description": ""
 							},

@@ -6,7 +6,7 @@
       <el-breadcrumb 
         separator="/">
         <el-breadcrumb-item 
-          :to="{ path: '/project/coupon' }">优惠券管理</el-breadcrumb-item>
+          :to="{ path: '/project/rules' }">优惠券规则管理</el-breadcrumb-item>
         <el-breadcrumb-item>{{ couponID ? '修改' : '添加' }}</el-breadcrumb-item>
       </el-breadcrumb>
       <headModule/>
@@ -397,7 +397,7 @@ export default {
                 type: 'success'
               })
               this.$router.push({
-                path: '/project/coupon/'
+                path: '/project/rules/'
               })
             })
             .catch(error => {

@@ -24,7 +24,7 @@ class Policy extends Model
 
     public function batches()
     {
-        return $this->belongsToMany(CouponBatch::class)->withPivot(['rate', 'min_age', 'max_age', 'gender', 'type', 'id']);
+        return $this->belongsToMany(CouponBatch::class)->withPivot(['rate', 'min_age', 'max_age', 'max_score', 'min_score', 'gender', 'type', 'id']);
     }
 
     public function company()
