@@ -52,8 +52,7 @@ class InvoiceController extends Controller
         return $this->response->paginator($invoice, new InvoiceTransformer());
     }
 
-    public
-    function store(InvoiceRequest $request, Invoice $invoice)
+    public function store(InvoiceRequest $request, Invoice $invoice)
     {
         $invoice = $request->all();
         $content = $invoice['invoice_content'];
@@ -66,32 +65,29 @@ class InvoiceController extends Controller
         return $this->response->noContent();
     }
 
-    public
-    function update(InvoiceRequest $request, Invoice $invoice)
+    public function update(InvoiceRequest $request, Invoice $invoice)
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
         if ($invoice->status == 6) {
             $invoice->update(array_merge($request->all(), ['handler' => $user->parent_id, 'status' => 1]));
+            $content = $request->invoice_content;
+            InvoiceContent::query()
+                ->where('invoice_id', '=', $invoice['id'])
+                ->delete();
+            foreach ($content as $item) {
+                $item['invoice_id'] = $invoice['id'];
+                InvoiceContent::query()->create($item);
+            }
         } else if ($invoice->status == 2) {
             $invoice->update(array_merge($request->all(), ['handler' => $invoice->applicant, 'status' => 6]));
         } else {
             abort(500, "不可修改");
         }
-
-        $content = $request->invoice_content;
-        InvoiceContent::query()
-            ->where('invoice_id', '=', $invoice['id'])
-            ->delete();
-        foreach ($content as $item) {
-            $item['invoice_id'] = $invoice['id'];
-            InvoiceContent::query()->create($item);
-        }
         return $this->response->noContent();
     }
 
-    public
-    function destroy(Invoice $invoice)
+    public function destroy(Invoice $invoice)
     {
         if ($invoice->status != 1) {
             abort(500, "合同审批状态已更改，不可删除");
@@ -103,8 +99,7 @@ class InvoiceController extends Controller
         return $this->response->noContent();
     }
 
-    public
-    function auditing(Invoice $invoice)
+    public function auditing(Invoice $invoice)
     {
         /**@var $user \App\Models\User */
         $user = $this->user();
@@ -137,8 +132,7 @@ class InvoiceController extends Controller
         return $this->response->item($invoice, new InvoiceTransformer())->setStatusCode(201);
     }
 
-    public
-    function receive(Invoice $invoice)
+    public function receive(Invoice $invoice)
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
