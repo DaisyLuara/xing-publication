@@ -246,13 +246,13 @@ export default {
                 : this.getLegalManagerList()
             }
             this.userForm.user.parent_id = result.parent_id
-            if (
-              result.parent_id !== null &&
-              (role.display_name === 'BD' || role.display_name === '法务')
-            ) {
+            if (role.display_name === 'BD' || role.display_name === '法务') {
               this.legelFlag = true
             }
-            if (role.display_name === 'BD主管' || role.display_name === '法务主管') {
+            if (
+              role.display_name === 'BD主管' ||
+              role.display_name === '法务主管'
+            ) {
               this.userForm.user.parent_id = this.id
             }
             this.setting.loading = false
