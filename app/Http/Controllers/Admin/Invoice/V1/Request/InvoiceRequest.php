@@ -42,7 +42,7 @@ class InvoiceRequest extends FormRequest
                     'invoice_content.*.money' => 'required|numeric',
                     'total' => 'required|numeric',
                     'total_text' => 'required|string',
-                    'remark' => 'required|string|max:150'
+                    'remark' => 'string|nullable|max:150'
                 ];
                 break;
             case 'PATCH':
@@ -62,7 +62,7 @@ class InvoiceRequest extends FormRequest
                     'invoice_content.*.money' => 'numeric',
                     'total' => 'numeric',
                     'total_text' => 'string',
-                    'remark' => 'string|max:150'
+                    'remark' => 'string|nullable|max:150'
                 ];
                 break;
             default:

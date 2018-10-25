@@ -32,7 +32,7 @@ class ContractRequest extends FormRequest
                     'type' => Rule::in([0, 1]),
                     'receive_date' => 'string',
                     'ids' => 'string',
-                    'remark' => 'string|max:150'
+                    'remark' => 'string|nullable|max:150'
                 ];
                 break;
             case 'PATCH':
@@ -42,7 +42,7 @@ class ContractRequest extends FormRequest
                     'type' => Rule::in([0, 1]),
                     'receive_date' => 'string',
                     'ids' => 'string',
-                    'remark' => 'string|max:150'
+                    'remark' => 'string|nullable|max:150'
                 ];
                 break;
             default:

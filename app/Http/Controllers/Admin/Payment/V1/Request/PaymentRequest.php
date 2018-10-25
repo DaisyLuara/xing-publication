@@ -35,7 +35,7 @@ class PaymentRequest extends FormRequest
                     'payee' => 'required|string|max:50',
                     'account_bank' => 'required|string',
                     'account_number' => 'required|alpha_num',
-                    'remark' => 'required|string|max:150'
+                    'remark' => 'string|nullable|max:150'
                 ];
                 break;
             case 'PATCH':
@@ -48,7 +48,7 @@ class PaymentRequest extends FormRequest
                     'payee' => 'string|max:50',
                     'account_bank' => 'string',
                     'account_number' => 'alpha_num',
-                    'remark' => 'string|max:150'
+                    'remark' => 'string|nullable|max:150'
                 ];
                 break;
             default:
