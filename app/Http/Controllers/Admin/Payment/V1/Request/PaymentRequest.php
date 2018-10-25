@@ -40,15 +40,15 @@ class PaymentRequest extends FormRequest
                 break;
             case 'PATCH':
                 return [
-                    'contract_id' => 'required|integer',
-                    'applicant' => 'required|integer',
-                    'amount' => 'required|numeric',
+                    'contract_id' => 'integer',
+                    'applicant' => 'integer',
+                    'amount' => 'numeric',
                     'type' => Rule::in([1, 2, 3]),
-                    'reason' => 'required|string:max:150',
-                    'payee' => 'required|string|max:50',
-                    'account_bank' => 'required|string',
-                    'account_number' => 'required|alpha_num',
-                    'remark' => 'required|string|max:150'
+                    'reason' => 'string:max:150',
+                    'payee' => 'string|max:50',
+                    'account_bank' => 'string',
+                    'account_number' => 'alpha_num',
+                    'remark' => 'string|max:150'
                 ];
                 break;
             default:
