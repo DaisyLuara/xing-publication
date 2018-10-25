@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Contract\V1\Request;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ContractRequest extends FormRequest
 {
@@ -23,19 +24,29 @@ class ContractRequest extends FormRequest
      */
     public function rules()
     {
-        switch ($this->method()){
+        switch ($this->method()) {
             case 'POST':
                 return [
-
+                    'name' => 'required|max:50',
+                    'contract_number' => 'string',
+                    'type' => Rule::in([0, 1]),
+                    'receive_date' => 'string',
+                    'ids' => 'string',
+                    'remark' => 'string|max:150'
                 ];
                 break;
             case 'PATCH':
                 return [
-
+                    'name' => 'required|max:50',
+                    'contract_number' => 'string',
+                    'type' => Rule::in([0, 1]),
+                    'receive_date' => 'string',
+                    'ids' => 'string',
+                    'remark' => 'string|max:150'
                 ];
                 break;
             default:
-                return[];
+                return [];
         }
 
     }

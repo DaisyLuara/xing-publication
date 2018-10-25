@@ -18,8 +18,8 @@ class CreateInvoiceContentTable extends Migration
             $table->integer('invoice_id');
             $table->integer('goods_service_id');
             $table->integer('num')->comment('数量');
-            $table->integer('price')->comment('单价');
-            $table->integer('money')->comment('金额');
+            $table->string('price')->comment('单价');
+            $table->string('money')->comment('金额');
             $table->index('invoice_id');
         });
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Payment\V1\Request;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class PaymentRequest extends FormRequest
 {
@@ -23,8 +24,35 @@ class PaymentRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            //
-        ];
+        switch ($this->method()) {
+            case 'POST':
+                return [
+                    'contract_id' => 'required|integer',
+                    'applicant' => 'required|integer',
+                    'amount' => 'required|string',
+                    'type' => Rule::in([1, 2, 3]),
+                    'reason' => 'required|string:max:150',
+                    'payee' => 'required|string|max:50',
+                    'account_bank' => 'required|string',
+                    'account_number' => 'required|alpha_num',
+                    'remark' => 'required|string|max:150'
+                ];
+                break;
+            case 'PATCH':
+                return [
+                    'contract_id' => 'required|integer',
+                    'applicant' => 'required|integer',
+                    'amount' => 'required|numeric',
+                    'type' => Rule::in([1, 2, 3]),
+                    'reason' => 'required|string:max:150',
+                    'payee' => 'required|string|max:50',
+                    'account_bank' => 'required|string',
+                    'account_number' => 'required|alpha_num',
+                    'remark' => 'required|string|max:150'
+                ];
+                break;
+            default:
+                return [];
+        }
     }
 }

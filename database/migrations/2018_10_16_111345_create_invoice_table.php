@@ -27,7 +27,7 @@ class CreateInvoiceTable extends Migration
             $table->smallInteger('status')->comment('1:待审批,2:审批中,3:已审批,4:已开票,5:已认领,6:驳回');
             $table->smallInteger('receive_status')->comment('0:未收款,1:已收款');
             $table->string('kind')->comment('种类');
-            $table->integer('total')->comment('总计');
+            $table->string('total')->comment('总计');
             $table->string('total_text')->comment('总计大写');
             $table->string('remark')->nullable()->comment('备注');
             $table->timestamps();

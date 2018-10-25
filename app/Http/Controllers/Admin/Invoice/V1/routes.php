@@ -13,7 +13,7 @@ $api->version('v1', [
             $api->get('invoice/{invoice}','InvoiceController@show');
             $api->get('invoice','InvoiceController@index');
             $api->post('invoice','InvoiceController@store');
-            $api->patch('invoice','InvoiceController@update');
+            $api->patch('invoice/{invoice}','InvoiceController@update');
             $api->delete('invoice/{invoice}','InvoiceController@destroy');
 
             $api->post('invoice/auditing/{invoice}', 'InvoiceController@auditing');

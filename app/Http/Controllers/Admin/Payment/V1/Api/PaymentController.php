@@ -36,7 +36,14 @@ class PaymentController extends Controller
         if ($request->status) {
             $query->where('status', '=', $request->status);
         }
-        $payment = $query->orderBy('created_at', 'desc')->paginate(10);
+        if ($request->contract_number) {
+            $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
+        }
+
+        $user = $this->user();
+        $payment = $query->whereRaw("(applicant=$user->id or handler=$user->id)")
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
         return $this->response->paginator($payment, new PaymentTransformer());
     }
 
@@ -48,6 +55,7 @@ class PaymentController extends Controller
 
     public function update(PaymentRequest $request, Payment $payment)
     {
+        /** @var  $user \App\Models\User */
         $user = $this->user();
         if ($payment->status == 5) {
             $payment->update(array_merge($request->all(), ['status' => 1, 'handler' => $user->parent_id]));
@@ -115,6 +123,11 @@ class PaymentController extends Controller
 
     public function receive(Payment $payment)
     {
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
+        if (!$user->hasPermissionTo('finance_bill')) {
+            abort(500, "无操作权限");
+        }
         $payment->receive_status = 1;
         $payment->update();
         return $this->response->noContent();

@@ -40,22 +40,28 @@ class ContractController extends Controller
 
         if ($request->name) {
             $name = $request->name;
-            $query->where(function ($query) use ($name) {
-                $query->where('name', 'like', '%' . $name . '%')
-                    ->orWhere(function ($q) use ($name) {
-                        $q->whereHas('company', function ($q) use ($name) {
-                            $q->where('name', 'like', '%' . $name . '%');
-                        });
-                    });
+            $query->whereHas('company', function ($q) use ($name) {
+                $q->where('name', 'like', '%' . $name . '%');
             });
         }
+//        if ($request->name) {
+//            $name = $request->name;
+//            $query->where(function ($query) use ($name) {
+//                $query->where('name', 'like', '%' . $name . '%')
+//                    ->orWhere(function ($q) use ($name) {
+//                        $q->whereHas('company', function ($q) use ($name) {
+//                            $q->where('name', 'like', '%' . $name . '%');
+//                        });
+//                    });
+//            });
+//        }
 
         if ($request->status) {
             $query->where('status', '=', $request->status);
         }
 
         if ($request->contract_number) {
-            $query->where('contract_number', '=', $request->contract_number);
+            $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
         }
 
         $user = $this->user();
