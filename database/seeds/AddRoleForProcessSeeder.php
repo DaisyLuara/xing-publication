@@ -25,7 +25,7 @@ class AddRoleForProcessSeeder extends Seeder
         $auditor = Role::create(['name' => 'auditor', 'display_name' => '审计']);
 
         $legalManager->givePermissionTo(['company', 'project', 'device', 'ad', 'point', 'team', 'report', 'home', 'contract', 'invoice', 'payments']);
-        $BDManager->givePermissionTo(['company', 'project', 'device', 'ad', 'point', 'team', 'report', 'home', 'contract', 'invoice', 'payments']);
+        $BDManager->givePermissionTo(['company', 'project', 'device', 'report', 'home', 'contract', 'invoice', 'payments']);
         $finance->givePermissionTo(['invoice', 'payments']);
         $auditor->givePermissionTo(['payments']);
 

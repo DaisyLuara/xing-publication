@@ -41,8 +41,12 @@ class PaymentController extends Controller
         }
 
         $user = $this->user();
-        $payment = $query->whereRaw("(applicant=$user->id or handler=$user->id)")
-            ->orderBy('created_at', 'desc')
+        if ($user->hasRole('finance')) {
+            $query->whereRaw("(handler=$user->id or status=4)");
+        } else {
+            $query->whereRaw("(applicant=$user->id or handler=$user->id)");
+        }
+        $payment = $query->orderBy('created_at', 'desc')
             ->paginate(10);
         return $this->response->paginator($payment, new PaymentTransformer());
     }

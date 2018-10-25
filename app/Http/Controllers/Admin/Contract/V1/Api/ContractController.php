@@ -65,13 +65,16 @@ class ContractController extends Controller
         }
 
         $user = $this->user();
-        $query->whereRaw("(applicant=$user->id or handler=$user->id)");
+        $query->whereRaw("(applicant=$user->id or handler=$user->id)")
+            ->orderBy('created_at', 'desc');
 
         $currentDate = Carbon::now()->toDateString();
         $sql = Contract::query()
             ->whereHas('receiveDate', function ($q) use ($currentDate) {
                 $q->whereRaw("'$currentDate' between date_add(date, interval -5 day) and date_add(date, interval 3 day)");
             })
+            ->whereRaw("(applicant=$user->id or handler=$user->id)")
+            ->orderBy('created_at', 'desc')
             ->union($query)->toSql();
 
         $data = DB::table(DB::raw("($sql) as a"))
@@ -80,7 +83,9 @@ class ContractController extends Controller
         $count = Contract::query()
             ->whereHas('receiveDate', function ($q) use ($currentDate) {
                 $q->whereRaw("'$currentDate' between date_add(date, interval -5 day) and date_add(date, interval 3 day)");
-            })->count();
+            })
+            ->whereRaw("(applicant=$user->id or handler=$user->id)")
+            ->count();
 
         $i = 0;
         foreach ($data as $item) {

@@ -46,16 +46,14 @@ class InvoiceController extends Controller
 
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if ($user->hasRole('finance')) {
-            $query->whereRaw("(handler=$user->id or status=4)");
-        } else {
-            $query->whereRaw("(applicant=$user->id or handler=$user->id)");
-        }
-        $invoice = $query->orderBy('created_at', 'desc')->paginate(10);
+        $invoice = $query->whereRaw("(applicant=$user->id or handler=$user->id)")
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
         return $this->response->paginator($invoice, new InvoiceTransformer());
     }
 
-    public function store(InvoiceRequest $request, Invoice $invoice)
+    public
+    function store(InvoiceRequest $request, Invoice $invoice)
     {
         $invoice = $request->all();
         $content = $invoice['invoice_content'];
@@ -68,7 +66,8 @@ class InvoiceController extends Controller
         return $this->response->noContent();
     }
 
-    public function update(InvoiceRequest $request, Invoice $invoice)
+    public
+    function update(InvoiceRequest $request, Invoice $invoice)
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
@@ -91,7 +90,8 @@ class InvoiceController extends Controller
         return $this->response->noContent();
     }
 
-    public function destroy(Invoice $invoice)
+    public
+    function destroy(Invoice $invoice)
     {
         if ($invoice->status != 1) {
             abort(500, "合同审批状态已更改，不可删除");
@@ -103,7 +103,8 @@ class InvoiceController extends Controller
         return $this->response->noContent();
     }
 
-    public function auditing(Invoice $invoice)
+    public
+    function auditing(Invoice $invoice)
     {
         /**@var $user \App\Models\User */
         $user = $this->user();
@@ -136,7 +137,8 @@ class InvoiceController extends Controller
         return $this->response->item($invoice, new InvoiceTransformer())->setStatusCode(201);
     }
 
-    public function receive(Invoice $invoice)
+    public
+    function receive(Invoice $invoice)
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
