@@ -68,7 +68,9 @@ class ContractController extends Controller
 
         $user = $this->user();
         $query->whereRaw("(applicant=$user->id or handler=$user->id)")
-            ->orderBy('created_at', 'desc');
+            ->orderBy('created_at', 'desc')
+            ->limit(10000000);
+        //union 子查询不加limit导致排序失效
 
         $currentDate = Carbon::now()->toDateString();
         $sql = Contract::query()
@@ -77,6 +79,7 @@ class ContractController extends Controller
             })
             ->whereRaw("(applicant=$user->id or handler=$user->id)")
             ->orderBy('created_at', 'desc')
+            ->limit(10000000)
             ->union($query)->toSql();
 
         $data = DB::table(DB::raw("($sql) as a"))
@@ -178,6 +181,7 @@ class ContractController extends Controller
         if ($contract->status != 1) {
             abort(500, "合同审批状态已更改，不可删除");
         }
+        ContractReceiveDate::query()->where('contract_id', $contract->id)->delete();
         $contract->delete();
         return $this->response->noContent();
     }

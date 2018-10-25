@@ -30,7 +30,7 @@ class ContractRequest extends FormRequest
                     'name' => 'required|max:50',
                     'contract_number' => 'string',
                     'type' => Rule::in([0, 1]),
-                    'receive_date' => 'string',
+                    'receive_date' => 'string|nullable',
                     'ids' => 'string',
                     'remark' => 'string|nullable|max:150'
                 ];
@@ -40,7 +40,7 @@ class ContractRequest extends FormRequest
                     'name' => 'max:50',
                     'contract_number' => 'string',
                     'type' => Rule::in([0, 1]),
-                    'receive_date' => 'string',
+                    'receive_date' => 'string|nullable',
                     'ids' => 'string',
                     'remark' => 'string|nullable|max:150'
                 ];

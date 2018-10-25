@@ -38,7 +38,9 @@ class PaymentController extends Controller
             $query->where('status', '=', $request->status);
         }
         if ($request->contract_number) {
-            $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
+            $query->whereHas('contract', function ($q) use ($request) {
+                $q->where('contract_number', 'like', '%' . $request->contract_number . '%');
+            });
         }
 
         $user = $this->user();
@@ -130,7 +132,7 @@ class PaymentController extends Controller
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if (!$user->hasPermissionTo('finance_bill')) {
+        if (!$user->hasPermissionTo('finance_pay')) {
             abort(500, "无操作权限");
         }
         $payment->receive_status = 1;

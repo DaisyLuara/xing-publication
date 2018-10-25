@@ -42,7 +42,9 @@ class InvoiceController extends Controller
         }
 
         if ($request->contract_number) {
-            $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
+            $query->whereHas('contrace', function ($q) use ($request) {
+                $q->where('contract_number', 'like', '%' . $request->contract_number . '%');
+            });
         }
 
         /** @var  $user \App\Models\User */
