@@ -62,13 +62,31 @@
           label="角色" 
           prop="user.role_id">
           <el-radio-group 
-            v-model="userForm.user.role_id">
+            v-model="userForm.user.role_id"
+            @change="rolesChange">
             <el-radio 
               v-for="role in allRoles" 
               :data="role" 
               :key="role.id" 
               :label="role.id">{{ role.display_name }}</el-radio>
           </el-radio-group>
+        </el-form-item>
+        <el-form-item 
+          v-if="legelFlag"
+          label="主管" 
+          prop="user.parent_id">
+        <el-select 
+          v-model="userForm.user.parent_id"
+          :loading="searchLoading"
+          filterable
+          placeholder="请选择主管" 
+          class="user-form-select">
+          <el-option
+            v-for="item in custodianList"
+            :key="item.parent_id"
+            :label="item.name"
+            :value="item.parent_id"/>
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button 
@@ -85,8 +103,18 @@
 
 <script>
 import user from 'service/user'
+import search from 'service/search'
 import router from 'router'
-import { Button, Input, Form, FormItem, RadioGroup, Radio } from 'element-ui'
+import {
+  Button,
+  Input,
+  Form,
+  FormItem,
+  RadioGroup,
+  Radio,
+  Select,
+  Option
+} from 'element-ui'
 
 export default {
   name: 'AddUser',
@@ -96,7 +124,9 @@ export default {
     'el-form': Form,
     'el-form-item': FormItem,
     'el-radio-group': RadioGroup,
-    'el-radio': Radio
+    'el-radio': Radio,
+    'el-select': Select,
+    'el-option': Option
   },
   data() {
     return {
@@ -105,17 +135,20 @@ export default {
         loading: false,
         loadingText: '拼命加载中'
       },
+      searchLoading: false,
+      custodianList: [],
       userForm: {
         user: {
           name: '',
+          parent_id: null,
           phone: '',
           password: '',
           role_id: 0,
           repassword: ''
         }
       },
+      id: null,
       panelVisible: false,
-
       userID: '',
       allRoles: [],
       rules: {
@@ -174,6 +207,7 @@ export default {
           }
         ]
       },
+      legelFlag: false,
       loading: false
     }
   },
@@ -203,7 +237,24 @@ export default {
           .then(result => {
             this.userForm.user.phone = result.phone
             this.userForm.user.name = result.name
-            this.userForm.user.role_id = result.roles.data[0].id
+            let role = result.roles.data[0]
+            this.id = result.id
+            this.userForm.user.role_id = role.id
+            if (role.display_name === 'BD' || role.display_name === '法务') {
+              role.display_name === 'BD'
+                ? this.getBDManagerList()
+                : this.getLegalManagerList()
+            }
+            this.userForm.user.parent_id = result.parent_id
+            if (
+              result.parent_id !== null &&
+              (role.display_name === 'BD' || role.display_name === '法务')
+            ) {
+              this.legelFlag = true
+            }
+            if (role.display_name === 'BD主管' || role.display_name === '法务主管') {
+              this.userForm.user.parent_id = this.id
+            }
             this.setting.loading = false
           })
           .catch(error => {
@@ -215,6 +266,51 @@ export default {
     })
   },
   methods: {
+    rolesChange(val) {
+      this.allRoles.map(r => {
+        if (r.id === val) {
+          if (r.display_name === 'BD' || r.display_name === '法务') {
+            r.display_name === 'BD'
+              ? this.getBDManagerList()
+              : this.getLegalManagerList()
+            this.legelFlag = true
+            return
+          } else {
+            this.legelFlag = false
+            this.userForm.user.parent_id = null
+          }
+          if (r.display_name === 'BD主管' || r.display_name === '法务主管') {
+            this.userForm.user.parent_id = this.id
+          }
+        }
+      })
+    },
+    getBDManagerList() {
+      this.searchLoading = true
+      search
+        .getBDManagerList(this)
+        .then(res => {
+          console.log(res)
+          this.custodianList = res.data
+          this.searchLoading = false
+        })
+        .catch(err => {
+          this.searchLoading = false
+        })
+    },
+    getLegalManagerList() {
+      this.searchLoading = true
+      search
+        .getLegalManagerList(this)
+        .then(res => {
+          console.log(res)
+          this.custodianList = res.data
+          this.searchLoading = false
+        })
+        .catch(err => {
+          this.searchLoading = false
+        })
+    },
     onSubmit(formName) {
       if (
         this.userID &&
@@ -224,6 +320,8 @@ export default {
         delete this.rules['user.password']
         delete this.rules['user.repassword']
         delete this[formName].user.password
+      } else {
+        this.userForm.user.parent_id = null
       }
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -259,7 +357,8 @@ export default {
 </script>
 <style scoped lang="less">
 .add-user-wrap {
-  .user-form-input {
+  .user-form-input,
+  .user-form-select {
     width: 385px;
   }
   .up-area-cover {
