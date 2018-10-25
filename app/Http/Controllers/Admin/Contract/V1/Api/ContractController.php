@@ -8,8 +8,10 @@ use App\Http\Controllers\Admin\Contract\V1\Request\ContractRequest;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Http\Controllers\Controller;
+use App\Models\Model;
 use Carbon\Carbon;
 use DB;
+use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 
 class ContractController extends Controller
@@ -157,13 +159,18 @@ class ContractController extends Controller
             }
             abort(500, "无审批的法务,请联系管理员");
         } else {
-            $contract->update(array_merge($request->all(), ['status' => 5, 'handler' => $contract->applicant]));
-            $ids = $request->ids;
-            Media::query()->whereRaw(" contract_id=$contract->id and id not in ($ids)")->delete();
-            Media::query()->whereRaw(" id in ($ids)")->update(['contract_id' => $contract->id]);
+            /** @var  $user \App\Models\User */
+            $user = $this->user();
+            if ($user->hasRole('legal-affairs')) {
+                $contract->update(array_merge($request->all(), ['status' => 5, 'handler' => $contract->applicant]));
+                $ids = $request->ids;
+                Media::query()->whereRaw(" contract_id=$contract->id and id not in ($ids)")->delete();
+                Media::query()->whereRaw(" id in ($ids)")->update(['contract_id' => $contract->id]);
+            } else {
+                $contract->update(array_merge($request->all(), ['status' => 5, 'handler' => $contract->applicant]));
+            }
             return $this->response->item($contract, new ContractTransformer())->setStatusCode(201);
         }
-
     }
 
     public function destroy(Contract $contract)
@@ -175,7 +182,7 @@ class ContractController extends Controller
         return $this->response->noContent();
     }
 
-    public function auditing(ContractRequest $request, Contract $contract)
+    public function auditing(Request $request, Contract $contract)
     {
         /**@var $user \App\Models\User */
         $user = $this->user();
@@ -196,7 +203,7 @@ class ContractController extends Controller
         return $this->response->item($contract, new ContractTransformer())->setStatusCode(201);
     }
 
-    public function specialAuditing(Contract $contract)
+    public function specialAuditing(Request $request, Contract $contract)
     {
         $role = Role::findByName('legal-affairs-manager');
         $legalManager = $role->users()->first();

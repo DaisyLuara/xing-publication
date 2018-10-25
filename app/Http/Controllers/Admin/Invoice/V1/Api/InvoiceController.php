@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceContent;
 use App\Http\Controllers\Admin\Invoice\V1\Request\InvoiceRequest;
 use App\Http\Controllers\Admin\Invoice\V1\Transformer\InvoiceTransformer;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -79,10 +80,8 @@ class InvoiceController extends Controller
                 $item['invoice_id'] = $invoice['id'];
                 InvoiceContent::query()->create($item);
             }
-        } else if ($invoice->status == 2) {
-            $invoice->update(array_merge($request->all(), ['handler' => $invoice->applicant, 'status' => 6]));
         } else {
-            abort(500, "不可修改");
+            $invoice->update(array_merge($request->all(), ['handler' => $invoice->applicant, 'status' => 6]));
         }
         return $this->response->noContent();
     }
@@ -99,7 +98,7 @@ class InvoiceController extends Controller
         return $this->response->noContent();
     }
 
-    public function auditing(Invoice $invoice)
+    public function auditing(Request $request, Invoice $invoice)
     {
         /**@var $user \App\Models\User */
         $user = $this->user();

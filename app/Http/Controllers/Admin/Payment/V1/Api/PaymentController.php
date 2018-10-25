@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\Payment\V1\Models\Payment;
 use App\Http\Controllers\Admin\Payment\V1\Request\PaymentRequest;
 use App\Http\Controllers\Admin\Payment\V1\Transformer\PaymentTransformer;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -79,7 +80,7 @@ class PaymentController extends Controller
         return $this->response->noContent();
     }
 
-    public function auditing(Payment $payment)
+    public function auditing(Request $request, Payment $payment)
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
@@ -125,7 +126,7 @@ class PaymentController extends Controller
         return $this->response->noContent();
     }
 
-    public function receive(Payment $payment)
+    public function receive(Request $request, Payment $payment)
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
