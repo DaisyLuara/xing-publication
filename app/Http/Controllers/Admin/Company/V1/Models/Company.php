@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Company\V1\Models;
 
 use App\Models\User;
 use App\Models\Model;
+use App\Models\Customer;
 
 
 class Company extends Model
