@@ -30,7 +30,7 @@ class MediaController extends Controller
             $width = $image->width();
         }
 
-        $url = $uploader->save($file, str_plural($request->type));
+        $url = $uploader->save($file, "contract/" . str_plural($request->type));
 
         $data = [
             'size' => $file->getSize(),
