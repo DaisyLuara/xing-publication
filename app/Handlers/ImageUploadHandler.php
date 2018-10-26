@@ -6,7 +6,7 @@ use Log;
 
 class ImageUploadHandler
 {
-    protected $allowed_ext = ['doc', 'wps', 'pdf', 'txt'];
+    protected $allowed_ext = ['doc', 'docx', 'pdf'];
 
     public function save($file, $file_prefix)
     {

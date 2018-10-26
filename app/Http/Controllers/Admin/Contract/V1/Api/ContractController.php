@@ -8,7 +8,6 @@ use App\Http\Controllers\Admin\Contract\V1\Request\ContractRequest;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Http\Controllers\Controller;
-use App\Models\Model;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
@@ -43,7 +42,7 @@ class ContractController extends Controller
         if ($request->name) {
             $name = $request->name;
             $query->whereHas('company', function ($q) use ($name) {
-                $q->where('name', 'like', '%' . $name . '%');
+                $q->whereRaw("name like '%$name%'");
             });
         }
 //        if ($request->name) {
@@ -59,15 +58,15 @@ class ContractController extends Controller
 //        }
 
         if ($request->status) {
-            $query->where('status', '=', $request->status);
+            $query->whereRaw("status = '$request->status'");
         }
 
         if ($request->contract_number) {
-            $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
+            $query->whereRaw("contract_number like '%$request->contract_number%' ");
         }
 
         $user = $this->user();
-        $query->whereRaw("(applicant=$user->id or handler=$user->id)")
+        $query->whereRaw("(applicant = $user->id or handler = $user->id)")
             ->orderBy('created_at', 'desc')
             ->limit(10000000);
         //union 子查询不加limit导致排序失效
@@ -75,9 +74,9 @@ class ContractController extends Controller
         $currentDate = Carbon::now()->toDateString();
         $sql = Contract::query()
             ->whereHas('receiveDate', function ($q) use ($currentDate) {
-                $q->whereRaw("'$currentDate' between date_add(date, interval -5 day) and date_add(date, interval 3 day)");
+                $q->whereRaw("'$currentDate' between date_add(date, interval - 5 day) and date_add(date, interval 3 day)");
             })
-            ->whereRaw("(applicant=$user->id or handler=$user->id)")
+            ->whereRaw("(applicant = $user->id or handler = $user->id)")
             ->orderBy('created_at', 'desc')
             ->limit(10000000)
             ->union($query)->toSql();
@@ -87,9 +86,9 @@ class ContractController extends Controller
 
         $count = Contract::query()
             ->whereHas('receiveDate', function ($q) use ($currentDate) {
-                $q->whereRaw("'$currentDate' between date_add(date, interval -5 day) and date_add(date, interval 3 day)");
+                $q->whereRaw("'$currentDate' between date_add(date, interval - 5 day) and date_add(date, interval 3 day)");
             })
-            ->whereRaw("(applicant=$user->id or handler=$user->id)")
+            ->whereRaw("(applicant = $user->id or handler = $user->id)")
             ->count();
 
         $i = 0;
@@ -148,8 +147,8 @@ class ContractController extends Controller
                     $contract->update(array_merge($request->all(), ['status' => 1, 'handler' => $legal->id]));
                     //修改文件
                     $ids = $request->ids;
-                    Media::query()->whereRaw(" contract_id=$contract->id and id not in ($ids)")->delete();
-                    Media::query()->whereRaw(" id in ($ids)")->update(['contract_id' => $contract->id]);
+                    Media::query()->whereRaw(" contract_id = $contract->id and id not in($ids)")->delete();
+                    Media::query()->whereRaw(" id in($ids)")->update(['contract_id' => $contract->id]);
 
                     //修改收款日期
                     $dates = explode(',', $request->receive_date);
@@ -167,8 +166,8 @@ class ContractController extends Controller
             if ($user->hasRole('legal-affairs')) {
                 $contract->update(array_merge($request->all(), ['status' => 5, 'handler' => $contract->applicant]));
                 $ids = $request->ids;
-                Media::query()->whereRaw(" contract_id=$contract->id and id not in ($ids)")->delete();
-                Media::query()->whereRaw(" id in ($ids)")->update(['contract_id' => $contract->id]);
+                Media::query()->whereRaw(" contract_id = $contract->id and id not in($ids)")->delete();
+                Media::query()->whereRaw(" id in($ids)")->update(['contract_id' => $contract->id]);
             } else {
                 $contract->update(array_merge($request->all(), ['status' => 5, 'handler' => $contract->applicant]));
             }
@@ -196,6 +195,7 @@ class ContractController extends Controller
             $contract->handler = $user->parent_id;
             $contract->update();
         } else if ($user->hasRole('legal-affairs-manager')) {
+            $contract->status = 2;
             $contract->handler = $contract->applicantUser->parent_id;
             $contract->update();
         } else if ($user->hasRole('bd-manager')) {

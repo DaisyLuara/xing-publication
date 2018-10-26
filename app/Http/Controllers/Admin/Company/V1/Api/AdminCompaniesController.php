@@ -13,6 +13,7 @@ class AdminCompaniesController extends Controller
     public function index(Request $request, Company $company)
     {
         $query = $company->query();
+        /** @var  $currentUser \App\Models\User */
         $currentUser = $this->user();
 
         if ($request->has('name')) {
@@ -23,7 +24,11 @@ class AdminCompaniesController extends Controller
             $companies = $query->paginate(10);
         } else {
             $companies = $query->whereHas('user', function ($q) use ($currentUser) {
-                $q->where('id', $currentUser->id);
+                if ($currentUser->hasRole('user')) {
+                    $q->where('id', $currentUser->id);
+                } else {
+                    $q->where('parent_id', $currentUser->id);
+                }
             })->paginate(10);
         }
 

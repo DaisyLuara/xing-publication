@@ -39,7 +39,7 @@ class MediaRequest extends FormRequest
                 } else if ($this->type == 'video') {
                     $rules['file'] = 'filled|mimes:mp4|max:51200';
                 } else {
-                    $rules['file'] = 'filled|max:2048';
+                    $rules['file'] = 'filled';
                 }
 
                 return $rules;

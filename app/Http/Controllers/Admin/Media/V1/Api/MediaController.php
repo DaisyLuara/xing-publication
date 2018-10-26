@@ -30,18 +30,19 @@ class MediaController extends Controller
             $width = $image->width();
         }
 
-        $url = $uploader->save($file, str_plural($request->type));
+        $url = $uploader->save($file, "contract/" . str_plural($request->type));
 
         $data = [
             'size' => $file->getSize(),
             'name' => $file->getClientOriginalName(),
+            'type' => $file->getMimeType(),
             'url' => $url,
             'company_id' => $companyID,
             'height' => $height,
             'width' => $width,
         ];
 
-        $media->fill(array_merge($data, $request->all()))->save();
+        $media->fill($data)->save();
 
         return $this->response->item($media, new MediaTransformer());
     }
