@@ -8,7 +8,6 @@ use App\Http\Controllers\Admin\Contract\V1\Request\ContractRequest;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Http\Controllers\Controller;
-use App\Models\Model;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
@@ -196,6 +195,7 @@ class ContractController extends Controller
             $contract->handler = $user->parent_id;
             $contract->update();
         } else if ($user->hasRole('legal-affairs-manager')) {
+            $contract->status = 2;
             $contract->handler = $contract->applicantUser->parent_id;
             $contract->update();
         } else if ($user->hasRole('bd-manager')) {
