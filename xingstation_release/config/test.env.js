@@ -4,7 +4,7 @@ const devEnv = require('./dev.env')
 
 module.exports = merge(devEnv, {
   NODE_ENV: '"testing"',
-  DOMAIN: '"jingfree.top"',
+  DOMAIN: '"newgls.cn"',
   SERVER_URL: '"http://papi.newgls.cn"',
   HTTPS_SERVER_URL: '"https://papi.newgls.cn"',
   TOWER_URL: '"http://tower.im/"'

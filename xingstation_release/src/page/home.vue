@@ -175,11 +175,15 @@ export default {
       this.active = item.id
       switch (item.id) {
         case 'zhongtai':
-          window.location.href = 'http://devad.' + DOMAIN + '/login'
+          window.location.href = 'http://ad.' + DOMAIN + '/login'
+          // window.opne('http://devad.' + DOMAIN + '/login')
+
           break
         case 'liucheng':
           console.log(33)
-          window.location.href = 'http://devflow.' + DOMAIN + '/login'
+          // window.opne('http://devflow.' + DOMAIN + '/login')
+
+          window.location.href = 'http://flow.' + DOMAIN + '/login'
           break
         default:
           window.location.href = 'http://ad.xingstation.com/login'
