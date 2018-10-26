@@ -33,15 +33,16 @@
     "socialiteproviders/manager": "^3.3",
     "spatie/laravel-activitylog": "^2.5",
     "spatie/laravel-permission": "~2.7",
-    "studio/laravel-totem": "~2.0",
     "sunding0308/laravel-api-auth": "^2.0",
     "tymon/jwt-auth": "1.0.0-rc.2",
+    "wangju/ding-notice": "^1.0",
     "yansongda/laravel-pay": "^2.0",
     "zgldh/qiniu-laravel-storage": "^0.9.2"
   },
   "require-dev": {
     "filp/whoops": "^2.0",
     "fzaninotto/faker": "^1.4",
+    "mnabialek/laravel-sql-logger": "^2.2",
     "mockery/mockery": "^1.0",
     "nunomaduro/collision": "^2.0",
     "overtrue/laravel-query-logger": "^1.0",
@@ -90,15 +91,12 @@
     "sort-packages": true,
     "optimize-autoloader": true
   },
-  "repositories": [
-    {
+  "repositories": {
+    "packagist": {
       "type": "composer",
-      "url": "https://packagist.phpcomposer.com"
-    },
-    {
-      "packagist.org": false
+      "url": "https://packagist.laravel-china.org"
     }
-  ],
+  },
   "minimum-stability": "dev",
   "prefer-stable": true
 }

@@ -361,7 +361,7 @@ class ChartDataController extends Controller
         $format = $days <= 31 ? '%Y-%m-%d' : '%Y-%m';
 
         $this->handleQuery($request, $query);
-        $data=$query->selectRaw("date_format(xs_face_count_log.date, '$format') as display_name")
+        $data = $query->selectRaw("date_format(xs_face_count_log.date, '$format') as display_name")
             ->groupBy('display_name')
             ->get();
 
@@ -376,7 +376,7 @@ class ChartDataController extends Controller
                         return $arr['display_name'] == $start_date;
                     });
                     sort($item);
-                    $item=$item[0];
+                    $item = $item[0];
                     $output[] = [
                         'display_name' => $item['display_name'],
                         'looknum' => $item['looknum'],
@@ -597,9 +597,10 @@ class ChartDataController extends Controller
     public function getTopProjects(ChartDataRequest $request, Builder $query)
     {
         $this->handleQuery($request, $query, false);
-        $data = $query->selectRaw("ar_product_list.name as product_name,belong,sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum) as playernum,sum(omo_outnum) as omo_outnum, sum(lovenum) as lovenum")
+        $table = $query->getModel()->getTable();
+        $data = $query->selectRaw("ar_product_list.name as product_name,belong,round(sum(looknum)/count($table.date),0) as looknum,round(sum(playernum7)/count($table.date),0) as playernum7,round(sum(playernum)/count($table.date),0) as playernum,round(sum(omo_outnum)/count($table.date),0) as omo_outnum, round(sum(lovenum)/count($table.date),0) as lovenum")
             ->groupBy('belong')
-            ->orderBy('looknum', 'desc')
+            ->orderBy(DB::raw(" looknum"), 'desc')
             ->limit(10)
             ->get();
 

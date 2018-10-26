@@ -6,7 +6,7 @@
       <el-breadcrumb 
         separator="/">
         <el-breadcrumb-item 
-          :to="{ path: '/project/coupon' }">优惠券管理</el-breadcrumb-item>
+          :to="{ path: '/project/rules' }">优惠券规则管理</el-breadcrumb-item>
         <el-breadcrumb-item>{{ couponID ? '修改' : '添加' }}</el-breadcrumb-item>
       </el-breadcrumb>
       <headModule/>
@@ -68,6 +68,23 @@
           <el-input 
             v-model="couponForm.image_url"
             class="coupon-form-input"/>
+        </el-form-item>
+        <el-form-item 
+          label="跳转链接" 
+          prop="redirect_url">
+          <el-input 
+            v-model="couponForm.redirect_url"
+            class="coupon-form-input"/>
+        </el-form-item>
+        <el-form-item 
+          label="类型" 
+          prop="type">
+          <el-radio 
+            v-model="couponForm.type" 
+            :label="1">优惠券</el-radio>
+          <el-radio 
+            v-model="couponForm.type" 
+            :label="2">小样</el-radio>
         </el-form-item>
         <el-form-item 
           label="金额" 
@@ -259,7 +276,9 @@ export default {
         name: '',
         description: '',
         company_id: '',
+        type: 1,
         image_url: '',
+        redirect_url: '',
         amount: 0,
         count: 0,
         stock: 0,
@@ -322,6 +341,8 @@ export default {
             this.couponForm.start_date = result.start_date
             this.couponForm.end_date = result.end_date
             this.couponForm.is_active = result.is_active
+            this.couponForm.redirect_url = result.redirect_url
+            this.couponForm.type = result.type
             this.setting.loading = false
           })
           .catch(error => {
@@ -349,7 +370,9 @@ export default {
         is_fixed_date: this.couponForm.is_fixed_date,
         delay_effective_day: this.couponForm.delay_effective_day,
         effective_day: this.couponForm.effective_day,
-        is_active: this.couponForm.is_active
+        is_active: this.couponForm.is_active,
+        redirect_url: this.couponForm.redirect_url,
+        type: this.couponForm.type
       }
       if (!this.couponForm.image_url) {
         delete args.image_url
@@ -374,7 +397,7 @@ export default {
                 type: 'success'
               })
               this.$router.push({
-                path: '/project/coupon/'
+                path: '/project/rules/'
               })
             })
             .catch(error => {

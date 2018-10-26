@@ -74,9 +74,15 @@
           :data="item.batches.data" 
           style="width: 100%">
           <el-table-column
+            :show-overflow-tooltip="true"
+            prop="id"
+            label="ID"
+            min-width="80"
+          />
+          <el-table-column
             prop="name"
             label="优惠券名称"
-            min-width="180"
+            min-width="160"
           >
             <template 
               slot-scope="scope">
@@ -85,7 +91,7 @@
                 :loading="searchLoading" 
                 placeholder="请选择优惠券" 
                 filterable 
-                style="width: 180px;">
+                style="width: 160px;">
                 <el-option
                   v-for="item in couponList"
                   :key="item.id"
@@ -97,7 +103,7 @@
           <el-table-column
             prop="name"
             label="性别"
-            min-width="100"
+            min-width="80"
           >
             <template 
               slot-scope="scope">
@@ -107,7 +113,7 @@
                 filterable
                 placeholder="请搜索" 
                 clearable 
-                style="width: 100px;"
+                style="width: 80px;"
                 @change="genderChangeHandle(index, scope.$index, scope.row.pivot.gender)" >
                 <el-option
                   v-for="item in genderList"
@@ -120,25 +126,49 @@
           <el-table-column
             prop="max_age"
             label="最大年龄"
-            min-width="120"
+            min-width="100"
           >
             <template 
               slot-scope="scope">
               <el-input 
                 v-model="scope.row.pivot.max_age" 
-                style="width: 100px;"/>
+                style="width: 80px;"/>
             </template>
           </el-table-column>
           <el-table-column
             prop="min_age"
             label="最小年龄"
-            min-width="120"
+            min-width="100"
           >
             <template 
               slot-scope="scope">
               <el-input 
                 v-model="scope.row.pivot.min_age"  
-                style="width: 100px;"/>
+                style="width: 80px;"/>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="max_score"
+            label="最大分数"
+            min-width="100"
+          >
+            <template 
+              slot-scope="scope">
+              <el-input 
+                v-model="scope.row.pivot.max_score" 
+                style="width: 80px;"/>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="min_score"
+            label="最小分数"
+            min-width="100"
+          >
+            <template 
+              slot-scope="scope">
+              <el-input 
+                v-model="scope.row.pivot.min_score"  
+                style="width: 80px;"/>
             </template>
           </el-table-column>
           <el-table-column
@@ -405,6 +435,8 @@ export default {
       let policy_id = row.pivot.policy_id
       let max_age = row.pivot.max_age
       let min_age = row.pivot.min_age
+      let max_score = row.pivot.max_score
+      let min_score = row.pivot.min_score
       let gender = row.pivot.gender
       let rate = row.pivot.rate
       let coupon_batch_id = row.pivot.coupon_batch_id
@@ -430,6 +462,8 @@ export default {
         min_age: parseInt(min_age),
         max_age: parseInt(max_age),
         gender: parseInt(gender),
+        max_score: parseFloat(max_score),
+        min_score: parseFloat(min_score),
         rate: rate,
         coupon_batch_id: coupon_batch_id
       }
@@ -442,9 +476,12 @@ export default {
       if (!rate) {
         delete args.rate
       }
-      // if (!gender) {
-      //   delete args.gender
-      // }
+      if (max_score === '') {
+        delete args.max_score
+      }
+      if (min_score === '') {
+        delete args.min_score
+      }
       policies
         .modifyBatchPolicy(this, policy_id, args, id)
         .then(response => {
@@ -467,6 +504,8 @@ export default {
       let min_age = row.pivot.min_age
       let gender = row.pivot.gender
       let rate = row.pivot.rate
+      let min_score = row.pivot.min_score
+      let max_score = row.pivot.max_score
       let coupon_batch_id = row.pivot.coupon_batch_id
       if (max_age === '' && min_age === '' && gender === '' && rate === '') {
         this.$message({
@@ -498,6 +537,8 @@ export default {
         max_age: parseInt(max_age),
         gender: parseInt(gender),
         rate: rate,
+        max_score: parseFloat(max_score),
+        min_score: parseFloat(min_score),
         coupon_batch_id: coupon_batch_id
       }
       if (!min_age) {
@@ -509,9 +550,13 @@ export default {
       if (!rate) {
         delete args.rate
       }
-      // if (!gender) {
-      //   delete args.gender
-      // }
+      if (max_score === '') {
+        delete args.max_score
+      }
+      if (min_score === '') {
+        delete args.min_score
+      }
+
       policies
         .saveBatchPolicy(this, policy_id, args)
         .then(response => {
@@ -544,6 +589,9 @@ export default {
         include: 'batches,company',
         name: this.searchForm.name
       }
+      if (!this.searchForm.name) {
+        delete args.name
+      }
       return policies
         .getPoliciesList(this, args)
         .then(response => {
@@ -574,6 +622,8 @@ export default {
           rate: '',
           max_age: '',
           gender: 0,
+          min_score: 0,
+          max_score: 0,
           policy_id: policy_id
         }
       }
