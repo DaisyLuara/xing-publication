@@ -82,23 +82,23 @@ let router = {
       ]
     },
     {
-      path: 'coupon',
-      name: '优惠券列表',
-      redirect: 'coupon',
+      path: 'rules',
+      name: '优惠券规则',
+      redirect: 'rules',
       meta: {
-        title: '优惠券列表'
+        title: '优惠券规则'
       },
       component: () =>
-        import(/* webpackChunkName: "page/project/coupon/routerView" */ 'page/project/coupon/routerView'),
+        import(/* webpackChunkName: "page/project/rules/routerView" */ 'page/project/rules/routerView'),
       children: [
         {
           path: '/',
-          name: '优惠券列表详情',
+          name: '优惠券规则详情',
           meta: {
-            title: '优惠券列表详情'
+            title: '优惠券规则详情'
           },
           component: () =>
-            import(/* webpackChunkName: "page/project/coupon/index" */ 'page/project/coupon/index')
+            import(/* webpackChunkName: "page/project/rules/index" */ 'page/project/rules/index')
         },
         {
           path: 'add',
@@ -107,12 +107,12 @@ let router = {
             title: '优惠券增加'
           },
           component: () =>
-            import(/* webpackChunkName: "page/project/coupon/save" */ 'page/project/coupon/save')
+            import(/* webpackChunkName: "page/project/rules/save" */ 'page/project/rules/save')
         },
         {
           path: 'edit/:uid',
           component: () =>
-            import(/* webpackChunkName: "page/project/coupon/save" */ 'page/project/coupon/save'),
+            import(/* webpackChunkName: "page/project/rules/save" */ 'page/project/rules/save'),
           name: '优惠券修改',
           meta: {
             title: '优惠券增加'
@@ -138,6 +138,27 @@ let router = {
           },
           component: () =>
             import(/* webpackChunkName: "page/project/strategy/index" */ 'page/project/strategy/index')
+        }
+      ]
+    },
+    {
+      path: 'coupon',
+      name: '优惠券投放',
+      redirect: 'coupon',
+      meta: {
+        title: '优惠券投放'
+      },
+      component: () =>
+        import(/* webpackChunkName: "page/project/coupon/routerView" */ 'page/project/coupon/routerView'),
+      children: [
+        {
+          path: '/',
+          name: '优惠券投放列表',
+          meta: {
+            title: '优惠券投放列表'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/project/coupon/index" */ 'page/project/coupon/index')
         }
       ]
     }

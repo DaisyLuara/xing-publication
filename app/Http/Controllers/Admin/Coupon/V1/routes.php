@@ -15,14 +15,19 @@ $api->version('v1', [
             $api->post('company/{company}/coupon/policy', 'PolicyController@store');
             $api->patch('coupon/policy/{policy}', 'PolicyController@update');
 
+            //优惠券策略
             $api->post('policy/{policy}', 'PolicyController@storeBatchPolicy');
             $api->patch('policy/{policy}/batch_policy/{batch_policy_id}', 'PolicyController@updateBatchPolicy');
             $api->delete('policy/{policy}/batch_policy/{batch_policy_id}', 'PolicyController@destroyBatchPolicy');
 
+            //优惠券规则
             $api->get('coupon/batches/{couponBatch}', 'CouponBatchController@show');
             $api->get('coupon/batches', 'CouponBatchController@index');
             $api->post('company/{company}/coupon/batch', 'CouponBatchController@store');
             $api->patch('coupon/batches/{couponBatch}', 'CouponBatchController@update');
+
+            //优惠券投放
+            $api->get('coupons', 'CouponController@index');
 
             //同步猫酷优惠券规则
             $api->get('coupon/sync', 'CouponBatchController@syncMallCooCouponBatch');

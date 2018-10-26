@@ -15,7 +15,7 @@ use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Common\V1\Request\CouponRequest;
 use App\Http\Controllers\Admin\Coupon\V1\Models\UserCouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
-use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponTransformer;
+use App\Http\Controllers\Admin\Common\V1\Transformer\CouponTransformer;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use DB;
@@ -26,6 +26,12 @@ use Overtrue\EasySms\EasySms;
 
 class CouponController extends Controller
 {
+
+    /**
+     * 优惠券规则 详情
+     * @param CouponBatch $couponBatch
+     * @return mixed
+     */
     public function getCouponBatch(CouponBatch $couponBatch)
     {
         if (!$couponBatch->dmg_status && !$couponBatch->pmg_status && $couponBatch->stock <= 0) {
@@ -48,11 +54,11 @@ class CouponController extends Controller
     }
 
     /**
-     * 根据策略获取优惠券规则
+     * 根据策略 生成优惠券规则
      * @param CouponRequest $request
      * @return mixed
      */
-    public function getCouponBatches(CouponRequest $request)
+    public function generateCouponBatch(CouponRequest $request)
     {
         //是否已经获取优惠券规则
         $userID = 0;
@@ -81,6 +87,10 @@ class CouponController extends Controller
             $query->where('max_age', '>=', $request->age)->where('min_age', '<=', $request->age);
         }
 
+        if ($request->has('score')) {
+            $query->where('max_score', '>=', $request->score)->where('min_score', '<=', $request->score);
+        }
+
         if ($request->has('gender')) {
             $query->where('gender', '=', $request->gender);
         }
@@ -88,7 +98,7 @@ class CouponController extends Controller
         $couponBatchPolicies = $query->join('coupon_batches', 'coupon_batch_id', '=', 'coupon_batches.id')->where('policy_id', '=', $policy->id)->get();
 
         if ($couponBatchPolicies->isEmpty()) {
-            abort('无可用优惠券', 500);
+            abort(500, '无可用优惠券');
         }
 
         $couponBatchPolicies = $couponBatchPolicies->toArray();
@@ -99,7 +109,7 @@ class CouponController extends Controller
         }
 
         if (count($couponBatchPolicies) == 0) {
-            abort('无可用优惠券', 500);
+            abort(500, '无可用优惠券');
         }
 
 

@@ -35,7 +35,12 @@ class CouponBatchController extends Controller
         if ($request->name) {
             $query->where('name', 'like', '%' . $request->name . '%');
         }
-        $couponBatch = $query->paginate(10);
+
+        if ($request->has('company_id')) {
+            $query->where('company_id', $request->get('company_id'));
+        }
+
+        $couponBatch = $query->orderByDesc('id')->paginate(10);
         return $this->response->paginator($couponBatch, new CouponBatchTransformer());
     }
 

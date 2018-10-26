@@ -12,12 +12,16 @@ $api->version('v1', [
         $api->post('captchas', 'CaptchasController@store');// 图片验证码
 
         $api->group(['middleware' => 'api_sign'], function ($api) {
-            $api->post('open/coupon/batches', 'CouponController@getCouponBatches');//获取优惠券规则列表
+            $api->post('open/coupon/batches', 'CouponController@generateCouponBatch');//获取优惠券规则列表
             $api->post('open/coupon/batches/{couponBatch}', 'CouponController@getCouponBatch');//获取优惠券规则
             $api->post('open/coupons/{couponBatch}', 'CouponController@generateCoupon');//发送优惠券
             $api->post('open/user/coupon', 'CouponController@getUserCoupon');//获取用户优惠券
         });
 
+        //淘宝接口
+        $api->get('tmall/user/coupon_batch/{couponBatch}', 'TaobaoCouponController@show');//获取用户的淘宝优惠券
+        $api->post('tmall/user/coupon_batch/{couponBatch}', 'TaobaoCouponController@store');//发送淘宝优惠券
+        $api->post('tmall/user/coupon', 'TaobaoCouponController@update');//核销
 
         $api->get('open/project/policy', 'ProjectController@show');//根据节目获取优惠券投放策略
         $api->get('s/{url_path}', 'ShortUrlController@redirect');//短链接跳转

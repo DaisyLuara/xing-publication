@@ -64,7 +64,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"username\":\"13818403072\",\n\t\"password\":\"password\",\n\t\"verification_key\":\"verificationCode_98TadYW6wicyxrq\",\n\t\"verification_code\":\"1234\"\n}"
+							"raw": "{\n\t\"username\":\"13818403072\",\n\t\"password\":\"password\"\n}"
 						},
 						"description": ""
 					},
@@ -163,7 +163,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_gao}}",
+								"value": "{{jwt_customer_1}}",
 								"description": ""
 							},
 							{
@@ -529,7 +529,13 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_admin}}",
+								"value": "{{jwt_gao}}",
+								"description": "",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vcGFwaS5qaW5nZnJlZS50b3AiLCJpYXQiOjE1MzkyNDg1NzcsImV4cCI6MTU3MDc4NDU3NywibmJmIjoxNTM5MjQ4NTc3LCJqdGkiOiJOdDROY1JsT1JHOFZOVTlxIiwic3ViIjoyLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.tO1644-nYMpSa7F9Dl9Ce4S_1YPj2Bosuwx8kc6tJ7o",
 								"description": ""
 							}
 						],
@@ -1180,7 +1186,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_admin}}",
+								"value": "{{jwt_customer_1}}",
 								"description": ""
 							}
 						],
@@ -2956,7 +2962,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"target_url\":\"https://lucky.suning.com/act/QdzGCM_1.html\",\"description\":\"test\"}"
+							"raw": "{\"target_url\":\"http://h5.newgls.cn/marketing/kaixue?\",\"description\":\"test\"}"
 						},
 						"description": ""
 					},
@@ -2965,7 +2971,25 @@
 				{
 					"name": "列表页",
 					"request": {
-						"url": "{{host}}/api/short_urls",
+						"url": {
+							"raw": "{{host}}/api/short_urls?description=测试",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"short_urls"
+							],
+							"query": [
+								{
+									"key": "description",
+									"value": "测试",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -3046,7 +3070,7 @@
 										"header": [
 											{
 												"key": "Authorization",
-												"value": "{{jwt_admin}}",
+												"value": "{{jwt_user_1}}",
 												"description": ""
 											},
 											{
@@ -3057,7 +3081,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n\t\"rate\":\"88\",\n\t\"min_age\":10,\n\t\"max_age\":20\n}"
+											"raw": "{\n\t\"rate\":\"88\",\n\t\"min_age\":10,\n\t\"max_age\":20,\n\t\"min_score\":\"95\",\n\t\"max_score\":\"94\"\n}"
 										},
 										"description": ""
 									},
@@ -3119,7 +3143,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_admin}}",
+										"value": "{{jwt_user_1}}",
 										"description": ""
 									}
 								],
@@ -3387,71 +3411,32 @@
 					"_postman_isSubFolder": true
 				},
 				{
-					"name": "领取",
+					"name": "投放",
 					"description": "",
 					"item": [
 						{
-							"name": "获取优惠券状态",
+							"name": "投放列表",
 							"request": {
 								"url": {
-									"raw": "http://{{host}}/api/get_coupon_status?company_id=1",
+									"raw": "http://{{host}}/api/coupons?include=couponBatch&coupon_batch_id=3",
 									"protocol": "http",
 									"host": [
 										"{{host}}"
 									],
 									"path": [
 										"api",
-										"get_coupon_status"
+										"coupons"
 									],
 									"query": [
 										{
-											"key": "company_id",
-											"value": "1"
-										}
-									],
-									"variable": []
-								},
-								"method": "GET",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"description": ""
-							},
-							"response": []
-						},
-						{
-							"name": "获取优惠券规则",
-							"request": {
-								"url": {
-									"raw": "http://{{host}}/api/open/coupon/batches?policy_id=2&gender=0&age=12",
-									"protocol": "http",
-									"host": [
-										"{{host}}"
-									],
-									"path": [
-										"api",
-										"open",
-										"coupon",
-										"batches"
-									],
-									"query": [
-										{
-											"key": "policy_id",
-											"value": "2",
+											"key": "include",
+											"value": "couponBatch",
 											"equals": true,
 											"description": ""
 										},
 										{
-											"key": "gender",
-											"value": "0",
-											"equals": true,
-											"description": ""
-										},
-										{
-											"key": "age",
-											"value": "12",
+											"key": "coupon_batch_id",
+											"value": "3",
 											"equals": true,
 											"description": ""
 										}
@@ -3459,78 +3444,13 @@
 									"variable": []
 								},
 								"method": "GET",
-								"header": [],
-								"body": {},
-								"description": ""
-							},
-							"response": []
-						},
-						{
-							"name": "根据手机号码发送优惠券",
-							"request": {
-								"url": "http://{{host}}/api/open/coupons/4",
-								"method": "POST",
 								"header": [
 									{
-										"key": "Content-Type",
-										"value": "application/json",
+										"key": "Authorization",
+										"value": "{{jwt_user_1}}",
 										"description": ""
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"mobile\":13818403069\n}"
-								},
-								"description": ""
-							},
-							"response": []
-						},
-						{
-							"name": "优惠券规则详情",
-							"request": {
-								"url": "http://{{host}}/api/open/coupon/batches/4",
-								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"description": ""
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"mobile\":15921145621\n}"
-								},
-								"description": ""
-							},
-							"response": []
-						},
-						{
-							"name": "获取节目的优惠券投放策略",
-							"request": {
-								"url": {
-									"raw": "{{host}}/api/open/project/policy?belong=WorldCupPortugalTest",
-									"host": [
-										"{{host}}"
-									],
-									"path": [
-										"api",
-										"open",
-										"project",
-										"policy"
-									],
-									"query": [
-										{
-											"key": "belong",
-											"value": "WorldCupPortugalTest",
-											"equals": true,
-											"description": ""
-										}
-									],
-									"variable": []
-								},
-								"method": "GET",
-								"header": [],
 								"body": {},
 								"description": ""
 							},
@@ -4003,6 +3923,250 @@
 								"body": {
 									"mode": "raw",
 									"raw": "{\n    \"name\": \"二楼扶梯口5-测试\",\n    \"info\": \"说明\",\n    \"icon\": \"http://o9xrbl1oc.bkt.clouddn.com/1007/image/446_161_167_exe.png\",\n    \"image\": \"\",\n    \"type\": \"free\",\n    \"lat\": \"31.232913567882918\",\n    \"lng\": \"121.52161940330083\",\n    \"count\": 0,\n    \"marketid\":15,\n    \"contract\": {\n        \"type\": \"free\",\n        \"contract\": 1,\n        \"contract_company\": \"\",\n        \"contract_num\": \"\",\n        \"contract_user\": \"\",\n        \"contract_phone\": \"\",\n        \"pay\": 0,\n        \"enter_sdate\": \"2018-09-11 17:09:20\",\n        \"enter_edate\": \"2018-09-06 17:09:20\",\n        \"oper_sdate\": \"2018-09-06 17:09:20\",\n        \"oper_edate\": \"2018-09-06 17:09:20\",\n        \"mode\": \"none\",\n        \"ad_istar\": 0,\n        \"ad_ads\": 0,\n        \"exchange_num\": 0\n    },\n    \"share\": {\n        \"site\": 1,\n        \"vipad\": 1,\n        \"ad\": 1,\n        \"agent\": 1,\n        \"offer\": 2000,\n        \"offer_off\": 100,\n        \"mad\": 50,\n        \"mad_off\": 100,\n        \"play\": 300,\n        \"play_off\": 100,\n        \"qrcode\": 1000,\n        \"qrcode_off\": 100,\n        \"wx_pa\": 1000,\n        \"wx_pa_off\": 100,\n        \"wx_mp\": 2000,\n        \"wx_mp_off\": 100,\n        \"app\": 5000,\n        \"app_off\": 100,\n        \"phone\": 5000,\n        \"phone_off\": 100,\n        \"coupon\": 2000,\n        \"coupon_off\": 99\n    }\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			]
+		},
+		{
+			"name": "通用接口",
+			"description": "",
+			"item": [
+				{
+					"name": "优惠券",
+					"description": "",
+					"item": [
+						{
+							"name": "获取优惠券规则",
+							"request": {
+								"url": {
+									"raw": "https://papi.xingstation.com/api/open/coupon/batches?policy_id=9&score=90",
+									"protocol": "https",
+									"host": [
+										"papi",
+										"xingstation",
+										"com"
+									],
+									"path": [
+										"api",
+										"open",
+										"coupon",
+										"batches"
+									],
+									"query": [
+										{
+											"key": "policy_id",
+											"value": "9",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "score",
+											"value": "90",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									},
+									{
+										"key": "api-token",
+										"value": "eyJhbGciOiJtZDUiLCJ0eXBlIjoiand0In0=.eyJhayI6IngwT3V0TUZkbmtqekZ3UmE3ZmxOczBsaENMOVJpMWRwIiwiZWNob3N0ciI6IjBBVHl4Rlhtc0EwRHhnNEhFU053czRiaGhmNiIsInRpbWVzdGFtcCI6MTUzOTkyMTA0Mn0=.37d9d02dc062160c1f79af0a5bb7fba0",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"sign\":\"eyJpdiI6IndwZGNubmd6dmxvNTE1MDZZaE1tRlE9PSIsInZhbHVlIjoiRytNXC9VYkMxeGdxU1hSemVIZ3ZsU0E9PSIsIm1hYyI6Ijg3N2ZhMjAyNzkxY2I3YzE1ZTk5NGZkY2M5MjhlMzMyMzU5MzllYjkxMGI0ZTAzNDJhZWY1Y2ZhNDI3ZGE3NWEifQ\"\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "领取优惠券",
+							"request": {
+								"url": "http://{{host}}/api/open/coupons/9",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"mobile\":15921145624,\n\t\"sign\":\"eyJpdiI6IndwZGNubmd6dmxvNTE1MDZZaE1tRlE9PSIsInZhbHVlIjoiRytNXC9VYkMxeGdxU1hSemVIZ3ZsU0E9PSIsIm1hYyI6Ijg3N2ZhMjAyNzkxY2I3YzE1ZTk5NGZkY2M5MjhlMzMyMzU5MzllYjkxMGI0ZTAzNDJhZWY1Y2ZhNDI3ZGE3NWEifQ\"\n}"
+								},
+								"description": null
+							},
+							"response": []
+						},
+						{
+							"name": "查询优惠券",
+							"request": {
+								"url": "http://{{host}}/api/open/user/coupon",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"sign\":\"eyJpdiI6IndwZGNubmd6dmxvNTE1MDZZaE1tRlE9PSIsInZhbHVlIjoiRytNXC9VYkMxeGdxU1hSemVIZ3ZsU0E9PSIsIm1hYyI6Ijg3N2ZhMjAyNzkxY2I3YzE1ZTk5NGZkY2M5MjhlMzMyMzU5MzllYjkxMGI0ZTAzNDJhZWY1Y2ZhNDI3ZGE3NWEifQ\",\n\t\"coupon_batch_id\":11\n}"
+								},
+								"description": null
+							},
+							"response": []
+						},
+						{
+							"name": "优惠券规则详情",
+							"request": {
+								"url": "http://papi.xingstation.com/api/open/coupon/batches/14",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									},
+									{
+										"key": "api-token",
+										"value": "eyJhbGciOiJtZDUiLCJ0eXBlIjoiand0In0=.eyJhayI6IngwT3V0TUZkbmtqekZ3UmE3ZmxOczBsaENMOVJpMWRwIiwiZWNob3N0ciI6IjBBVHl4Rlhtc0EwRHhnNEhFU053czRiaGhmNiIsInRpbWVzdGFtcCI6MTUzOTkyMTA0Mn0=.37d9d02dc062160c1f79af0a5bb7fba0",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "获取节目的优惠券投放策略",
+							"request": {
+								"url": {
+									"raw": "{{host}}/api/open/project/policy?belong=WorldCupPortugalTest",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"open",
+										"project",
+										"policy"
+									],
+									"query": [
+										{
+											"key": "belong",
+											"value": "WorldCupPortugalTest",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "发送淘宝优惠券",
+							"request": {
+								"url": "{{host}}/api/tmall/user/coupon_batch/3",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"openuid\":\"AAGsESr6AGsOHI408ramCukB\"\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "获取用户淘宝优惠券",
+							"request": {
+								"url": {
+									"raw": "{{host}}/api/tmall/user/coupon_batch/3?openuid=AAGsESr6AGsOHI408ramCukB",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"tmall",
+										"user",
+										"coupon_batch",
+										"3"
+									],
+									"query": [
+										{
+											"key": "openuid",
+											"value": "AAGsESr6AGsOHI408ramCukB",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"sign\":\"eyJpdiI6IndwZGNubmd6dmxvNTE1MDZZaE1tRlE9PSIsInZhbHVlIjoiRytNXC9VYkMxeGdxU1hSemVIZ3ZsU0E9PSIsIm1hYyI6Ijg3N2ZhMjAyNzkxY2I3YzE1ZTk5NGZkY2M5MjhlMzMyMzU5MzllYjkxMGI0ZTAzNDJhZWY1Y2ZhNDI3ZGE3NWEifQ\",\n\t\"openuid\":\"asdfasdfadf\"\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "核销用户淘宝优惠券",
+							"request": {
+								"url": "http://{{host}}/api/tmall/user/coupon",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"openuid\":\"AAGsESr6AGsOHI408ramCukB\",\n\t\"code\":\"5bcfe39d68b85\"\n}"
 								},
 								"description": ""
 							},
