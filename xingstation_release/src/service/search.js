@@ -1,4 +1,3 @@
-import { router } from '../main'
 const STAFFS_API = '/api/staffs'
 const AREAS_API = '/api/areas/query'
 const MARKET_API = '/api/markets/query'
@@ -11,10 +10,13 @@ const ADVERTISEMENT_API = '/api/advertisement/query'
 const SENCE_API = '/api/scene/query'
 const COMPANY_API = '/api/company/query'
 const COUPON_API = '/api/coupon_batch/query'
-const POLICY_API= '/api/policy/query'
+const POLICY_API = '/api/policy/query'
+const LEGAL_MANAGER_API = '/api/legal_manager/query'
+const BD_MANAGER_API = '/api/bd_manager/query'
 const HOST = process.env.SERVER_URL
 
 export default {
+  // 区域
   getAeraList(context) {
     return new Promise(function(resolve, reject) {
       context.$http
@@ -27,6 +29,7 @@ export default {
         })
     })
   },
+  // 商场
   getMarketList(context, args) {
     return new Promise(function(resolve, reject) {
       context.$http
@@ -39,6 +42,7 @@ export default {
         })
     })
   },
+  // 模版
   getModuleList(context) {
     return new Promise(function(resolve, reject) {
       context.$http
@@ -51,6 +55,7 @@ export default {
         })
     })
   },
+  // 点位
   gePointList(context, args) {
     return new Promise(function(resolve, reject) {
       context.$http
@@ -63,6 +68,7 @@ export default {
         })
     })
   },
+  // 节目
   getProjectList(context, args) {
     return new Promise(function(resolve, reject) {
       context.$http
@@ -75,6 +81,7 @@ export default {
         })
     })
   },
+  // 广告主
   getAdTradeList(context) {
     return new Promise(function(resolve, reject) {
       context.$http
@@ -87,6 +94,7 @@ export default {
         })
     })
   },
+  // 广告
   getAdvertiserList(context, args) {
     return new Promise(function(resolve, reject) {
       context.$http
@@ -111,6 +119,7 @@ export default {
         })
     })
   },
+  // 用户
   getUserList(context, args) {
     return new Promise(function(resolve, reject) {
       context.$http
@@ -123,6 +132,7 @@ export default {
         })
     })
   },
+  // 场景
   getSceneList(context) {
     return new Promise(function(resolve, reject) {
       context.$http
@@ -135,6 +145,7 @@ export default {
         })
     })
   },
+  // 公司
   getCompanyList(context) {
     return new Promise(function(resolve, reject) {
       context.$http
@@ -147,6 +158,7 @@ export default {
         })
     })
   },
+  // 优惠券
   getCouponList(context, args) {
     return new Promise(function(resolve, reject) {
       context.$http
@@ -163,6 +175,32 @@ export default {
     return new Promise(function(resolve, reject) {
       context.$http
         .get(HOST + POLICY_API)
+        .then(response => {
+          resolve(response.data)
+        })
+        .catch(error => {
+          reject(error)
+        })
+    })
+  },
+  // 法务主管
+  getLegalManagerList(context) {
+    return new Promise(function(resolve, reject) {
+      context.$http
+        .get(HOST + LEGAL_MANAGER_API)
+        .then(response => {
+          resolve(response.data)
+        })
+        .catch(error => {
+          reject(error)
+        })
+    })
+  },
+  // BD主管
+  getBDManagerList(context) {
+    return new Promise(function(resolve, reject) {
+      context.$http
+        .get(HOST + BD_MANAGER_API)
         .then(response => {
           resolve(response.data)
         })

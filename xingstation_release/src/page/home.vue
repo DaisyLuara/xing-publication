@@ -41,6 +41,14 @@
         </el-menu-item>
       </el-menu>
     </div>
+    <div class="system-menu">
+      <div 
+        v-for="item in systemMenuList" 
+        :key="item.id" 
+        :class="{'active': active === item.id}" 
+        class="system-menu-item" 
+        @click="systemMenu(item)" >{{ item.name }}</div>
+    </div>
     <div 
       class="modules">
       <router-view/>
@@ -51,7 +59,9 @@
 <script>
 import { Menu, MenuItem, Button, Badge, Icon } from 'element-ui'
 import auth from 'service/auth'
+import { Cookies } from 'utils/cookies'
 import notice from 'service/notice'
+const DOMAIN = process.env.DOMAIN
 
 export default {
   name: 'Home',
@@ -64,7 +74,18 @@ export default {
   data() {
     return {
       visible: false,
-      setIntervalValue: ''
+      setIntervalValue: '',
+      systemMenuList: [
+        {
+          id: 'zhongtai',
+          name: '中台系统'
+        },
+        {
+          id: 'liucheng',
+          name: '流程管理'
+        }
+      ],
+      active: 'zhongtai'
     }
   },
   computed: {
@@ -131,11 +152,44 @@ export default {
     }
   },
   created() {
+    if (Cookies.get('jwt_token') && !localStorage.getItem('jwt_token')) {
+      localStorage.setItem('jwt_token', Cookies.get('jwt_token'))
+      localStorage.setItem('jwt_ttl', Cookies.get('jwt_ttl'))
+      localStorage.setItem('jwt_begin_time', Cookies.get('jwt_begin_time'))
+      localStorage.setItem('user_info', Cookies.get('user_info'))
+      localStorage.setItem('permissions', Cookies.get('permissions'))
+    } else if (!Cookies.get('jwt_token')) {
+      localStorage.removeItem('jwt_token')
+      localStorage.removeItem('user_info')
+      localStorage.removeItem('jwt_ttl')
+      localStorage.removeItem('permissions')
+      localStorage.removeItem('jwt_begin_time')
+    }
+
     let userInfo = JSON.parse(localStorage.getItem('user_info'))
     this.$store.commit('setCurUserInfo', userInfo)
     this.notificationStats()
   },
   methods: {
+    systemMenu(item) {
+      this.active = item.id
+      switch (item.id) {
+        case 'zhongtai':
+          window.location.href = 'http://ad.' + DOMAIN + '/login'
+          // window.opne('http://devad.' + DOMAIN + '/login')
+
+          break
+        case 'liucheng':
+          console.log(33)
+          // window.opne('http://devflow.' + DOMAIN + '/login')
+
+          window.location.href = 'http://flow.' + DOMAIN + '/login'
+          break
+        default:
+          window.location.href = 'http://ad.xingstation.com/login'
+          break
+      }
+    },
     notificationStats() {
       return notice
         .notificationStats(this)
@@ -146,13 +200,33 @@ export default {
         .catch(err => {
           console.log(err)
         })
-    },
+    }
   }
 }
 </script>
 
 <style lang="less">
 @import '../assets/css/pcCommon.less';
+.system-menu {
+  display: flex;
+  position: relative;
+  width: 100%;
+  padding-left: 90px;
+  flex-flow: row;
+  height: 50px;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid #ccc8c8;
+  .system-menu-item {
+    margin-right: 35px;
+    height: 50px;
+    line-height: 50px;
+    cursor: pointer;
+    &.active {
+      border-bottom: 2px solid #2196f3;
+    }
+  }
+}
 .menu-item {
   display: flex;
   flex-direction: row;

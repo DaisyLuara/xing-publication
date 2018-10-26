@@ -4,10 +4,14 @@ namespace App\Http\Controllers\Admin\Common\V1\Api;
 
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
+use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
+use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\PolicyTransformer;
+use App\Http\Controllers\Admin\Invoice\V1\Models\GoodsService;
+use App\Http\Controllers\Admin\Invoice\V1\Transformer\GoodsServiceTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\AreaTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\MarketTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\PointTransformer;
@@ -28,8 +32,10 @@ use App\Http\Controllers\Admin\Ad\V1\Models\AdTrade;
 use App\Http\Controllers\Admin\Ad\V1\Models\Advertiser;
 use App\Http\Controllers\Admin\Ad\V1\Models\Advertisement;
 use App\Http\Controllers\Admin\User\V1\Models\ArUser;
+use App\Http\Controllers\Admin\User\V1\Transformer\UserTransformer;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class QueryController extends Controller
 {
@@ -269,4 +275,41 @@ class QueryController extends Controller
         return $this->response->collection($policies, new PolicyTransformer());
     }
 
+    public function contractQuery(Contract $contract, Request $request)
+    {
+        $query = $contract->query();
+        $user = $this->user();
+
+        if ($request->name) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+        if ($request->contract_number) {
+            $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
+        }
+
+        $contracts = $query->where('applicant', '=', $user->id)->get();
+
+        return $this->response->collection($contracts, new ContractTransformer());
+    }
+
+    public function goodsServiceQuery(GoodsService $goodsService, Request $request)
+    {
+        $query = $goodsService->query();
+        $contracts = $query->get();
+        return $this->response->collection($contracts, new GoodsServiceTransformer());
+    }
+
+    public function bdManagerQuery(Request $request)
+    {
+        $role = Role::findByName('bd-manager');
+        $users = $role->users()->get();
+        return $this->response->collection($users, new UserTransformer());
+    }
+
+    public function legalManagerQuery(Request $request)
+    {
+        $role = Role::findByName('legal-affairs-manager');
+        $users = $role->users()->get();
+        return $this->response->collection($users, new UserTransformer());
+    }
 }
