@@ -53,6 +53,7 @@
       class="modules">
       <router-view/>
     </div>
+    <iframe id="otherFlowWindow" src="http://devflow.jingfree.top/login" style="width:0px;height:0px"></iframe>
   </div>
 </template>
 
@@ -151,21 +152,8 @@ export default {
       return this.$store.state.notificationCount.noticeCount
     }
   },
+  mounted() {},
   created() {
-    if (Cookies.get('jwt_token') && !localStorage.getItem('jwt_token')) {
-      localStorage.setItem('jwt_token', Cookies.get('jwt_token'))
-      localStorage.setItem('jwt_ttl', Cookies.get('jwt_ttl'))
-      localStorage.setItem('jwt_begin_time', Cookies.get('jwt_begin_time'))
-      localStorage.setItem('user_info', Cookies.get('user_info'))
-      localStorage.setItem('permissions', Cookies.get('permissions'))
-    } else if (!Cookies.get('jwt_token')) {
-      localStorage.removeItem('jwt_token')
-      localStorage.removeItem('user_info')
-      localStorage.removeItem('jwt_ttl')
-      localStorage.removeItem('permissions')
-      localStorage.removeItem('jwt_begin_time')
-    }
-
     let userInfo = JSON.parse(localStorage.getItem('user_info'))
     this.$store.commit('setCurUserInfo', userInfo)
     this.notificationStats()
@@ -175,15 +163,24 @@ export default {
       this.active = item.id
       switch (item.id) {
         case 'zhongtai':
-          window.location.href = 'http://ad.' + DOMAIN + '/login'
-          // window.opne('http://devad.' + DOMAIN + '/login')
-
+          window.location.href = 'http://devad.' + DOMAIN + '/login'
           break
         case 'liucheng':
-          console.log(33)
-          // window.opne('http://devflow.' + DOMAIN + '/login')
-
-          window.location.href = 'http://flow.' + DOMAIN + '/login'
+          window.location.href = 'http://devflow.' + DOMAIN + '/login'
+          let info = {
+            jwt_token: localStorage.getItem('jwt_token'),
+            jwt_begin_time: localStorage.getItem('jwt_begin_time'),
+            jwt_ttl: localStorage.getItem('jwt_ttl'),
+            permissions: JSON.parse(localStorage.getItem('permissions')),
+            user_info: JSON.parse(localStorage.getItem('user_info'))
+          }
+          document
+            .getElementById('otherFlowWindow')
+            .contentWindow.postMessage(
+              JSON.stringify(info),
+              'http://devflow.jingfree.top'
+            )
+          window.localStorage.clear()
           break
         default:
           window.location.href = 'http://ad.xingstation.com/login'
