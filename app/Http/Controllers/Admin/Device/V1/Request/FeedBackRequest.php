@@ -6,11 +6,11 @@
  * Time: 14:26
  */
 
-namespace App\Http\Controllers\Admin\Coupon\V1\Request;
+namespace App\Http\Controllers\Admin\Device\V1\Request;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CouponBatchRequest extends FormRequest
+class FeedBackRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
