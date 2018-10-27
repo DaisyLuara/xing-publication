@@ -91,7 +91,7 @@
           prop="amount">
           <el-input
             v-model="couponForm.amount" 
-            :maxlength="4"
+            :maxlength="6"
             class="coupon-form-input"/>
         </el-form-item>
         <el-form-item 
@@ -100,7 +100,7 @@
           prop="count">
           <el-input 
             v-model="couponForm.count" 
-            :maxlength="4"
+            :maxlength="6"
             class="coupon-form-input"/>
         </el-form-item>
         <el-form-item 
@@ -109,7 +109,7 @@
           prop="stock" >
           <el-input 
             v-model="couponForm.stock" 
-            :maxlength="4"
+            :maxlength="6"
             class="coupon-form-input"/>
         </el-form-item>
         <el-form-item 
@@ -117,7 +117,7 @@
           prop="people_max_get">
           <el-input 
             v-model="couponForm.people_max_get" 
-            :maxlength="4"
+            :maxlength="6"
             class="coupon-form-input"/>
         </el-form-item>
         <el-form-item 
@@ -135,7 +135,7 @@
           prop="day_max_get">
           <el-input 
             v-model="couponForm.day_max_get" 
-            :maxlength="4"
+            :maxlength="6"
             class="coupon-form-input"/>
         </el-form-item>
         <el-form-item 
@@ -163,7 +163,7 @@
           prop="delay_effective_day">
           <el-input 
             v-model="couponForm.delay_effective_day" 
-            :maxlength="4"
+            :maxlength="6"
             class="coupon-form-input"/>
         </el-form-item>
         <el-form-item 
@@ -171,7 +171,7 @@
           prop="effective_day">
           <el-input 
             v-model="couponForm.effective_day" 
-            :maxlength="4"
+            :maxlength="6"
             class="coupon-form-input"/>
         </el-form-item>
         <el-form-item 
