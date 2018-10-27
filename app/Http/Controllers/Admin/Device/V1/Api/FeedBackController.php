@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Admin\Device\V1\Api;
 use App\Http\Controllers\Admin\Device\V1\Transformer\FeedBackTransformer;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Admin\Device\V1\Models\FeedBack;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Admin\Device\V1\Request\FeedBackRequest;
 
 class FeedBackController extends Controller
 {
-    public function index(Request $request, FeedBack $feedBack)
+    public function index(FeedBackRequest $request, FeedBack $feedBack)
     {
         $query = $feedBack->newQuery();
         if ($request->has('action')) {
