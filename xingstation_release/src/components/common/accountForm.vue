@@ -265,7 +265,6 @@
         </p>
       </a>
 		</div>
-    <!-- <iframe style="width:0px;height:0px" id="f2" src="http://devflow.jingfree.top/inform/list"></iframe> -->
   </div>
 </template>
 <script>
@@ -374,7 +373,7 @@ export default {
           md5: '',
           image_url: ''
         },
-        redirect_url: '/home/item'
+        redirect_url: '/inform/list'
       },
       rules: {
         account: [{ validator: va, trigger: 'blur' }],
@@ -402,27 +401,6 @@ export default {
         smsCaptcha: false
       }
     }
-  },
-  mounted() {
-    console.log(333 + 'ad')
-    window.addEventListener(
-      'message',
-      function(event) {
-        if (event.origin == 'http://devflow.jingfree.top') {
-          let data = event.data
-          let info = JSON.parse(data)
-          localStorage.setItem('jwt_token', info.jwt_token)
-          localStorage.setItem('jwt_ttl', info.jwt_ttl)
-          localStorage.setItem('jwt_begin_time', info.jwt_begin_time)
-          localStorage.setItem('permissions', JSON.stringify(info.permissions))
-          localStorage.setItem('user_info', JSON.stringify(info.user_info))
-          console.log(event)
-        } else {
-          return
-        }
-      },
-      false
-    )
   },
   created() {},
   methods: {

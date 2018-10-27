@@ -175,6 +175,13 @@ export default {
               user_info.password = ''
               this.$store.commit('setCurUserInfo', user_info)
               localStorage.setItem('user_info', JSON.stringify(user_info))
+              Cookies.set(
+                'user_info',
+                JSON.stringify(user_info),
+                '',
+                '',
+                DOMAIN
+              )
               this.$message({
                 message: '修改成功',
                 type: 'success'

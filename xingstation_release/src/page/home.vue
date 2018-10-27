@@ -53,7 +53,6 @@
       class="modules">
       <router-view/>
     </div>
-    <iframe id="otherFlowWindow" src="http://devflow.jingfree.top/login" style="width:0px;height:0px"></iframe>
   </div>
 </template>
 
@@ -63,6 +62,7 @@ import auth from 'service/auth'
 import { Cookies } from 'utils/cookies'
 import notice from 'service/notice'
 const DOMAIN = process.env.DOMAIN
+const NODE_ENV = process.env.NODE_ENV
 
 export default {
   name: 'Home',
@@ -161,26 +161,15 @@ export default {
   methods: {
     systemMenu(item) {
       this.active = item.id
+      let name = NODE_ENV === 'development' ? 'dev' : ''
       switch (item.id) {
         case 'zhongtai':
-          window.location.href = 'http://devad.' + DOMAIN + '/login'
+          window.location.href =
+            'http://' + name + 'ad.' + DOMAIN + '/inform/list'
           break
         case 'liucheng':
-          window.location.href = 'http://devflow.' + DOMAIN + '/login'
-          let info = {
-            jwt_token: localStorage.getItem('jwt_token'),
-            jwt_begin_time: localStorage.getItem('jwt_begin_time'),
-            jwt_ttl: localStorage.getItem('jwt_ttl'),
-            permissions: JSON.parse(localStorage.getItem('permissions')),
-            user_info: JSON.parse(localStorage.getItem('user_info'))
-          }
-          document
-            .getElementById('otherFlowWindow')
-            .contentWindow.postMessage(
-              JSON.stringify(info),
-              'http://devflow.jingfree.top'
-            )
-          window.localStorage.clear()
+          window.location.href =
+            'http://' + name + 'flow.' + DOMAIN + '/inform/list'
           break
         default:
           window.location.href = 'http://ad.xingstation.com/login'
