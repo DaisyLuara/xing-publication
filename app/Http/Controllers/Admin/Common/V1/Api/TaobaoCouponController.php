@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\Common\V1\Request\TaobaoCouponRequest;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Log;
+use DB;
 
 
 class TaobaoCouponController extends Controller
@@ -107,7 +108,20 @@ class TaobaoCouponController extends Controller
         $coupon = Coupon::query()->where('code', $request->code)
             ->where('taobao_user_id', $taobaoUserID)
             ->firstOrFail();
-        $coupon->update(['status' => 1]);
+        if ($coupon->status != 1) {
+            $coupon->update(['status' => 1]);
+            $op_time = date('Y-m-d H:i:s');
+            $insertData = array_merge(
+                [
+                    'op_time' => $op_time,
+                    'coupon_id' => $coupon->coupon_batch_id,
+                    'action' => 'RECEIVE_COUPONS',
+                    'created_at' => $op_time,
+                    'updated_at' => $op_time,
+                ],
+                $request->only(['game_name', 'device_code', 'user_nick']));
+            DB::connection('xs')->table('game_feedback')->insert($insertData);
+        }
         return $this->response->item($coupon, new CouponTransformer());
     }
 
