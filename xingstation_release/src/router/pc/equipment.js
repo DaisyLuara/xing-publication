@@ -52,6 +52,27 @@ let router = {
             import(/* webpackChunkName: "page/equipment/map/index" */ 'page/equipment/map/index')
         }
       ]
+    },
+    {
+      path: 'feedback',
+      name: '数据回流',
+      redirect: 'list',
+      meta: {
+        title: '数据回流'
+      },
+      component: () =>
+        import(/* webpackChunkName: "page/equipment/feedback/routerView" */ 'page/equipment/feedback/routerView'),
+      children: [
+        {
+          path: '/',
+          name: '数据回流列表',
+          meta: {
+            title: '数据回流列表'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/equipment/feedback/index" */ 'page/equipment/feedback/index')
+        }
+      ]
     }
   ]
 }

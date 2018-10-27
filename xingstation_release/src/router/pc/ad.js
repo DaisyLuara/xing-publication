@@ -6,7 +6,7 @@ let router = {
   name: '广告',
   meta: {
     title: '广告',
-    permission: 'ad',
+    permission: 'ad'
   },
   component: () =>
     import(/* webpackChunkName: "page/ad/adView" */ 'page/ad/adView'),
@@ -16,7 +16,7 @@ let router = {
       name: '广告投放',
       redirect: 'item',
       meta: {
-        title: '广告投放',
+        title: '广告投放'
       },
       component: () =>
         import(/* webpackChunkName: "page/ad/item/routerView" */ 'page/ad/item/routerView'),
@@ -25,19 +25,18 @@ let router = {
           path: '/',
           name: '广告投放详情列表',
           meta: {
-            title: '广告投放详情列表',
+            title: '广告投放详情列表'
           },
           component: () =>
-            import(/* webpackChunkName: "page/ad/item/index" */ 'page/ad/item/index'),
+            import(/* webpackChunkName: "page/ad/item/index" */ 'page/ad/item/index')
         },
         {
           path: 'add',
           component: () =>
             import(/* webpackChunkName: "page/ad/item/adSave" */ 'page/ad/item/adSave'),
           name: '新增广告投放节目',
-          meta: {
-          },
-        },
+          meta: {}
+        }
       ]
     },
     {
@@ -45,7 +44,7 @@ let router = {
       name: '短链接',
       redirect: 'url',
       meta: {
-        title: '短链接',
+        title: '短链接'
       },
       component: () =>
         import(/* webpackChunkName: "page/ad/url/routerView" */ 'page/ad/url/routerView'),
@@ -54,22 +53,21 @@ let router = {
           path: '/',
           name: '短链接列表',
           meta: {
-            title: '短链接列表',
+            title: '短链接列表'
           },
           component: () =>
-            import(/* webpackChunkName: "page/ad/url/index" */ 'page/ad/url/index'),
+            import(/* webpackChunkName: "page/ad/url/index" */ 'page/ad/url/index')
         },
         {
           path: 'add',
           component: () =>
             import(/* webpackChunkName: "page/ad/url/add" */ 'page/ad/url/add'),
           name: '短链接增加',
-          meta: {
-          },
-        },
+          meta: {}
+        }
       ]
-    },
-  ],
+    }
+  ]
 }
 
 router.redirect = () => {
