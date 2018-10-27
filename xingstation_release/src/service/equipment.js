@@ -1,6 +1,6 @@
 import { router } from '../main'
 const EQUIPMENT_API = '/api/push'
-const FEEDBACK_API = '/tmall/feedback'
+const FEEDBACK_API = '/api/tmall/feedback'
 
 const HOST = process.env.SERVER_URL
 
