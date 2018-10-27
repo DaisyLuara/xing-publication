@@ -11,6 +11,9 @@ $api->version('v1', [
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
             //设备
             $api->get('push', 'PushController@index');
+
+            //天猫-数据回流
+            $api->get('tmall/feedback', 'FeedBackController@index');
         });
     });
 
