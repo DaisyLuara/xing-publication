@@ -115,6 +115,10 @@ class ContractController extends Controller
 
     public function store(ContractRequest $request, Contract $contract)
     {
+        $user = $this->user();
+        if (!$user->parent_id) {
+            abort(500, '无所属主管，无法新增合同申请');
+        }
         $role = Role::findByName('legal-affairs');
         $legals = $role->users()->get();
         foreach ($legals as $legal) {

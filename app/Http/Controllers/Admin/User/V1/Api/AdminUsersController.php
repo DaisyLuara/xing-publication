@@ -51,6 +51,10 @@ class AdminUsersController extends Controller
             return $this->response->errorNotFound('角色不存在');
         }
 
+        if (($role->name == 'legal-affairs' || $role->name == 'user') && !$request->parent_id) {
+            abort(500, "请选择所属主管");
+        }
+
         /** @var User $user */
         $user = User::create([
             'name' => $request->name,
