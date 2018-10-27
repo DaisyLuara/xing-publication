@@ -83,6 +83,11 @@
           min-width="120"/>
         <el-table-column
           :show-overflow-tooltip="true"
+          prop="action"
+          label="action" 
+          min-width="120"/>
+        <el-table-column
+          :show-overflow-tooltip="true"
           prop="coupon_id"
           label="couponID" 
           min-width="120"/>
