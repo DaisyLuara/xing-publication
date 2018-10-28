@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers\Admin\Coupon\V1\Models;
 
+use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Models\Model;
 
 class Coupon extends Model
@@ -26,5 +27,10 @@ class Coupon extends Model
     public function couponBatch()
     {
         return $this->belongsTo(CouponBatch::class, 'coupon_batch_id', 'id');
+    }
+
+    public function media()
+    {
+        return $this->hasOne(Media::class);
     }
 }
