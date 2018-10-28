@@ -46,7 +46,7 @@ class Handler extends ExceptionHandler
     {
 
         if ($this->shouldReport($exception) && env('APP_ENV') == 'production') {
-            ding()->with('other')->text($exception->getMessage());
+            ding()->with('other')->text($exception->getMessage() . PHP_EOL . $exception->getFile() . PHP_EOL . $exception->getLine());
         }
 
         return parent::report($exception);
