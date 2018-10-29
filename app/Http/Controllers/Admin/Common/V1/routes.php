@@ -29,11 +29,12 @@ $api->version('v1', [
         });
 
         //淘宝接口
-        $api->get('user/coupon_batch/{couponBatch}', 'TaobaoCouponController@show');//获取用户的淘宝优惠券
-        $api->post('user/coupon_batch/{couponBatch}', 'TaobaoCouponController@store');//发送淘宝优惠券
-        $api->post('user/coupon', 'TaobaoCouponController@update');//核销
+        $api->group(['prefix' => 'tmall'], function ($api) {
+            $api->get('user/coupon_batch/{couponBatch}', 'TaobaoCouponController@show');//获取用户的淘宝优惠券
+            $api->post('user/coupon_batch/{couponBatch}', 'TaobaoCouponController@store');//发送淘宝优惠券
+            $api->post('user/coupon', 'TaobaoCouponController@update');//核销
+        });
 
-        $api->any('open/coupon/batches', 'CouponController@generateCouponBatch');//抽奖
         $api->get('s/{url_path}', 'ShortUrlController@redirect');//短链接跳转
         $api->post('open/short_urls', 'ShortUrlController@store');//短链接生成
 
