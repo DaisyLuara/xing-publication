@@ -4001,59 +4001,6 @@
 							"description": "",
 							"item": [
 								{
-									"name": "获取优惠券规则",
-									"request": {
-										"url": {
-											"raw": "papi.xingstation.com/api/open/coupon/batches?policy_id=16&score=94",
-											"host": [
-												"papi",
-												"xingstation",
-												"com"
-											],
-											"path": [
-												"api",
-												"open",
-												"coupon",
-												"batches"
-											],
-											"query": [
-												{
-													"key": "policy_id",
-													"value": "16",
-													"equals": true,
-													"description": ""
-												},
-												{
-													"key": "score",
-													"value": "94",
-													"equals": true,
-													"description": ""
-												}
-											],
-											"variable": []
-										},
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json",
-												"description": ""
-											},
-											{
-												"key": "api-token",
-												"value": "eyJhbGciOiJtZDUiLCJ0eXBlIjoiand0In0=.eyJhayI6IngwT3V0TUZkbmtqekZ3UmE3ZmxOczBsaENMOVJpMWRwIiwiZWNob3N0ciI6IjBBVHl4Rlhtc0EwRHhnNEhFU053czRiaGhmNiIsInRpbWVzdGFtcCI6MTUzOTkyMTA0Mn0=.37d9d02dc062160c1f79af0a5bb7fba0",
-												"description": ""
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n}"
-										},
-										"description": ""
-									},
-									"response": []
-								},
-								{
 									"name": "领取优惠券",
 									"request": {
 										"url": "http://{{host}}/api/open/coupons/9",
@@ -4199,6 +4146,48 @@
 										"description": ""
 									},
 									"response": []
+								},
+								{
+									"name": "领券优惠券",
+									"request": {
+										"url": {
+											"raw": "{{host}}/api/mini/user/coupon_batch/3?z=0fg4a3dfc48b6628628ef6bf71f6b31869d5tg",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"mini",
+												"user",
+												"coupon_batch",
+												"3"
+											],
+											"query": [
+												{
+													"key": "z",
+													"value": "0fg4a3dfc48b6628628ef6bf71f6b31869d5tg",
+													"equals": true,
+													"description": ""
+												}
+											],
+											"variable": []
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "api-token",
+													"value": "{{api-token}}",
+													"description": "",
+													"type": "text"
+												}
+											]
+										},
+										"description": ""
+									},
+									"response": []
 								}
 							],
 							"_postman_isSubFolder": true
@@ -4295,7 +4284,7 @@
 					"_postman_isSubFolder": true
 				},
 				{
-					"name": "获取节目的优惠券投放策略",
+					"name": "获取抽奖规则",
 					"request": {
 						"url": {
 							"raw": "{{host}}/api/open/project/policy?belong=cvTianMaoNew",
@@ -4321,6 +4310,51 @@
 						"method": "GET",
 						"header": [],
 						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "抽奖",
+					"request": {
+						"url": {
+							"raw": "{{host}}/api/open/coupon/batches?policy_id=1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"open",
+								"coupon",
+								"batches"
+							],
+							"query": [
+								{
+									"key": "policy_id",
+									"value": "1",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "api-token",
+								"value": "eyJhbGciOiJtZDUiLCJ0eXBlIjoiand0In0=.eyJhayI6IngwT3V0TUZkbmtqekZ3UmE3ZmxOczBsaENMOVJpMWRwIiwiZWNob3N0ciI6IjBBVHl4Rlhtc0EwRHhnNEhFU053czRiaGhmNiIsInRpbWVzdGFtcCI6MTUzOTkyMTA0Mn0=.37d9d02dc062160c1f79af0a5bb7fba0",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n}"
+						},
 						"description": ""
 					},
 					"response": []
