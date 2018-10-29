@@ -14,6 +14,7 @@ $api->version('v1', [
         //h5页面优惠券
         $api->group(['middleware' => 'api_sign'], function ($api) {
             $api->get('open/project/policy', 'ProjectController@show');//获取抽奖规则
+            $api->any('open/coupon/batches', 'CouponController@generateCouponBatch');//抽奖
 
             $api->post('open/coupon/batches/{couponBatch}', 'CouponController@getCouponBatch');//获取优惠券规则
             $api->post('open/coupons/{couponBatch}', 'CouponController@generateCoupon');//发送优惠券
