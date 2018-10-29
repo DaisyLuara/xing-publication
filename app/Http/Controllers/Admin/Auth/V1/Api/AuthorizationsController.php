@@ -4,13 +4,11 @@ namespace App\Http\Controllers\Admin\Auth\V1\Api;
 
 use App\Http\Controllers\Admin\Auth\V1\Request\AuthorizationRequest;
 use App\Http\Controllers\Admin\Auth\V1\Request\SocialBindRequest;
-use Illuminate\Support\Facades\Cookie;
 use App\Http\Controllers\Controller;
-use Illuminate\Auth\Events\Login;
-use Illuminate\Http\Request;
 use App\Models\User;
 use Auth;
-use Log;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 
 class AuthorizationsController extends Controller
 {
@@ -59,7 +57,7 @@ class AuthorizationsController extends Controller
             'access_token' => $token,
             'token_type' => 'Bearer',
             'expires_in' => Auth::guard('api')->factory()->getTTL() * 60
-        ])->setStatusCode(201);
+        ])->cookie('jwt_token', $token)->setStatusCode(201);
     }
 
     public function customerLogin(Request $request, Customer $customer)
@@ -102,6 +100,11 @@ class AuthorizationsController extends Controller
     {
         Auth::guard('api')->logout();
         activity('logout')->causedBy($this->user())->log('用户登出');
+        Cookie::forget('jwt_begin_time');
+        Cookie::forget('jwt_token');
+        Cookie::forget('jwt_ttl');
+        Cookie::forget('permissions');
+        Cookie::forget('user_info');
         return $this->response->noContent();
     }
 
@@ -142,4 +145,21 @@ class AuthorizationsController extends Controller
         return $this->response->noContent();
 
     }
+
+//    public function system_skip(Request $request)
+//    {
+//        $token = Auth::guard('api')->refresh();
+//        $data = [
+//            'access_token' => $token,
+//            'token_type' => 'Bearer',
+//            'expires_in' => Auth::guard('api')->factory()->getTTL() * 60
+//        ];
+//
+//        if ($request->type == 'publication') {
+//            return redirect()->away(env('PUBLICATION_URL'))->withInput($data);
+//        } else {
+//            return redirect()->away(env('PROCESS_URL'))->withInput($data);
+//        }
+//
+//    }
 }

@@ -56,7 +56,11 @@ class PaymentController extends Controller
 
     public function store(PaymentRequest $request, Payment $payment)
     {
-        $payment->fill(array_merge($request->all(), ['status' => 1, 'handler' => $this->user()->parent_id, 'receive_status' => 0]))->save();
+        $user = $this->user();
+        if (!$user->parent_id) {
+            abort(500, '无所属主管，无法新增付款申请');
+        }
+        $payment->fill(array_merge($request->all(), ['status' => 1, 'handler' => $user->parent_id, 'receive_status' => 0]))->save();
         return $this->response->noContent();
     }
 
