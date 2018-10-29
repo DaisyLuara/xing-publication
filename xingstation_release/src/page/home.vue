@@ -165,13 +165,13 @@ export default {
       let name = NODE_ENV === 'development' ? 'dev' : ''
       switch (item.id) {
         case 'zhongtai':
-          this.redirectUrl('flow')
+          this.redirectUrl('ad')
 
           // window.location.href =
           //   'http://' + name + 'ad.' + DOMAIN + '/inform/list'
           break
         case 'liucheng':
-          this.redirectUrl('ad')
+          this.redirectUrl('flow')
 
           // window.location.href =
           //   'http://' + name + 'flow.' + DOMAIN + '/inform/list'
