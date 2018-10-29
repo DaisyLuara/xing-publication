@@ -60,6 +60,7 @@
 import { Menu, MenuItem, Button, Badge, Icon } from 'element-ui'
 import auth from 'service/auth'
 import { Cookies } from 'utils/cookies'
+import { redirectUrl } from 'service/redirect'
 import notice from 'service/notice'
 const DOMAIN = process.env.DOMAIN
 const NODE_ENV = process.env.NODE_ENV
@@ -164,17 +165,34 @@ export default {
       let name = NODE_ENV === 'development' ? 'dev' : ''
       switch (item.id) {
         case 'zhongtai':
-          window.location.href =
-            'http://' + name + 'ad.' + DOMAIN + '/inform/list'
+          this.redirectUrl('flow')
+
+          // window.location.href =
+          //   'http://' + name + 'ad.' + DOMAIN + '/inform/list'
           break
         case 'liucheng':
-          window.location.href =
-            'http://' + name + 'flow.' + DOMAIN + '/inform/list'
-          break
-        default:
-          window.location.href = 'http://ad.xingstation.com/login'
+          this.redirectUrl('ad')
+
+          // window.location.href =
+          //   'http://' + name + 'flow.' + DOMAIN + '/inform/list'
           break
       }
+    },
+    redirectUrl(type) {
+      let permissions = Cookies.get('permissions')
+      let userInfo = Cookies.get('user_info')
+      let args = {
+        user_info: userInfo,
+        permissions: permissions,
+        type: type
+      }
+      redirectUrl(this, args)
+        .then(res => {
+          console.log(res)
+        })
+        .catch(err => {
+          console.log(err)
+        })
     },
     notificationStats() {
       return notice
