@@ -8,7 +8,6 @@
 
 namespace App\Http\Controllers\Admin\Coupon\V1\Request;
 
-
 use Illuminate\Validation\Rule;
 use Dingo\Api\Http\FormRequest;
 

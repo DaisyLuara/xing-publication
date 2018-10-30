@@ -52,8 +52,12 @@ class AdminCustomersController extends Controller
     public function update(CustomerRequest $request, Company $company, Customer $customer)
     {
         $this->authorize('update', [$customer, $company]);
+        $input = $request->except('company_id');
+        if (isset($input['password'])) {
+            $input['password'] = bcrypt($input['password']);
+        }
 
-        $customer->update($request->except('company_id'));
+        $customer->update($input);
         return $this->response->item($customer, new CustomerTransformer());
     }
 
