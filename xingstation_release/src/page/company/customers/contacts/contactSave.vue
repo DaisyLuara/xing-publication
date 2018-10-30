@@ -137,11 +137,11 @@ export default {
           let name = this.contactName
           let uid = this.$route.query.uid
           let args = {
-            name: this.contactForm.name,
-            phone: this.contactForm.phone,
-            password: this.contactForm.password
+            name: this.contactForm.contact.name,
+            phone: this.contactForm.contact.phone,
+            password: this.contactForm.contact.password
           }
-          if (this.contactForm.password === '') {
+          if (this.contactForm.contact.password === '') {
             delete args.password
           }
           company
