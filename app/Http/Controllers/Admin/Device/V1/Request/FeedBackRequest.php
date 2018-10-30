@@ -8,7 +8,7 @@
 
 namespace App\Http\Controllers\Admin\Device\V1\Request;
 
-use Illuminate\Foundation\Http\FormRequest;
+use Dingo\Api\Http\FormRequest;
 
 class FeedBackRequest extends FormRequest
 {
