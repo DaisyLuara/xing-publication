@@ -70,7 +70,7 @@ export default {
     context.$http
       .delete(HOST + LOGOUT_API)
       .then(data => {
-        // this.clearLoginData(context)
+        this.clearLoginData(context)
         let setIntervalValue =
           context.$store.state.notificationCount.setIntervalValue
         clearInterval(setIntervalValue)

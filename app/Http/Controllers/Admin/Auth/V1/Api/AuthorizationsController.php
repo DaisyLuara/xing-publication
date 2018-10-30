@@ -99,6 +99,7 @@ class AuthorizationsController extends Controller
      */
     public function destroy()
     {
+
         Auth::guard('api')->logout();
         activity('logout')->causedBy($this->user())->log('用户登出');
         $this->cookieDelete();
@@ -145,13 +146,13 @@ class AuthorizationsController extends Controller
 
     public function systemSkip(Request $request)
     {
-       $this->cookieDelete();
+        $this->cookieDelete();
 
-        Cookie::queue(Cookie::make('jwt_token', $request->token, '', '', env('DOMAIN_SERVER_NAME')));
-        Cookie::queue(Cookie::make('jwt_ttl', $request->jwt_ttl, '', '', env('DOMAIN_SERVER_NAME')));
-        Cookie::queue(Cookie::make('jwt_begin_time', $request->jwt_begin_time, '', '', env('DOMAIN_SERVER_NAME')));
-        Cookie::queue(Cookie::make('permissions', $request->permissions, '', '', env('DOMAIN_SERVER_NAME')));
-        Cookie::queue(Cookie::make('user_info', $request->user_info, '', '', env('DOMAIN_SERVER_NAME')));
+        setcookie('jwt_token', $request->token, time() + 1000, '/', env('DOMAIN_SERVER_NAME'));
+        setcookie('jwt_ttl', $request->jwt_ttl, time() + 1000, '/', env('DOMAIN_SERVER_NAME'));
+        setcookie('jwt_begin_time', $request->jwt_begin_time, time() + 1000, '/', env('DOMAIN_SERVER_NAME'));
+        setcookie('permissions', $request->permissions, time() + 1000, '/', env('DOMAIN_SERVER_NAME'));
+        setcookie('user_info', $request->user_info, time() + 1000, '/', env('DOMAIN_SERVER_NAME'));
         if ($request->type == 'ad') {
             return redirect()->away(env('PUBLICATION_URL'));
         } else {
@@ -162,10 +163,10 @@ class AuthorizationsController extends Controller
 
     public function cookieDelete()
     {
-        Cookie::queue(Cookie::forget('jwt_token', '', env('DOMAIN_SERVER_NAME')));
-        Cookie::queue(Cookie::forget('jwt_ttl', '', env('DOMAIN_SERVER_NAME')));
-        Cookie::queue(Cookie::forget('jwt_begin_time', '', env('DOMAIN_SERVER_NAME')));
-        Cookie::queue(Cookie::forget('permissions', '', env('DOMAIN_SERVER_NAME')));
-        Cookie::queue(Cookie::forget('user_info', '', env('DOMAIN_SERVER_NAME')));
+        setcookie('jwt_token', '', 0, '/', env('DOMAIN_SERVER_NAME'));
+        setcookie('jwt_ttl', '', 0, '/', env('DOMAIN_SERVER_NAME'));
+        setcookie('jwt_begin_time', '', 0, '/', env('DOMAIN_SERVER_NAME'));
+        setcookie('permissions', '', 0, '/', env('DOMAIN_SERVER_NAME'));
+        setcookie('user_info', '', 0, '/', env('DOMAIN_SERVER_NAME'));
     }
 }
