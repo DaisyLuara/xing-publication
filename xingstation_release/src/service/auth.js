@@ -24,7 +24,7 @@ export default {
         })
         context.setting.submiting = false
         this.refreshUserInfo(context).then(res => {
-          if (localStorage.getItem('permissions').indexOf('setting') > -1) {
+          if (context.$cookie.get('permissions').indexOf('setting') > -1) {
             context.$router.push({
               path: '/'
             })
@@ -70,7 +70,7 @@ export default {
     context.$http
       .delete(HOST + LOGOUT_API)
       .then(data => {
-        // this.clearLoginData(context)
+        this.clearLoginData(context)
         let setIntervalValue =
           context.$store.state.notificationCount.setIntervalValue
         clearInterval(setIntervalValue)
@@ -85,16 +85,11 @@ export default {
 
   // 清楚一切登录相关数据
   clearLoginData(context) {
-    Cookies.removeItem('jwt_token')
-    Cookies.removeItem('user_info')
-    Cookies.removeItem('jwt_ttl')
-    Cookies.removeItem('jwt_begin_time')
-    Cookies.removeItem('permissions')
-    localStorage.removeItem('jwt_token')
-    localStorage.removeItem('user_info')
-    localStorage.removeItem('jwt_ttl')
-    localStorage.removeItem('permissions')
-    localStorage.removeItem('jwt_begin_time')
+    context.$cookie.delete('jwt_token', { domain: 'jingfree.top' })
+    context.$cookie.delete('user_info', { domain: 'jingfree.top' })
+    context.$cookie.delete('jwt_ttl', { domain: 'jingfree.top' })
+    context.$cookie.delete('jwt_begin_time', { domain: 'jingfree.top' })
+    context.$cookie.delete('permissions', { domain: 'jingfree.top' })
     let setIntervalValue =
       context.$store.state.notificationCount.setIntervalValue
     clearInterval(setIntervalValue)
@@ -105,18 +100,22 @@ export default {
       context.$http
         .get(HOST + USERINFO_API)
         .then(response => {
-          Cookies.removeItem('permissions')
-          Cookies.removeItem('user_info')
-          localStorage.removeItem('user_info')
-          localStorage.removeItem('permissions')
+          context.$cookie.delete('permissions', { domain: 'jingfree.top' })
+          context.$cookie.delete('user_info', { domain: 'jingfree.top' })
           let result = response.data
-          localStorage.setItem(
+          // localStorage.setItem(
+          //   'permissions',
+          //   JSON.stringify(result.permissions)
+          // )
+          context.$cookie.set(
             'permissions',
-            JSON.stringify(result.permissions)
+            JSON.stringify(result.permissions),
+            { domain: 'jingfree.top' }
           )
-          Cookies.set('permissions', JSON.stringify(result.permissions))
-          Cookies.set('user_info', JSON.stringify(result))
-          localStorage.setItem('user_info', JSON.stringify(result))
+          context.$cookie.set('user_info', JSON.stringify(result), {
+            domain: 'jingfree.top'
+          })
+          // localStorage.setItem('user_info', JSON.stringify(result))
           //context.$store.commit('setCurUserInfo', result.data)
           resolve(result.data)
         })
@@ -172,12 +171,18 @@ export default {
 
   setToken(context, tokenObj) {
     let tokenBeginTime = new Date().getTime()
-    localStorage.setItem('jwt_token', tokenObj.access_token)
-    localStorage.setItem('jwt_ttl', tokenObj.expires_in)
-    localStorage.setItem('jwt_begin_time', tokenBeginTime)
-    Cookies.set('jwt_token', tokenObj.access_token)
-    Cookies.set('jwt_ttl', tokenObj.expires_in)
-    Cookies.set('jwt_begin_time', tokenBeginTime)
+    // localStorage.setItem('jwt_token', tokenObj.access_token)
+    // localStorage.setItem('jwt_ttl', tokenObj.expires_in)
+    // localStorage.setItem('jwt_begin_time', tokenBeginTime)
+    context.$cookie.set('jwt_token', tokenObj.access_token, {
+      domain: 'jingfree.top'
+    })
+    context.$cookie.set('jwt_ttl', tokenObj.expires_in, {
+      domain: 'jingfree.top'
+    })
+    context.$cookie.set('jwt_begin_time', tokenBeginTime, {
+      domain: 'jingfree.top'
+    })
   },
 
   // 检测token是否过期, 过期返回true，没有过期返回false
