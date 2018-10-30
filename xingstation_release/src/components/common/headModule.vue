@@ -68,7 +68,13 @@ export default {
 <style lang="less" scoped>
 .logout {
   height: 80px;
+  position: fixed;
+  top: 0;
   background: #222830;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 130;
   .logo-wrap {
     position: relative;
     display: flex;

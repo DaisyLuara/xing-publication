@@ -211,19 +211,22 @@ export default {
 @import '../assets/css/pcCommon.less';
 
 .system-menu {
-  display: flex;
-  position: relative;
+  position: fixed;
+  top: 80px;
+  left: 0;
+  right: 0;
   width: 100%;
+  text-align: center;
   padding-left: 90px;
-  flex-flow: row;
   height: 50px;
-  justify-content: center;
-  align-items: center;
+  background: #fff;
   border-bottom: 1px solid #ccc8c8;
+  z-index: 300;
   .system-menu-item {
     margin-right: 35px;
     height: 50px;
     line-height: 50px;
+    display: inline-block;
     cursor: pointer;
     &.active {
       border-bottom: 2px solid #2196f3;

@@ -84,7 +84,7 @@ body {
 }
 .topbar {
   position: absolute;
-  top: 0;
+  top: 130px;
   left: 200px;
   right: 0;
   height: 75px;
@@ -104,7 +104,7 @@ body {
   position: relative;
   width: 100%;
   padding-left: 200px;
-  padding-top: 76px;
+  padding-top: 206px;
 }
 .modules .content {
   background-color: #fff;
