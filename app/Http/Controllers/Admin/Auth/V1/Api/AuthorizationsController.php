@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\Auth\V1\Request\SocialBindRequest;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Auth;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 
@@ -57,7 +58,7 @@ class AuthorizationsController extends Controller
             'access_token' => $token,
             'token_type' => 'Bearer',
             'expires_in' => Auth::guard('api')->factory()->getTTL() * 60
-        ])->cookie('jwt_token', $token)->setStatusCode(201);
+        ])->setStatusCode(201);
     }
 
     public function customerLogin(Request $request, Customer $customer)
@@ -100,11 +101,11 @@ class AuthorizationsController extends Controller
     {
         Auth::guard('api')->logout();
         activity('logout')->causedBy($this->user())->log('用户登出');
-        Cookie::forget('jwt_begin_time');
-        Cookie::forget('jwt_token');
-        Cookie::forget('jwt_ttl');
-        Cookie::forget('permissions');
-        Cookie::forget('user_info');
+        Cookie::queue(Cookie::forget('jwt_token', '', 'jingfree.top'));
+        Cookie::queue(Cookie::forget('jwt_ttl', '', 'jingfree.top'));
+        Cookie::queue(Cookie::forget('jwt_begin_time', '', 'jingfree.top'));
+        Cookie::queue(Cookie::forget('permissions', '', 'jingfree.top'));
+        Cookie::queue(Cookie::forget('user_info', '', ''));
         return $this->response->noContent();
     }
 
@@ -146,20 +147,21 @@ class AuthorizationsController extends Controller
 
     }
 
-//    public function system_skip(Request $request)
-//    {
-//        $token = Auth::guard('api')->refresh();
-//        $data = [
-//            'access_token' => $token,
-//            'token_type' => 'Bearer',
-//            'expires_in' => Auth::guard('api')->factory()->getTTL() * 60
-//        ];
-//
-//        if ($request->type == 'publication') {
-//            return redirect()->away(env('PUBLICATION_URL'))->withInput($data);
-//        } else {
-//            return redirect()->away(env('PROCESS_URL'))->withInput($data);
-//        }
-//
-//    }
+    public function systemSkip(Request $request)
+    {
+        $token = Auth::guard('api')->refresh();
+        $ttl = Auth::guard('api')->factory()->getTTL() * 60;
+        $beginTime = strtotime(Carbon::now()->toDateTimeString());
+        Cookie::queue(Cookie::make('jwt_token', $token, '', '', env('DOMAIN_SERVER_NAME')));
+        Cookie::queue(Cookie::make('jwt_ttl', $ttl, '', '', env('DOMAIN_SERVER_NAME')));
+        Cookie::queue(Cookie::make('jwt_begin_time', $beginTime, '', '', env('DOMAIN_SERVER_NAME')));
+        Cookie::queue(Cookie::make('permissions', $request->permissions, '', '', env('DOMAIN_SERVER_NAME')));
+        Cookie::queue(Cookie::make('user_info', $request->user_info, '', '', env('DOMAIN_SERVER_NAME')));
+        if ($request->type == 'ad') {
+            return redirect(env('PUBLICATION_URL'));
+        } else {
+            return redirect(env('PROCESS_URL'));
+        }
+
+    }
 }
