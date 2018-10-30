@@ -18,7 +18,6 @@ class CrossRequest
     {
         $response = $next($request);
         $headers = $request->headers->all();
-        Log::info($headers);
         $origin = $headers['origin'][0];
         $allow_origin = [
             'http://devad.jingfree.top',

@@ -32,7 +32,7 @@ $api->version('v1', [
         //管理员登陆
         $api->post('verificationCodes', 'VerificationCodesController@store'); // 短信验证码
         $api->post('authorizations', 'AuthorizationsController@store'); //登陆
-        $api->post('system_skip', ['middleware' => ['api.auth', 'CrossRequest'], 'uses' => 'AuthorizationsController@systemSkip']);
+        $api->get('system_skip', ['middleware' => ['api.auth', 'CrossRequest'], 'uses' => 'AuthorizationsController@systemSkip']);
 
         //用户登录
         $api->post('customer/login', 'AuthorizationsController@customerLogin');
