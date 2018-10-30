@@ -101,11 +101,7 @@ class AuthorizationsController extends Controller
     {
         Auth::guard('api')->logout();
         activity('logout')->causedBy($this->user())->log('用户登出');
-        Cookie::queue(Cookie::forget('jwt_token', '', 'jingfree.top'));
-        Cookie::queue(Cookie::forget('jwt_ttl', '', 'jingfree.top'));
-        Cookie::queue(Cookie::forget('jwt_begin_time', '', 'jingfree.top'));
-        Cookie::queue(Cookie::forget('permissions', '', 'jingfree.top'));
-        Cookie::queue(Cookie::forget('user_info', '', ''));
+        $this->cookieDelete();
         return $this->response->noContent();
     }
 
@@ -149,19 +145,27 @@ class AuthorizationsController extends Controller
 
     public function systemSkip(Request $request)
     {
-        $token = Auth::guard('api')->refresh();
-        $ttl = Auth::guard('api')->factory()->getTTL() * 60;
-        $beginTime = strtotime(Carbon::now()->toDateTimeString());
-        Cookie::queue(Cookie::make('jwt_token', $token, '', '', env('DOMAIN_SERVER_NAME')));
-        Cookie::queue(Cookie::make('jwt_ttl', $ttl, '', '', env('DOMAIN_SERVER_NAME')));
-        Cookie::queue(Cookie::make('jwt_begin_time', $beginTime, '', '', env('DOMAIN_SERVER_NAME')));
+        $this->cookieDelete();
+
+        Cookie::queue(Cookie::make('jwt_token', $request->token, '', '', env('DOMAIN_SERVER_NAME')));
+        Cookie::queue(Cookie::make('jwt_ttl', $request->jwt_ttl, '', '', env('DOMAIN_SERVER_NAME')));
+        Cookie::queue(Cookie::make('jwt_begin_time', $request->jwt_begin_time, '', '', env('DOMAIN_SERVER_NAME')));
         Cookie::queue(Cookie::make('permissions', $request->permissions, '', '', env('DOMAIN_SERVER_NAME')));
         Cookie::queue(Cookie::make('user_info', $request->user_info, '', '', env('DOMAIN_SERVER_NAME')));
         if ($request->type == 'ad') {
-            return redirect(env('PUBLICATION_URL'));
+            return redirect()->away(env('PUBLICATION_URL'));
         } else {
-            return redirect(env('PROCESS_URL'));
+            return redirect()->away(env('PROCESS_URL'));
         }
 
+    }
+
+    public function cookieDelete()
+    {
+        Cookie::queue(Cookie::forget('jwt_token', '', env('DOMAIN_SERVER_NAME')));
+        Cookie::queue(Cookie::forget('jwt_ttl', '', env('DOMAIN_SERVER_NAME')));
+        Cookie::queue(Cookie::forget('jwt_begin_time', '', env('DOMAIN_SERVER_NAME')));
+        Cookie::queue(Cookie::forget('permissions', '', env('DOMAIN_SERVER_NAME')));
+        Cookie::queue(Cookie::forget('user_info', '', env('DOMAIN_SERVER_NAME')));
     }
 }
