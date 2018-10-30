@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Media\V1\Request;
 
-use Illuminate\Foundation\Http\FormRequest;
+use Dingo\Api\Http\FormRequest;
 
 class MediaRequest extends FormRequest
 {

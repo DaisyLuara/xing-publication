@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin\Contract\V1\Request;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Dingo\Api\Http\FormRequest;
 
 class ContractRequest extends FormRequest
 {
