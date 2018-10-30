@@ -43,6 +43,7 @@
           label="密码" 
           prop="contact.password">
           <el-input 
+            type="password"
             v-model="contactForm.contact.password" 
             :maxlength="25"
             class="customer-form-input"/>
