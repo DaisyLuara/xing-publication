@@ -99,9 +99,9 @@ export default {
               case 'system':
                 m.src = require('../assets/images/icons/permission-icon.png')
                 break
-              case 'company':
-                m.src = require('../assets/images/icons/company-icon.png')
-                break
+              // case 'company':
+              //   m.src = require('../assets/images/icons/company-icon.png')
+              //   break
               case 'ad':
                 m.src = require('../assets/images/icons/advertisement-icon.png')
                 break
