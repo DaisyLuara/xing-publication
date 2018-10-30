@@ -11,42 +11,53 @@ namespace App\Http\Controllers\Admin\Common\V1\Api;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Common\V1\Transformer\CouponTransformer;
-use App\Http\Controllers\Admin\Common\V1\Request\TaobaoCouponRequest;
+use App\Http\Controllers\Admin\Common\V1\Request\MiniCouponRequest;
+use App\Http\Controllers\Admin\User\V1\Models\ArMemberSession;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Log;
-use DB;
 
 
-class TaobaoCouponController extends Controller
+class MiniCouponController extends Controller
 {
+
     /**
-     * 获取用户优惠券
-     * @param TaobaoCouponRequest $request
+     * 用户优惠券列表
+     * @param Request $request
      * @return mixed
      */
-    public function show(CouponBatch $couponBatch, TaobaoCouponRequest $request)
+    public function couponIndex(MiniCouponRequest $request)
     {
-        $coupon = Coupon::query()->where('coupon_batch_id', $couponBatch->id)->where('taobao_user_id', $request->openuid)->first();
-        abort_if(!$coupon, 204);
+        $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
 
-        return $this->response->item($coupon, new CouponTransformer());
+        $couponQuery = Coupon::query();
+        if ($request->has('status')) {
+            $couponQuery->where('status', $request->get('status'));
+        }
+
+        if ($request->has('coupon_batch_id')) {
+            $couponQuery->where('coupon_batch_id', $request->get('coupon_batch_id'));
+        }
+
+        $coupon = $couponQuery->where('member_uid', $member->uid)->orderByDesc('id')->paginate(10);
+
+        return $this->response->paginator($coupon, new CouponTransformer());
     }
 
-
     /**
-     * 发送优惠券
+     * 领取优惠券
      * @param CouponBatch $couponBatch
      * @param TaobaoCouponRequest $request
      * @return mixed
      */
-    public function store(CouponBatch $couponBatch, TaobaoCouponRequest $request)
+    public function store(CouponBatch $couponBatch, MiniCouponRequest $request)
     {
-        Log::info('taobao_coupon_store', $request->all());
-        $taobaoUserID = $request->openuid;
+        Log::info('mini_coupon_store', $request->all());
+        $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
+        $memberUID = $member->uid;
 
         //同一种优惠券只能领取一次
-        $coupon = Coupon::query()->where('coupon_batch_id', $couponBatch->id)->where('taobao_user_id', $taobaoUserID)->first();
+        $coupon = Coupon::query()->where('coupon_batch_id', $couponBatch->id)->where('member_uid', $memberUID)->first();
         if ($coupon) {
             return $this->response->item($coupon, new CouponTransformer());
         }
@@ -69,7 +80,7 @@ class TaobaoCouponController extends Controller
 
         //用户最大领取量
         if (!$couponBatch->pmg_status) {
-            $coupons = Coupon::query()->where('taobao_user_id', $taobaoUserID)
+            $coupons = Coupon::query()->where('taobao_user_id', $memberUID)
                 ->where('coupon_batch_id', $couponBatch->id)
                 ->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
                 ->get();
@@ -84,7 +95,7 @@ class TaobaoCouponController extends Controller
             'code' => uniqid(),
             'coupon_batch_id' => $couponBatch->id,
             'status' => 3,
-            'taobao_user_id' => $taobaoUserID,
+            'member_uid' => $memberUID,
         ]);
 
         //减少库存
@@ -94,35 +105,6 @@ class TaobaoCouponController extends Controller
 
         return $this->response->item($coupon, new CouponTransformer());
 
-    }
-
-    /**
-     * 核销
-     * @param TaobaoCouponRequest $request
-     * @return mixed
-     */
-    public function update(TaobaoCouponRequest $request)
-    {
-        Log::info('taobao_coupon_update', $request->all());
-        $taobaoUserID = $request->openuid;
-        $coupon = Coupon::query()->where('code', $request->code)
-            ->where('taobao_user_id', $taobaoUserID)
-            ->firstOrFail();
-        if ($coupon->status != 1) {
-            $coupon->update(['status' => 1]);
-            $op_time = date('Y-m-d H:i:s');
-            $insertData = array_merge(
-                [
-                    'op_time' => $op_time,
-                    'coupon_id' => $coupon->coupon_batch_id,
-                    'action' => 'RECEIVE_COUPONS',
-                    'created_at' => $op_time,
-                    'updated_at' => $op_time,
-                ],
-                $request->only(['game_name', 'device_code', 'user_nick']));
-            DB::connection('xs')->table('game_feedback')->insert($insertData);
-        }
-        return $this->response->item($coupon, new CouponTransformer());
     }
 
 }

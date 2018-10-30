@@ -8,6 +8,8 @@
 
 namespace App\Http\Controllers\Admin\Coupon\V1\Models;
 
+use App\Http\Controllers\Admin\Media\V1\Models\Media;
+use App\Http\Controllers\Admin\User\V1\Models\ArMember;
 use App\Models\Model;
 
 class Coupon extends Model
@@ -21,10 +23,21 @@ class Coupon extends Model
         'status',
         'wx_user_id',
         'taobao_user_id',
+        'member_uid',
     ];
 
     public function couponBatch()
     {
         return $this->belongsTo(CouponBatch::class, 'coupon_batch_id', 'id');
+    }
+
+    public function media()
+    {
+        return $this->hasOne(Media::class);
+    }
+
+    public function member()
+    {
+        return $this->belongsTo(ArMember::class, 'member_uid', 'uid');
     }
 }
