@@ -18,12 +18,14 @@ class CustomerRequest extends FormRequest
                 return [
                     'name' => 'required|string',
                     'phone' => 'required|regex:/^1[3456789]\d{9}$/|unique:customers',
+                    'password' => 'filled',
                 ];
                 break;
             case 'PATCH':
                 return [
-                    'name' => 'string',
-                    'phone' => 'regex:/^1[3456789]\d{9}$/',
+                    'name' => 'filled|string',
+                    'phone' => 'filled|regex:/^1[3456789]\d{9}$/',
+                    'password' => 'filled',
                 ];
                 break;
         }
