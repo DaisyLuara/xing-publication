@@ -145,7 +145,7 @@ class AuthorizationsController extends Controller
 
     public function systemSkip(Request $request)
     {
-        $this->cookieDelete();
+       $this->cookieDelete();
 
         Cookie::queue(Cookie::make('jwt_token', $request->token, '', '', env('DOMAIN_SERVER_NAME')));
         Cookie::queue(Cookie::make('jwt_ttl', $request->jwt_ttl, '', '', env('DOMAIN_SERVER_NAME')));
