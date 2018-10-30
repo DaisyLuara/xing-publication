@@ -9,7 +9,6 @@
           :to="{ path: '/project/rules' }">优惠券规则管理</el-breadcrumb-item>
         <el-breadcrumb-item>{{ couponID ? '修改' : '添加' }}</el-breadcrumb-item>
       </el-breadcrumb>
-      <headModule/>
     </div>
     <div 
       v-loading="setting.loading"

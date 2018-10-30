@@ -14,29 +14,12 @@ body {
 }
 .first-sidebar {
   position: fixed;
-  top: 0;
+  top: 80px;
   left: 0;
   width: 90px;
   height: 100%;
   background-color: #222830;
   z-index: 99;
-}
-.first-sidebar .logo-wrap {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 75px;
-}
-.first-sidebar .logo-wrap .logo {
-  width: 60px;
-  height: 60px;
-  border-radius: 25px;
-}
-.first-sidebar .logo-wrap .logo img {
-  width: 100%;
-  height: 100%;
 }
 .first-sidebar .el-menu {
   background-color: rgba(0, 0, 0, 0);
@@ -47,7 +30,7 @@ body {
   height: 36px;
   line-height: 36px;
   font-size: 14px;
-  margin: 10px 0;
+  margin: 5px 0;
 }
 .first-sidebar .el-menu .el-menu-item:hover {
   cursor: pointer;
@@ -58,9 +41,12 @@ body {
   background-color: #fff;
   color: #5e6d82;
 }
+.first-sidebar .el-menu-item:first-child {
+  margin-top: 0;
+}
 .second-sidebar {
   position: fixed;
-  top: 0;
+  top: 80px;
   left: 90px;
   width: 110px;
   height: 100%;

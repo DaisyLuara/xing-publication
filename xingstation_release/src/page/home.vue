@@ -1,16 +1,9 @@
 <template>
   <div
     class="main">
+    <headModule/>
     <div
       class="first-sidebar">
-      <div
-        class="logo-wrap">
-        <div
-          class="logo">
-          <img
-            src="../assets/images/exe-logo-white-circle.png">
-        </div>
-      </div>
       <el-menu
         :default-active="'/' + currModule"
         router>

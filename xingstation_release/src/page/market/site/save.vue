@@ -9,7 +9,6 @@
           :to="{ path: '/market/site' }">场地管理</el-breadcrumb-item>
         <el-breadcrumb-item>{{ siteID ? '修改' : '添加' }}</el-breadcrumb-item>
       </el-breadcrumb>
-      <headModule/>
     </div>
     <div 
       v-loading="setting.loading"
