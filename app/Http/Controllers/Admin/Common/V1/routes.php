@@ -36,6 +36,12 @@ $api->version('v1', [
             $api->post('user/coupon', 'TaobaoCouponController@update');//核销
         });
 
+        //获取大屏参数
+        $api->group(['middleware' => 'api_sign'], function ($api) {
+            $api->get('device/params', 'FileUploadController@show');
+        });
+
+
         $api->get('s/{url_path}', 'ShortUrlController@redirect');//短链接跳转
         $api->post('open/short_urls', 'ShortUrlController@store');//短链接生成
 
