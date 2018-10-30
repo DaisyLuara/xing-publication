@@ -18,14 +18,14 @@ class DataRollback extends Command
      *
      * @var string
      */
-    protected $signature = 'xingstation:rollback';
+    protected $signature = 'xingstation:count_rollback';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = '数据回滚';
+    protected $description = 'count数据回滚';
 
     /**
      * Create a new command instance.
