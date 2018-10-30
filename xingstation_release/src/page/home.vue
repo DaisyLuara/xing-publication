@@ -155,7 +155,7 @@ export default {
   },
   mounted() {},
   created() {
-    let userInfo = JSON.parse(localStorage.getItem('user_info'))
+    let userInfo = JSON.parse(this.$cookie.get('user_info'))
     this.$store.commit('setCurUserInfo', userInfo)
     this.notificationStats()
   },
@@ -163,32 +163,50 @@ export default {
     systemMenu(item) {
       this.active = item.id
       let name = NODE_ENV === 'development' ? 'dev' : ''
+      let permissions = this.$cookie.get('permissions')
+      let userInfo = this.$cookie.get('user_info')
+      let token = this.$cookie.get('jwt_token')
+
       switch (item.id) {
         case 'zhongtai':
-          this.redirectUrl('ad')
-
-          // window.location.href =
-          //   'http://' + name + 'ad.' + DOMAIN + '/inform/list'
+          // let url = 'http://devflow.jingfree.top/inform/list'
+          // this.redirectUrl('ad', url)
+          window.location.href =
+            process.env.SERVER_URL +
+            '/api/system_skip?permissions=' +
+            permissions +
+            '&user_info=' +
+            userInfo +
+            '&type=ad&token=' +
+            token
           break
         case 'liucheng':
-          this.redirectUrl('flow')
-
-          // window.location.href =
-          //   'http://' + name + 'flow.' + DOMAIN + '/inform/list'
+          // let url1 = 'http://devad.jingfree.top/inform/list'
+          // this.redirectUrl('flow', url1)
+          window.location.href =
+            process.env.SERVER_URL +
+            '/api/system_skip?permissions=' +
+            permissions +
+            '&user_info=' +
+            userInfo +
+            '&type=ad&token=' +
+            token
           break
       }
     },
-    redirectUrl(type) {
-      let permissions = Cookies.get('permissions')
-      let userInfo = Cookies.get('user_info')
+    redirectUrl(type, url) {
+      let permissions = this.$cookie.get('permissions')
+      let userInfo = this.$cookie.get('user_info')
+      let token = this.$cookie.get('jwt_token')
       let args = {
         user_info: userInfo,
         permissions: permissions,
-        type: type
+        type: type,
+        jwt_token: token
       }
       redirectUrl(this, args)
         .then(res => {
-          console.log(res)
+          window.location.href = url
         })
         .catch(err => {
           console.log(err)

@@ -1440,7 +1440,7 @@ export default {
       return this.peopleCount.length
     },
     showUser() {
-      let user_info = JSON.parse(localStorage.getItem('user_info'))
+      let user_info = JSON.parse(this.$cookie.get('user_info'))
       let roles = user_info.roles.data[0].name
       return roles == 'user' ? false : true
     },
@@ -2063,7 +2063,7 @@ export default {
               this.searchLoading = false
             })
         } else {
-          let user_info = JSON.parse(localStorage.getItem('user_info'))
+          let user_info = JSON.parse(this.$cookie.get('user_info'))
           this.arUserId = user_info.ar_user_id
           args.ar_user_id = this.arUserId
           this.searchLoading = true

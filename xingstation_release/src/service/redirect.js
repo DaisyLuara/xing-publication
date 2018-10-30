@@ -4,7 +4,7 @@ const HOST = process.env.SERVER_URL
 const redirectUrl = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .post(HOST + SKIP_API, params)
+      .get(HOST + SKIP_API, params)
       .then(response => {
         resolve(response.data)
       })

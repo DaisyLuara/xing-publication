@@ -576,7 +576,9 @@ export default {
       }
       if (
         new Date(value.replace(/\-/g, '/')).getTime() <
-        new Date(this.pointForm.contract.enter_sdate.replace(/\-/g, '/')).getTime()
+        new Date(
+          this.pointForm.contract.enter_sdate.replace(/\-/g, '/')
+        ).getTime()
       ) {
         callback(new Error('结束日期要大于开始日期'))
       } else {
@@ -589,7 +591,9 @@ export default {
       }
       if (
         new Date(value.replace(/\-/g, '/')).getTime() <
-        new Date(this.pointForm.contract.oper_edate.replace(/\-/g, '/')).getTime()
+        new Date(
+          this.pointForm.contract.oper_edate.replace(/\-/g, '/')
+        ).getTime()
       ) {
         callback(new Error('结束日期要大于开始日期'))
       } else {
@@ -831,7 +835,7 @@ export default {
     this.setting.loading = true
     this.pointID = this.$route.params.uid
     this.getAreaList()
-    let roles = JSON.parse(localStorage.getItem('user_info')).roles.data
+    let roles = JSON.parse(this.$cookie.get('user_info')).roles.data
     roles.map(r => {
       if (r.display_name === '管理员') {
         this.payFlag = true

@@ -300,7 +300,7 @@ export default {
     if (this.setting.loading == true) {
       return false
     }
-    let user = JSON.parse(localStorage.getItem('user_info'))
+    let user = JSON.parse(this.$cookie.get('user_info'))
     this.user_name = user.name
     this.couponID = this.$route.params.uid
     this.setting.loadingText = '拼命加载中'

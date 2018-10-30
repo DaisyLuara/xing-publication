@@ -7,7 +7,6 @@ import { Message, MessageBox } from 'element-ui'
 import store from '../store'
 import auth from '../service/auth'
 import app from '../main'
-// const REFRESH_TOKEN_API = '/api/users/refresh'
 
 function VueAxios(Vue) {
   if (VueAxios.installed) {
@@ -30,21 +29,11 @@ function VueAxios(Vue) {
         config.headers['Authorization'] = 'Bearer ' + auth.getToken()
         return config
       } else if (config.url.includes('tower')) {
-        console.log(3)
-        config.headers['Authorization'] = 'Bearer ' + auth.getTowerAccessToken()
+        config.headers['Authorization'] =
+          'Bearer ' + auth.getTowerAccessToken(app)
         //config.headers['Authorization'] = 'Bearer b0f84ed20181704c312b6af9af3ba15611b90b02201a379eea30fb89e3317900'
         return config
       } else {
-        // if (auth.checkTokenRefresh()) {
-        //   // refresh token
-        //   return auth.refreshToken(app).then(result => {
-        //     return config;
-        //   }).catch(error => {
-        //     return config;
-        //   })
-        // } else {
-        //   return config
-        // }
         config.headers['Authorization'] = 'Bearer ' + auth.getToken()
         return config
       }
@@ -57,14 +46,6 @@ function VueAxios(Vue) {
   axios.interceptors.response.use(
     function(response) {
       // Do something with response data
-      let result = response.data
-      // if (result && !result.success) {
-      //   if (response.config && response.config.passError) {
-      //     return Promise.reject(response);
-      //   } else {
-      //     return Promise.reject(result);
-      //   }
-      // }
       return response
     },
     function(error) {
@@ -91,23 +72,23 @@ function VueAxios(Vue) {
         // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
         // http.ClientRequest in node.js
         if (error.request.status === 0) {
-          let user_info = JSON.parse(localStorage.getItem('user_info'))
+          let user_info = JSON.parse(app.$cookie.get('user_info'))
+          console.log(user_info)
           let id = user_info.id
           if (user_info.tower_access_token) {
             auth
               .refreshTowerOuthToken(app)
-              .then(result => {
-                localStorage.removeItem('user_info')
-                localStorage.setItem('user_info', JSON.stringify(result))
-              })
+              .then(() => {})
               .catch(error => {
                 console.log(error)
               })
           } else {
-            window.open(
-              process.env.HTTPS_SERVER_URL + '/api/login/tower?id=' + id,
-              '_blank'
-            )
+            window.location.href =
+              // process.env.HTTPS_SERVER_URL + '/api/login/tower?id=' + id
+              window.open(
+                process.env.HTTPS_SERVER_URL + '/api/login/tower?id=' + id,
+                '_blank'
+              )
           }
         }
       } else {
