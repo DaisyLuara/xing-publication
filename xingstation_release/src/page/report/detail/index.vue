@@ -299,9 +299,14 @@
           auto-resize />
       </div>
     </div>
-    <el-collapse v-model="activeNames" @change="handleChange">
+    <el-collapse 
+      v-model="activeNames" 
+      @change="handleChange">
       <!-- 年龄分布图 -->
-      <el-collapse-item title="年龄分布图" name="1" class="echart-data">
+      <el-collapse-item 
+        title="年龄分布图" 
+        name="1" 
+        class="echart-data">
         <div 
           v-loading="ageFlag"
           class="age-sex-wrapper" > 
@@ -322,7 +327,10 @@
         </div>
       </el-collapse-item>
       <!-- 时间段与人群特征 -->
-      <el-collapse-item title="时间段与人群特征" name="2"  class="echart-data">
+      <el-collapse-item 
+        title="时间段与人群特征" 
+        name="2"  
+        class="echart-data">
         <div  
           v-loading="crowdFlag"
           class="time-crowd-wrapper" > 
@@ -335,7 +343,10 @@
         </div>
       </el-collapse-item>
       <!-- 节目日化人气 -->
-      <el-collapse-item title="节目日化人气" name="3"  class="echart-data">
+      <el-collapse-item 
+        title="节目日化人气" 
+        name="3"  
+        class="echart-data">
         <div 
           class="ranking-wrap">
           <div
@@ -356,7 +367,10 @@
         </div>
       </el-collapse-item>
       <!-- 报表部分 -->
-      <el-collapse-item title="点位列表" name="4" class="echart-data">
+      <el-collapse-item 
+        title="点位列表" 
+        name="4" 
+        class="echart-data">
         <div 
           v-loading="tableSetting.loading"
           class="table-wrap">

@@ -75,17 +75,17 @@
           v-if="legelFlag"
           label="主管" 
           prop="user.parent_id">
-        <el-select 
-          v-model="userForm.user.parent_id"
-          :loading="searchLoading"
-          filterable
-          placeholder="请选择主管" 
-          class="user-form-select">
-          <el-option
-            v-for="item in custodianList"
-            :key="item.parent_id"
-            :label="item.name"
-            :value="item.parent_id"/>
+          <el-select 
+            v-model="userForm.user.parent_id"
+            :loading="searchLoading"
+            filterable
+            placeholder="请选择主管" 
+            class="user-form-select">
+            <el-option
+              v-for="item in custodianList"
+              :key="item.parent_id"
+              :label="item.name"
+              :value="item.parent_id"/>
           </el-select>
         </el-form-item>
         <el-form-item>
