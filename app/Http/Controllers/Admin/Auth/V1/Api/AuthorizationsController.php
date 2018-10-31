@@ -4,13 +4,10 @@ namespace App\Http\Controllers\Admin\Auth\V1\Api;
 
 use App\Http\Controllers\Admin\Auth\V1\Request\AuthorizationRequest;
 use App\Http\Controllers\Admin\Auth\V1\Request\SocialBindRequest;
-use Illuminate\Support\Facades\Cookie;
 use App\Http\Controllers\Controller;
-use Illuminate\Auth\Events\Login;
-use Illuminate\Http\Request;
 use App\Models\User;
 use Auth;
-use Log;
+use Illuminate\Http\Request;
 
 class AuthorizationsController extends Controller
 {
@@ -100,8 +97,10 @@ class AuthorizationsController extends Controller
      */
     public function destroy()
     {
+
         Auth::guard('api')->logout();
         activity('logout')->causedBy($this->user())->log('用户登出');
+        $this->cookieDelete();
         return $this->response->noContent();
     }
 
@@ -141,5 +140,31 @@ class AuthorizationsController extends Controller
 
         return $this->response->noContent();
 
+    }
+
+    public function systemSkip(Request $request)
+    {
+        $this->cookieDelete();
+
+        setcookie('jwt_token', $request->token, time() + 1000, '/', env('DOMAIN_SERVER_NAME'));
+        setcookie('jwt_ttl', $request->jwt_ttl, time() + 1000, '/', env('DOMAIN_SERVER_NAME'));
+        setcookie('jwt_begin_time', $request->jwt_begin_time, time() + 1000, '/', env('DOMAIN_SERVER_NAME'));
+        setcookie('permissions', $request->permissions, time() + 1000, '/', env('DOMAIN_SERVER_NAME'));
+        setcookie('user_info', $request->user_info, time() + 1000, '/', env('DOMAIN_SERVER_NAME'));
+        if ($request->type == 'ad') {
+            return redirect()->away(env('PUBLICATION_URL'));
+        } else {
+            return redirect()->away(env('PROCESS_URL'));
+        }
+
+    }
+
+    public function cookieDelete()
+    {
+        setcookie('jwt_token', '', 0, '/', env('DOMAIN_SERVER_NAME'));
+        setcookie('jwt_ttl', '', 0, '/', env('DOMAIN_SERVER_NAME'));
+        setcookie('jwt_begin_time', '', 0, '/', env('DOMAIN_SERVER_NAME'));
+        setcookie('permissions', '', 0, '/', env('DOMAIN_SERVER_NAME'));
+        setcookie('user_info', '', 0, '/', env('DOMAIN_SERVER_NAME'));
     }
 }

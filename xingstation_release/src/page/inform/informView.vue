@@ -3,7 +3,6 @@
     <second-sidebar module="inform"/>
     <div class="topbar">
       {{ this.$route.meta.title }}
-      <headModule/>
     </div>
     <router-view/>
   </div>
@@ -20,7 +19,7 @@ export default {
   background-color: #eff2f7;
   .topbar {
     position: absolute;
-    top: 0;
+    top: 130px;
     left: 200px;
     right: 0;
     height: 75px;

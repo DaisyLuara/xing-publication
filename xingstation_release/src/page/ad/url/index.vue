@@ -3,7 +3,7 @@
     v-loading="setting.loading" 
     :element-loading-text="setting.loadingText" 
     class="page-list-template">
-     <div 
+    <div 
       class="search-wrap">
       <el-form 
         ref="searchForm" 

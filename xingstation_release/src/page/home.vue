@@ -1,40 +1,33 @@
 <template>
-  <div 
+  <div
     class="main">
-    <div 
+    <headModule/>
+    <div
       class="first-sidebar">
-      <div 
-        class="logo-wrap">
-        <div 
-          class="logo">
-          <img 
-            src="../assets/images/exe-logo-white-circle.png" >
-        </div>
-      </div>
-      <el-menu 
-        :default-active="'/' + currModule" 
-        router >
-        <el-menu-item 
+      <el-menu
+        :default-active="'/' + currModule"
+        router>
+        <el-menu-item
           v-for="m in modules"
           v-if="m.path != 'inform'"
-          :key="m.path" 
-          :index="'/' + m.path" 
-          class="menu-item" >
-          <img 
-            :src="m.src" 
+          :key="m.path"
+          :index="'/' + m.path"
+          class="menu-item">
+          <img
+            :src="m.src"
             class="first-sidebar-icon">
           {{ m.meta.title }}
         </el-menu-item>
-        <el-menu-item 
-          class="menu-item" 
+        <el-menu-item
+          class="menu-item"
           index="/inform">
-          <el-badge 
-            :value="noticeCount" 
-            :max="99" 
+          <el-badge
+            :value="noticeCount"
+            :max="99"
             class="item">
-            <img 
-              src="../assets/images/icons/notification-icon.png" 
-              class="first-sidebar-icon" 
+            <img
+              src="../assets/images/icons/notification-icon.png"
+              class="first-sidebar-icon"
               style="padding-right: 3px;">
             通知
           </el-badge>
@@ -42,14 +35,15 @@
       </el-menu>
     </div>
     <div class="system-menu">
-      <div 
-        v-for="item in systemMenuList" 
-        :key="item.id" 
-        :class="{'active': active === item.id}" 
-        class="system-menu-item" 
-        @click="systemMenu(item)" >{{ item.name }}</div>
+      <div
+        v-for="item in systemMenuList"
+        :key="item.id"
+        :class="{'active': active === item.id}"
+        class="system-menu-item"
+        @click="systemMenu(item)">{{ item.name }}
+      </div>
     </div>
-    <div 
+    <div
       class="modules">
       <router-view/>
     </div>
@@ -61,7 +55,8 @@ import { Menu, MenuItem, Button, Badge, Icon } from 'element-ui'
 import auth from 'service/auth'
 import { Cookies } from 'utils/cookies'
 import notice from 'service/notice'
-const DOMAIN = process.env.DOMAIN
+
+const NODE_ENV = process.env.NODE_ENV
 
 export default {
   name: 'Home',
@@ -104,9 +99,9 @@ export default {
               case 'system':
                 m.src = require('../assets/images/icons/permission-icon.png')
                 break
-              case 'company':
-                m.src = require('../assets/images/icons/company-icon.png')
-                break
+              // case 'company':
+              //   m.src = require('../assets/images/icons/company-icon.png')
+              //   break
               case 'ad':
                 m.src = require('../assets/images/icons/advertisement-icon.png')
                 break
@@ -151,42 +146,49 @@ export default {
       return this.$store.state.notificationCount.noticeCount
     }
   },
+  mounted() {},
   created() {
-    if (Cookies.get('jwt_token') && !localStorage.getItem('jwt_token')) {
-      localStorage.setItem('jwt_token', Cookies.get('jwt_token'))
-      localStorage.setItem('jwt_ttl', Cookies.get('jwt_ttl'))
-      localStorage.setItem('jwt_begin_time', Cookies.get('jwt_begin_time'))
-      localStorage.setItem('user_info', Cookies.get('user_info'))
-      localStorage.setItem('permissions', Cookies.get('permissions'))
-    } else if (!Cookies.get('jwt_token')) {
-      localStorage.removeItem('jwt_token')
-      localStorage.removeItem('user_info')
-      localStorage.removeItem('jwt_ttl')
-      localStorage.removeItem('permissions')
-      localStorage.removeItem('jwt_begin_time')
-    }
-
-    let userInfo = JSON.parse(localStorage.getItem('user_info'))
+    let userInfo = JSON.parse(this.$cookie.get('user_info'))
     this.$store.commit('setCurUserInfo', userInfo)
     this.notificationStats()
   },
   methods: {
     systemMenu(item) {
       this.active = item.id
+      let permissions = this.$cookie.get('permissions')
+      let userInfo = this.$cookie.get('user_info')
+      let jwt_ttl = this.$cookie.get('jwt_ttl')
+      let token = this.$cookie.get('jwt_token')
+      let jwt_begin_time = this.$cookie.get('jwt_begin_time')
+
       switch (item.id) {
         case 'zhongtai':
-          window.location.href = 'http://ad.' + DOMAIN + '/login'
-          // window.opne('http://devad.' + DOMAIN + '/login')
-
+          window.location.href =
+            process.env.SERVER_URL +
+            '/api/system_skip?permissions=' +
+            permissions +
+            '&user_info=' +
+            userInfo +
+            '&type=ad&token=' +
+            token +
+            '&jwt_ttl=' +
+            jwt_ttl +
+            '&jwt_begin_time=' +
+            jwt_begin_time
           break
         case 'liucheng':
-          console.log(33)
-          // window.opne('http://devflow.' + DOMAIN + '/login')
-
-          window.location.href = 'http://flow.' + DOMAIN + '/login'
-          break
-        default:
-          window.location.href = 'http://ad.xingstation.com/login'
+          window.location.href =
+            process.env.SERVER_URL +
+            '/api/system_skip?permissions=' +
+            permissions +
+            '&user_info=' +
+            userInfo +
+            '&type=flow&token=' +
+            token +
+            '&jwt_ttl=' +
+            jwt_ttl +
+            '&jwt_begin_time=' +
+            jwt_begin_time
           break
       }
     },
@@ -207,43 +209,52 @@ export default {
 
 <style lang="less">
 @import '../assets/css/pcCommon.less';
+
 .system-menu {
-  display: flex;
-  position: relative;
+  position: fixed;
+  top: 80px;
+  left: 0;
+  right: 0;
   width: 100%;
+  text-align: center;
   padding-left: 90px;
-  flex-flow: row;
   height: 50px;
-  justify-content: center;
-  align-items: center;
+  background: #fff;
   border-bottom: 1px solid #ccc8c8;
+  z-index: 300;
   .system-menu-item {
     margin-right: 35px;
     height: 50px;
     line-height: 50px;
+    display: inline-block;
     cursor: pointer;
     &.active {
       border-bottom: 2px solid #2196f3;
     }
   }
 }
+
 .menu-item {
   display: flex;
   flex-direction: row;
   align-items: center;
 }
+
 .el-badge__content {
   border: none;
 }
+
 .el-badge__content.is-fixed {
   top: 10px;
   right: 45px;
 }
+
 .logo-wrap {
   .logo {
     margin-top: 15px;
   }
 }
+
 .modules-top {
   padding-top: 0;
 }
@@ -253,6 +264,7 @@ export default {
   margin-left: -3px;
   height: 16px;
 }
+
 .sidebar-user {
   position: absolute;
   bottom: 0;
@@ -267,6 +279,7 @@ export default {
     width: 100%;
   }
 }
+
 .sidebar-user-block {
   position: absolute;
   z-index: 33;
@@ -278,6 +291,7 @@ export default {
   // display: table-cell;
   // vertical-align: middle;
 }
+
 .sidebar-user-item {
   max-width: 90px;
   margin: 10px 0;

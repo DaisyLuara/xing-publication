@@ -405,7 +405,7 @@ export default {
   },
   computed: {
     showUser() {
-      let user_info = JSON.parse(localStorage.getItem('user_info'))
+      let user_info = JSON.parse(this.$cookie.get('user_info'))
       let roles = user_info.roles.data[0].name
       return roles == 'user' ? false : true
     }
@@ -472,7 +472,7 @@ export default {
             this.searchLoading = false
           })
       } else {
-        let user_info = JSON.parse(localStorage.getItem('user_info'))
+        let user_info = JSON.parse(this.$cookie.get('user_info'))
         this.searchForm.user_id = user_info.ar_user_id
         args.ar_user_id = this.searchForm.user_id
         this.searchLoading = true

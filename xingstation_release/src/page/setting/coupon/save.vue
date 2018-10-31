@@ -9,7 +9,6 @@
           :to="{ path: '/setting/coupon' }">优惠券管理</el-breadcrumb-item>
         <el-breadcrumb-item>{{ couponID ? '修改' : '添加' }}</el-breadcrumb-item>
       </el-breadcrumb>
-      <headModule/>
     </div>
     <div 
       v-loading="setting.loading"
@@ -281,7 +280,7 @@ export default {
     if (this.setting.loading == true) {
       return false
     }
-    let user = JSON.parse(localStorage.getItem('user_info'))
+    let user = JSON.parse(this.$cookie.get('user_info'))
     this.user_name = user.name
     this.couponID = this.$route.params.uid
     this.setting.loadingText = '拼命加载中'

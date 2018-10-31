@@ -57,10 +57,14 @@ class InvoiceController extends Controller
 
     public function store(InvoiceRequest $request, Invoice $invoice)
     {
+        $user = $this->user();
+        if (!$user->parent_id) {
+            abort(500, '无所属主管，无法新增开票申请');
+        }
         $invoice = $request->all();
         $content = $invoice['invoice_content'];
         unset($invoice['invoice_content']);
-        $invoice = Invoice::query()->create(array_merge($invoice, ['status' => 1, 'handler' => $this->user()->parent_id]));
+        $invoice = Invoice::query()->create(array_merge($invoice, ['status' => 1, 'handler' => $user->parent_id]));
         foreach ($content as $item) {
             $item['invoice_id'] = $invoice['id'];
             InvoiceContent::query()->create($item);

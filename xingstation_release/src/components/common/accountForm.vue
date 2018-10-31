@@ -254,17 +254,27 @@
       </div>
     </div>
     <div class="icp">
-      <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31011502008032" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;">
-        <p style="height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#fff;">
-          Copyright©2018 星视度 版权所有 <img src="~assets/images/reference.png"/> 沪公网安备 31011502008032号
+      <a 
+        target="_blank" 
+        href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31011502008032" 
+        style="display:inline-block;text-decoration:none;height:20px;line-height:20px;">
+        <p 
+          style="height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#fff;">
+          Copyright©2018 星视度 版权所有 
+          <img src="~assets/images/reference.png"> 沪公网安备 31011502008032号
         </p>
       </a>
-      <a target="_blank" href="http://www.miitbeian.gov.cn" class="m-contact-text" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;">
-        <p style="height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#fff;">
+      <a 
+        target="_blank" 
+        href="http://www.miitbeian.gov.cn" 
+        class="m-contact-text" 
+        style="display:inline-block;text-decoration:none;height:20px;line-height:20px;">
+        <p 
+          style="height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#fff;">
           沪ICP备 17045724号
         </p>
       </a>
-		</div>
+    </div>
   </div>
 </template>
 <script>
@@ -373,7 +383,7 @@ export default {
           md5: '',
           image_url: ''
         },
-        redirect_url: '/home/item'
+        redirect_url: '/inform/list'
       },
       rules: {
         account: [{ validator: va, trigger: 'blur' }],
@@ -402,9 +412,7 @@ export default {
       }
     }
   },
-  created() {
-    // 从localstorage中取 记住密码的配置
-  },
+  created() {},
   methods: {
     onSubmit(type) {
       this[type]()

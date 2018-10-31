@@ -9,7 +9,6 @@
           :to="{ path: '/market/site' }">场地管理</el-breadcrumb-item>
         <el-breadcrumb-item>{{ siteID ? '修改' : '添加' }}</el-breadcrumb-item>
       </el-breadcrumb>
-      <headModule/>
     </div>
     <div 
       v-loading="setting.loading"
@@ -553,7 +552,9 @@ export default {
       }
       if (
         new Date(value.replace(/\-/g, '/')).getTime() <
-        new Date(this.siteForm.contract.enter_sdate.replace(/\-/g, '/')).getTime()
+        new Date(
+          this.siteForm.contract.enter_sdate.replace(/\-/g, '/')
+        ).getTime()
       ) {
         callback(new Error('结束日期要大于开始日期'))
       } else {
@@ -565,7 +566,10 @@ export default {
         return callback(new Error('入驻结束时间不能为空'))
       }
       if (
-        new Date(value.replace(/\-/g, '/')).getTime() < new Date(this.siteForm.contract.oper_edate.replace(/\-/g, '/')).getTime()
+        new Date(value.replace(/\-/g, '/')).getTime() <
+        new Date(
+          this.siteForm.contract.oper_edate.replace(/\-/g, '/')
+        ).getTime()
       ) {
         callback(new Error('结束日期要大于开始日期'))
       } else {
@@ -800,7 +804,7 @@ export default {
     }
     this.getAreaList()
     this.getAreaList()
-    let roles = JSON.parse(localStorage.getItem('user_info')).roles.data
+    let roles = JSON.parse(this.$cookie.get('user_info')).roles.data
     roles.map(r => {
       if (r.display_name === '管理员') {
         this.payFlag = true
