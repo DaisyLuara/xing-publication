@@ -12,10 +12,12 @@ use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Common\V1\Transformer\CouponTransformer;
 use App\Http\Controllers\Admin\Common\V1\Request\MiniCouponRequest;
+use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\User\V1\Models\ArMemberSession;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Log;
+use Illuminate\Http\Request;
 
 
 class MiniCouponController extends Controller
@@ -42,6 +44,33 @@ class MiniCouponController extends Controller
         $coupon = $couponQuery->where('member_uid', $member->uid)->orderByDesc('id')->paginate(10);
 
         return $this->response->paginator($coupon, new CouponTransformer());
+    }
+
+
+    /**
+     * 获取可用 优惠券规则列表
+     */
+    public function couponBatchesIndex(Request $request)
+    {
+        $policyID = $request->policy_id;
+        $couponBatches = CouponBatch::query()->join('coupon_batch_policy', 'coupon_batches.id', '=', 'coupon_batch_policy.coupon_batch_id')
+            ->where('policy_id', '=', $policyID)->get();
+
+        abort_if($couponBatches->isEmpty(), 500, '无可用优惠券');
+
+        //业务参数过滤
+        foreach ($couponBatches as $key => $couponBatch) {
+
+            if (!$couponBatch->pmg_status && !$couponBatch->dmg_status && $couponBatch->stock <= 0) {
+
+                $couponBatches->forget($key);
+            }
+        }
+
+        abort_if($couponBatches->isEmpty(), 500, '无可用优惠券');
+
+        return $this->response->collection($couponBatches, new CouponBatchTransformer());
+
     }
 
     /**
