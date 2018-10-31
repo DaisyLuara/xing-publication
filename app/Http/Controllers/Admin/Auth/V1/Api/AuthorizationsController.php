@@ -146,11 +146,11 @@ class AuthorizationsController extends Controller
     {
         $this->cookieDelete();
 
-        setcookie('jwt_token', $request->token, time() + 1000, '/', env('COOKIE_DOMAIN'));
-        setcookie('jwt_ttl', $request->jwt_ttl, time() + 1000, '/', env('COOKIE_DOMAIN'));
-        setcookie('jwt_begin_time', $request->jwt_begin_time, time() + 1000, '/', env('COOKIE_DOMAIN'));
-        setcookie('permissions', $request->permissions, time() + 1000, '/', env('COOKIE_DOMAIN'));
-        setcookie('user_info', $request->user_info, time() + 1000, '/', env('COOKIE_DOMAIN'));
+        setcookie('jwt_token', $request->token, time() + 7200, '/', env('COOKIE_DOMAIN'));
+        setcookie('jwt_ttl', $request->jwt_ttl, time() + 7200, '/', env('COOKIE_DOMAIN'));
+        setcookie('jwt_begin_time', $request->jwt_begin_time, time() + 7200, '/', env('COOKIE_DOMAIN'));
+        setcookie('permissions', $request->permissions, time() + 7200, '/', env('COOKIE_DOMAIN'));
+        setcookie('user_info', $request->user_info, time() + 7200, '/', env('COOKIE_DOMAIN'));
         if ($request->type == 'ad') {
             return redirect()->away(env('PUBLICATION_URL'));
         } else {
@@ -161,10 +161,10 @@ class AuthorizationsController extends Controller
 
     public function cookieDelete()
     {
-        setcookie('jwt_token', '', 0, '/', env('COOKIE_DOMAIN'));
-        setcookie('jwt_ttl', '', 0, '/', env('COOKIE_DOMAIN'));
-        setcookie('jwt_begin_time', '', 0, '/', env('COOKIE_DOMAIN'));
-        setcookie('permissions', '', 0, '/', env('COOKIE_DOMAIN'));
-        setcookie('user_info', '', 0, '/', env('COOKIE_DOMAIN'));
+        setcookie('jwt_token', '', time() - 7200, '/', env('COOKIE_DOMAIN'));
+        setcookie('jwt_ttl', '', time() - 7200, '/', env('COOKIE_DOMAIN'));
+        setcookie('jwt_begin_time', '', time() - 7200, '/', env('COOKIE_DOMAIN'));
+        setcookie('permissions', '', time() - 7200, '/', env('COOKIE_DOMAIN'));
+        setcookie('user_info', '', time() - 7200, '/', env('COOKIE_DOMAIN'));
     }
 }
