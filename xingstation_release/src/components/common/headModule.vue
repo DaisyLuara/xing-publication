@@ -5,7 +5,7 @@
       <div
         class="logo">
         <img
-          src="../../assets/images/exe-logo-white-circle.png">
+          src="../../assets/images/logo.png">
       </div>
     </div>
     <el-popover
@@ -24,7 +24,7 @@
       class="avatar-wrap" 
       @click="handleUser">
       <span>{{ name }}</span>
-      <div style="height: 75px;">
+      <div class="avatar-block">
         <img 
           src="~assets/images/user-default-icon.png" 
           alt="" 
@@ -67,7 +67,7 @@ export default {
 
 <style lang="less" scoped>
 .logout {
-  height: 80px;
+  height: 60px;
   position: fixed;
   top: 0;
   background: #222830;
@@ -80,15 +80,14 @@ export default {
     display: flex;
     margin-left: 20px;
     width: 100%;
-    height: 75px;
+    height: 60px;
     .logo {
       width: 60px;
-      height: 60px;
-      border-radius: 25px;
-
+      display: flex;
+      justify-content: center;
+      align-items: center;
       img {
         width: 100%;
-        height: 100%;
       }
     }
   }
@@ -100,19 +99,27 @@ export default {
     cursor: pointer;
     font-size: 14px;
   }
+
   .avatar-wrap {
     position: absolute;
     top: 0;
     right: 30px;
-    height: 80px;
+    height: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
     color: #fff;
     cursor: pointer;
+    .avatar-block {
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-left: 10px;
+    }
     .avatar {
-      height: 70%;
-      margin: 15%;
+      height: 50%;
+      // margin: 15%;
       border-radius: 50%;
     }
   }

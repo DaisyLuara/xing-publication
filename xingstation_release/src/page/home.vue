@@ -212,20 +212,20 @@ export default {
 
 .system-menu {
   position: fixed;
-  top: 80px;
+  top: 60px;
   left: 0;
   right: 0;
   width: 100%;
   text-align: center;
   padding-left: 90px;
-  height: 50px;
+  height: 60px;
   background: #fff;
-  border-bottom: 1px solid #ccc8c8;
+  box-shadow: 0 2px 0 #ccc8c8;
   z-index: 300;
   .system-menu-item {
     margin-right: 35px;
-    height: 50px;
-    line-height: 50px;
+    height: 60px;
+    line-height: 60px;
     display: inline-block;
     cursor: pointer;
     &.active {
@@ -249,12 +249,6 @@ export default {
   right: 45px;
 }
 
-.logo-wrap {
-  .logo {
-    margin-top: 15px;
-  }
-}
-
 .modules-top {
   padding-top: 0;
 }
@@ -272,7 +266,6 @@ export default {
   width: 100%;
   height: 90px;
   text-align: center;
-  // background: #20a0ff url(../assets/images/user-bg.png) no-repeat center 5px;
   color: #fff;
   cursor: pointer;
   .avatar {
@@ -288,8 +281,6 @@ export default {
   right: 16%;
   color: #000;
   font-weight: 600;
-  // display: table-cell;
-  // vertical-align: middle;
 }
 
 .sidebar-user-item {
