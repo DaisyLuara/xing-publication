@@ -42,7 +42,7 @@ class PaymentRequest extends FormRequest
                 return [
                     'contract_id' => 'integer',
                     'applicant' => 'integer',
-                    'amount' => 'numeric',
+                    'amount' => 'string',
                     'type' => Rule::in([1, 2, 3]),
                     'reason' => 'string:max:150',
                     'payee' => 'string|max:50',
