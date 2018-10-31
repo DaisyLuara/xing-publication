@@ -82,9 +82,9 @@
             class="user-form-select">
             <el-option
               v-for="item in custodianList"
-              :key="item.parent_id"
+              :key="item.id"
               :label="item.name"
-              :value="item.parent_id"/>
+              :value="item.id"/>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -289,7 +289,6 @@ export default {
       search
         .getBDManagerList(this)
         .then(res => {
-          console.log(res)
           this.custodianList = res.data
           this.searchLoading = false
         })
@@ -302,7 +301,6 @@ export default {
       search
         .getLegalManagerList(this)
         .then(res => {
-          console.log(res)
           this.custodianList = res.data
           this.searchLoading = false
         })
@@ -319,9 +317,7 @@ export default {
         delete this.rules['user.password']
         delete this.rules['user.repassword']
         delete this[formName].user.password
-      } else {
-        this.userForm.user.parent_id = null
-      }
+      } 
       this.$refs[formName].validate(valid => {
         if (valid) {
           delete this[formName].user.repassword
