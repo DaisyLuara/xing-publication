@@ -15,10 +15,12 @@ use App\Http\Controllers\Admin\Common\V1\Request\MiniCouponRequest;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\User\V1\Models\ArMemberSession;
 use App\Http\Controllers\Controller;
+use App\Handlers\ImageUploadHandler;
 use Carbon\Carbon;
 use Log;
 use Illuminate\Http\Request;
 use QrCode;
+use Cache;
 
 
 class MiniCouponController extends Controller
@@ -29,13 +31,29 @@ class MiniCouponController extends Controller
      * @param Request $request
      * @return mixed
      */
-    public function couponShow($code, Request $request)
+    public function couponShow($code, ImageUploadHandler $uploader, Request $request)
     {
         $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
         $couponQuery = Coupon::query();
         $coupon = $couponQuery->where('member_uid', $member->uid)->where('code', $code)->firstOrFail();
-        $qrcode = QrCode::generate($coupon->code);
-        $coupon->setAttribute('qrcode', $qrcode);
+
+        $cacheIndex = 'mini_qrcode_' . $coupon->code;
+        if (Cache::has($cacheIndex)) {
+            $qrcodeUrl = Cache::get($cacheIndex);
+        } else {
+            $path = 'qrcode/' . $coupon->code . '.png';
+            $qrcodeApp = QrCode::format('png');
+            if ($request->size) {
+                $qrcodeApp->size($request->size);
+            }
+            $qrcodeApp->generate($coupon->code, $path);
+//            $result = $uploader->save($qrcodePng, 'coupon/code');
+//            $qrcodeUrl = $result['path'];
+            $qrcodeUrl = env('APP_URL') . '/' . $path;
+            Cache::set($cacheIndex, $qrcodeUrl);
+        }
+
+        $coupon->setAttribute('qrcode_url', $qrcodeUrl);
 
         return $this->response->item($coupon, new CouponTransformer());
 
