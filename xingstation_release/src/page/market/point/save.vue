@@ -844,6 +844,7 @@ export default {
     if (this.pointID) {
       this.getPointDetail()
     }
+    this.setting.loading = false
   },
   methods: {
     siteHandle() {
