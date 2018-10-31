@@ -20,6 +20,7 @@ class CouponTransformer extends TransformerAbstract
             'code' => $coupon->code,
             'name' => $coupon->couponBatch->name,
             'status' => (int)$coupon->status,
+            'qrcode_url' => $coupon->qrcode_url,
         ];
     }
 
