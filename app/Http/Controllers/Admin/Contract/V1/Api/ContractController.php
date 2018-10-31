@@ -130,10 +130,12 @@ class ContractController extends Controller
                     Media::where('id', '=', $id)->update(['contract_id' => $contract->id]);
                 }
 
-                //收款日期存储
-                $dates = explode(',', $request->receive_date);
-                foreach ($dates as $date) {
-                    ContractReceiveDate::create(['contract_id' => $contract->id, 'date' => $date]);
+                if ($request->type == 0) {
+                    //收款日期存储
+                    $dates = explode(',', $request->receive_date);
+                    foreach ($dates as $date) {
+                        ContractReceiveDate::create(['contract_id' => $contract->id, 'date' => $date]);
+                    }
                 }
                 return $this->response->item($contract, new ContractTransformer())->setStatusCode(201);
             }
