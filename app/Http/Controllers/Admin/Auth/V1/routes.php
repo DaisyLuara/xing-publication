@@ -32,10 +32,19 @@ $api->version('v1', [
         //管理员登陆
         $api->post('verificationCodes', 'VerificationCodesController@store'); // 短信验证码
         $api->post('authorizations', 'AuthorizationsController@store'); //登陆
-        $api->get('system_skip', ['middleware' => 'CrossRequest', 'uses' => 'AuthorizationsController@systemSkip']);
 
         //用户登录
         $api->post('customer/login', 'AuthorizationsController@customerLogin');
+    });
+
+
+    //系统切换
+    $api->group([
+        'middleware' => 'api.throttle',//频率限制中间件
+        'limit' => config('api.rate_limits.access.limit'),
+        'expires' => config('api.rate_limits.access.expires'),
+    ], function ($api) {
+        $api->get('system_skip', ['middleware' => 'CrossRequest', 'uses' => 'AuthorizationsController@systemSkip']);
     });
 
 });

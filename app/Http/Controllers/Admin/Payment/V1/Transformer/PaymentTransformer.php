@@ -27,6 +27,7 @@ class PaymentTransformer extends TransformerAbstract
     {
         return [
             'id' => $payment->id,
+            'contract_id' => $payment->contract->id,
             'contract_number' => $payment->contract->contract_number,
             'payee' => $payment->payee,
             'applicant' => $payment->applicant,
