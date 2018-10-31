@@ -10,9 +10,11 @@ namespace App\Http\Controllers\Admin\Common\V1\Transformer;
 
 use League\Fractal\TransformerAbstract;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
+use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 
 class CouponTransformer extends TransformerAbstract
 {
+    protected $availableIncludes = ['couponBatch'];
 
     public function transform(Coupon $coupon)
     {
@@ -24,4 +26,8 @@ class CouponTransformer extends TransformerAbstract
         ];
     }
 
+    public function includeCouponBatch(Coupon $coupon)
+    {
+        return $this->item($coupon->couponBatch, new CouponBatchTransformer());
+    }
 }
