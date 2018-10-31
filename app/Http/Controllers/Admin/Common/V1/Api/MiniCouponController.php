@@ -90,7 +90,7 @@ class MiniCouponController extends Controller
     {
         $policyID = $request->policy_id;
         $couponBatches = CouponBatch::query()->join('coupon_batch_policy', 'coupon_batches.id', '=', 'coupon_batch_policy.coupon_batch_id')
-            ->where('policy_id', '=', $policyID)->get();
+            ->where('policy_id', '=', $policyID)->selectRaw('coupon_batches.*')->get();
 
         abort_if($couponBatches->isEmpty(), 500, '无可用优惠券');
 
