@@ -18,10 +18,28 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Log;
 use Illuminate\Http\Request;
+use QrCode;
 
 
 class MiniCouponController extends Controller
 {
+    /**
+     * 优惠券详情
+     * @param $code
+     * @param Request $request
+     * @return mixed
+     */
+    public function couponShow($code, Request $request)
+    {
+        $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
+        $couponQuery = Coupon::query();
+        $coupon = $couponQuery->where('member_uid', $member->uid)->where('code', $code)->firstOrFail();
+        $qrcode = QrCode::generate($coupon->code);
+        $coupon->setAttribute('qrcode', $qrcode);
+
+        return $this->response->item($coupon, new CouponTransformer());
+
+    }
 
     /**
      * 用户优惠券列表
