@@ -51,7 +51,7 @@ class ContractController extends Controller
             $query->where('status', $request->status);
         }
 
-        if ($request->contract_number) {
+        if ($request->has('contract_number')) {
             $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
         }
 
@@ -70,7 +70,7 @@ class ContractController extends Controller
         if ($request->name) {
             $query->where('name', '=', $request->name);
         }
-        if ($request->contract_number) {
+        if ($request->has('contract_number')) {
             $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
         }
         $contract = $query->whereHas('receiveDate', function ($q) use ($currentDate) {

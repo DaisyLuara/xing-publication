@@ -41,13 +41,13 @@ class InvoiceController extends Controller
             $query->where('status', '=', $request->status);
         }
 
-        if ($request->contract_number) {
+        if ($request->has('contract_number')) {
             $query->whereHas('contract', function ($q) use ($request) {
                 $q->where('contract_number', 'like', '%' . $request->contract_number . '%');
             });
         }
 
-        if ($request->receive_status) {
+        if ($request->has('receive_status')) {
             $query->where('receive_status', '=', $request->receive_status);
         }
 

@@ -37,7 +37,7 @@ class PaymentController extends Controller
         if ($request->status) {
             $query->where('status', '=', $request->status);
         }
-        if ($request->contract_number) {
+        if ($request->has('contract_number')) {
             $query->whereHas('contract', function ($q) use ($request) {
                 $q->where('contract_number', 'like', '%' . $request->contract_number . '%');
             });
