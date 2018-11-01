@@ -31,7 +31,7 @@ class PaymentController extends Controller
         if ($request->payee) {
             $query->where('payee', 'like', '%' . $request->payee . '%');
         }
-        if ($request->receive_status) {
+        if ($request->has('receive_status')) {
             $query->where('receive_status', '=', $request->receive_status);
         }
         if ($request->status) {
