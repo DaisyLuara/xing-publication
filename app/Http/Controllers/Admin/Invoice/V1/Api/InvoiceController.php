@@ -41,17 +41,24 @@ class InvoiceController extends Controller
             $query->where('status', '=', $request->status);
         }
 
-        if ($request->contract_number) {
+        if ($request->has('contract_number')) {
             $query->whereHas('contract', function ($q) use ($request) {
                 $q->where('contract_number', 'like', '%' . $request->contract_number . '%');
             });
         }
 
+        if ($request->has('receive_status')) {
+            $query->where('receive_status', '=', $request->receive_status);
+        }
+
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        $invoice = $query->whereRaw("(applicant=$user->id or handler=$user->id)")
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        if ($user->hasPermissionTo('finance_bill')) {
+            $query->whereRaw("(handler=$user->id or status=4 or status=5)");
+        } else {
+            $query->whereRaw("(applicant=$user->id or handler=$user->id)");
+        }
+        $invoice = $query->orderBy('created_at', 'desc')->paginate(10);
         return $this->response->paginator($invoice, new InvoiceTransformer());
     }
 
@@ -150,4 +157,16 @@ class InvoiceController extends Controller
         return $this->response->noContent();
     }
 
+    public function receipt(Invoice $invoice)
+    {
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
+        if (!$user->hasPermissionTo('finance_bill')) {
+            abort(500, "无操作权限");
+        }
+        $invoice->receive_status = 1;
+        $invoice->update();
+        return $this->response->noContent();
+
+    }
 }

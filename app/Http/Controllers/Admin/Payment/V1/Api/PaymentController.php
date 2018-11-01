@@ -31,26 +31,26 @@ class PaymentController extends Controller
         if ($request->payee) {
             $query->where('payee', 'like', '%' . $request->payee . '%');
         }
-        if ($request->receive_status) {
+        if ($request->has('receive_status')) {
             $query->where('receive_status', '=', $request->receive_status);
         }
         if ($request->status) {
             $query->where('status', '=', $request->status);
         }
-        if ($request->contract_number) {
+        if ($request->has('contract_number')) {
             $query->whereHas('contract', function ($q) use ($request) {
                 $q->where('contract_number', 'like', '%' . $request->contract_number . '%');
             });
         }
 
+        /** @var  $user \App\Models\User */
         $user = $this->user();
-        if ($user->hasRole('finance')) {
+        if ($user->hasPermissionTo('finance_pay')) {
             $query->whereRaw("(handler=$user->id or status=4)");
         } else {
             $query->whereRaw("(applicant=$user->id or handler=$user->id)");
         }
-        $payment = $query->orderBy('created_at', 'desc')
-            ->paginate(10);
+        $payment = $query->orderBy('created_at', 'desc')->paginate(10);
         return $this->response->paginator($payment, new PaymentTransformer());
     }
 
