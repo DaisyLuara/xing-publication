@@ -1,0 +1,127 @@
+html,
+body {
+  color: #5e6d82;
+  margin: 0 auto;
+  background-color: #eff2f7;
+  font-smoothing: always;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Helvetica Neue', 'Helvetica', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'SimSun', 'sans-serif';
+}
+.main {
+  width: 100%;
+  min-width: 1230px;
+}
+.first-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 90px;
+  height: 100%;
+  background-color: #222830;
+  z-index: 99;
+}
+.first-sidebar .logo-wrap {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 75px;
+}
+.first-sidebar .logo-wrap .logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 25px;
+}
+.first-sidebar .logo-wrap .logo img {
+  width: 100%;
+  height: 100%;
+}
+.first-sidebar .el-menu {
+  background-color: rgba(0, 0, 0, 0);
+  border-radius: 0px;
+}
+.first-sidebar .el-menu .el-menu-item {
+  color: #a1b0c3;
+  height: 36px;
+  line-height: 36px;
+  font-size: 14px;
+  margin: 10px 0;
+}
+.first-sidebar .el-menu .el-menu-item:hover {
+  cursor: pointer;
+  color: #20a0ff;
+  background-color: rgba(0, 0, 0, 0);
+}
+.first-sidebar .el-menu .el-menu-item.is-active {
+  background-color: #fff;
+  color: #5e6d82;
+}
+.second-sidebar {
+  position: fixed;
+  top: 0;
+  left: 90px;
+  width: 110px;
+  height: 100%;
+  background-color: #fff;
+  border-right: 1px solid #d3dce6;
+  z-index: 99;
+}
+.second-sidebar .module-name {
+  width: 110px;
+  height: 75px;
+  line-height: 75px;
+  color: #c0ccda;
+  font-size: 16px;
+  text-align: center;
+  border-bottom: 1px solid #d3dce6;
+}
+.second-sidebar .el-menu {
+  background-color: rgba(0, 0, 0, 0);
+}
+.second-sidebar .el-menu .el-menu-item {
+  color: #5e6d82;
+  height: 36px;
+  line-height: 36px;
+  font-size: 14px;
+  background-color: rgba(0, 0, 0, 0);
+  margin: 16px 0;
+}
+.second-sidebar .el-menu .el-menu-item:hover {
+  color: #20a0ff;
+  cursor: pointer;
+}
+.second-sidebar .el-menu .el-menu-item.is-active {
+  background-color: #eff2f7;
+  color: #5e6d82;
+}
+.topbar {
+  position: absolute;
+  top: 0;
+  left: 200px;
+  right: 0;
+  height: 75px;
+  line-height: 75px;
+  border-bottom: 1px solid #d3dce6;
+  background-color: #fff;
+  z-index: 98;
+  font-size: 16px;
+  color: #5e6d82;
+  padding-left: 35px;
+}
+.topbar .el-breadcrumb {
+  line-height: 75px;
+  font-size: 16px;
+}
+.modules {
+  position: relative;
+  width: 100%;
+  padding-left: 200px;
+  padding-top: 76px;
+}
+.modules .content {
+  background-color: #fff;
+  margin: 10px;
+  min-height: 420px;
+}

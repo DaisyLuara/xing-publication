@@ -1,0 +1,237 @@
+.account-form {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  overflow-y: scroll;
+  background-image: url('http://o9xrzyznl.bkt.clouddn.com/bg.jpg');
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .account-form__container {
+    //position: absolute;
+    border-radius: 2px;
+    background-color: white;
+    //top: 0;
+    //left: 0;
+    //right: 0;
+    width: 468px;
+    min-height: 424px;
+    //margin: auto;
+  }
+  .account-form__header {
+    padding: 5px 0 8px;
+    border-bottom: 1px solid #e4e4e4;
+    .header-logo-wrap {
+      float: left;
+      .icon-header {
+        // width: 102px;
+        // height: 47px;
+        padding-right: 10px;
+        border-right: 1px solid #e4e4e4;
+        margin-bottom: 4px;
+      }
+      .title-header {
+        color: #444444;
+        font-size: 16px;
+        line-height: 47px;
+        padding-left: 22px;
+      }
+    }
+    .header-link {
+      float: right;
+      cursor: pointer;
+      padding-right: 15px;
+      .register-label {
+        line-height: 50px;
+        font-size: 14px;
+        color: #20a0ff;
+      }
+    }
+  }
+  .account-form__body {
+    width: 300px;
+    max-width: 320px;
+    font-size: 14px;
+    margin: 56px auto 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    .account-form-item {
+      position: relative;
+      height: 43px;
+      margin-bottom: 34px;
+      border-bottom: 1px solid #e4e4e4;
+      .btn-code-wrap {
+        text-align: right;
+        font-size: 10px;
+        color: #20a0ff;
+      }
+      .btn-code-label__countdown {
+        cursor: pointer;
+        color: #20a0ff;
+      }
+      &.active {
+        border-bottom: 2px solid #20a0ff;
+      }
+      &.error {
+        border-bottom: 2px solid #ff4949;
+      }
+      .error-tip {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        bottom: -46px;
+        color: #ff4949;
+        font-size: 12px;
+        text-align: left;
+      }
+      .voice-tip {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        bottom: -46px;
+        text-align: left;
+        color: #474747;
+        font-size: 12px;
+      }
+      .btn-voice-captcha {
+        font-size: 12px;
+        color: #20a0ff;
+        cursor: pointer;
+      }
+      .voice-wait-tip__top {
+        line-height: 12px;
+        font-size: 12px;
+        color: #474747;
+      }
+      .voice-wait-tip__bottom {
+        line-height: 12px;
+        font-size: 12px;
+        margin-top: 2px;
+        color: #cdcdcd;
+      }
+      input {
+        width: 100%;
+        height: 36px;
+        border: none;
+        font-size: 14px;
+        padding-left: 20px;
+        background-color: #fff;
+        &::-webkit-input-placeholder {
+          color: #cecece;
+        }
+        &:-webkit-autofill {
+          background-color: #fff;
+        }
+      }
+      .account-form-item-label {
+        font-size: 14px;
+        color: #444444;
+        border-right: none;
+      }
+      &.mobile {
+        .account-form-item-label {
+          padding-right: 8px;
+          border-right: 1px solid #e4e4e4;
+          .lable-prefix {
+            float: right;
+          }
+        }
+      }
+      &.password {
+        .account-form-item-label {
+          border-right: none;
+        }
+      }
+      &.image-code {
+        img {
+          float: right;
+          width: 100%;
+        }
+        .image-code-wrap {
+          .check-image-code {
+            width: 20px;
+            height: 20px;
+            margin: 9px 5px 9px 0;
+          }
+          text-align: right;
+        }
+      }
+      &.sms-code {
+        .sms-code-wrap {
+          text-align: right;
+          font-size: 14px;
+          color: #20a0ff;
+        }
+        .sms-code-label {
+          cursor: pointer;
+        }
+        .sms-code-label__countdown {
+          color: #9b9b9b;
+        }
+      }
+    }
+    .account-form-submit {
+      margin-top: 40px;
+      .btn-login {
+        color: #fff;
+        width: 100%;
+        height: 38px;
+        font-size: 16px;
+        text-align: center;
+        background-color: #20a0ff;
+      }
+    }
+  }
+  .account-form__footer {
+    width: 300px;
+    max-width: 417px;
+    margin: 0 auto;
+    padding-bottom: 20px;
+    .auto-login {
+      color: #8a8a8a;
+      font-weight: 300;
+      font-size: 16px;
+      float: left;
+    }
+    .find-password {
+      float: right;
+      color: #4a4a4a;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  }
+  @media (max-width: 768px) {
+    .account-form__body {
+      width: 96%;
+      margin: 10px auto 0;
+      .account-form-item input {
+        font-size: 1em;
+      }
+    }
+    .m-label {
+      display: none;
+    }
+    .account-form__footer {
+      width: 96%;
+    }
+  }
+  .icp {
+    position: absolute;
+    color: white;
+    bottom: 21px;
+    font-size: 14px;
+    margin: 0 auto;
+    padding: 20px 0;
+  }
+}
+.switch-show-off-password {
+  width: 25px;
+  img {
+    width: 100%;
+  }
+}
