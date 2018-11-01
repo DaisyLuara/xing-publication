@@ -62,11 +62,17 @@ class ContractController extends Controller
         return $this->response->paginator($contract, new ContractTransformer());
     }
 
-    public function topIndex(Contract $contract)
+    public function topIndex(Request $request, Contract $contract)
     {
         $user = $this->user();
         $currentDate = Carbon::now()->toDateString();
         $query = $contract->query();
+        if ($request->name) {
+            $query->where('name', '=', $request->name);
+        }
+        if ($request->contract_number) {
+            $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
+        }
         $contract = $query->whereHas('receiveDate', function ($q) use ($currentDate) {
             $q->whereRaw("'$currentDate' between date_add(date, interval - 5 day) and date_add(date, interval 3 day)");
         })

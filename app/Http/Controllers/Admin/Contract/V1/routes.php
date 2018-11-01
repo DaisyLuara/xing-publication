@@ -12,7 +12,7 @@ $api->version('v1', [
 
             $api->get('contract/{contract}', 'ContractController@show');
             $api->get('contract', 'ContractController@index');
-            $api->get('top_contract', 'ContractController@topIndex');
+            $api->get('remind_contract', 'ContractController@topIndex');
             $api->post('contract', 'ContractController@store');
             $api->patch('contract/{contract}', 'ContractController@update');
             $api->delete('contract/{contract}', 'ContractController@destroy');
