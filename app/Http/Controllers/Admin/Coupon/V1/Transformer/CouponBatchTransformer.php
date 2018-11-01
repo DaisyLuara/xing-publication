@@ -42,6 +42,7 @@ class CouponBatchTransformer extends TransformerAbstract
             'wx_user_id' => $couponBatch->wx_user_id,
             'type' => (int)$couponBatch->type,
             'redirect_url' => $couponBatch->redirect_url,
+            'title' => $couponBatch->title,
         ];
     }
 
