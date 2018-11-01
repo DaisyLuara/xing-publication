@@ -281,7 +281,7 @@ export default {
       user_name: '',
       couponForm: {
         name: '',
-        title:'',
+        title: '',
         description: '',
         company_id: '',
         type: 1,
@@ -381,10 +381,14 @@ export default {
         effective_day: this.couponForm.effective_day,
         is_active: this.couponForm.is_active,
         redirect_url: this.couponForm.redirect_url,
-        type: this.couponForm.type
+        type: this.couponForm.type,
+        title: this.couponForm.title
       }
       if (!this.couponForm.image_url) {
         delete args.image_url
+      }
+      if (this.couponForm.title === '') {
+        delete args.title
       }
       if (!this.couponForm.description) {
         delete args.description
