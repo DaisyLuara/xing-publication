@@ -47,6 +47,13 @@
             class="coupon-form-input"/>
         </el-form-item>
         <el-form-item 
+          label="标题" 
+          prop="title">
+          <el-input 
+            v-model="couponForm.title" 
+            class="coupon-form-input"/>
+        </el-form-item>
+        <el-form-item 
           :rules="{required: true, message: '优惠券名称不能为空', trigger: 'submit'}"
           label="优惠券名称" 
           prop="name" >
@@ -274,6 +281,7 @@ export default {
       user_name: '',
       couponForm: {
         name: '',
+        title:'',
         description: '',
         company_id: '',
         type: 1,
@@ -343,6 +351,7 @@ export default {
             this.couponForm.is_active = result.is_active
             this.couponForm.redirect_url = result.redirect_url
             this.couponForm.type = result.type
+            this.couponForm.title = result.title
             this.setting.loading = false
           })
           .catch(error => {
