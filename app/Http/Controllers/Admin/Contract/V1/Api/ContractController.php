@@ -62,7 +62,7 @@ class ContractController extends Controller
         return $this->response->paginator($contract, new ContractTransformer());
     }
 
-    public function topIndex(Request $request, Contract $contract)
+    public function remindIndex(Request $request, Contract $contract)
     {
         $user = $this->user();
         $currentDate = Carbon::now()->toDateString();
