@@ -309,7 +309,6 @@ export default {
       return false
     }
     let user = JSON.parse(localStorage.getItem('user_info'))
-    this.user_name = user.name
     this.couponID = this.$route.params.uid
     this.setting.loadingText = '拼命加载中'
     this.setting.loading = true
@@ -352,12 +351,14 @@ export default {
             this.couponForm.redirect_url = result.redirect_url
             this.couponForm.type = result.type
             this.couponForm.title = result.title
+            this.user_name = result.user.name
             this.setting.loading = false
           })
           .catch(error => {
             console.log(error)
           })
       } else {
+        this.user_name = user.name
         this.setting.loading = false
       }
     })
