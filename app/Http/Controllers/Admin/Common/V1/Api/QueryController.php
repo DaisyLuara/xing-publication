@@ -287,6 +287,9 @@ class QueryController extends Controller
             $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
         }
 
+        if ($request->has('type')) {
+            $query->where('type', $request->type);
+        }
         $contracts = $query->where('applicant', '=', $user->id)->where('status', '3')->get();
 
         return $this->response->collection($contracts, new ContractTransformer());
