@@ -9,21 +9,11 @@ use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
-use DB;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 
 class ContractController extends Controller
 {
-
-    protected $statusMapping = [
-        '1' => '待审批',
-        '2' => '审批中',
-        '3' => '已审批',
-        '4' => '特批',
-        '5' => '驳回'
-    ];
-
     public function show(Contract $contract)
     {
         return $this->response->item($contract, new ContractTransformer());
@@ -42,7 +32,7 @@ class ContractController extends Controller
         if ($request->name) {
             $name = $request->name;
             $query->whereHas('company', function ($q) use ($name) {
-                $q->whereRaw("name like '%$name%'");
+                $q->where('name', 'like', '%' . $name . '%');
             });
         }
 //        if ($request->name) {
@@ -58,58 +48,33 @@ class ContractController extends Controller
 //        }
 
         if ($request->status) {
-            $query->whereRaw("status = '$request->status'");
+            $query->where('status', $request->status);
         }
 
         if ($request->contract_number) {
-            $query->whereRaw("contract_number like '%$request->contract_number%' ");
+            $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
         }
 
         $user = $this->user();
-        $query->whereRaw("(applicant = $user->id or handler = $user->id)")
+        $contract = $query->whereRaw("(applicant = $user->id or handler = $user->id)")
             ->orderBy('created_at', 'desc')
-            ->limit(10000000);
-        //union 子查询不加limit导致排序失效
+            ->paginate(10);
+        return $this->response->paginator($contract, new ContractTransformer());
+    }
 
+    public function topIndex(Contract $contract)
+    {
+        $user = $this->user();
         $currentDate = Carbon::now()->toDateString();
-        $sql = Contract::query()
-            ->whereHas('receiveDate', function ($q) use ($currentDate) {
-                $q->whereRaw("'$currentDate' between date_add(date, interval - 5 day) and date_add(date, interval 3 day)");
-            })
+        $query = $contract->query();
+        $contract = $query->whereHas('receiveDate', function ($q) use ($currentDate) {
+            $q->whereRaw("'$currentDate' between date_add(date, interval - 5 day) and date_add(date, interval 3 day)");
+        })
             ->whereRaw("(applicant = $user->id or handler = $user->id)")
             ->orderBy('created_at', 'desc')
-            ->limit(10000000)
-            ->union($query)->toSql();
-
-        $data = DB::table(DB::raw("($sql) as a"))
             ->paginate(10);
 
-        $count = Contract::query()
-            ->whereHas('receiveDate', function ($q) use ($currentDate) {
-                $q->whereRaw("'$currentDate' between date_add(date, interval - 5 day) and date_add(date, interval 3 day)");
-            })
-            ->whereRaw("(applicant = $user->id or handler = $user->id)")
-            ->count();
-
-        $i = 0;
-        foreach ($data as $item) {
-            if ($i < $count) {
-                $item->top = 1;
-            } else {
-                $item->top = 0;
-            }
-            $contract = Contract::findOrFail($item->id);
-            $dates = array_column($contract->receiveDate->toArray(), 'date');
-
-            $item->company_name = $contract->company->name;
-            $item->applicant_name = $contract->applicantUser->name;
-            $item->handler_name = $contract->handler ? $contract->handlerUser->name : null;
-            $item->type = $contract->type == 0 ? '收款合同' : '付款合同';
-            $item->status = $this->statusMapping[$contract->status];
-            $item->receive_date = join(',', $dates);
-            $i++;
-        }
-        return $data;
+        return $this->response->paginator($contract, new ContractTransformer());
 
     }
 

@@ -10,14 +10,15 @@ $api->version('v1', [
     ], function ($api) {
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
-            $api->get('invoice/{invoice}','InvoiceController@show');
-            $api->get('invoice','InvoiceController@index');
-            $api->post('invoice','InvoiceController@store');
-            $api->patch('invoice/{invoice}','InvoiceController@update');
-            $api->delete('invoice/{invoice}','InvoiceController@destroy');
+            $api->get('invoice/{invoice}', 'InvoiceController@show');
+            $api->get('invoice', 'InvoiceController@index');
+            $api->post('invoice', 'InvoiceController@store');
+            $api->patch('invoice/{invoice}', 'InvoiceController@update');
+            $api->delete('invoice/{invoice}', 'InvoiceController@destroy');
 
             $api->post('invoice/auditing/{invoice}', 'InvoiceController@auditing');
-            $api->post('invoice/receive/{invoice}','InvoiceController@receive');
+            $api->post('invoice/receive/{invoice}', 'InvoiceController@receive');
+            $api->post('invoice/receipt/{invoice}', 'InvoiceController@receipt');
         });
     });
 
