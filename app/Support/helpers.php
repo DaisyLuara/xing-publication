@@ -14,7 +14,6 @@ use App\Http\Controllers\Admin\Face\V1\Models\FacePhoneRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceActivePlaytimesRecord;
 use app\Support\Jenner\Zebra\ArrayGroupBy;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceLogRecord;
-use Cache;
 
 /**
  *求两个已知经纬度之间的距离,单位为千米
