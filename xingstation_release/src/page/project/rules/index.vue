@@ -109,6 +109,10 @@
                   <span>{{ scope.row.count }}</span> 
                 </el-form-item>
                 <el-form-item 
+                  label="优先级">
+                  <span>{{ scope.row.sort_order }}</span> 
+                </el-form-item>
+                <el-form-item 
                   label="剩余库存">
                   <span>{{ scope.row.stock }}</span> 
                 </el-form-item>
@@ -187,6 +191,12 @@
             :show-overflow-tooltip="true"
             prop="name"
             label="名称"
+            min-width="100"
+          />
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="sort_order"
+            label="优先级"
             min-width="100"
           />
           <el-table-column

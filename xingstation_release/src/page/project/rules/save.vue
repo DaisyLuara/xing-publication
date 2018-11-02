@@ -84,6 +84,14 @@
             class="coupon-form-input"/>
         </el-form-item>
         <el-form-item 
+          label="优先级" 
+          prop="sort_order">
+          <el-input
+            v-model="couponForm.sort_order"
+            :maxlength="3"
+            class="coupon-form-input"/>
+        </el-form-item>
+        <el-form-item 
           label="类型" 
           prop="type">
           <el-radio 
@@ -268,6 +276,22 @@ export default {
         callback()
       }
     }
+    var checkSortOrder = (rule, value, callback) => {
+      if (!value) {
+        callback()
+        return
+      }
+      console.log(/^[0-9]+.?[0-9]*$/.test(value))
+      if (/^[0-9]+.?[0-9]*$/.test(value)) {
+        if (parseInt(value) < 1 || parseInt(value) > 100) {
+          callback(new Error('优先级只能是1-100'))
+        } else {
+          callback()
+        }
+      } else {
+        callback('优先级只能是数字')
+      }
+    }
     return {
       companyList: [],
       setting: {
@@ -276,7 +300,8 @@ export default {
         loadingText: '拼命加载中'
       },
       rules: {
-        end_date: [{ validator: checkEndDate, trigger: 'submit' }]
+        end_date: [{ validator: checkEndDate, trigger: 'submit' }],
+        sort_order: [{ validator: checkSortOrder, trigger: 'submit' }]
       },
       user_name: '',
       couponForm: {
@@ -289,6 +314,7 @@ export default {
         redirect_url: '',
         amount: 0,
         count: 0,
+        sort_order: 1,
         stock: 0,
         people_max_get: 0,
         pmg_status: 0,
@@ -330,7 +356,6 @@ export default {
         coupon
           .getCouponDetial(this, this.couponID, args)
           .then(result => {
-            console.log(result)
             this.couponForm.name = result.name
             this.couponForm.description = result.description
             this.couponForm.company_id = result.company.id
@@ -350,6 +375,7 @@ export default {
             this.couponForm.is_active = result.is_active
             this.couponForm.redirect_url = result.redirect_url
             this.couponForm.type = result.type
+            this.couponForm.sort_order = result.sort_order
             this.couponForm.title = result.title
             this.user_name = result.user.name
             this.setting.loading = false
@@ -383,6 +409,7 @@ export default {
         is_active: this.couponForm.is_active,
         redirect_url: this.couponForm.redirect_url,
         type: this.couponForm.type,
+        sort_order: this.sort_order,
         title: this.couponForm.title
       }
       if (!this.couponForm.image_url) {
@@ -390,6 +417,9 @@ export default {
       }
       if (this.couponForm.title === '') {
         delete args.title
+      }
+      if (this.couponForm.redirect_url === '') {
+        delete args.redirect_url
       }
       if (!this.couponForm.description) {
         delete args.description

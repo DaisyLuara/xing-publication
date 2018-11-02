@@ -19,8 +19,6 @@ use App\Handlers\ImageUploadHandler;
 use Carbon\Carbon;
 use Log;
 use Illuminate\Http\Request;
-use QrCode;
-use Cache;
 
 
 class MiniCouponController extends Controller
@@ -37,21 +35,9 @@ class MiniCouponController extends Controller
         $couponQuery = Coupon::query();
         $coupon = $couponQuery->where('member_uid', $member->uid)->where('code', $code)->firstOrFail();
 
-        $cacheIndex = 'mini_qrcode_' . $coupon->code;
-        if (Cache::has($cacheIndex)) {
-            $qrcodeUrl = Cache::get($cacheIndex);
-        } else {
-            $path = 'qrcode/' . $coupon->code . '.png';
-            $qrcodeApp = QrCode::format('png');
-            if ($request->size) {
-                $qrcodeApp->size($request->size);
-            }
-            $qrcodeApp->generate($coupon->code, $path);
-//            $result = $uploader->save($qrcodePng, 'coupon/code');
-//            $qrcodeUrl = $result['path'];
-            $qrcodeUrl = env('APP_URL') . '/' . $path;
-            Cache::set($cacheIndex, $qrcodeUrl);
-        }
+        $prefix = 'mini_qrcode_' . $coupon->code;
+        $size = $request->size ? $request->size : 200;
+        $qrcodeUrl = couponQrCode($coupon->code, $size, $prefix);
 
         $coupon->setAttribute('qrcode_url', $qrcodeUrl);
 
@@ -92,7 +78,7 @@ class MiniCouponController extends Controller
          * @todo  多个商户参加活动 优惠券配置
          * 新增字段 campaign_id 硬编码 获取活动ID为1的优惠券
          */
-        $couponBatches = CouponBatch::query()->where('campaign_id', 1)->get();
+        $couponBatches = CouponBatch::query()->where('campaign_id', 1)->orderByDesc('sort_order')->get();
 
         abort_if($couponBatches->isEmpty(), 500, '无可用优惠券');
 

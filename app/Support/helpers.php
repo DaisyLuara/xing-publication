@@ -1145,3 +1145,22 @@ if (!function_exists('ding_test')) {
         ding()->with('other')->markdown($title, $markdown);
     }
 }
+
+if (!function_exists('couponQrCode')) {
+    function couponQrCode($code, $size = 200, $prefix = 'mini_qrcode_')
+    {
+        $cacheIndex = $prefix . $code;
+        if (Cache::has($cacheIndex)) {
+            return Cache::get($cacheIndex);
+        }
+        $path = 'qrcode/' . $code . '.png';
+        $qrcodeApp = QrCode::format('png');
+        if ($size) {
+            $qrcodeApp->size($size);
+        }
+        $qrcodeApp->generate($code, $path);
+        $qrcodeUrl = env('APP_URL') . '/' . $path;
+        Cache::set($cacheIndex, $qrcodeUrl);
+        return $qrcodeUrl;
+    }
+}
