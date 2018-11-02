@@ -22,6 +22,7 @@ class ProjectTransformer extends TransformerAbstract
             'image' => $project->image,
             'alias' => $project->versionname,
             'version_code' => $project->versioncode,
+            'versionname' => $project->versionname,
             'link' => $project->link,
             'created_at' => $project->date,
             'policy_id' => $project->policy_id,
