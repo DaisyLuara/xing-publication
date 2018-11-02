@@ -483,16 +483,23 @@ class ChartDataController extends Controller
                     ]
             ];
         }
-        foreach ($data as $index => $item) {
-            if ($item->time = $times[$index]) {
-                $output[$index]['count'] = [
-                    'century10' => $item->century10,
-                    'century00' => $item->century00,
-                    'century90' => $item->century90,
-                    'century80' => $item->century80,
-                    'century70' => $item->century70,
-                ];
-                $output[$index]['rate'] = $item->totalnum == 0 ? 0 : strval(round($item->gnum / $item->totalnum, 3) * 100);
+        foreach ($data as $item) {
+            $flag = 1;
+            $i = 0;
+            while ($flag) {
+                if ($item->time == $times[$i]) {
+                    $output[$i]['count'] = [
+                        'century10' => $item->century10,
+                        'century00' => $item->century00,
+                        'century90' => $item->century90,
+                        'century80' => $item->century80,
+                        'century70' => $item->century70,
+                    ];
+                    $output[$i]['rate'] = $item->totalnum == 0 ? 0 : strval(round($item->gnum / $item->totalnum, 3) * 100);
+                    $flag = 0;
+                } else {
+                    $i++;
+                }
             }
         }
         return $output;

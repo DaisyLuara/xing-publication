@@ -844,92 +844,149 @@ function faceCharacterClean()
         foreach ($allData as $item) {
             $item = json_decode(json_encode($item), true);
             $item['belong'] = 'all';
-            $item['time'] = (new Carbon($item['time']))->addMinutes(30)->format('H:i');
+            $item['time'] = getDateFormat((new Carbon($item['time']))->addMinutes(30)->format('H:i'));
             $item['date'] = $date;
             $item['clientdate'] = strtotime($date) * 1000;
             $count[] = $item;
         }
         foreach ($data as $item) {
             $item = json_decode(json_encode($item), true);
-            $item['time'] = (new Carbon($item['time']))->addMinutes(30)->format('H:i');
+            $item['time'] = getDateFormat((new Carbon($item['time']))->addMinutes(30)->format('H:i'));
             $item['date'] = $date;
             $item['clientdate'] = strtotime($date) * 1000;
             $count[] = $item;
         }
-        $count = array_chunk($count, 8000);
-        for ($i = 0; $i < count($count); $i++) {
-            DB::connection('ar')->table('xs_face_character')->insert($count[$i]);
-        }
+
+
+        $group_by_fields = [
+            'oid' => function ($value) {
+                return $value;
+            },
+            'belong' => function ($value) {
+                return $value;
+            },
+            'time' => function ($value) {
+                return $value;
+            }
+        ];
+        $group_by_value = groupByValueCharacter('looknum');
+        $characterData = ArrayGroupBy::groupBy($count, $group_by_fields, $group_by_value);
+
+        DB::connection('ar')->table('xs_face_character_count')->insert($characterData);
         $date = (new Carbon($date))->addDay(1)->toDateString();
+    }
+
+    FaceCharacterRecord::create(['date' => $currentDate]);
+}
+
+function getDateFormat($date)
+{
+    $date = (new Carbon($date))->format('H:i');
+    if ($date > '00:00' && $date <= '10:00') {
+        return '10:00';
+    } else if ($date > '10:00' && $date <= '12:00') {
+        return '12:00';
+    } else if ($date > '12:00' && $date <= '14:00') {
+        return '14:00';
+    } else if ($date > '14:00' && $date <= '16:00') {
+        return '16:00';
+    } else if ($date > '16:00' && $date <= '18:00') {
+        return '18:00';
+    } else if ($date > '18:00' && $date <= '20:00') {
+        return '20:00';
+    } else if ($date > '20:00' && $date <= '22:00') {
+        return '22:00';
+    } else {
+        return '24:00';
     }
 }
 
-function faceCharacterCountClean()
+
+function groupByValueCharacter($x)
 {
-    $date = FaceCharacterRecord::query()->max('date');
-    $date = (new Carbon($date))->format('Y-m-d');
-    $currentDate = Carbon::now()->toDateString();
-    while ($date < $currentDate) {
-        $clientDate = strtotime($date . ' 00:00:00') * 1000;
-        $time1 = " when time >'00:00' and time <='10:00' then '10:00'";
-        $time2 = " when time >'10:00' and time <='12:00' then '12:00'";
-        $time3 = " when time >'12:00' and time <='14:00' then '14:00'";
-        $time4 = " when time >'14:00' and time <='16:00' then '16:00'";
-        $time5 = " when time >'16:00' and time <='18:00' then '18:00'";
-        $time6 = " when time >'18:00' and time <='20:00' then '20:00'";
-        $time7 = " when time >'20:00' and time <='22:00' then '22:00'";
-        $time8 = " when time >'22:00' or time ='00:00' then '24:00'";
-        $timeSql = $time1 . $time2 . $time3 . $time4 . $time5 . $time6 . $time7 . $time8;
+    return $data = [
+        'oid' => [
+            'callback' => function ($value_array) {
+                return $value_array[0]['oid'];
+            },
+            'as' => 'oid'
+        ],
+        'belong' => [
+            'callback' => function ($value_array) {
+                return $value_array[0]['belong'];
+            },
+            'as' => 'belong'
+        ],
+        'time' => [
+            'callback' => function ($value_array) {
+                return $value_array[0]['time'];
+            },
+            'as' => 'time'
+        ],
+        'century00_bnum' => function ($data) use ($x) {
+            return array_sum(array_column(array_filter($data, function ($arr) {
+                return $arr['gender'] == 'Male' and $arr['century'] == '00';
+            }), $x));
+        },
+        'century00_gnum' => function ($data) use ($x) {
+            return array_sum(array_column(array_filter($data, function ($arr) {
+                return $arr['gender'] == 'Female' and $arr['century'] == '00';
+            }), $x));
+        },
+        'century90_bnum' => function ($data) use ($x) {
+            return array_sum(array_column(array_filter($data, function ($arr) {
+                return $arr['gender'] == 'Male' and $arr['century'] == '90';
+            }), $x));
+        },
+        'century90_gnum' => function ($data) use ($x) {
+            return array_sum(array_column(array_filter($data, function ($arr) {
+                return $arr['gender'] == 'Female' and $arr['century'] == '90';
+            }), $x));
+        },
+        'century80_bnum' => function ($data) use ($x) {
+            return array_sum(array_column(array_filter($data, function ($arr) {
+                return $arr['gender'] == 'Male' and $arr['century'] == '80';
+            }), $x));
+        },
+        'century80_gnum' => function ($data) use ($x) {
+            return array_sum(array_column(array_filter($data, function ($arr) {
+                return $arr['gender'] == 'Female' and $arr['century'] == '80';
+            }), $x));
+        },
+        'century70_bnum' => function ($data) use ($x) {
+            return array_sum(array_column(array_filter($data, function ($arr) {
+                return $arr['gender'] == 'Male' and $arr['century'] == '70';
+            }), $x));
+        },
+        'century70_gnum' => function ($data) use ($x) {
+            return array_sum(array_column(array_filter($data, function ($arr) {
+                return $arr['gender'] == 'Female' and $arr['century'] == '70';
+            }), $x));
+        },
+        'century10_bnum' => function ($data) use ($x) {
+            return array_sum(array_column(array_filter($data, function ($arr) {
+                return $arr['gender'] == 'Male' and $arr['century'] == '10';
+            }), $x));
+        },
+        'century10_gnum' => function ($data) use ($x) {
+            return array_sum(array_column(array_filter($data, function ($arr) {
+                return $arr['gender'] == 'Female' and $arr['century'] == '10';
+            }), $x));
+        },
+        'date' => [
+            'callback' => function ($value_array) {
+                return $value_array[0]['date'];
+            },
+            'as' => 'date'
+        ],
+        'clientdate' => [
+            'callback' => function ($value_array) {
+                return $value_array[0]['clientdate'];
+            },
+            'as' => 'clientdate'
+        ]
+    ];
 
-        $sql = DB::connection('ar')->table('xs_face_character')
-            ->whereRaw("clientdate='$clientDate'")
-            ->groupBy(DB::raw("oid,belong,times,century,gender"))
-            ->selectRaw("oid,belong,case" . $timeSql . " else 0 end as times,century,gender,sum(looknum) as looknum");
-
-        $sum1 = "sum(if(century = '00' and gender = 'Male', looknum, 0))   as century00_bnum,";
-        $sum2 = " sum(if(century = '00' and gender = 'Female', looknum, 0)) as century00_gnum,";
-        $sum3 = " sum(if(century = '90' and gender = 'Male', looknum, 0))   as century90_bnum,";
-        $sum4 = " sum(if(century = '90' and gender = 'Female', looknum, 0)) as century90_gnum,";
-        $sum5 = " sum(if(century = '80' and gender = 'Male', looknum, 0))   as century80_bnum,";
-        $sum6 = " sum(if(century = '80' and gender = 'Female', looknum, 0)) as century80_gnum,";
-        $sum7 = " sum(if(century = '70' and gender = 'Male', looknum, 0))   as century70_bnum,";
-        $sum8 = " sum(if(century = '70' and gender = 'Female', looknum, 0)) as century70_gnum,";
-        $sum9 = " sum(if(century = '10' and gender = 'Male', looknum, 0))    as century10_bnum,";
-        $sum10 = " sum(if(century = '10' and gender = 'Female', looknum, 0)) as century10_gnum";
-        $sum = $sum1 . $sum2 . $sum3 . $sum4 . $sum5 . $sum6 . $sum7 . $sum8 . $sum9 . $sum10;
-        $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
-            ->groupBy(DB::raw('oid,belong,times'))
-            ->selectRaw("oid,belong,times," . $sum)
-            ->get();
-
-        $count = [];
-        foreach ($data as $item) {
-            $count[] = [
-                'oid' => $item->oid,
-                'belong' => $item->belong,
-                'time' => $item->times,
-                'century00_bnum' => $item->century00_bnum ? $item->century00_bnum : 0,
-                'century00_gnum' => $item->century00_gnum ? $item->century00_gnum : 0,
-                'century90_bnum' => $item->century90_bnum ? $item->century90_bnum : 0,
-                'century90_gnum' => $item->century90_gnum ? $item->century90_gnum : 0,
-                'century80_bnum' => $item->century80_bnum ? $item->century80_bnum : 0,
-                'century80_gnum' => $item->century80_gnum ? $item->century80_gnum : 0,
-                'century70_bnum' => $item->century70_bnum ? $item->century70_bnum : 0,
-                'century70_gnum' => $item->century70_gnum ? $item->century70_gnum : 0,
-                'century10_bnum' => $item->century10_bnum ? $item->century10_bnum : 0,
-                'century10_gnum' => $item->century10_gnum ? $item->century10_gnum : 0,
-                'date' => $date,
-                'clientdate' => strtotime($date) * 1000
-            ];
-        }
-        $count = array_chunk($count, 8000);
-        for ($i = 0; $i < count($count); $i++) {
-            DB::connection('ar')->table('xs_face_character_count')
-                ->insert($count[$i]);
-        }
-        $date = (new Carbon($date))->addDay(1)->toDateString();
-    }
-    FaceCharacterRecord::create(['date' => $currentDate]);
 }
 
 function faceLogClean()
@@ -1086,5 +1143,24 @@ if (!function_exists('ding_test')) {
             "> ###### 10点20分发布 [天气](http://www.thinkpage.cn/) ";
 
         ding()->with('other')->markdown($title, $markdown);
+    }
+}
+
+if (!function_exists('couponQrCode')) {
+    function couponQrCode($code, $size = 200, $prefix = 'mini_qrcode_')
+    {
+        $cacheIndex = $prefix . $code;
+        if (Cache::has($cacheIndex)) {
+            return Cache::get($cacheIndex);
+        }
+        $path = 'qrcode/' . $code . '.png';
+        $qrcodeApp = QrCode::format('png');
+        if ($size) {
+            $qrcodeApp->size($size);
+        }
+        $qrcodeApp->generate($code, $path);
+        $qrcodeUrl = env('APP_URL') . '/' . $path;
+        Cache::set($cacheIndex, $qrcodeUrl);
+        return $qrcodeUrl;
     }
 }

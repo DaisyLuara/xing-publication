@@ -30,6 +30,5 @@ class CharacterJob implements ShouldQueue
     public function handle()
     {
         faceCharacterClean();
-        faceCharacterCountClean();
     }
 }

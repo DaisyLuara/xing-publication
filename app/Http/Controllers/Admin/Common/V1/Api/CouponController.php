@@ -134,11 +134,21 @@ class CouponController extends Controller
      */
     public function generateCoupon(CouponBatch $couponBatch, CouponRequest $request, EasySms $easySms)
     {
-        $mobile = $request->mobile;
+        $mobile = $request->has('mobile') ? $request->get('mobile') : '';
+        //库存校验
         if (!$couponBatch->dmg_status && !$couponBatch->pmg_status && $couponBatch->stock <= 0) {
             abort(500, '优惠券已发完!');
         }
 
+        //时间日期
+        $now = Carbon::now()->timestamp;
+        $startDate = strtotime($couponBatch->start_date);
+        $endDdate = strtotime($couponBatch->end_date);
+
+        abort_if($now <= $startDate, 500, '活动未开启!');
+        abort_if($now >= $endDdate, 500, '活动已结束!');
+
+        //第三方优惠券
         if ($couponBatch->third_code) {
             $result = $this->sendMallCooCoupon($mobile, $couponBatch->third_code);
             if ($result['Code'] != 1) {
@@ -198,10 +208,22 @@ class CouponController extends Controller
                         abort(500, '您今天已经领过了，请明天再来!');
                     }
 
-                } else {
+                } else if ($mobile) {
                     //按手机号码 发送优惠券
+                    Log::info('mobile', $request->all());
                     $couponBatchIds = [$couponBatchId];
                     $coupons = Coupon::query()->where('mobile', $mobile)->whereIn('coupon_batch_id', $couponBatchIds)->get();
+                } else {
+                    //根据微信客户端 发送优惠券
+                    $userID = decrypt($request->get('sign'));
+                    Log::info('wx_user_id', [$userID]);
+                    $coupons = Coupon::query()->where('wx_user_id', $userID)
+                        ->where('coupon_batch_id', $couponBatchId)
+                        ->get();
+
+                    if ($coupons->count() >= $couponBatch->people_max_get) {
+                        abort(500, '您今天已经领过了，请明天再来!');
+                    }
                 }
 
                 if ($coupons->count() >= $couponBatch->people_max_get) {
@@ -217,12 +239,21 @@ class CouponController extends Controller
                 'wx_user_id' => $userID,
             ]);
 
+
+            //优惠券二维码
+            $prefix = 'h5_code' . $coupon->code;
+            $qrcodeUrl = couponQrCode($coupon->code, 200, $prefix);
+            $coupon->setAttribute('qrcode_url', $qrcodeUrl);
+
             if (!$couponBatch->pmg_status && !$couponBatch->pmg_status) {
 
                 $couponBatch->decrement('stock');
             }
 
-            $this->sendCouponMsg($mobile, $couponBatch, $easySms);
+            if ($mobile) {
+                $this->sendCouponMsg($mobile, $couponBatch, $easySms);
+            }
+
         }
 
         return $this->response->item($coupon, new CouponTransformer());
@@ -236,6 +267,11 @@ class CouponController extends Controller
             ->first();
 
         abort_if(!$coupon, 204);
+
+        //优惠券二维码
+        $prefix = 'h5_code' . $coupon->code;
+        $qrcodeUrl = couponQrCode($coupon->code, 200, $prefix);
+        $coupon->setAttribute('qrcode_url', $qrcodeUrl);
 
         return $this->response->item($coupon, new CouponTransformer());
     }

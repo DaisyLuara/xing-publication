@@ -12,14 +12,38 @@ use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Common\V1\Transformer\CouponTransformer;
 use App\Http\Controllers\Admin\Common\V1\Request\MiniCouponRequest;
+use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\User\V1\Models\ArMemberSession;
 use App\Http\Controllers\Controller;
+use App\Handlers\ImageUploadHandler;
 use Carbon\Carbon;
 use Log;
+use Illuminate\Http\Request;
 
 
 class MiniCouponController extends Controller
 {
+    /**
+     * 优惠券详情
+     * @param $code
+     * @param Request $request
+     * @return mixed
+     */
+    public function couponShow($code, ImageUploadHandler $uploader, Request $request)
+    {
+        $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
+        $couponQuery = Coupon::query();
+        $coupon = $couponQuery->where('member_uid', $member->uid)->where('code', $code)->firstOrFail();
+
+        $prefix = 'mini_qrcode_' . $coupon->code;
+        $size = $request->size ? $request->size : 200;
+        $qrcodeUrl = couponQrCode($coupon->code, $size, $prefix);
+
+        $coupon->setAttribute('qrcode_url', $qrcodeUrl);
+
+        return $this->response->item($coupon, new CouponTransformer());
+
+    }
 
     /**
      * 用户优惠券列表
@@ -44,6 +68,35 @@ class MiniCouponController extends Controller
         return $this->response->paginator($coupon, new CouponTransformer());
     }
 
+
+    /**
+     * 获取可用 优惠券规则列表
+     */
+    public function couponBatchesIndex(Request $request)
+    {
+        /**
+         * @todo  多个商户参加活动 优惠券配置
+         * 新增字段 campaign_id 硬编码 获取活动ID为1的优惠券
+         */
+        $couponBatches = CouponBatch::query()->where('campaign_id', 1)->orderByDesc('sort_order')->get();
+
+        abort_if($couponBatches->isEmpty(), 500, '无可用优惠券');
+
+        //业务参数过滤
+        foreach ($couponBatches as $key => $couponBatch) {
+
+            if (!$couponBatch->pmg_status && !$couponBatch->dmg_status && $couponBatch->stock <= 0) {
+
+                $couponBatches->forget($key);
+            }
+        }
+
+        abort_if($couponBatches->isEmpty(), 500, '无可用优惠券');
+
+        return $this->response->collection($couponBatches, new CouponBatchTransformer());
+
+    }
+
     /**
      * 领取优惠券
      * @param CouponBatch $couponBatch
@@ -56,15 +109,16 @@ class MiniCouponController extends Controller
         $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
         $memberUID = $member->uid;
 
-        //同一种优惠券只能领取一次
-        $coupon = Coupon::query()->where('coupon_batch_id', $couponBatch->id)->where('member_uid', $memberUID)->first();
-        if ($coupon) {
-            return $this->response->item($coupon, new CouponTransformer());
-        }
-
         if (!$couponBatch->dmg_status && !$couponBatch->pmg_status && $couponBatch->stock <= 0) {
             abort(500, '优惠券已发完!');
         }
+
+        $now = Carbon::now()->timestamp;
+        $startDate = strtotime($couponBatch->start_date);
+        $endDdate = strtotime($couponBatch->end_date);
+
+        abort_if($now <= $startDate, 500, '活动未开启!');
+        abort_if($now >= $endDdate, 500, '活动已结束!');
 
         //每天最大领取量
         if (!$couponBatch->dmg_status) {

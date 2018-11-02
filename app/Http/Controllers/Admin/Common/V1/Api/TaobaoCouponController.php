@@ -45,6 +45,14 @@ class TaobaoCouponController extends Controller
         Log::info('taobao_coupon_store', $request->all());
         $taobaoUserID = $request->openuid;
 
+        //优惠券时间判断
+        $now = Carbon::now()->timestamp;
+        $startDate = strtotime($couponBatch->start_date);
+        $endDdate = strtotime($couponBatch->end_date);
+
+        abort_if($now <= $startDate, 500, '活动未开启!');
+        abort_if($now >= $endDdate, 500, '活动已结束!');
+
         //同一种优惠券只能领取一次
         $coupon = Coupon::query()->where('coupon_batch_id', $couponBatch->id)->where('taobao_user_id', $taobaoUserID)->first();
         if ($coupon) {

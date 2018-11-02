@@ -24,9 +24,10 @@ $api->version('v1', [
         //小程序优惠券接口
         $api->group(['middleware' => 'api_sign', 'prefix' => 'mini'], function ($api) {
             $api->get('user/coupons', 'MiniCouponController@couponIndex');//优惠券列表
+            $api->get('user/coupons/{code}', 'MiniCouponController@couponShow');//优惠券详情
 
-            $api->get('user/coupon_batch/{couponBatch}', 'MiniCouponController@show');//优惠券规则详情
             $api->post('user/coupon_batch/{couponBatch}', 'MiniCouponController@store');//发送优惠券
+            $api->any('coupon/batches', 'MiniCouponController@couponBatchesIndex');//优惠券规则列表
         });
 
         //淘宝接口
@@ -35,6 +36,12 @@ $api->version('v1', [
             $api->post('user/coupon_batch/{couponBatch}', 'TaobaoCouponController@store');//发送淘宝优惠券
             $api->post('user/coupon', 'TaobaoCouponController@update');//核销
         });
+
+        //获取大屏参数
+        $api->group(['middleware' => 'api_sign'], function ($api) {
+            $api->get('device/params', 'FileUploadController@show');
+        });
+
 
         $api->get('s/{url_path}', 'ShortUrlController@redirect');//短链接跳转
         $api->post('open/short_urls', 'ShortUrlController@store');//短链接生成
