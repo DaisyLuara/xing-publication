@@ -1,3 +1,4 @@
+
 <template>
   <div 
     class="add-coupon-wrap">
@@ -409,7 +410,7 @@ export default {
         is_active: this.couponForm.is_active,
         redirect_url: this.couponForm.redirect_url,
         type: this.couponForm.type,
-        sort_order: this.sort_order,
+        sort_order: this.couponForm.sort_order,
         title: this.couponForm.title
       }
       if (!this.couponForm.image_url) {
