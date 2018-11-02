@@ -37,21 +37,9 @@ class MiniCouponController extends Controller
         $couponQuery = Coupon::query();
         $coupon = $couponQuery->where('member_uid', $member->uid)->where('code', $code)->firstOrFail();
 
-        $cacheIndex = 'mini_qrcode_' . $coupon->code;
-        if (Cache::has($cacheIndex)) {
-            $qrcodeUrl = Cache::get($cacheIndex);
-        } else {
-            $path = 'qrcode/' . $coupon->code . '.png';
-            $qrcodeApp = QrCode::format('png');
-            if ($request->size) {
-                $qrcodeApp->size($request->size);
-            }
-            $qrcodeApp->generate($coupon->code, $path);
-//            $result = $uploader->save($qrcodePng, 'coupon/code');
-//            $qrcodeUrl = $result['path'];
-            $qrcodeUrl = env('APP_URL') . '/' . $path;
-            Cache::set($cacheIndex, $qrcodeUrl);
-        }
+        $prefix = 'mini_qrcode_' . $coupon->code;
+        $size = $request->size ? $request->size : 200;
+        $qrcodeUrl = couponQrCode($coupon->code, $size, $prefix);
 
         $coupon->setAttribute('qrcode_url', $qrcodeUrl);
 

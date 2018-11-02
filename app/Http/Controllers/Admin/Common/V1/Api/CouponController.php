@@ -49,6 +49,11 @@ class CouponController extends Controller
             }
         }
 
+        //优惠券二维码
+        $prefix = 'h5_code' . $coupon->code;
+        $qrcodeUrl = couponQrCode($coupon->code, 200, $prefix);
+        $coupon->setAttribute('qrcode_url', $qrcodeUrl);
+
         return $this->response->item($couponBatch, new CouponBatchTransformer());
 
     }
@@ -226,6 +231,12 @@ class CouponController extends Controller
                 'status' => 3,
                 'wx_user_id' => $userID,
             ]);
+
+
+            //优惠券二维码
+            $prefix = 'h5_code' . $coupon->code;
+            $qrcodeUrl = couponQrCode($coupon->code, 200, $prefix);
+            $coupon->setAttribute('qrcode_url', $qrcodeUrl);
 
             if (!$couponBatch->pmg_status && !$couponBatch->pmg_status) {
 

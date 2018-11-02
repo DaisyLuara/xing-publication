@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\Face\V1\Models\FacePhoneRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceActivePlaytimesRecord;
 use app\Support\Jenner\Zebra\ArrayGroupBy;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceLogRecord;
+use Cache;
 
 /**
  *求两个已知经纬度之间的距离,单位为千米
@@ -1143,5 +1144,24 @@ if (!function_exists('ding_test')) {
             "> ###### 10点20分发布 [天气](http://www.thinkpage.cn/) ";
 
         ding()->with('other')->markdown($title, $markdown);
+    }
+}
+
+if (!function_exists('couponQrCode')) {
+    function couponQrCode($code, $size = 200, $prefix = 'mini_qrcode_')
+    {
+        $cacheIndex = $prefix . $code;
+        if (Cache::has($cacheIndex)) {
+            return Cache::get($cacheIndex);
+        }
+        $path = 'qrcode/' . $code . '.png';
+        $qrcodeApp = QrCode::format('png');
+        if ($size) {
+            $qrcodeApp->size($size);
+        }
+        $qrcodeApp->generate($code, $path);
+        $qrcodeUrl = env('APP_URL') . '/' . $path;
+        Cache::set($cacheIndex, $qrcodeUrl);
+        return $qrcodeUrl;
     }
 }
