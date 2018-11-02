@@ -43,6 +43,7 @@ class CouponBatchTransformer extends TransformerAbstract
             'type' => (int)$couponBatch->type,
             'redirect_url' => $couponBatch->redirect_url,
             'title' => $couponBatch->title,
+            'sort_order' => $couponBatch->sort_order,
         ];
     }
 

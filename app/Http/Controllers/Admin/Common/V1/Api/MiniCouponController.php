@@ -19,8 +19,6 @@ use App\Handlers\ImageUploadHandler;
 use Carbon\Carbon;
 use Log;
 use Illuminate\Http\Request;
-use QrCode;
-use Cache;
 
 
 class MiniCouponController extends Controller
@@ -80,7 +78,7 @@ class MiniCouponController extends Controller
          * @todo  多个商户参加活动 优惠券配置
          * 新增字段 campaign_id 硬编码 获取活动ID为1的优惠券
          */
-        $couponBatches = CouponBatch::query()->where('campaign_id', 1)->get();
+        $couponBatches = CouponBatch::query()->where('campaign_id', 1)->orderByDesc('sort_order')->get();
 
         abort_if($couponBatches->isEmpty(), 500, '无可用优惠券');
 
