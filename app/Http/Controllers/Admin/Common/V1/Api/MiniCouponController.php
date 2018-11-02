@@ -133,6 +133,13 @@ class MiniCouponController extends Controller
             abort(500, '优惠券已发完!');
         }
 
+        $now = Carbon::now()->timestamp;
+        $startDate = strtotime($couponBatch->start_date);
+        $endDdate = strtotime($couponBatch->end_date);
+
+        abort_if($now <= $startDate, 500, '活动未开启!');
+        abort_if($now >= $endDdate, 500, '活动已结束!');
+
         //每天最大领取量
         if (!$couponBatch->dmg_status) {
             $now = Carbon::now();

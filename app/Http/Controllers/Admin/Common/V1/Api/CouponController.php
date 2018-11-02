@@ -99,7 +99,7 @@ class CouponController extends Controller
         $couponBatchPolicies = $query->join('coupon_batches', 'coupon_batch_id', '=', 'coupon_batches.id')->where('policy_id', '=', $policy->id)->get();
 
         if ($couponBatchPolicies->isEmpty()) {
-            abort(500,'无可用优惠券' );
+            abort(500, '无可用优惠券');
         }
 
         $couponBatchPolicies = $couponBatchPolicies->toArray();
@@ -110,7 +110,7 @@ class CouponController extends Controller
         }
 
         if (count($couponBatchPolicies) == 0) {
-            abort(500,'无可用优惠券' );
+            abort(500, '无可用优惠券');
         }
 
 
@@ -135,10 +135,20 @@ class CouponController extends Controller
     public function generateCoupon(CouponBatch $couponBatch, CouponRequest $request, EasySms $easySms)
     {
         $mobile = $request->mobile;
+        //库存校验
         if (!$couponBatch->dmg_status && !$couponBatch->pmg_status && $couponBatch->stock <= 0) {
             abort(500, '优惠券已发完!');
         }
 
+        //时间日期
+        $now = Carbon::now()->timestamp;
+        $startDate = strtotime($couponBatch->start_date);
+        $endDdate = strtotime($couponBatch->end_date);
+
+        abort_if($now <= $startDate, 500, '活动未开启!');
+        abort_if($now >= $endDdate, 500, '活动已结束!');
+
+        //第三方优惠券
         if ($couponBatch->third_code) {
             $result = $this->sendMallCooCoupon($mobile, $couponBatch->third_code);
             if ($result['Code'] != 1) {
