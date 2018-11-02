@@ -73,6 +73,10 @@
                   <span>{{ scope.row.version_code }}</span> 
                 </el-form-item>
                 <el-form-item 
+                  label="版本名称">
+                  {{ scope.row.versionname }}
+                </el-form-item>
+                <el-form-item 
                   label="创建时间">
                   <span>{{ scope.row.created_at }}</span>
                 </el-form-item>
@@ -106,6 +110,12 @@
             :show-overflow-tooltip="true"
             prop="version_code"
             label="版本号"
+            min-width="100"
+          />
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="versionname"
+            label="版本名称"
             min-width="100"
           />
           <el-table-column
