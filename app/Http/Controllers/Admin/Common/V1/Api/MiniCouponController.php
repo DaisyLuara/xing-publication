@@ -109,12 +109,6 @@ class MiniCouponController extends Controller
         $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
         $memberUID = $member->uid;
 
-        //同一种优惠券只能领取一次
-        $coupon = Coupon::query()->where('coupon_batch_id', $couponBatch->id)->where('member_uid', $memberUID)->first();
-        if ($coupon) {
-            return $this->response->item($coupon, new CouponTransformer());
-        }
-
         if (!$couponBatch->dmg_status && !$couponBatch->pmg_status && $couponBatch->stock <= 0) {
             abort(500, '优惠券已发完!');
         }
