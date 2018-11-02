@@ -41,6 +41,5 @@ class FaceCharacter extends Command
     public function handle()
     {
         faceCharacterClean();
-        faceCharacterCountClean();
     }
 }
