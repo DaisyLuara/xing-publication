@@ -18,6 +18,7 @@ class CustomerRequest extends FormRequest
                 return [
                     'name' => 'required|string',
                     'phone' => 'required|regex:/^1[3456789]\d{9}$/|unique:customers',
+                    'telephone' => 'filled',
                     'password' => 'filled',
                 ];
                 break;
@@ -25,6 +26,7 @@ class CustomerRequest extends FormRequest
                 return [
                     'name' => 'filled|string',
                     'phone' => 'filled|regex:/^1[3456789]\d{9}$/',
+                    'telephone' => 'filled',
                     'password' => 'filled',
                 ];
                 break;
@@ -36,6 +38,14 @@ class CustomerRequest extends FormRequest
         return [
             'phone' => '手机号码',
             'customer_name' => '客户名称'
+        ];
+    }
+
+    public function messages()
+
+    {
+        return [
+            'phone.unique' => '手机号码被占用',
         ];
     }
 }
