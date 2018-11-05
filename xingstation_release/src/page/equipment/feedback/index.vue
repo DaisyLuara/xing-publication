@@ -30,6 +30,15 @@
         </el-form-item>
         <el-form-item 
           label="" 
+          prop="code">
+          <el-input 
+            v-model="searchForm.code" 
+            clearable
+            placeholder="code"
+            class="item-input"/>
+        </el-form-item>
+        <el-form-item 
+          label="" 
           prop="dataValue">
           <el-date-picker
             v-model="searchForm.dataValue"
@@ -66,6 +75,49 @@
       <el-table
         :data="tableData"
         style="width: 100%">
+        <el-table-column 
+          type="expand">
+          <template 
+            slot-scope="scope">
+            <el-form 
+              label-position="left" 
+              inline 
+              class="demo-table-expand">
+              <el-form-item 
+                label="ID">
+                <span>{{ scope.row.id }}</span>
+              </el-form-item>
+              <el-form-item 
+                label="创建时间">
+                <span>{{ scope.row.created_at }}</span>
+              </el-form-item>
+              <el-form-item 
+                label="device_code">
+                <span>{{ scope.row.device_code }}</span>
+              </el-form-item>
+              <el-form-item 
+                label="action">
+                <span>{{ scope.row.action }}</span>
+              </el-form-item>
+              <el-form-item 
+                label="couponID">
+                <span>{{ scope.row.coupon_id }}</span>
+              </el-form-item>
+              <el-form-item 
+                label="code">
+                <span>{{ scope.row.code }} s</span>
+              </el-form-item>
+              <el-form-item 
+                label="游戏名称">
+                <span>{{ scope.row.game_name }}</span>
+              </el-form-item>
+              <el-form-item 
+                label="userNick">
+                <span>{{ scope.row.user_nick }}</span>
+              </el-form-item>
+            </el-form>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="id"
           label="ID" 
@@ -147,6 +199,7 @@ export default {
       searchForm: {
         action: '',
         device_code: '',
+        code: '',
         dataValue: []
       },
       pickerOptions2: {
@@ -232,13 +285,17 @@ export default {
         action: this.searchForm.action,
         device_code: this.searchForm.device_code,
         start_date: this.handleDateTransform(this.searchForm.dataValue[0]),
-        end_date: this.handleDateTransform(this.searchForm.dataValue[1])
+        end_date: this.handleDateTransform(this.searchForm.dataValue[1]),
+        code: this.searchForm.code
       }
       if (!this.searchForm.action) {
         delete args.action
       }
       if (!this.searchForm.device_code) {
         delete args.device_code
+      }
+      if (this.searchForm.code === '') {
+        delete args.code
       }
       if (!this.searchForm.dataValue[0]) {
         delete args.start_date
@@ -317,6 +374,19 @@ export default {
         margin-right: 5px;
       }
     }
+  }
+  .demo-table-expand {
+    font-size: 0;
+  }
+
+  .demo-table-expand label {
+    width: 90px;
+    color: #99a9bf;
+  }
+  .demo-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 50%;
   }
   .actions-wrap {
     margin-top: 5px;
