@@ -56,12 +56,34 @@
         <el-form-item
           label="动态库存"
           prop="dynamic_stock_status">
-          <el-radio
+          <el-radio-group 
             v-model="couponForm.dynamic_stock_status"
-            :label="0">关闭</el-radio>
-          <el-radio
-            v-model="couponForm.dynamic_stock_status"
-            :label="1">开启</el-radio>
+            @change="handleWriteOffStatus">
+            <el-radio
+              :label="0">关闭</el-radio>
+              <el-tooltip class="item" effect="dark" content="计算规则：由剩余库存 减去 当天领取但未使用的优惠券数量" placement="right">
+                <el-radio
+                  :label="1">
+                    开启
+                </el-radio>
+              </el-tooltip>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item
+          label="系统核销"
+          prop="write_off_status">
+          <el-tooltip class="item" effect="dark" content="领券后，库存自动减少" placement="left">
+            <el-radio
+              v-model="couponForm.write_off_status"
+              :label="0"
+              :disabled="disabledWriteStatus">关闭</el-radio>
+          </el-tooltip>
+          <el-tooltip class="item" effect="dark" content="领券后库存不自动减少，由系统核销后，库存在减少" placement="right">
+            <el-radio
+              v-model="couponForm.write_off_status"
+              :label="1"
+              :disabled="disabledWriteStatus">开启</el-radio>
+          </el-tooltip>
         </el-form-item>
         <el-form-item
           :rules="{required: true, message: '优惠券名称不能为空', trigger: 'submit'}"
@@ -255,7 +277,8 @@ import {
   Radio,
   DatePicker,
   Select,
-  Option
+  Option,
+  Tooltip
 } from 'element-ui'
 
 export default {
@@ -269,7 +292,8 @@ export default {
     'el-radio': Radio,
     'el-select': Select,
     'el-date-picker': DatePicker,
-    'el-option': Option
+    'el-option': Option,
+    'el-tooltip': Tooltip
   },
   data() {
     var checkEndDate = (rule, value, callback) => {
@@ -313,6 +337,7 @@ export default {
         end_date: [{ validator: checkEndDate, trigger: 'submit' }],
         sort_order: [{ validator: checkSortOrder, trigger: 'submit' }]
       },
+      disabledWriteStatus: false,
       user_name: '',
       couponForm: {
         name: '',
@@ -336,7 +361,8 @@ export default {
         effective_day: 0,
         start_date: '',
         end_date: '',
-        is_active: 1
+        is_active: 1,
+        write_off_status: 1
       },
       couponID: ''
     }
@@ -390,7 +416,8 @@ export default {
             this.couponForm.sort_order = result.sort_order
             this.couponForm.title = result.title
             this.user_name = result.user.name
-            this.dynamic_stock_status = result.dynamic_stock_status
+            this.couponForm.dynamic_stock_status = result.dynamic_stock_status
+            this.couponForm.write_off_status = result.write_off_status
             this.setting.loading = false
           })
           .catch(error => {
@@ -403,6 +430,14 @@ export default {
     })
   },
   methods: {
+    handleWriteOffStatus(e) {
+      if (e === 1) {
+        this.couponForm.write_off_status = 1
+        this.disabledWriteStatus = true
+      } else {
+        this.disabledWriteStatus = false
+      }
+    },
     onSubmit(formName) {
       let company_id = this.couponForm.company_id
       let args = {
@@ -424,7 +459,8 @@ export default {
         type: this.couponForm.type,
         sort_order: this.couponForm.sort_order,
         title: this.couponForm.title,
-        dynamic_stock_status: this.couponForm.dynamic_stock_status
+        dynamic_stock_status: this.couponForm.dynamic_stock_status,
+        write_off_status: this.couponForm.write_off_status
       }
       if (!this.couponForm.image_url) {
         delete args.image_url
