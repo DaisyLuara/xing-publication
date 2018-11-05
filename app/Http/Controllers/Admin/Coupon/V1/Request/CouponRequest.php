@@ -32,6 +32,8 @@ class CouponRequest extends FormRequest
     {
         return [
             'status' => ['filled', Rule::in([0, 1, 2, 3])],
+            'start_date' => 'filled|date_format:Y-m-d H:i:s',
+            'end_date' => 'filled|date_format:Y-m-d H:i:s',
         ];
     }
 }

@@ -48,6 +48,35 @@
                   :value="item.id"/>
               </el-select>
             </el-form-item>
+            <el-form-item 
+              label="" 
+              prop="company_id">
+              <el-select
+                v-model="filters.company_id" 
+                placeholder="请选择公司" 
+                filterable 
+                clearable 
+                class="item-select">
+                <el-option
+                  v-for="item in companyList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"/>
+              </el-select>
+            </el-form-item>
+            <el-form-item 
+              label="" 
+              prop="dataValue">
+              <el-date-picker
+                v-model="filters.dataValue"
+                :clearable="false"
+                :picker-options="pickerOptions2"
+                type="datetimerange"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                align="right">
+              </el-date-picker>
+            </el-form-item>
             <el-button 
               type="primary" 
               size="small"
@@ -99,6 +128,14 @@
                   label="淘宝ID">
                   <span>{{ scope.row.taobao_user_id }}</span> 
                 </el-form-item>
+                <el-form-item 
+                  label="时间">
+                  <span>{{ scope.row.created_at }}</span> 
+                </el-form-item>
+                <el-form-item 
+                  label="公司">
+                  <span>{{ scope.row.couponBatch.company.name }}</span> 
+                </el-form-item>
               </el-form>
             </template>
           </el-table-column>
@@ -136,6 +173,21 @@
             label="手机号"
             min-width="100"
           />
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="created_at"
+            label="时间"
+            min-width="100"
+          />
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop=""
+            label="公司"
+            min-width="100">
+            <template slot-scope="scope">
+              {{ scope.row.couponBatch.company.name }}
+            </template>
+          </el-table-column>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="wx_user_id"
@@ -177,7 +229,8 @@ import {
   Pagination,
   Form,
   FormItem,
-  MessageBox
+  MessageBox,
+  DatePicker
 } from 'element-ui'
 
 export default {
@@ -190,7 +243,8 @@ export default {
     'el-form': Form,
     'el-select': Select,
     'el-option': Option,
-    'el-form-item': FormItem
+    'el-form-item': FormItem,
+    'el-date-picker': DatePicker
   },
   data() {
     return {
@@ -198,7 +252,58 @@ export default {
       templateVisible: false,
       filters: {
         coupon_batch_id: '',
-        status: ''
+        status: '',
+        company_id: '',
+        dataValue: []
+      },
+      pickerOptions2: {
+        shortcuts: [
+          {
+            text: '今天',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '昨天',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24)
+              end.setTime(end.getTime() - 3600 * 1000 * 24)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
+          }
+        ]
       },
       setting: {
         loading: false,
@@ -227,6 +332,7 @@ export default {
           name: '未使用'
         }
       ],
+      companyList: [],
       tableData: [],
       couponList: [],
       searchLoading: false
@@ -234,8 +340,19 @@ export default {
   },
   created() {
     this.putInCouponList()
+    this.getCompanyList()
   },
   methods: {
+    getCompanyList() {
+      return search
+        .getCompanyList(this)
+        .then(result => {
+          this.companyList = result.data
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
     getCouponQuery(query) {
       if (query !== '') {
         this.searchLoading = true
@@ -257,11 +374,14 @@ export default {
     },
     putInCouponList() {
       this.setting.loading = true
-      console.log(this.filters)
       let args = {
+        include: 'couponBatch.company',
         page: this.pagination.currentPage,
         coupon_batch_id: this.filters.coupon_batch_id[0],
-        status: this.filters.status
+        status: this.filters.status,
+        company_id: this.filters.company_id,
+        start_date: this.handleDateTransform(this.filters.dataValue[0]),
+        end_date: this.handleDateTransform(this.filters.dataValue[1])
       }
       if (this.filters.coupon_batch_id.length === 0) {
         delete args.coupon_batch_id
@@ -269,11 +389,19 @@ export default {
       if (this.filters.status === '') {
         delete args.status
       }
+      if (this.filters.company_id === '') {
+        delete args.company_id
+      }
+      if (!this.filters.dataValue[0]) {
+        delete args.start_date
+      }
+      if (!this.filters.dataValue[1]) {
+        delete args.end_date
+      }
       coupon
         .putInCouponList(this, args)
         .then(response => {
           let data = response.data
-          console.log(response)
           this.tableData = data
           this.pagination.total = response.meta.pagination.total
           this.setting.loading = false
@@ -290,6 +418,34 @@ export default {
     search() {
       this.pagination.currentPage = 1
       this.putInCouponList()
+    },
+    handleDateTransform: function(time) {
+      var d = new Date(time)
+      var year = d.getFullYear()
+      var month = change(d.getMonth() + 1)
+      var day = change(d.getDate())
+      var hour = change(d.getHours())
+      var minute = change(d.getMinutes())
+      var second = change(d.getSeconds())
+      function change(t) {
+        if (t < 10) {
+          return '0' + t
+        } else {
+          return t
+        }
+      }
+      return (time =
+        year +
+        '-' +
+        month +
+        '-' +
+        day +
+        ' ' +
+        hour +
+        ':' +
+        minute +
+        ':' +
+        second)
     }
   }
 }
