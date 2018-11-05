@@ -257,7 +257,8 @@ class CouponController extends Controller
             $qrcodeUrl = couponQrCode($coupon->code, 200, $prefix);
             $coupon->setAttribute('qrcode_url', $qrcodeUrl);
 
-            if (!$couponBatch->pmg_status && !$couponBatch->pmg_status) {
+            //不使用系统核销 领取优惠券后 ，自动减去库存
+            if (!$couponBatch->write_off_status && !$couponBatch->pmg_status && !$couponBatch->pmg_status) {
 
                 $couponBatch->decrement('stock');
             }

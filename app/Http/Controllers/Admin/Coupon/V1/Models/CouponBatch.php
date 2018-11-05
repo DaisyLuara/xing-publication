@@ -45,6 +45,7 @@ class CouponBatch extends Model
         'campaign_id',
         'sort_order',
         'dynamic_stock_status',
+        'write_off_status',
     ];
 
     public function coupon()
