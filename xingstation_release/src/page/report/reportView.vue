@@ -5,7 +5,6 @@
       module="report"/>
     <div class="topbar">
       {{ this.$route.meta.title }}
-      <headModule/>
     </div>
     <router-view/>
   </div>
@@ -28,7 +27,7 @@ export default {
     background-color: #EFF2F7;
     .topbar {
       position: absolute;
-      top: 0;
+      top: 120px;
       left: 200px;
       right: 0;
       height: 75px;

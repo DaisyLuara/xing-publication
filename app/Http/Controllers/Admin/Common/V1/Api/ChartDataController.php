@@ -458,8 +458,18 @@ class ChartDataController extends Controller
             ->get();
 
         $times = ['10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', '24:00'];
+        $displayTime = [
+            '00:00-10:00',
+            '10:00-12:00',
+            '12:00-14:00',
+            '14:00-16:00',
+            '16:00-18:00',
+            '18:00-20:00',
+            '20:00-22:00',
+            '22:00-24:00',
+        ];
         $output = [];
-        foreach ($times as $key => $value) {
+        foreach ($displayTime as $key => $value) {
             $output[] = [
                 'display_name' => $value,
                 'rate' => 0,

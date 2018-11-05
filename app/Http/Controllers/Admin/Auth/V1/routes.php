@@ -37,4 +37,14 @@ $api->version('v1', [
         $api->post('customer/login', 'AuthorizationsController@customerLogin');
     });
 
+
+    //系统切换
+    $api->group([
+        'middleware' => 'api.throttle',//频率限制中间件
+        'limit' => config('api.rate_limits.access.limit'),
+        'expires' => config('api.rate_limits.access.expires'),
+    ], function ($api) {
+        $api->get('system_skip', ['middleware' => 'CrossRequest', 'uses' => 'AuthorizationsController@systemSkip']);
+    });
+
 });

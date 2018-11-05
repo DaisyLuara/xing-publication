@@ -13,6 +13,7 @@ class UserTransformer extends TransformerAbstract
     {
         return [
             'id' => $user->id,
+            'parent_id' => $user->parent_id,
             'name' => $user->name,
             'email' => $user->email,
             'avatar' => $user->avatar,

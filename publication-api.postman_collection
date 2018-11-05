@@ -4039,31 +4039,6 @@
 										"description": null
 									},
 									"response": []
-								},
-								{
-									"name": "优惠券规则详情",
-									"request": {
-										"url": "http://papi.xingstation.com/api/open/coupon/batches/34",
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json",
-												"description": ""
-											},
-											{
-												"key": "api-token",
-												"value": "eyJhbGciOiJtZDUiLCJ0eXBlIjoiand0In0=.eyJhayI6IngwT3V0TUZkbmtqekZ3UmE3ZmxOczBsaENMOVJpMWRwIiwiZWNob3N0ciI6IjBBVHl4Rlhtc0EwRHhnNEhFU053czRiaGhmNiIsInRpbWVzdGFtcCI6MTUzOTkyMTA0Mn0=.37d9d02dc062160c1f79af0a5bb7fba0",
-												"description": ""
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n\t\n}"
-										},
-										"description": ""
-									},
-									"response": []
 								}
 							],
 							"_postman_isSubFolder": true
@@ -4197,26 +4172,6 @@
 							"description": "",
 							"item": [
 								{
-									"name": "发送淘宝优惠券",
-									"request": {
-										"url": "{{host}}/api/tmall/user/coupon_batch/13",
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json",
-												"description": ""
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n\t\"openuid\":\"AAGsESr6AGsOHI408ramCu\"\n}"
-										},
-										"description": ""
-									},
-									"response": []
-								},
-								{
 									"name": "获取用户淘宝优惠券",
 									"request": {
 										"url": {
@@ -4276,88 +4231,133 @@
 										"description": ""
 									},
 									"response": []
+								},
+								{
+									"name": "发送淘宝优惠券",
+									"request": {
+										"url": "{{host}}/api/tmall/user/coupon_batch/13",
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"description": ""
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"openuid\":\"AAGsESr6AGsOHI408ramCu\"\n}"
+										},
+										"description": ""
+									},
+									"response": []
 								}
 							],
 							"_postman_isSubFolder": true
+						},
+						{
+							"name": "获取抽奖规则",
+							"request": {
+								"url": {
+									"raw": "{{host}}/api/open/project/policy?belong=cvTianMaoNew",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"open",
+										"project",
+										"policy"
+									],
+									"query": [
+										{
+											"key": "belong",
+											"value": "cvTianMaoNew",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "抽奖",
+							"request": {
+								"url": {
+									"raw": "{{host}}/api/open/coupon/batches?policy_id=1",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"open",
+										"coupon",
+										"batches"
+									],
+									"query": [
+										{
+											"key": "policy_id",
+											"value": "1",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									},
+									{
+										"key": "api-token",
+										"value": "eyJhbGciOiJtZDUiLCJ0eXBlIjoiand0In0=.eyJhayI6IngwT3V0TUZkbmtqekZ3UmE3ZmxOczBsaENMOVJpMWRwIiwiZWNob3N0ciI6IjBBVHl4Rlhtc0EwRHhnNEhFU053czRiaGhmNiIsInRpbWVzdGFtcCI6MTUzOTkyMTA0Mn0=.37d9d02dc062160c1f79af0a5bb7fba0",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n}"
+								},
+								"description": ""
+							},
+							"response": []
+						},
+						{
+							"name": "优惠券规则详情",
+							"request": {
+								"url": "http://papi.xingstation.com/api/open/coupon/batches/14",
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"description": ""
+									},
+									{
+										"key": "api-token",
+										"value": "eyJhbGciOiJtZDUiLCJ0eXBlIjoiand0In0=.eyJhayI6IngwT3V0TUZkbmtqekZ3UmE3ZmxOczBsaENMOVJpMWRwIiwiZWNob3N0ciI6IjBBVHl4Rlhtc0EwRHhnNEhFU053czRiaGhmNiIsInRpbWVzdGFtcCI6MTUzOTkyMTA0Mn0=.37d9d02dc062160c1f79af0a5bb7fba0",
+										"description": ""
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\n}"
+								},
+								"description": ""
+							},
+							"response": []
 						}
 					],
 					"_postman_isSubFolder": true
-				},
-				{
-					"name": "获取抽奖规则",
-					"request": {
-						"url": {
-							"raw": "{{host}}/api/open/project/policy?belong=cvTianMaoNew",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"open",
-								"project",
-								"policy"
-							],
-							"query": [
-								{
-									"key": "belong",
-									"value": "cvTianMaoNew",
-									"equals": true,
-									"description": ""
-								}
-							],
-							"variable": []
-						},
-						"method": "GET",
-						"header": [],
-						"body": {},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "抽奖",
-					"request": {
-						"url": {
-							"raw": "{{host}}/api/open/coupon/batches?policy_id=1",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"open",
-								"coupon",
-								"batches"
-							],
-							"query": [
-								{
-									"key": "policy_id",
-									"value": "1",
-									"equals": true,
-									"description": ""
-								}
-							],
-							"variable": []
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "api-token",
-								"value": "eyJhbGciOiJtZDUiLCJ0eXBlIjoiand0In0=.eyJhayI6IngwT3V0TUZkbmtqekZ3UmE3ZmxOczBsaENMOVJpMWRwIiwiZWNob3N0ciI6IjBBVHl4Rlhtc0EwRHhnNEhFU053czRiaGhmNiIsInRpbWVzdGFtcCI6MTUzOTkyMTA0Mn0=.37d9d02dc062160c1f79af0a5bb7fba0",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n}"
-						},
-						"description": ""
-					},
-					"response": []
 				}
 			]
 		}

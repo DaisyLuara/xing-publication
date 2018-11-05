@@ -37,7 +37,9 @@ class AdminCustomersController extends Controller
         /** @var Customer $user */
         $customer = Customer::create([
             'name' => $request->name,
+            'position' => $request->position,
             'phone' => $request->phone,
+            'telephone' => $request->telephone,
             'password' => bcrypt($request->password),
             'company_id' => $company->id,
         ]);

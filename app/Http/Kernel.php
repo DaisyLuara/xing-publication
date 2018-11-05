@@ -64,5 +64,6 @@ class Kernel extends HttpKernel
         'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
         'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
         'api_sign' => \SunD1ng\LaravelApiAuth\Middleware::class,
+        'CrossRequest' => \App\Http\Middleware\CrossRequest::class
     ];
 }

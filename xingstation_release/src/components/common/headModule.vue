@@ -1,5 +1,13 @@
 <template>
-  <div>
+  <div class="logout">
+    <div
+      class="logo-wrap">
+      <div
+        class="logo">
+        <img
+          src="../../assets/images/logo.png">
+      </div>
+    </div>
     <el-popover
       ref="popover"
       v-model="visible"
@@ -15,7 +23,8 @@
       v-popover:popover
       class="avatar-wrap" 
       @click="handleUser">
-      <div style="height: 75px;">
+      <span>{{ name }}</span>
+      <div class="avatar-block">
         <img 
           src="~assets/images/user-default-icon.png" 
           alt="" 
@@ -34,8 +43,13 @@ export default {
   },
   data() {
     return {
-      visible: false
+      visible: false,
+      name: null
     }
+  },
+  created() {
+    let user_info = JSON.parse(this.$cookie.get('user_info'))
+    this.name = user_info.name
   },
   methods: {
     logout() {
@@ -52,28 +66,62 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.el-popover.popper-logout {
-  padding: 0;
-  min-width: 80px;
-  text-align: center;
-}
-.logout-btn {
-  display: block;
-  width: 100%;
-  height: 35px;
-  line-height: 35px;
-  cursor: pointer;
-  font-size: 14px;
-}
-.avatar-wrap {
-  position: absolute;
+.logout {
+  height: 60px;
+  position: fixed;
   top: 0;
-  right: 30px;
-  height: 75px;
-  cursor: pointer;
-  .avatar {
-    height: 50%;
-    border-radius: 50%;
+  background: #222830;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 130;
+  .logo-wrap {
+    position: relative;
+    display: flex;
+    margin-left: 20px;
+    width: 100%;
+    height: 60px;
+    .logo {
+      width: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      img {
+        width: 100%;
+      }
+    }
+  }
+  .logout-btn {
+    display: block;
+    width: 100%;
+    height: 35px;
+    line-height: 35px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .avatar-wrap {
+    position: absolute;
+    top: 0;
+    right: 30px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    cursor: pointer;
+    .avatar-block {
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-left: 10px;
+    }
+    .avatar {
+      height: 50%;
+      // margin: 15%;
+      border-radius: 50%;
+    }
   }
 }
 </style>

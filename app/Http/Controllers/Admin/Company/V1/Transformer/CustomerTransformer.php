@@ -14,7 +14,11 @@ class CustomerTransformer extends TransformerAbstract
         return [
             'id' => $customer->id,
             'name' => $customer->name,
+            'position' => $customer->position,
             'phone' => $customer->phone,
+            'telephone' => $customer->telephone,
+            'created_at' => $customer->created_at->toDateTimeString(),
+            'updated_at'=>$customer->updated_at->toDateTImeString()
         ];
     }
 
