@@ -54,6 +54,16 @@
             class="coupon-form-input"/>
         </el-form-item>
         <el-form-item
+          label="动态库存"
+          prop="dynamic_stock_status">
+          <el-radio
+            v-model="couponForm.dynamic_stock_status"
+            :label="0">关闭</el-radio>
+          <el-radio
+            v-model="couponForm.dynamic_stock_status"
+            :label="1">开启</el-radio>
+        </el-form-item>
+        <el-form-item
           :rules="{required: true, message: '优惠券名称不能为空', trigger: 'submit'}"
           label="优惠券名称"
           prop="name" >
@@ -307,6 +317,7 @@ export default {
       couponForm: {
         name: '',
         title: '',
+        dynamic_stock_status: 0,
         description: '',
         company_id: '',
         type: 1,
@@ -379,6 +390,7 @@ export default {
             this.couponForm.sort_order = result.sort_order
             this.couponForm.title = result.title
             this.user_name = result.user.name
+            this.dynamic_stock_status = result.dynamic_stock_status
             this.setting.loading = false
           })
           .catch(error => {
@@ -411,7 +423,8 @@ export default {
         redirect_url: this.couponForm.redirect_url,
         type: this.couponForm.type,
         sort_order: this.couponForm.sort_order,
-        title: this.couponForm.title
+        title: this.couponForm.title,
+        dynamic_stock_status: this.couponForm.dynamic_stock_status
       }
       if (!this.couponForm.image_url) {
         delete args.image_url
