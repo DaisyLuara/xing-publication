@@ -93,6 +93,11 @@
           min-width="120"/>
         <el-table-column
           :show-overflow-tooltip="true"
+          prop="code"
+          label="code" 
+          min-width="120"/>
+        <el-table-column
+          :show-overflow-tooltip="true"
           prop="game_name"
           label="游戏名称" 
           min-width="120"/>
