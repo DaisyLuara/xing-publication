@@ -44,6 +44,7 @@ class CouponBatchTransformer extends TransformerAbstract
             'redirect_url' => $couponBatch->redirect_url,
             'title' => $couponBatch->title,
             'sort_order' => $couponBatch->sort_order,
+            'dynamic_stock_status' => $couponBatch->dynamic_stock_status,
         ];
     }
 
