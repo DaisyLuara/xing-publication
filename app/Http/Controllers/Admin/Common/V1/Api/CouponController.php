@@ -134,12 +134,6 @@ class CouponController extends Controller
      */
     public function generateCoupon(CouponBatch $couponBatch, CouponRequest $request, EasySms $easySms)
     {
-        $mobile = $request->has('mobile') ? $request->get('mobile') : '';
-        //库存校验
-        if (!$couponBatch->dmg_status && !$couponBatch->pmg_status && $couponBatch->stock <= 0) {
-            abort(500, '优惠券已发完!');
-        }
-
         //时间日期
         $now = Carbon::now()->timestamp;
         $startDate = strtotime($couponBatch->start_date);
@@ -147,6 +141,24 @@ class CouponController extends Controller
 
         abort_if($now <= $startDate, 500, '活动未开启!');
         abort_if($now >= $endDdate, 500, '活动已结束!');
+
+        //动态库存校验
+        if ($couponBatch->dynamic_stock_status) {
+            $count = Coupon::query()->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
+                ->whereIn('status', [0, 3])
+                ->where('coupon_batch_id', $couponBatch->id)->count('id');
+            $dynamicStock = $couponBatch->stock - $count;
+            abort_if($dynamicStock <= 0, 500, '优惠券已发完!');
+
+        }
+
+        //库存校验
+        if (!$couponBatch->dmg_status && !$couponBatch->pmg_status && $couponBatch->stock <= 0) {
+            abort(500, '优惠券已发完!');
+        }
+
+
+        $mobile = $request->has('mobile') ? $request->get('mobile') : '';
 
         //第三方优惠券
         if ($couponBatch->third_code) {
