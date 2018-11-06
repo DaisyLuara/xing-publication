@@ -77,10 +77,14 @@
                 align="right">
               </el-date-picker>
             </el-form-item>
-            <el-button 
-              type="primary" 
-              size="small"
-              @click="search()">搜索</el-button>
+            <el-form-item 
+              label="" 
+              prop="">
+              <el-button 
+                type="primary" 
+                size="small"
+                @click="search()">搜索</el-button>
+            </el-form-item>
           </el-form>
         </div>
         <div 
@@ -129,8 +133,12 @@
                   <span>{{ scope.row.taobao_user_id }}</span> 
                 </el-form-item>
                 <el-form-item 
-                  label="时间">
+                  label="创建时间">
                   <span>{{ scope.row.created_at }}</span> 
+                </el-form-item>
+                <el-form-item 
+                  label="核销时间">
+                  <span>{{ scope.row.updated_at }}</span> 
                 </el-form-item>
                 <el-form-item 
                   label="公司">
@@ -176,7 +184,13 @@
           <el-table-column
             :show-overflow-tooltip="true"
             prop="created_at"
-            label="时间"
+            label="创建时间"
+            min-width="100"
+          />
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="updated_at"
+            label="核销时间"
             min-width="100"
           />
           <el-table-column
@@ -461,7 +475,7 @@ export default {
     padding: 30px;
 
     .el-form-item {
-      margin-bottom: 0;
+      margin-bottom: 15px;
     }
     .item-content-wrap {
       .demo-table-expand {
@@ -489,7 +503,7 @@ export default {
         align-items: center;
         margin-bottom: 10px;
         .el-form-item {
-          margin-bottom: 0;
+          margin-bottom: 10px;
         }
         .el-select {
           width: 200px;

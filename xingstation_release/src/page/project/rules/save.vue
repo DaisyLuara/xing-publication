@@ -409,7 +409,10 @@ export default {
             this.user_name = result.user.name
             this.couponForm.dynamic_stock_status = result.dynamic_stock_status
             this.couponForm.write_off_status = result.write_off_status
-            if (parseInt(result.write_off_status) === 1) {
+            if (
+              parseInt(result.write_off_status) === 1 &&
+              parseInt(result.dynamic_stock_status) === 1
+            ) {
               this.disabledWriteStatus = true
             }
             this.setting.loading = false
