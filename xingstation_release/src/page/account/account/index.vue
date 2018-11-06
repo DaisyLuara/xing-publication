@@ -201,7 +201,6 @@ export default {
 </script>
 <style scoped lang="less">
 .root {
-  padding: 10px;
   font-size: 14px;
   color: #5e6d82;
   .account-wrap {
