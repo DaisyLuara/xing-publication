@@ -204,42 +204,35 @@ export default {
     },
     systemMenu(item) {
       this.active = item.id
+      switch (item.id) {
+        case 'zhongtai':
+          this.linkRedirect('ad')
+          break
+        case 'liucheng':
+          this.linkRedirect('flow')
+          break
+      }
+    },
+    linkRedirect(type) {
       let permissions = this.$cookie.get('permissions')
       let userInfo = this.$cookie.get('user_info')
       let jwt_ttl = this.$cookie.get('jwt_ttl')
       let token = this.$cookie.get('jwt_token')
       let jwt_begin_time = this.$cookie.get('jwt_begin_time')
-
-      switch (item.id) {
-        case 'zhongtai':
-          window.location.href =
-            process.env.SERVER_URL +
-            '/api/system_skip?permissions=' +
-            permissions +
-            '&user_info=' +
-            userInfo +
-            '&type=ad&token=' +
-            token +
-            '&jwt_ttl=' +
-            jwt_ttl +
-            '&jwt_begin_time=' +
-            jwt_begin_time
-          break
-        case 'liucheng':
-          window.location.href =
-            process.env.SERVER_URL +
-            '/api/system_skip?permissions=' +
-            permissions +
-            '&user_info=' +
-            userInfo +
-            '&type=flow&token=' +
-            token +
-            '&jwt_ttl=' +
-            jwt_ttl +
-            '&jwt_begin_time=' +
-            jwt_begin_time
-          break
-      }
+      window.location.href =
+        process.env.SERVER_URL +
+        '/api/system_skip?permissions=' +
+        permissions +
+        '&user_info=' +
+        userInfo +
+        '&type=' +
+        type +
+        '&token=' +
+        token +
+        '&jwt_ttl=' +
+        jwt_ttl +
+        '&jwt_begin_time=' +
+        jwt_begin_time
     },
     notificationStats() {
       return notice
