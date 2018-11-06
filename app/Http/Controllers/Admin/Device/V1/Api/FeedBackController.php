@@ -27,7 +27,7 @@ class FeedBackController extends Controller
         if ($request->has('start_date') && $request->has('end_date')) {
             $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
         }
-        $feedBack = $query->paginate(10);
+        $feedBack = $query->orderByDesc('id')->paginate(10);
 
         return $this->response->paginator($feedBack, new FeedBackTransformer());
     }
