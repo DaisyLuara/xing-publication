@@ -55,6 +55,8 @@ class InvoiceController extends Controller
         $user = $this->user();
         if ($user->hasPermissionTo('finance_bill')) {
             $query->whereRaw("(handler=$user->id or status=4 or status=5)");
+        } else if ($user->hasRole('operation')) {
+            $query->whereRaw('(status=3 or status=4 or status=5)');
         } else {
             $query->whereRaw("(applicant=$user->id or handler=$user->id)");
         }
