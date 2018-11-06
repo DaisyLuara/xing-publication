@@ -2437,7 +2437,7 @@ export default {
             name: 'CPA转化率',
             type: 'line',
             lineStyle: {
-              color: '#F8B62D'
+              color: '#be136e'
             },
             data: res.map(r => {
               return ((r.omo_outnum / r.looknum) * 100).toFixed(2)

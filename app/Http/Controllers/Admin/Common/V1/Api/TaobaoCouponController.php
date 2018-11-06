@@ -123,6 +123,7 @@ class TaobaoCouponController extends Controller
                 [
                     'op_time' => $op_time,
                     'coupon_id' => $coupon->coupon_batch_id,
+                    'code' => $coupon->code,
                     'action' => 'RECEIVE_COUPONS',
                     'created_at' => $op_time,
                     'updated_at' => $op_time,

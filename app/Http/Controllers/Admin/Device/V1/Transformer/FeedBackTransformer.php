@@ -18,6 +18,7 @@ class FeedBackTransformer extends TransformerAbstract
             'coupon_id' => $feedback->coupon_id,
             'user_nick' => $feedback->user_nick,
             'game_name' => $feedback->game_name,
+            'code' => $feedback->code,
             'created_at' => $feedback->created_at->toDateTimeString(),
         ];
     }

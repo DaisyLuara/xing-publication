@@ -90,6 +90,14 @@
                   <span>{{ scope.row.name }}</span> 
                 </el-form-item>
                 <el-form-item 
+                  label="标题">
+                  <span>{{ scope.row.title }}</span> 
+                </el-form-item>
+                <el-form-item 
+                  label="动态库存">
+                  <span>{{ scope.row.dynamic_stock_status === 0  ? '关闭' :  '开启'}}</span> 
+                </el-form-item>
+                <el-form-item 
                   label="优惠券描述">
                   <span>{{ scope.row.description }}</span> 
                 </el-form-item>
