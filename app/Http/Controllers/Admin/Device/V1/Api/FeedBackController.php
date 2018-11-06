@@ -20,6 +20,10 @@ class FeedBackController extends Controller
             $query->where('device_code', $request->device_code);
         }
 
+        if ($request->has('code')) {
+            $query->where('code', $request->code);
+        }
+
         if ($request->has('start_date') && $request->has('end_date')) {
             $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
         }
