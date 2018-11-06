@@ -57,7 +57,7 @@ export default {
 <style lang="less" scoped>
 .root {
   background-color: white;
-  margin: 10px;
+  // margin: 10px;
   border-radius: 5px;
   .buttons {
     padding: 15px 15px 0 15px;
@@ -66,7 +66,7 @@ export default {
     justify-content: flex-end;
   }
   .tabs {
-    margin: 10px;
+    // margin: 10px;
     border-radius: 5px;
     padding: 0 10px;
   }

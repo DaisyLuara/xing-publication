@@ -1,9 +1,9 @@
 <template>
   <div class="inform-root">
     <second-sidebar module="inform"/>
-    <div class="topbar">
+    <!-- <div class="topbar">
       {{ this.$route.meta.title }}
-    </div>
+    </div> -->
     <router-view/>
   </div>
 </template>

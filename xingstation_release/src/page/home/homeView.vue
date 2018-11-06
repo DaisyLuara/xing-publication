@@ -1,8 +1,8 @@
 <template>
   <div class="home-root">
-    <div class="topbar">
+    <!-- <div class="topbar">
       {{ this.$route.meta.title }}
-    </div>
+    </div> -->
     <router-view/>
   </div>
 </template>

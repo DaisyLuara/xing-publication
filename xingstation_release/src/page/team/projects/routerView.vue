@@ -18,7 +18,6 @@ export default {
 <style lang="less" scoped>
   .projects-root {
     height: 100%;
-    margin: 10px;
     background-color: #EFF2F7;
   }
 </style>

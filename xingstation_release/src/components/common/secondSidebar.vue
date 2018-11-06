@@ -1,8 +1,8 @@
 <template>
   <div 
     class="second-sidebar">
-    <div 
-      class="module-name">{{ moduleName }}</div>
+    <!-- <div 
+      class="module-name">{{ moduleName }}</div> -->
     <el-menu
       :default-active="currPath"
       router>

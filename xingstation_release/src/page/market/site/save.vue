@@ -2,15 +2,6 @@
   <div 
     class="item-wrap-template">
     <div 
-      class="topbar">
-      <el-breadcrumb 
-        separator="/">
-        <el-breadcrumb-item 
-          :to="{ path: '/market/site' }">场地管理</el-breadcrumb-item>
-        <el-breadcrumb-item>{{ siteID ? '修改' : '添加' }}</el-breadcrumb-item>
-      </el-breadcrumb>
-    </div>
-    <div 
       v-loading="setting.loading"
       :element-loading-text="setting.loadingText" 
       class="pane">
