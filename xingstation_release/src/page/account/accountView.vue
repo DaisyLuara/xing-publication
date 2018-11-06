@@ -3,10 +3,6 @@
     class="account-root">
     <second-sidebar 
       module="account"/>
-    <div 
-      class="topbar">
-      {{ this.$route.meta.title }}
-    </div>
     <router-view/>
   </div>
 </template>
