@@ -77,10 +77,14 @@
                 align="right">
               </el-date-picker>
             </el-form-item>
-            <el-button 
-              type="primary" 
-              size="small"
-              @click="search()">搜索</el-button>
+            <el-form-item 
+              label="" 
+              prop="">
+              <el-button 
+                type="primary" 
+                size="small"
+                @click="search()">搜索</el-button>
+            </el-form-item>
           </el-form>
         </div>
         <div 
@@ -471,7 +475,7 @@ export default {
     padding: 30px;
 
     .el-form-item {
-      margin-bottom: 0;
+      margin-bottom: 15px;
     }
     .item-content-wrap {
       .demo-table-expand {
@@ -499,7 +503,7 @@ export default {
         align-items: center;
         margin-bottom: 10px;
         .el-form-item {
-          margin-bottom: 0;
+          margin-bottom: 10px;
         }
         .el-select {
           width: 200px;
