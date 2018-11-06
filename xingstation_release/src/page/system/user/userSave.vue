@@ -2,20 +2,11 @@
   <div 
     class="add-user-wrap">
     <div 
-      class="topbar">
-      <el-breadcrumb 
-        separator="/">
-        <el-breadcrumb-item 
-          :to="{ path: '/system/user' }">用户管理</el-breadcrumb-item>
-        <el-breadcrumb-item>{{ userID ? '修改' : '添加' }}</el-breadcrumb-item>
-      </el-breadcrumb>
-    </div>
-    <div 
       v-loading="setting.loading"
       :element-loading-text="setting.loadingText" >
       <div 
         class="user-title">
-        {{ $route.name }}
+        用户{{ $route.name }}
       </div>
       <el-form 
         ref="userForm" 
@@ -317,7 +308,7 @@ export default {
         delete this.rules['user.password']
         delete this.rules['user.repassword']
         delete this[formName].user.password
-      } 
+      }
       this.$refs[formName].validate(valid => {
         if (valid) {
           delete this[formName].user.repassword

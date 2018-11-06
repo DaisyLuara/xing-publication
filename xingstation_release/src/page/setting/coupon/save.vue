@@ -2,15 +2,6 @@
   <div 
     class="add-coupon-wrap">
     <div 
-      class="topbar">
-      <el-breadcrumb 
-        separator="/">
-        <el-breadcrumb-item 
-          :to="{ path: '/setting/coupon' }">优惠券管理</el-breadcrumb-item>
-        <el-breadcrumb-item>{{ couponID ? '修改' : '添加' }}</el-breadcrumb-item>
-      </el-breadcrumb>
-    </div>
-    <div 
       v-loading="setting.loading"
       :element-loading-text="setting.loadingText" >
       <div 

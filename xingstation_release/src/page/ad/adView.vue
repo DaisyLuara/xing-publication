@@ -3,10 +3,6 @@
     class="ad-root">
     <second-sidebar 
       module="ad"/>
-    <div 
-      class="topbar">
-      {{ this.$route.meta.title }}
-    </div>
     <router-view/>
   </div>
 </template>
