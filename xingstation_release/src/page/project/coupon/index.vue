@@ -129,8 +129,12 @@
                   <span>{{ scope.row.taobao_user_id }}</span> 
                 </el-form-item>
                 <el-form-item 
-                  label="时间">
+                  label="创建时间">
                   <span>{{ scope.row.created_at }}</span> 
+                </el-form-item>
+                <el-form-item 
+                  label="核销时间">
+                  <span>{{ scope.row.updated_at }}</span> 
                 </el-form-item>
                 <el-form-item 
                   label="公司">
@@ -176,7 +180,13 @@
           <el-table-column
             :show-overflow-tooltip="true"
             prop="created_at"
-            label="时间"
+            label="创建时间"
+            min-width="100"
+          />
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="updated_at"
+            label="核销时间"
             min-width="100"
           />
           <el-table-column
