@@ -3,9 +3,6 @@
     class="report-root">
     <second-sidebar 
       module="report"/>
-    <div class="topbar">
-      {{ this.$route.meta.title }}
-    </div>
     <router-view/>
   </div>
 </template>

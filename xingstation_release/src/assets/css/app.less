@@ -1,5 +1,6 @@
 @sidebar_w_1: 90px;
 @sidebar_w_2: 110px;
+@sidebar_w_3: 160px;
 @topbar_h: 76px;
 @blue: #20a0ff;
 
@@ -25,17 +26,16 @@ body {
   position: fixed;
   top: 120px;
   left: 0;
-  width: @sidebar_w_1;
+  width: @sidebar_w_3;
   height: 100%;
-  // background-color: #222830;
-  background-color: #fff;
-  z-index: 99;
+  background-color: #22282f;
+  z-index: 150;
   border-right: 1px solid #d3dce6;
+ 
   .el-menu {
     background-color: rgba(0, 0, 0, 0);
     border-radius: 0px;
     .el-menu-item {
-      // color: #a1b0c3;
       color: #6484ad;
       height: 36px;
       line-height: 36px;
@@ -49,7 +49,40 @@ body {
       &.is-active {
         background-color: #d1d3d6;
         color: #5e6d82;
-        // color: #5e6d82;
+      }
+    }
+  }
+  .el-menu-item:first-child {
+    margin-top: 0;
+  }
+}
+
+.first-icon-sidebar {
+  position: fixed;
+  top: 120px;
+  left: 0;
+  width: 50px;
+  height: 100%;
+  background-color: #22282f;
+  z-index: 99;
+  border-right: 1px solid #d3dce6;
+  .el-menu {
+    background-color: rgba(0, 0, 0, 0);
+    border-radius: 0px;
+    .el-menu-item {
+      color: #6484ad;
+      height: 36px;
+      line-height: 36px;
+      font-size: 14px;
+      margin: 5px 0;
+      &:hover {
+        cursor: pointer;
+        color: @blue;
+        background-color: rgba(0, 0, 0, 0);
+      }
+      &.is-active {
+        background-color: #d1d3d6;
+        color: #5e6d82;
       }
     }
   }
@@ -61,13 +94,12 @@ body {
 .second-sidebar {
   position: fixed;
   top: 120px;
-  left: @sidebar_w_1;
+  left: @sidebar_w_1 - 40px;
   width: @sidebar_w_2;
   height: 100%;
   background-color: #fff;
-  // border-right: 1px solid #d3dce6;
+  border-right: 1px solid #d3dce6;
   z-index: 99;
-
   .module-name {
     width: @sidebar_w_2;
     height: @topbar_h - 1px;
@@ -86,16 +118,13 @@ body {
       line-height: 36px;
       font-size: 14px;
       background-color: rgba(0, 0, 0, 0);
-      margin: 16px 0;
-
+      margin: 5px 0;
       &:hover {
         color: @blue;
         cursor: pointer;
       }
       &.is-active {
         background-color: #eff2f7;
-        // background-color: #222830;
-
         color: #5e6d82;
       }
     }
@@ -125,12 +154,12 @@ body {
 .modules {
   position: relative;
   width: 100%;
-  padding-left: @sidebar_w_1 + @sidebar_w_2;
-  padding-top: 196px;
+  padding-left: @sidebar_w_1 + @sidebar_w_2 - 40px;
+  padding-top: 120px;
 
   .content {
     background-color: #fff;
-    margin: 10px;
+    // margin: 10px;
     min-height: 420px;
   }
 }
