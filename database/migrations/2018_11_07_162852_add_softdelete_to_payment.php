@@ -26,7 +26,7 @@ class AddSoftdeleteToPayment extends Migration
     public function down()
     {
         Schema::table('payments', function (Blueprint $table) {
-            $table->softDeletes();
+            $table->dropSoftDeletes();
         });
     }
 }

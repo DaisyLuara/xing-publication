@@ -105,7 +105,7 @@ class ContractController extends Controller
                     Media::where('id', '=', $id)->update(['contract_id' => $contract->id]);
                 }
 
-                if ($request->type == 0) {
+                if ($request->type == 0 && $request->has('receive_date')) {
                     //收款日期存储
                     $dates = explode(',', $request->receive_date);
                     foreach ($dates as $date) {
@@ -174,10 +174,14 @@ class ContractController extends Controller
         if ($user->hasRole('legal-affairs')) {
             $contract->status = 2;
             $contract->handler = $user->parent_id;
+            $contract->contract_number = $request->contract_number;
             $contract->update();
         } else if ($user->hasRole('legal-affairs-manager')) {
             $contract->status = 2;
             $contract->handler = $contract->applicantUser->parent_id;
+            if ($request->has('contract_number')) {
+                $contract->contract_number = $request->contract_number;
+            }
             $contract->update();
         } else if ($user->hasRole('bd-manager')) {
             $contract->status = 3;

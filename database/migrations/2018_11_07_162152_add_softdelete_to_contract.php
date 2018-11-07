@@ -14,6 +14,7 @@ class AddSoftdeleteToContract extends Migration
     public function up()
     {
         Schema::table('contracts', function (Blueprint $table) {
+            $table->string('contract_number')->nullable()->change();
             $table->softDeletes();
         });
     }
@@ -26,6 +27,7 @@ class AddSoftdeleteToContract extends Migration
     public function down()
     {
         Schema::table('contracts', function (Blueprint $table) {
+            $table->string('contract_number')->nullable()->change();
             $table->dropSoftDeletes();
         });
     }

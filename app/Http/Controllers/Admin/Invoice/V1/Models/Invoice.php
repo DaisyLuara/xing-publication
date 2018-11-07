@@ -17,6 +17,7 @@ class Invoice extends Model
         'handler',
         'type',
         'taxpayer_num',
+        'invoice_company',
         'phone',
         'telephone',
         'address',

@@ -31,6 +31,7 @@ class InvoiceTransformer extends TransformerAbstract
             'handler_name' => $invoice->handler ? $invoice->handlerUser->name : null,
             'type' => $invoice->type == 0 ? '专票' : '普票',
             'taxpayer_num' => $invoice->taxpayer_num,
+            'invoice_company' => $invoice->invoice_company,
             'phone' => $invoice->phone,
             'telephone' => $invoice->telephone,
             'address' => $invoice->address,
