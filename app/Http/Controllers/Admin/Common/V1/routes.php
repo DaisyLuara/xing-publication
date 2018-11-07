@@ -38,9 +38,9 @@ $api->version('v1', [
             $api->post('user/coupon', 'TaobaoCouponController@update');//核销
         });
 
-        //获取大屏参数
         $api->group(['middleware' => 'api_sign'], function ($api) {
-            $api->get('device/params', 'FileUploadController@show');
+            $api->get('device/params', 'FileUploadController@show');//获取大屏参数
+            $api->post('images', 'ImagesController@store');//上传图片
         });
 
 
@@ -73,9 +73,6 @@ $api->version('v1', [
             $api->get('user/notifications/stats', 'NotificationsController@stats');
             $api->patch('user/read/notifications', 'NotificationsController@read');
             $api->get('user/activities', 'ActivityLogController@index');
-
-            // 图片资源
-            $api->post('images', 'ImagesController@store');
 
             //数据统计
             $api->get('stats', 'ChartDataController@index');//列表
