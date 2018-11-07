@@ -161,7 +161,7 @@ class ContractController extends Controller
         if ($contract->status != 1) {
             abort(500, "合同审批状态已更改，不可删除");
         }
-        ContractReceiveDate::query()->where('contract_id', $contract->id)->delete();
+//        ContractReceiveDate::query()->where('contract_id', $contract->id)->delete();
         $contract->delete();
         return $this->response->noContent();
     }
