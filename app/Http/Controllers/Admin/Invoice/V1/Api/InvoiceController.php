@@ -106,9 +106,9 @@ class InvoiceController extends Controller
         if ($invoice->status != 1) {
             abort(500, "合同审批状态已更改，不可删除");
         }
-        InvoiceContent::query()
-            ->where('invoice_id', '=', $invoice['id'])
-            ->delete();
+//        InvoiceContent::query()
+//            ->where('invoice_id', '=', $invoice['id'])
+//            ->delete();
         $invoice->delete();
         return $this->response->noContent();
     }
