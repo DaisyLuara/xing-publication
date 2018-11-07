@@ -4,7 +4,8 @@
     <headModule/>
     <div
       class="first-sidebar"
-      v-show="!iconMenuShow">
+      v-show="!iconMenuShow"
+      @mouseleave="leaveIcon">
       <el-menu
         :default-active="'/' + currModule"
         router>
@@ -44,7 +45,8 @@
     </div>
     <div
       v-show="iconMenuShow"
-      class="first-icon-sidebar">
+      class="first-icon-sidebar"
+      @mouseenter="iconEnter">
       <el-menu
         :default-active="'/' + currModule"
         router>
@@ -196,6 +198,12 @@ export default {
     this.notificationStats()
   },
   methods: {
+    leaveIcon(){
+      this.iconMenuShow = true
+    },
+    iconEnter() {
+      this.iconMenuShow = false
+    },
     handleMenuShow() {
       this.iconMenuShow = false
     },
