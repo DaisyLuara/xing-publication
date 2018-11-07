@@ -15,6 +15,7 @@ $api->version('v1', [
         $api->group(['middleware' => 'api_sign'], function ($api) {
             $api->get('open/project/policy', 'ProjectController@show');//获取抽奖规则
             $api->any('open/coupon/batches', 'CouponController@generateCouponBatch');//抽奖
+            $api->any('open/coupon/batches/stock', 'CouponController@generateCouponBatchAndDecrement');//抽奖并减少库存
 
             $api->post('open/coupon/batches/{couponBatch}', 'CouponController@getCouponBatch');//获取优惠券规则
             $api->post('open/coupons/{couponBatch}', 'CouponController@generateCoupon');//发送优惠券

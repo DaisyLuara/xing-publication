@@ -126,6 +126,55 @@ class CouponController extends Controller
     }
 
     /**
+     * 2018年11月06日17:04:14
+     * 大融城活动
+     * 抽奖并减少库存
+     * @deprecated 这个接口并没有什么卵用
+     */
+    public function generateCouponBatchAndDecrement(CouponRequest $request)
+    {
+
+        $policy = Policy::query()->findOrFail($request->policy_id);
+
+        $query = DB::table('coupon_batch_policy');
+        if ($request->has('age')) {
+            $query->where('max_age', '>=', $request->age)->where('min_age', '<=', $request->age);
+        }
+
+
+        if ($request->has('score')) {
+            $query->where('max_score', '>=', $request->score)->where('min_score', '<=', $request->score);
+        }
+
+        if ($request->has('gender')) {
+            $query->where('gender', '=', $request->gender);
+        }
+
+        $couponBatchPolicies = $query->join('coupon_batches', 'coupon_batch_id', '=', 'coupon_batches.id')->where('policy_id', '=', $policy->id)->get();
+
+        if ($couponBatchPolicies->isEmpty()) {
+            abort(500, '无可用优惠券');
+        }
+
+        $couponBatchPolicies = $couponBatchPolicies->toArray();
+        foreach ($couponBatchPolicies as $key => $couponBatchPolicy) {
+            if (!$couponBatchPolicy->pmg_status && !$couponBatchPolicy->dmg_status && $couponBatchPolicy->stock <= 0) {
+                unset($couponBatchPolicies[$key]);
+            }
+        }
+
+        if (count($couponBatchPolicies) == 0) {
+            abort(500, '无可用优惠券');
+        }
+
+        $targetCouponBatch = getRand($couponBatchPolicies);
+        $couponBatch = CouponBatch::findOrFail($targetCouponBatch->coupon_batch_id);
+        $couponBatch->decrement('stock');
+
+        return $this->response->item($couponBatch, new CouponBatchTransformer());
+    }
+
+    /**
      * 发送优惠券
      * @param CouponBatch $couponBatch
      * @param CouponRequest $request

@@ -2,15 +2,6 @@
   <div 
     class="add-wrap">
     <div 
-      class="topbar">
-      <el-breadcrumb 
-        separator="/">
-        <el-breadcrumb-item 
-          :to="{ path: '/ad/url' }">短链接管理</el-breadcrumb-item>
-        <el-breadcrumb-item>添加</el-breadcrumb-item>
-      </el-breadcrumb>
-    </div>
-    <div 
       class="url-title">
       新增短链接
     </div>

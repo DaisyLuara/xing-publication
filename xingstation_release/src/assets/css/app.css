@@ -16,10 +16,10 @@ body {
   position: fixed;
   top: 120px;
   left: 0;
-  width: 90px;
+  width: 160px;
   height: 100%;
-  background-color: #fff;
-  z-index: 99;
+  background-color: #22282f;
+  z-index: 150;
   border-right: 1px solid #d3dce6;
 }
 .first-sidebar .el-menu {
@@ -45,13 +45,47 @@ body {
 .first-sidebar .el-menu-item:first-child {
   margin-top: 0;
 }
+.first-icon-sidebar {
+  position: fixed;
+  top: 120px;
+  left: 0;
+  width: 50px;
+  height: 100%;
+  background-color: #22282f;
+  z-index: 99;
+  border-right: 1px solid #d3dce6;
+}
+.first-icon-sidebar .el-menu {
+  background-color: rgba(0, 0, 0, 0);
+  border-radius: 0px;
+}
+.first-icon-sidebar .el-menu .el-menu-item {
+  color: #6484ad;
+  height: 36px;
+  line-height: 36px;
+  font-size: 14px;
+  margin: 5px 0;
+}
+.first-icon-sidebar .el-menu .el-menu-item:hover {
+  cursor: pointer;
+  color: #20a0ff;
+  background-color: rgba(0, 0, 0, 0);
+}
+.first-icon-sidebar .el-menu .el-menu-item.is-active {
+  background-color: #d1d3d6;
+  color: #5e6d82;
+}
+.first-icon-sidebar .el-menu-item:first-child {
+  margin-top: 0;
+}
 .second-sidebar {
   position: fixed;
   top: 120px;
-  left: 90px;
+  left: 50px;
   width: 110px;
   height: 100%;
   background-color: #fff;
+  border-right: 1px solid #d3dce6;
   z-index: 99;
 }
 .second-sidebar .module-name {
@@ -72,7 +106,7 @@ body {
   line-height: 36px;
   font-size: 14px;
   background-color: rgba(0, 0, 0, 0);
-  margin: 16px 0;
+  margin: 5px 0;
 }
 .second-sidebar .el-menu .el-menu-item:hover {
   color: #20a0ff;
@@ -103,11 +137,10 @@ body {
 .modules {
   position: relative;
   width: 100%;
-  padding-left: 200px;
-  padding-top: 196px;
+  padding-left: 160px;
+  padding-top: 120px;
 }
 .modules .content {
   background-color: #fff;
-  margin: 10px;
   min-height: 420px;
 }

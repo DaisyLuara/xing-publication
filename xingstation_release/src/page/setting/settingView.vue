@@ -3,10 +3,6 @@
     class="setting-root">
     <second-sidebar 
       module="setting"/>
-    <div 
-      class="topbar">
-      {{ this.$route.meta.title }}
-    </div>
     <router-view/>
   </div>
 </template>

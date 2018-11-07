@@ -3,7 +3,8 @@
     class="main">
     <headModule/>
     <div
-      class="first-sidebar">
+      class="first-sidebar"
+      v-show="!iconMenuShow">
       <el-menu
         :default-active="'/' + currModule"
         router>
@@ -12,15 +13,17 @@
           v-if="m.path != 'inform'"
           :key="m.path"
           :index="'/' + m.path"
-          class="menu-item">
+          class="menu-item"
+          @click="handleMenuHide">
           <img
             :src="m.src"
             class="first-sidebar-icon">
           {{ m.meta.title }}
         </el-menu-item>
         <el-menu-item
-          class="menu-item"
-          index="/inform">
+          class=" menu-no-icon-item"
+          index="/inform"
+          @click="handleMenuHide">
           <el-badge
             :value="noticeCount"
             :max="99"
@@ -33,7 +36,49 @@
           </el-badge>
         </el-menu-item>
       </el-menu>
+      <div class="menu-show">
+        <i 
+          class="el-icon-d-arrow-left left-icon-menu" 
+          @click="handleMenuHide"/>
+      </div>
     </div>
+    <div
+      v-show="iconMenuShow"
+      class="first-icon-sidebar">
+      <el-menu
+        :default-active="'/' + currModule"
+        router>
+        <el-menu-item
+          v-for="m in modules"
+          v-if="m.path != 'inform'"
+          :key="m.path"
+          :index="'/' + m.path"
+          class="menu-item">
+          <img
+            :src="m.src"
+            class="first-sidebar-icon">
+        </el-menu-item>
+        <el-menu-item
+          class="menu-item menu-icon-item"
+          index="/inform">
+          <el-badge
+            :value="noticeCount"
+            :max="99"
+            class="item">
+            <img
+              src="../assets/images/icons/notification-icon.png"
+              class="first-sidebar-icon"
+              style="padding-right: 3px;">
+          </el-badge>
+        </el-menu-item>
+      </el-menu>
+      <div class="menu-icon-show">
+        <i 
+          class="el-icon-d-arrow-right right-icon-menu" 
+          @click="handleMenuShow"/>
+      </div>
+    </div>
+
     <div class="system-menu">
       <div
         v-for="item in systemMenuList"
@@ -68,6 +113,7 @@ export default {
   },
   data() {
     return {
+      iconMenuShow: true,
       visible: false,
       setIntervalValue: '',
       systemMenuList: [
@@ -99,9 +145,6 @@ export default {
               case 'system':
                 m.src = require('../assets/images/icons/permission-icon.png')
                 break
-              // case 'company':
-              //   m.src = require('../assets/images/icons/company-icon.png')
-              //   break
               case 'ad':
                 m.src = require('../assets/images/icons/advertisement-icon.png')
                 break
@@ -153,44 +196,43 @@ export default {
     this.notificationStats()
   },
   methods: {
+    handleMenuShow() {
+      this.iconMenuShow = false
+    },
+    handleMenuHide() {
+      this.iconMenuShow = true
+    },
     systemMenu(item) {
       this.active = item.id
+      switch (item.id) {
+        case 'zhongtai':
+          this.linkRedirect('ad')
+          break
+        case 'liucheng':
+          this.linkRedirect('flow')
+          break
+      }
+    },
+    linkRedirect(type) {
       let permissions = this.$cookie.get('permissions')
       let userInfo = this.$cookie.get('user_info')
       let jwt_ttl = this.$cookie.get('jwt_ttl')
       let token = this.$cookie.get('jwt_token')
       let jwt_begin_time = this.$cookie.get('jwt_begin_time')
-
-      switch (item.id) {
-        case 'zhongtai':
-          window.location.href =
-            process.env.SERVER_URL +
-            '/api/system_skip?permissions=' +
-            permissions +
-            '&user_info=' +
-            userInfo +
-            '&type=ad&token=' +
-            token +
-            '&jwt_ttl=' +
-            jwt_ttl +
-            '&jwt_begin_time=' +
-            jwt_begin_time
-          break
-        case 'liucheng':
-          window.location.href =
-            process.env.SERVER_URL +
-            '/api/system_skip?permissions=' +
-            permissions +
-            '&user_info=' +
-            userInfo +
-            '&type=flow&token=' +
-            token +
-            '&jwt_ttl=' +
-            jwt_ttl +
-            '&jwt_begin_time=' +
-            jwt_begin_time
-          break
-      }
+      window.location.href =
+        process.env.SERVER_URL +
+        '/api/system_skip?permissions=' +
+        permissions +
+        '&user_info=' +
+        userInfo +
+        '&type=' +
+        type +
+        '&token=' +
+        token +
+        '&jwt_ttl=' +
+        jwt_ttl +
+        '&jwt_begin_time=' +
+        jwt_begin_time
     },
     notificationStats() {
       return notice
@@ -210,6 +252,24 @@ export default {
 <style lang="less">
 @import '../assets/css/pcCommon.less';
 
+.menu-icon-show {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  .right-icon-menu {
+    color: #fff;
+  }
+}
+.menu-show {
+  font-size: 18px;
+  font-weight: 600;
+  text-align: right;
+  margin-right: 10px;
+  .left-icon-menu {
+    color: #fff;
+  }
+}
+
 .system-menu {
   position: fixed;
   top: 60px;
@@ -220,7 +280,7 @@ export default {
   padding-left: 90px;
   height: 60px;
   background: #fff;
-  box-shadow: 0 2px 0 #ccc8c8;
+  box-shadow: 0 1px 0 #ccc8c8;
   z-index: 300;
   .system-menu-item {
     margin-right: 35px;

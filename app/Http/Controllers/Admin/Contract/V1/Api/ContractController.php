@@ -55,10 +55,14 @@ class ContractController extends Controller
             $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
         }
 
+        /** @var  $user \App\Models\User */
         $user = $this->user();
-        $contract = $query->whereRaw("(applicant = $user->id or handler = $user->id)")
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        if ($user->hasRole('operation')) {
+            $query->where('status', '=', 3);
+        } else {
+            $query->whereRaw("(applicant = $user->id or handler = $user->id)");
+        }
+        $contract = $query->orderBy('created_at', 'desc')->paginate(10);
         return $this->response->paginator($contract, new ContractTransformer());
     }
 
