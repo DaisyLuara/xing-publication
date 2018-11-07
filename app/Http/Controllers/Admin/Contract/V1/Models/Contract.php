@@ -6,9 +6,12 @@ use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Models\Model;
 use App\Models\User;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Contract extends Model
 {
+    use SoftDeletes;
+
     public $fillable = [
         'contract_number',
         'name',
@@ -46,7 +49,8 @@ class Contract extends Model
         return $this->hasMany(Media::class, 'contract_id', 'id');
     }
 
-    public function receiveDate(){
-        return $this->hasMany(ContractReceiveDate::class,'contract_id','id');
+    public function receiveDate()
+    {
+        return $this->hasMany(ContractReceiveDate::class, 'contract_id', 'id');
     }
 }

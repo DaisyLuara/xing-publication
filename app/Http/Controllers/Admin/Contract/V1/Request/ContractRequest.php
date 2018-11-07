@@ -28,7 +28,6 @@ class ContractRequest extends FormRequest
             case 'POST':
                 return [
                     'name' => 'required|max:50',
-                    'contract_number' => 'string',
                     'type' => Rule::in([0, 1]),
                     'receive_date' => 'string|nullable',
                     'ids' => 'string',
@@ -38,7 +37,6 @@ class ContractRequest extends FormRequest
             case 'PATCH':
                 return [
                     'name' => 'max:50',
-                    'contract_number' => 'string',
                     'type' => Rule::in([0, 1]),
                     'receive_date' => 'string|nullable',
                     'ids' => 'string',
