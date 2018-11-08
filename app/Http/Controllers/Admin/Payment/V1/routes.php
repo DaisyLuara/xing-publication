@@ -18,6 +18,11 @@ $api->version('v1', [
 
             $api->post('payment/auditing/{payment}', 'PaymentController@auditing');
             $api->post('payment/receive/{payment}', 'PaymentController@receive');
+
+            $api->get('payment_payee/{payment_payee}', 'PaymentPayeeController@show');
+            $api->get('payment_payee', 'PaymentPayeeController@index');
+            $api->post('payment_payee', 'PaymentPayeeController@store');
+            $api->patch('payment_payee/{payment_payee}', 'PaymentPayeeController@update');
         });
     });
 

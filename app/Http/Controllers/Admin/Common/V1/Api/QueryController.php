@@ -14,6 +14,8 @@ use App\Http\Controllers\Admin\Invoice\V1\Models\GoodsService;
 use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany;
 use App\Http\Controllers\Admin\Invoice\V1\Transformer\GoodsServiceTransformer;
 use App\Http\Controllers\Admin\Invoice\V1\Transformer\InvoiceCompanyTransformer;
+use App\Http\Controllers\Admin\Payment\V1\Models\PaymentPayee;
+use App\Http\Controllers\Admin\Payment\V1\Transformer\PaymentPayeeTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\AreaTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\MarketTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\PointTransformer;
@@ -318,11 +320,25 @@ class QueryController extends Controller
         return $this->response->collection($users, new UserTransformer());
     }
 
-    public function invoiceCompanyQuery(InvoiceCompany $invoiceCompany)
+    public function invoiceCompanyQuery(Request $request, InvoiceCompany $invoiceCompany)
     {
         $user = $this->user();
         $query = $invoiceCompany->query();
-        $invoiceCompany = $query->where('user_id',$user->id)->get();
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+        $invoiceCompany = $query->where('user_id', $user->id)->get();
         return $this->response()->collection($invoiceCompany, new InvoiceCompanyTransformer());
+    }
+
+    public function paymentPayeeQuery(Request $request, PaymentPayee $paymentPayee)
+    {
+        $user = $this->user();
+        $query = $paymentPayee->query();
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+        $paymentPayee = $query->where('user_id', $user->id)->get();
+        return $this->response()->collection($paymentPayee, new PaymentPayeeTransformer());
     }
 }
