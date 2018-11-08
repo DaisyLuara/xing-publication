@@ -17,6 +17,7 @@ class InvoiceCompanyTransformer extends TransformerAbstract
     public function transform(InvoiceCompany $invoiceCompany)
     {
         return [
+            'id' => $invoiceCompany->id,
             'name' => $invoiceCompany->name,
             'taxpayer_num' => $invoiceCompany->taxpayer_num,
             'phone' => $invoiceCompany->phone,
