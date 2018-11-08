@@ -31,7 +31,7 @@ class InvoiceTransformer extends TransformerAbstract
             'handler' => $invoice->handler,
             'handler_name' => $invoice->handler ? $invoice->handlerUser->name : null,
             'type' => $invoice->type == 0 ? '专票' : '普票',
-            'invoice_company_name' => $invoice->invoiceCompany->name,
+            'invoice_company_name' => $invoice->invoiceCompany ? $invoice->invoiceCompany->name : null,
             'status' => $this->statusMapping[$invoice->status],
             'receive_status' => $invoice->receive_status == 0 ? '未收款' : '已收款',
             'kind' => $invoice->kind,
@@ -55,6 +55,9 @@ class InvoiceTransformer extends TransformerAbstract
 
     public function includeInvoiceCompany(Invoice $invoice)
     {
+        if (!$invoice->invoiceCompany) {
+            return null;
+        }
         return $this->item($invoice->invoiceCompany, new InvoiceCompanyTransformer());
     }
 }
