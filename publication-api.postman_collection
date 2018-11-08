@@ -254,7 +254,13 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{jwt_admin}}",
+								"value": "{{jwt_user_1}}",
+								"description": "",
+								"disabled": true
+							},
+							{
+								"key": "api-token",
+								"value": "{{api-token}}",
 								"description": ""
 							}
 						],
@@ -264,11 +270,17 @@
 								{
 									"key": "image",
 									"type": "file",
-									"src": "整体数据-3.png"
+									"src": "mkfd.jpg"
 								},
 								{
 									"key": "type",
-									"value": "avatardimensionsdimensions",
+									"value": "avatar",
+									"type": "text"
+								},
+								{
+									"key": "sign",
+									"value": "eyJpdiI6IkdBOHkyUDdDNzdaa0RNeHRqREhpM0E9PSIsInZhbHVlIjoiTHZaUmVabW5rV1ZUVk9sRWlFUXBwdz09IiwibWFjIjoiNzIxMTQ0NGE3YzM5N2JkNjJkOTE5MDc0MzQyNjQ2ZmExZDhjNzZhYjE0OThkYWI4ZjE0ZWJjY2E2MWFhMTJhMSJ9",
+									"description": "",
 									"type": "text"
 								}
 							]
@@ -625,15 +637,15 @@
 			]
 		},
 		{
-			"name": "客户中心",
+			"name": "商户管理",
 			"description": "",
 			"item": [
 				{
-					"name": "负责人",
+					"name": "联系人",
 					"description": "",
 					"item": [
 						{
-							"name": "负责人列表",
+							"name": "联系人列表",
 							"request": {
 								"url": {
 									"raw": "http://{{host}}/api/companies/73/customers?include=company.user",
@@ -661,7 +673,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_user_1}}",
+										"value": "{{jwt_chenzhong}}",
 										"description": ""
 									}
 								],
@@ -674,7 +686,7 @@
 							"response": []
 						},
 						{
-							"name": "负责人详情",
+							"name": "联系人详情",
 							"request": {
 								"url": "http://{{host}}/api/companies/1/customers/2",
 								"method": "GET",
@@ -694,14 +706,14 @@
 							"response": []
 						},
 						{
-							"name": "修改负责人",
+							"name": "修改联系人",
 							"request": {
-								"url": "http://{{host}}/api/companies/1/customers/2",
+								"url": "http://{{host}}/api/companies/74/customers/24",
 								"method": "PATCH",
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_gao}}",
+										"value": "{{jwt_chenzhong}}",
 										"description": ""
 									},
 									{
@@ -712,17 +724,17 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t    \"name\": \"上海某某科技公sas司\",\n\t    \"phone\": \"13818403071\"\n}"
+									"raw": "{\n\t    \"name\": \"大融城联系人\",\n\t    \"phone\": \"13818403071\",\n\t    \"password\":\"password\"\n}"
 								},
 								"description": ""
 							},
 							"response": []
 						},
 						{
-							"name": "创建负责人",
+							"name": "创建联系人",
 							"request": {
 								"url": {
-									"raw": "http://{{host}}/api/companies/1/customers?include=company.user",
+									"raw": "http://{{host}}/api/companies/74/customers?include=company.user",
 									"protocol": "http",
 									"host": [
 										"{{host}}"
@@ -730,7 +742,7 @@
 									"path": [
 										"api",
 										"companies",
-										"1",
+										"74",
 										"customers"
 									],
 									"query": [
@@ -747,7 +759,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_gao}}",
+										"value": "{{jwt_chenzhong}}",
 										"description": ""
 									},
 									{
@@ -758,7 +770,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"name\" : \"陈经理aa\",\n  \"phone\":\"13818203277\",\n  \"password\":\"123456\"\n}"
+									"raw": "{\n  \"name\" : \"大融城-联系人\",\n  \"phone\":\"13818203277\"\n}"
 								},
 								"description": ""
 							},
@@ -768,11 +780,11 @@
 					"_postman_isSubFolder": true
 				},
 				{
-					"name": "客户",
+					"name": "商户",
 					"description": "",
 					"item": [
 						{
-							"name": "客户列表",
+							"name": "商户列表",
 							"request": {
 								"url": {
 									"raw": "http://{{host}}/api/companies?include=user",
@@ -811,7 +823,7 @@
 							"response": []
 						},
 						{
-							"name": "客户详情",
+							"name": "商户详情",
 							"request": {
 								"url": {
 									"raw": "http://{{host}}/api/companies/1?include=customers",
@@ -851,14 +863,14 @@
 							"response": []
 						},
 						{
-							"name": "修改客户",
+							"name": "商户客户",
 							"request": {
 								"url": "http://{{host}}/api/companies/1",
 								"method": "PATCH",
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_gao}}",
+										"value": "{{jwt_user_1}}",
 										"description": ""
 									},
 									{
@@ -876,7 +888,7 @@
 							"response": []
 						},
 						{
-							"name": "创建客户",
+							"name": "商户客户",
 							"request": {
 								"url": {
 									"raw": "http://{{host}}/api/companies?include=user",
@@ -902,7 +914,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_gao}}",
+										"value": "{{jwt_chenzhong}}",
 										"description": ""
 									},
 									{
@@ -913,7 +925,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"name\" : \"上海某某科技公司\",\n  \"address\":\"上海市浦东南路1133号\"\n}"
+									"raw": "{\n  \"name\" : \"大融城\",\n  \"address\":\"上海市浦东南路1133号\"\n}"
 								},
 								"description": ""
 							},
@@ -3411,7 +3423,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_admin}}",
+										"value": "{{jwt_user_1}}",
 										"description": ""
 									}
 								],
@@ -3428,7 +3440,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_admin}}",
+										"value": "{{jwt_user_1}}",
 										"description": ""
 									},
 									{
@@ -3439,7 +3451,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"name\": \"测试券\",\n\t\"description\": \"111\",\n\t\"amount\": 0,\n\t\"count\": \"10\",\n\t\"stock\": \"10\",\n\t\"people_max_get\": \"1\",\n\t\"pmg_status\": 0,\n\t\"day_max_get\": 0,\n\t\"dmg_status\": 0,\n\t\"is_fixed_date\": 0,\n\t\"delay_effective_day\": \"1\",\n\t\"effective_day\": \"2\",\n\t\"start_date\": \"2018-07-02 16:00:00\",\n\t\"end_date\": \"2018-07-17 16:00:00\",\n\t\"is_active\": 1\n}"
+									"raw": "{\n\t\"name\": \"大荣成-mmp\",\n\t\"description\": \"大荣成-mmp\",\n\t\"image_url\": \"www.baidu.com\",\n\t\"amount\": 10,\n\t\"count\": 1000,\n\t\"stock\": 1000,\n\t\"people_max_get\": 1,\n\t\"pmg_status\": 0,\n\t\"day_max_get\": 1,\n\t\"dmg_status\": 0,\n\t\"is_fixed_date\": 0,\n\t\"delay_effective_day\": 1,\n\t\"effective_day\": 1,\n\t\"is_active\": 1,\n\t\"redirect_url\": \"www.baidu.com\",\n\t\"type\": 1,\n\t\"start_date\": \"2018-10-30\",\n\t\"end_date\": \"2018-10-31\"\n}"
 								},
 								"description": ""
 							},
@@ -3448,16 +3460,24 @@
 						{
 							"name": "修改规则",
 							"request": {
-								"url": "http://{{host}}/api/coupon/batches/1",
+								"url": "http://{{host}}/api/coupon/batches/17",
 								"method": "PATCH",
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{jwt_admin}}",
+										"value": "{{jwt_user_1}}",
+										"description": ""
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
 										"description": ""
 									}
 								],
-								"body": {},
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": 17,\n    \"name\": \"大荣成-mmp\",\n    \"description\": \"大荣成-mmp\",\n    \"image_url\": \"http://www.baidu.com\",\n    \"amount\": 10,\n    \"count\": 1000,\n    \"stock\": 1000,\n    \"people_max_get\": 1,\n    \"pmg_status\": 0,\n    \"day_max_get\": 1,\n    \"dmg_status\": 0,\n    \"is_fixed_date\": 0,\n    \"delay_effective_day\": 1,\n    \"effective_day\": 1,\n    \"start_date\": \"2018-10-30 00:00:00\",\n    \"end_date\": \"2018-10-31 00:00:00\",\n    \"is_active\": 1,\n    \"third_code\": \"\",\n    \"pivot\": null,\n    \"wx_user_id\": null,\n    \"type\": 1,\n    \"redirect_url\": \"\",\n    \"title\": \"\",\n    \"sort_order\": 1\n}"
+								},
 								"description": ""
 							},
 							"response": []
@@ -3473,7 +3493,7 @@
 							"name": "投放列表",
 							"request": {
 								"url": {
-									"raw": "http://{{host}}/api/coupons?include=couponBatch&coupon_batch_id=3",
+									"raw": "http://{{host}}/api/coupons?include=couponBatch.company&company_id=11&start_date=2018-10-31 13:46:01&end_date=2018-10-31 13:46:55",
 									"protocol": "http",
 									"host": [
 										"{{host}}"
@@ -3485,7 +3505,7 @@
 									"query": [
 										{
 											"key": "include",
-											"value": "couponBatch",
+											"value": "couponBatch.company",
 											"equals": true,
 											"description": ""
 										},
@@ -3493,7 +3513,25 @@
 											"key": "coupon_batch_id",
 											"value": "3",
 											"equals": true,
+											"description": "",
+											"disabled": true
+										},
+										{
+											"key": "company_id",
+											"value": "11",
+											"equals": true,
 											"description": ""
+										},
+										{
+											"key": "start_date",
+											"value": "2018-10-31 13:46:01",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "end_date",
+											"value": "2018-10-31 13:46:55",
+											"equals": true
 										}
 									],
 									"variable": []
@@ -4003,18 +4041,23 @@
 								{
 									"name": "领取优惠券",
 									"request": {
-										"url": "http://{{host}}/api/open/coupons/9",
+										"url": "http://{{host}}/api/open/coupons/14",
 										"method": "POST",
 										"header": [
 											{
 												"key": "Content-Type",
 												"value": "application/json",
 												"description": ""
+											},
+											{
+												"key": "api-token",
+												"value": "{{api-token}}",
+												"description": ""
 											}
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n\t\"mobile\":15921145624,\n\t\"sign\":\"eyJpdiI6IndwZGNubmd6dmxvNTE1MDZZaE1tRlE9PSIsInZhbHVlIjoiRytNXC9VYkMxeGdxU1hSemVIZ3ZsU0E9PSIsIm1hYyI6Ijg3N2ZhMjAyNzkxY2I3YzE1ZTk5NGZkY2M5MjhlMzMyMzU5MzllYjkxMGI0ZTAzNDJhZWY1Y2ZhNDI3ZGE3NWEifQ\"\n}"
+											"raw": "{\n\t\"sign\":\"eyJpdiI6IkdBOHkyUDdDNzdaa0RNeHRqREhpM0E9PSIsInZhbHVlIjoiTHZaUmVabW5rV1ZUVk9sRWlFUXBwdz09IiwibWFjIjoiNzIxMTQ0NGE3YzM5N2JkNjJkOTE5MDc0MzQyNjQ2ZmExZDhjNzZhYjE0OThkYWI4ZjE0ZWJjY2E2MWFhMTJhMSJ9\"\n}"
 										},
 										"description": null
 									},
@@ -4023,18 +4066,44 @@
 								{
 									"name": "查询优惠券",
 									"request": {
-										"url": "http://{{host}}/api/open/user/coupon",
+										"url": {
+											"raw": "http://{{host}}/api/open/user/coupons?include=couponBatch.company",
+											"protocol": "http",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"open",
+												"user",
+												"coupons"
+											],
+											"query": [
+												{
+													"key": "include",
+													"value": "couponBatch.company",
+													"equals": true,
+													"description": ""
+												}
+											],
+											"variable": []
+										},
 										"method": "POST",
 										"header": [
 											{
 												"key": "Content-Type",
 												"value": "application/json",
 												"description": ""
+											},
+											{
+												"key": "api-token",
+												"value": "{{api-token}}",
+												"description": ""
 											}
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n\t\"sign\":\"eyJpdiI6IndwZGNubmd6dmxvNTE1MDZZaE1tRlE9PSIsInZhbHVlIjoiRytNXC9VYkMxeGdxU1hSemVIZ3ZsU0E9PSIsIm1hYyI6Ijg3N2ZhMjAyNzkxY2I3YzE1ZTk5NGZkY2M5MjhlMzMyMzU5MzllYjkxMGI0ZTAzNDJhZWY1Y2ZhNDI3ZGE3NWEifQ\",\n\t\"coupon_batch_id\":11\n}"
+											"raw": "{\n\t\"sign\":\"eyJpdiI6IkdBOHkyUDdDNzdaa0RNeHRqREhpM0E9PSIsInZhbHVlIjoiTHZaUmVabW5rV1ZUVk9sRWlFUXBwdz09IiwibWFjIjoiNzIxMTQ0NGE3YzM5N2JkNjJkOTE5MDc0MzQyNjQ2ZmExZDhjNzZhYjE0OThkYWI4ZjE0ZWJjY2E2MWFhMTJhMSJ9\",\n\t\"coupon_batch_id\":14\n}"
 										},
 										"description": null
 									},
@@ -4051,7 +4120,7 @@
 									"name": "优惠券列表",
 									"request": {
 										"url": {
-											"raw": "{{host}}/api/mini/user/coupons?z=0fg4a3dfc48b6628628ef6bf71f6b31869d5tg",
+											"raw": "{{host}}/api/mini/user/coupons?z=ky71a2d5dfff925b026de99489f68fd8a29f1t&status=3&include=couponBatch.company",
 											"host": [
 												"{{host}}"
 											],
@@ -4064,7 +4133,19 @@
 											"query": [
 												{
 													"key": "z",
-													"value": "0fg4a3dfc48b6628628ef6bf71f6b31869d5tg",
+													"value": "ky71a2d5dfff925b026de99489f68fd8a29f1t",
+													"equals": true,
+													"description": ""
+												},
+												{
+													"key": "status",
+													"value": "3",
+													"equals": true,
+													"description": ""
+												},
+												{
+													"key": "include",
+													"value": "couponBatch.company",
 													"equals": true,
 													"description": ""
 												}
@@ -4085,10 +4166,10 @@
 									"response": []
 								},
 								{
-									"name": "优惠券规则详情",
+									"name": "优惠券详情",
 									"request": {
 										"url": {
-											"raw": "{{host}}/api/mini/user/coupon_batch/1?z=0fg4a3dfc48b6628628ef6bf71f6b31869d5tg",
+											"raw": "{{host}}/api/mini/user/coupons/5be004b6a8212?z=ky71a2d5dfff925b026de99489f68fd8a29f1t&size=200&include=couponBatch.company",
 											"host": [
 												"{{host}}"
 											],
@@ -4096,13 +4177,25 @@
 												"api",
 												"mini",
 												"user",
-												"coupon_batch",
-												"1"
+												"coupons",
+												"5be004b6a8212"
 											],
 											"query": [
 												{
 													"key": "z",
-													"value": "0fg4a3dfc48b6628628ef6bf71f6b31869d5tg",
+													"value": "ky71a2d5dfff925b026de99489f68fd8a29f1t",
+													"equals": true,
+													"description": ""
+												},
+												{
+													"key": "size",
+													"value": "200",
+													"equals": true,
+													"description": ""
+												},
+												{
+													"key": "include",
+													"value": "couponBatch.company",
 													"equals": true,
 													"description": ""
 												}
@@ -4126,7 +4219,7 @@
 									"name": "领券优惠券",
 									"request": {
 										"url": {
-											"raw": "{{host}}/api/mini/user/coupon_batch/3?z=0fg4a3dfc48b6628628ef6bf71f6b31869d5tg",
+											"raw": "{{host}}/api/mini/user/coupon_batch/16?z=ky71a2d5dfff925b026de99489f68fd8a29f1t",
 											"host": [
 												"{{host}}"
 											],
@@ -4135,12 +4228,12 @@
 												"mini",
 												"user",
 												"coupon_batch",
-												"3"
+												"16"
 											],
 											"query": [
 												{
 													"key": "z",
-													"value": "0fg4a3dfc48b6628628ef6bf71f6b31869d5tg",
+													"value": "ky71a2d5dfff925b026de99489f68fd8a29f1t",
 													"equals": true,
 													"description": ""
 												}
@@ -4161,6 +4254,43 @@
 											]
 										},
 										"description": ""
+									},
+									"response": []
+								},
+								{
+									"name": "优惠券规则列表",
+									"request": {
+										"url": {
+											"raw": "{{host}}/api/mini/coupon/batches?include=company",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"mini",
+												"coupon",
+												"batches"
+											],
+											"query": [
+												{
+													"key": "include",
+													"value": "company",
+													"equals": true,
+													"description": ""
+												}
+											],
+											"variable": []
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "api-token",
+												"value": "{{api-token}}",
+												"description": ""
+											}
+										],
+										"body": {},
+										"description": "小程序客户端 获取优惠券规则列表"
 									},
 									"response": []
 								}
@@ -4259,9 +4389,11 @@
 							"name": "获取抽奖规则",
 							"request": {
 								"url": {
-									"raw": "{{host}}/api/open/project/policy?belong=cvTianMaoNew",
+									"raw": "papi.xingstation.com/api/open/project/policy?belong=CuteLion",
 									"host": [
-										"{{host}}"
+										"papi",
+										"xingstation",
+										"com"
 									],
 									"path": [
 										"api",
@@ -4272,7 +4404,7 @@
 									"query": [
 										{
 											"key": "belong",
-											"value": "cvTianMaoNew",
+											"value": "CuteLion",
 											"equals": true,
 											"description": ""
 										}
@@ -4280,7 +4412,13 @@
 									"variable": []
 								},
 								"method": "GET",
-								"header": [],
+								"header": [
+									{
+										"key": "api-token",
+										"value": "{{api-token}}",
+										"description": ""
+									}
+								],
 								"body": {},
 								"description": ""
 							},
@@ -4290,7 +4428,7 @@
 							"name": "抽奖",
 							"request": {
 								"url": {
-									"raw": "{{host}}/api/open/coupon/batches?policy_id=1",
+									"raw": "{{host}}/api/open/coupon/batches/stock?policy_id=2",
 									"host": [
 										"{{host}}"
 									],
@@ -4298,12 +4436,13 @@
 										"api",
 										"open",
 										"coupon",
-										"batches"
+										"batches",
+										"stock"
 									],
 									"query": [
 										{
 											"key": "policy_id",
-											"value": "1",
+											"value": "2",
 											"equals": true,
 											"description": ""
 										}
@@ -4334,7 +4473,7 @@
 						{
 							"name": "优惠券规则详情",
 							"request": {
-								"url": "http://papi.xingstation.com/api/open/coupon/batches/14",
+								"url": "http://papi.xingstation.com/api/open/coupon/batches/76",
 								"method": "POST",
 								"header": [
 									{
@@ -4358,6 +4497,42 @@
 						}
 					],
 					"_postman_isSubFolder": true
+				},
+				{
+					"name": "获取大屏参数",
+					"request": {
+						"url": {
+							"raw": "{{host}}/api/device/params?scene=istart:6185023",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"device",
+								"params"
+							],
+							"query": [
+								{
+									"key": "scene",
+									"value": "istart:6185023",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "api-token",
+								"value": "{{api-token}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
 				}
 			]
 		}
