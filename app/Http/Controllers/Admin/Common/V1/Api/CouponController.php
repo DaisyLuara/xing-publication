@@ -321,21 +321,24 @@ class CouponController extends Controller
         return $this->response->item($coupon, new CouponTransformer());
     }
 
-    public function getUserCoupon(UserCouponRequest $request)
+    public function getUserCoupons(UserCouponRequest $request)
     {
         $userID = decrypt($request->sign);
-        $coupon = Coupon::query()->where('wx_user_id', $userID)
+        $coupons = Coupon::query()->where('wx_user_id', $userID)
             ->where('coupon_batch_id', $request->get('coupon_batch_id'))
-            ->first();
+            ->orderByDesc('id')
+            ->paginate(5);
 
-        abort_if(!$coupon, 204);
+        abort_if($coupons->isEmpty(), 204);
 
         //优惠券二维码
-        $prefix = 'h5_code' . $coupon->code;
-        $qrcodeUrl = couponQrCode($coupon->code, 200, $prefix);
-        $coupon->setAttribute('qrcode_url', $qrcodeUrl);
+        foreach ($coupons as $coupon) {
+            $prefix = 'h5_code' . $coupon->code;
+            $qrcodeUrl = couponQrCode($coupon->code, 200, $prefix);
+            $coupon->setAttribute('qrcode_url', $qrcodeUrl);
+        }
 
-        return $this->response->item($coupon, new CouponTransformer());
+        return $this->response->paginator($coupons, new CouponTransformer());
     }
 
     /**

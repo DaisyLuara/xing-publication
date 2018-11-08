@@ -19,7 +19,7 @@ $api->version('v1', [
 
             $api->post('open/coupon/batches/{couponBatch}', 'CouponController@getCouponBatch');//获取优惠券规则
             $api->post('open/coupons/{couponBatch}', 'CouponController@generateCoupon');//发送优惠券
-            $api->post('open/user/coupon', 'CouponController@getUserCoupon');//获取用户优惠券
+            $api->post('open/user/coupons', 'CouponController@getUserCoupons');//获取用户优惠券
         });
 
         //小程序优惠券接口
