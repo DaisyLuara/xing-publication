@@ -11,7 +11,9 @@ use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\PolicyTransformer;
 use App\Http\Controllers\Admin\Invoice\V1\Models\GoodsService;
+use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany;
 use App\Http\Controllers\Admin\Invoice\V1\Transformer\GoodsServiceTransformer;
+use App\Http\Controllers\Admin\Invoice\V1\Transformer\InvoiceCompanyTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\AreaTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\MarketTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\PointTransformer;
@@ -314,5 +316,13 @@ class QueryController extends Controller
         $role = Role::findByName('legal-affairs-manager');
         $users = $role->users()->get();
         return $this->response->collection($users, new UserTransformer());
+    }
+
+    public function invoiceCompanyQuery(InvoiceCompany $invoiceCompany)
+    {
+        $user = $this->user();
+        $query = $invoiceCompany->query();
+        $invoiceCompany = $query->where('user_id',$user->id)->get();
+        return $this->response()->collection($invoiceCompany, new InvoiceCompanyTransformer());
     }
 }
