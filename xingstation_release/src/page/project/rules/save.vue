@@ -41,6 +41,8 @@
           label="标题"
           prop="title">
           <el-input
+            type="textarea"
+            :maxlength="500"
             v-model="couponForm.title"
             class="coupon-form-input"/>
         </el-form-item>
@@ -85,10 +87,11 @@
             class="coupon-form-input" />
         </el-form-item>
         <el-form-item
-          label="优惠券描述"
+          label="使用说明"
           prop="description">
           <el-input
             v-model="couponForm.description"
+            :maxlength="1000"
             type="textarea"
             class="coupon-form-input"/>
         </el-form-item>

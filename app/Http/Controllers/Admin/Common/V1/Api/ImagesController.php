@@ -12,13 +12,16 @@ class ImagesController extends Controller
 {
     public function store(ImageRequest $request, ImageUploadHandler $uploader, Image $image)
     {
-        $user = $this->user();
 
-        $result = $uploader->save($request->image, str_plural($request->type));
+        $userID = 0;
+        if ($request->sign) {
+            $userID = decrypt($request->sign);
+        }
+        $path = $uploader->save($request->image, str_plural($request->type));
 
-        $image->path = $result['path'];
+        $image->path = $path;
         $image->type = $request->type;
-        $image->user_id = $user->id;
+        $image->user_id = $userID;
         $image->save();
 
         return $this->response->item($image, new ImageTransformer())->setStatusCode(201);

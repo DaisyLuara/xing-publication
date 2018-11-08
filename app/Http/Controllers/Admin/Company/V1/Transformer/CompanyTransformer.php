@@ -17,6 +17,8 @@ class CompanyTransformer extends TransformerAbstract
             'name' => $company->name,
             'address' => $company->address,
             'status' => (int)$company->status,
+            'description' => $company->description,
+            'logo' => $company->logo,
             'created_at' => $company->created_at->toDateTimeString(),
             'updated_at' => $company->updated_at->toDateTimeString(),
         ];

@@ -10,7 +10,7 @@ use App\Models\Customer;
 class Company extends Model
 {
 
-    protected $fillable = ['name', 'address', 'status', 'user_id', 'trade_id'];
+    protected $fillable = ['name', 'address', 'status', 'user_id', 'trade_id','description','logo'];
 
     public function user()
     {
