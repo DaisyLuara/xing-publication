@@ -247,9 +247,10 @@ class QueryController extends Controller
     {
         $query = $company->query();
 
+        /** @var  $loginUser \App\Models\User */
         $loginUser = $this->user;
 
-        if (!$loginUser->isAdmin()) {
+        if (!$loginUser->isAdmin() && !$loginUser->hasRole('legal-affairs') && !$loginUser->hasRole('legal-affairs-manager')) {
             $query->where('user_id', '=', $loginUser->id);
         }
 

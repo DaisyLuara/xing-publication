@@ -15,7 +15,7 @@ class InvoiceController extends Controller
 {
     public function show(Invoice $invoice)
     {
-        return $this->response->item($invoice, new InvoiceTransformer());
+        return $this->response()->item($invoice, new InvoiceTransformer())->setStatusCode(200);
     }
 
     public function index(InvoiceRequest $request, Invoice $invoice)
@@ -61,7 +61,7 @@ class InvoiceController extends Controller
             $query->whereRaw("(applicant=$user->id or handler=$user->id)");
         }
         $invoice = $query->orderBy('created_at', 'desc')->paginate(10);
-        return $this->response->paginator($invoice, new InvoiceTransformer());
+        return $this->response()->paginator($invoice, new InvoiceTransformer())->setStatusCode(200);
     }
 
     public function store(InvoiceRequest $request, Invoice $invoice)
@@ -78,7 +78,7 @@ class InvoiceController extends Controller
             $item['invoice_id'] = $invoice['id'];
             InvoiceContent::query()->create($item);
         }
-        return $this->response->noContent();
+        return $this->response()->item($invoice, new InvoiceTransformer())->setStatusCode(201);
     }
 
     public function update(InvoiceRequest $request, Invoice $invoice)
@@ -98,7 +98,7 @@ class InvoiceController extends Controller
         } else {
             $invoice->update(array_merge($request->all(), ['handler' => $invoice->applicant, 'status' => 6]));
         }
-        return $this->response->noContent();
+        return $this->response()->noContent()->setStatusCode(200);
     }
 
     public function destroy(Invoice $invoice)
@@ -110,7 +110,7 @@ class InvoiceController extends Controller
 //            ->where('invoice_id', '=', $invoice['id'])
 //            ->delete();
         $invoice->delete();
-        return $this->response->noContent();
+        return $this->response()->noContent()->setStatusCode(204);
     }
 
     public function auditing(Request $request, Invoice $invoice)
@@ -143,7 +143,7 @@ class InvoiceController extends Controller
             $invoice->update();
         }
 
-        return $this->response->item($invoice, new InvoiceTransformer())->setStatusCode(201);
+        return $this->response()->item($invoice, new InvoiceTransformer())->setStatusCode(201);
     }
 
     public function receive(Invoice $invoice)
@@ -156,7 +156,7 @@ class InvoiceController extends Controller
         $invoice->status = 5;
         $invoice->handler = null;
         $invoice->update();
-        return $this->response->noContent();
+        return $this->response()->noContent();
     }
 
     public function receipt(Invoice $invoice)
@@ -168,7 +168,7 @@ class InvoiceController extends Controller
         }
         $invoice->receive_status = 1;
         $invoice->update();
-        return $this->response->noContent();
+        return $this->response()->noContent();
 
     }
 }

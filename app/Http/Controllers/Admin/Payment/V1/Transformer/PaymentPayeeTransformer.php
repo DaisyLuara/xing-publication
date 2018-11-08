@@ -21,8 +21,8 @@ class PaymentPayeeTransformer extends TransformerAbstract
             'name' => $paymentPayee->name,
             'account_bank' => $paymentPayee->account_bank,
             'account_number' => $paymentPayee->account_number,
-            'created_at' => $paymentPayee->created_at,
-            'updated_at' => $paymentPayee->updated_at
+            'created_at' => $paymentPayee->created_at->toDateString(),
+            'updated_at' => $paymentPayee->updated_at->toDateString()
         ];
     }
 }

@@ -16,7 +16,7 @@ class ContractController extends Controller
 {
     public function show(Contract $contract)
     {
-        return $this->response->item($contract, new ContractTransformer());
+        return $this->response()->item($contract, new ContractTransformer())->setStatusCode(200);
     }
 
     public function index(ContractRequest $request, Contract $contract)
@@ -63,7 +63,7 @@ class ContractController extends Controller
             $query->whereRaw("(applicant = $user->id or handler = $user->id)");
         }
         $contract = $query->orderBy('created_at', 'desc')->paginate(10);
-        return $this->response->paginator($contract, new ContractTransformer());
+        return $this->response()->paginator($contract, new ContractTransformer())->setStatusCode(200);
     }
 
     public function remindIndex(Request $request, Contract $contract)
@@ -84,21 +84,26 @@ class ContractController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return $this->response->paginator($contract, new ContractTransformer());
+        return $this->response()->paginator($contract, new ContractTransformer())->setStatusCode(200);
 
     }
 
     public function store(ContractRequest $request, Contract $contract)
     {
+        /** @var  $user \App\Models\User */
         $user = $this->user();
-        if (!$user->parent_id) {
+        if (($user->hasRole('user') || $user->hasRole('bd-manager')) && !$user->parent_id) {
             abort(500, '无所属主管，无法新增合同申请');
         }
         $role = Role::findByName('legal-affairs');
         $legals = $role->users()->get();
         foreach ($legals as $legal) {
             if ($legal->hasPermissionTo('auditing')) {
-                $contract->fill(array_merge($request->all(), ['status' => 1, 'handler' => $legal->id]))->save();
+                if ($user->hasRole('legal-affairs') || $user->hasRole('legal-affairs-manager')) {
+                    $contract->fill(array_merge($request->all(), ['status' => 3, 'handler' => null]))->save();
+                } else {
+                    $contract->fill(array_merge($request->all(), ['status' => 1, 'handler' => $legal->id]))->save();
+                }
                 //文档存储
                 $ids = explode(',', $request->ids);
                 foreach ($ids as $id) {
@@ -112,7 +117,7 @@ class ContractController extends Controller
                         ContractReceiveDate::create(['contract_id' => $contract->id, 'date' => $date]);
                     }
                 }
-                return $this->response->item($contract, new ContractTransformer())->setStatusCode(201);
+                return $this->response()->item($contract, new ContractTransformer())->setStatusCode(201);
             }
         }
         abort(500, "无审批的法务,请联系管理员");
@@ -137,7 +142,7 @@ class ContractController extends Controller
                     foreach ($dates as $date) {
                         ContractReceiveDate::create(['contract_id' => $contract->id, 'date' => $date]);
                     }
-                    return $this->response->item($contract, new ContractTransformer())->setStatusCode(201);
+                    return $this->response()->item($contract, new ContractTransformer())->setStatusCode(200);
                 }
             }
             abort(500, "无审批的法务,请联系管理员");
@@ -152,7 +157,7 @@ class ContractController extends Controller
             } else {
                 $contract->update(array_merge($request->all(), ['status' => 5, 'handler' => $contract->applicant]));
             }
-            return $this->response->item($contract, new ContractTransformer())->setStatusCode(201);
+            return $this->response()->item($contract, new ContractTransformer())->setStatusCode(200);
         }
     }
 
@@ -163,7 +168,7 @@ class ContractController extends Controller
         }
 //        ContractReceiveDate::query()->where('contract_id', $contract->id)->delete();
         $contract->delete();
-        return $this->response->noContent();
+        return $this->response()->noContent()->setStatusCode(204);
     }
 
     public function auditing(Request $request, Contract $contract)
@@ -189,7 +194,7 @@ class ContractController extends Controller
             $contract->update();
         }
 
-        return $this->response->item($contract, new ContractTransformer())->setStatusCode(201);
+        return $this->response()->item($contract, new ContractTransformer())->setStatusCode(201);
     }
 
     public function specialAuditing(Request $request, Contract $contract)
@@ -203,6 +208,6 @@ class ContractController extends Controller
         $contract->status = 4;
         $contract->handler = $legalManager->id;
         $contract->update();
-        return $this->response->noContent();
+        return $this->response()->noContent();
     }
 }

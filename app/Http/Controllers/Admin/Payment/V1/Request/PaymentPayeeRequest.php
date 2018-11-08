@@ -10,6 +10,8 @@ namespace App\Http\Controllers\Admin\Payment\V1\Request;
 
 
 use Dingo\Api\Http\FormRequest;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class PaymentPayeeRequest extends FormRequest
 {
@@ -18,7 +20,7 @@ class PaymentPayeeRequest extends FormRequest
         return true;
     }
 
-    public function rules()
+    public function rules(Request $request)
     {
         switch ($this->method()) {
             case 'POST':
@@ -30,7 +32,7 @@ class PaymentPayeeRequest extends FormRequest
                 break;
             case 'PATCH':
                 return [
-                    'name' => 'string|max:50|unique:payment_payees',
+                    'name' => Rule::unique('payment_payees')->ignore($request->id),
                     'account_bank' => 'string',
                     'account_number' => 'alpha_num',
                 ];
