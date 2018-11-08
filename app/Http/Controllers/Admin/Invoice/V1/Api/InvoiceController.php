@@ -104,7 +104,7 @@ class InvoiceController extends Controller
     public function destroy(Invoice $invoice)
     {
         if ($invoice->status != 1) {
-            abort(500, "合同审批状态已更改，不可删除");
+            abort(403, "合同审批状态已更改，不可删除");
         }
 //        InvoiceContent::query()
 //            ->where('invoice_id', '=', $invoice['id'])
@@ -151,7 +151,7 @@ class InvoiceController extends Controller
         /** @var  $user \App\Models\User */
         $user = $this->user();
         if ($invoice->status != 4) {
-            abort(500, "不能领取票据");
+            abort(403, "不能领取票据");
         }
         $invoice->status = 5;
         $invoice->handler = null;
@@ -164,7 +164,7 @@ class InvoiceController extends Controller
         /** @var  $user \App\Models\User */
         $user = $this->user();
         if (!$user->hasPermissionTo('finance_bill')) {
-            abort(500, "无操作权限");
+            abort(403, "无操作权限");
         }
         $invoice->receive_status = 1;
         $invoice->update();

@@ -50,4 +50,9 @@ class Invoice extends Model
     {
         return $this->belongsTo(User::class, 'applicant', 'id');
     }
+
+    public function invoiceCompany()
+    {
+        return $this->belongsTo(InvoiceCompany::class, 'invoice_company_id', 'id');
+    }
 }

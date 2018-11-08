@@ -82,7 +82,7 @@ class PaymentController extends Controller
     public function destroy(Payment $payment)
     {
         if ($payment->status != 1) {
-            abort(500, "合同审批状态已更改，不可删除");
+            abort(403, "合同审批状态已更改，不可删除");
         }
         $payment->delete();
         return $this->response->noContent();
@@ -139,7 +139,7 @@ class PaymentController extends Controller
         /** @var  $user \App\Models\User */
         $user = $this->user();
         if (!$user->hasPermissionTo('finance_pay')) {
-            abort(500, "无操作权限");
+            abort(403, "无操作权限");
         }
         $payment->receive_status = 1;
         $payment->update();

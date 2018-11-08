@@ -159,7 +159,7 @@ class ContractController extends Controller
     public function destroy(Contract $contract)
     {
         if ($contract->status != 1) {
-            abort(500, "合同审批状态已更改，不可删除");
+            abort(403, "合同审批状态已更改，不可删除");
         }
 //        ContractReceiveDate::query()->where('contract_id', $contract->id)->delete();
         $contract->delete();
@@ -198,7 +198,7 @@ class ContractController extends Controller
         $legalManager = $role->users()->first();
 
         if ($contract->status == 2) {
-            abort(500, "合同审核中无法申请特批");
+            abort(403, "合同审核中无法申请特批");
         }
         $contract->status = 4;
         $contract->handler = $legalManager->id;
