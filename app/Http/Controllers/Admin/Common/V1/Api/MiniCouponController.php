@@ -134,7 +134,7 @@ class MiniCouponController extends Controller
 
         //用户最大领取量
         if (!$couponBatch->pmg_status) {
-            $coupons = Coupon::query()->where('taobao_user_id', $memberUID)
+            $coupons = Coupon::query()->where('member_uid', $memberUID)
                 ->where('coupon_batch_id', $couponBatch->id)
                 ->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
                 ->get();
