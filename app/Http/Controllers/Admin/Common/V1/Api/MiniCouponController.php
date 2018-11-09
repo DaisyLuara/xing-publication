@@ -122,9 +122,9 @@ class MiniCouponController extends Controller
 
         //每天最大领取量
         if (!$couponBatch->dmg_status) {
-            $startOfDay = Carbon::now()->startOfDay();
+            $dateString = Carbon::now()->toDateString();
             $coupon = Coupon::query()->where('coupon_batch_id', $couponBatch->id)
-                ->whereRaw("date_format(created_at,'%Y-%m-%d')>='$startOfDay'")
+                ->whereRaw("date_format(created_at,'%Y-%m-%d')='$dateString'")
                 ->selectRaw("count(coupon_batch_id) as day_receive")->first();
 
             if ($coupon->day_receive >= $couponBatch->day_max_get) {
