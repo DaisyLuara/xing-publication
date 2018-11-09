@@ -53,4 +53,9 @@ class Contract extends Model
     {
         return $this->hasMany(ContractReceiveDate::class, 'contract_id', 'id');
     }
+
+    public function contractHistory()
+    {
+        return $this->hasMany(ContractHistory::class, 'contract_id', 'id');
+    }
 }
