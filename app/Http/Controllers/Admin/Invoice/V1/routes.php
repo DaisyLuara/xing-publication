@@ -25,6 +25,8 @@ $api->version('v1', [
             $api->post('invoice_company', 'InvoiceCompanyController@store');
             $api->patch('invoice_company/{invoice_company}', 'InvoiceCompanyController@update');
 
+            $api->get('invoice_history', 'InvoiceHistoryController@index');
+
         });
     });
 

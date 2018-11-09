@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Invoice\V1\Api;
 
 use App\Http\Controllers\Admin\Invoice\V1\Models\Invoice;
 use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceContent;
+use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceHistory;
 use App\Http\Controllers\Admin\Invoice\V1\Request\InvoiceRequest;
 use App\Http\Controllers\Admin\Invoice\V1\Transformer\InvoiceTransformer;
 use App\Http\Controllers\Controller;
@@ -126,21 +127,25 @@ class InvoiceController extends Controller
                     $invoice->status = 2;
                     $invoice->handler = $legal->id;
                     $invoice->update();
+                    InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $invoice->id], ['user_id' => $user->id, 'contract_id' => $invoice->id]);
                 }
             }
         } else if ($user->hasRole('legal-affairs')) {
             $invoice->handler = $user->parent_id;
             $invoice->update();
+            InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $invoice->id], ['user_id' => $user->id, 'contract_id' => $invoice->id]);
         } else if ($user->hasRole('legal-affairs-manager')) {
             $permission = Permission::findByName('finance_bill');
             $finance = $permission->users()->first();
             $invoice->status = 3;
             $invoice->handler = $finance->id;
             $invoice->update();
+            InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $invoice->id], ['user_id' => $user->id, 'contract_id' => $invoice->id]);
         } else if ($user->hasRole('finance')) {
             $invoice->status = 4;
             $invoice->handler = $invoice->applicant;
             $invoice->update();
+            InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $invoice->id], ['user_id' => $user->id, 'contract_id' => $invoice->id]);
         }
 
         return $this->response()->item($invoice, new InvoiceTransformer())->setStatusCode(201);

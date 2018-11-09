@@ -43,4 +43,9 @@ class Payment extends Model
     {
         return $this->belongsTo(PaymentPayee::class, 'payment_payee_id', 'id');
     }
+
+    public function paymentHistory()
+    {
+        return $this->hasMany(PaymentHistory::class, 'payment_id', 'id');
+    }
 }

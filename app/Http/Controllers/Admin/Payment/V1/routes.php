@@ -23,6 +23,8 @@ $api->version('v1', [
             $api->get('payment_payee', 'PaymentPayeeController@index');
             $api->post('payment_payee', 'PaymentPayeeController@store');
             $api->patch('payment_payee/{payment_payee}', 'PaymentPayeeController@update');
+
+            $api->get('payment_history', 'PaymentHistoryController@index');
         });
     });
 

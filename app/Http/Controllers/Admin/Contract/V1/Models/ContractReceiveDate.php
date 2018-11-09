@@ -13,9 +13,15 @@ use App\Models\Model;
 
 class ContractReceiveDate extends Model
 {
-    protected $fillable=[
+    protected $fillable = [
         'contract_id',
-        'date',
+        'receive_date',
+        'receive_status'
     ];
     public $timestamps = false;
+
+    public function contract()
+    {
+        return $this->belongsTo(Contract::class, 'contract_id', 'id');
+    }
 }

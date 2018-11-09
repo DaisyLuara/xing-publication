@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use App\Http\Controllers\Admin\Payment\V1\Models\PaymentHistory;
 
 class PaymentController extends Controller
 {
@@ -101,13 +102,14 @@ class PaymentController extends Controller
                     $payment->status = 2;
                     $payment->handler = $legal->id;
                     $payment->update();
+                    PaymentHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $payment->id], ['user_id' => $user->id, 'contract_id' => $payment->id]);
                 }
             }
         } else if ($user->hasRole('legal-affairs')) {
 
             $payment->handler = $user->parent_id;
             $payment->update();
-
+            PaymentHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $payment->id], ['user_id' => $user->id, 'contract_id' => $payment->id]);
         } else if ($user->hasRole('legal-affairs-manager')) {
 
             $role = Role::findByName('auditor');
@@ -116,6 +118,7 @@ class PaymentController extends Controller
                 if ($auditor->hasPermissionTo('auditing')) {
                     $payment->handler = $auditor->id;
                     $payment->update();
+                    PaymentHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $payment->id], ['user_id' => $user->id, 'contract_id' => $payment->id]);
                 }
             }
         } else if ($user->hasRole('auditor')) {
@@ -125,11 +128,13 @@ class PaymentController extends Controller
             $payment->status = 3;
             $payment->handler = $finance->id;
             $payment->update();
+            PaymentHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $payment->id], ['user_id' => $user->id, 'contract_id' => $payment->id]);
 
         } else if ($user->hasRole('finance')) {
             $payment->status = 4;
             $payment->handler = null;
             $payment->update();
+            PaymentHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $payment->id], ['user_id' => $user->id, 'contract_id' => $payment->id]);
         }
         return $this->response->noContent();
     }

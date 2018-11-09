@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Admin\Contract\V1\Api;
 
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
+use App\Http\Controllers\Admin\Contract\V1\Models\ContractHistory;
 use App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate;
 use App\Http\Controllers\Admin\Contract\V1\Request\ContractRequest;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Http\Controllers\Controller;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 
@@ -66,27 +66,6 @@ class ContractController extends Controller
         return $this->response()->paginator($contract, new ContractTransformer())->setStatusCode(200);
     }
 
-    public function remindIndex(Request $request, Contract $contract)
-    {
-        $user = $this->user();
-        $currentDate = Carbon::now()->toDateString();
-        $query = $contract->query();
-        if ($request->name) {
-            $query->where('name', '=', $request->name);
-        }
-        if ($request->has('contract_number')) {
-            $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
-        }
-        $contract = $query->whereHas('receiveDate', function ($q) use ($currentDate) {
-            $q->whereRaw("'$currentDate' between date_add(date, interval - 5 day) and date_add(date, interval 3 day)");
-        })
-            ->whereRaw("(applicant = $user->id or handler = $user->id)")
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
-
-        return $this->response()->paginator($contract, new ContractTransformer())->setStatusCode(200);
-
-    }
 
     public function store(ContractRequest $request, Contract $contract)
     {
@@ -114,7 +93,7 @@ class ContractController extends Controller
                     //收款日期存储
                     $dates = explode(',', $request->receive_date);
                     foreach ($dates as $date) {
-                        ContractReceiveDate::create(['contract_id' => $contract->id, 'date' => $date]);
+                        ContractReceiveDate::create(['contract_id' => $contract->id, 'receive_date' => $date, 'receive_status' => 0]);
                     }
                 }
                 return $this->response()->item($contract, new ContractTransformer())->setStatusCode(201);
@@ -181,6 +160,7 @@ class ContractController extends Controller
             $contract->handler = $user->parent_id;
             $contract->contract_number = $request->contract_number;
             $contract->update();
+            ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
         } else if ($user->hasRole('legal-affairs-manager')) {
             $contract->status = 2;
             $contract->handler = $contract->applicantUser->parent_id;
@@ -188,10 +168,12 @@ class ContractController extends Controller
                 $contract->contract_number = $request->contract_number;
             }
             $contract->update();
+            ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
         } else if ($user->hasRole('bd-manager')) {
             $contract->status = 3;
             $contract->handler = null;
             $contract->update();
+            ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
         }
 
         return $this->response()->item($contract, new ContractTransformer())->setStatusCode(201);

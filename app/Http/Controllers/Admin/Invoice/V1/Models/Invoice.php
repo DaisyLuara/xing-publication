@@ -49,4 +49,9 @@ class Invoice extends Model
     {
         return $this->belongsTo(InvoiceCompany::class, 'invoice_company_id', 'id');
     }
+
+    public function invoiceHistory()
+    {
+        return $this->hasMany(InvoiceHistory::class, 'invoice_id', 'id');
+    }
 }
