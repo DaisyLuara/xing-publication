@@ -11,7 +11,11 @@ use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\PolicyTransformer;
 use App\Http\Controllers\Admin\Invoice\V1\Models\GoodsService;
+use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany;
 use App\Http\Controllers\Admin\Invoice\V1\Transformer\GoodsServiceTransformer;
+use App\Http\Controllers\Admin\Invoice\V1\Transformer\InvoiceCompanyTransformer;
+use App\Http\Controllers\Admin\Payment\V1\Models\PaymentPayee;
+use App\Http\Controllers\Admin\Payment\V1\Transformer\PaymentPayeeTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\AreaTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\MarketTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\PointTransformer;
@@ -243,9 +247,10 @@ class QueryController extends Controller
     {
         $query = $company->query();
 
+        /** @var  $loginUser \App\Models\User */
         $loginUser = $this->user;
 
-        if (!$loginUser->isAdmin()) {
+        if (!$loginUser->isAdmin() && !$loginUser->hasRole('legal-affairs') && !$loginUser->hasRole('legal-affairs-manager')) {
             $query->where('user_id', '=', $loginUser->id);
         }
 
@@ -278,6 +283,7 @@ class QueryController extends Controller
     public function contractQuery(Contract $contract, Request $request)
     {
         $query = $contract->query();
+        /** @var  $user \App\Models\User */
         $user = $this->user();
 
         if ($request->name) {
@@ -290,7 +296,10 @@ class QueryController extends Controller
         if ($request->has('type')) {
             $query->where('type', $request->type);
         }
-        $contracts = $query->where('applicant', '=', $user->id)->where('status', '3')->get();
+        if ($user->hasRole('user') || $user->hasRole('bd-manager')) {
+            $query->where('applicant', '=', $user->id);
+        }
+        $contracts = $query->where('status', '3')->get();
 
         return $this->response->collection($contracts, new ContractTransformer());
     }
@@ -314,5 +323,36 @@ class QueryController extends Controller
         $role = Role::findByName('legal-affairs-manager');
         $users = $role->users()->get();
         return $this->response->collection($users, new UserTransformer());
+    }
+
+    public function invoiceCompanyQuery(Request $request, InvoiceCompany $invoiceCompany)
+    {
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
+        $query = $invoiceCompany->query();
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        if ($user->hasRole('user') || $user->hasRole('bd-manager')) {
+            $query->where('user_id', $user->id);
+        }
+        $invoiceCompany = $query->get();
+        return $this->response()->collection($invoiceCompany, new InvoiceCompanyTransformer());
+    }
+
+    public function paymentPayeeQuery(Request $request, PaymentPayee $paymentPayee)
+    {
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
+        $query = $paymentPayee->query();
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+        if ($user->hasRole('user') || $user->hasRole('bd-manager')) {
+            $query->where('user_id', $user->id);
+        }
+        $paymentPayee = $query->get();
+        return $this->response()->collection($paymentPayee, new PaymentPayeeTransformer());
     }
 }

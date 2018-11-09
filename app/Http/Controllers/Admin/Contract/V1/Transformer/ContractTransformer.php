@@ -34,7 +34,7 @@ class ContractTransformer extends TransformerAbstract
             'handler_name' => $contract->handler ? $contract->handlerUser->name : null,
             'type' => $contract->type == 0 ? '收款合同' : '付款合同',
             'remark' => $contract->remark,
-            'receive_date' => join(',', array_column($contract->receiveDate->toArray(), 'date')),
+            'receive_date' => join(',', array_column($contract->receiveDate->toArray(), 'receive_date')),
             'created_at' => $contract->created_at->toDateTimeString(),
             'updated_at' => $contract->updated_at->toDateTimeString(),
         ];

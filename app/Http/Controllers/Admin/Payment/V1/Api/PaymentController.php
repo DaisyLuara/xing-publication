@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use App\Http\Controllers\Admin\Payment\V1\Models\PaymentHistory;
 
 class PaymentController extends Controller
 {
@@ -58,11 +59,29 @@ class PaymentController extends Controller
 
     public function store(PaymentRequest $request, Payment $payment)
     {
+        /** @var  $user \App\Models\User */
         $user = $this->user();
-        if (!$user->parent_id) {
+        if (($user->hasRole('user') || $user->hasRole('bd-manager')) && !$user->parent_id) {
             abort(500, '无所属主管，无法新增付款申请');
         }
-        $payment->fill(array_merge($request->all(), ['status' => 1, 'handler' => $user->parent_id, 'receive_status' => 0]))->save();
+        if ($user->hasRole('legal-affairs')) {
+            $payment->fill(array_merge($request->all(), ['status' => 2, 'handler' => $user->parent_id, 'receive_status' => 0]))->save();
+        }
+
+        if ($user->hasRole('legal-affairs-manager')) {
+            $role = Role::findByName('auditor');
+            $auditors = $role->users()->get();
+            foreach ($auditors as $auditor) {
+                if ($auditor->hasPermissionTo('auditing')) {
+                    $payment->fill(array_merge($request->all(), ['status' => 2, 'handler' => $auditor->id, 'receive_status' => 0]))->save();
+                }
+            }
+        }
+
+        if ($user->hasRole('user') || $user->hasRole('bd-manager')) {
+            $payment->fill(array_merge($request->all(), ['status' => 1, 'handler' => $user->parent_id, 'receive_status' => 0]))->save();
+        }
+
         return $this->response->noContent();
     }
 
@@ -82,7 +101,7 @@ class PaymentController extends Controller
     public function destroy(Payment $payment)
     {
         if ($payment->status != 1) {
-            abort(500, "合同审批状态已更改，不可删除");
+            abort(403, "合同审批状态已更改，不可删除");
         }
         $payment->delete();
         return $this->response->noContent();
@@ -101,13 +120,14 @@ class PaymentController extends Controller
                     $payment->status = 2;
                     $payment->handler = $legal->id;
                     $payment->update();
+                    PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
                 }
             }
         } else if ($user->hasRole('legal-affairs')) {
 
             $payment->handler = $user->parent_id;
             $payment->update();
-
+            PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
         } else if ($user->hasRole('legal-affairs-manager')) {
 
             $role = Role::findByName('auditor');
@@ -116,6 +136,7 @@ class PaymentController extends Controller
                 if ($auditor->hasPermissionTo('auditing')) {
                     $payment->handler = $auditor->id;
                     $payment->update();
+                    PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
                 }
             }
         } else if ($user->hasRole('auditor')) {
@@ -125,11 +146,13 @@ class PaymentController extends Controller
             $payment->status = 3;
             $payment->handler = $finance->id;
             $payment->update();
+            PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
 
         } else if ($user->hasRole('finance')) {
             $payment->status = 4;
             $payment->handler = null;
             $payment->update();
+            PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
         }
         return $this->response->noContent();
     }
@@ -139,7 +162,7 @@ class PaymentController extends Controller
         /** @var  $user \App\Models\User */
         $user = $this->user();
         if (!$user->hasPermissionTo('finance_pay')) {
-            abort(500, "无操作权限");
+            abort(403, "无操作权限");
         }
         $payment->receive_status = 1;
         $payment->update();

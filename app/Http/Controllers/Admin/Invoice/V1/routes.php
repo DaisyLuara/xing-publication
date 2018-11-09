@@ -19,6 +19,14 @@ $api->version('v1', [
             $api->post('invoice/auditing/{invoice}', 'InvoiceController@auditing');
             $api->post('invoice/receive/{invoice}', 'InvoiceController@receive');
             $api->post('invoice/receipt/{invoice}', 'InvoiceController@receipt');
+
+            $api->get('invoice_company/{invoice_company}', 'InvoiceCompanyController@show');
+            $api->get('invoice_company', 'InvoiceCompanyController@index');
+            $api->post('invoice_company', 'InvoiceCompanyController@store');
+            $api->patch('invoice_company/{invoice_company}', 'InvoiceCompanyController@update');
+
+            $api->get('invoice_history', 'InvoiceHistoryController@index');
+
         });
     });
 

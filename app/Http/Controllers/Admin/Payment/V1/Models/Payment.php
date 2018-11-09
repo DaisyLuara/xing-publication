@@ -18,9 +18,7 @@ class Payment extends Model
         'amount',
         'type',
         'reason',
-        'payee',
-        'account_bank',
-        'account_number',
+        'payment_payee_id',
         'remark',
         'status',
         'receive_status',
@@ -39,5 +37,15 @@ class Payment extends Model
     public function handlerUser()
     {
         return $this->belongsTo(User::class, 'handler', 'id');
+    }
+
+    public function paymentPayee()
+    {
+        return $this->belongsTo(PaymentPayee::class, 'payment_payee_id', 'id');
+    }
+
+    public function paymentHistory()
+    {
+        return $this->hasMany(PaymentHistory::class, 'payment_id', 'id');
     }
 }

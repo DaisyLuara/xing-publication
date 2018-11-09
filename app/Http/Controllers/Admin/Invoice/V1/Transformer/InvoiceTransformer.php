@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Invoice\V1\Transformer;
 
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Invoice\V1\Models\Invoice;
+use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany;
 use League\Fractal\TransformerAbstract;
 
 class InvoiceTransformer extends TransformerAbstract
@@ -16,7 +17,7 @@ class InvoiceTransformer extends TransformerAbstract
         '5' => '已认领',
         '6' => '驳回',
     ];
-    protected $availableIncludes = ['invoice_content', 'contract'];
+    protected $availableIncludes = ['invoice_content', 'contract', 'invoice_company'];
 
     public function transform(Invoice $invoice)
     {
@@ -30,13 +31,7 @@ class InvoiceTransformer extends TransformerAbstract
             'handler' => $invoice->handler,
             'handler_name' => $invoice->handler ? $invoice->handlerUser->name : null,
             'type' => $invoice->type == 0 ? '专票' : '普票',
-            'taxpayer_num' => $invoice->taxpayer_num,
-            'invoice_company' => $invoice->invoice_company,
-            'phone' => $invoice->phone,
-            'telephone' => $invoice->telephone,
-            'address' => $invoice->address,
-            'account_bank' => $invoice->account_bank,
-            'account_number' => $invoice->account_number,
+            'invoice_company_name' => $invoice->invoiceCompany ? $invoice->invoiceCompany->name : null,
             'status' => $this->statusMapping[$invoice->status],
             'receive_status' => $invoice->receive_status == 0 ? '未收款' : '已收款',
             'kind' => $invoice->kind,
@@ -56,5 +51,13 @@ class InvoiceTransformer extends TransformerAbstract
     public function includeContract(Invoice $invoice)
     {
         return $this->item($invoice->contract, new ContractTransformer());
+    }
+
+    public function includeInvoiceCompany(Invoice $invoice)
+    {
+        if (!$invoice->invoiceCompany) {
+            return null;
+        }
+        return $this->item($invoice->invoiceCompany, new InvoiceCompanyTransformer());
     }
 }
