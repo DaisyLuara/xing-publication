@@ -100,7 +100,7 @@ class MiniCouponController extends Controller
     /**
      * 领取优惠券
      * @param CouponBatch $couponBatch
-     * @param TaobaoCouponRequest $request
+     * @param MiniCouponRequest $request
      * @return mixed
      */
     public function store(CouponBatch $couponBatch, MiniCouponRequest $request)
@@ -122,9 +122,9 @@ class MiniCouponController extends Controller
 
         //每天最大领取量
         if (!$couponBatch->dmg_status) {
-            $now = Carbon::now();
+            $dateString = Carbon::now()->toDateString();
             $coupon = Coupon::query()->where('coupon_batch_id', $couponBatch->id)
-                ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
+                ->whereRaw("date_format(created_at,'%Y-%m-%d')='$dateString'")
                 ->selectRaw("count(coupon_batch_id) as day_receive")->first();
 
             if ($coupon->day_receive >= $couponBatch->day_max_get) {
@@ -134,7 +134,7 @@ class MiniCouponController extends Controller
 
         //用户最大领取量
         if (!$couponBatch->pmg_status) {
-            $coupons = Coupon::query()->where('taobao_user_id', $memberUID)
+            $coupons = Coupon::query()->where('member_uid', $memberUID)
                 ->where('coupon_batch_id', $couponBatch->id)
                 ->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
                 ->get();

@@ -38,10 +38,10 @@ class CouponController extends Controller
             abort(500, '优惠券已发完');
         }
 
-        $now = Carbon::now()->toDateString();
+        $startOfDay = Carbon::now()->toDateString();
         if ($couponBatch->dmg_status == 0) {
             $coupon = Coupon::query()->where('coupon_batch_id', $couponBatch->id)
-                ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
+                ->whereRaw("date_format(created_at,'%Y-%m-%d')='$startOfDay'")
                 ->selectRaw("count(coupon_batch_id) as day_receive")->first();
 
             if ($coupon->day_receive >= $couponBatch->day_max_get) {
