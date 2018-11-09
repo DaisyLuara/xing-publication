@@ -67,14 +67,25 @@ class InvoiceController extends Controller
 
     public function store(InvoiceRequest $request, Invoice $invoice)
     {
+        /** @var  $user \App\Models\User */
         $user = $this->user();
-        if (!$user->parent_id) {
+        if (($user->hasRole('user') || $user->hasRole('bd-manager')) && !$user->parent_id) {
             abort(500, '无所属主管，无法新增开票申请');
         }
         $invoice = $request->all();
         $content = $invoice['invoice_content'];
         unset($invoice['invoice_content']);
-        $invoice = Invoice::query()->create(array_merge($invoice, ['status' => 1, 'handler' => $user->parent_id]));
+        if ($user->hasRole('legal-affairs')) {
+            $invoice = Invoice::query()->create(array_merge($invoice, ['status' => 2, 'handler' => $user->parent_id]));
+        }
+        if ($user->hasRole('legal-affairs-manager')) {
+            $permission = Permission::findByName('finance_bill');
+            $finance = $permission->users()->first();
+            $invoice = Invoice::query()->create(array_merge($invoice, ['status' => 3, 'handler' => $finance->id]));
+        }
+        if ($user->hasRole('user') || $user->hasRole('bd-manager')) {
+            $invoice = Invoice::query()->create(array_merge($invoice, ['status' => 1, 'handler' => $user->parent_id]));
+        }
         foreach ($content as $item) {
             $item['invoice_id'] = $invoice['id'];
             InvoiceContent::query()->create($item);
@@ -127,25 +138,25 @@ class InvoiceController extends Controller
                     $invoice->status = 2;
                     $invoice->handler = $legal->id;
                     $invoice->update();
-                    InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $invoice->id], ['user_id' => $user->id, 'contract_id' => $invoice->id]);
+                    InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'invoice_id' => $invoice->id], ['user_id' => $user->id, 'invoice_id' => $invoice->id]);
                 }
             }
         } else if ($user->hasRole('legal-affairs')) {
             $invoice->handler = $user->parent_id;
             $invoice->update();
-            InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $invoice->id], ['user_id' => $user->id, 'contract_id' => $invoice->id]);
+            InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'invoice_id' => $invoice->id], ['user_id' => $user->id, 'invoice_id' => $invoice->id]);
         } else if ($user->hasRole('legal-affairs-manager')) {
             $permission = Permission::findByName('finance_bill');
             $finance = $permission->users()->first();
             $invoice->status = 3;
             $invoice->handler = $finance->id;
             $invoice->update();
-            InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $invoice->id], ['user_id' => $user->id, 'contract_id' => $invoice->id]);
+            InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'invoice_id' => $invoice->id], ['user_id' => $user->id, 'invoice_id' => $invoice->id]);
         } else if ($user->hasRole('finance')) {
             $invoice->status = 4;
             $invoice->handler = $invoice->applicant;
             $invoice->update();
-            InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $invoice->id], ['user_id' => $user->id, 'contract_id' => $invoice->id]);
+            InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'invoice_id' => $invoice->id], ['user_id' => $user->id, 'invoice_id' => $invoice->id]);
         }
 
         return $this->response()->item($invoice, new InvoiceTransformer())->setStatusCode(201);

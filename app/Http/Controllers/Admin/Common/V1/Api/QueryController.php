@@ -283,6 +283,7 @@ class QueryController extends Controller
     public function contractQuery(Contract $contract, Request $request)
     {
         $query = $contract->query();
+        /** @var  $user \App\Models\User */
         $user = $this->user();
 
         if ($request->name) {
@@ -295,7 +296,10 @@ class QueryController extends Controller
         if ($request->has('type')) {
             $query->where('type', $request->type);
         }
-        $contracts = $query->where('applicant', '=', $user->id)->where('status', '3')->get();
+        if ($user->hasRole('user') || $user->hasRole('bd-manager')) {
+            $query->where('applicant', '=', $user->id);
+        }
+        $contracts = $query->where('status', '3')->get();
 
         return $this->response->collection($contracts, new ContractTransformer());
     }
@@ -323,23 +327,32 @@ class QueryController extends Controller
 
     public function invoiceCompanyQuery(Request $request, InvoiceCompany $invoiceCompany)
     {
+        /** @var  $user \App\Models\User */
         $user = $this->user();
         $query = $invoiceCompany->query();
         if ($request->has('name')) {
             $query->where('name', 'like', '%' . $request->name . '%');
         }
-        $invoiceCompany = $query->where('user_id', $user->id)->get();
+
+        if ($user->hasRole('user') || $user->hasRole('bd-manager')) {
+            $query->where('user_id', $user->id);
+        }
+        $invoiceCompany = $query->get();
         return $this->response()->collection($invoiceCompany, new InvoiceCompanyTransformer());
     }
 
     public function paymentPayeeQuery(Request $request, PaymentPayee $paymentPayee)
     {
+        /** @var  $user \App\Models\User */
         $user = $this->user();
         $query = $paymentPayee->query();
         if ($request->has('name')) {
             $query->where('name', 'like', '%' . $request->name . '%');
         }
-        $paymentPayee = $query->where('user_id', $user->id)->get();
+        if ($user->hasRole('user') || $user->hasRole('bd-manager')) {
+            $query->where('user_id', $user->id);
+        }
+        $paymentPayee = $query->get();
         return $this->response()->collection($paymentPayee, new PaymentPayeeTransformer());
     }
 }

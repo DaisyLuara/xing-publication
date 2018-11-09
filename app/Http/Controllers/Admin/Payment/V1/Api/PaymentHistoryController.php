@@ -43,7 +43,7 @@ class PaymentHistoryController extends Controller
 
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        $query->where('paymentHistory', function ($q) use ($user) {
+        $query->whereHas('paymentHistory', function ($q) use ($user) {
             $q->where('user_id', $user->id);
         });
         $payment = $query->orderBy('created_at', 'desc')->paginate(10);
