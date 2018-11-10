@@ -16,6 +16,7 @@ $api->version('v1', [
             $api->patch('payment/{payment}', 'PaymentController@update');
             $api->delete('payment/{payment}', 'PaymentController@destroy');
 
+            $api->post('payment/reject/{payment}', 'PaymentController@reject');
             $api->post('payment/auditing/{payment}', 'PaymentController@auditing');
             $api->post('payment/receive/{payment}', 'PaymentController@receive');
 

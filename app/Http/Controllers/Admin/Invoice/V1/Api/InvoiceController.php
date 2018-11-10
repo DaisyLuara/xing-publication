@@ -97,19 +97,19 @@ class InvoiceController extends Controller
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if ($invoice->status == 6) {
-            $invoice->update(array_merge($request->all(), ['handler' => $user->parent_id, 'status' => 1]));
-            $content = $request->invoice_content;
-            InvoiceContent::query()
-                ->where('invoice_id', '=', $invoice['id'])
-                ->delete();
-            foreach ($content as $item) {
-                $item['invoice_id'] = $invoice['id'];
-                InvoiceContent::query()->create($item);
-            }
-        } else {
-            $invoice->update(array_merge($request->all(), ['handler' => $invoice->applicant, 'status' => 6]));
+        if (!$user->hasRole('user') && !$user->hasRole('bd-manager')) {
+            abort(403, '无操作权限');
         }
+        $invoice->update(array_merge($request->all(), ['handler' => $user->parent_id, 'status' => 1]));
+        $content = $request->invoice_content;
+        InvoiceContent::query()
+            ->where('invoice_id', '=', $invoice['id'])
+            ->delete();
+        foreach ($content as $item) {
+            $item['invoice_id'] = $invoice['id'];
+            InvoiceContent::query()->create($item);
+        }
+
         return $this->response()->noContent()->setStatusCode(200);
     }
 
@@ -123,6 +123,16 @@ class InvoiceController extends Controller
 //            ->delete();
         $invoice->delete();
         return $this->response()->noContent()->setStatusCode(204);
+    }
+
+    public function reject(Request $request, Invoice $invoice)
+    {
+
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
+        $invoice->update(array_merge($request->all(), ['handler' => $invoice->applicant, 'status' => 6]));
+        InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'invoice_id' => $invoice->id], ['user_id' => $user->id, 'invoice_id' => $invoice->id]);
+        return $this->response()->noContent()->setStatusCode(200);
     }
 
     public function auditing(Request $request, Invoice $invoice)

@@ -16,6 +16,7 @@ $api->version('v1', [
             $api->patch('invoice/{invoice}', 'InvoiceController@update');
             $api->delete('invoice/{invoice}', 'InvoiceController@destroy');
 
+            $api->post('invoice/reject/{invoice}', 'InvoiceController@reject');
             $api->post('invoice/auditing/{invoice}', 'InvoiceController@auditing');
             $api->post('invoice/receive/{invoice}', 'InvoiceController@receive');
             $api->post('invoice/receipt/{invoice}', 'InvoiceController@receipt');

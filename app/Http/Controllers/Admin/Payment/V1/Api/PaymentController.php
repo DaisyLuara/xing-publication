@@ -82,20 +82,19 @@ class PaymentController extends Controller
             $payment->fill(array_merge($request->all(), ['status' => 1, 'handler' => $user->parent_id, 'receive_status' => 0]))->save();
         }
 
-        return $this->response->noContent();
+        return $this->response()->noContent();
     }
 
     public function update(PaymentRequest $request, Payment $payment)
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if ($payment->status == 5) {
-            $payment->update(array_merge($request->all(), ['status' => 1, 'handler' => $user->parent_id]));
-        } else {
-            $payment->update(array_merge($request->all(), ['status' => 5, 'handler' => $payment->applicant]));
+        if (!$user->hasRole('user') && !$user->hasRole('bd-manager')) {
+            abort(403, '无操作权限');
         }
+        $payment->update(array_merge($request->all(), ['status' => 1, 'handler' => $user->parent_id]));
 
-        return $this->response->item($payment, new PaymentTransformer());
+        return $this->response()->item($payment, new PaymentTransformer());
     }
 
     public function destroy(Payment $payment)
@@ -105,6 +104,12 @@ class PaymentController extends Controller
         }
         $payment->delete();
         return $this->response->noContent();
+    }
+
+    public function reject(Request $request, Payment $payment)
+    {
+        $payment->update(array_merge($request->all(), ['status' => 5, 'handler' => $payment->applicant]));
+        return $this->response()->noContent();
     }
 
     public function auditing(Request $request, Payment $payment)
