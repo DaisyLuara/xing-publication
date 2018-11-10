@@ -124,7 +124,7 @@ class ContractController extends Controller
                 $dates = explode(',', $request->receive_date);
                 ContractReceiveDate::query()->where('contract_id', $contract->id)->delete();
                 foreach ($dates as $date) {
-                    ContractReceiveDate::create(['contract_id' => $contract->id, 'date' => $date]);
+                    ContractReceiveDate::create(['contract_id' => $contract->id, 'receive_date' => $date,'receive_status'=>0]);
                 }
                 return $this->response()->item($contract, new ContractTransformer())->setStatusCode(200);
             }
