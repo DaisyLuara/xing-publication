@@ -108,7 +108,9 @@ class PaymentController extends Controller
 
     public function reject(Request $request, Payment $payment)
     {
+        $user = $this->user();
         $payment->update(array_merge($request->all(), ['status' => 5, 'handler' => $payment->applicant]));
+        PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
         return $this->response()->noContent();
     }
 
