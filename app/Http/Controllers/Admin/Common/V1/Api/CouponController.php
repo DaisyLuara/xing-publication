@@ -169,6 +169,11 @@ class CouponController extends Controller
 
         $targetCouponBatch = getRand($couponBatchPolicies);
         $couponBatch = CouponBatch::findOrFail($targetCouponBatch->coupon_batch_id);
+
+        if ($couponBatch->stock <= 0) {
+            abort(500, '优惠券已发完');
+        }
+       
         $couponBatch->decrement('stock');
 
         return $this->response->item($couponBatch, new CouponBatchTransformer());
