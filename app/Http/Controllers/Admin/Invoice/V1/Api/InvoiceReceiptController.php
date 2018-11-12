@@ -14,7 +14,7 @@ use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceReceipt;
 use App\Http\Controllers\Admin\Invoice\V1\Request\InvoiceReceiptRequest;
 use App\Http\Controllers\Admin\Invoice\V1\Transformer\InvoiceReceiptTransformer;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Request;
+use Illuminate\Http\Request;
 
 class InvoiceReceiptController extends Controller
 {
