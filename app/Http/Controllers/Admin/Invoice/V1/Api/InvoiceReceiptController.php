@@ -83,7 +83,7 @@ class InvoiceReceiptController extends Controller
             abort(403, '无操作权限');
         }
         $contractReceiveDate = ContractReceiveDate::query()->first($request->receive_date_id);
-        $contractReceiveDate->update(['receive_status' => 1, 'invoice_receipt_id' => $request->id]);
+        $contractReceiveDate->update(['receive_status' => 1, 'invoice_receipt_id' => $invoiceReceipt->id]);
 
         $invoiceReceipt->claim_status = 1;
         $invoiceReceipt->update();

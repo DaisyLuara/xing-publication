@@ -9,14 +9,13 @@
 namespace App\Http\Controllers\Admin\Invoice\V1\Transformer;
 
 
-use App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractReceiveDateTransformer;
 use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceReceipt;
 use League\Fractal\TransformerAbstract;
 
 class InvoiceReceiptTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['receive_date'];
+    protected $availableIncludes = ['receiveDate'];
 
     public function transform(InvoiceReceipt $invoiceReceipt)
     {

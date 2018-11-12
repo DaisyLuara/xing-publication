@@ -9,7 +9,7 @@ use League\Fractal\TransformerAbstract;
 class ContractTransformer extends TransformerAbstract
 {
 
-    protected $availableIncludes = ['media', 'receive_date'];
+    protected $availableIncludes = ['media', 'receiveDate'];
 
     protected $statusMapping = [
         '1' => '待审批',
@@ -41,7 +41,7 @@ class ContractTransformer extends TransformerAbstract
             'type' => $this->typeMapping[$contract->type],
             'amount' => $contract->amount,
             'remark' => $contract->remark,
-            'receive_date' => join(',', array_column($contract->receiveDate->toArray(), 'receive_date')),
+            //'receive_date' => join(',', array_column($contract->receiveDate->toArray(), 'receive_date')),
             'created_at' => $contract->created_at->toDateTimeString(),
             'updated_at' => $contract->updated_at->toDateTimeString(),
         ];

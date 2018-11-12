@@ -15,7 +15,7 @@ use League\Fractal\TransformerAbstract;
 
 class ContractReceiveDateTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['invoice_receipt'];
+    protected $availableIncludes = ['invoiceReceipt'];
 
     public function transform(ContractReceiveDate $contractReceiveDate)
     {
@@ -29,6 +29,9 @@ class ContractReceiveDateTransformer extends TransformerAbstract
 
     public function includeInvoiceReceipt(ContractReceiveDate $contractReceiveDate)
     {
+        if (!$contractReceiveDate->invoiceReceipt) {
+            return null;
+        }
         return $this->item($contractReceiveDate->invoiceReceipt(), new InvoiceReceiptTransformer());
     }
 }
