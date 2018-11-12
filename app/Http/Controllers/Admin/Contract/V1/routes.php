@@ -16,6 +16,8 @@ $api->version('v1', [
             $api->post('contract', 'ContractController@store');
             $api->patch('contract/{contract}', 'ContractController@update');
             $api->delete('contract/{contract}', 'ContractController@destroy');
+
+            $api->post('contract/reject/{contract}', 'ContractController@reject');
             $api->post('contract/auditing/{contract}', 'ContractController@auditing');
             $api->post('contract/special_auditing/{contract}', 'ContractController@specialAuditing');
 

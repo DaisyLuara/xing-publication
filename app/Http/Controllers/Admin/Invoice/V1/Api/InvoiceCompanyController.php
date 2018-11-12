@@ -40,7 +40,7 @@ class InvoiceCompanyController extends Controller
     {
         /** @var  $user  \App\Models\User */
         $user = $this->user();
-        if (!$user->hasRole('user') && !$user->hasRole('bd-manager')) {
+        if (!$user->hasRole('user') && !$user->hasRole('bd-manager')&&!$user->hasRole('legal-affairs')&&!$user->hasRole('legal-affairs-manager')) {
             abort(403, '无操作权限');
         }
         $invoiceCompany->fill(array_merge($request->all(), ['user_id' => $user->id]))->save();
