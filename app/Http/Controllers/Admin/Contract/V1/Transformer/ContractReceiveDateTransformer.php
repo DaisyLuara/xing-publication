@@ -35,7 +35,7 @@ class ContractReceiveDateTransformer extends TransformerAbstract
         return $this->item($contractReceiveDate->invoiceReceipt, new InvoiceReceiptTransformer());
     }
 
-    public function contract(ContractReceiveDate $contractReceiveDate)
+    public function includeContract(ContractReceiveDate $contractReceiveDate)
     {
         return $this->item($contractReceiveDate->contract, new ContractTransformer());
     }
