@@ -21,6 +21,7 @@ class Contract extends Model
         'status',
         'processing_person',
         'type',
+        'amount',
         'remark',
     ];
 

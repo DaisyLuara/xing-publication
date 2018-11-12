@@ -31,7 +31,8 @@ class ContractRequest extends FormRequest
                     'type' => Rule::in([0, 1]),
                     'receive_date' => 'string|nullable',
                     'ids' => 'string',
-                    'remark' => 'string|nullable|max:150'
+                    'remark' => 'string|nullable|max:150',
+                    'amount' => 'required'
                 ];
                 break;
             case 'PATCH':

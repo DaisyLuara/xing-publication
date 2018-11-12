@@ -9,38 +9,32 @@
 namespace App\Http\Controllers\Admin\Contract\V1\Api;
 
 
-use App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate;
+use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
+use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractReceiveDateTransformer;
+use Illuminate\Http\Request;
 
 class ContractReceiveDateController extends Controller
 {
 
-    public function index(Request $request, ContractReceiveDate $contractReceiveDate)
+    public function index(Request $request, Contract $contract)
     {
         $user = $this->user();
         $currentDate = Carbon::now()->toDateString();
-        $query = $contractReceiveDate->query();
+        $query = $contract->query();
         if ($request->name) {
-            $query->whereHas('contract', function ($q) use ($request) {
-                $q->where('name', $request->name);
-            });
+            $query->where('name', $request->name);
         }
         if ($request->has('contract_number')) {
-            $query->whereHas('contract', function ($q) use ($request) {
-                $q->where('contract_number', 'like', '%' . $request->contract_number . '%');
-            });
+            $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
         }
 
-        $query->whereHas('contract', function ($q) use ($request, $user) {
-            $q->whereRaw("(applicant = $user->id or handler = $user->id)");
-        });
-
-        $contractReceiveDate = $query
-            ->whereRaw("'$currentDate' between date_add(receive_date, interval - 5 day) and date_add(receive_date, interval 3 day)")
+        $contractReceiveDate = $query->whereHas('receiveDate', function ($q) use ($currentDate) {
+            $q->whereRaw("'$currentDate' between date_add(receive_date, interval - 5 day) and date_add(receive_date, interval 3 day)");
+        })
+            ->whereRaw("(applicant = $user->id or handler = $user->id)")
             ->paginate(10);
-        return $this->response()->paginator($contractReceiveDate, new ContractReceiveDateTransformer());
+        return $this->response()->paginator($contractReceiveDate, new ContractTransformer());
     }
 }

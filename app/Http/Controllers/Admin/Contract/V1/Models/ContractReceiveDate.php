@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Admin\Contract\V1\Models;
 
 
+use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceReceipt;
 use App\Models\Model;
 
 class ContractReceiveDate extends Model
@@ -23,5 +24,10 @@ class ContractReceiveDate extends Model
     public function contract()
     {
         return $this->belongsTo(Contract::class, 'contract_id', 'id');
+    }
+
+    public function invoiceReceipt()
+    {
+        return $this->belongsTo(InvoiceReceipt::class, 'invoice_receipt_id', 'id');
     }
 }
