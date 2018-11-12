@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin\Common\V1\Api;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
+use App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate;
+use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractReceiveDateTransformer;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
@@ -354,5 +356,12 @@ class QueryController extends Controller
         }
         $paymentPayee = $query->get();
         return $this->response()->collection($paymentPayee, new PaymentPayeeTransformer());
+    }
+
+    public function receiveDateQuery(Request $request, ContractReceiveDate $contractReceiveDate)
+    {
+        $query = $contractReceiveDate->query();
+        $contractReceiveDate = $query->where('contract_id', $request->id)->get();
+        return $this->response()->collection($contractReceiveDate, new ContractReceiveDateTransformer());
     }
 }
