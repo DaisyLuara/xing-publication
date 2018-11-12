@@ -74,7 +74,6 @@ class ChartDataController extends Controller
     public function chart(ChartDataRequest $request)
     {
         $xsFaceLogQuery = XsFaceLog::query();
-        $faceCountQuery = FaceCount::query();
         $faceCharacterCount = FaceCharacterCount::query();
         $xsFaceCountLog = XsFaceCountLog::query();
         switch ($request->id) {
@@ -647,6 +646,16 @@ class ChartDataController extends Controller
             ];
         }
         return $output;
+    }
+
+    public function getFCpe()
+    {
+        $data = XsFaceCountLog::query()
+            ->whereRaw("belong='all'")
+            ->selectRaw("sum(playtimes7) as fcpe")
+            ->first();
+        $output = ['fcpe' => $data->fcpe];
+        return response()->json($output);
     }
 
     private function handleQuery(Request $request, Builder $query, $selectByAlias = true, bool $selectPoint = false)
