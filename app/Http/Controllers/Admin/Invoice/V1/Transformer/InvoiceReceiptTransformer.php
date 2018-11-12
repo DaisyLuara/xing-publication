@@ -22,7 +22,7 @@ class InvoiceReceiptTransformer extends TransformerAbstract
         return [
             'id' => $invoiceReceipt->id,
             'receipt_company' => $invoiceReceipt->receipt_company,
-            'receipt_date' => $invoiceReceipt->receipt_date,
+            'receipt_date' => $invoiceReceipt->receipt_date->toDateString(),
             'claim_status' => $invoiceReceipt->claim_status,
         ];
     }
