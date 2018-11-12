@@ -4,12 +4,13 @@ namespace App\Http\Controllers\Admin\Contract\V1\Transformer;
 
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
 use App\Http\Controllers\Admin\Media\V1\Transformer\MediaTransformer;
+use App\Http\Controllers\Admin\User\V1\Transformer\UserTransformer;
 use League\Fractal\TransformerAbstract;
 
 class ContractTransformer extends TransformerAbstract
 {
 
-    protected $availableIncludes = ['media', 'receiveDate'];
+    protected $availableIncludes = ['media', 'receiveDate', 'applicant'];
 
     protected $statusMapping = [
         '1' => '待审批',
@@ -55,5 +56,10 @@ class ContractTransformer extends TransformerAbstract
     public function includeReceiveDate(Contract $contract)
     {
         return $this->collection($contract->receiveDate, new ContractReceiveDateTransformer());
+    }
+
+    public function includeApplicant(Contract $contract)
+    {
+        return $this->item($contract->applicantUser(), new UserTransformer());
     }
 }
