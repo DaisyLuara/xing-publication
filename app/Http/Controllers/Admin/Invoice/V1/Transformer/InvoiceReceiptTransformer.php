@@ -22,14 +22,17 @@ class InvoiceReceiptTransformer extends TransformerAbstract
         return [
             'id' => $invoiceReceipt->id,
             'receipt_company' => $invoiceReceipt->receipt_company,
-            'receipt_date' => $invoiceReceipt->receipt_date->toDateString(),
+            'receipt_date' => $invoiceReceipt->receipt_date,
             'claim_status' => $invoiceReceipt->claim_status,
         ];
     }
 
     public function includeReceiveDate(InvoiceReceipt $invoiceReceipt)
     {
-        return $this->item($invoiceReceipt->receiveDate(), new ContractReceiveDateTransformer());
+        if (!$invoiceReceipt->receiveDate) {
+            return null;
+        }
+        return $this->item($invoiceReceipt->receiveDate, new ContractReceiveDateTransformer());
     }
 
 }

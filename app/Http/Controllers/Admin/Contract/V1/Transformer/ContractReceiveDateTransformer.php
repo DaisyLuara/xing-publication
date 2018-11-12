@@ -15,7 +15,7 @@ use League\Fractal\TransformerAbstract;
 
 class ContractReceiveDateTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['invoiceReceipt'];
+    protected $availableIncludes = ['invoiceReceipt', 'contract'];
 
     public function transform(ContractReceiveDate $contractReceiveDate)
     {
@@ -32,6 +32,11 @@ class ContractReceiveDateTransformer extends TransformerAbstract
         if (!$contractReceiveDate->invoiceReceipt) {
             return null;
         }
-        return $this->item($contractReceiveDate->invoiceReceipt(), new InvoiceReceiptTransformer());
+        return $this->item($contractReceiveDate->invoiceReceipt, new InvoiceReceiptTransformer());
+    }
+
+    public function contract(ContractReceiveDate $contractReceiveDate)
+    {
+        return $this->item($contractReceiveDate->contract, new ContractTransformer());
     }
 }

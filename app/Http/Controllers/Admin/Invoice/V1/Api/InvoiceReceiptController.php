@@ -55,7 +55,7 @@ class InvoiceReceiptController extends Controller
 
         $invoiceReceipt->fill(array_merge($request->all(), ['claim_status' => 0]))->save();
 
-        return $this->response()->item($invoiceReceipt, new $invoiceReceipt)->setStatusCode(201);
+        return $this->response()->item($invoiceReceipt, new InvoiceReceiptTransformer())->setStatusCode(201);
     }
 
     public function update(InvoiceReceiptRequest $request, InvoiceReceipt $invoiceReceipt)
