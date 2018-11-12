@@ -60,6 +60,6 @@ class ContractTransformer extends TransformerAbstract
 
     public function includeApplicant(Contract $contract)
     {
-        return $this->item($contract->applicantUser(), new UserTransformer());
+        return $this->item($contract->applicantUser, new UserTransformer());
     }
 }
