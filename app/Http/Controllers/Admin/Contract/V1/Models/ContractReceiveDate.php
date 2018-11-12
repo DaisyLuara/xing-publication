@@ -17,7 +17,8 @@ class ContractReceiveDate extends Model
     protected $fillable = [
         'contract_id',
         'receive_date',
-        'receive_status'
+        'receive_status',
+        'invoice_receipt_id'
     ];
     public $timestamps = false;
 
