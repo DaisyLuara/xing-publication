@@ -40,6 +40,26 @@ class InvoiceReceiptController extends Controller
             $query->where('claim_status', $request->claim_status);
         }
 
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
+        if ($user->hasRole('user')) {
+            $query->whereHas('receiveDate', function ($q) use ($user) {
+                $q->whereHas('contract', function ($q) use ($user) {
+                    $q->where('applicant', $user->id);
+                });
+            });
+        }
+
+        if ($user->hasRole('bd-manager')) {
+            $query->whereHas('receiveDate', function ($q) use ($user) {
+                $q->whereHas('contract', function ($q) use ($user) {
+                    $q->whereHas('applicantUser', function ($q) use ($user) {
+                        $q->where('parent_id', $user->id);
+                    });
+                });
+            });
+        }
+        
         $invoiceReceipt = $query->paginate(10);;
 
         return $this->response()->paginator($invoiceReceipt, new InvoiceReceiptTransformer());
