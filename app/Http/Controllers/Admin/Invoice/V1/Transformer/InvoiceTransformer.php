@@ -38,6 +38,8 @@ class InvoiceTransformer extends TransformerAbstract
             'total' => $invoice->total,
             '$total_text' => $invoice->total_text,
             'remark' => $invoice->remark,
+            'bd_ma_massage' => $invoice->bd_ma_massage,
+            'legal_ma_message' => $invoice->legal_ma_message,
             'created_at' => $invoice->created_at->toDateTimeString(),
             'updated_at' => $invoice->updated_at->toDateTimeString()
         ];

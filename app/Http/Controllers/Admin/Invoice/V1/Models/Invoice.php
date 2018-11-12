@@ -22,6 +22,8 @@ class Invoice extends Model
         'total',
         'total_text',
         'remark',
+        'bd_ma_massage',
+        'legal_ma_message'
     ];
 
     public function invoiceContent()

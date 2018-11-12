@@ -23,6 +23,9 @@ class Contract extends Model
         'type',
         'amount',
         'remark',
+        'legal_message',
+        'legal_ma_message',
+        'bd_ma_message'
     ];
 
     public function company()

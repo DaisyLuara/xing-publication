@@ -146,6 +146,7 @@ class InvoiceController extends Controller
 
             $invoice->status = 2;
             $invoice->handler = $legalMa->id;
+            $invoice->bd_ma_massage = $request->bd_ma_massage;
             $invoice->update();
             InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'invoice_id' => $invoice->id], ['user_id' => $user->id, 'invoice_id' => $invoice->id]);
 
@@ -154,6 +155,7 @@ class InvoiceController extends Controller
             $finance = $permission->users()->first();
             $invoice->status = 3;
             $invoice->handler = $finance->id;
+            $invoice->legal_ma_message = $request->legal_ma_message;
             $invoice->update();
             InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'invoice_id' => $invoice->id], ['user_id' => $user->id, 'invoice_id' => $invoice->id]);
         } else if ($user->hasRole('finance')) {

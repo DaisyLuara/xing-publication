@@ -126,6 +126,7 @@ class PaymentController extends Controller
                 if ($legal->hasPermissionTo('auditing')) {
                     $payment->status = 2;
                     $payment->handler = $legal->id;
+                    $payment->bd_ma_massage = $request->bd_ma_massage;
                     $payment->update();
                     PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
                 }
@@ -133,6 +134,7 @@ class PaymentController extends Controller
         } else if ($user->hasRole('legal-affairs')) {
 
             $payment->handler = $user->parent_id;
+            $payment->legal_message = $request->legal_message;
             $payment->update();
             PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
         } else if ($user->hasRole('legal-affairs-manager')) {
@@ -142,6 +144,7 @@ class PaymentController extends Controller
             foreach ($auditors as $auditor) {
                 if ($auditor->hasPermissionTo('auditing')) {
                     $payment->handler = $auditor->id;
+                    $payment->legal_ma_message = $request->legal_ma_message;
                     $payment->update();
                     PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
                 }
@@ -152,6 +155,7 @@ class PaymentController extends Controller
             $finance = $permission->users()->first();
             $payment->status = 3;
             $payment->handler = $finance->id;
+            $payment->auditor_message = $request->auditor_message;
             $payment->update();
             PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
 
