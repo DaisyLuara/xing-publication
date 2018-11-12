@@ -82,7 +82,7 @@ class InvoiceReceiptController extends Controller
         if ($user->hasRole('legal-affairs') && $user->hasRole('legal-affairs-manager')) {
             abort(403, '无操作权限');
         }
-        $contractReceiveDate = ContractReceiveDate::query()->first($request->receive_date_id);
+        $contractReceiveDate = ContractReceiveDate::find($request->receive_date_id);
         $contractReceiveDate->update(['receive_status' => 1, 'invoice_receipt_id' => $invoiceReceipt->id]);
 
         $invoiceReceipt->claim_status = 1;

@@ -18,7 +18,6 @@ class Invoice extends Model
         'type',
         'invoice_company_id',
         'status',
-        'receive_status',
         'kind',
         'total',
         'total_text',
