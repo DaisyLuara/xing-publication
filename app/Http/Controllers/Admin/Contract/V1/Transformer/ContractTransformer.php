@@ -10,7 +10,7 @@ use League\Fractal\TransformerAbstract;
 class ContractTransformer extends TransformerAbstract
 {
 
-    protected $availableIncludes = ['media', 'receiveDate', 'applicantUser'];
+    protected $availableIncludes = ['media', 'receiveDate'];
 
     protected $statusMapping = [
         '1' => '待审批',
@@ -56,10 +56,5 @@ class ContractTransformer extends TransformerAbstract
     public function includeReceiveDate(Contract $contract)
     {
         return $this->collection($contract->receiveDate, new ContractReceiveDateTransformer());
-    }
-
-    public function includeApplicantUser(Contract $contract)
-    {
-        return $this->item($contract->applicantUser, new UserTransformer());
     }
 }
