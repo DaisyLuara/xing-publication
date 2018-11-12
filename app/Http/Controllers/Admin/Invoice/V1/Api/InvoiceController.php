@@ -141,25 +141,27 @@ class InvoiceController extends Controller
         $user = $this->user();
 
         if ($user->hasRole('bd-manager')) {
-            $role = Role::findByName('legal-affairs');
-            $legals = $role->users()->get();
-            foreach ($legals as $legal) {
-                if ($legal->hasPermissionTo('auditing')) {
-                    $invoice->status = 2;
-                    $invoice->handler = $legal->id;
-                    $invoice->update();
-                    InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'invoice_id' => $invoice->id], ['user_id' => $user->id, 'invoice_id' => $invoice->id]);
-                }
+            $role = Role::findByName('legal-affairs-manager');
+            $legalMa = $role->users()->first();
+
+            $invoice->status = 2;
+            $invoice->handler = $legalMa->id;
+            if (!$request->has('bd_ma_message')) {
+                abort(500, '没有填写意见');
             }
-        } else if ($user->hasRole('legal-affairs')) {
-            $invoice->handler = $user->parent_id;
+            $invoice->bd_ma_message = $request->bd_ma_message;
             $invoice->update();
             InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'invoice_id' => $invoice->id], ['user_id' => $user->id, 'invoice_id' => $invoice->id]);
+
         } else if ($user->hasRole('legal-affairs-manager')) {
             $permission = Permission::findByName('finance_bill');
             $finance = $permission->users()->first();
             $invoice->status = 3;
             $invoice->handler = $finance->id;
+            if (!$request->has('legal_ma_message')) {
+                abort(500, '没有填写意见');
+            }
+            $invoice->legal_ma_message = $request->legal_ma_message;
             $invoice->update();
             InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'invoice_id' => $invoice->id], ['user_id' => $user->id, 'invoice_id' => $invoice->id]);
         } else if ($user->hasRole('finance')) {
@@ -176,6 +178,9 @@ class InvoiceController extends Controller
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
+        if (!$user->hasRole('finance')) {
+            abort(403, '无操作权限');
+        }
         if ($invoice->status != 4) {
             abort(403, "不能领取票据");
         }
@@ -185,16 +190,16 @@ class InvoiceController extends Controller
         return $this->response()->noContent();
     }
 
-    public function receipt(Invoice $invoice)
-    {
-        /** @var  $user \App\Models\User */
-        $user = $this->user();
-        if (!$user->hasPermissionTo('finance_bill')) {
-            abort(403, "无操作权限");
-        }
-        $invoice->receive_status = 1;
-        $invoice->update();
-        return $this->response()->noContent();
-
-    }
+//    public function receipt(Invoice $invoice)
+//    {
+//        /** @var  $user \App\Models\User */
+//        $user = $this->user();
+//        if (!$user->hasPermissionTo('finance_bill')) {
+//            abort(403, "无操作权限");
+//        }
+//        $invoice->receive_status = 1;
+//        $invoice->update();
+//        return $this->response()->noContent();
+//
+//    }
 }

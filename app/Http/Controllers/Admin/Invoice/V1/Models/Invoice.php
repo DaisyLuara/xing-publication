@@ -18,11 +18,12 @@ class Invoice extends Model
         'type',
         'invoice_company_id',
         'status',
-        'receive_status',
         'kind',
         'total',
         'total_text',
         'remark',
+        'bd_ma_message',
+        'legal_ma_message'
     ];
 
     public function invoiceContent()

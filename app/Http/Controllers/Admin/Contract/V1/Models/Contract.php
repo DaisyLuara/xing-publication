@@ -21,7 +21,11 @@ class Contract extends Model
         'status',
         'processing_person',
         'type',
+        'amount',
         'remark',
+        'legal_message',
+        'legal_ma_message',
+        'bd_ma_message'
     ];
 
     public function company()
