@@ -36,7 +36,7 @@ class PaymentTransformer extends TransformerAbstract
             'type' => $this->typeMapping[$payment->type],
             'reason' => $payment->reason,
             'remark' => $payment->remark,
-            'bd_ma_massage' => $payment->bd_ma_massage,
+            'bd_ma_message' => $payment->bd_ma_message,
             'legal_message' => $payment->legal_message,
             'legal_ma_message' => $payment->legal_ma_message,
             'auditor_message' => $payment->auditor_message,

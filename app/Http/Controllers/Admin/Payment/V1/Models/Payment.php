@@ -20,7 +20,7 @@ class Payment extends Model
         'reason',
         'payment_payee_id',
         'remark',
-        'bd_ma_massage',
+        'bd_ma_message',
         'legal_message',
         'legal_ma_message',
         'auditor_message',

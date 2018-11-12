@@ -170,6 +170,9 @@ class ContractController extends Controller
             $contract->status = 2;
             $contract->handler = $user->parent_id;
             $contract->contract_number = $request->contract_number;
+            if (!$request->has('legal_message')) {
+                abort(500, '没有填写意见');
+            }
             $contract->legal_message = $request->legal_message;
             $contract->update();
             ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
@@ -179,12 +182,18 @@ class ContractController extends Controller
             if ($request->has('contract_number')) {
                 $contract->contract_number = $request->contract_number;
             }
+            if (!$request->has('legal_ma_message')) {
+                abort(500, '没有填写意见');
+            }
             $contract->legal_ma_message = $request->legal_ma_message;
             $contract->update();
             ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
         } else if ($user->hasRole('bd-manager')) {
             $contract->status = 3;
             $contract->handler = null;
+            if (!$request->has('bd_ma_message')) {
+                abort(500, '没有填写意见');
+            }
             $contract->bd_ma_message = $request->bd_ma_message;
             $contract->update();
             ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);

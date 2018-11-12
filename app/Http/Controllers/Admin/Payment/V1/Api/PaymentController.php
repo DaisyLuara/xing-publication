@@ -126,7 +126,10 @@ class PaymentController extends Controller
                 if ($legal->hasPermissionTo('auditing')) {
                     $payment->status = 2;
                     $payment->handler = $legal->id;
-                    $payment->bd_ma_massage = $request->bd_ma_massage;
+                    if (!$request->has('bd_ma_message')) {
+                        abort(500, '没有填写意见');
+                    }
+                    $payment->bd_ma_message = $request->bd_ma_message;
                     $payment->update();
                     PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
                 }
@@ -134,6 +137,9 @@ class PaymentController extends Controller
         } else if ($user->hasRole('legal-affairs')) {
 
             $payment->handler = $user->parent_id;
+            if (!$request->has('legal_message')) {
+                abort(500, '没有填写意见');
+            }
             $payment->legal_message = $request->legal_message;
             $payment->update();
             PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
@@ -145,6 +151,9 @@ class PaymentController extends Controller
                 if ($auditor->hasPermissionTo('auditing')) {
                     $payment->handler = $auditor->id;
                     $payment->legal_ma_message = $request->legal_ma_message;
+                    if (!$request->has('legal_ma_message')) {
+                        abort(500, '没有填写意见');
+                    }
                     $payment->update();
                     PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
                 }
@@ -155,6 +164,9 @@ class PaymentController extends Controller
             $finance = $permission->users()->first();
             $payment->status = 3;
             $payment->handler = $finance->id;
+            if (!$request->has('auditor_message')) {
+                abort(500, '没有填写意见');
+            }
             $payment->auditor_message = $request->auditor_message;
             $payment->update();
             PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
