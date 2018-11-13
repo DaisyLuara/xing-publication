@@ -28,8 +28,12 @@ class PaymentPayeeController extends Controller
         if ($request->has('name')) {
             $query->where('name', 'like', '5' . $request->name . '%');
         }
+        /** @var  $user \App\Models\User */
         $user = $this->user();
-        $paymentPayee = $query->where('user_id', $user->id)->paginate(10);
+        if ($user->hasRole('user') || $user->hasRole('bd-manager')) {
+            $query->where('user_id', $user->id);
+        }
+        $paymentPayee = $query->paginate(10);
 
         return $this->response()->paginator($paymentPayee, new PaymentPayeeTransformer());
     }
