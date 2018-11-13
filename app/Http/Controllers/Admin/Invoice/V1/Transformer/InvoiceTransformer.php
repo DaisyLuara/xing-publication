@@ -33,7 +33,6 @@ class InvoiceTransformer extends TransformerAbstract
             'type' => $invoice->type == 0 ? '专票' : '普票',
             'invoice_company_name' => $invoice->invoiceCompany ? $invoice->invoiceCompany->name : null,
             'status' => $this->statusMapping[$invoice->status],
-            'receive_status' => $invoice->receive_status == 0 ? '未收款' : '已收款',
             'kind' => $invoice->kind,
             'total' => $invoice->total,
             '$total_text' => $invoice->total_text,
