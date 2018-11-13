@@ -26,6 +26,7 @@ class CouponBatchController extends Controller
             ->where('start_date', '<=', $now)
             ->where('end_date', '>=', $now)
             ->where('coupon_batch_policy.policy_id', $request->policy_id)
+            ->orderByDesc('sort_order')
             ->selectRaw('coupon_batches.*')
             ->get();
 
