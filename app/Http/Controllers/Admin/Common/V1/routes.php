@@ -80,6 +80,7 @@ $api->version('v1', [
             $api->post('chart_data', 'ChartDataController@chart');//图表
             $api->get('export', 'ExportController@store');//导出
         });
+        $api->get('fcpe', 'ChartDataController@getFCpe');
     });
 
 });
