@@ -351,6 +351,10 @@ class CouponController extends Controller
             $query->where('qiniu_id', $request->get('qiniu_id'));
         }
 
+        if ($request->has('start_date') && $request->has('end_date')) {
+            $query->whereBetween('created_at', [$request->get('start_date'), $request->get('end_date')]);
+        }
+
         $coupon = $query->where('wx_user_id', $userID)
             ->where('coupon_batch_id', $request->get('coupon_batch_id'))
             ->first();
