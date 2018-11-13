@@ -20,6 +20,7 @@ class ContractReceiveDateController extends Controller
 
     public function index(Request $request, Contract $contract)
     {
+        /** @var  $user \App\Models\User */
         $user = $this->user();
         $currentDate = Carbon::now()->toDateString();
         $query = $contract->query();
@@ -30,10 +31,19 @@ class ContractReceiveDateController extends Controller
             $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
         }
 
+        if ($user->hasRole('user')) {
+            $query->where('applicant', $user->id);
+        }
+
+        if ($user->hasRole('bd-manager')) {
+            $query->whereHas('applicantUser', function ($q) use ($user) {
+                $q->where('parent_id', $user->id);
+            });
+        }
+
         $contractReceiveDate = $query->whereHas('receiveDate', function ($q) use ($currentDate) {
             $q->whereRaw("'$currentDate' between date_add(receive_date, interval - 5 day) and date_add(receive_date, interval 3 day)");
         })
-            ->whereRaw("(applicant = $user->id or handler = $user->id)")
             ->paginate(10);
         return $this->response()->paginator($contractReceiveDate, new ContractTransformer());
     }
