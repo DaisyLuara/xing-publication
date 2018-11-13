@@ -288,6 +288,7 @@ class CouponController extends Controller
                     //活动期间 每人每天领取次数
                     $userID = decrypt($request->get('sign'));
                     $coupons = Coupon::query()->where('wx_user_id', $userID)
+                        ->where('coupon_batch_id', $couponBatchId)
                         ->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
                         ->get();
 
