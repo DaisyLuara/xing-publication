@@ -32,7 +32,7 @@ class ContractRequest extends FormRequest
                     'receive_date' => 'string|nullable',
                     'ids' => 'string',
                     'remark' => 'string|nullable|max:150',
-                    'amount' => 'required'
+                    'amount' => 'string'
                 ];
                 break;
             case 'PATCH':

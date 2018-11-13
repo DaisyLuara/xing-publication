@@ -30,8 +30,12 @@ class InvoiceCompanyController extends Controller
             $query->where('name', 'like', '%' . $request->name . '%');
         }
 
+        /** @var  $user \App\Models\User */
         $user = $this->user();
-        $invoiceCompany = $query->where('user_id', $user->id)->paginate(10);
+        if ($user->hasRole('user') || $user->hasRole('bd-manager')) {
+            $query->where('user_id', $user->id);
+        }
+        $invoiceCompany = $query->paginate(10);
 
         return $this->response()->paginator($invoiceCompany, new InvoiceCompanyTransformer());
     }
@@ -40,7 +44,7 @@ class InvoiceCompanyController extends Controller
     {
         /** @var  $user  \App\Models\User */
         $user = $this->user();
-        if (!$user->hasRole('user') && !$user->hasRole('bd-manager')&&!$user->hasRole('legal-affairs')&&!$user->hasRole('legal-affairs-manager')) {
+        if (!$user->hasRole('user') && !$user->hasRole('bd-manager') && !$user->hasRole('legal-affairs') && !$user->hasRole('legal-affairs-manager')) {
             abort(403, '无操作权限');
         }
         $invoiceCompany->fill(array_merge($request->all(), ['user_id' => $user->id]))->save();
