@@ -76,15 +76,23 @@ class InvoiceController extends Controller
         $content = $invoice['invoice_content'];
         unset($invoice['invoice_content']);
         if ($user->hasRole('legal-affairs')) {
-            $invoice = Invoice::query()->create(array_merge($invoice, ['status' => 2, 'handler' => $user->parent_id]));
+            $permission = Permission::findByName('finance_bill');
+            $finance = $permission->users()->first();
+            $invoice = Invoice::query()->create(array_merge($invoice, ['status' => 3, 'handler' => $finance->id]));
         }
         if ($user->hasRole('legal-affairs-manager')) {
             $permission = Permission::findByName('finance_bill');
             $finance = $permission->users()->first();
             $invoice = Invoice::query()->create(array_merge($invoice, ['status' => 3, 'handler' => $finance->id]));
         }
-        if ($user->hasRole('user') || $user->hasRole('bd-manager')) {
+        if ($user->hasRole('user') ) {
             $invoice = Invoice::query()->create(array_merge($invoice, ['status' => 1, 'handler' => $user->parent_id]));
+        }
+
+        if($user->hasRole('bd-manager')){
+            $role = Role::findByName('legal-affairs-manager');
+            $legalMa = $role->users()->first();
+            $invoice = Invoice::query()->create(array_merge($invoice, ['status' => 1, 'handler' => $legalMa->id]));
         }
         foreach ($content as $item) {
             $item['invoice_id'] = $invoice['id'];

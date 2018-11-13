@@ -178,7 +178,16 @@ class ContractController extends Controller
             ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
         } else if ($user->hasRole('legal-affairs-manager')) {
             $contract->status = 2;
-            $contract->handler = $contract->applicantUser->parent_id;
+            $parentId = $contract->applicantUser->parent_id;
+            // BD主管建的直接已审批
+            if ($parentId == $contract->applicant) {
+                $contract->handler = null;
+                $contract->status = 3;
+                $contract->update();
+                ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
+                return $this->response()->item($contract, new ContractTransformer())->setStatusCode(201);
+            }
+            $contract->handler = $parentId;
             if ($request->has('contract_number')) {
                 $contract->contract_number = $request->contract_number;
             }
