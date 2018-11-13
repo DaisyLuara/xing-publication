@@ -65,24 +65,32 @@ class PaymentController extends Controller
             abort(500, '无所属主管，无法新增付款申请');
         }
         if ($user->hasRole('legal-affairs')) {
-            $payment->fill(array_merge($request->all(), ['status' => 2, 'handler' => $user->parent_id, 'receive_status' => 0]))->save();
+            $permission = Permission::findByName('finance_pay');
+            $finance = $permission->users()->first();
+            $payment->fill(array_merge($request->all(), ['status' => 3, 'handler' => $finance->id, 'receive_status' => 0]))->save();
         }
 
         if ($user->hasRole('legal-affairs-manager')) {
-            $role = Role::findByName('auditor');
-            $auditors = $role->users()->get();
-            foreach ($auditors as $auditor) {
-                if ($auditor->hasPermissionTo('auditing')) {
-                    $payment->fill(array_merge($request->all(), ['status' => 2, 'handler' => $auditor->id, 'receive_status' => 0]))->save();
-                }
-            }
+            $permission = Permission::findByName('finance_pay');
+            $finance = $permission->users()->first();
+            $payment->fill(array_merge($request->all(), ['status' => 3, 'handler' => $finance->id, 'receive_status' => 0]))->save();
         }
 
-        if ($user->hasRole('user') || $user->hasRole('bd-manager')) {
+
+        if ($user->hasRole('user')) {
             $payment->fill(array_merge($request->all(), ['status' => 1, 'handler' => $user->parent_id, 'receive_status' => 0]))->save();
         }
 
-        return $this->response()->noContent();
+        if ($user->hasRole('bd-manager')) {
+            $role = Role::findByName('legal-affairs');
+            $legals = $role->users()->get();
+            foreach ($legals as $legal) {
+                if ($legal->hasPermissionTo('auditing')) {
+                    $payment->fill(array_merge($request->all(), ['status' => 1, 'handler' => $legal->id, 'receive_status' => 0]))->save();
+                }
+            }
+            return $this->response()->noContent();
+        }
     }
 
     public function update(PaymentRequest $request, Payment $payment)
