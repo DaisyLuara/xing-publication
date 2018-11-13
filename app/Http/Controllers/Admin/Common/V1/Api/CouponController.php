@@ -173,7 +173,7 @@ class CouponController extends Controller
         if ($couponBatch->stock <= 0) {
             abort(500, '优惠券已发完');
         }
-       
+
         $couponBatch->decrement('stock');
 
         return $this->response->item($couponBatch, new CouponBatchTransformer());
@@ -216,25 +216,30 @@ class CouponController extends Controller
 
         //第三方优惠券
         if ($couponBatch->third_code) {
-            $result = $this->sendMallCooCoupon($mobile, $couponBatch->third_code);
-            if ($result['Code'] != 1) {
-                abort(500, $result['Message']);
-            }
+            if ($couponBatch->channel == 'mallcoo') {
 
-            if (!$result['Data'][0]['IsSuccess']) {
-                abort(500, $result['Data'][0]['FailReason']);
-            }
+                $result = $this->sendMallCooCoupon($mobile, $couponBatch->third_code);
+                if ($result['Code'] != 1) {
+                    abort(500, $result['Message']);
+                }
 
-            $data = $result['Data'];
-            $coupon = Coupon::create([
-                'code' => $data[0]['VCode'],
-                'mobile' => $mobile,
-                'coupon_batch_id' => $couponBatch->id,
-                'picm_id' => $data[0]['PICMID'],
-                'trace_id' => $data[0]['TraceID'],
-                'status' => 3,
-            ]);
-            $couponBatch->decrement('stock');
+                if (!$result['Data'][0]['IsSuccess']) {
+                    abort(500, $result['Data'][0]['FailReason']);
+                }
+
+                $data = $result['Data'];
+                $coupon = Coupon::create([
+                    'code' => $data[0]['VCode'],
+                    'mobile' => $mobile,
+                    'coupon_batch_id' => $couponBatch->id,
+                    'picm_id' => $data[0]['PICMID'],
+                    'trace_id' => $data[0]['TraceID'],
+                    'status' => 3,
+                ]);
+                $couponBatch->decrement('stock');
+            } else if ($couponBatch->channel == 'wechat') {
+                //@todo 微信卡券
+            }
 
         } else {
 
@@ -279,6 +284,16 @@ class CouponController extends Controller
                     Log::info('mobile', $request->all());
                     $couponBatchIds = [$couponBatchId];
                     $coupons = Coupon::query()->where('mobile', $mobile)->whereIn('coupon_batch_id', $couponBatchIds)->get();
+                } else if ($request->has('qiniu_id')) {
+                    //活动期间 每人每天领取次数
+                    $userID = decrypt($request->get('sign'));
+                    $coupons = Coupon::query()->where('wx_user_id', $userID)
+                        ->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
+                        ->get();
+
+                    if ($coupons->count() >= $couponBatch->people_max_get) {
+                        abort(500, '您今天已经领过了，请明天再来!');
+                    }
                 } else {
                     //根据微信客户端 发送优惠券
                     $userID = decrypt($request->get('sign'));
@@ -303,6 +318,7 @@ class CouponController extends Controller
                 'coupon_batch_id' => $couponBatchId,
                 'status' => 3,
                 'wx_user_id' => $userID,
+                'qiniu_id' => $request->has('qiniu_id') ? $request->get('qiniu_id') : 0,
             ]);
 
 
@@ -329,21 +345,24 @@ class CouponController extends Controller
     public function getUserCoupons(UserCouponRequest $request)
     {
         $userID = decrypt($request->sign);
-        $coupons = Coupon::query()->where('wx_user_id', $userID)
-            ->where('coupon_batch_id', $request->get('coupon_batch_id'))
-            ->orderByDesc('id')
-            ->paginate(5);
+        $query = Coupon::query();
 
-        abort_if($coupons->isEmpty(), 204);
-
-        //优惠券二维码
-        foreach ($coupons as $coupon) {
-            $prefix = 'h5_code' . $coupon->code;
-            $qrcodeUrl = couponQrCode($coupon->code, 200, $prefix);
-            $coupon->setAttribute('qrcode_url', $qrcodeUrl);
+        if ($request->has('qiniu_id')) {
+            $query->where('qiniu_id', $request->get('qiniu_id'));
         }
 
-        return $this->response->paginator($coupons, new CouponTransformer());
+        $coupon = $query->where('wx_user_id', $userID)
+            ->where('coupon_batch_id', $request->get('coupon_batch_id'))
+            ->first();
+
+        abort_if(!$coupon, 204);
+
+        //优惠券二维码
+        $prefix = 'h5_code' . $coupon->code;
+        $qrcodeUrl = couponQrCode($coupon->code, 200, $prefix);
+        $coupon->setAttribute('qrcode_url', $qrcodeUrl);
+
+        return $this->response->item($coupon, new CouponTransformer());
     }
 
     /**
