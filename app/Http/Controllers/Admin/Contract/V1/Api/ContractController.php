@@ -232,20 +232,15 @@ class ContractController extends Controller
     public function count(Request $request)
     {
         $user = $this->user();
-        $count = 0;
-        if ($request->type == 'contract') {
-            $count = Contract::query()->where('handler', $user->id)->count();
-        }
-
-        if ($request->type == 'invoice') {
-            $count = Invoice::query()->where('handler', $user->id)->count();
-        }
-
-        if ($request->type == 'payment') {
-            $count = Payment::query()->where('handler', $user->id)->count();
-        }
-
-        return response()->json(['count' => $count]);
+        $contractCount = Contract::query()->where('handler', $user->id)->count();
+        $invoiceCount = Invoice::query()->where('handler', $user->id)->count();
+        $paymentCount = Payment::query()->where('handler', $user->id)->count();
+        $data = [
+            'contract_count' => $contractCount,
+            'invoice_count' => $invoiceCount,
+            'payment_Count' => $paymentCount
+        ];
+        return response()->json($data);
     }
 
 }
