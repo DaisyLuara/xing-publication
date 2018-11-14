@@ -57,7 +57,7 @@ class ContractController extends Controller
 
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if ($user->hasRole('operation')) {
+        if ($user->hasRole('operation') || $user->hasRole('legal-affairs') || $user->hasRole('legal-affairs-manager')) {
             $query->where('status', '=', 3);
         } else {
             $query->whereRaw("(applicant = $user->id or handler = $user->id)");
