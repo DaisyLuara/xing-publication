@@ -46,7 +46,7 @@ class PaymentHistoryController extends Controller
         $query->whereHas('paymentHistory', function ($q) use ($user) {
             $q->where('user_id', $user->id);
         });
-        $payment = $query->orderBy('created_at', 'desc')->paginate(10);
+        $payment = $query->orderBy('updated_at', 'desc')->paginate(10);
         return $this->response->paginator($payment, new PaymentTransformer());
     }
 }

@@ -73,7 +73,7 @@ class InvoiceReceiptController extends Controller
             abort(403, '无操作权限');
         }
 
-        $invoiceReceipt->fill(array_merge($request->all(), ['claim_status' => 0]))->save();
+        $invoiceReceipt->fill(array_merge($request->all(), ['claim_status' => 0,'creator'=>$user->name]))->save();
 
         return $this->response()->item($invoiceReceipt, new InvoiceReceiptTransformer())->setStatusCode(201);
     }

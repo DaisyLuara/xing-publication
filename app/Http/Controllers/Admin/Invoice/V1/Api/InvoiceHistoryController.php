@@ -54,7 +54,7 @@ class InvoiceHistoryController extends Controller
         $query->whereHas('invoiceHistory', function ($q) use ($user) {
             $q->where('user_id', $user->id);
         });
-        $invoice = $query->orderBy('created_at', 'desc')->paginate(10);
+        $invoice = $query->orderBy('updated_at', 'desc')->paginate(10);
         return $this->response()->paginator($invoice, new InvoiceTransformer())->setStatusCode(200);
     }
 }
