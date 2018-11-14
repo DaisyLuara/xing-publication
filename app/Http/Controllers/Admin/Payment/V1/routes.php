@@ -16,8 +16,16 @@ $api->version('v1', [
             $api->patch('payment/{payment}', 'PaymentController@update');
             $api->delete('payment/{payment}', 'PaymentController@destroy');
 
+            $api->post('payment/reject/{payment}', 'PaymentController@reject');
             $api->post('payment/auditing/{payment}', 'PaymentController@auditing');
             $api->post('payment/receive/{payment}', 'PaymentController@receive');
+
+            $api->get('payment_payee/{payment_payee}', 'PaymentPayeeController@show');
+            $api->get('payment_payee', 'PaymentPayeeController@index');
+            $api->post('payment_payee', 'PaymentPayeeController@store');
+            $api->patch('payment_payee/{payment_payee}', 'PaymentPayeeController@update');
+
+            $api->get('payment_history', 'PaymentHistoryController@index');
         });
     });
 

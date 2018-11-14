@@ -68,6 +68,9 @@ $api->version('v1', [
             $api->get('goods_service/query', 'QueryController@goodsServiceQuery');
             $api->get('bd_manager/query', 'QueryController@bdManagerQuery');
             $api->get('legal_manager/query', 'QueryController@legalManagerQuery');
+            $api->get('invoice_company/query', 'QueryController@invoiceCompanyQuery');
+            $api->get('payment_payee/query', 'QueryController@paymentPayeeQuery');
+            $api->get('receive_date/query', 'QueryController@receiveDateQuery');
 
             //消息通知
             $api->get('user/notifications', 'NotificationsController@index');

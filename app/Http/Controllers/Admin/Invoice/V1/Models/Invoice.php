@@ -16,19 +16,14 @@ class Invoice extends Model
         'applicant',
         'handler',
         'type',
-        'taxpayer_num',
-        'invoice_company',
-        'phone',
-        'telephone',
-        'address',
-        'account_bank',
-        'account_number',
+        'invoice_company_id',
         'status',
-        'receive_status',
         'kind',
         'total',
         'total_text',
         'remark',
+        'bd_ma_message',
+        'legal_ma_message'
     ];
 
     public function invoiceContent()
@@ -49,5 +44,15 @@ class Invoice extends Model
     public function applicantUser()
     {
         return $this->belongsTo(User::class, 'applicant', 'id');
+    }
+
+    public function invoiceCompany()
+    {
+        return $this->belongsTo(InvoiceCompany::class, 'invoice_company_id', 'id');
+    }
+
+    public function invoiceHistory()
+    {
+        return $this->hasMany(InvoiceHistory::class, 'invoice_id', 'id');
     }
 }

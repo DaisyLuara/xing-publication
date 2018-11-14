@@ -21,7 +21,11 @@ class Contract extends Model
         'status',
         'processing_person',
         'type',
+        'amount',
         'remark',
+        'legal_message',
+        'legal_ma_message',
+        'bd_ma_message'
     ];
 
     public function company()
@@ -52,5 +56,10 @@ class Contract extends Model
     public function receiveDate()
     {
         return $this->hasMany(ContractReceiveDate::class, 'contract_id', 'id');
+    }
+
+    public function contractHistory()
+    {
+        return $this->hasMany(ContractHistory::class, 'contract_id', 'id');
     }
 }

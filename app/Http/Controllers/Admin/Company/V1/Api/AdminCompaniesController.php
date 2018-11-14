@@ -20,7 +20,7 @@ class AdminCompaniesController extends Controller
             $query->where('name', 'like', '%' . $request->name . '%');
         }
 
-        if ($currentUser->isAdmin()) {
+        if ($currentUser->isAdmin() || $currentUser->hasRole('legal-affairs') || $currentUser->hasRole('legal-affairs-manager')) {
             $companies = $query->orderByDesc('id')->paginate(10);
         } else {
             $companies = $query->whereHas('user', function ($q) use ($currentUser) {

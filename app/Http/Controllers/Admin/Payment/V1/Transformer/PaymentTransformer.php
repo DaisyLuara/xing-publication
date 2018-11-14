@@ -21,7 +21,7 @@ class PaymentTransformer extends TransformerAbstract
         '2' => '电汇单',
         '3' => '贷记凭证'
     ];
-    protected $availableIncludes = ['contract'];
+    protected $availableIncludes = ['contract', 'payment_payee'];
 
     public function transform(Payment $payment)
     {
@@ -29,15 +29,17 @@ class PaymentTransformer extends TransformerAbstract
             'id' => $payment->id,
             'contract_id' => $payment->contract->id,
             'contract_number' => $payment->contract->contract_number,
-            'payee' => $payment->payee,
+            'payment_payee_name' => $payment->paymentPayee ? $payment->paymentPayee->name : null,
             'applicant' => $payment->applicant,
             'applicant_name' => $payment->applicantUser->name,
             'amount' => $payment->amount,
             'type' => $this->typeMapping[$payment->type],
             'reason' => $payment->reason,
             'remark' => $payment->remark,
-            'account_bank' => $payment->account_bank,
-            'account_number' => $payment->account_number,
+            'bd_ma_message' => $payment->bd_ma_message,
+            'legal_message' => $payment->legal_message,
+            'legal_ma_message' => $payment->legal_ma_message,
+            'auditor_message' => $payment->auditor_message,
             'receive_status' => $payment->receive_status == 0 ? '未收票' : '已收票',
             'status' => $this->statusMapping[$payment->status],
             'handler' => $payment->handler,
@@ -50,5 +52,13 @@ class PaymentTransformer extends TransformerAbstract
     public function includeContract(Payment $payment)
     {
         return $this->item($payment->contract, new ContractTransformer());
+    }
+
+    public function includePaymentPayee(Payment $payment)
+    {
+        if (!$payment->paymentPayee) {
+            return null;
+        }
+        return $this->item($payment->paymentPayee, new PaymentPayeeTransformer());
     }
 }

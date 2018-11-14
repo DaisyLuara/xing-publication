@@ -16,9 +16,26 @@ $api->version('v1', [
             $api->patch('invoice/{invoice}', 'InvoiceController@update');
             $api->delete('invoice/{invoice}', 'InvoiceController@destroy');
 
+            $api->post('invoice/reject/{invoice}', 'InvoiceController@reject');
             $api->post('invoice/auditing/{invoice}', 'InvoiceController@auditing');
             $api->post('invoice/receive/{invoice}', 'InvoiceController@receive');
             $api->post('invoice/receipt/{invoice}', 'InvoiceController@receipt');
+
+            //开票公司
+            $api->get('invoice_company/{invoice_company}', 'InvoiceCompanyController@show');
+            $api->get('invoice_company', 'InvoiceCompanyController@index');
+            $api->post('invoice_company', 'InvoiceCompanyController@store');
+            $api->patch('invoice_company/{invoice_company}', 'InvoiceCompanyController@update');
+
+            $api->get('invoice_history', 'InvoiceHistoryController@index');
+
+            //财务收款
+            $api->get('invoice_receipt/{invoice_receipt}', 'InvoiceReceiptController@show');
+            $api->get('invoice_receipt', 'InvoiceReceiptController@index');
+            $api->post('invoice_receipt', 'InvoiceReceiptController@store');
+            $api->patch('invoice_receipt/{invoice_receipt}', 'InvoiceReceiptController@update');
+
+            $api->post('invoice_receipt/confirm/{invoice_receipt}', 'InvoiceReceiptController@confirm');
         });
     });
 
