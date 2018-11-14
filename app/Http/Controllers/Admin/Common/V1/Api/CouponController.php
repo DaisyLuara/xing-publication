@@ -343,7 +343,7 @@ class CouponController extends Controller
         return $this->response->item($coupon, new CouponTransformer());
     }
 
-    public function getUserCoupons(UserCouponRequest $request)
+    public function getUserCoupon(UserCouponRequest $request)
     {
         $userID = decrypt($request->sign);
         $query = Coupon::query();
