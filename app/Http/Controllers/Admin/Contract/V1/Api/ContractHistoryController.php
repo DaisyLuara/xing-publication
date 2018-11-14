@@ -47,7 +47,7 @@ class ContractHistoryController extends Controller
         $query->whereHas('contractHistory', function ($q) use ($user) {
             $q->where('user_id', $user->id);
         });
-        $contract = $query->orderBy('updated_at', 'desc')->paginate(10);
+        $contract = $query->orderBy('created_at', 'desc')->paginate(10);
         return $this->response()->paginator($contract, new ContractTransformer())->setStatusCode(200);
     }
 }
