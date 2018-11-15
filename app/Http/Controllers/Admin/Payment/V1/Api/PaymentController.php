@@ -182,6 +182,7 @@ class PaymentController extends Controller
         } else if ($user->hasRole('finance')) {
             $payment->status = 4;
             $payment->handler = null;
+            $payment->payer = $user->name;
             $payment->update();
             PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
         }
