@@ -25,6 +25,8 @@ class Coupon extends Model
         'taobao_user_id',
         'member_uid',
         'qiniu_id',
+        'oid',
+        'belong',
     ];
 
     public function couponBatch()

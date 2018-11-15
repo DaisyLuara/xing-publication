@@ -316,6 +316,8 @@ class CouponController extends Controller
                 'status' => 3,
                 'wx_user_id' => $userID,
                 'qiniu_id' => $request->has('qiniu_id') ? $request->get('qiniu_id') : 0,
+                'oid' => $request->has('oid') ? $request->get('oid') : 0,
+                'belong' => $request->has('belong') ? $request->get('belong') : '',
             ]);
 
 
