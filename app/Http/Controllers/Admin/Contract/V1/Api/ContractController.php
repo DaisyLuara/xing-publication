@@ -7,7 +7,9 @@ use App\Http\Controllers\Admin\Contract\V1\Models\ContractHistory;
 use App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate;
 use App\Http\Controllers\Admin\Contract\V1\Request\ContractRequest;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
+use App\Http\Controllers\Admin\Invoice\V1\Models\Invoice;
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
+use App\Http\Controllers\Admin\Payment\V1\Models\Payment;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
@@ -230,4 +232,19 @@ class ContractController extends Controller
         $contract->update();
         return $this->response()->noContent();
     }
+
+    public function count(Request $request)
+    {
+        $user = $this->user();
+        $contractCount = Contract::query()->where('handler', $user->id)->where('status', '<>', 5)->count();
+        $invoiceCount = Invoice::query()->where('handler', $user->id)->where('status', '<>', 6)->count();
+        $paymentCount = Payment::query()->where('handler', $user->id)->where('status', '<>', 5)->count();
+        $data = [
+            'contract_count' => $contractCount,
+            'invoice_count' => $invoiceCount,
+            'payment_Count' => $paymentCount
+        ];
+        return response()->json($data);
+    }
+
 }

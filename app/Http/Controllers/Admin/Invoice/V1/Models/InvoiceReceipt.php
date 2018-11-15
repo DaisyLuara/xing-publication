@@ -18,7 +18,8 @@ class InvoiceReceipt extends Model
         'receipt_company',
         'receipt_money',
         'receipt_date',
-        'claim_status'
+        'claim_status',
+        'creator'
     ];
 
     public function receiveDate()

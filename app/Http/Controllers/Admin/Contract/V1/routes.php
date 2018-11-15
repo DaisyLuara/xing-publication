@@ -26,6 +26,9 @@ $api->version('v1', [
 
             // 审批历史
             $api->get('contract_history', 'ContractHistoryController@index');
+
+            //待审批数
+            $api->get('auditing_count', 'ContractController@count');
         });
     });
 
