@@ -253,12 +253,11 @@ class CouponController extends Controller
                 }
             }
 
-            $userID = 0;
+            $userID = $request->has('sign') ? decrypt($request->get('sign')) : 0;
             if (!$couponBatch->pmg_status) {
                 if (in_array($couponBatch->id, [3, 4, 5, 6])) {
                     //按微信客户端 发送优惠券(活动期间 限制领取张数)
                     $couponBatchIds = [3, 4, 5, 6];
-                    $userID = decrypt($request->get('sign'));
                     $coupons = Coupon::query()->where('wx_user_id', $userID)->whereIn('coupon_batch_id', $couponBatchIds)->get();
 
                     $couponBatchId = $this->scoreToCoupon($userID, ['FarmSchool', 'FarmSchoolHigh']);
@@ -266,7 +265,6 @@ class CouponController extends Controller
                 } elseif (in_array($couponBatch->id, [7, 8, 9, 10])) {
                     //按微信客户端 发送优惠券(活动期间 每天限制领取张数)
                     $couponBatchIds = [7, 8, 9, 10];
-                    $userID = decrypt($request->get('sign'));
                     $coupons = Coupon::query()->where('wx_user_id', $userID)
                         ->whereIn('coupon_batch_id', $couponBatchIds)
                         ->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
@@ -283,7 +281,6 @@ class CouponController extends Controller
                     $coupons = Coupon::query()->where('mobile', $mobile)->whereIn('coupon_batch_id', $couponBatchIds)->get();
                 } else if ($request->has('qiniu_id')) {
                     //活动期间 每人每天领取次数
-                    $userID = decrypt($request->get('sign'));
                     $coupons = Coupon::query()->where('wx_user_id', $userID)
                         ->where('coupon_batch_id', $couponBatchId)
                         ->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
@@ -294,7 +291,6 @@ class CouponController extends Controller
                     }
                 } else {
                     //根据微信客户端 发送优惠券
-                    $userID = decrypt($request->get('sign'));
                     Log::info('wx_user_id', [$userID]);
                     $coupons = Coupon::query()->where('wx_user_id', $userID)
                         ->where('coupon_batch_id', $couponBatchId)
@@ -317,6 +313,8 @@ class CouponController extends Controller
                 'status' => 3,
                 'wx_user_id' => $userID,
                 'qiniu_id' => $request->has('qiniu_id') ? $request->get('qiniu_id') : 0,
+                'oid' => $request->has('oid') ? $request->get('oid') : 0,
+                'belong' => $request->has('belong') ? $request->get('belong') : '',
             ]);
 
 
