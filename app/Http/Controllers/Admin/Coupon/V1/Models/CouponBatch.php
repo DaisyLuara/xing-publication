@@ -47,6 +47,7 @@ class CouponBatch extends Model
         'dynamic_stock_status',
         'write_off_status',
         'channel',
+        'wechat_coupon_batch_id',
     ];
 
     public function coupon()
@@ -72,5 +73,10 @@ class CouponBatch extends Model
     public function company()
     {
         return $this->belongsTo(Company::class, 'company_id', 'id');
+    }
+
+    public function wechat()
+    {
+        return $this->hasOne(WechatCouponBatch::class, 'id', 'wechat_coupon_batch_id');
     }
 }

@@ -218,7 +218,7 @@ class CouponController extends Controller
         $couponBatchId = $couponBatch->id;
 
         //第三方优惠券
-        if ($couponBatch->channel == 'mallcoo') {
+        if ($couponBatch->third_code) {
 
             $result = $this->sendMallCooCoupon($mobile, $couponBatch->third_code);
             if ($result['Code'] != 1) {
@@ -321,18 +321,21 @@ class CouponController extends Controller
 
 
             //微信卡券二维码
-            if ($couponBatch->channel = 'wechat') {
+            if ($couponBatch->wechat_coupon_batch_id) {
+                $wechatCouponBatch = $couponBatch->wechat;
+
+                /** @var \EasyWeChat\OpenPlatform\Application $app */
                 $app = EasyWeChat::openPlatform();
                 $this->componentVerify($app);
-                $official_account = $this->getOfficialAccount($couponBatch->authorizer_id, $app);
+                $official_account = $this->getOfficialAccount($wechatCouponBatch->wechat_authorizer_id, $app);
                 $card = $official_account->card;
 
                 $cards = [
                     'action_name' => 'QR_CARD',
-                    'expire_seconds' => $couponBatch->expire_seconds,
+                    'expire_seconds' => $wechatCouponBatch->expire_seconds,
                     'action_info' => [
                         'card' => [
-                            'card_id' => $couponBatch->card_id,
+                            'card_id' => $wechatCouponBatch->card_id,
                             'is_unique_code' => false,
                             'outer_id' => 1,
                         ],
@@ -509,9 +512,7 @@ class CouponController extends Controller
     {
         $authorizer = WeChatAuthorizer::where('id', $authorizer_id)->first();
 
-        if (!$authorizer) {
-            return abort(404);
-        }
+        abort_if(!$authorizer, 404);
 
         return $app->officialAccount($authorizer->appid, $authorizer->refresh_token);
     }
