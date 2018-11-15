@@ -174,7 +174,7 @@ class InvoiceController extends Controller
             InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'invoice_id' => $invoice->id], ['user_id' => $user->id, 'invoice_id' => $invoice->id]);
         } else if ($user->hasRole('finance')) {
             $invoice->status = 4;
-            $invoice->handler = $invoice->applicant;
+            $invoice->handler = $user->id;
             $invoice->drawer = $user->name;
             $invoice->update();
             InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'invoice_id' => $invoice->id], ['user_id' => $user->id, 'invoice_id' => $invoice->id]);

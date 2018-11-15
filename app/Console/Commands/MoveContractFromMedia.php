@@ -3,8 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
+use App\Http\Controllers\Admin\Invoice\V1\Models\Invoice;
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use Illuminate\Console\Command;
+use Spatie\Permission\Models\Role;
 
 class MoveContractFromMedia extends Command
 {
@@ -47,9 +49,14 @@ class MoveContractFromMedia extends Command
         foreach ($data as $item) {
             /** @var  $contract \App\Http\Controllers\Admin\Contract\V1\Models\Contract */
             $contract = Contract::query()->withTrashed()->find($item->contract_id);
-            if($contract){
+            if ($contract) {
                 $contract->media()->attach($item->id);
             }
         }
+
+        //开票状态 待处理人改为财务
+        $role = Role::findByName('finance');
+        $finance = $role->users()->first();
+        Invoice::query()->where('status', 4)->update(['handler'=>$finance->id]);
     }
 }
