@@ -50,7 +50,7 @@ class Contract extends Model
 
     public function media()
     {
-        return $this->hasMany(Media::class, 'contract_id', 'id');
+        return $this->belongsToMany(Media::class, 'contract_role', 'contract_id','role_id');
     }
 
     public function receiveDate()
