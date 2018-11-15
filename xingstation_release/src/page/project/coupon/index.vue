@@ -402,7 +402,7 @@ export default {
     putInCouponList() {
       this.setting.loading = true
       let args = {
-        include: 'couponBatch.company.point',
+        include: 'couponBatch.company,point',
         page: this.pagination.currentPage,
         coupon_batch_id: this.filters.coupon_batch_id[0],
         status: this.filters.status,
