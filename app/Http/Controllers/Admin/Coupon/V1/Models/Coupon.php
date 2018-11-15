@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Admin\Coupon\V1\Models;
 
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
+use App\Http\Controllers\Admin\Point\V1\Models\Point;
 use App\Http\Controllers\Admin\User\V1\Models\ArMember;
 use App\Models\Model;
 
@@ -25,6 +26,8 @@ class Coupon extends Model
         'taobao_user_id',
         'member_uid',
         'qiniu_id',
+        'oid',
+        'belong',
     ];
 
     public function couponBatch()
@@ -40,5 +43,10 @@ class Coupon extends Model
     public function member()
     {
         return $this->belongsTo(ArMember::class, 'member_uid', 'uid');
+    }
+
+    public function point()
+    {
+        return $this->belongsTo(Point::class, 'oid', 'oid');
     }
 }
