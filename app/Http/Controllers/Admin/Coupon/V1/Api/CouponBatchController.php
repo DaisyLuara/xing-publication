@@ -51,6 +51,10 @@ class CouponBatchController extends Controller
             'create_user_id' => $this->user->id,
             'bd_user_id' => $company->user_id,
         ], $request->all()))->save();
+        dd($couponBatch);
+        if ($request->wechat) {
+            $couponBatch->wechat()->create($request->wechat);
+        }
 
         return $this->response->item($couponBatch, new CouponBatchTransformer())
             ->setStatusCode(201);
@@ -59,6 +63,9 @@ class CouponBatchController extends Controller
     public function update(CouponBatch $couponBatch, Request $request)
     {
         $couponBatch->update($request->all());
+        if ($request->wechat) {
+            $couponBatch->wechat()->update($request['wechat']);
+        }
         return $this->response->item($couponBatch, new CouponBatchTransformer())
             ->setStatusCode(201);
     }
