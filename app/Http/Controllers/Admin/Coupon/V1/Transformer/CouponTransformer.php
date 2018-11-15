@@ -8,12 +8,13 @@
 
 namespace App\Http\Controllers\Admin\Coupon\V1\Transformer;
 
+use App\Http\Controllers\Admin\Point\V1\Transformer\PointTransformer;
 use League\Fractal\TransformerAbstract;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
 
 class CouponTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['couponBatch'];
+    protected $availableIncludes = ['couponBatch', 'point'];
 
     public function transform(Coupon $coupon)
     {
@@ -32,5 +33,10 @@ class CouponTransformer extends TransformerAbstract
     public function includeCouponBatch(Coupon $coupon)
     {
         return $this->item($coupon->couponBatch, new CouponBatchTransformer());
+    }
+
+    public function includePoint(Coupon $coupon)
+    {
+        return $this->item($coupon->point, new PointTransformer());
     }
 }
