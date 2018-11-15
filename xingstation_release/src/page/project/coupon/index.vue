@@ -144,6 +144,10 @@
                   label="公司">
                   <span>{{ scope.row.couponBatch.company.name }}</span> 
                 </el-form-item>
+                <el-form-item 
+                  label="点位">
+                  <span>{{ scope.row.point.id !== 0 ? scope.row.point.name : '' }}</span> 
+                </el-form-item>
               </el-form>
             </template>
           </el-table-column>
@@ -181,12 +185,12 @@
             label="手机号"
             min-width="100"
           />
-          <el-table-column
+          <!-- <el-table-column
             :show-overflow-tooltip="true"
             prop="created_at"
             label="创建时间"
             min-width="100"
-          />
+          /> -->
           <el-table-column
             :show-overflow-tooltip="true"
             prop="updated_at"
@@ -204,6 +208,15 @@
           </el-table-column>
           <el-table-column
             :show-overflow-tooltip="true"
+            prop=""
+            label="点位"
+            min-width="100">
+            <template slot-scope="scope">
+              {{ scope.row.point.id !== 0 ? scope.row.point.name : '' }}
+            </template>
+          </el-table-column>
+          <!-- <el-table-column
+            :show-overflow-tooltip="true"
             prop="wx_user_id"
             label="微信ID"
             min-width="100"
@@ -213,7 +226,7 @@
             prop="taobao_user_id"
             label="淘宝ID"
             min-width="100"
-          />
+          /> -->
         </el-table>
         <div 
           class="pagination-wrap">
@@ -389,7 +402,7 @@ export default {
     putInCouponList() {
       this.setting.loading = true
       let args = {
-        include: 'couponBatch.company',
+        include: 'couponBatch.company.point',
         page: this.pagination.currentPage,
         coupon_batch_id: this.filters.coupon_batch_id[0],
         status: this.filters.status,
