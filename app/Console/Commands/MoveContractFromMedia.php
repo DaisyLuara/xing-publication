@@ -47,7 +47,9 @@ class MoveContractFromMedia extends Command
         foreach ($data as $item) {
             /** @var  $contract \App\Http\Controllers\Admin\Contract\V1\Models\Contract */
             $contract = Contract::query()->withTrashed()->find($item->contract_id);
+            if($contract){
                 $contract->media()->attach($item->id);
+            }
         }
     }
 }
