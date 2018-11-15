@@ -146,7 +146,7 @@
                 </el-form-item>
                 <el-form-item 
                   label="点位">
-                  <span>{{ scope.row.point!==undefined ? scope.row.point.name : '' }}</span> 
+                  <span>{{ scope.row.point.id !== 0 ? scope.row.point.name : '' }}</span> 
                 </el-form-item>
               </el-form>
             </template>
@@ -212,7 +212,7 @@
             label="点位"
             min-width="100">
             <template slot-scope="scope">
-              {{ scope.row.point !==undefined ? scope.row.point.name : '' }}
+              {{ scope.row.point.id !== 0 ? scope.row.point.name : '' }}
             </template>
           </el-table-column>
           <!-- <el-table-column
