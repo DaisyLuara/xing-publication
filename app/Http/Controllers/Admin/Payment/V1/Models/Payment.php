@@ -24,6 +24,7 @@ class Payment extends Model
         'legal_message',
         'legal_ma_message',
         'auditor_message',
+        'payer',
         'status',
         'receive_status',
     ];

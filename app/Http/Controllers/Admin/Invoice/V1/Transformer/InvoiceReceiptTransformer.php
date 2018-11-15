@@ -25,6 +25,7 @@ class InvoiceReceiptTransformer extends TransformerAbstract
             'receipt_money' => $invoiceReceipt->receipt_money,
             'receipt_date' => $invoiceReceipt->receipt_date,
             'claim_status' => $invoiceReceipt->claim_status == 0 ? '未认领' : '已认领',
+            'creator'=>$invoiceReceipt->creator,
         ];
     }
 

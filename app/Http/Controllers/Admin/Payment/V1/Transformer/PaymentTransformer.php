@@ -40,6 +40,7 @@ class PaymentTransformer extends TransformerAbstract
             'legal_message' => $payment->legal_message,
             'legal_ma_message' => $payment->legal_ma_message,
             'auditor_message' => $payment->auditor_message,
+            'payer' => $payment->payer,
             'receive_status' => $payment->receive_status == 0 ? '未收票' : '已收票',
             'status' => $this->statusMapping[$payment->status],
             'handler' => $payment->handler,
