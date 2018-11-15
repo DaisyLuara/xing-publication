@@ -37,6 +37,9 @@ class CouponTransformer extends TransformerAbstract
 
     public function includePoint(Coupon $coupon)
     {
+        if (!$coupon->point) {
+            return null;
+        }
         return $this->item($coupon->point, new PointTransformer());
     }
 }
