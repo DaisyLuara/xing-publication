@@ -2,20 +2,16 @@
 
 namespace App\Http\Controllers\Admin\Common\V1\Api;
 
-use App\Http\Controllers\Admin\Face\V1\Models\FaceCharacter;
+use App\Http\Controllers\Admin\Common\V1\Request\ChartDataRequest;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceCharacterCount;
 use App\Http\Controllers\Admin\Face\V1\Models\XsFaceCountLog;
+use App\Http\Controllers\Admin\Face\V1\Models\XsFaceLog;
 use App\Http\Controllers\Admin\Face\V1\Transformer\FaceCountTransformer;
-use App\Http\Controllers\Admin\Common\V1\Request\ChartDataRequest;
-use App\Http\Controllers\Admin\Face\V1\Models\FaceCount;
-use App\Http\Controllers\Admin\Face\V1\Models\FaceLog;
-use function GuzzleHttp\Psr7\str;
-use Illuminate\Database\Eloquent\Builder;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
 use DB;
-use App\Http\Controllers\Admin\Face\V1\Models\XsFaceLog;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 class ChartDataController extends Controller
 {
@@ -656,16 +652,6 @@ class ChartDataController extends Controller
             ];
         }
         return $output;
-    }
-
-    public function getFCpe()
-    {
-        $data = XsFaceCountLog::query()
-            ->whereRaw("belong='all'")
-            ->selectRaw("sum(playtimes7) as fcpe")
-            ->first();
-        $output = ['fcpe' => $data->fcpe];
-        return response()->json($output);
     }
 
     private function handleQuery(Request $request, Builder $query, $selectByAlias = true, bool $selectPoint = false)
