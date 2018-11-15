@@ -88,7 +88,7 @@ class ContractController extends Controller
                 //文档存储
                 $ids = explode(',', $request->ids);
                 foreach ($ids as $id) {
-                    Media::where('id', '=', $id)->update(['contract_id' => $contract->id]);
+                    $contract->media()->attach($id);
                 }
 
                 if ($request->type == 0 && $request->has('receive_date')) {
@@ -152,9 +152,9 @@ class ContractController extends Controller
         if ($user->hasRole('legal-affairs')) {
             $contract->update(array_merge($request->all(), ['status' => 5, 'handler' => $contract->applicant]));
             ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
+
             $ids = $request->ids;
-            Media::query()->whereRaw(" contract_id = $contract->id and id not in($ids)")->delete();
-            Media::query()->whereRaw(" id in($ids)")->update(['contract_id' => $contract->id]);
+            $contract->media()->sync($ids);
         } else {
             $contract->update(array_merge($request->all(), ['status' => 5, 'handler' => $contract->applicant]));
             ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
