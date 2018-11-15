@@ -143,10 +143,10 @@ let router = {
     },
     {
       path: 'coupon',
-      name: '优惠券投放',
+      name: '优惠券',
       redirect: 'coupon',
       meta: {
-        title: '优惠券投放'
+        title: '优惠券'
       },
       component: () =>
         import(/* webpackChunkName: "page/project/coupon/routerView" */ 'page/project/coupon/routerView'),
