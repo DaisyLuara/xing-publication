@@ -153,8 +153,12 @@ class ContractController extends Controller
             $contract->update(array_merge($request->all(), ['status' => 5, 'handler' => $contract->applicant]));
             ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
 
-            $ids = $request->ids;
-            $contract->media()->sync($ids);
+            $ids = explode(',',$request->ids);
+            $contract->media()->detach();
+            foreach ($ids as $id) {
+                $contract->media()->attach($id);
+            }
+
         } else {
             $contract->update(array_merge($request->all(), ['status' => 5, 'handler' => $contract->applicant]));
             ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
