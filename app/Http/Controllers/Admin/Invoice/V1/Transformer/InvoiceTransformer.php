@@ -39,6 +39,7 @@ class InvoiceTransformer extends TransformerAbstract
             'remark' => $invoice->remark,
             'bd_ma_message' => $invoice->bd_ma_message,
             'legal_ma_message' => $invoice->legal_ma_message,
+            'drawer' => $invoice->drawer,
             'created_at' => $invoice->created_at->toDateTimeString(),
             'updated_at' => $invoice->updated_at->toDateTimeString()
         ];

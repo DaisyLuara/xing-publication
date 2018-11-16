@@ -7,7 +7,9 @@ use App\Http\Controllers\Admin\Contract\V1\Models\ContractHistory;
 use App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate;
 use App\Http\Controllers\Admin\Contract\V1\Request\ContractRequest;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
+use App\Http\Controllers\Admin\Invoice\V1\Models\Invoice;
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
+use App\Http\Controllers\Admin\Payment\V1\Models\Payment;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
@@ -88,7 +90,7 @@ class ContractController extends Controller
                 //文档存储
                 $ids = explode(',', $request->ids);
                 foreach ($ids as $id) {
-                    Media::where('id', '=', $id)->update(['contract_id' => $contract->id]);
+                    $contract->media()->attach($id);
                 }
 
                 if ($request->type == 0 && $request->has('receive_date')) {
@@ -152,9 +154,13 @@ class ContractController extends Controller
         if ($user->hasRole('legal-affairs')) {
             $contract->update(array_merge($request->all(), ['status' => 5, 'handler' => $contract->applicant]));
             ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
-            $ids = $request->ids;
-            Media::query()->whereRaw(" contract_id = $contract->id and id not in($ids)")->delete();
-            Media::query()->whereRaw(" id in($ids)")->update(['contract_id' => $contract->id]);
+
+            $ids = explode(',',$request->ids);
+            $contract->media()->detach();
+            foreach ($ids as $id) {
+                $contract->media()->attach($id);
+            }
+
         } else {
             $contract->update(array_merge($request->all(), ['status' => 5, 'handler' => $contract->applicant]));
             ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
@@ -226,4 +232,19 @@ class ContractController extends Controller
         $contract->update();
         return $this->response()->noContent();
     }
+
+    public function count(Request $request)
+    {
+        $user = $this->user();
+        $contractCount = Contract::query()->where('handler', $user->id)->where('status', '<>', 5)->count();
+        $invoiceCount = Invoice::query()->where('handler', $user->id)->where('status', '<>', 6)->count();
+        $paymentCount = Payment::query()->where('handler', $user->id)->where('status', '<>', 5)->count();
+        $data = [
+            'contract_count' => $contractCount,
+            'invoice_count' => $invoiceCount,
+            'payment_Count' => $paymentCount
+        ];
+        return response()->json($data);
+    }
+
 }

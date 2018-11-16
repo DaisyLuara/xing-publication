@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
 use App\Http\Controllers\Admin\Company\V1\Request\CompanyRequest;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 
 class AdminCompaniesController extends Controller
@@ -44,9 +45,24 @@ class AdminCompaniesController extends Controller
 
     public function store(CompanyRequest $request, Company $company)
     {
-        $company->fill($request->all());
-        $company->user_id = $this->user()->id;
+        $companyData = [
+            'name' => $request->name,
+            'address' => $request->address,
+            'description' => $request->description,
+            'logo' => $request->logo
+        ];
+        $company->fill(array_merge($companyData, ['user_id' => $this->user()->id]));
         $company->save();
+
+        $customerData = [
+            'name' => $request->customer_name,
+            'position' => $request->position,
+            'phone' => $request->phone,
+            'telephone' => $request->telephone,
+            'password' => bcrypt($request->password),
+            'company_id' => $company->id,
+        ];
+        Customer::create($customerData);
 
         return $this->response->item($company, new CompanyTransformer())
             ->setStatusCode(201);

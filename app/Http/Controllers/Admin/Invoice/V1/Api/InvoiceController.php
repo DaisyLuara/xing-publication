@@ -85,11 +85,11 @@ class InvoiceController extends Controller
             $finance = $permission->users()->first();
             $invoice = Invoice::query()->create(array_merge($invoice, ['status' => 3, 'handler' => $finance->id]));
         }
-        if ($user->hasRole('user') ) {
+        if ($user->hasRole('user')) {
             $invoice = Invoice::query()->create(array_merge($invoice, ['status' => 1, 'handler' => $user->parent_id]));
         }
 
-        if($user->hasRole('bd-manager')){
+        if ($user->hasRole('bd-manager')) {
             $role = Role::findByName('legal-affairs-manager');
             $legalMa = $role->users()->first();
             $invoice = Invoice::query()->create(array_merge($invoice, ['status' => 1, 'handler' => $legalMa->id]));
@@ -174,7 +174,8 @@ class InvoiceController extends Controller
             InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'invoice_id' => $invoice->id], ['user_id' => $user->id, 'invoice_id' => $invoice->id]);
         } else if ($user->hasRole('finance')) {
             $invoice->status = 4;
-            $invoice->handler = $invoice->applicant;
+            $invoice->handler = $user->id;
+            $invoice->drawer = $user->name;
             $invoice->update();
             InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'invoice_id' => $invoice->id], ['user_id' => $user->id, 'invoice_id' => $invoice->id]);
         }
