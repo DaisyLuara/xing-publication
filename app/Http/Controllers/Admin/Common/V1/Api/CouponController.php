@@ -306,7 +306,7 @@ class CouponController extends Controller
 
             //微信卡券二维码
             $wechatCouponBatch = $couponBatch->wechat;
-            $prefix = 'h5_code' . $code;
+            $prefix = 'h5_code';
             $qrcodeUrl = couponQrCode($code, 200, $prefix, $wechatCouponBatch);
 
             $coupon = Coupon::create([
@@ -357,7 +357,7 @@ class CouponController extends Controller
         abort_if(!$coupon, 204);
 
         //优惠券二维码
-        $prefix = 'h5_code' . $coupon->code;
+        $prefix = 'h5_code';
         $qrcodeUrl = couponQrCode($coupon->code, 200, $prefix);
         $coupon->setAttribute('qrcode_url', $qrcodeUrl);
 
