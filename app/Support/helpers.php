@@ -1158,7 +1158,7 @@ if (!function_exists('couponQrCode')) {
             return Cache::get($cacheIndex);
         }
 
-        if ($wechatCouponBatch->id) {
+        if ($wechatCouponBatch && $wechatCouponBatch->id) {
             /** @var \EasyWeChat\OpenPlatform\Application $app */
             $app = EasyWeChat::openPlatform();
             componentVerify($app);
