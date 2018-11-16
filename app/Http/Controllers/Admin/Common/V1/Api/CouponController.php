@@ -217,6 +217,7 @@ class CouponController extends Controller
         $mobile = $request->has('mobile') ? $request->get('mobile') : '';
         $couponBatchId = $couponBatch->id;
         $userID = $request->has('sign') ? decrypt($request->get('sign')) : 0;
+        $code = uniqid();
 
         //第三方优惠券
         if ($couponBatch->third_code) {
@@ -306,18 +307,6 @@ class CouponController extends Controller
                 }
             }
 
-            $coupon = Coupon::create([
-                'code' => uniqid(),
-                'mobile' => $mobile,
-                'coupon_batch_id' => $couponBatchId,
-                'status' => 3,
-                'wx_user_id' => $userID,
-                'qiniu_id' => $request->has('qiniu_id') ? $request->get('qiniu_id') : 0,
-                'oid' => $request->has('oid') ? $request->get('oid') : 0,
-                'belong' => $request->has('belong') ? $request->get('belong') : '',
-            ]);
-
-
             //微信卡券二维码
             if ($couponBatch->wechat_coupon_batch_id) {
                 $wechatCouponBatch = $couponBatch->wechat;
@@ -346,9 +335,20 @@ class CouponController extends Controller
 
             } else {
                 //优惠券二维码
-                $prefix = 'h5_code' . $coupon->code;
-                $qrcodeUrl = couponQrCode($coupon->code, 200, $prefix);
+                $prefix = 'h5_code' . $code;
+                $qrcodeUrl = couponQrCode($code, 200, $prefix);
             }
+
+            $coupon = Coupon::create([
+                'code' => $code,
+                'mobile' => $mobile,
+                'coupon_batch_id' => $couponBatchId,
+                'status' => 3,
+                'wx_user_id' => $userID,
+                'qiniu_id' => $request->has('qiniu_id') ? $request->get('qiniu_id') : 0,
+                'oid' => $request->has('oid') ? $request->get('oid') : 0,
+                'belong' => $request->has('belong') ? $request->get('belong') : '',
+            ]);
 
             $coupon->setAttribute('qrcode_url', $qrcodeUrl);
 
