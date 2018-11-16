@@ -1154,8 +1154,8 @@ if (!function_exists('couponQrCode')) {
     function couponQrCode($code, $size = 200, $prefix = 'mini_qrcode_', WechatCouponBatch $wechatCouponBatch = null)
     {
         $cacheIndex = $prefix . $code;
-        if (Cache::has($cacheIndex)) {
-            return Cache::get($cacheIndex);
+        if (cache()->has($cacheIndex)) {
+            return cache()->get($cacheIndex);
         }
 
         if ($wechatCouponBatch && $wechatCouponBatch->id) {
@@ -1189,7 +1189,7 @@ if (!function_exists('couponQrCode')) {
             $qrcodeApp->generate($code, $path);
             $qrcodeUrl = env('APP_URL') . '/' . $path;
         }
-        Cache::set($cacheIndex, $qrcodeUrl);
+        cache()->forever($cacheIndex, $qrcodeUrl);
         return $qrcodeUrl;
     }
 }
