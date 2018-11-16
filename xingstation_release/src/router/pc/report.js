@@ -31,16 +31,6 @@ let router = {
           },
           component: () =>
             import(/* webpackChunkName: "page/report/detail/index" */ 'page/report/detail/index')
-        },
-        {
-          path: 'person',
-          name: '数据展示',
-          meta: {
-            title: '数据展示',
-            permission: ''
-          },
-          component: () =>
-            import(/* webpackChunkName: "page/report/detail/person" */ 'page/report/detail/person')
         }
       ]
     }
