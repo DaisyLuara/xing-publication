@@ -330,7 +330,7 @@ class CouponController extends Controller
                 ];
 
                 $result = $card->createQrCode($cards);
-                abort_if(!$result['errcode'], 500, $result['errmsg']);
+                abort_if($result['errcode'] > 0, 500, $result['errmsg']);
                 $qrcodeUrl = $result['show_qrcode_url'];
 
             } else {
