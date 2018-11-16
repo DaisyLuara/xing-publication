@@ -216,6 +216,7 @@ class CouponController extends Controller
 
         $mobile = $request->has('mobile') ? $request->get('mobile') : '';
         $couponBatchId = $couponBatch->id;
+        $userID = $request->has('sign') ? decrypt($request->get('sign')) : 0;
 
         //第三方优惠券
         if ($couponBatch->third_code) {
@@ -253,7 +254,6 @@ class CouponController extends Controller
                 }
             }
 
-            $userID = $request->has('sign') ? decrypt($request->get('sign')) : 0;
             if (!$couponBatch->pmg_status) {
                 if (in_array($couponBatch->id, [3, 4, 5, 6])) {
                     //按微信客户端 发送优惠券(活动期间 限制领取张数)

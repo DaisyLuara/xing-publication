@@ -20,5 +20,4 @@ class WechatCouponBatch extends Model
         'expire_at',
         'card_id',
     ];
-
 }

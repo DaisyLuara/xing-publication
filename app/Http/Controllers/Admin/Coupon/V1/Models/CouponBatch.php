@@ -77,6 +77,6 @@ class CouponBatch extends Model
 
     public function wechat()
     {
-        return $this->hasOne(WechatCouponBatch::class, 'id', 'wechat_coupon_batch_id');
+        return $this->hasOne(WechatCouponBatch::class, 'id', 'wechat_coupon_batch_id')->withDefault();
     }
 }
