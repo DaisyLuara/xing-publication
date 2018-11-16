@@ -252,6 +252,9 @@
                 size="small" 
                 type="warning" 
                 @click="linkToEdit(scope.row)">编辑</el-button>
+              <el-button 
+                size="small" 
+                @click="copyRules(scope.row)">复制</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -308,6 +311,7 @@
 <script>
 import coupon from 'service/coupon'
 import search from 'service/search'
+import utils from 'service/utils'
 
 import {
   Button,
@@ -434,6 +438,66 @@ export default {
       this.$router.push({
         path: '/project/rules/add'
       })
+    },
+    copyRules(data) {
+      this.setting.loading = true
+      let company_id = data.company.id
+      let args = {
+        name: data.name,
+        description: data.description,
+        image_url: data.image_url,
+        amount: data.amount,
+        count: data.count,
+        stock: data.stock,
+        people_max_get: data.people_max_get,
+        pmg_status: data.pmg_status,
+        day_max_get: data.day_max_get,
+        dmg_status: data.dmg_status,
+        is_fixed_date: data.is_fixed_date,
+        delay_effective_day: data.delay_effective_day,
+        effective_day: data.effective_day,
+        start_date: data.start_date,
+        end_date: data.end_date,
+        is_active: data.is_active,
+        redirect_url: data.redirect_url,
+        type: data.type,
+        sort_order: data.sort_order,
+        title: data.title,
+        dynamic_stock_status: data.dynamic_stock_status,
+        write_off_status: data.write_off_status
+      }
+      if (!args.image_url) {
+        delete args.image_url
+      }
+      if (args.title === '') {
+        delete args.title
+      }
+      if (args.redirect_url === '') {
+        delete args.redirect_url
+      }
+      if (!args.description) {
+        delete args.description
+      }
+      if (!args.end_date) {
+        delete args.end_date
+      }
+      if (!args.start_date) {
+        delete args.start_date
+      }
+      coupon
+        .saveCoupon(this, args, '', company_id)
+        .then(result => {
+          this.loading = false
+          this.$message({
+            message: '复制成功',
+            type: 'success'
+          })
+          this.getCouponList()
+        })
+        .catch(error => {
+          this.loading = false
+          console.log(error)
+        })
     },
     changePage(currentPage) {
       this.pagination.currentPage = currentPage
