@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Admin\Coupon\V1\Api;
 
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
+use App\Http\Controllers\Admin\Coupon\V1\Models\WechatCouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Request\CouponBatchRequest;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Controller;
@@ -52,6 +53,11 @@ class CouponBatchController extends Controller
             'bd_user_id' => $company->user_id,
         ], $request->all()))->save();
 
+        if ($request->has('wechat')) {
+            $wechatCouponBatch = WechatCouponBatch::query()->create($request->get('wechat'));
+            $couponBatch->update(['wechat_coupon_batch_id' => $wechatCouponBatch->id]);
+        }
+
         return $this->response->item($couponBatch, new CouponBatchTransformer())
             ->setStatusCode(201);
     }
@@ -59,6 +65,9 @@ class CouponBatchController extends Controller
     public function update(CouponBatch $couponBatch, Request $request)
     {
         $couponBatch->update($request->all());
+        if ($request->wechat && $couponBatch->wechat) {
+            $couponBatch->wechat()->update($request['wechat']);
+        }
         return $this->response->item($couponBatch, new CouponBatchTransformer())
             ->setStatusCode(201);
     }
