@@ -3435,7 +3435,29 @@
 						{
 							"name": "生成规则",
 							"request": {
-								"url": "http://{{host}}/api/company/2/coupon/batch",
+								"url": {
+									"raw": "http://{{host}}/api/company/2/coupon/batch?include=wechat",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"company",
+										"2",
+										"coupon",
+										"batch"
+									],
+									"query": [
+										{
+											"key": "include",
+											"value": "wechat",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
 								"method": "POST",
 								"header": [
 									{
@@ -3451,7 +3473,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"name\": \"大荣成-mmp\",\n\t\"description\": \"大荣成-mmp\",\n\t\"image_url\": \"www.baidu.com\",\n\t\"amount\": 10,\n\t\"count\": 1000,\n\t\"stock\": 1000,\n\t\"people_max_get\": 1,\n\t\"pmg_status\": 0,\n\t\"day_max_get\": 1,\n\t\"dmg_status\": 0,\n\t\"is_fixed_date\": 0,\n\t\"delay_effective_day\": 1,\n\t\"effective_day\": 1,\n\t\"is_active\": 1,\n\t\"redirect_url\": \"www.baidu.com\",\n\t\"type\": 1,\n\t\"start_date\": \"2018-10-30\",\n\t\"end_date\": \"2018-10-31\"\n}"
+									"raw": "{\n\t\"name\": \"大荣成-mmp\",\n\t\"description\": \"大荣成-mmp\",\n\t\"image_url\": \"http://www.baidu.com\",\n\t\"amount\": 10,\n\t\"count\": 1000,\n\t\"stock\": 1000,\n\t\"people_max_get\": 1,\n\t\"pmg_status\": 0,\n\t\"day_max_get\": 1,\n\t\"dmg_status\": 0,\n\t\"is_fixed_date\": 0,\n\t\"delay_effective_day\": 1,\n\t\"effective_day\": 1,\n\t\"is_active\": 1,\n\t\"redirect_url\": \"www.baidu.com\",\n\t\"type\": 1,\n\t\"start_date\": \"2018-10-30\",\n\t\"end_date\": \"2018-10-31\",\n\t\"wechat\":{\n\t\t\"wechat_authorizer_id\":6,\n\t\t\"expire_at\":1800,\n\t\t\"card_id\":\"ssadfadfasdf\"\n\t}\n}"
 								},
 								"description": ""
 							},
@@ -3460,7 +3482,28 @@
 						{
 							"name": "修改规则",
 							"request": {
-								"url": "http://{{host}}/api/coupon/batches/17",
+								"url": {
+									"raw": "http://{{host}}/api/coupon/batches/10?include=wechat",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"coupon",
+										"batches",
+										"10"
+									],
+									"query": [
+										{
+											"key": "include",
+											"value": "wechat",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
 								"method": "PATCH",
 								"header": [
 									{
@@ -3476,7 +3519,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"id\": 17,\n    \"name\": \"大荣成-mmp\",\n    \"description\": \"大荣成-mmp\",\n    \"image_url\": \"http://www.baidu.com\",\n    \"amount\": 10,\n    \"count\": 1000,\n    \"stock\": 1000,\n    \"people_max_get\": 1,\n    \"pmg_status\": 0,\n    \"day_max_get\": 1,\n    \"dmg_status\": 0,\n    \"is_fixed_date\": 0,\n    \"delay_effective_day\": 1,\n    \"effective_day\": 1,\n    \"start_date\": \"2018-10-30 00:00:00\",\n    \"end_date\": \"2018-10-31 00:00:00\",\n    \"is_active\": 1,\n    \"third_code\": \"\",\n    \"pivot\": null,\n    \"wx_user_id\": null,\n    \"type\": 1,\n    \"redirect_url\": \"\",\n    \"title\": \"\",\n    \"sort_order\": 1\n}"
+									"raw": "{\n    \"id\": 17,\n    \"name\": \"大荣成-mmp\",\n    \"description\": \"大荣成-mmp\",\n    \"image_url\": \"http://www.baidu.com\",\n    \"amount\": 10,\n    \"count\": 1000,\n    \"stock\": 1000,\n    \"people_max_get\": 1,\n    \"pmg_status\": 0,\n    \"day_max_get\": 1,\n    \"dmg_status\": 0,\n    \"is_fixed_date\": 0,\n    \"delay_effective_day\": 1,\n    \"effective_day\": 1,\n    \"start_date\": \"2018-10-30 00:00:00\",\n    \"end_date\": \"2018-10-31 00:00:00\",\n    \"is_active\": 1,\n    \"third_code\": \"\",\n    \"pivot\": null,\n    \"wx_user_id\": null,\n    \"type\": 1,\n    \"redirect_url\": \"\",\n    \"title\": \"\",\n    \"sort_order\": 1,\n    \t\"wechat\":{\n\t\t\"wechat_authorizer_id\":6,\n\t\t\"expire_at\":100,\n\t\t\"card_id\":\"ssssssssss\"\n\t}\n}"
 								},
 								"description": ""
 							},
@@ -3493,7 +3536,7 @@
 							"name": "投放列表",
 							"request": {
 								"url": {
-									"raw": "http://{{host}}/api/coupons?include=couponBatch.company&company_id=11&start_date=2018-10-31 13:46:01&end_date=2018-10-31 13:46:55",
+									"raw": "http://{{host}}/api/coupons?include=couponBatch.company,point&company_id=60&start_date=2018-11-11 13:46:01&end_date=2018-11-30 13:46:55",
 									"protocol": "http",
 									"host": [
 										"{{host}}"
@@ -3505,7 +3548,7 @@
 									"query": [
 										{
 											"key": "include",
-											"value": "couponBatch.company",
+											"value": "couponBatch.company,point",
 											"equals": true,
 											"description": ""
 										},
@@ -3518,20 +3561,21 @@
 										},
 										{
 											"key": "company_id",
-											"value": "11",
+											"value": "60",
 											"equals": true,
 											"description": ""
 										},
 										{
 											"key": "start_date",
-											"value": "2018-10-31 13:46:01",
+											"value": "2018-11-11 13:46:01",
 											"equals": true,
 											"description": ""
 										},
 										{
 											"key": "end_date",
-											"value": "2018-10-31 13:46:55",
-											"equals": true
+											"value": "2018-11-30 13:46:55",
+											"equals": true,
+											"description": ""
 										}
 									],
 									"variable": []
@@ -4041,7 +4085,7 @@
 								{
 									"name": "领取优惠券",
 									"request": {
-										"url": "http://{{host}}/api/open/coupons/14",
+										"url": "http://{{host}}/api/open/coupons/96",
 										"method": "POST",
 										"header": [
 											{
@@ -4057,7 +4101,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n\t\"sign\":\"eyJpdiI6IkdBOHkyUDdDNzdaa0RNeHRqREhpM0E9PSIsInZhbHVlIjoiTHZaUmVabW5rV1ZUVk9sRWlFUXBwdz09IiwibWFjIjoiNzIxMTQ0NGE3YzM5N2JkNjJkOTE5MDc0MzQyNjQ2ZmExZDhjNzZhYjE0OThkYWI4ZjE0ZWJjY2E2MWFhMTJhMSJ9\"\n}"
+											"raw": "{\n\t\"sign\":\"eyJpdiI6IkdBOHkyUDdDNzdaa0RNeHRqREhpM0E9PSIsInZhbHVlIjoiTHZaUmVabW5rV1ZUVk9sRWlFUXBwdz09IiwibWFjIjoiNzIxMTQ0NGE3YzM5N2JkNjJkOTE5MDc0MzQyNjQ2ZmExZDhjNzZhYjE0OThkYWI4ZjE0ZWJjY2E2MWFhMTJhMSJ9\",\n\t\"qiniu_id\":1111111,\n\t\"belong\":\"LanHuaCheng\",\n\t\"oid\":540\n}"
 										},
 										"description": null
 									},
@@ -4066,28 +4110,7 @@
 								{
 									"name": "查询优惠券",
 									"request": {
-										"url": {
-											"raw": "http://{{host}}/api/open/user/coupons?include=couponBatch.company",
-											"protocol": "http",
-											"host": [
-												"{{host}}"
-											],
-											"path": [
-												"api",
-												"open",
-												"user",
-												"coupons"
-											],
-											"query": [
-												{
-													"key": "include",
-													"value": "couponBatch.company",
-													"equals": true,
-													"description": ""
-												}
-											],
-											"variable": []
-										},
+										"url": "http://{{host}}/api/open/user/coupon",
 										"method": "POST",
 										"header": [
 											{
@@ -4103,11 +4126,168 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n\t\"sign\":\"eyJpdiI6IkdBOHkyUDdDNzdaa0RNeHRqREhpM0E9PSIsInZhbHVlIjoiTHZaUmVabW5rV1ZUVk9sRWlFUXBwdz09IiwibWFjIjoiNzIxMTQ0NGE3YzM5N2JkNjJkOTE5MDc0MzQyNjQ2ZmExZDhjNzZhYjE0OThkYWI4ZjE0ZWJjY2E2MWFhMTJhMSJ9\",\n\t\"coupon_batch_id\":14\n}"
+											"raw": "{\n\t\"sign\":\"eyJpdiI6IkVkSVV0SFF4cUtsdlVobnhvR1ZkdVE9PSIsInZhbHVlIjoialRzQ1lYYm1YazQ1OGtVSEVDeWVmdz09IiwibWFjIjoiZmY5N2I0ZDc3NjJmZTEzZGZiZDgwNjExMjE5OGUzMThiNzQ2ZDFkNzljNTg1YTgxZTk3YWRiOGIyN2M2YTllMiJ9\",\n\t\"coupon_batch_id\":92,\n\t\"start_date\":\"2018-11-13 00:00:00\",\n\t\"end_date\":\"2018-11-13 23:59:59\",\n\t\"include\":\"couponBatch\"\n}"
 										},
 										"description": null
 									},
-									"response": []
+									"response": [
+										{
+											"id": "5ec36eea-366f-469c-9020-3caa996c4a5a",
+											"name": "查询优惠券测试",
+											"originalRequest": {
+												"url": {
+													"raw": "http://{{host}}/api/open/user/coupons?include=couponBatch.company",
+													"protocol": "http",
+													"host": [
+														"{{host}}"
+													],
+													"path": [
+														"api",
+														"open",
+														"user",
+														"coupons"
+													],
+													"query": [
+														{
+															"key": "include",
+															"value": "couponBatch.company",
+															"equals": true,
+															"description": ""
+														}
+													],
+													"variable": []
+												},
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"description": ""
+													},
+													{
+														"key": "api-token",
+														"value": "{{api-token}}",
+														"description": ""
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n\t\"sign\":\"eyJpdiI6IkdBOHkyUDdDNzdaa0RNeHRqREhpM0E9PSIsInZhbHVlIjoiTHZaUmVabW5rV1ZUVk9sRWlFUXBwdz09IiwibWFjIjoiNzIxMTQ0NGE3YzM5N2JkNjJkOTE5MDc0MzQyNjQ2ZmExZDhjNzZhYjE0OThkYWI4ZjE0ZWJjY2E2MWFhMTJhMSJ9\",\n\t\"coupon_batch_id\":14\n}"
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"_postman_previewtype": "text",
+											"header": [
+												{
+													"name": "access-control-allow-credentials",
+													"key": "access-control-allow-credentials",
+													"value": "true",
+													"description": "Indicates whether or not the response to the request can be exposed when the credentials flag is true. When used as part of a response to a preflight request, this indicates whether or not the actual request can be made using credentials."
+												},
+												{
+													"name": "access-control-allow-origin",
+													"key": "access-control-allow-origin",
+													"value": "chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop",
+													"description": "Specifies a URI that may access the resource. For requests without credentials, the server may specify '*' as a wildcard, thereby allowing any origin to access the resource."
+												},
+												{
+													"name": "cache-control",
+													"key": "cache-control",
+													"value": "private, must-revalidate",
+													"description": "Tells all caching mechanisms from server to client whether they may cache this object. It is measured in seconds"
+												},
+												{
+													"name": "connection",
+													"key": "connection",
+													"value": "keep-alive",
+													"description": "Options that are desired for the connection"
+												},
+												{
+													"name": "content-encoding",
+													"key": "content-encoding",
+													"value": "gzip",
+													"description": "The type of encoding used on the data."
+												},
+												{
+													"name": "content-type",
+													"key": "content-type",
+													"value": "application/json",
+													"description": "The mime type of this content"
+												},
+												{
+													"name": "date",
+													"key": "date",
+													"value": "Thu, 08 Nov 2018 01:57:29 GMT",
+													"description": "The date and time that the message was sent"
+												},
+												{
+													"name": "expires",
+													"key": "expires",
+													"value": "-1",
+													"description": "Gives the date/time after which the response is considered stale"
+												},
+												{
+													"name": "pragma",
+													"key": "pragma",
+													"value": "no-cache",
+													"description": "Implementation-specific headers that may have various effects anywhere along the request-response chain."
+												},
+												{
+													"name": "server",
+													"key": "server",
+													"value": "nginx/1.4.6 (Ubuntu)",
+													"description": "A name for the server"
+												},
+												{
+													"name": "transfer-encoding",
+													"key": "transfer-encoding",
+													"value": "chunked",
+													"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+												},
+												{
+													"name": "vary",
+													"key": "vary",
+													"value": "Accept-Encoding, Origin",
+													"description": "Tells downstream proxies how to match future request headers to decide whether the cached response can be used rather than requesting a fresh one from the origin server."
+												},
+												{
+													"name": "x-frame-options",
+													"key": "x-frame-options",
+													"value": "SAMEORIGIN",
+													"description": "Clickjacking protection: \"deny\" - no rendering within a frame, \"sameorigin\" - no rendering if origin mismatch"
+												},
+												{
+													"name": "x-powered-by",
+													"key": "x-powered-by",
+													"value": "PHP/7.1.11",
+													"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+												},
+												{
+													"name": "x-ratelimit-limit",
+													"key": "x-ratelimit-limit",
+													"value": "120",
+													"description": "Custom header"
+												},
+												{
+													"name": "x-ratelimit-remaining",
+													"key": "x-ratelimit-remaining",
+													"value": "118",
+													"description": "Custom header"
+												},
+												{
+													"name": "x-ratelimit-reset",
+													"key": "x-ratelimit-reset",
+													"value": "1541642297",
+													"description": "Custom header"
+												}
+											],
+											"cookie": [],
+											"responseTime": 101,
+											"body": "{\"data\":[{\"code\":\"5be39806681ae\",\"name\":\"\\u6797\\u6e05\\u8f69-\\u5c0f\\u6837\",\"status\":3,\"qrcode_url\":\"http:\\/\\/papi.newgls.cn\\/qrcode\\/5be39806681ae.png\",\"created_at\":\"2018-11-08 09:57:26\",\"couponBatch\":{\"id\":14,\"name\":\"\\u6797\\u6e05\\u8f69-\\u5c0f\\u6837\",\"description\":\"\\u6ee1300\\u5143\\u4f7f\\u7528\",\"image_url\":\"https:\\/\\/cdn.exe666.com\\/fe\\/image\\/tmall\\/play_gift\\/couponA.png\",\"amount\":50,\"count\":1000,\"stock\":999,\"people_max_get\":100,\"pmg_status\":0,\"day_max_get\":100,\"dmg_status\":0,\"is_fixed_date\":0,\"delay_effective_day\":0,\"effective_day\":0,\"start_date\":\"2018-11-07 00:00:00\",\"end_date\":\"2018-11-08 23:59:59\",\"is_active\":1,\"third_code\":\"\",\"pivot\":null,\"wx_user_id\":null,\"type\":2,\"redirect_url\":\"www.actiview.com\",\"title\":\"\",\"sort_order\":1,\"dynamic_stock_status\":1,\"write_off_status\":1,\"company\":{\"id\":59,\"name\":\"\\u6d3b\\u52a8\\u6d4b\\u8bd5\\u516c\\u53f8\",\"address\":\"\\u6d3b\\u52a8\\u6d4b\\u8bd5\\u516c\\u53f8\",\"status\":1,\"description\":null,\"logo\":\"\",\"created_at\":\"2018-09-21 17:21:27\",\"updated_at\":\"2018-09-21 17:21:27\"}}},{\"code\":\"5be391e484f97\",\"name\":\"\\u6797\\u6e05\\u8f69-\\u5c0f\\u6837\",\"status\":3,\"qrcode_url\":\"http:\\/\\/papi.newgls.cn\\/qrcode\\/5be391e484f97.png\",\"created_at\":\"2018-11-08 09:31:16\",\"couponBatch\":{\"id\":14,\"name\":\"\\u6797\\u6e05\\u8f69-\\u5c0f\\u6837\",\"description\":\"\\u6ee1300\\u5143\\u4f7f\\u7528\",\"image_url\":\"https:\\/\\/cdn.exe666.com\\/fe\\/image\\/tmall\\/play_gift\\/couponA.png\",\"amount\":50,\"count\":1000,\"stock\":999,\"people_max_get\":100,\"pmg_status\":0,\"day_max_get\":100,\"dmg_status\":0,\"is_fixed_date\":0,\"delay_effective_day\":0,\"effective_day\":0,\"start_date\":\"2018-11-07 00:00:00\",\"end_date\":\"2018-11-08 23:59:59\",\"is_active\":1,\"third_code\":\"\",\"pivot\":null,\"wx_user_id\":null,\"type\":2,\"redirect_url\":\"www.actiview.com\",\"title\":\"\",\"sort_order\":1,\"dynamic_stock_status\":1,\"write_off_status\":1,\"company\":{\"id\":59,\"name\":\"\\u6d3b\\u52a8\\u6d4b\\u8bd5\\u516c\\u53f8\",\"address\":\"\\u6d3b\\u52a8\\u6d4b\\u8bd5\\u516c\\u53f8\",\"status\":1,\"description\":null,\"logo\":\"\",\"created_at\":\"2018-09-21 17:21:27\",\"updated_at\":\"2018-09-21 17:21:27\"}}}],\"meta\":{\"pagination\":{\"total\":2,\"count\":2,\"per_page\":5,\"current_page\":1,\"total_pages\":1,\"links\":null}}}"
+										}
+									]
 								}
 							],
 							"_postman_isSubFolder": true
@@ -4120,9 +4300,12 @@
 									"name": "优惠券列表",
 									"request": {
 										"url": {
-											"raw": "{{host}}/api/mini/user/coupons?z=ky71a2d5dfff925b026de99489f68fd8a29f1t&status=3&include=couponBatch.company",
+											"raw": "https://papi.xingstation.com/api/mini/user/coupons?z=wg522765c324795fb353543952f5160f38chgq&status=2&include=couponBatch.company",
+											"protocol": "https",
 											"host": [
-												"{{host}}"
+												"papi",
+												"xingstation",
+												"com"
 											],
 											"path": [
 												"api",
@@ -4133,13 +4316,13 @@
 											"query": [
 												{
 													"key": "z",
-													"value": "ky71a2d5dfff925b026de99489f68fd8a29f1t",
+													"value": "wg522765c324795fb353543952f5160f38chgq",
 													"equals": true,
 													"description": ""
 												},
 												{
 													"key": "status",
-													"value": "3",
+													"value": "2",
 													"equals": true,
 													"description": ""
 												},
@@ -4365,7 +4548,7 @@
 								{
 									"name": "发送淘宝优惠券",
 									"request": {
-										"url": "{{host}}/api/tmall/user/coupon_batch/13",
+										"url": "{{host}}/api/tmall/user/coupon_batch/50",
 										"method": "POST",
 										"header": [
 											{
@@ -4376,7 +4559,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n\t\"openuid\":\"AAGsESr6AGsOHI408ramCu\"\n}"
+											"raw": "{\n\t\"openuid\":\"AAGsESr6AGsOHI408ramC\"\n}"
 										},
 										"description": ""
 									},
@@ -4384,12 +4567,19 @@
 								}
 							],
 							"_postman_isSubFolder": true
-						},
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "优惠券规则",
+					"description": "",
+					"item": [
 						{
-							"name": "获取抽奖规则",
+							"name": "根据节目获取优惠券策略",
 							"request": {
 								"url": {
-									"raw": "papi.xingstation.com/api/open/project/policy?belong=CuteLion",
+									"raw": "papi.xingstation.com/api/open/project/policy?belong=LanHuaCheng",
 									"host": [
 										"papi",
 										"xingstation",
@@ -4404,7 +4594,7 @@
 									"query": [
 										{
 											"key": "belong",
-											"value": "CuteLion",
+											"value": "LanHuaCheng",
 											"equals": true,
 											"description": ""
 										}
@@ -4425,10 +4615,10 @@
 							"response": []
 						},
 						{
-							"name": "抽奖",
+							"name": "根据策略获取优惠券规则详情",
 							"request": {
 								"url": {
-									"raw": "{{host}}/api/open/coupon/batches/stock?policy_id=2",
+									"raw": "{{host}}/api/open/coupon/batches?policy_id=31",
 									"host": [
 										"{{host}}"
 									],
@@ -4436,13 +4626,12 @@
 										"api",
 										"open",
 										"coupon",
-										"batches",
-										"stock"
+										"batches"
 									],
 									"query": [
 										{
 											"key": "policy_id",
-											"value": "2",
+											"value": "31",
 											"equals": true,
 											"description": ""
 										}
@@ -4473,7 +4662,7 @@
 						{
 							"name": "优惠券规则详情",
 							"request": {
-								"url": "http://papi.xingstation.com/api/open/coupon/batches/76",
+								"url": "{{host}}/api/open/coupon/batches/50",
 								"method": "POST",
 								"header": [
 									{
@@ -4489,7 +4678,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\n}"
+									"raw": ""
 								},
 								"description": ""
 							},
