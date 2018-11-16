@@ -15,7 +15,7 @@ use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 
 class CouponBatchTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['user', 'company'];
+    protected $availableIncludes = ['user', 'company', 'wechat'];
 
     public function transform(CouponBatch $couponBatch)
     {
@@ -57,5 +57,10 @@ class CouponBatchTransformer extends TransformerAbstract
     public function includeCompany(CouponBatch $couponBatch)
     {
         return $this->item($couponBatch->company, new CompanyTransformer());
+    }
+
+    public function includeWechat(CouponBatch $couponBatch)
+    {
+        return $this->item($couponBatch->wechat, new WecahtCouponBatchTransformer());
     }
 }

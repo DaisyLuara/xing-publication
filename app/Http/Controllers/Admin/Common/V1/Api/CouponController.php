@@ -20,8 +20,10 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use DB;
 use Log;
-use Cookie;
 use Overtrue\EasySms\EasySms;
+use EasyWeChat;
+use App\Http\Controllers\Admin\WeChat\V1\Models\WeChatAuthorizer;
+use App\Http\Controllers\Admin\WeChat\V1\Models\ComponentVerifyTicket;
 
 
 class CouponController extends Controller
@@ -213,37 +215,34 @@ class CouponController extends Controller
 
 
         $mobile = $request->has('mobile') ? $request->get('mobile') : '';
+        $couponBatchId = $couponBatch->id;
+        $userID = $request->has('sign') ? decrypt($request->get('sign')) : 0;
+        $code = uniqid();
 
         //第三方优惠券
         if ($couponBatch->third_code) {
-            if ($couponBatch->channel == 'mallcoo') {
 
-                $result = $this->sendMallCooCoupon($mobile, $couponBatch->third_code);
-                if ($result['Code'] != 1) {
-                    abort(500, $result['Message']);
-                }
-
-                if (!$result['Data'][0]['IsSuccess']) {
-                    abort(500, $result['Data'][0]['FailReason']);
-                }
-
-                $data = $result['Data'];
-                $coupon = Coupon::create([
-                    'code' => $data[0]['VCode'],
-                    'mobile' => $mobile,
-                    'coupon_batch_id' => $couponBatch->id,
-                    'picm_id' => $data[0]['PICMID'],
-                    'trace_id' => $data[0]['TraceID'],
-                    'status' => 3,
-                ]);
-                $couponBatch->decrement('stock');
-            } else if ($couponBatch->channel == 'wechat') {
-                //@todo 微信卡券
+            $result = $this->sendMallCooCoupon($mobile, $couponBatch->third_code);
+            if ($result['Code'] != 1) {
+                abort(500, $result['Message']);
             }
 
-        } else {
+            if (!$result['Data'][0]['IsSuccess']) {
+                abort(500, $result['Data'][0]['FailReason']);
+            }
 
-            $couponBatchId = $couponBatch->id;
+            $data = $result['Data'];
+            $coupon = Coupon::create([
+                'code' => $data[0]['VCode'],
+                'mobile' => $mobile,
+                'coupon_batch_id' => $couponBatch->id,
+                'picm_id' => $data[0]['PICMID'],
+                'trace_id' => $data[0]['TraceID'],
+                'status' => 3,
+            ]);
+            $couponBatch->decrement('stock');
+
+        } else {
 
             $now = Carbon::now()->toDateString();
             if (!$couponBatch->dmg_status) {
@@ -256,7 +255,6 @@ class CouponController extends Controller
                 }
             }
 
-            $userID = $request->has('sign') ? decrypt($request->get('sign')) : 0;
             if (!$couponBatch->pmg_status) {
                 if (in_array($couponBatch->id, [3, 4, 5, 6])) {
                     //按微信客户端 发送优惠券(活动期间 限制领取张数)
@@ -309,8 +307,40 @@ class CouponController extends Controller
                 }
             }
 
+            //微信卡券二维码
+            if ($couponBatch->wechat_coupon_batch_id) {
+                $wechatCouponBatch = $couponBatch->wechat;
+
+                /** @var \EasyWeChat\OpenPlatform\Application $app */
+                $app = EasyWeChat::openPlatform();
+                $this->componentVerify($app);
+                $official_account = $this->getOfficialAccount($wechatCouponBatch->wechat_authorizer_id, $app);
+                $card = $official_account->card;
+
+                $cards = [
+                    'action_name' => 'QR_CARD',
+                    'expire_seconds' => $wechatCouponBatch->expire_seconds,
+                    'action_info' => [
+                        'card' => [
+                            'card_id' => $wechatCouponBatch->card_id,
+                            'is_unique_code' => false,
+                            'outer_id' => 1,
+                        ],
+                    ],
+                ];
+
+                $result = $card->createQrCode($cards);
+                abort_if($result['errcode'] > 0, 500, $result['errmsg']);
+                $qrcodeUrl = $result['show_qrcode_url'];
+
+            } else {
+                //优惠券二维码
+                $prefix = 'h5_code' . $code;
+                $qrcodeUrl = couponQrCode($code, 200, $prefix);
+            }
+
             $coupon = Coupon::create([
-                'code' => uniqid(),
+                'code' => $code,
                 'mobile' => $mobile,
                 'coupon_batch_id' => $couponBatchId,
                 'status' => 3,
@@ -320,10 +350,6 @@ class CouponController extends Controller
                 'belong' => $request->has('belong') ? $request->get('belong') : '',
             ]);
 
-
-            //优惠券二维码
-            $prefix = 'h5_code' . $coupon->code;
-            $qrcodeUrl = couponQrCode($coupon->code, 200, $prefix);
             $coupon->setAttribute('qrcode_url', $qrcodeUrl);
 
             //不使用系统核销 领取优惠券后 ，自动减去库存
@@ -464,6 +490,29 @@ class CouponController extends Controller
             Log::info('send_msg_exceptions', ['msg' => $exception->getMessage()]);
         }
 
+    }
+
+
+    private function componentVerify($app)
+    {
+        $component = ComponentVerifyTicket::orderBy('clientdate', 'desc')->first();
+        /** @var \EasyWeChat\OpenPlatform\Auth\VerifyTicket $verifyTicket */
+        $verifyTicket = $app->verify_ticket;
+        $verifyTicket->setTicket($component->ticket);
+    }
+
+    /**
+     * @param $authorizer_id
+     * @param $app
+     * @return \EasyWeChat\OfficialAccount\Application
+     */
+    private function getOfficialAccount($authorizer_id, $app)
+    {
+        $authorizer = WeChatAuthorizer::where('id', $authorizer_id)->first();
+
+        abort_if(!$authorizer, 404);
+
+        return $app->officialAccount($authorizer->appid, $authorizer->refresh_token);
     }
 
 }
