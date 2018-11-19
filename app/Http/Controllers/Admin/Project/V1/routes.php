@@ -19,7 +19,7 @@ $api->version('v1', [
             //节目投放
             $api->get('projects', 'ProjectController@index');
             $api->patch('projects', ['middleware' => ['role:super-admin|admin'], 'uses' => 'ProjectController@update']);
-            $api->get('projects/launch', ['middleware' => ['role:super-admin|admin'], 'uses' => 'ProjectLaunchController@store']);
+            $api->get('projects/launch', ['middleware' => ['role:super-admin|admin'], 'uses' => 'ProjectLaunchController@index']);
             $api->post('projects/launch', ['middleware' => ['role:super-admin|admin'], 'uses' => 'ProjectLaunchController@store']);
             $api->patch('projects/launches', ['middleware' => ['role:super-admin|admin'], 'uses' => 'ProjectLaunchController@update']);
             $api->get('projects/launches/tpl', 'ProjectLaunchTplController@index');
