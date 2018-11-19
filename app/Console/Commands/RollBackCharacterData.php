@@ -7,21 +7,21 @@ use Illuminate\Console\Command;
 use DB;
 use Carbon\Carbon;
 
-class CharacterDataRollBack extends Command
+class RollBackCharacterData extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'xingstation:character_rollback';
+    protected $signature = 'yqDataClean:rollback_faceCharacter';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'character数据回滚';
+    protected $description = '数据回滚face_character';
 
     /**
      * Create a new command instance.

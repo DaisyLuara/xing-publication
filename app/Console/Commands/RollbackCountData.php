@@ -5,27 +5,28 @@ namespace App\Console\Commands;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceActivePlayerRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceActivePlaytimesRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceCountRecord;
+use App\Http\Controllers\Admin\Face\V1\Models\FaceLookTimesRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceOmoRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FacePhoneRecord;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use DB;
 
-class DataRollback extends Command
+class RollbackCountData extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'xingstation:count_rollback';
+    protected $signature = 'yqDataClean:rollback_faceCount';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'count数据回滚';
+    protected $description = '数据回滚face_count';
 
     /**
      * Create a new command instance.
@@ -73,6 +74,9 @@ class DataRollback extends Command
         FaceCountRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
         FaceCountRecord::create(['date' => $date]);
 
+        FaceLookTimesRecord::query()->whereRaw("date_format(date,%Y-%m-%d)>='$date'")->delete();
+        FaceLookTimesRecord::create(['date' => $date]);
+
         //rollback data
         DB::connection('ar')->table('xs_face_active_player')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
         DB::connection('ar')->table('xs_face_active_playtimes')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
@@ -80,5 +84,6 @@ class DataRollback extends Command
         DB::connection('ar')->table('xs_face_phone')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
         DB::connection('ar')->table('xs_face_phone_times')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
         DB::connection('ar')->table('xs_face_count_log')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
+        DB::connection('ar')->table('xs_face_look_times')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
     }
 }

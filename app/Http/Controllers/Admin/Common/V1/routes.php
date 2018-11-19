@@ -80,8 +80,10 @@ $api->version('v1', [
 
             //数据统计
             $api->get('stats', 'ChartDataController@index');//列表
-            $api->post('chart_data', 'ChartDataController@chart');//图表
+            $api->post('chart_data', 'ChartDataController@chart');//人数图表
             $api->get('export', 'ExportController@store');//导出
+
+            $api->post('chart_data_times', 'ChartDataTimesController@chart');//人次图表
         });
 
         $api->get('website/fcpe', 'WebsiteController@getFCpe');

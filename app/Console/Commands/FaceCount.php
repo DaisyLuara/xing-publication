@@ -2,23 +2,26 @@
 
 namespace App\Console\Commands;
 
+use App\Http\Controllers\Admin\Face\V1\Models\FaceActivePlayerRecord;
+use Carbon\Carbon;
+use DB;
 use Illuminate\Console\Command;
 
-class FaceLog extends Command
+class FaceCount extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'yqDataClean:face_log';
+    protected $signature = 'yqDataClean:face_count';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = '清洗围观人数的用户渗透率';
+    protected $description = '清洗count数据';
 
     /**
      * Create a new command instance.
@@ -37,6 +40,11 @@ class FaceLog extends Command
      */
     public function handle()
     {
-        faceLogClean();
+//        lookTimesClean();
+//        activePlayerClean();
+//        activePlayTimesClean();
+//        omoClean();
+//        phoneClean();
+        mergeActiveOmoLook();
     }
 }

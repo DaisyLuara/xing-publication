@@ -7,21 +7,21 @@ use Illuminate\Console\Command;
 use Carbon\Carbon;
 use DB;
 
-class LogDataRollBack extends Command
+class RollBackLogData extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'xingstation:log_rollback';
+    protected $signature = 'yqDataClean:rollback_faceLog';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'log数据回滚';
+    protected $description = '数据回滚face_log';
 
     /**
      * Create a new command instance.

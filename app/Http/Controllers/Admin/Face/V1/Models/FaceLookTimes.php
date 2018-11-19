@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: yangqiang
- * Date: 2018/7/7
- * Time: 17:58
+ * Date: 2018/11/19
+ * Time: 下午3:25
  */
 
 namespace App\Http\Controllers\Admin\Face\V1\Models;
@@ -11,8 +11,9 @@ namespace App\Http\Controllers\Admin\Face\V1\Models;
 
 use App\Models\Model;
 
-class FaceCharacter extends Model
+class FaceLookTimes extends Model
 {
     protected $connection = 'ar';
-    protected $table = 'xs_face_character';
+    public $table = 'xs_face_log_times';
+
 }
