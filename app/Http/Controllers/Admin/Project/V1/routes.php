@@ -18,11 +18,10 @@ $api->version('v1', [
 
             //节目投放
             $api->get('projects', 'ProjectController@index');
-//            $api->post('projects', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectController@store']);
-            $api->patch('projects', ['middleware' => ['role:super-admin|admin|user|project-manager|market_owner'], 'uses' => 'ProjectController@update']);
-            $api->get('projects/launch', 'ProjectLaunchController@index');
-            $api->post('projects/launch', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectLaunchController@store']);
-            $api->patch('projects/launches', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'ProjectLaunchController@update']);
+            $api->patch('projects', ['middleware' => ['role:super-admin|admin'], 'uses' => 'ProjectController@update']);
+            $api->get('projects/launch', ['middleware' => ['role:super-admin|admin'], 'uses' => 'ProjectLaunchController@store']);
+            $api->post('projects/launch', ['middleware' => ['role:super-admin|admin'], 'uses' => 'ProjectLaunchController@store']);
+            $api->patch('projects/launches', ['middleware' => ['role:super-admin|admin'], 'uses' => 'ProjectLaunchController@update']);
             $api->get('projects/launches/tpl', 'ProjectLaunchTplController@index');
             $api->post('projects/launches/tpl', 'ProjectLaunchTplController@store');
             $api->patch('projects/launches/tpl/{projectLaunchTpl}', 'ProjectLaunchTplController@update');
