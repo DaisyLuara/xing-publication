@@ -14,6 +14,10 @@ use App\Http\Controllers\Admin\Face\V1\Models\FacePhoneRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceActivePlaytimesRecord;
 use app\Support\Jenner\Zebra\ArrayGroupBy;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceLogRecord;
+use App\Http\Controllers\Admin\Coupon\V1\Models\WechatCouponBatch;
+use EasyWeChat;
+use App\Http\Controllers\Admin\WeChat\V1\Models\WeChatAuthorizer;
+use App\Http\Controllers\Admin\WeChat\V1\Models\ComponentVerifyTicket;
 
 /**
  *求两个已知经纬度之间的距离,单位为千米
@@ -1147,20 +1151,67 @@ if (!function_exists('ding_test')) {
 }
 
 if (!function_exists('couponQrCode')) {
-    function couponQrCode($code, $size = 200, $prefix = 'mini_qrcode_')
+    function couponQrCode($code, $size = 200, $prefix = 'mini_qrcode_', WechatCouponBatch $wechatCouponBatch = null)
     {
         $cacheIndex = $prefix . $code;
-        if (Cache::has($cacheIndex)) {
-            return Cache::get($cacheIndex);
+        if (cache()->has($cacheIndex)) {
+            return cache()->get($cacheIndex);
         }
-        $path = 'qrcode/' . $code . '.png';
-        $qrcodeApp = QrCode::format('png');
-        if ($size) {
-            $qrcodeApp->size($size);
+
+        if ($wechatCouponBatch && $wechatCouponBatch->id) {
+            /** @var \EasyWeChat\OpenPlatform\Application $app */
+            $app = EasyWeChat::openPlatform();
+            componentVerify($app);
+            $official_account = getOfficialAccount($wechatCouponBatch->wechat_authorizer_id, $app);
+            $card = $official_account->card;
+
+            $cards = [
+                'action_name' => 'QR_CARD',
+                'expire_seconds' => $wechatCouponBatch->expire_seconds,
+                'action_info' => [
+                    'card' => [
+                        'card_id' => $wechatCouponBatch->card_id,
+                        'is_unique_code' => false,
+                        'outer_id' => 1,
+                    ],
+                ],
+            ];
+
+            $result = $card->createQrCode($cards);
+            abort_if($result['errcode'] > 0, 500, $result['errmsg']);
+            $qrcodeUrl = $result['show_qrcode_url'];
+        } else {
+            $path = 'qrcode/' . $code . '.png';
+            $qrcodeApp = QrCode::format('png');
+            if ($size) {
+                $qrcodeApp->size($size);
+            }
+            $qrcodeApp->generate($code, $path);
+            $qrcodeUrl = env('APP_URL') . '/' . $path;
         }
-        $qrcodeApp->generate($code, $path);
-        $qrcodeUrl = env('APP_URL') . '/' . $path;
-        Cache::set($cacheIndex, $qrcodeUrl);
+        cache()->forever($cacheIndex, $qrcodeUrl);
         return $qrcodeUrl;
     }
+}
+
+function componentVerify($app)
+{
+    $component = ComponentVerifyTicket::orderBy('clientdate', 'desc')->first();
+    /** @var \EasyWeChat\OpenPlatform\Auth\VerifyTicket $verifyTicket */
+    $verifyTicket = $app->verify_ticket;
+    $verifyTicket->setTicket($component->ticket);
+}
+
+/**
+ * @param $authorizer_id
+ * @param $app
+ * @return \EasyWeChat\OfficialAccount\Application
+ */
+function getOfficialAccount($authorizer_id, $app)
+{
+    $authorizer = WeChatAuthorizer::where('id', $authorizer_id)->first();
+
+    abort_if(!$authorizer, 404);
+
+    return $app->officialAccount($authorizer->appid, $authorizer->refresh_token);
 }
