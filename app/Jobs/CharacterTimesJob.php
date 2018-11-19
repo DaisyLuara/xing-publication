@@ -8,7 +8,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
-class ActivePlayerJob implements ShouldQueue
+class CharacterTimesJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -29,11 +29,6 @@ class ActivePlayerJob implements ShouldQueue
      */
     public function handle()
     {
-        lookTimesClean();
-        activePlayerClean();
-        activePlayTimesClean();
-        omoClean();
-        phoneClean();
-        mergeActiveOmoLook();
+        faceCharacterTimesClean();
     }
 }

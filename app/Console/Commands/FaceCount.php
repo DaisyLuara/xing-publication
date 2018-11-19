@@ -40,11 +40,11 @@ class FaceCount extends Command
      */
     public function handle()
     {
-//        lookTimesClean();
-//        activePlayerClean();
-//        activePlayTimesClean();
-//        omoClean();
-//        phoneClean();
+        lookTimesClean();
+        activePlayerClean();
+        activePlayTimesClean();
+        omoClean();
+        phoneClean();
         mergeActiveOmoLook();
     }
 }
