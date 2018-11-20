@@ -1647,7 +1647,6 @@ export default {
         .then(response => {
           this.projectTop = response
           let chart = this.$refs.projectChar
-          console.log(response)
           chart.mergeOptions({
             yAxis: {
               type: 'category',
@@ -2066,7 +2065,6 @@ export default {
             .getProjectList(this, args)
             .then(response => {
               this.projectList = response.data
-              console.log(this.projectList)
               this.searchLoading = false
             })
             .catch(err => {
