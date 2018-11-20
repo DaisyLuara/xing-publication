@@ -210,203 +210,34 @@
       v-loading="poepleCountFlag"
       class="content-wrapper">
       <ul class="btns-wrapper">
-        <li>
+        <li 
+          v-for="(item, key) in peopleCount"
+          :key="item.number.index">
           <div class="person-btn-wrap">
-            <div class="person-btn-top-0"></div>
+            <div :class="'person-btn-top-'+ key"></div>
             <div class="person-btn person-btn-left">
-              <div class="person-btn-title">围观人次</div>
-              <div class="person-btn-count">236,390</div>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="person-btn-wrap">
-            <div class="person-btn-top-1"></div>
-            <div class="person-btn">
-              <div class="person-btn-title">7"fCPE</div>
-              <div class="person-btn-count">127,868</div>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="person-btn-wrap">
-            <div class="person-btn-top-2"></div>
-            <div class="person-btn">
-              <div class="person-btn-title">15"fCPE</div>
-              <div class="person-btn-count">72,868</div>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="person-btn-wrap">
-            <div class="person-btn-top-3"></div>
-            <div class="person-btn">
-              <div class="person-btn-title">21"fCPE</div>
-              <div class="person-btn-count">63,868</div>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="person-btn-wrap">
-            <div class="person-btn-top-4"></div>
-            <div class="person-btn">
-              <div class="person-btn-title">fCPR(二维码生成数)</div>
-              <div class="person-btn-count">7,868</div>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="person-btn-wrap">
-            <div class="person-btn-top-5"></div>
-            <div class="person-btn">
-              <div class="person-btn-title">fCPA(扫码跳转数)</div>
-              <div class="person-btn-count">4,868</div>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="person-btn-wrap">
-            <div class="person-btn-top-6"></div>
-            <div class="person-btn">
-              <div class="person-btn-title">fCPL(拉新会员数)</div>
-              <div class="person-btn-count">1,868</div>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="person-btn-wrap">
-            <div class="person-btn-top-7"></div>
-            <div class="person-btn">
-              <div class="person-btn-title">fCPS(到店核销次数)</div>
-              <div class="person-btn-count">868</div>
+              <div class="person-btn-title">{{ item.number.display_name }}</div>
+              <div class="person-btn-count">{{ item.number.count ? item.number.count : 0 }}</div>
             </div>
           </div>
         </li>
       </ul>
       <ul class="btns-rate-wrapper">
-        <li>
+        <li
+          v-for="(item, key) in peopleCount"
+          :key="item.number.index">
           <div class="person-rate-btn-wrap">
             <div class="person-btn">
               <div class="person-rate-item">
                 <div class="person-btn-name">
-                  CPM
+                  {{ key === 0 ? '' : item.rate.display_name }}
                 </div>
-                <div class="person-btn-title">转化率</div>
-                <div class="person-btn-count"> 32.2%</div>
+                <div class="person-btn-title"> {{ key === 0 ? '' : '转化率' }}</div>
+                <div class="person-btn-count">{{ key === 0 ? '' : item.rate.value }}</div>
               </div>
-              <div class="person-rate-color-0">
-                <div class="person-rate-content"></div>
-              </div>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="person-rate-btn-wrap">
-            <div class="person-btn">
-              <div class="person-rate-item">
-                <div class="person-btn-name">
-                  7"fCPE
-                </div>
-                <div class="person-btn-title">转化率</div>
-                <div class="person-btn-count"> 86.7%</div>
-              </div>
-              <div class="person-rate-color-1">
-                <div class="person-rate-content"></div>
-              </div>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="person-rate-btn-wrap">
-            <div class="person-btn">
-              <div class="person-rate-item">
-                <div class="person-btn-name">
-                  15"fCPE
-                </div>
-                <div class="person-btn-title">转化率</div>
-                <div class="person-btn-count"> 68.2%</div>
-              </div>
-              <div class="person-rate-color-2">
-                <div class="person-rate-content"></div>
-              </div>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="person-rate-btn-wrap">
-            <div class="person-btn">
-              <div class="person-rate-item">
-                <div class="person-btn-name">
-                  21"fCPE
-                </div>
-                <div class="person-btn-title">转化率</div>
-                <div class="person-btn-count"> 44.2%</div>
-              </div>
-              <div class="person-rate-color-3">
-                <div class="person-rate-content"></div>
-              </div>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="person-rate-btn-wrap">
-            <div class="person-btn">
-              <div class="person-rate-item">
-                <div class="person-btn-name">
-                  fCPR
-                </div>
-                <div class="person-btn-title">转化率</div>
-                <div class="person-btn-count"> 28.2%</div>
-              </div>
-              <div class="person-rate-color-4">
-                <div class="person-rate-content"></div>
-              </div>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="person-rate-btn-wrap">
-            <div class="person-btn">
-              <div class="person-rate-item">
-                <div class="person-btn-name">
-                  fCPA
-                </div>
-                <div class="person-btn-title">转化率</div>
-                <div class="person-btn-count"> 8.2%</div>
-              </div>
-              <div class="person-rate-color-5">
-                <div class="person-rate-content"></div>
-              </div>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="person-rate-btn-wrap">
-            <div class="person-btn">
-              <div class="person-rate-item">
-                <div class="person-btn-name">
-                  fCPL
-                </div>
-                <div class="person-btn-title">转化率</div>
-                <div class="person-btn-count"> 3.7%</div>
-              </div>
-              <div class="person-rate-color-6">
-                <div class="person-rate-content"></div>
-              </div>
-            </div>
-          </div>
-        </li>
-        <li>
-          <div class="person-rate-btn-wrap">
-            <div class="person-btn">
-              <div class="person-rate-item">
-                <div class="person-btn-name">
-                  fCPS
-                </div>
-                <div class="person-btn-title">转化率</div>
-                <div class="person-btn-count"> 1.5%</div>
-              </div>
-              <div class="person-rate-color-7">
+              <div 
+                v-if="key !==0 "
+                :class="'person-rate-color-' + key">
                 <div class="person-rate-content"></div>
               </div>
             </div>
@@ -504,21 +335,6 @@
                 class="point-title">点位列表 
               </span> 数量: {{ pagination.total }}
             </span>
-            <div>
-              <el-select 
-                v-model="reportValue" 
-                placeholder="请选择导出报表类型">
-                <el-option
-                  v-for="item in reportList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"/>
-              </el-select>
-              <el-button 
-                type="success"
-                size="small" 
-                @click="changeReportType">下载</el-button>
-            </div>
           </div>
           <el-table
             :data="tableData"
@@ -545,25 +361,46 @@
                   </el-form-item>
                   <el-form-item 
                     label="围观">
-                    <span>{{ scope.row.looknum }}</span>
+                    <span>{{ scope.row.looktimes }}</span>
                   </el-form-item>
                   <el-form-item 
-                    label="活跃"/>
-                  <el-form-item 
-                    label="铁杆">
-                    <span>{{ scope.row.playernum }}</span>
+                    label="7″fCPE">
+                    <span>{{ scope.row.playtimes7 }}</span>
                   </el-form-item>
                   <el-form-item 
-                    label="拉新">
-                    <span>{{ scope.row.lovenum }}</span>
+                    label="7″fCPE">
+                    <span>{{ scope.row.playtimes7 }}</span>
+                  </el-form-item>
+                  <el-form-item 
+                    label="15″fCPE">
+                    <span>{{ scope.row.playtimes15 }}</span>
+                  </el-form-item>
+                  <el-form-item 
+                    label="21″fCPE">
+                    <span>{{ scope.row.playtimes21 }}</span>
+                  </el-form-item>
+                  <el-form-item 
+                    label="fCPR(二维码生成数)">
+                    <span>{{ scope.row.outnum }}</span>
+                  </el-form-item>
+                  <el-form-item 
+                    label="fCPA(扫码跳转次数)">
+                    <span>{{ scope.row.omo_scannum }}</span>
+                  </el-form-item>
+                  <el-form-item 
+                    label="fCPL(拉新会员数)">
+                    <span>{{ scope.row.lovetimes }}</span>
                   </el-form-item>
                   <el-form-item 
                     label="输出">
-                    <span>
-                      CPF: {{ computedCPF }}
-                      CPR：{{ computedCPR }}
-                      CPL： {{ computedCPL }}
-                    </span>
+                    <div>
+                      <div>7″fCPE: {{ scope.row.rate.fCPE7 }}</div>
+                      <div>15″fCPE{{ scope.row.rate.fCPE15 }}</div>
+                      <div>21″fCPE {{ scope.row.rate.fCPE21 }}</div>
+                      <div>fCPR {{ scope.row.rate.fCPR }}</div>
+                      <div>fCPA {{ scope.row.rate.fCPA }}</div>
+                      <div>fCPL {{ scope.row.rate.fCPL }}</div>
+                    </div>
                   </el-form-item>
                   <el-form-item 
                     label="时间">
@@ -594,34 +431,25 @@
             />
             <el-table-column
               label="围观"
-              prop="looknum"
+              prop="looktimes"
               min-width="90"/>
             <el-table-column
               :show-overflow-tooltip="true"
-              label="活跃"
-              min-width="90"
-            >
-              <template 
-                slot-scope="scope">
-                暂无
-              </template>
-            </el-table-column>
-            <el-table-column
-              :show-overflow-tooltip="true"
-              label="拉新"
-              prop="lovenum"
+              label="7″fCPE"
+              prop="playtimes7"
               min-width="90"
             />
             <el-table-column
               :show-overflow-tooltip="true"
-              label="平均有效时长"
+              label="15″fCPE"
+              prop="playtimes15"
               min-width="90"
-            >
-              <template 
-                slot-scope="scope">
-                暂无
-              </template>
-            </el-table-column>
+            />
+            <el-table-column
+              :show-overflow-tooltip="true"
+              label="21″fCPE"
+              prop="playtimes21"
+              min-width="90"/>
             <el-table-column
               :show-overflow-tooltip="true"
               label="输出"
@@ -631,9 +459,12 @@
               <template 
                 slot-scope="props">*
                 <div>
-                  <div>CPF: {{ ((props.row.playernum7 / props.row.looknum) * 100).toFixed(2) }}%</div>
-                  <div>CPR：{{ ((props.row.playernum / props.row.looknum) * 100).toFixed(2) }}%</div>
-                  <div>CPL：{{ ((props.row.lovenum / props.row.looknum) * 100).toFixed(2) }}%</div>
+                  <div>7″fCPE: {{ props.row.rate.fCPE7 }}</div>
+                  <div>15″fCPE: {{ props.row.rate.fCPE15 }}</div>
+                  <div>21″fCPE: {{ props.row.rate.fCPE21 }}</div>
+                  <div>fCPR: {{ props.row.rate.fCPR }}</div>
+                  <div>fCPA: {{ props.row.rate.fCPA }}</div>
+                  <div>fCPL: {{ props.row.rate.fCPL }}</div>
                 </div>  
               </template>
             </el-table-column>
@@ -852,19 +683,6 @@ export default {
   },
   data() {
     return {
-      // searchForm: {
-      //   userSelect: [],
-      //   projectSelect: [],
-      //   sceneSelect: '',
-      //   area_id: '',
-      //   market_id: [],
-      //   point_id: '',
-      //   dateTime: [
-      //     new Date().getTime() - 3600 * 1000 * 24 * 7,
-      //     new Date().getTime() - 3600 * 1000 * 24
-      //   ],
-      //   timeFrame: []
-      // },
       PersonprojectAgeChart: {
         tooltip: {
           trigger: 'item',
@@ -891,26 +709,7 @@ export default {
             type: 'shadow'
           }
         },
-        legend: {
-          data: [
-            'fCPL玩家人次',
-            'fCPA玩家人次',
-            'fCPR玩家人次',
-            '21"fCPE玩家人次',
-            '15"fCPE玩家人次',
-            '7"fCPE玩家人次',
-            '围观参与玩家人次'
-          ]
-        },
-        color: [
-          '#e9200f',
-          '#ff008a',
-          '#ffa200',
-          '#8e007d',
-          '#ffdd00',
-          '#05a253',
-          '#006eff'
-        ],
+        color: ['#006eff'],
         grid: {
           left: '3%',
           right: '4%',
@@ -925,78 +724,6 @@ export default {
           data: null
         },
         series: [
-          {
-            name: 'fCPL玩家玩家人次',
-            type: 'bar',
-            stack: '总量',
-            label: {
-              normal: {
-                show: true,
-                position: 'insideRight'
-              }
-            },
-            data: null
-          },
-          {
-            name: 'fCPA玩家玩家人次',
-            type: 'bar',
-            stack: '总量',
-            label: {
-              normal: {
-                show: true,
-                position: 'insideRight'
-              }
-            },
-            data: null
-          },
-          {
-            name: 'fCPR玩家玩家人次',
-            type: 'bar',
-            stack: '总量',
-            label: {
-              normal: {
-                show: true,
-                position: 'insideRight'
-              }
-            },
-            data: null
-          },
-          {
-            name: '21"fCPE玩家玩家人次',
-            type: 'bar',
-            stack: '总量',
-            label: {
-              normal: {
-                show: true,
-                position: 'insideRight'
-              }
-            },
-            data: null
-          },
-          {
-            name: '15"fCPE玩家玩家人次',
-            type: 'bar',
-            stack: '总量',
-            label: {
-              normal: {
-                show: true,
-                position: 'insideRight'
-              }
-            },
-            data: null
-          },
-          {
-            name: '7"fCPE玩家玩家人次',
-            type: 'bar',
-            stack: '总量',
-            label: {
-              normal: {
-                show: true,
-                position: 'insideRight'
-              }
-            },
-            data: null
-          },
           {
             name: '围观参与玩家人次',
             type: 'bar',
@@ -1047,30 +774,7 @@ export default {
         loading: false,
         loadingText: '拼命加载中'
       },
-      reportList: [
-        {
-          value: 'point',
-          label: '点位数据'
-        },
-        {
-          value: 'marketing',
-          label: '营销成果数据'
-        },
-        {
-          value: 'marketing_top',
-          label: '营销成果Top100'
-        },
-        {
-          value: 'daily_average',
-          label: '日均数据'
-        },
-        {
-          value: 'project_point',
-          label: '节目数据'
-        }
-      ],
       shouldDialogShow: false,
-      reportValue: 'point',
       area_id: '',
       market_id: [],
       point_id: '',
@@ -1197,7 +901,8 @@ export default {
       },
       tableData: [],
       tempAgeData: null,
-      peopleCount: [0, 0, 0, 0, 0],
+      // peopleCount: [0, 0, 0, 0, 0],
+      peopleCount: [],
       type: '',
       userList: [],
       ageType: false,
@@ -1213,15 +918,19 @@ export default {
       projectAlias: '',
       mainPersonTimesChart: {
         color: [
-          '#0099FF',
-          '#22b572',
-          '#F8B62D',
-          '#E80F9B',
-          '#E83828',
-          '#197748',
-          '#F8B62D',
-          '#be136e',
-          '#BC1313'
+          '#006eff',
+          '#05a253',
+          '#ffdd00',
+          '#8e007d',
+          '#ffa200',
+          '#ff008a',
+          '#e9200f',
+          '#03662e',
+          '#f0bf00',
+          '#700068',
+          '#9b7800',
+          '#d00084',
+          '#af0004'
         ],
         title: {
           text: ''
@@ -1237,15 +946,19 @@ export default {
         },
         legend: {
           data: [
-            '大屏围观参与人数',
-            '大屏活跃玩家人数',
-            '大屏铁杆玩家人数',
-            'OMO有效跳转人数',
-            '扫码拉新会员注册总数',
-            'CPF转化率',
-            'CPR转化率',
-            'CPA转化率',
-            'CPL转化率'
+            '围观人次',
+            '7″fCPE',
+            '15″fCPE',
+            '21″fCPE',
+            'fCPR(二维码生成数)',
+            'fCPA(扫码跳转次数)',
+            'fCPL(拉新会员数)',
+            '7″fCPE转化率',
+            '15″fCPE转化率',
+            '21″fCPE转化率',
+            'fCPR转化率',
+            'fCPA转化率',
+            'fCPL转化率'
           ]
         },
         grid: [
@@ -1722,23 +1435,17 @@ export default {
   mounted() {
     let that = this
     window.onresize = function() {
-      that.$nextTick(function() {
-        that.$refs.crowdPersonChart.resize()
-        that.$refs.agePersonChart.resize()
-        that.$refs.pieSexChart.resize()
-        that.$refs.projectPersonChar.resize()
-        that.$refs.PersonprojectAgeChart.resize()
-      })
+      that.handleChange()
       if (window.innerWidth > 1300) {
         that.width = ((window.innerWidth - 60 + 20) * 0.5 - 20) * 0.6
       }
     }
   },
   created() {
-    this.setting.loading = true
+    // this.setting.loading = true
     this.getSceneList()
     this.getAreaList()
-    this.allPromise()
+    // this.allPromise()
   },
   methods: {
     handleChange(val) {
@@ -1847,90 +1554,6 @@ export default {
             },
             series: [
               {
-                name: 'fCPL玩家人次',
-                type: 'bar',
-                stack: '总量',
-                label: {
-                  normal: {
-                    show: true,
-                    position: 'insideRight'
-                  }
-                },
-                data: response.map(r => {
-                  return r.count.lovetimes
-                })
-              },
-              {
-                name: 'fCPA玩家人次',
-                type: 'bar',
-                stack: '总量',
-                label: {
-                  normal: {
-                    show: true,
-                    position: 'insideRight'
-                  }
-                },
-                data: response.map(r => {
-                  return r.count.omo_scannum
-                })
-              },
-              {
-                name: 'fCPR玩家人次',
-                type: 'bar',
-                stack: '总量',
-                label: {
-                  normal: {
-                    show: true,
-                    position: 'insideRight'
-                  }
-                },
-                data: response.map(r => {
-                  return r.count.outnum
-                })
-              },
-              {
-                name: '21"fCPE玩家人次',
-                type: 'bar',
-                stack: '总量',
-                label: {
-                  normal: {
-                    show: true,
-                    position: 'insideRight'
-                  }
-                },
-                data: response.map(r => {
-                  return r.count.playtimes21
-                })
-              },
-              {
-                name: '15"fCPE玩家人次',
-                type: 'bar',
-                stack: '总量',
-                label: {
-                  normal: {
-                    show: true,
-                    position: 'insideRight'
-                  }
-                },
-                data: response.map(r => {
-                  return r.count.playtimes15
-                })
-              },
-              {
-                name: '7"fCPE玩家人次',
-                type: 'bar',
-                stack: '总量',
-                label: {
-                  normal: {
-                    show: true,
-                    position: 'insideRight'
-                  }
-                },
-                data: response.map(r => {
-                  return r.count.playtimes7
-                })
-              },
-              {
                 name: '围观参与玩家人次',
                 type: 'bar',
                 stack: '总量',
@@ -1958,48 +1581,8 @@ export default {
           console.log(err)
         })
     },
-    changeReportType() {
-      if (this.reportValue === 'point') {
-        if (!this.point_id) {
-          this.$message({
-            message: '点位数据下载，请选择点位',
-            type: 'warning'
-          })
-        } else {
-          this.getExcelData()
-        }
-      } else if (this.reportValue === 'project_point') {
-        if (this.projectSelect.length === 0) {
-          this.$message({
-            message: '节目数据下载，请选择节目',
-            type: 'warning'
-          })
-        } else {
-          this.getExcelData()
-        }
-      } else {
-        this.getExcelData()
-      }
-    },
     handleDialogClose() {
       this.shouldDialogShow = false
-    },
-    getExcelData() {
-      let args = this.setArgs()
-      args.type = this.reportValue
-      delete args.id
-      return chart
-        .getExcelData(this, args)
-        .then(response => {
-          const a = document.createElement('a')
-          a.href = response
-          a.download = 'download'
-          a.click()
-          window.URL.revokeObjectURL(response)
-        })
-        .catch(err => {
-          console.log(err)
-        })
     },
     getAreaList() {
       return search
@@ -2019,9 +1602,8 @@ export default {
       args.page = this.pagination.currentPage
       delete args.id
       return stats
-        .getStaus(this, args)
+        .getTimesStaus(this, args)
         .then(response => {
-          args.index = 'looknum,playernum,lovenum'
           this.tableData = response.data
           this.pagination.total = response.meta.pagination.total
           this.setting.loading = false
@@ -2125,13 +1707,13 @@ export default {
       }
     },
     allPromise() {
+      this.setting.loading = true
       this.getPointList()
       this.getPeopleCount()
       this.getAge()
       this.getCrowdTime()
       this.getGender()
       this.getProjectTop()
-      // this.getProjectAge()
       this.setting.loading = false
     },
     getCrowdTime() {
@@ -2310,16 +1892,17 @@ export default {
     },
     getPeopleCount() {
       this.poepleCountFlag = true
-      let args = this.setArgs('6')
+      let args = this.setArgs('1')
       return chart
-        .getChartData(this, args)
+        .getTimesChartData(this, args)
         .then(response => {
           this.peopleCount = response
-          this.type = 'looknum,playernum,lovenum,playernum7,omo_outnum'
+          this.type =
+            'looktimes,playtimes7,playtimes15,playtimes21,outnum,omo_scannum,lovetimes'
           this.getLineData()
         })
         .catch(err => {
-          this.poepleCountFlag = false
+          // this.poepleCountFlag = false
           console.log(err)
         })
     },
@@ -2526,10 +2109,10 @@ export default {
     },
     getLineData() {
       this.poepleCountFlag = true
-      let args = this.setArgs('7')
+      let args = this.setArgs('2')
       args.index = this.type
       return chart
-        .getChartData(this, args)
+        .getTimesChartData(this, args)
         .then(response => {
           let dataLine = []
           let chart = this.$refs.mainPersonTimesChart
@@ -2545,15 +2128,19 @@ export default {
       let newOption = {
         legend: {
           data: [
-            '大屏围观参与人数',
-            '大屏活跃玩家人数',
-            '大屏铁杆玩家人数',
-            'OMO有效跳转人数',
-            '扫码拉新会员注册总数',
-            'CPF转化率',
-            'CPR转化率',
-            'CPA转化率',
-            'CPL转化率'
+            '围观人次',
+            '7″fCPE',
+            '15″fCPE',
+            '21″fCPE',
+            'fCPR(二维码生成数)',
+            'fCPA(扫码跳转次数)',
+            'fCPL(拉新会员数)',
+            '7″fCPE转化率',
+            '15″fCPE转化率',
+            '21″fCPE转化率',
+            'fCPR转化率',
+            'fCPA转化率',
+            'fCPL转化率'
           ]
         },
         xAxis: [
@@ -2578,96 +2165,138 @@ export default {
         series: [
           {
             symbol: 'circle',
-            name: '大屏围观参与人数',
+            name: '围观人次',
             type: 'line',
             areaStyle: { normal: {} },
             data: res.map(r => {
-              return r.looknum
+              return r.looktimes
             })
           },
           {
             symbol: 'circle',
-            name: '大屏活跃玩家人数',
+            name: '7″fCPE',
             type: 'line',
             areaStyle: { normal: {} },
             data: res.map(r => {
-              return r.playernum7
+              return r.playtimes7
             })
           },
           {
             symbol: 'circle',
-            name: '大屏铁杆玩家人数',
+            name: '15″fCPE',
             type: 'line',
             areaStyle: { normal: {} },
             data: res.map(r => {
-              return r.playernum
+              return r.playtimes15
             })
           },
           {
             symbol: 'circle',
-            name: 'OMO有效跳转人数',
+            name: '21″fCPE',
             type: 'line',
             areaStyle: { normal: {} },
             data: res.map(r => {
-              return r.omo_outnum
+              return r.playtimes21
             })
           },
           {
             symbol: 'circle',
-            name: '扫码拉新会员注册总数',
+            name: 'fCPR(二维码生成数)',
             type: 'line',
             areaStyle: { normal: {} },
             data: res.map(r => {
-              return r.lovenum
+              return r.outnum
+            })
+          },
+          {
+            symbol: 'circle',
+            name: 'fCPA(扫码跳转次数)',
+            type: 'line',
+            areaStyle: { normal: {} },
+            data: res.map(r => {
+              return r.omo_scannum
+            })
+          },
+          {
+            symbol: 'circle',
+            name: 'fCPL(拉新会员数)',
+            type: 'line',
+            areaStyle: { normal: {} },
+            data: res.map(r => {
+              return r.lovetimes
             })
           },
           {
             xAxisIndex: 1,
             yAxisIndex: 1,
-            name: 'CPF转化率',
+            name: '7″fCPE转化率',
             type: 'line',
             lineStyle: {
-              color: '#197748'
+              color: '#03662e'
             },
             data: res.map(r => {
-              return ((r.playernum7 / r.looknum) * 100).toFixed(2)
+              return r.playtimes7_rate
             })
           },
           {
             xAxisIndex: 1,
             yAxisIndex: 1,
-            name: 'CPR转化率',
+            name: '15″fCPE转化率',
             type: 'line',
             lineStyle: {
-              color: '#F8B62D'
+              color: '#f0bf00'
             },
             data: res.map(r => {
-              return ((r.playernum / r.looknum) * 100).toFixed(2)
+              return r.playtimes15_rate
             })
           },
           {
             xAxisIndex: 1,
             yAxisIndex: 1,
-            name: 'CPA转化率',
+            name: '21″fCPE转化率',
             type: 'line',
             lineStyle: {
-              color: '#be136e'
+              color: '#700068'
             },
             data: res.map(r => {
-              return ((r.omo_outnum / r.looknum) * 100).toFixed(2)
+              return r.playtimes21
             })
           },
           {
             xAxisIndex: 1,
             yAxisIndex: 1,
-            name: 'CPL转化率',
+            name: 'fCPR转化率',
             type: 'line',
             type: 'line',
             lineStyle: {
-              color: '#BC1313'
+              color: '#9b7800'
             },
             data: res.map(r => {
-              return ((r.lovenum / r.looknum) * 100).toFixed(2)
+              return r.outnum_rate
+            })
+          },
+          {
+            xAxisIndex: 1,
+            yAxisIndex: 1,
+            name: 'fCPA转化率',
+            type: 'line',
+            lineStyle: {
+              color: '#d00084'
+            },
+            data: res.map(r => {
+              return r.omo_scannum_rate
+            })
+          },
+          {
+            xAxisIndex: 1,
+            yAxisIndex: 1,
+            name: 'fCPL转化率',
+            type: 'line',
+            lineStyle: {
+              color: '#af0004'
+            },
+            data: res.map(r => {
+              return r.lovetimes_rate
             })
           }
         ]

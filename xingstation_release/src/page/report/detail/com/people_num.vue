@@ -1531,23 +1531,15 @@ export default {
   mounted() {
     let that = this
     window.onresize = function() {
-      that.$nextTick(function() {
-        that.$refs.crowdChart.resize()
-        that.$refs.ageChart.resize()
-        that.$refs.pieChart.resize()
-        that.$refs.projectChar.resize()
-        that.$refs.projectAgeChart.resize()
-      })
+      that.handleChange()
       if (window.innerWidth > 1300) {
         that.width = ((window.innerWidth - 60 + 20) * 0.5 - 20) * 0.6
       }
     }
   },
   created() {
-    this.setting.loading = true
     this.getSceneList()
     this.getAreaList()
-    this.allPromise()
   },
   methods: {
     handleChange(val) {
@@ -1906,13 +1898,13 @@ export default {
       }
     },
     allPromise() {
+      this.setting.loading = true
       this.getPointList()
       this.getPeopleCount()
       this.getAge()
       this.getCrowdTime()
       this.getGender()
       this.getProjectTop()
-      // this.getProjectAge()
       this.setting.loading = false
     },
     getCrowdTime() {

@@ -263,83 +263,91 @@ export default {
       //   ],
       //   timeFrame: []
       // },
-      activeName: 'first',
-    //   festivalList: [
-    //     {
-    //       id: 'workday',
-    //       name: '工作日'
-    //     },
-    //     {
-    //       id: 'weekend',
-    //       name: '周末'
-    //     },
-    //     {
-    //       id: 'holiday',
-    //       name: '假日'
-    //     }
-    //   ],
-    //   pickerOptions2: {
-    //     shortcuts: [
-    //       {
-    //         text: '昨天',
-    //         onClick(picker) {
-    //           const end = new Date()
-    //           const start = new Date()
-    //           start.setTime(start.getTime() - 3600 * 1000 * 24)
-    //           end.setTime(end.getTime() - 3600 * 1000 * 24)
-    //           picker.$emit('pick', [start, end])
-    //         }
-    //       },
-    //       {
-    //         text: '最近一周',
-    //         onClick(picker) {
-    //           const end = new Date().getTime() - 3600 * 1000 * 24
-    //           const start = new Date()
-    //           start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-    //           picker.$emit('pick', [start, end])
-    //         }
-    //       },
-    //       {
-    //         text: '最近一个月',
-    //         onClick(picker) {
-    //           const end = new Date() - 3600 * 1000 * 24
-    //           const start = new Date()
-    //           start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-    //           picker.$emit('pick', [start, end])
-    //         }
-    //       },
-    //       {
-    //         text: '最近三个月',
-    //         onClick(picker) {
-    //           const end = new Date() - 3600 * 1000 * 24
-    //           const start = new Date()
-    //           start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-    //           picker.$emit('pick', [start, end])
-    //         }
-    //       }
-    //     ],
-    //     disabledDate: time => {
-    //       return (
-    //         time.getTime() > Date.now() - 8.64e7 ||
-    //         time.getTime() < new Date('2017/04/21').getTime()
-    //       )
-    //     }
-    //   },
-    //   areaList: [],
-    //   marketList: [],
-    //   pointList: [],
-    //   sceneList: [],
-    //   projectSelect: [],
+      activeName: 'first'
+      //   festivalList: [
+      //     {
+      //       id: 'workday',
+      //       name: '工作日'
+      //     },
+      //     {
+      //       id: 'weekend',
+      //       name: '周末'
+      //     },
+      //     {
+      //       id: 'holiday',
+      //       name: '假日'
+      //     }
+      //   ],
+      //   pickerOptions2: {
+      //     shortcuts: [
+      //       {
+      //         text: '昨天',
+      //         onClick(picker) {
+      //           const end = new Date()
+      //           const start = new Date()
+      //           start.setTime(start.getTime() - 3600 * 1000 * 24)
+      //           end.setTime(end.getTime() - 3600 * 1000 * 24)
+      //           picker.$emit('pick', [start, end])
+      //         }
+      //       },
+      //       {
+      //         text: '最近一周',
+      //         onClick(picker) {
+      //           const end = new Date().getTime() - 3600 * 1000 * 24
+      //           const start = new Date()
+      //           start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+      //           picker.$emit('pick', [start, end])
+      //         }
+      //       },
+      //       {
+      //         text: '最近一个月',
+      //         onClick(picker) {
+      //           const end = new Date() - 3600 * 1000 * 24
+      //           const start = new Date()
+      //           start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+      //           picker.$emit('pick', [start, end])
+      //         }
+      //       },
+      //       {
+      //         text: '最近三个月',
+      //         onClick(picker) {
+      //           const end = new Date() - 3600 * 1000 * 24
+      //           const start = new Date()
+      //           start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+      //           picker.$emit('pick', [start, end])
+      //         }
+      //       }
+      //     ],
+      //     disabledDate: time => {
+      //       return (
+      //         time.getTime() > Date.now() - 8.64e7 ||
+      //         time.getTime() < new Date('2017/04/21').getTime()
+      //       )
+      //     }
+      //   },
+      //   areaList: [],
+      //   marketList: [],
+      //   pointList: [],
+      //   sceneList: [],
+      //   projectSelect: [],
     }
   },
-  mounted() {},
+  mounted() {
+    if (this.activeName === 'first') {
+      this.$refs.personTimes.allPromise()
+    } else {
+      this.$refs.peopleCount.allPromise()
+    }
+  },
   created() {},
   methods: {
     handleTab(tab, event) {
       if (tab.name === 'first') {
-        this.$refs.personTimes.handleChange()
+        // this.$refs.personTimes.handleChange()
+        this.$refs.personTimes.allPromise()
       } else {
-        this.$refs.peopleCount.handleChange()
+        // this.$refs.peopleCount.handleChange()
+        this.$refs.peopleCount.allPromise()
       }
     }
   }
