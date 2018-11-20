@@ -6,13 +6,13 @@
       type="card"
       @tab-click="handleTab">
       <!-- 搜索 -->
-      <!-- <div 
+      <div 
         class="search-wrap">
-        <el-button
+        <!-- <el-button
           class="more-pic"
           @click="handlePicShow">
           漏斗图
-        </el-button>
+        </el-button> -->
         <el-form 
           ref="searchForm"
           :model="searchForm"
@@ -26,7 +26,7 @@
                 label="" 
                 prop="user" >
                 <el-select
-                  v-model="userSelect"
+                  v-model="searchForm.userSelect"
                   :remote-method="getUser" 
                   :loading="searchLoading" 
                   :multiple-limit="1"
@@ -50,7 +50,7 @@
                 label="" 
                 prop="project" >
                 <el-select 
-                  v-model="projectSelect" 
+                  v-model="searchForm.projectSelect" 
                   :remote-method="getProject"
                   :loading="searchLoading"
                   :multiple-limit="1"
@@ -74,7 +74,7 @@
                 label="" 
                 prop="scene" >
                 <el-select
-                  v-model="sceneSelect" 
+                  v-model="searchForm.sceneSelect" 
                   placeholder="请选择场景" 
                   filterable  
                   clearable>
@@ -95,7 +95,7 @@
                 label="" 
                 prop="area_id" >
                 <el-select 
-                  v-model="area_id"
+                  v-model="searchForm.area_id"
                   placeholder="请选择区域"
                   filterable 
                   clearable 
@@ -114,7 +114,7 @@
                 label="" 
                 prop="market_id" >
                 <el-select 
-                  v-model="market_id"
+                  v-model="searchForm.market_id"
                   :multiple-limit="1"
                   :loading="searchLoading"
                   :remote-method="getMarket" 
@@ -138,7 +138,7 @@
                 label=""
                 prop="point_id" >
                 <el-select 
-                  v-model="point_id" 
+                  v-model="searchForm.point_id" 
                   :loading="searchLoading"
                   placeholder="请选择点位"   
                   filterable 
@@ -160,8 +160,8 @@
                 label="" 
                 prop="date" >
                 <el-date-picker
-                  v-model="dateTime"
-                  :default-value="dateTime"
+                  v-model="searchForm.dateTime"
+                  :default-value="searchForm.dateTime"
                   :clearable="false"
                   :picker-options="pickerOptions2"
                   type="daterange"
@@ -177,7 +177,7 @@
                 label=""
                 prop="timeFrame">
                 <el-select 
-                  v-model="timeFrame" 
+                  v-model="searchForm.timeFrame" 
                   :loading="searchLoading"
                   placeholder="请选择时段" 
                   multiple  
@@ -206,18 +206,19 @@
             </el-col>
           </el-row>
         </el-form>
-      </div> -->
+      </div>
       <el-tab-pane label="按人次计" name="first">
-        <PersonTimes ref="personTimes"/>
+        <PersonTimes ref="personTimes" :searchForm="searchForm"/>
       </el-tab-pane>
       <el-tab-pane label="按人数计" name="second">
-        <PeopleNum ref="peopleCount"/>
+        <PeopleNum ref="peopleCount" :searchForm="searchForm"/>
       </el-tab-pane>
     </el-tabs>
    
   </div>
 </template>
 <script>
+import search from 'service/search'
 import PersonTimes from './com/person_times'
 import PeopleNum from './com/people_num'
 import {
@@ -250,86 +251,97 @@ export default {
   },
   data() {
     return {
-      // searchForm: {
-      //   userSelect: [],
-      //   projectSelect: [],
-      //   sceneSelect: '',
-      //   area_id: '',
-      //   market_id: [],
-      //   point_id: '',
-      //   dateTime: [
-      //     new Date().getTime() - 3600 * 1000 * 24 * 7,
-      //     new Date().getTime() - 3600 * 1000 * 24
-      //   ],
-      //   timeFrame: []
-      // },
-      activeName: 'first'
-      //   festivalList: [
-      //     {
-      //       id: 'workday',
-      //       name: '工作日'
-      //     },
-      //     {
-      //       id: 'weekend',
-      //       name: '周末'
-      //     },
-      //     {
-      //       id: 'holiday',
-      //       name: '假日'
-      //     }
-      //   ],
-      //   pickerOptions2: {
-      //     shortcuts: [
-      //       {
-      //         text: '昨天',
-      //         onClick(picker) {
-      //           const end = new Date()
-      //           const start = new Date()
-      //           start.setTime(start.getTime() - 3600 * 1000 * 24)
-      //           end.setTime(end.getTime() - 3600 * 1000 * 24)
-      //           picker.$emit('pick', [start, end])
-      //         }
-      //       },
-      //       {
-      //         text: '最近一周',
-      //         onClick(picker) {
-      //           const end = new Date().getTime() - 3600 * 1000 * 24
-      //           const start = new Date()
-      //           start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-      //           picker.$emit('pick', [start, end])
-      //         }
-      //       },
-      //       {
-      //         text: '最近一个月',
-      //         onClick(picker) {
-      //           const end = new Date() - 3600 * 1000 * 24
-      //           const start = new Date()
-      //           start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-      //           picker.$emit('pick', [start, end])
-      //         }
-      //       },
-      //       {
-      //         text: '最近三个月',
-      //         onClick(picker) {
-      //           const end = new Date() - 3600 * 1000 * 24
-      //           const start = new Date()
-      //           start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-      //           picker.$emit('pick', [start, end])
-      //         }
-      //       }
-      //     ],
-      //     disabledDate: time => {
-      //       return (
-      //         time.getTime() > Date.now() - 8.64e7 ||
-      //         time.getTime() < new Date('2017/04/21').getTime()
-      //       )
-      //     }
-      //   },
-      //   areaList: [],
-      //   marketList: [],
-      //   pointList: [],
-      //   sceneList: [],
-      //   projectSelect: [],
+      searchForm: {
+        userSelect: [],
+        projectSelect: [],
+        sceneSelect: '',
+        area_id: '',
+        market_id: [],
+        point_id: '',
+        projectAlias: '',
+        dateTime: [
+          new Date().getTime() - 3600 * 1000 * 24 * 7,
+          new Date().getTime() - 3600 * 1000 * 24
+        ],
+        timeFrame: [],
+        arUserId: ''
+      },
+      activeName: 'first',
+      festivalList: [
+        {
+          id: 'workday',
+          name: '工作日'
+        },
+        {
+          id: 'weekend',
+          name: '周末'
+        },
+        {
+          id: 'holiday',
+          name: '假日'
+        }
+      ],
+      pickerOptions2: {
+        shortcuts: [
+          {
+            text: '昨天',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24)
+              end.setTime(end.getTime() - 3600 * 1000 * 24)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date().getTime() - 3600 * 1000 * 24
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date() - 3600 * 1000 * 24
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date() - 3600 * 1000 * 24
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
+          }
+        ],
+        disabledDate: time => {
+          return (
+            time.getTime() > Date.now() - 8.64e7 ||
+            time.getTime() < new Date('2017/04/21').getTime()
+          )
+        }
+      },
+      projectList: [],
+      areaList: [],
+      marketList: [],
+      pointList: [],
+      sceneList: [],
+      userList: [],
+      searchLoading: false
+    }
+  },
+  computed: {
+    showUser() {
+      let user_info = JSON.parse(this.$cookie.get('user_info'))
+      let roles = user_info.roles.data[0].name
+      return roles == 'user' ? false : true
     }
   },
   mounted() {
@@ -339,7 +351,10 @@ export default {
       this.$refs.peopleCount.allPromise()
     }
   },
-  created() {},
+  created() {
+    this.getSceneList()
+    this.getAreaList()
+  },
   methods: {
     handleTab(tab, event) {
       if (tab.name === 'first') {
@@ -348,6 +363,178 @@ export default {
       } else {
         this.$refs.peopleCount.handleChange()
         this.$refs.peopleCount.allPromise()
+      }
+    },
+    searchHandle() {
+      this.searchForm.projectAlias = this.searchForm.projectSelect[0]
+      if (this.activeName === 'first') {
+        this.$refs.personTimes.searchHandle()
+      } else {
+        this.$refs.peopleCount.searchHandle()
+      }
+    },
+    resetSearch() {
+      if (this.searchForm.showUser) {
+        this.searchForm.userSelect = []
+        this.searchForm.arUserId = this.userSelect[0]
+        this.searchForm.projectSelect = ''
+        this.searchForm.area_id = ''
+        this.searchForm.market_id = []
+        this.searchForm.point_id = ''
+        this.searchForm.sceneSelect = ''
+      } else {
+        this.searchForm.projectSelect = ''
+      }
+      if (this.activeName === 'first') {
+        this.$refs.personTimes.resetSearch()
+      } else {
+        this.$refs.peopleCount.resetSearch()
+      }
+    },
+    areaChangeHandle() {
+      this.searchForm.market_id = []
+      this.searchForm.point_id = ''
+      this.getMarket()
+    },
+    marketChangeHandle() {
+      this.searchForm.point_id = ''
+      this.getPoint()
+    },
+    getAreaList() {
+      return search
+        .getAeraList(this)
+        .then(response => {
+          let data = response.data
+          this.areaList = data
+        })
+        .catch(error => {
+          console.log(error)
+          this.setting.loading = false
+        })
+    },
+    getMarket(query) {
+      if (query !== '') {
+        this.searchLoading = true
+        let args = {
+          name: query,
+          include: 'area',
+          area_id: this.searchForm.area_id
+        }
+        return search
+          .getMarketList(this, args)
+          .then(response => {
+            this.marketList = response.data
+            if (this.marketList.length == 0) {
+              this.searchForm.market_id = []
+              this.searchForm.marketList = []
+            }
+            this.searchLoading = false
+          })
+          .catch(err => {
+            console.log(err)
+            this.searchLoading = false
+          })
+      }
+    },
+    getPoint() {
+      let args = {
+        include: 'market',
+        market_id: this.searchForm.market_id[0]
+      }
+      this.searchLoading = true
+      return search
+        .gePointList(this, args)
+        .then(response => {
+          this.pointList = response.data
+          this.searchLoading = false
+        })
+        .catch(err => {
+          this.searchLoading = false
+          console.log(err)
+        })
+    },
+    getUser(query) {
+      let args = {
+        name: query
+      }
+      if (query !== '') {
+        this.searchLoading = true
+        return search
+          .getUserList(this, args)
+          .then(response => {
+            this.userList = response.data
+            if (this.userList.length == 0) {
+              this.projectList = []
+              this.projectSelect = []
+            }
+            this.searchLoading = false
+          })
+          .catch(err => {
+            console.log(err)
+            this.searchLoading = false
+          })
+      } else {
+        this.userList = []
+        return false
+      }
+    },
+    getProject(query) {
+      if (query !== '') {
+        let args = {
+          ar_user_id: this.searchForm.arUserId,
+          name: query
+        }
+        if (this.showUser) {
+          this.searchLoading = true
+          if (!this.searchForm.arUserId) {
+            delete args.ar_user_id
+          }
+          return search
+            .getProjectList(this, args)
+            .then(response => {
+              this.projectList = response.data
+              this.searchLoading = false
+            })
+            .catch(err => {
+              console.log(err)
+              this.searchLoading = false
+            })
+        } else {
+          let user_info = JSON.parse(this.$cookie.get('user_info'))
+          this.searchForm.arUserId = user_info.ar_user_id
+          args.ar_user_id = this.searchForm.arUserId
+          this.searchLoading = true
+          return search
+            .getProjectList(this, args)
+            .then(response => {
+              this.projectList = response.data
+              this.searchLoading = false
+            })
+            .catch(err => {
+              console.log(err)
+              this.searchLoading = false
+            })
+        }
+      }
+    },
+    getSceneList() {
+      return search
+        .getSceneList(this)
+        .then(response => {
+          this.sceneList = response.data
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    projectChangeHandle() {
+      this.searchForm.projectAlias = this.searchForm.projectSelect[0]
+    },
+    userChangeHandle() {
+      this.searchForm.arUserId = this.searchForm.userSelect[0]
+      this.searchForm.projectSelect = []
+      if (this.searchForm.arUserId) {
+        this.getProject('')
       }
     }
   }

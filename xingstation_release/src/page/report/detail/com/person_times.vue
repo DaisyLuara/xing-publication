@@ -4,7 +4,7 @@
     :element-loading-text="setting.loadingText"
     class="person-times-wrap" >
     <!-- 搜索 -->
-    <div 
+    <!-- <div 
       class="search-wrap">
       <el-button
         class="more-pic"
@@ -203,7 +203,7 @@
           </el-col>
         </el-row>
       </el-form>
-    </div>
+    </div> -->
 
     <!-- 主要图表部分 -->
     <div 
@@ -527,7 +527,7 @@
           class="actions-wrap-pic">
           <div 
             class="label">
-            <div class="item-text">时间：{{ handleDateTransform(dateTime[0]) }}  -  {{ handleDateTransform(dateTime[1]) }}</div>
+            <div class="item-text">时间：{{ handleDateTransform(searchForm.dateTime[0]) }}  -  {{ handleDateTransform(searchForm.dateTime[1]) }}</div>
             <div
               v-if="sceneInfo" 
               class="item-text">场景：{{ sceneInfo }}</div>
@@ -670,16 +670,12 @@ export default {
     PicChart
   },
   props: {
-    resizeFlag: {
-      type: Boolean,
-      default: false
+    searchForm: {
+      type: Object,
+      default: function() {
+        return {}
+      }
     }
-    // chartdata: {
-    //   type: Object,
-    //   default: function() {
-    //     return {}
-    //   }
-    // }
   },
   data() {
     return {
@@ -740,21 +736,21 @@ export default {
       },
       projectPersonFlag: false,
       userFlag: false,
-      timeFrame: [],
-      festivalList: [
-        {
-          id: 'workday',
-          name: '工作日'
-        },
-        {
-          id: 'weekend',
-          name: '周末'
-        },
-        {
-          id: 'holiday',
-          name: '假日'
-        }
-      ],
+      // timeFrame: [],
+      // festivalList: [
+      //   {
+      //     id: 'workday',
+      //     name: '工作日'
+      //   },
+      //   {
+      //     id: 'weekend',
+      //     name: '周末'
+      //   },
+      //   {
+      //     id: 'holiday',
+      //     name: '假日'
+      //   }
+      // ],
       activeNames: ['1', '2', '3', '4'],
       rateDay: 0,
       marketCount: 0,
@@ -775,65 +771,65 @@ export default {
         loadingText: '拼命加载中'
       },
       shouldDialogShow: false,
-      area_id: '',
-      market_id: [],
-      point_id: '',
+      // area_id: '',
+      // market_id: [],
+      // point_id: '',
       setting: {
         isOpenSelectAll: true,
         loading: false,
         loadingText: '拼命加载中'
       },
-      dateTime: [
-        new Date().getTime() - 3600 * 1000 * 24 * 7,
-        new Date().getTime() - 3600 * 1000 * 24
-      ],
-      pickerOptions2: {
-        shortcuts: [
-          {
-            text: '昨天',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24)
-              end.setTime(end.getTime() - 3600 * 1000 * 24)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近一周',
-            onClick(picker) {
-              const end = new Date().getTime() - 3600 * 1000 * 24
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近一个月',
-            onClick(picker) {
-              const end = new Date() - 3600 * 1000 * 24
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近三个月',
-            onClick(picker) {
-              const end = new Date() - 3600 * 1000 * 24
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-              picker.$emit('pick', [start, end])
-            }
-          }
-        ],
-        disabledDate: time => {
-          return (
-            time.getTime() > Date.now() - 8.64e7 ||
-            time.getTime() < new Date('2017/04/21').getTime()
-          )
-        }
-      },
+      // dateTime: [
+      //   new Date().getTime() - 3600 * 1000 * 24 * 7,
+      //   new Date().getTime() - 3600 * 1000 * 24
+      // ],
+      // pickerOptions2: {
+      //   shortcuts: [
+      //     {
+      //       text: '昨天',
+      //       onClick(picker) {
+      //         const end = new Date()
+      //         const start = new Date()
+      //         start.setTime(start.getTime() - 3600 * 1000 * 24)
+      //         end.setTime(end.getTime() - 3600 * 1000 * 24)
+      //         picker.$emit('pick', [start, end])
+      //       }
+      //     },
+      //     {
+      //       text: '最近一周',
+      //       onClick(picker) {
+      //         const end = new Date().getTime() - 3600 * 1000 * 24
+      //         const start = new Date()
+      //         start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+      //         picker.$emit('pick', [start, end])
+      //       }
+      //     },
+      //     {
+      //       text: '最近一个月',
+      //       onClick(picker) {
+      //         const end = new Date() - 3600 * 1000 * 24
+      //         const start = new Date()
+      //         start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+      //         picker.$emit('pick', [start, end])
+      //       }
+      //     },
+      //     {
+      //       text: '最近三个月',
+      //       onClick(picker) {
+      //         const end = new Date() - 3600 * 1000 * 24
+      //         const start = new Date()
+      //         start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+      //         picker.$emit('pick', [start, end])
+      //       }
+      //     }
+      //   ],
+      //   disabledDate: time => {
+      //     return (
+      //       time.getTime() > Date.now() - 8.64e7 ||
+      //       time.getTime() < new Date('2017/04/21').getTime()
+      //     )
+      //   }
+      // },
       rateOption: {
         title: {
           text: ''
@@ -886,14 +882,14 @@ export default {
           }
         ]
       },
-      areaList: [],
-      marketList: [],
-      pointList: [],
-      sceneList: [],
-      projectSelect: [],
-      sceneSelect: '',
-      searchLoading: false,
-      projectList: [],
+      // areaList: [],
+      // marketList: [],
+      // pointList: [],
+      // sceneList: [],
+      // projectSelect: [],
+      // sceneSelect: '',
+      // searchLoading: false,
+      // projectList: [],
       pagination: {
         total: 0,
         pageSize: 5,
@@ -901,21 +897,20 @@ export default {
       },
       tableData: [],
       tempAgeData: null,
-      // peopleCount: [0, 0, 0, 0, 0],
       peopleCount: [],
       type: '',
-      userList: [],
+      // userList: [],
       ageType: false,
       sexType: false,
       pointName: '',
-      arUserId: '',
+      // arUserId: '',
       poepleCountFlag: false,
       shouldPicDialogShow: false,
       ageFlag: false,
       rateDialog: false,
       crowdFlag: false,
-      userSelect: [],
-      projectAlias: '',
+      // userSelect: [],
+      // projectAlias: '',
       mainPersonTimesChart: {
         color: [
           '#006eff',
@@ -1352,85 +1347,6 @@ export default {
     }
   },
   computed: {
-    peopleCountLength: function() {
-      return this.peopleCount.length
-    },
-    showUser() {
-      let user_info = JSON.parse(this.$cookie.get('user_info'))
-      let roles = user_info.roles.data[0].name
-      return roles == 'user' ? false : true
-    },
-    circleLooknum: function() {
-      return this.peopleCount[0].count === null ? 0 : this.peopleCount[0].count
-    },
-    circlePlayernum7: function() {
-      return this.peopleCount[1].count === null ? 0 : this.peopleCount[1].count
-    },
-    circlePlayernum: function() {
-      return this.peopleCount[2].count === null ? 0 : this.peopleCount[2].count
-    },
-    circleOmoOutnum: function() {
-      return this.peopleCount[3].count === null ? 0 : this.peopleCount[3].count
-    },
-    circleLovenum: function() {
-      return this.peopleCount[4].count === null ? 0 : this.peopleCount[4].count
-    },
-    playernum7DivideLookNum: function() {
-      let result = (
-        (this.peopleCount[1].count / this.peopleCount[0].count) *
-        100
-      ).toFixed(2)
-      return result === 0 || result === NaN ? 0 : result + '%'
-    },
-    playernumDivideLookNum: function() {
-      let result = (
-        (this.peopleCount[2].count / this.peopleCount[1].count) *
-        100
-      ).toFixed(2)
-      return result === 0 || result === NaN ? 0 : result + '%'
-    },
-    lovenumDivideLookNum: function() {
-      let result = (
-        (this.peopleCount[3].count / this.peopleCount[2].count) *
-        100
-      ).toFixed(2)
-      return result === 0 || result === NaN ? 0 : result + '%'
-    },
-    lovenumDivideOmoOutnum: function() {
-      let result = (
-        (this.peopleCount[4].count / this.peopleCount[3].count) *
-        100
-      ).toFixed(2)
-      return result === 0 || result === NaN ? 0 : result + '%'
-    },
-    computedCPF: function() {
-      let result = (
-        (this.peopleCount[1].count / this.peopleCount[0].count) *
-        100
-      ).toFixed(2)
-      return String(result) + '%'
-    },
-    computedCPR: function() {
-      let result = (
-        (this.peopleCount[2].count / this.peopleCount[0].count) *
-        100
-      ).toFixed(2)
-      return String(result) + '%'
-    },
-    computedCPA: function() {
-      let result = (
-        (this.peopleCount[3].count / this.peopleCount[0].count) *
-        100
-      ).toFixed(2)
-      return String(result) + '%'
-    },
-    computedCPL: function() {
-      let result = (
-        (this.peopleCount[4].count / this.peopleCount[0].count) *
-        100
-      ).toFixed(2)
-      return String(result) + '%'
-    }
   },
   mounted() {
     let that = this
@@ -1442,10 +1358,6 @@ export default {
     }
   },
   created() {
-    // this.setting.loading = true
-    this.getSceneList()
-    this.getAreaList()
-    // this.allPromise()
   },
   methods: {
     handleChange(val) {
@@ -1584,18 +1496,6 @@ export default {
     handleDialogClose() {
       this.shouldDialogShow = false
     },
-    getAreaList() {
-      return search
-        .getAeraList(this)
-        .then(response => {
-          let data = response.data
-          this.areaList = data
-        })
-        .catch(error => {
-          console.log(error)
-          this.setting.loading = false
-        })
-    },
     getPointList() {
       this.tableSetting.loading = true
       let args = this.setArgs()
@@ -1615,96 +1515,14 @@ export default {
           this.setting.loading = false
         })
     },
-    getMarket(query) {
-      if (query !== '') {
-        this.searchLoading = true
-        let args = {
-          name: query,
-          include: 'area',
-          area_id: this.area_id
-        }
-        return search
-          .getMarketList(this, args)
-          .then(response => {
-            this.marketList = response.data
-            if (this.marketList.length == 0) {
-              this.market_id = []
-              this.marketList = []
-            }
-            this.searchLoading = false
-          })
-          .catch(err => {
-            console.log(err)
-            this.searchLoading = false
-          })
-      }
-    },
-    getPoint() {
-      let args = {
-        include: 'market',
-        market_id: this.market_id[0]
-      }
-      this.searchLoading = true
-      return search
-        .gePointList(this, args)
-        .then(response => {
-          this.pointList = response.data
-          this.searchLoading = false
-        })
-        .catch(err => {
-          this.searchLoading = false
-          console.log(err)
-        })
-    },
-    areaChangeHandle() {
-      this.market_id = []
-      this.point_id = ''
-      this.getMarket()
-    },
-    marketChangeHandle() {
-      this.point_id = ''
-      this.getPoint()
-    },
-    getSceneList() {
-      return search
-        .getSceneList(this)
-        .then(response => {
-          this.sceneList = response.data
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    },
     searchHandle() {
       this.pagination.currentPage = 1
-      this.projectAlias = this.projectSelect[0]
       this.setting.loading = true
       this.allPromise()
     },
     resetSearch() {
-      if (this.showUser) {
-        this.userSelect = []
-        this.arUserId = this.userSelect[0]
-        this.projectSelect = ''
-        this.area_id = ''
-        this.market_id = []
-        this.point_id = ''
-        this.sceneSelect = ''
-      } else {
-        this.projectSelect = ''
-      }
       this.setting.loading = true
       this.allPromise()
-    },
-    projectChangeHandle() {
-      this.projectAlias = this.projectSelect[0]
-    },
-    userChangeHandle() {
-      this.arUserId = this.userSelect[0]
-      this.projectSelect = []
-      if (this.arUserId) {
-        this.getProject('')
-      }
     },
     allPromise() {
       this.setting.loading = true
@@ -1826,70 +1644,6 @@ export default {
           console.log(err)
         })
     },
-    getUser(query) {
-      let args = {
-        name: query
-      }
-      if (query !== '') {
-        this.searchLoading = true
-        return search
-          .getUserList(this, args)
-          .then(response => {
-            this.userList = response.data
-            if (this.userList.length == 0) {
-              this.projectList = []
-              this.projectSelect = []
-            }
-            this.searchLoading = false
-          })
-          .catch(err => {
-            console.log(err)
-            this.searchLoading = false
-          })
-      } else {
-        this.userList = []
-        return false
-      }
-    },
-    getProject(query) {
-      if (query !== '') {
-        let args = {
-          ar_user_id: this.arUserId,
-          name: query
-        }
-        if (this.showUser) {
-          this.searchLoading = true
-          if (!this.arUserId) {
-            delete args.ar_user_id
-          }
-          return search
-            .getProjectList(this, args)
-            .then(response => {
-              this.projectList = response.data
-              this.searchLoading = false
-            })
-            .catch(err => {
-              console.log(err)
-              this.searchLoading = false
-            })
-        } else {
-          let user_info = JSON.parse(this.$cookie.get('user_info'))
-          this.arUserId = user_info.ar_user_id
-          args.ar_user_id = this.arUserId
-          this.searchLoading = true
-          return search
-            .getProjectList(this, args)
-            .then(response => {
-              this.projectList = response.data
-              this.searchLoading = false
-            })
-            .catch(err => {
-              console.log(err)
-              this.searchLoading = false
-            })
-        }
-      }
-    },
     getPeopleCount() {
       this.poepleCountFlag = true
       let args = this.setArgs('1')
@@ -1902,7 +1656,7 @@ export default {
           this.getLineData()
         })
         .catch(err => {
-          // this.poepleCountFlag = false
+          this.poepleCountFlag = false
           console.log(err)
         })
     },
@@ -2060,49 +1814,49 @@ export default {
     setArgs(id) {
       let args = {
         id: id,
-        start_date: this.handleDateTransform(this.dateTime[0]),
+        start_date: this.handleDateTransform(this.searchForm.dateTime[0]),
         end_date: this.handleDateTransform(
-          new Date(this.dateTime[1]).getTime()
+          new Date(this.searchForm.dateTime[1]).getTime()
         ),
-        alias: this.projectAlias,
-        ar_user_id: this.arUserId,
-        market_id: this.market_id[0],
-        scene_id: this.sceneSelect,
-        area_id: this.area_id,
-        point_id: this.point_id,
+        alias: this.searchForm.projectAlias,
+        ar_user_id: this.searchForm.arUserId,
+        market_id: this.searchForm.market_id[0],
+        scene_id: this.searchForm.sceneSelect,
+        area_id: this.searchForm.area_id,
+        point_id: this.searchForm.point_id,
         workday: 0,
         weekend: 0,
         holiday: 0
       }
-      if (this.timeFrame.length > 0) {
-        for (let i = 0; i < this.timeFrame.length; i++) {
-          if (this.timeFrame[i] === '工作日') {
+      if (this.searchForm.timeFrame.length > 0) {
+        for (let i = 0; i < this.searchForm.timeFrame.length; i++) {
+          if (this.searchForm.timeFrame[i] === '工作日') {
             args.workday = 1
           }
-          if (this.timeFrame[i] === '周末') {
+          if (this.searchForm.timeFrame[i] === '周末') {
             args.weekend = 1
           }
-          if (this.timeFrame[i] === '假日') {
+          if (this.searchForm.timeFrame[i] === '假日') {
             args.holiday = 1
           }
         }
       }
-      if (!this.projectAlias) {
+      if (!this.searchForm.projectAlias) {
         delete args.alias
       }
-      if (!this.arUserId) {
+      if (!this.searchForm.arUserId) {
         delete args.ar_user_id
       }
-      if (!this.sceneSelect) {
+      if (!this.searchForm.sceneSelect) {
         delete args.scene_id
       }
-      if (!this.area_id) {
+      if (!this.searchForm.area_id) {
         delete args.area_id
       }
-      if (!this.point_id) {
+      if (!this.searchForm.point_id) {
         delete args.point_id
       }
-      if (this.market_id.length === 0) {
+      if (this.searchForm.market_id.length === 0) {
         delete args.market_id
       }
       return args
@@ -2415,33 +2169,33 @@ export default {
       let that = this
       if (this.shouldPicDialogShow) {
         this.getConversionRate()
-        if (that.sceneSelect) {
+        if (that.searchForm.sceneSelect) {
           let scene = this.sceneList.find(function(r) {
-            if (r.id === that.sceneSelect) {
+            if (r.id === that.searchForm.sceneSelect) {
               return r.name
             }
           })
           this.sceneInfo = scene.name
         }
-        if (that.projectSelect.length !== 0) {
+        if (that.searchForm.projectSelect.length !== 0) {
           let project = that.projectList.find(function(r) {
-            if (r.alias === that.projectSelect[0]) {
+            if (r.alias === that.searchForm.projectSelect[0]) {
               return r.name
             }
           })
           that.projectInfo = project.name
         }
-        if (that.area_id) {
+        if (that.searchForm.area_id) {
           let area = this.areaList.find(function(r) {
-            if (r.id === that.area_id) {
+            if (r.id === that.searchForm.area_id) {
               return r.name
             }
           })
           this.addressInfo = area.name
         }
-        if (that.market_id.length !== 0) {
+        if (that.searchForm.market_id.length !== 0) {
           let market = that.marketList.find(function(r) {
-            if (r.id === that.market_id[0]) {
+            if (r.id === that.searchForm.market_id[0]) {
               return r.name
             }
           })
@@ -2449,7 +2203,7 @@ export default {
         }
         if (that.point_id) {
           let point = that.pointList.find(function(r) {
-            if (r.id === that.point_id) {
+            if (r.id === that.searchForm.point_id) {
               return r.name
             }
           })
