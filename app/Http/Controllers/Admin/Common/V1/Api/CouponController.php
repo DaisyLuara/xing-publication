@@ -357,8 +357,9 @@ class CouponController extends Controller
         abort_if(!$coupon, 204);
 
         //优惠券二维码
+        $wechatCouponBatch = CouponBatch::query()->findOrFail($coupon->coupon_batch_id)->wechat;
         $prefix = 'h5_code';
-        $qrcodeUrl = couponQrCode($coupon->code, 200, $prefix);
+        $qrcodeUrl = couponQrCode($coupon->code, 200, $prefix, $wechatCouponBatch);
         $coupon->setAttribute('qrcode_url', $qrcodeUrl);
 
         return $this->response->item($coupon, new CouponTransformer());
