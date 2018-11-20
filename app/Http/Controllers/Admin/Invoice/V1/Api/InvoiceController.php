@@ -95,7 +95,7 @@ class InvoiceController extends Controller
             $invoice = Invoice::query()->create(array_merge($param, ['status' => 1, 'handler' => $legalMa->id]));
         }
         foreach ($content as $item) {
-            $item['invoice_id'] = $param['id'];
+            $item['invoice_id'] = $invoice['id'];
             InvoiceContent::query()->create($item);
         }
         //文件存储
