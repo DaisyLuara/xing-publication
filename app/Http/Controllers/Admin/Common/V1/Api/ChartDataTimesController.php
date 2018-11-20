@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\Face\V1\Models\XsFaceCharacterCountTimes;
 use App\Http\Controllers\Admin\Face\V1\Models\XsFaceCountLog;
 use App\Http\Controllers\Admin\Face\V1\Models\XsFaceLogTimes;
 use App\Http\Controllers\Controller;
+use function GuzzleHttp\Psr7\str;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -187,12 +188,12 @@ class ChartDataTimesController extends Controller
                         'omo_scannum' => $item['omo_scannum'],
                         'lovetimes' => $item['lovetimes'],
                         'looktimes_rate' => 0,
-                        'playtimes7_rate' => $item['looktimes'] == 0 ? 0 : (round($item['playtimes7'] / $item['looktimes'], 3) * 100) . '%',
-                        'playtimes15_rate' => $item['looktimes'] == 0 ? 0 : (round($item['playtimes15'] / $item['looktimes'], 3) * 100) . '%',
-                        'playtimes21_rate' => $item['looktimes'] == 0 ? 0 : (round($item['playtimes21'] / $item['looktimes'], 3) * 100) . '%',
-                        'outnum_rate' => $item['looktimes'] == 0 ? 0 : (round($item['outnum'] / $item['looktimes'], 3) * 100) . '%',
-                        'omo_scannum_rate' => $item['looktimes'] == 0 ? 0 : (round($item['omo_scannum'] / $item['looktimes'], 3) * 100) . '%',
-                        'lovetimes_rate' => $item['looktimes'] == 0 ? 0 : (round($item['lovetimes'] / $item['looktimes'], 3) * 100) . '%',
+                        'playtimes7_rate' => $item['looktimes'] == 0 ? 0 : strval(round($item['playtimes7'] / $item['looktimes'], 3) * 100),
+                        'playtimes15_rate' => $item['looktimes'] == 0 ? 0 : strval(round($item['playtimes15'] / $item['looktimes'], 3) * 100),
+                        'playtimes21_rate' => $item['looktimes'] == 0 ? 0 : strval(round($item['playtimes21'] / $item['looktimes'], 3) * 100),
+                        'outnum_rate' => $item['looktimes'] == 0 ? 0 : strval(round($item['outnum'] / $item['looktimes'], 3) * 100),
+                        'omo_scannum_rate' => $item['looktimes'] == 0 ? 0 : strval(round($item['omo_scannum'] / $item['looktimes'], 3) * 100),
+                        'lovetimes_rate' => $item['looktimes'] == 0 ? 0 : strval(round($item['lovetimes'] / $item['looktimes'], 3) * 100),
 
                     ];
                 } else {
@@ -431,6 +432,84 @@ class ChartDataTimesController extends Controller
                 'century70' => $item->century70,
             ];
         }
+        return $output;
+    }
+
+    /**
+     * 漏斗图
+     * @param ChartDataRequest $request
+     * @param Builder $query
+     * @return array
+     */
+    public function getFunnelChart(ChartDataRequest $request, Builder $query)
+    {
+        $startDate = $request->start_date;
+        $endDate = $request->end_date;
+
+        $this->handleQuery($request, $query);
+
+        $data = $query->selectRaw("sum(looktimes) as looktimes ,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15 ,sum(playtimes21) as playtimes21,sum(outnum) as outnum,sum(omo_scannum) as omo_scannum,sum(lovetimes) as lovetimes")
+            ->first()->toArray();
+
+        $allData = XsFaceCountLog::query()
+            ->selectRaw("sum(looktimes) as looktimes ,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15 ,sum(playtimes21) as playtimes21,sum(outnum) as outnum,sum(omo_scannum) as omo_scannum,sum(lovetimes) as lovetimes")
+            ->whereRaw("date_format(date,'%Y-%m-%d') between '$startDate' and '$endDate' and belong='all'")
+            ->first();
+
+        $query = XsFaceCountLog::query();
+        $this->handleQuery($request, $query);
+        $count = $query->selectRaw("count(distinct avr_official.oid) as oid_count,count(distinct avr_official.marketid) as market_count")
+            ->first();
+
+        $output = [];
+        foreach ($data as $key => $value) {
+            $output['data'][] = [
+                'count' => $value,
+                'display_name' => $this->totalMapping[$key],
+                'index' => $key,
+            ];
+        }
+        $output['rate']['total_rate'] = [
+            [
+                'count' => $allData->looknum ? strval(round($allData->playernum7 / $allData->looknum, 3) * 100) : 0,
+                'display_name' => 'CPF转化率',
+            ],
+            [
+                'count' => $allData->looknum ? strval(round($allData->playernum / $allData->looknum, 3) * 100) : 0,
+                'display_name' => 'CPR转化率',
+            ],
+            [
+                'count' => $allData->looknum ? strval(round($allData->omo_outnum / $allData->looknum, 3) * 100) : 0,
+                'display_name' => 'CPA转化率',
+            ],
+            [
+                'count' => $allData->looknum ? strval(round($allData->lovenum / $allData->looknum, 3) * 100) : 0,
+                'display_name' => 'CPL转化率',
+            ],
+        ];
+        $output['rate']['rate'] = [
+            [
+                'count' => $data['looknum'] ? strval(round($data['playernum7'] / $data['looknum'], 3) * 100) : 0,
+                'display_name' => 'CPF转化率',
+            ],
+            [
+                'count' => $data['looknum'] ? strval(round($data['playernum'] / $data['looknum'], 3) * 100) : 0,
+                'display_name' => 'CPR转化率',
+            ],
+            [
+                'count' => $data['looknum'] ? strval(round($data['omo_outnum'] / $data['looknum'], 3) * 100) : 0,
+                'display_name' => 'CPA转化率',
+            ],
+            [
+                'count' => $data['looknum'] ? strval(round($data['lovenum'] / $data['looknum'], 3) * 100) : 0,
+                'display_name' => 'CPL转化率',
+            ],
+        ];
+
+        $output['oid_count'] = $count->oid_count;
+        $output['market_count'] = $count->market_count;
+        $output['day'] = (new Carbon($endDate))->diffInDays((new Carbon($startDate))) + 1;
+
         return $output;
     }
 
