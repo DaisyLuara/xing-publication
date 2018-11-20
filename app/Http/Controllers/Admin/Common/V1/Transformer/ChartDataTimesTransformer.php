@@ -29,9 +29,9 @@ class ChartDataTimesTransformer extends TransformerAbstract
             'omo_scannum' => $faceCount->omo_scannum,
             'lovetimes' => $faceCount->lovetimes,
             'rate' => [
-                '7″fCPE' => $faceCount->looktimes == 0 ? 0 : (round($faceCount->playtimes7 / $faceCount->looktimes, 3) * 100) . '%',
-                '15″fCPE' => $faceCount->looktimes == 0 ? 0 : (round($faceCount->playtimes15 / $faceCount->looktimes, 3) * 100) . '%',
-                '21″fCPE' => $faceCount->looktimes == 0 ? 0 : (round($faceCount->playtimes21 / $faceCount->looktimes, 3) * 100) . '%',
+                'fCPE7' => $faceCount->looktimes == 0 ? 0 : (round($faceCount->playtimes7 / $faceCount->looktimes, 3) * 100) . '%',
+                'fCPE15' => $faceCount->looktimes == 0 ? 0 : (round($faceCount->playtimes15 / $faceCount->looktimes, 3) * 100) . '%',
+                'fCPE21' => $faceCount->looktimes == 0 ? 0 : (round($faceCount->playtimes21 / $faceCount->looktimes, 3) * 100) . '%',
                 'fCPR' => $faceCount->looktimes == 0 ? 0 : (round($faceCount->outnum / $faceCount->looktimes, 3) * 100) . '%',
                 'fCPA' => $faceCount->looktimes == 0 ? 0 : (round($faceCount->omo_scannum / $faceCount->looktimes, 3) * 100) . '%',
                 'fCPL' => $faceCount->looktimes == 0 ? 0 : (round($faceCount->lovetimes / $faceCount->looktimes, 3) * 100) . '%',
