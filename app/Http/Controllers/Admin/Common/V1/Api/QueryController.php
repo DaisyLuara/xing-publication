@@ -295,9 +295,9 @@ class QueryController extends Controller
             $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
         }
 
-        if ($request->has('type')) {
-            $query->where('type', $request->type);
-        }
+//        if ($request->has('type')) {
+//            $query->where('type', $request->type);
+//        }
         if ($user->hasRole('user') || $user->hasRole('bd-manager')) {
             $query->where('applicant', '=', $user->id);
         }
