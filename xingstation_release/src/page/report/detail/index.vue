@@ -343,10 +343,10 @@ export default {
   methods: {
     handleTab(tab, event) {
       if (tab.name === 'first') {
-        // this.$refs.personTimes.handleChange()
+        this.$refs.personTimes.handleChange()
         this.$refs.personTimes.allPromise()
       } else {
-        // this.$refs.peopleCount.handleChange()
+        this.$refs.peopleCount.handleChange()
         this.$refs.peopleCount.allPromise()
       }
     }
