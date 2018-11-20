@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Admin\Common\V1\Api;
 
 
 use App\Http\Controllers\Admin\Common\V1\Request\ChartDataRequest;
+use App\Http\Controllers\Admin\Common\V1\Transformer\ChartDataTimesTransformer;
 use App\Http\Controllers\Admin\Face\V1\Models\XsFaceCharacterCountTimes;
 use App\Http\Controllers\Admin\Face\V1\Models\XsFaceCountLog;
 use App\Http\Controllers\Admin\Face\V1\Models\XsFaceLogTimes;
@@ -70,7 +71,7 @@ class ChartDataTimesController extends Controller
         $table = $query->getModel()->getTable();
         $this->handleQuery($request, $query);
 
-        $faceCount = $query->selectRaw("max($table.clientdate) as max_date,min($table.clientdate) as min_date,$table.id as id,sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum) as playernum,sum(lovenum) as lovenum,sum(outnum) as outnum,sum(scannum) as scannum,avr_official.name as point_name,avr_official_market.name as market_name,avr_official_area.name as area_name,xs_face_count_log.date as created_at")
+        $faceCount = $query->selectRaw("max($table.clientdate) as max_date,min($table.clientdate) as min_date,$table.id as id,sum(looktimes) as looktimes,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(outnum) as outnum,sum(omo_scannum) as omo_scannum,sum(lovetimes) as lovetimes,avr_official.name as point_name,avr_official_market.name as market_name,avr_official_area.name as area_name,xs_face_count_log.date as created_at")
             ->selectRaw("(SELECT GROUP_CONCAT(DISTINCT (ar_product_list.name)) FROM xs_face_count_log AS fcl2 INNER JOIN ar_product_list ON ar_product_list.versionname = fcl2.belong WHERE fcl2.oid = $table.oid AND date_format(fcl2.date, '%Y-%m-%d') BETWEEN '$request->start_date' AND '$request->end_date' GROUP BY fcl2.oid) as projects ")
             //->where("$table.fclid", '>', 0)
             ->groupBy("$table.oid")
@@ -79,7 +80,7 @@ class ChartDataTimesController extends Controller
             ->orderBy('avr_official.oid', 'desc')
             ->paginate(5);
 
-        return $this->response->paginator($faceCount, new FaceCountTransformer());
+        return $this->response()->paginator($faceCount, new ChartDataTimesTransformer());
     }
 
     public function chart(ChartDataRequest $request)
