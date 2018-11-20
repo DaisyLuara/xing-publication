@@ -72,54 +72,59 @@ class InvoiceController extends Controller
         if (($user->hasRole('user') || $user->hasRole('bd-manager')) && !$user->parent_id) {
             abort(500, '无所属主管，无法新增开票申请');
         }
-        $invoice = $request->all();
-        $content = $invoice['invoice_content'];
-        unset($invoice['invoice_content']);
+        $param = $request->all();
+        $content = $param['invoice_content'];
+        unset($param['invoice_content']);
         if ($user->hasRole('legal-affairs')) {
             $permission = Permission::findByName('finance_bill');
             $finance = $permission->users()->first();
-            $invoice = Invoice::query()->create(array_merge($invoice, ['status' => 3, 'handler' => $finance->id]));
+            $invoice = Invoice::query()->create(array_merge($param, ['status' => 3, 'handler' => $finance->id]));
         }
         if ($user->hasRole('legal-affairs-manager')) {
             $permission = Permission::findByName('finance_bill');
             $finance = $permission->users()->first();
-            $invoice = Invoice::query()->create(array_merge($invoice, ['status' => 3, 'handler' => $finance->id]));
+            $invoice = Invoice::query()->create(array_merge($param, ['status' => 3, 'handler' => $finance->id]));
         }
         if ($user->hasRole('user')) {
-            $invoice = Invoice::query()->create(array_merge($invoice, ['status' => 1, 'handler' => $user->parent_id]));
+            $invoice = Invoice::query()->create(array_merge($param, ['status' => 1, 'handler' => $user->parent_id]));
         }
 
         if ($user->hasRole('bd-manager')) {
             $role = Role::findByName('legal-affairs-manager');
             $legalMa = $role->users()->first();
-            $invoice = Invoice::query()->create(array_merge($invoice, ['status' => 1, 'handler' => $legalMa->id]));
+            $invoice = Invoice::query()->create(array_merge($param, ['status' => 1, 'handler' => $legalMa->id]));
         }
         foreach ($content as $item) {
-            $item['invoice_id'] = $invoice['id'];
+            $item['invoice_id'] = $param['id'];
             InvoiceContent::query()->create($item);
+        }
+        //文件存储
+        $ids = explode(',', $request->ids);
+        foreach ($ids as $id) {
+            $invoice->media()->attach($id);
         }
         return $this->response()->item($invoice, new InvoiceTransformer())->setStatusCode(201);
     }
 
-    public function update(InvoiceRequest $request, Invoice $invoice)
-    {
-        /** @var  $user \App\Models\User */
-        $user = $this->user();
-        if (!$user->hasRole('user') && !$user->hasRole('bd-manager')) {
-            abort(403, '无操作权限');
-        }
-        $invoice->update(array_merge($request->all(), ['handler' => $user->parent_id, 'status' => 1]));
-        $content = $request->invoice_content;
-        InvoiceContent::query()
-            ->where('invoice_id', '=', $invoice['id'])
-            ->delete();
-        foreach ($content as $item) {
-            $item['invoice_id'] = $invoice['id'];
-            InvoiceContent::query()->create($item);
-        }
-
-        return $this->response()->noContent()->setStatusCode(200);
-    }
+//    public function update(InvoiceRequest $request, Invoice $invoice)
+//    {
+//        /** @var  $user \App\Models\User */
+//        $user = $this->user();
+//        if (!$user->hasRole('user') && !$user->hasRole('bd-manager')) {
+//            abort(403, '无操作权限');
+//        }
+//        $invoice->update(array_merge($request->all(), ['handler' => $user->parent_id, 'status' => 1]));
+//        $content = $request->invoice_content;
+//        InvoiceContent::query()
+//            ->where('invoice_id', '=', $invoice['id'])
+//            ->delete();
+//        foreach ($content as $item) {
+//            $item['invoice_id'] = $invoice['id'];
+//            InvoiceContent::query()->create($item);
+//        }
+//
+//        return $this->response()->noContent()->setStatusCode(200);
+//    }
 
     public function destroy(Invoice $invoice)
     {
