@@ -83,6 +83,7 @@ $api->version('v1', [
             $api->post('chart_data', 'ChartDataController@chart');//人数图表
             $api->get('export', 'ExportController@store');//导出
 
+            $api->get('times_stats', 'ChartDataTimesController@index');//人次列表
             $api->post('chart_data_times', 'ChartDataTimesController@chart');//人次图表
         });
 

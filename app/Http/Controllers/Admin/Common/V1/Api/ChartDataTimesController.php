@@ -63,6 +63,25 @@ class ChartDataTimesController extends Controller
         'lovetimes' => 'fCPL',
     ];
 
+    public function index(Request $request)
+    {
+
+        $query = XsFaceCountLog::query();
+        $table = $query->getModel()->getTable();
+        $this->handleQuery($request, $query);
+
+        $faceCount = $query->selectRaw("max($table.clientdate) as max_date,min($table.clientdate) as min_date,$table.id as id,sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum) as playernum,sum(lovenum) as lovenum,sum(outnum) as outnum,sum(scannum) as scannum,avr_official.name as point_name,avr_official_market.name as market_name,avr_official_area.name as area_name,xs_face_count_log.date as created_at")
+            ->selectRaw("(SELECT GROUP_CONCAT(DISTINCT (ar_product_list.name)) FROM xs_face_count_log AS fcl2 INNER JOIN ar_product_list ON ar_product_list.versionname = fcl2.belong WHERE fcl2.oid = $table.oid AND date_format(fcl2.date, '%Y-%m-%d') BETWEEN '$request->start_date' AND '$request->end_date' GROUP BY fcl2.oid) as projects ")
+            //->where("$table.fclid", '>', 0)
+            ->groupBy("$table.oid")
+            ->orderBy('avr_official_area.areaid', 'desc')
+            ->orderBy('avr_official_market.marketid', 'desc')
+            ->orderBy('avr_official.oid', 'desc')
+            ->paginate(5);
+
+        return $this->response->paginator($faceCount, new FaceCountTransformer());
+    }
+
     public function chart(ChartDataRequest $request)
     {
         $xsFaceCountLog = XsFaceCountLog::query();
@@ -119,7 +138,7 @@ class ChartDataTimesController extends Controller
                 ],
                 'rate' => [
                     'display_name' => $this->rateMapping[$key],
-                    'value' => $key == 'looktimes' ? 0 : (round($value / $data['looktimes'], 3) * 100) . '%',
+                    'value' => $key == 'looktimes' ? 0 : ($data['looktimes'] == 0 ? 0 : (round($value / $data['looktimes'], 3) * 100) . '%'),
                 ]
             ];
         }
@@ -167,12 +186,12 @@ class ChartDataTimesController extends Controller
                         'omo_scannum' => $item['omo_scannum'],
                         'lovetimes' => $item['lovetimes'],
                         'looktimes_rate' => 0,
-                        'playtimes7_rate' => (round($item['playtimes7'] / $item['looktimes'], 3) * 100) . '%',
-                        'playtimes15_rate' => (round($item['playtimes15'] / $item['looktimes'], 3) * 100) . '%',
-                        'playtimes21_rate' => (round($item['playtimes21'] / $item['looktimes'], 3) * 100) . '%',
-                        'outnum_rate' => (round($item['outnum'] / $item['looktimes'], 3) * 100) . '%',
-                        'omo_scannum_rate' => (round($item['omo_scannum'] / $item['looktimes'], 3) * 100) . '%',
-                        'lovetimes_rate' => (round($item['lovetimes'] / $item['looktimes'], 3) * 100) . '%',
+                        'playtimes7_rate' => $item['looktimes'] == 0 ? 0 : (round($item['playtimes7'] / $item['looktimes'], 3) * 100) . '%',
+                        'playtimes15_rate' => $item['looktimes'] == 0 ? 0 : (round($item['playtimes15'] / $item['looktimes'], 3) * 100) . '%',
+                        'playtimes21_rate' => $item['looktimes'] == 0 ? 0 : (round($item['playtimes21'] / $item['looktimes'], 3) * 100) . '%',
+                        'outnum_rate' => $item['looktimes'] == 0 ? 0 : (round($item['outnum'] / $item['looktimes'], 3) * 100) . '%',
+                        'omo_scannum_rate' => $item['looktimes'] == 0 ? 0 : (round($item['omo_scannum'] / $item['looktimes'], 3) * 100) . '%',
+                        'lovetimes_rate' => $item['looktimes'] == 0 ? 0 : (round($item['lovetimes'] / $item['looktimes'], 3) * 100) . '%',
 
                     ];
                 } else {
