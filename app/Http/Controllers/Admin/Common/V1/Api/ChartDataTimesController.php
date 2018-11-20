@@ -52,7 +52,7 @@ class ChartDataTimesController extends Controller
         'outnum' => 'fCPR(二维码生成数)',
         'omo_scannum' => 'fCPA(扫码跳转次数)',
         'lovetimes' => 'fCPL(拉新会员数)',
-//        '' => 'fCPS(到店核销次数)'
+        'verifytimes' => 'fCPS(到店核销次数)'
     ];
 
     protected $rateMapping = [
@@ -63,6 +63,7 @@ class ChartDataTimesController extends Controller
         'outnum' => 'fCPR',
         'omo_scannum' => 'fCPA',
         'lovetimes' => 'fCPL',
+        'verifytimes' => 'fCPS'
     ];
 
     public function index(Request $request)
@@ -111,6 +112,10 @@ class ChartDataTimesController extends Controller
             case 7:
                 $data = $this->getProjectCharacter($request, $xsFaceCharacterCountTimes);
                 break;
+            case 8:
+                $data = $this->getFunnelChart($request, $xsFaceCountLog);
+                break;
+
             default:
                 return null;
 
@@ -471,38 +476,46 @@ class ChartDataTimesController extends Controller
         }
         $output['rate']['total_rate'] = [
             [
-                'count' => $allData->looknum ? strval(round($allData->playernum7 / $allData->looknum, 3) * 100) : 0,
-                'display_name' => 'CPF转化率',
+                'count' => $allData->looktimes ? strval(round($allData->playtimes7 / $allData->looktimes, 3) * 100) : 0,
+                'display_name' => '7″fCPE转化率',
             ],
             [
-                'count' => $allData->looknum ? strval(round($allData->playernum / $allData->looknum, 3) * 100) : 0,
-                'display_name' => 'CPR转化率',
+                'count' => $allData->looktimes ? strval(round($allData->playtimes15 / $allData->looktimes, 3) * 100) : 0,
+                'display_name' => '15″fCPE转化率',
             ],
             [
-                'count' => $allData->looknum ? strval(round($allData->omo_outnum / $allData->looknum, 3) * 100) : 0,
-                'display_name' => 'CPA转化率',
+                'count' => $allData->looktimes ? strval(round($allData->playtimes21 / $allData->looktimes, 3) * 100) : 0,
+                'display_name' => '21″fCPE转化率',
             ],
             [
-                'count' => $allData->looknum ? strval(round($allData->lovenum / $allData->looknum, 3) * 100) : 0,
-                'display_name' => 'CPL转化率',
+                'count' => $allData->looktimes ? strval(round($allData->omo_scannum / $allData->looktimes, 3) * 100) : 0,
+                'display_name' => 'fCPA转化率',
+            ],
+            [
+                'count' => $allData->looktimes ? strval(round($allData->lovetimes / $allData->looktimes, 3) * 100) : 0,
+                'display_name' => 'fCPL转化率',
             ],
         ];
         $output['rate']['rate'] = [
             [
-                'count' => $data['looknum'] ? strval(round($data['playernum7'] / $data['looknum'], 3) * 100) : 0,
-                'display_name' => 'CPF转化率',
+                'count' => $data['looktimes'] ? strval(round($data['playtimes7'] / $data['looktimes'], 3) * 100) : 0,
+                'display_name' => '7″fCPE转化率',
             ],
             [
-                'count' => $data['looknum'] ? strval(round($data['playernum'] / $data['looknum'], 3) * 100) : 0,
-                'display_name' => 'CPR转化率',
+                'count' => $data['looktimes'] ? strval(round($data['playtimes15'] / $data['looktimes'], 3) * 100) : 0,
+                'display_name' => '15″fCPE转化率',
             ],
             [
-                'count' => $data['looknum'] ? strval(round($data['omo_outnum'] / $data['looknum'], 3) * 100) : 0,
-                'display_name' => 'CPA转化率',
+                'count' => $data['looktimes'] ? strval(round($data['playtimes21'] / $data['looktimes'], 3) * 100) : 0,
+                'display_name' => '21″fCPE转化率',
             ],
             [
-                'count' => $data['looknum'] ? strval(round($data['lovenum'] / $data['looknum'], 3) * 100) : 0,
-                'display_name' => 'CPL转化率',
+                'count' => $data['looktimes'] ? strval(round($data['omo_scannum'] / $data['looktimes'], 3) * 100) : 0,
+                'display_name' => 'fCPA转化率',
+            ],
+            [
+                'count' => $data['looktimes'] ? strval(round($data['lovetimes'] / $data['looktimes'], 3) * 100) : 0,
+                'display_name' => 'fCPL转化率',
             ],
         ];
 
