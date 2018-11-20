@@ -1065,7 +1065,7 @@ function faceCharacterTimesClean()
         $group_by_value = groupByValueCharacter('looktimes');
         $characterTimesData = ArrayGroupBy::groupBy($count, $group_by_fields, $group_by_value);
 
-        DB::table('xs_face_character_count_times')->insert($characterTimesData);
+        DB::connection('ar')->table('xs_face_character_count_times')->insert($characterTimesData);
         $date = (new Carbon($date))->addDay(1)->toDateString();
     }
     FaceCharacterTimesRecord::create(['date' => $currentDate]);
