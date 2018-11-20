@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Invoice\V1\Transformer;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Invoice\V1\Models\Invoice;
 use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany;
+use App\Http\Controllers\Admin\Media\V1\Transformer\MediaTransformer;
 use League\Fractal\TransformerAbstract;
 
 class InvoiceTransformer extends TransformerAbstract
@@ -17,7 +18,7 @@ class InvoiceTransformer extends TransformerAbstract
         '5' => '已认领',
         '6' => '驳回',
     ];
-    protected $availableIncludes = ['invoice_content', 'contract', 'invoice_company'];
+    protected $availableIncludes = ['invoice_content', 'contract', 'invoice_company', 'media'];
 
     public function transform(Invoice $invoice)
     {
@@ -61,5 +62,10 @@ class InvoiceTransformer extends TransformerAbstract
             return null;
         }
         return $this->item($invoice->invoiceCompany, new InvoiceCompanyTransformer());
+    }
+
+    public function includeMedia(Invoice $invoice)
+    {
+        return $this->collection($invoice->media, new MediaTransformer());
     }
 }

@@ -261,6 +261,7 @@
 <script>
 import coupon from 'service/coupon'
 import search from 'service/search'
+import utils from 'service/utils'
 import router from 'router'
 import {
   Button,
@@ -478,7 +479,7 @@ export default {
         args.start_date = this.couponForm.start_date
       }
       if (this.couponForm.end_date) {
-        args.end_date = this.handleDateTransform(this.couponForm.end_date)
+        args.end_date = utils.handleDateTransform(this.couponForm.end_date)
       }
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -506,24 +507,24 @@ export default {
     },
     historyBack() {
       router.back()
-    },
-    handleDateTransform(valueDate) {
-      let dateValue = valueDate.replace(/\-/g, '/')
-      let date = new Date(dateValue)
-      let year = date.getFullYear() + '-'
-      let mouth =
-        (date.getMonth() + 1 < 10
-          ? '0' + (date.getMonth() + 1)
-          : date.getMonth() + 1) + '-'
-      let day =
-        (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ''
-      let hours = date.getHours() === 0 ? date.getHours() + 23 : date.getHours()
-      let minutes =
-        date.getMinutes() === 0 ? date.getMinutes() + 59 : date.getMinutes()
-      let second =
-        date.getSeconds() === 0 ? date.getSeconds() + 59 : date.getSeconds()
-      return year + mouth + day + ' ' + hours + ':' + minutes + ':' + second
     }
+    // handleDateTransform(valueDate) {
+    //   let dateValue = valueDate.replace(/\-/g, '/')
+    //   let date = new Date(dateValue)
+    //   let year = date.getFullYear() + '-'
+    //   let mouth =
+    //     (date.getMonth() + 1 < 10
+    //       ? '0' + (date.getMonth() + 1)
+    //       : date.getMonth() + 1) + '-'
+    //   let day =
+    //     (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ''
+    //   let hours = date.getHours() === 0 ? date.getHours() + 23 : date.getHours()
+    //   let minutes =
+    //     date.getMinutes() === 0 ? date.getMinutes() + 59 : date.getMinutes()
+    //   let second =
+    //     date.getSeconds() === 0 ? date.getSeconds() + 59 : date.getSeconds()
+    //   return year + mouth + day + ' ' + hours + ':' + minutes + ':' + second
+    // }
   }
 }
 </script>

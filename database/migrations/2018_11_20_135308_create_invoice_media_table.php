@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateContractMediaTable extends Migration
+class CreateInvoiceMediaTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateContractMediaTable extends Migration
      */
     public function up()
     {
-        Schema::create('contract_media', function (Blueprint $table) {
-            $table->integer('contract_id');
+        Schema::create('invoice_media', function (Blueprint $table) {
+            $table->integer('invoice_id');
             $table->integer('media_id');
-            $table->index('contract_id');
+            $table->index('invoice_id');
             $table->index('media_id');
         });
     }
@@ -28,6 +28,6 @@ class CreateContractMediaTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('contract_media');
+        Schema::dropIfExists('invoice_media');
     }
 }
