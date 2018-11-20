@@ -852,6 +852,19 @@ export default {
   },
   data() {
     return {
+      // searchForm: {
+      //   userSelect: [],
+      //   projectSelect: [],
+      //   sceneSelect: '',
+      //   area_id: '',
+      //   market_id: [],
+      //   point_id: '',
+      //   dateTime: [
+      //     new Date().getTime() - 3600 * 1000 * 24 * 7,
+      //     new Date().getTime() - 3600 * 1000 * 24
+      //   ],
+      //   timeFrame: []
+      // },
       PersonprojectAgeChart: {
         tooltip: {
           trigger: 'item',
@@ -878,7 +891,26 @@ export default {
             type: 'shadow'
           }
         },
-        color: ['#E83828', '#E80F9B', '#F8B62D', '#22b572', '#0099FF'],
+        legend: {
+          data: [
+            'fCPL玩家人次',
+            'fCPA玩家人次',
+            'fCPR玩家人次',
+            '21"fCPE玩家人次',
+            '15"fCPE玩家人次',
+            '7"fCPE玩家人次',
+            '围观参与玩家人次'
+          ]
+        },
+        color: [
+          '#e9200f',
+          '#ff008a',
+          '#ffa200',
+          '#8e007d',
+          '#ffdd00',
+          '#05a253',
+          '#006eff'
+        ],
         grid: {
           left: '3%',
           right: '4%',
@@ -894,7 +926,7 @@ export default {
         },
         series: [
           {
-            name: '扫码拉新会员注册总数',
+            name: 'fCPL玩家玩家人次',
             type: 'bar',
             stack: '总量',
             label: {
@@ -906,7 +938,7 @@ export default {
             data: null
           },
           {
-            name: 'OMO有效跳转人数',
+            name: 'fCPA玩家玩家人次',
             type: 'bar',
             stack: '总量',
             label: {
@@ -918,7 +950,7 @@ export default {
             data: null
           },
           {
-            name: '大屏铁杆玩家人数',
+            name: 'fCPR玩家玩家人次',
             type: 'bar',
             stack: '总量',
             label: {
@@ -930,7 +962,7 @@ export default {
             data: null
           },
           {
-            name: '大屏活跃玩家人数',
+            name: '21"fCPE玩家玩家人次',
             type: 'bar',
             stack: '总量',
             label: {
@@ -942,7 +974,31 @@ export default {
             data: null
           },
           {
-            name: '大屏围观参与人数',
+            name: '15"fCPE玩家玩家人次',
+            type: 'bar',
+            stack: '总量',
+            label: {
+              normal: {
+                show: true,
+                position: 'insideRight'
+              }
+            },
+            data: null
+          },
+          {
+            name: '7"fCPE玩家玩家人次',
+            type: 'bar',
+            stack: '总量',
+            label: {
+              normal: {
+                show: true,
+                position: 'insideRight'
+              }
+            },
+            data: null
+          },
+          {
+            name: '围观参与玩家人次',
             type: 'bar',
             stack: '总量',
             label: {
@@ -1134,7 +1190,6 @@ export default {
       sceneSelect: '',
       searchLoading: false,
       projectList: [],
-      active: '围观总数',
       pagination: {
         total: 0,
         pageSize: 5,
@@ -1729,10 +1784,10 @@ export default {
     },
     getProjectAge(belong) {
       this.userFlag = true
-      let args = this.setArgs('12')
+      let args = this.setArgs('7')
       args.belong = belong
       return chart
-        .getChartData(this, args)
+        .getTimesChartData(this, args)
         .then(response => {
           let chart = this.$refs.PersonprojectAgeChart
           chart.mergeOptions({
@@ -1777,13 +1832,12 @@ export default {
     },
     getProjectTop() {
       this.projectPersonFlag = true
-      let args = this.setArgs('11')
+      let args = this.setArgs('6')
       return chart
-        .getChartData(this, args)
+        .getTimesChartData(this, args)
         .then(response => {
           this.projectTop = response
           let chart = this.$refs.projectPersonChar
-          console.log(response)
           chart.mergeOptions({
             yAxis: {
               type: 'category',
@@ -1793,7 +1847,7 @@ export default {
             },
             series: [
               {
-                name: '扫码拉新会员注册总数',
+                name: 'fCPL玩家人次',
                 type: 'bar',
                 stack: '总量',
                 label: {
@@ -1803,11 +1857,11 @@ export default {
                   }
                 },
                 data: response.map(r => {
-                  return r.count.lovenum
+                  return r.count.lovetimes
                 })
               },
               {
-                name: 'OMO有效跳转人数',
+                name: 'fCPA玩家人次',
                 type: 'bar',
                 stack: '总量',
                 label: {
@@ -1817,11 +1871,11 @@ export default {
                   }
                 },
                 data: response.map(r => {
-                  return r.count.omo_outnum
+                  return r.count.omo_scannum
                 })
               },
               {
-                name: '大屏铁杆玩家人数',
+                name: 'fCPR玩家人次',
                 type: 'bar',
                 stack: '总量',
                 label: {
@@ -1831,11 +1885,11 @@ export default {
                   }
                 },
                 data: response.map(r => {
-                  return r.count.playernum
+                  return r.count.outnum
                 })
               },
               {
-                name: '大屏活跃玩家人数',
+                name: '21"fCPE玩家人次',
                 type: 'bar',
                 stack: '总量',
                 label: {
@@ -1845,11 +1899,11 @@ export default {
                   }
                 },
                 data: response.map(r => {
-                  return r.count.playernum7
+                  return r.count.playtimes21
                 })
               },
               {
-                name: '大屏围观参与人数',
+                name: '15"fCPE玩家人次',
                 type: 'bar',
                 stack: '总量',
                 label: {
@@ -1859,7 +1913,35 @@ export default {
                   }
                 },
                 data: response.map(r => {
-                  return r.count.looknum
+                  return r.count.playtimes15
+                })
+              },
+              {
+                name: '7"fCPE玩家人次',
+                type: 'bar',
+                stack: '总量',
+                label: {
+                  normal: {
+                    show: true,
+                    position: 'insideRight'
+                  }
+                },
+                data: response.map(r => {
+                  return r.count.playtimes7
+                })
+              },
+              {
+                name: '围观参与玩家人次',
+                type: 'bar',
+                stack: '总量',
+                label: {
+                  normal: {
+                    show: true,
+                    position: 'insideRight'
+                  }
+                },
+                data: response.map(r => {
+                  return r.count.looktimes
                 })
               }
             ]
@@ -2013,7 +2095,6 @@ export default {
     },
     searchHandle() {
       this.pagination.currentPage = 1
-      this.active = '围观总数'
       this.projectAlias = this.projectSelect[0]
       this.setting.loading = true
       this.allPromise()
@@ -2055,9 +2136,9 @@ export default {
     },
     getCrowdTime() {
       this.crowdFlag = true
-      let args = this.setArgs('8')
+      let args = this.setArgs('5')
       return chart
-        .getChartData(this, args)
+        .getTimesChartData(this, args)
         .then(response => {
           let chart = this.$refs.crowdPersonChart
           chart.mergeOptions({
@@ -2203,7 +2284,6 @@ export default {
             .getProjectList(this, args)
             .then(response => {
               this.projectList = response.data
-              console.log(this.projectList)
               this.searchLoading = false
             })
             .catch(err => {
@@ -2247,7 +2327,7 @@ export default {
       this.ageFlag = true
       let args = this.setArgs('4')
       return chart
-        .getChartData(this, args)
+        .getTimesChartData(this, args)
         .then(response => {
           this.tempAgeData = response
           let chart = this.$refs.agePersonChart
@@ -2311,9 +2391,9 @@ export default {
       this.getPointList()
     },
     getGender() {
-      let args = this.setArgs('5')
+      let args = this.setArgs('3')
       return chart
-        .getChartData(this, args)
+        .getTimesChartData(this, args)
         .then(response => {
           let chart = this.$refs.pieSexChart
           chart.mergeOptions({
@@ -2321,12 +2401,12 @@ export default {
               {
                 data: [
                   {
-                    name: '男',
+                    name: response[1].display_name,
                     value: response[1].count === null ? 0 : response[1].count,
                     selected: true
                   },
                   {
-                    name: '女',
+                    name: response[0].display_name,
                     value: response[0].count === null ? 0 : response[0].count
                   }
                 ]
@@ -2342,7 +2422,7 @@ export default {
       this.dialogLoading = true
       this.shouldDialogShow = true
       let args = this.setArgs('4')
-      chart.getChartData(this, args).then(response => {
+      chart.getTimesChartData(this, args).then(response => {
         let that = this
         let mergeChart = this.$refs.pieSexChart2
         mergeChart.mergeOptions({
@@ -2594,11 +2674,6 @@ export default {
       }
       return newOption
     },
-    lineDataHandle(obj) {
-      this.active = obj.display_name
-      this.type = obj.index
-      this.getLineData()
-    },
     handleDateTransform(valueDate) {
       let date = new Date(valueDate)
       let year = date.getFullYear() + '-'
@@ -2609,9 +2684,6 @@ export default {
       let day =
         (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ''
       return year + mouth + day
-    },
-    handleHover(key) {
-      console.log(key)
     },
     getConversionRate() {
       this.rateDialog = true
@@ -3154,155 +3226,6 @@ export default {
   .content-wrapper {
     padding: 15px;
     background-color: #fff;
-    // .btns-wrapper {
-    //   min-height: 170px;
-    //   padding: 10px 0;
-    //   display: flex;
-    //   flex-direction: row;
-    //   flex-wrap: wrap;
-    //   margin-bottom: 10px;
-    //   li {
-    //     padding-right: 95px;
-    //     padding-top: 20px;
-    //     padding-bottom: 10px;
-    //   }
-
-    //   .btn {
-    //     &.color-0 {
-    //       background: url('~assets/images/program/circle.png') center 39px
-    //         no-repeat #0099ff;
-    //       background-size: 80px;
-    //     }
-    //     &.color-1 {
-    //       background: url('~assets/images/program/circle.png') center 39px
-    //         no-repeat #22b572;
-    //       background-size: 80px;
-    //     }
-    //     &.color-2 {
-    //       background: url('~assets/images/program/circle.png') center 39px
-    //         no-repeat #f8b62d;
-    //       background-size: 80px;
-    //     }
-    //     &.color-3 {
-    //       background: url('~assets/images/program/circle.png') center 39px
-    //         no-repeat #e80f9b;
-    //       background-size: 80px;
-    //     }
-    //     &.color-4 {
-    //       background: url('~assets/images/program/circle.png') center 39px
-    //         no-repeat #e83828;
-    //       background-size: 80px;
-    //     }
-    //     &.color-5 {
-    //       background: url('~assets/images/program/circle.png') center 39px
-    //         no-repeat #197748;
-    //       background-size: 80px;
-    //     }
-    //     &.color-6 {
-    //       background: url('~assets/images/program/circle.png') center 39px
-    //         no-repeat #f8b62d;
-    //       background-size: 80px;
-    //     }
-    //     &.color-7 {
-    //       background: url('~assets/images/program/circle.png') center 39px
-    //         no-repeat #be136e;
-    //       background-size: 80px;
-    //     }
-    //     &.color-8 {
-    //       background: url('~assets/images/program/circle.png') center 39px
-    //         no-repeat #bc1313;
-    //       background-size: 80px;
-    //     }
-    //     .arrow-icon {
-    //       position: absolute;
-    //       z-index: 2;
-    //       top: 145px;
-    //       left: 66px;
-    //       width: 0;
-    //       height: 0;
-    //       border-width: 13px 10px;
-    //       border-style: solid;
-    //       &.color-0 {
-    //         border-color: #0099ff #ffffff #ffffff #ffffff;
-    //       }
-    //       &.color-1 {
-    //         border-color: #22b572 #ffffff #ffffff #ffffff;
-    //       }
-    //       &.color-2 {
-    //         border-color: #f8b62d #ffffff #ffffff #ffffff;
-    //       }
-    //       &.color-3 {
-    //         border-color: #e80f9b #ffffff #ffffff #ffffff;
-    //       }
-    //       &.color-4 {
-    //         border-color: #e83828 #ffffff #ffffff #ffffff;
-    //       }
-    //       &.color-5 {
-    //         border-color: #197748 #ffffff #ffffff #ffffff;
-    //       }
-    //       &.color-6 {
-    //         border-color: #f8b62d #ffffff #ffffff #ffffff;
-    //       }
-    //       &.color-7 {
-    //         border-color: #be136e #ffffff #ffffff #ffffff;
-    //       }
-    //       &.color-8 {
-    //         border-color: #bc1313 #ffffff #ffffff #ffffff;
-    //       }
-    //     }
-    //     cursor: pointer;
-    //     width: 130px;
-    //     height: 130px;
-    //     display: block;
-    //     border-radius: 5px;
-    //     background: url('~assets/images/program/circle.png') center 35px
-    //       no-repeat #f6f6f6;
-    //     position: relative;
-
-    //     .title {
-    //       display: block;
-    //       height: 35px;
-    //       padding-left: 20px;
-    //       padding-top: 9px;
-    //       font-size: 14px;
-    //       color: white;
-    //       font-weight: 600;
-    //       font-style: normal;
-    //     }
-    //     .count {
-    //       display: block;
-    //       text-align: center;
-    //       height: 30px;
-    //       padding-top: 40px;
-    //       font-size: 15px;
-    //       color: #517ebb;
-    //     }
-    //     .arrow-icon {
-    //       position: absolute;
-    //       z-index: 2;
-    //       top: 130px;
-    //       left: 55px;
-    //       width: 0;
-    //       height: 0;
-    //       border-width: 13px 10px;
-    //       border-style: solid;
-    //       border-color: #f6f6f6 #ffffff #ffffff #ffffff;
-    //     }
-    //     .right-arrow-icon {
-    //       position: absolute;
-    //       z-index: 2;
-    //       text-align: center;
-    //       color: #fff;
-    //       line-height: 34px;
-    //       top: 63px;
-    //       right: -90px;
-    //       width: 82px;
-    //       height: 34px;
-    //       background: url('~assets/images/program/right-arrow.png') 50%
-    //         no-repeat;
-    //     }
-    //   }
-    // }
     .chart-person-times-wrapper {
       padding-top: 30px;
       width: 100%;
@@ -3422,7 +3345,7 @@ export default {
     flex-direction: row;
     justify-content: space-between;
     .project-person-part {
-      width: 55%;
+      width: 60%;
       height: 100%;
       .echarts {
         height: 100%;
@@ -3430,7 +3353,7 @@ export default {
       }
     }
     .project-age-person-part {
-      width: 40%;
+      width: 35%;
       left: 3%;
       height: 100%;
     }
