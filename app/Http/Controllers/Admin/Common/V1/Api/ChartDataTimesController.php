@@ -53,6 +53,15 @@ class ChartDataTimesController extends Controller
 //        '' => 'fCPS(到店核销次数)'
     ];
 
+    protected $rateMapping = [
+        'looktimes' => 'CPM',
+        'playtimes7' => '7″fCPE',
+        'playtimes15' => '15″fCPE',
+        'playtimes21' => '21″fCPE',
+        'outnum' => 'fCPR',
+        'omo_scannum' => 'fCPA',
+        'lovetimes' => 'fCPL',
+    ];
 
     public function chart(ChartDataRequest $request)
     {
@@ -102,9 +111,16 @@ class ChartDataTimesController extends Controller
         $output = [];
         foreach ($data as $key => $value) {
             $output[] = [
-                'count' => $value,
-                'display_name' => $this->totalMapping[$key],
-                'index' => $key,
+                'number' => [
+                    'count' => $value,
+                    'display_name' => $this->totalMapping[$key],
+                    'index' => $key,
+                ],
+                'rate' => [
+                    'display_name' => $this->rateMapping[$key],
+                    'value' => (round($value / $data['looktimes'], 3) * 100) . '%'
+                ]
+
             ];
         }
         return $output;
@@ -149,7 +165,14 @@ class ChartDataTimesController extends Controller
                         'playtimes21' => $item['playtimes21'],
                         'outnum' => $item['outnum'],
                         'omo_scannum' => $item['omo_scannum'],
-                        'lovetimes' => $item['lovetimes']
+                        'lovetimes' => $item['lovetimes'],
+
+                        'playtimes7_rate' => round($item['playtimes7'] / $item['looktimes']),
+                        'playtimes15_rate' => round($item['playtimes15'] / $item['looktimes']),
+                        'playtimes21_rate' => round($item['playtimes21'] / $item['looktimes']),
+                        'outnum_rate' => round($item['outnum'] / $item['looktimes']),
+                        'omo_scannum_rate' => round($item['omo_scannum'] / $item['looktimes']),
+                        'lovetimes_rate' => round($item['lovetimes'] / $item['looktimes']),
 
                     ];
                 } else {
@@ -161,7 +184,14 @@ class ChartDataTimesController extends Controller
                         'playtimes21' => 0,
                         'outnum' => 0,
                         'omo_scannum' => 0,
-                        'lovetimes' => 0
+                        'lovetimes' => 0,
+
+                        'playtimes7_rate' => 0,
+                        'playtimes15_rate' => 0,
+                        'playtimes21_rate' => 0,
+                        'outnum_rate' => 0,
+                        'omo_scannum_rate' => 0,
+                        'lovetimes_rate' => 0,
                     ];
                 }
                 $start_date = (new Carbon($start_date))->addDay(1)->toDateString();
