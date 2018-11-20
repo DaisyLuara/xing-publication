@@ -1213,5 +1213,5 @@ function getOfficialAccount($authorizer_id, $app)
 
     abort_if(!$authorizer, 404);
 
-    return $app->officialAccount($authorizer->appid, $authorizer->refresh_token);
+    return $app->officialAccount($authorizer->appid, null, $authorizer->access_token);
 }
