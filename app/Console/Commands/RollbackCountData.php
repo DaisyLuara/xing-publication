@@ -8,9 +8,10 @@ use App\Http\Controllers\Admin\Face\V1\Models\FaceCountRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceLookTimesRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceOmoRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FacePhoneRecord;
+use App\Http\Controllers\Admin\Face\V1\Models\FaceVerifyRecord;
 use Carbon\Carbon;
-use Illuminate\Console\Command;
 use DB;
+use Illuminate\Console\Command;
 
 class RollbackCountData extends Command
 {
@@ -57,20 +58,31 @@ class RollbackCountData extends Command
         } else {
             FaceActivePlayerRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-06-13'")->delete();
         }
+
         if ($date >= '2018-07-24') {
             FaceActivePlaytimesRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
             FaceActivePlaytimesRecord::create(['date' => $date]);
         } else {
             FaceActivePlaytimesRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-07-24'")->delete();
         }
+
         if ($date >= '2018-07-19') {
             FaceOmoRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
             FaceOmoRecord::create(['date' => $date]);
         } else {
             FaceOmoRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-07-19'")->delete();
         }
+
+        if ($date >= '2018-11-15') {
+            FaceVerifyRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
+            FaceVerifyRecord::create(['date' => $date]);
+        } else {
+            FaceVerifyRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-07-19'")->delete();
+        }
+
         FacePhoneRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
         FacePhoneRecord::create(['date' => $date]);
+
         FaceCountRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
         FaceCountRecord::create(['date' => $date]);
 
@@ -85,5 +97,6 @@ class RollbackCountData extends Command
         DB::connection('ar')->table('xs_face_phone_times')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
         DB::connection('ar')->table('xs_face_count_log')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
         DB::connection('ar')->table('xs_face_look_times')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
+        DB::connection('ar')->table('xs_face_verify_times')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
     }
 }
