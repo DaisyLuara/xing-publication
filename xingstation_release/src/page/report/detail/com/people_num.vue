@@ -2207,7 +2207,7 @@ export default {
     right: 0;
     bottom: 0;
     margin: auto;
-    min-width: 1200px;
+    min-width: 1000px;
     overflow-x: scroll;
     background-color: white;
     border: 1px solid black;

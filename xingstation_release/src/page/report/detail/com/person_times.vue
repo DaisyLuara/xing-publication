@@ -577,16 +577,12 @@ export default {
         toolbox: {
           show: true
         },
-        // calculable: true,
+        calculable: true,
         color: ['#5687f8', '#74bd66'],
         xAxis: [
           {
             type: 'category',
             axisTick: { show: false },
-            // axisLabel: {
-            //   interval: 0,
-            //   rotate: 30
-            // },
             data: [
               '7″fCPE\n转化率',
               '15″fCPE\n转化率',
@@ -690,14 +686,12 @@ export default {
             left: 50,
             right: 50,
             height: '50%'
-            // containLabel: true
           },
           {
             left: 50,
             right: 50,
             top: '61%',
             height: '33%'
-            // containLabel: true
           }
         ],
         xAxis: [
@@ -1810,19 +1804,7 @@ export default {
           this.rateDay = response.day
           this.marketCount = response.market_count
           this.screenCount = response.oid_count
-          console.log(
-            response.rate.rate.map(r => {
-              return r.display_name
-            })
-          )
           chart.mergeOptions({
-            // xAxis: {
-            //   type: 'category',
-            //   axisTick: { show: false },
-            //   data: response.rate.rate.map(r => {
-            //     return r.display_name
-            //   })
-            // },
             series: [
               {
                 name: '当前范围各级转化率',
@@ -2131,7 +2113,7 @@ export default {
     right: 0;
     bottom: 0;
     margin: auto;
-    min-width: 1200px;
+    min-width: 1000px;
     overflow-x: scroll;
     background-color: white;
     border: 1px solid black;
