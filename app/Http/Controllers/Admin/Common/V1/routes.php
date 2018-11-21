@@ -42,6 +42,8 @@ $api->version('v1', [
         $api->group(['middleware' => 'api_sign'], function ($api) {
             $api->get('device/params', 'FileUploadController@show');//获取大屏参数
             $api->post('images', 'ImagesController@store');//上传图片
+            $api->post('temp/customer', 'TempCustomerController@store');//临时用户保存
+            $api->get('temp/customer/all', 'TempCustomerController@all');//临时用户总数
         });
 
 
