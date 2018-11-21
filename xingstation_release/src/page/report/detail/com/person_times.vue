@@ -23,6 +23,7 @@
       <ul class="btns-rate-wrapper">
         <li
           v-for="(item, key) in peopleCount"
+          v-if="key !== 0"
           :key="item.number.index">
           <div class="person-rate-btn-wrap">
             <div class="person-btn">
