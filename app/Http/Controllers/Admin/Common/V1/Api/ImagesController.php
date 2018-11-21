@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\Common\V1\Request\ImageRequest;
 use App\Http\Controllers\Admin\Common\V1\Models\Image;
 use App\Handlers\ImageUploadHandler;
 use App\Http\Controllers\Controller;
+use Illuminate\Contracts\Encryption\DecryptException;
+use Log;
 
 class ImagesController extends Controller
 {
@@ -15,7 +17,11 @@ class ImagesController extends Controller
 
         $userID = 0;
         if ($request->sign) {
-            $userID = decrypt($request->sign);
+            try {
+                $userID = decrypt($request->sign);
+            } catch (DecryptException $exception) {
+                Log::info('decrypt fail', [$exception->getMessage()]);
+            }
         }
         $path = $uploader->save($request->image, str_plural($request->type));
 
