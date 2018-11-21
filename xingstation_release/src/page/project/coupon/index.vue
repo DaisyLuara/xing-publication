@@ -56,9 +56,26 @@
                 placeholder="请选择公司" 
                 filterable 
                 clearable 
-                class="item-select">
+                class="item-select"
+                @change="handleCompany">
                 <el-option
                   v-for="item in companyList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"/>
+              </el-select>
+            </el-form-item>
+            <el-form-item 
+              label="" 
+              prop="shop_customer_id">
+              <el-select
+                v-model="filters.shop_customer_id" 
+                placeholder="请选择核销人" 
+                filterable 
+                clearable 
+                class="item-select">
+                <el-option
+                  v-for="item in shopCustomerList"
                   :key="item.id"
                   :label="item.name"
                   :value="item.id"/>
@@ -148,6 +165,10 @@
                   label="点位">
                   <span>{{ scope.row.point.id !== 0 ? scope.row.point.market.area.name + '-' + scope.row.point.market.name + '-' + scope.row.point.name : '' }}</span> 
                 </el-form-item>
+                <el-form-item 
+                  label="核销人">
+                  <span>{{ scope.row.customer !== undefined ? scope.row.customer.name : '' }}</span> 
+                </el-form-item>
               </el-form>
             </template>
           </el-table-column>
@@ -198,6 +219,15 @@
             min-width="100">
             <template slot-scope="scope">
               {{ scope.row.couponBatch.company.name }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop=""
+            label="核销人"
+            min-width="100">
+            <template slot-scope="scope">
+              {{ scope.row.customer !==undefined ? scope.row.customer.name : '' }}
             </template>
           </el-table-column>
           <el-table-column
@@ -263,7 +293,8 @@ export default {
         coupon_batch_id: '',
         status: '',
         company_id: '',
-        dataValue: []
+        dataValue: [],
+        shop_customer_id: ''
       },
       pickerOptions2: {
         shortcuts: [
@@ -314,6 +345,7 @@ export default {
           }
         ]
       },
+      shopCustomerList: [],
       setting: {
         loading: false,
         loadingText: '拼命加载中'
@@ -352,6 +384,27 @@ export default {
     this.getCompanyList()
   },
   methods: {
+    handleCompany() {
+      this.filters.shop_customer_id = ''
+      this.getShopCustomerList()
+    },
+    getShopCustomerList() {
+      this.searchLoading = true
+      let args = {
+        company_id: this.filters.company_id
+      }
+      return search
+        .getShopCustomerList(this, args)
+        .then(res => {
+          this.shopCustomerList = res.data
+          this.searchLoading = false
+        })
+        .catch(err => {
+          this.searchLoading = false
+
+          console.log(err)
+        })
+    },
     getCompanyList() {
       return search
         .getCompanyList(this)
@@ -384,11 +437,12 @@ export default {
     putInCouponList() {
       this.setting.loading = true
       let args = {
-        include: 'couponBatch.company,point.market.area',
+        include: 'couponBatch.company,point.market.area,customer',
         page: this.pagination.currentPage,
         coupon_batch_id: this.filters.coupon_batch_id[0],
         status: this.filters.status,
         company_id: this.filters.company_id,
+        shop_customer_id: this.filters.shop_customer_id,
         start_date: this.handleDateTransform(this.filters.dataValue[0]),
         end_date: this.handleDateTransform(this.filters.dataValue[1])
       }
@@ -400,6 +454,9 @@ export default {
       }
       if (this.filters.company_id === '') {
         delete args.company_id
+      }
+      if (this.filters.shop_customer_id === '') {
+        delete args.shop_customer_id
       }
       if (!this.filters.dataValue[0]) {
         delete args.start_date
