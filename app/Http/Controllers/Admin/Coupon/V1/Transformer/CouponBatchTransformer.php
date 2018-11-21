@@ -56,6 +56,9 @@ class CouponBatchTransformer extends TransformerAbstract
 
     public function includeCompany(CouponBatch $couponBatch)
     {
+        if (!$couponBatch->company) {
+            return null;
+        }
         return $this->item($couponBatch->company, new CompanyTransformer());
     }
 
