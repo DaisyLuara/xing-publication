@@ -186,8 +186,18 @@ class CouponController extends Controller
      * @param EasySms $easySms
      * @return \Illuminate\Http\JsonResponse
      */
-    public function generateCoupon(CouponBatch $couponBatch, CouponRequest $request, EasySms $easySms)
+    public function generateCoupon(CouponRequest $request, EasySms $easySms)
     {
+        $mobile = $request->has('mobile') ? $request->get('mobile') : '';
+        $userID = $request->has('sign') ? decrypt($request->get('sign')) : 0;
+        $gameAttributePayload = $request->has('game_attribute_payload') ? decrypt($request->get('game_attribute_payload')) : null;
+        $gameAttributePayload = parse_query($gameAttributePayload);
+        Log::info('game_attribute_payload', $gameAttributePayload);
+
+        abort_if(!isset($gameAttributePayload['coupon_batch_id']), 404, 'coupon batch not found!');
+        $couponBatch = CouponBatch::query()->findOrFail($gameAttributePayload['coupon_batch_id']);
+        $couponBatchId = $couponBatch->id;
+
         //时间日期
         $now = Carbon::now()->timestamp;
         $startDate = strtotime($couponBatch->start_date);
@@ -210,13 +220,6 @@ class CouponController extends Controller
         if (!$couponBatch->dmg_status && !$couponBatch->pmg_status && $couponBatch->stock <= 0) {
             abort(500, '优惠券已发完!');
         }
-
-
-        $mobile = $request->has('mobile') ? $request->get('mobile') : '';
-        $couponBatchId = $couponBatch->id;
-        $userID = $request->has('sign') ? decrypt($request->get('sign')) : 0;
-        $gameAttributePayload = $request->has('game_attribute_payload') ? decrypt($request->get('game_attribute_payload')) : null;
-        $gameAttributePayload = parse_query($gameAttributePayload);
 
         $code = uniqid();
 
