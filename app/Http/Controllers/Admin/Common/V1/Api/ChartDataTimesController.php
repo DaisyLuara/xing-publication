@@ -453,11 +453,11 @@ class ChartDataTimesController extends Controller
 
         $this->handleQuery($request, $query);
 
-        $data = $query->selectRaw("sum(looktimes) as looktimes ,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15 ,sum(playtimes21) as playtimes21,sum(outnum) as outnum,sum(omo_scannum) as omo_scannum,sum(lovetimes) as lovetimes")
+        $data = $query->selectRaw("sum(looktimes) as looktimes ,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15 ,sum(playtimes21) as playtimes21,sum(omo_scannum) as omo_scannum,sum(lovetimes) as lovetimes")
             ->first()->toArray();
 
         $allData = XsFaceCountLog::query()
-            ->selectRaw("sum(looktimes) as looktimes ,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15 ,sum(playtimes21) as playtimes21,sum(outnum) as outnum,sum(omo_scannum) as omo_scannum,sum(lovetimes) as lovetimes")
+            ->selectRaw("sum(looktimes) as looktimes ,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15 ,sum(playtimes21) as playtimes21,sum(omo_scannum) as omo_scannum,sum(lovetimes) as lovetimes")
             ->whereRaw("date_format(date,'%Y-%m-%d') between '$startDate' and '$endDate' and belong='all'")
             ->first();
 
