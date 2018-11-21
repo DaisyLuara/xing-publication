@@ -21,6 +21,7 @@ use Carbon\Carbon;
 use DB;
 use Log;
 use Overtrue\EasySms\EasySms;
+use function GuzzleHttp\Psr7\parse_query;
 
 
 class CouponController extends Controller
@@ -214,6 +215,9 @@ class CouponController extends Controller
         $mobile = $request->has('mobile') ? $request->get('mobile') : '';
         $couponBatchId = $couponBatch->id;
         $userID = $request->has('sign') ? decrypt($request->get('sign')) : 0;
+        $gameAttributePayload = $request->has('game_attribute_payload') ? decrypt($request->get('game_attribute_payload')) : null;
+        $gameAttributePayload = parse_query($gameAttributePayload);
+
         $code = uniqid();
 
         //第三方优惠券
@@ -315,9 +319,9 @@ class CouponController extends Controller
                 'coupon_batch_id' => $couponBatchId,
                 'status' => 3,
                 'wx_user_id' => $userID,
-                'qiniu_id' => $request->has('qiniu_id') ? $request->get('qiniu_id') : 0,
-                'oid' => $request->has('oid') ? $request->get('oid') : 0,
-                'belong' => $request->has('belong') ? $request->get('belong') : '',
+                'qiniu_id' => $gameAttributePayload && isset($gameAttributePayload['id']) ? $gameAttributePayload['id'] : 0,
+                'oid' => $gameAttributePayload && isset($gameAttributePayload['utm_source']) ? $gameAttributePayload['utm_source'] : 0,
+                'belong' => $gameAttributePayload && isset($gameAttributePayload['utm_campaign']) ? $gameAttributePayload['utm_campaign'] : '',
             ]);
 
             $coupon->setAttribute('qrcode_url', $qrcodeUrl);
