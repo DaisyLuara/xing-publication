@@ -77,7 +77,7 @@ class RollbackCountData extends Command
             FaceVerifyRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
             FaceVerifyRecord::create(['date' => $date]);
         } else {
-            FaceVerifyRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-07-19'")->delete();
+            FaceVerifyRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-11-15'")->delete();
         }
 
         FacePhoneRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
@@ -86,7 +86,7 @@ class RollbackCountData extends Command
         FaceCountRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
         FaceCountRecord::create(['date' => $date]);
 
-        FaceLookTimesRecord::query()->whereRaw("date_format(date,%Y-%m-%d)>='$date'")->delete();
+        FaceLookTimesRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
         FaceLookTimesRecord::create(['date' => $date]);
 
         //rollback data

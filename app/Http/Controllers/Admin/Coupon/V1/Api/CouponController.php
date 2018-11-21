@@ -40,6 +40,10 @@ class CouponController extends Controller
             $query->whereBetween('created_at', [$request->get('start_date'), $request->get('end_date')]);
         }
 
+        if ($request->has('shop_customer_id')) {
+            $query->where('shop_customer_id', $request->get('shop_customer_id'));
+        }
+
         $coupon = $query->orderByDesc('id')->paginate(10);
 
         return $this->response->paginator($coupon, new CouponTransformer());
