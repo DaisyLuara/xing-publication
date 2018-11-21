@@ -18,5 +18,6 @@ class WebsiteVisitor extends Model
         'phone',
         'email',
         'remark',
+        'subscribe'
     ];
 }
