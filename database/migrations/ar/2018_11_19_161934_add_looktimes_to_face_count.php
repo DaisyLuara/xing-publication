@@ -16,6 +16,7 @@ class AddLooktimesToFaceCount extends Migration
         Schema::connection('ar')->table('xs_face_count_log', function (Blueprint $table) {
             $table->integer('looktimes')->after('oatimes');
             $table->integer('lovetimes')->after('playtimes21');
+            $table->integer('verifytimes')->after('lovetimes');
         });
     }
 
@@ -29,6 +30,7 @@ class AddLooktimesToFaceCount extends Migration
         Schema::connection('ar')->table('xs_face_count_log', function (Blueprint $table) {
             $table->dropColumn('looktimes');
             $table->dropColumn('lovetimes');
+            $table->dropColumn('verifytimes');
         });
     }
 }

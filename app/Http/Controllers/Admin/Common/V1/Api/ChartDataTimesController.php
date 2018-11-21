@@ -73,7 +73,7 @@ class ChartDataTimesController extends Controller
         $table = $query->getModel()->getTable();
         $this->handleQuery($request, $query);
 
-        $faceCount = $query->selectRaw("max($table.clientdate) as max_date,min($table.clientdate) as min_date,$table.id as id,sum(looktimes) as looktimes,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(outnum) as outnum,sum(omo_scannum) as omo_scannum,sum(lovetimes) as lovetimes,avr_official.name as point_name,avr_official_market.name as market_name,avr_official_area.name as area_name,xs_face_count_log.date as created_at")
+        $faceCount = $query->selectRaw("max($table.clientdate) as max_date,min($table.clientdate) as min_date,$table.id as id,sum(looktimes) as looktimes,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(outnum) as outnum,sum(omo_scannum) as omo_scannum,sum(lovetimes) as lovetimes,sum(verifytimes) as verifytimes,avr_official.name as point_name,avr_official_market.name as market_name,avr_official_area.name as area_name,xs_face_count_log.date as created_at")
             ->selectRaw("(SELECT GROUP_CONCAT(DISTINCT (ar_product_list.name)) FROM xs_face_count_log AS fcl2 INNER JOIN ar_product_list ON ar_product_list.versionname = fcl2.belong WHERE fcl2.oid = $table.oid AND date_format(fcl2.date, '%Y-%m-%d') BETWEEN '$request->start_date' AND '$request->end_date' GROUP BY fcl2.oid) as projects ")
             //->where("$table.fclid", '>', 0)
             ->groupBy("$table.oid")
@@ -132,7 +132,7 @@ class ChartDataTimesController extends Controller
     private function getTotal(ChartDataRequest $request, Builder $query)
     {
         $this->handleQuery($request, $query);
-        $data = $query->selectRaw("sum(looktimes) as looktimes,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(outnum) as outnum ,sum(omo_scannum) as omo_scannum,sum(lovetimes) as lovetimes")
+        $data = $query->selectRaw("sum(looktimes) as looktimes,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(outnum) as outnum ,sum(omo_scannum) as omo_scannum,sum(lovetimes) as lovetimes,sum(verifytimes) as verifytimes")
             ->first()->toArray();
         $output = [];
 
@@ -199,7 +199,7 @@ class ChartDataTimesController extends Controller
                         'outnum_rate' => $item['looktimes'] == 0 ? 0 : strval(round($item['outnum'] / $item['looktimes'], 3) * 100),
                         'omo_scannum_rate' => $item['looktimes'] == 0 ? 0 : strval(round($item['omo_scannum'] / $item['looktimes'], 3) * 100),
                         'lovetimes_rate' => $item['looktimes'] == 0 ? 0 : strval(round($item['lovetimes'] / $item['looktimes'], 3) * 100),
-
+                        'verifytimes_rate'=>$item['looktimes'] == 0 ? 0 : strval(round($item['verifytimes'] / $item['looktimes'], 3) * 100),
                     ];
                 } else {
                     $output[] = [
@@ -218,6 +218,7 @@ class ChartDataTimesController extends Controller
                         'outnum_rate' => 0,
                         'omo_scannum_rate' => 0,
                         'lovetimes_rate' => 0,
+                        'verifytimes_rate'=>0
                     ];
                 }
                 $start_date = (new Carbon($start_date))->addDay(1)->toDateString();
@@ -393,7 +394,7 @@ class ChartDataTimesController extends Controller
     {
         $this->handleQuery($request, $query, false);
         $table = $query->getModel()->getTable();
-        $data = $query->selectRaw("ar_product_list.name as product_name,belong,round(sum(looktimes)/count($table.date),0) as looktimes,round(sum(playtimes7)/count($table.date),0) as playtimes7,round(sum(playtimes15)/count($table.date),0) as playtimes15,round(sum(playtimes21)/count($table.date),0) as playtimes21, round(sum(outnum)/count($table.date),0) as outnum,round(sum(omo_scannum)/count($table.date),0) as omo_scannum,round(sum(lovetimes)/count($table.date),0) as lovetimes")
+        $data = $query->selectRaw("ar_product_list.name as product_name,belong,round(sum(looktimes)/count($table.date),0) as looktimes,round(sum(playtimes7)/count($table.date),0) as playtimes7,round(sum(playtimes15)/count($table.date),0) as playtimes15,round(sum(playtimes21)/count($table.date),0) as playtimes21, round(sum(outnum)/count($table.date),0) as outnum,round(sum(omo_scannum)/count($table.date),0) as omo_scannum,round(sum(lovetimes)/count($table.date),0) as lovetimes,round(sum(verifytimes)/count($table.date),0) as verifytimes")
             ->groupBy('belong')
             ->orderBy('looktimes', 'desc')
             ->limit(10)
@@ -412,6 +413,7 @@ class ChartDataTimesController extends Controller
                     'outnum' => $item->outnum,
                     'omo_scannum' => $item->omo_scannum,
                     'lovetimes' => $item->lovetimes,
+                    'verifytimes' => $item->verifytimes
                 ]
             ];
         };
@@ -453,11 +455,11 @@ class ChartDataTimesController extends Controller
 
         $this->handleQuery($request, $query);
 
-        $data = $query->selectRaw("sum(looktimes) as looktimes ,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15 ,sum(playtimes21) as playtimes21,sum(omo_scannum) as omo_scannum,sum(lovetimes) as lovetimes")
+        $data = $query->selectRaw("sum(looktimes) as looktimes ,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15 ,sum(playtimes21) as playtimes21,sum(omo_scannum) as omo_scannum,sum(lovetimes) as lovetimes,sum(verifytimes) as verifytimes")
             ->first()->toArray();
 
         $allData = XsFaceCountLog::query()
-            ->selectRaw("sum(looktimes) as looktimes ,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15 ,sum(playtimes21) as playtimes21,sum(omo_scannum) as omo_scannum,sum(lovetimes) as lovetimes")
+            ->selectRaw("sum(looktimes) as looktimes ,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15 ,sum(playtimes21) as playtimes21,sum(omo_scannum) as omo_scannum,sum(lovetimes) as lovetimes,sum(verifytimes) as verifytimes")
             ->whereRaw("date_format(date,'%Y-%m-%d') between '$startDate' and '$endDate' and belong='all'")
             ->first();
 
@@ -495,6 +497,10 @@ class ChartDataTimesController extends Controller
                 'count' => $allData->looktimes ? strval(round($allData->lovetimes / $allData->looktimes, 3) * 100) : 0,
                 'display_name' => 'fCPL转化率',
             ],
+            [
+                'count' => $allData->looktimes ? strval(round($allData->verifytimes / $allData->looktimes, 3) * 100) : 0,
+                'display_name' => 'fCPS转化率',
+            ],
         ];
         $output['rate']['rate'] = [
             [
@@ -516,6 +522,10 @@ class ChartDataTimesController extends Controller
             [
                 'count' => $data['looktimes'] ? strval(round($data['lovetimes'] / $data['looktimes'], 3) * 100) : 0,
                 'display_name' => 'fCPL转化率',
+            ],
+            [
+                'count' => $data['looktimes'] ? strval(round($data['verifytimes'] / $data['looktimes'], 3) * 100) : 0,
+                'display_name' => 'fCPS转化率',
             ],
         ];
 
