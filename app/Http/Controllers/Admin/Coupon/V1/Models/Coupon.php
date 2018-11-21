@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Http\Controllers\Admin\Point\V1\Models\Point;
 use App\Http\Controllers\Admin\User\V1\Models\ArMember;
 use App\Models\Model;
+use App\Models\Customer;
 
 class Coupon extends Model
 {
@@ -48,5 +49,10 @@ class Coupon extends Model
     public function point()
     {
         return $this->belongsTo(Point::class, 'oid', 'oid');
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'shop_customer_id', 'id');
     }
 }

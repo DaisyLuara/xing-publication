@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Admin\Common\V1\Api;
 
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
+use App\Http\Controllers\Admin\Company\V1\Transformer\CustomerTransformer;
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
 use App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractReceiveDateTransformer;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
+use App\Models\Customer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\PolicyTransformer;
@@ -264,6 +266,20 @@ class QueryController extends Controller
         return $this->response->collection($companies, new CompanyTransformer());
     }
 
+    public function customerQuery(Request $request)
+    {
+        $builder = Customer::query();
+        $loginUser = $this->user;
+        if (!$loginUser->isAdmin() && !$loginUser->hasRole('legal-affairs') && !$loginUser->hasRole('legal-affairs-manager')) {
+            $builder->whereHas('company', function ($builder) use ($loginUser) {
+                $builder->where('user_id', '=', $loginUser->id);
+            });
+        }
+
+        $customers = $builder->where('company_id', $request->company_id)->get();
+        return $this->response->collection($customers, new CustomerTransformer());
+    }
+
     public function policyQuery(Policy $policy, Request $request)
     {
         $query = $policy->query();
@@ -364,4 +380,6 @@ class QueryController extends Controller
         $contractReceiveDate = $query->where('contract_id', $request->id)->get();
         return $this->response()->collection($contractReceiveDate, new ContractReceiveDateTransformer());
     }
+
+
 }

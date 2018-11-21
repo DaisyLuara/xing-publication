@@ -71,6 +71,7 @@ $api->version('v1', [
             $api->get('invoice_company/query', 'QueryController@invoiceCompanyQuery');
             $api->get('payment_payee/query', 'QueryController@paymentPayeeQuery');
             $api->get('receive_date/query', 'QueryController@receiveDateQuery');
+            $api->get('customer/query', 'QueryController@customerQuery');
 
             //消息通知
             $api->get('user/notifications', 'NotificationsController@index');

@@ -279,7 +279,7 @@
 								},
 								{
 									"key": "sign",
-									"value": "eyJpdiI6IkdBOHkyUDdDNzdaa0RNeHRqREhpM0E9PSIsInZhbHVlIjoiTHZaUmVabW5rV1ZUVk9sRWlFUXBwdz09IiwibWFjIjoiNzIxMTQ0NGE3YzM5N2JkNjJkOTE5MDc0MzQyNjQ2ZmExZDhjNzZhYjE0OThkYWI4ZjE0ZWJjY2E2MWFhMTJhMSJ9",
+									"value": "null",
 									"description": "",
 									"type": "text"
 								}
@@ -1274,6 +1274,46 @@
 					"name": "公司搜索",
 					"request": {
 						"url": "http://{{host}}/api/company/query",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{jwt_user_1}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": "关联 点位信息\ninclude=points\n关联 点位，用户信息\ninclude=points.user\n"
+					},
+					"response": []
+				},
+				{
+					"name": "公司-客户搜索",
+					"request": {
+						"url": {
+							"raw": "http://{{host}}/api/customer/query?company_id=3",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"customer",
+								"query"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "3",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -3087,7 +3127,7 @@
 			]
 		},
 		{
-			"name": "优惠券",
+			"name": "市场营销",
 			"description": "",
 			"item": [
 				{
@@ -3529,14 +3569,14 @@
 					"_postman_isSubFolder": true
 				},
 				{
-					"name": "投放",
+					"name": "优惠券",
 					"description": "",
 					"item": [
 						{
-							"name": "投放列表",
+							"name": "优惠券列表",
 							"request": {
 								"url": {
-									"raw": "http://{{host}}/api/coupons?include=couponBatch.company,point&company_id=60&start_date=2018-11-11 13:46:01&end_date=2018-11-30 13:46:55",
+									"raw": "http://{{host}}/api/coupons?include=couponBatch.company,point,customer&start_date=2018-11-11 13:46:01&end_date=2018-11-30 13:46:55&shop_customer_id=13",
 									"protocol": "http",
 									"host": [
 										"{{host}}"
@@ -3548,7 +3588,7 @@
 									"query": [
 										{
 											"key": "include",
-											"value": "couponBatch.company,point",
+											"value": "couponBatch.company,point,customer",
 											"equals": true,
 											"description": ""
 										},
@@ -3563,7 +3603,8 @@
 											"key": "company_id",
 											"value": "60",
 											"equals": true,
-											"description": ""
+											"description": "",
+											"disabled": true
 										},
 										{
 											"key": "start_date",
@@ -3574,6 +3615,12 @@
 										{
 											"key": "end_date",
 											"value": "2018-11-30 13:46:55",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "shop_customer_id",
+											"value": "13",
 											"equals": true,
 											"description": ""
 										}
@@ -4126,13 +4173,13 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n\t\"sign\":\"eyJpdiI6IkVkSVV0SFF4cUtsdlVobnhvR1ZkdVE9PSIsInZhbHVlIjoialRzQ1lYYm1YazQ1OGtVSEVDeWVmdz09IiwibWFjIjoiZmY5N2I0ZDc3NjJmZTEzZGZiZDgwNjExMjE5OGUzMThiNzQ2ZDFkNzljNTg1YTgxZTk3YWRiOGIyN2M2YTllMiJ9\",\n\t\"coupon_batch_id\":92,\n\t\"start_date\":\"2018-11-13 00:00:00\",\n\t\"end_date\":\"2018-11-13 23:59:59\",\n\t\"include\":\"couponBatch\"\n}"
+											"raw": "{\n\t\"sign\":\"eyJpdiI6IkdBOHkyUDdDNzdaa0RNeHRqREhpM0E9PSIsInZhbHVlIjoiTHZaUmVabW5rV1ZUVk9sRWlFUXBwdz09IiwibWFjIjoiNzIxMTQ0NGE3YzM5N2JkNjJkOTE5MDc0MzQyNjQ2ZmExZDhjNzZhYjE0OThkYWI4ZjE0ZWJjY2E2MWFhMTJhMSJ9\",\n\t\"coupon_batch_id\":96,\n\t\"include\":\"couponBatch\"\n}"
 										},
 										"description": null
 									},
 									"response": [
 										{
-											"id": "5ec36eea-366f-469c-9020-3caa996c4a5a",
+											"id": "a10692d6-1ba0-4885-bdd9-9619b2a2dbb1",
 											"name": "查询优惠券测试",
 											"originalRequest": {
 												"url": {
