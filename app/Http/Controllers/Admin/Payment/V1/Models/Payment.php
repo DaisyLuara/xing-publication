@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
 use App\Models\Model;
 use App\Models\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Http\Controllers\Admin\Media\V1\Models\Media;
 
 class Payment extends Model
 {
@@ -52,5 +53,9 @@ class Payment extends Model
     public function paymentHistory()
     {
         return $this->hasMany(PaymentHistory::class, 'payment_id', 'id');
+    }
+
+    public function media(){
+        return $this->belongsToMany(Media::class, 'payment_media', 'payment_id', 'media_id');
     }
 }

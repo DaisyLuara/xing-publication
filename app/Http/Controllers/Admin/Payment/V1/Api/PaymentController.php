@@ -89,21 +89,28 @@ class PaymentController extends Controller
                     $payment->fill(array_merge($request->all(), ['status' => 1, 'handler' => $legal->id, 'receive_status' => 0]))->save();
                 }
             }
-            return $this->response()->noContent();
         }
+        //附件存储
+        $ids = explode(',', $request->ids);
+        foreach ($ids as $id) {
+            $payment->media()->attach($id);
+        }
+
+        return $this->response()->noContent();
     }
 
-    public function update(PaymentRequest $request, Payment $payment)
-    {
-        /** @var  $user \App\Models\User */
-        $user = $this->user();
-        if (!$user->hasRole('user') && !$user->hasRole('bd-manager')) {
-            abort(403, '无操作权限');
-        }
-        $payment->update(array_merge($request->all(), ['status' => 1, 'handler' => $user->parent_id]));
-
-        return $this->response()->item($payment, new PaymentTransformer());
-    }
+//
+//    public function update(PaymentRequest $request, Payment $payment)
+//    {
+//        /** @var  $user \App\Models\User */
+//        $user = $this->user();
+//        if (!$user->hasRole('user') && !$user->hasRole('bd-manager')) {
+//            abort(403, '无操作权限');
+//        }
+//        $payment->update(array_merge($request->all(), ['status' => 1, 'handler' => $user->parent_id]));
+//
+//        return $this->response()->item($payment, new PaymentTransformer());
+//    }
 
     public function destroy(Payment $payment)
     {

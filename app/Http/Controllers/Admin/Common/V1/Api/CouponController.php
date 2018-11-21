@@ -21,9 +21,7 @@ use Carbon\Carbon;
 use DB;
 use Log;
 use Overtrue\EasySms\EasySms;
-use EasyWeChat;
-use App\Http\Controllers\Admin\WeChat\V1\Models\WeChatAuthorizer;
-use App\Http\Controllers\Admin\WeChat\V1\Models\ComponentVerifyTicket;
+use function GuzzleHttp\Psr7\parse_query;
 
 
 class CouponController extends Controller
@@ -217,6 +215,9 @@ class CouponController extends Controller
         $mobile = $request->has('mobile') ? $request->get('mobile') : '';
         $couponBatchId = $couponBatch->id;
         $userID = $request->has('sign') ? decrypt($request->get('sign')) : 0;
+        $gameAttributePayload = $request->has('game_attribute_payload') ? decrypt($request->get('game_attribute_payload')) : null;
+        $gameAttributePayload = parse_query($gameAttributePayload);
+
         $code = uniqid();
 
         //第三方优惠券
@@ -308,36 +309,9 @@ class CouponController extends Controller
             }
 
             //微信卡券二维码
-            if ($couponBatch->wechat_coupon_batch_id) {
-                $wechatCouponBatch = $couponBatch->wechat;
-
-                /** @var \EasyWeChat\OpenPlatform\Application $app */
-                $app = EasyWeChat::openPlatform();
-                $this->componentVerify($app);
-                $official_account = $this->getOfficialAccount($wechatCouponBatch->wechat_authorizer_id, $app);
-                $card = $official_account->card;
-
-                $cards = [
-                    'action_name' => 'QR_CARD',
-                    'expire_seconds' => $wechatCouponBatch->expire_seconds,
-                    'action_info' => [
-                        'card' => [
-                            'card_id' => $wechatCouponBatch->card_id,
-                            'is_unique_code' => false,
-                            'outer_id' => 1,
-                        ],
-                    ],
-                ];
-
-                $result = $card->createQrCode($cards);
-                abort_if($result['errcode'] > 0, 500, $result['errmsg']);
-                $qrcodeUrl = $result['show_qrcode_url'];
-
-            } else {
-                //优惠券二维码
-                $prefix = 'h5_code' . $code;
-                $qrcodeUrl = couponQrCode($code, 200, $prefix);
-            }
+            $wechatCouponBatch = $couponBatch->wechat;
+            $prefix = 'h5_code';
+            $qrcodeUrl = couponQrCode($code, 200, $prefix, $wechatCouponBatch);
 
             $coupon = Coupon::create([
                 'code' => $code,
@@ -345,9 +319,9 @@ class CouponController extends Controller
                 'coupon_batch_id' => $couponBatchId,
                 'status' => 3,
                 'wx_user_id' => $userID,
-                'qiniu_id' => $request->has('qiniu_id') ? $request->get('qiniu_id') : 0,
-                'oid' => $request->has('oid') ? $request->get('oid') : 0,
-                'belong' => $request->has('belong') ? $request->get('belong') : '',
+                'qiniu_id' => $gameAttributePayload && isset($gameAttributePayload['id']) ? $gameAttributePayload['id'] : 0,
+                'oid' => $gameAttributePayload && isset($gameAttributePayload['utm_source']) ? $gameAttributePayload['utm_source'] : 0,
+                'belong' => $gameAttributePayload && isset($gameAttributePayload['utm_campaign']) ? $gameAttributePayload['utm_campaign'] : '',
             ]);
 
             $coupon->setAttribute('qrcode_url', $qrcodeUrl);
@@ -387,7 +361,7 @@ class CouponController extends Controller
         abort_if(!$coupon, 204);
 
         //优惠券二维码
-        $prefix = 'h5_code' . $coupon->code;
+        $prefix = 'h5_code';
         $qrcodeUrl = couponQrCode($coupon->code, 200, $prefix);
         $coupon->setAttribute('qrcode_url', $qrcodeUrl);
 
@@ -490,29 +464,6 @@ class CouponController extends Controller
             Log::info('send_msg_exceptions', ['msg' => $exception->getMessage()]);
         }
 
-    }
-
-
-    private function componentVerify($app)
-    {
-        $component = ComponentVerifyTicket::orderBy('clientdate', 'desc')->first();
-        /** @var \EasyWeChat\OpenPlatform\Auth\VerifyTicket $verifyTicket */
-        $verifyTicket = $app->verify_ticket;
-        $verifyTicket->setTicket($component->ticket);
-    }
-
-    /**
-     * @param $authorizer_id
-     * @param $app
-     * @return \EasyWeChat\OfficialAccount\Application
-     */
-    private function getOfficialAccount($authorizer_id, $app)
-    {
-        $authorizer = WeChatAuthorizer::where('id', $authorizer_id)->first();
-
-        abort_if(!$authorizer, 404);
-
-        return $app->officialAccount($authorizer->appid, $authorizer->refresh_token);
     }
 
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Payment\V1\Transformer;
 
+use App\Http\Controllers\Admin\Media\V1\Transformer\MediaTransformer;
 use App\Http\Controllers\Admin\Payment\V1\Models\Payment;
 use League\Fractal\TransformerAbstract;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
@@ -21,7 +22,7 @@ class PaymentTransformer extends TransformerAbstract
         '2' => '电汇单',
         '3' => '贷记凭证'
     ];
-    protected $availableIncludes = ['contract', 'payment_payee'];
+    protected $availableIncludes = ['contract', 'payment_payee', 'media'];
 
     public function transform(Payment $payment)
     {
@@ -61,5 +62,10 @@ class PaymentTransformer extends TransformerAbstract
             return null;
         }
         return $this->item($payment->paymentPayee, new PaymentPayeeTransformer());
+    }
+
+    public function includeMedia(Payment $payment)
+    {
+        return $this->collection($payment->media, new MediaTransformer());
     }
 }
