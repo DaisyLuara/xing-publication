@@ -15,7 +15,6 @@ use App\Http\Controllers\Admin\Face\V1\Models\FaceActivePlaytimesRecord;
 use app\Support\Jenner\Zebra\ArrayGroupBy;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceLogRecord;
 use App\Http\Controllers\Admin\Coupon\V1\Models\WechatCouponBatch;
-use EasyWeChat;
 use App\Http\Controllers\Admin\WeChat\V1\Models\WeChatAuthorizer;
 use App\Http\Controllers\Admin\WeChat\V1\Models\ComponentVerifyTicket;
 
