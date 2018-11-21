@@ -8,11 +8,11 @@
       <!-- 搜索 -->
       <div 
         class="search-wrap">
-        <!-- <el-button
+        <el-button
           class="more-pic"
           @click="handlePicShow">
           漏斗图
-        </el-button> -->
+        </el-button>
         <el-form 
           ref="searchForm"
           :model="searchForm"
@@ -208,13 +208,16 @@
         </el-form>
       </div>
       <el-tab-pane label="按人次计" name="first">
-        <PersonTimes ref="personTimes" :searchForm="searchForm"/>
+        <PersonTimes 
+          ref="personTimes" 
+          :searchForm="searchForm"/>
       </el-tab-pane>
       <el-tab-pane label="按人数计" name="second">
-        <PeopleNum ref="peopleCount" :searchForm="searchForm"/>
+        <PeopleNum 
+          ref="peopleCount" 
+          :searchForm="searchForm"/>
       </el-tab-pane>
     </el-tabs>
-   
   </div>
 </template>
 <script>
@@ -346,9 +349,17 @@ export default {
   },
   mounted() {
     if (this.activeName === 'first') {
-      this.$refs.personTimes.allPromise()
+      this.$refs.personTimes.allChartData()
     } else {
-      this.$refs.peopleCount.allPromise()
+      this.$refs.peopleCount.allChartData()
+    }
+    let that = this
+    window.onresize = function() {
+      if (that.activeName === 'first') {
+        that.$refs.personTimes.handleChange()
+      } else {
+        that.$refs.peopleCount.handleChange()
+      }
     }
   },
   created() {
@@ -359,10 +370,34 @@ export default {
     handleTab(tab, event) {
       if (tab.name === 'first') {
         this.$refs.personTimes.handleChange()
-        this.$refs.personTimes.allPromise()
+        this.$refs.personTimes.allChartData()
       } else {
         this.$refs.peopleCount.handleChange()
-        this.$refs.peopleCount.allPromise()
+        this.$refs.peopleCount.allChartData()
+      }
+    },
+    handlePicShow() {
+      let sceneList = this.sceneList
+      let projectList = this.projectList
+      let areaList = this.areaList
+      let marketList = this.marketList
+      let pointList = this.pointList
+      if (this.activeName === 'first') {
+        this.$refs.personTimes.handlePicShow(
+          sceneList,
+          projectList,
+          areaList,
+          marketList,
+          pointList
+        )
+      } else {
+        this.$refs.peopleCount.handlePicShow(
+          sceneList,
+          projectList,
+          areaList,
+          marketList,
+          pointList
+        )
       }
     },
     searchHandle() {

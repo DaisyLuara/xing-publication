@@ -466,7 +466,7 @@ import stats from 'service/stats'
 import search from 'service/search'
 import chart from 'service/chart'
 import Vue from 'vue'
-import PicChart from './chart'
+import PicChart from './numChart'
 import {
   Row,
   Col,
@@ -1259,8 +1259,7 @@ export default {
       }
     }
   },
-  created() {
-  },
+  created() {},
   methods: {
     handleChange(val) {
       this.$nextTick(function() {
@@ -1517,13 +1516,13 @@ export default {
     searchHandle() {
       this.pagination.currentPage = 1
       this.setting.loading = true
-      this.allPromise()
+      this.allChartData()
     },
     resetSearch() {
       this.setting.loading = true
-      this.allPromise()
+      this.allChartData()
     },
-    allPromise() {
+    allChartData() {
       this.setting.loading = true
       this.getPointList()
       this.getPeopleCount()
@@ -2120,13 +2119,13 @@ export default {
           console.log(err)
         })
     },
-    handlePicShow() {
+    handlePicShow(sceneList, projectList, areaList, marketList, pointList) {
       this.shouldPicDialogShow = !this.shouldPicDialogShow
       let that = this
       if (this.shouldPicDialogShow) {
         this.getConversionRate()
         if (that.searchForm.sceneSelect) {
-          let scene = this.sceneList.find(function(r) {
+          let scene = sceneList.find(function(r) {
             if (r.id === that.searchForm.sceneSelect) {
               return r.name
             }
@@ -2134,7 +2133,7 @@ export default {
           this.sceneInfo = scene.name
         }
         if (that.searchForm.projectSelect.length !== 0) {
-          let project = that.projectList.find(function(r) {
+          let project = projectList.find(function(r) {
             if (r.alias === that.searchForm.projectSelect[0]) {
               return r.name
             }
@@ -2142,7 +2141,7 @@ export default {
           that.projectInfo = project.name
         }
         if (that.searchForm.area_id) {
-          let area = this.areaList.find(function(r) {
+          let area = areaList.find(function(r) {
             if (r.id === that.searchForm.area_id) {
               return r.name
             }
@@ -2150,7 +2149,7 @@ export default {
           this.addressInfo = area.name
         }
         if (that.searchForm.market_id.length !== 0) {
-          let market = that.marketList.find(function(r) {
+          let market = marketList.find(function(r) {
             if (r.id === that.searchForm.market_id[0]) {
               return r.name
             }
@@ -2158,7 +2157,7 @@ export default {
           this.addressInfo = this.addressInfo + market.name
         }
         if (that.searchForm.point_id) {
-          let point = that.pointList.find(function(r) {
+          let point = pointList.find(function(r) {
             if (r.id === that.searchForm.point_id) {
               return r.name
             }
@@ -2377,41 +2376,6 @@ export default {
       font-weight: 800;
       text-align: center;
       color: white;
-    }
-  }
-  .search-wrap {
-    padding: 30px;
-    background: #fff;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    font-size: 16px;
-    align-items: center;
-    position: relative;
-    .search-form {
-      width: 865px;
-    }
-    .more-pic {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-    }
-    .el-form-item {
-      margin-bottom: 10px;
-    }
-    .el-select {
-      width: 200px;
-    }
-    .warning {
-      background: #ebf1fd;
-      padding: 8px;
-      margin-left: 10px;
-      color: #444;
-      font-size: 12px;
-      i {
-        color: #4a8cf3;
-        margin-right: 5px;
-      }
     }
   }
 

@@ -50,6 +50,7 @@
           auto-resize />
       </div>
     </div>
+    <!-- 其他图表 -->
     <el-collapse 
       v-model="activeNames" 
       @change="handleChange">
@@ -291,16 +292,15 @@
         </div>
       </el-collapse-item>
     </el-collapse>
+
     <!-- 弹窗for 性别细节 -->
     <div  
       v-loading="dialogLoading"
       v-show="shouldDialogShow"
-      class="chart-dialog"
-    >
+      class="chart-dialog">
       <div 
         class="dialog-close"
-        @click="handleDialogClose"
-      >
+        @click="handleDialogClose">
         关闭
       </div>
       <chart 
@@ -313,14 +313,13 @@
     <div
       v-loading="rateDialog"
       v-show="shouldPicDialogShow"
-      class="pic-dialog">
+      class="pic-times-dialog">
       <div 
         class="dialog-close"
-        @click="handlePicShow"
-      >
+        @click="handlePicShow">
         关闭
       </div>
-      <div class="pic-content">
+      <div class="pic-times-content">
         <div 
           class="actions-wrap-pic">
           <div 
@@ -357,30 +356,30 @@
           <el-col :span="12">
             <div class="funnel">
               <div class="legend">
-                <!-- <span 
+                <span 
                   class="legend-text" 
                   @click="legendHandle('0')">
                   <span 
                     :class="{'label-gray': !dataOptions[0]}"
-                    class="legend-text-one"/>爆光</span> -->
+                    class="legend-text-one"/>围观</span>
                 <span 
                   class="legend-text" 
                   @click="legendHandle('1')">
                   <span
                     :class="{'label-gray': !dataOptions[1]}" 
-                    class="legend-text-two"/>围观</span>
+                    class="legend-text-two"/>7秒</span>
                 <span 
                   class="legend-text" 
                   @click="legendHandle('2')">
                   <span 
                     :class="{'label-gray': !dataOptions[2]}"
-                    class="legend-text-three" />活跃</span>
+                    class="legend-text-three" />15秒</span>
                 <span 
                   class="legend-text" 
                   @click="legendHandle('3')">
                   <span 
                     :class="{'label-gray': !dataOptions[3]}"
-                    class="legend-text-four" />铁杆</span>
+                    class="legend-text-four" />21秒</span>
                 <span 
                   class="legend-text" 
                   @click="legendHandle('4')">
@@ -398,7 +397,7 @@
                   @click="legendHandle('6')">
                   <span 
                     :class="{'label-gray': !dataOptions[6]}"
-                    class="legend-text-seven " />转发</span>
+                    class="legend-text-seven " />核销</span>
               </div>
               <PicChart 
                 :chartdata="chartdata" 
@@ -408,8 +407,8 @@
           </el-col>
           <el-col :span="12">
             <chart 
-              ref="rateChart"
-              :options="rateOption"
+              ref="personRateChart"
+              :options="personRateOption"
               auto-resize 
               class="rate-chart"/>
           </el-col>
@@ -423,7 +422,7 @@ import stats from 'service/stats'
 import search from 'service/search'
 import chart from 'service/chart'
 import Vue from 'vue'
-import PicChart from './chart'
+import PicChart from './timesChart'
 import {
   Row,
   Col,
@@ -559,7 +558,7 @@ export default {
         loading: false,
         loadingText: '拼命加载中'
       },
-      rateOption: {
+      personRateOption: {
         title: {
           text: ''
         },
@@ -569,20 +568,33 @@ export default {
             type: 'shadow'
           }
         },
+
         legend: {
           data: ['当前范围各级转化率', '总体各级平均转化率'],
-          bottom: 0,
-          left: 'center'
+          top: 10,
+          left: 20
         },
         toolbox: {
           show: true
         },
-        calculable: true,
+        // calculable: true,
         color: ['#5687f8', '#74bd66'],
         xAxis: [
           {
             type: 'category',
-            data: ['CPF转化率', 'CPR转化率', 'CPL转化率']
+            axisTick: { show: false },
+            // axisLabel: {
+            //   interval: 0,
+            //   rotate: 30
+            // },
+            data: [
+              '7″fCPE\n转化率',
+              '15″fCPE\n转化率',
+              '21″fCPE\n转化率',
+              'fCPA\n转化率',
+              'fCPL\n转化率',
+              'fCPS\n转化率'
+            ]
           }
         ],
         yAxis: [
@@ -600,13 +612,13 @@ export default {
             name: '当前范围各级转化率',
             type: 'bar',
             barGap: 0,
-            barWidth: 40,
+            // barWidth: 40,
             data: null
           },
           {
             name: '总体各级平均转化率',
             type: 'bar',
-            barWidth: 40,
+            // barWidth: 40,
             data: null
           }
         ]
@@ -1063,19 +1075,14 @@ export default {
       dialogLoading: false
     }
   },
-  computed: {
-  },
+  computed: {},
   mounted() {
     let that = this
     window.onresize = function() {
       that.handleChange()
-      if (window.innerWidth > 1300) {
-        that.width = ((window.innerWidth - 60 + 20) * 0.5 - 20) * 0.6
-      }
     }
   },
-  created() {
-  },
+  created() {},
   methods: {
     handleChange(val) {
       this.$nextTick(function() {
@@ -1084,6 +1091,9 @@ export default {
         this.$refs.pieSexChart.resize()
         this.$refs.projectPersonChar.resize()
         this.$refs.PersonprojectAgeChart.resize()
+        if (window.innerWidth > 1300) {
+          this.width = ((window.innerWidth - 60 + 20) * 0.5 - 20) * 0.6
+        }
       })
     },
     legendHandle(index) {
@@ -1235,13 +1245,13 @@ export default {
     searchHandle() {
       this.pagination.currentPage = 1
       this.setting.loading = true
-      this.allPromise()
+      this.allChartData()
     },
     resetSearch() {
       this.setting.loading = true
-      this.allPromise()
+      this.allChartData()
     },
-    allPromise() {
+    allChartData() {
       this.setting.loading = true
       this.getPointList()
       this.getPeopleCount()
@@ -1787,34 +1797,38 @@ export default {
     },
     getConversionRate() {
       this.rateDialog = true
-      let args = this.setArgs('10')
+      let args = this.setArgs('8')
       return chart
-        .getChartData(this, args)
+        .getTimesChartData(this, args)
         .then(response => {
           this.chartdata = []
-          let chart = this.$refs.rateChart
-          this.chartdata.push(0)
+          let chart = this.$refs.personRateChart
           response.data.map(r => {
             let value = r.count === null ? 0 : r.count
             this.chartdata.push(value)
           })
-          this.chartdata.push(0)
           this.rateDay = response.day
           this.marketCount = response.market_count
           this.screenCount = response.oid_count
+          console.log(
+            response.rate.rate.map(r => {
+              return r.display_name
+            })
+          )
           chart.mergeOptions({
-            xAxis: {
-              type: 'category',
-              data: response.rate.rate.map(r => {
-                return r.display_name
-              })
-            },
+            // xAxis: {
+            //   type: 'category',
+            //   axisTick: { show: false },
+            //   data: response.rate.rate.map(r => {
+            //     return r.display_name
+            //   })
+            // },
             series: [
               {
                 name: '当前范围各级转化率',
                 type: 'bar',
                 barGap: 0,
-                barWidth: 40,
+                // barWidth: 40,
                 data: response.rate.rate.map(r => {
                   return r.count
                 }),
@@ -1867,7 +1881,7 @@ export default {
               {
                 name: '总体各级平均转化率',
                 type: 'bar',
-                barWidth: 40,
+                // barWidth: 40,
                 data: response.rate.total_rate.map(r => {
                   return r.count
                 })
@@ -1881,13 +1895,13 @@ export default {
           console.log(err)
         })
     },
-    handlePicShow() {
+    handlePicShow(sceneList, projectList, areaList, marketList, pointList) {
       this.shouldPicDialogShow = !this.shouldPicDialogShow
       let that = this
       if (this.shouldPicDialogShow) {
         this.getConversionRate()
         if (that.searchForm.sceneSelect) {
-          let scene = this.sceneList.find(function(r) {
+          let scene = sceneList.find(function(r) {
             if (r.id === that.searchForm.sceneSelect) {
               return r.name
             }
@@ -1895,7 +1909,7 @@ export default {
           this.sceneInfo = scene.name
         }
         if (that.searchForm.projectSelect.length !== 0) {
-          let project = that.projectList.find(function(r) {
+          let project = projectList.find(function(r) {
             if (r.alias === that.searchForm.projectSelect[0]) {
               return r.name
             }
@@ -1903,7 +1917,7 @@ export default {
           that.projectInfo = project.name
         }
         if (that.searchForm.area_id) {
-          let area = this.areaList.find(function(r) {
+          let area = areaList.find(function(r) {
             if (r.id === that.searchForm.area_id) {
               return r.name
             }
@@ -1911,15 +1925,15 @@ export default {
           this.addressInfo = area.name
         }
         if (that.searchForm.market_id.length !== 0) {
-          let market = that.marketList.find(function(r) {
+          let market = marketList.find(function(r) {
             if (r.id === that.searchForm.market_id[0]) {
               return r.name
             }
           })
           this.addressInfo = this.addressInfo + market.name
         }
-        if (that.point_id) {
-          let point = that.pointList.find(function(r) {
+        if (that.searchForm.point_id) {
+          let point = pointList.find(function(r) {
             if (r.id === that.searchForm.point_id) {
               return r.name
             }
@@ -2108,7 +2122,8 @@ export default {
       width: 100%;
     }
   }
-  .pic-dialog {
+
+  .pic-times-dialog {
     position: absolute;
     z-index: 10000;
     top: 0;
@@ -2127,7 +2142,7 @@ export default {
       cursor: pointer;
       z-index: 200;
     }
-    .pic-content {
+    .pic-times-content {
       padding: 30px;
       height: 100%;
       .actions-wrap-pic {
@@ -2187,25 +2202,25 @@ export default {
             }
 
             .legend-text-one {
-              background: #8fe5b8;
+              background: #007bff;
             }
             .legend-text-two {
-              background: #0099ff;
+              background: #05a254;
             }
             .legend-text-three {
-              background: #22b573;
+              background: #ffdd00;
             }
             .legend-text-four {
-              background: #f8b62d;
+              background: #90007d;
             }
             .legend-text-five {
-              background: #e80f9b;
+              background: #ff0089;
             }
             .legend-text-six {
-              background: #e83828;
+              background: #eb1000;
             }
             .legend-text-seven {
-              background: #9e8047;
+              background: #956e32;
             }
             .label-gray {
               background: #aba6a6;
@@ -2287,42 +2302,6 @@ export default {
       color: white;
     }
   }
-  .search-wrap {
-    padding: 30px;
-    background: #fff;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    font-size: 16px;
-    align-items: center;
-    position: relative;
-    .search-form {
-      width: 865px;
-    }
-    .more-pic {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-    }
-    .el-form-item {
-      margin-bottom: 10px;
-    }
-    .el-select {
-      width: 200px;
-    }
-    .warning {
-      background: #ebf1fd;
-      padding: 8px;
-      margin-left: 10px;
-      color: #444;
-      font-size: 12px;
-      i {
-        color: #4a8cf3;
-        margin-right: 5px;
-      }
-    }
-  }
-
   .content-wrapper {
     padding: 15px;
     background-color: #fff;
