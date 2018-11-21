@@ -3,208 +3,6 @@
     v-loading="setting.loading"
     :element-loading-text="setting.loadingText"
     class="person-times-wrap" >
-    <!-- 搜索 -->
-    <!-- <div 
-      class="search-wrap">
-      <el-button
-        class="more-pic"
-        @click="handlePicShow">
-        漏斗图
-      </el-button>
-      <el-form 
-        ref="searchForm" 
-        class="search-form">
-        <el-row 
-          :gutter="20">
-          <el-col
-            v-if="showUser"
-            :span="6">
-            <el-form-item 
-              label="" 
-              prop="user" >
-              <el-select
-                v-model="userSelect"
-                :remote-method="getUser" 
-                :loading="searchLoading" 
-                :multiple-limit="1"
-                multiple 
-                filterable 
-                placeholder="请选择用户(可搜索)" 
-                remote
-                clearable
-                @change="userChangeHandle">
-                <el-option
-                  v-for="item in userList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"/>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col 
-            :span="6">
-            <el-form-item 
-              label="" 
-              prop="project" >
-              <el-select 
-                v-model="projectSelect" 
-                :remote-method="getProject"
-                :loading="searchLoading"
-                :multiple-limit="1"
-                filterable 
-                placeholder="请选择节目(可搜索)" 
-                remote
-                multiple 
-                clearable
-                @change="projectChangeHandle">
-                <el-option
-                  v-for="item in projectList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.alias"/>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col 
-            :span="6">
-            <el-form-item 
-              label="" 
-              prop="scene" >
-              <el-select
-                v-model="sceneSelect" 
-                placeholder="请选择场景" 
-                filterable  
-                clearable>
-                <el-option
-                  v-for="item in sceneList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"/>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row 
-          :gutter="20">
-          <el-col 
-            :span="6">
-            <el-form-item 
-              label="" 
-              prop="area_id" >
-              <el-select 
-                v-model="area_id"
-                placeholder="请选择区域"
-                filterable 
-                clearable 
-                @change="areaChangeHandle">
-                <el-option
-                  v-for="item in areaList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"/>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col 
-            :span="6">
-            <el-form-item 
-              label="" 
-              prop="market_id" >
-              <el-select 
-                v-model="market_id"
-                :multiple-limit="1"
-                :loading="searchLoading"
-                :remote-method="getMarket" 
-                placeholder="请搜索商场" 
-                filterable 
-                multiple
-                remote 
-                clearable
-                @change="marketChangeHandle" >
-                <el-option
-                  v-for="item in marketList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"/>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col 
-            :span="6">
-            <el-form-item 
-              label=""
-              prop="point_id" >
-              <el-select 
-                v-model="point_id" 
-                :loading="searchLoading"
-                placeholder="请选择点位"   
-                filterable 
-                clearable>
-                <el-option
-                  v-for="item in pointList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"/>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row 
-          :gutter="20">
-          <el-col 
-            :span="10">
-            <el-form-item 
-              label="" 
-              prop="date" >
-              <el-date-picker
-                v-model="dateTime"
-                :default-value="dateTime"
-                :clearable="false"
-                :picker-options="pickerOptions2"
-                type="daterange"
-                align="right"
-                unlink-panels
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"/>
-            </el-form-item>
-          </el-col>
-          <el-col
-            :span="8">
-            <el-form-item 
-              label=""
-              prop="timeFrame">
-              <el-select 
-                v-model="timeFrame" 
-                :loading="searchLoading"
-                placeholder="请选择时段" 
-                multiple  
-                filterable 
-                clearable
-                style="width: 100%">
-                <el-option
-                  v-for="item in festivalList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.name"/>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col 
-            :span="4">
-            <el-form-item>
-              <el-button 
-                type="primary" 
-                size="small"
-                @click="searchHandle">搜索</el-button>
-              <el-button 
-                size="small"
-                @click="resetSearch">重置</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-    </div> -->
-
     <!-- 主要图表部分 -->
     <div 
       v-loading="poepleCountFlag"
@@ -736,21 +534,6 @@ export default {
       },
       projectPersonFlag: false,
       userFlag: false,
-      // timeFrame: [],
-      // festivalList: [
-      //   {
-      //     id: 'workday',
-      //     name: '工作日'
-      //   },
-      //   {
-      //     id: 'weekend',
-      //     name: '周末'
-      //   },
-      //   {
-      //     id: 'holiday',
-      //     name: '假日'
-      //   }
-      // ],
       activeNames: ['1', '2', '3', '4'],
       rateDay: 0,
       marketCount: 0,
@@ -771,65 +554,11 @@ export default {
         loadingText: '拼命加载中'
       },
       shouldDialogShow: false,
-      // area_id: '',
-      // market_id: [],
-      // point_id: '',
       setting: {
         isOpenSelectAll: true,
         loading: false,
         loadingText: '拼命加载中'
       },
-      // dateTime: [
-      //   new Date().getTime() - 3600 * 1000 * 24 * 7,
-      //   new Date().getTime() - 3600 * 1000 * 24
-      // ],
-      // pickerOptions2: {
-      //   shortcuts: [
-      //     {
-      //       text: '昨天',
-      //       onClick(picker) {
-      //         const end = new Date()
-      //         const start = new Date()
-      //         start.setTime(start.getTime() - 3600 * 1000 * 24)
-      //         end.setTime(end.getTime() - 3600 * 1000 * 24)
-      //         picker.$emit('pick', [start, end])
-      //       }
-      //     },
-      //     {
-      //       text: '最近一周',
-      //       onClick(picker) {
-      //         const end = new Date().getTime() - 3600 * 1000 * 24
-      //         const start = new Date()
-      //         start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-      //         picker.$emit('pick', [start, end])
-      //       }
-      //     },
-      //     {
-      //       text: '最近一个月',
-      //       onClick(picker) {
-      //         const end = new Date() - 3600 * 1000 * 24
-      //         const start = new Date()
-      //         start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-      //         picker.$emit('pick', [start, end])
-      //       }
-      //     },
-      //     {
-      //       text: '最近三个月',
-      //       onClick(picker) {
-      //         const end = new Date() - 3600 * 1000 * 24
-      //         const start = new Date()
-      //         start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-      //         picker.$emit('pick', [start, end])
-      //       }
-      //     }
-      //   ],
-      //   disabledDate: time => {
-      //     return (
-      //       time.getTime() > Date.now() - 8.64e7 ||
-      //       time.getTime() < new Date('2017/04/21').getTime()
-      //     )
-      //   }
-      // },
       rateOption: {
         title: {
           text: ''
@@ -882,14 +611,6 @@ export default {
           }
         ]
       },
-      // areaList: [],
-      // marketList: [],
-      // pointList: [],
-      // sceneList: [],
-      // projectSelect: [],
-      // sceneSelect: '',
-      // searchLoading: false,
-      // projectList: [],
       pagination: {
         total: 0,
         pageSize: 5,
@@ -899,18 +620,14 @@ export default {
       tempAgeData: null,
       peopleCount: [],
       type: '',
-      // userList: [],
       ageType: false,
       sexType: false,
       pointName: '',
-      // arUserId: '',
       poepleCountFlag: false,
       shouldPicDialogShow: false,
       ageFlag: false,
       rateDialog: false,
       crowdFlag: false,
-      // userSelect: [],
-      // projectAlias: '',
       mainPersonTimesChart: {
         color: [
           '#006eff',
