@@ -13,6 +13,7 @@ const COUPON_API = '/api/coupon_batch/query'
 const POLICY_API = '/api/policy/query'
 const LEGAL_MANAGER_API = '/api/legal_manager/query'
 const BD_MANAGER_API = '/api/bd_manager/query'
+const CUSTOMER_API = '/api/customer/query'
 const HOST = process.env.SERVER_URL
 
 export default {
@@ -201,6 +202,19 @@ export default {
     return new Promise(function(resolve, reject) {
       context.$http
         .get(HOST + BD_MANAGER_API)
+        .then(response => {
+          resolve(response.data)
+        })
+        .catch(error => {
+          reject(error)
+        })
+    })
+  },
+  // 核销人
+  getShopCustomerList(context, params) {
+    return new Promise(function(resolve, reject) {
+      context.$http
+        .get(HOST + CUSTOMER_API, { params: params })
         .then(response => {
           resolve(response.data)
         })
