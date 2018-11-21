@@ -192,6 +192,7 @@ class ChartDataTimesController extends Controller
                         'outnum' => $item['outnum'],
                         'omo_scannum' => $item['omo_scannum'],
                         'lovetimes' => $item['lovetimes'],
+                        'verifytimes' => $item['verifytimes'],
                         'looktimes_rate' => 0,
                         'playtimes7_rate' => $item['looktimes'] == 0 ? 0 : strval(round($item['playtimes7'] / $item['looktimes'], 3) * 100),
                         'playtimes15_rate' => $item['looktimes'] == 0 ? 0 : strval(round($item['playtimes15'] / $item['looktimes'], 3) * 100),
@@ -199,7 +200,7 @@ class ChartDataTimesController extends Controller
                         'outnum_rate' => $item['looktimes'] == 0 ? 0 : strval(round($item['outnum'] / $item['looktimes'], 3) * 100),
                         'omo_scannum_rate' => $item['looktimes'] == 0 ? 0 : strval(round($item['omo_scannum'] / $item['looktimes'], 3) * 100),
                         'lovetimes_rate' => $item['looktimes'] == 0 ? 0 : strval(round($item['lovetimes'] / $item['looktimes'], 3) * 100),
-                        'verifytimes_rate'=>$item['looktimes'] == 0 ? 0 : strval(round($item['verifytimes'] / $item['looktimes'], 3) * 100),
+                        'verifytimes_rate' => $item['looktimes'] == 0 ? 0 : strval(round($item['verifytimes'] / $item['looktimes'], 3) * 100),
                     ];
                 } else {
                     $output[] = [
@@ -211,6 +212,7 @@ class ChartDataTimesController extends Controller
                         'outnum' => 0,
                         'omo_scannum' => 0,
                         'lovetimes' => 0,
+                        'verifytimes' => 0,
                         'looktimes_rate' => 0,
                         'playtimes7_rate' => 0,
                         'playtimes15_rate' => 0,
@@ -218,7 +220,7 @@ class ChartDataTimesController extends Controller
                         'outnum_rate' => 0,
                         'omo_scannum_rate' => 0,
                         'lovetimes_rate' => 0,
-                        'verifytimes_rate'=>0
+                        'verifytimes_rate' => 0
                     ];
                 }
                 $start_date = (new Carbon($start_date))->addDay(1)->toDateString();
