@@ -5,7 +5,9 @@ namespace App\Console;
 use App\Http\Controllers\Admin\WeChat\V1\Models\WeekRanking;
 use App\Jobs\ActivePlayerJob;
 use App\Jobs\CharacterJob;
+use App\Jobs\CharacterTimesJob;
 use App\Jobs\FaceLogJob;
+use App\Jobs\FaceLogTimesJob;
 use App\Jobs\MauJob;
 use App\Jobs\WeekRankingJob;
 use Carbon\Carbon;
@@ -38,7 +40,7 @@ class Kernel extends ConsoleKernel
             }
         })->weekly()->fridays()->at('10:25');
 
-        //活跃玩家清洗
+        //count数据清洗
         $schedule->call(function () {
             ActivePlayerJob::dispatch()->onQueue('data-clean');
         })->daily()->at('7:00');
@@ -53,11 +55,21 @@ class Kernel extends ConsoleKernel
             CharacterJob::dispatch()->onQueue('data-clean');
         })->daily()->at('7:20');
 
+        //围观人次渗透率
+        $schedule->call(function () {
+            FaceLogTimesJob::dispatch()->onQueue('data-clean');
+        })->daily()->at('7:30');
+
+        //人次时间段与人群特征数据清洗
+        $schedule->call(function () {
+            CharacterTimesJob::dispatch()->onQueue('data-clean');
+        })->daily()->at('7:40');
+
 
         //月活玩家清洗(按人和商场去重)
         $schedule->call(function () {
             MauJob::dispatch()->onQueue('data-clean');
-        })->monthlyOn(1, '7:30');
+        })->monthlyOn(1, '6:00');
     }
 
 

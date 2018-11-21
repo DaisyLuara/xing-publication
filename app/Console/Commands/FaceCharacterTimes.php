@@ -2,26 +2,23 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\Admin\Face\V1\Models\FaceActivePlayerRecord;
-use Carbon\Carbon;
-use DB;
 use Illuminate\Console\Command;
 
-class FaceActivePlayer extends Command
+class FaceCharacterTimes extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'xingstation:active_player';
+    protected $signature = 'yqDataClean:face_character_times';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = '清洗活跃玩家';
+    protected $description = '清洗围观人次的时间段与人群特征';
 
     /**
      * Create a new command instance.
@@ -40,10 +37,6 @@ class FaceActivePlayer extends Command
      */
     public function handle()
     {
-        activePlayerClean();
-        activePlayTimesClean();
-        omoClean();
-        phoneClean();
-        mergeActiveOmoLook();
+        faceCharacterTimesClean();
     }
 }
