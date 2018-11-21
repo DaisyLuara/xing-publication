@@ -23,6 +23,7 @@
       <ul class="btns-rate-wrapper">
         <li
           v-for="(item, key) in peopleCount"
+          v-if="key !== 0"
           :key="item.number.index">
           <div class="person-rate-btn-wrap">
             <div class="person-btn">
@@ -191,20 +192,22 @@
                     <span>{{ scope.row.lovetimes }}</span>
                   </el-form-item>
                   <el-form-item 
-                    label="输出">
-                    <div>
-                      <div>7″fCPE: {{ scope.row.rate.fCPE7 }}</div>
-                      <div>15″fCPE{{ scope.row.rate.fCPE15 }}</div>
-                      <div>21″fCPE {{ scope.row.rate.fCPE21 }}</div>
-                      <div>fCPR {{ scope.row.rate.fCPR }}</div>
-                      <div>fCPA {{ scope.row.rate.fCPA }}</div>
-                      <div>fCPL {{ scope.row.rate.fCPL }}</div>
-                      <div>fCPS {{ scope.row.rate.fCPS }}</div>
-                    </div>
-                  </el-form-item>
-                  <el-form-item 
                     label="时间">
                     <span>{{ scope.row.min_date }} - {{ scope.row.max_date }}</span>
+                  </el-form-item>
+                  <el-form-item 
+                    label="输出">
+                    <div>
+                      <span>7″fCPE: {{ scope.row.rate.fCPE7 }} &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                      <span>15″fCPE:{{ scope.row.rate.fCPE15 }} &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                      <span>21″fCPE: {{ scope.row.rate.fCPE21 }} &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    </div>
+                    <div>
+                      <span>fCPR: {{ scope.row.rate.fCPR }} &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                      <span>fCPA: {{ scope.row.rate.fCPA }} &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                      <span>fCPL: {{ scope.row.rate.fCPL }} &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                      <span>fCPS: {{ scope.row.rate.fCPS }} &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    </div>
                   </el-form-item>
                 </el-form>
               </template>
@@ -257,16 +260,16 @@
               min-width="120"
             >
               <template 
-                slot-scope="props">*
-                <div>
-                  <div>7″fCPE: {{ props.row.rate.fCPE7 }}</div>
-                  <div>15″fCPE: {{ props.row.rate.fCPE15 }}</div>
-                  <div>21″fCPE: {{ props.row.rate.fCPE21 }}</div>
-                  <div>fCPR: {{ props.row.rate.fCPR }}</div>
-                  <div>fCPA: {{ props.row.rate.fCPA }}</div>
-                  <div>fCPL: {{ props.row.rate.fCPL }}</div>
-                  <div>fCPS: {{ props.row.rate.fCPS }}</div>
-                </div>  
+                slot-scope="props">
+                <span>
+                  <span>7″fCPE: {{ props.row.rate.fCPE7 }}</span>
+                  <span>15″fCPE: {{ props.row.rate.fCPE15 }}</span>
+                  <span>21″fCPE: {{ props.row.rate.fCPE21 }}</span>
+                  <span>fCPR: {{ props.row.rate.fCPR }}</span>
+                  <span>fCPA: {{ props.row.rate.fCPA }}</span>
+                  <span>fCPL: {{ props.row.rate.fCPL }}</span>
+                  <span>fCPS: {{ props.row.rate.fCPS }}</span>
+                </span>  
               </template>
             </el-table-column>
             <el-table-column
@@ -684,7 +687,7 @@ export default {
             'fCPR转化率',
             'fCPA转化率',
             'fCPL转化率',
-            'fCPS转化率',
+            'fCPS转化率'
           ]
         },
         grid: [

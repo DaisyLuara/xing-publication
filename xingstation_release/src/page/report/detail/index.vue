@@ -4,6 +4,7 @@
     <el-tabs 
       v-model="activeName" 
       type="card"
+      class="report-data-card"
       @tab-click="handleTab">
       <!-- 搜索 -->
       <div 
