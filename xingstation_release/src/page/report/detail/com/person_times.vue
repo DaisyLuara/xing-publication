@@ -199,6 +199,7 @@
                       <div>fCPR {{ scope.row.rate.fCPR }}</div>
                       <div>fCPA {{ scope.row.rate.fCPA }}</div>
                       <div>fCPL {{ scope.row.rate.fCPL }}</div>
+                      <div>fCPS {{ scope.row.rate.fCPS }}</div>
                     </div>
                   </el-form-item>
                   <el-form-item 
@@ -264,6 +265,7 @@
                   <div>fCPR: {{ props.row.rate.fCPR }}</div>
                   <div>fCPA: {{ props.row.rate.fCPA }}</div>
                   <div>fCPL: {{ props.row.rate.fCPL }}</div>
+                  <div>fCPS: {{ props.row.rate.fCPS }}</div>
                 </div>  
               </template>
             </el-table-column>
@@ -645,12 +647,14 @@ export default {
           '#ffa200',
           '#ff008a',
           '#e9200f',
+          '#946f32',
           '#03662e',
           '#f0bf00',
           '#700068',
           '#9b7800',
           '#d00084',
-          '#af0004'
+          '#af0004',
+          '#7e3b10'
         ],
         title: {
           text: ''
@@ -673,12 +677,14 @@ export default {
             'fCPR(二维码生成数)',
             'fCPA(扫码跳转次数)',
             'fCPL(拉新会员数)',
+            'fCPS玩家人次',
             '7″fCPE转化率',
             '15″fCPE转化率',
             '21″fCPE转化率',
             'fCPR转化率',
             'fCPA转化率',
-            'fCPL转化率'
+            'fCPL转化率',
+            'fCPS转化率',
           ]
         },
         grid: [
@@ -1373,7 +1379,7 @@ export default {
         .then(response => {
           this.peopleCount = response
           this.type =
-            'looktimes,playtimes7,playtimes15,playtimes21,outnum,omo_scannum,lovetimes'
+            'looktimes,playtimes7,playtimes15,playtimes21,outnum,omo_scannum,lovetimes,verifytimes'
           this.getLineData()
         })
         .catch(err => {
@@ -1610,12 +1616,14 @@ export default {
             'fCPR(二维码生成数)',
             'fCPA(扫码跳转次数)',
             'fCPL(拉新会员数)',
+            'fCPS玩家人次',
             '7″fCPE转化率',
             '15″fCPE转化率',
             '21″fCPE转化率',
             'fCPR转化率',
             'fCPA转化率',
-            'fCPL转化率'
+            'fCPL转化率',
+            'fCPS转化率'
           ]
         },
         xAxis: [
@@ -1702,6 +1710,15 @@ export default {
             })
           },
           {
+            symbol: 'circle',
+            name: 'fCPS玩家人次',
+            type: 'line',
+            areaStyle: { normal: {} },
+            data: res.map(r => {
+              return r.verifytimes
+            })
+          },
+          {
             xAxisIndex: 1,
             yAxisIndex: 1,
             name: '7″fCPE转化率',
@@ -1772,6 +1789,18 @@ export default {
             },
             data: res.map(r => {
               return r.lovetimes_rate
+            })
+          },
+          {
+            xAxisIndex: 1,
+            yAxisIndex: 1,
+            name: 'fCPS转化率',
+            type: 'line',
+            lineStyle: {
+              color: '#7e3b10'
+            },
+            data: res.map(r => {
+              return r.verifytimes_rate
             })
           }
         ]
