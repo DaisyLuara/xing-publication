@@ -13,7 +13,10 @@
           :key="item.number.index">
           <div class="person-btn-wrap">
             <div :class="'person-btn-top-'+ key"></div>
-            <div class="person-btn person-btn-left">
+            <div 
+              :class="{'person-btn-left':key === 0,'person-btn-bg': active === key}"
+              class="person-btn"
+              @click="typeHandle(key)">
               <div class="person-btn-title">{{ item.number.display_name }}</div>
               <div class="person-btn-count">{{ item.number.count ? item.number.count : 0 }}</div>
             </div>
@@ -481,6 +484,7 @@ export default {
   },
   data() {
     return {
+      active: null,
       PersonprojectAgeChart: {
         tooltip: {
           trigger: 'item',
@@ -1075,6 +1079,7 @@ export default {
         ]
       },
       projectTop: [],
+      times: '',
       dialogLoading: false
     }
   },
@@ -1087,6 +1092,41 @@ export default {
   },
   created() {},
   methods: {
+    typeHandle(type) {
+      switch (type) {
+        case 0:
+          this.times = ''
+          this.active = ''
+          this.allChartData()
+          break
+        case 1:
+          this.times = 'playtimes7'
+          this.getAge()
+          this.getCrowdTime()
+          this.getGender()
+          this.getProjectTop()
+          this.active = type
+          break
+        case 2:
+          this.times = 'playtimes15'
+          this.getAge()
+          this.getCrowdTime()
+          this.getGender()
+          this.getProjectTop()
+          this.active = type
+          break
+        case 3:
+          this.times = 'playtimes21'
+          this.getAge()
+          this.getCrowdTime()
+          this.getGender()
+          this.getProjectTop()
+          this.active = type
+          break
+        default:
+          break
+      }
+    },
     handleChange(val) {
       this.$nextTick(function() {
         this.$refs.crowdPersonChart.resize()
@@ -1556,7 +1596,11 @@ export default {
         point_id: this.searchForm.point_id,
         workday: 0,
         weekend: 0,
-        holiday: 0
+        holiday: 0,
+        times: this.times
+      }
+      if (this.times === '') {
+        delete args.times
       }
       if (this.searchForm.timeFrame.length > 0) {
         for (let i = 0; i < this.searchForm.timeFrame.length; i++) {
@@ -2009,6 +2053,9 @@ export default {
       .person-btn-top-7 {
         background: #946f32;
       }
+      .person-btn-bg {
+        background: #f1e17d;
+      }
       .person-btn {
         text-align: center;
         padding: 10px 0;
@@ -2016,6 +2063,7 @@ export default {
         height: 100%;
         border: 1px solid #ccc;
         border-left: none;
+        cursor: pointer;
         .person-btn-title {
           font-size: 12px;
           color: #222;
