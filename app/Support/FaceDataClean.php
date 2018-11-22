@@ -630,39 +630,40 @@ function mergeActiveOmoLook()
         $sql6 = DB::connection('ar')->table('xs_face_active_playtimes')
             ->whereRaw("clientdate='$clientDate'")
             ->selectRaw("oid,belong,playtimes7,playtimes15,playtimes21");
-        $sql7 = DB::connection('ar')->table('xs_face_look_times')
-            ->whereRaw("clientdate='$clientDate'")
-            ->selectRaw("oid,belong,looktimes");
-        $sql8 = DB::connection('ar')->table('xs_face_verify_times')
+        $sql7 = DB::connection('ar')->table('xs_face_verify_times')
             ->whereRaw("clientdate='$clientDate'")
             ->selectRaw("oid,belong,verifytimes");
 
-        $data = DB::connection('ar')->table(DB::raw("({$sql1->toSql()}) as a"))
-            ->join(DB::raw("({$sql2->toSql()}) as b"), function ($join) {
+        $sql = DB::connection('ar')->table('xs_face_look_times')
+            ->whereRaw("clientdate='$clientDate'")
+            ->selectRaw("oid,belong,looktimes");
+
+        $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
+            ->join(DB::raw("({$sql1->toSql()}) as b"), function ($join) {
                 $join->on('a.oid', '=', 'b.oid');
                 $join->on('a.belong', '=', 'b.belong');
             }, null, null, 'left')
-            ->join(DB::raw("({$sql3->toSql()}) as c"), function ($join) {
+            ->join(DB::raw("({$sql2->toSql()}) as c"), function ($join) {
                 $join->on('a.oid', '=', 'c.oid');
                 $join->on('a.belong', '=', 'c.belong');
             }, null, null, 'left')
-            ->join(DB::raw("({$sql4->toSql()}) as d"), function ($join) {
+            ->join(DB::raw("({$sql3->toSql()}) as d"), function ($join) {
                 $join->on('a.oid', '=', 'd.oid');
                 $join->on('a.belong', '=', 'd.belong');
             }, null, null, 'left')
-            ->join(DB::raw("({$sql5->toSql()}) as e"), function ($join) {
+            ->join(DB::raw("({$sql4->toSql()}) as e"), function ($join) {
                 $join->on('a.oid', '=', 'e.oid');
                 $join->on('a.belong', '=', 'e.belong');
             }, null, null, 'left')
-            ->join(DB::raw("({$sql6->toSql()}) as f"), function ($join) {
+            ->join(DB::raw("({$sql5->toSql()}) as f"), function ($join) {
                 $join->on('a.oid', '=', 'f.oid');
                 $join->on('a.belong', '=', 'f.belong');
             }, null, null, 'left')
-            ->join(DB::raw("({$sql7->toSql()}) as g"), function ($join) {
+            ->join(DB::raw("({$sql6->toSql()}) as g"), function ($join) {
                 $join->on('a.oid', '=', 'g.oid');
                 $join->on('a.belong', '=', 'g.belong');
             }, null, null, 'left')
-            ->join(DB::raw("({$sql8->toSql()}) as h"), function ($join) {
+            ->join(DB::raw("({$sql7->toSql()}) as h"), function ($join) {
                 $join->on('a.oid', '=', 'h.oid');
                 $join->on('a.belong', '=', 'h.belong');
             }, null, null, 'left')
@@ -1064,13 +1065,13 @@ function faceCharacterTimesClean()
             $century = $century10 . $century00 . $century90 . $century80 . $century70;
         }
 
-        $time1 = "when date_format(fc.date, '%H:%i') > '00:00' and date_format(fc.date, '%H:%i') <= '10:00' then '10:00' ";
-        $time2 = "when date_format(fc.date, '%H:%i') > '10:00' and date_format(fc.date, '%H:%i') <= '12:00' then '12:00' ";
-        $time3 = "when date_format(fc.date, '%H:%i') > '12:00' and date_format(fc.date, '%H:%i') <= '14:00' then '14:00' ";
-        $time4 = "when date_format(fc.date, '%H:%i') > '14:00' and date_format(fc.date, '%H:%i') <= '16:00' then '16:00' ";
-        $time5 = "when date_format(fc.date, '%H:%i') > '16:00' and date_format(fc.date, '%H:%i') <= '18:00' then '18:00' ";
-        $time6 = "when date_format(fc.date, '%H:%i') > '18:00' and date_format(fc.date, '%H:%i') <= '20:00' then '20:00' ";
-        $time7 = "when date_format(fc.date, '%H:%i') > '20:00' and date_format(fc.date, '%H:%i') <= '22:00' then '22:00' ";
+        $time1 = "when date_format(fc.date, '%H:%i') >= '00:00' and date_format(fc.date, '%H:%i') < '10:00' then '10:00' ";
+        $time2 = "when date_format(fc.date, '%H:%i') >= '10:00' and date_format(fc.date, '%H:%i') < '12:00' then '12:00' ";
+        $time3 = "when date_format(fc.date, '%H:%i') >= '12:00' and date_format(fc.date, '%H:%i') < '14:00' then '14:00' ";
+        $time4 = "when date_format(fc.date, '%H:%i') >= '14:00' and date_format(fc.date, '%H:%i') < '16:00' then '16:00' ";
+        $time5 = "when date_format(fc.date, '%H:%i') >= '16:00' and date_format(fc.date, '%H:%i') < '18:00' then '18:00' ";
+        $time6 = "when date_format(fc.date, '%H:%i') >= '18:00' and date_format(fc.date, '%H:%i') < '20:00' then '20:00' ";
+        $time7 = "when date_format(fc.date, '%H:%i') >= '20:00' and date_format(fc.date, '%H:%i') < '22:00' then '22:00' ";
         $time = $time1 . $time2 . $time3 . $time4 . $time5 . $time6 . $time7;
 
 
