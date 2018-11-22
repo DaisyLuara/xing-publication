@@ -14,6 +14,8 @@ use App\Http\Controllers\Admin\Face\V1\Models\FacePhoneRecord;
 use app\Support\Jenner\Zebra\ArrayGroupBy;
 use Carbon\Carbon;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceVerifyRecord;
+use App\Http\Controllers\Admin\Face\V1\Models\FacePlayCharacterRecord;
+use App\Http\Controllers\Admin\Face\V1\Models\FacePermeabilityRecord;
 
 /**
  * 围观人次清洗
@@ -867,7 +869,7 @@ function faceCharacterClean()
                 return $value;
             }
         ];
-        $group_by_value = groupByValueCharacter('looknum');
+        $group_by_value = groupByValueCharacter('looknum', false);
         $characterData = ArrayGroupBy::groupBy($count, $group_by_fields, $group_by_value);
 
         DB::connection('ar')->table('xs_face_character_count')->insert($characterData);
@@ -897,94 +899,6 @@ function getDateFormat($date)
     } else {
         return '24:00';
     }
-}
-
-
-function groupByValueCharacter($x)
-{
-    return $data = [
-        'oid' => [
-            'callback' => function ($value_array) {
-                return $value_array[0]['oid'];
-            },
-            'as' => 'oid'
-        ],
-        'belong' => [
-            'callback' => function ($value_array) {
-                return $value_array[0]['belong'];
-            },
-            'as' => 'belong'
-        ],
-        'time' => [
-            'callback' => function ($value_array) {
-                return $value_array[0]['time'];
-            },
-            'as' => 'time'
-        ],
-        'century00_bnum' => function ($data) use ($x) {
-            return array_sum(array_column(array_filter($data, function ($arr) {
-                return $arr['gender'] == 'Male' and $arr['century'] == '00';
-            }), $x));
-        },
-        'century00_gnum' => function ($data) use ($x) {
-            return array_sum(array_column(array_filter($data, function ($arr) {
-                return $arr['gender'] == 'Female' and $arr['century'] == '00';
-            }), $x));
-        },
-        'century90_bnum' => function ($data) use ($x) {
-            return array_sum(array_column(array_filter($data, function ($arr) {
-                return $arr['gender'] == 'Male' and $arr['century'] == '90';
-            }), $x));
-        },
-        'century90_gnum' => function ($data) use ($x) {
-            return array_sum(array_column(array_filter($data, function ($arr) {
-                return $arr['gender'] == 'Female' and $arr['century'] == '90';
-            }), $x));
-        },
-        'century80_bnum' => function ($data) use ($x) {
-            return array_sum(array_column(array_filter($data, function ($arr) {
-                return $arr['gender'] == 'Male' and $arr['century'] == '80';
-            }), $x));
-        },
-        'century80_gnum' => function ($data) use ($x) {
-            return array_sum(array_column(array_filter($data, function ($arr) {
-                return $arr['gender'] == 'Female' and $arr['century'] == '80';
-            }), $x));
-        },
-        'century70_bnum' => function ($data) use ($x) {
-            return array_sum(array_column(array_filter($data, function ($arr) {
-                return $arr['gender'] == 'Male' and $arr['century'] == '70';
-            }), $x));
-        },
-        'century70_gnum' => function ($data) use ($x) {
-            return array_sum(array_column(array_filter($data, function ($arr) {
-                return $arr['gender'] == 'Female' and $arr['century'] == '70';
-            }), $x));
-        },
-        'century10_bnum' => function ($data) use ($x) {
-            return array_sum(array_column(array_filter($data, function ($arr) {
-                return $arr['gender'] == 'Male' and $arr['century'] == '10';
-            }), $x));
-        },
-        'century10_gnum' => function ($data) use ($x) {
-            return array_sum(array_column(array_filter($data, function ($arr) {
-                return $arr['gender'] == 'Female' and $arr['century'] == '10';
-            }), $x));
-        },
-        'date' => [
-            'callback' => function ($value_array) {
-                return $value_array[0]['date'];
-            },
-            'as' => 'date'
-        ],
-        'clientdate' => [
-            'callback' => function ($value_array) {
-                return $value_array[0]['clientdate'];
-            },
-            'as' => 'clientdate'
-        ]
-    ];
-
 }
 
 /**
@@ -1118,7 +1032,7 @@ function faceCharacterTimesClean()
                 return $value;
             }
         ];
-        $group_by_value = groupByValueCharacter('looktimes');
+        $group_by_value = groupByValueCharacter('looktimes', false);
         $characterTimesData = ArrayGroupBy::groupBy($count, $group_by_fields, $group_by_value);
 
         DB::connection('ar')->table('xs_face_character_count_times')->insert($characterTimesData);
@@ -1187,7 +1101,7 @@ function faceLogTimesClean()
             }
         ];
 
-        $group_by_value = groupByValueFaceLog('looktimes');
+        $group_by_value = groupByValuePermeability('looktimes', false);
         $faceLogTimesData = ArrayGroupBy::groupBy($count, $group_by_fields, $group_by_value);
 
         DB::connection('ar')->table('xs_face_log_times')->insert($faceLogTimesData);
@@ -1196,7 +1110,322 @@ function faceLogTimesClean()
     FaceLogTimesRecord::create(['date' => $currentDate]);
 }
 
-function groupByValueFaceLog($x)
+/**
+ * 7s,15s,21s人群特征清洗
+ */
+function playTimesCharacterClean()
+{
+    $date = FacePlayCharacterRecord::query()->max('date');
+    $date = (new Carbon($date))->format('Y-m-d');
+    $currentDate = Carbon::now()->toDateString();
+    while ($date < $currentDate) {
+        $startClientDate = strtotime($date . ' 00:00:00') * 1000;
+        $endClientDate = strtotime($date . ' 23:59:59') * 1000;
+
+        $sql = DB::connection('ar')->table("face_collect as fc")
+            ->join('avr_official as ao', 'fc.oid', '=', 'ao.oid')
+            ->join('face_people_time as fpt', function ($join) {
+                $join->on('fc.oid', '=', 'fpt.oid');
+                $join->on('fc.belong', '=', 'fpt.belong');
+                $join->on('fc.fpid', '=', 'fpt.fpid');
+            }, null, null, 'left')
+            ->whereRaw("fc.clientdate between '$startClientDate' and '$endClientDate' and fpt.clientdate between '$startClientDate' AND '$endClientDate' and fc.fpid>0")
+            ->selectRaw("fc.oid as oid ,fc.belong as belong,fc.gender as gender,fc.age as age,fc.fpid as fpid,fc.date as date,fc.clientdate as clientdate,playtime");
+        $data = $sql->get();
+        $count = [];
+        foreach ($data as $item) {
+            $count[] = [
+                'oid' => $item->oid,
+                'belong' => $item->belong,
+                'fpid' => $item->fpid,
+                'gender' => $item->gender,
+                'age' => $item->age,
+                'date' => $item->date,
+                'clientdate' => $item->clientdate,
+                'playtime' => $item->playtime,
+            ];
+        }
+        $group_by_fields = [
+            'oid' => function ($value) {
+                return $value;
+            },
+            'belong' => function ($value) {
+                return $value;
+            },
+            'fpid' => function ($value) {
+                return $value;
+            },
+
+        ];
+        $group_by_value = [
+            'oid' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['oid'];
+                },
+                'as' => 'oid'
+            ],
+            'belong' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['belong'];
+                },
+                'as' => 'belong'
+            ],
+            'fpid' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['fpid'];
+                },
+                'as' => 'fpid'
+            ],
+            'gender' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['gender'];
+                },
+                'as' => 'gender'
+            ],
+            'age' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['age'];
+                },
+                'as' => 'age'
+            ],
+            'date' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['date'];
+                },
+                'as' => 'date'
+            ],
+            'clientdate' => [
+                'callback' => function ($data) {
+                    return join(',', array_column($data, 'clientdate'));
+                },
+                'as' => 'clientdate'
+            ],
+            'playtime' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['playtime'];
+                },
+                'as' => 'playtime'
+            ],
+        ];
+        $data = ArrayGroupBy::groupBy($count, $group_by_fields, $group_by_value);//concat clientdate
+
+        $count = [];
+        foreach ($data as $item) {
+            $clientDates = explode(',', $item['clientdate']);
+            sort($clientDates);
+            $m = 0;
+            $n = 1;
+            $num7 = dateRecursion($m, $n, $clientDates, 7000) + 1;
+            $num15 = dateRecursion($m, $n, $clientDates, 15000) + 1;
+            $num21 = dateRecursion($m, $n, $clientDates, 21000) + 1;
+
+            $count[] = [
+                'oid' => $item['oid'],
+                'belong' => $item['belong'],
+                'fpid' => $item['fpid'],
+                'gender' => $item['gender'],
+                'century' => getAgeFormat($item['age'], $date),
+                'time' => getDateFormatCharacter($item['date']),
+                'playtimes7' => ($num7 > floor($item['playtime'] / 7000)) ? floor($item['playtime'] / 7000) : $num7,
+                'playtimes15' => ($num15 > floor($item['playtime'] / 15000)) ? floor($item['playtime'] / 15000) : $num15,
+                'playtimes21' => ($num21 > floor($item['playtime'] / 21000)) ? floor($item['playtime'] / 21000) : $num21,
+                'date' => $date,
+                'clientdate' => strtotime($date) * 1000
+            ];
+        }
+
+        $group_by_fields = [
+            'oid' => function ($value) {
+                return $value;
+            },
+            'belong' => function ($value) {
+                return $value;
+            },
+            'time' => function ($value) {
+                return $value;
+            }
+        ];
+        $group_by_value_character7 = groupByValueCharacter('playtimes7', false);
+        $group_by_value_character15 = groupByValueCharacter('playtimes15', false);
+        $group_by_value_character21 = groupByValueCharacter('playtimes21', false);
+        $data7 = ArrayGroupBy::groupBy($count, $group_by_fields, $group_by_value_character7);
+        $data15 = ArrayGroupBy::groupBy($count, $group_by_fields, $group_by_value_character15);
+        $data21 = ArrayGroupBy::groupBy($count, $group_by_fields, $group_by_value_character21);
+
+        $group_by_fields_all = [
+            'oid' => function ($value) {
+                return $value;
+            },
+            'time' => function ($value) {
+                return $value;
+            }
+        ];
+        $group_by_value_character7_all = groupByValueCharacter('playtimes7', true);
+        $group_by_value_character15_all = groupByValueCharacter('playtimes15', true);
+        $group_by_value_character21_all = groupByValueCharacter('playtimes21', true);
+        $data7_all = ArrayGroupBy::groupBy($count, $group_by_fields_all, $group_by_value_character7_all);
+        $data15_all = ArrayGroupBy::groupBy($count, $group_by_fields_all, $group_by_value_character15_all);
+        $data21_all = ArrayGroupBy::groupBy($count, $group_by_fields_all, $group_by_value_character21_all);
+
+        DB::connection('ar')->table('xs_face_playtimes7_character_count')->insert(array_merge($data7, $data7_all));
+        DB::connection('ar')->table('xs_face_playtimes15_character_count')->insert(array_merge($data15, $data15_all));
+        DB::connection('ar')->table('xs_face_playtimes21_character_count')->insert(array_merge($data21, $data21_all));
+        $date = (new Carbon($date))->addDay(1)->toDateString();
+    }
+    FacePlayCharacterRecord::create(['date' => $currentDate]);
+}
+
+/**
+ *7s,15s,21s人次用户渗透率
+ */
+function playTimesPermeabilityClean()
+{
+    $date = FacePermeabilityRecord::query()->max('date');
+    $date = (new Carbon($date))->format('Y-m-d');
+    $currentDate = Carbon::now()->toDateString();
+    while ($date < $currentDate) {
+        $startClientDate = strtotime($date . ' 00:00:00') * 1000;
+        $endClientDate = strtotime($date . ' 23:59:59') * 1000;
+
+        $sql = DB::connection('ar')->table("face_collect as fc")
+            ->join('avr_official as ao', 'fc.oid', '=', 'ao.oid')
+            ->join('face_people_time as fpt', function ($join) {
+                $join->on('fc.oid', '=', 'fpt.oid');
+                $join->on('fc.belong', '=', 'fpt.belong');
+                $join->on('fc.fpid', '=', 'fpt.fpid');
+            }, null, null, 'left')
+            ->whereRaw("fc.clientdate between '$startClientDate' and '$endClientDate' and fpt.clientdate between '$startClientDate' AND '$endClientDate' and fc.fpid>0")
+            ->selectRaw("fc.oid as oid ,fc.belong as belong,fc.gender as gender,fc.age as age,fc.fpid as fpid,fc.clientdate as clientdate,playtime");
+        $data = $sql->get();
+        $count = [];
+        foreach ($data as $item) {
+            $count[] = [
+                'oid' => $item->oid,
+                'belong' => $item->belong,
+                'fpid' => $item->fpid,
+                'gender' => $item->gender,
+                'age' => $item->age,
+                'clientdate' => $item->clientdate,
+                'playtime' => $item->playtime,
+            ];
+        }
+        $group_by_fields = [
+            'oid' => function ($value) {
+                return $value;
+            },
+            'belong' => function ($value) {
+                return $value;
+            },
+            'fpid' => function ($value) {
+                return $value;
+            },
+
+        ];
+        $group_by_value = [
+            'oid' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['oid'];
+                },
+                'as' => 'oid'
+            ],
+            'belong' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['belong'];
+                },
+                'as' => 'belong'
+            ],
+            'fpid' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['fpid'];
+                },
+                'as' => 'fpid'
+            ],
+            'gender' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['gender'];
+                },
+                'as' => 'gender'
+            ],
+            'age' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['age'];
+                },
+                'as' => 'age'
+            ],
+            'clientdate' => [
+                'callback' => function ($data) {
+                    return join(',', array_column($data, 'clientdate'));
+                },
+                'as' => 'clientdate'
+            ],
+            'playtime' => [
+                'callback' => function ($value_array) {
+                    return $value_array[0]['playtime'];
+                },
+                'as' => 'playtime'
+            ],
+        ];
+        $data = ArrayGroupBy::groupBy($count, $group_by_fields, $group_by_value);
+
+        $count = [];
+        foreach ($data as $item) {
+            $clientDates = explode(',', $item['clientdate']);
+            sort($clientDates);
+            $m = 0;
+            $n = 1;
+            $num7 = dateRecursion($m, $n, $clientDates, 7000) + 1;
+            $num15 = dateRecursion($m, $n, $clientDates, 15000) + 1;
+            $num21 = dateRecursion($m, $n, $clientDates, 21000) + 1;
+
+            $count[] = [
+                'oid' => $item['oid'],
+                'belong' => $item['belong'],
+                'fpid' => $item['fpid'],
+                'gender' => $item['gender'],
+                'age' => $item['age'],
+                'playtimes7' => ($num7 > floor($item['playtime'] / 7000)) ? floor($item['playtime'] / 7000) : $num7,
+                'playtimes15' => ($num15 > floor($item['playtime'] / 15000)) ? floor($item['playtime'] / 15000) : $num15,
+                'playtimes21' => ($num21 > floor($item['playtime'] / 21000)) ? floor($item['playtime'] / 21000) : $num21,
+                'date' => $date,
+                'clientdate' => strtotime($date) * 1000
+            ];
+        }
+        $group_by_fields = [
+            'oid' => function ($value) {
+                return $value;
+            },
+            'belong' => function ($value) {
+                return $value;
+            }
+        ];
+        $group_by_value_playtimes7 = groupByValuePermeability('playtimes7', false);
+        $group_by_value_playtimes15 = groupByValuePermeability('playtimes15', false);
+        $group_by_value_playtimes21 = groupByValuePermeability('playtimes21', false);
+        $data7 = ArrayGroupBy::groupBy($count, $group_by_fields, $group_by_value_playtimes7);
+        $data15 = ArrayGroupBy::groupBy($count, $group_by_fields, $group_by_value_playtimes15);
+        $data21 = ArrayGroupBy::groupBy($count, $group_by_fields, $group_by_value_playtimes21);
+
+        $group_by_fields_all = [
+            'oid' => function ($value) {
+                return $value;
+            }
+        ];
+        $group_by_value_playtimes7_all = groupByValuePermeability('playtimes7', true);
+        $group_by_value_playtimes15_all = groupByValuePermeability('playtimes15', true);
+        $group_by_value_playtimes21_all = groupByValuePermeability('playtimes21', true);
+        $data7_all = ArrayGroupBy::groupBy($count, $group_by_fields_all, $group_by_value_playtimes7_all);
+        $data15_all = ArrayGroupBy::groupBy($count, $group_by_fields_all, $group_by_value_playtimes15_all);
+        $data21_all = ArrayGroupBy::groupBy($count, $group_by_fields_all, $group_by_value_playtimes21_all);
+        DB::connection('ar')->table('xs_face_playtimes7_permeability')->insert(array_merge($data7, $data7_all));
+        DB::connection('ar')->table('xs_face_playtimes15_permeability')->insert(array_merge($data15, $data15_all));
+        DB::connection('ar')->table('xs_face_playtimes21_permeability')->insert(array_merge($data21, $data21_all));
+        $date = (new Carbon($date))->addDay(1)->toDateString();
+    }
+
+    FacePermeabilityRecord::create(['date' => $currentDate]);
+}
+
+function groupByValueCharacter($x, $all)
 {
     return $data = [
         'oid' => [
@@ -1206,79 +1435,69 @@ function groupByValueFaceLog($x)
             'as' => 'oid'
         ],
         'belong' => [
-            'callback' => function ($value_array) {
-                return $value_array[0]['belong'];
+            'callback' => function ($value_array) use ($all) {
+                if ($all) {
+                    return 'all';
+                } else {
+                    return $value_array[0]['belong'];
+                }
             },
             'as' => 'belong'
         ],
-        'bnum' => function ($data) use ($x) {
+        'time' => [
+            'callback' => function ($value_array) {
+                return $value_array[0]['time'];
+            },
+            'as' => 'time'
+        ],
+        'century00_bnum' => function ($data) use ($x) {
             return array_sum(array_column(array_filter($data, function ($arr) {
-                return $arr['gender'] == 'Male';
+                return $arr['gender'] == 'Male' and $arr['century'] == '00';
             }), $x));
         },
-        'gnum' => function ($data) use ($x) {
+        'century00_gnum' => function ($data) use ($x) {
             return array_sum(array_column(array_filter($data, function ($arr) {
-                return $arr['gender'] == 'Female';
+                return $arr['gender'] == 'Female' and $arr['century'] == '00';
             }), $x));
         },
-        'age10b' => function ($data) use ($x) {
+        'century90_bnum' => function ($data) use ($x) {
             return array_sum(array_column(array_filter($data, function ($arr) {
-                return $arr['gender'] == 'Male' and $arr['age'] == '10';
+                return $arr['gender'] == 'Male' and $arr['century'] == '90';
             }), $x));
         },
-        'age10g' => function ($data) use ($x) {
+        'century90_gnum' => function ($data) use ($x) {
             return array_sum(array_column(array_filter($data, function ($arr) {
-                return $arr['gender'] == 'Female' and $arr['age'] == '10';
+                return $arr['gender'] == 'Female' and $arr['century'] == '90';
             }), $x));
         },
-        'age18b' => function ($data) use ($x) {
+        'century80_bnum' => function ($data) use ($x) {
             return array_sum(array_column(array_filter($data, function ($arr) {
-                return $arr['gender'] == 'Male' and $arr['age'] == '18';
+                return $arr['gender'] == 'Male' and $arr['century'] == '80';
             }), $x));
         },
-        'age18g' => function ($data) use ($x) {
+        'century80_gnum' => function ($data) use ($x) {
             return array_sum(array_column(array_filter($data, function ($arr) {
-                return $arr['gender'] == 'Female' and $arr['age'] == '18';
+                return $arr['gender'] == 'Female' and $arr['century'] == '80';
             }), $x));
         },
-        'age30b' => function ($data) use ($x) {
+        'century70_bnum' => function ($data) use ($x) {
             return array_sum(array_column(array_filter($data, function ($arr) {
-                return $arr['gender'] == 'Male' and $arr['age'] == '30';
+                return $arr['gender'] == 'Male' and $arr['century'] == '70';
             }), $x));
         },
-        'age30g' => function ($data) use ($x) {
+        'century70_gnum' => function ($data) use ($x) {
             return array_sum(array_column(array_filter($data, function ($arr) {
-                return $arr['gender'] == 'Female' and $arr['age'] == '30';
+                return $arr['gender'] == 'Female' and $arr['century'] == '70';
             }), $x));
         },
-        'age40b' => function ($data) use ($x) {
+        'century10_bnum' => function ($data) use ($x) {
             return array_sum(array_column(array_filter($data, function ($arr) {
-                return $arr['gender'] == 'Male' and $arr['age'] == '40';
+                return $arr['gender'] == 'Male' and $arr['century'] == '10';
             }), $x));
         },
-        'age40g' => function ($data) use ($x) {
+        'century10_gnum' => function ($data) use ($x) {
             return array_sum(array_column(array_filter($data, function ($arr) {
-                return $arr['gender'] == 'Female' and $arr['age'] == '40';
-            }), $x));
-        },
-        'age60b' => function ($data) use ($x) {
-            return array_sum(array_column(array_filter($data, function ($arr) {
-                return $arr['gender'] == 'Male' and $arr['age'] == '60';
-            }), $x));
-        },
-        'age60g' => function ($data) use ($x) {
-            return array_sum(array_column(array_filter($data, function ($arr) {
-                return $arr['gender'] == 'Female' and $arr['age'] == '60';
-            }), $x));
-        },
-        'age61b' => function ($data) use ($x) {
-            return array_sum(array_column(array_filter($data, function ($arr) {
-                return $arr['gender'] == 'Male' and $arr['age'] == '61';
-            }), $x));
-        },
-        'age61g' => function ($data) use ($x) {
-            return array_sum(array_column(array_filter($data, function ($arr) {
-                return $arr['gender'] == 'Female' and $arr['age'] == '61';
+                return $arr['gender'] == 'Female' and $arr['century'] == '10';
             }), $x));
         },
         'date' => [
@@ -1294,6 +1513,164 @@ function groupByValueFaceLog($x)
             'as' => 'clientdate'
         ]
     ];
+}
+
+function groupByValuePermeability($x, $all)
+{
+    return $data = [
+        'oid' => [
+            'callback' => function ($value_array) {
+                return $value_array[0]['oid'];
+            },
+            'as' => 'oid'
+        ],
+        'belong' => [
+            'callback' => function ($value_array) use ($all) {
+                if ($all) {
+                    return 'all';
+                } else {
+                    return $value_array[0]['belong'];
+                }
+            },
+            'as' => 'belong'
+        ],
+        'bnum' => function ($data) use ($x) {
+            return array_sum(array_column(array_filter($data, function ($arr) {
+                return $arr['gender'] == 'Male';
+            }), $x));
+        },
+        'gnum' => function ($data) use ($x) {
+            return array_sum(array_column(array_filter($data, function ($arr) {
+                return $arr['gender'] == 'Female';
+            }), $x));
+        },
+        'age10b' => function ($data) use ($x) {
+            return array_sum(array_column(array_filter($data, function ($arr) {
+                return $arr['gender'] == 'Male' and $arr['age'] <= 10;
+            }), $x));
+        },
+        'age10g' => function ($data) use ($x) {
+            return array_sum(array_column(array_filter($data, function ($arr) {
+                return $arr['gender'] == 'Female' and $arr['age'] <= 10;
+            }), $x));
+        },
+        'age18b' => function ($data) use ($x) {
+            return array_sum(array_column(array_filter($data, function ($arr) {
+                return $arr['gender'] == 'Male' and $arr['age'] > 10 and $arr['age'] <= 18;
+            }), $x));
+        },
+        'age18g' => function ($data) use ($x) {
+            return array_sum(array_column(array_filter($data, function ($arr) {
+                return $arr['gender'] == 'Female' and $arr['age'] > 10 and $arr['age'] <= 18;
+            }), $x));
+        },
+        'age30b' => function ($data) use ($x) {
+            return array_sum(array_column(array_filter($data, function ($arr) {
+                return $arr['gender'] == 'Male' and $arr['age'] > 18 and $arr['age'] <= 30;
+            }), $x));
+        },
+        'age30g' => function ($data) use ($x) {
+            return array_sum(array_column(array_filter($data, function ($arr) {
+                return $arr['gender'] == 'Female' and $arr['age'] > 18 and $arr['age'] <= 30;
+            }), $x));
+        },
+        'age40b' => function ($data) use ($x) {
+            return array_sum(array_column(array_filter($data, function ($arr) {
+                return $arr['gender'] == 'Male' and $arr['age'] > 30 and $arr['age'] <= 40;
+            }), $x));
+        },
+        'age40g' => function ($data) use ($x) {
+            return array_sum(array_column(array_filter($data, function ($arr) {
+                return $arr['gender'] == 'Female' and $arr['age'] > 30 and $arr['age'] <= 40;
+            }), $x));
+        },
+        'age60b' => function ($data) use ($x) {
+            return array_sum(array_column(array_filter($data, function ($arr) {
+                return $arr['gender'] == 'Male' and $arr['age'] > 40 and $arr['age'] <= 60;
+            }), $x));
+        },
+        'age60g' => function ($data) use ($x) {
+            return array_sum(array_column(array_filter($data, function ($arr) {
+                return $arr['gender'] == 'Female' and $arr['age'] > 40 and $arr['age'] <= 60;
+            }), $x));
+        },
+        'age61b' => function ($data) use ($x) {
+            return array_sum(array_column(array_filter($data, function ($arr) {
+                return $arr['gender'] == 'Male' and $arr['age'] > 60;
+            }), $x));
+        },
+        'age61g' => function ($data) use ($x) {
+            return array_sum(array_column(array_filter($data, function ($arr) {
+                return $arr['gender'] == 'Female' and $arr['age'] > 60;
+            }), $x));
+        },
+        'date' => [
+            'callback' => function ($value_array) {
+                return $value_array[0]['date'];
+            },
+            'as' => 'date'
+        ],
+        'clientdate' => [
+            'callback' => function ($value_array) {
+                return $value_array[0]['clientdate'];
+            },
+            'as' => 'clientdate'
+        ]
+    ];
+}
+
+function getAgeFormat($age, $date)
+{
+    if ($date < '2018-01-01') {
+        if ($age <= 7) {
+            return '10';
+        } else if ($age > 7 && $age <= 17) {
+            return '00';
+        } else if ($age > 7 && $age <= 17) {
+            return '90';
+        } else if ($age > 7 && $age <= 17) {
+            return '80';
+        } else {
+            return '70';
+        }
+    } else {
+        $age1 = (new Carbon($date))->diffInYears('2010-01-01');
+        $age2 = (new Carbon($date))->diffInYears('2000-01-01');
+        $age3 = (new Carbon($date))->diffInYears('1990-01-01');
+        $age4 = (new Carbon($date))->diffInYears('1980-01-01');
+        if ($age <= $age1) {
+            return '10';
+        } else if ($age > $age1 && $age <= $age2) {
+            return '00';
+        } else if ($age > $age2 && $age <= $age3) {
+            return '90';
+        } else if ($age > $age3 && $age <= $age4) {
+            return '80';
+        } else {
+            return '70';
+        }
+    }
+}
 
 
+function getDateFormatCharacter($date)
+{
+    $date = (new Carbon($date))->format('H:i');
+    if ($date >= '00:00' && $date < '10:00') {
+        return '10:00';
+    } else if ($date >= '10:00' && $date < '12:00') {
+        return '12:00';
+    } else if ($date >= '12:00' && $date < '14:00') {
+        return '14:00';
+    } else if ($date >= '14:00' && $date < '16:00') {
+        return '16:00';
+    } else if ($date >= '16:00' && $date < '18:00') {
+        return '18:00';
+    } else if ($date >= '18:00' && $date < '20:00') {
+        return '20:00';
+    } else if ($date >= '20:00' && $date < '22:00') {
+        return '22:00';
+    } else {
+        return '24:00';
+    }
 }
