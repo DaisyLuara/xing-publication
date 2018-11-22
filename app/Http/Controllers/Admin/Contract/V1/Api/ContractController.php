@@ -193,10 +193,10 @@ class ContractController extends Controller
                 if ($request->has('contract_number')) {
                     $contract->contract_number = $request->contract_number;
                 }
-                if (!$request->has('bd_ma_message')) {
+                if (!$request->has('legal_ma_message')) {
                     abort(500, '没有填写意见');
                 }
-                $contract->bd_ma_message = $request->bd_ma_message;
+                $contract->legal_ma_message = $request->legal_ma_message;
                 $contract->update();
                 ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
                 return $this->response()->item($contract, new ContractTransformer())->setStatusCode(201);
