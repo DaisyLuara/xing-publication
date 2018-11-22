@@ -413,14 +413,18 @@ export default {
       if (this.searchForm.showUser) {
         this.searchForm.userSelect = []
         this.searchForm.arUserId = this.userSelect[0]
-        this.searchForm.projectSelect = ''
-        this.searchForm.area_id = ''
-        this.searchForm.market_id = []
-        this.searchForm.point_id = ''
-        this.searchForm.sceneSelect = ''
-      } else {
-        this.searchForm.projectSelect = ''
       }
+      this.searchForm.projectSelect = ''
+      this.searchForm.area_id = ''
+      this.searchForm.market_id = []
+      this.searchForm.point_id = ''
+      this.searchForm.sceneSelect = ''
+      this.searchForm.timeFrame = []
+      this.searchForm.dateTime = [
+        new Date().getTime() - 3600 * 1000 * 24 * 7,
+        new Date().getTime() - 3600 * 1000 * 24
+      ]
+
       if (this.activeName === 'first') {
         this.$refs.personTimes.resetSearch()
       } else {

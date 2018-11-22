@@ -9,7 +9,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
-
 /**
  *求两个已知经纬度之间的距离,单位为千米
  * @param lng1 ,lng2 经度
@@ -333,5 +332,7 @@ function getOfficialAccount($authorizer_id, $app)
 
     abort_if(!$authorizer, 404);
 
-    return $app->officialAccount($authorizer->appid, $authorizer->refresh_token);
+    $officialApp = $app->officialAccount($authorizer->appid);
+    $officialApp->access_token->setToken($authorizer->access_token, 7200);
+    return $officialApp;
 }
