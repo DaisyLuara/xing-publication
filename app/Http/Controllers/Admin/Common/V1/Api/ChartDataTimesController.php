@@ -14,6 +14,12 @@ use App\Http\Controllers\Admin\Common\V1\Transformer\ChartDataTimesTransformer;
 use App\Http\Controllers\Admin\Face\V1\Models\XsFaceCharacterCountTimes;
 use App\Http\Controllers\Admin\Face\V1\Models\XsFaceCountLog;
 use App\Http\Controllers\Admin\Face\V1\Models\XsFaceLogTimes;
+use App\Http\Controllers\Admin\Face\V1\Models\XsFacePlayTimes15Character;
+use App\Http\Controllers\Admin\Face\V1\Models\XsFacePlayTimes15Permeability;
+use App\Http\Controllers\Admin\Face\V1\Models\XsFacePlayTimes21Character;
+use App\Http\Controllers\Admin\Face\V1\Models\XsFacePlayTimes21Permeability;
+use App\Http\Controllers\Admin\Face\V1\Models\XsFacePlayTimes7Character;
+use App\Http\Controllers\Admin\Face\V1\Models\XsFacePlayTimes7Permeability;
 use App\Http\Controllers\Controller;
 use function GuzzleHttp\Psr7\str;
 use Illuminate\Database\Eloquent\Builder;
@@ -88,8 +94,25 @@ class ChartDataTimesController extends Controller
     public function chart(ChartDataRequest $request)
     {
         $xsFaceCountLog = XsFaceCountLog::query();
-        $xsFaceLogTimes = XsFaceLogTimes::query();
-        $xsFaceCharacterCountTimes = XsFaceCharacterCountTimes::query();
+        if ($request->has('times')) {
+            if ($request->times == 'playtimes7') {
+                $xsFaceLog = XsFacePlayTimes7Permeability::query();
+                $xsFaceCharacter = XsFacePlayTimes7Character::query();
+            }
+            if ($request->times == 'playtimes15') {
+                $xsFaceLog = XsFacePlayTimes15Permeability::query();
+                $xsFaceCharacter = XsFacePlayTimes15Character::query();
+            }
+            if ($request->times == 'playtimes21') {
+                $xsFaceLog = XsFacePlayTimes21Permeability::query();
+                $xsFaceCharacter = XsFacePlayTimes21Character::query();
+            }
+
+        } else {
+            $xsFaceLog = XsFaceLogTimes::query();
+            $xsFaceCharacter = XsFaceCharacterCountTimes::query();
+        }
+
         switch ($request->id) {
             case 1:
                 $data = $this->getTotal($request, $xsFaceCountLog);
@@ -98,19 +121,19 @@ class ChartDataTimesController extends Controller
                 $data = $this->getTotalByDate($request, $xsFaceCountLog);
                 break;
             case 3:
-                $data = $this->getPermeabilityByGender($request, $xsFaceLogTimes);
+                $data = $this->getPermeabilityByGender($request, $xsFaceLog);
                 break;
             case 4:
-                $data = $this->getPermeabilityByAge($request, $xsFaceLogTimes);
+                $data = $this->getPermeabilityByAge($request, $xsFaceLog);
                 break;
             case 5:
-                $data = $this->getCharacterByTime($request, $xsFaceCharacterCountTimes);
+                $data = $this->getCharacterByTime($request, $xsFaceCharacter);
                 break;
             case 6:
                 $data = $this->getTopProjects($request, $xsFaceCountLog);
                 break;
             case 7:
-                $data = $this->getProjectCharacter($request, $xsFaceCharacterCountTimes);
+                $data = $this->getProjectCharacter($request, $xsFaceCharacter);
                 break;
             case 8:
                 $data = $this->getFunnelChart($request, $xsFaceCountLog);
@@ -331,8 +354,9 @@ class ChartDataTimesController extends Controller
         $startClientDate = strtotime($startDate) * 1000;
         $endClientDate = strtotime($endDate) * 1000;
 
+        $table=$query->getModel()->getTable();
         $this->handleQuery($request, $query);
-        $data = $query->whereRaw("xs_face_character_count_times.clientdate between '$startClientDate' and '$endClientDate'")
+        $data = $query->whereRaw("$table.clientdate between '$startClientDate' and '$endClientDate'")
             ->groupBy('time')
             ->selectRaw("time,sum(century10_bnum+century10_gnum) as century10, sum(century00_bnum + century00_gnum) as century00,sum(century90_bnum + century90_gnum) as century90,sum(century80_bnum + century80_gnum) as century80,sum(century70_bnum + century70_gnum) as century70")
             ->selectRaw("sum(century10_gnum+century00_gnum+century90_gnum+century80_gnum+century70_gnum) as gnum,sum(century10_bnum+century10_gnum+century00_gnum+century00_bnum+century90_gnum+century90_bnum+century80_gnum+century80_bnum+century70_gnum+century70_bnum) as totalnum")

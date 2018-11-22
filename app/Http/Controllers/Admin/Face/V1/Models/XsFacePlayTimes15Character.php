@@ -10,9 +10,16 @@ namespace App\Http\Controllers\Admin\Face\V1\Models;
 
 
 use App\Models\Model;
+use App\Scopes\ExceptPointsScope;
 
 class XsFacePlayTimes15Character extends Model
 {
     protected $connection = 'ar';
     public $table = 'xs_face_playtimes15_character_count';
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope(new ExceptPointsScope());
+    }
 }
