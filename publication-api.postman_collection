@@ -4132,7 +4132,7 @@
 								{
 									"name": "领取优惠券",
 									"request": {
-										"url": "http://{{host}}/api/open/coupons/96",
+										"url": "http://{{host}}/api/open/coupons/99",
 										"method": "POST",
 										"header": [
 											{
@@ -4148,7 +4148,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n\t\"sign\":\"eyJpdiI6IkdBOHkyUDdDNzdaa0RNeHRqREhpM0E9PSIsInZhbHVlIjoiTHZaUmVabW5rV1ZUVk9sRWlFUXBwdz09IiwibWFjIjoiNzIxMTQ0NGE3YzM5N2JkNjJkOTE5MDc0MzQyNjQ2ZmExZDhjNzZhYjE0OThkYWI4ZjE0ZWJjY2E2MWFhMTJhMSJ9\",\n\t\"qiniu_id\":1111111,\n\t\"belong\":\"LanHuaCheng\",\n\t\"oid\":540\n}"
+											"raw": "{\n\t\"sign\":\"eyJpdiI6IkdBOHkyUDdDNzdaa0RNeHRqREhpM0E9PSIsInZhbHVlIjoiTHZaUmVabW5rV1ZUVk9sRWlFUXBwdz09IiwibWFjIjoiNzIxMTQ0NGE3YzM5N2JkNjJkOTE5MDc0MzQyNjQ2ZmExZDhjNzZhYjE0OThkYWI4ZjE0ZWJjY2E2MWFhMTJhMSJ9\",\n\t\"qiniu_id\":1111111,\n\t\"belong\":\"LanHuaCheng\",\n\t\"oid\":540,\n\t\"game_attribute_payload\":\"eyJpdiI6IkpZeGNLcnF4eHdvY1wvQ2hQQjgyMlp3PT0iLCJ2YWx1ZSI6Im9xVUVDditybzIxa3RnblhEUnF6eCsxSldhZER1NzlTM1A5c1wvT2pQdGFQS3k2NXJmcnVRdE9HUDM1VTlEZjZ1YzRtQ012SlcyWFk0MmhCUFpuTjM2U1ZpSHcyVDFoUmVyMFFlZzJVc29rekZQblZCTGZsSzl4SmdibDVaOFQxNVU5SVZDQTRlclpkaWNUOUdsOWYyOGc9PSIsIm1hYyI6IjQ0YzhmNGQ2ZTI2MDY2YWI3NDhjY2NhNTgwOTY3ZTViYjI1ZjUxOWIwYTdiYzU5MjUxYTczNmVjYmE2ZjljZjEifQ==\"\n}"
 										},
 										"description": null
 									},
@@ -4173,13 +4173,13 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n\t\"sign\":\"eyJpdiI6IkdBOHkyUDdDNzdaa0RNeHRqREhpM0E9PSIsInZhbHVlIjoiTHZaUmVabW5rV1ZUVk9sRWlFUXBwdz09IiwibWFjIjoiNzIxMTQ0NGE3YzM5N2JkNjJkOTE5MDc0MzQyNjQ2ZmExZDhjNzZhYjE0OThkYWI4ZjE0ZWJjY2E2MWFhMTJhMSJ9\",\n\t\"coupon_batch_id\":96,\n\t\"include\":\"couponBatch\"\n}"
+											"raw": "{\n\t\"sign\":\"eyJpdiI6IkdBOHkyUDdDNzdaa0RNeHRqREhpM0E9PSIsInZhbHVlIjoiTHZaUmVabW5rV1ZUVk9sRWlFUXBwdz09IiwibWFjIjoiNzIxMTQ0NGE3YzM5N2JkNjJkOTE5MDc0MzQyNjQ2ZmExZDhjNzZhYjE0OThkYWI4ZjE0ZWJjY2E2MWFhMTJhMSJ9\",\n\t\"coupon_batch_id\":99,\n\t\"include\":\"couponBatch\"\n}"
 										},
 										"description": null
 									},
 									"response": [
 										{
-											"id": "a10692d6-1ba0-4885-bdd9-9619b2a2dbb1",
+											"id": "b0d9b233-2f0e-4b16-8496-23c2040c4380",
 											"name": "查询优惠券测试",
 											"originalRequest": {
 												"url": {
@@ -4757,6 +4757,48 @@
 							],
 							"variable": []
 						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "api-token",
+								"value": "{{api-token}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "保存临时用户信息",
+					"request": {
+						"url": "{{host}}/api/temp/customer",
+						"method": "POST",
+						"header": [
+							{
+								"key": "api-token",
+								"value": "{{api-token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"测试\",\n\t\"mobile\":13818403077,\n\t\"address\":\"sdfas摩士大夫是的发送到发\",\n\t\"age\":20,\n\t\"gender\":1,\n\t\"oid\":540,\n\t\"belong\":\"some test\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "获取临时用户总数",
+					"request": {
+						"url": "{{host}}/api/temp/customer/all",
 						"method": "GET",
 						"header": [
 							{
