@@ -185,16 +185,23 @@ class ContractController extends Controller
             $contract->update();
             ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
         } else if ($user->hasRole('legal-affairs-manager')) {
-            $contract->status = 2;
             $parentId = $contract->applicantUser->parent_id;
             // BD主管建的直接已审批
             if ($parentId == $contract->applicant) {
                 $contract->handler = null;
                 $contract->status = 3;
+                if ($request->has('contract_number')) {
+                    $contract->contract_number = $request->contract_number;
+                }
+                if (!$request->has('bd_ma_message')) {
+                    abort(500, '没有填写意见');
+                }
+                $contract->bd_ma_message = $request->bd_ma_message;
                 $contract->update();
                 ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
                 return $this->response()->item($contract, new ContractTransformer())->setStatusCode(201);
             }
+            $contract->status = 2;
             $contract->handler = $parentId;
             if ($request->has('contract_number')) {
                 $contract->contract_number = $request->contract_number;
