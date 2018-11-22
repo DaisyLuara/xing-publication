@@ -1286,11 +1286,13 @@ export default {
         })
     },
     searchHandle() {
+      this.active = ''
       this.pagination.currentPage = 1
       this.setting.loading = true
       this.allChartData()
     },
     resetSearch() {
+      this.active = ''
       this.setting.loading = true
       this.allChartData()
     },
