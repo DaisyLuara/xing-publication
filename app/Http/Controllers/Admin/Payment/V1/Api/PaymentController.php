@@ -91,11 +91,12 @@ class PaymentController extends Controller
             }
         }
         //附件存储
-        $ids = explode(',', $request->ids);
-        foreach ($ids as $id) {
-            $payment->media()->attach($id);
+        if ($request->ids) {
+            $ids = explode(',', $request->ids);
+            foreach ($ids as $id) {
+                $payment->media()->attach($id);
+            }
         }
-
         return $this->response()->noContent();
     }
 
