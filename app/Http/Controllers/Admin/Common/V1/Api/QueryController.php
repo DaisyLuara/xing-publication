@@ -377,7 +377,7 @@ class QueryController extends Controller
     public function receiveDateQuery(Request $request, ContractReceiveDate $contractReceiveDate)
     {
         $query = $contractReceiveDate->query();
-        $contractReceiveDate = $query->where('contract_id', $request->id)->get();
+        $contractReceiveDate = $query->where('contract_id', $request->id)->whereRaw("invoice_receipt_id is null")->get();
         return $this->response()->collection($contractReceiveDate, new ContractReceiveDateTransformer());
     }
 
