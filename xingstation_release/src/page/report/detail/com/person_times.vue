@@ -1313,12 +1313,14 @@ export default {
     },
     searchHandle() {
       this.active = ''
+      this.times =''
       this.pagination.currentPage = 1
       this.setting.loading = true
       this.allChartData()
     },
     resetSearch() {
       this.active = ''
+      this.times =''
       this.setting.loading = true
       this.allChartData()
     },
