@@ -354,7 +354,7 @@ class ChartDataTimesController extends Controller
         $startClientDate = strtotime($startDate) * 1000;
         $endClientDate = strtotime($endDate) * 1000;
 
-        $table=$query->getModel()->getTable();
+        $table = $query->getModel()->getTable();
         $this->handleQuery($request, $query);
         $data = $query->whereRaw("$table.clientdate between '$startClientDate' and '$endClientDate'")
             ->groupBy('time')
@@ -418,9 +418,10 @@ class ChartDataTimesController extends Controller
      */
     public function getTopProjects(ChartDataRequest $request, Builder $query)
     {
+        $times = $request->times ? $request->times : 'looktimes';
         $this->handleQuery($request, $query, false);
         $table = $query->getModel()->getTable();
-        $data = $query->selectRaw("ar_product_list.name as product_name,belong,round(sum(looktimes)/count($table.date),0) as looktimes,round(sum(playtimes7)/count($table.date),0) as playtimes7,round(sum(playtimes15)/count($table.date),0) as playtimes15,round(sum(playtimes21)/count($table.date),0) as playtimes21, round(sum(outnum)/count($table.date),0) as outnum,round(sum(omo_scannum)/count($table.date),0) as omo_scannum,round(sum(lovetimes)/count($table.date),0) as lovetimes,round(sum(verifytimes)/count($table.date),0) as verifytimes")
+        $data = $query->selectRaw("ar_product_list.name as product_name,belong,round(sum($times)/count($table.date),0) as $times")
             ->groupBy('belong')
             ->orderBy('looktimes', 'desc')
             ->limit(10)
@@ -431,16 +432,7 @@ class ChartDataTimesController extends Controller
             $output[] = [
                 'display_name' => $item->product_name,
                 'index' => $item->belong,
-                'count' => [
-                    'looktimes' => $item->looktimes,
-                    'playtimes7' => $item->playtimes7,
-                    'playtimes15' => $item->playtimes15,
-                    'playtimes21' => $item->playtimes21,
-                    'outnum' => $item->outnum,
-                    'omo_scannum' => $item->omo_scannum,
-                    'lovetimes' => $item->lovetimes,
-                    'verifytimes' => $item->verifytimes
-                ]
+                'count' => $item->$times
             ];
         };
         return array_reverse($output);

@@ -1271,7 +1271,7 @@ export default {
                   }
                 },
                 data: response.map(r => {
-                  return r.count.looktimes
+                  return r.count
                 })
               }
             ]
@@ -1598,7 +1598,7 @@ export default {
               data: response.map(r => {
                 return {
                   name: r.display_name,
-                  value: event.name === '男' ? r.count.male : r.count.female
+                  value: r.count
                 }
               }),
               itemStyle: {
