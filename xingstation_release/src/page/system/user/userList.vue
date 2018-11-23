@@ -26,6 +26,20 @@
               placeholder="请输入搜索的名字" 
               clearable/>
           </el-form-item>
+          <el-form-item
+            label="">
+            <el-select 
+              v-model="filters.role_id" 
+              placeholder="请选择角色" 
+              filterable 
+              clearable>
+              <el-option
+                v-for="item in roleList"
+                :key="item.id"
+                :label="item.display_name"
+                :value="item.id"/>
+            </el-select>
+          </el-form-item>
           <el-button 
             type="primary" 
             size="small"
@@ -117,7 +131,9 @@ import {
   Pagination,
   Form,
   FormItem,
-  MessageBox
+  MessageBox,
+  Select,
+  Option
 } from 'element-ui'
 
 export default {
@@ -129,17 +145,22 @@ export default {
     'el-input': Input,
     'el-pagination': Pagination,
     'el-form': Form,
-    'el-form-item': FormItem
+    'el-form-item': FormItem,
+    'el-select': Select,
+    'el-option': Option
   },
   data() {
     return {
       userList: [],
+      roleList: [],
       setting: {
         loading: false,
         loadingText: '拼命加载中'
       },
       filters: {
-        phone: ''
+        phone: '',
+        role_id: '',
+        name: ''
       },
       pagination: {
         total: 100,
@@ -150,12 +171,23 @@ export default {
   },
   created() {
     this.getUserList()
+    this.getRoleList()
   },
   methods: {
     linkToEdit(currentUser) {
       this.$router.push({
         path: '/system/user/edit/' + currentUser.id
       })
+    },
+    getRoleList() {
+      user
+        .getManageableRoles(this)
+        .then(result => {
+          this.roleList = result.data
+        })
+        .catch(error => {
+          console.log(error)
+        })
     },
     getUserList() {
       if (this.setting.loading == true) {
@@ -166,7 +198,17 @@ export default {
         include: 'roles',
         page: pageNum,
         phone: this.filters.phone,
+        role_id: this.filters.role_id,
         name: this.filters.name
+      }
+      if (this.filters.role_id === '') {
+        delete args.role_id
+      }
+      if (this.filters.name === '') {
+        delete args.name
+      }
+      if (this.filters.phone === '') {
+        delete args.phone
       }
       this.setting.loadingText = '拼命加载中'
       this.setting.loading = true
