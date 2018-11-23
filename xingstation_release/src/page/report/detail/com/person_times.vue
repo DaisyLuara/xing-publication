@@ -13,7 +13,10 @@
           :key="item.number.index">
           <div class="person-btn-wrap">
             <div :class="'person-btn-top-'+ key"></div>
-            <div class="person-btn person-btn-left">
+            <div 
+              :class="{'person-btn-left':key === 0,'person-btn-bg': active === key}"
+              class="person-btn"
+              @click="typeHandle(key)">
               <div class="person-btn-title">{{ item.number.display_name }}</div>
               <div class="person-btn-count">{{ item.number.count ? item.number.count : 0 }}</div>
             </div>
@@ -113,6 +116,7 @@
           <div
             v-loading="userFlag"
             class="project-age-person-part">
+            <div style="font-size: 16px;">{{ projectAgeTitle }}</div>
             <chart
               ref="PersonprojectAgeChart"
               :options="PersonprojectAgeChart"/>
@@ -481,6 +485,8 @@ export default {
   },
   data() {
     return {
+      projectAgeTitle: '',
+      active: null,
       PersonprojectAgeChart: {
         tooltip: {
           trigger: 'item',
@@ -523,7 +529,7 @@ export default {
         },
         series: [
           {
-            name: '围观参与玩家人次',
+            // name: '围观参与玩家人次',
             type: 'bar',
             stack: '总量',
             label: {
@@ -1075,6 +1081,7 @@ export default {
         ]
       },
       projectTop: [],
+      times: '',
       dialogLoading: false
     }
   },
@@ -1087,6 +1094,41 @@ export default {
   },
   created() {},
   methods: {
+    typeHandle(type) {
+      switch (type) {
+        case 0:
+          this.times = ''
+          this.active = ''
+          this.allChartData()
+          break
+        case 1:
+          this.times = 'playtimes7'
+          this.getAge()
+          this.getCrowdTime()
+          this.getGender()
+          this.getProjectTop()
+          this.active = type
+          break
+        case 2:
+          this.times = 'playtimes15'
+          this.getAge()
+          this.getCrowdTime()
+          this.getGender()
+          this.getProjectTop()
+          this.active = type
+          break
+        case 3:
+          this.times = 'playtimes21'
+          this.getAge()
+          this.getCrowdTime()
+          this.getGender()
+          this.getProjectTop()
+          this.active = type
+          break
+        default:
+          break
+      }
+    },
     handleChange(val) {
       this.$nextTick(function() {
         this.$refs.crowdPersonChart.resize()
@@ -1177,11 +1219,33 @@ export default {
     clickProject(event, instance, echarts) {
       let project = this.projectTop[event.dataIndex]
       let belong = project.index
+      this.projectAgeTitle = project.display_name
       this.getProjectAge(belong)
     },
     getProjectTop() {
       this.projectPersonFlag = true
       let args = this.setArgs('6')
+      let type = this.times
+      let name = '围观参与玩家人次'
+      let color = ['#006eff']
+      switch (type) {
+        case 'playtimes7':
+          name = '7秒玩家人次'
+          color = ['#05a253']
+          break
+        case 'playtimes15':
+          name = '15秒玩家人次'
+          color = ['#ffdd00']
+          break
+        case 'playtimes21':
+          name = '21秒玩家人次'
+          color = ['#8e007d']
+          break
+        default:
+          name = '围观参与玩家人次'
+          color = ['#006eff']
+          break
+      }
       return chart
         .getTimesChartData(this, args)
         .then(response => {
@@ -1194,9 +1258,10 @@ export default {
                 return r.display_name
               })
             },
+            color: color,
             series: [
               {
-                name: '围观参与玩家人次',
+                name: name,
                 type: 'bar',
                 stack: '总量',
                 label: {
@@ -1206,12 +1271,13 @@ export default {
                   }
                 },
                 data: response.map(r => {
-                  return r.count.looktimes
+                  return r.count
                 })
               }
             ]
           })
           if (response.length > 0) {
+            this.projectAgeTitle = response[response.length - 1].display_name
             this.getProjectAge(response[response.length - 1].index)
           } else {
             this.getProjectAge()
@@ -1246,11 +1312,13 @@ export default {
         })
     },
     searchHandle() {
+      this.active = ''
       this.pagination.currentPage = 1
       this.setting.loading = true
       this.allChartData()
     },
     resetSearch() {
+      this.active = ''
       this.setting.loading = true
       this.allChartData()
     },
@@ -1488,7 +1556,12 @@ export default {
     onClick(event, instance, echarts) {
       this.dialogLoading = true
       this.shouldDialogShow = true
-      let args = this.setArgs('4')
+      let args = this.setArgs('3')
+      if (event.name === '男') {
+        args.gender = 'male'
+      } else if (event.name === '女') {
+        args.gender = 'female'
+      }
       chart.getTimesChartData(this, args).then(response => {
         let that = this
         let mergeChart = this.$refs.pieSexChart2
@@ -1525,7 +1598,7 @@ export default {
               data: response.map(r => {
                 return {
                   name: r.display_name,
-                  value: event.name === '男' ? r.count.male : r.count.female
+                  value: r.count
                 }
               }),
               itemStyle: {
@@ -1556,7 +1629,11 @@ export default {
         point_id: this.searchForm.point_id,
         workday: 0,
         weekend: 0,
-        holiday: 0
+        holiday: 0,
+        times: this.times
+      }
+      if (this.times === '') {
+        delete args.times
       }
       if (this.searchForm.timeFrame.length > 0) {
         for (let i = 0; i < this.searchForm.timeFrame.length; i++) {
@@ -2009,6 +2086,9 @@ export default {
       .person-btn-top-7 {
         background: #946f32;
       }
+      .person-btn-bg {
+        background: #f1e17d;
+      }
       .person-btn {
         text-align: center;
         padding: 10px 0;
@@ -2016,6 +2096,7 @@ export default {
         height: 100%;
         border: 1px solid #ccc;
         border-left: none;
+        cursor: pointer;
         .person-btn-title {
           font-size: 12px;
           color: #222;
