@@ -1225,6 +1225,27 @@ export default {
     getProjectTop() {
       this.projectPersonFlag = true
       let args = this.setArgs('6')
+      let type = this.times
+      let name = '围观参与玩家人次'
+      let color = ['#006eff']
+      switch (type) {
+        case 'playtimes7':
+          name = '7秒玩家人次'
+          color = ['#05a253']
+          break
+        case 'playtimes15':
+          name = '15秒玩家人次'
+          color = ['#ffdd00']
+          break
+        case 'playtimes21':
+          name = '21秒玩家人次'
+          color = ['#8e007d']
+          break
+        default:
+          name = '围观参与玩家人次'
+          color = ['#006eff']
+          break
+      }
       return chart
         .getTimesChartData(this, args)
         .then(response => {
@@ -1237,9 +1258,10 @@ export default {
                 return r.display_name
               })
             },
+            color: color,
             series: [
               {
-                // name: '围观参与玩家人次',
+                name: name,
                 type: 'bar',
                 stack: '总量',
                 label: {
