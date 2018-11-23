@@ -423,7 +423,7 @@ class ChartDataTimesController extends Controller
         $table = $query->getModel()->getTable();
         $data = $query->selectRaw("ar_product_list.name as product_name,belong,round(sum($times)/count($table.date),0) as $times")
             ->groupBy('belong')
-            ->orderBy('looktimes', 'desc')
+            ->orderBy($times, 'desc')
             ->limit(10)
             ->get();
 
