@@ -1755,7 +1755,12 @@ export default {
     onClick(event, instance, echarts) {
       this.dialogLoading = true
       this.shouldDialogShow = true
-      let args = this.setArgs('4')
+      let args = this.setArgs('5')
+      if (event.name === '男') {
+        args.gender = 'male'
+      } else if (event.name === '女') {
+        args.gender = 'female'
+      }
       chart.getChartData(this, args).then(response => {
         let that = this
         let mergeChart = this.$refs.pieChart2
