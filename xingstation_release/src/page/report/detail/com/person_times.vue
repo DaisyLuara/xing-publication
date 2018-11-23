@@ -116,6 +116,7 @@
           <div
             v-loading="userFlag"
             class="project-age-person-part">
+            <div style="font-size: 16px;">{{ projectAgeTitle }}</div>
             <chart
               ref="PersonprojectAgeChart"
               :options="PersonprojectAgeChart"/>
@@ -484,6 +485,7 @@ export default {
   },
   data() {
     return {
+      projectAgeTitle: '',
       active: null,
       PersonprojectAgeChart: {
         tooltip: {
@@ -527,7 +529,7 @@ export default {
         },
         series: [
           {
-            name: '围观参与玩家人次',
+            // name: '围观参与玩家人次',
             type: 'bar',
             stack: '总量',
             label: {
@@ -1217,6 +1219,7 @@ export default {
     clickProject(event, instance, echarts) {
       let project = this.projectTop[event.dataIndex]
       let belong = project.index
+      this.projectAgeTitle = project.display_name
       this.getProjectAge(belong)
     },
     getProjectTop() {
@@ -1236,7 +1239,7 @@ export default {
             },
             series: [
               {
-                name: '围观参与玩家人次',
+                // name: '围观参与玩家人次',
                 type: 'bar',
                 stack: '总量',
                 label: {
@@ -1252,6 +1255,7 @@ export default {
             ]
           })
           if (response.length > 0) {
+            this.projectAgeTitle = response[response.length - 1].display_name
             this.getProjectAge(response[response.length - 1].index)
           } else {
             this.getProjectAge()
