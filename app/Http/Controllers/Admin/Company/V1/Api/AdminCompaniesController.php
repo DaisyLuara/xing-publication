@@ -47,6 +47,7 @@ class AdminCompaniesController extends Controller
     {
         $companyData = [
             'name' => $request->name,
+            'internal_name' => $request->internal_name,
             'address' => $request->address,
             'description' => $request->description,
             'logo' => $request->logo
