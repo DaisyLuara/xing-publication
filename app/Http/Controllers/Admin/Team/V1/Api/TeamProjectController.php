@@ -64,8 +64,12 @@ class TeamProjectController extends Controller
 
     }
 
-    public function update(TeamProjectRequest $request)
+    public function update(TeamProjectRequest $request, TeamProject $teamProject)
     {
-        //
+        $teamProject->update($request->all());
+        $member = $request->member;
+        $teamProject->member()->detach();
+        $this->memberStore($member, $teamProject);
+        return $this->response()->noContent()->setStatusCode(200);
     }
 }
