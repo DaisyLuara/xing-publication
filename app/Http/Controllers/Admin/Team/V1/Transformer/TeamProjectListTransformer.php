@@ -38,6 +38,7 @@ class TeamProjectListTransformer extends TransformerAbstract
     public function transform(TeamProject $teamProject)
     {
         return [
+            'id'=>$teamProject->id,
             'project_name' => $teamProject->project_name,
             'belong' => $teamProject->belong,
             'applicant' => $teamProject->applicant,

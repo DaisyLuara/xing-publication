@@ -41,6 +41,9 @@ class TeamProjectController extends Controller
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
+        if(!$user->hasRole('project-manager')){
+
+        }
         $teamProject->fill((array_merge($request->all(),
             [
                 'status' => 1,

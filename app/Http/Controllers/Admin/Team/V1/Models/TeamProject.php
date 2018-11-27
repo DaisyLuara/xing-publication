@@ -15,7 +15,7 @@ class TeamProject extends Model
         'link_attribute',
         'h5_attribute',
         'xo_attribute',
-        'start_date',
+        'begin_date',
         'online_date',
         'launch_date',
         'remark',
