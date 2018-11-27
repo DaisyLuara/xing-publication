@@ -24,7 +24,7 @@ class TeamProject extends Model
 
     public function member()
     {
-        return $this->belongsToMany(User::class, 'team_project_members', 'team_project_id', 'user_id')->withPivot(['type','rate']);
+        return $this->belongsToMany(User::class, 'team_project_members', 'team_project_id', 'user_id')->withPivot(['user_name', 'type', 'rate']);
     }
 
     public function applicantUser()

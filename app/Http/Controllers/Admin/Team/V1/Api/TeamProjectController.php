@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Team\V1\Api;
 
 use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
 use App\Http\Controllers\Admin\Team\V1\Request\TeamProjectRequest;
+use App\Http\Controllers\Admin\Team\V1\Transformer\TeamProjectListTransformer;
 use App\Http\Controllers\Admin\Team\V1\Transformer\TeamProjectTransformer;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
@@ -33,7 +34,7 @@ class TeamProjectController extends Controller
 
         $teamProject = $query->paginate(10);
 
-        return $this->response()->paginator($teamProject, new TeamProjectTransformer());
+        return $this->response()->paginator($teamProject, new TeamProjectListTransformer());
     }
 
     public function store(TeamProjectRequest $request, TeamProject $teamProject)
@@ -57,7 +58,7 @@ class TeamProjectController extends Controller
     {
         foreach ($member as $key => $value) {
             foreach ($value as $item) {
-                $teamProject->member()->attach($item['user_id'], ['type' => $key, 'rate' => $item['rate']]);
+                $teamProject->member()->attach($item['user_id'], ['user_name' => $item['user_name'], 'type' => $key, 'rate' => $item['rate']]);
             }
         }
 

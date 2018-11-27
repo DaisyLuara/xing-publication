@@ -1,11 +1,18 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: yangqiang
+ * Date: 2018/11/27
+ * Time: 下午6:46
+ */
 
 namespace App\Http\Controllers\Admin\Team\V1\Transformer;
+
 
 use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
 use League\Fractal\TransformerAbstract;
 
-class TeamProjectTransformer extends TransformerAbstract
+class TeamProjectListTransformer extends TransformerAbstract
 {
 
     protected $availableIncludes = ['member'];
@@ -30,7 +37,6 @@ class TeamProjectTransformer extends TransformerAbstract
 
     public function transform(TeamProject $teamProject)
     {
-        $member = $teamProject->member->toArray();
         return [
             'project_name' => $teamProject->project_name,
             'belong' => $teamProject->belong,
@@ -45,29 +51,6 @@ class TeamProjectTransformer extends TransformerAbstract
             'launch_date' => $teamProject->launch_date,
             'remark' => $teamProject->remark,
             'status' => $this->statusMapping[$teamProject->status],
-            'member' => [
-                'interaction' => array_column(array_filter($member, function ($arr) {
-                    return $arr['pivot']['type'] == 'interaction';
-                }), 'pivot'),
-                'originality' => array_column(array_filter($member, function ($arr) {
-                    return $arr['pivot']['type'] == 'originality';
-                }), 'pivot'),
-                'h5' => array_column(array_filter($member, function ($arr) {
-                    return $arr['pivot']['type'] == 'h5';
-                }), 'pivot'),
-                'animation' => array_column(array_filter($member, function ($arr) {
-                    return $arr['pivot']['type'] == 'animation';
-                }), 'pivot'),
-                'plan' => array_column(array_filter($member, function ($arr) {
-                    return $arr['pivot']['type'] == 'plan';
-                }), 'pivot'),
-                'tester' => array_column(array_filter($member, function ($arr) {
-                    return $arr['pivot']['type'] == 'tester';
-                }), 'pivot'),
-                'operation' => array_column(array_filter($member, function ($arr) {
-                    return $arr['pivot']['type'] == 'operation';
-                }), 'pivot'),
-            ]
         ];
     }
 }
