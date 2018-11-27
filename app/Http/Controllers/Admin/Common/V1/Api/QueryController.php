@@ -2,6 +2,12 @@
 
 namespace App\Http\Controllers\Admin\Common\V1\Api;
 
+use App\Http\Controllers\Admin\Ad\V1\Models\AdTrade;
+use App\Http\Controllers\Admin\Ad\V1\Models\Advertisement;
+use App\Http\Controllers\Admin\Ad\V1\Models\Advertiser;
+use App\Http\Controllers\Admin\Ad\V1\Transformer\AdTradeTransformer;
+use App\Http\Controllers\Admin\Ad\V1\Transformer\AdvertisementTransformer;
+use App\Http\Controllers\Admin\Ad\V1\Transformer\AdvertiserTransformer;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
 use App\Http\Controllers\Admin\Company\V1\Transformer\CustomerTransformer;
@@ -10,7 +16,6 @@ use App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractReceiveDateTransformer;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
-use App\Models\Customer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\PolicyTransformer;
@@ -20,28 +25,24 @@ use App\Http\Controllers\Admin\Invoice\V1\Transformer\GoodsServiceTransformer;
 use App\Http\Controllers\Admin\Invoice\V1\Transformer\InvoiceCompanyTransformer;
 use App\Http\Controllers\Admin\Payment\V1\Models\PaymentPayee;
 use App\Http\Controllers\Admin\Payment\V1\Transformer\PaymentPayeeTransformer;
+use App\Http\Controllers\Admin\Point\V1\Models\Area;
+use App\Http\Controllers\Admin\Point\V1\Models\Market;
+use App\Http\Controllers\Admin\Point\V1\Models\Point;
+use App\Http\Controllers\Admin\Point\V1\Models\Scene;
 use App\Http\Controllers\Admin\Point\V1\Transformer\AreaTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\MarketTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\PointTransformer;
-use App\Http\Controllers\Admin\Project\V1\Transformer\ProjectTransformer;
-use App\Http\Controllers\Admin\Project\V1\Transformer\ProjectLaunchTplTransformer;
-use App\Http\Controllers\Admin\Ad\V1\Transformer\AdTradeTransformer;
-use App\Http\Controllers\Admin\Ad\V1\Transformer\AdvertiserTransformer;
-use App\Http\Controllers\Admin\Ad\V1\Transformer\AdvertisementTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\SceneTransformer;
-use App\Http\Controllers\Admin\User\V1\Transformer\ArUserTransformer;
-use App\Http\Controllers\Admin\Point\V1\Models\Scene;
-use App\Http\Controllers\Admin\Point\V1\Models\Market;
-use App\Http\Controllers\Admin\Point\V1\Models\Area;
-use App\Http\Controllers\Admin\Point\V1\Models\Point;
 use App\Http\Controllers\Admin\Project\V1\Models\Project;
 use App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTpl;
-use App\Http\Controllers\Admin\Ad\V1\Models\AdTrade;
-use App\Http\Controllers\Admin\Ad\V1\Models\Advertiser;
-use App\Http\Controllers\Admin\Ad\V1\Models\Advertisement;
+use App\Http\Controllers\Admin\Project\V1\Transformer\ProjectLaunchTplTransformer;
+use App\Http\Controllers\Admin\Project\V1\Transformer\ProjectTransformer;
 use App\Http\Controllers\Admin\User\V1\Models\ArUser;
+use App\Http\Controllers\Admin\User\V1\Transformer\ArUserTransformer;
 use App\Http\Controllers\Admin\User\V1\Transformer\UserTransformer;
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 
@@ -381,5 +382,14 @@ class QueryController extends Controller
         return $this->response()->collection($contractReceiveDate, new ContractReceiveDateTransformer());
     }
 
+    public function userQuery(Request $request, User $user)
+    {
+        $query = $user->query();
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+        $user = $query->get();
+        return $this->response()->collection($user, new UserTransformer());
+    }
 
 }
