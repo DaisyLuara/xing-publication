@@ -46,7 +46,7 @@ class TeamProjectController extends Controller
             });
         }
 
-        if (!$request->own) {
+        if ($request->has('own') && $request->own=='true') {
             $query->where(function ($query) use ($user) {
                 $query->where('applicant', $user->id)
                     ->orWhere(function ($q) use ($user) {
