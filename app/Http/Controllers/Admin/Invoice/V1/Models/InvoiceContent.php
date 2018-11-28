@@ -15,6 +15,7 @@ class InvoiceContent extends Model
 {
     protected $fillable = [
         'invoice_id',
+        'invoice_kind_id',
         'goods_service_id',
         'num',
         'price',
