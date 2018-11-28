@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\Face\V1\Models\FaceVerifyRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FacePlayCharacterRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FacePermeabilityRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceCouponRecord;
+use App\Http\Controllers\Admin\Team\V1\Models\TeamBonusRecord;
 
 /**
  * 围观人次清洗
@@ -1732,4 +1733,52 @@ function getDateFormatCharacter($date)
     } else {
         return '24:00';
     }
+}
+
+/**
+ * 绩效清洗
+ */
+function teamBonusClean()
+{
+    $date = TeamBonusRecord::query()->max('date');
+    $date = (new Carbon($date))->format('Y-m-d');
+    $currentDate = Carbon::now()->toDateString();
+    while ($date < $currentDate) {
+        $faceCount1 = DB::connection('ar')->table('xs_face_count_log as fcl')
+            ->join('ar_product_list as apl', 'belong', '=', 'versionname')
+            ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
+            ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
+            ->whereRaw("date_format(fcl.date, '%Y-%m-%d')='$date' and fcl.oid not in ('16', '19', '30', '31', '177','182','327','328','329','334','335','540') and aom.marketid <> '15'")
+            ->groupBy(DB::raw("date_format(fcl.date, '%Y-%m-%d'),fcl.oid,fcl.belong"))
+            ->orderBy('date')
+            ->orderBy('apl.id')
+            ->orderBy('looknum', 'desc')
+            ->selectRaw("date_format(fcl.date, '%Y-%m-%d') as date,apl.name as name,fcl.belong as belong,sum(playernum7)as playernum7,sum(playernum15) as playernum15 ,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum");
+
+        $faceCount2 = DB::connection('ar')->table(DB::raw("({$faceCount1->toSql()}) a,(select @gn := 0)  b"))
+            ->selectRaw("  @gn := case when (@date=date and @name = name) then @gn + 1 else 1 end gn,@date:=date date,@name := name name,belong,playernum7,playernum15,playernum21,omo_outnum");
+
+        $faceCount = DB::connection('ar')->table(DB::raw("({$faceCount2->toSql()}) c"))
+            ->selectRaw("name,belong,sum(playernum7) as playernum7,sum(playernum15) as playernum15,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum")
+            ->whereRaw("gn<=100")
+            ->groupBy('name')
+            ->get();
+
+        $count = [];
+        foreach ($faceCount as $item) {
+            $player7Money = round($item->playernum7 * 0.01, 0);
+            $player15Money = round($item->playernum15 * 0.02, 0);
+            $player21Money = round($item->playernum21 * 0.05, 0);
+            $uCPAMoney = round($item->omo_outnum * 0.2, 0);
+            $totalMoney = $player7Money + $player15Money + $player21Money + $uCPAMoney;
+            $count[] = [
+                'project_name' => $item->name,
+                'belong' => $item->belong,
+                'money' => $totalMoney
+            ];
+        }
+        DB::table('team_bonuses')->insert($count);
+        $date = (new Carbon($date))->addDay(1)->toDateString();
+    }
+    TeamBonusRecord::create(['date' => $currentDate]);
 }

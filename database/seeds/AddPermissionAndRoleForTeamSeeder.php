@@ -21,5 +21,8 @@ class AddPermissionAndRoleForTeamSeeder extends Seeder
         $projectMa = Role::findByName('project-manager');
         $projectMa->givePermissionTo(['team']);
 
+        $operation = Role::findByName('operation');
+        $operation->givePermissionTo('team');
+
     }
 }
