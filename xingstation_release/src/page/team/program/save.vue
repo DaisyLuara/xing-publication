@@ -32,7 +32,7 @@
                   v-for="item in projectList"
                   :key="item.alias"
                   :label="item.name"
-                  :value="item.alias + ',' +item.name"/>
+                  :value="item.alias + ',' + item.name"/>
               </el-select>
             </el-form-item>
           </el-col>
@@ -449,18 +449,37 @@ export default {
   },
   methods: {
     getProgramDetails() {
+      this.setting.loading = true
       getProgramDetails(this, this.programID)
         .then(res => {
-          console.log(res)
           this.programForm.applicant = res.applicant
           this.programForm.applicant_name = res.applicant_name
-          this.programForm.belong = res.project_name
+          this.getProject(res.project_name)
+          this.programForm.belong = res.belong + ',' + res.project_name
+          this.programForm.link_attribute = res.link_attribute
+          this.programForm.h5_attribute = res.h5_attribute
+          this.programForm.project_attribute = res.project_attribute
+          this.programForm.xo_attribute = res.xo_attribute
+          this.programForm.animation = res.member.animation
+          this.programForm.h5 = res.member.h5
+          this.programForm.interaction = res.member.interaction
+          this.programForm.originality = res.member.originality
+          this.programForm.operation = res.member.operation
+          this.programForm.plan = res.member.plan
+          this.programForm.tester = res.member.tester
+          if (res.member.animation.length > 0) {
+            res.member.animation.map(r => {
+              this.programForm.animate.push(r.id)
+            })
+          }
+          this.setting.loading = false
         })
         .catch(err => {
           this.$message({
             type: 'warning',
             message: err.response.data.message
           })
+          this.setting.loading = false
         })
     },
     modifyTotal() {
@@ -564,6 +583,7 @@ export default {
             this.addRate('h5', val, averageRate)
             break
           case 'animate':
+          console.log(33)
             this.addRate('animation', val, averageRate)
             break
           case 'whole':
@@ -665,24 +685,25 @@ export default {
             member.platform = this.programForm.platform
           }
           args.member = member
-          saveProgram(this, args)
-            .then(res => {
-              this.$message({
-                message: '提交成功',
-                type: 'success'
-              })
-              this.$router.push({
-                path: '/team/program'
-              })
-              this.setting.loading = false
-            })
-            .catch(err => {
-              this.setting.loading = false
-              this.$message({
-                message: err.response.data.message,
-                type: 'warning'
-              })
-            })
+          console.log(this.programForm)
+          // saveProgram(this, args)
+          //   .then(res => {
+          //     this.$message({
+          //       message: '提交成功',
+          //       type: 'success'
+          //     })
+          //     this.$router.push({
+          //       path: '/team/program'
+          //     })
+          //     this.setting.loading = false
+          //   })
+          //   .catch(err => {
+          //     this.setting.loading = false
+          //     this.$message({
+          //       message: err.response.data.message,
+          //       type: 'warning'
+          //     })
+          //   })
         }
       })
     },

@@ -198,7 +198,7 @@
           <el-table-column
             :show-overflow-tooltip="true"
             prop="status"
-            label="优惠券状态"
+            label="状态"
             min-width="100"/>
           <el-table-column 
             label="操作" 
