@@ -19,8 +19,8 @@ class TeamProjectController extends Controller
     public function index(TeamProjectRequest $request, TeamProject $teamProject)
     {
         $query = $teamProject->query();
-        if ($request->has('belong')) {
-            $query->where('belong', $request->belong);
+        if ($request->has('alias')) {
+            $query->where('belong', $request->alias);
         }
         if ($request->has('status')) {
             $query->where('status', $request->status);
@@ -30,6 +30,20 @@ class TeamProjectController extends Controller
         }
         if ($request->has('start_date_online') && $request->has('end_date_online')) {
             $query->whereRaw("begin_date between '$request->start_date_online' and '$request->end_date_online' ");
+        }
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
+
+        if (!$user->hasRole('tester') && !$user->hasRole('operation') && !$user->hasRole('legal-affairs-manager')) {
+            $query->whereHas('member', function ($q) use ($user) {
+                $q->where('id', $user->id);
+            });
+        }
+
+        if ($request->has('own')) {
+            $query->whereHas('member', function ($q) use ($user) {
+                $q->where('id', $user->id);
+            });
         }
 
         $teamProject = $query->paginate(10);
@@ -41,8 +55,8 @@ class TeamProjectController extends Controller
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if(!$user->hasRole('project-manager')){
-
+        if (!$user->hasRole('project-manager')) {
+            abort(403, '无操作权限');
         }
         $teamProject->fill((array_merge($request->all(),
             [
