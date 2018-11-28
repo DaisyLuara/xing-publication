@@ -103,10 +103,26 @@ class TeamProjectController extends Controller
 
     public function confirm(Request $request, TeamProject $teamProject)
     {
-        /** @var  $user \App\Models\User*/
-        $user=$this->user();
-        if($user->hasRole('tester')){
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
 
+        if ($user->hasRole('tester') && $teamProject->status == 1) {
+            $teamProject->status = 2;
+            $teamProject->update();
+            return $this->response()->noContent()->setStatusCode(200);
         }
+
+        if ($user->hasRole('operation') && $teamProject->status == 2) {
+            $teamProject->status = 3;
+            $teamProject->update();
+            return $this->response()->noContent()->setStatusCode(200);
+        }
+
+        if ($user->hasRole('legal-affairs-manager') && $teamProject->status == 3) {
+            $teamProject->status = 4;
+            $teamProject->update();
+            return $this->response()->noContent()->setStatusCode(200);
+        }
+        abort(403, '无操作权限');
     }
 }
