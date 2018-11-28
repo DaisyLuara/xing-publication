@@ -27,6 +27,9 @@ class InvoiceContentTransformer extends TransformerAbstract
 
     public function includeInvoiceKind(InvoiceContent $invoiceContent)
     {
+        if ($invoiceContent->invoiceKind) {
+            return null;
+        }
         return $this->item($invoiceContent->invoiceKind, new InvoiceKindTransformer());
     }
 
