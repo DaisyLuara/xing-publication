@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceVerifyRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FacePlayCharacterRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FacePermeabilityRecord;
+use App\Http\Controllers\Admin\Face\V1\Models\FaceCouponRecord;
 
 /**
  * 围观人次清洗
@@ -553,6 +554,51 @@ function phoneClean()
     FacePhoneRecord::create(['date' => $currentDate]);
 }
 
+/** 优惠券清洗 */
+function couponTimesClean()
+{
+    $date = FaceCouponRecord::query()->max('date');
+    $date = (new Carbon($date))->format('Y-m-d');
+    $currentDate = Carbon::now()->toDateString();
+    while ($date < $currentDate) {
+        $data = DB::table('coupons')
+            ->selectRaw("oid,belong,count(*) as coupontimes")
+            ->whereRaw("date_format(created_at,'%Y-%m-%d')='$date' and oid>0 ")
+            ->groupBy(DB::raw("oid,belong"))
+            ->get();
+
+        $allData = DB::table('coupons')
+            ->selectRaw("oid,belong,count(*) as coupontimes")
+            ->whereRaw("date_format(created_at,'%Y-%m-%d')='$date' and oid>0 ")
+            ->groupBy('oid')
+            ->get();
+        $count = [];
+        foreach ($data as $item) {
+            $count[] = [
+                'oid' => $item->oid,
+                'belong' => $item->belong,
+                'coupontimes' => $item->coupontimes,
+                'date' => $date,
+                'clientdate' => strtotime($date) * 1000
+            ];
+        }
+
+        foreach ($allData as $item) {
+            $count[] = [
+                'oid' => $item->oid,
+                'belong' => 'all',
+                'coupontimes' => $item->coupontimes,
+                'date' => $date,
+                'clientdate' => strtotime($date) * 1000
+            ];
+        }
+
+        DB::connection('ar')->table('xs_face_coupon_times')->insert($count);
+        $date = (new Carbon($date))->addDay(1)->toDateString();
+    }
+    FaceCouponRecord::create(['date' => $currentDate]);
+}
+
 /**
  * 核销清洗
  */
@@ -626,15 +672,22 @@ function mergeActiveOmoLook()
         $sql4 = DB::connection('ar')->table('xs_face_phone')
             ->whereRaw("clientdate='$clientDate'")
             ->selectRaw("oid,belong,phonenum,oanum");
+
         $sql5 = DB::connection('ar')->table('xs_face_phone_times')
             ->whereRaw("clientdate='$clientDate'")
             ->selectRaw("oid,belong,phonetimes,oatimes");
+
         $sql6 = DB::connection('ar')->table('xs_face_active_playtimes')
             ->whereRaw("clientdate='$clientDate'")
             ->selectRaw("oid,belong,playtimes7,playtimes15,playtimes21");
+
         $sql7 = DB::connection('ar')->table('xs_face_verify_times')
             ->whereRaw("clientdate='$clientDate'")
             ->selectRaw("oid,belong,verifytimes");
+
+        $sql8 = DB::connection('ar')->table('xs_face_coupon_times')
+            ->whereRaw("clientdate='$clientDate'")
+            ->selectRaw("oid,belong,coupontimes");
 
         $sql = DB::connection('ar')->table('xs_face_look_times')
             ->whereRaw("clientdate='$clientDate'")
@@ -669,7 +722,11 @@ function mergeActiveOmoLook()
                 $join->on('a.oid', '=', 'h.oid');
                 $join->on('a.belong', '=', 'h.belong');
             }, null, null, 'left')
-            ->selectRaw("a.oid as oid,a.belong as belong,looknum,playernum7,playernum15,playernum21,playernum,outnum,scannum,omo_outnum,omo_scannum,omo_sharenum,lovenum,phonenum,oanum,phonetimes,oatimes,playtimes7,playtimes15,playtimes21,looktimes,verifytimes")
+            ->join(DB::raw("({$sql8->toSql()}) as i"), function ($join) {
+                $join->on('a.oid', '=', 'i.oid');
+                $join->on('a.belong', '=', 'i.belong');
+            }, null, null, 'left')
+            ->selectRaw("a.oid as oid,a.belong as belong,looknum,playernum7,playernum15,playernum21,playernum,outnum,scannum,omo_outnum,omo_scannum,omo_sharenum,lovenum,phonenum,oanum,phonetimes,oatimes,playtimes7,playtimes15,playtimes21,looktimes,verifytimes,coupontimes")
             ->get();
         $count = [];
         foreach ($data as $item) {
@@ -697,6 +754,7 @@ function mergeActiveOmoLook()
                 'looktimes' => $item->looktimes,
                 'lovetimes' => $item->oatimes + $item->phonetimes,
                 'verifytimes' => $item->verifytimes,
+                'coupontimes' => $item->coupontimes,
                 'date' => $date,
                 'clientdate' => strtotime($date) * 1000
             ];

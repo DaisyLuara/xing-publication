@@ -34,6 +34,7 @@ class ActivePlayerJob implements ShouldQueue
         activePlayTimesClean();
         omoClean();
         phoneClean();
+        couponTimesClean();
         verifyTimesClean();
         mergeActiveOmoLook();
     }
