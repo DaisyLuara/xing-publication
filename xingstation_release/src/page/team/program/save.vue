@@ -7,7 +7,7 @@
       class="pane">
       <div 
         class="pane-title">
-        新建项目
+        {{ programID ? '修改项目' : '新增项目'}}
       </div>
       <el-form
         ref="programForm"
@@ -312,7 +312,7 @@
           <el-button 
             type="primary"
             @click="submit('programForm')">保存</el-button>
-          <el-button>返回</el-button>
+          <el-button @click="historyBack">返回</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -368,7 +368,7 @@ import {
   Tooltip
 } from 'element-ui'
 import search from 'service/search'
-import { saveProgram } from 'service'
+import { saveProgram, historyBack, getProgramDetails } from 'service'
 import { Cookies } from 'utils/cookies'
 
 export default {
@@ -437,12 +437,32 @@ export default {
     }
   },
   created() {
-    let user_info = JSON.parse(Cookies.get('user_info'))
-    this.programForm.applicant_name = user_info.name
-    this.programForm.applicant = user_info.id
+    this.programID = this.$route.params.uid
     this.getUserList()
+    if (this.programID) {
+      this.getProgramDetails()
+    } else {
+      let user_info = JSON.parse(Cookies.get('user_info'))
+      this.programForm.applicant_name = user_info.name
+      this.programForm.applicant = user_info.id
+    }
   },
   methods: {
+    getProgramDetails() {
+      getProgramDetails(this, this.programID)
+        .then(res => {
+          console.log(res)
+          this.programForm.applicant = res.applicant
+          this.programForm.applicant_name = res.applicant_name
+          this.programForm.belong = res.project_name
+        })
+        .catch(err => {
+          this.$message({
+            type: 'warning',
+            message: err.response.data.message
+          })
+        })
+    },
     modifyTotal() {
       this.disabledChange = false
     },
@@ -609,9 +629,9 @@ export default {
       }
     },
     submit(formName) {
-      console.log(this.programForm)
       this.$refs[formName].validate(valid => {
         if (valid) {
+          this.setting.loading = true
           let member = {}
           let args = {
             belong: this.programForm.belong.split(',')[0],
@@ -645,7 +665,6 @@ export default {
             member.platform = this.programForm.platform
           }
           args.member = member
-          console.log(args)
           saveProgram(this, args)
             .then(res => {
               this.$message({
@@ -666,6 +685,9 @@ export default {
             })
         }
       })
+    },
+    historyBack() {
+      historyBack()
     }
   }
 }
