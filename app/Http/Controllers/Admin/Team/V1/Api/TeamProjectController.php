@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\Team\V1\Transformer\TeamProjectListTransformer;
 use App\Http\Controllers\Admin\Team\V1\Transformer\TeamProjectTransformer;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class TeamProjectController extends Controller
 {
@@ -35,9 +36,9 @@ class TeamProjectController extends Controller
         $user = $this->user();
 
         if (!$user->hasRole('tester') && !$user->hasRole('operation') && !$user->hasRole('legal-affairs-manager')) {
-            $query->where(function ($query) use($user){
+            $query->where(function ($query) use ($user) {
                 $query->where('applicant', $user->id)
-                    ->orWhere(function ($q) use($user) {
+                    ->orWhere(function ($q) use ($user) {
                         $q->whereHas('member', function ($q) use ($user) {
                             $q->where('id', $user->id);
                         });
@@ -46,9 +47,9 @@ class TeamProjectController extends Controller
         }
 
         if (!$request->own) {
-            $query->where(function ($query) use($user){
+            $query->where(function ($query) use ($user) {
                 $query->where('applicant', $user->id)
-                    ->orWhere(function ($q) use($user) {
+                    ->orWhere(function ($q) use ($user) {
                         $q->whereHas('member', function ($q) use ($user) {
                             $q->where('id', $user->id);
                         });
@@ -98,5 +99,14 @@ class TeamProjectController extends Controller
         $teamProject->member()->detach();
         $this->memberStore($member, $teamProject);
         return $this->response()->noContent()->setStatusCode(200);
+    }
+
+    public function confirm(Request $request, TeamProject $teamProject)
+    {
+        /** @var  $user \App\Models\User*/
+        $user=$this->user();
+        if($user->hasRole('tester')){
+
+        }
     }
 }
