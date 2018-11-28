@@ -469,9 +469,31 @@ export default {
           this.programForm.tester = res.member.tester
           if (res.member.animation.length > 0) {
             res.member.animation.map(r => {
-              this.programForm.animate.push(r.id)
+              this.programForm.animate.push(r.user_id)
             })
           }
+          if (res.member.animation.length > 0) {
+            res.member.animation.map(r => {
+              this.programForm.animate.push(r.user_id)
+            })
+          }
+          if (res.member.animation.length > 0) {
+            res.member.animation.map(r => {
+              this.programForm.animate.push(r.user_id)
+            })
+          }
+          if (res.member.animation.length > 0) {
+            res.member.animation.map(r => {
+              this.programForm.animate.push(r.user_id)
+            })
+          }
+          if (res.member.animation.length > 0) {
+            res.member.animation.map(r => {
+              this.programForm.animate.push(r.user_id)
+            })
+          }
+          
+          console.log(this.programForm.animate)
           this.setting.loading = false
         })
         .catch(err => {

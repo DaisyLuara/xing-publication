@@ -50,4 +50,23 @@ const getProgramDetails = (context, id) => {
   })
 }
 
-export { getProgramList, saveProgram, modifyProgram, getProgramDetails }
+const confirmProgram = (context, id) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .post(HOST + TEAM_API + '/confirm/' + id)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+export {
+  getProgramList,
+  saveProgram,
+  modifyProgram,
+  getProgramDetails,
+  confirmProgram
+}
