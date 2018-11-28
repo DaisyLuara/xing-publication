@@ -14,7 +14,7 @@ use League\Fractal\TransformerAbstract;
 
 class InvoiceContentTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['goodsService'];
+    protected $availableIncludes = ['invoiceKind', 'goodsService'];
 
     public function transform(InvoiceContent $invoiceContent)
     {
@@ -23,6 +23,11 @@ class InvoiceContentTransformer extends TransformerAbstract
             'price' => $invoiceContent->price,
             'money' => $invoiceContent->money,
         ];
+    }
+
+    public function includeInvoiceKind(InvoiceContent $invoiceContent)
+    {
+        return $this->item($invoiceContent->invoiceKind, new InvoiceKindTransformer());
     }
 
     public function includeGoodsService(InvoiceContent $invoiceContent)

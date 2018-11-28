@@ -22,6 +22,11 @@ class InvoiceContent extends Model
     ];
     public $timestamps = false;
 
+    public function invoiceKind()
+    {
+        return $this->belongsTo(InvoiceKind::class, 'invoice_kind_id', 'id');
+    }
+
     public function goodsService()
     {
         return $this->belongsTo(GoodsService::class, 'goods_service_id', 'id');
