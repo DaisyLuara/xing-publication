@@ -19,7 +19,6 @@ class CompanyRequest extends FormRequest
                     'name' => 'required|string',
                     'address' => 'required|string',
                     'phone' => 'filled|exists:customers,phone',
-                    'telephone' => 'filled|exists:customers,telephone',
                 ];
                 break;
             case 'PATCH':
