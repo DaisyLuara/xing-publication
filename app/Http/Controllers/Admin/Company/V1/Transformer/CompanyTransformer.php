@@ -15,6 +15,7 @@ class CompanyTransformer extends TransformerAbstract
         return [
             'id' => $company->id,
             'name' => $company->name,
+            'internal_name' => $company->internal_name,
             'address' => $company->address,
             'status' => (int)$company->status,
             'description' => $company->description,

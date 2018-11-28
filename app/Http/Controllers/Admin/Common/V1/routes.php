@@ -67,6 +67,7 @@ $api->version('v1', [
             $api->get('scene/query', 'QueryController@sceneQueryIndex');
             $api->get('policy/query', 'QueryController@policyQuery');
             $api->get('contract/query', 'QueryController@contractQuery');
+            $api->get('invoice_kind/query', 'QueryController@invoiceKindQuery');
             $api->get('goods_service/query', 'QueryController@goodsServiceQuery');
             $api->get('bd_manager/query', 'QueryController@bdManagerQuery');
             $api->get('legal_manager/query', 'QueryController@legalManagerQuery');

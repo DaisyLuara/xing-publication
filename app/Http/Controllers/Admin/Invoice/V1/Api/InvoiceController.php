@@ -99,9 +99,11 @@ class InvoiceController extends Controller
             InvoiceContent::query()->create($item);
         }
         //文件存储
-        $ids = explode(',', $request->ids);
-        foreach ($ids as $id) {
-            $invoice->media()->attach($id);
+        if($request->ids){
+            $ids = explode(',', $request->ids);
+            foreach ($ids as $id) {
+                $invoice->media()->attach($id);
+            }
         }
         return $this->response()->item($invoice, new InvoiceTransformer())->setStatusCode(201);
     }

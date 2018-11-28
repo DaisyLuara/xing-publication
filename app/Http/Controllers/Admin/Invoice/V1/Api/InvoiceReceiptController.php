@@ -99,7 +99,7 @@ class InvoiceReceiptController extends Controller
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if ($user->hasRole('legal-affairs') && $user->hasRole('legal-affairs-manager')) {
+        if (!$user->hasRole('legal-affairs') && !$user->hasRole('legal-affairs-manager') && !$user->hasRole('operation')) {
             abort(403, '无操作权限');
         }
         $contractReceiveDate = ContractReceiveDate::find($request->receive_date_id);
