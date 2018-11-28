@@ -90,12 +90,14 @@
           <span 
             class="label">
             总数:{{ pagination.total }} 
-            <el-checkbox 
+            <el-checkbox
+              v-if="role.name === 'tester' || role.name === 'legal-affairs-manager' || role.name === 'operation'" 
               v-model="own"
               @change="meSearch">关于我的</el-checkbox>
           </span>
           <div>
-            <el-button 
+            <el-button
+              v-if="role.name === 'project-manager'" 
               type="success" 
               size="small"
               @click="addProgram()">新增项目</el-button>
@@ -196,17 +198,20 @@
           <el-table-column
             :show-overflow-tooltip="true"
             prop="status"
-            label="优惠券状态"
+            label="状态"
             min-width="100"/>
           <el-table-column 
             label="操作" 
             min-width="150">
             <template 
               slot-scope="scope">
-              <el-button 
+              <el-button
+                v-if="role.name === 'project-manager'" 
                 size="small" 
-                type="warning">修改</el-button>
+                type="warning"
+                @click="editHandle(scope.row)">修改</el-button>
               <el-button 
+                v-if="(role.name === 'tester' && scope.row.status === '进行中') || (role.name === 'operation' && scope.row.status === '测试确认') || (role.name === 'legal-affairs-manager' && scope.row.status === '运营确认')" 
                 size="small">确认</el-button>
             </template>
           </el-table-column>
@@ -229,6 +234,7 @@
 <script>
 import { getProgramList } from 'service'
 import search from 'service/search'
+import { Cookies } from 'utils/cookies'
 import {
   Button,
   Input,
@@ -260,7 +266,7 @@ export default {
   },
   data() {
     return {
-      own: false,
+      own: '',
       loading: true,
       templateVisible: false,
       filters: {
@@ -278,6 +284,7 @@ export default {
         pageSize: 10,
         currentPage: 1
       },
+      role: '',
       statusList: [
         {
           id: 1,
@@ -352,8 +359,15 @@ export default {
   },
   created() {
     this.getProgramList()
+    let user_info = JSON.parse(Cookies.get('user_info'))
+    this.role = user_info.roles.data[0]
   },
   methods: {
+    editHandle(data) {
+      this.$router.push({
+        path: 'program/edit/' + data.id
+      })
+    },
     addProgram() {
       this.$router.push({
         path: 'program/add'
@@ -377,6 +391,9 @@ export default {
       if (this.filters.alias === '') {
         delete args.alias
       }
+      if (this.own === '') {
+        delete args.own
+      }
       if (!this.filters.status) {
         delete args.status
       }
@@ -391,6 +408,7 @@ export default {
       getProgramList(this, args)
         .then(res => {
           this.tableData = res.data
+          this.pagination.total = res.meta.pagination.total
           this.setting.loading = false
         })
         .catch(err => {

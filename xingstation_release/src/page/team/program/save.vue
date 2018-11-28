@@ -7,7 +7,7 @@
       class="pane">
       <div 
         class="pane-title">
-        新建项目
+        {{ programID ? '修改项目' : '新增项目'}}
       </div>
       <el-form
         ref="programForm"
@@ -32,7 +32,7 @@
                   v-for="item in projectList"
                   :key="item.alias"
                   :label="item.name"
-                  :value="item.alias + ',' +item.name"/>
+                  :value="item.alias + ',' + item.name"/>
               </el-select>
             </el-form-item>
           </el-col>
@@ -312,7 +312,7 @@
           <el-button 
             type="primary"
             @click="submit('programForm')">保存</el-button>
-          <el-button>返回</el-button>
+          <el-button @click="historyBack">返回</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -368,7 +368,12 @@ import {
   Tooltip
 } from 'element-ui'
 import search from 'service/search'
-import { saveProgram } from 'service'
+import {
+  saveProgram,
+  historyBack,
+  getProgramDetails,
+  modifyProgram
+} from 'service'
 import { Cookies } from 'utils/cookies'
 
 export default {
@@ -437,12 +442,82 @@ export default {
     }
   },
   created() {
-    let user_info = JSON.parse(Cookies.get('user_info'))
-    this.programForm.applicant_name = user_info.name
-    this.programForm.applicant = user_info.id
+    this.programID = this.$route.params.uid
     this.getUserList()
+    if (this.programID) {
+      this.getProgramDetails()
+    } else {
+      let user_info = JSON.parse(Cookies.get('user_info'))
+      this.programForm.applicant_name = user_info.name
+      this.programForm.applicant = user_info.id
+    }
   },
   methods: {
+    getProgramDetails() {
+      this.setting.loading = true
+      getProgramDetails(this, this.programID)
+        .then(res => {
+          this.programForm.applicant = res.applicant
+          this.programForm.applicant_name = res.applicant_name
+          this.getProject(res.project_name)
+          this.programForm.belong = res.belong + ',' + res.project_name
+          this.programForm.link_attribute = res.link_attribute
+          this.programForm.h5_attribute = res.h5_attribute
+          this.programForm.project_attribute = res.project_attribute
+          this.programForm.xo_attribute = res.xo_attribute
+          this.programForm.animation = res.member.animation
+          this.programForm.h5 = res.member.h5
+          this.programForm.interaction = res.member.interaction
+          this.programForm.originality = res.member.originality
+          this.programForm.operation = res.member.operation
+          this.programForm.plan = res.member.plan
+          this.programForm.tester = res.member.tester
+          this.programForm.remark = res.remark
+          if (res.member.animation.length > 0) {
+            res.member.animation.map(r => {
+              this.programForm.animate.push(r.user_id)
+            })
+          }
+          if (res.member.plan.length > 0) {
+            res.member.plan.map(r => {
+              this.programForm.whole.push(r.user_id)
+            })
+          }
+          if (res.member.interaction.length > 0) {
+            res.member.interaction.map(r => {
+              this.programForm.interactionVal.push(r.user_id)
+            })
+          }
+          if (res.member.h5.length > 0) {
+            res.member.h5.map(r => {
+              this.programForm.H5Val.push(r.user_id)
+            })
+          }
+          if (res.member.tester.length > 0) {
+            res.member.tester.map(r => {
+              this.programForm.test.push(r.user_id)
+            })
+          }
+          if (res.member.operation.length > 0) {
+            res.member.operation.map(r => {
+              this.programForm.platform.push(r.user_id)
+            })
+          }
+          if (res.member.originality.length > 0) {
+            res.member.originality.map(r => {
+              this.programForm.creative.push(r.user_id)
+            })
+          }
+          this.setting.loading = false
+        })
+        .catch(err => {
+          this.$message({
+            type: 'warning',
+            message: err.response.data.message
+          })
+          this.setting.loading = false
+        })
+    },
     modifyTotal() {
       this.disabledChange = false
     },
@@ -544,6 +619,7 @@ export default {
             this.addRate('h5', val, averageRate)
             break
           case 'animate':
+            console.log(33)
             this.addRate('animation', val, averageRate)
             break
           case 'whole':
@@ -609,9 +685,9 @@ export default {
       }
     },
     submit(formName) {
-      console.log(this.programForm)
       this.$refs[formName].validate(valid => {
         if (valid) {
+          this.setting.loading = true
           let member = {}
           let args = {
             belong: this.programForm.belong.split(',')[0],
@@ -641,31 +717,56 @@ export default {
           if (this.programForm.tester.length > 0) {
             member.tester = this.programForm.tester
           }
-          if (this.programForm.platform.length > 0) {
-            member.platform = this.programForm.platform
+          if (this.programForm.operation.length > 0) {
+            member.operation = this.programForm.operation
           }
           args.member = member
+          console.log(this.programForm)
           console.log(args)
-          saveProgram(this, args)
-            .then(res => {
-              this.$message({
-                message: '提交成功',
-                type: 'success'
+          if (this.programID) {
+            modifyProgram(this, args, this.programID)
+              .then(res => {
+                this.$message({
+                  message: '修改成功',
+                  type: 'success'
+                })
+                this.$router.push({
+                  path: '/team/program'
+                })
+                this.setting.loading = false
               })
-              this.$router.push({
-                path: '/team/program'
+              .catch(err => {
+                this.setting.loading = false
+                this.$message({
+                  message: err.response.data.message,
+                  type: 'warning'
+                })
               })
-              this.setting.loading = false
-            })
-            .catch(err => {
-              this.setting.loading = false
-              this.$message({
-                message: err.response.data.message,
-                type: 'warning'
+          } else {
+            saveProgram(this, args)
+              .then(res => {
+                this.$message({
+                  message: '提交成功',
+                  type: 'success'
+                })
+                this.$router.push({
+                  path: '/team/program'
+                })
+                this.setting.loading = false
               })
-            })
+              .catch(err => {
+                this.setting.loading = false
+                this.$message({
+                  message: err.response.data.message,
+                  type: 'warning'
+                })
+              })
+          }
         }
       })
+    },
+    historyBack() {
+      historyBack()
     }
   }
 }

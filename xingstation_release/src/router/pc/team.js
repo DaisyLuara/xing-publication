@@ -32,14 +32,24 @@ let router = {
         },
         {
           path: 'add',
-          name: '新建节目',
+          name: '新增节目',
           meta: {
-            title: '新建节目',
+            title: '新增节目',
             permission: ''
           },
           component: () =>
             import(/* webpackChunkName: "page/team/program/save" */ 'page/team/program/save')
         },
+        {
+          path: 'edit/:uid',
+          name: '修改节目',
+          meta: {
+            title: '修改节目',
+            permission: ''
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/team/program/save" */ 'page/team/program/save')
+        }
       ]
     }
     // {
