@@ -13,6 +13,8 @@ $api->version('v1', [
             $api->get('team_project', 'TeamProjectController@index');
             $api->post('team_project', 'TeamProjectController@store');
             $api->patch('team_project/{team_project}', 'TeamProjectController@update');
+
+            $api->post('team_project/auditing/{team_project}','TeamProjectController@auditing');
         });
     });
 
