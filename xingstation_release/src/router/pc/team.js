@@ -51,30 +51,37 @@ let router = {
             import(/* webpackChunkName: "page/team/program/save" */ 'page/team/program/save')
         }
       ]
+    },
+    {
+      path: 'platform',
+      name: '平台项目',
+      redirect: 'platform',
+      meta: {
+        title: '平台项目'
+      },
+      component: () =>
+        import(/* webpackChunkName: "page/team/platform/routerView" */ 'page/team/platform/routerView'),
+      children: [
+        {
+          path: '/',
+          name: '平台项目列表',
+          meta: {
+            title: '平台项目列表'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/team/platform/index" */ 'page/team/platform/index')
+        },
+        {
+          path: 'detail',
+          name: '平台项目详细',
+          meta: {
+            title: '平台项目详细'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/team/platform/detail" */ 'page/team/platform/detail')
+        }
+      ]
     }
-    // {
-    //   path: 'list',
-    //   name: '成员管理',
-    //   redirect: 'list/index',
-    //   meta: {
-    //     title: '成员管理',
-    //     permission: ''
-    //   },
-    //   component: () =>
-    //     import(/* webpackChunkName: "page/team/list/routerView" */ 'page/team/list/routerView'),
-    //   children: [
-    //     {
-    //       path: 'index',
-    //       name: '成员列表',
-    //       meta: {
-    //         title: '成员列表',
-    //         permission: ''
-    //       },
-    //       component: () =>
-    //         import(/* webpackChunkName: "page/team/list/index" */ 'page/team/list/index')
-    //     }
-    //   ]
-    // }
   ]
 }
 

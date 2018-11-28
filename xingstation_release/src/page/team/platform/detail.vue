@@ -7,7 +7,6 @@
       class="program-list-wrap">
       <div 
         class="program-content-wrap">
-        <!-- 搜索 -->
         <div 
           class="search-wrap">
           <el-form 
@@ -15,50 +14,11 @@
             :model="filters" 
             :inline="true">
             <el-form-item 
-              label=""
-              prop="alias">
-              <el-select 
-                v-model="filters.alias" 
-                :loading="searchLoading"
-                remote
-                :remote-method="getProject"
-                placeholder="请输入节目名称" 
-                filterable 
-                clearable>
-                <el-option
-                  v-for="item in projectList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.alias"/>
-              </el-select>
-            </el-form-item>
-            <el-form-item 
               label="" 
               prop="status">
-              <el-select 
-                v-model="filters.status" 
-                placeholder="请选择状态" 
-                clearable
-                class="coupon-form-select">
-                <el-option
-                  v-for="item in statusList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"/>
-              </el-select>
-            </el-form-item>
-            <el-form-item 
-              label="" 
-              prop="beginDate">
-              <el-date-picker
-                v-model="filters.beginDate"
-                :clearable="false"
-                :picker-options="pickerOptions"
-                type="daterange"
-                start-placeholder="开始时间"
-                end-placeholder="结束时间"
-                align="right">
-              </el-date-picker>
+              <el-input 
+                v-model="filters.applicant" 
+                placeholder="申请人"/>
             </el-form-item>
             <el-form-item 
               label="" 
@@ -86,23 +46,22 @@
             </el-form-item>
           </el-form>
         </div>
-        <!-- 表单 -->
         <div 
           class="total-wrap">
           <span 
             class="label">
             总数:{{ pagination.total }} 
-            <el-checkbox
-              v-if="role.name === 'tester' || role.name === 'legal-affairs-manager' || role.name === 'operation'" 
-              v-model="own"
-              @change="meSearch">关于我的</el-checkbox>
           </span>
           <div>
             <el-button
               v-if="role.name === 'project-manager'" 
+              type="primary" 
+              size="small">详情</el-button>
+            <el-button
+              v-if="role.name === 'project-manager'" 
               type="success" 
               size="small"
-              @click="addProgram()">新增项目</el-button>
+              @click="applyReward">申请奖励</el-button>
           </div>
         </div>
         <el-table 
@@ -121,7 +80,7 @@
                   <span>{{ scope.row.id }}</span> 
                 </el-form-item>
                 <el-form-item 
-                  label="节目名称">
+                  label="平台名称">
                   <span>{{ scope.row.project_name }}</span> 
                 </el-form-item>
                 <el-form-item 
@@ -135,30 +94,6 @@
                 <el-form-item 
                   label="上线时间">
                   <span>{{ scope.row.online_date }}</span> 
-                </el-form-item>
-                <el-form-item 
-                  label="投放时间">
-                  <span>{{ scope.row.launch_date }}</span> 
-                </el-form-item>
-                <el-form-item 
-                  label="联动属性">
-                  <span>{{ scope.row.link_attribute }}</span> 
-                </el-form-item>
-                <el-form-item 
-                  label="节目属性">
-                  <span>{{ scope.row.project_attribute }}</span> 
-                </el-form-item>
-                <el-form-item 
-                  label="H5属性">
-                  <span>{{ scope.row.h5_attribute }}</span> 
-                </el-form-item>
-                <el-form-item 
-                  label="小偶属性">
-                  <span>{{ scope.row.xo_attribute }}</span> 
-                </el-form-item>
-                <el-form-item 
-                  label="备注">
-                  <span>{{ scope.row.remark }}</span> 
                 </el-form-item>
                 <el-form-item 
                   label="状态">
@@ -175,7 +110,7 @@
           <el-table-column
             :show-overflow-tooltip="true"
             prop="project_name"
-            label="节目名称"
+            label="平台名称"
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
@@ -194,11 +129,6 @@
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="launch_date"
-            label="投放时间"
-            min-width="100"/>
-          <el-table-column
-            :show-overflow-tooltip="true"
             prop="status"
             label="状态"
             min-width="100"/>
@@ -207,14 +137,15 @@
             min-width="150">
             <template 
               slot-scope="scope">
+                <!-- v-if="role.name === 'legal-affairs-manager'"  -->
               <el-button
                 size="small" 
                 type="warning"
-                @click="editHandle(scope.row)">修改</el-button>
+                @click="rejectHandle(scope.row)">驳回</el-button>
+                <!-- v-if="role.name === 'legal-affairs-manager'"  -->
               <el-button 
-                v-if="(role.name === 'tester' && scope.row.status === '进行中') || (role.name === 'operation' && scope.row.status === '测试确认') || (role.name === 'legal-affairs-manager' && scope.row.status === '运营确认')" 
                 size="small"
-                @click="confirmProgram(scope.row)">确认</el-button>
+                @click="allocationHandle(scope.row)">分配</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -230,6 +161,56 @@
         </div>
       </div>  
     </div>
+    <el-dialog 
+      :visible.sync="applyFormVisible"
+      title="申请奖金" 
+      :show-close="false">
+      <el-form 
+        :model="applyForm"
+        label-width="100px">
+        <el-form-item label="申请人">
+          <el-input 
+            v-model="applyForm.applicant_name"
+            :disabled="true"/>
+        </el-form-item>
+        <el-form-item label="平台项目名称">
+          <el-input v-model="applyForm.project_name"/>
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input 
+            v-model="applyForm.remark"
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 4}"
+            :maxlength="400"
+            rows="2"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="applyFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="applyFormVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog 
+      :visible.sync="allocationFormVisible"
+      title="申请奖金" 
+      :show-close="false">
+      <el-form 
+        :model="allocationForm"
+        label-width="100px">
+        <el-form-item label="可发奖金">
+          <el-input 
+            v-model="allocationForm.total"
+            :disabled="true"/>
+        </el-form-item>
+        <el-form-item label="分配数额">
+          <el-input v-model="allocationForm.count"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="allocationFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="allocationFormVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -249,7 +230,8 @@ import {
   FormItem,
   MessageBox,
   DatePicker,
-  Checkbox
+  Checkbox,
+  Dialog
 } from 'element-ui'
 
 export default {
@@ -264,17 +246,28 @@ export default {
     'el-option': Option,
     'el-form-item': FormItem,
     'el-date-picker': DatePicker,
-    'el-checkbox': Checkbox
+    'el-checkbox': Checkbox,
+    'el-dialog': Dialog
   },
   data() {
     return {
-      own: '',
+      allocationFormVisible: false,
+      allocationForm: {
+        total: 100,
+        count: ''
+      },
+      applyForm: {
+        applicant: '',
+        applicant_name: '',
+        project_name: '',
+        remark: ''
+      },
+      applyFormVisible: false,
       loading: true,
       templateVisible: false,
       filters: {
         alias: '',
         status: '',
-        beginDate: [],
         onlineDate: []
       },
       setting: {
@@ -290,19 +283,15 @@ export default {
       statusList: [
         {
           id: 1,
-          name: '进行中'
+          name: '申请中'
         },
         {
           id: 2,
-          name: '测试确认'
+          name: '已驳回'
         },
         {
           id: 3,
-          name: '运营确认'
-        },
-        {
-          id: 4,
-          name: '主管确认'
+          name: '已分配'
         }
       ],
       pickerOptions: {
@@ -354,56 +343,52 @@ export default {
           }
         ]
       },
-      tableData: [],
+      tableData: [
+        {
+          id: 1,
+          project_name: '测试',
+          applicant_name: '测试',
+          begin_date: '2018-09-09',
+          online_date: '2018-10-10',
+          status: '申请中'
+        }
+      ],
       projectList: [],
       searchLoading: false
     }
   },
   created() {
-    this.getProgramList()
+    // this.getProgramList()
     let user_info = JSON.parse(Cookies.get('user_info'))
     this.role = user_info.roles.data[0]
+    this.applyForm.applicant_name = user_info.name
+    this.applyForm.applicant = user_info.id
   },
   methods: {
-    confirmProgram(row) {
-      this.$confirm('确认通过吗?', '提示', {
+    allocationHandle(row) {
+      this.allocationFormVisible = true
+    },
+    rejectHandle() {
+      this.$confirm('确认驳回吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(() => {
-          let id = row.id
-          confirmProgram(this, id)
-            .then(res => {
-              this.$message({
-                type: 'success',
-                message: '确认成功!'
-              })
-              this.getProgramList()
-            })
-            .catch(err => {
-              this.$message({
-                type: 'warning',
-                message: err.response.data.message
-              })
-            })
+          this.$message({
+            type: 'success',
+            message: '驳回成功!'
+          })
         })
         .catch(() => {
           this.$message({
             type: 'info',
-            message: '已取消确认'
+            message: '已取消驳回'
           })
         })
     },
-    editHandle(data) {
-      this.$router.push({
-        path: 'program/edit/' + data.id
-      })
-    },
-    addProgram() {
-      this.$router.push({
-        path: 'program/add'
-      })
+    applyReward() {
+      this.applyFormVisible = true
     },
     meSearch() {
       this.getProgramList()
@@ -414,24 +399,14 @@ export default {
         page: this.pagination.currentPage,
         alias: this.filters.alias,
         status: this.filters.status,
-        start_date_begin: this.handleDateTransform(this.filters.beginDate[0]),
-        end_date_begin: this.handleDateTransform(this.filters.beginDate[1]),
         start_date_online: this.handleDateTransform(this.filters.onlineDate[0]),
-        end_date_online: this.handleDateTransform(this.filters.onlineDate[1]),
-        own: this.own
+        end_date_online: this.handleDateTransform(this.filters.onlineDate[1])
       }
       if (this.filters.alias === '') {
         delete args.alias
       }
-      if (this.own === '') {
-        delete args.own
-      }
       if (!this.filters.status) {
         delete args.status
-      }
-      if (JSON.stringify(this.filters.beginDate) === '[]') {
-        delete args.start_date_begin
-        delete args.end_date_begin
       }
       if (JSON.stringify(this.filters.onlineDate) === '[]') {
         delete args.start_date_online
@@ -477,15 +452,15 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields()
       this.pagination.currentPage = 1
-      this.getProgramList()
+      // this.getProgramList()
     },
     changePage(currentPage) {
       this.pagination.currentPage = currentPage
-      this.getProgramList()
+      // this.getProgramList()
     },
     search() {
       this.pagination.currentPage = 1
-      this.getProgramList()
+      // this.getProgramList()
     },
     handleDateTransform(valueDate) {
       let date = new Date(valueDate)

@@ -301,7 +301,7 @@
               <el-input
                 v-model="programForm.remark"
                 :autosize="{ minRows: 2, maxRows: 4}"
-                :maxlength="180"
+                :maxlength="400"
                 type="textarea"
                 placeholder="请填写项目说明"
                 class="text-input"/>
@@ -309,14 +309,20 @@
           </el-col>
         </el-row>
         <el-form-item>
-          <el-button 
+          <!-- 产品经理可以保存 -->
+          <el-button
+            v-if="role.name === 'project-manager'" 
             type="primary"
             @click="submit('programForm')">保存</el-button>
           <el-button @click="historyBack">返回</el-button>
         </el-form-item>
       </el-form>
     </div>
-    <el-dialog title="绩效更改" :visible.sync="dialogFormVisible">
+    <!-- 修改比列 -->
+    <el-dialog 
+      :visible.sync="dialogFormVisible"
+      :show-close="false"
+      title="绩效更改">
       <el-form 
         :model="form"
         label-width="90px">
@@ -331,7 +337,9 @@
               <div slot="content">总点数不可调配只有指定权限可调配，固定比例是按人头均分，<br/>如有调整请在下面人员后面做调整，调整比例总和不可大于总点数</div>
               <i class="el-icon-question hint"/>
             </el-tooltip>
-            <span 
+            <!-- 法务主管可操作 -->
+            <span
+              v-if="role.name === 'legal-affairs-manager'"  
               class="modify-change"
               @click="modifyTotal">修改</span>
           </el-col>
@@ -344,7 +352,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button @click="dialogFormVisible = false,disabledChange = true">取 消</el-button>
         <el-button type="primary" @click="rateSubmit">确 定</el-button>
       </div>
     </el-dialog>
@@ -423,6 +431,7 @@ export default {
         test: [],
         animate: [],
         whole: [],
+        operation: [],
         interaction: [],
         originality: [],
         h5: [],
@@ -438,16 +447,18 @@ export default {
       testRate: 0.12,
       platformRate: 0.04,
       animateRate: 0.3,
-      wholeRate: 0.06
+      wholeRate: 0.06,
+      role: null
     }
   },
   created() {
     this.programID = this.$route.params.uid
+    let user_info = JSON.parse(Cookies.get('user_info'))
+    this.role = user_info.roles.data[0]
     this.getUserList()
     if (this.programID) {
       this.getProgramDetails()
     } else {
-      let user_info = JSON.parse(Cookies.get('user_info'))
       this.programForm.applicant_name = user_info.name
       this.programForm.applicant = user_info.id
     }
@@ -521,6 +532,7 @@ export default {
     modifyTotal() {
       this.disabledChange = false
     },
+    // 自定义比列修改modifyHandle，rateSubmit，performanceChange
     modifyHandle(obj, rate, type) {
       let length = obj.length
       this.form.total = rate
@@ -586,7 +598,8 @@ export default {
           this.performanceChange('operation', sum)
           break
       }
-      this.dialogFormVisible = true
+      this.disabledChange = true
+      this.dialogFormVisible = false
     },
     performanceChange(name, sum) {
       this.peopleList.map(r => {
@@ -601,9 +614,11 @@ export default {
         })
       }
     },
+    // h5比列
     h5Handle(val) {
       this.h5Rate = val === 1 ? 0.025 : 0.1
     },
+    // 添加人员 均分比列
     peopleHandle(val, rate, type) {
       let length = val.length
       if (length > 0) {
@@ -619,7 +634,6 @@ export default {
             this.addRate('h5', val, averageRate)
             break
           case 'animate':
-            console.log(33)
             this.addRate('animation', val, averageRate)
             break
           case 'whole':
@@ -721,8 +735,6 @@ export default {
             member.operation = this.programForm.operation
           }
           args.member = member
-          console.log(this.programForm)
-          console.log(args)
           if (this.programID) {
             modifyProgram(this, args, this.programID)
               .then(res => {
