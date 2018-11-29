@@ -107,7 +107,6 @@
                 :loading="searchLoading"
                 :multiple-limit="5"
                 multiple
-                collapse-tags
                 placeholder="请添加人员" 
                 filterable 
                 clearable
@@ -118,7 +117,8 @@
                   :label="item.name"
                   :value="item.id"/>
               </el-select>
-              <el-button 
+              <el-button
+                v-if="role.name === 'project-manager'" 
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.interaction,interactionRate,'interaction')">修改</el-button>
@@ -134,7 +134,6 @@
                 :loading="searchLoading"
                 :multiple-limit="5"
                 multiple
-                collapse-tags
                 placeholder="请添加人员" 
                 filterable 
                 clearable
@@ -146,6 +145,7 @@
                   :value="item.id"/>
               </el-select>
               <el-button 
+                v-if="role.name === 'project-manager'"
                 type="text" 
                 size="mini"
                 @click="modifyHandle(programForm.originality,creativeRate,'creative')">修改</el-button>
@@ -166,7 +166,6 @@
                 placeholder="请添加人员" 
                 filterable 
                 clearable
-                collapse-tags
                 @change="peopleHandle($event,h5Rate,'H5')">
                 <el-option
                   v-for="item in userList"
@@ -175,6 +174,7 @@
                   :value="item.id"/>
               </el-select>
               <el-button
+                v-if="role.name === 'project-manager'"
                 type="text" 
                 size="mini"
                 @click="modifyHandle(programForm.h5,h5Rate,'H5')">修改</el-button>
@@ -192,7 +192,6 @@
                 multiple
                 placeholder="请添加人员" 
                 filterable 
-                collapse-tags
                 clearable
                 @change="peopleHandle($event,animateRate,'animate')">
                 <el-option
@@ -201,7 +200,8 @@
                   :label="item.name"
                   :value="item.id"/>
               </el-select>
-              <el-button 
+              <el-button
+                v-if="role.name === 'project-manager'" 
                 type="text" 
                 size="mini"
                 @click="modifyHandle(programForm.animation,animateRate,'animate')">修改</el-button>
@@ -222,7 +222,6 @@
                 placeholder="请添加人员" 
                 filterable 
                 clearable
-                collapse-tags
                 @change="peopleHandle($event,wholeRate,'whole')">
                 <el-option
                   v-for="item in userList"
@@ -230,7 +229,8 @@
                   :label="item.name"
                   :value="item.id"/>
               </el-select>
-              <el-button 
+              <el-button
+                v-if="role.name === 'project-manager'" 
                 type="text" 
                 size="mini"
                 @click="modifyHandle(programForm.plan,wholeRate,'whole')">修改</el-button>
@@ -248,7 +248,6 @@
                 multiple
                 placeholder="请添加人员" 
                 filterable 
-                collapse-tags
                 clearable
                 @change="peopleHandle($event,testRate,'test')">
                 <el-option
@@ -257,7 +256,8 @@
                   :label="item.name"
                   :value="item.id"/>
               </el-select>
-              <el-button 
+              <el-button
+                v-if="role.name === 'project-manager'" 
                 type="text" 
                 size="mini"
                 @click="modifyHandle(programForm.tester,testRate,'test')">修改</el-button>
@@ -275,7 +275,6 @@
                 :loading="searchLoading"
                 :multiple-limit="5"
                 multiple
-                collapse-tags
                 placeholder="请添加人员" 
                 filterable 
                 clearable
@@ -287,6 +286,7 @@
                   :value="item.id"/>
               </el-select>
               <el-button 
+                v-if="role.name === 'project-manager'"
                 type="text" 
                 size="mini"
                 @click="modifyHandle(programForm.operation,platformRate,'platform')">修改</el-button>
@@ -428,13 +428,15 @@ export default {
       },
       type: '',
       userList: [],
-      interactionRate: 0.3,
-      creativeRate: 0.1,
-      h5Rate: 0.025,
-      testRate: 0.12,
-      platformRate: 0.04,
-      animateRate: 0.16,
-      wholeRate: 0.06,
+      interactionRate: null,
+      creativeRate: null,
+      h5Rate1: null,
+      h5Rate: null,
+      h5Rate2: null,
+      testRate: null,
+      platformRate: null,
+      animateRate: null,
+      wholeRate: null,
       role: null
     }
   },
@@ -443,14 +445,45 @@ export default {
     let user_info = JSON.parse(Cookies.get('user_info'))
     this.role = user_info.roles.data[0]
     this.getUserList()
+    this.getTeamRateList()
     if (this.programID) {
       this.getProgramDetails()
     } else {
+      this.setting.loading = true
+
       this.programForm.applicant_name = user_info.name
       this.programForm.applicant = user_info.id
     }
   },
   methods: {
+    h5Handle(val) {
+      this.h5Rate = val === 1 ? this.h5Rate1 : this.h5Rate2
+    },
+    // 比列
+    getTeamRateList() {
+      search
+        .getTeamRateList(this)
+        .then(res => {
+          let data = res.data[0]
+          this.interactionRate = data.interaction
+          this.creativeRate = data.originality
+          this.h5Rate1 = data.h5_1
+          this.testRate = data.tester
+          this.platformRate = data.operation
+          this.wholeRate = data.plan
+          this.animateRate = data.animation
+          this.h5Rate2 = data.h5_2
+          this.h5Rate = this.h5Rate1
+          this.setting.loading = false
+        })
+        .catch(err => {
+          this.$message({
+            type: 'warning',
+            message: err.response.data.message
+          })
+          this.setting.loading = false
+        })
+    },
     getProgramDetails() {
       this.setting.loading = true
       getProgramDetails(this, this.programID)
@@ -526,26 +559,35 @@ export default {
       if (length > 0) {
         switch (type) {
           case 'interaction':
-            this.peopleList = JSON.parse(JSON.stringify(this.programForm.interaction))
+            this.peopleList = JSON.parse(
+              JSON.stringify(this.programForm.interaction)
+            )
             break
           case 'creative':
-
-            this.peopleList = JSON.parse(JSON.stringify(this.programForm.originality))
+            this.peopleList = JSON.parse(
+              JSON.stringify(this.programForm.originality)
+            )
             break
           case 'H5':
             this.peopleList = JSON.parse(JSON.stringify(this.programForm.h5))
             break
           case 'animate':
-            this.peopleList = JSON.parse(JSON.stringify(this.programForm.animation))
+            this.peopleList = JSON.parse(
+              JSON.stringify(this.programForm.animation)
+            )
             break
           case 'whole':
             this.peopleList = JSON.parse(JSON.stringify(this.programForm.plan))
             break
           case 'test':
-            this.peopleList = JSON.parse(JSON.stringify(this.programForm.tester))
+            this.peopleList = JSON.parse(
+              JSON.stringify(this.programForm.tester)
+            )
             break
           case 'platform':
-            this.peopleList = JSON.parse(JSON.stringify(this.programForm.operation))
+            this.peopleList = JSON.parse(
+              JSON.stringify(this.programForm.operation)
+            )
             break
         }
       }
@@ -599,10 +641,7 @@ export default {
         })
       }
     },
-    // h5比列
-    h5Handle(val) {
-      this.h5Rate = val === 1 ? 0.025 : 0.1
-    },
+
     // 添加人员 均分比列
     peopleHandle(val, rate, type) {
       let length = val.length

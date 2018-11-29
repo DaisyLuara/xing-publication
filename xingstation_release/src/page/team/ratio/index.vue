@@ -12,7 +12,7 @@
           <div>
             <span 
               class="label">
-              奖金总额
+              比例配置列表
             </span>
           </div>
         </div>
@@ -102,7 +102,7 @@
             prop="tester"
             label="节目测试"
             min-width="70"/>
-            <!-- role.name === 'project-manager' -->
+            <!-- v-if="role.name === 'legal-affairs-manager'" -->
             <el-table-column 
             label="操作" 
             min-width="90">
@@ -346,11 +346,8 @@ export default {
         align-items: center;
         margin-bottom: 10px;
         .label {
-          font-size: 18px;
+          font-size: 14px;
           margin: 5px 0;
-          .count {
-            color: #03a9f4;
-          }
         }
       }
       .pagination-wrap {
