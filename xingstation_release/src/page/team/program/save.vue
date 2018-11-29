@@ -7,7 +7,7 @@
       class="pane">
       <div 
         class="pane-title">
-        {{ programID ? '修改项目' : '新增项目'}}
+        {{ programID ? (role.name==='project-manager'? '修改项目' : '查看项目') : '新增项目'}}
       </div>
       <el-form
         ref="programForm"
@@ -327,22 +327,9 @@
         :model="form"
         label-width="90px">
         <el-form-item label="总点数">
-          <el-col :span="20">
-            <el-input 
-              v-model="form.total" 
-              :disabled="disabledChange"/>
-          </el-col>
-          <el-col :span="4">
-            <el-tooltip class="item" effect="dark" placement="right-start">
-              <div slot="content">总点数不可调配只有指定权限可调配，固定比例是按人头均分，<br/>如有调整请在下面人员后面做调整，调整比例总和不可大于总点数</div>
-              <i class="el-icon-question hint"/>
-            </el-tooltip>
-            <!-- 法务主管可操作 -->
-            <span
-              v-if="role.name === 'legal-affairs-manager'"  
-              class="modify-change"
-              @click="modifyTotal">修改</span>
-          </el-col>
+          <el-input 
+            v-model="form.total" 
+            :disabled="disabledChange"/>
         </el-form-item>
         <el-form-item 
           v-for="item in peopleList"
@@ -529,9 +516,6 @@ export default {
           this.setting.loading = false
         })
     },
-    modifyTotal() {
-      this.disabledChange = false
-    },
     // 自定义比列修改modifyHandle，rateSubmit，performanceChange
     modifyHandle(obj, rate, type) {
       let length = obj.length
@@ -542,25 +526,26 @@ export default {
       if (length > 0) {
         switch (type) {
           case 'interaction':
-            this.peopleList = this.programForm.interaction
+            this.peopleList = JSON.parse(JSON.stringify(this.programForm.interaction))
             break
           case 'creative':
-            this.peopleList = this.programForm.originality
+
+            this.peopleList = JSON.parse(JSON.stringify(this.programForm.originality))
             break
           case 'H5':
-            this.peopleList = this.programForm.h5
+            this.peopleList = JSON.parse(JSON.stringify(this.programForm.h5))
             break
           case 'animate':
-            this.peopleList = this.programForm.animation
+            this.peopleList = JSON.parse(JSON.stringify(this.programForm.animation))
             break
           case 'whole':
-            this.peopleList = this.programForm.plan
+            this.peopleList = JSON.parse(JSON.stringify(this.programForm.plan))
             break
           case 'test':
-            this.peopleList = this.programForm.tester
+            this.peopleList = JSON.parse(JSON.stringify(this.programForm.tester))
             break
           case 'platform':
-            this.peopleList = this.programForm.operation
+            this.peopleList = JSON.parse(JSON.stringify(this.programForm.operation))
             break
         }
       }

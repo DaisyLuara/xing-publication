@@ -70,15 +70,27 @@ let router = {
           },
           component: () =>
             import(/* webpackChunkName: "page/team/platform/index" */ 'page/team/platform/index')
-        },
+        }
+      ]
+    },
+    {
+      path: 'detail',
+      name: '平台明细',
+      redirect: 'detail',
+      meta: {
+        title: '平台明细'
+      },
+      component: () =>
+        import(/* webpackChunkName: "page/team/detail/routerView" */ 'page/team/detail/routerView'),
+      children: [
         {
-          path: 'detail',
-          name: '平台项目详细',
+          path: '/',
+          name: '平台明细列表',
           meta: {
-            title: '平台项目详细'
+            title: '平台明细列表'
           },
           component: () =>
-            import(/* webpackChunkName: "page/team/platform/detail" */ 'page/team/platform/detail')
+            import(/* webpackChunkName: "page/team/detail/index" */ 'page/team/detail/index')
         }
       ]
     }

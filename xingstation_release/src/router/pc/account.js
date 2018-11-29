@@ -32,27 +32,27 @@ let router = {
         }
       ]
     },
-    // {
-    //   path: 'center',
-    //   name: '个人中心',
-    //   redirect: 'center',
-    //   meta: {
-    //     title: '个人中心'
-    //   },
-    //   component: () =>
-    //     import(/* webpackChunkName: "page/account/center/routerView" */ 'page/account/center/routerView'),
-    //   children: [
-    //     {
-    //       path: '/',
-    //       name: '个人中心列表',
-    //       meta: {
-    //         title: '个人中心列表'
-    //       },
-    //       component: () =>
-    //         import(/* webpackChunkName: "page/account/center/index" */ 'page/account/center/index')
-    //     }
-    //   ]
-    // }
+    {
+      path: 'center',
+      name: '个人中心',
+      redirect: 'center',
+      meta: {
+        title: '个人中心'
+      },
+      component: () =>
+        import(/* webpackChunkName: "page/account/center/routerView" */ 'page/account/center/routerView'),
+      children: [
+        {
+          path: '/',
+          name: '个人中心列表',
+          meta: {
+            title: '个人中心列表'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/account/center/index" */ 'page/account/center/index')
+        }
+      ]
+    }
   ]
 }
 
