@@ -433,7 +433,7 @@ export default {
       h5Rate: 0.025,
       testRate: 0.12,
       platformRate: 0.04,
-      animateRate: 0.3,
+      animateRate: 0.16,
       wholeRate: 0.06,
       role: null
     }

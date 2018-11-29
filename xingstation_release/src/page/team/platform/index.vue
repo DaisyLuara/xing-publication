@@ -67,10 +67,6 @@
           <div>
             <div 
               class="label">
-              总条数:{{ pagination.total }} 
-            </div>
-            <div 
-              class="label">
               奖金总额:10000.00
             </div>
           </div>

@@ -1,6 +1,8 @@
 const HOST = process.env.SERVER_URL
 
 const TEAM_API = '/api/team_project'
+const TEAM_RATE_API = '/api/team_rate'
+
 const getProgramList = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
@@ -63,10 +65,52 @@ const confirmProgram = (context, id) => {
   })
 }
 
+const getTeamRate = context => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + TEAM_RATE_API)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+const getTeamRateDetails = (context, id) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + TEAM_RATE_API + '/' + id)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+const modifyTeamRate = (context, id, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .patch(HOST + TEAM_RATE_API + '/' + id, params)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
 export {
   getProgramList,
   saveProgram,
   modifyProgram,
   getProgramDetails,
-  confirmProgram
+  confirmProgram,
+  getTeamRate,
+  getTeamRateDetails,
+  modifyTeamRate
 }
