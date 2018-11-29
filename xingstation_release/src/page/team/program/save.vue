@@ -360,7 +360,6 @@ import {
   Radio,
   Col,
   Dialog,
-  Tooltip
 } from 'element-ui'
 import search from 'service/search'
 import {
@@ -384,7 +383,6 @@ export default {
     ElRadioGroup: RadioGroup,
     ElRadio: Radio,
     ElDialog: Dialog,
-    ElTooltip: Tooltip
   },
   data() {
     return {

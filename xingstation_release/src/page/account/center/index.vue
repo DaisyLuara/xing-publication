@@ -18,8 +18,9 @@
               prop="name">
               <el-input 
                 v-model="filters.name"
-                placeholder="节目名称"
-                clearable/>
+                placeholder="项目名称"
+                clearable
+                class="item-input"/>
             </el-form-item>
             <el-form-item 
               label="" 
@@ -72,7 +73,7 @@
                   <span>{{ scope.row.id }}</span> 
                 </el-form-item>
                 <el-form-item 
-                  label="节目名称">
+                  label="项目名称">
                   <span>{{ scope.row.project_name }}</span> 
                 </el-form-item>
                 <el-form-item 
@@ -165,53 +166,9 @@ export default {
       },
       role: '',
       pickerOptions: {
-        shortcuts: [
-          {
-            text: '今天',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '昨天',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24)
-              end.setTime(end.getTime() - 3600 * 1000 * 24)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近一周',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近一个月',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近三个月',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-              picker.$emit('pick', [start, end])
-            }
-          }
-        ]
+        disabledDate: time => {
+          return time.getTime() < new Date('2018/11/29').getTime()
+        }
       },
       tableData: [
         {
@@ -360,7 +317,7 @@ export default {
         .label {
           font-size: 18px;
           margin: 5px 0;
-          .count{
+          .count {
             color: #03a9f4;
           }
         }

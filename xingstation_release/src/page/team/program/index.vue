@@ -212,7 +212,7 @@
                 type="warning"
                 @click="editHandle(scope.row)">{{ role.name === 'project-manager' ? '修改': '查看'  }}</el-button>
               <el-button 
-                v-if="(role.name === 'tester' && scope.row.status === '进行中') || (role.name === 'operation' && scope.row.status === '测试确认') || (role.name === 'legal-affairs-manager' && scope.row.status === '运营确认')" 
+                v-if="(role.name === 'tester' && scope.row.status === '进行中') || (role.name === 'operation' && scope.row.status === '测试已确认') || (role.name === 'legal-affairs-manager' && scope.row.status === '运营已确认')" 
                 size="small"
                 @click="confirmProgram(scope.row)">确认</el-button>
             </template>
@@ -294,65 +294,23 @@ export default {
         },
         {
           id: 2,
-          name: '测试确认'
+          name: '测试已确认'
         },
         {
           id: 3,
-          name: '运营确认'
+          name: '运营已确认'
         },
         {
           id: 4,
-          name: '主管确认'
+          name: '主管已确认'
         }
       ],
       pickerOptions: {
-        shortcuts: [
-          {
-            text: '今天',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '昨天',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24)
-              end.setTime(end.getTime() - 3600 * 1000 * 24)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近一周',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近一个月',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近三个月',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-              picker.$emit('pick', [start, end])
-            }
-          }
-        ]
+        disabledDate: time => {
+          return (
+            time.getTime() < new Date('2018/11/29').getTime()
+          )
+        }
       },
       tableData: [],
       projectList: [],

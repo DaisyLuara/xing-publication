@@ -90,6 +90,9 @@
             type="primary"
             size="small" 
             @click="submit('rateForm')">保存</el-button>
+          <el-button 
+            size="small" 
+            @click="historyBack">返回</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -97,7 +100,7 @@
 </template>
 
 <script>
-import { modifyTeamRate, getTeamRateDetails } from 'service'
+import { modifyTeamRate, getTeamRateDetails, historyBack } from 'service'
 import { Form, FormItem, Button, Input, MessageBox } from 'element-ui'
 
 export default {
@@ -133,6 +136,9 @@ export default {
     this.getTeamRateDetails()
   },
   methods: {
+    historyBack() {
+      historyBack()
+    },
     getTeamRateDetails() {
       this.setting.loading = true
       getTeamRateDetails(this, this.rateId)

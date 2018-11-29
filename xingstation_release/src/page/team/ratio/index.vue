@@ -133,35 +133,17 @@
 <script>
 import { getTeamRate } from 'service'
 import { Cookies } from 'utils/cookies'
-import {
-  Button,
-  Input,
-  Table,
-  TableColumn,
-  Pagination,
-  Form,
-  FormItem,
-  MessageBox,
-  DatePicker
-} from 'element-ui'
+import { Button, Table, TableColumn, Pagination, MessageBox } from 'element-ui'
 
 export default {
   components: {
     'el-table': Table,
     'el-table-column': TableColumn,
     'el-button': Button,
-    'el-input': Input,
-    'el-pagination': Pagination,
-    'el-form': Form,
-    'el-form-item': FormItem,
-    'el-date-picker': DatePicker
+    'el-pagination': Pagination
   },
   data() {
     return {
-      filters: {
-        name: '',
-        beginDate: []
-      },
       setting: {
         loading: false,
         loadingText: '拼命加载中'
@@ -172,64 +154,7 @@ export default {
         currentPage: 1
       },
       role: '',
-      pickerOptions: {
-        shortcuts: [
-          {
-            text: '今天',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '昨天',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24)
-              end.setTime(end.getTime() - 3600 * 1000 * 24)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近一周',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近一个月',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近三个月',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-              picker.$emit('pick', [start, end])
-            }
-          }
-        ]
-      },
-      tableData: [
-        {
-          id: 1,
-          project_name: '测试',
-          applicant_name: '测试',
-          begin_date: '2018-09-09',
-          amount: '100'
-        }
-      ]
+      tableData: []
     }
   },
   created() {

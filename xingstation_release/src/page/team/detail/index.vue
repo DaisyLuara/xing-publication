@@ -17,8 +17,16 @@
               label=""
               prop="name">
               <el-input 
+                v-model="filters.project_name"
+                placeholder="平台名称"
+                clearable/>
+            </el-form-item>
+            <el-form-item 
+              label=""
+              prop="name">
+              <el-input 
                 v-model="filters.name"
-                placeholder="申请人"
+                placeholder="分配人"
                 clearable/>
             </el-form-item>
             <el-form-item 
@@ -29,8 +37,8 @@
                 :clearable="false"
                 :picker-options="pickerOptions"
                 type="daterange"
-                start-placeholder="申请开始时间"
-                end-placeholder="申请结束时间"
+                start-placeholder="分配开始时间"
+                end-placeholder="分配结束时间"
                 align="right">
               </el-date-picker>
             </el-form-item>
@@ -60,6 +68,11 @@
               已发奖金:<span class="count">1000.00</span>
             </span>
           </div>
+          <div>
+            <el-button
+              type="success"
+              size="small">新建分配</el-button>
+          </div>
         </div>
         <el-table 
           :data="tableData" 
@@ -81,11 +94,11 @@
                   <span>{{ scope.row.project_name }}</span> 
                 </el-form-item>
                 <el-form-item 
-                  label="申请人">
+                  label="分配人">
                   <span>{{ scope.row.applicant_name }}</span> 
                 </el-form-item>
                 <el-form-item 
-                  label="申请时间">
+                  label="分配时间">
                   <span>{{ scope.row.begin_date }}</span> 
                 </el-form-item>
                 <el-form-item 
@@ -108,18 +121,30 @@
           <el-table-column
             :show-overflow-tooltip="true"
             prop="applicant_name"
-            label="申请人"
+            label="分配人"
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="begin_date"
-            label="申请时间"
+            label="分配时间"
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="amount"
             label="发放奖金"
             min-width="100"/>
+          <el-table-column 
+            label="操作" 
+            min-width="150">
+            <template 
+              slot-scope="scope">
+                <!-- v-if="role.name === 'legal-affairs-manager'"  -->
+              <el-button
+                size="small" 
+                type="warning"
+                @click="modifyHandle(scope.row)">修改</el-button>
+            </template>
+          </el-table-column>
         </el-table>
         <div 
           class="pagination-wrap">
@@ -133,6 +158,32 @@
         </div>
       </div>  
     </div>
+    <el-dialog 
+      :visible.sync="applyFormVisible"
+      title="分配奖金" 
+      :show-close="false">
+      <el-form 
+        :model="applyForm"
+        label-width="100px">
+        <el-form-item label="分配人">
+          <el-input 
+            v-model="applyForm.applicant_name"
+            :disabled="true"/>
+        </el-form-item>
+        <el-form-item label="平台项目名称">
+          <el-input v-model="applyForm.project_name"/>
+        </el-form-item>
+        <el-form-item label="分配金额">
+          <el-input 
+            v-model="applyForm.amount"
+            :maxlength="10"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="applyFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="applyFormVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -148,7 +199,8 @@ import {
   Form,
   FormItem,
   MessageBox,
-  DatePicker
+  DatePicker,
+  Dialog
 } from 'element-ui'
 
 export default {
@@ -160,12 +212,21 @@ export default {
     'el-pagination': Pagination,
     'el-form': Form,
     'el-form-item': FormItem,
-    'el-date-picker': DatePicker
+    'el-date-picker': DatePicker,
+    'el-dialog': Dialog
   },
   data() {
     return {
+      applyFormVisible: false,
+      applyForm: {
+        applicant_name: '',
+        project_name: '',
+        amount: 0,
+        applicant: ''
+      },
       filters: {
         name: '',
+        project_name: '',
         beginDate: []
       },
       setting: {
@@ -179,53 +240,11 @@ export default {
       },
       role: '',
       pickerOptions: {
-        shortcuts: [
-          {
-            text: '今天',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '昨天',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24)
-              end.setTime(end.getTime() - 3600 * 1000 * 24)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近一周',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近一个月',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近三个月',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-              picker.$emit('pick', [start, end])
-            }
-          }
-        ]
+       disabledDate: time => {
+          return (
+            time.getTime() < new Date('2018/11/29').getTime()
+          )
+        }
       },
       tableData: [
         {
@@ -242,8 +261,13 @@ export default {
     // this.getProgramList()
     let user_info = JSON.parse(Cookies.get('user_info'))
     this.role = user_info.roles.data[0]
+    this.applyForm.applicant_name = user_info.name
+    this.applyForm.applicant = user_info.id
   },
   methods: {
+    modifyHandle() {
+      this.applyFormVisible = true
+    },
     getProgramList() {
       this.setting.loading = true
       let args = {
@@ -374,7 +398,7 @@ export default {
         .label {
           font-size: 18px;
           margin: 5px 0;
-          .count{
+          .count {
             color: #03a9f4;
           }
         }
