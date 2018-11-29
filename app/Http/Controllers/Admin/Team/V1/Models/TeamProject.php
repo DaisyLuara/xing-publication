@@ -19,7 +19,8 @@ class TeamProject extends Model
         'online_date',
         'launch_date',
         'remark',
-        'status'
+        'status',
+        'factor'
     ];
 
     public function member()

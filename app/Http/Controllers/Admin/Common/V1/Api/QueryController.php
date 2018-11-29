@@ -37,6 +37,8 @@ use App\Http\Controllers\Admin\Project\V1\Models\Project;
 use App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTpl;
 use App\Http\Controllers\Admin\Project\V1\Transformer\ProjectLaunchTplTransformer;
 use App\Http\Controllers\Admin\Project\V1\Transformer\ProjectTransformer;
+use App\Http\Controllers\Admin\Team\V1\Models\TeamRate;
+use App\Http\Controllers\Admin\Team\V1\Transformer\TeamRateTransformer;
 use App\Http\Controllers\Admin\User\V1\Models\ArUser;
 use App\Http\Controllers\Admin\User\V1\Transformer\ArUserTransformer;
 use App\Http\Controllers\Admin\User\V1\Transformer\UserTransformer;
@@ -392,4 +394,10 @@ class QueryController extends Controller
         return $this->response()->collection($user, new UserTransformer());
     }
 
+    public function teamRateQuery(TeamRate $teamRate)
+    {
+        $query = $teamRate->query();
+        $teamRate = $query->get();
+        return $this->response()->collection($teamRate, new TeamRateTransformer());
+    }
 }

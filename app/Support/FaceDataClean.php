@@ -1780,7 +1780,7 @@ function teamBonusClean()
 
             //系数修改
             $teamProject = TeamProject::query()->where('belong', $item->belong)->first();
-            if ($teamProject) {
+            if ($teamProject && $teamProject->status==4) {
                 $days = (new Carbon($date))->diffInDays(new Carbon($teamProject->online_date));
                 if ($days < 30) {
                     $factor = 1;

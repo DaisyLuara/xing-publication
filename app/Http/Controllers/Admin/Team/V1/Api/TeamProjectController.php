@@ -46,7 +46,7 @@ class TeamProjectController extends Controller
             });
         }
 
-        if ($request->has('own') && $request->own=='true') {
+        if ($request->has('own') && $request->own == 'true') {
             $query->where(function ($query) use ($user) {
                 $query->where('applicant', $user->id)
                     ->orWhere(function ($q) use ($user) {
@@ -69,11 +69,17 @@ class TeamProjectController extends Controller
         if (!$user->hasRole('project-manager')) {
             abort(403, '无操作权限');
         }
+        if ($request->project_attribute <= 2) {
+            $factor = 0.8;
+        } else {
+            $factor = 1;
+        }
         $teamProject->fill((array_merge($request->all(),
             [
                 'status' => 1,
                 'applicant' => $user->id,
-                'begin_date' => Carbon::now()->toDateString()
+                'begin_date' => Carbon::now()->toDateString(),
+                'factor' => $factor
             ]
         )))->save();
         $member = $request->member;

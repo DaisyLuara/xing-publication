@@ -38,7 +38,7 @@ class TeamProjectListTransformer extends TransformerAbstract
     public function transform(TeamProject $teamProject)
     {
         return [
-            'id'=>$teamProject->id,
+            'id' => $teamProject->id,
             'project_name' => $teamProject->project_name,
             'belong' => $teamProject->belong,
             'applicant' => $teamProject->applicant,
@@ -52,6 +52,7 @@ class TeamProjectListTransformer extends TransformerAbstract
             'launch_date' => $teamProject->launch_date,
             'remark' => $teamProject->remark,
             'status' => $this->statusMapping[$teamProject->status],
+            'factor' => $teamProject->factor
         ];
     }
 }
