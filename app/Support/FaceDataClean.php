@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\Face\V1\Models\FacePlayCharacterRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FacePermeabilityRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceCouponRecord;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamBonusRecord;
+use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
 
 /**
  * 围观人次清洗
@@ -1776,6 +1777,25 @@ function teamBonusClean()
                 'belong' => $item->belong,
                 'money' => $totalMoney
             ];
+
+            //系数修改
+            $teamProject = TeamProject::query()->where('belong', $item->belong)->first();
+            if ($teamProject) {
+                $days = (new Carbon($date))->diffInDays(new Carbon($teamProject->online_date));
+                if ($days < 30) {
+                    $factor = 1;
+                }
+
+                if ($days >= 60 && $days < 90) {
+                    $factor = 1.1;
+                }
+
+                if ($days >= 90) {
+                    $factor = 1.2;
+                }
+                $teamProject->update(['factor' => $factor]);
+            }
+
         }
         DB::table('team_bonuses')->insert($count);
         $date = (new Carbon($date))->addDay(1)->toDateString();

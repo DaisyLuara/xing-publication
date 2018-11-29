@@ -16,6 +16,11 @@ use App\Http\Controllers\Controller;
 
 class TeamRateController extends Controller
 {
+    public function show(TeamRate $teamRate)
+    {
+        return $this->response()->item($teamRate, new TeamRateTransformer());
+    }
+
     public function index(TeamRate $teamRate)
     {
         $query = $teamRate->query();

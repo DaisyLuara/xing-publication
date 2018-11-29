@@ -16,7 +16,7 @@ $api->version('v1', [
 
             $api->post('team_project/confirm/{team_project}','TeamProjectController@confirm');
 
-
+            $api->get('team_rate/{team_rate}', 'TeamRateController@show');
             $api->get('team_rate', 'TeamRateController@index');
             $api->post('team_rate', 'TeamRateController@store');
             $api->patch('team_rate/{team_rate}', 'TeamRateController@update');
