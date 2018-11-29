@@ -72,7 +72,6 @@
           </div>
           <div>
             <el-button
-              v-if="role.name === 'project-manager'" 
               type="success" 
               size="small"
               @click="applyReward">申请奖励</el-button>

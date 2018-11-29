@@ -133,14 +133,24 @@
 <script>
 import { getTeamRate } from 'service'
 import { Cookies } from 'utils/cookies'
-import { Button, Table, TableColumn, Pagination, MessageBox } from 'element-ui'
+import {
+  Button,
+  Table,
+  TableColumn,
+  Pagination,
+  MessageBox,
+  Form,
+  FormItem
+} from 'element-ui'
 
 export default {
   components: {
     'el-table': Table,
     'el-table-column': TableColumn,
     'el-button': Button,
-    'el-pagination': Pagination
+    'el-pagination': Pagination,
+    'el-form': Form,
+    'el-form-item': FormItem
   },
   data() {
     return {
