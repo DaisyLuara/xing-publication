@@ -15,6 +15,11 @@ $api->version('v1', [
             $api->patch('team_project/{team_project}', 'TeamProjectController@update');
 
             $api->post('team_project/confirm/{team_project}','TeamProjectController@confirm');
+
+
+            $api->get('team_rate', 'TeamRateController@index');
+            $api->post('team_rate', 'TeamRateController@store');
+            $api->patch('team_rate/{team_rate}', 'TeamRateController@update');
         });
     });
 
