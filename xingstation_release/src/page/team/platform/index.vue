@@ -151,13 +151,13 @@
             min-width="150">
             <template 
               slot-scope="scope">
+                <!-- v-if="role.name === 'legal-affairs-manager'"  -->
               <el-button
-                v-if="role.name === 'legal-affairs-manager'" 
                 size="small" 
                 type="warning"
                 @click="rejectHandle(scope.row)">驳回</el-button>
+                <!-- v-if="role.name === 'legal-affairs-manager'"  -->
               <el-button 
-                v-if="role.name === 'legal-affairs-manager'" 
                 size="small"
                 @click="allocationHandle(scope.row)">分配</el-button>
             </template>

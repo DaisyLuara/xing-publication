@@ -359,7 +359,7 @@ import {
   RadioGroup,
   Radio,
   Col,
-  Dialog,
+  Dialog
 } from 'element-ui'
 import search from 'service/search'
 import {
@@ -382,7 +382,7 @@ export default {
     ElInput: Input,
     ElRadioGroup: RadioGroup,
     ElRadio: Radio,
-    ElDialog: Dialog,
+    ElDialog: Dialog
   },
   data() {
     return {
