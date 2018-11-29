@@ -53,6 +53,37 @@ let router = {
       ]
     },
     {
+      path: 'ratio',
+      name: '比例配置',
+      redirect: 'ratio',
+      meta: {
+        title: '比例配置'
+      },
+      component: () =>
+        import(/* webpackChunkName: "page/team/ratio/routerView" */ 'page/team/ratio/routerView'),
+      children: [
+        {
+          path: '/',
+          name: '比例配置列表',
+          meta: {
+            title: '比例配置列表'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/team/ratio/index" */ 'page/team/ratio/index')
+        },
+        {
+          path: 'edit/:uid',
+          name: '修改比例',
+          meta: {
+            title: '修改比例',
+            permission: ''
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/team/ratio/save" */ 'page/team/ratio/save')
+        }
+      ]
+    },
+    {
       path: 'platform',
       name: '平台项目',
       redirect: 'platform',
