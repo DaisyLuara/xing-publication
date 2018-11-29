@@ -129,7 +129,7 @@
                   <span>{{ scope.row.people_max_get }}</span> 
                 </el-form-item>
                 <el-form-item 
-                  label="是否开启没人无限领取">
+                  label="是否开启每人无限领取">
                   <span>{{ scope.row.pmg_status === 1 ? '开启' : '关闭' }}</span> 
                 </el-form-item>
                 <el-form-item 
