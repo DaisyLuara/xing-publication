@@ -14,7 +14,7 @@ class CreateMerchantBehaviorTable extends Migration
      */
     public function up()
     {
-        Schema::create('merchant_behavior', function (Blueprint $table) {
+        Schema::create('merchant_behaviors', function (Blueprint $table) {
             $table->increments('id');
             $table->string('appid')->comment('商户 appid');
             $table->string('url')->comment('操作地址 fullUrl()');
@@ -41,6 +41,6 @@ class CreateMerchantBehaviorTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('merchant_behavior');
+        Schema::dropIfExists('merchant_behaviors');
     }
 }

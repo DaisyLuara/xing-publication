@@ -14,7 +14,7 @@ class CreateMerchantTable extends Migration
      */
     public function up()
     {
-        Schema::create('merchant', function (Blueprint $table) {
+        Schema::create('merchants', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name',50)->comment('商户名称');
             $table->char('appid',32)->comment('商户接口唯一appid');
@@ -36,6 +36,6 @@ class CreateMerchantTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('merchant');
+        Schema::dropIfExists('merchants');
     }
 }
