@@ -1836,7 +1836,7 @@ function teamBonusClean()
 
         $rewards = [];
         foreach ($data as $item) {
-            $rewards = [
+            $rewards[] = [
                 'user_id' => $item->user_id,
                 'project_name' => $item->project_name,
                 'belong' => $item->belong,
