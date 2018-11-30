@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Admin\Team\V1\Api;
 
 
+use App\Http\Controllers\Admin\Team\V1\Models\TeamBonus;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamSystemProject;
 use App\Http\Controllers\Admin\Team\V1\Request\TeamSystemRequest;
 use App\Http\Controllers\Admin\Team\V1\Transformer\TeamSystemProjectTransformer;
@@ -28,7 +29,7 @@ class TeamSystemProjectController extends Controller
         if ($request->has('name')) {
             $query->where('name', $request->name);
         }
-        if ($query->has('status')) {
+        if ($request->has('status')) {
             $query->where('status', $request->status);
         }
         if ($request->has('start_date') && $request->has('end_date')) {
@@ -45,7 +46,17 @@ class TeamSystemProjectController extends Controller
         return $this->response()->noContent()->setStatusCode(201);
     }
 
-    public function systemBonus(){
+    public function systemBonus(Request $request)
+    {
+        $startDate = $request->start_date;
+        $endDate = $request->end_date;
+        $data = TeamBonus::query()->whereRaw("date_format(date,'%Y-%m-%d') between '$startDate' and '$endDate' ")
+            ->selectRaw("sum(money) as total")
+            ->first();
 
+        $output = [
+            'total_bonus' => $data ? round($data->total * 0.12, 2) : 0
+        ];
+        return response()->json($output);
     }
 }

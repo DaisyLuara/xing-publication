@@ -19,6 +19,7 @@ class CreateTeamSystemProjectTable extends Migration
             $table->integer('applicant')->comment('申请人');
             $table->string('status')->comment('1:申请中,2:已分配,3:已驳回');
             $table->string('remark')->nullable()->comment('备注');
+            $table->string('reject_message')->nullable()->comment('驳回意见');
             $table->timestamps();
         });
     }

@@ -26,6 +26,8 @@ $api->version('v1', [
             $api->get('team_system_project/{team_system_project}', 'TeamSystemProjectController@show');
             $api->get('team_system_project', 'TeamSystemProjectController@index');
             $api->post('team_system_project', 'TeamSystemProjectController@store');
+
+            $api->get('system_bonus', 'TeamSystemProjectController@systemBonus');
         });
     });
 
