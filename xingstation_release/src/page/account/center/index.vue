@@ -53,7 +53,7 @@
           <div>
             <span 
               class="label">
-              累计奖金(¥):<span class="count">10000.00</span>
+              累计奖金(¥):<span class="count">{{ moneyTotal }}</span>
             </span>
           </div>
         </div>
