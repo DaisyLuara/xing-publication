@@ -50,6 +50,12 @@ class TeamSystemProjectController extends Controller
 
     public function reject(Request $request, TeamSystemProject $teamSystemProject)
     {
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
+
+//        if (!$user->hasRole('legal-affairs-manager')) {
+//            abort(403, '无操作权限');
+//        }
         $teamSystemProject->update(array_merge($request->all(), ['status' => 3]));
         return $this->response()->noContent()->setStatusCode(200);
     }
@@ -89,7 +95,7 @@ class TeamSystemProjectController extends Controller
             ->first();
 
         $output = [
-            'total_bonus' => $data ? round($data->total * 0.12, 2) : 0
+            'total_bonus' => $data->total ? round($data->total * 0.12, 2) : 0
         ];
         return response()->json($output);
     }
@@ -107,7 +113,7 @@ class TeamSystemProjectController extends Controller
             ->selectRaw("sum(money) as total")
             ->first();
         $output = [
-            'distribution_bonus' => $data ? $data->total : 0
+            'distribution_bonus' => $data->total ? $data->total : 0
         ];
         return response()->json($output);
 
