@@ -18,7 +18,7 @@
               prop="name">
               <el-input 
                 v-model="filters.project_name"
-                placeholder="平台名称"
+                placeholder="平台项目"
                 clearable/>
             </el-form-item>
             <el-form-item 
@@ -90,7 +90,7 @@
                   <span>{{ scope.row.id }}</span> 
                 </el-form-item>
                 <el-form-item 
-                  label="平台名称">
+                  label="平台项目">
                   <span>{{ scope.row.project_name }}</span> 
                 </el-form-item>
                 <el-form-item 
@@ -116,7 +116,7 @@
           <el-table-column
             :show-overflow-tooltip="true"
             prop="project_name"
-            label="平台名称"
+            label="平台项目"
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"

@@ -44,8 +44,8 @@
                 :clearable="false"
                 :picker-options="pickerOptions"
                 type="daterange"
-                start-placeholder="上线开始时间"
-                end-placeholder="上线结束时间"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
                 align="right">
               </el-date-picker>
             </el-form-item>
@@ -93,7 +93,7 @@
                   <span>{{ scope.row.id }}</span> 
                 </el-form-item>
                 <el-form-item 
-                  label="平台名称">
+                  label="平台项目">
                   <span>{{ scope.row.project_name }}</span> 
                 </el-form-item>
                 <el-form-item 
@@ -101,12 +101,8 @@
                   <span>{{ scope.row.applicant_name }}</span> 
                 </el-form-item>
                 <el-form-item 
-                  label="开始时间">
+                  label="申请时间">
                   <span>{{ scope.row.begin_date }}</span> 
-                </el-form-item>
-                <el-form-item 
-                  label="上线时间">
-                  <span>{{ scope.row.online_date }}</span> 
                 </el-form-item>
                 <el-form-item 
                   label="状态">
@@ -123,7 +119,7 @@
           <el-table-column
             :show-overflow-tooltip="true"
             prop="project_name"
-            label="平台名称"
+            label="平台项目"
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
@@ -133,12 +129,7 @@
           <el-table-column
             :show-overflow-tooltip="true"
             prop="begin_date"
-            label="开始时间"
-            min-width="100"/>
-          <el-table-column
-            :show-overflow-tooltip="true"
-            prop="online_date"
-            label="上线时间"
+            label="申请时间"
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
@@ -186,7 +177,7 @@
             v-model="applyForm.applicant_name"
             :disabled="true"/>
         </el-form-item>
-        <el-form-item label="平台项目名称">
+        <el-form-item label="平台项目">
           <el-input v-model="applyForm.project_name"/>
         </el-form-item>
         <el-form-item label="备注">
