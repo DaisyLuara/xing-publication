@@ -34,8 +34,13 @@ $api->version('v1', [
             $api->get('system_bonus', 'TeamSystemProjectController@systemBonus');
             //已分配的奖金
             $api->get('distribution_bonus', 'TeamSystemProjectController@distributionBonus');
+            //平台明细
+            $api->get('system_detail', 'TeamSystemProjectController@detail');
 
-            //个人奖金
+
+            //个人中心奖金
+            $api->get('person_reward', 'TeamPersonRewardController@index');
+            $api->get('person_reward/total', 'TeamPersonRewardController@totalReward');
         });
     });
 

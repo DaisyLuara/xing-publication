@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\Team\V1\Models\TeamBonus;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamSystemProject;
 use App\Http\Controllers\Admin\Team\V1\Request\TeamSystemRequest;
+use App\Http\Controllers\Admin\Team\V1\Transformer\TeamPersonRewardTransformer;
 use App\Http\Controllers\Admin\Team\V1\Transformer\TeamSystemProjectTransformer;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
@@ -117,5 +118,31 @@ class TeamSystemProjectController extends Controller
         ];
         return response()->json($output);
 
+    }
+
+    /**
+     * 平台明细列表
+     * @param Request $request
+     * @param TeamPersonReward $teamPersonReward
+     * @return \Dingo\Api\Http\Response
+     */
+    public function detail(Request $request, TeamPersonReward $teamPersonReward)
+    {
+        $query = $teamPersonReward->query();
+
+        if ($request->has('name')) {
+            $query->where('project_name','like' ,'%'.$request->name.'%');
+        }
+
+        if ($request->has('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+
+        if ($request->has('start_date') && $request->has('end_date')) {
+            $query->whereRaw("date_format(date,'%Y-%m-%d') between '$request->start_date' and '$request->end_date'");
+        }
+
+        $teamPersonReward = $query->whereRaw("belong='system'")->paginate(10);
+        return $this->response()->paginator($teamPersonReward, new TeamPersonRewardTransformer());
     }
 }
