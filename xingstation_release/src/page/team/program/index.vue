@@ -210,7 +210,7 @@
               <el-button
                 size="small" 
                 type="warning"
-                @click="editHandle(scope.row)">{{ role.name === 'project-manager' ? '修改': '查看'  }}</el-button>
+                @click="editHandle(scope.row)">{{ (role.name === 'project-manager'&& scope.row.status === '进行中') ? '修改': '查看'  }}</el-button>
               <el-button 
                 v-if="(role.name === 'tester' && scope.row.status === '进行中') || (role.name === 'operation' && scope.row.status === '测试已确认') || (role.name === 'legal-affairs-manager' && scope.row.status === '运营已确认')" 
                 size="small"
