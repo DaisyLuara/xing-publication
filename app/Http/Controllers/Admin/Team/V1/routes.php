@@ -26,12 +26,16 @@ $api->version('v1', [
             $api->get('team_system_project/{team_system_project}', 'TeamSystemProjectController@show');
             $api->get('team_system_project', 'TeamSystemProjectController@index');
             $api->post('team_system_project', 'TeamSystemProjectController@store');
+            //申请驳回
+            $api->post('team_system_project/reject/{team_system_project}', 'TeamSystemProjectController@reject');
             //奖金分配
             $api->post('team_system_project/distribute/{team_system_project}', 'TeamSystemProjectController@distribute');
             //平台总奖金
             $api->get('system_bonus', 'TeamSystemProjectController@systemBonus');
             //已分配的奖金
             $api->get('distribution_bonus', 'TeamSystemProjectController@distributionBonus');
+
+            //个人奖金
         });
     });
 

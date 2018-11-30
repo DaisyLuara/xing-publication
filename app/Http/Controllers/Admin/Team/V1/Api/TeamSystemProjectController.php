@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\Team\V1\Models\TeamSystemProject;
 use App\Http\Controllers\Admin\Team\V1\Request\TeamSystemRequest;
 use App\Http\Controllers\Admin\Team\V1\Transformer\TeamSystemProjectTransformer;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class TeamSystemProjectController extends Controller
@@ -47,6 +48,12 @@ class TeamSystemProjectController extends Controller
         return $this->response()->noContent()->setStatusCode(201);
     }
 
+    public function reject(Request $request, TeamSystemProject $teamSystemProject)
+    {
+        $teamSystemProject->update(array_merge($request->all(), ['status' => 3]));
+        return $this->response()->noContent()->setStatusCode(200);
+    }
+
     public function distribute(Request $request, TeamSystemProject $teamSystemProject)
     {
         /** @var  $user \App\Models\User */
@@ -55,13 +62,17 @@ class TeamSystemProjectController extends Controller
 //        if (!$user->hasRole('legal-affairs-manager')) {
 //            abort(403, '无操作权限');
 //        }
+        $teamSystemProject->status = 2;
+        $teamSystemProject->update();
         //分配到个人账户
         TeamPersonReward::create([
-            'user_id' => $teamSystemProject->user_id,
+            'user_id' => $teamSystemProject->applicant,
             'project_name' => $teamSystemProject->name,
             'belong' => 'system',
-            'money' => $request->money
+            'money' => $request->money,
+            'date' => Carbon::now()->toDateString()
         ]);
+        return $this->response()->noContent()->setStatusCode(200);
     }
 
     /**
@@ -96,7 +107,7 @@ class TeamSystemProjectController extends Controller
             ->selectRaw("sum(money) as total")
             ->first();
         $output = [
-            'total_bonus' => $data ? $data->total : 0
+            'distribution_bonus' => $data ? $data->total : 0
         ];
         return response()->json($output);
 

@@ -20,4 +20,5 @@ class TeamPersonReward extends Model
         'money',
         'date'
     ];
+    public $timestamps = false;
 }
