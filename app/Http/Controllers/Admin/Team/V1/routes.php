@@ -14,12 +14,18 @@ $api->version('v1', [
             $api->post('team_project', 'TeamProjectController@store');
             $api->patch('team_project/{team_project}', 'TeamProjectController@update');
 
-            $api->post('team_project/confirm/{team_project}','TeamProjectController@confirm');
+            $api->post('team_project/confirm/{team_project}', 'TeamProjectController@confirm');
 
+            //比例分配
             $api->get('team_rate/{team_rate}', 'TeamRateController@show');
             $api->get('team_rate', 'TeamRateController@index');
             $api->post('team_rate', 'TeamRateController@store');
             $api->patch('team_rate/{team_rate}', 'TeamRateController@update');
+
+            //平台项目
+            $api->get('team_system_project/{team_system_project}', 'TeamSystemProjectController@show');
+            $api->get('team_system_project', 'TeamSystemProjectController@index');
+            $api->post('team_system_project', 'TeamSystemProjectController@store');
         });
     });
 

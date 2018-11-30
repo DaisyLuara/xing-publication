@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTeamBonusTable extends Migration
+class CreateTeamPersonRewardTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateTeamBonusTable extends Migration
      */
     public function up()
     {
-        Schema::create('team_bonuses', function (Blueprint $table) {
+        Schema::create('team_person_rewards', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('user_id');
             $table->string('project_name');
             $table->string('belong');
-            $table->string('money')->comment('奖金');
+            $table->string('money');
             $table->timestamp('date')->nullable();
-            $table->string('factor')->comment('系数');
             $table->index('belong');
         });
     }
@@ -31,6 +31,6 @@ class CreateTeamBonusTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('team_bonuses');
+        Schema::dropIfExists('team_person_rewards');
     }
 }

@@ -24,10 +24,8 @@ class CreateTeamProjectTable extends Migration
             $table->smallInteger('xo_attribute')->comment('小偶属性 1:是,0:否');
             $table->string('begin_date')->nullable()->comment('开始时间');
             $table->string('online_date')->nullable()->comment('上线时间');
-            $table->string('launch_date')->nullable()->comment('投放时间');
             $table->string('remark')->nullable()->comment('项目说明');
             $table->smallInteger('status')->comment('1:进行中,2:测试确认,3:运营确认,4:主管确认');
-            $table->string('factor')->comment('系数');
             $table->timestamps();
             $table->index('belong');
         });

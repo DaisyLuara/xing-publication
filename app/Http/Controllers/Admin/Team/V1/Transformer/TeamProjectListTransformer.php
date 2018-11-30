@@ -30,9 +30,9 @@ class TeamProjectListTransformer extends TransformerAbstract
 
     protected $statusMapping = [
         '1' => '进行中',
-        '2' => '测试确认',
-        '3' => '运营确认',
-        '4' => '主管确认'
+        '2' => '测试已确认',
+        '3' => '运营已确认',
+        '4' => '主管已确认'
     ];
 
     public function transform(TeamProject $teamProject)
@@ -49,10 +49,9 @@ class TeamProjectListTransformer extends TransformerAbstract
             'xo_attribute' => $teamProject->xo_attribute == 1 ? '是' : '否',
             'begin_date' => $teamProject->begin_date,
             'online_date' => $teamProject->online_date,
-            'launch_date' => $teamProject->launch_date,
+            'launch_date' => date('Y-m-d',$teamProject->project->online),
             'remark' => $teamProject->remark,
             'status' => $this->statusMapping[$teamProject->status],
-            'factor' => $teamProject->factor
         ];
     }
 }

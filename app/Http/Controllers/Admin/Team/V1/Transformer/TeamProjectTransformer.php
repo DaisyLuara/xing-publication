@@ -25,10 +25,9 @@ class TeamProjectTransformer extends TransformerAbstract
             'xo_attribute' => $teamProject->xo_attribute,
             'begin_date' => $teamProject->begin_date,
             'online_date' => $teamProject->online_date,
-            'launch_date' => $teamProject->launch_date,
+            'launch_date' => date('Y-m-d', $teamProject->project->online),
             'remark' => $teamProject->remark,
             'status' => $teamProject->status,
-            'factor' => $teamProject->factor,
             'member' => [
                 'interaction' => array_column(array_filter($member, function ($arr) {
                     return $arr['pivot']['type'] == 'interaction';
