@@ -165,4 +165,9 @@ class TeamSystemProjectController extends Controller
         $teamPersonReward->update($request->all());
         return $this->response()->noContent()->setStatusCode(200);
     }
+
+    public function detailShow(TeamPersonReward $teamPersonReward)
+    {
+        return $this->response()->item($teamPersonReward, new TeamPersonRewardTransformer());
+    }
 }
