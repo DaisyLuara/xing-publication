@@ -5,6 +5,8 @@ const TEAM_SYSTEM_API = '/api/team_system_project'
 const TEAM_RATE_API = '/api/team_rate'
 const SYSTEM_BONUS_API = '/api/system_bonus'
 const SYSTEM_DISTRIBTION_BONUS_API = '/api/distribution_bonus'
+const SYSTEM_DETAIL_API = '/api/system_detail'
+const PERSON_REWARD_API = '/api/person_reward'
 
 // 得到项目列表
 const getProgramList = (context, params) => {
@@ -192,6 +194,90 @@ const systemReject = (context, id, params) => {
       })
   })
 }
+
+// 平台明细列表
+
+const getSystemDetails = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + SYSTEM_DETAIL_API, { params: params })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+// 个人奖金列表
+const getPersonRewardList = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + PERSON_REWARD_API, { params: params })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+// 个人中心总金额
+const getPersonRewardTotal = context => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + PERSON_REWARD_API + '/total')
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+// 法务新增平台明细分配
+const saveSystemDetailMoney = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .post(HOST + SYSTEM_DETAIL_API, params)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+// 法务修改平台明细分配
+const modifySystemDetailMoney = (context, id, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .patch(HOST + SYSTEM_DETAIL_API + '/' + id, params)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+// 平台明细分配详情
+const getSystemlMoneyDetail = (context, id) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + SYSTEM_DETAIL_API + '/' + id)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
 export {
   getProgramList,
   saveProgram,
@@ -206,5 +292,11 @@ export {
   systemDistribute,
   getSystemBonus,
   getDistributionBonus,
-  systemReject
+  systemReject,
+  getSystemDetails,
+  getPersonRewardList,
+  getPersonRewardTotal,
+  saveSystemDetailMoney,
+  modifySystemDetailMoney,
+  getSystemlMoneyDetail
 }

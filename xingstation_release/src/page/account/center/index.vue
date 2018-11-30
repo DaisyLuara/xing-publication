@@ -53,7 +53,7 @@
           <div>
             <span 
               class="label">
-              累计奖金(¥):<span class="count">10000.00</span>
+              累计奖金(¥):<span class="count">{{ moneyTotal }}</span>
             </span>
           </div>
         </div>
@@ -78,11 +78,11 @@
                 </el-form-item>
                 <el-form-item 
                   label="获取时间">
-                  <span>{{ scope.row.begin_date }}</span> 
+                  <span>{{ scope.row.date }}</span> 
                 </el-form-item>
                 <el-form-item 
                   label="发放奖金">
-                  <span>{{ scope.row.amount }}</span> 
+                  <span>{{ scope.row.money }}</span> 
                 </el-form-item>
               </el-form>
             </template>
@@ -99,12 +99,12 @@
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="begin_date"
+            prop="date"
             label="获取时间"
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="amount"
+            prop="money"
             label="发放奖金"
             min-width="100"/>
         </el-table>
@@ -124,8 +124,7 @@
 </template>
 
 <script>
-import { getProgramList } from 'service'
-import { Cookies } from 'utils/cookies'
+import { getPersonRewardList, getPersonRewardTotal } from 'service'
 import {
   Button,
   Input,
@@ -153,7 +152,10 @@ export default {
     return {
       filters: {
         name: '',
-        beginDate: []
+        beginDate: [
+          new Date().getTime() - 3600 * 1000 * 24 * 6,
+          new Date().getTime()
+        ]
       },
       setting: {
         loading: false,
@@ -214,43 +216,50 @@ export default {
           }
         ]
       },
-      tableData: [
-        {
-          id: 1,
-          project_name: '测试',
-          applicant_name: '测试',
-          begin_date: '2018-09-09',
-          amount: '100'
-        }
-      ]
+      moneyTotal: 0,
+      tableData: []
     }
   },
   created() {
-    // this.getProgramList()
-    let user_info = JSON.parse(Cookies.get('user_info'))
-    this.role = user_info.roles.data[0]
+    this.getPersonRewardList()
+    this.getPersonRewardTotal()
   },
   methods: {
-    getProgramList() {
+    getPersonRewardTotal() {
+      let args = {
+        start_date: this.handleDateTransform(this.filters.beginDate[0]),
+        end_date: this.handleDateTransform(this.filters.beginDate[1])
+      }
+      getPersonRewardTotal(this)
+        .then(res => {
+          this.moneyTotal = res.total_reward
+        })
+        .catch(err => {
+          this.$message({
+            type: 'warning',
+            message: err.response.data.message
+          })
+        })
+    },
+    getPersonRewardList() {
       this.setting.loading = true
       let args = {
         page: this.pagination.currentPage,
-        alias: this.filters.alias,
-        status: this.filters.status,
-        start_date_online: this.handleDateTransform(this.filters.beginDate[0]),
-        end_date_online: this.handleDateTransform(this.filters.beginDate[1])
+        name: this.filters.name,
+        start_date: this.handleDateTransform(this.filters.beginDate[0]),
+        end_date: this.handleDateTransform(this.filters.beginDate[1])
       }
-      if (this.filters.alias === '') {
-        delete args.alias
+      if (this.filters.name === '') {
+        delete args.name
       }
       if (!this.filters.status) {
         delete args.status
       }
       if (JSON.stringify(this.filters.beginDate) === '[]') {
-        delete args.start_date_online
-        delete args.end_date_online
+        delete args.start_date
+        delete args.end_date
       }
-      getProgramList(this, args)
+      getPersonRewardList(this, args)
         .then(res => {
           this.tableData = res.data
           this.pagination.total = res.meta.pagination.total
@@ -267,15 +276,17 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields()
       this.pagination.currentPage = 1
-      // this.getProgramList()
+      this.getPersonRewardList()
+      this.getPersonRewardTotal()
     },
     changePage(currentPage) {
       this.pagination.currentPage = currentPage
-      // this.getProgramList()
+      this.getPersonRewardList()
     },
     search() {
       this.pagination.currentPage = 1
-      // this.getProgramList()
+      this.getPersonRewardList()
+      this.getPersonRewardTotal()
     },
     handleDateTransform(valueDate) {
       let date = new Date(valueDate)

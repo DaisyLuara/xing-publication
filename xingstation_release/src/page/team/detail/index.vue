@@ -17,15 +17,15 @@
               label=""
               prop="name">
               <el-input 
-                v-model="filters.project_name"
+                v-model="filters.name"
                 placeholder="平台项目"
                 clearable/>
             </el-form-item>
             <el-form-item 
               label=""
-              prop="name">
+              prop="user_name">
               <el-input 
-                v-model="filters.name"
+                v-model="filters.user_name"
                 placeholder="分配人"
                 clearable/>
             </el-form-item>
@@ -60,18 +60,20 @@
           <div>
             <span 
               class="label">
-              奖金总额:<span class="count">10000.00</span>
+              奖金总额:<span class="count">{{ moneyTotal }}</span>
               &nbsp;&nbsp;&nbsp;&nbsp;
             </span>
             <span 
               class="label">
-              已发奖金:<span class="count">1000.00</span>
+              已发奖金:<span class="count">{{ distributionTotal }}</span>
             </span>
           </div>
           <div>
             <el-button
+              v-if="role.name === 'legal-affairs-manager'" 
               type="success"
-              size="small">新建分配</el-button>
+              size="small"
+              @click="applyFormVisible = true">新建分配</el-button>
           </div>
         </div>
         <el-table 
@@ -95,15 +97,15 @@
                 </el-form-item>
                 <el-form-item 
                   label="分配人">
-                  <span>{{ scope.row.applicant_name }}</span> 
+                  <span>{{ scope.row.user_name }}</span> 
                 </el-form-item>
                 <el-form-item 
                   label="分配时间">
-                  <span>{{ scope.row.begin_date }}</span> 
+                  <span>{{ scope.row.date }}</span> 
                 </el-form-item>
                 <el-form-item 
                   label="发放奖金">
-                  <span>{{ scope.row.amount }}</span> 
+                  <span>{{ scope.row.money }}</span> 
                 </el-form-item>
               </el-form>
             </template>
@@ -120,25 +122,25 @@
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="applicant_name"
+            prop="user_name"
             label="分配人"
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="begin_date"
+            prop="date"
             label="分配时间"
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="amount"
+            prop="money"
             label="发放奖金"
             min-width="100"/>
           <el-table-column 
+            v-if="role.name === 'legal-affairs-manager'" 
             label="操作" 
             min-width="150">
             <template 
               slot-scope="scope">
-                <!-- v-if="role.name === 'legal-affairs-manager'"  -->
               <el-button
                 size="small" 
                 type="warning"
@@ -158,38 +160,73 @@
         </div>
       </div>  
     </div>
-    <el-dialog 
+    <el-dialog
       :visible.sync="applyFormVisible"
       title="分配奖金" 
       :show-close="false">
       <el-form 
+        v-loading="loading" 
+        ref="applyForm"
         :model="applyForm"
         label-width="100px">
-        <el-form-item label="分配人">
-          <el-input 
-            v-model="applyForm.applicant_name"
-            :disabled="true"/>
+        <el-form-item
+          :rules="[{ required: true, message: '请输入平台项目', trigger: 'submit' }]" 
+          prop="user_id"
+          label="分配人">
+          <el-select 
+            v-model="applyForm.user_id" 
+            :loading="searchLoading"
+            placeholder="请添加人员" 
+            filterable 
+            clearable
+            style="width: 250px;">
+            <el-option
+              v-for="item in userList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"/>
+            </el-select>
         </el-form-item>
-        <el-form-item label="平台项目名称">
-          <el-input v-model="applyForm.project_name"/>
-        </el-form-item>
-        <el-form-item label="分配金额">
+        <el-form-item 
+          :rules="[{ required: true, message: '请输入平台项目', trigger: 'submit' }]"
+          prop="project_name"
+          label="平台项目">
           <el-input 
-            v-model="applyForm.amount"
-            :maxlength="10"/>
+            v-model="applyForm.project_name"
+            placeholder="请输入平台项目"
+            :maxlength="30"
+            style="width: 250px;"/>
+        </el-form-item>
+        <el-form-item
+          :rules="[{ required: true, message: '请输入分配金额', trigger: 'submit' }]" 
+          prop="money"
+          label="分配金额">
+          <el-input 
+            v-model="applyForm.money"
+            :maxlength="10"
+            placeholder="请输入分配金额"
+            style="width: 250px;"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="applyFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="applyFormVisible = false">确 定</el-button>
+        <el-button type="primary" @click="submit('applyForm')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getProgramList } from 'service'
+import {
+  getSystemBonus,
+  getDistributionBonus,
+  getSystemDetails,
+  saveSystemDetailMoney,
+  getSystemlMoneyDetail,
+  modifySystemDetailMoney
+} from 'service'
 import { Cookies } from 'utils/cookies'
+import search from 'service/search'
 import {
   Button,
   Input,
@@ -200,7 +237,9 @@ import {
   FormItem,
   MessageBox,
   DatePicker,
-  Dialog
+  Dialog,
+  Select,
+  Option
 } from 'element-ui'
 
 export default {
@@ -209,6 +248,8 @@ export default {
     'el-table-column': TableColumn,
     'el-button': Button,
     'el-input': Input,
+    'el-select': Select,
+    'el-option': Option,
     'el-pagination': Pagination,
     'el-form': Form,
     'el-form-item': FormItem,
@@ -217,17 +258,20 @@ export default {
   },
   data() {
     return {
+      loading: false,
       applyFormVisible: false,
       applyForm: {
-        applicant_name: '',
         project_name: '',
-        amount: 0,
-        applicant: ''
+        money: 0,
+        user_id: ''
       },
       filters: {
         name: '',
-        project_name: '',
-        beginDate: []
+        user_name: '',
+        beginDate: [
+          new Date().getTime() - 3600 * 1000 * 24 * 6,
+          new Date().getTime()
+        ]
       },
       setting: {
         loading: false,
@@ -239,6 +283,8 @@ export default {
         currentPage: 1
       },
       role: '',
+      moneyTotal: 0,
+      distributionTotal: 0,
       pickerOptions: {
         shortcuts: [
           {
@@ -288,48 +334,161 @@ export default {
           }
         ]
       },
-      tableData: [
-        {
-          id: 1,
-          project_name: '测试',
-          applicant_name: '测试',
-          begin_date: '2018-09-09',
-          amount: '100'
-        }
-      ]
+      id: '',
+      tableData: [],
+      userList: [],
+      searchLoading: false
     }
   },
   created() {
-    // this.getProgramList()
+    this.getSystemDetails()
+    this.getSystemBonus()
+    this.getDistributionBonus()
+    this.getUserList()
     let user_info = JSON.parse(Cookies.get('user_info'))
     this.role = user_info.roles.data[0]
     this.applyForm.applicant_name = user_info.name
     this.applyForm.applicant = user_info.id
   },
   methods: {
-    modifyHandle() {
+    getUserList() {
+      this.searchLoading = true
+      return search
+        .getUserList(this)
+        .then(response => {
+          this.userList = response.data
+          this.searchLoading = false
+        })
+        .catch(err => {
+          this.searchLoading = false
+        })
+    },
+    submit(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          let args = {
+            user_id: this.applyForm.user_id,
+            project_name: this.applyForm.project_name,
+            money: this.applyForm.money
+          }
+          if (this.id) {
+            modifySystemDetailMoney(this, this.id, args)
+              .then(res => {
+                this.$message({
+                  type: 'success',
+                  message: '修改成功!'
+                })
+                this.getSystemBonus()
+                this.getDistributionBonus()
+                this.getSystemDetails()
+                this.applyFormVisible = false
+              })
+              .catch(err => {
+                this.$message({
+                  type: 'warning',
+                  message: err.response.data.message
+                })
+                this.applyFormVisible = false
+              })
+          } else {
+            saveSystemDetailMoney(this, args)
+              .then(res => {
+                this.$message({
+                  type: 'success',
+                  message: '分配成功!'
+                })
+                this.applyFormVisible = false
+                this.getSystemBonus()
+                this.getDistributionBonus()
+                this.getSystemDetails()
+              })
+              .catch(err => {
+                this.$message({
+                  type: 'warning',
+                  message: err.response.data.message
+                })
+                this.applyFormVisible = false
+              })
+          }
+        }
+      })
+    },
+    getDistributionBonus() {
+      let args = {
+        start_date: this.handleDateTransform(this.filters.beginDate[0]),
+        end_date: this.handleDateTransform(this.filters.beginDate[1])
+      }
+      getDistributionBonus(this, args)
+        .then(res => {
+          this.distributionTotal = res.distribution_bonus
+        })
+        .catch(err => {
+          this.$message({
+            type: 'warning',
+            message: err.response.data.message
+          })
+        })
+    },
+    getSystemBonus() {
+      let args = {
+        start_date: this.handleDateTransform(this.filters.beginDate[0]),
+        end_date: this.handleDateTransform(this.filters.beginDate[1])
+      }
+      getSystemBonus(this, args)
+        .then(res => {
+          this.moneyTotal = res.total_bonus
+        })
+        .catch(err => {
+          this.$message({
+            type: 'warning',
+            message: err.response.data.message
+          })
+        })
+    },
+    modifyHandle(data) {
+      this.id = data.id
+      this.applyForm.project_name = data.project_name
+      this.applyForm.money = data.money
+      this.getSystemlMoneyDetail()
       this.applyFormVisible = true
     },
-    getProgramList() {
+    getSystemlMoneyDetail() {
+      this.loading = true
+      getSystemlMoneyDetail(this, this.id)
+        .then(res => {
+          this.applyForm.user_id = res.user_id
+          this.applyForm.project_name = res.project_name
+          this.applyForm.money = res.money
+          this.loading = false
+        })
+        .catch(err => {
+          this.$message({
+            type: 'warning',
+            message: err.response.data.message
+          })
+          this.loading = false
+        })
+    },
+    getSystemDetails() {
       this.setting.loading = true
       let args = {
         page: this.pagination.currentPage,
-        alias: this.filters.alias,
-        status: this.filters.status,
-        start_date_online: this.handleDateTransform(this.filters.beginDate[0]),
-        end_date_online: this.handleDateTransform(this.filters.beginDate[1])
+        name: this.filters.name,
+        user_name: this.filters.user_name,
+        start_date: this.handleDateTransform(this.filters.beginDate[0]),
+        end_date: this.handleDateTransform(this.filters.beginDate[1])
       }
-      if (this.filters.alias === '') {
-        delete args.alias
+      if (this.filters.name === '') {
+        delete args.name
       }
-      if (!this.filters.status) {
-        delete args.status
+      if (!this.filters.user_name) {
+        delete args.user_name
       }
       if (JSON.stringify(this.filters.beginDate) === '[]') {
-        delete args.start_date_online
-        delete args.end_date_online
+        delete args.start_date
+        delete args.end_date
       }
-      getProgramList(this, args)
+      getSystemDetails(this, args)
         .then(res => {
           this.tableData = res.data
           this.pagination.total = res.meta.pagination.total
@@ -346,15 +505,19 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields()
       this.pagination.currentPage = 1
-      // this.getProgramList()
+      this.getSystemBonus()
+      this.getDistributionBonus()
+      this.getSystemDetails()
     },
     changePage(currentPage) {
       this.pagination.currentPage = currentPage
-      // this.getProgramList()
+      this.getSystemDetails()
     },
     search() {
       this.pagination.currentPage = 1
-      // this.getProgramList()
+      this.getSystemBonus()
+      this.getDistributionBonus()
+      this.getSystemDetails()
     },
     handleDateTransform(valueDate) {
       let date = new Date(valueDate)
@@ -379,7 +542,6 @@ export default {
   .program-list-wrap {
     background: #fff;
     padding: 30px;
-
     .el-form-item {
       margin-bottom: 15px;
     }
@@ -412,10 +574,10 @@ export default {
           margin-bottom: 10px;
         }
         .el-select {
-          width: 200px;
+          width: 250px;
         }
         .item-input {
-          width: 230px;
+          width: 250px;
         }
         .warning {
           background: #ebf1fd;
