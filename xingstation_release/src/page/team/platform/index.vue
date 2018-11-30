@@ -15,9 +15,9 @@
             :inline="true">
             <el-form-item 
               label=""
-              prop="alias">
+              prop="name">
               <el-input 
-                v-model="filters.alias" 
+                v-model="filters.name" 
                 placeholder="请输入平台名称"
                 clearable/>
             </el-form-item>
@@ -38,9 +38,9 @@
             </el-form-item>
             <el-form-item 
               label="" 
-              prop="onlineDate">
+              prop="applyDate">
               <el-date-picker
-                v-model="filters.onlineDate"
+                v-model="filters.applyDate"
                 :clearable="false"
                 :picker-options="pickerOptions"
                 type="daterange"
@@ -94,7 +94,7 @@
                 </el-form-item>
                 <el-form-item 
                   label="平台项目">
-                  <span>{{ scope.row.project_name }}</span> 
+                  <span>{{ scope.row.name }}</span> 
                 </el-form-item>
                 <el-form-item 
                   label="申请人">
@@ -102,7 +102,7 @@
                 </el-form-item>
                 <el-form-item 
                   label="申请时间">
-                  <span>{{ scope.row.begin_date }}</span> 
+                  <span>{{ scope.row.created_at }}</span> 
                 </el-form-item>
                 <el-form-item 
                   label="状态">
@@ -118,7 +118,7 @@
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="project_name"
+            prop="name"
             label="平台项目"
             min-width="100"/>
           <el-table-column
@@ -128,7 +128,7 @@
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="begin_date"
+            prop="created_at"
             label="申请时间"
             min-width="100"/>
           <el-table-column
@@ -170,17 +170,26 @@
       title="申请奖金" 
       :show-close="false">
       <el-form 
+        ref="applyForm"
         :model="applyForm"
         label-width="100px">
-        <el-form-item label="申请人">
+        <el-form-item 
+          prop="applicant_name"
+          label="申请人">
           <el-input 
             v-model="applyForm.applicant_name"
             :disabled="true"/>
         </el-form-item>
-        <el-form-item label="平台项目">
-          <el-input v-model="applyForm.project_name"/>
+        <el-form-item 
+          :rules="[{ required: true, message: '请输入平台项目', trigger: 'submit' }]"
+          prop="name"
+          label="平台项目">
+          <el-input v-model="applyForm.name"/>
         </el-form-item>
-        <el-form-item label="备注">
+        <el-form-item 
+          :rules="[{ required: true, message: '请输入备注', trigger: 'submit' }]"
+          prop="remark"
+          label="备注">
           <el-input 
             v-model="applyForm.remark"
             type="textarea"
@@ -191,12 +200,15 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="applyFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="applyFormVisible = false">确 定</el-button>
+        <el-button 
+          size="small"
+          type="primary" 
+          @click="submitApply('applyForm')">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog 
       :visible.sync="allocationFormVisible"
-      title="申请奖金" 
+      title="分配奖金" 
       :show-close="false">
       <el-form 
         :model="allocationForm"
@@ -212,14 +224,14 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="allocationFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="allocationFormVisible = false">确 定</el-button>
+        <el-button type="primary" @click="allocationFormVisible=false">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getProgramList, confirmProgram } from 'service'
+import { getTeamSystemProject, saveTeamSystemProject } from 'service'
 import search from 'service/search'
 import { Cookies } from 'utils/cookies'
 import {
@@ -263,14 +275,17 @@ export default {
       applyForm: {
         applicant: '',
         applicant_name: '',
-        project_name: '',
+        name: '',
         remark: ''
       },
       applyFormVisible: false,
       filters: {
-        alias: '',
+        name: '',
         status: '',
-        onlineDate: []
+        applyDate: [
+          new Date().getTime() - 3600 * 1000 * 24 * 6,
+          new Date().getTime()
+        ]
       },
       setting: {
         loading: false,
@@ -289,11 +304,11 @@ export default {
         },
         {
           id: 2,
-          name: '已驳回'
+          name: '已分配'
         },
         {
           id: 3,
-          name: '已分配'
+          name: '已驳回'
         }
       ],
       pickerOptions: {
@@ -345,26 +360,44 @@ export default {
           }
         ]
       },
-      tableData: [
-        {
-          id: 1,
-          project_name: '测试',
-          applicant_name: '测试',
-          begin_date: '2018-09-09',
-          online_date: '2018-10-10',
-          status: '申请中'
-        }
-      ]
+      tableData: []
     }
   },
   created() {
-    // this.getProgramList()
+    this.getTeamSystemProject()
     let user_info = JSON.parse(Cookies.get('user_info'))
     this.role = user_info.roles.data[0]
     this.applyForm.applicant_name = user_info.name
     this.applyForm.applicant = user_info.id
   },
   methods: {
+    submitApply(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          let args = {
+            name: this.applyForm.name,
+            applicant: this.applyForm.applicant,
+            remark: this.applyForm.remark
+          }
+          saveTeamSystemProject(this, args)
+            .then(res => {
+              this.applyFormVisible = false
+              this.$message({
+                type: 'success',
+                message: '申请成功!'
+              })
+              this.getTeamSystemProject()
+            })
+            .catch(err => {
+              this.$message({
+                type: 'warning',
+                message: err.response.data.message
+              })
+              this.applyFormVisible = false
+            })
+        }
+      })
+    },
     allocationHandle(row) {
       this.allocationFormVisible = true
     },
@@ -390,26 +423,26 @@ export default {
     applyReward() {
       this.applyFormVisible = true
     },
-    getProgramList() {
+    getTeamSystemProject() {
       this.setting.loading = true
       let args = {
         page: this.pagination.currentPage,
-        alias: this.filters.alias,
+        name: this.filters.name,
         status: this.filters.status,
-        start_date_online: this.handleDateTransform(this.filters.onlineDate[0]),
-        end_date_online: this.handleDateTransform(this.filters.onlineDate[1])
+        start_date: this.handleDateTransform(this.filters.applyDate[0]),
+        end_date: this.handleDateTransform(this.filters.applyDate[1])
       }
-      if (this.filters.alias === '') {
-        delete args.alias
+      if (this.filters.name === '') {
+        delete args.name
       }
       if (!this.filters.status) {
         delete args.status
       }
-      if (JSON.stringify(this.filters.onlineDate) === '[]') {
-        delete args.start_date_online
-        delete args.end_date_online
+      if (JSON.stringify(this.filters.applyDate) === '[]') {
+        delete args.start_date
+        delete args.end_date
       }
-      getProgramList(this, args)
+      getTeamSystemProject(this, args)
         .then(res => {
           this.tableData = res.data
           this.pagination.total = res.meta.pagination.total
@@ -426,15 +459,15 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields()
       this.pagination.currentPage = 1
-      // this.getProgramList()
+      this.getTeamSystemProject()
     },
     changePage(currentPage) {
       this.pagination.currentPage = currentPage
-      // this.getProgramList()
+      this.getTeamSystemProject()
     },
     search() {
       this.pagination.currentPage = 1
-      // this.getProgramList()
+      this.getTeamSystemProject()
     },
     handleDateTransform(valueDate) {
       let date = new Date(valueDate)
