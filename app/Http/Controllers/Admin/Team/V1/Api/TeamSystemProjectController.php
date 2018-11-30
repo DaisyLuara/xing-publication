@@ -52,9 +52,9 @@ class TeamSystemProjectController extends Controller
         /** @var  $user \App\Models\User */
         $user = $this->user();
 
-        if (!$user->hasRole('legal-affairs-manager')) {
-            abort(403, '无操作权限');
-        }
+//        if (!$user->hasRole('legal-affairs-manager')) {
+//            abort(403, '无操作权限');
+//        }
         //分配到个人账户
         TeamPersonReward::create([
             'user_id' => $teamSystemProject->user_id,
