@@ -69,8 +69,8 @@
             </span>
           </div>
           <div>
-              <!-- v-if="role.name === 'legal-affairs-manager'"  -->
             <el-button
+              v-if="role.name === 'legal-affairs-manager'" 
               type="success"
               size="small"
               @click="applyFormVisible = true">新建分配</el-button>
@@ -135,8 +135,8 @@
             prop="money"
             label="发放奖金"
             min-width="100"/>
-            <!-- v-if="role.name === 'legal-affairs-manager'"  -->
           <el-table-column 
+            v-if="role.name === 'legal-affairs-manager'" 
             label="操作" 
             min-width="150">
             <template 
