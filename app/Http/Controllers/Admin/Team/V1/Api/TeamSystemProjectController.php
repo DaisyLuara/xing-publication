@@ -126,7 +126,7 @@ class TeamSystemProjectController extends Controller
      * @param TeamPersonReward $teamPersonReward
      * @return \Dingo\Api\Http\Response
      */
-    public function detail(Request $request, TeamPersonReward $teamPersonReward)
+    public function detailIndex(Request $request, TeamPersonReward $teamPersonReward)
     {
         $query = $teamPersonReward->query();
 
