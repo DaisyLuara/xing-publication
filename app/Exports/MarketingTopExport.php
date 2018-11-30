@@ -30,13 +30,14 @@ class MarketingTopExport extends AbstractExport
             ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
             ->whereRaw("date_format(fcl.date, '%Y-%m-%d') BETWEEN '{$this->startDate}' AND '{$this->endDate}' and fcl.oid not in ('16', '19', '30', '31', '177','182','327','328','329','334','335','540') and aom.marketid <> '15'")
-            ->groupBy(DB::raw("fcl.oid,fcl.belong"))
+            ->groupBy(DB::raw("date_format(fcl.date, '%Y-%m-%d'),fcl.oid,fcl.belong"))
+            ->orderBy('date')
             ->orderBy('apl.id')
             ->orderBy('looknum', 'desc')
-            ->selectRaw("apl.name as name,count(*) as days,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(looknum) as looknum,sum(playernum7)as playernum7,sum(playernum15) as playernum15 ,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum,sum(omo_scannum) as omo_scannum,sum(phonenum) as phonenum,sum(oanum) as oanum,sum(phonetimes) as phonetimes,sum(oatimes) as oatimes");
+            ->selectRaw("date_format(fcl.date, '%Y-%m-%d') as date,apl.name as name,count(*) as days,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(looknum) as looknum,sum(playernum7)as playernum7,sum(playernum15) as playernum15 ,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum,sum(omo_scannum) as omo_scannum,sum(phonenum) as phonenum,sum(oanum) as oanum,sum(phonetimes) as phonetimes,sum(oatimes) as oatimes");
 
         $faceCount2 = DB::connection('ar')->table(DB::raw("({$faceCount1->toSql()}) a,(select @gn := 0)  b"))
-            ->selectRaw("  @gn := case when @name = name then @gn + 1 else 1 end gn,@name := name name,days,playtimes7,playtimes15,playtimes21,looknum,playernum7,playernum15,playernum21,phonenum,oanum,phonetimes,oatimes,omo_outnum,omo_scannum");
+            ->selectRaw("  @gn := case when (@date=date and @name = name) then @gn + 1 else 1 end gn,@date:=date date,@name := name name,days,playtimes7,playtimes15,playtimes21,looknum,playernum7,playernum15,playernum21,phonenum,oanum,phonetimes,oatimes,omo_outnum,omo_scannum");
 
         $faceCount = DB::connection('ar')->table(DB::raw("({$faceCount2->toSql()}) c"))
             ->selectRaw("name,sum(days) as pushnum,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum15) as playernum15,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum,sum(omo_scannum) as omo_scannum,sum(phonenum) as phonenum,sum(oanum) as oanum,sum(phonetimes) as phonetimes,sum(oatimes) as oatimes")
@@ -76,7 +77,7 @@ class MarketingTopExport extends AbstractExport
             $player7Money = round($aa['playernum7'] * 0.01, 0);
             $player15Money = round($aa['playernum15'] * 0.02, 0);
             $player21Money = round($aa['playernum21'] * 0.05, 0);
-            $uCPAMoney = round(($aa['omo_outnum'] + $aa['oanum'] + $aa['phonenum']) * 0.2, 0);
+            $uCPAMoney = round($aa['omo_outnum'] * 0.2, 0);
             $totalMoney = $player7Money + $player15Money + $player21Money + $uCPAMoney;
 
 
