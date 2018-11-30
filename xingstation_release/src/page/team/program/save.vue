@@ -311,7 +311,7 @@
         <el-form-item>
           <!-- 产品经理可以保存 -->
           <el-button
-            v-if="role.name === 'project-manager'" 
+            v-if="role.name === 'project-manager' && status === 1" 
             type="primary"
             @click="submit('programForm')">保存</el-button>
           <el-button @click="historyBack">返回</el-button>
@@ -399,6 +399,7 @@ export default {
         loading: false,
         loadingText: '拼命加载中'
       },
+      status: '',
       programID: '',
       programForm: {
         applicant: '',
@@ -502,6 +503,7 @@ export default {
           this.programForm.plan = res.member.plan
           this.programForm.tester = res.member.tester
           this.programForm.remark = res.remark
+          this.status = res.status
           if (res.member.animation.length > 0) {
             res.member.animation.map(r => {
               this.programForm.animate.push(r.user_id)

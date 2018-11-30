@@ -102,8 +102,8 @@
             prop="tester"
             label="节目测试"
             min-width="70"/>
-            <!-- v-if="role.name === 'legal-affairs-manager'" -->
             <el-table-column 
+            v-if="role.name === 'legal-affairs-manager' || role.name === 'bonus-manager'"
             label="操作" 
             min-width="90">
             <template 
