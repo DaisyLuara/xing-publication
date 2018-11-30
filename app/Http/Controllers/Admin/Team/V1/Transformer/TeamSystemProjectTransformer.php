@@ -23,10 +23,15 @@ class TeamSystemProjectTransformer extends TransformerAbstract
     public function transform(TeamSystemProject $teamSystemProject)
     {
         return [
+            'id' => $teamSystemProject->id,
             'name' => $teamSystemProject->name,
             'applicant' => $teamSystemProject->applicant,
             'applicant_name' => $teamSystemProject->user->name,
-            'status' => $this->statusMapping[$teamSystemProject->status]
+            'status' => $this->statusMapping[$teamSystemProject->status],
+            'remark' => $teamSystemProject->remark,
+            'reject_message'=>$teamSystemProject->reject_message,
+            'created_at' => $teamSystemProject->created_at->toDateString(),
+            'updated_at' => $teamSystemProject->updated_at->toDateString()
         ];
     }
 }

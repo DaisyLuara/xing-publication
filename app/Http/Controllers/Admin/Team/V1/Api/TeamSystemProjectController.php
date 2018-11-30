@@ -46,6 +46,9 @@ class TeamSystemProjectController extends Controller
         return $this->response()->noContent()->setStatusCode(201);
     }
 
+    public function allot(){
+
+    }
     public function systemBonus(Request $request)
     {
         $startDate = $request->start_date;
