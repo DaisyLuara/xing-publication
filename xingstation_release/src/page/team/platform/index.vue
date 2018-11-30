@@ -65,9 +65,16 @@
         <div 
           class="total-wrap">
           <div>
-            <div 
+            <div>
+            <span 
               class="label">
-              奖金总额:10000.00
+              奖金总额: {{ moneyTotal }}
+            </span>
+            <span 
+              class="label"
+              style="margin-left:20px;">
+              已分配奖金: {{ distributionTotal }}
+             </span>
             </div>
           </div>
           <div>
@@ -108,6 +115,11 @@
                   label="状态">
                   <span>{{ scope.row.status }}</span> 
                 </el-form-item>
+                <el-form-item
+                  v-if="scope.row.reject_message"
+                  label="驳回意见">
+                  <span>{{ scope.row.reject_message }}</span> 
+                </el-form-item>
               </el-form>
             </template>
           </el-table-column>
@@ -136,18 +148,19 @@
             prop="status"
             label="状态"
             min-width="100"/>
-          <el-table-column 
+          <el-table-column
+            v-if="role.name === 'legal-affairs-manager'" 
             label="操作" 
             min-width="150">
             <template 
               slot-scope="scope">
-                <!-- v-if="role.name === 'legal-affairs-manager'"  -->
               <el-button
+                v-if="role.name === 'legal-affairs-manager' && status === '申请中'" 
                 size="small" 
                 type="warning"
-                @click="rejectHandle(scope.row)">驳回</el-button>
-                <!-- v-if="role.name === 'legal-affairs-manager'"  -->
+                @click="rejectFormVisible = true,id = scope.row.id">驳回</el-button>
               <el-button 
+                v-if="role.name === 'legal-affairs-manager'  && status === '申请中' " 
                 size="small"
                 @click="allocationHandle(scope.row)">分配</el-button>
             </template>
@@ -211,6 +224,7 @@
       title="分配奖金" 
       :show-close="false">
       <el-form 
+        ref="allocationForm"
         :model="allocationForm"
         label-width="100px">
         <el-form-item label="可发奖金">
@@ -218,21 +232,49 @@
             v-model="allocationForm.total"
             :disabled="true"/>
         </el-form-item>
-        <el-form-item label="分配数额">
+        <el-form-item 
+          :rules="[{ required: true, message: '请输入分配数额', trigger: 'submit' }]"
+          prop="count"
+          label="分配数额">
           <el-input v-model="allocationForm.count"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="allocationFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="allocationFormVisible=false">确 定</el-button>
+        <el-button type="primary" @click="systemDistribute('allocationForm')">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog 
+      :visible.sync="rejectFormVisible"
+      title="驳回申请" 
+      :show-close="false">
+      <el-form 
+        ref="rejectForm"
+        :model="rejectForm"
+        label-width="100px">
+        <el-form-item 
+          prop="reject_message"
+          label="驳回意见">
+          <el-input v-model="rejectForm.reject_message"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="rejectFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="rejectHandle('rejectForm')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getTeamSystemProject, saveTeamSystemProject } from 'service'
-import search from 'service/search'
+import {
+  getTeamSystemProject,
+  saveTeamSystemProject,
+  systemDistribute,
+  getSystemBonus,
+  getDistributionBonus,
+  systemReject
+} from 'service'
 import { Cookies } from 'utils/cookies'
 import {
   Button,
@@ -267,6 +309,10 @@ export default {
   },
   data() {
     return {
+      rejectForm: {
+        reject_message: ''
+      },
+      rejectFormVisible: false,
       allocationFormVisible: false,
       allocationForm: {
         total: 100,
@@ -278,13 +324,16 @@ export default {
         name: '',
         remark: ''
       },
+      moneyTotal: 0,
+      residueTotal: 0,
+      distributionTotal: 0,
       applyFormVisible: false,
       filters: {
         name: '',
         status: '',
         applyDate: [
-          new Date().getTime() - 3600 * 1000 * 24 * 6,
-          new Date().getTime()
+          new Date('2018-07-01').getTime() - 3600 * 1000 * 24 * 6,
+          new Date('2018-07-03').getTime()
         ]
       },
       setting: {
@@ -360,17 +409,89 @@ export default {
           }
         ]
       },
-      tableData: []
+      tableData: [],
+      id: null
     }
   },
   created() {
     this.getTeamSystemProject()
+    this.getSystemBonus()
+    this.getDistributionBonus()
     let user_info = JSON.parse(Cookies.get('user_info'))
     this.role = user_info.roles.data[0]
     this.applyForm.applicant_name = user_info.name
     this.applyForm.applicant = user_info.id
   },
   methods: {
+    getDistributionBonus() {
+      let args = {
+        start_date: this.handleDateTransform(this.filters.applyDate[0]),
+        end_date: this.handleDateTransform(this.filters.applyDate[1])
+      }
+      getDistributionBonus(this, args)
+        .then(res => {
+          this.distributionTotal = res.distribution_bonus
+          this.residueTotal = this.moneyTotal - this.distributionTotal
+          this.allocationForm.total = this.residueTotal
+        })
+        .catch(err => {
+          this.$message({
+            type: 'warning',
+            message: err.response.data.message
+          })
+        })
+    },
+    getSystemBonus() {
+      let args = {
+        start_date: this.handleDateTransform(this.filters.applyDate[0]),
+        end_date: this.handleDateTransform(this.filters.applyDate[1])
+      }
+      getSystemBonus(this, args)
+        .then(res => {
+          this.moneyTotal = res.total_bonus
+        })
+        .catch(err => {
+          this.$message({
+            type: 'warning',
+            message: err.response.data.message
+          })
+        })
+    },
+    systemDistribute(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          let args = {
+            money: this.allocationForm.count
+          }
+          if (this.allocationForm.total - this.allocationForm.count < 0) {
+            this.$message({
+              type: 'warning',
+              message: '分配数额大于可发奖金，请重新填写!'
+            })
+            return
+          }
+          systemDistribute(this, this.id, args)
+            .then(res => {
+              this.applyFormVisible = false
+              this.$message({
+                type: 'success',
+                message: '分配成功!'
+              })
+              this.getTeamSystemProject()
+              this.getTeamSystemProject()
+              this.getSystemBonus()
+              this.applyFormVisible = false
+            })
+            .catch(err => {
+              this.$message({
+                type: 'warning',
+                message: err.response.data.message
+              })
+              this.applyFormVisible = false
+            })
+        }
+      })
+    },
     submitApply(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -399,25 +520,29 @@ export default {
       })
     },
     allocationHandle(row) {
+      this.id = row.id
+      this.getDistributionBonus()
       this.allocationFormVisible = true
     },
     rejectHandle() {
-      this.$confirm('确认驳回吗?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
+      let args = {
+        reject_message: this.rejectForm.reject_message
+      }
+      systemReject(this, this.id, args)
+        .then(res => {
           this.$message({
             type: 'success',
-            message: '驳回成功!'
+            message: '驳回成功'
           })
+          this.getTeamSystemProject()
+          this.rejectFormVisible = false
         })
-        .catch(() => {
+        .catch(err => {
           this.$message({
-            type: 'info',
-            message: '已取消驳回'
+            type: 'warning',
+            message: err.response.data.message
           })
+          this.rejectFormVisible = false
         })
     },
     applyReward() {

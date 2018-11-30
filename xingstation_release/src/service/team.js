@@ -3,6 +3,9 @@ const HOST = process.env.SERVER_URL
 const TEAM_API = '/api/team_project'
 const TEAM_SYSTEM_API = '/api/team_system_project'
 const TEAM_RATE_API = '/api/team_rate'
+const SYSTEM_BONUS_API = '/api/system_bonus'
+const SYSTEM_DISTRIBTION_BONUS_API = '/api/distribution_bonus'
+
 // 得到项目列表
 const getProgramList = (context, params) => {
   return new Promise(function(resolve, reject) {
@@ -134,6 +137,61 @@ const getTeamSystemProject = (context, params) => {
       })
   })
 }
+
+// 奖金分配
+const systemDistribute = (context, id, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .post(HOST + TEAM_SYSTEM_API + '/distribute/' + id, params)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+// 平台总奖金
+const getSystemBonus = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + SYSTEM_BONUS_API, { params: params })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+// 平台已分配奖金
+const getDistributionBonus = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + SYSTEM_DISTRIBTION_BONUS_API, { params: params })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+// 平台驳回
+const systemReject = (context, id, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .post(HOST + TEAM_SYSTEM_API + '/reject/' + id, params)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
 export {
   getProgramList,
   saveProgram,
@@ -144,5 +202,9 @@ export {
   getTeamRateDetails,
   modifyTeamRate,
   saveTeamSystemProject,
-  getTeamSystemProject
+  getTeamSystemProject,
+  systemDistribute,
+  getSystemBonus,
+  getDistributionBonus,
+  systemReject
 }
