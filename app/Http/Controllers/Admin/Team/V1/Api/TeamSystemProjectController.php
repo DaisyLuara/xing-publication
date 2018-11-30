@@ -54,9 +54,9 @@ class TeamSystemProjectController extends Controller
         /** @var  $user \App\Models\User */
         $user = $this->user();
 
-//        if (!$user->hasRole('legal-affairs-manager')) {
-//            abort(403, '无操作权限');
-//        }
+        if (!$user->hasRole('legal-affairs-manager')) {
+            abort(403, '无操作权限');
+        }
         $teamSystemProject->update(array_merge($request->all(), ['status' => 3]));
         return $this->response()->noContent()->setStatusCode(200);
     }
@@ -66,9 +66,9 @@ class TeamSystemProjectController extends Controller
         /** @var  $user \App\Models\User */
         $user = $this->user();
 
-//        if (!$user->hasRole('legal-affairs-manager')) {
-//            abort(403, '无操作权限');
-//        }
+        if (!$user->hasRole('legal-affairs-manager')) {
+            abort(403, '无操作权限');
+        }
         $teamSystemProject->status = 2;
         $teamSystemProject->update();
         //分配到个人账户
@@ -156,12 +156,21 @@ class TeamSystemProjectController extends Controller
      */
     public function detailStore(Request $request, TeamPersonReward $teamPersonReward)
     {
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
+        if (!$user->hasRole('legal-affairs-manager')) {
+            abort(403, '无操作权限');
+        }
         $teamPersonReward->fill(array_merge($request->all(), ['belong' => 'system', 'date' => Carbon::now()->toDateTimeString()]))->save();
         return $this->response()->noContent()->setStatusCode(201);
     }
 
     public function detailUpdate(Request $request, TeamPersonReward $teamPersonReward)
     {
+        $user = $this->user();
+        if (!$user->hasRole('legal-affairs-manager')) {
+            abort(403, '无操作权限');
+        }
         $teamPersonReward->update($request->all());
         return $this->response()->noContent()->setStatusCode(200);
     }

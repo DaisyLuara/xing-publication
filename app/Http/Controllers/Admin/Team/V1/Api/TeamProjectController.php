@@ -35,7 +35,7 @@ class TeamProjectController extends Controller
         /** @var  $user \App\Models\User */
         $user = $this->user();
 
-        if (!$user->hasRole('tester') && !$user->hasRole('operation') && !$user->hasRole('legal-affairs-manager')) {
+        if (!$user->hasRole('tester') && !$user->hasRole('operation') && !$user->hasRole('legal-affairs-manager')&&!$user->hasRole('bonus-manager')) {
             $query->where(function ($query) use ($user) {
                 $query->where('applicant', $user->id)
                     ->orWhere(function ($q) use ($user) {
@@ -100,6 +100,13 @@ class TeamProjectController extends Controller
 
     public function update(TeamProjectRequest $request, TeamProject $teamProject)
     {
+        if ($teamProject->status != 1) {
+            abort(403, '项目已确认无法修改');
+        }
+        $user = $this->user();
+        if (!$user->hasRole('project-manager')) {
+            abort(403, '无操作权限');
+        }
         $teamProject->update($request->all());
         $member = $request->member;
         $teamProject->member()->detach();

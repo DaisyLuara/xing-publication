@@ -28,14 +28,19 @@ class TeamRateController extends Controller
         return $this->response()->paginator($teamRate, new TeamRateTransformer());
     }
 
-    public function store(TeamRateRequest $request, TeamRate $teamRate)
-    {
-        $teamRate->fill($request->all())->save();
-        return $this->response()->noContent()->setStatusCode(201);
-    }
+//    public function store(TeamRateRequest $request, TeamRate $teamRate)
+////    {
+////        $teamRate->fill($request->all())->save();
+////        return $this->response()->noContent()->setStatusCode(201);
+////    }
 
     public function update(TeamRateRequest $request, TeamRate $teamRate)
     {
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
+        if (!$user->hasRole('legal-affairs-manager') && !$user->hasRole('bonus-manager')) {
+            abort(403, '无操作权限');
+        }
         $teamRate->update($request->all());
         return $this->response()->noContent()->setStatusCode(200);
     }
