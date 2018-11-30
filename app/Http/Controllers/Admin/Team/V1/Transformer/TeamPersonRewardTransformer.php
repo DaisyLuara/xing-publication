@@ -19,6 +19,7 @@ class TeamPersonRewardTransformer extends TransformerAbstract
     {
         return [
             'id' => $teamPersonReward->id,
+            'user_id' => $teamPersonReward->user_id,
             'user_name' => $teamPersonReward->user->name,
             'project_name' => $teamPersonReward->project_name,
             'money' => $teamPersonReward->money,
