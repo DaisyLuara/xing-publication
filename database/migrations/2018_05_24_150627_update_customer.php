@@ -14,7 +14,13 @@ class UpdateCustomer extends Migration
     public function up()
     {
         Schema::table('customers', function (Blueprint $table) {
-            $table->string('password');
+            $table->string('avatar')->nullable();
+            $table->string('introduction')->nullable();
+            $table->integer('notification_count')->unsigned()->default(0);
+            $table->string('weixin_openid')->unique()->nullable();
+            $table->string('weixin_unionid')->unique()->nullable();
+            $table->integer('ar_user_id')->index()->nullable()->comment('星视度用户ID');
+            $table->softDeletes();
         });
     }
 
@@ -26,7 +32,13 @@ class UpdateCustomer extends Migration
     public function down()
     {
         Schema::table('customers', function (Blueprint $table) {
-            $table->dropColumn('password');
+            $table->dropColumn('avatar');
+            $table->dropColumn('introduction');
+            $table->dropColumn('notification_count');
+            $table->dropColumn('weixin_openid');
+            $table->dropColumn('weixin_unionid');
+            $table->dropColumn('ar_user_id');
+            $table->dropSoftDeletes();
         });
     }
 }

@@ -18,8 +18,7 @@ class CompanyRequest extends FormRequest
                 return [
                     'name' => 'required|string',
                     'address' => 'required|string',
-                    'phone' => 'filled|exists:customers,phone',
-                    'telephone' => 'filled|exists:customers,telephone',
+                    'phone' => 'required|regex:/^1[3456789]\d{9}$/|unique:customers',
                 ];
                 break;
             case 'PATCH':
