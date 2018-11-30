@@ -77,7 +77,7 @@ class TeamSystemProjectController extends Controller
             'project_name' => $teamSystemProject->name,
             'belong' => 'system',
             'money' => $request->money,
-            'date' => Carbon::now()->toDateString()
+            'date' => Carbon::now()->toDateTimeString()
         ]);
         return $this->response()->noContent()->setStatusCode(200);
     }
@@ -131,11 +131,13 @@ class TeamSystemProjectController extends Controller
         $query = $teamPersonReward->query();
 
         if ($request->has('name')) {
-            $query->where('project_name','like' ,'%'.$request->name.'%');
+            $query->where('project_name', 'like', '%' . $request->name . '%');
         }
 
-        if ($request->has('user_id')) {
-            $query->where('user_id', $request->user_id);
+        if ($request->has('user_name')) {
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->user_name . '%');
+            });
         }
 
         if ($request->has('start_date') && $request->has('end_date')) {
@@ -144,5 +146,23 @@ class TeamSystemProjectController extends Controller
 
         $teamPersonReward = $query->whereRaw("belong='system'")->paginate(10);
         return $this->response()->paginator($teamPersonReward, new TeamPersonRewardTransformer());
+    }
+
+    /**
+     * 新增分配
+     * @param Request $request
+     * @param TeamPersonReward $teamPersonReward
+     * @return \Dingo\Api\Http\Response
+     */
+    public function detailStore(Request $request, TeamPersonReward $teamPersonReward)
+    {
+        $teamPersonReward->fill(array_merge($request->all(), ['belong' => 'system', 'date' => Carbon::now()->toDateTimeString()]))->save();
+        return $this->response()->noContent()->setStatusCode(201);
+    }
+
+    public function detailUpdate(Request $request, TeamPersonReward $teamPersonReward)
+    {
+        $teamPersonReward->update($request->all());
+        return $this->response()->noContent()->setStatusCode(200);
     }
 }
