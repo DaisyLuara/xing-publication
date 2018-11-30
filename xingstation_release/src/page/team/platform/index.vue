@@ -332,8 +332,8 @@ export default {
         name: '',
         status: '',
         applyDate: [
-          new Date('2018-07-01').getTime() - 3600 * 1000 * 24 * 6,
-          new Date('2018-07-03').getTime()
+          new Date().getTime() - 3600 * 1000 * 24 * 6,
+          new Date().getTime()
         ]
       },
       setting: {
@@ -585,6 +585,8 @@ export default {
       this.$refs[formName].resetFields()
       this.pagination.currentPage = 1
       this.getTeamSystemProject()
+      this.getSystemBonus()
+      this.getDistributionBonus()
     },
     changePage(currentPage) {
       this.pagination.currentPage = currentPage
@@ -593,6 +595,8 @@ export default {
     search() {
       this.pagination.currentPage = 1
       this.getTeamSystemProject()
+      this.getSystemBonus()
+      this.getDistributionBonus()
     },
     handleDateTransform(valueDate) {
       let date = new Date(valueDate)
