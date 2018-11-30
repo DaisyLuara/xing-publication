@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Admin\Team\V1\Api;
 
 
 use App\Http\Controllers\Admin\Team\V1\Models\TeamBonus;
+use App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamSystemProject;
 use App\Http\Controllers\Admin\Team\V1\Request\TeamSystemRequest;
 use App\Http\Controllers\Admin\Team\V1\Transformer\TeamSystemProjectTransformer;
@@ -46,9 +47,28 @@ class TeamSystemProjectController extends Controller
         return $this->response()->noContent()->setStatusCode(201);
     }
 
-    public function allot(){
+    public function distribute(Request $request, TeamSystemProject $teamSystemProject)
+    {
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
 
+        if (!$user->hasRole('legal-affairs-manager')) {
+            abort(403, '无操作权限');
+        }
+        //分配到个人账户
+        TeamPersonReward::create([
+            'user_id' => $teamSystemProject->user_id,
+            'project_name' => $teamSystemProject->name,
+            'belong' => 'system',
+            'money' => $request->money
+        ]);
     }
+
+    /**
+     * 平台总奖金
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function systemBonus(Request $request)
     {
         $startDate = $request->start_date;
@@ -61,5 +81,24 @@ class TeamSystemProjectController extends Controller
             'total_bonus' => $data ? round($data->total * 0.12, 2) : 0
         ];
         return response()->json($output);
+    }
+
+    /**
+     * 已发放的平台奖金
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function distributionBonus(Request $request)
+    {
+        $startDate = $request->start_date;
+        $endDate = $request->end_date;
+        $data = TeamPersonReward::query()->whereRaw("date_format(date,'%Y-%m-%d') between '$startDate' and '$endDate' and belong='system'")
+            ->selectRaw("sum(money) as total")
+            ->first();
+        $output = [
+            'total_bonus' => $data ? $data->total : 0
+        ];
+        return response()->json($output);
+
     }
 }
