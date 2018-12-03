@@ -45,6 +45,7 @@ class FaceCount extends Command
         activePlayTimesClean();
         omoClean();
         phoneClean();
+        couponTimesClean();
         verifyTimesClean();
         mergeActiveOmoLook();
     }

@@ -10,6 +10,7 @@ $api->version('v1', [
     ], function ($api) {
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
             $api->get('week_ranking', 'FaceCountController@weekRanking');
+            $api->get('aaa', 'FaceCountController@aaa');
         });
     });
 

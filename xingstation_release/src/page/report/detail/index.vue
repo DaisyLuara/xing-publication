@@ -500,7 +500,7 @@ export default {
       if (query !== '') {
         this.searchLoading = true
         return search
-          .getUserList(this, args)
+          .getStaffsList(this, args)
           .then(response => {
             this.userList = response.data
             if (this.userList.length == 0) {
