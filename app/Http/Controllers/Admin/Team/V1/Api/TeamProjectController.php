@@ -35,7 +35,7 @@ class TeamProjectController extends Controller
         /** @var  $user \App\Models\User */
         $user = $this->user();
 
-        if (!$user->hasRole('tester') && !$user->hasRole('operation') && !$user->hasRole('legal-affairs-manager')&&!$user->hasRole('bonus-manager')) {
+        if (!$user->hasRole('tester') && !$user->hasRole('operation') && !$user->hasRole('legal-affairs-manager') && !$user->hasRole('bonus-manager')) {
             $query->where(function ($query) use ($user) {
                 $query->where('applicant', $user->id)
                     ->orWhere(function ($q) use ($user) {
@@ -131,7 +131,7 @@ class TeamProjectController extends Controller
             return $this->response()->noContent()->setStatusCode(200);
         }
 
-        if ($user->hasRole('legal-affairs-manager') && $teamProject->status == 3) {
+        if (($user->hasRole('legal-affairs-manager') || $user->hasRole('bonus-manager')) && $teamProject->status == 3) {
             $teamProject->status = 4;
             $teamProject->online_date = Carbon::now()->toDateString();
             $teamProject->update();

@@ -34,20 +34,20 @@ class MarketingTopExport extends AbstractExport
             ->orderBy('date')
             ->orderBy('apl.id')
             ->orderBy('looknum', 'desc')
-            ->selectRaw("date_format(fcl.date, '%Y-%m-%d') as date,apl.name as name,count(*) as days,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(looknum) as looknum,sum(playernum7)as playernum7,sum(playernum15) as playernum15 ,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum,sum(omo_scannum) as omo_scannum,sum(phonenum) as phonenum,sum(oanum) as oanum,sum(phonetimes) as phonetimes,sum(oatimes) as oatimes");
+            ->selectRaw("date_format(fcl.date, '%Y-%m-%d') as date,apl.name as name,count(*) as days,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(looknum) as looknum,sum(playernum7)as playernum7,sum(playernum15) as playernum15 ,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum,sum(omo_scannum) as omo_scannum,sum(phonenum) as phonenum,sum(oanum) as oanum,sum(phonetimes) as phonetimes,sum(oatimes) as oatimes,sum(coupontimes) as coupontimes,sum(verifytimes) as verifytimes");
 
         $faceCount2 = DB::connection('ar')->table(DB::raw("({$faceCount1->toSql()}) a,(select @gn := 0)  b"))
-            ->selectRaw("  @gn := case when (@date=date and @name = name) then @gn + 1 else 1 end gn,@date:=date date,@name := name name,days,playtimes7,playtimes15,playtimes21,looknum,playernum7,playernum15,playernum21,phonenum,oanum,phonetimes,oatimes,omo_outnum,omo_scannum");
+            ->selectRaw("  @gn := case when (@date=date and @name = name) then @gn + 1 else 1 end gn,@date:=date date,@name := name name,days,playtimes7,playtimes15,playtimes21,looknum,playernum7,playernum15,playernum21,phonenum,oanum,phonetimes,oatimes,omo_outnum,omo_scannum,coupontimes,verifytimes");
 
         $faceCount = DB::connection('ar')->table(DB::raw("({$faceCount2->toSql()}) c"))
-            ->selectRaw("name,sum(days) as pushnum,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum15) as playernum15,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum,sum(omo_scannum) as omo_scannum,sum(phonenum) as phonenum,sum(oanum) as oanum,sum(phonetimes) as phonetimes,sum(oatimes) as oatimes")
+            ->selectRaw("name,sum(days) as pushnum,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum15) as playernum15,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum,sum(omo_scannum) as omo_scannum,sum(phonenum) as phonenum,sum(oanum) as oanum,sum(phonetimes) as phonetimes,sum(oatimes) as oatimes,sum(coupontimes) as coupontimes,sum(verifytimes) as verifytimes")
             ->whereRaw("gn<=100")
             ->groupBy('name')
             ->get();
         $data = collect();
-        $header1 = ['节目名称', '7″fCPE', '', '15″fCPE', '', '21″fCPE', '', '7″uCPE', '', '15″uCPE', '', '21″uCPE', '', 'uCPA(去重)', '', '', 'fCPA(不去重)', '', '', '1', '2', '5', '20', '合计'];
-        $header2 = ['', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', 'omo', '公众号', '手机号', 'omo', '公众号', '手机号', '7″uCPE', '15″uCPE', '21″uCPE', 'uCPA', ''];
-        $header3 = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+        $header1 = ['节目名称', '7″fCPE', '', '15″fCPE', '', '21″fCPE', '', '7″uCPE', '', '15″uCPE', '', '21″uCPE', '', 'uCPA(去重)', '', '', '', 'fCPA(不去重)', '', '', '', 'CPS', '1', '2', '5', '20', '合计'];
+        $header2 = ['', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', 'omo', '领券', '公众号', '手机号', 'omo', '领券', '公众号', '手机号', '核销券', '7″uCPE', '15″uCPE', '21″uCPE', 'uCPA', ''];
+        $header3 = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
         $data->push($header1);
         $data->push($header2);
         $data->push($header3);
@@ -68,11 +68,14 @@ class MarketingTopExport extends AbstractExport
                 'playernum21' => $item['playernum21'] ? $item['playernum21'] : 0,
                 'playernum21_average' => round(($item['playernum21'] / $item['pushnum']), 0),
                 'omo_outnum' => $item['omo_outnum'],
+                'coupontimes_1' => $item['coupontimes'],
                 'oanum' => $item['oanum'],
                 'phonenum' => $item['phonenum'],
                 'omo_scannum' => $item['omo_scannum'],
+                'coupontimes_2' => $item['coupontimes'],
                 'oatimes' => $item['oatimes'],
                 'phonetimes' => $item['phonetimes'],
+                'verifytimes' => $item['verifytimes']
             ];
             $player7Money = round($aa['playernum7'] * 0.01, 0);
             $player15Money = round($aa['playernum15'] * 0.02, 0);
@@ -102,20 +105,20 @@ class MarketingTopExport extends AbstractExport
                     'A1:A3', 'B1:C1', 'B2:B3', 'C2:C3', 'D1:E1', 'D2:D3', 'E2:E3',
                     'F1:G1', 'F2:F3', 'G2:G3', 'H1:I1', 'H2:H3', 'I2:I3',
                     'J1:K1', 'J2:J3', 'K2:K3', 'L1:M1', 'L2:L3', 'M2:M3',
-                    'N1:P1', 'N2:N3', 'O2:O3', 'P2:P3', 'Q1:S1', 'Q2:Q3',
+                    'N1:Q1', 'N2:N3', 'O2:O3', 'P2:P3', 'Q2:Q3', 'R1:U1',
                     'R2:R3', 'S2:S3', 'T2:T3', 'U2:U3', 'V2:V3', 'W2:W3',
-                    'X1:X3'
+                    'X2:X3', 'Y2:Y3', 'Z2:Z3', 'AA1:AA3'
                 ];
                 $event->sheet->getDelegate()->setMergeCells($cellArray);
 
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:X' . $this->data->count())
+                    ->getStyle('A1:AA' . $this->data->count())
                     ->getAlignment()
                     ->setVertical(Alignment::VERTICAL_CENTER)
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:X3')
+                    ->getStyle('A1:AA3')
                     ->applyFromArray([
                         'font' => [
                             'bold' => 'true'
@@ -123,7 +126,7 @@ class MarketingTopExport extends AbstractExport
                     ]);
 
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:X' . $this->data->count())
+                    ->getStyle('A1:AA' . $this->data->count())
                     ->applyFromArray([
                         'borders' => [
                             'allBorders' => [

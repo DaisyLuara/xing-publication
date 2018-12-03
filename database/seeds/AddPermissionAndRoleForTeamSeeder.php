@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
+use App\Models\User;
 
 class AddPermissionAndRoleForTeamSeeder extends Seeder
 {
@@ -24,5 +25,10 @@ class AddPermissionAndRoleForTeamSeeder extends Seeder
         $operation = Role::findByName('operation');
         $operation->givePermissionTo('team');
 
+        $bonusMa = Role::create(['name' => 'bonus-manager', 'display_name' => '绩效主管']);
+        $bonusMa->givePermissionTo('team');
+
+        $yq = User::query()->where('phone', '15671556667')->first();
+        $yq->givePermissionTo('download');
     }
 }
