@@ -211,16 +211,16 @@
             :maxlength="400"
             rows="2"/>
         </el-form-item>
+        <el-form-item>
+          <el-button 
+            size="small"
+            type="primary" 
+            @click="submitApply('applyForm')">确 定</el-button>
+          <el-button
+            size="small" 
+            @click="applyFormVisible = false">取 消</el-button>
+        </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button 
-          size="small"
-          type="primary" 
-          @click="submitApply('applyForm')">确 定</el-button>
-        <el-button
-          size="small" 
-          @click="applyFormVisible = false">取 消</el-button>
-      </div>
     </el-dialog>
     <el-dialog 
       :visible.sync="allocationFormVisible"
@@ -242,11 +242,16 @@
           label="分配数额">
           <el-input v-model="allocationForm.count"/>
         </el-form-item>
+        <el-form-item>
+          <el-button
+            size="small" 
+            @click="allocationFormVisible = false">取 消</el-button>
+          <el-button 
+            size="small"
+            type="primary" 
+            @click="systemDistribute('allocationForm')">确 定</el-button>
+        </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="allocationFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="systemDistribute('allocationForm')">确 定</el-button>
-      </div>
     </el-dialog>
     <el-dialog 
       :visible.sync="rejectFormVisible"
@@ -263,8 +268,13 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="rejectFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="rejectHandle('rejectForm')">确 定</el-button>
+        <el-button 
+          size="small"
+          @click="rejectFormVisible = false">取 消</el-button>
+        <el-button 
+          size="small"
+          type="primary" 
+          @click="rejectHandle('rejectForm')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
