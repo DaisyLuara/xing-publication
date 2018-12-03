@@ -29,6 +29,12 @@ class AdminUsersController extends Controller
             $query->where('name', 'like', $request->name . '%');
         }
 
+        if ($request->has('role_id')) {
+            $query->whereHas('roles', function ($q) use ($request) {
+                $q->where('id', $request->role_id);
+            });
+        }
+
         $users = $query->whereHas('roles', function ($q) use ($isSuperAdmin) {
             if (!$isSuperAdmin) {
                 $q->where('name', '<>', 'super-admin');

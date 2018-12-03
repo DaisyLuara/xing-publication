@@ -15,12 +15,18 @@ class InvoiceContent extends Model
 {
     protected $fillable = [
         'invoice_id',
+        'invoice_kind_id',
         'goods_service_id',
         'num',
         'price',
         'money'
     ];
     public $timestamps = false;
+
+    public function invoiceKind()
+    {
+        return $this->belongsTo(InvoiceKind::class, 'invoice_kind_id', 'id');
+    }
 
     public function goodsService()
     {

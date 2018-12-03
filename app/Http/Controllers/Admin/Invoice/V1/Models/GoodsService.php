@@ -15,6 +15,7 @@ class GoodsService extends Model
 {
     protected $fillable = [
         'id',
+        'invoice_kind_id',
         'name',
         'spec_type',
         'unit'

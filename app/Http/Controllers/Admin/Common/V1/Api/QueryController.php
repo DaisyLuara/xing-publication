@@ -16,6 +16,9 @@ use App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractReceiveDateTransformer;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
+use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceKind;
+use App\Http\Controllers\Admin\Invoice\V1\Transformer\InvoiceKindTransformer;
+use App\Models\Customer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\PolicyTransformer;
@@ -43,7 +46,6 @@ use App\Http\Controllers\Admin\User\V1\Models\ArUser;
 use App\Http\Controllers\Admin\User\V1\Transformer\ArUserTransformer;
 use App\Http\Controllers\Admin\User\V1\Transformer\UserTransformer;
 use App\Http\Controllers\Controller;
-use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
@@ -325,11 +327,18 @@ class QueryController extends Controller
         return $this->response->collection($contracts, new ContractTransformer());
     }
 
+    public function invoiceKindQuery(InvoiceKind $invoiceKind, Request $request)
+    {
+        $query = $invoiceKind->query();
+        $invoiceKind = $query->get();
+        return $this->response()->collection($invoiceKind, new InvoiceKindTransformer());
+    }
+
     public function goodsServiceQuery(GoodsService $goodsService, Request $request)
     {
         $query = $goodsService->query();
-        $contracts = $query->get();
-        return $this->response->collection($contracts, new GoodsServiceTransformer());
+        $goodsService = $query->where('invoice_kind_id', $request->invoice_kind_id)->get();
+        return $this->response->collection($goodsService, new GoodsServiceTransformer());
     }
 
     public function bdManagerQuery(Request $request)
@@ -380,7 +389,7 @@ class QueryController extends Controller
     public function receiveDateQuery(Request $request, ContractReceiveDate $contractReceiveDate)
     {
         $query = $contractReceiveDate->query();
-        $contractReceiveDate = $query->where('contract_id', $request->id)->get();
+        $contractReceiveDate = $query->where('contract_id', $request->id)->whereRaw("invoice_receipt_id is null")->get();
         return $this->response()->collection($contractReceiveDate, new ContractReceiveDateTransformer());
     }
 

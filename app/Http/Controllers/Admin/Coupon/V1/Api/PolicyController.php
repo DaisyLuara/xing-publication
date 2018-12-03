@@ -33,7 +33,7 @@ class PolicyController extends Controller
 
         $loginUser = $this->user;
 
-        if (!$loginUser->isAdmin()) {
+        if ($loginUser->hasRole('user')) {
             $query->where('bd_user_id', '=', $loginUser->id);
         }
 

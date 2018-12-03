@@ -40,7 +40,8 @@ class WebsiteController extends Controller
         }
 
         $data['name'] = $request->name;
-        $data['remark']=$request->remark;
+        $data['remark'] = $request->remark;
+        $data['subscribe'] = $request->subscribe;
         WebsiteVisitor::create($data);
         return $this->response()->noContent()->setStatusCode(201);
     }

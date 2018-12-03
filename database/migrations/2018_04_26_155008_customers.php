@@ -18,6 +18,7 @@ class Customers extends Migration
             $table->integer('company_id')->unsigned()->index();
             $table->string('name', 20)->defualt('')->comment('客户名称');
             $table->string('phone')->nullable()->unique();
+            $table->string('password')->nullable();
             $table->timestamps();
 
         });

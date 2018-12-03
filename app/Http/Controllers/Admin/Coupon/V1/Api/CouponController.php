@@ -20,6 +20,7 @@ class CouponController extends Controller
     public function index(Coupon $coupon, CouponRequest $request)
     {
         $query = $coupon->query();
+        $loginUser = $this->user;
 
         if ($request->has('status')) {
             $query->where('status', $request->get('status'));
@@ -42,6 +43,12 @@ class CouponController extends Controller
 
         if ($request->has('shop_customer_id')) {
             $query->where('shop_customer_id', $request->get('shop_customer_id'));
+        }
+
+        if ($loginUser->hasRole('user')) {
+            $query->whereHas('couponBatch', function ($query) use ($loginUser) {
+                $query->where('bd_user_id', '=', $loginUser->id);
+            });
         }
 
         $coupon = $query->orderByDesc('id')->paginate(10);
