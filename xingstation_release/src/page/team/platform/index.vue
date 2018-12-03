@@ -178,11 +178,12 @@
         </div>
       </div>  
     </div>
-    <el-dialog 
+    <el-dialog
       :visible.sync="applyFormVisible"
       title="申请奖金" 
       :show-close="false">
       <el-form 
+        v-loading="applyLoading"
         ref="applyForm"
         :model="applyForm"
         label-width="100px">
@@ -212,18 +213,21 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="applyFormVisible = false">取 消</el-button>
         <el-button 
           size="small"
           type="primary" 
           @click="submitApply('applyForm')">确 定</el-button>
+        <el-button
+          size="small" 
+          @click="applyFormVisible = false">取 消</el-button>
       </div>
     </el-dialog>
     <el-dialog 
       :visible.sync="allocationFormVisible"
       title="分配奖金" 
       :show-close="false">
-      <el-form 
+      <el-form
+        v-loading="allocationLoading" 
         ref="allocationForm"
         :model="allocationForm"
         label-width="100px">
@@ -309,6 +313,7 @@ export default {
   },
   data() {
     return {
+      applyLoading: false,
       rejectForm: {
         reject_message: ''
       },
@@ -410,7 +415,8 @@ export default {
         ]
       },
       tableData: [],
-      id: null
+      id: null,
+      allocationLoading: false
     }
   },
   created() {
@@ -460,6 +466,7 @@ export default {
     systemDistribute(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+          this.allocationLoading = true
           let args = {
             money: this.allocationForm.count
           }
@@ -477,6 +484,7 @@ export default {
                 type: 'success',
                 message: '分配成功!'
               })
+              this.allocationLoading = false
               this.getTeamSystemProject()
               this.getDistributionBonus()
               this.getSystemBonus()
@@ -486,6 +494,7 @@ export default {
                 type: 'warning',
                 message: err.response.data.message
               })
+              this.allocationLoading = false
               this.allocationFormVisible = false
             })
         }
@@ -494,6 +503,7 @@ export default {
     submitApply(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+          this.applyLoading = true
           let args = {
             name: this.applyForm.name,
             applicant: this.applyForm.applicant,
@@ -506,6 +516,7 @@ export default {
                 type: 'success',
                 message: '申请成功!'
               })
+              this.applyLoading = false
               this.getTeamSystemProject()
             })
             .catch(err => {
@@ -513,6 +524,7 @@ export default {
                 type: 'warning',
                 message: err.response.data.message
               })
+              this.applyLoading = false
               this.applyFormVisible = false
             })
         }
