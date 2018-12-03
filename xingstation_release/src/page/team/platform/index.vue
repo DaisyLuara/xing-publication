@@ -472,7 +472,7 @@ export default {
           }
           systemDistribute(this, this.id, args)
             .then(res => {
-              this.applyFormVisible = false
+              this.allocationFormVisible = false
               this.$message({
                 type: 'success',
                 message: '分配成功!'
@@ -480,14 +480,13 @@ export default {
               this.getTeamSystemProject()
               this.getTeamSystemProject()
               this.getSystemBonus()
-              this.applyFormVisible = false
             })
             .catch(err => {
               this.$message({
                 type: 'warning',
                 message: err.response.data.message
               })
-              this.applyFormVisible = false
+              this.allocationFormVisible = false
             })
         }
       })
