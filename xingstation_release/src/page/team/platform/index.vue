@@ -155,12 +155,12 @@
             <template 
               slot-scope="scope">
               <el-button
-                v-if="role.name === 'legal-affairs-manager' && status === '申请中'" 
+                v-if="role.name === 'legal-affairs-manager' && scope.row.status === '申请中'" 
                 size="small" 
                 type="warning"
                 @click="rejectFormVisible = true,id = scope.row.id">驳回</el-button>
               <el-button 
-                v-if="role.name === 'legal-affairs-manager'  && status === '申请中' " 
+                v-if="role.name === 'legal-affairs-manager'  && scope.row.status === '申请中' " 
                 size="small"
                 @click="allocationHandle(scope.row)">分配</el-button>
             </template>
