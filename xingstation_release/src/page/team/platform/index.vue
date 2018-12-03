@@ -478,7 +478,7 @@ export default {
                 message: '分配成功!'
               })
               this.getTeamSystemProject()
-              this.getTeamSystemProject()
+              this.getDistributionBonus()
               this.getSystemBonus()
             })
             .catch(err => {
