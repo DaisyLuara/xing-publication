@@ -16,7 +16,7 @@ class AddPermissionAndRoleForTeamSeeder extends Seeder
         $tester = Role::create(['name' => 'tester', 'display_name' => '测试']);
         $designer = Role::create(['name' => 'designer', 'display_name' => '设计']);
 
-        $tester->givePermissionTo(['company', 'project', 'device', 'ad', 'point', 'team', 'report', 'home', 'contract', 'invoice', 'payments', 'system']);
+        $tester->givePermissionTo(['company', 'project', 'device', 'ad', 'point', 'team', 'report', 'home', 'contract', 'invoice', 'payments']);
         $designer->givePermissionTo(['home', 'team']);
 
         $projectMa = Role::findByName('project-manager');
@@ -30,8 +30,5 @@ class AddPermissionAndRoleForTeamSeeder extends Seeder
 
         $yq = User::query()->where('phone', '15671556667')->first();
         $yq->givePermissionTo('download');
-
-        $legalMa = Role::findByName('legal-affairs-manager');
-        $legalMa->givePermissionTo('system');
     }
 }
