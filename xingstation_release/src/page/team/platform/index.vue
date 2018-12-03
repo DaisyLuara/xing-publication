@@ -178,11 +178,12 @@
         </div>
       </div>  
     </div>
-    <el-dialog 
+    <el-dialog
       :visible.sync="applyFormVisible"
       title="申请奖金" 
       :show-close="false">
       <el-form 
+        v-loading="applyLoading"
         ref="applyForm"
         :model="applyForm"
         label-width="100px">
@@ -210,20 +211,23 @@
             :maxlength="400"
             rows="2"/>
         </el-form-item>
+        <el-form-item>
+          <el-button 
+            size="small"
+            type="primary" 
+            @click="submitApply('applyForm')">确 定</el-button>
+          <el-button
+            size="small" 
+            @click="applyFormVisible = false">取 消</el-button>
+        </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="applyFormVisible = false">取 消</el-button>
-        <el-button 
-          size="small"
-          type="primary" 
-          @click="submitApply('applyForm')">确 定</el-button>
-      </div>
     </el-dialog>
     <el-dialog 
       :visible.sync="allocationFormVisible"
       title="分配奖金" 
       :show-close="false">
-      <el-form 
+      <el-form
+        v-loading="allocationLoading" 
         ref="allocationForm"
         :model="allocationForm"
         label-width="100px">
@@ -238,11 +242,16 @@
           label="分配数额">
           <el-input v-model="allocationForm.count"/>
         </el-form-item>
+        <el-form-item>
+          <el-button
+            size="small" 
+            @click="allocationFormVisible = false">取 消</el-button>
+          <el-button 
+            size="small"
+            type="primary" 
+            @click="systemDistribute('allocationForm')">确 定</el-button>
+        </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="allocationFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="systemDistribute('allocationForm')">确 定</el-button>
-      </div>
     </el-dialog>
     <el-dialog 
       :visible.sync="rejectFormVisible"
@@ -259,8 +268,13 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="rejectFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="rejectHandle('rejectForm')">确 定</el-button>
+        <el-button 
+          size="small"
+          @click="rejectFormVisible = false">取 消</el-button>
+        <el-button 
+          size="small"
+          type="primary" 
+          @click="rejectHandle('rejectForm')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -309,6 +323,7 @@ export default {
   },
   data() {
     return {
+      applyLoading: false,
       rejectForm: {
         reject_message: ''
       },
@@ -410,7 +425,8 @@ export default {
         ]
       },
       tableData: [],
-      id: null
+      id: null,
+      allocationLoading: false
     }
   },
   created() {
@@ -460,6 +476,7 @@ export default {
     systemDistribute(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+          this.allocationLoading = true
           let args = {
             money: this.allocationForm.count
           }
@@ -472,22 +489,23 @@ export default {
           }
           systemDistribute(this, this.id, args)
             .then(res => {
-              this.applyFormVisible = false
+              this.allocationFormVisible = false
               this.$message({
                 type: 'success',
                 message: '分配成功!'
               })
+              this.allocationLoading = false
               this.getTeamSystemProject()
-              this.getTeamSystemProject()
+              this.getDistributionBonus()
               this.getSystemBonus()
-              this.applyFormVisible = false
             })
             .catch(err => {
               this.$message({
                 type: 'warning',
                 message: err.response.data.message
               })
-              this.applyFormVisible = false
+              this.allocationLoading = false
+              this.allocationFormVisible = false
             })
         }
       })
@@ -495,6 +513,7 @@ export default {
     submitApply(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+          this.applyLoading = true
           let args = {
             name: this.applyForm.name,
             applicant: this.applyForm.applicant,
@@ -507,6 +526,7 @@ export default {
                 type: 'success',
                 message: '申请成功!'
               })
+              this.applyLoading = false
               this.getTeamSystemProject()
             })
             .catch(err => {
@@ -514,6 +534,7 @@ export default {
                 type: 'warning',
                 message: err.response.data.message
               })
+              this.applyLoading = false
               this.applyFormVisible = false
             })
         }
