@@ -40,9 +40,9 @@ class TeamPersonRewardController extends Controller
 
         $user = $this->user();
 
-        $data = $query->where('user_id', $user->id)->selectRaw("sum(money) as total")->first();
+        $data = $query->where('user_id', $user->id)->selectRaw("sum(total) as total")->first();
         $output = [
-            'total_reward' => $data->total ? $data->total : 0
+            'total_reward' => $data->total ? strval($data->total) : 0
         ];
 
         return response()->json($output);

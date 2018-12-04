@@ -238,9 +238,9 @@
         </el-form-item>
         <el-form-item 
           :rules="[{ required: true, message: '请输入分配数额', trigger: 'submit' }]"
-          prop="count"
+          prop="system_money"
           label="分配数额">
-          <el-input v-model="allocationForm.count"/>
+          <el-input v-model="allocationForm.system_money"/>
         </el-form-item>
         <el-form-item>
           <el-button
@@ -331,7 +331,7 @@ export default {
       allocationFormVisible: false,
       allocationForm: {
         total: 100,
-        count: ''
+        system_money: ''
       },
       applyForm: {
         applicant: '',
@@ -478,9 +478,9 @@ export default {
         if (valid) {
           this.allocationLoading = true
           let args = {
-            money: this.allocationForm.count
+            system_money: this.allocationForm.system_money
           }
-          if (this.allocationForm.total - this.allocationForm.count < 0) {
+          if (this.allocationForm.total - this.allocationForm.system_money < 0) {
             this.$message({
               type: 'warning',
               message: '分配数额大于可发奖金，请重新填写!'

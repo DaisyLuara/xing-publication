@@ -131,7 +131,7 @@ class TeamProjectController extends Controller
             return $this->response()->noContent()->setStatusCode(200);
         }
 
-        if (($user->hasRole('legal-affairs-manager') || $user->hasRole('bonus-manager')) && $teamProject->status == 3) {
+        if (($user->hasRole('legal-affairs-manager') || $user->hasRole('bonus-manager')) && $teamProject->status == 3 && $teamProject->type == 1) {
             $teamProject->status = 4;
             $teamProject->online_date = Carbon::now()->toDateString();
             $teamProject->update();

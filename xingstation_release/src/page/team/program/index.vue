@@ -129,6 +129,10 @@
                   <span>{{ scope.row.applicant_name }}</span> 
                 </el-form-item>
                 <el-form-item 
+                  label="节目类型">
+                  <span>{{ scope.row.type }}</span> 
+                </el-form-item>
+                <el-form-item 
                   label="开始时间">
                   <span>{{ scope.row.begin_date }}</span> 
                 </el-form-item>
@@ -184,6 +188,11 @@
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
+            prop="type"
+            label="节目类型"
+            min-width="100"/>
+          <el-table-column
+            :show-overflow-tooltip="true"
             prop="begin_date"
             label="开始时间"
             min-width="100"/>
@@ -212,7 +221,7 @@
                 type="warning"
                 @click="editHandle(scope.row)">{{ (role.name === 'project-manager'&& scope.row.status === '进行中') ? '修改': '查看'  }}</el-button>
               <el-button 
-                v-if="(role.name === 'tester' && scope.row.status === '进行中') || (role.name === 'operation' && scope.row.status === '测试已确认') || ((role.name === 'legal-affairs-manager' && scope.row.status === '运营已确认') || (role.name === 'bonus-manager' && scope.row.status === '运营已确认'))" 
+                v-if="(role.name === 'tester' && scope.row.status === '进行中') || (role.name === 'operation' && scope.row.status === '测试已确认') || ((role.name === 'legal-affairs-manager' && scope.row.status === '运营已确认' && scope.row.type === '提前节目') || (role.name === 'bonus-manager' && scope.row.status === '运营已确认' && scope.row.type === '提前节目'))" 
                 size="small"
                 @click="confirmProgram(scope.row)">确认</el-button>
             </template>
