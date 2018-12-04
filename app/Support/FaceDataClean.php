@@ -1776,10 +1776,10 @@ function teamBonusClean()
 
         $count = [];
         foreach ($faceCount as $item) {
-            $player7Money = $item->playernum7 * 0.01;
-            $player15Money = $item->playernum15 * 0.02;
-            $player21Money = $item->playernum21 * 0.05;
-            $uCPAMoney = $item->omo_outnum * 0.2;
+            $player7Money = round($item->playernum7 * 0.01, 2);
+            $player15Money = round($item->playernum15 * 0.02, 2);
+            $player21Money = round($item->playernum21 * 0.05, 2);
+            $uCPAMoney = round($item->omo_outnum * 0.2, 2);
             $totalMoney = $player7Money + $player15Money + $player21Money + $uCPAMoney;
 
             $launchDate = date('Y-m-d', $item->online);
@@ -1850,8 +1850,8 @@ function teamBonusClean()
                 'user_id' => $item->user_id,
                 'project_name' => $item->project_name,
                 'belong' => $item->belong,
-                'experience_money' => $item->money * $item->factor * $item->rate,
-                'total' => $item->money * $item->factor * $item->rate,
+                'experience_money' => round($item->money * $item->factor * $item->rate, 6),
+                'total' => round($item->money * $item->factor * $item->rate, 6),
                 'date' => $date
             ];
         }
