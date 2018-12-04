@@ -777,6 +777,7 @@ export default {
           }
           args.member = member
           if (this.programID) {
+            args.id = this.programID
             modifyProgram(this, args, this.programID)
               .then(res => {
                 this.$message({
