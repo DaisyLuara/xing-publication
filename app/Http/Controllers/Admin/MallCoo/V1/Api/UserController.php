@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Admin\MallCoo\V1\Api;
 
+use App\Http\Controllers\Admin\WeChat\V1\Models\WeChatUser;
 use function GuzzleHttp\Psr7\parse_query;
+use Hashids\Hashids;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Admin\ShortUrl\V1\Models\ShortUrl;
@@ -20,6 +22,7 @@ class UserController extends Controller
 
         $mall_coo = app('mall_coo');
         $callback_url = 'http://' . $request->getHost() . '/api/mallcoo/user/callback?redirect_url=' . urlencode(($redirect_url));
+
         $short_url_obj = ShortUrl::query()->create(
             ['target_url' => $callback_url,
                 'source' => 1,
@@ -27,7 +30,9 @@ class UserController extends Controller
             ]
         );
 
-        $callback_url = 'http://' . $request->getHost() . '/api/s/' . $short_url_obj->url;
+        $hashIds = new Hashids();
+        $callback_url = 'http://' . $request->getHost() . '/api/s/' . $hashIds->encode($short_url_obj->id);
+
         return $mall_coo->oauth($callback_url);
     }
 
@@ -41,23 +46,25 @@ class UserController extends Controller
         $mall_coo = app('mall_coo');
         $sUrl = 'https://openapi10.mallcoo.cn/User/OAuth/v1/GetToken/ByTicket/';
         $result = $mall_coo->send($sUrl, ['Ticket' => $ticket]);
+
         if ($result['Code'] !== 1) {
             return $result;
         }
 
         $open_user_id = $result['Data']['OpenUserId'];
         $mobile = $result['Data']['Mobile'];
+        $username = $result['Data']['UserName'];
+        $gender = $result['Data']['Gender'];
 
         $separator = strpos($redirect_url, '?') ? '&' : '?';
         $redirect_url = $redirect_url . $separator . 'open_user_id=' . $open_user_id;
 
-        WeChatUser::updateOrCreate(
-            ['mallcoo_open_user_id' => $open_user_id],
-            [
-                'mobile' => $mobile,
-                'face_id' => isset($queries['face_id']) ? $queries['face_id'] : '',
-            ]
-        );
+        WeChatUser::updateOrCreate([
+            'mobile' => $mobile,
+            'mallcoo_open_user_id' => $open_user_id,
+            'username' => $username,
+            'gender' => $gender,
+        ]);
 
         return redirect($redirect_url);
     }
@@ -74,5 +81,6 @@ class UserController extends Controller
         $sUrl = 'https://openapi10.mallcoo.cn/User/OAuth/v1/GetToken/ByTicket/';
         return $mall_coo->send($sUrl, array('Ticket' => $sTicket));
     }
+
 
 }
