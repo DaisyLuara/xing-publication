@@ -77,24 +77,24 @@
                   <span>{{ scope.row.project_name }}</span> 
                 </el-form-item>
                 <el-form-item 
+                  label="获取时间">
+                  <span>{{ scope.row.date }}</span> 
+                </el-form-item>
+                <el-form-item 
                   label="体验绩效">
-                  <span>{{ scope.row.project_name }}</span> 
+                  <span>{{ scope.row.experience_money }}</span> 
                 </el-form-item>
                 <el-form-item 
                   label="平台绩效">
-                  <span>{{ scope.row.project_name }}</span> 
+                  <span>{{ scope.row.system_money }}</span> 
                 </el-form-item>
                 <el-form-item 
                   label="小偶绩效">
-                  <span>{{ scope.row.project_name }}</span> 
+                  <span>{{ scope.row.xo_money }}</span> 
                 </el-form-item>
                 <el-form-item 
                   label="联动绩效">
-                  <span>{{ scope.row.project_name }}</span> 
-                </el-form-item>
-                <el-form-item 
-                  label="获取时间">
-                  <span>{{ scope.row.date }}</span> 
+                  <span>{{ scope.row.link_money }}</span> 
                 </el-form-item>
                 <el-form-item 
                   label="总计">
@@ -115,28 +115,28 @@
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="project_name"
+            prop="date"
+            label="获取时间"
+            min-width="100"/>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="experience_money"
             label="体验绩效"
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="project_name"
+            prop="system_money"
             label="平台绩效"
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="project_name"
+            prop="xo_money"
             label="小偶绩效"
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="project_name"
+            prop="link_money"
             label="联动绩效"
-            min-width="100"/>
-          <el-table-column
-            :show-overflow-tooltip="true"
-            prop="date"
-            label="获取时间"
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"

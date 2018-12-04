@@ -102,8 +102,7 @@
               label="节目类型" 
               prop="type">
               <el-radio-group 
-                v-model="programForm.type"
-                @change="h5Handle">
+                v-model="programForm.type">
                 <el-radio :label="0">正常节目</el-radio>
                 <el-radio :label="1">提前节目</el-radio>
               </el-radio-group>
@@ -417,7 +416,7 @@ export default {
       status: '',
       programID: '',
       programForm: {
-        type: 1,
+        type: 0,
         applicant: '',
         belong: '',
         remark: '',
