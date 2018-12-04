@@ -16,6 +16,13 @@ class FaceCountController extends Controller
     {
         $date = '2018-11-29';
         while ($date <= '2018-12-03') {
+            $projectList = DB::connection('ar')->table('ar_product_list')
+                ->whereRaw("online<>0")
+                ->selectRaw("versionname,online")
+                ->get();
+            foreach ($projectList as $item) {
+                TeamProject::query()->where('belong', $item->versionname)->update(['launch_date' => date('Y-m-d', $item->online)]);
+            }
             $faceCount1 = DB::connection('ar')->table('xs_face_count_log as fcl')
                 ->join('ar_product_list as apl', 'belong', '=', 'versionname')
                 ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
