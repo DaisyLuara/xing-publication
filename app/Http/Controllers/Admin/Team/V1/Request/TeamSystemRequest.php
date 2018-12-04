@@ -23,7 +23,9 @@ class TeamSystemRequest extends FormRequest
         switch ($this->method()) {
             case 'POST':
                 return [
-
+                    'applicant' => 'required|integer',
+                    'name' => 'required',
+                    'remark' => 'required|max:150'
                 ];
                 break;
             case 'PATCH':

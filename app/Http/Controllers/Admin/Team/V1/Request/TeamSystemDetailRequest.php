@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: yangqiang
- * Date: 2018/11/29
- * Time: 上午10:52
+ * Date: 2018/12/4
+ * Time: 下午2:02
  */
 
 namespace App\Http\Controllers\Admin\Team\V1\Request;
@@ -11,7 +11,7 @@ namespace App\Http\Controllers\Admin\Team\V1\Request;
 
 use Dingo\Api\Http\FormRequest;
 
-class TeamRateRequest extends FormRequest
+class TeamSystemDetailRequest extends FormRequest
 {
     public function authorize()
     {
@@ -23,19 +23,16 @@ class TeamRateRequest extends FormRequest
         switch ($this->method()) {
             case 'POST':
                 return [
-
+                    'user_id' => 'required|integer',
+                    'project_name' => 'required|string',
+                    'system_money' => 'required|numeric'
                 ];
                 break;
             case 'PATCH':
                 return [
-                    'interaction' => 'numeric',
-                    'originality' => 'numeric',
-                    'h5_1' => 'numeric',
-                    'h5_2' => 'numeric',
-                    'animation' => 'numeric',
-                    'plan' => 'numeric',
-                    'tester' => 'numeric',
-                    'operation' => 'numeric'
+                    'user_id' => 'integer',
+                    'project_name' => 'string',
+                    'system_money' => 'numeric'
                 ];
                 break;
             default:
