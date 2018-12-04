@@ -71,7 +71,7 @@ class FaceCountController extends Controller
                             }
                         }
                         //运营确认
-                        if ($teamProject->status == 3) {
+                        if ($teamProject->status == 3 && $teamProject->type == 0) {
                             if ($teamProject->project_attribute <= 2) {
                                 $factor = 0.8;
                             } else {
@@ -102,16 +102,17 @@ class FaceCountController extends Controller
             $data = DB::table('team_projects as tp')
                 ->join('team_project_members as tpm', 'tp.id', '=', 'tpm.team_project_id')
                 ->join('team_bonuses as tb', 'tp.belong', '=', 'tb.belong')
+                ->whereRaw("date_format(date,'%Y-%m-%d')='$date'")
                 ->selectRaw("user_id,tp.project_name as project_name,tp.belong as belong,money,factor,rate")
                 ->get();
-
             $rewards = [];
             foreach ($data as $item) {
                 $rewards[] = [
                     'user_id' => $item->user_id,
                     'project_name' => $item->project_name,
                     'belong' => $item->belong,
-                    'money' => round($item->money * $item->factor * $item->rate, 2),
+                    'experience_money' => round($item->money * $item->factor * $item->rate, 2),
+                    'total' => round($item->money * $item->factor * $item->rate, 2),
                     'date' => $date
                 ];
             }

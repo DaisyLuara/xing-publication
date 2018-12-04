@@ -105,7 +105,7 @@
                 </el-form-item>
                 <el-form-item 
                   label="发放奖金">
-                  <span>{{ scope.row.money }}</span> 
+                  <span>{{ scope.row.system_money }}</span>
                 </el-form-item>
               </el-form>
             </template>
@@ -132,7 +132,7 @@
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="money"
+            prop="system_money"
             label="发放奖金"
             min-width="100"/>
           <el-table-column 

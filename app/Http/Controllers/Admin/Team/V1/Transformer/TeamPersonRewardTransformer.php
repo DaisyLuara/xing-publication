@@ -22,7 +22,11 @@ class TeamPersonRewardTransformer extends TransformerAbstract
             'user_id' => $teamPersonReward->user_id,
             'user_name' => $teamPersonReward->user->name,
             'project_name' => $teamPersonReward->project_name,
-            'money' => $teamPersonReward->money,
+            'experience_money' => $teamPersonReward->experience_money ? $teamPersonReward->experience_money : 0,
+            'xo_money' => $teamPersonReward->xo_money ? $teamPersonReward->xo_money : 0,
+            'link_money' => $teamPersonReward->link_money ? $teamPersonReward->link_money : 0,
+            'system_money' => $teamPersonReward->system_money ? $teamPersonReward->system_money : 0,
+            'total' => $teamPersonReward->total ? $teamPersonReward->total : 0,
             'date' => (new Carbon($teamPersonReward->date))->toDateString()
         ];
     }

@@ -26,6 +26,7 @@ class CreateTeamProjectTable extends Migration
             $table->string('online_date')->nullable()->comment('上线时间');
             $table->string('remark')->nullable()->comment('项目说明');
             $table->smallInteger('status')->comment('1:进行中,2:测试确认,3:运营确认,4:主管确认');
+            $table->smallInteger('type')->comment('节目类型:1:提前,0:正常');
             $table->timestamps();
             $table->index('belong');
         });

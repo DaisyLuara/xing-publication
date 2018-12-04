@@ -20,6 +20,7 @@ class TeamProject extends Model
         'online_date',
         'remark',
         'status',
+        'type'
     ];
 
     public function member()

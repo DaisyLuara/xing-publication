@@ -76,7 +76,8 @@ class TeamSystemProjectController extends Controller
             'user_id' => $teamSystemProject->applicant,
             'project_name' => $teamSystemProject->name,
             'belong' => 'system',
-            'money' => $request->money,
+            'system_money' => $request->system_money,
+            'total' => $request->system_money,
             'date' => Carbon::now()->toDateTimeString()
         ]);
         return $this->response()->noContent()->setStatusCode(200);
@@ -111,7 +112,7 @@ class TeamSystemProjectController extends Controller
         $startDate = $request->start_date;
         $endDate = $request->end_date;
         $data = TeamPersonReward::query()->whereRaw("date_format(date,'%Y-%m-%d') between '$startDate' and '$endDate' and belong='system'")
-            ->selectRaw("sum(money) as total")
+            ->selectRaw("sum(system_money) as total")
             ->first();
         $output = [
             'distribution_bonus' => $data->total ? $data->total : 0
@@ -161,7 +162,7 @@ class TeamSystemProjectController extends Controller
         if (!$user->hasRole('legal-affairs-manager')) {
             abort(403, '无操作权限');
         }
-        $teamPersonReward->fill(array_merge($request->all(), ['belong' => 'system', 'date' => Carbon::now()->toDateTimeString()]))->save();
+        $teamPersonReward->fill(array_merge($request->all(), ['total' => $request->system_money, 'belong' => 'system', 'date' => Carbon::now()->toDateTimeString()]))->save();
         return $this->response()->noContent()->setStatusCode(201);
     }
 
