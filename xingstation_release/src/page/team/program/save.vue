@@ -99,6 +99,20 @@
         <el-row>
           <el-col :span="12">
             <el-form-item 
+              label="节目类型" 
+              prop="type">
+              <el-radio-group 
+                v-model="programForm.type"
+                @change="h5Handle">
+                <el-radio :label="0">正常节目</el-radio>
+                <el-radio :label="1">提前节目</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item 
               label="交互技术" 
               prop="interactionVal" >
               <span style="color: #999;font-size:14px;">{{ interactionRate }} * 系数</span>
@@ -292,6 +306,7 @@
                 @click="modifyHandle(programForm.operation,platformRate,'platform')">修改</el-button>
             </el-form-item>
           </el-col>
+          
         </el-row>
         <el-row>
           <el-col :span="24">
@@ -402,6 +417,7 @@ export default {
       status: '',
       programID: '',
       programForm: {
+        type: 1,
         applicant: '',
         belong: '',
         remark: '',
@@ -489,6 +505,7 @@ export default {
         .then(res => {
           this.programForm.applicant = res.applicant
           this.programForm.applicant_name = res.applicant_name
+          this.programForm.type = res.type
           this.getProject(res.project_name)
           this.programForm.belong = res.belong + ',' + res.project_name
           this.programForm.link_attribute = res.link_attribute
@@ -735,7 +752,8 @@ export default {
             link_attribute: this.programForm.link_attribute,
             h5_attribute: this.programForm.h5_attribute,
             xo_attribute: this.programForm.xo_attribute,
-            remark: this.programForm.remark
+            remark: this.programForm.remark,
+            type: this.programForm.type
           }
           if (this.programForm.interaction.length > 0) {
             member.interaction = this.programForm.interaction

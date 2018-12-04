@@ -18,7 +18,7 @@
               prop="name">
               <el-input 
                 v-model="filters.name"
-                placeholder="项目名称"
+                placeholder="名称"
                 clearable
                 class="item-input"/>
             </el-form-item>
@@ -73,7 +73,23 @@
                   <span>{{ scope.row.id }}</span> 
                 </el-form-item>
                 <el-form-item 
-                  label="项目名称">
+                  label="名称">
+                  <span>{{ scope.row.project_name }}</span> 
+                </el-form-item>
+                <el-form-item 
+                  label="体验绩效">
+                  <span>{{ scope.row.project_name }}</span> 
+                </el-form-item>
+                <el-form-item 
+                  label="平台绩效">
+                  <span>{{ scope.row.project_name }}</span> 
+                </el-form-item>
+                <el-form-item 
+                  label="小偶绩效">
+                  <span>{{ scope.row.project_name }}</span> 
+                </el-form-item>
+                <el-form-item 
+                  label="联动绩效">
                   <span>{{ scope.row.project_name }}</span> 
                 </el-form-item>
                 <el-form-item 
@@ -81,7 +97,7 @@
                   <span>{{ scope.row.date }}</span> 
                 </el-form-item>
                 <el-form-item 
-                  label="发放奖金">
+                  label="总计">
                   <span>{{ scope.row.money }}</span> 
                 </el-form-item>
               </el-form>
@@ -95,7 +111,27 @@
           <el-table-column
             :show-overflow-tooltip="true"
             prop="project_name"
-            label="平台名称"
+            label="名称"
+            min-width="100"/>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="project_name"
+            label="体验绩效"
+            min-width="100"/>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="project_name"
+            label="平台绩效"
+            min-width="100"/>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="project_name"
+            label="小偶绩效"
+            min-width="100"/>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="project_name"
+            label="联动绩效"
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
@@ -105,7 +141,7 @@
           <el-table-column
             :show-overflow-tooltip="true"
             prop="money"
-            label="发放奖金"
+            label="总计"
             min-width="100"/>
         </el-table>
         <div 

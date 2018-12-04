@@ -199,10 +199,10 @@
         </el-form-item>
         <el-form-item
           :rules="[{ required: true, message: '请输入分配金额', trigger: 'submit' }]" 
-          prop="money"
+          prop="system_money"
           label="分配金额">
           <el-input 
-            v-model="applyForm.money"
+            v-model="applyForm.system_money"
             :maxlength="10"
             placeholder="请输入分配金额"
             style="width: 250px;"/>
@@ -262,7 +262,7 @@ export default {
       applyFormVisible: false,
       applyForm: {
         project_name: '',
-        money: 0,
+        system_money: 0,
         user_id: ''
       },
       filters: {
@@ -369,7 +369,7 @@ export default {
           let args = {
             user_id: this.applyForm.user_id,
             project_name: this.applyForm.project_name,
-            money: this.applyForm.money
+            system_money: this.applyForm.system_money
           }
           if (this.id) {
             modifySystemDetailMoney(this, this.id, args)
