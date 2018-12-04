@@ -878,6 +878,16 @@ export default {
           this.modifyOptionFlag.project ? args : delete args.default_plid
           this.modifyOptionFlag.sdate ? args : delete args.sdate
           this.modifyOptionFlag.edate ? args : delete args.edate
+          this.projectForm.define ? args : delete args.div_tvid
+          this.projectForm.day1_tvid ? args : delete args.day1_tvid
+          this.projectForm.day2_tvid ? args : delete args.day2_tvid
+          this.projectForm.day3_tvid ? args : delete args.day3_tvid
+          this.projectForm.day4_tvid ? args : delete args.day4_tvid
+          this.projectForm.day5_tvid ? args : delete args.day5_tvid
+          this.projectForm.day6_tvid ? args : delete args.day6_tvid
+          this.projectForm.day7_tvid ? args : delete args.day7_tvid
+          this.projectForm.weekday ? args : delete args.weekday_tvid
+          this.projectForm.weekend ? args : delete args.weekend_tvid
           this.loading = false
           return project
             .modifyProjectLaunch(this, args)
