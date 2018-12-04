@@ -30,6 +30,6 @@ class CreateFaceCouponRecordTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('face_coupon_record');
+        Schema::dropIfExists('face_coupon_records');
     }
 }
