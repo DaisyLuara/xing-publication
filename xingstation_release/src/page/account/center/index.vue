@@ -98,7 +98,7 @@
                 </el-form-item>
                 <el-form-item 
                   label="总计">
-                  <span>{{ scope.row.money }}</span> 
+                  <span>{{ scope.row.total }}</span> 
                 </el-form-item>
               </el-form>
             </template>
@@ -140,7 +140,7 @@
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="money"
+            prop="total"
             label="总计"
             min-width="100"/>
         </el-table>
