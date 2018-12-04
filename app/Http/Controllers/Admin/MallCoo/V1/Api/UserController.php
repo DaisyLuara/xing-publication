@@ -82,5 +82,28 @@ class UserController extends Controller
         return $mall_coo->send($sUrl, array('Ticket' => $sTicket));
     }
 
+    /**
+     *  根据UserToken获取用户信息
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUserByToken(Request $request)
+    {
+        $this->validate($request, [
+            'UserToken' => 'required'
+        ]);
+
+        $mall_coo = app('mall_coo');
+        $sUrl = 'https://openapi10.mallcoo.cn/User/BaseInfo/v1/Get/ByToken/';
+
+        $data = [
+            'UserToken' => $request->UserToken,
+        ];
+
+        $result = $mall_coo->send($sUrl, $data);
+        abort_if($result['Code'] != 1, 500, $result['Message']);
+
+        return response()->json($result['Data']);
+    }
+
 
 }

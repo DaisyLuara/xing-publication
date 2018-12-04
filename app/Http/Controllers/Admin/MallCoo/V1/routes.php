@@ -13,6 +13,8 @@ $api->version('v1', [
 
             $api->any('user/oauth', 'UserController@oauth');
             $api->any('user/callback', 'UserController@callback');
+            $api->any('user/byToken', 'UserController@getUserByToken');
+            $api->any('user/byOpenUserId', 'UserController@getUserByOpenUserID');
 
             $api->get('promotion/categories', 'PromotionController@getCategoryList');
             $api->get('promotion', 'PromotionAPIController@getList');
