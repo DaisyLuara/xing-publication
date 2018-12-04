@@ -12,6 +12,7 @@ namespace App\Http\Controllers\Admin\Team\V1\Api;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamBonus;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamSystemProject;
+use App\Http\Controllers\Admin\Team\V1\Request\TeamSystemDetailRequest;
 use App\Http\Controllers\Admin\Team\V1\Request\TeamSystemRequest;
 use App\Http\Controllers\Admin\Team\V1\Transformer\TeamPersonRewardTransformer;
 use App\Http\Controllers\Admin\Team\V1\Transformer\TeamSystemProjectTransformer;
@@ -155,7 +156,7 @@ class TeamSystemProjectController extends Controller
      * @param TeamPersonReward $teamPersonReward
      * @return \Dingo\Api\Http\Response
      */
-    public function detailStore(Request $request, TeamPersonReward $teamPersonReward)
+    public function detailStore(TeamSystemDetailRequest $request, TeamPersonReward $teamPersonReward)
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
@@ -166,7 +167,7 @@ class TeamSystemProjectController extends Controller
         return $this->response()->noContent()->setStatusCode(201);
     }
 
-    public function detailUpdate(Request $request, TeamPersonReward $teamPersonReward)
+    public function detailUpdate(TeamSystemDetailRequest $request, TeamPersonReward $teamPersonReward)
     {
         $user = $this->user();
         if (!$user->hasRole('legal-affairs-manager')) {
