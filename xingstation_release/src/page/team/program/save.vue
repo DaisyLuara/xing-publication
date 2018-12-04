@@ -131,10 +131,9 @@
                   :value="item.id"/>
               </el-select>
               <el-button
-                v-if="role.name === 'project-manager'" 
                 type="text"
                 size="mini"
-                @click="modifyHandle(programForm.interaction,interactionRate,'interaction')">修改</el-button>
+                @click="modifyHandle(programForm.interaction,interactionRate,'interaction')">{{(role.name === 'project-manager') ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -157,11 +156,10 @@
                   :label="item.name"
                   :value="item.id"/>
               </el-select>
-              <el-button 
-                v-if="role.name === 'project-manager'"
-                type="text" 
+              <el-button
+                type="text"
                 size="mini"
-                @click="modifyHandle(programForm.originality,creativeRate,'creative')">修改</el-button>
+                @click="modifyHandle(programForm.originality,creativeRate,'creative')">{{(role.name === 'project-manager') ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -187,10 +185,9 @@
                   :value="item.id"/>
               </el-select>
               <el-button
-                v-if="role.name === 'project-manager'"
-                type="text" 
+                type="text"
                 size="mini"
-                @click="modifyHandle(programForm.h5,h5Rate,'H5')">修改</el-button>
+                @click="modifyHandle(programForm.h5,h5Rate,'H5')">{{(role.name === 'project-manager') ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -214,10 +211,9 @@
                   :value="item.id"/>
               </el-select>
               <el-button
-                v-if="role.name === 'project-manager'" 
-                type="text" 
+                type="text"
                 size="mini"
-                @click="modifyHandle(programForm.animation,animateRate,'animate')">修改</el-button>
+                @click="modifyHandle(programForm.animation,animateRate,'animate')">{{(role.name === 'project-manager') ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -243,10 +239,9 @@
                   :value="item.id"/>
               </el-select>
               <el-button
-                v-if="role.name === 'project-manager'" 
-                type="text" 
+                type="text"
                 size="mini"
-                @click="modifyHandle(programForm.plan,wholeRate,'whole')">修改</el-button>
+                @click="modifyHandle(programForm.plan,wholeRate,'whole')">{{(role.name === 'project-manager') ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -270,10 +265,9 @@
                   :value="item.id"/>
               </el-select>
               <el-button
-                v-if="role.name === 'project-manager'" 
-                type="text" 
+                type="text"
                 size="mini"
-                @click="modifyHandle(programForm.tester,testRate,'test')">修改</el-button>
+                @click="modifyHandle(programForm.tester,testRate,'test')">{{(role.name === 'project-manager') ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -298,11 +292,10 @@
                   :label="item.name"
                   :value="item.id"/>
               </el-select>
-              <el-button 
-                v-if="role.name === 'project-manager'"
-                type="text" 
+              <el-button
+                type="text"
                 size="mini"
-                @click="modifyHandle(programForm.operation,platformRate,'platform')">修改</el-button>
+                @click="modifyHandle(programForm.operation,platformRate,'platform')">{{(role.name === 'project-manager') ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
           
@@ -325,7 +318,7 @@
         <el-form-item>
           <!-- 产品经理可以保存 -->
           <el-button
-            v-if="role.name === 'project-manager' && status !== 1" 
+            v-if="role.name === 'project-manager' && status === 1"
             type="primary"
             @click="submit('programForm')">保存</el-button>
           <el-button @click="historyBack">返回</el-button>
@@ -352,9 +345,9 @@
           <el-input v-model="item.rate"/>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div  slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false,disabledChange = true">取 消</el-button>
-        <el-button type="primary" @click="rateSubmit">确 定</el-button>
+        <el-button v-if="role.name === 'project-manager' && status === 1" type="primary" @click="rateSubmit">确 定</el-button>
       </div>
     </el-dialog>
   </div>
