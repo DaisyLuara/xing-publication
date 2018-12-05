@@ -480,11 +480,16 @@ export default {
           let args = {
             system_money: this.allocationForm.system_money
           }
-          if (this.allocationForm.total - this.allocationForm.system_money < 0) {
+          if (
+            this.allocationForm.total - this.allocationForm.system_money <
+            0
+          ) {
             this.$message({
               type: 'warning',
               message: '分配数额大于可发奖金，请重新填写!'
             })
+            this.allocationLoading = false
+            this.allocationFormVisible = false
             return
           }
           systemDistribute(this, this.id, args)
