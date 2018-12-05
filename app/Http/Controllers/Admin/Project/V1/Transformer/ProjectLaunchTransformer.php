@@ -8,7 +8,8 @@ use League\Fractal\TransformerAbstract;
 
 class ProjectLaunchTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['point', 'project', 'template'];
+    protected $availableIncludes = ['point', 'project', 'divtemplate','day1template','day2template','day3template',
+        'day4template','day5template','day6template','day7template','weekdaytemplate','weekendtemplate'];
 
     public function transform(ProjectLaunch $projectLaunch)
     {
@@ -31,10 +32,73 @@ class ProjectLaunchTransformer extends TransformerAbstract
         return $this->item($projectLaunch->project, new ProjectTransformer());
     }
 
-    public function includeTemplate(ProjectLaunch $projectLaunch)
+    public function includeDivtemplate(ProjectLaunch $projectLaunch)
     {
         if ($projectLaunch->template) {
             return $this->item($projectLaunch->template, new ProjectLaunchTplTransformer());
+        }
+    }
+
+    public function includeDay1template(ProjectLaunch $projectLaunch)
+    {
+        if ($projectLaunch->day1template) {
+            return $this->item($projectLaunch->day1template, new ProjectLaunchTplTransformer());
+        }
+    }
+
+    public function includeDay2template(ProjectLaunch $projectLaunch)
+    {
+        if ($projectLaunch->day2template) {
+            return $this->item($projectLaunch->day2template, new ProjectLaunchTplTransformer());
+        }
+    }
+
+    public function includeDay3template(ProjectLaunch $projectLaunch)
+    {
+        if ($projectLaunch->day3template) {
+            return $this->item($projectLaunch->day3template, new ProjectLaunchTplTransformer());
+        }
+    }
+
+    public function includeDay4template(ProjectLaunch $projectLaunch)
+    {
+        if ($projectLaunch->day4template) {
+            return $this->item($projectLaunch->day4template, new ProjectLaunchTplTransformer());
+        }
+    }
+
+    public function includeDay5template(ProjectLaunch $projectLaunch)
+    {
+        if ($projectLaunch->day5template) {
+            return $this->item($projectLaunch->day5template, new ProjectLaunchTplTransformer());
+        }
+    }
+
+    public function includeDay6template(ProjectLaunch $projectLaunch)
+    {
+        if ($projectLaunch->day6template) {
+            return $this->item($projectLaunch->day6template, new ProjectLaunchTplTransformer());
+        }
+    }
+
+    public function includeDay7template(ProjectLaunch $projectLaunch)
+    {
+        if ($projectLaunch->day7template) {
+            return $this->item($projectLaunch->day7template, new ProjectLaunchTplTransformer());
+        }
+    }
+
+    public function includeWeekdaytemplate(ProjectLaunch $projectLaunch)
+    {
+        if ($projectLaunch->weekdaytemplate) {
+            return $this->item($projectLaunch->weekdaytemplate, new ProjectLaunchTplTransformer());
+        }
+    }
+
+    public function includeWeekendtemplate(ProjectLaunch $projectLaunch)
+    {
+        if ($projectLaunch->weekendtemplate) {
+            return $this->item($projectLaunch->weekendtemplate, new ProjectLaunchTplTransformer());
         }
     }
 
