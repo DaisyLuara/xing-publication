@@ -372,6 +372,7 @@ export default {
             system_money: this.applyForm.system_money
           }
           if (this.id) {
+            args.total = this.applyForm.system_money
             modifySystemDetailMoney(this, this.id, args)
               .then(res => {
                 this.$message({
