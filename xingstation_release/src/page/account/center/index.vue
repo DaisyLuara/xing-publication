@@ -266,7 +266,7 @@ export default {
         start_date: this.handleDateTransform(this.filters.beginDate[0]),
         end_date: this.handleDateTransform(this.filters.beginDate[1])
       }
-      getPersonRewardTotal(this)
+      getPersonRewardTotal(this, args)
         .then(res => {
           this.moneyTotal = res.total_reward
         })
