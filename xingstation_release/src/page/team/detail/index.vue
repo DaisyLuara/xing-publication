@@ -448,7 +448,7 @@ export default {
     modifyHandle(data) {
       this.id = data.id
       this.applyForm.project_name = data.project_name
-      this.applyForm.money = data.money
+      this.applyForm.system_money = data.system_money
       this.getSystemlMoneyDetail()
       this.applyFormVisible = true
     },
@@ -458,7 +458,7 @@ export default {
         .then(res => {
           this.applyForm.user_id = res.user_id
           this.applyForm.project_name = res.project_name
-          this.applyForm.money = res.money
+          this.applyForm.system_money = res.system_money
           this.loading = false
         })
         .catch(err => {
