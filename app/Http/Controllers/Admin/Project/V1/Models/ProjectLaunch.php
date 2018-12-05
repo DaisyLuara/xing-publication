@@ -80,7 +80,7 @@ class ProjectLaunch extends Model
         return $this->belongsTo(ProjectLaunchTpl::class, 'weekday_tvid', 'tvid');
 
     }
-    public function weekendemplate()
+    public function weekendtemplate()
     {
         return $this->belongsTo(ProjectLaunchTpl::class, 'weekend_tvid', 'tvid');
 
