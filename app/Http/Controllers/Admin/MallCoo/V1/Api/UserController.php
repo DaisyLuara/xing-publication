@@ -55,16 +55,20 @@ class UserController extends Controller
         $mobile = $result['Data']['Mobile'];
         $username = $result['Data']['UserName'];
         $gender = $result['Data']['Gender'];
+        $birthday = $result['Data']['Birthday'];
 
         $separator = strpos($redirect_url, '?') ? '&' : '?';
         $redirect_url = $redirect_url . $separator . 'open_user_id=' . $open_user_id;
 
-        WeChatUser::updateOrCreate([
-            'mobile' => $mobile,
-            'mallcoo_open_user_id' => $open_user_id,
-            'username' => $username,
-            'gender' => $gender,
-        ]);
+        WeChatUser::updateOrCreate(
+            ['mallcoo_open_user_id' => $open_user_id],
+            [
+                'mobile' => $mobile,
+                'username' => $username,
+                'gender' => $gender,
+                'birthday' => $birthday
+            ]
+        );
 
         return redirect($redirect_url);
     }

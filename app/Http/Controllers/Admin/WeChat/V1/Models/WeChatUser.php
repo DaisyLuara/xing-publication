@@ -20,7 +20,9 @@ class WeChatUser extends Model
         'openid',
         'mobile',
         'mallcoo_open_user_id',
+        'birthday'
     ];
+
 
     /**
      * The attributes that should be casted to native types.
