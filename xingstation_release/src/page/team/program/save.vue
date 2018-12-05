@@ -7,7 +7,7 @@
       class="pane">
       <div 
         class="pane-title">
-        {{ programID ? (role.name==='project-manager'? '修改项目' : '查看项目') : '新增项目'}}
+        {{ programID ? (((role.name==='project-manager' && status===1) || role.name === 'legal-affairs-manager') ? '修改项目' : '查看项目') : '新增项目'}}
       </div>
       <el-form
         ref="programForm"
@@ -407,7 +407,7 @@ export default {
         loading: false,
         loadingText: '拼命加载中'
       },
-      status: '',
+      status: 1,
       programID: '',
       programForm: {
         type: 0,
