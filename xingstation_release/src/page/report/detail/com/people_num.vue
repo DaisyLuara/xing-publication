@@ -664,6 +664,10 @@ export default {
         {
           value: 'project_point',
           label: '节目数据'
+        },
+        {
+          value: 'person_reward',
+          label: '团队奖励'
         }
       ],
       shouldDialogShow: false,

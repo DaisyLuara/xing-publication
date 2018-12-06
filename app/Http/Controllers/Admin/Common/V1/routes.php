@@ -75,6 +75,8 @@ $api->version('v1', [
             $api->get('payment_payee/query', 'QueryController@paymentPayeeQuery');
             $api->get('receive_date/query', 'QueryController@receiveDateQuery');
             $api->get('customer/query', 'QueryController@customerQuery');
+            $api->get('user/query', 'QueryController@userQuery');
+            $api->get('team_rate/query', 'QueryController@teamRateQuery');
 
             //消息通知
             $api->get('user/notifications', 'NotificationsController@index');

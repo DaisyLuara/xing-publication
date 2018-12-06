@@ -16,6 +16,9 @@ use Carbon\Carbon;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceVerifyRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FacePlayCharacterRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FacePermeabilityRecord;
+use App\Http\Controllers\Admin\Face\V1\Models\FaceCouponRecord;
+use App\Http\Controllers\Admin\Team\V1\Models\TeamBonusRecord;
+use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
 
 /**
  * 围观人次清洗
@@ -553,6 +556,51 @@ function phoneClean()
     FacePhoneRecord::create(['date' => $currentDate]);
 }
 
+/** 优惠券清洗 */
+function couponTimesClean()
+{
+    $date = FaceCouponRecord::query()->max('date');
+    $date = (new Carbon($date))->format('Y-m-d');
+    $currentDate = Carbon::now()->toDateString();
+    while ($date < $currentDate) {
+        $data = DB::table('coupons')
+            ->selectRaw("oid,belong,count(*) as coupontimes")
+            ->whereRaw("date_format(created_at,'%Y-%m-%d')='$date' and oid>0 ")
+            ->groupBy(DB::raw("oid,belong"))
+            ->get();
+
+        $allData = DB::table('coupons')
+            ->selectRaw("oid,belong,count(*) as coupontimes")
+            ->whereRaw("date_format(created_at,'%Y-%m-%d')='$date' and oid>0 ")
+            ->groupBy('oid')
+            ->get();
+        $count = [];
+        foreach ($data as $item) {
+            $count[] = [
+                'oid' => $item->oid,
+                'belong' => $item->belong,
+                'coupontimes' => $item->coupontimes,
+                'date' => $date,
+                'clientdate' => strtotime($date) * 1000
+            ];
+        }
+
+        foreach ($allData as $item) {
+            $count[] = [
+                'oid' => $item->oid,
+                'belong' => 'all',
+                'coupontimes' => $item->coupontimes,
+                'date' => $date,
+                'clientdate' => strtotime($date) * 1000
+            ];
+        }
+
+        DB::connection('ar')->table('xs_face_coupon_times')->insert($count);
+        $date = (new Carbon($date))->addDay(1)->toDateString();
+    }
+    FaceCouponRecord::create(['date' => $currentDate]);
+}
+
 /**
  * 核销清洗
  */
@@ -626,15 +674,22 @@ function mergeActiveOmoLook()
         $sql4 = DB::connection('ar')->table('xs_face_phone')
             ->whereRaw("clientdate='$clientDate'")
             ->selectRaw("oid,belong,phonenum,oanum");
+
         $sql5 = DB::connection('ar')->table('xs_face_phone_times')
             ->whereRaw("clientdate='$clientDate'")
             ->selectRaw("oid,belong,phonetimes,oatimes");
+
         $sql6 = DB::connection('ar')->table('xs_face_active_playtimes')
             ->whereRaw("clientdate='$clientDate'")
             ->selectRaw("oid,belong,playtimes7,playtimes15,playtimes21");
+
         $sql7 = DB::connection('ar')->table('xs_face_verify_times')
             ->whereRaw("clientdate='$clientDate'")
             ->selectRaw("oid,belong,verifytimes");
+
+        $sql8 = DB::connection('ar')->table('xs_face_coupon_times')
+            ->whereRaw("clientdate='$clientDate'")
+            ->selectRaw("oid,belong,coupontimes");
 
         $sql = DB::connection('ar')->table('xs_face_look_times')
             ->whereRaw("clientdate='$clientDate'")
@@ -669,7 +724,11 @@ function mergeActiveOmoLook()
                 $join->on('a.oid', '=', 'h.oid');
                 $join->on('a.belong', '=', 'h.belong');
             }, null, null, 'left')
-            ->selectRaw("a.oid as oid,a.belong as belong,looknum,playernum7,playernum15,playernum21,playernum,outnum,scannum,omo_outnum,omo_scannum,omo_sharenum,lovenum,phonenum,oanum,phonetimes,oatimes,playtimes7,playtimes15,playtimes21,looktimes,verifytimes")
+            ->join(DB::raw("({$sql8->toSql()}) as i"), function ($join) {
+                $join->on('a.oid', '=', 'i.oid');
+                $join->on('a.belong', '=', 'i.belong');
+            }, null, null, 'left')
+            ->selectRaw("a.oid as oid,a.belong as belong,looknum,playernum7,playernum15,playernum21,playernum,outnum,scannum,omo_outnum,omo_scannum,omo_sharenum,lovenum,phonenum,oanum,phonetimes,oatimes,playtimes7,playtimes15,playtimes21,looktimes,verifytimes,coupontimes")
             ->get();
         $count = [];
         foreach ($data as $item) {
@@ -697,6 +756,7 @@ function mergeActiveOmoLook()
                 'looktimes' => $item->looktimes,
                 'lovetimes' => $item->oatimes + $item->phonetimes,
                 'verifytimes' => $item->verifytimes,
+                'coupontimes' => $item->coupontimes,
                 'date' => $date,
                 'clientdate' => strtotime($date) * 1000
             ];
@@ -1674,4 +1734,131 @@ function getDateFormatCharacter($date)
     } else {
         return '24:00';
     }
+}
+
+/**
+ * 绩效清洗
+ */
+function teamBonusClean()
+{
+    $date = TeamBonusRecord::query()->max('date');
+    $date = (new Carbon($date))->format('Y-m-d');
+    $currentDate = Carbon::now()->toDateString();
+    while ($date < $currentDate) {
+        //更新publication项目的投放时间
+        $projectList = DB::connection('ar')->table('ar_product_list')
+            ->whereRaw("online<>0")
+            ->selectRaw("versionname,online")
+            ->get();
+        foreach ($projectList as $item) {
+            TeamProject::query()->where('belong', $item->versionname)->update(['launch_date' => date('Y-m-d', $item->online)]);
+        }
+
+        $faceCount1 = DB::connection('ar')->table('xs_face_count_log as fcl')
+            ->join('ar_product_list as apl', 'belong', '=', 'versionname')
+            ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
+            ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
+            ->whereRaw("date_format(fcl.date, '%Y-%m-%d')='$date' and apl.online<>0 and fcl.oid not in ('16', '19', '30', '31', '177','182','327','328','329','334','335','540') and aom.marketid <> '15'")
+            ->groupBy(DB::raw("date_format(fcl.date, '%Y-%m-%d'),fcl.oid,fcl.belong"))
+            ->orderBy('date')
+            ->orderBy('apl.id')
+            ->orderBy('looknum', 'desc')
+            ->selectRaw("date_format(fcl.date, '%Y-%m-%d') as date,apl.name as name,apl.online as online,fcl.belong as belong,sum(playernum7)as playernum7,sum(playernum15) as playernum15 ,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum");
+
+        $faceCount2 = DB::connection('ar')->table(DB::raw("({$faceCount1->toSql()}) a,(select @gn := 0)  b"))
+            ->selectRaw("  @gn := case when (@date=date and @name = name) then @gn + 1 else 1 end gn,@date:=date date,@name := name name,online,belong,playernum7,playernum15,playernum21,omo_outnum");
+
+        $faceCount = DB::connection('ar')->table(DB::raw("({$faceCount2->toSql()}) c"))
+            ->selectRaw("name,online,belong,sum(playernum7) as playernum7,sum(playernum15) as playernum15,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum")
+            ->whereRaw("gn<=100")
+            ->groupBy('name')
+            ->get();
+
+        $count = [];
+        foreach ($faceCount as $item) {
+            $player7Money = round($item->playernum7 * 0.01, 2);
+            $player15Money = round($item->playernum15 * 0.02, 2);
+            $player21Money = round($item->playernum21 * 0.05, 2);
+            $uCPAMoney = round($item->omo_outnum * 0.2, 2);
+            $totalMoney = $player7Money + $player15Money + $player21Money + $uCPAMoney;
+
+            $launchDate = date('Y-m-d', $item->online);
+
+            $teamProject = TeamProject::query()->where('belong', $item->belong)->first();
+            //投放时长 当前日期-投放日期
+            $launchTime = (new Carbon($date))->diffInDays($launchDate);
+            $factor = 0;
+            if ($teamProject) {
+                if ($launchTime <= 30) {
+                    //主管确认
+                    if ($teamProject->status == 4) {
+                        //提前制作时间 投放时间-上线时间
+                        $advanceTime = (new Carbon($launchDate))->diffInDays($teamProject->online_date);
+                        if ($advanceTime >= 90) {
+                            $factor = 1.2;
+                        }
+                        if ($advanceTime >= 60 && $advanceTime < 90) {
+                            $factor = 1.1;
+                        }
+                        if ($advanceTime < 60) {
+                            if ($teamProject->project_attribute <= 2) {
+                                $factor = 0.8;
+                            } else {
+                                $factor = 1;
+                            }
+                        }
+                    }
+                    //运营确认
+                    if ($teamProject->status == 3 && $teamProject->type == 0) {
+                        if ($teamProject->project_attribute <= 2) {
+                            $factor = 0.8;
+                        } else {
+                            $factor = 1;
+                        }
+                    }
+                }
+                if ($launchTime > 30 && $launchTime <= 60) {
+                    $factor = 0.6;
+                }
+                if ($launchTime > 60 && $launchTime <= 90) {
+                    $factor = 0.4;
+                }
+                if ($launchTime > 90 && $launchTime <= 120) {
+                    $factor = 0.2;
+                }
+            }
+            $count[] = [
+                'project_name' => $item->name,
+                'belong' => $item->belong,
+                'money' => $totalMoney,
+                'factor' => $factor,
+                'date' => $date
+            ];
+        }
+        DB::table('team_bonuses')->insert($count);
+
+        $data = DB::table('team_projects as tp')
+            ->join('team_project_members as tpm', 'tp.id', '=', 'tpm.team_project_id')
+            ->join('team_bonuses as tb', 'tp.belong', '=', 'tb.belong')
+            ->whereRaw("date_format(date,'%Y-%m-%d')='$date'")
+            ->selectRaw("user_id,tp.project_name as project_name,tp.belong as belong,money,factor,rate,tpm.type as type")
+            ->get();
+
+        $rewards = [];
+        foreach ($data as $item) {
+            $rewards[] = [
+                'user_id' => $item->user_id,
+                'project_name' => $item->project_name,
+                'belong' => $item->belong,
+                'type' => $item->type,
+                'experience_money' => round($item->money * $item->factor * $item->rate, 6),
+                'total' => round($item->money * $item->factor * $item->rate, 6),
+                'date' => $date
+            ];
+        }
+        DB::table('team_person_rewards')->insert($rewards);
+
+        $date = (new Carbon($date))->addDay(1)->toDateString();
+    }
+    TeamBonusRecord::create(['date' => $currentDate]);
 }

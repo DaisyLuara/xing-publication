@@ -71,26 +71,26 @@ function VueAxios(Vue) {
         // The request was made but no response was received
         // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
         // http.ClientRequest in node.js
-        if (error.request.status === 0) {
-          let user_info = JSON.parse(app.$cookie.get('user_info'))
-          console.log(user_info)
-          let id = user_info.id
-          if (user_info.tower_access_token) {
-            auth
-              .refreshTowerOuthToken(app)
-              .then(() => {})
-              .catch(error => {
-                console.log(error)
-              })
-          } else {
-            window.location.href =
-              // process.env.HTTPS_SERVER_URL + '/api/login/tower?id=' + id
-              window.open(
-                process.env.HTTPS_SERVER_URL + '/api/login/tower?id=' + id,
-                '_blank'
-              )
-          }
-        }
+        // tower methods
+        // if (error.request.status === 0) {
+        //   let user_info = JSON.parse(app.$cookie.get('user_info'))
+        //   let id = user_info.id
+        //   if (user_info.tower_access_token) {
+        //     auth
+        //       .refreshTowerOuthToken(app)
+        //       .then(() => {})
+        //       .catch(error => {
+        //         console.log(error)
+        //       })
+        //   } else {
+        //     window.location.href =
+        //       // process.env.HTTPS_SERVER_URL + '/api/login/tower?id=' + id
+        //       window.open(
+        //         process.env.HTTPS_SERVER_URL + '/api/login/tower?id=' + id,
+        //         '_blank'
+        //       )
+        //   }
+        // }
       } else {
         // Something happened in setting up the request that triggered an Error
         console.log('Error', error.message)

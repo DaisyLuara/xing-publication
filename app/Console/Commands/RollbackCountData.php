@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceActivePlayerRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceActivePlaytimesRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceCountRecord;
+use App\Http\Controllers\Admin\Face\V1\Models\FaceCouponRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceLookTimesRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceOmoRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FacePhoneRecord;
@@ -76,8 +77,13 @@ class RollbackCountData extends Command
         if ($date >= '2018-11-15') {
             FaceVerifyRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
             FaceVerifyRecord::create(['date' => $date]);
+
+            FaceCouponRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
+            FaceCouponRecord::create(['date' => $date]);
         } else {
             FaceVerifyRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-11-15'")->delete();
+
+            FaceCouponRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-11-15'")->delete();
         }
 
         FacePhoneRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
@@ -98,5 +104,6 @@ class RollbackCountData extends Command
         DB::connection('ar')->table('xs_face_count_log')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
         DB::connection('ar')->table('xs_face_look_times')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
         DB::connection('ar')->table('xs_face_verify_times')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
+        DB::connection('ar')->table('xs_face_coupon_times')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
     }
 }

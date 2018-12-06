@@ -1,11 +1,12 @@
 <template>
-  <div class="list-root">
-    <router-view />
+  <div 
+    class="center-root">
+    <router-view/>
   </div>
 </template>
 <script>
 export default {
-  name: 'ListView',
+  name: 'CenterView',
   data() {
     return {
     }
@@ -16,7 +17,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  .list-root {
+  .center-root {
     height: 100%;
     background-color: #EFF2F7;
   }
