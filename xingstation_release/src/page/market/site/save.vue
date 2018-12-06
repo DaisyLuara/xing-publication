@@ -497,9 +497,13 @@
 </template>
 
 <script>
-import search from 'service/search'
-import market from 'service/market'
-import router from 'router'
+import {
+  getSiteMarketDetail,
+  historyBack,
+  siteSaveMarket,
+  siteModifyMarket,
+  getSearchAeraList
+} from 'service'
 
 import {
   Form,
@@ -810,8 +814,7 @@ export default {
       let args = {
         include: 'share,contract,area'
       }
-      market
-        .getMarketDetail(this, args, id)
+      getSiteMarketDetail(this, args, id)
         .then(res => {
           this.siteForm.name = res.name
           this.siteForm.areaid = res.area.id
@@ -860,8 +863,7 @@ export default {
         })
     },
     getAreaList() {
-      return search
-        .getAeraList(this)
+      return getSearchAeraList(this)
         .then(res => {
           this.areaList = res.data
         })
@@ -881,7 +883,7 @@ export default {
       }
     },
     historyBack() {
-      router.back()
+      historyBack()
     },
     submit(formName) {
       this.$refs[formName].validate(valid => {
@@ -911,8 +913,7 @@ export default {
           let args = this.siteForm
           delete args.permission
           if (this.siteID) {
-            market
-              .modifyMarket(this, args, this.siteID)
+            siteModifyMarket(this, args, this.siteID)
               .then(res => {
                 this.$message({
                   message: '修改场地成功',
@@ -926,8 +927,7 @@ export default {
                 console.log(err)
               })
           } else {
-            market
-              .saveMarket(this, args)
+            siteSaveMarket(this, args)
               .then(res => {
                 this.$message({
                   message: '新建场地成功',

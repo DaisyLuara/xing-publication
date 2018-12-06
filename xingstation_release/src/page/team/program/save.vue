@@ -369,12 +369,14 @@ import {
   Col,
   Dialog
 } from 'element-ui'
-import search from 'service/search'
 import {
   saveProgram,
   historyBack,
   getProgramDetails,
-  modifyProgram
+  modifyProgram,
+  getSearchUserList,
+  getSearchProjectList,
+  getSearchTeamRateList
 } from 'service'
 import { Cookies } from 'utils/cookies'
 
@@ -469,8 +471,7 @@ export default {
     },
     // 比列
     getTeamRateList() {
-      search
-        .getTeamRateList(this)
+      getSearchTeamRateList(this)
         .then(res => {
           let data = res.data[0]
           this.interactionRate = data.interaction
@@ -700,8 +701,7 @@ export default {
     },
     getUserList() {
       this.searchLoading = true
-      return search
-        .getUserList(this)
+      return getSearchUserList(this)
         .then(response => {
           this.userList = response.data
           this.searchLoading = false
@@ -716,8 +716,7 @@ export default {
         let args = {
           name: query
         }
-        return search
-          .getProjectList(this, args)
+        return getSearchProjectList(this, args)
           .then(response => {
             this.projectList = response.data
             if (this.projectList.length == 0) {

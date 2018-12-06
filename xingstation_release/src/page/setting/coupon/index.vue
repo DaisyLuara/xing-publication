@@ -262,8 +262,7 @@
 </template>
 
 <script>
-import coupon from 'service/coupon'
-import search from 'service/search'
+import { getSyncCoupon, getCouponList, getSearchCompanyList } from 'service'
 
 import {
   Button,
@@ -326,8 +325,7 @@ export default {
           let args = {
             company_id: this.templateForm.company_id
           }
-          coupon
-            .getSyncCoupon(this, args)
+          getSyncCoupon(this, args)
             .then(result => {
               this.getCouponList()
               this.templateVisible = false
@@ -340,8 +338,7 @@ export default {
       })
     },
     getCompanyList() {
-      search
-        .getCompanyList(this)
+      getSearchCompanyList(this)
         .then(result => {
           this.companyList = result.data
         })
@@ -368,8 +365,7 @@ export default {
         page: this.pagination.currentPage,
         name: this.filters.name
       }
-      coupon
-        .getCouponList(this, args)
+      getCouponList(this, args)
         .then(response => {
           let data = response.data
           console.log(data)

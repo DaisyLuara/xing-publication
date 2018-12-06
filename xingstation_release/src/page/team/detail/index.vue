@@ -223,10 +223,11 @@ import {
   getSystemDetails,
   saveSystemDetailMoney,
   getSystemlMoneyDetail,
-  modifySystemDetailMoney
+  modifySystemDetailMoney,
+  getSearchUserList,
+  handleDateTypeTransform
 } from 'service'
 import { Cookies } from 'utils/cookies'
-import search from 'service/search'
 import {
   Button,
   Input,
@@ -353,8 +354,7 @@ export default {
   methods: {
     getUserList() {
       this.searchLoading = true
-      return search
-        .getUserList(this)
+      return getSearchUserList(this)
         .then(response => {
           this.userList = response.data
           this.searchLoading = false
@@ -476,8 +476,8 @@ export default {
         page: this.pagination.currentPage,
         name: this.filters.name,
         user_name: this.filters.user_name,
-        start_date: this.handleDateTransform(this.filters.beginDate[0]),
-        end_date: this.handleDateTransform(this.filters.beginDate[1])
+        start_date: handleDateTypeTransform(this.filters.beginDate[0]),
+        end_date: handleDateTypeTransform(this.filters.beginDate[1])
       }
       if (this.filters.name === '') {
         delete args.name
