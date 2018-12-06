@@ -1841,7 +1841,7 @@ function teamBonusClean()
             ->join('team_project_members as tpm', 'tp.id', '=', 'tpm.team_project_id')
             ->join('team_bonuses as tb', 'tp.belong', '=', 'tb.belong')
             ->whereRaw("date_format(date,'%Y-%m-%d')='$date'")
-            ->selectRaw("user_id,tp.project_name as project_name,tp.belong as belong,money,factor,rate")
+            ->selectRaw("user_id,tp.project_name as project_name,tp.belong as belong,money,factor,rate,tp.type as type")
             ->get();
 
         $rewards = [];
@@ -1850,6 +1850,7 @@ function teamBonusClean()
                 'user_id' => $item->user_id,
                 'project_name' => $item->project_name,
                 'belong' => $item->belong,
+                'type' => $item->type,
                 'experience_money' => round($item->money * $item->factor * $item->rate, 6),
                 'total' => round($item->money * $item->factor * $item->rate, 6),
                 'date' => $date
