@@ -447,7 +447,7 @@ export default {
       getDistributionBonus(this, args)
         .then(res => {
           this.distributionTotal = res.distribution_bonus
-          this.residueTotal = this.moneyTotal - this.distributionTotal
+          this.residueTotal = (this.moneyTotal - this.distributionTotal).toFixed(2)
           this.allocationForm.total = this.residueTotal
         })
         .catch(err => {
