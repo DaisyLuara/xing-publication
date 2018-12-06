@@ -1,7 +1,6 @@
-import Vue from 'vue'
 import router from 'router'
 export default {
-  install(Vue, options) {
+  install(Vue) {
     Vue.prototype.$cancel = function() {
       history.go(-1)
     }
