@@ -65,7 +65,7 @@
         <div 
           class="total-wrap">
           <div>
-            <div>
+            <div v-if="role.name === 'legal-affairs-manager'">
             <span 
               class="label">
               奖金总额: {{ moneyTotal }}
