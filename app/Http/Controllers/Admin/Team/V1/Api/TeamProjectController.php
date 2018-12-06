@@ -105,8 +105,8 @@ class TeamProjectController extends Controller
         if (!$user->hasRole('project-manager') && !$user->hasRole('legal-affairs-manager')) {
             abort(403, '无操作权限');
         }
-        if ($user->hasRole('project-manager') && $teamProject->status != 1) {
-            abort(403, '项目已确认无法修改');
+        if ($user->hasRole('project-manager') && $teamProject->status > 2) {
+            abort(403, '项目已无法修改');
         }
         $teamProject->update($request->all());
         $member = $request->member;
