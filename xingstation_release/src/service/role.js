@@ -1,5 +1,3 @@
-import { router } from '../main'
-
 const ROLE_API = '/api/tenants/roles'
 const DELETE_ROLES = 'api/tenants/roles/destroyAll'
 const PERMISSION_API = '/api/users/permissions'

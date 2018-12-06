@@ -416,8 +416,8 @@ export default {
     },
     getDistributionBonus() {
       let args = {
-        start_date: this.handleDateTransform(this.filters.beginDate[0]),
-        end_date: this.handleDateTransform(this.filters.beginDate[1])
+        start_date: handleDateTypeTransform(this.filters.beginDate[0]),
+        end_date: handleDateTypeTransform(this.filters.beginDate[1])
       }
       getDistributionBonus(this, args)
         .then(res => {
@@ -432,8 +432,8 @@ export default {
     },
     getSystemBonus() {
       let args = {
-        start_date: this.handleDateTransform(this.filters.beginDate[0]),
-        end_date: this.handleDateTransform(this.filters.beginDate[1])
+        start_date: handleDateTypeTransform(this.filters.beginDate[0]),
+        end_date: handleDateTypeTransform(this.filters.beginDate[1])
       }
       getSystemBonus(this, args)
         .then(res => {
@@ -519,17 +519,6 @@ export default {
       this.getSystemBonus()
       this.getDistributionBonus()
       this.getSystemDetails()
-    },
-    handleDateTransform(valueDate) {
-      let date = new Date(valueDate)
-      let year = date.getFullYear() + '-'
-      let mouth =
-        (date.getMonth() + 1 < 10
-          ? '0' + (date.getMonth() + 1)
-          : date.getMonth() + 1) + '-'
-      let day =
-        (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ''
-      return year + mouth + day
     }
   }
 }
