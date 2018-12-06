@@ -60,7 +60,7 @@ class ShortUrlController extends Controller
          */
         if ($shortUrl->id == 180) {
             $couponBatchID = array_random([111, 112, 113, 114]);
-            $queryString['coupon_batch_id'] = $couponBatchID;
+            $queryString = $queryString . '&coupon_batch_id=' . $couponBatchID;
         }
 
 
