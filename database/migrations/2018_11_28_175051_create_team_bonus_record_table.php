@@ -19,7 +19,7 @@ class CreateTeamBonusRecordTable extends Migration
             $table->timestamp('date')->nullable();
             $table->timestamps();
         });
-        TeamBonusRecord::create(['date' => '2018-11-21']);
+        TeamBonusRecord::create(['date' => '2018-12-06']);
     }
 
     /**

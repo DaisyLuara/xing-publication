@@ -49,7 +49,7 @@ class TeamProjectListTransformer extends TransformerAbstract
             'xo_attribute' => $teamProject->xo_attribute == 1 ? '是' : '否',
             'begin_date' => $teamProject->begin_date,
             'online_date' => $teamProject->online_date,
-            'launch_date' => date('Y-m-d', $teamProject->project->online),
+            'launch_date' => $teamProject->project->online != 0 ? date('Y-m-d', $teamProject->project->online) : null,
             'remark' => $teamProject->remark,
             'status' => $this->statusMapping[$teamProject->status],
             'type' => $teamProject->type == 1 ? '提前节目' : '正常节目'

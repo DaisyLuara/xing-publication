@@ -319,7 +319,7 @@
         <el-form-item>
           <!-- 产品经理可以保存 -->
           <el-button
-            v-if="(role.name === 'project-manager' && status === 1) || role.name === 'legal-affairs-manager'"
+            v-if="(role.name === 'project-manager' && (status === 1 || status === 2)) || role.name === 'legal-affairs-manager'"
             type="primary"
             @click="submit('programForm')">保存</el-button>
           <el-button @click="historyBack">返回</el-button>
