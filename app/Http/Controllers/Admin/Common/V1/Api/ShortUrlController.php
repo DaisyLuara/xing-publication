@@ -6,6 +6,8 @@ namespace App\Http\Controllers\Admin\Common\V1\Api;
 use App\Http\Controllers\Admin\ShortUrl\V1\Models\ShortUrl;
 use App\Http\Controllers\Admin\Common\V1\Request\ShortUrlRequest;
 use App\Http\Controllers\Controller;
+use function GuzzleHttp\Psr7\build_query;
+use function GuzzleHttp\Psr7\parse_query;
 use Jenssegers\Agent\Facades\Agent;
 use Illuminate\Http\Request;
 use App\Jobs\ShortUrlJob;
@@ -59,8 +61,9 @@ class ShortUrlController extends Controller
          * @todo 去掉
          */
         if ($shortUrl->id == 180) {
-            $couponBatchID = array_random([111, 112, 113, 114]);
-            $queryString = $queryString . '&coupon_batch_id=' . $couponBatchID;
+            $queryArr = parse_query($queryString);
+            $queryArr['coupon_batch_id'] = array_random([111, 112, 113, 114]);
+            $queryString = build_query($queryArr);
         }
 
 
