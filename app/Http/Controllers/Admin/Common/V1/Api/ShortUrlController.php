@@ -54,6 +54,16 @@ class ShortUrlController extends Controller
 
         $queryString = $request->getQueryString();
 
+        /**
+         * 短链接跳转添加 随机优惠券
+         * @todo 去掉
+         */
+        if ($shortUrl->id == 180) {
+            $couponBatchID = array_random([111, 112, 113, 114]);
+            $queryString['coupon_batch_id'] = $couponBatchID;
+        }
+
+
         //大屏跳转参数加密
         $cookieExpire = time() + 3600 * 24 * 7;
         setcookie('game_attribute_payload', encrypt($queryString), $cookieExpire, '/', config('app')['cookie_domain']);
