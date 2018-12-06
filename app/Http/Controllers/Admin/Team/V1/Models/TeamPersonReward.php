@@ -23,7 +23,8 @@ class TeamPersonReward extends Model
         'link_money',
         'system_money',
         'total',
-        'date'
+        'date',
+        'type',
     ];
     public $timestamps = false;
 
