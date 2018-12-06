@@ -1833,7 +1833,7 @@ export default {
               color: '#700068'
             },
             data: res.map(r => {
-              return r.playtimes21
+              return r.playtimes21_rate
             })
           },
           {
