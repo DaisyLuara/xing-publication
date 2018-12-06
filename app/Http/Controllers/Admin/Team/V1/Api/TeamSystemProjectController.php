@@ -39,6 +39,11 @@ class TeamSystemProjectController extends Controller
         if ($request->has('start_date') && $request->has('end_date')) {
             $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '$request->start_date' and '$request->end_date'");
         }
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
+        if (!$user->hasRole('legal-affairs-manager')) {
+            $query->where('applicant', $user->id);
+        }
         $teamSystemProject = $query->paginate(10);
         return $this->response()->paginator($teamSystemProject, new TeamSystemProjectTransformer());
 
@@ -144,6 +149,11 @@ class TeamSystemProjectController extends Controller
 
         if ($request->has('start_date') && $request->has('end_date')) {
             $query->whereRaw("date_format(date,'%Y-%m-%d') between '$request->start_date' and '$request->end_date'");
+        }
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
+        if (!$user->hasRole('legal-affairs-manager')) {
+            $query->where('user_id', $user->id);
         }
 
         $teamPersonReward = $query->whereRaw("belong='system'")->paginate(10);
