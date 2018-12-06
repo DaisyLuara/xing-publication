@@ -247,7 +247,43 @@
                 </el-form-item>
                 <el-form-item 
                   label="自定义模版">
-                  <span>{{ typeof(scope.row.template) === 'undefined' ? '' : scope.row.template.name }}</span>
+                  <span>{{ scope.row.divtemplate.name }}</span>
+                </el-form-item>
+                <el-form-item 
+                  label="星期一模板">
+                  <span>{{ scope.row.day1template.name }}</span>
+                </el-form-item>
+                <el-form-item 
+                  label="星期二模板">
+                  <span>{{ scope.row.day2template.name }}</span>
+                </el-form-item>
+                <el-form-item 
+                  label="星期三模板">
+                  <span>{{ scope.row.day3template.name }}</span>
+                </el-form-item>
+                <el-form-item 
+                  label="星期四模板">
+                  <span>{{ scope.row.day4template.name }}</span>
+                </el-form-item>
+                <el-form-item 
+                  label="星期五模板">
+                  <span>{{ scope.row.day5template.name }}</span>
+                </el-form-item>
+                <el-form-item 
+                  label="星期六模板">
+                  <span>{{ scope.row.day6template.name }}</span>
+                </el-form-item>
+                <el-form-item 
+                  label="星期日模板">
+                  <span>{{ scope.row.day7template.name }}</span>
+                </el-form-item>
+                <el-form-item 
+                  label="工作日模板">
+                  <span>{{ scope.row.weekdaytemplate.name }}</span>
+                </el-form-item>
+                <el-form-item 
+                  label="周末模板">
+                  <span>{{ scope.row.weekendtemplate.name }}</span>
                 </el-form-item>
               </el-form>
             </template>
@@ -333,7 +369,7 @@
           >
             <template 
               slot-scope="scope">
-              {{ typeof(scope.row.template) === 'undefined' ? '' : scope.row.template.name }}
+              {{ scope.row.divtemplate.name }}
             </template>
           </el-table-column>
           <el-table-column
@@ -940,7 +976,8 @@ export default {
       this.setting.loading = true
       let searchArgs = {
         page: this.pagination.currentPage,
-        include: 'point.scene,point.market,point.area,project,template',
+        include:
+          'point.scene,point.market,point.area,project,divtemplate,day1template,day2template,day3template,day4template,day5template,day6template,day7template,weekdaytemplate,weekendtemplate',
         project_name: this.filters.name,
         area_id: this.filters.area,
         market_id: this.filters.market[0],
