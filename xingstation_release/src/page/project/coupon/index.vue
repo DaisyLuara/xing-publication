@@ -256,8 +256,13 @@
 </template>
 
 <script>
-import coupon from 'service/coupon'
-import search from 'service/search'
+import {
+  handleDateTimeTransform,
+  putInCouponList,
+  getSearchShopCustomerList,
+  getSearchCompanyList,
+  getSearchCouponList
+} from 'service'
 import {
   Button,
   Input,
@@ -393,8 +398,7 @@ export default {
       let args = {
         company_id: this.filters.company_id
       }
-      return search
-        .getShopCustomerList(this, args)
+      return getSearchShopCustomerList(this, args)
         .then(res => {
           this.shopCustomerList = res.data
           this.searchLoading = false
@@ -406,8 +410,7 @@ export default {
         })
     },
     getCompanyList() {
-      return search
-        .getCompanyList(this)
+      return getSearchCompanyList(this)
         .then(result => {
           this.companyList = result.data
         })
@@ -421,8 +424,7 @@ export default {
         let args = {
           name: query
         }
-        return search
-          .getCouponList(this, args)
+        return getSearchCouponList(this, args)
           .then(response => {
             this.couponList = response.data
             this.searchLoading = false
@@ -443,8 +445,8 @@ export default {
         status: this.filters.status,
         company_id: this.filters.company_id,
         shop_customer_id: this.filters.shop_customer_id,
-        start_date: this.handleDateTransform(this.filters.dataValue[0]),
-        end_date: this.handleDateTransform(this.filters.dataValue[1])
+        start_date: handleDateTimeTransform(this.filters.dataValue[0]),
+        end_date: handleDateTimeTransform(this.filters.dataValue[1])
       }
       if (this.filters.coupon_batch_id.length === 0) {
         delete args.coupon_batch_id
@@ -464,8 +466,7 @@ export default {
       if (!this.filters.dataValue[1]) {
         delete args.end_date
       }
-      coupon
-        .putInCouponList(this, args)
+      putInCouponList(this, args)
         .then(response => {
           let data = response.data
           this.tableData = data
@@ -484,34 +485,6 @@ export default {
     search() {
       this.pagination.currentPage = 1
       this.putInCouponList()
-    },
-    handleDateTransform: function(time) {
-      var d = new Date(time)
-      var year = d.getFullYear()
-      var month = change(d.getMonth() + 1)
-      var day = change(d.getDate())
-      var hour = change(d.getHours())
-      var minute = change(d.getMinutes())
-      var second = change(d.getSeconds())
-      function change(t) {
-        if (t < 10) {
-          return '0' + t
-        } else {
-          return t
-        }
-      }
-      return (time =
-        year +
-        '-' +
-        month +
-        '-' +
-        day +
-        ' ' +
-        hour +
-        ':' +
-        minute +
-        ':' +
-        second)
     }
   }
 }

@@ -287,6 +287,7 @@ import {
   systemDistribute,
   getSystemBonus,
   getDistributionBonus,
+  handleDateTypeTransform,
   systemReject
 } from 'service'
 import { Cookies } from 'utils/cookies'
@@ -441,8 +442,8 @@ export default {
   methods: {
     getDistributionBonus() {
       let args = {
-        start_date: this.handleDateTransform(this.filters.applyDate[0]),
-        end_date: this.handleDateTransform(this.filters.applyDate[1])
+        start_date: handleDateTypeTransform(this.filters.applyDate[0]),
+        end_date: handleDateTypeTransform(this.filters.applyDate[1])
       }
       getDistributionBonus(this, args)
         .then(res => {
@@ -459,8 +460,8 @@ export default {
     },
     getSystemBonus() {
       let args = {
-        start_date: this.handleDateTransform(this.filters.applyDate[0]),
-        end_date: this.handleDateTransform(this.filters.applyDate[1])
+        start_date: handleDateTypeTransform(this.filters.applyDate[0]),
+        end_date: handleDateTypeTransform(this.filters.applyDate[1])
       }
       getSystemBonus(this, args)
         .then(res => {
@@ -568,8 +569,8 @@ export default {
         page: this.pagination.currentPage,
         name: this.filters.name,
         status: this.filters.status,
-        start_date: this.handleDateTransform(this.filters.applyDate[0]),
-        end_date: this.handleDateTransform(this.filters.applyDate[1])
+        start_date: handleDateTypeTransform(this.filters.applyDate[0]),
+        end_date: handleDateTypeTransform(this.filters.applyDate[1])
       }
       if (this.filters.name === '') {
         delete args.name
@@ -611,17 +612,6 @@ export default {
       this.getTeamSystemProject()
       this.getSystemBonus()
       this.getDistributionBonus()
-    },
-    handleDateTransform(valueDate) {
-      let date = new Date(valueDate)
-      let year = date.getFullYear() + '-'
-      let mouth =
-        (date.getMonth() + 1 < 10
-          ? '0' + (date.getMonth() + 1)
-          : date.getMonth() + 1) + '-'
-      let day =
-        (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ''
-      return year + mouth + day
     }
   }
 }

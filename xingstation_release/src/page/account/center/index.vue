@@ -169,7 +169,11 @@
 </template>
 
 <script>
-import { getPersonRewardList, getPersonRewardTotal } from 'service'
+import {
+  getPersonRewardList,
+  getPersonRewardTotal,
+  handleDateTypeTransform
+} from 'service'
 import {
   Button,
   Input,
@@ -293,8 +297,8 @@ export default {
       let args = {
         page: this.pagination.currentPage,
         name: this.filters.name,
-        start_date: this.handleDateTransform(this.filters.beginDate[0]),
-        end_date: this.handleDateTransform(this.filters.beginDate[1])
+        start_date: handleDateTypeTransform(this.filters.beginDate[0]),
+        end_date: handleDateTypeTransform(this.filters.beginDate[1])
       }
       if (this.filters.name === '') {
         delete args.name
@@ -334,17 +338,6 @@ export default {
       this.pagination.currentPage = 1
       this.getPersonRewardList()
       this.getPersonRewardTotal()
-    },
-    handleDateTransform(valueDate) {
-      let date = new Date(valueDate)
-      let year = date.getFullYear() + '-'
-      let mouth =
-        (date.getMonth() + 1 < 10
-          ? '0' + (date.getMonth() + 1)
-          : date.getMonth() + 1) + '-'
-      let day =
-        (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ''
-      return year + mouth + day
     }
   }
 }

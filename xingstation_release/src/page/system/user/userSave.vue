@@ -58,7 +58,8 @@
               v-for="role in allRoles" 
               :data="role" 
               :key="role.id" 
-              :label="role.id">{{ role.display_name }}</el-radio>
+              :label="role.id"
+              class="role-radio">{{ role.display_name }}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item 
@@ -92,9 +93,14 @@
 </template>
 
 <script>
-import user from 'service/user'
-import search from 'service/search'
-import router from 'router'
+import {
+  getUserDetial,
+  saveUser,
+  historyBack,
+  getSearchLegalManagerList,
+  getManageableRoles,
+  getSearchBDManagerList
+} from 'service'
 import {
   Button,
   Input,
@@ -209,8 +215,7 @@ export default {
     this.setting.loadingText = '拼命加载中'
     this.setting.loading = true
     // 获取当前用户可分配的角色
-    let rolesPromise = user
-      .getManageableRoles(this)
+    let rolesPromise = getManageableRoles(this)
       .then(result => {
         this.allRoles = result.data
       })
@@ -222,8 +227,7 @@ export default {
         let args = {
           include: 'roles'
         }
-        user
-          .getUserDetial(this, this.userID, args)
+        getUserDetial(this, this.userID, args)
           .then(result => {
             this.userForm.user.phone = result.phone
             this.userForm.user.name = result.name
@@ -277,8 +281,7 @@ export default {
     },
     getBDManagerList() {
       this.searchLoading = true
-      search
-        .getBDManagerList(this)
+      getSearchBDManagerList(this)
         .then(res => {
           this.custodianList = res.data
           this.searchLoading = false
@@ -289,8 +292,7 @@ export default {
     },
     getLegalManagerList() {
       this.searchLoading = true
-      search
-        .getLegalManagerList(this)
+      getSearchLegalManagerList(this)
         .then(res => {
           this.custodianList = res.data
           this.searchLoading = false
@@ -313,8 +315,7 @@ export default {
         if (valid) {
           delete this[formName].user.repassword
           this.loading = true
-          user
-            .saveUser(this, this[formName].user, this.userID)
+          saveUser(this, this[formName].user, this.userID)
             .then(result => {
               this.loading = false
               this.$message({
@@ -336,7 +337,7 @@ export default {
       })
     },
     historyBack() {
-      router.back()
+      historyBack()
     }
   }
 }

@@ -115,7 +115,7 @@
             <el-form-item 
               label="交互技术" 
               prop="interactionVal" >
-              <span style="color: #999;font-size:14px;">{{ interactionRate }} * 系数</span>
+              <span style="color: #999;font-size:14px;margin-right: 15px;">{{ interactionRate }} * 系数</span>
               <el-select 
                 v-model="programForm.interactionVal" 
                 :loading="searchLoading"
@@ -141,7 +141,7 @@
             <el-form-item 
               label="节目创意" 
               prop="creative" >
-              <span style="color: #999;font-size:14px;">{{ creativeRate }} * 系数</span>
+              <span style="color: #999;font-size:14px;margin-right: 7px;">{{ creativeRate }} * 系数</span>
               <el-select 
                 v-model="programForm.creative" 
                 :loading="searchLoading"
@@ -169,7 +169,9 @@
             <el-form-item 
               label="H5开发" 
               prop="H5Val" >
-              <span style="color: #999;font-size:14px;">{{ h5Rate }} * 系数</span>
+              <span  
+                :style="h5Rate==='0.1' ? 'margin-right: 15px;' : 'margin-right: 0;'"
+                style="color: #999;font-size:14px;">{{ h5Rate }} * 系数</span>
               <el-select 
                 v-model="programForm.H5Val" 
                 :loading="searchLoading"
@@ -223,7 +225,7 @@
             <el-form-item 
               label="节目统筹" 
               prop="whole" >
-              <span style="color: #999;font-size:14px;">{{ wholeRate }} * 系数</span>
+              <span style="color: #999;font-size:14px;margin-right: 8px;">{{ wholeRate }} * 系数</span>
               <el-select 
                 v-model="programForm.whole" 
                 :loading="searchLoading"
@@ -277,7 +279,7 @@
             <el-form-item 
               label="平台运营" 
               prop="platform" >
-              <span style="color: #999;font-size:14px;">{{ platformRate }} * 系数</span>
+              <span style="color: #999;font-size:14px;margin-right: 8px;">{{ platformRate }} * 系数</span>
               <el-select 
                 v-model="programForm.platform" 
                 :loading="searchLoading"
@@ -369,12 +371,14 @@ import {
   Col,
   Dialog
 } from 'element-ui'
-import search from 'service/search'
 import {
   saveProgram,
   historyBack,
   getProgramDetails,
-  modifyProgram
+  modifyProgram,
+  getSearchUserList,
+  getSearchProjectList,
+  getSearchTeamRateList
 } from 'service'
 import { Cookies } from 'utils/cookies'
 
@@ -469,8 +473,7 @@ export default {
     },
     // 比列
     getTeamRateList() {
-      search
-        .getTeamRateList(this)
+      getSearchTeamRateList(this)
         .then(res => {
           let data = res.data[0]
           this.interactionRate = data.interaction
@@ -700,8 +703,7 @@ export default {
     },
     getUserList() {
       this.searchLoading = true
-      return search
-        .getUserList(this)
+      return getSearchUserList(this)
         .then(response => {
           this.userList = response.data
           this.searchLoading = false
@@ -716,8 +718,7 @@ export default {
         let args = {
           name: query
         }
-        return search
-          .getProjectList(this, args)
+        return getSearchProjectList(this, args)
           .then(response => {
             this.projectList = response.data
             if (this.projectList.length == 0) {

@@ -580,8 +580,15 @@
 </template>
 
 <script>
-import project from 'service/project'
-import search from 'service/search'
+import {
+  modifyProjectLaunch,
+  getPutProjectList,
+  getSearchMarketList,
+  getSearchSceneList,
+  getSearchAeraList,
+  getSearchModuleList,
+  getSearchProjectList
+} from 'service'
 
 import {
   Button,
@@ -739,8 +746,7 @@ export default {
   },
   methods: {
     getSceneList() {
-      return search
-        .getSceneList(this)
+      return getSearchSceneList(this)
         .then(response => {
           this.sceneList = response.data
         })
@@ -833,8 +839,7 @@ export default {
         let args = {
           name: query
         }
-        return search
-          .getProjectList(this, args)
+        return getSearchProjectList(this, args)
           .then(response => {
             this.projectList = response.data
             if (this.projectList.length == 0) {
@@ -889,8 +894,7 @@ export default {
           this.projectForm.weekday ? args : delete args.weekday_tvid
           this.projectForm.weekend ? args : delete args.weekend_tvid
           this.loading = false
-          return project
-            .modifyProjectLaunch(this, args)
+          return modifyProjectLaunch(this, args)
             .then(response => {
               this.setting.loading = false
               this.$message({
@@ -914,8 +918,7 @@ export default {
       })
     },
     getModuleList() {
-      return search
-        .getModuleList(this)
+      return getSearchModuleList(this)
         .then(response => {
           let data = response.data
           this.templateNameList = data
@@ -948,8 +951,7 @@ export default {
         tpl_name: this.filters.tpl_name,
         tpl_id: this.filters.tpl_id
       }
-      project
-        .getProjectList(this, searchArgs)
+      getPutProjectList(this, searchArgs)
         .then(response => {
           let data = response.data
           this.tableData = data
@@ -973,8 +975,7 @@ export default {
           include: 'area',
           area_id: this.filters.area
         }
-        return search
-          .getMarketList(this, args)
+        return getSearchMarketList(this, args)
           .then(response => {
             this.marketList = response.data
             if (this.marketList.length == 0) {
@@ -1007,8 +1008,7 @@ export default {
       })
     },
     getAreaList() {
-      return search
-        .getAeraList(this)
+      return getSearchAeraList(this)
         .then(response => {
           let data = response.data
           this.areaList = data
