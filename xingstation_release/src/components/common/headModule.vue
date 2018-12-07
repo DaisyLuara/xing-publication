@@ -8,38 +8,53 @@
           src="../../assets/images/logo.png">
       </div>
     </div>
-    <el-popover
-      ref="popover"
-      v-model="visible"
-      placement="left"
-      width="80"
-      trigger="hover"
-      popper-class="popper-logout">
-      <span 
-        class="logout-btn"
-        @click="logout">登出</span>
-    </el-popover>
-    <div 
-      v-popover:popover
-      class="avatar-wrap" 
-      @click="handleUser">
-      <span>{{ name }}</span>
+    <el-dropdown 
+      :hide-on-click="true"
+      class="avatar-wrap">
       <div class="avatar-block">
+        <span>
+        {{ name }}
+        </span>
         <img 
           src="~assets/images/user-default-icon.png" 
           alt="" 
           class="avatar">
       </div>
-    </div>
+      <el-dropdown-menu slot="dropdown">
+        <el-dropdown-item>
+          <span 
+            class="item-info"
+            @click="handleUser">
+            账号设置
+          </span>
+        </el-dropdown-item>
+        <el-dropdown-item divided>
+          <span 
+            @click="intoCenter"
+            class="item-info">
+            个人中心
+          </span>
+        </el-dropdown-item>
+        <el-dropdown-item divided>
+          <span 
+            @click="logout"
+            class="item-info">
+            退出
+          </span>
+        </el-dropdown-item>
+      </el-dropdown-menu>
+    </el-dropdown>
   </div>
 </template>
 <script>
-import { Popover } from 'element-ui'
+import { Dropdown, DropdownItem, DropdownMenu } from 'element-ui'
 import auth from 'service/auth'
 
 export default {
   components: {
-    'el-popover': Popover
+    'el-dropdown': Dropdown,
+    'el-dropdown-item': DropdownItem,
+    'el-dropdown-menu': DropdownMenu
   },
   data() {
     return {
@@ -59,6 +74,11 @@ export default {
     handleUser() {
       this.$router.push({
         path: '/account/account'
+      })
+    },
+    intoCenter() {
+      this.$router.push({
+        path: '/account/center'
       })
     }
   }
@@ -91,6 +111,7 @@ export default {
       }
     }
   }
+  
   .logout-btn {
     display: block;
     width: 100%;
@@ -111,6 +132,9 @@ export default {
     color: #fff;
     cursor: pointer;
     .avatar-block {
+      span {
+        margin-right: 10px;
+      }
       height: 60px;
       display: flex;
       justify-content: center;

@@ -13,7 +13,7 @@ class FaceCalendar extends Command
      *
      * @var string
      */
-    protected $signature = 'xingstation:calendar';
+    protected $signature = 'yqDataClean:calendar';
 
     /**
      * The console command description.

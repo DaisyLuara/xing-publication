@@ -14,14 +14,14 @@ class FaceMau extends Command
      *
      * @var string
      */
-    protected $signature = 'xingstation:mau';
+    protected $signature = 'yqDataClean:face_mau';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = '月活玩家清洗';
+    protected $description = '清洗月活玩家';
 
     /**
      * Create a new command instance.

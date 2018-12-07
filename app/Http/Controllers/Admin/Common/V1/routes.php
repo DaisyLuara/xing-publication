@@ -75,6 +75,8 @@ $api->version('v1', [
             $api->get('payment_payee/query', 'QueryController@paymentPayeeQuery');
             $api->get('receive_date/query', 'QueryController@receiveDateQuery');
             $api->get('customer/query', 'QueryController@customerQuery');
+            $api->get('user/query', 'QueryController@userQuery');
+            $api->get('team_rate/query', 'QueryController@teamRateQuery');
 
             //消息通知
             $api->get('user/notifications', 'NotificationsController@index');
@@ -84,8 +86,11 @@ $api->version('v1', [
 
             //数据统计
             $api->get('stats', 'ChartDataController@index');//列表
-            $api->post('chart_data', 'ChartDataController@chart');//图表
+            $api->post('chart_data', 'ChartDataController@chart');//人数图表
             $api->get('export', 'ExportController@store');//导出
+
+            $api->get('times_stats', 'ChartDataTimesController@index');//人次列表
+            $api->post('chart_data_times', 'ChartDataTimesController@chart');//人次图表
         });
 
         $api->get('website/fcpe', 'WebsiteController@getFCpe');

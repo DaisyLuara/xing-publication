@@ -14,14 +14,14 @@ class FaceCharacter extends Command
      *
      * @var string
      */
-    protected $signature = 'xingstation:face_character';
+    protected $signature = 'yqDataClean:face_character';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = '清洗人群时间性别年龄特征';
+    protected $description = '清洗围观人数的时间段与人群特征';
 
     /**
      * Create a new command instance.

@@ -5,11 +5,15 @@ namespace App\Console;
 use App\Http\Controllers\Admin\WeChat\V1\Models\WeekRanking;
 use App\Jobs\ActivePlayerJob;
 use App\Jobs\CharacterJob;
+use App\Jobs\CharacterTimesJob;
 use App\Jobs\FaceLogJob;
+use App\Jobs\FaceLogTimesJob;
+use App\Jobs\FacePlaytimesCharacterJob;
+use App\Jobs\FacePlaytimesLogJob;
 use App\Jobs\MauJob;
+use App\Jobs\TeamBonusJob;
 use App\Jobs\WeekRankingJob;
 use Carbon\Carbon;
-use DB;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -38,7 +42,7 @@ class Kernel extends ConsoleKernel
             }
         })->weekly()->fridays()->at('10:25');
 
-        //活跃玩家清洗
+        //count数据清洗
         $schedule->call(function () {
             ActivePlayerJob::dispatch()->onQueue('data-clean');
         })->daily()->at('7:00');
@@ -53,11 +57,35 @@ class Kernel extends ConsoleKernel
             CharacterJob::dispatch()->onQueue('data-clean');
         })->daily()->at('7:20');
 
+        //围观人次渗透率
+        $schedule->call(function () {
+            FaceLogTimesJob::dispatch()->onQueue('data-clean');
+        })->daily()->at('7:30');
+
+        //人次时间段与人群特征数据清洗
+        $schedule->call(function () {
+            CharacterTimesJob::dispatch()->onQueue('data-clean');
+        })->daily()->at('7:40');
+
+        //7s,15s,21s人群特征数据清洗
+        $schedule->call(function () {
+            FacePlaytimesCharacterJob::dispatch()->onQueue('data-clean');
+        })->daily()->at('6:00');
+
+        //7s,15s,21s渗透率
+        $schedule->call(function () {
+            FacePlaytimesLogJob::dispatch()->onQueue('data-clean');
+        })->daily()->at('6:10');
 
         //月活玩家清洗(按人和商场去重)
         $schedule->call(function () {
             MauJob::dispatch()->onQueue('data-clean');
-        })->monthlyOn(1, '7:30');
+        })->monthlyOn(1, '6:00');
+
+        //绩效清洗
+        $schedule->call(function () {
+            TeamBonusJob::dispatch()->onQueue('data-clean');
+        })->daily()->at('8:00');
     }
 
 

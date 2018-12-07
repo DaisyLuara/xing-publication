@@ -11,14 +11,14 @@ class FaceLog extends Command
      *
      * @var string
      */
-    protected $signature = 'xingstation:face_log';
+    protected $signature = 'yqDataClean:face_log';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = '围观渗透率';
+    protected $description = '清洗围观人数的用户渗透率';
 
     /**
      * Create a new command instance.

@@ -14,6 +14,8 @@ const POLICY_API = '/api/policy/query'
 const LEGAL_MANAGER_API = '/api/legal_manager/query'
 const BD_MANAGER_API = '/api/bd_manager/query'
 const CUSTOMER_API = '/api/customer/query'
+const USER_API = '/api/user/query'
+const TEAM_RATE_API = '/api/team_rate/query'
 const HOST = process.env.SERVER_URL
 
 export default {
@@ -120,8 +122,8 @@ export default {
         })
     })
   },
-  // 用户
-  getUserList(context, args) {
+  // 星视度用户
+  getStaffsList(context, args) {
     return new Promise(function(resolve, reject) {
       context.$http
         .get(HOST + STAFFS_API, { params: args })
@@ -215,6 +217,32 @@ export default {
     return new Promise(function(resolve, reject) {
       context.$http
         .get(HOST + CUSTOMER_API, { params: params })
+        .then(response => {
+          resolve(response.data)
+        })
+        .catch(error => {
+          reject(error)
+        })
+    })
+  },
+  // 用户
+  getUserList(context, params) {
+    return new Promise(function(resolve, reject) {
+      context.$http
+        .get(HOST + USER_API, { params: params })
+        .then(response => {
+          resolve(response.data)
+        })
+        .catch(error => {
+          reject(error)
+        })
+    })
+  },
+  // 比例
+  getTeamRateList(context) {
+    return new Promise(function(resolve, reject) {
+      context.$http
+        .get(HOST + TEAM_RATE_API)
         .then(response => {
           resolve(response.data)
         })

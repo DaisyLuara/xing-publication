@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin\Common\V1\Api;
 
 use App\Http\Controllers\Admin\Common\V1\Request\ChartDataRequest;
-use App\Http\Controllers\Admin\Face\V1\Models\FaceCharacterCount;
+use App\Http\Controllers\Admin\Face\V1\Models\XsFaceCharacterCount;
 use App\Http\Controllers\Admin\Face\V1\Models\XsFaceCountLog;
 use App\Http\Controllers\Admin\Face\V1\Models\XsFaceLog;
 use App\Http\Controllers\Admin\Face\V1\Transformer\FaceCountTransformer;
@@ -70,7 +70,7 @@ class ChartDataController extends Controller
     public function chart(ChartDataRequest $request)
     {
         $xsFaceLogQuery = XsFaceLog::query();
-        $faceCharacterCount = FaceCharacterCount::query();
+        $faceCharacterCount = XsFaceCharacterCount::query();
         $xsFaceCountLog = XsFaceCountLog::query();
         switch ($request->id) {
             case 1:
@@ -107,7 +107,7 @@ class ChartDataController extends Controller
                 $data = $this->getTopProjects($request, $xsFaceCountLog);
                 break;
             case 12:
-                $data = $this->getPointCharacter($request, $faceCharacterCount);
+                $data = $this->getProjectCharacter($request, $faceCharacterCount);
                 break;
             default:
                 return null;
@@ -633,7 +633,7 @@ class ChartDataController extends Controller
         return array_reverse($output);
     }
 
-    public function getPointCharacter(ChartDataRequest $request, Builder $query)
+    public function getProjectCharacter(ChartDataRequest $request, Builder $query)
     {
         $belong = $request->belong;
         $this->handleQuery($request, $query, false);

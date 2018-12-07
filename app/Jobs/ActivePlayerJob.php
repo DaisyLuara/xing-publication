@@ -29,10 +29,13 @@ class ActivePlayerJob implements ShouldQueue
      */
     public function handle()
     {
+        lookTimesClean();
         activePlayerClean();
         activePlayTimesClean();
         omoClean();
         phoneClean();
+        couponTimesClean();
+        verifyTimesClean();
         mergeActiveOmoLook();
     }
 }

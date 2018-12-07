@@ -61,6 +61,7 @@
     },
     "files": [
       "app/Support/helpers.php",
+      "app/Support/FaceDataClean.php",
       "app/Support/SimpleDict.php"
     ]
   },
