@@ -277,8 +277,8 @@ export default {
     getPersonRewardTotal() {
       let args = {
         name: this.filters.name,
-        start_date: this.handleDateTransform(this.filters.beginDate[0]),
-        end_date: this.handleDateTransform(this.filters.beginDate[1])
+        start_date: handleDateTypeTransform(this.filters.beginDate[0]),
+        end_date: handleDateTypeTransform(this.filters.beginDate[1])
       }
       !this.filters.name ? delete args.name : args
       getPersonRewardTotal(this, args)
