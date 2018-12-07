@@ -81,6 +81,10 @@
                   <span>{{ scope.row.date }}</span> 
                 </el-form-item>
                 <el-form-item 
+                  label="类型">
+                  <span>{{ scope.row.type }}</span> 
+                </el-form-item>
+                <el-form-item 
                   label="体验绩效">
                   <span>{{ scope.row.experience_money }}</span> 
                 </el-form-item>
@@ -117,6 +121,11 @@
             :show-overflow-tooltip="true"
             prop="date"
             label="获取时间"
+            min-width="100"/>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="type"
+            label="类型"
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
@@ -267,9 +276,11 @@ export default {
   methods: {
     getPersonRewardTotal() {
       let args = {
-        start_date: handleDateTypeTransform(this.filters.beginDate[0]),
-        end_date: handleDateTypeTransform(this.filters.beginDate[1])
+        name: this.filters.name,
+        start_date: this.handleDateTransform(this.filters.beginDate[0]),
+        end_date: this.handleDateTransform(this.filters.beginDate[1])
       }
+      !this.filters.name ? delete args.name : args
       getPersonRewardTotal(this, args)
         .then(res => {
           this.moneyTotal = res.total_reward
