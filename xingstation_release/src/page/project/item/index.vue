@@ -157,11 +157,13 @@
                 <el-checkbox 
                   label="节目名称"/>
                 <el-checkbox 
-                  label="模板"/>
+                  label="非自定义模板"/>
                 <el-checkbox 
+                  label="自定义模板"/>
+                <!-- <el-checkbox 
                   label="自定义开始时间"/>
                 <el-checkbox 
-                  label="自定义结束时间" />
+                  label="自定义结束时间" /> -->
               </el-checkbox-group>
             </el-form-item>
             <el-button 
@@ -566,7 +568,7 @@
             </el-select>
           </el-form-item>
           <el-form-item 
-            v-if="modifyOptionFlag.template"
+            v-if="modifyOptionFlag.defineTemplate"
             label="自定义模版" 
             prop="define" >
             <el-select
@@ -582,8 +584,7 @@
             </el-select>
           </el-form-item>
           <el-form-item  
-            v-if="modifyOptionFlag.sdate" 
-            :rules="[{ type: 'date', required: true, message: '请输入自定义开始时间', trigger: 'submit' }]"
+            v-if="modifyOptionFlag.defineTemplate" 
             label="自定义开始时间" 
             prop="sdate">
             <el-date-picker
@@ -593,8 +594,7 @@
               placeholder="选择自定义开始时间" />
           </el-form-item>
           <el-form-item 
-            v-if="modifyOptionFlag.edate" 
-            :rules="[{ type: 'date', required: true, message: '请输入自定义结束时间', trigger: 'submit' }]"
+            v-if="modifyOptionFlag.defineTemplate" 
             label="自定义结束时间" 
             prop="edate">
             <el-date-picker
@@ -759,8 +759,8 @@ export default {
       modifyOptionFlag: {
         project: false,
         template: false,
-        sdate: false,
-        edate: false
+        defineTemplate: false
+        // edate: false
       },
       tvoids: [],
       tableData: [],
@@ -829,22 +829,19 @@ export default {
           }
           this.modifyOptionFlag.project = false
           this.modifyOptionFlag.template = false
-          this.modifyOptionFlag.sdate = false
-          this.modifyOptionFlag.edate = false
+          this.modifyOptionFlag.defineTemplate = false
+          // this.modifyOptionFlag.edate = false
           for (let k = 0; k < optionModify.length; k++) {
             let type = optionModify[k]
             switch (type) {
               case '节目名称':
                 this.modifyOptionFlag.project = true
                 break
-              case '模板':
+              case '非自定义模板':
                 this.modifyOptionFlag.template = true
                 break
-              case '自定义开始时间':
-                this.modifyOptionFlag.sdate = true
-                break
-              case '自定义结束时间':
-                this.modifyOptionFlag.edate = true
+              case '自定义模板':
+                this.modifyOptionFlag.defineTemplate = true
                 break
             }
           }
@@ -912,9 +909,12 @@ export default {
             day7_tvid: this.projectForm.day7_tvid
           }
           this.modifyOptionFlag.project ? args : delete args.default_plid
-          this.modifyOptionFlag.sdate ? args : delete args.sdate
-          this.modifyOptionFlag.edate ? args : delete args.edate
-          this.projectForm.define ? args : delete args.div_tvid
+
+          if (!this.modifyOptionFlag.defineTemplate) {
+            delete args.sdate
+            delete args.edate
+            delete args.div_tvid
+          }
           this.projectForm.day1_tvid ? args : delete args.day1_tvid
           this.projectForm.day2_tvid ? args : delete args.day2_tvid
           this.projectForm.day3_tvid ? args : delete args.day3_tvid
