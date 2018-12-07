@@ -94,6 +94,12 @@ class MiniCouponController extends Controller
             });
         }
 
+        if ($request->has('acid')) {
+            $query->whereHas('activityCouponBatches', function ($q) use($request){
+                $q->where('activity_id', $request->acid);
+            });
+        }
+
         $couponBatches = $query->orderByDesc('sort_order')->get();
 
         abort_if($couponBatches->isEmpty(), 500, '无可用优惠券');
