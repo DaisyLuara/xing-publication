@@ -58,7 +58,8 @@
               v-for="role in allRoles" 
               :data="role" 
               :key="role.id" 
-              :label="role.id">{{ role.display_name }}</el-radio>
+              :label="role.id"
+              class="role-radio">{{ role.display_name }}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item 
