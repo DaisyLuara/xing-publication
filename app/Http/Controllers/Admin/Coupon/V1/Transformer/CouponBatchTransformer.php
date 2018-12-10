@@ -24,6 +24,7 @@ class CouponBatchTransformer extends TransformerAbstract
             'name' => $couponBatch->name,
             'description' => $couponBatch->description,
             'image_url' => $couponBatch->image_url,
+            'bs_image_url' => $couponBatch->bs_image_url,
             'amount' => $couponBatch->amount,
             'count' => $couponBatch->count,
             'stock' => $couponBatch->stock,
