@@ -976,8 +976,7 @@ export default {
       this.setting.loading = true
       let searchArgs = {
         page: this.pagination.currentPage,
-        include:
-          'point.scene,point.market,point.area,project,divtemplate,day1template,day2template,day3template,day4template,day5template,day6template,day7template,weekdaytemplate,weekendtemplate',
+        include: 'point.scene,point.market,point.area,project',
         project_name: this.filters.name,
         area_id: this.filters.area,
         market_id: this.filters.market[0],
