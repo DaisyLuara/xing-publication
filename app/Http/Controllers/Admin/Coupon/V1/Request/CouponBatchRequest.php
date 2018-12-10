@@ -50,7 +50,7 @@ class CouponBatchRequest extends FormRequest
                     'delay_effective_day' => 'alpha_num',
                     'effective_day' => 'alpha_num',
                     'title' => 'filled',
-                    'credit' => 'int',
+                    'credit' => 'alpha_num',
                 ];
                 break;
             case 'PATCH':
@@ -71,7 +71,7 @@ class CouponBatchRequest extends FormRequest
                     'is_fixed_date' => Rule::in([0, 1]),
                     'delay_effective_day' => 'alpha_num',
                     'effective_day' => 'alpha_num',
-                    'credit' => 'int',
+                    'credit' => 'alpha_num',
                 ];
 
                 break;

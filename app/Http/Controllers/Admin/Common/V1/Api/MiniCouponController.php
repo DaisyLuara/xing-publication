@@ -23,6 +23,7 @@ use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Carbon\Carbon;
 use Log;
+use DB;
 
 
 class MiniCouponController extends Controller
@@ -169,33 +170,45 @@ class MiniCouponController extends Controller
 
         $traceCode = uniqid();
 
-        //积分兑换
-        if ($couponBatch->credit) {
-            //积分扣除接口
-            $response = $client->request('GET', 'https://exelook.com/client//open/userhd/', [
-                'query' => [
-                    'z' => $request->z,
-                    'api' => 'json',
-                    'num' => $couponBatch->credit,
-                    'key' => $traceCode,
-                ],
+        DB::beginTransaction();
+
+        try{
+            //创建优惠券
+            $coupon = Coupon::create([
+                'code' => $traceCode,
+                'coupon_batch_id' => $couponBatch->id,
+                'status' => 3,
+                'member_uid' => $memberUID,
             ]);
 
-            $callback = json_decode($response->getBody()->getContents(), true);
-            abort_if($callback != '1', 500, '兑换失败');
-        }
+            //减少库存
+            if (!$couponBatch->pmg_status && !$couponBatch->pmg_status) {
+                $couponBatch->decrement('stock');
+            }
 
-        //创建优惠券
-        $coupon = Coupon::create([
-            'code' => $traceCode,
-            'coupon_batch_id' => $couponBatch->id,
-            'status' => 3,
-            'member_uid' => $memberUID,
-        ]);
+            //积分兑换
+            if ($couponBatch->credit) {
+                //积分扣除接口
+                $response = $client->request('GET', 'https://exelook.com/client//open/userhd/', [
+                    'query' => [
+                        'z' => $request->z,
+                        'api' => 'json',
+                        'num' => $couponBatch->credit,
+                        'key' => $traceCode,
+                    ],
+                ]);
 
-        //减少库存
-        if (!$couponBatch->pmg_status && !$couponBatch->pmg_status) {
-            $couponBatch->decrement('stock');
+                $callback = json_decode($response->getBody()->getContents(), true);
+
+                if ($callback['state'] != '1') {
+                    throw new \Exception("兑换失败");
+                }
+            }
+            DB::commit();
+
+        } catch (\Exception $e){
+            DB::rollback();//事务回滚
+            abort(500, $e->getMessage());
         }
 
         return $this->response->item($coupon, new CouponTransformer());
