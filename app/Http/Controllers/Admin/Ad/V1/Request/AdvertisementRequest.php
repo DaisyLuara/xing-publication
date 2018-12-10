@@ -2,19 +2,14 @@
 
 namespace App\Http\Controllers\Admin\Ad\V1\Request;
 
-use Dingo\Api\Http\FormRequest;
+use App\Http\Requests\Request;
 
-class AdvertisementRequest extends FormRequest
+class AdvertisementRequest extends Request
 {
-    public function authorize()
-    {
-        return true;
-    }
-
     public function rules()
     {
         switch ($this->method()) {
-            case 'Post':
+            case 'POST':
                 return [
                     'atid' => 'required|integer',
                     'atiid' => 'required|integer',

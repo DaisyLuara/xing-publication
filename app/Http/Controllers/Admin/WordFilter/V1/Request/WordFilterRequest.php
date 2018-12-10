@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin\WordFilter\V1\Request;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\Request;
 
-class WordFilterRequest extends FormRequest
+class WordFilterRequest extends Request
 {
     /**
      * Determine if the user is authorized to make this request.

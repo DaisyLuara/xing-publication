@@ -2,15 +2,10 @@
 
 namespace App\Http\Controllers\Admin\Point\V1\Request;
 
-use Dingo\Api\Http\FormRequest;
+use App\Http\Requests\Request;
 
-class MarketRequest extends FormRequest
+class MarketRequest extends Request
 {
-    public function authorize()
-    {
-        return true;
-    }
-
 
     public function rules()
     {

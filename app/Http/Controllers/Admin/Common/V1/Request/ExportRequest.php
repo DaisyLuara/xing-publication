@@ -2,16 +2,11 @@
 
 namespace App\Http\Controllers\Admin\Common\V1\Request;
 
-use Dingo\Api\Http\FormRequest;
+use App\Http\Requests\Request;
 use Illuminate\Validation\Rule;
 
-class ExportRequest extends FormRequest
+class ExportRequest extends Request
 {
-    public function authorize()
-    {
-        return true;
-    }
-
     public function rules()
     {
         return [
