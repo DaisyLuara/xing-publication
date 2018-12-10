@@ -19,9 +19,10 @@ use App\Http\Controllers\Admin\User\V1\Models\ArMemberSession;
 use function GuzzleHttp\Psr7\parse_query;
 use App\Http\Controllers\Controller;
 use App\Handlers\ImageUploadHandler;
+use Illuminate\Http\Request;
+use GuzzleHttp\Client;
 use Carbon\Carbon;
 use Log;
-use Illuminate\Http\Request;
 
 
 class MiniCouponController extends Controller
@@ -125,7 +126,7 @@ class MiniCouponController extends Controller
      * @param MiniCouponRequest $request
      * @return mixed
      */
-    public function store(CouponBatch $couponBatch, MiniCouponRequest $request)
+    public function store(CouponBatch $couponBatch, MiniCouponRequest $request, Client $client)
     {
         Log::info('mini_coupon_store', $request->all());
         $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
@@ -166,9 +167,27 @@ class MiniCouponController extends Controller
             }
         }
 
+        $traceCode = uniqid();
+
+        //积分兑换
+        if ($couponBatch->credit) {
+            //积分扣除接口
+            $response = $client->request('GET', 'https://exelook.com/client//open/userhd/', [
+                'query' => [
+                    'z' => $request->z,
+                    'api' => 'json',
+                    'num' => $couponBatch->credit,
+                    'key' => $traceCode,
+                ],
+            ]);
+
+            $callback = json_decode($response->getBody()->getContents(), true);
+            abort_if($callback != '1', 500, '兑换失败');
+        }
+
         //创建优惠券
         $coupon = Coupon::create([
-            'code' => uniqid(),
+            'code' => $traceCode,
             'coupon_batch_id' => $couponBatch->id,
             'status' => 3,
             'member_uid' => $memberUID,

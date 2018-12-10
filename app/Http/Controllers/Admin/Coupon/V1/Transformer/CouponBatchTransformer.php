@@ -46,6 +46,7 @@ class CouponBatchTransformer extends TransformerAbstract
             'sort_order' => $couponBatch->sort_order,
             'dynamic_stock_status' => $couponBatch->dynamic_stock_status,
             'write_off_status' => $couponBatch->write_off_status,
+            'credit' => $couponBatch->credit,
         ];
     }
 

@@ -16,6 +16,7 @@
     "doctrine/dbal": "^2.7",
     "fideloper/proxy": "^4.0",
     "gregwar/captcha": "^1.1",
+    "guzzlehttp/guzzle": "^6.3",
     "hashids/hashids": "1.0.0",
     "intervention/image": "^2.4",
     "jenssegers/agent": "^2.6",

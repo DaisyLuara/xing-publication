@@ -11,7 +11,7 @@ class ActivitiesController extends Controller
 {
     public function index()
     {
-        $activities = Activity::query()->paginate(20);
+        $activities = Activity::query()->orderByDesc('acid')->paginate(20);
 
         return $this->response->paginator($activities, new ActivityTransformer());
     }
