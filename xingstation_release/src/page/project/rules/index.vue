@@ -102,15 +102,26 @@
                   <span>{{ scope.row.description }}</span> 
                 </el-form-item>
                 <el-form-item 
-                  label="图片">
+                  label="h5图片">
                   <a 
                     :href="scope.row.image_url" 
                     target="_blank" 
                     style="color: blue">查看</a> 
                 </el-form-item>
                 <el-form-item 
+                  label="大屏图片">
+                  <a 
+                    :href="scope.row.bs_image_url" 
+                    target="_blank" 
+                    style="color: blue">查看</a> 
+                </el-form-item>
+                <el-form-item 
                   label="金额">
                   <span>{{ scope.row.amount }}</span> 
+                </el-form-item>
+                <el-form-item 
+                  label="积分">
+                  <span>{{ scope.row.credit }}</span> 
                 </el-form-item>
                 <el-form-item 
                   label="库存总数">
