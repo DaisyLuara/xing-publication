@@ -33,7 +33,7 @@ class PaymentRequest extends FormRequest
                     'type' => Rule::in([1, 2, 3]),
                     'reason' => 'required|string:max:150',
                     'payment_payee_id' => 'required|integer',
-                    'remark' => 'string|nullable|max:150'
+                    'remark' => 'string|nullable|max:1000'
                 ];
                 break;
             case 'PATCH':
@@ -44,7 +44,7 @@ class PaymentRequest extends FormRequest
                     'type' => Rule::in([1, 2, 3]),
                     'reason' => 'string:max:150',
                     'payment_payee_id' => 'integer',
-                    'remark' => 'string|nullable|max:150'
+                    'remark' => 'string|nullable|max:1000'
                 ];
                 break;
             default:
