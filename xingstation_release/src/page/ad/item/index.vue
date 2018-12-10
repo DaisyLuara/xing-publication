@@ -413,8 +413,16 @@
 </template>
 
 <script>
-import ad from 'service/ad'
-import search from 'service/search'
+import {
+  modifyAdLaunch,
+  getAdList,
+  getSearchAdTradeList,
+  getSearchMarketList,
+  getSearchPointList,
+  getSearchAdvertisementList,
+  getSearchAeraList,
+  getSearchAdvertiserList
+} from 'service'
 
 import {
   Button,
@@ -550,8 +558,7 @@ export default {
       }
     },
     getAdTradeList() {
-      return search
-        .getAdTradeList(this)
+      return getSearchAdTradeList(this)
         .then(response => {
           let data = response.data
           this.adTradeList = data
@@ -592,8 +599,7 @@ export default {
         }
       }
       this.searchLoading = true
-      return search
-        .getAdvertisementList(this, args)
+      return getSearchAdvertisementList(this, args)
         .then(response => {
           let data = response.data
           if (type === 'edit') {
@@ -620,8 +626,7 @@ export default {
         }
       }
       this.searchLoading = true
-      return search
-        .getAdvertiserList(this, args)
+      return getSearchAdvertiserList(this, args)
         .then(response => {
           let data = response.data
           if (type === 'edit') {
@@ -641,8 +646,7 @@ export default {
       this.getMarket()
     },
     getAreaList() {
-      return search
-        .getAeraList(this)
+      return getSearchAeraList(this)
         .then(response => {
           let data = response.data
           this.areaList = data
@@ -662,8 +666,7 @@ export default {
         market_id: this.adSearchForm.market_id[0]
       }
       this.searchLoading = true
-      return search
-        .gePointList(this, args)
+      return getSearchPointList(this, args)
         .then(response => {
           this.pointList = response.data
           this.searchLoading = false
@@ -681,8 +684,7 @@ export default {
           include: 'area',
           area_id: this.adSearchForm.area_id
         }
-        return search
-          .getMarketList(this, args)
+        return getSearchMarketList(this, args)
           .then(response => {
             this.marketList = response.data
             if (this.marketList.length == 0) {
@@ -727,8 +729,7 @@ export default {
       this.adSearchForm.point_id !== ''
         ? searchArgs
         : delete searchArgs.point_id
-      return ad
-        .getAdList(this, searchArgs)
+      return getAdList(this, searchArgs)
         .then(response => {
           let data = response.data
           this.adList = data
@@ -851,8 +852,7 @@ export default {
           this.modifyOptionFlag.cycle ? args : delete args.ktime
           this.modifyOptionFlag.sdate ? args : delete args.sdate
           this.modifyOptionFlag.edate ? args : delete args.edate
-          return ad
-            .modifyAdLaunch(this, args)
+          return modifyAdLaunch(this, args)
             .then(response => {
               this.loading = false
               this.$message({

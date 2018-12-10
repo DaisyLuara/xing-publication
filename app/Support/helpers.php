@@ -336,3 +336,19 @@ function getOfficialAccount($authorizer_id, $app)
     $officialApp->access_token->setToken($authorizer->access_token, 7200);
     return $officialApp;
 }
+
+/**
+ * @param $p_needle
+ * @param $p_haystack
+ * @return bool
+ */
+function arrayMultiSearch($needle, $haystack)
+{
+    foreach ($haystack as $row) {
+        if (in_array($needle, $row)) {
+            return true;
+        }
+    }
+    return false;
+}
+

@@ -82,7 +82,7 @@
   </div>
 </template>
 <script>
-import url from 'service/url'
+import { getUrlList } from 'service'
 import VueClipboards from 'vue-clipboards'
 import Vue from 'vue'
 Vue.use(VueClipboards)
@@ -155,8 +155,7 @@ export default {
       if (!this.searchForm.description) {
         delete args.description
       }
-      url
-        .getUrlList(this, args)
+      getUrlList(this, args)
         .then(response => {
           this.tableData = response.data
           this.total = response.meta.pagination.total

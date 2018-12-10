@@ -337,8 +337,7 @@
 </template>
 
 <script>
-import market from 'service/market'
-import search from 'service/search'
+import { getSiteMarketList, getSearchAeraList } from 'service'
 
 import {
   Button,
@@ -503,8 +502,7 @@ export default {
       if (this.searchForm.permission.length === 0) {
         delete args.share_users
       }
-      market
-        .getMarketList(this, args)
+      getSiteMarketList(this, args)
         .then(res => {
           this.tableData = res.data
           this.pagination.total = res.meta.pagination.total
@@ -535,8 +533,7 @@ export default {
       return permission.join(',')
     },
     getAeraList() {
-      search
-        .getAeraList(this)
+      getSearchAeraList(this)
         .then(result => {
           this.areaList = result.data
         })
