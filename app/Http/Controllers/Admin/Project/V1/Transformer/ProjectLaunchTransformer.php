@@ -9,7 +9,7 @@ use App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTpl;
 
 class ProjectLaunchTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['point', 'project'];
+    protected $availableIncludes = ['point', 'project','template'];
 
     public function transform(ProjectLaunch $projectLaunch)
     {
@@ -64,5 +64,11 @@ class ProjectLaunchTransformer extends TransformerAbstract
         return $this->item($projectLaunch->project, new ProjectTransformer());
     }
 
+    public function includeTemplate(ProjectLaunch $projectLaunch)
+    {
+        if($projectLaunch->template){
+            return $this->item($projectLaunch->template,new ProjectLaunchTplTransformer());
+        }
+    }
 
 }
