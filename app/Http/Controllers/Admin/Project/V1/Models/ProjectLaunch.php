@@ -42,49 +42,4 @@ class ProjectLaunch extends Model
         return $this->belongsTo(Project::class, 'default_plid', 'id');
     }
 
-    public function divtemplate()
-    {
-        return $this->belongsTo(ProjectLaunchTpl::class, 'div_tvid', 'tvid');
-    }
-
-    public function day1template()
-    {
-        return $this->belongsTo(ProjectLaunchTpl::class, 'day1_tvid', 'tvid');
-    }
-    public function day2template()
-    {
-        return $this->belongsTo(ProjectLaunchTpl::class, 'day2_tvid', 'tvid');
-    }
-    public function day3template()
-    {
-        return $this->belongsTo(ProjectLaunchTpl::class, 'day3_tvid', 'tvid');
-    }
-    public function day4template()
-    {
-        return $this->belongsTo(ProjectLaunchTpl::class, 'day4_tvid', 'tvid');
-    }
-    public function day5template()
-    {
-        return $this->belongsTo(ProjectLaunchTpl::class, 'day5_tvid', 'tvid');
-    }
-    public function day6template()
-    {
-        return $this->belongsTo(ProjectLaunchTpl::class, 'day6_tvid', 'tvid');
-    }
-    public function day7template()
-    {
-        return $this->belongsTo(ProjectLaunchTpl::class, 'day7_tvid', 'tvid');
-    }
-    public function weekdaytemplate()
-    {
-        return $this->belongsTo(ProjectLaunchTpl::class, 'weekday_tvid', 'tvid');
-
-    }
-    public function weekendtemplate()
-    {
-        return $this->belongsTo(ProjectLaunchTpl::class, 'weekend_tvid', 'tvid');
-
-    }
-
-
 }
