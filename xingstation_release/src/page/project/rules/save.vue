@@ -372,7 +372,7 @@ export default {
         is_active: 1,
         write_off_status: 1,
         bs_image_url: '',
-        credit: ''
+        credit: 0
       },
       couponID: ''
     }

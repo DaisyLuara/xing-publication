@@ -475,7 +475,9 @@ export default {
         sort_order: data.sort_order,
         title: data.title,
         dynamic_stock_status: data.dynamic_stock_status,
-        write_off_status: data.write_off_status
+        write_off_status: data.write_off_status,
+        credit: data.credit,
+        bs_image_url: data.bs_image_url
       }
       if (!args.image_url) {
         delete args.image_url
