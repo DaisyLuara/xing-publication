@@ -235,8 +235,11 @@
 </template>
 
 <script>
-import market from 'service/market'
-import search from 'service/search'
+import {
+  getSitePointList,
+  getSearchMarketList,
+  getSearchAeraList
+} from 'service'
 
 import {
   Button,
@@ -399,8 +402,7 @@ export default {
         include: 'area',
         area_id: this.searchForm.areaid
       }
-      return search
-        .getMarketList(this, args)
+      return getSearchMarketList(this, args)
         .then(response => {
           this.siteList = response.data
           if (this.siteList.length == 0) {
@@ -444,8 +446,7 @@ export default {
       if (this.searchForm.permission.length === 0) {
         delete args.share_users
       }
-      market
-        .getPointList(this, args)
+      getSitePointList(this, args)
         .then(res => {
           this.tableData = res.data
           this.pagination.total = res.meta.pagination.total
@@ -474,8 +475,7 @@ export default {
       }
     },
     getAeraList() {
-      search
-        .getAeraList(this)
+      getSearchAeraList(this)
         .then(result => {
           this.areaList = result.data
         })

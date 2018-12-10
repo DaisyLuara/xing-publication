@@ -9,6 +9,8 @@
 namespace App\Http\Controllers\Admin\Coupon\V1\Models;
 
 
+use App\Http\Controllers\Admin\Activity\V1\Models\Activity;
+use App\Http\Controllers\Admin\Activity\V1\Models\ActivityCouponBatch;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Models\Model;
 use App\Models\User;
@@ -78,5 +80,10 @@ class CouponBatch extends Model
     public function wechat()
     {
         return $this->hasOne(WechatCouponBatch::class, 'id', 'wechat_coupon_batch_id')->withDefault();
+    }
+
+    public function activityCouponBatches()
+    {
+        return $this->hasMany(ActivityCouponBatch::class, 'coupon_batch_id', 'id');
     }
 }

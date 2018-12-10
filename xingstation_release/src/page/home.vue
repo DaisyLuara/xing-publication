@@ -101,7 +101,7 @@
 import { Menu, MenuItem, Button, Badge, Icon } from 'element-ui'
 import auth from 'service/auth'
 import { Cookies } from 'utils/cookies'
-import notice from 'service/notice'
+import { notificationStats } from 'service'
 
 const NODE_ENV = process.env.NODE_ENV
 
@@ -198,7 +198,7 @@ export default {
     this.notificationStats()
   },
   methods: {
-    leaveIcon(){
+    leaveIcon() {
       this.iconMenuShow = true
     },
     iconEnter() {
@@ -243,8 +243,7 @@ export default {
         jwt_begin_time
     },
     notificationStats() {
-      return notice
-        .notificationStats(this)
+      return notificationStats(this)
         .then(response => {
           response.setIntervalValue = this.setIntervalValue
           this.$store.commit('saveNotificationState', response)

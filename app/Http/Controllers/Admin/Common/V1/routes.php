@@ -30,6 +30,8 @@ $api->version('v1', [
 
             $api->post('user/coupon_batch/{couponBatch}', 'MiniCouponController@store');//发送优惠券
             $api->any('coupon/batches', 'MiniCouponController@couponBatchesIndex');//优惠券规则列表
+
+            $api->get('activities', 'ActivitiesController@index');//活动列表
         });
 
         //淘宝接口

@@ -101,7 +101,7 @@
 </template>
 
 <script>
-import notice from 'service/notice'
+import { getActivitiesList } from 'service'
 
 import {
   Button,
@@ -150,8 +150,7 @@ export default {
         include: 'causer',
         page: this.pagination.currentPage
       }
-      return notice
-        .getActivitiesList(this, args)
+      getActivitiesList(this, args)
         .then(response => {
           this.tableData = response.data
           this.pagination.total = response.meta.pagination.total

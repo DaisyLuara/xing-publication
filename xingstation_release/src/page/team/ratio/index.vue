@@ -197,18 +197,6 @@ export default {
     changePage(currentPage) {
       this.pagination.currentPage = currentPage
       this.getTeamRate()
-    },
-
-    handleDateTransform(valueDate) {
-      let date = new Date(valueDate)
-      let year = date.getFullYear() + '-'
-      let mouth =
-        (date.getMonth() + 1 < 10
-          ? '0' + (date.getMonth() + 1)
-          : date.getMonth() + 1) + '-'
-      let day =
-        (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ''
-      return year + mouth + day
     }
   }
 }

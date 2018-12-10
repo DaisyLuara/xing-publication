@@ -86,7 +86,7 @@ import Highcharts from 'highcharts'
 import VueHighcharts from 'vue-highcharts'
 Vue.use(VueHighcharts)
 
-import chartData from 'service/chart'
+import { getChartData } from 'service'
 
 export default {
   components: {
@@ -324,7 +324,7 @@ export default {
           plotBorderWidth: null,
           plotShadow: false
         },
-        colors: ['#3b9aca','#8cc63f', '#fbb03b', '#ed1e79', '#662d91'],
+        colors: ['#3b9aca', '#8cc63f', '#fbb03b', '#ed1e79', '#662d91'],
         tooltip: {
           headerFormat: '{性别访问数}<br>',
           pointFormat:
@@ -548,8 +548,7 @@ export default {
           }
           break
       }
-      return chartData
-        .getChartData(this, args)
+      return getChartData(this, args)
         .then(response => {
           switch (type) {
             case 'scene':

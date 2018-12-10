@@ -259,9 +259,13 @@
 </template>
 
 <script>
-import coupon from 'service/coupon'
-import search from 'service/search'
-import { handleDateTransform, historyBack } from 'service'
+import {
+  handleDateTransform,
+  historyBack,
+  getCouponDetial,
+  getSearchCompanyList,
+  saveCoupon
+} from 'service'
 
 import {
   Button,
@@ -372,8 +376,7 @@ export default {
     this.setting.loadingText = '拼命加载中'
     this.setting.loading = true
     //获取公司列表
-    let companyPromise = search
-      .getCompanyList(this)
+    let companyPromise = getSearchCompanyList(this)
       .then(result => {
         this.companyList = result.data
       })
@@ -386,8 +389,7 @@ export default {
         let args = {
           include: 'user,company'
         }
-        coupon
-          .getCouponDetial(this, this.couponID, args)
+        getCouponDetial(this, this.couponID, args)
           .then(result => {
             this.couponForm.name = result.name
             this.couponForm.description = result.description
@@ -483,8 +485,7 @@ export default {
       }
       this.$refs[formName].validate(valid => {
         if (valid) {
-          coupon
-            .saveCoupon(this, args, this.couponID, company_id)
+          saveCoupon(this, args, this.couponID, company_id)
             .then(result => {
               this.loading = false
               this.$message({
