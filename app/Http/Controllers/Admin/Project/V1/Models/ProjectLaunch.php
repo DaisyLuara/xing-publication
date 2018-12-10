@@ -42,4 +42,9 @@ class ProjectLaunch extends Model
         return $this->belongsTo(Project::class, 'default_plid', 'id');
     }
 
+    public function template()
+    {
+        return $this->belongsTo(ProjectLaunchTpl::class,'div_tvid','tvid');
+    }
+
 }
