@@ -5,21 +5,53 @@ namespace App\Http\Controllers\Admin\Project\V1\Transformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\PointTransformer;
 use App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch;
 use League\Fractal\TransformerAbstract;
+use App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTpl;
 
 class ProjectLaunchTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['point', 'project', 'divtemplate','day1template','day2template','day3template',
-        'day4template','day5template','day6template','day7template','weekdaytemplate','weekendtemplate'];
+    protected $availableIncludes = ['point', 'project'];
 
     public function transform(ProjectLaunch $projectLaunch)
     {
-        return [
+        $data = [
             'id' => $projectLaunch->tvoid,
             'start_date' => date('Y-m-d H:i:s', $projectLaunch->sdate),
             'end_date' => date('Y-m-d H:i:s', $projectLaunch->edate),
             'created_at' => $projectLaunch->date,
             'updated_at' => formatClientDate($projectLaunch->clientdate),
         ];
+
+        $tplIds = collect([
+            $projectLaunch->day1_tvid,
+            $projectLaunch->day2_tvid,
+            $projectLaunch->day3_tvid,
+            $projectLaunch->day4_tvid,
+            $projectLaunch->day5_tvid,
+            $projectLaunch->day5_tvid,
+            $projectLaunch->day6_tvid,
+            $projectLaunch->day7_tvid,
+            $projectLaunch->div_tvid,
+            $projectLaunch->weekday_tvid,
+            $projectLaunch->weekend_tvid,
+        ]);
+
+        $tpls = ProjectLaunchTpl::whereIn('tvid', $tplIds)->get();
+
+        $tpldata = $this->collection($tpls, new ProjectLaunchTplTransformer());
+
+        $data['day1template'] = $tpldata->getData()->firstWhere('tvid', $projectLaunch->day1_tvid);
+        $data['day2template'] = $tpldata->getData()->firstWhere('tvid', $projectLaunch->day2_tvid);
+        $data['day3template'] =$tpldata->getData()->firstWhere('tvid', $projectLaunch->day3_tvid);
+        $data['day4template'] = $tpldata->getData()->firstWhere('tvid', $projectLaunch->day4_tvid);
+        $data['day5template'] = $tpldata->getData()->firstWhere('tvid', $projectLaunch->day5_tvid);
+        $data['day6template'] = $tpldata->getData()->firstWhere('tvid', $projectLaunch->day6_tvid);
+        $data['day7template'] = $tpldata->getData()->firstWhere('tvid', $projectLaunch->day7_tvid);
+        $data['divtemplate'] = $tpldata->getData()->firstWhere('tvid', $projectLaunch->div_tvid);
+        $data['weekdaytemplate'] = $tpldata->getData()->firstWhere('tvid', $projectLaunch->weekday_tvid);
+        $data['weekendtemplate'] = $tpldata->getData()->firstWhere('tvid', $projectLaunch->weekday_tvid);
+
+
+        return $data;
     }
 
     public function includePoint(ProjectLaunch $projectLaunch)
@@ -32,74 +64,5 @@ class ProjectLaunchTransformer extends TransformerAbstract
         return $this->item($projectLaunch->project, new ProjectTransformer());
     }
 
-    public function includeDivtemplate(ProjectLaunch $projectLaunch)
-    {
-        if ($projectLaunch->divtemplate) {
-            return $this->item($projectLaunch->divtemplate, new ProjectLaunchTplTransformer());
-        }
-    }
-
-    public function includeDay1template(ProjectLaunch $projectLaunch)
-    {
-        if ($projectLaunch->day1template) {
-            return $this->item($projectLaunch->day1template, new ProjectLaunchTplTransformer());
-        }
-    }
-
-    public function includeDay2template(ProjectLaunch $projectLaunch)
-    {
-        if ($projectLaunch->day2template) {
-            return $this->item($projectLaunch->day2template, new ProjectLaunchTplTransformer());
-        }
-    }
-
-    public function includeDay3template(ProjectLaunch $projectLaunch)
-    {
-        if ($projectLaunch->day3template) {
-            return $this->item($projectLaunch->day3template, new ProjectLaunchTplTransformer());
-        }
-    }
-
-    public function includeDay4template(ProjectLaunch $projectLaunch)
-    {
-        if ($projectLaunch->day4template) {
-            return $this->item($projectLaunch->day4template, new ProjectLaunchTplTransformer());
-        }
-    }
-
-    public function includeDay5template(ProjectLaunch $projectLaunch)
-    {
-        if ($projectLaunch->day5template) {
-            return $this->item($projectLaunch->day5template, new ProjectLaunchTplTransformer());
-        }
-    }
-
-    public function includeDay6template(ProjectLaunch $projectLaunch)
-    {
-        if ($projectLaunch->day6template) {
-            return $this->item($projectLaunch->day6template, new ProjectLaunchTplTransformer());
-        }
-    }
-
-    public function includeDay7template(ProjectLaunch $projectLaunch)
-    {
-        if ($projectLaunch->day7template) {
-            return $this->item($projectLaunch->day7template, new ProjectLaunchTplTransformer());
-        }
-    }
-
-    public function includeWeekdaytemplate(ProjectLaunch $projectLaunch)
-    {
-        if ($projectLaunch->weekdaytemplate) {
-            return $this->item($projectLaunch->weekdaytemplate, new ProjectLaunchTplTransformer());
-        }
-    }
-
-    public function includeWeekendtemplate(ProjectLaunch $projectLaunch)
-    {
-        if ($projectLaunch->weekendtemplate) {
-            return $this->item($projectLaunch->weekendtemplate, new ProjectLaunchTplTransformer());
-        }
-    }
 
 }
