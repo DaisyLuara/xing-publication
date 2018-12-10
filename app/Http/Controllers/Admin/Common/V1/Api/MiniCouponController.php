@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Admin\Common\V1\Api;
 
 use App\Http\Controllers\Admin\Activity\V1\Models\ActivityCouponBatch;
 use App\Http\Controllers\Admin\Common\V1\Models\FileUpload;
+use App\Http\Controllers\Admin\Common\V1\Models\XsCreditRecord;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Common\V1\Transformer\CouponTransformer;
@@ -203,6 +204,14 @@ class MiniCouponController extends Controller
                 if ($callback['state'] != '1') {
                     throw new \Exception("兑换失败");
                 }
+
+                //积分记录
+                XsCreditRecord::create([
+                    'uid' => $memberUID,
+                    'num' => $couponBatch->credit,
+                    'key' => $traceCode,
+                ]);
+
             }
             DB::commit();
 
