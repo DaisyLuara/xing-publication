@@ -366,7 +366,7 @@ class ChartDataController extends Controller
             $start_date = $request->start_date;
             $end_date = $request->end_date;
             while ($start_date <= $end_date) {
-                if ($this->array_multi_search($start_date, $data)) {
+                if (arrayMultiSearch($start_date, $data)) {
                     $item = array_filter($data, function ($arr) use ($start_date) {
                         return $arr['display_name'] == $start_date;
                     });
@@ -396,16 +396,6 @@ class ChartDataController extends Controller
         } else {
             return $data;
         }
-    }
-
-    public function array_multi_search($p_needle, $p_haystack)
-    {
-        foreach ($p_haystack as $row) {
-            if (in_array($p_needle, $row)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public function getAllPeopleByPoint($arUserID = 0)
