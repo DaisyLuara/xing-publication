@@ -462,9 +462,12 @@
   </div>
 </template>
 <script>
-import stats from 'service/stats'
-import search from 'service/search'
-import chart from 'service/chart'
+import {
+  getExcelData,
+  getChartData,
+  getStaus,
+  handleDateTypeTransform
+} from 'service'
 import Vue from 'vue'
 import PicChart from './numChart'
 import {
@@ -1310,8 +1313,7 @@ export default {
       this.userFlag = true
       let args = this.setArgs('12')
       args.belong = belong
-      return chart
-        .getChartData(this, args)
+      return getChartData(this, args)
         .then(response => {
           let chart = this.$refs.projectAgeChart
           chart.mergeOptions({
@@ -1357,8 +1359,7 @@ export default {
     getProjectTop() {
       this.projectFlag = true
       let args = this.setArgs('11')
-      return chart
-        .getChartData(this, args)
+      return getChartData(this, args)
         .then(response => {
           this.projectTop = response
           let chart = this.$refs.projectChar
@@ -1465,7 +1466,7 @@ export default {
           this.getExcelData()
         }
       } else if (this.reportValue === 'project_point') {
-        if (this.projectSelect.length === 0) {
+        if (this.searchForm.projectSelect.length === 0) {
           this.$message({
             message: '节目数据下载，请选择节目',
             type: 'warning'
@@ -1484,8 +1485,7 @@ export default {
       let args = this.setArgs()
       args.type = this.reportValue
       delete args.id
-      return chart
-        .getExcelData(this, args)
+      return getExcelData(this, args)
         .then(response => {
           const a = document.createElement('a')
           a.href = response
@@ -1502,8 +1502,7 @@ export default {
       let args = this.setArgs()
       args.page = this.pagination.currentPage
       delete args.id
-      return stats
-        .getStaus(this, args)
+      return getStaus(this, args)
         .then(response => {
           args.index = 'looknum,playernum,lovenum'
           this.tableData = response.data
@@ -1539,8 +1538,7 @@ export default {
     getCrowdTime() {
       this.crowdFlag = true
       let args = this.setArgs('8')
-      return chart
-        .getChartData(this, args)
+      return getChartData(this, args)
         .then(response => {
           let chart = this.$refs.crowdChart
           chart.mergeOptions({
@@ -1649,8 +1647,7 @@ export default {
     getPeopleCount() {
       this.poepleCountFlag = true
       let args = this.setArgs('6')
-      return chart
-        .getChartData(this, args)
+      return getChartData(this, args)
         .then(response => {
           this.peopleCount = response
           this.type = 'looknum,playernum,lovenum,playernum7,omo_outnum'
@@ -1664,8 +1661,7 @@ export default {
     getAge() {
       this.ageFlag = true
       let args = this.setArgs('4')
-      return chart
-        .getChartData(this, args)
+      return getChartData(this, args)
         .then(response => {
           this.tempAgeData = response
           let chart = this.$refs.ageChart
@@ -1730,8 +1726,7 @@ export default {
     },
     getGender() {
       let args = this.setArgs('5')
-      return chart
-        .getChartData(this, args)
+      return getChartData(this, args)
         .then(response => {
           let chart = this.$refs.pieChart
           chart.mergeOptions({
@@ -1760,7 +1755,7 @@ export default {
       this.dialogLoading = true
       this.shouldDialogShow = true
       let args = this.setArgs('4')
-      chart.getChartData(this, args).then(response => {
+      getChartData(this, args).then(response => {
         let that = this
         let mergeChart = this.$refs.pieChart2
         mergeChart.mergeOptions({
@@ -1815,8 +1810,8 @@ export default {
     setArgs(id) {
       let args = {
         id: id,
-        start_date: this.handleDateTransform(this.searchForm.dateTime[0]),
-        end_date: this.handleDateTransform(
+        start_date: handleDateTypeTransform(this.searchForm.dateTime[0]),
+        end_date: handleDateTypeTransform(
           new Date(this.searchForm.dateTime[1]).getTime()
         ),
         alias: this.searchForm.projectAlias,
@@ -1866,8 +1861,7 @@ export default {
       this.poepleCountFlag = true
       let args = this.setArgs('7')
       args.index = this.type
-      return chart
-        .getChartData(this, args)
+      return getChartData(this, args)
         .then(response => {
           let dataLine = []
           let chart = this.$refs.mainChart
@@ -2017,21 +2011,12 @@ export default {
       this.getLineData()
     },
     handleDateTransform(valueDate) {
-      let date = new Date(valueDate)
-      let year = date.getFullYear() + '-'
-      let mouth =
-        (date.getMonth() + 1 < 10
-          ? '0' + (date.getMonth() + 1)
-          : date.getMonth() + 1) + '-'
-      let day =
-        (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ''
-      return year + mouth + day
+      return handleDateTypeTransform(valueDate)
     },
     getConversionRate() {
       this.rateDialog = true
       let args = this.setArgs('10')
-      return chart
-        .getChartData(this, args)
+      return getChartData(this, args)
         .then(response => {
           this.chartdata = []
           let chart = this.$refs.rateChart

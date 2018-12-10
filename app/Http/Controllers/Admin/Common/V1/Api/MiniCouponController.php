@@ -8,12 +8,15 @@
 
 namespace App\Http\Controllers\Admin\Common\V1\Api;
 
+use App\Http\Controllers\Admin\Activity\V1\Models\ActivityCouponBatch;
+use App\Http\Controllers\Admin\Common\V1\Models\FileUpload;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Common\V1\Transformer\CouponTransformer;
 use App\Http\Controllers\Admin\Common\V1\Request\MiniCouponRequest;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\User\V1\Models\ArMemberSession;
+use function GuzzleHttp\Psr7\parse_query;
 use App\Http\Controllers\Controller;
 use App\Handlers\ImageUploadHandler;
 use Carbon\Carbon;
@@ -68,17 +71,36 @@ class MiniCouponController extends Controller
         return $this->response->paginator($coupon, new CouponTransformer());
     }
 
-
     /**
      * 获取可用 优惠券规则列表
      */
-    public function couponBatchesIndex(Request $request)
+    public function couponBatchesIndex(Request $request, CouponBatch $couponBatch)
     {
         /**
          * @todo  多个商户参加活动 优惠券配置
          * 新增字段 campaign_id 硬编码 获取活动ID为1的优惠券
          */
-        $couponBatches = CouponBatch::query()->where('campaign_id', 1)->orderByDesc('sort_order')->get();
+        $query = $couponBatch->query();
+
+        if ($request->has('scene')) {
+            $scene = $request->scene;
+            $scene = str_replace('istart:', '', $scene);
+            $id = explode('_', $scene)[0];
+            $fileUpload = FileUpload::query()->findOrFail($id);
+
+            abort_if(!$fileUpload->acid, 500, '无效活动');
+            $query->whereHas('activityCouponBatches', function ($q) use($fileUpload){
+                $q->where('activity_id', $fileUpload->acid);
+            });
+        }
+
+        if ($request->has('acid')) {
+            $query->whereHas('activityCouponBatches', function ($q) use($request){
+                $q->where('activity_id', $request->acid);
+            });
+        }
+
+        $couponBatches = $query->orderByDesc('sort_order')->get();
 
         abort_if($couponBatches->isEmpty(), 500, '无可用优惠券');
 

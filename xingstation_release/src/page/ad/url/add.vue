@@ -38,7 +38,7 @@
   </div>
 </template>
 <script>
-import url from 'service/url'
+import { saveUrl } from 'service'
 import router from 'router'
 import { Input, Button, FormItem, Form } from 'element-ui'
 
@@ -76,8 +76,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          url
-            .saveUrl(this, this.urlInfo)
+          saveUrl(this, this.urlInfo)
             .then(res => {
               this.$router.push({
                 path: '/ad/url'
