@@ -12,7 +12,8 @@
         ref="userForm" 
         :model="userForm" 
         :rules="rules" 
-        label-width="80px">
+        label-width="80px"
+        class="userForm">
         <el-form-item
           label="姓名" 
           prop="user.name">
@@ -58,7 +59,8 @@
               v-for="role in allRoles" 
               :data="role" 
               :key="role.id" 
-              :label="role.id">{{ role.display_name }}</el-radio>
+              :label="role.id"
+              class="role-radio">{{ role.display_name }}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item 
@@ -374,6 +376,9 @@ export default {
       color: #83909a;
       cursor: pointer;
     }
+  }
+  .userForm{
+    width: 800px;
   }
   .user-title {
     margin-bottom: 20px;
