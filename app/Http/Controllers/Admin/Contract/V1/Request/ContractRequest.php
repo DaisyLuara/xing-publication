@@ -31,7 +31,7 @@ class ContractRequest extends FormRequest
                     'type' => Rule::in([0, 1, 2]),
                     'receive_date' => 'string|nullable',
                     'ids' => 'string',
-                    'remark' => 'string|nullable|max:150',
+                    'remark' => 'string|nullable|max:1000',
                     'amount' => 'string'
                 ];
                 break;
@@ -41,7 +41,7 @@ class ContractRequest extends FormRequest
                     'type' => Rule::in([0, 1, 2]),
                     'receive_date' => 'string|nullable',
                     'ids' => 'string',
-                    'remark' => 'string|nullable|max:150'
+                    'remark' => 'string|nullable|max:1000'
                 ];
                 break;
             default:
