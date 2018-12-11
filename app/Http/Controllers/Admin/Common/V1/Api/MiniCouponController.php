@@ -8,17 +8,23 @@
 
 namespace App\Http\Controllers\Admin\Common\V1\Api;
 
+use App\Http\Controllers\Admin\Activity\V1\Models\ActivityCouponBatch;
+use App\Http\Controllers\Admin\Common\V1\Models\FileUpload;
+use App\Http\Controllers\Admin\Common\V1\Models\XsCreditRecord;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Common\V1\Transformer\CouponTransformer;
 use App\Http\Controllers\Admin\Common\V1\Request\MiniCouponRequest;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\User\V1\Models\ArMemberSession;
+use function GuzzleHttp\Psr7\parse_query;
 use App\Http\Controllers\Controller;
 use App\Handlers\ImageUploadHandler;
+use Illuminate\Http\Request;
+use GuzzleHttp\Client;
 use Carbon\Carbon;
 use Log;
-use Illuminate\Http\Request;
+use DB;
 
 
 class MiniCouponController extends Controller
@@ -68,17 +74,36 @@ class MiniCouponController extends Controller
         return $this->response->paginator($coupon, new CouponTransformer());
     }
 
-
     /**
      * 获取可用 优惠券规则列表
      */
-    public function couponBatchesIndex(Request $request)
+    public function couponBatchesIndex(Request $request, CouponBatch $couponBatch)
     {
         /**
          * @todo  多个商户参加活动 优惠券配置
          * 新增字段 campaign_id 硬编码 获取活动ID为1的优惠券
          */
-        $couponBatches = CouponBatch::query()->where('campaign_id', 1)->orderByDesc('sort_order')->get();
+        $query = $couponBatch->query();
+
+        if ($request->has('scene')) {
+            $scene = $request->scene;
+            $scene = str_replace('istart:', '', $scene);
+            $id = explode('_', $scene)[0];
+            $fileUpload = FileUpload::query()->findOrFail($id);
+
+            abort_if(!$fileUpload->acid, 500, '无效活动');
+            $query->whereHas('activityCouponBatches', function ($q) use ($fileUpload) {
+                $q->where('activity_id', $fileUpload->acid);
+            });
+        }
+
+        if ($request->has('acid')) {
+            $query->whereHas('activityCouponBatches', function ($q) use ($request) {
+                $q->where('activity_id', $request->acid);
+            });
+        }
+
+        $couponBatches = $query->orderByDesc('sort_order')->get();
 
         abort_if($couponBatches->isEmpty(), 500, '无可用优惠券');
 
@@ -103,7 +128,7 @@ class MiniCouponController extends Controller
      * @param MiniCouponRequest $request
      * @return mixed
      */
-    public function store(CouponBatch $couponBatch, MiniCouponRequest $request)
+    public function store(CouponBatch $couponBatch, MiniCouponRequest $request, Client $client)
     {
         Log::info('mini_coupon_store', $request->all());
         $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
@@ -112,13 +137,6 @@ class MiniCouponController extends Controller
         if (!$couponBatch->dmg_status && !$couponBatch->pmg_status && $couponBatch->stock <= 0) {
             abort(500, '优惠券已发完!');
         }
-
-        $now = Carbon::now()->timestamp;
-        $startDate = strtotime($couponBatch->start_date);
-        $endDdate = strtotime($couponBatch->end_date);
-
-        abort_if($now <= $startDate, 500, '活动未开启!');
-        abort_if($now >= $endDdate, 500, '活动已结束!');
 
         //每天最大领取量
         if (!$couponBatch->dmg_status) {
@@ -144,21 +162,71 @@ class MiniCouponController extends Controller
             }
         }
 
-        //创建优惠券
-        $coupon = Coupon::create([
-            'code' => uniqid(),
-            'coupon_batch_id' => $couponBatch->id,
-            'status' => 3,
-            'member_uid' => $memberUID,
-        ]);
+        $traceCode = uniqid();
 
-        //减少库存
-        if (!$couponBatch->pmg_status && !$couponBatch->pmg_status) {
-            $couponBatch->decrement('stock');
+        DB::beginTransaction();
+
+        try {
+
+            //券的有效期
+            if ($couponBatch->is_fixed_date) {
+                $startDate = Carbon::createFromTimeString($couponBatch->start_date);;
+                $endDate = Carbon::createFromTimeString($couponBatch->end_date);
+            } else {
+                $startDate = Carbon::now()->addDays($couponBatch->delay_effective_day);
+                $endDate = Carbon::now()->addDays($couponBatch->delay_effective_day + $couponBatch->effective_day);
+            }
+
+            //创建优惠券
+            $coupon = Coupon::create([
+                'code' => uniqid(),
+                'coupon_batch_id' => $couponBatch->id,
+                'status' => 3,
+                'member_uid' => $memberUID,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+            ]);
+
+            //减少库存
+            if (!$couponBatch->pmg_status && !$couponBatch->pmg_status) {
+                $couponBatch->decrement('stock');
+            }
+
+            //积分兑换
+            if ($couponBatch->credit) {
+                //积分扣除接口
+                $response = $client->request('GET', 'https://exelook.com/client//open/userhd/', [
+                    'query' => [
+                        'z' => $request->z,
+                        'api' => 'json',
+                        'num' => $couponBatch->credit,
+                        'key' => $traceCode,
+                    ],
+                ]);
+
+                $callback = json_decode($response->getBody()->getContents(), true);
+
+                if ($callback['state'] != '1') {
+                    throw new \Exception("兑换失败");
+                }
+
+                //积分记录
+                XsCreditRecord::create([
+                    'uid' => $memberUID,
+                    'num' => $couponBatch->credit,
+                    'key' => $traceCode,
+                ]);
+
+            }
+            DB::commit();
+
+        } catch (\Exception $e) {
+            DB::rollback();//事务回滚
+            abort(500, $e->getMessage());
         }
 
-        return $this->response->item($coupon, new CouponTransformer());
+return $this->response->item($coupon, new CouponTransformer());
 
-    }
+}
 
 }

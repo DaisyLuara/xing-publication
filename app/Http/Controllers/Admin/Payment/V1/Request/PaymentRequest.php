@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin\Payment\V1\Request;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\Request;
 use Illuminate\Validation\Rule;
 
-class PaymentRequest extends FormRequest
+class PaymentRequest extends Request
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -33,7 +33,7 @@ class PaymentRequest extends FormRequest
                     'type' => Rule::in([1, 2, 3]),
                     'reason' => 'required|string:max:150',
                     'payment_payee_id' => 'required|integer',
-                    'remark' => 'string|nullable|max:150'
+                    'remark' => 'string|nullable|max:1000'
                 ];
                 break;
             case 'PATCH':
@@ -44,7 +44,7 @@ class PaymentRequest extends FormRequest
                     'type' => Rule::in([1, 2, 3]),
                     'reason' => 'string:max:150',
                     'payment_payee_id' => 'integer',
-                    'remark' => 'string|nullable|max:150'
+                    'remark' => 'string|nullable|max:1000'
                 ];
                 break;
             default:

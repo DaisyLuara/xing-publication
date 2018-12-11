@@ -9,21 +9,18 @@
 namespace App\Http\Controllers\Admin\Team\V1\Request;
 
 
-use Dingo\Api\Http\FormRequest;
+use App\Http\Requests\Request;
 
-class TeamSystemRequest extends FormRequest
+class TeamSystemRequest extends Request
 {
-    public function authorize()
-    {
-        return true;
-    }
-
     public function rules()
     {
         switch ($this->method()) {
             case 'POST':
                 return [
-
+                    'applicant' => 'required|integer',
+                    'name' => 'required',
+                    'remark' => 'required|max:150'
                 ];
                 break;
             case 'PATCH':

@@ -129,6 +129,10 @@
                   <span>{{ scope.row.applicant_name }}</span> 
                 </el-form-item>
                 <el-form-item 
+                  label="节目类型">
+                  <span>{{ scope.row.type }}</span> 
+                </el-form-item>
+                <el-form-item 
                   label="开始时间">
                   <span>{{ scope.row.begin_date }}</span> 
                 </el-form-item>
@@ -184,6 +188,11 @@
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
+            prop="type"
+            label="节目类型"
+            min-width="100"/>
+          <el-table-column
+            :show-overflow-tooltip="true"
             prop="begin_date"
             label="开始时间"
             min-width="100"/>
@@ -210,9 +219,9 @@
               <el-button
                 size="small" 
                 type="warning"
-                @click="editHandle(scope.row)">{{ (role.name === 'project-manager'&& scope.row.status === '进行中') ? '修改': '查看'  }}</el-button>
+                @click="editHandle(scope.row)">{{ ((role.name === 'project-manager' && (scope.row.status === '进行中' || scope.row.status === '测试已确认')) || role.name === 'legal-affairs-manager' ) ? '修改': '查看'  }}</el-button>
               <el-button 
-                v-if="(role.name === 'tester' && scope.row.status === '进行中') || (role.name === 'operation' && scope.row.status === '测试已确认') || ((role.name === 'legal-affairs-manager' && scope.row.status === '运营已确认') || (role.name === 'bonus-manager' && scope.row.status === '运营已确认'))" 
+                v-if="(role.name === 'tester' && scope.row.status === '进行中') || (role.name === 'operation' && scope.row.status === '测试已确认') || ((role.name === 'legal-affairs-manager' && scope.row.status === '运营已确认' && scope.row.type === '提前节目') || (role.name === 'bonus-manager' && scope.row.status === '运营已确认' && scope.row.type === '提前节目'))" 
                 size="small"
                 @click="confirmProgram(scope.row)">确认</el-button>
             </template>
@@ -234,8 +243,12 @@
 </template>
 
 <script>
-import { getProgramList, confirmProgram } from 'service'
-import search from 'service/search'
+import {
+  getProgramList,
+  getSearchProjectList,
+  handleDateTypeTransform,
+  confirmProgram
+} from 'service'
 import { Cookies } from 'utils/cookies'
 import {
   Button,
@@ -414,10 +427,10 @@ export default {
         page: this.pagination.currentPage,
         alias: this.filters.alias,
         status: this.filters.status,
-        start_date_begin: this.handleDateTransform(this.filters.beginDate[0]),
-        end_date_begin: this.handleDateTransform(this.filters.beginDate[1]),
-        start_date_online: this.handleDateTransform(this.filters.onlineDate[0]),
-        end_date_online: this.handleDateTransform(this.filters.onlineDate[1]),
+        start_date_begin: handleDateTypeTransform(this.filters.beginDate[0]),
+        end_date_begin: handleDateTypeTransform(this.filters.beginDate[1]),
+        start_date_online: handleDateTypeTransform(this.filters.onlineDate[0]),
+        end_date_online: handleDateTypeTransform(this.filters.onlineDate[1]),
         own: this.own
       }
       if (this.filters.alias === '') {
@@ -457,8 +470,7 @@ export default {
         let args = {
           name: query
         }
-        return search
-          .getProjectList(this, args)
+        return getSearchProjectList(this, args)
           .then(response => {
             this.projectList = response.data
             if (this.projectList.length == 0) {
@@ -486,17 +498,6 @@ export default {
     search() {
       this.pagination.currentPage = 1
       this.getProgramList()
-    },
-    handleDateTransform(valueDate) {
-      let date = new Date(valueDate)
-      let year = date.getFullYear() + '-'
-      let mouth =
-        (date.getMonth() + 1 < 10
-          ? '0' + (date.getMonth() + 1)
-          : date.getMonth() + 1) + '-'
-      let day =
-        (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ''
-      return year + mouth + day
     }
   }
 }

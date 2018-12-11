@@ -427,9 +427,11 @@
   </div>
 </template>
 <script>
-import stats from 'service/stats'
-import search from 'service/search'
-import chart from 'service/chart'
+import {
+  getTimesStaus,
+  getTimesChartData,
+  handleDateTypeTransform
+} from 'service'
 import Vue from 'vue'
 import PicChart from './timesChart'
 import {
@@ -1177,8 +1179,7 @@ export default {
       this.userFlag = true
       let args = this.setArgs('7')
       args.belong = belong
-      return chart
-        .getTimesChartData(this, args)
+      return getTimesChartData(this, args)
         .then(response => {
           let chart = this.$refs.PersonprojectAgeChart
           chart.mergeOptions({
@@ -1246,8 +1247,7 @@ export default {
           color = ['#006eff']
           break
       }
-      return chart
-        .getTimesChartData(this, args)
+      return getTimesChartData(this, args)
         .then(response => {
           this.projectTop = response
           let chart = this.$refs.projectPersonChar
@@ -1297,8 +1297,7 @@ export default {
       let args = this.setArgs()
       args.page = this.pagination.currentPage
       delete args.id
-      return stats
-        .getTimesStaus(this, args)
+      return getTimesStaus(this, args)
         .then(response => {
           this.tableData = response.data
           this.pagination.total = response.meta.pagination.total
@@ -1313,14 +1312,14 @@ export default {
     },
     searchHandle() {
       this.active = ''
-      this.times =''
+      this.times = ''
       this.pagination.currentPage = 1
       this.setting.loading = true
       this.allChartData()
     },
     resetSearch() {
       this.active = ''
-      this.times =''
+      this.times = ''
       this.setting.loading = true
       this.allChartData()
     },
@@ -1337,8 +1336,7 @@ export default {
     getCrowdTime() {
       this.crowdFlag = true
       let args = this.setArgs('5')
-      return chart
-        .getTimesChartData(this, args)
+      return getTimesChartData(this, args)
         .then(response => {
           let chart = this.$refs.crowdPersonChart
           chart.mergeOptions({
@@ -1447,8 +1445,7 @@ export default {
     getPeopleCount() {
       this.poepleCountFlag = true
       let args = this.setArgs('1')
-      return chart
-        .getTimesChartData(this, args)
+      return getTimesChartData(this, args)
         .then(response => {
           this.peopleCount = response
           this.type =
@@ -1463,8 +1460,7 @@ export default {
     getAge() {
       this.ageFlag = true
       let args = this.setArgs('4')
-      return chart
-        .getTimesChartData(this, args)
+      return getTimesChartData(this, args)
         .then(response => {
           this.tempAgeData = response
           let chart = this.$refs.agePersonChart
@@ -1529,8 +1525,7 @@ export default {
     },
     getGender() {
       let args = this.setArgs('3')
-      return chart
-        .getTimesChartData(this, args)
+      return getTimesChartData(this, args)
         .then(response => {
           let chart = this.$refs.pieSexChart
           chart.mergeOptions({
@@ -1564,7 +1559,7 @@ export default {
       } else if (event.name === '女') {
         args.gender = 'female'
       }
-      chart.getTimesChartData(this, args).then(response => {
+      getTimesChartData(this, args).then(response => {
         let that = this
         let mergeChart = this.$refs.pieSexChart2
         mergeChart.mergeOptions({
@@ -1619,8 +1614,8 @@ export default {
     setArgs(id) {
       let args = {
         id: id,
-        start_date: this.handleDateTransform(this.searchForm.dateTime[0]),
-        end_date: this.handleDateTransform(
+        start_date: handleDateTypeTransform(this.searchForm.dateTime[0]),
+        end_date: handleDateTypeTransform(
           new Date(this.searchForm.dateTime[1]).getTime()
         ),
         alias: this.searchForm.projectAlias,
@@ -1674,8 +1669,7 @@ export default {
       this.poepleCountFlag = true
       let args = this.setArgs('2')
       args.index = this.type
-      return chart
-        .getTimesChartData(this, args)
+      return getTimesChartData(this, args)
         .then(response => {
           let dataLine = []
           let chart = this.$refs.mainPersonTimesChart
@@ -1833,7 +1827,7 @@ export default {
               color: '#700068'
             },
             data: res.map(r => {
-              return r.playtimes21
+              return r.playtimes21_rate
             })
           },
           {
@@ -1890,21 +1884,12 @@ export default {
       return newOption
     },
     handleDateTransform(valueDate) {
-      let date = new Date(valueDate)
-      let year = date.getFullYear() + '-'
-      let mouth =
-        (date.getMonth() + 1 < 10
-          ? '0' + (date.getMonth() + 1)
-          : date.getMonth() + 1) + '-'
-      let day =
-        (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ''
-      return year + mouth + day
+      return handleDateTypeTransform(valueDate)
     },
     getConversionRate() {
       this.rateDialog = true
       let args = this.setArgs('8')
-      return chart
-        .getTimesChartData(this, args)
+      return getTimesChartData(this, args)
         .then(response => {
           this.chartdata = []
           let chart = this.$refs.personRateChart

@@ -85,8 +85,7 @@
             placeholder="请选择"  
             multiple 
             filterable
-            clearable
-            @change="pointChangeHandle" >
+            clearable>
             <el-option
               v-for="item in pointList"
               :key="item.id"
@@ -265,8 +264,14 @@
 </template>
 
 <script>
-import search from 'service/search'
-import project from 'service/project'
+import {
+  savePorjectLaunch,
+  getSearchModuleList,
+  getSearchProjectList,
+  getSearchAeraList,
+  getSearchMarketList,
+  getSearchPointList
+} from 'service'
 import {
   Form,
   Select,
@@ -345,8 +350,7 @@ export default {
         let args = {
           name: query
         }
-        return search
-          .getProjectList(this, args)
+        return getSearchProjectList(this, args)
           .then(response => {
             this.projectList = response.data
             if (this.projectList.length == 0) {
@@ -364,8 +368,7 @@ export default {
       }
     },
     getModuleList() {
-      return search
-        .getModuleList(this)
+      return getSearchModuleList(this)
         .then(response => {
           let data = response.data
           this.weekdayList = data
@@ -390,8 +393,7 @@ export default {
       this.getMarket(this.projectForm.market)
     },
     getAreaList() {
-      return search
-        .getAeraList(this)
+      return getSearchAeraList(this)
         .then(response => {
           let data = response.data
           this.areaList = data
@@ -405,15 +407,13 @@ export default {
       this.projectForm.point = []
       this.getPoint()
     },
-    pointChangeHandle() {},
     getPoint() {
       let args = {
         include: 'market',
         market_id: this.projectForm.market
       }
       this.searchLoading = true
-      return search
-        .gePointList(this, args)
+      return getSearchPointList(this, args)
         .then(response => {
           this.pointList = response.data
           this.searchLoading = false
@@ -431,8 +431,7 @@ export default {
           include: 'area',
           area_id: this.projectForm.area
         }
-        return search
-          .getMarketList(this, args)
+        return getSearchMarketList(this, args)
           .then(response => {
             this.marketList = response.data
             if (this.marketList.length == 0) {
@@ -473,8 +472,7 @@ export default {
             day6_tvid: this.projectForm.day6_tvid,
             day7_tvid: this.projectForm.day7_tvid
           }
-          return project
-            .savePorjectLaunch(this, args)
+          return savePorjectLaunch(this, args)
             .then(response => {
               this.setting.loading = false
               this.$message({
@@ -489,7 +487,7 @@ export default {
               this.setting.loading = false
               console.log(err)
             })
-        } 
+        }
       })
     }
   }

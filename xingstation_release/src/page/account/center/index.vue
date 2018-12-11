@@ -18,7 +18,7 @@
               prop="name">
               <el-input 
                 v-model="filters.name"
-                placeholder="项目名称"
+                placeholder="名称"
                 clearable
                 class="item-input"/>
             </el-form-item>
@@ -73,7 +73,7 @@
                   <span>{{ scope.row.id }}</span> 
                 </el-form-item>
                 <el-form-item 
-                  label="项目名称">
+                  label="名称">
                   <span>{{ scope.row.project_name }}</span> 
                 </el-form-item>
                 <el-form-item 
@@ -81,8 +81,28 @@
                   <span>{{ scope.row.date }}</span> 
                 </el-form-item>
                 <el-form-item 
-                  label="发放奖金">
-                  <span>{{ scope.row.money }}</span> 
+                  label="类型">
+                  <span>{{ scope.row.type }}</span> 
+                </el-form-item>
+                <el-form-item 
+                  label="体验绩效">
+                  <span>{{ scope.row.experience_money }}</span> 
+                </el-form-item>
+                <el-form-item 
+                  label="平台绩效">
+                  <span>{{ scope.row.system_money }}</span> 
+                </el-form-item>
+                <el-form-item 
+                  label="小偶绩效">
+                  <span>{{ scope.row.xo_money }}</span> 
+                </el-form-item>
+                <el-form-item 
+                  label="联动绩效">
+                  <span>{{ scope.row.link_money }}</span> 
+                </el-form-item>
+                <el-form-item 
+                  label="总计">
+                  <span>{{ scope.row.total }}</span> 
                 </el-form-item>
               </el-form>
             </template>
@@ -95,7 +115,7 @@
           <el-table-column
             :show-overflow-tooltip="true"
             prop="project_name"
-            label="平台名称"
+            label="名称"
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
@@ -104,8 +124,33 @@
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="money"
-            label="发放奖金"
+            prop="type"
+            label="类型"
+            min-width="100"/>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="experience_money"
+            label="体验绩效"
+            min-width="100"/>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="system_money"
+            label="平台绩效"
+            min-width="100"/>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="xo_money"
+            label="小偶绩效"
+            min-width="100"/>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="link_money"
+            label="联动绩效"
+            min-width="100"/>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="total"
+            label="总计"
             min-width="100"/>
         </el-table>
         <div 
@@ -124,7 +169,11 @@
 </template>
 
 <script>
-import { getPersonRewardList, getPersonRewardTotal } from 'service'
+import {
+  getPersonRewardList,
+  getPersonRewardTotal,
+  handleDateTypeTransform
+} from 'service'
 import {
   Button,
   Input,
@@ -227,10 +276,12 @@ export default {
   methods: {
     getPersonRewardTotal() {
       let args = {
-        start_date: this.handleDateTransform(this.filters.beginDate[0]),
-        end_date: this.handleDateTransform(this.filters.beginDate[1])
+        name: this.filters.name,
+        start_date: handleDateTypeTransform(this.filters.beginDate[0]),
+        end_date: handleDateTypeTransform(this.filters.beginDate[1])
       }
-      getPersonRewardTotal(this)
+      !this.filters.name ? delete args.name : args
+      getPersonRewardTotal(this, args)
         .then(res => {
           this.moneyTotal = res.total_reward
         })
@@ -246,8 +297,8 @@ export default {
       let args = {
         page: this.pagination.currentPage,
         name: this.filters.name,
-        start_date: this.handleDateTransform(this.filters.beginDate[0]),
-        end_date: this.handleDateTransform(this.filters.beginDate[1])
+        start_date: handleDateTypeTransform(this.filters.beginDate[0]),
+        end_date: handleDateTypeTransform(this.filters.beginDate[1])
       }
       if (this.filters.name === '') {
         delete args.name
@@ -287,17 +338,6 @@ export default {
       this.pagination.currentPage = 1
       this.getPersonRewardList()
       this.getPersonRewardTotal()
-    },
-    handleDateTransform(valueDate) {
-      let date = new Date(valueDate)
-      let year = date.getFullYear() + '-'
-      let mouth =
-        (date.getMonth() + 1 < 10
-          ? '0' + (date.getMonth() + 1)
-          : date.getMonth() + 1) + '-'
-      let day =
-        (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ''
-      return year + mouth + day
     }
   }
 }

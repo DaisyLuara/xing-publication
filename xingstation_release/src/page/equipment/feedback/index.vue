@@ -172,7 +172,7 @@
   </div>
 </template>
 <script>
-import equipment from 'service/equipment'
+import { getFeedBackList, handleDateTimeTransform } from 'service'
 import {
   Input,
   Button,
@@ -284,8 +284,8 @@ export default {
         page: this.currentPage,
         action: this.searchForm.action,
         device_code: this.searchForm.device_code,
-        start_date: this.handleDateTransform(this.searchForm.dataValue[0]),
-        end_date: this.handleDateTransform(this.searchForm.dataValue[1]),
+        start_date: handleDateTimeTransform(this.searchForm.dataValue[0]),
+        end_date: handleDateTimeTransform(this.searchForm.dataValue[1]),
         code: this.searchForm.code
       }
       if (!this.searchForm.action) {
@@ -303,8 +303,7 @@ export default {
       if (!this.searchForm.dataValue[1]) {
         delete args.end_date
       }
-      equipment
-        .getFeedBackList(this, args)
+      getFeedBackList(this, args)
         .then(res => {
           this.tableData = res.data
           this.total = res.meta.pagination.total
@@ -313,34 +312,6 @@ export default {
         .catch(err => {
           this.setting.loading = false
         })
-    },
-    handleDateTransform: function(time) {
-      var d = new Date(time)
-      var year = d.getFullYear()
-      var month = change(d.getMonth() + 1)
-      var day = change(d.getDate())
-      var hour = change(d.getHours())
-      var minute = change(d.getMinutes())
-      var second = change(d.getSeconds())
-      function change(t) {
-        if (t < 10) {
-          return '0' + t
-        } else {
-          return t
-        }
-      }
-      return (time =
-        year +
-        '-' +
-        month +
-        '-' +
-        day +
-        ' ' +
-        hour +
-        ':' +
-        minute +
-        ':' +
-        second)
     }
   }
 }

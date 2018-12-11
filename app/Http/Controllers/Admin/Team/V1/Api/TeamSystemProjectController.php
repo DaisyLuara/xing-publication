@@ -12,6 +12,7 @@ namespace App\Http\Controllers\Admin\Team\V1\Api;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamBonus;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamSystemProject;
+use App\Http\Controllers\Admin\Team\V1\Request\TeamSystemDetailRequest;
 use App\Http\Controllers\Admin\Team\V1\Request\TeamSystemRequest;
 use App\Http\Controllers\Admin\Team\V1\Transformer\TeamPersonRewardTransformer;
 use App\Http\Controllers\Admin\Team\V1\Transformer\TeamSystemProjectTransformer;
@@ -37,6 +38,11 @@ class TeamSystemProjectController extends Controller
         }
         if ($request->has('start_date') && $request->has('end_date')) {
             $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '$request->start_date' and '$request->end_date'");
+        }
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
+        if (!$user->hasRole('legal-affairs-manager')) {
+            $query->where('applicant', $user->id);
         }
         $teamSystemProject = $query->paginate(10);
         return $this->response()->paginator($teamSystemProject, new TeamSystemProjectTransformer());
@@ -76,7 +82,9 @@ class TeamSystemProjectController extends Controller
             'user_id' => $teamSystemProject->applicant,
             'project_name' => $teamSystemProject->name,
             'belong' => 'system',
-            'money' => $request->money,
+            'type' => 'system',
+            'system_money' => $request->system_money,
+            'total' => $request->system_money,
             'date' => Carbon::now()->toDateTimeString()
         ]);
         return $this->response()->noContent()->setStatusCode(200);
@@ -111,7 +119,7 @@ class TeamSystemProjectController extends Controller
         $startDate = $request->start_date;
         $endDate = $request->end_date;
         $data = TeamPersonReward::query()->whereRaw("date_format(date,'%Y-%m-%d') between '$startDate' and '$endDate' and belong='system'")
-            ->selectRaw("sum(money) as total")
+            ->selectRaw("sum(system_money) as total")
             ->first();
         $output = [
             'distribution_bonus' => $data->total ? $data->total : 0
@@ -143,6 +151,11 @@ class TeamSystemProjectController extends Controller
         if ($request->has('start_date') && $request->has('end_date')) {
             $query->whereRaw("date_format(date,'%Y-%m-%d') between '$request->start_date' and '$request->end_date'");
         }
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
+        if (!$user->hasRole('legal-affairs-manager')) {
+            $query->where('user_id', $user->id);
+        }
 
         $teamPersonReward = $query->whereRaw("belong='system'")->paginate(10);
         return $this->response()->paginator($teamPersonReward, new TeamPersonRewardTransformer());
@@ -154,18 +167,18 @@ class TeamSystemProjectController extends Controller
      * @param TeamPersonReward $teamPersonReward
      * @return \Dingo\Api\Http\Response
      */
-    public function detailStore(Request $request, TeamPersonReward $teamPersonReward)
+    public function detailStore(TeamSystemDetailRequest $request, TeamPersonReward $teamPersonReward)
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
         if (!$user->hasRole('legal-affairs-manager')) {
             abort(403, '无操作权限');
         }
-        $teamPersonReward->fill(array_merge($request->all(), ['belong' => 'system', 'date' => Carbon::now()->toDateTimeString()]))->save();
+        $teamPersonReward->fill(array_merge($request->all(), ['total' => $request->system_money, 'belong' => 'system', 'type' => 'system', 'date' => Carbon::now()->toDateTimeString()]))->save();
         return $this->response()->noContent()->setStatusCode(201);
     }
 
-    public function detailUpdate(Request $request, TeamPersonReward $teamPersonReward)
+    public function detailUpdate(TeamSystemDetailRequest $request, TeamPersonReward $teamPersonReward)
     {
         $user = $this->user();
         if (!$user->hasRole('legal-affairs-manager')) {

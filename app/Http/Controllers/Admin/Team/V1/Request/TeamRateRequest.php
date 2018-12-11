@@ -9,14 +9,10 @@
 namespace App\Http\Controllers\Admin\Team\V1\Request;
 
 
-use Dingo\Api\Http\FormRequest;
+use App\Http\Requests\Request;
 
-class TeamRateRequest extends FormRequest
+class TeamRateRequest extends Request
 {
-    public function authorize()
-    {
-        return true;
-    }
 
     public function rules()
     {
@@ -28,6 +24,14 @@ class TeamRateRequest extends FormRequest
                 break;
             case 'PATCH':
                 return [
+                    'interaction' => 'numeric',
+                    'originality' => 'numeric',
+                    'h5_1' => 'numeric',
+                    'h5_2' => 'numeric',
+                    'animation' => 'numeric',
+                    'plan' => 'numeric',
+                    'tester' => 'numeric',
+                    'operation' => 'numeric'
                 ];
                 break;
             default:

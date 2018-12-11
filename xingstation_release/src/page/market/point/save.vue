@@ -520,9 +520,15 @@
 </template>
 
 <script>
-import search from 'service/search'
-import market from 'service/market'
-import router from 'router'
+import {
+  getSiteMarketDetail,
+  historyBack,
+  getSitePointDetail,
+  siteSavePoint,
+  siteModifyPoint,
+  getSearchAeraList,
+  getSearchMarketList
+} from 'service'
 
 import {
   Form,
@@ -834,8 +840,9 @@ export default {
     })
     if (this.pointID) {
       this.getPointDetail()
+    } else {
+      this.setting.loading = false
     }
-    this.setting.loading = false
   },
   methods: {
     siteHandle() {
@@ -848,8 +855,7 @@ export default {
       let args = {
         include: 'share,contract,area'
       }
-      market
-        .getMarketDetail(this, args, id)
+      getSiteMarketDetail(this, args, id)
         .then(res => {
           this.fieldHandle(res)
           this.contractFlag = false
@@ -865,8 +871,7 @@ export default {
       let args = {
         include: 'share,contract,area,market'
       }
-      market
-        .getPointDetail(this, args, id)
+      getSitePointDetail(this, args, id)
         .then(res => {
           this.pointForm.name = res.name
           this.pointForm.area_id = res.area.id
@@ -923,8 +928,7 @@ export default {
       }
     },
     getAreaList() {
-      return search
-        .getAeraList(this)
+      return getSearchAeraList(this)
         .then(res => {
           this.areaList = res.data
           this.setting.loading = false
@@ -944,8 +948,7 @@ export default {
         include: 'area',
         area_id: this.pointForm.area_id
       }
-      return search
-        .getMarketList(this, args)
+      return getSearchMarketList(this, args)
         .then(response => {
           this.siteList = response.data
           if (this.siteList.length == 0) {
@@ -973,7 +976,7 @@ export default {
       }
     },
     historyBack() {
-      router.back()
+      historyBack()
     },
     submit(formName) {
       this.$refs[formName].validate(valid => {
@@ -1005,8 +1008,7 @@ export default {
           delete args.permission
 
           if (this.pointID) {
-            market
-              .modifyPoint(this, args, this.pointID)
+            siteModifyPoint(this, args, this.pointID)
               .then(res => {
                 this.$message({
                   message: '修改点位成功',
@@ -1020,8 +1022,7 @@ export default {
                 console.log(err)
               })
           } else {
-            market
-              .savePoint(this, args)
+            siteSavePoint(this, args)
               .then(res => {
                 this.$message({
                   message: '新建点位成功',

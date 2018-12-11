@@ -299,8 +299,18 @@ import {
   MessageBox,
   Input
 } from 'element-ui'
-import search from 'service/search'
-import schedule from 'service/schedule'
+import {
+  modifySchedule,
+  saveSchedule,
+  getScheduleList,
+  saveTemplate,
+  getSearchModuleList,
+  getSearchProjectList,
+  modifyTemplate,
+  getSearchMarketList,
+  getSearchAeraList,
+  getSearchPointList
+} from 'service'
 
 export default {
   components: {
@@ -392,8 +402,7 @@ export default {
           date_end: date_end,
           date_start: date_start
         }
-        schedule
-          .modifySchedule(this, id, args)
+        modifySchedule(this, id, args)
           .then(response => {
             this.setting.loading = false
             this.$message({
@@ -427,8 +436,7 @@ export default {
           date_end: date_end,
           date_start: date_start
         }
-        schedule
-          .saveSchedule(this, args)
+        saveSchedule(this, args)
           .then(response => {
             this.setting.loading = false
             this.$message({
@@ -468,8 +476,7 @@ export default {
         include: 'schedules.project',
         name: this.searchForm.name
       }
-      return schedule
-        .getScheduleList(this, args)
+      return getScheduleList(this, args)
         .then(response => {
           this.tableData = response.data
           this.pagination.total = response.meta.pagination.total
@@ -504,8 +511,7 @@ export default {
         let args = {
           name: query
         }
-        return search
-          .getProjectList(this, args)
+        return getSearchProjectList(this, args)
           .then(response => {
             this.projectList = response.data
             if (this.projectList.length == 0) {
@@ -522,8 +528,7 @@ export default {
       }
     },
     getModuleList() {
-      return search
-        .getModuleList(this)
+      return getSearchModuleList(this)
         .then(response => {
           let data = response.data
           this.templateList = data
@@ -534,8 +539,7 @@ export default {
         })
     },
     getAreaList() {
-      return search
-        .getAeraList(this)
+      return getSearchAeraList(this)
         .then(response => {
           let data = response.data
           this.areaList = data
@@ -553,8 +557,7 @@ export default {
           include: 'area',
           area_id: this.templateForm.area_id
         }
-        return search
-          .getMarketList(this, args)
+        return getSearchMarketList(this, args)
           .then(response => {
             this.marketList = response.data
             if (this.marketList.length == 0) {
@@ -577,8 +580,7 @@ export default {
         market_id: this.templateForm.market_id[0]
       }
       this.searchLoading = true
-      return search
-        .gePointList(this, args)
+      return getSearchPointList(this, args)
         .then(response => {
           this.pointList = response.data
           this.searchLoading = false
@@ -599,8 +601,7 @@ export default {
           }
           let id = this.templateForm.tpl_id
           if (this.templateForm.tpl_id) {
-            schedule
-              .modifyTemplate(this, id, args)
+            modifyTemplate(this, id, args)
               .then(response => {
                 this.$message({
                   message: '修改成功',
@@ -614,8 +615,7 @@ export default {
                 console.log(err)
               })
           } else {
-            schedule
-              .saveTemplate(this, args)
+            saveTemplate(this, args)
               .then(response => {
                 this.$message({
                   message: '添加成功',

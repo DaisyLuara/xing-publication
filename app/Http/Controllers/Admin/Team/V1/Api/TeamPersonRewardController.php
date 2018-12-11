@@ -38,11 +38,14 @@ class TeamPersonRewardController extends Controller
             $query->whereRaw("date_format(date,'%Y-%m-%d') between '$request->start_date' and '$request->end_date' ");
         }
 
+        if ($request->has('name')) {
+            $query->where("project_name", 'like', '%' . $request->name . '%');
+        }
         $user = $this->user();
 
-        $data = $query->where('user_id', $user->id)->selectRaw("sum(money) as total")->first();
+        $data = $query->where('user_id', $user->id)->selectRaw("sum(total) as total")->first();
         $output = [
-            'total_reward' => $data->total ? $data->total : 0
+            'total_reward' => $data->total ? round($data->total, 2) : 0
         ];
 
         return response()->json($output);

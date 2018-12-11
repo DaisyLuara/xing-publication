@@ -186,8 +186,11 @@
 </template>
 
 <script>
-import project from 'service/project'
-import search from 'service/search'
+import {
+  getProjectListDetails,
+  modifyProject,
+  getSearchPolicyList
+} from 'service'
 
 import {
   Button,
@@ -256,8 +259,7 @@ export default {
             policy_id: this.templateForm.policy_id,
             ids: this.templateForm.ids
           }
-          project
-            .modifyProject(this, args)
+          modifyProject(this, args)
             .then(result => {
               this.templateVisible = false
               this.$message({
@@ -274,8 +276,7 @@ export default {
       })
     },
     getPolicyList() {
-      search
-        .getPolicyList(this)
+      getSearchPolicyList(this)
         .then(result => {
           this.policyList = result.data
         })
@@ -300,8 +301,7 @@ export default {
         page: this.pagination.currentPage,
         name: this.filters.name
       }
-      project
-        .getProjectListDetails(this, searchArgs)
+      getProjectListDetails(this, searchArgs)
         .then(response => {
           let data = response.data
           this.tableData = data

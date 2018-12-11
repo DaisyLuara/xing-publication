@@ -11,6 +11,7 @@ use App\Jobs\FaceLogTimesJob;
 use App\Jobs\FacePlaytimesCharacterJob;
 use App\Jobs\FacePlaytimesLogJob;
 use App\Jobs\MauJob;
+use App\Jobs\TeamBonusJob;
 use App\Jobs\WeekRankingJob;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
@@ -80,6 +81,11 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             MauJob::dispatch()->onQueue('data-clean');
         })->monthlyOn(1, '6:00');
+
+        //绩效清洗
+        $schedule->call(function () {
+            TeamBonusJob::dispatch()->onQueue('data-clean');
+        })->daily()->at('8:00');
     }
 
 

@@ -57,7 +57,7 @@
         </div>
         <div 
           class="total-wrap">
-          <div>
+          <div v-if="role.name === 'legal-affairs-manager'">
             <span 
               class="label">
               奖金总额:<span class="count">{{ moneyTotal }}</span>
@@ -105,7 +105,7 @@
                 </el-form-item>
                 <el-form-item 
                   label="发放奖金">
-                  <span>{{ scope.row.money }}</span> 
+                  <span>{{ scope.row.system_money }}</span>
                 </el-form-item>
               </el-form>
             </template>
@@ -132,7 +132,7 @@
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="money"
+            prop="system_money"
             label="发放奖金"
             min-width="100"/>
           <el-table-column 
@@ -199,10 +199,10 @@
         </el-form-item>
         <el-form-item
           :rules="[{ required: true, message: '请输入分配金额', trigger: 'submit' }]" 
-          prop="money"
+          prop="system_money"
           label="分配金额">
           <el-input 
-            v-model="applyForm.money"
+            v-model="applyForm.system_money"
             :maxlength="10"
             placeholder="请输入分配金额"
             style="width: 250px;"/>
@@ -223,10 +223,11 @@ import {
   getSystemDetails,
   saveSystemDetailMoney,
   getSystemlMoneyDetail,
-  modifySystemDetailMoney
+  modifySystemDetailMoney,
+  getSearchUserList,
+  handleDateTypeTransform
 } from 'service'
 import { Cookies } from 'utils/cookies'
-import search from 'service/search'
 import {
   Button,
   Input,
@@ -262,7 +263,7 @@ export default {
       applyFormVisible: false,
       applyForm: {
         project_name: '',
-        money: 0,
+        system_money: 0,
         user_id: ''
       },
       filters: {
@@ -353,8 +354,7 @@ export default {
   methods: {
     getUserList() {
       this.searchLoading = true
-      return search
-        .getUserList(this)
+      return getSearchUserList(this)
         .then(response => {
           this.userList = response.data
           this.searchLoading = false
@@ -369,9 +369,10 @@ export default {
           let args = {
             user_id: this.applyForm.user_id,
             project_name: this.applyForm.project_name,
-            money: this.applyForm.money
+            system_money: this.applyForm.system_money
           }
           if (this.id) {
+            args.total = this.applyForm.system_money
             modifySystemDetailMoney(this, this.id, args)
               .then(res => {
                 this.$message({
@@ -415,8 +416,8 @@ export default {
     },
     getDistributionBonus() {
       let args = {
-        start_date: this.handleDateTransform(this.filters.beginDate[0]),
-        end_date: this.handleDateTransform(this.filters.beginDate[1])
+        start_date: handleDateTypeTransform(this.filters.beginDate[0]),
+        end_date: handleDateTypeTransform(this.filters.beginDate[1])
       }
       getDistributionBonus(this, args)
         .then(res => {
@@ -431,8 +432,8 @@ export default {
     },
     getSystemBonus() {
       let args = {
-        start_date: this.handleDateTransform(this.filters.beginDate[0]),
-        end_date: this.handleDateTransform(this.filters.beginDate[1])
+        start_date: handleDateTypeTransform(this.filters.beginDate[0]),
+        end_date: handleDateTypeTransform(this.filters.beginDate[1])
       }
       getSystemBonus(this, args)
         .then(res => {
@@ -448,7 +449,7 @@ export default {
     modifyHandle(data) {
       this.id = data.id
       this.applyForm.project_name = data.project_name
-      this.applyForm.money = data.money
+      this.applyForm.system_money = data.system_money
       this.getSystemlMoneyDetail()
       this.applyFormVisible = true
     },
@@ -458,7 +459,7 @@ export default {
         .then(res => {
           this.applyForm.user_id = res.user_id
           this.applyForm.project_name = res.project_name
-          this.applyForm.money = res.money
+          this.applyForm.system_money = res.system_money
           this.loading = false
         })
         .catch(err => {
@@ -475,8 +476,8 @@ export default {
         page: this.pagination.currentPage,
         name: this.filters.name,
         user_name: this.filters.user_name,
-        start_date: this.handleDateTransform(this.filters.beginDate[0]),
-        end_date: this.handleDateTransform(this.filters.beginDate[1])
+        start_date: handleDateTypeTransform(this.filters.beginDate[0]),
+        end_date: handleDateTypeTransform(this.filters.beginDate[1])
       }
       if (this.filters.name === '') {
         delete args.name
@@ -518,17 +519,6 @@ export default {
       this.getSystemBonus()
       this.getDistributionBonus()
       this.getSystemDetails()
-    },
-    handleDateTransform(valueDate) {
-      let date = new Date(valueDate)
-      let year = date.getFullYear() + '-'
-      let mouth =
-        (date.getMonth() + 1 < 10
-          ? '0' + (date.getMonth() + 1)
-          : date.getMonth() + 1) + '-'
-      let day =
-        (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ''
-      return year + mouth + day
     }
   }
 }

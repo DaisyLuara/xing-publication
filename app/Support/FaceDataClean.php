@@ -1745,6 +1745,15 @@ function teamBonusClean()
     $date = (new Carbon($date))->format('Y-m-d');
     $currentDate = Carbon::now()->toDateString();
     while ($date < $currentDate) {
+        //更新publication项目的投放时间
+        $projectList = DB::connection('ar')->table('ar_product_list')
+            ->whereRaw("online<>0")
+            ->selectRaw("versionname,online")
+            ->get();
+        foreach ($projectList as $item) {
+            TeamProject::query()->where('belong', $item->versionname)->update(['launch_date' => date('Y-m-d', $item->online / 1000)]);
+        }
+
         $faceCount1 = DB::connection('ar')->table('xs_face_count_log as fcl')
             ->join('ar_product_list as apl', 'belong', '=', 'versionname')
             ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
@@ -1767,13 +1776,13 @@ function teamBonusClean()
 
         $count = [];
         foreach ($faceCount as $item) {
-            $player7Money = round($item->playernum7 * 0.01, 0);
-            $player15Money = round($item->playernum15 * 0.02, 0);
-            $player21Money = round($item->playernum21 * 0.05, 0);
-            $uCPAMoney = round($item->omo_outnum * 0.2, 0);
+            $player7Money = round($item->playernum7 * 0.01, 2);
+            $player15Money = round($item->playernum15 * 0.02, 2);
+            $player21Money = round($item->playernum21 * 0.05, 2);
+            $uCPAMoney = round($item->omo_outnum * 0.2, 2);
             $totalMoney = $player7Money + $player15Money + $player21Money + $uCPAMoney;
 
-            $launchDate = date('Y-m-d', $item->online);
+            $launchDate = date('Y-m-d', $item->online / 1000);
 
             $teamProject = TeamProject::query()->where('belong', $item->belong)->first();
             //投放时长 当前日期-投放日期
@@ -1800,7 +1809,7 @@ function teamBonusClean()
                         }
                     }
                     //运营确认
-                    if ($teamProject->status == 3) {
+                    if ($teamProject->status == 3 && $teamProject->type == 0) {
                         if ($teamProject->project_attribute <= 2) {
                             $factor = 0.8;
                         } else {
@@ -1831,7 +1840,8 @@ function teamBonusClean()
         $data = DB::table('team_projects as tp')
             ->join('team_project_members as tpm', 'tp.id', '=', 'tpm.team_project_id')
             ->join('team_bonuses as tb', 'tp.belong', '=', 'tb.belong')
-            ->selectRaw("user_id,tp.project_name as project_name,tp.belong as belong,money,factor,rate")
+            ->whereRaw("date_format(date,'%Y-%m-%d')='$date'")
+            ->selectRaw("user_id,tp.project_name as project_name,tp.belong as belong,money,factor,rate,tpm.type as type")
             ->get();
 
         $rewards = [];
@@ -1840,7 +1850,9 @@ function teamBonusClean()
                 'user_id' => $item->user_id,
                 'project_name' => $item->project_name,
                 'belong' => $item->belong,
-                'money' => round($item->money * $item->factor * $item->rate, 2),
+                'type' => $item->type,
+                'experience_money' => round($item->money * $item->factor * $item->rate, 6),
+                'total' => round($item->money * $item->factor * $item->rate, 6),
                 'date' => $date
             ];
         }

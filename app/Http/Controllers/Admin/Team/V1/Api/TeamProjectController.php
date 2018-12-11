@@ -100,12 +100,13 @@ class TeamProjectController extends Controller
 
     public function update(TeamProjectRequest $request, TeamProject $teamProject)
     {
-        if ($teamProject->status != 1) {
-            abort(403, '项目已确认无法修改');
-        }
+        /** @var  $user \App\Models\User */
         $user = $this->user();
-        if (!$user->hasRole('project-manager')) {
+        if (!$user->hasRole('project-manager') && !$user->hasRole('legal-affairs-manager')) {
             abort(403, '无操作权限');
+        }
+        if ($user->hasRole('project-manager') && $teamProject->status > 2) {
+            abort(403, '项目已无法修改');
         }
         $teamProject->update($request->all());
         $member = $request->member;
@@ -131,7 +132,7 @@ class TeamProjectController extends Controller
             return $this->response()->noContent()->setStatusCode(200);
         }
 
-        if (($user->hasRole('legal-affairs-manager') || $user->hasRole('bonus-manager')) && $teamProject->status == 3) {
+        if (($user->hasRole('legal-affairs-manager') || $user->hasRole('bonus-manager')) && $teamProject->status == 3 && $teamProject->type == 1) {
             $teamProject->status = 4;
             $teamProject->online_date = Carbon::now()->toDateString();
             $teamProject->update();

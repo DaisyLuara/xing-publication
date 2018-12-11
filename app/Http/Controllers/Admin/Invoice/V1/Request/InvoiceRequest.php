@@ -2,21 +2,11 @@
 
 namespace App\Http\Controllers\Admin\Invoice\V1\Request;
 
+use App\Http\Requests\Request;
 use Illuminate\Validation\Rule;
-use Dingo\Api\Http\FormRequest;
 
-class InvoiceRequest extends FormRequest
+class InvoiceRequest extends Request
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
-    {
-        return true;
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -37,7 +27,7 @@ class InvoiceRequest extends FormRequest
                     'invoice_content.*.money' => 'required|numeric',
                     'total' => 'required|numeric',
                     'total_text' => 'required|string',
-                    'remark' => 'string|nullable|max:150'
+                    'remark' => 'string|nullable|max:1000'
                 ];
                 break;
             case 'PATCH':
@@ -52,7 +42,7 @@ class InvoiceRequest extends FormRequest
                     'invoice_content.*.money' => 'numeric',
                     'total' => 'numeric',
                     'total_text' => 'string',
-                    'remark' => 'string|nullable|max:150'
+                    'remark' => 'string|nullable|max:1000'
                 ];
                 break;
             default:

@@ -259,8 +259,16 @@ import {
   MessageBox,
   Input
 } from 'element-ui'
-import search from 'service/search'
-import policies from 'service/policies'
+import {
+  deleteBatchPolicy,
+  modifyBatchPolicy,
+  saveBatchPolicy,
+  getPoliciesList,
+  getSearchCouponList,
+  getSearchCompanyList,
+  savePolicy,
+  modifyPolicy
+} from 'service'
 
 export default {
   components: {
@@ -336,8 +344,7 @@ export default {
       let args = {
         company_id: company_id
       }
-      search
-        .getCouponList(this, args)
+      getSearchCouponList(this, args)
         .then(result => {
           this.couponList = result.data
         })
@@ -346,8 +353,7 @@ export default {
         })
     },
     getCompanyList() {
-      search
-        .getCompanyList(this)
+      getSearchCompanyList(this)
         .then(result => {
           this.companyList = result.data
         })
@@ -366,8 +372,7 @@ export default {
         .then(() => {
           this.setting.loadingText = '拼命加载中'
           this.setting.loading = true
-          policies
-            .deleteBatchPolicy(this, policy_id, id)
+          deleteBatchPolicy(this, policy_id, id)
             .then(response => {
               this.setting.loading = false
               this.$message({
@@ -446,8 +451,7 @@ export default {
       // if (!gender) {
       //   delete args.gender
       // }
-      policies
-        .modifyBatchPolicy(this, policy_id, args, id)
+      modifyBatchPolicy(this, policy_id, args, id)
         .then(response => {
           this.$message({
             message: '修改成功',
@@ -513,8 +517,7 @@ export default {
       // if (!gender) {
       //   delete args.gender
       // }
-      policies
-        .saveBatchPolicy(this, policy_id, args)
+      saveBatchPolicy(this, policy_id, args)
         .then(response => {
           this.$message({
             message: '添加成功',
@@ -545,8 +548,7 @@ export default {
         include: 'batches,company',
         name: this.searchForm.name
       }
-      return policies
-        .getPoliciesList(this, args)
+      return getPoliciesList(this, args)
         .then(response => {
           this.activeNames = 0
           this.tableData = response.data
@@ -592,8 +594,7 @@ export default {
           }
           if (this.title !== '增加策略') {
             let id = this.templateForm.id
-            policies
-              .modifyPolicy(this, id, args)
+            modifyPolicy(this, id, args)
               .then(response => {
                 this.$message({
                   message: '修改成功',
@@ -607,8 +608,7 @@ export default {
                 console.log(err)
               })
           } else {
-            policies
-              .savePolicy(this, company_id, args)
+            savePolicy(this, company_id, args)
               .then(response => {
                 this.$message({
                   message: '添加成功',

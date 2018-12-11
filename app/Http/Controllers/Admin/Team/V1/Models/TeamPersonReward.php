@@ -18,8 +18,13 @@ class TeamPersonReward extends Model
         'user_id',
         'project_name',
         'belong',
-        'money',
-        'date'
+        'experience_money',
+        'xo_money',
+        'link_money',
+        'system_money',
+        'total',
+        'date',
+        'type',
     ];
     public $timestamps = false;
 

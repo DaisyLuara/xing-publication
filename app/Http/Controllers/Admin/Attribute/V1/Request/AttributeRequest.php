@@ -2,14 +2,10 @@
 
 namespace App\Http\Controllers\Admin\Attribute\V1\Request;
 
-use Dingo\Api\Http\FormRequest;
+use App\Http\Requests\Request;
 
-class AttributeRequest extends FormRequest
+class AttributeRequest extends Request
 {
-    public function authorize()
-    {
-        return true;
-    }
 
     public function rules()
     {

@@ -8,20 +8,11 @@
 
 namespace App\Http\Controllers\Admin\Coupon\V1\Request;
 
+use App\Http\Requests\Request;
 use Illuminate\Validation\Rule;
-use Dingo\Api\Http\FormRequest;
 
-class CouponBatchRequest extends FormRequest
+class CouponBatchRequest extends Request
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
-    {
-        return true;
-    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -36,6 +27,7 @@ class CouponBatchRequest extends FormRequest
                     'name' => 'required|string',
                     'description' => 'string',
                     'image_url' => 'url',
+                    'bs_image_url' => 'url',
                     'start_date' => 'date',
                     'end_date' => 'date|after_or_equal:start_date',
                     'amount' => 'alpha_num',
@@ -48,7 +40,8 @@ class CouponBatchRequest extends FormRequest
                     'is_fixed_date' => Rule::in([0, 1]),
                     'delay_effective_day' => 'alpha_num',
                     'effective_day' => 'alpha_num',
-                    'title' => 'filled'
+                    'title' => 'filled',
+                    'credit' => 'alpha_num',
                 ];
                 break;
             case 'PATCH':
@@ -56,6 +49,7 @@ class CouponBatchRequest extends FormRequest
                     'name' => 'string',
                     'description' => 'string',
                     'image_url' => 'url',
+                    'bs_image_url' => 'url',
                     'start_date' => 'date',
                     'end_date' => 'date|after_or_equal:start_date',
                     'amount' => 'alpha_num',
@@ -68,6 +62,7 @@ class CouponBatchRequest extends FormRequest
                     'is_fixed_date' => Rule::in([0, 1]),
                     'delay_effective_day' => 'alpha_num',
                     'effective_day' => 'alpha_num',
+                    'credit' => 'alpha_num',
                 ];
 
                 break;

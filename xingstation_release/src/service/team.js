@@ -224,10 +224,10 @@ const getPersonRewardList = (context, params) => {
   })
 }
 // 个人中心总金额
-const getPersonRewardTotal = context => {
+const getPersonRewardTotal = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .get(HOST + PERSON_REWARD_API + '/total')
+      .get(HOST + PERSON_REWARD_API + '/total', { params: params })
       .then(response => {
         resolve(response.data)
       })
