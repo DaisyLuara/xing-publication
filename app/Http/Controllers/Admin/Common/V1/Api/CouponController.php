@@ -117,7 +117,9 @@ class CouponController extends Controller
                     $count = Coupon::query()->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
                         ->whereIn('status', [0, 3])
                         ->where('coupon_batch_id', $couponBatchPolicy->id)->count('id');
-                    if ($couponBatchPolicy->stock - $count <= 0) {
+                    $dynamicStock = $couponBatchPolicy->stock - $count;
+                    Log::info('dynamic_stock', ['coupon_batch_id' => $couponBatchPolicy->id, 'dynamic_stock' => $dynamicStock]);
+                    if ($dynamicStock <= 0) {
                         unset($couponBatchPolicies[$key]);
                         break;
                     }
@@ -125,6 +127,7 @@ class CouponController extends Controller
                 }
 
                 //剩余库存为0 不出券
+                Log::info('current_stock', ['coupon_batch_id' => $couponBatchPolicy->id, 'current_stock' => $couponBatchPolicy->stock]);
                 if ($couponBatchPolicy->stock <= 0) {
                     unset($couponBatchPolicies[$key]);
                     break;
@@ -136,6 +139,7 @@ class CouponController extends Controller
                     ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
                     ->selectRaw("count(coupon_batch_id) as day_receive")->first();
 
+                Log::info('daily_stock', ['coupon_batch_id' => $couponBatchPolicy->id, 'daily_stock' => $couponBatchPolicy->stock]);
                 if ($coupon->day_receive >= $couponBatchPolicy->day_max_get) {
                     unset($couponBatchPolicies[$key]);
                 }
