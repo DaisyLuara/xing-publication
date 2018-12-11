@@ -112,17 +112,19 @@ class CouponController extends Controller
             //设置了库存上限的券
             if (!$couponBatchPolicy->pmg_status && !$couponBatchPolicy->dmg_status) {
 
-                //动态库存为0 不出券
+                //剩余库存-未使用=动态库存为
                 if ($couponBatchPolicy->dynamic_stock_status) {
                     $count = Coupon::query()->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
                         ->whereIn('status', [0, 3])
                         ->where('coupon_batch_id', $couponBatchPolicy->id)->count('id');
-                    $dynamicStock = $couponBatchPolicy->stock - $count;
-                    abort_if($dynamicStock <= 0, 500, '优惠券已发完!');
+                    if ($couponBatchPolicy->stock - $count <= 0) {
+                        unset($couponBatchPolicies[$key]);
+                        break;
+                    }
 
                 }
 
-                //总库存为0 不出券
+                //剩余库存为0 不出券
                 if ($couponBatchPolicy->stock <= 0) {
                     unset($couponBatchPolicies[$key]);
                     break;
