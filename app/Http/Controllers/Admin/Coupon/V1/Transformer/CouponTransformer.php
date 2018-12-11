@@ -19,7 +19,6 @@ class CouponTransformer extends TransformerAbstract
 
     public function transform(Coupon $coupon)
     {
-        dd($coupon->start_date);
         return [
             'code' => $coupon->code,
             'name' => $coupon->couponBatch->name,
