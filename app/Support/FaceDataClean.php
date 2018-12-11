@@ -1751,7 +1751,7 @@ function teamBonusClean()
             ->selectRaw("versionname,online")
             ->get();
         foreach ($projectList as $item) {
-            TeamProject::query()->where('belong', $item->versionname)->update(['launch_date' => date('Y-m-d', $item->online)]);
+            TeamProject::query()->where('belong', $item->versionname)->update(['launch_date' => date('Y-m-d', $item->online / 1000)]);
         }
 
         $faceCount1 = DB::connection('ar')->table('xs_face_count_log as fcl')

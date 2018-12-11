@@ -25,7 +25,7 @@ class TeamProjectTransformer extends TransformerAbstract
             'xo_attribute' => $teamProject->xo_attribute,
             'begin_date' => $teamProject->begin_date,
             'online_date' => $teamProject->online_date,
-            'launch_date' => $teamProject->project->online != 0 ? date('Y-m-d', $teamProject->project->online) : null,
+            'launch_date' => $teamProject->project->online != 0 ? date('Y-m-d', $teamProject->project->online / 1000) : null,
             'remark' => $teamProject->remark,
             'status' => $teamProject->status,
             'type' => $teamProject->type,
