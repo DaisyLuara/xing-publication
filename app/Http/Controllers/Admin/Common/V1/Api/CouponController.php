@@ -116,7 +116,7 @@ class CouponController extends Controller
                 Log::info('coupon_batch_id:' . $couponBatchPolicy->id . ':current_stock:' . $couponBatchPolicy->stock, []);
                 if ($couponBatchPolicy->stock <= 0) {
                     unset($couponBatchPolicies[$key]);
-                    break;
+                    continue;
                 }
 
                 //动态库存=剩余库存-未使用
@@ -128,7 +128,7 @@ class CouponController extends Controller
                     Log::info('coupon_batch_id:' . $couponBatchPolicy->id . ':dynamic_stock:' . $dynamicStock, []);
                     if ($dynamicStock <= 0) {
                         unset($couponBatchPolicies[$key]);
-                        break;
+                        continue;
                     }
 
                 }
