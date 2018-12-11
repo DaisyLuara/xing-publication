@@ -96,7 +96,7 @@
             class="coupon-form-input"/>
         </el-form-item>
         <el-form-item
-          label="兑换积分"
+          label="积分"
           prop="credit">
           <el-input
             v-model="couponForm.credit"

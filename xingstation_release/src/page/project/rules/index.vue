@@ -120,7 +120,7 @@
                   <span>{{ scope.row.amount }}</span> 
                 </el-form-item>
                 <el-form-item 
-                  label="兑换积分">
+                  label="积分">
                   <span>{{ scope.row.credit }}</span> 
                 </el-form-item>
                 <el-form-item 
