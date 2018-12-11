@@ -16,7 +16,7 @@ return [
     'other' => [
         'enabled' => env('OTHER_DING_ENABLED',true),
 
-        'token' => env('OTHER_DING_TOKEN','d536a709b481ea7cf9c2ff2752984646340a5d2dff3ca82d321b755b153f6a1c'),
+        'token' => env('OTHER_DING_TOKEN','a91a3705258232a8a3a697c724b35201690a6834b49f6cfb3de46c76bf0e96b1'),
 
         'timeout' => env('OTHER_DING_TIME_OUT',2.0)
     ]
