@@ -139,24 +139,6 @@
           <el-table-column :show-overflow-tooltip="true" prop="amount" label="金额" min-width="100"/>
           <el-table-column :show-overflow-tooltip="true" prop="count" label="库存总数" min-width="100"/>
           <el-table-column :show-overflow-tooltip="true" prop="stock" label="剩余库存" min-width="100"/>
-          <!-- <el-table-column
-            :show-overflow-tooltip="true"
-            prop="effective_day"
-            label="有效天数"
-            min-width="100"
-          />-->
-          <!-- <el-table-column
-            :show-overflow-tooltip="true"
-            prop="start_date"
-            label="开始时间"
-            min-width="100"
-          />
-          <el-table-column
-            :show-overflow-tooltip="true"
-            min-width="100"
-            prop="end_date"
-            label="结束时间"
-          />-->
           <el-table-column label="操作" min-width="150">
             <template slot-scope="scope">
               <el-button size="small" type="warning" @click="linkToEdit(scope.row)">编辑</el-button>
