@@ -18,7 +18,6 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class CouponBatch extends Model
 {
-    use LogsActivity;
 
     protected $fillable = [
         'company_id',
