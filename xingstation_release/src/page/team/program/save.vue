@@ -297,8 +297,8 @@
             <el-form-item label="项目说明" prop="remark">
               <el-input
                 v-model="programForm.remark"
-                :autosize="{ minRows: 2, maxRows: 4}"
-                :maxlength="400"
+                :autosize="{ minRows: 2, maxRows: 11}"
+                :maxlength="150"
                 type="textarea"
                 placeholder="请填写项目说明"
                 class="text-input"
@@ -330,7 +330,7 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false,disabledChange = true">取 消</el-button>
         <el-button
-          v-if="(role.name === 'project-manager' && status === 1) || role.name === 'legal-affairs-manager'"
+          v-if="(role.name === 'project-manager' && (status === 1 || status === 2)) || role.name === 'legal-affairs-manager'"
           type="primary"
           @click="rateSubmit"
         >确 定</el-button>
