@@ -112,25 +112,25 @@ class CouponController extends Controller
             //设置了库存上限的券
             if (!$couponBatchPolicy->pmg_status && !$couponBatchPolicy->dmg_status) {
 
-                //剩余库存-未使用=动态库存为
+                //剩余库存为0 不出券
+                Log::info('coupon_batch_id:' . $couponBatchPolicy->id . ':current_stock:' . $couponBatchPolicy->stock, []);
+                if ($couponBatchPolicy->stock <= 0) {
+                    unset($couponBatchPolicies[$key]);
+                    break;
+                }
+
+                //动态库存=剩余库存-未使用
                 if ($couponBatchPolicy->dynamic_stock_status) {
                     $count = Coupon::query()->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
                         ->whereIn('status', [0, 3])
                         ->where('coupon_batch_id', $couponBatchPolicy->id)->count('id');
                     $dynamicStock = $couponBatchPolicy->stock - $count;
-                    Log::info('dynamic_stock', ['coupon_batch_id' => $couponBatchPolicy->id, 'dynamic_stock' => $dynamicStock]);
+                    Log::info('coupon_batch_id:' . $couponBatchPolicy->id . ':dynamic_stock:' . $dynamicStock, []);
                     if ($dynamicStock <= 0) {
                         unset($couponBatchPolicies[$key]);
                         break;
                     }
 
-                }
-
-                //剩余库存为0 不出券
-                Log::info('current_stock', ['coupon_batch_id' => $couponBatchPolicy->id, 'current_stock' => $couponBatchPolicy->stock]);
-                if ($couponBatchPolicy->stock <= 0) {
-                    unset($couponBatchPolicies[$key]);
-                    break;
                 }
 
                 //当天库存为0 不出券
@@ -139,7 +139,7 @@ class CouponController extends Controller
                     ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
                     ->selectRaw("count(coupon_batch_id) as day_receive")->first();
 
-                Log::info('daily_stock', ['coupon_batch_id' => $couponBatchPolicy->id, 'daily_stock' => $couponBatchPolicy->stock]);
+                Log::info('coupon_batch_id:' . $couponBatchPolicy->id . ':daily_stock:' . $coupon->day_receive, []);
                 if ($coupon->day_receive >= $couponBatchPolicy->day_max_get) {
                     unset($couponBatchPolicies[$key]);
                 }
