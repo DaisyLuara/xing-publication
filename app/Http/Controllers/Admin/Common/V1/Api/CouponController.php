@@ -103,11 +103,50 @@ class CouponController extends Controller
         }
 
         $couponBatchPolicies = $couponBatchPolicies->toArray();
+
+        /**
+         * @todo 优化查询逻辑
+         */
         foreach ($couponBatchPolicies as $key => $couponBatchPolicy) {
-            if (!$couponBatchPolicy->pmg_status && !$couponBatchPolicy->dmg_status && $couponBatchPolicy->stock <= 0) {
-                unset($couponBatchPolicies[$key]);
+
+            //设置了库存上限的券
+            if (!$couponBatchPolicy->pmg_status && !$couponBatchPolicy->dmg_status) {
+
+                //剩余库存为0 不出券
+                Log::info('coupon_batch_id:' . $couponBatchPolicy->id . ':current_stock:' . $couponBatchPolicy->stock, []);
+                if ($couponBatchPolicy->stock <= 0) {
+                    unset($couponBatchPolicies[$key]);
+                    continue;
+                }
+
+                //动态库存=剩余库存-未使用
+                if ($couponBatchPolicy->dynamic_stock_status) {
+                    $count = Coupon::query()->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
+                        ->whereIn('status', [0, 3])
+                        ->where('coupon_batch_id', $couponBatchPolicy->id)->count('id');
+                    $dynamicStock = $couponBatchPolicy->stock - $count;
+                    Log::info('coupon_batch_id:' . $couponBatchPolicy->id . ':dynamic_stock:' . $dynamicStock, []);
+                    if ($dynamicStock <= 0) {
+                        unset($couponBatchPolicies[$key]);
+                        continue;
+                    }
+
+                }
+
+                //当天库存为0 不出券
+                $now = Carbon::now()->toDateString();
+                $coupon = Coupon::query()->where('coupon_batch_id', $couponBatchPolicy->id)
+                    ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
+                    ->selectRaw("count(coupon_batch_id) as day_receive")->first();
+
+                Log::info('coupon_batch_id:' . $couponBatchPolicy->id . ':daily_stock:' . $coupon->day_receive, []);
+                if ($coupon->day_receive >= $couponBatchPolicy->day_max_get) {
+                    unset($couponBatchPolicies[$key]);
+                }
             }
         }
+
+        Log::info('coupon_batch_policies', $couponBatchPolicies);
 
         if (count($couponBatchPolicies) == 0) {
             abort(500, '无可用优惠券');
