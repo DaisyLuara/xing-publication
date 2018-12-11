@@ -117,7 +117,7 @@ class CouponController extends Controller
                     $count = Coupon::query()->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
                         ->whereIn('status', [0, 3])
                         ->where('coupon_batch_id', $couponBatchPolicy->id)->count('id');
-                    $dynamicStock = $couponBatch->stock - $count;
+                    $dynamicStock = $couponBatchPolicy->stock - $count;
                     abort_if($dynamicStock <= 0, 500, '优惠券已发完!');
 
                 }
