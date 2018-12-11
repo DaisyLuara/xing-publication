@@ -38,9 +38,33 @@ class MallCoo
      */
     public function oauth($sCallbackUrl)
     {
-        $sUrl = 'https://m.mallcoo.cn/a/open/User/V2/OAuth/BaseInfo/';
+        $sUrl = 'https://m.mallcoo.cn/a/open/User/V2/OAuth/CardInfo/';
         $sUrl .= '?AppID=' . $this->m_AppID . '&PublicKey=' . $this->m_PublicKey . '&CallbackUrl=' . urlencode($sCallbackUrl);
         return $sUrl;
+    }
+
+    /**
+     * 通过 Ticket 获取 Token
+     *
+     * @param string $sTicket Ticket
+     * @return
+     */
+    public function getTokenByTicket($sTicket)
+    {
+        $sUrl = 'https://openapi10.mallcoo.cn/User/OAuth/v1/GetToken/ByTicket/';
+        return $this->send($sUrl, ['Ticket' => $sTicket]);
+    }
+
+    /**
+     * 根据OpenUserID获取会员信息接口
+     *
+     * @param $openUserId
+     * @return array
+     */
+    public function getUserInfoByOpenUserID($openUserId)
+    {
+        $sUrl = 'https://openapi10.mallcoo.cn/User/AdvancedInfo/v1/Get/ByOpenUserID/';
+        return $this->send($sUrl, ['OpenUserId' => $openUserId]);
     }
 
     /**

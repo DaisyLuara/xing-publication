@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin\MallCoo\V1\Api;
 
 use App\Http\Controllers\Admin\WeChat\V1\Models\WeChatUser;
-use function GuzzleHttp\Psr7\parse_query;
-use Hashids\Hashids;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\Admin\ShortUrl\V1\Models\ShortUrl;
+use function GuzzleHttp\Psr7\parse_query;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Hashids\Hashids;
 
 
 class UserController extends Controller
@@ -23,39 +23,33 @@ class UserController extends Controller
         $mall_coo = app('mall_coo');
         $callback_url = 'http://' . $request->getHost() . '/api/mallcoo/user/callback?redirect_url=' . urlencode(($redirect_url));
 
-        $short_url_obj = ShortUrl::query()->create(
-            ['target_url' => $callback_url,
-                'source' => 1,
-                'url_type' => 0,
-            ]
-        );
-
-        $hashIds = new Hashids();
-        $callback_url = 'http://' . $request->getHost() . '/api/s/' . $hashIds->encode($short_url_obj->id);
-
         return $mall_coo->oauth($callback_url);
     }
 
     public function callback(Request $request)
     {
         $redirect_url = urldecode($request->get('redirect_url'));
+
         $ticket = $request->get('Ticket');
 
         $queries = parse_query(parse_url($redirect_url, PHP_URL_QUERY), false);
 
+        //获取用户UserToken
         $mall_coo = app('mall_coo');
-        $sUrl = 'https://openapi10.mallcoo.cn/User/OAuth/v1/GetToken/ByTicket/';
-        $result = $mall_coo->send($sUrl, ['Ticket' => $ticket]);
+        $result = $mall_coo->getTokenByTicket($ticket);
 
         if ($result['Code'] !== 1) {
-            return $result;
+            return $result['Message'];
         }
 
-        $open_user_id = $result['Data']['OpenUserId'];
-        $mobile = $result['Data']['Mobile'];
-        $username = $result['Data']['UserName'];
-        $gender = $result['Data']['Gender'];
-        $birthday = $result['Data']['Birthday'];
+        //获取会员信息
+        $userInfo = $mall_coo->getUserInfoByOpenUserID($result['Data']['OpenUserId']);
+
+        $open_user_id = $userInfo['Data']['OpenUserId'];
+        $mobile = $userInfo['Data']['Mobile'];
+        $username = $userInfo['Data']['UserName'];
+        $gender = $userInfo['Data']['Gender'];
+        $birthday = $userInfo['Data']['Birthday'];
 
         $separator = strpos($redirect_url, '?') ? '&' : '?';
         $redirect_url = $redirect_url . $separator . 'open_user_id=' . $open_user_id;
