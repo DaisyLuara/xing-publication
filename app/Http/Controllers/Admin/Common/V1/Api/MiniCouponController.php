@@ -159,6 +159,23 @@ class MiniCouponController extends Controller
             }
         }
 
+<<<<<<< Updated upstream
+=======
+        $traceCode = uniqid();
+
+        DB::beginTransaction();
+
+        try {
+
+            //券的有效期
+            if ($couponBatch->is_fixed_date) {
+                $startDate = Carbon::createFromTimeString($couponBatch->start_date);;
+                $endDate = Carbon::createFromTimeString($couponBatch->end_date);
+            } else {
+                $startDate = Carbon::now()->addDays($couponBatch->delay_effective_day);
+                $endDate = Carbon::now()->addDays($couponBatch->delay_effective_day + $couponBatch->effective_day);
+            }
+>>>>>>> Stashed changes
 
         //券的有效期
         if ($couponBatch->is_fixed_date) {
