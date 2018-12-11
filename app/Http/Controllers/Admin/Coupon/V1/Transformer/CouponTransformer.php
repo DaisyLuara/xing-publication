@@ -19,6 +19,7 @@ class CouponTransformer extends TransformerAbstract
 
     public function transform(Coupon $coupon)
     {
+        dd($coupon->start_date);
         return [
             'code' => $coupon->code,
             'name' => $coupon->couponBatch->name,
@@ -27,9 +28,9 @@ class CouponTransformer extends TransformerAbstract
             'wx_user_id' => $coupon->wx_user_id,
             'taobao_user_id' => $coupon->taobao_user_id,
             'created_at' => $coupon->created_at->toDateTimeString(),
-            'use_date' => $coupon->use_date ? $coupon->use_date->toDateTimeString() : '',
-            'effect_start_date' => $coupon->start_date ? $coupon->start_date->toDateTimeString() : '',
-            'effect_end_date' => $coupon->start_date ? $coupon->start_date->toDateTimeString() : '',
+            'use_date' => $coupon->use_date ? $coupon->use_date : '',
+            'effect_start_date' => $coupon->start_date ? $coupon->start_date : '',
+            'effect_end_date' => $coupon->end_date ? $coupon->end_date : '',
         ];
     }
 
