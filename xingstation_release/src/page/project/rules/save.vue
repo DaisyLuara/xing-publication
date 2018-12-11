@@ -71,7 +71,7 @@
               :label="0"
               :disabled="disabledWriteStatus">关闭</el-radio>
           </el-tooltip>
-          <el-tooltip class="item" effect="dark" content="领券后，库存自动减少" placement="right">
+          <el-tooltip class="item" effect="dark" content="核销后，库存自动减少" placement="right">
             <el-radio
               v-model="couponForm.write_off_status"
               :label="1"
