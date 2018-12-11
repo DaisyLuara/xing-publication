@@ -237,7 +237,7 @@ class CouponController extends Controller
         Log::info('game_attribute_payload', $gameAttributePayload);
 
         abort_if(!isset($gameAttributePayload['coupon_batch_id']), 404, 'coupon batch not found!');
-        $couponBatch = CouponBatch::query()->findOrFail($gameAttributePayload['coupon_batch_id']);
+        $couponBatch = CouponBatch::query()->where('is_active', 0)->findOrFail($gameAttributePayload['coupon_batch_id']);
         $couponBatchId = $couponBatch->id;
 
         //动态库存校验
