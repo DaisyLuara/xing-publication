@@ -49,7 +49,7 @@
         <el-form-item
           label="动态库存"
           prop="dynamic_stock_status">
-          <el-radio-group 
+          <el-radio-group
             v-model="couponForm.dynamic_stock_status"
             @change="handleWriteOffStatus">
             <el-radio
@@ -63,7 +63,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item
-          label="系统核销"
+          label="核销减库存"
           prop="write_off_status">
           <el-tooltip class="item" effect="dark" content="领券后，库存自动减少" placement="left">
             <el-radio
@@ -71,7 +71,7 @@
               :label="0"
               :disabled="disabledWriteStatus">关闭</el-radio>
           </el-tooltip>
-          <el-tooltip class="item" effect="dark" content="领券后库存不自动减少，由系统核销后，库存在减少" placement="right">
+          <el-tooltip class="item" effect="dark" content="领券后，库存自动减少" placement="right">
             <el-radio
               v-model="couponForm.write_off_status"
               :label="1"
