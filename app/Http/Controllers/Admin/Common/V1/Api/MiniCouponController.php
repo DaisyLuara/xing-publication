@@ -89,13 +89,13 @@ class MiniCouponController extends Controller
             $fileUpload = FileUpload::query()->findOrFail($id);
 
             abort_if(!$fileUpload->acid, 500, '无效活动');
-            $query->whereHas('activityCouponBatches', function ($q) use($fileUpload){
+            $query->whereHas('activityCouponBatches', function ($q) use ($fileUpload) {
                 $q->where('activity_id', $fileUpload->acid);
             });
         }
 
         if ($request->has('acid')) {
-            $query->whereHas('activityCouponBatches', function ($q) use($request){
+            $query->whereHas('activityCouponBatches', function ($q) use ($request) {
                 $q->where('activity_id', $request->acid);
             });
         }
@@ -159,28 +159,11 @@ class MiniCouponController extends Controller
             }
         }
 
-<<<<<<< Updated upstream
-=======
-        $traceCode = uniqid();
-
-        DB::beginTransaction();
-
-        try {
-
-            //券的有效期
-            if ($couponBatch->is_fixed_date) {
-                $startDate = Carbon::createFromTimeString($couponBatch->start_date);;
-                $endDate = Carbon::createFromTimeString($couponBatch->end_date);
-            } else {
-                $startDate = Carbon::now()->addDays($couponBatch->delay_effective_day);
-                $endDate = Carbon::now()->addDays($couponBatch->delay_effective_day + $couponBatch->effective_day);
-            }
->>>>>>> Stashed changes
 
         //券的有效期
         if ($couponBatch->is_fixed_date) {
-            $startDate = $couponBatch->start_date;
-            $endDate = $couponBatch->end_date;
+            $startDate = Carbon::createFromTimeString($couponBatch->start_date);;
+            $endDate = Carbon::createFromTimeString($couponBatch->end_date);
         } else {
             $startDate = Carbon::now()->addDays($couponBatch->delay_effective_day);
             $endDate = Carbon::now()->addDays($couponBatch->delay_effective_day + $couponBatch->effective_day);
