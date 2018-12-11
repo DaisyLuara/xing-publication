@@ -15,7 +15,7 @@ use App\Http\Controllers\Admin\Company\V1\Transformer\CustomerTransformer;
 
 class CouponTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['couponBatch', 'point','customer'];
+    protected $availableIncludes = ['couponBatch', 'point', 'customer'];
 
     public function transform(Coupon $coupon)
     {
@@ -27,7 +27,9 @@ class CouponTransformer extends TransformerAbstract
             'wx_user_id' => $coupon->wx_user_id,
             'taobao_user_id' => $coupon->taobao_user_id,
             'created_at' => $coupon->created_at->toDateTimeString(),
-            'updated_at' => $coupon->updated_at->toDateTimeString(),
+            'use_date' => $coupon->use_date ? $coupon->use_date->toDateTimeString() : '',
+            'effect_start_date' => $coupon->start_date ? $coupon->start_date->toDateTimeString() : '',
+            'effect_end_date' => $coupon->start_date ? $coupon->start_date->toDateTimeString() : '',
         ];
     }
 

@@ -2,14 +2,10 @@
 
 namespace App\Http\Controllers\Admin\Common\V1\Request;
 
-use Dingo\Api\Http\FormRequest;
+use App\Http\Requests\Request;
 
-class TaobaoCouponRequest extends FormRequest
+class TaobaoCouponRequest extends Request
 {
-    public function authorize()
-    {
-        return true;
-    }
 
     public function rules()
     {

@@ -96,18 +96,60 @@ class CouponController extends Controller
             $query->where('gender', '=', $request->gender);
         }
 
-        $couponBatchPolicies = $query->join('coupon_batches', 'coupon_batch_id', '=', 'coupon_batches.id')->where('policy_id', '=', $policy->id)->get();
+        $couponBatchPolicies = $query->join('coupon_batches', 'coupon_batch_id', '=', 'coupon_batches.id')
+            ->where('policy_id', '=', $policy->id)
+            ->where('coupon_batches.is_active', 1)
+            ->get();
 
         if ($couponBatchPolicies->isEmpty()) {
             abort(500, '无可用优惠券');
         }
 
         $couponBatchPolicies = $couponBatchPolicies->toArray();
+
+        /**
+         * @todo 优化查询逻辑
+         */
         foreach ($couponBatchPolicies as $key => $couponBatchPolicy) {
-            if (!$couponBatchPolicy->pmg_status && !$couponBatchPolicy->dmg_status && $couponBatchPolicy->stock <= 0) {
-                unset($couponBatchPolicies[$key]);
+
+            //设置了库存上限的券
+            if (!$couponBatchPolicy->pmg_status && !$couponBatchPolicy->dmg_status) {
+
+                //剩余库存为0 不出券
+                Log::info('coupon_batch_id:' . $couponBatchPolicy->id . ':current_stock:' . $couponBatchPolicy->stock, []);
+                if ($couponBatchPolicy->stock <= 0) {
+                    unset($couponBatchPolicies[$key]);
+                    continue;
+                }
+
+                //动态库存=剩余库存-未使用
+                if ($couponBatchPolicy->dynamic_stock_status) {
+                    $count = Coupon::query()->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
+                        ->whereIn('status', [0, 3])
+                        ->where('coupon_batch_id', $couponBatchPolicy->id)->count('id');
+                    $dynamicStock = $couponBatchPolicy->stock - $count;
+                    Log::info('coupon_batch_id:' . $couponBatchPolicy->id . ':dynamic_stock:' . $dynamicStock, []);
+                    if ($dynamicStock <= 0) {
+                        unset($couponBatchPolicies[$key]);
+                        continue;
+                    }
+
+                }
+
+                //当天库存为0 不出券
+                $now = Carbon::now()->toDateString();
+                $coupon = Coupon::query()->where('coupon_batch_id', $couponBatchPolicy->id)
+                    ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
+                    ->selectRaw("count(coupon_batch_id) as day_receive")->first();
+
+                Log::info('coupon_batch_id:' . $couponBatchPolicy->id . ':daily_stock:' . $coupon->day_receive, []);
+                if ($coupon->day_receive >= $couponBatchPolicy->day_max_get) {
+                    unset($couponBatchPolicies[$key]);
+                }
             }
         }
+
+        Log::info('coupon_batch_policies', $couponBatchPolicies);
 
         if (count($couponBatchPolicies) == 0) {
             abort(500, '无可用优惠券');
@@ -195,16 +237,8 @@ class CouponController extends Controller
         Log::info('game_attribute_payload', $gameAttributePayload);
 
         abort_if(!isset($gameAttributePayload['coupon_batch_id']), 404, 'coupon batch not found!');
-        $couponBatch = CouponBatch::query()->findOrFail($gameAttributePayload['coupon_batch_id']);
+        $couponBatch = CouponBatch::query()->where('is_active', 1)->findOrFail($gameAttributePayload['coupon_batch_id']);
         $couponBatchId = $couponBatch->id;
-
-        //时间日期
-        $now = Carbon::now()->timestamp;
-        $startDate = strtotime($couponBatch->start_date);
-        $endDdate = strtotime($couponBatch->end_date);
-
-        abort_if($now <= $startDate, 500, '活动未开启!');
-        abort_if($now >= $endDdate, 500, '活动已结束!');
 
         //动态库存校验
         if ($couponBatch->dynamic_stock_status) {
@@ -316,6 +350,14 @@ class CouponController extends Controller
             $prefix = 'h5_code';
             $qrcodeUrl = couponQrCode($code, 200, $prefix, $wechatCouponBatch);
 
+            if ($couponBatch->is_fixed_date) {
+                $startDate = $couponBatch->start_date;
+                $endDate = $couponBatch->end_date;
+            } else {
+                $startDate = Carbon::now()->addDays($couponBatch->delay_effective_day);
+                $endDate = Carbon::now()->addDays($couponBatch->delay_effective_day + $couponBatch->effective_day);
+            }
+
             $coupon = Coupon::create([
                 'code' => $code,
                 'mobile' => $mobile,
@@ -325,7 +367,10 @@ class CouponController extends Controller
                 'qiniu_id' => $gameAttributePayload && isset($gameAttributePayload['id']) ? $gameAttributePayload['id'] : 0,
                 'oid' => $gameAttributePayload && isset($gameAttributePayload['utm_source']) ? $gameAttributePayload['utm_source'] : 0,
                 'belong' => $gameAttributePayload && isset($gameAttributePayload['utm_campaign']) ? $gameAttributePayload['utm_campaign'] : '',
+                'start_date' => $startDate,
+                'end_date' => $endDate,
             ]);
+
 
             $coupon->setAttribute('qrcode_url', $qrcodeUrl);
 

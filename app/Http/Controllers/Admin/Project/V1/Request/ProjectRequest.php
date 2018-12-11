@@ -2,14 +2,10 @@
 
 namespace App\Http\Controllers\Admin\Project\V1\Request;
 
-use Dingo\Api\Http\FormRequest;
+use App\Http\Requests\Request;
 
-class ProjectRequest extends FormRequest
+class ProjectRequest extends Request
 {
-    public function authorize()
-    {
-        return true;
-    }
 
     public function rules()
     {

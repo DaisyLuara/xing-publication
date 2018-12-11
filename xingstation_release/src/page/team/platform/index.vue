@@ -65,7 +65,7 @@
         <div 
           class="total-wrap">
           <div>
-            <div>
+            <div v-if="role.name === 'legal-affairs-manager'">
             <span 
               class="label">
               奖金总额: {{ moneyTotal }}
@@ -287,6 +287,7 @@ import {
   systemDistribute,
   getSystemBonus,
   getDistributionBonus,
+  handleDateTypeTransform,
   systemReject
 } from 'service'
 import { Cookies } from 'utils/cookies'
@@ -441,13 +442,13 @@ export default {
   methods: {
     getDistributionBonus() {
       let args = {
-        start_date: this.handleDateTransform(this.filters.applyDate[0]),
-        end_date: this.handleDateTransform(this.filters.applyDate[1])
+        start_date: handleDateTypeTransform(this.filters.applyDate[0]),
+        end_date: handleDateTypeTransform(this.filters.applyDate[1])
       }
       getDistributionBonus(this, args)
         .then(res => {
           this.distributionTotal = res.distribution_bonus
-          this.residueTotal = this.moneyTotal - this.distributionTotal
+          this.residueTotal = (this.moneyTotal - this.distributionTotal).toFixed(2)
           this.allocationForm.total = this.residueTotal
         })
         .catch(err => {
@@ -459,8 +460,8 @@ export default {
     },
     getSystemBonus() {
       let args = {
-        start_date: this.handleDateTransform(this.filters.applyDate[0]),
-        end_date: this.handleDateTransform(this.filters.applyDate[1])
+        start_date: handleDateTypeTransform(this.filters.applyDate[0]),
+        end_date: handleDateTypeTransform(this.filters.applyDate[1])
       }
       getSystemBonus(this, args)
         .then(res => {
@@ -479,13 +480,6 @@ export default {
           this.allocationLoading = true
           let args = {
             system_money: this.allocationForm.system_money
-          }
-          if (this.allocationForm.total - this.allocationForm.system_money < 0) {
-            this.$message({
-              type: 'warning',
-              message: '分配数额大于可发奖金，请重新填写!'
-            })
-            return
           }
           systemDistribute(this, this.id, args)
             .then(res => {
@@ -575,8 +569,8 @@ export default {
         page: this.pagination.currentPage,
         name: this.filters.name,
         status: this.filters.status,
-        start_date: this.handleDateTransform(this.filters.applyDate[0]),
-        end_date: this.handleDateTransform(this.filters.applyDate[1])
+        start_date: handleDateTypeTransform(this.filters.applyDate[0]),
+        end_date: handleDateTypeTransform(this.filters.applyDate[1])
       }
       if (this.filters.name === '') {
         delete args.name
@@ -618,17 +612,6 @@ export default {
       this.getTeamSystemProject()
       this.getSystemBonus()
       this.getDistributionBonus()
-    },
-    handleDateTransform(valueDate) {
-      let date = new Date(valueDate)
-      let year = date.getFullYear() + '-'
-      let mouth =
-        (date.getMonth() + 1 < 10
-          ? '0' + (date.getMonth() + 1)
-          : date.getMonth() + 1) + '-'
-      let day =
-        (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ''
-      return year + mouth + day
     }
   }
 }

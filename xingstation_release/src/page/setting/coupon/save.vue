@@ -191,9 +191,13 @@
 </template>
 
 <script>
-import coupon from 'service/coupon'
-import search from 'service/search'
-import router from 'router'
+import {
+  saveCoupon,
+  historyBack,
+  getCouponDetial,
+  handleDateTransform,
+  getSearchCompanyList
+} from 'service'
 import {
   Button,
   Input,
@@ -277,8 +281,7 @@ export default {
     this.setting.loadingText = '拼命加载中'
     this.setting.loading = true
     //获取公司列表
-    let companyPromise = search
-      .getCompanyList(this)
+    let companyPromise = getSearchCompanyList(this)
       .then(result => {
         this.companyList = result.data
       })
@@ -291,8 +294,7 @@ export default {
         let args = {
           include: 'user,company'
         }
-        coupon
-          .getCouponDetial(this, this.couponID, args)
+        getCouponDetial(this, this.couponID, args)
           .then(result => {
             this.couponForm.name = result.name
             this.couponForm.description = result.description
@@ -350,12 +352,11 @@ export default {
         args.start_date = this.couponForm.start_date
       }
       if (this.couponForm.end_date) {
-        args.end_date = this.handleDateTransform(this.couponForm.end_date)
+        args.end_date = handleDateTransform(this.couponForm.end_date)
       }
       this.$refs[formName].validate(valid => {
         if (valid) {
-          coupon
-            .saveCoupon(this, args, this.couponID, company_id)
+          saveCoupon(this, args, this.couponID, company_id)
             .then(result => {
               this.loading = false
               this.$message({
@@ -377,24 +378,7 @@ export default {
       this.$refs[formName].resetFields()
     },
     historyBack() {
-      router.back()
-    },
-    handleDateTransform(valueDate) {
-      let dateValue = valueDate.replace(/\-/g, '/')
-      let date = new Date(dateValue)
-      let year = date.getFullYear() + '-'
-      let mouth =
-        (date.getMonth() + 1 < 10
-          ? '0' + (date.getMonth() + 1)
-          : date.getMonth() + 1) + '-'
-      let day =
-        (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ''
-      let hours = date.getHours() === 0 ? date.getHours() + 23 : date.getHours()
-      let minutes =
-        date.getMinutes() === 0 ? date.getMinutes() + 59 : date.getMinutes()
-      let second =
-        date.getSeconds() === 0 ? date.getSeconds() + 59 : date.getSeconds()
-      return year + mouth + day + ' ' + hours + ':' + minutes + ':' + second
+      historyBack()
     }
   }
 }

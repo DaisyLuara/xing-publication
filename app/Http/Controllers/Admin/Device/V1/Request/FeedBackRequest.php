@@ -8,19 +8,10 @@
 
 namespace App\Http\Controllers\Admin\Device\V1\Request;
 
-use Dingo\Api\Http\FormRequest;
+use App\Http\Requests\Request;
 
-class FeedBackRequest extends FormRequest
+class FeedBackRequest extends Request
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
-    {
-        return true;
-    }
 
     /**
      * Get the validation rules that apply to the request.

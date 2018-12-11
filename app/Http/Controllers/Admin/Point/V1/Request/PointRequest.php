@@ -2,16 +2,10 @@
 
 namespace App\Http\Controllers\Admin\Point\V1\Request;
 
-use Dingo\Api\Http\FormRequest;
+use App\Http\Requests\Request;
 
-class PointRequest extends FormRequest
+class PointRequest extends Request
 {
-    public function authorize()
-    {
-        return true;
-    }
-
-
     public function rules()
     {
         switch ($this->method()) {

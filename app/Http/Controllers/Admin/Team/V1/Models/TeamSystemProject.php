@@ -18,7 +18,8 @@ class TeamSystemProject extends Model
         'name',
         'applicant',
         'status',
-        'remark'
+        'remark',
+        'reject_message'
     ];
 
     public function user()
