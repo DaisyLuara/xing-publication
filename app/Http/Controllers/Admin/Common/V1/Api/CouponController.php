@@ -237,7 +237,7 @@ class CouponController extends Controller
         Log::info('game_attribute_payload', $gameAttributePayload);
 
         abort_if(!isset($gameAttributePayload['coupon_batch_id']), 404, 'coupon batch not found!');
-        $couponBatch = CouponBatch::query()->where('is_active', 0)->findOrFail($gameAttributePayload['coupon_batch_id']);
+        $couponBatch = CouponBatch::query()->where('is_active', 1)->findOrFail($gameAttributePayload['coupon_batch_id']);
         $couponBatchId = $couponBatch->id;
 
         //动态库存校验
@@ -350,6 +350,14 @@ class CouponController extends Controller
             $prefix = 'h5_code';
             $qrcodeUrl = couponQrCode($code, 200, $prefix, $wechatCouponBatch);
 
+            if ($couponBatch->is_fixed_date) {
+                $startDate = $couponBatch->start_date;
+                $endDate = $couponBatch->end_date;
+            } else {
+                $startDate = Carbon::now()->addDays($couponBatch->delay_effective_day);
+                $endDate = Carbon::now()->addDays($couponBatch->delay_effective_day + $couponBatch->effective_day);
+            }
+
             $coupon = Coupon::create([
                 'code' => $code,
                 'mobile' => $mobile,
@@ -359,13 +367,10 @@ class CouponController extends Controller
                 'qiniu_id' => $gameAttributePayload && isset($gameAttributePayload['id']) ? $gameAttributePayload['id'] : 0,
                 'oid' => $gameAttributePayload && isset($gameAttributePayload['utm_source']) ? $gameAttributePayload['utm_source'] : 0,
                 'belong' => $gameAttributePayload && isset($gameAttributePayload['utm_campaign']) ? $gameAttributePayload['utm_campaign'] : '',
-                'is_fixed_date' => $couponBatch->is_fixed_date,
-                'delay_effective_day' => $couponBatch->delay_effective_day,
-                'effective_day' => $couponBatch->effective_day,
-                'start_date' => $couponBatch->start_date,
-                'end_date' => $couponBatch->end_date,
-                'use_date' => $couponBatch->use_date,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
             ]);
+
 
             $coupon->setAttribute('qrcode_url', $qrcodeUrl);
 
