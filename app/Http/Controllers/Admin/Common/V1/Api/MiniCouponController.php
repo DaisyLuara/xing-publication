@@ -170,8 +170,8 @@ class MiniCouponController extends Controller
 
             //券的有效期
             if ($couponBatch->is_fixed_date) {
-                $startDate = $couponBatch->start_date;
-                $endDate = $couponBatch->end_date;
+                $startDate = Carbon::createFromTimeString($couponBatch->start_date);;
+                $endDate = Carbon::createFromTimeString($couponBatch->end_date);
             } else {
                 $startDate = Carbon::now()->addDays($couponBatch->delay_effective_day);
                 $endDate = Carbon::now()->addDays($couponBatch->delay_effective_day + $couponBatch->effective_day);
@@ -225,8 +225,8 @@ class MiniCouponController extends Controller
             abort(500, $e->getMessage());
         }
 
-        return $this->response->item($coupon, new CouponTransformer());
+return $this->response->item($coupon, new CouponTransformer());
 
-    }
+}
 
 }

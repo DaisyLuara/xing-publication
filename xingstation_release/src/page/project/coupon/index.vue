@@ -127,7 +127,7 @@
                   <span>{{ scope.row.use_date }}</span>
                 </el-form-item>
                 <el-form-item label="有效期">
-                  <span>{{ scope.row.effect_start_date ? (scope.row.effect_start_date +'-'+ scope.row.effect_end_date) : '' }}</span>
+                  <span>{{ scope.row.effect_start_date ? (scope.row.effect_start_date +' -- '+ scope.row.effect_end_date) : '' }}</span>
                 </el-form-item>
                 <el-form-item label="公司">
                   <span>{{ scope.row.couponBatch.company.name }}</span>
