@@ -73,11 +73,33 @@
             class="coupon-form-input"
           />
         </el-form-item>
-        <el-form-item label="图片链接" prop="image_url">
-          <el-input v-model="couponForm.image_url" class="coupon-form-input"/>
+        <el-form-item
+          label="积分"
+          prop="credit">
+          <el-input
+            v-model="couponForm.credit"
+            class="coupon-form-input"/>
         </el-form-item>
-        <el-form-item label="跳转链接" prop="redirect_url">
-          <el-input v-model="couponForm.redirect_url" class="coupon-form-input"/>
+        <el-form-item
+          label="h5图片链接"
+          prop="image_url">
+          <el-input
+            v-model="couponForm.image_url"
+            class="coupon-form-input"/>
+        </el-form-item>
+        <el-form-item
+          label="大屏图片链接"
+          prop="bs_image_url">
+          <el-input
+            v-model="couponForm.bs_image_url"
+            class="coupon-form-input"/>
+        </el-form-item>
+        <el-form-item
+          label="跳转链接"
+          prop="redirect_url">
+          <el-input
+            v-model="couponForm.redirect_url"
+            class="coupon-form-input"/>
         </el-form-item>
         <el-form-item label="优先级" prop="sort_order">
           <el-input v-model="couponForm.sort_order" :maxlength="3" class="coupon-form-input"/>
@@ -267,7 +289,9 @@ export default {
         start_date: "",
         end_date: "",
         is_active: 1,
-        write_off_status: 1
+        write_off_status: 1,
+        bs_image_url: '',
+        credit: 0
       },
       couponID: ""
     };
@@ -297,35 +321,32 @@ export default {
         };
         getCouponDetial(this, this.couponID, args)
           .then(result => {
-            this.couponForm.name = result.name;
-            this.couponForm.description = result.description;
-            this.couponForm.company_id = result.company.id;
-            this.couponForm.image_url = result.image_url;
-            this.couponForm.amount = result.amount;
-            this.couponForm.count = result.count;
-            this.couponForm.stock = result.stock;
-            this.couponForm.people_max_get = result.people_max_get;
-            this.couponForm.pmg_status = result.pmg_status;
-            this.couponForm.day_max_get = result.day_max_get;
-            this.couponForm.dmg_status = result.dmg_status;
-            this.couponForm.is_fixed_date = result.is_fixed_date;
-            this.couponForm.delay_effective_day = result.delay_effective_day;
-            this.couponForm.effective_day = result.effective_day;
-            this.couponForm.start_date = result.start_date;
-            this.couponForm.end_date = result.end_date;
-            this.couponForm.is_active = result.is_active;
-            this.couponForm.redirect_url = result.redirect_url;
-            this.couponForm.type = result.type;
-            this.couponForm.sort_order = result.sort_order;
-            this.couponForm.title = result.title;
-            this.user_name = result.user.name;
-            this.couponForm.dynamic_stock_status = result.dynamic_stock_status;
-            this.couponForm.write_off_status = result.write_off_status;
-            if (result.is_fixed_date === 1) {
-              this.dateShow = true;
-            } else {
-              this.dateShow = false;
-            }
+            this.couponForm.name = result.name
+            this.couponForm.description = result.description
+            this.couponForm.company_id = result.company.id
+            this.couponForm.image_url = result.image_url
+            this.couponForm.amount = result.amount
+            this.couponForm.count = result.count
+            this.couponForm.stock = result.stock
+            this.couponForm.people_max_get = result.people_max_get
+            this.couponForm.pmg_status = result.pmg_status
+            this.couponForm.day_max_get = result.day_max_get
+            this.couponForm.dmg_status = result.dmg_status
+            this.couponForm.is_fixed_date = result.is_fixed_date
+            this.couponForm.delay_effective_day = result.delay_effective_day
+            this.couponForm.effective_day = result.effective_day
+            this.couponForm.start_date = result.start_date
+            this.couponForm.end_date = result.end_date
+            this.couponForm.is_active = result.is_active
+            this.couponForm.redirect_url = result.redirect_url
+            this.couponForm.type = result.type
+            this.couponForm.sort_order = result.sort_order
+            this.couponForm.title = result.title
+            this.user_name = result.user.name
+            this.couponForm.dynamic_stock_status = result.dynamic_stock_status
+            this.couponForm.write_off_status = result.write_off_status
+            this.couponForm.credit = result.credit
+            this.couponForm.bs_image_url = result.bs_image_url
             if (
               parseInt(result.write_off_status) === 1 &&
               parseInt(result.dynamic_stock_status) === 1
@@ -381,8 +402,10 @@ export default {
         sort_order: this.couponForm.sort_order,
         title: this.couponForm.title,
         dynamic_stock_status: this.couponForm.dynamic_stock_status,
-        write_off_status: this.couponForm.write_off_status
-      };
+        write_off_status: this.couponForm.write_off_status,
+        bs_image_url: this.couponForm.bs_image_url,
+        credit: this.couponForm.credit
+      }
       if (!this.couponForm.image_url) {
         delete args.image_url;
       }

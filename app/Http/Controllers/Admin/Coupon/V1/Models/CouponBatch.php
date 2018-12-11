@@ -18,13 +18,13 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class CouponBatch extends Model
 {
-    use LogsActivity;
 
     protected $fillable = [
         'company_id',
         'create_user_id',
         'bd_user_id',
         'image_url',
+        'bs_image_url',
         'amount',
         'count',
         'stock',
@@ -45,6 +45,7 @@ class CouponBatch extends Model
         'redirect_url',
         'title',
         'campaign_id',
+        'credit',
         'sort_order',
         'dynamic_stock_status',
         'write_off_status',

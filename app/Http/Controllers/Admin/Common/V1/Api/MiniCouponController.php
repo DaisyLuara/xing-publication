@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Admin\Common\V1\Api;
 
 use App\Http\Controllers\Admin\Activity\V1\Models\ActivityCouponBatch;
 use App\Http\Controllers\Admin\Common\V1\Models\FileUpload;
+use App\Http\Controllers\Admin\Common\V1\Models\XsCreditRecord;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Common\V1\Transformer\CouponTransformer;
@@ -19,9 +20,11 @@ use App\Http\Controllers\Admin\User\V1\Models\ArMemberSession;
 use function GuzzleHttp\Psr7\parse_query;
 use App\Http\Controllers\Controller;
 use App\Handlers\ImageUploadHandler;
+use Illuminate\Http\Request;
+use GuzzleHttp\Client;
 use Carbon\Carbon;
 use Log;
-use Illuminate\Http\Request;
+use DB;
 
 
 class MiniCouponController extends Controller
@@ -125,7 +128,7 @@ class MiniCouponController extends Controller
      * @param MiniCouponRequest $request
      * @return mixed
      */
-    public function store(CouponBatch $couponBatch, MiniCouponRequest $request)
+    public function store(CouponBatch $couponBatch, MiniCouponRequest $request, Client $client)
     {
         Log::info('mini_coupon_store', $request->all());
         $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
@@ -166,17 +169,55 @@ class MiniCouponController extends Controller
             }
         }
 
-        //创建优惠券
-        $coupon = Coupon::create([
-            'code' => uniqid(),
-            'coupon_batch_id' => $couponBatch->id,
-            'status' => 3,
-            'member_uid' => $memberUID,
-        ]);
+        $traceCode = uniqid();
 
-        //减少库存
-        if (!$couponBatch->pmg_status && !$couponBatch->pmg_status) {
-            $couponBatch->decrement('stock');
+        DB::beginTransaction();
+
+        try{
+            //创建优惠券
+            $coupon = Coupon::create([
+                'code' => $traceCode,
+                'coupon_batch_id' => $couponBatch->id,
+                'status' => 3,
+                'member_uid' => $memberUID,
+            ]);
+
+            //减少库存
+            if (!$couponBatch->pmg_status && !$couponBatch->pmg_status) {
+                $couponBatch->decrement('stock');
+            }
+
+            //积分兑换
+            if ($couponBatch->credit) {
+                //积分扣除接口
+                $response = $client->request('GET', 'https://exelook.com/client//open/userhd/', [
+                    'query' => [
+                        'z' => $request->z,
+                        'api' => 'json',
+                        'num' => $couponBatch->credit,
+                        'key' => $traceCode,
+                    ],
+                ]);
+
+                $callback = json_decode($response->getBody()->getContents(), true);
+
+                if ($callback['state'] != '1') {
+                    throw new \Exception("兑换失败");
+                }
+
+                //积分记录
+                XsCreditRecord::create([
+                    'uid' => $memberUID,
+                    'num' => $couponBatch->credit,
+                    'key' => $traceCode,
+                ]);
+
+            }
+            DB::commit();
+
+        } catch (\Exception $e){
+            DB::rollback();//事务回滚
+            abort(500, $e->getMessage());
         }
 
         return $this->response->item($coupon, new CouponTransformer());
