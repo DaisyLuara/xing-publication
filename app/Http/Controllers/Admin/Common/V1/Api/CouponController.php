@@ -120,6 +120,7 @@ class CouponController extends Controller
                 }
 
                 //动态库存=剩余库存-未使用
+                Log::info('coupon_batch_policy', $couponBatchPolicy);
                 if ($couponBatchPolicy->dynamic_stock_status) {
                     $count = Coupon::query()->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
                         ->whereIn('status', [0, 3])
