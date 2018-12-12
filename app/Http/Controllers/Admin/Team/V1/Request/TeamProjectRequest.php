@@ -23,9 +23,12 @@ class TeamProjectRequest extends \App\Http\Requests\Request
                     'link_attribute' => Rule::in([0, 1]),
                     'h5_attribute' => Rule::in([1, 2]),
                     'xo_attribute' => Rule::in([0, 1]),
-                    'remark' => 'max:150',
+                    'art_innovate' => 'required|max:1000',
+                    'dynamic_innovate' => 'required|max:1000',
+                    'interact_innovate' => 'required|max:1000',
+                    'remark' => 'max:1000',
                     'type' => Rule::in([0, 1]),
-                    'member.*.rate'=>'numeric'
+                    'member.*.rate' => 'numeric'
                 ];
                 break;
             case 'PATCH':
@@ -35,9 +38,12 @@ class TeamProjectRequest extends \App\Http\Requests\Request
                     'link_attribute' => Rule::in([0, 1]),
                     'h5_attribute' => Rule::in([1, 2]),
                     'xo_attribute' => Rule::in([0, 1]),
-                    'remark' => 'max:150',
+                    'art_innovate' => 'max:1000',
+                    'dynamic_innovate' => 'max:1000',
+                    'interact_innovate' => 'max:1000',
+                    'remark' => 'max:1000',
                     'type' => Rule::in([0, 1]),
-                    'member.*.rate'=>'numeric'
+                    'member.*.rate' => 'numeric'
                 ];
                 break;
             default:
