@@ -123,6 +123,11 @@ class MiniCouponController extends Controller
 
     }
 
+    public function couponBatchShow(CouponBatch $couponBatch)
+    {
+        return $this->response->item($couponBatch, new CouponBatchTransformer());
+    }
+
     /**
      * 领取优惠券
      * @param CouponBatch $couponBatch
