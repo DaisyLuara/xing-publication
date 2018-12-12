@@ -60,7 +60,7 @@ class UserController extends Controller
         $separator = strpos($redirect_url, '?') ? '&' : '?';
         $redirect_url = $redirect_url . $separator . 'open_user_id=' . $openUserId;
 
-        ThirdPartyUser::updateOrCreate(
+        $thirdPartyUser = ThirdPartyUser::updateOrCreate(
             ['mallcoo_open_user_id' => $openUserId],
             [
                 'mobile' => $mobile,

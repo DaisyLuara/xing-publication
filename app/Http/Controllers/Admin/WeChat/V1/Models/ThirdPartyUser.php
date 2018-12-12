@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\WeChat\V1\Models;
 
+use App\Http\Controllers\Admin\MallCoo\V1\Models\MallcooScoreHistory;
 use App\Models\Model;
 
 class ThirdPartyUser extends Model
@@ -35,6 +36,11 @@ class ThirdPartyUser extends Model
         'subscribe' => 'boolean',
         'gendor' => 'boolean',
     ];
+
+    public function mallcoo_score_histories()
+    {
+        return $this->hasMany(MallcooScoreHistory::class, 'mallcoo_open_user_id', 'mallcoo_wx_open_id');
+    }
 
 
 }
