@@ -7,7 +7,7 @@
     >
       <div class="item-content-wrap">
         <div class="search-wrap">
-          <el-form ref="searchForm" :model="filters" :inline="true">
+          <el-form ref="filters" :model="filters" :inline="true">
             <el-form-item label prop="coupon_batch_id">
               <el-select
                 v-model="filters.coupon_batch_id"
@@ -89,6 +89,7 @@
             </el-form-item>
             <el-form-item label prop>
               <el-button type="primary" size="small" @click="search()">搜索</el-button>
+              <el-button type="default" size="small" @click="resetSearch('filters')">重置</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -326,6 +327,11 @@ export default {
     this.getCompanyList();
   },
   methods: {
+    resetSearch(formName) {
+      this.$refs[formName].resetFields();
+      this.pagination.currentPage = 1;
+      this.putInCouponList();
+    },
     handleCompany() {
       this.filters.shop_customer_id = "";
       this.getShopCustomerList();
@@ -381,9 +387,7 @@ export default {
         coupon_batch_id: this.filters.coupon_batch_id[0],
         status: this.filters.status,
         company_id: this.filters.company_id,
-        shop_customer_id: this.filters.shop_customer_id,
-        start_date: handleDateTimeTransform(this.filters.dataValue[0]),
-        end_date: handleDateTimeTransform(this.filters.dataValue[1])
+        shop_customer_id: this.filters.shop_customer_id
       };
       if (this.filters.coupon_batch_id.length === 0) {
         delete args.coupon_batch_id;
@@ -397,11 +401,17 @@ export default {
       if (this.filters.shop_customer_id === "") {
         delete args.shop_customer_id;
       }
-      if (!this.filters.dataValue[0]) {
-        delete args.start_date;
-      }
-      if (!this.filters.dataValue[1]) {
-        delete args.end_date;
+      if (this.filters.dataValue) {
+        if (this.filters.dataValue.length !== 0) {
+          if (this.filters.dataValue[0]) {
+            args.start_date = handleDateTimeTransform(
+              this.filters.dataValue[0]
+            );
+          }
+          if (this.filters.dataValue[1]) {
+            args.end_date = handleDateTimeTransform(this.filters.dataValue[1]);
+          }
+        }
       }
       putInCouponList(this, args)
         .then(response => {
