@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Point\V1\Api;
 
+use App\Http\Controllers\Admin\Attribute\V1\Models\Attribute;
 use App\Http\Controllers\Admin\Point\V1\Models\Market;
 use App\Http\Controllers\Admin\Point\V1\Transformer\PointTransformer;
 use App\Http\Controllers\Admin\Point\V1\Request\PointRequest;
@@ -112,6 +113,7 @@ class PointController extends Controller
 
     public function store(PointRequest $request, Point $point)
     {
+
         $market = Market::find($request->marketid);
         $area = $market->area;
 
@@ -119,6 +121,7 @@ class PointController extends Controller
         $insertData['areaid'] = $area->areaid;
 
         $point->fill($insertData)->saveOrFail();
+        $point->attribute()->attach($request->attribute_id);
 
         if ($request->has('contract')) {
             $point->contract()->create($request->contract);
@@ -128,11 +131,23 @@ class PointController extends Controller
             $point->share()->create($request->share);
         }
 
+        $point->attribute()->get();
+
         return $this->response->item($point, new PointTransformer());
     }
 
     public function update(PointRequest $request, Point $point)
     {
+        $node = Attribute::query()->where('name', '业态')->first();
+        $attribute = $point->attribute()->get();
+        /** @var \Baum\Node $item */
+        foreach ($attribute as $item) {
+            if ($item->isDescendantOf($node)) {
+                $point->attribute()->detach($item->id);
+            }
+        }
+        $point->attribute()->attach($request->attribute_id);
+
         $market = Market::find($request->marketid);
         $area = $market->area;
 
