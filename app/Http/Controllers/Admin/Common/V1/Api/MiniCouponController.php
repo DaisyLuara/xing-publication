@@ -103,7 +103,8 @@ class MiniCouponController extends Controller
             });
         }
 
-        $couponBatches = $query->orderByDesc('sort_order')->get();
+        $per_page = $request->get('per_page') ? : 5;
+        $couponBatches = $query->orderByDesc('sort_order')->paginate($per_page);
 
         abort_if($couponBatches->isEmpty(), 500, '无可用优惠券');
 
@@ -118,7 +119,7 @@ class MiniCouponController extends Controller
 
         abort_if($couponBatches->isEmpty(), 500, '无可用优惠券');
 
-        return $this->response->collection($couponBatches, new CouponBatchTransformer());
+        return $this->response->paginator($couponBatches, new CouponBatchTransformer());
 
     }
 
