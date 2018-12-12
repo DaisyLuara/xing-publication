@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\MallCoo\V1\Api;
 
+use App\Http\Controllers\Admin\MallCoo\V1\Request\MallCooRequest;
 use App\Http\Controllers\Admin\WeChat\V1\Models\ThirdPartyUser;
 use App\Models\WeChatUser;
 use App\Http\Controllers\Controller;
@@ -11,13 +12,8 @@ use DB;
 
 class UserController extends Controller
 {
-    public function oauth(Request $request)
+    public function oauth(MallCooRequest $request)
     {
-        $this->validate($request, [
-            'redirect_url' => 'required|url',
-            'sign' => 'required',
-        ]);
-
         $userID = decrypt($request->sign);
         $redirect_url = $request->get('redirect_url');
         $redirect_url = add_query_string($redirect_url, 'user_id', $userID);
