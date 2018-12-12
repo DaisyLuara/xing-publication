@@ -158,7 +158,7 @@
               <span v-if="scope.row.status===3">未使用</span>
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="mobile" label="手机号" min-width="100"/>
+          <el-table-column :show-overflow-tooltip="true" prop="created_at" label="创建时间" min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="use_date"
