@@ -102,7 +102,7 @@ class TeamProjectController extends Controller
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if (!$user->hasRole('project-manager') && !$user->hasRole('legal-affairs-manager')) {
+        if (!$user->hasRole('project-manager') && !$user->hasRole('legal-affairs-manager') && !$user->hasRole('bonus-manager')) {
             abort(403, '无操作权限');
         }
         if ($user->hasRole('project-manager') && $teamProject->status > 2) {

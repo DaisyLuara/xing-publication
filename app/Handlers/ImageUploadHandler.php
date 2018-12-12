@@ -6,9 +6,9 @@ use Log;
 
 class ImageUploadHandler
 {
-    protected $allowed_ext = ['doc', 'docx', 'pdf', 'png', 'jpg', 'jpeg'];
+    protected $allowed_ext = ['doc', 'docx', 'pdf', 'png', 'jpg', 'jpeg', 'zip', 'rar'];
 
-    public function save($file, $file_prefix)
+    public function save($file, $request)
     {
         /** @var  $file \Illuminate\Http\UploadedFile */
         $format = $file->getClientOriginalExtension();
@@ -16,9 +16,15 @@ class ImageUploadHandler
             abort(500, "不支持" . $format . "文件格式");
         }
         $extension = strtolower($format);
-        $filename = $file_prefix . '_' . time() . '_' . str_random(10) . '.' . $extension;
-
+        $file_prefix = str_plural($request->type);
         $disk = \Storage::disk('qiniu');
+
+        if ($request->type == 'package') {
+            $file_prefix = "publication/team/" . str_plural($request->type);
+            $disk = \Storage::disk('qiniu_bw');
+        }
+
+        $filename = $file_prefix . '_' . time() . '_' . str_random(10) . '.' . $extension;
         $result = $disk->put($filename, fopen($file, 'r'));
         Log::info('qi niu url', ['result' => $result]);
 
