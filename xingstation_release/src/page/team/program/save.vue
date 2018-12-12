@@ -45,30 +45,18 @@
           <el-col :span="12">
             <el-form-item label="节目属性" prop="project_attribute">
               <el-radio-group v-model="programForm.project_attribute">
-                <el-radio
-                  :label="1"
-                >基础条目</el-radio>
-                <el-radio
-                  :label="2"
-                >通用节目</el-radio>
-                <el-radio
-                  :label="3"
-                >定制节目</el-radio>
-                <el-radio
-                  :label="4"
-                >定制项目</el-radio>
+                <el-radio :label="1">基础条目</el-radio>
+                <el-radio :label="2">通用节目</el-radio>
+                <el-radio :label="3">定制节目</el-radio>
+                <el-radio :label="4">定制项目</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="联动属性" prop="link_attribute">
               <el-radio-group v-model="programForm.link_attribute">
-                <el-radio
-                  :label="1"
-                >是</el-radio>
-                <el-radio
-                  :label="0"
-                >否</el-radio>
+                <el-radio :label="1">是</el-radio>
+                <el-radio :label="0">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -77,24 +65,16 @@
           <el-col :span="12">
             <el-form-item label="H5属性" prop="h5_attribute">
               <el-radio-group v-model="programForm.h5_attribute" @change="h5Handle">
-                <el-radio
-                  :label="1"
-                >基础模版</el-radio>
-                <el-radio
-                  :label="2"
-                >复杂模版</el-radio>
+                <el-radio :label="1">基础模版</el-radio>
+                <el-radio :label="2">复杂模版</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="小偶属性" prop="xo_attribute">
               <el-radio-group v-model="programForm.xo_attribute">
-                <el-radio
-                  :label="1"
-                >是</el-radio>
-                <el-radio
-                  :label="0"
-                >否</el-radio>
+                <el-radio :label="1">是</el-radio>
+                <el-radio :label="0">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -103,12 +83,8 @@
           <el-col :span="12">
             <el-form-item label="节目类型" prop="type">
               <el-radio-group v-model="programForm.type">
-                <el-radio
-                  :label="0"
-                >正常节目</el-radio>
-                <el-radio
-                  :label="1"
-                >提前节目</el-radio>
+                <el-radio :label="0">正常节目</el-radio>
+                <el-radio :label="1">提前节目</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -320,11 +296,11 @@
             <el-form-item
               :rules="[{ required: true, message: '请输入艺术风格创新点', trigger: 'submit' }]"
               label="艺术风格创新点"
-              prop="remark"
+              prop="art_innovate"
               label-width="120px"
             >
               <el-input
-                v-model="programForm.remark"
+                v-model="programForm.art_innovate"
                 :autosize="{ minRows: 2}"
                 :maxlength="1000"
                 type="textarea"
@@ -339,11 +315,11 @@
             <el-form-item
               :rules="[{ required: true, message: '请输入动效体验创新点', trigger: 'submit' }]"
               label="动效体验创新点"
-              prop="remark"
+              prop="dynamic_innovate"
               label-width="120px"
             >
               <el-input
-                v-model="programForm.remark"
+                v-model="programForm.dynamic_innovate"
                 :autosize="{ minRows: 2}"
                 :maxlength="1000"
                 type="textarea"
@@ -358,11 +334,11 @@
             <el-form-item
               :rules="[{ required: true, message: '请输入交互技术创新点', trigger: 'submit' }]"
               label="交互技术创新点"
-              prop="remark"
+              prop="interact_innovate"
               label-width="120px"
             >
               <el-input
-                v-model="programForm.remark"
+                v-model="programForm.interact_innovate"
                 :autosize="{ minRows: 2}"
                 :maxlength="1000"
                 type="textarea"
@@ -477,6 +453,9 @@ export default {
       status: 1,
       programID: "",
       programForm: {
+        art_innovate: "",
+        dynamic_innovate: "",
+        interact_innovate: "",
         type: 0,
         applicant: "",
         belong: "",
@@ -588,6 +567,9 @@ export default {
           this.programForm.plan = res.member.plan;
           this.programForm.tester = res.member.tester;
           this.programForm.remark = res.remark;
+          this.programForm.art_innovate = res.art_innovate;
+          this.programForm.dynamic_innovate = res.dynamic_innovate;
+          this.programForm.interact_innovate = res.interact_innovate;
           this.status = res.status;
           if (res.member.animation.length > 0) {
             res.member.animation.map(r => {
@@ -819,6 +801,9 @@ export default {
             h5_attribute: this.programForm.h5_attribute,
             xo_attribute: this.programForm.xo_attribute,
             remark: this.programForm.remark,
+            art_innovate: this.programForm.art_innovate,
+            dynamic_innovate: this.programForm.dynamic_innovate,
+            interact_innovate: this.programForm.interact_innovate,
             type: this.programForm.type
           };
           if (this.programForm.interaction.length > 0) {
