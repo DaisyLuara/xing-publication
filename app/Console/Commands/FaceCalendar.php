@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use DB;
+use GuzzleHttp\Client;
 
 class FaceCalendar extends Command
 {
@@ -39,47 +40,31 @@ class FaceCalendar extends Command
      */
     public function handle()
     {
-        $date = $this->ask("输入起始日期：");
-        $start_date = (new Carbon($date))->startOfYear()->toDateString();
-        $end_date = (new Carbon($date))->endOfYear()->toDateString();
-        $holiday_list = [
-            '2018-01-01',
-            '2018-02-15',
-            '2018-02-16',
-            '2018-02-17',
-            '2018-02-18',
-            '2018-02-19',
-            '2018-02-20',
-            '2018-02-21',
-            '2018-04-05',
-            '2018-04-06',
-            '2018-04-07',
-            '2018-04-29',
-            '2018-04-30',
-            '2018-05-01',
-            '2018-06-16',
-            '2018-06-17',
-            '2018-06-18',
-            '2018-09-22',
-            '2018-09-23',
-            '2018-09-24',
-            '2018-10-01',
-            '2018-10-02',
-            '2018-10-03',
-            '2018-10-04',
-            '2018-10-05',
-            '2018-10-06',
-            '2018-10-07',
-        ];
-        $workday_list = [
-            '2018-02-11',
-            '2018-02-24',
-            '2018-04-08',
-            '2018-04-28',
-            '2018-09-29',
-            '2018-09-30',
-        ];
+        $year = $this->ask("输入起始日期：");
+        $end_date = (new Carbon($year))->endOfYear()->toDateString();
+
+        //获取法定假日列表和周末补班列表
+        $url = 'http://api.goseek.cn/Tools/holiday?date=';
+        $holiday_list = [];
+        $workday_list = [];
+        $date = (new Carbon($year))->startOfYear()->toDateString();
+        while ($date <= $end_date) {
+            $reqDate = (new Carbon($date))->format('Ymd');
+            $client = new Client();
+            $res = json_decode($client->request('get', $url . $reqDate)->getBody());
+            //工作日0，休息日1，法定假日2
+            if ($res->data == 2) {
+                $holiday_list[] = $date;
+            }
+            if ($res->data == 0 && (new Carbon($date))->isWeekend()) {
+                $workday_list[] = $date;
+            }
+            $date = (new Carbon($date))->addDay(1)->toDateString();
+        }
+
+        //确定每天属性存入数据库
         $count = [];
+        $start_date = (new Carbon($year))->startOfYear()->toDateString();
         while ($start_date <= $end_date) {
             $work = 1;
             $weekend = 0;
@@ -105,5 +90,33 @@ class FaceCalendar extends Command
             $start_date = (new Carbon($start_date))->addDay(1)->toDateString();
         }
         DB::connection('ar')->table('xs_calendar')->insert($count);
+
+//        更快但需要授权码
+//        $date = '2018-01-01';
+//        $end_date = (new Carbon($date))->endOfYear()->toDateString();
+//        $url = 'http://www.easybots.cn/api/holiday.php?d=';
+//
+//        $allDate = [];
+//        while ($date <= $end_date) {
+//            $reqDate = (new Carbon($date))->format('Ymd');
+//            $allDate[] = $reqDate;
+//            $date = (new Carbon($date))->addDay(1)->toDateString();
+//        }
+//        $day_str = join(',', $allDate);
+//        $client = new Client();
+//        $data = json_decode($client->request('get', $url . $day_str)->getBody());
+//
+//        $holiday_list = [];
+//        $workday_list = [];
+//        foreach ($data as $key => $value) {
+//            if ($value == 2) {
+//                $holiday_list[] = (new Carbon($key))->format('Y-m-d');
+//            }
+//
+//            if ($value == 0 && (new Carbon($key))->isWeekend()) {
+//                $workday_list[] = (new Carbon($key))->format('Y-m-d');
+//            }
+//        }
     }
 }
+
