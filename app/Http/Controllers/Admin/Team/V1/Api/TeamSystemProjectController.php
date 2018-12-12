@@ -39,6 +39,11 @@ class TeamSystemProjectController extends Controller
         if ($request->has('start_date') && $request->has('end_date')) {
             $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '$request->start_date' and '$request->end_date'");
         }
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
+        if (!$user->hasRole('legal-affairs-manager')) {
+            $query->where('applicant', $user->id);
+        }
         $teamSystemProject = $query->paginate(10);
         return $this->response()->paginator($teamSystemProject, new TeamSystemProjectTransformer());
 
@@ -77,6 +82,7 @@ class TeamSystemProjectController extends Controller
             'user_id' => $teamSystemProject->applicant,
             'project_name' => $teamSystemProject->name,
             'belong' => 'system',
+            'type' => 'system',
             'system_money' => $request->system_money,
             'total' => $request->system_money,
             'date' => Carbon::now()->toDateTimeString()
@@ -145,6 +151,11 @@ class TeamSystemProjectController extends Controller
         if ($request->has('start_date') && $request->has('end_date')) {
             $query->whereRaw("date_format(date,'%Y-%m-%d') between '$request->start_date' and '$request->end_date'");
         }
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
+        if (!$user->hasRole('legal-affairs-manager')) {
+            $query->where('user_id', $user->id);
+        }
 
         $teamPersonReward = $query->whereRaw("belong='system'")->paginate(10);
         return $this->response()->paginator($teamPersonReward, new TeamPersonRewardTransformer());
@@ -163,7 +174,7 @@ class TeamSystemProjectController extends Controller
         if (!$user->hasRole('legal-affairs-manager')) {
             abort(403, '无操作权限');
         }
-        $teamPersonReward->fill(array_merge($request->all(), ['total' => $request->system_money, 'belong' => 'system', 'date' => Carbon::now()->toDateTimeString()]))->save();
+        $teamPersonReward->fill(array_merge($request->all(), ['total' => $request->system_money, 'belong' => 'system', 'type' => 'system', 'date' => Carbon::now()->toDateTimeString()]))->save();
         return $this->response()->noContent()->setStatusCode(201);
     }
 

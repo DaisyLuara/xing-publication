@@ -222,7 +222,14 @@
   </div>
 </template>
 <script>
-import search from 'service/search'
+import {
+  getSearchAeraList,
+  getSearchMarketList,
+  getSearchPointList,
+  getSearchStaffsList,
+  getSearchSceneList,
+  getSearchProjectList
+} from 'service'
 import PersonTimes from './com/person_times'
 import PeopleNum from './com/people_num'
 import {
@@ -441,8 +448,7 @@ export default {
       this.getPoint()
     },
     getAreaList() {
-      return search
-        .getAeraList(this)
+      return getSearchAeraList(this)
         .then(response => {
           let data = response.data
           this.areaList = data
@@ -460,8 +466,7 @@ export default {
           include: 'area',
           area_id: this.searchForm.area_id
         }
-        return search
-          .getMarketList(this, args)
+        return getSearchMarketList(this, args)
           .then(response => {
             this.marketList = response.data
             if (this.marketList.length == 0) {
@@ -482,8 +487,7 @@ export default {
         market_id: this.searchForm.market_id[0]
       }
       this.searchLoading = true
-      return search
-        .gePointList(this, args)
+      return getSearchPointList(this, args)
         .then(response => {
           this.pointList = response.data
           this.searchLoading = false
@@ -499,8 +503,7 @@ export default {
       }
       if (query !== '') {
         this.searchLoading = true
-        return search
-          .getStaffsList(this, args)
+        return getSearchStaffsList(this, args)
           .then(response => {
             this.userList = response.data
             if (this.userList.length == 0) {
@@ -529,8 +532,7 @@ export default {
           if (!this.searchForm.arUserId) {
             delete args.ar_user_id
           }
-          return search
-            .getProjectList(this, args)
+          return getSearchProjectList(this, args)
             .then(response => {
               this.projectList = response.data
               this.searchLoading = false
@@ -544,8 +546,7 @@ export default {
           this.searchForm.arUserId = user_info.ar_user_id
           args.ar_user_id = this.searchForm.arUserId
           this.searchLoading = true
-          return search
-            .getProjectList(this, args)
+          return getSearchProjectList(this, args)
             .then(response => {
               this.projectList = response.data
               this.searchLoading = false
@@ -558,8 +559,7 @@ export default {
       }
     },
     getSceneList() {
-      return search
-        .getSceneList(this)
+      return getSearchSceneList(this)
         .then(response => {
           this.sceneList = response.data
         })

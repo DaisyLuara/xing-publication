@@ -29,6 +29,8 @@ class Coupon extends Model
         'qiniu_id',
         'oid',
         'belong',
+        'start_date',
+        'end_date',
     ];
 
     public function couponBatch()

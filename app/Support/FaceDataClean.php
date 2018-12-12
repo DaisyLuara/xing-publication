@@ -1751,7 +1751,7 @@ function teamBonusClean()
             ->selectRaw("versionname,online")
             ->get();
         foreach ($projectList as $item) {
-            TeamProject::query()->where('belong', $item->versionname)->update(['launch_date' => date('Y-m-d', $item->online)]);
+            TeamProject::query()->where('belong', $item->versionname)->update(['launch_date' => date('Y-m-d', $item->online / 1000)]);
         }
 
         $faceCount1 = DB::connection('ar')->table('xs_face_count_log as fcl')
@@ -1782,7 +1782,7 @@ function teamBonusClean()
             $uCPAMoney = round($item->omo_outnum * 0.2, 2);
             $totalMoney = $player7Money + $player15Money + $player21Money + $uCPAMoney;
 
-            $launchDate = date('Y-m-d', $item->online);
+            $launchDate = date('Y-m-d', $item->online / 1000);
 
             $teamProject = TeamProject::query()->where('belong', $item->belong)->first();
             //投放时长 当前日期-投放日期
@@ -1841,7 +1841,7 @@ function teamBonusClean()
             ->join('team_project_members as tpm', 'tp.id', '=', 'tpm.team_project_id')
             ->join('team_bonuses as tb', 'tp.belong', '=', 'tb.belong')
             ->whereRaw("date_format(date,'%Y-%m-%d')='$date'")
-            ->selectRaw("user_id,tp.project_name as project_name,tp.belong as belong,money,factor,rate")
+            ->selectRaw("user_id,tp.project_name as project_name,tp.belong as belong,money,factor,rate,tpm.type as type")
             ->get();
 
         $rewards = [];
@@ -1850,6 +1850,7 @@ function teamBonusClean()
                 'user_id' => $item->user_id,
                 'project_name' => $item->project_name,
                 'belong' => $item->belong,
+                'type' => $item->type,
                 'experience_money' => round($item->money * $item->factor * $item->rate, 6),
                 'total' => round($item->money * $item->factor * $item->rate, 6),
                 'date' => $date

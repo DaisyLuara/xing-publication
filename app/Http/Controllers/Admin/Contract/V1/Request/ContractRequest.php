@@ -2,21 +2,11 @@
 
 namespace App\Http\Controllers\Admin\Contract\V1\Request;
 
+use App\Http\Requests\Request;
 use Illuminate\Validation\Rule;
-use Dingo\Api\Http\FormRequest;
 
-class ContractRequest extends FormRequest
+class ContractRequest extends Request
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
-    {
-        return true;
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -31,7 +21,7 @@ class ContractRequest extends FormRequest
                     'type' => Rule::in([0, 1, 2]),
                     'receive_date' => 'string|nullable',
                     'ids' => 'string',
-                    'remark' => 'string|nullable|max:150',
+                    'remark' => 'string|nullable|max:1000',
                     'amount' => 'string'
                 ];
                 break;
@@ -41,7 +31,7 @@ class ContractRequest extends FormRequest
                     'type' => Rule::in([0, 1, 2]),
                     'receive_date' => 'string|nullable',
                     'ids' => 'string',
-                    'remark' => 'string|nullable|max:150'
+                    'remark' => 'string|nullable|max:1000'
                 ];
                 break;
             default:

@@ -164,8 +164,16 @@
 </template>
 
 <script>
-import search from 'service/search'
-import ad from 'service/ad'
+import {
+  saveAdLaunch,
+  getSearchAdTradeList,
+  getSearchAdvertisementList,
+  getSearchAdvertiserList,
+  getSearchPointList,
+  getSearchAeraList,
+  getSearchMarketList
+} from 'service'
+
 import {
   Form,
   Select,
@@ -233,8 +241,7 @@ export default {
   },
   methods: {
     getAdTradeList() {
-      return search
-        .getAdTradeList(this)
+      return getSearchAdTradeList(this)
         .then(response => {
           let data = response.data
           this.adTradeList = data
@@ -259,8 +266,7 @@ export default {
         advertiser_id: this.adForm.advertiser
       }
       this.searchLoading = true
-      return search
-        .getAdvertisementList(this, args)
+      return getSearchAdvertisementList(this, args)
         .then(response => {
           let data = response.data
           this.advertisementList = data
@@ -276,8 +282,7 @@ export default {
         ad_trade_id: this.adForm.adTrade
       }
       this.searchLoading = true
-      return search
-        .getAdvertiserList(this, args)
+      return getSearchAdvertiserList(this, args)
         .then(response => {
           let data = response.data
           this.advertiserList = data
@@ -295,8 +300,7 @@ export default {
     },
     getAreaList() {
       this.searchLoading = true
-      return search
-        .getAeraList(this)
+      return getSearchAeraList(this)
         .then(response => {
           let data = response.data
           this.areaList = data
@@ -317,8 +321,7 @@ export default {
         market_id: this.adForm.market[0]
       }
       this.searchLoading = true
-      return search
-        .gePointList(this, args)
+      return getSearchPointList(this, args)
         .then(response => {
           this.pointList = response.data
           this.searchLoading = false
@@ -336,8 +339,7 @@ export default {
           include: 'area',
           area_id: this.adForm.area
         }
-        return search
-          .getMarketList(this, args)
+        return getSearchMarketList(this, args)
           .then(response => {
             this.marketList = response.data
             if (this.marketList.length == 0) {
@@ -373,8 +375,7 @@ export default {
             oids: this.adForm.point,
             ktime: parseInt(this.adForm.cycle)
           }
-          return ad
-            .saveAdLaunch(this, args)
+          return saveAdLaunch(this, args)
             .then(response => {
               this.setting.loading = false
               this.$message({

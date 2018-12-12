@@ -121,7 +121,7 @@
   </div>
 </template>
 <script>
-import user from 'service/user'
+import { getManageableRoles, getUserList, deleteUser } from 'service'
 import auth from 'service/auth'
 import {
   Button,
@@ -180,8 +180,7 @@ export default {
       })
     },
     getRoleList() {
-      user
-        .getManageableRoles(this)
+      getManageableRoles(this)
         .then(result => {
           this.roleList = result.data
         })
@@ -212,8 +211,7 @@ export default {
       }
       this.setting.loadingText = '拼命加载中'
       this.setting.loading = true
-      return user
-        .getUserList(this, args)
+      return getUserList(this, args)
         .then(response => {
           this.setting.loading = false
           this.userList = response.data
@@ -245,8 +243,7 @@ export default {
         .then(() => {
           this.setting.loadingText = '删除中'
           this.setting.loading = true
-          user
-            .deleteUser(this, id)
+          deleteUser(this, id)
             .then(response => {
               this.setting.loading = false
               this.$message({

@@ -81,6 +81,10 @@
                   <span>{{ scope.row.date }}</span> 
                 </el-form-item>
                 <el-form-item 
+                  label="类型">
+                  <span>{{ scope.row.type }}</span> 
+                </el-form-item>
+                <el-form-item 
                   label="体验绩效">
                   <span>{{ scope.row.experience_money }}</span> 
                 </el-form-item>
@@ -117,6 +121,11 @@
             :show-overflow-tooltip="true"
             prop="date"
             label="获取时间"
+            min-width="100"/>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="type"
+            label="类型"
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
@@ -160,7 +169,11 @@
 </template>
 
 <script>
-import { getPersonRewardList, getPersonRewardTotal } from 'service'
+import {
+  getPersonRewardList,
+  getPersonRewardTotal,
+  handleDateTypeTransform
+} from 'service'
 import {
   Button,
   Input,
@@ -263,9 +276,11 @@ export default {
   methods: {
     getPersonRewardTotal() {
       let args = {
-        start_date: this.handleDateTransform(this.filters.beginDate[0]),
-        end_date: this.handleDateTransform(this.filters.beginDate[1])
+        name: this.filters.name,
+        start_date: handleDateTypeTransform(this.filters.beginDate[0]),
+        end_date: handleDateTypeTransform(this.filters.beginDate[1])
       }
+      !this.filters.name ? delete args.name : args
       getPersonRewardTotal(this, args)
         .then(res => {
           this.moneyTotal = res.total_reward
@@ -282,8 +297,8 @@ export default {
       let args = {
         page: this.pagination.currentPage,
         name: this.filters.name,
-        start_date: this.handleDateTransform(this.filters.beginDate[0]),
-        end_date: this.handleDateTransform(this.filters.beginDate[1])
+        start_date: handleDateTypeTransform(this.filters.beginDate[0]),
+        end_date: handleDateTypeTransform(this.filters.beginDate[1])
       }
       if (this.filters.name === '') {
         delete args.name
@@ -323,17 +338,6 @@ export default {
       this.pagination.currentPage = 1
       this.getPersonRewardList()
       this.getPersonRewardTotal()
-    },
-    handleDateTransform(valueDate) {
-      let date = new Date(valueDate)
-      let year = date.getFullYear() + '-'
-      let mouth =
-        (date.getMonth() + 1 < 10
-          ? '0' + (date.getMonth() + 1)
-          : date.getMonth() + 1) + '-'
-      let day =
-        (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ''
-      return year + mouth + day
     }
   }
 }
