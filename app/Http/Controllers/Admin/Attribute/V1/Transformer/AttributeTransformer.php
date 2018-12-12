@@ -14,7 +14,6 @@ class AttributeTransformer extends TransformerAbstract
         return [
             'id' => $attribute->id,
             'name' => $attribute->name,
-            'desc' => $attribute->desc,
         ];
     }
 
