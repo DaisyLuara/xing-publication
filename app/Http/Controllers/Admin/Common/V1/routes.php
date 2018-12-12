@@ -79,6 +79,7 @@ $api->version('v1', [
             $api->get('customer/query', 'QueryController@customerQuery');
             $api->get('user/query', 'QueryController@userQuery');
             $api->get('team_rate/query', 'QueryController@teamRateQuery');
+            $api->get('attribute/query','QueryController@attributeQuery');
 
             //消息通知
             $api->get('user/notifications', 'NotificationsController@index');
