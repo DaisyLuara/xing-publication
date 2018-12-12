@@ -28,8 +28,8 @@ class CouponTransformer extends TransformerAbstract
             'taobao_user_id' => $coupon->taobao_user_id,
             'created_at' => $coupon->created_at->toDateTimeString(),
             'use_date' => $coupon->use_date ? $coupon->use_date->toDatetimeString() : '',
-            'start_date' => $coupon->start_date ? $coupon->start_date->toDatetimeString() : '',
-            'end_date' => $coupon->end_date ? $coupon->end_date->toDatetimeString() : '',
+            'effect_start_date' => $coupon->start_date ? $coupon->start_date->toDatetimeString() : '',
+            'effect_end_date' => $coupon->end_date ? $coupon->end_date->toDatetimeString() : '',
         ];
     }
 
