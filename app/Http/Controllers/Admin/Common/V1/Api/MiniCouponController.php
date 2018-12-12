@@ -89,13 +89,13 @@ class MiniCouponController extends Controller
             $fileUpload = FileUpload::query()->findOrFail($id);
 
             abort_if(!$fileUpload->acid, 500, '无效活动');
-            $query->whereHas('activityCouponBatches', function ($q) use($fileUpload){
+            $query->whereHas('activityCouponBatches', function ($q) use ($fileUpload) {
                 $q->where('activity_id', $fileUpload->acid);
             });
         }
 
         if ($request->has('acid')) {
-            $query->whereHas('activityCouponBatches', function ($q) use($request){
+            $query->whereHas('activityCouponBatches', function ($q) use ($request) {
                 $q->where('activity_id', $request->acid);
             });
         }
@@ -135,13 +135,6 @@ class MiniCouponController extends Controller
             abort(500, '优惠券已发完!');
         }
 
-        $now = Carbon::now()->timestamp;
-        $startDate = strtotime($couponBatch->start_date);
-        $endDdate = strtotime($couponBatch->end_date);
-
-        abort_if($now <= $startDate, 500, '活动未开启!');
-        abort_if($now >= $endDdate, 500, '活动已结束!');
-
         //每天最大领取量
         if (!$couponBatch->dmg_status) {
             $dateString = Carbon::now()->toDateString();
@@ -166,12 +159,24 @@ class MiniCouponController extends Controller
             }
         }
 
+
+        //券的有效期
+        if ($couponBatch->is_fixed_date) {
+            $startDate = Carbon::createFromTimeString($couponBatch->start_date);;
+            $endDate = Carbon::createFromTimeString($couponBatch->end_date);
+        } else {
+            $startDate = Carbon::now()->addDays($couponBatch->delay_effective_day);
+            $endDate = Carbon::now()->addDays($couponBatch->delay_effective_day + $couponBatch->effective_day);
+        }
+
         //创建优惠券
         $coupon = Coupon::create([
             'code' => uniqid(),
             'coupon_batch_id' => $couponBatch->id,
             'status' => 3,
             'member_uid' => $memberUID,
+            'start_date' => $startDate,
+            'end_date' => $endDate,
         ]);
 
         //减少库存
