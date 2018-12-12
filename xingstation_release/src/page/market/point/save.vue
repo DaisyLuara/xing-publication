@@ -49,13 +49,13 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="业态" prop="attribute_name">
-              <el-radio-group v-model="pointForm.attribute_name">
+            <el-form-item label="业态" prop="attribute_id">
+              <el-radio-group v-model="pointForm.attribute_id">
                 <el-radio
                   v-for="item in formatsList"
                   :label="item.id"
                   :key="item.id"
-                >{{ item.name }}</el-radio>
+                  class="role-radio">{{ item.name }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-tab-pane>
@@ -356,7 +356,8 @@ import {
   siteSavePoint,
   siteModifyPoint,
   getSearchAeraList,
-  getSearchMarketList
+  getSearchMarketList,
+  getFormatsList
 } from "service";
 
 import {
@@ -514,7 +515,7 @@ export default {
         marketid: "",
         area_id: null,
         name: "",
-        attribute_name: "",
+        attribute_id: "",
         contract: {
           type: "free",
           contract: 1,
@@ -662,6 +663,7 @@ export default {
     this.setting.loading = true;
     this.pointID = this.$route.params.uid;
     this.getAreaList();
+    this.getFormatsList();
     let roles = JSON.parse(this.$cookie.get("user_info")).roles.data;
     roles.map(r => {
       if (r.display_name === "管理员") {
@@ -676,6 +678,15 @@ export default {
     }
   },
   methods: {
+    getFormatsList() {
+      getFormatsList(this)
+        .then(res => {
+          this.formatsList = res.data;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
     siteHandle() {
       if (!this.pointID) {
         this.getMarketDetail(this.pointForm.marketid);
@@ -707,6 +718,7 @@ export default {
           this.pointForm.name = res.name;
           this.pointForm.area_id = res.area.id;
           this.pointForm.marketid = res.market.id;
+          this.pointForm.attribute_id = res.attribute_id;
           this.fieldHandle(res);
           this.setting.loading = false;
         })
