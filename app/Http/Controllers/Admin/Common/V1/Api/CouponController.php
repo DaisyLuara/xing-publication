@@ -16,7 +16,9 @@ use App\Http\Controllers\Admin\Common\V1\Request\CouponRequest;
 use App\Http\Controllers\Admin\Coupon\V1\Models\UserCouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\Common\V1\Transformer\CouponTransformer;
+use App\Http\Controllers\Admin\WeChat\V1\Models\ThirdPartyUser;
 use App\Http\Controllers\Controller;
+use App\Models\WeChatUser;
 use Carbon\Carbon;
 use DB;
 use Log;
@@ -260,7 +262,9 @@ class CouponController extends Controller
         //第三方优惠券
         if ($couponBatch->third_code) {
 
-            $result = $this->sendMallCooCoupon($mobile, $couponBatch->third_code);
+            $user = WeChatUser::query()->findOrFail($userID, ['mallcoo_open_user_id']);
+            $mallcooUser = ThirdPartyUser::query()->findOrFail($user->mallcoo_open_user_id, ['mobile']);
+            $result = $this->sendMallCooCoupon($mallcooUser->mobile, $couponBatch->third_code);
             if ($result['Code'] != 1) {
                 abort(500, $result['Message']);
             }
