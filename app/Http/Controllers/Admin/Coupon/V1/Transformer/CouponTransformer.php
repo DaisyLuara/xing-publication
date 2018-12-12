@@ -27,9 +27,9 @@ class CouponTransformer extends TransformerAbstract
             'wx_user_id' => $coupon->wx_user_id,
             'taobao_user_id' => $coupon->taobao_user_id,
             'created_at' => $coupon->created_at->toDateTimeString(),
-            'use_date' => $coupon->use_date ? $coupon->use_date : '',
-            'effect_start_date' => $coupon->start_date ? $coupon->start_date : '',
-            'effect_end_date' => $coupon->end_date ? $coupon->end_date : '',
+            'use_date' => $coupon->use_date ? $coupon->use_date->toDatetimeString() : '',
+            'start_date' => $coupon->start_date ? $coupon->start_date->toDatetimeString() : '',
+            'end_date' => $coupon->end_date ? $coupon->end_date->toDatetimeString() : '',
         ];
     }
 

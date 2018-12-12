@@ -225,8 +225,8 @@ class MiniCouponController extends Controller
             abort(500, $e->getMessage());
         }
 
-return $this->response->item($coupon, new CouponTransformer());
+        return $this->response->item($coupon, new CouponTransformer());
 
-}
+    }
 
 }
