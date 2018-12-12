@@ -3,7 +3,7 @@
     <div v-loading="setting.loading" :element-loading-text="setting.loadingText" class="pane">
       <div
         class="pane-title"
-      >{{ programID ? (((role.name==='project-manager' && status===1) || role.name === 'legal-affairs-manager') ? '修改项目' : '查看项目') : '新增项目'}}</div>
+      >{{ programID ? (((role.name==='project-manager' && status===1) || role.name === 'legal-affairs-manager' || role.name === 'bonus-manager') ? '修改项目' : '查看项目') : '新增项目'}}</div>
       <el-form ref="programForm" :model="programForm" label-position="left" label-width="80px">
         <el-row>
           <el-col :span="12">
@@ -17,7 +17,6 @@
                 :loading="searchLoading"
                 remote
                 :remote-method="getProject"
-                :disabled="role.name === 'legal-affairs-manager'"
                 placeholder="请输入节目名称"
                 filterable
                 clearable
@@ -46,18 +45,30 @@
           <el-col :span="12">
             <el-form-item label="节目属性" prop="project_attribute">
               <el-radio-group v-model="programForm.project_attribute">
-                <el-radio :label="1" :disabled="role.name === 'legal-affairs-manager'">基础条目</el-radio>
-                <el-radio :label="2" :disabled="role.name === 'legal-affairs-manager'">通用节目</el-radio>
-                <el-radio :label="3" :disabled="role.name === 'legal-affairs-manager'">定制节目</el-radio>
-                <el-radio :label="4" :disabled="role.name === 'legal-affairs-manager'">定制项目</el-radio>
+                <el-radio
+                  :label="1"
+                >基础条目</el-radio>
+                <el-radio
+                  :label="2"
+                >通用节目</el-radio>
+                <el-radio
+                  :label="3"
+                >定制节目</el-radio>
+                <el-radio
+                  :label="4"
+                >定制项目</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="联动属性" prop="link_attribute">
               <el-radio-group v-model="programForm.link_attribute">
-                <el-radio :label="1" :disabled="role.name === 'legal-affairs-manager'">是</el-radio>
-                <el-radio :label="0" :disabled="role.name === 'legal-affairs-manager'">否</el-radio>
+                <el-radio
+                  :label="1"
+                >是</el-radio>
+                <el-radio
+                  :label="0"
+                >否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -66,16 +77,24 @@
           <el-col :span="12">
             <el-form-item label="H5属性" prop="h5_attribute">
               <el-radio-group v-model="programForm.h5_attribute" @change="h5Handle">
-                <el-radio :label="1" :disabled="role.name === 'legal-affairs-manager'">基础模版</el-radio>
-                <el-radio :label="2" :disabled="role.name === 'legal-affairs-manager'">复杂模版</el-radio>
+                <el-radio
+                  :label="1"
+                >基础模版</el-radio>
+                <el-radio
+                  :label="2"
+                >复杂模版</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="小偶属性" prop="xo_attribute">
               <el-radio-group v-model="programForm.xo_attribute">
-                <el-radio :label="1" :disabled="role.name === 'legal-affairs-manager'">是</el-radio>
-                <el-radio :label="0" :disabled="role.name === 'legal-affairs-manager'">否</el-radio>
+                <el-radio
+                  :label="1"
+                >是</el-radio>
+                <el-radio
+                  :label="0"
+                >否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -84,8 +103,12 @@
           <el-col :span="12">
             <el-form-item label="节目类型" prop="type">
               <el-radio-group v-model="programForm.type">
-                <el-radio :label="0" :disabled="role.name === 'legal-affairs-manager'">正常节目</el-radio>
-                <el-radio :label="1" :disabled="role.name === 'legal-affairs-manager'">提前节目</el-radio>
+                <el-radio
+                  :label="0"
+                >正常节目</el-radio>
+                <el-radio
+                  :label="1"
+                >提前节目</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -117,7 +140,7 @@
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.interaction,interactionRate,'interaction')"
-              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager') ? '修改':'详情' }}</el-button>
+              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager' || role.name === 'bonus-manager') ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -144,7 +167,7 @@
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.originality,creativeRate,'creative')"
-              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager') ? '修改':'详情' }}</el-button>
+              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager' || role.name === 'bonus-manager') ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -176,7 +199,7 @@
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.h5,h5Rate,'H5')"
-              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager') ? '修改':'详情' }}</el-button>
+              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager' || role.name === 'bonus-manager') ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -203,7 +226,7 @@
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.animation,animateRate,'animate')"
-              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager') ? '修改':'详情' }}</el-button>
+              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager' || role.name === 'bonus-manager') ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -232,7 +255,7 @@
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.plan,wholeRate,'whole')"
-              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager') ? '修改':'详情' }}</el-button>
+              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager' || role.name === 'bonus-manager') ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -259,7 +282,7 @@
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.tester,testRate,'test')"
-              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager') ? '修改':'详情' }}</el-button>
+              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager'|| role.name === 'bonus-manager') ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -288,19 +311,76 @@
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.operation,platformRate,'platform')"
-              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager') ? '修改':'详情' }}</el-button>
+              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager'|| role.name === 'bonus-manager') ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item label="项目说明" prop="remark">
+            <el-form-item
+              :rules="[{ required: true, message: '请输入艺术风格创新点', trigger: 'submit' }]"
+              label="艺术风格创新点"
+              prop="remark"
+              label-width="120px"
+            >
               <el-input
                 v-model="programForm.remark"
-                :autosize="{ minRows: 2, maxRows: 4}"
-                :maxlength="400"
+                :autosize="{ minRows: 2}"
+                :maxlength="1000"
                 type="textarea"
-                placeholder="请填写项目说明"
+                placeholder="请填写艺术风格创新点"
+                class="text-input"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item
+              :rules="[{ required: true, message: '请输入动效体验创新点', trigger: 'submit' }]"
+              label="动效体验创新点"
+              prop="remark"
+              label-width="120px"
+            >
+              <el-input
+                v-model="programForm.remark"
+                :autosize="{ minRows: 2}"
+                :maxlength="1000"
+                type="textarea"
+                placeholder="请填写动效体验创新点"
+                class="text-input"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item
+              :rules="[{ required: true, message: '请输入交互技术创新点', trigger: 'submit' }]"
+              label="交互技术创新点"
+              prop="remark"
+              label-width="120px"
+            >
+              <el-input
+                v-model="programForm.remark"
+                :autosize="{ minRows: 2}"
+                :maxlength="1000"
+                type="textarea"
+                placeholder="请填写交互技术创新点"
+                class="text-input"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label-width="120px" label="备注" prop="remark">
+              <el-input
+                v-model="programForm.remark"
+                :autosize="{ minRows: 2}"
+                :maxlength="1000"
+                type="textarea"
+                placeholder="请填写备注"
                 class="text-input"
               />
             </el-form-item>
@@ -309,7 +389,7 @@
         <el-form-item>
           <!-- 产品经理可以保存 -->
           <el-button
-            v-if="(role.name === 'project-manager' && (status === 1 || status === 2)) || role.name === 'legal-affairs-manager'"
+            v-if="(role.name === 'project-manager' && (status === 1 || status === 2)) || role.name === 'legal-affairs-manager'|| role.name === 'bonus-manager'"
             type="primary"
             @click="submit('programForm')"
           >保存</el-button>
@@ -330,7 +410,7 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false,disabledChange = true">取 消</el-button>
         <el-button
-          v-if="(role.name === 'project-manager' && status === 1) || role.name === 'legal-affairs-manager'"
+          v-if="(role.name === 'project-manager' && (status === 1 || status === 2)) || role.name === 'legal-affairs-manager'|| role.name === 'bonus-manager'"
           type="primary"
           @click="rateSubmit"
         >确 定</el-button>
