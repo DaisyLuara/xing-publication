@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateWxUsersTable extends Migration
+class CreateThirdPartyUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateWxUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('wx_users', function (Blueprint $table) {
+        Schema::create('third_party_users', function (Blueprint $table) {
             $table->increments('id');
             $table->tinyInteger('subscribe')->default(0);
             $table->string('nickname')->nullable();
@@ -36,6 +36,6 @@ class CreateWxUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('wx_users');
+        Schema::dropIfExists('third_party_users');
     }
 }

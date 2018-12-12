@@ -20,7 +20,9 @@ class WeChatUser extends Model
         'openid',
         'mobile',
         'mallcoo_open_user_id',
-        'birthday'
+        'birthday',
+        'mallcoo_wx_open_id',
+        'mall_card_apply_time',
     ];
 
 

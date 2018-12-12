@@ -43,41 +43,36 @@ class UserController extends Controller
         }
 
         //获取会员信息
-        $userInfo = $mall_coo->getUserInfoByOpenUserID($result['Data']['OpenUserId']);
+        $response = $mall_coo->getUserInfoByOpenUserID($result['Data']['OpenUserId']);
+        if ($response['Code'] !==1) {
+            return $response['Message'];
+        }
 
-        $open_user_id = $userInfo['Data']['OpenUserId'];
-        $mobile = $userInfo['Data']['Mobile'];
-        $username = $userInfo['Data']['UserName'];
-        $gender = $userInfo['Data']['Gender'];
-        $birthday = $userInfo['Data']['Birthday'];
+        $userInfo          = $response['Data'];
+        $openUserId        = $userInfo['OpenUserID'];
+        $mobile            = $userInfo['Mobile'];
+        $mallCooWxOpenId   = $userInfo['WXOpenID'];
+        $username          = $userInfo['UserName'];
+        $gender            = $userInfo['Gender'];
+        $birthday          = $userInfo['Birthday'];
+        $mallCardApplyTime = $userInfo['MallCardApplyTime'];
 
         $separator = strpos($redirect_url, '?') ? '&' : '?';
-        $redirect_url = $redirect_url . $separator . 'open_user_id=' . $open_user_id;
+        $redirect_url = $redirect_url . $separator . 'open_user_id=' . $openUserId;
 
         WeChatUser::updateOrCreate(
-            ['mallcoo_open_user_id' => $open_user_id],
+            ['mallcoo_open_user_id' => $openUserId],
             [
                 'mobile' => $mobile,
                 'username' => $username,
+                'mallcoo_wx_open_id' => $mallCooWxOpenId,
                 'gender' => $gender,
-                'birthday' => $birthday
+                'birthday' => $birthday,
+                'mall_card_apply_time' => $mallCardApplyTime,
             ]
         );
 
         return redirect($redirect_url);
-    }
-
-    /**
-     * 通过 Ticket 获取 Token
-     *
-     * @param string $sTicket Ticket
-     * @return
-     */
-    public function GetTokenByTicket($sTicket)
-    {
-        $mall_coo = app('mall_coo');
-        $sUrl = 'https://openapi10.mallcoo.cn/User/OAuth/v1/GetToken/ByTicket/';
-        return $mall_coo->send($sUrl, array('Ticket' => $sTicket));
     }
 
     /**
@@ -87,17 +82,21 @@ class UserController extends Controller
     public function getUserByToken(Request $request)
     {
         $this->validate($request, [
-            'UserToken' => 'required'
+            'OpenUserId' => 'required'
         ]);
 
         $mall_coo = app('mall_coo');
-        $sUrl = 'https://openapi10.mallcoo.cn/User/BaseInfo/v1/Get/ByToken/';
+        $sUrl = 'https://openapi10.mallcoo.cn/Shop/V1/GetList/';
 
         $data = [
-            'UserToken' => $request->UserToken,
+              "PageIndex" => 1,
+              "PageSize" => null,
+              "FloorID" => null,
+              "CommercialTypeID" => null,
         ];
 
         $result = $mall_coo->send($sUrl, $data);
+        dd($result);
         abort_if($result['Code'] != 1, 500, $result['Message']);
 
         return response()->json($result['Data']);
