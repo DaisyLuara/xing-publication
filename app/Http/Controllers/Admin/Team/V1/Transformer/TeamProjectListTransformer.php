@@ -50,6 +50,9 @@ class TeamProjectListTransformer extends TransformerAbstract
             'begin_date' => $teamProject->begin_date,
             'online_date' => $teamProject->online_date,
             'launch_date' => $teamProject->project->online != 0 ? date('Y-m-d', $teamProject->project->online / 1000) : null,
+            'art_innovate' => $teamProject->art_innovate,
+            'dynamic_innovate' => $teamProject->dynamic_innovate,
+            'interact_innovate' => $teamProject->interact_innovate,
             'remark' => $teamProject->remark,
             'status' => $this->statusMapping[$teamProject->status],
             'type' => $teamProject->type == 1 ? '提前节目' : '正常节目'

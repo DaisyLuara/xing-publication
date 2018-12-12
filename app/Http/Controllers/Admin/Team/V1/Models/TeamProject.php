@@ -18,6 +18,9 @@ class TeamProject extends Model
         'xo_attribute',
         'begin_date',
         'online_date',
+        'art_innovate',
+        'dynamic_innovate',
+        'interact_innovate',
         'remark',
         'status',
         'type'

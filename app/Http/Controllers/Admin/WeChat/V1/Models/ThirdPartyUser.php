@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Admin\WeChat\V1\Models;
 
+use App\Http\Controllers\Admin\MallCoo\V1\Models\MallcooScoreHistory;
 use App\Models\Model;
 
-class WeChatUser extends Model
+class ThirdPartyUser extends Model
 {
 
-    public $table = 'wx_users';
+    public $table = 'third_party_users';
     public $primaryKey = 'id';
 
     public $fillable = [
@@ -35,6 +36,11 @@ class WeChatUser extends Model
         'subscribe' => 'boolean',
         'gendor' => 'boolean',
     ];
+
+    public function mallcoo_score_histories()
+    {
+        return $this->hasMany(MallcooScoreHistory::class, 'mallcoo_open_user_id', 'mallcoo_wx_open_id');
+    }
 
 
 }

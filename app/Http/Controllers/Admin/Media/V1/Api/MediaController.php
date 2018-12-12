@@ -17,7 +17,6 @@ class MediaController extends Controller
     {
         $user = $this->user();
         $companyID = $user->company_id;
-        $ar_user_id = $user->ar_user_id;
         /** @var  $file \Illuminate\Http\UploadedFile */
         $file = $request->file;
 
@@ -30,7 +29,7 @@ class MediaController extends Controller
             $width = $image->width();
         }
 
-        $url = $uploader->save($file, "contract/" . str_plural($request->type));
+        $url = $uploader->save($file, $request);
 
         $data = [
             'size' => $file->getSize(),

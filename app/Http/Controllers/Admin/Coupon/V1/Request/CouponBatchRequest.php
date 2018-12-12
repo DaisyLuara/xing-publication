@@ -27,7 +27,7 @@ class CouponBatchRequest extends Request
                     'name' => 'required|string',
                     'description' => 'string',
                     'image_url' => 'url',
-                    'bs_image_url' => 'url',
+                    'bs_image_url' => 'url|nullable',
                     'start_date' => 'date',
                     'end_date' => 'date|after_or_equal:start_date',
                     'amount' => 'alpha_num',
@@ -41,7 +41,7 @@ class CouponBatchRequest extends Request
                     'delay_effective_day' => 'alpha_num',
                     'effective_day' => 'alpha_num',
                     'title' => 'filled',
-                    'credit' => 'alpha_num',
+                    'credit' => 'alpha_num|nullable',
                 ];
                 break;
             case 'PATCH':
@@ -49,7 +49,7 @@ class CouponBatchRequest extends Request
                     'name' => 'string',
                     'description' => 'string',
                     'image_url' => 'url',
-                    'bs_image_url' => 'url',
+                    'bs_image_url' => 'url|nullable',
                     'start_date' => 'date',
                     'end_date' => 'date|after_or_equal:start_date',
                     'amount' => 'alpha_num',
@@ -62,7 +62,7 @@ class CouponBatchRequest extends Request
                     'is_fixed_date' => Rule::in([0, 1]),
                     'delay_effective_day' => 'alpha_num',
                     'effective_day' => 'alpha_num',
-                    'credit' => 'alpha_num',
+                    'credit' => 'alpha_num|nullable',
                 ];
 
                 break;
