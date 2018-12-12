@@ -58,6 +58,8 @@ class CouponBatchController extends Controller
             $couponBatch->update(['wechat_coupon_batch_id' => $wechatCouponBatch->id]);
         }
 
+        activity('coupon_batch')->on($couponBatch)->withProperties($request->all())->log('新增优惠券规则');
+
         return $this->response->item($couponBatch, new CouponBatchTransformer())
             ->setStatusCode(201);
     }
@@ -68,6 +70,9 @@ class CouponBatchController extends Controller
         if ($request->wechat && $couponBatch->wechat) {
             $couponBatch->wechat()->update($request['wechat']);
         }
+
+        activity('coupon_batch')->on($couponBatch)->withProperties($request->all())->log('修改优惠券规则');
+
         return $this->response->item($couponBatch, new CouponBatchTransformer())
             ->setStatusCode(201);
     }
