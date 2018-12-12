@@ -440,17 +440,25 @@ export default {
     let user_info = JSON.parse(Cookies.get("user_info"));
     this.role = user_info.roles.data[0];
     this.getUserList();
-    this.getTeamRateList();
+
     if (this.programID) {
-      this.getProgramDetails();
+      this.detailInit();
     } else {
       this.setting.loading = true;
-
+      this.getTeamRateList();
       this.programForm.applicant_name = user_info.name;
       this.programForm.applicant = user_info.id;
     }
   },
   methods: {
+    async detailInit() {
+      try {
+        await this.getTeamRateList();
+        await this.getProgramDetails();
+      } catch (e) {
+        console.log(e);
+      }
+    },
     h5Handle(val) {
       this.h5Rate = val === 1 ? this.h5Rate1 : this.h5Rate2;
     },

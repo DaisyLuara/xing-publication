@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Point\V1\Models;
 
+use App\Http\Controllers\Admin\Attribute\V1\Models\Attribute;
 use App\Http\Controllers\Admin\Project\V1\Models\Project;
 use App\Http\Controllers\Admin\User\V1\Models\ArUser;
 use App\Models\ArModel;
@@ -52,6 +53,11 @@ class Point extends ArModel
     public function contract()
     {
         return $this->hasOne(PointContract::class, 'oid', 'oid');
+    }
+
+    public function attribute()
+    {
+        return $this->belongsToMany(Attribute::class, 'xs_point_attributes', 'point_id', 'attribute_id')->where('parent_id', '=', '5');
     }
 
 }
