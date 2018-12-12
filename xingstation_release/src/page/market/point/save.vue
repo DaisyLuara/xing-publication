@@ -1,149 +1,117 @@
 <template>
-  <div 
-    class="item-wrap-template">
-    <div 
-      v-loading="setting.loading"
-      :element-loading-text="setting.loadingText" 
-      class="pane">
-      <div 
-        class="pane-title">
-        {{ pointID ? '修改场地' : '新建场地' }}
-      </div>
+  <div class="item-wrap-template">
+    <div v-loading="setting.loading" :element-loading-text="setting.loadingText" class="pane">
+      <div class="pane-title">{{ pointID ? '修改场地' : '新建场地' }}</div>
       <el-form
         ref="pointForm"
         :model="pointForm"
         :rules="rules"
-        label-width="150px">
-        <el-tabs 
-          v-model="activeName" 
-          type="card">
-          <el-tab-pane 
-            label="点位配置" 
-            name="first">
-            <el-form-item 
-              label="点位名称" 
-              prop="name" >
-              <el-input 
-                v-model="pointForm.name" 
-                placeholder="请输入点位名称" 
-                class="item-input"/>
+        label-width="150px"
+        class="point-form"
+      >
+        <el-tabs v-model="activeName" type="card">
+          <el-tab-pane label="点位配置" name="first">
+            <el-form-item label="点位名称" prop="name">
+              <el-input v-model="pointForm.name" placeholder="请输入点位名称" class="item-input"/>
             </el-form-item>
-            <el-form-item 
-              label="区域" 
-              prop="area_id" >
-              <el-select 
-                v-model="pointForm.area_id" 
-                placeholder="请选择" 
-                filterable 
+            <el-form-item label="区域" prop="area_id">
+              <el-select
+                v-model="pointForm.area_id"
+                placeholder="请选择"
+                filterable
                 clearable
-                @change="areaHandle">
+                @change="areaHandle"
+              >
                 <el-option
                   v-for="item in areaList"
                   :key="item.id"
                   :label="item.name"
-                  :value="item.id"/>
+                  :value="item.id"
+                />
               </el-select>
             </el-form-item>
-            <el-form-item 
-              label="场地" 
-              prop="marketid" >
-              <el-select 
-                v-model="pointForm.marketid" 
+            <el-form-item label="场地" prop="marketid">
+              <el-select
+                v-model="pointForm.marketid"
                 :remote-method="getMarket"
-                :loading="searchLoading" 
+                :loading="searchLoading"
                 placeholder="请选择"
                 filterable
-                remote 
+                remote
                 clearable
-                @change="siteHandle">
+                @change="siteHandle"
+              >
                 <el-option
                   v-for="item in siteList"
                   :key="item.id"
                   :label="item.name"
-                  :value="item.id"/>
+                  :value="item.id"
+                />
               </el-select>
             </el-form-item>
-          </el-tab-pane>
-          <el-tab-pane
-            v-loading="contractFlag" 
-            label="合约配置" 
-            name="second">
-            <el-form-item 
-              label="点位类型" 
-              prop="contract.type" >
-              <el-radio-group v-model="pointForm.contract.type" >
-                <el-radio 
-                  v-for="item in typeList"
-                  :label="item.id"  
-                  :key="item.id">{{ item.name }}</el-radio>
+            <el-form-item label="业态" prop="attribute_name">
+              <el-radio-group v-model="pointForm.attribute_name">
+                <el-radio
+                  v-for="item in formatsList"
+                  :label="item.id"
+                  :key="item.id"
+                >{{ item.name }}</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item 
-              label="合同" 
-              prop="contract.contract" >
-              <el-radio  
-                v-model="pointForm.contract.contract" 
-                :label="0" >无</el-radio>
-              <el-radio  
-                v-model="pointForm.contract.contract" 
-                :label="1" >有</el-radio>
+          </el-tab-pane>
+          <el-tab-pane v-loading="contractFlag" label="合约配置" name="second">
+            <el-form-item label="点位类型" prop="contract.type">
+              <el-radio-group v-model="pointForm.contract.type">
+                <el-radio v-for="item in typeList" :label="item.id" :key="item.id">{{ item.name }}</el-radio>
+              </el-radio-group>
             </el-form-item>
-            <el-form-item 
-              label="合同公司" 
-              prop="contract.contract_company" >
-              <el-input 
-                v-model="pointForm.contract.contract_company" 
-                placeholder="请输入合同公司" 
-                class="item-input"/>
+            <el-form-item label="合同" prop="contract.contract">
+              <el-radio v-model="pointForm.contract.contract" :label="0">无</el-radio>
+              <el-radio v-model="pointForm.contract.contract" :label="1">有</el-radio>
             </el-form-item>
-            <el-form-item 
-              label="合同编号" 
-              prop="contract.contract_num" >
-              <el-input 
-                v-model="pointForm.contract.contract_num" 
-                placeholder="请输入合同编号" 
-                class="item-input"/>
+            <el-form-item label="合同公司" prop="contract.contract_company">
+              <el-input
+                v-model="pointForm.contract.contract_company"
+                placeholder="请输入合同公司"
+                class="item-input"
+              />
             </el-form-item>
-            <el-form-item 
-              label="合同联系人" 
-              prop="contract.contract_user" >
-              <el-input 
-                v-model="pointForm.contract.contract_user" 
-                placeholder="请输入合同联系人" 
-                class="item-input"/>
+            <el-form-item label="合同编号" prop="contract.contract_num">
+              <el-input
+                v-model="pointForm.contract.contract_num"
+                placeholder="请输入合同编号"
+                class="item-input"
+              />
             </el-form-item>
-            <el-form-item 
-              label="联系方式" 
-              prop="contract.contract_phone" >
-              <el-input 
-                v-model="pointForm.contract.contract_phone" 
-                placeholder="请输入联系方式" 
-                class="item-input"/>
+            <el-form-item label="合同联系人" prop="contract.contract_user">
+              <el-input
+                v-model="pointForm.contract.contract_user"
+                placeholder="请输入合同联系人"
+                class="item-input"
+              />
             </el-form-item>
-            <el-form-item
-              v-if="payFlag" 
-              label="租金" 
-              prop="contract.pay">
-              <el-input 
-                v-model="pointForm.contract.pay" 
-                placeholder="请输入租金" 
-                class="item-input">
+            <el-form-item label="联系方式" prop="contract.contract_phone">
+              <el-input
+                v-model="pointForm.contract.contract_phone"
+                placeholder="请输入联系方式"
+                class="item-input"
+              />
+            </el-form-item>
+            <el-form-item v-if="payFlag" label="租金" prop="contract.pay">
+              <el-input v-model="pointForm.contract.pay" placeholder="请输入租金" class="item-input">
                 <template slot="append">元／年</template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="合同开始时间" 
-              prop="contract.enter_sdate">
+            <el-form-item label="合同开始时间" prop="contract.enter_sdate">
               <el-date-picker
                 v-model="pointForm.contract.enter_sdate"
                 type="date"
                 placeholder="选择日期"
                 class="coupon-form-date"
-                value-format="yyyy-MM-dd HH:mm:ss"/>
+                value-format="yyyy-MM-dd HH:mm:ss"
+              />
             </el-form-item>
-            <el-form-item 
-              label="合同结束时间"
-              prop="contract.enter_edate">
+            <el-form-item label="合同结束时间" prop="contract.enter_edate">
               <el-date-picker
                 v-model="pointForm.contract.enter_edate"
                 type="date"
@@ -152,19 +120,16 @@
                 value-format="yyyy-MM-dd HH:mm:ss"
               />
             </el-form-item>
-            <el-form-item 
-              label="实际入驻开始时间" 
-              prop="contract.oper_sdate">
+            <el-form-item label="实际入驻开始时间" prop="contract.oper_sdate">
               <el-date-picker
                 v-model="pointForm.contract.oper_sdate"
                 type="date"
                 placeholder="选择日期"
                 class="coupon-form-date"
-                value-format="yyyy-MM-dd HH:mm:ss"/>
+                value-format="yyyy-MM-dd HH:mm:ss"
+              />
             </el-form-item>
-            <el-form-item 
-              label="实际入驻结束时间"
-              prop="contract.oper_edate">
+            <el-form-item label="实际入驻结束时间" prop="contract.oper_edate">
               <el-date-picker
                 v-model="pointForm.contract.oper_edate"
                 type="date"
@@ -173,346 +138,210 @@
                 value-format="yyyy-MM-dd HH:mm:ss"
               />
             </el-form-item>
-            <el-form-item 
-              label="合约模式" 
-              prop="contract.mode" >
-              <el-radio-group 
-                v-model="pointForm.contract.mode" 
-                @change="modeHandle">
-                <el-radio 
-                  v-for="item in modeList"
-                  :label="item.id"  
-                  :key="item.id">{{ item.name }}</el-radio>
+            <el-form-item label="合约模式" prop="contract.mode">
+              <el-radio-group v-model="pointForm.contract.mode" @change="modeHandle">
+                <el-radio v-for="item in modeList" :label="item.id" :key="item.id">{{ item.name }}</el-radio>
               </el-radio-group>
             </el-form-item>
             <div v-if="modeNone">
-              <el-form-item 
-                v-if="modeFlag"
-                label="A类广告分成" 
-                prop="contract.ad_istar" >
-                <el-input 
-                  v-model="pointForm.contract.ad_istar" 
-                  placeholder="请输入A类广告分成" 
-                  class="item-input">
+              <el-form-item v-if="modeFlag" label="A类广告分成" prop="contract.ad_istar">
+                <el-input
+                  v-model="pointForm.contract.ad_istar"
+                  placeholder="请输入A类广告分成"
+                  class="item-input"
+                >
                   <template slot="append">%(星视度引入)</template>
                 </el-input>
               </el-form-item>
-              <el-form-item 
-                v-if="modeFlag"
-                label="B类广告分成" 
-                prop="contract.ad_ads" >
-                <el-input 
-                  v-model="pointForm.contract.ad_ads" 
-                  placeholder="请输入B类广告分成" 
-                  class="item-input">
+              <el-form-item v-if="modeFlag" label="B类广告分成" prop="contract.ad_ads">
+                <el-input
+                  v-model="pointForm.contract.ad_ads"
+                  placeholder="请输入B类广告分成"
+                  class="item-input"
+                >
                   <template slot="append">%(非星视度引入)</template>
                 </el-input>
               </el-form-item>
-              <el-form-item
-                v-if="!modeFlag" 
-                label="置换节目数量" 
-                prop="contract.exchange_num" >
-                <el-input 
-                  v-model="pointForm.contract.exchange_num" 
-                  placeholder="请输入置换节目数量" 
-                  class="item-input">
+              <el-form-item v-if="!modeFlag" label="置换节目数量" prop="contract.exchange_num">
+                <el-input
+                  v-model="pointForm.contract.exchange_num"
+                  placeholder="请输入置换节目数量"
+                  class="item-input"
+                >
                   <template slot="append">套</template>
                 </el-input>
               </el-form-item>
             </div>
           </el-tab-pane>
-          <el-tab-pane
-            v-loading="contractFlag" 
-            label="共享配置" 
-            name="third">
-            <el-form-item 
-              label="点位权限" 
-              prop="permission" >
-              <el-checkbox-group 
-                v-model="pointForm.permission" >
-                <el-checkbox 
+          <el-tab-pane v-loading="contractFlag" label="共享配置" name="third">
+            <el-form-item label="点位权限" prop="permission">
+              <el-checkbox-group v-model="pointForm.permission">
+                <el-checkbox
                   v-for="item in permissionList"
-                  :label="item.id"  
-                  :key="item.id">{{ item.name }}</el-checkbox>
+                  :label="item.id"
+                  :key="item.id"
+                >{{ item.name }}</el-checkbox>
               </el-checkbox-group>
             </el-form-item>
-            <el-form-item 
-              label="报刊价" 
-              prop="share.offer" >
-              <el-input 
-                v-model="pointForm.share.offer" 
-                placeholder="请输入报刊价" 
-                class="item-input">
+            <el-form-item label="报刊价" prop="share.offer">
+              <el-input v-model="pointForm.share.offer" placeholder="请输入报刊价" class="item-input">
                 <template slot="append">
-                  <el-tooltip  
-                    effect="dark" 
-                    content="每个屏每次的价钱" 
-                    placement="right"
-                    class="item">
-                    <div>
-                      ¥／分
-                    </div>
+                  <el-tooltip effect="dark" content="每个屏每次的价钱" placement="right" class="item">
+                    <div>¥／分</div>
                   </el-tooltip>
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="报刊价系数" 
-              prop="share.offer_off" >
-              <el-input 
-                v-model="pointForm.share.offer_off" 
-                placeholder="请输入报刊价系数" 
-                class="item-input">
+            <el-form-item label="报刊价系数" prop="share.offer_off">
+              <el-input
+                v-model="pointForm.share.offer_off"
+                placeholder="请输入报刊价系数"
+                class="item-input"
+              >
                 <template slot="append">%</template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="曝光价" 
-              prop="share.mad" >
-              <el-input 
-                v-model="pointForm.share.mad" 
-                placeholder="请输入曝光价" 
-                class="item-input">
+            <el-form-item label="曝光价" prop="share.mad">
+              <el-input v-model="pointForm.share.mad" placeholder="请输入曝光价" class="item-input">
                 <template slot="append">
-                  <el-tooltip  
-                    effect="dark" 
-                    content="每个屏每次的价钱" 
-                    placement="right"
-                    class="item">
-                    <div>
-                      ¥／分
-                    </div>
+                  <el-tooltip effect="dark" content="每个屏每次的价钱" placement="right" class="item">
+                    <div>¥／分</div>
                   </el-tooltip>
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="曝光价系数" 
-              prop="share.mad_off" >
-              <el-input 
-                v-model="pointForm.share.mad_off" 
-                placeholder="请输入曝光价系数" 
-                class="item-input">
+            <el-form-item label="曝光价系数" prop="share.mad_off">
+              <el-input v-model="pointForm.share.mad_off" placeholder="请输入曝光价系数" class="item-input">
                 <template slot="append">%</template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="冠名价" 
-              prop="share.play" >
-              <el-input 
-                v-model="pointForm.share.play" 
-                placeholder="请输入冠名价" 
-                class="item-input">
+            <el-form-item label="冠名价" prop="share.play">
+              <el-input v-model="pointForm.share.play" placeholder="请输入冠名价" class="item-input">
                 <template slot="append">
-                  <el-tooltip  
-                    effect="dark" 
-                    content="每个屏每次的价钱" 
-                    placement="right"
-                    class="item">
-                    <div>
-                      ¥／分
-                    </div>
+                  <el-tooltip effect="dark" content="每个屏每次的价钱" placement="right" class="item">
+                    <div>¥／分</div>
                   </el-tooltip>
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="冠名价系数" 
-              prop="share.play_off" >
-              <el-input 
-                v-model="pointForm.share.play_off" 
-                placeholder="请输入冠名价系数" 
-                class="item-input">
+            <el-form-item label="冠名价系数" prop="share.play_off">
+              <el-input
+                v-model="pointForm.share.play_off"
+                placeholder="请输入冠名价系数"
+                class="item-input"
+              >
                 <template slot="append">%</template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="链接跳转" 
-              prop="share.qrcode" >
-              <el-input 
-                v-model="pointForm.share.qrcode" 
-                placeholder="请输入" 
-                class="item-input">
+            <el-form-item label="链接跳转" prop="share.qrcode">
+              <el-input v-model="pointForm.share.qrcode" placeholder="请输入" class="item-input">
                 <template slot="append">
-                  <el-tooltip  
-                    effect="dark" 
-                    content="每个场地每天的价钱" 
-                    placement="right"
-                    class="item">
-                    <div>
-                      ¥／分
-                    </div>
+                  <el-tooltip effect="dark" content="每个场地每天的价钱" placement="right" class="item">
+                    <div>¥／分</div>
                   </el-tooltip>
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="链接跳转系数" 
-              prop="share.qrcode_off" >
-              <el-input 
-                v-model="pointForm.share.qrcode_off" 
-                placeholder="请输入链接跳转系数" 
-                class="item-input">
+            <el-form-item label="链接跳转系数" prop="share.qrcode_off">
+              <el-input
+                v-model="pointForm.share.qrcode_off"
+                placeholder="请输入链接跳转系数"
+                class="item-input"
+              >
                 <template slot="append">%</template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="订阅/公众号" 
-              prop="share.wx_pa" >
-              <el-input 
-                v-model="pointForm.share.wx_pa" 
-                placeholder="请输入" 
-                class="item-input">
+            <el-form-item label="订阅/公众号" prop="share.wx_pa">
+              <el-input v-model="pointForm.share.wx_pa" placeholder="请输入" class="item-input">
                 <template slot="append">
-                  <el-tooltip  
-                    effect="dark" 
-                    content="每个场地每天的价钱" 
-                    placement="right"
-                    class="item">
-                    <div>
-                      ¥／分
-                    </div>
+                  <el-tooltip effect="dark" content="每个场地每天的价钱" placement="right" class="item">
+                    <div>¥／分</div>
                   </el-tooltip>
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="订阅/公众号系数" 
-              prop="share.wx_pa_off" >
-              <el-input 
-                v-model="pointForm.share.wx_pa_off" 
-                placeholder="请输入订阅/公众号系数" 
-                class="item-input">
+            <el-form-item label="订阅/公众号系数" prop="share.wx_pa_off">
+              <el-input
+                v-model="pointForm.share.wx_pa_off"
+                placeholder="请输入订阅/公众号系数"
+                class="item-input"
+              >
                 <template slot="append">%</template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="小程序" 
-              prop="share.wx_mp" >
-              <el-input 
-                v-model="pointForm.share.wx_mp" 
-                placeholder="请输入" 
-                class="item-input">
+            <el-form-item label="小程序" prop="share.wx_mp">
+              <el-input v-model="pointForm.share.wx_mp" placeholder="请输入" class="item-input">
                 <template slot="append">
-                  <el-tooltip  
-                    effect="dark" 
-                    content="每个场地每天的价钱" 
-                    placement="right"
-                    class="item">
-                    <div>
-                      ¥／分
-                    </div>
+                  <el-tooltip effect="dark" content="每个场地每天的价钱" placement="right" class="item">
+                    <div>¥／分</div>
                   </el-tooltip>
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="小程序系数" 
-              prop="share.wx_mp_off" >
-              <el-input 
-                v-model="pointForm.share.wx_mp_off" 
-                placeholder="请输入小程序系数" 
-                class="item-input">
+            <el-form-item label="小程序系数" prop="share.wx_mp_off">
+              <el-input
+                v-model="pointForm.share.wx_mp_off"
+                placeholder="请输入小程序系数"
+                class="item-input"
+              >
                 <template slot="append">%</template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="APP下载" 
-              prop="share.app" >
-              <el-input 
-                v-model="pointForm.share.app" 
-                placeholder="请输入" 
-                class="item-input">
+            <el-form-item label="APP下载" prop="share.app">
+              <el-input v-model="pointForm.share.app" placeholder="请输入" class="item-input">
                 <template slot="append">
-                  <el-tooltip  
-                    effect="dark" 
-                    content="每个场地每天的价钱" 
-                    placement="right"
-                    class="item">
-                    <div>
-                      ¥／分
-                    </div>
+                  <el-tooltip effect="dark" content="每个场地每天的价钱" placement="right" class="item">
+                    <div>¥／分</div>
                   </el-tooltip>
                 </template>
               </el-input>
-            </el-form-item><el-form-item 
-              label="APP系数" 
-              prop="share.app_off" >
-              <el-input 
-                v-model="pointForm.share.app_off" 
-                placeholder="请输入APP系数" 
-                class="item-input">
+            </el-form-item>
+            <el-form-item label="APP系数" prop="share.app_off">
+              <el-input v-model="pointForm.share.app_off" placeholder="请输入APP系数" class="item-input">
                 <template slot="append">%</template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="手机号提取" 
-              prop="share.phone" >
-              <el-input 
-                v-model="pointForm.share.phone" 
-                placeholder="请输入" 
-                class="item-input">
+            <el-form-item label="手机号提取" prop="share.phone">
+              <el-input v-model="pointForm.share.phone" placeholder="请输入" class="item-input">
                 <template slot="append">
-                  <el-tooltip  
-                    effect="dark" 
-                    content="每个场地每天的价钱" 
-                    placement="right"
-                    class="item">
-                    <div>
-                      ¥／分
-                    </div>
+                  <el-tooltip effect="dark" content="每个场地每天的价钱" placement="right" class="item">
+                    <div>¥／分</div>
                   </el-tooltip>
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="手机号系数" 
-              prop="share.phone_off" >
-              <el-input 
-                v-model="pointForm.share.phone_off" 
-                placeholder="请输入手机号系数" 
-                class="item-input">
+            <el-form-item label="手机号系数" prop="share.phone_off">
+              <el-input
+                v-model="pointForm.share.phone_off"
+                placeholder="请输入手机号系数"
+                class="item-input"
+              >
                 <template slot="append">%</template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="优惠券" 
-              prop="share.coupon" >
-              <el-input 
-                v-model="pointForm.share.coupon" 
-                placeholder="请输入" 
-                class="item-input">
+            <el-form-item label="优惠券" prop="share.coupon">
+              <el-input v-model="pointForm.share.coupon" placeholder="请输入" class="item-input">
                 <template slot="append">
-                  <el-tooltip  
-                    effect="dark" 
-                    content="每个场地每天的价钱" 
-                    placement="right"
-                    class="item">
-                    <div>
-                      ¥／分
-                    </div>
+                  <el-tooltip effect="dark" content="每个场地每天的价钱" placement="right" class="item">
+                    <div>¥／分</div>
                   </el-tooltip>
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="卷系数" 
-              prop="share.coupon_off" >
-              <el-input 
-                v-model="pointForm.share.coupon_off" 
-                placeholder="请输入卷系数" 
-                class="item-input">
+            <el-form-item label="卷系数" prop="share.coupon_off">
+              <el-input
+                v-model="pointForm.share.coupon_off"
+                placeholder="请输入卷系数"
+                class="item-input"
+              >
                 <template slot="append">%</template>
               </el-input>
             </el-form-item>
           </el-tab-pane>
         </el-tabs>
         <el-form-item>
-          <el-button 
-            type="primary"
-            @click="submit('pointForm')">保存</el-button>
-          <el-button 
-            @click="historyBack" >返回</el-button>
+          <el-button type="primary" @click="submit('pointForm')">保存</el-button>
+          <el-button @click="historyBack">返回</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -528,7 +357,7 @@ import {
   siteModifyPoint,
   getSearchAeraList,
   getSearchMarketList
-} from 'service'
+} from "service";
 
 import {
   Form,
@@ -546,7 +375,7 @@ import {
   Tooltip,
   Checkbox,
   CheckboxGroup
-} from 'element-ui'
+} from "element-ui";
 
 export default {
   components: {
@@ -568,43 +397,43 @@ export default {
   data() {
     let checkEnterEndDate = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error('合同结束时间不能为空'))
+        return callback(new Error("合同结束时间不能为空"));
       }
       if (
-        new Date(value.replace(/\-/g, '/')).getTime() <
+        new Date(value.replace(/\-/g, "/")).getTime() <
         new Date(
-          this.pointForm.contract.enter_sdate.replace(/\-/g, '/')
+          this.pointForm.contract.enter_sdate.replace(/\-/g, "/")
         ).getTime()
       ) {
-        callback(new Error('结束日期要大于开始日期'))
+        callback(new Error("结束日期要大于开始日期"));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     let checkOperEndDate = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error('实际入驻结束时间不能为空'))
+        return callback(new Error("实际入驻结束时间不能为空"));
       }
       if (
-        new Date(value.replace(/\-/g, '/')).getTime() <
+        new Date(value.replace(/\-/g, "/")).getTime() <
         new Date(
-          this.pointForm.contract.oper_edate.replace(/\-/g, '/')
+          this.pointForm.contract.oper_edate.replace(/\-/g, "/")
         ).getTime()
       ) {
-        callback(new Error('结束日期要大于开始日期'))
+        callback(new Error("结束日期要大于开始日期"));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     let checkNumber = (rule, value, callback) => {
       if (value < 0) {
-        callback(new Error('不能小于0'))
-      } else if (typeof parseFloat(value) !== 'number') {
-        callback(new Error('必须是数字'))
+        callback(new Error("不能小于0"));
+      } else if (typeof parseFloat(value) !== "number") {
+        callback(new Error("必须是数字"));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     return {
       contractFlag: false,
       modeNone: false,
@@ -612,91 +441,93 @@ export default {
       searchLoading: false,
       modeList: [
         {
-          id: 'part',
-          name: '分成'
+          id: "part",
+          name: "分成"
         },
         {
-          id: 'exchange',
-          name: '置换'
+          id: "exchange",
+          name: "置换"
         },
         {
-          id: 'none',
-          name: '无要求'
+          id: "none",
+          name: "无要求"
         }
       ],
       permissionList: [
         {
-          id: 'agent',
-          name: '代理'
+          id: "agent",
+          name: "代理"
         },
         {
-          id: 'site',
-          name: '场地主'
+          id: "site",
+          name: "场地主"
         },
         {
-          id: 'ad',
-          name: '广告主'
+          id: "ad",
+          name: "广告主"
         },
         {
-          id: 'vipad',
-          name: 'VIP广告主'
+          id: "vipad",
+          name: "VIP广告主"
         }
       ],
       typeList: [
         {
-          id: 'sell',
-          name: '出售'
+          id: "sell",
+          name: "出售"
         },
         {
-          id: 'lease',
-          name: '租借'
+          id: "lease",
+          name: "租借"
         },
         {
-          id: 'activity',
-          name: '活动'
+          id: "activity",
+          name: "活动"
         },
         {
-          id: 'agent',
-          name: '代理'
+          id: "agent",
+          name: "代理"
         },
         {
-          id: 'tmp',
-          name: '过桥'
+          id: "tmp",
+          name: "过桥"
         },
         {
-          id: 'free',
-          name: '免费入驻'
+          id: "free",
+          name: "免费入驻"
         },
         {
-          id: 'pay',
-          name: '付费入驻'
+          id: "pay",
+          name: "付费入驻"
         }
       ],
-      activeName: 'first',
+      formatsList: [],
+      activeName: "first",
       setting: {
         isOpenSelectAll: true,
         loading: false,
-        loadingText: '拼命加载中'
+        loadingText: "拼命加载中"
       },
       siteList: [],
-      pointID: '',
+      pointID: "",
       pointForm: {
-        marketid: '',
+        marketid: "",
         area_id: null,
-        name: '',
+        name: "",
+        attribute_name: "",
         contract: {
-          type: 'free',
+          type: "free",
           contract: 1,
-          contract_company: '',
-          contract_num: '',
-          contract_user: '',
-          contract_phone: '',
+          contract_company: "",
+          contract_num: "",
+          contract_user: "",
+          contract_phone: "",
           pay: 0,
-          enter_sdate: '',
-          enter_edate: '',
-          oper_sdate: '',
-          oper_edate: '',
-          mode: 'none',
+          enter_sdate: "",
+          enter_edate: "",
+          oper_sdate: "",
+          oper_edate: "",
+          mode: "none",
           ad_istar: 5,
           ad_ads: 5,
           exchange_num: 0
@@ -725,184 +556,184 @@ export default {
       },
       areaList: [],
       rules: {
-        name: [{ required: true, message: '请输入名称', trigger: 'submit' }],
-        area_id: [{ required: true, message: '请选择区域', trigger: 'submit' }],
+        name: [{ required: true, message: "请输入名称", trigger: "submit" }],
+        area_id: [{ required: true, message: "请选择区域", trigger: "submit" }],
         marketid: [
-          { required: true, message: '请选择场地', trigger: 'submit' }
+          { required: true, message: "请选择场地", trigger: "submit" }
         ],
-        'contract.type': [
-          { required: true, message: '请选择场地类型', trigger: 'submit' }
+        "contract.type": [
+          { required: true, message: "请选择场地类型", trigger: "submit" }
         ],
-        'contract.contract': [
-          { required: true, message: '请选择是否有无合同', trigger: 'submit' }
+        "contract.contract": [
+          { required: true, message: "请选择是否有无合同", trigger: "submit" }
         ],
-        'contract.pay': [
-          { required: true, message: '请输入金额', trigger: 'submit' },
-          { validator: checkNumber, trigger: 'submit' }
+        "contract.pay": [
+          { required: true, message: "请输入金额", trigger: "submit" },
+          { validator: checkNumber, trigger: "submit" }
         ],
-        'contract.enter_sdate': [
-          { required: true, message: '请选择合同开始时间', trigger: 'submit' }
+        "contract.enter_sdate": [
+          { required: true, message: "请选择合同开始时间", trigger: "submit" }
         ],
-        'contract.enter_edate': [
-          { required: true, validator: checkEnterEndDate, trigger: 'submit' }
+        "contract.enter_edate": [
+          { required: true, validator: checkEnterEndDate, trigger: "submit" }
         ],
-        'contract.oper_sdate': [
-          { required: true, message: '请选择入驻开始时间', trigger: 'submit' }
+        "contract.oper_sdate": [
+          { required: true, message: "请选择入驻开始时间", trigger: "submit" }
         ],
-        'contract.oper_edate': [
-          { required: true, validator: checkOperEndDate, trigger: 'submit' }
+        "contract.oper_edate": [
+          { required: true, validator: checkOperEndDate, trigger: "submit" }
         ],
-        'contract.mode': [
-          { required: true, message: '请选择合作模式', trigger: 'submit' }
+        "contract.mode": [
+          { required: true, message: "请选择合作模式", trigger: "submit" }
         ],
-        'contract.ad_istar': [
-          { required: true, message: '请输入A类广告分成', trigger: 'submit' },
-          { validator: checkNumber, trigger: 'submit' }
+        "contract.ad_istar": [
+          { required: true, message: "请输入A类广告分成", trigger: "submit" },
+          { validator: checkNumber, trigger: "submit" }
         ],
-        'contract.ad_ads': [
-          { required: true, message: '请输入B类广告分成', trigger: 'submit' },
-          { validator: checkNumber, trigger: 'submit' }
+        "contract.ad_ads": [
+          { required: true, message: "请输入B类广告分成", trigger: "submit" },
+          { validator: checkNumber, trigger: "submit" }
         ],
-        'contract.exchange_num': [
-          { required: true, message: '请输入置换节目数量', trigger: 'submit' },
-          { validator: checkNumber, trigger: 'submit' }
+        "contract.exchange_num": [
+          { required: true, message: "请输入置换节目数量", trigger: "submit" },
+          { validator: checkNumber, trigger: "submit" }
         ],
         permission: [
           {
             required: true,
-            message: '请选择场地权限',
-            trigger: 'submit',
-            type: 'array'
+            message: "请选择场地权限",
+            trigger: "submit",
+            type: "array"
           }
         ],
-        'share.offer': [
-          { required: true, message: '请输入报刊价', trigger: 'submit' },
-          { validator: checkNumber, trigger: 'submit' }
+        "share.offer": [
+          { required: true, message: "请输入报刊价", trigger: "submit" },
+          { validator: checkNumber, trigger: "submit" }
         ],
-        'share.offer_off': [{ validator: checkNumber, trigger: 'submit' }],
-        'share.mad': [
-          { required: true, message: '请输入曝光价', trigger: 'submit' },
-          { validator: checkNumber, trigger: 'submit' }
+        "share.offer_off": [{ validator: checkNumber, trigger: "submit" }],
+        "share.mad": [
+          { required: true, message: "请输入曝光价", trigger: "submit" },
+          { validator: checkNumber, trigger: "submit" }
         ],
-        'share.mad_off': [{ validator: checkNumber, trigger: 'submit' }],
-        'share.play': [
-          { required: true, message: '请输入冠名价', trigger: 'submit' },
-          { validator: checkNumber, trigger: 'submit' }
+        "share.mad_off": [{ validator: checkNumber, trigger: "submit" }],
+        "share.play": [
+          { required: true, message: "请输入冠名价", trigger: "submit" },
+          { validator: checkNumber, trigger: "submit" }
         ],
-        'share.play_off': [{ validator: checkNumber, trigger: 'submit' }],
-        'share.qrcode': [
-          { required: true, message: '请输入', trigger: 'submit' },
-          { validator: checkNumber, trigger: 'submit' }
+        "share.play_off": [{ validator: checkNumber, trigger: "submit" }],
+        "share.qrcode": [
+          { required: true, message: "请输入", trigger: "submit" },
+          { validator: checkNumber, trigger: "submit" }
         ],
-        'share.qrcode_off': [{ validator: checkNumber, trigger: 'submit' }],
-        'share.wx_pa': [
-          { required: true, message: '请输入', trigger: 'submit' },
-          { validator: checkNumber, trigger: 'submit' }
+        "share.qrcode_off": [{ validator: checkNumber, trigger: "submit" }],
+        "share.wx_pa": [
+          { required: true, message: "请输入", trigger: "submit" },
+          { validator: checkNumber, trigger: "submit" }
         ],
-        'share.wx_pa_off': [{ validator: checkNumber, trigger: 'submit' }],
-        'share.wx_mp': [
-          { required: true, message: '请输入', trigger: 'submit' },
-          { validator: checkNumber, trigger: 'submit' }
+        "share.wx_pa_off": [{ validator: checkNumber, trigger: "submit" }],
+        "share.wx_mp": [
+          { required: true, message: "请输入", trigger: "submit" },
+          { validator: checkNumber, trigger: "submit" }
         ],
-        'share.wx_mp_off': [{ validator: checkNumber, trigger: 'submit' }],
-        'share.app': [
-          { required: true, message: '请输入', trigger: 'submit' },
-          { validator: checkNumber, trigger: 'submit' }
+        "share.wx_mp_off": [{ validator: checkNumber, trigger: "submit" }],
+        "share.app": [
+          { required: true, message: "请输入", trigger: "submit" },
+          { validator: checkNumber, trigger: "submit" }
         ],
-        'share.app_off': [{ validator: checkNumber, trigger: 'submit' }],
-        'share.phone': [
-          { required: true, message: '请输入', trigger: 'submit' },
-          { validator: checkNumber, trigger: 'submit' }
+        "share.app_off": [{ validator: checkNumber, trigger: "submit" }],
+        "share.phone": [
+          { required: true, message: "请输入", trigger: "submit" },
+          { validator: checkNumber, trigger: "submit" }
         ],
-        'share.phone_off': [{ validator: checkNumber, trigger: 'submit' }],
-        'share.coupon': [
-          { required: true, message: '请输入', trigger: 'submit' },
-          { validator: checkNumber, trigger: 'submit' }
+        "share.phone_off": [{ validator: checkNumber, trigger: "submit" }],
+        "share.coupon": [
+          { required: true, message: "请输入", trigger: "submit" },
+          { validator: checkNumber, trigger: "submit" }
         ],
-        'share.coupon_off': [{ validator: checkNumber, trigger: 'submit' }]
+        "share.coupon_off": [{ validator: checkNumber, trigger: "submit" }]
       },
       indexRouter: {
-        path: '/market/point'
+        path: "/market/point"
       },
       payFlag: false
-    }
+    };
   },
   created() {
-    this.setting.loading = true
-    this.pointID = this.$route.params.uid
-    this.getAreaList()
-    let roles = JSON.parse(this.$cookie.get('user_info')).roles.data
+    this.setting.loading = true;
+    this.pointID = this.$route.params.uid;
+    this.getAreaList();
+    let roles = JSON.parse(this.$cookie.get("user_info")).roles.data;
     roles.map(r => {
-      if (r.display_name === '管理员') {
-        this.payFlag = true
-        return
+      if (r.display_name === "管理员") {
+        this.payFlag = true;
+        return;
       }
-    })
+    });
     if (this.pointID) {
-      this.getPointDetail()
+      this.getPointDetail();
     } else {
-      this.setting.loading = false
+      this.setting.loading = false;
     }
   },
   methods: {
     siteHandle() {
       if (!this.pointID) {
-        this.getMarketDetail(this.pointForm.marketid)
+        this.getMarketDetail(this.pointForm.marketid);
       }
     },
     getMarketDetail(id) {
-      this.contractFlag = true
+      this.contractFlag = true;
       let args = {
-        include: 'share,contract,area'
-      }
+        include: "share,contract,area"
+      };
       getSiteMarketDetail(this, args, id)
         .then(res => {
-          this.fieldHandle(res)
-          this.contractFlag = false
+          this.fieldHandle(res);
+          this.contractFlag = false;
         })
         .catch(err => {
-          console.log(err)
-          this.contractFlag = false
-        })
+          console.log(err);
+          this.contractFlag = false;
+        });
     },
     getPointDetail() {
-      this.setting.loading = true
-      let id = this.pointID
+      this.setting.loading = true;
+      let id = this.pointID;
       let args = {
-        include: 'share,contract,area,market'
-      }
+        include: "share,contract,area,market"
+      };
       getSitePointDetail(this, args, id)
         .then(res => {
-          this.pointForm.name = res.name
-          this.pointForm.area_id = res.area.id
-          this.pointForm.marketid = res.market.id
-          this.fieldHandle(res)
-          this.setting.loading = false
+          this.pointForm.name = res.name;
+          this.pointForm.area_id = res.area.id;
+          this.pointForm.marketid = res.market.id;
+          this.fieldHandle(res);
+          this.setting.loading = false;
         })
         .catch(err => {
-          console.log(err)
-          this.setting.loading = false
-        })
+          console.log(err);
+          this.setting.loading = false;
+        });
     },
     fieldHandle(data) {
-      this.getMarket()
+      this.getMarket();
       if (data.contract) {
-        this.pointForm.contract = data.contract
-        delete this.pointForm.contract.marketid
-        if (data.contract.mode === 'part') {
-          this.modeNone = true
-          this.modeFlag = true
-        } else if (data.contract.mode === 'exchange') {
-          this.modeNone = true
-          this.modeFlag = false
+        this.pointForm.contract = data.contract;
+        delete this.pointForm.contract.marketid;
+        if (data.contract.mode === "part") {
+          this.modeNone = true;
+          this.modeFlag = true;
+        } else if (data.contract.mode === "exchange") {
+          this.modeNone = true;
+          this.modeFlag = false;
         } else {
-          this.modeNone = false
+          this.modeNone = false;
         }
       }
       if (data.share) {
-        this.pointForm.permission = []
-        this.pointForm.share = data.share
-        delete this.pointForm.share.marketid
+        this.pointForm.permission = [];
+        this.pointForm.share = data.share;
+        delete this.pointForm.share.marketid;
 
         if (
           data.share.site === 0 &&
@@ -910,19 +741,19 @@ export default {
           data.share.ad === 0 &&
           data.share.agent === 0
         ) {
-          this.pointForm.permission = []
+          this.pointForm.permission = [];
         } else {
           if (data.share.site === 1) {
-            this.pointForm.permission.push('site')
+            this.pointForm.permission.push("site");
           }
           if (data.share.vipad === 1) {
-            this.pointForm.permission.push('vipad')
+            this.pointForm.permission.push("vipad");
           }
           if (data.share.ad === 1) {
-            this.pointForm.permission.push('ad')
+            this.pointForm.permission.push("ad");
           }
           if (data.share.agent === 1) {
-            this.pointForm.permission.push('agent')
+            this.pointForm.permission.push("agent");
           }
         }
       }
@@ -930,128 +761,131 @@ export default {
     getAreaList() {
       return getSearchAeraList(this)
         .then(res => {
-          this.areaList = res.data
-          this.setting.loading = false
+          this.areaList = res.data;
+          this.setting.loading = false;
         })
         .catch(error => {
-          console.log(error)
-        })
+          console.log(error);
+        });
     },
     areaHandle() {
-      this.pointForm.marketid = ''
-      this.getMarket(this.pointForm.marketid)
+      this.pointForm.marketid = "";
+      this.getMarket(this.pointForm.marketid);
     },
     getMarket(query) {
-      this.searchLoading = true
+      this.searchLoading = true;
       let args = {
         name: query,
-        include: 'area',
+        include: "area",
         area_id: this.pointForm.area_id
-      }
+      };
       return getSearchMarketList(this, args)
         .then(response => {
-          this.siteList = response.data
+          this.siteList = response.data;
           if (this.siteList.length == 0) {
-            this.pointForm.marketid = ''
-            this.pointForm.siteList = []
+            this.pointForm.marketid = "";
+            this.pointForm.siteList = [];
           }
-          this.setting.loading = false
-          this.searchLoading = false
+          this.setting.loading = false;
+          this.searchLoading = false;
         })
         .catch(err => {
-          console.log(err)
-          this.setting.loading = false
-          this.searchLoading = false
-        })
+          console.log(err);
+          this.setting.loading = false;
+          this.searchLoading = false;
+        });
     },
     modeHandle() {
-      if (this.pointForm.contract.mode === 'none') {
-        this.modeNone = false
-      } else if (this.pointForm.contract.mode === 'part') {
-        this.modeNone = true
-        this.modeFlag = true
-      } else if (this.pointForm.contract.mode === 'exchange') {
-        this.modeNone = true
-        this.modeFlag = false
+      if (this.pointForm.contract.mode === "none") {
+        this.modeNone = false;
+      } else if (this.pointForm.contract.mode === "part") {
+        this.modeNone = true;
+        this.modeFlag = true;
+      } else if (this.pointForm.contract.mode === "exchange") {
+        this.modeNone = true;
+        this.modeFlag = false;
       }
     },
     historyBack() {
-      historyBack()
+      historyBack();
     },
     submit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          delete this.pointForm.area_id
-          delete this.pointForm.contract.date
-          delete this.pointForm.share.date
-          this.pointForm.share.site = 0
-          this.pointForm.share.vipad = 0
-          this.pointForm.share.ad = 0
-          this.pointForm.share.agent = 0
+          delete this.pointForm.area_id;
+          delete this.pointForm.contract.date;
+          delete this.pointForm.share.date;
+          this.pointForm.share.site = 0;
+          this.pointForm.share.vipad = 0;
+          this.pointForm.share.ad = 0;
+          this.pointForm.share.agent = 0;
           for (let i = 0; i < this.pointForm.permission.length; i++) {
-            let value = this.pointForm.permission[i]
-            if (value === 'site') {
-              this.pointForm.share.site = 1
+            let value = this.pointForm.permission[i];
+            if (value === "site") {
+              this.pointForm.share.site = 1;
             }
-            if (value === 'vipad') {
-              this.pointForm.share.vipad = 1
+            if (value === "vipad") {
+              this.pointForm.share.vipad = 1;
             }
-            if (value === 'ad') {
-              this.pointForm.share.ad = 1
+            if (value === "ad") {
+              this.pointForm.share.ad = 1;
             }
-            if (value === 'agent') {
-              this.pointForm.share.agent = 1
+            if (value === "agent") {
+              this.pointForm.share.agent = 1;
             }
           }
 
-          let args = this.pointForm
-          delete args.permission
+          let args = this.pointForm;
+          delete args.permission;
 
           if (this.pointID) {
             siteModifyPoint(this, args, this.pointID)
               .then(res => {
                 this.$message({
-                  message: '修改点位成功',
-                  type: 'success'
-                })
+                  message: "修改点位成功",
+                  type: "success"
+                });
                 this.$router.push({
-                  path: '/market/point'
-                })
+                  path: "/market/point"
+                });
               })
               .catch(err => {
-                console.log(err)
-              })
+                console.log(err);
+              });
           } else {
             siteSavePoint(this, args)
               .then(res => {
                 this.$message({
-                  message: '新建点位成功',
-                  type: 'success'
-                })
+                  message: "新建点位成功",
+                  type: "success"
+                });
                 this.$router.push({
-                  path: '/market/point'
-                })
+                  path: "/market/point"
+                });
               })
               .catch(err => {
-                console.log(err)
-              })
+                console.log(err);
+              });
           }
         } else {
           this.$message({
             showClose: true,
-            message: '请填写完表单必填项，在提交',
-            type: 'error',
+            message: "请填写完表单必填项，在提交",
+            type: "error",
             duration: 5000
-          })
+          });
         }
-      })
+      });
     }
   }
-}
+};
 </script>
 
 <style lang="less" scoped>
 .item-wrap-template {
+  .point-form {
+    width: 900px;
+  }
   .pane {
     border-radius: 5px;
     background-color: white;
