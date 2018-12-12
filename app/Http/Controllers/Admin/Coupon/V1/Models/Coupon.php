@@ -16,6 +16,9 @@ use App\Models\Customer;
 
 class Coupon extends Model
 {
+
+    protected $dates = ['start_date', 'end_date', 'use_date'];
+
     protected $fillable = [
         'mobile',
         'coupon_batch_id',
