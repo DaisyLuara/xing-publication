@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin\MallCoo\V1\Api;
 
-use App\Http\Controllers\Admin\WeChat\V1\Models\WeChatUser;
+use App\Http\Controllers\Admin\WeChat\V1\Models\ThirdPartyUser;
 use App\Http\Controllers\Admin\ShortUrl\V1\Models\ShortUrl;
 use function GuzzleHttp\Psr7\parse_query;
 use App\Http\Controllers\Controller;
@@ -60,7 +60,7 @@ class UserController extends Controller
         $separator = strpos($redirect_url, '?') ? '&' : '?';
         $redirect_url = $redirect_url . $separator . 'open_user_id=' . $openUserId;
 
-        WeChatUser::updateOrCreate(
+        ThirdPartyUser::updateOrCreate(
             ['mallcoo_open_user_id' => $openUserId],
             [
                 'mobile' => $mobile,

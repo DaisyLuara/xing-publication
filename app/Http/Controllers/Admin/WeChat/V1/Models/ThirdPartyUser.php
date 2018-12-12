@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Admin\WeChat\V1\Models;
 
 use App\Models\Model;
 
-class WeChatUser extends Model
+class ThirdPartyUser extends Model
 {
 
-    public $table = 'wx_users';
+    public $table = 'third_party_users';
     public $primaryKey = 'id';
 
     public $fillable = [
