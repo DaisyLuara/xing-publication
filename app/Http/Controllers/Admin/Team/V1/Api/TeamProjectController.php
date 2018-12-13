@@ -32,6 +32,13 @@ class TeamProjectController extends Controller
         if ($request->has('start_date_online') && $request->has('end_date_online')) {
             $query->whereRaw("begin_date between '$request->start_date_online' and '$request->end_date_online' ");
         }
+        if ($request->has('start_date_launch') && $request->has('end_date_launch')) {
+            $query->whereHas('', function ($q) use ($request) {
+                $startDate = strtotime($request->start_date_launch . ' 00:00:00') * 1000;
+                $endDate = strtotime($request->end_date_launch . ' 00:00:00') * 1000;
+                $q->whereRaw("online between '$startDate' and '$endDate'");
+            });
+        }
         /** @var  $user \App\Models\User */
         $user = $this->user();
 

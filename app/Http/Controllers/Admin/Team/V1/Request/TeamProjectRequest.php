@@ -28,7 +28,8 @@ class TeamProjectRequest extends \App\Http\Requests\Request
                     'interact_innovate' => 'required|max:1000',
                     'remark' => 'max:1000',
                     'type' => Rule::in([0, 1]),
-                    'member.*.rate' => 'numeric'
+                    'member.*.rate' => 'numeric',
+                    'media_id' => 'required|integer'
                 ];
                 break;
             case 'PATCH':
@@ -43,7 +44,8 @@ class TeamProjectRequest extends \App\Http\Requests\Request
                     'interact_innovate' => 'max:1000',
                     'remark' => 'max:1000',
                     'type' => Rule::in([0, 1]),
-                    'member.*.rate' => 'numeric'
+                    'member.*.rate' => 'numeric',
+                    'media_id' => 'integer'
                 ];
                 break;
             default:

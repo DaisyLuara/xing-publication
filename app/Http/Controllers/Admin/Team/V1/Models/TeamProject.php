@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Team\V1\Models;
 
+use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Http\Controllers\Admin\Project\V1\Models\Project;
 use App\Models\Model;
 use App\Models\User;
@@ -23,7 +24,8 @@ class TeamProject extends Model
         'interact_innovate',
         'remark',
         'status',
-        'type'
+        'type',
+        'media_id'
     ];
 
     public function member()
@@ -39,5 +41,10 @@ class TeamProject extends Model
     public function project()
     {
         return $this->setConnection('ar')->belongsTo(Project::class, 'belong', 'versionname');
+    }
+
+    public function media()
+    {
+        return $this->belongsTo(Media::class, 'media_id', 'id');
     }
 }

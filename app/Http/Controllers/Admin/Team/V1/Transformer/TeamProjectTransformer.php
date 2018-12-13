@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Admin\Team\V1\Transformer;
 
+use App\Http\Controllers\Admin\Media\V1\Transformer\MediaTransformer;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
 use League\Fractal\TransformerAbstract;
 
 class TeamProjectTransformer extends TransformerAbstract
 {
 
-    protected $availableIncludes = ['member'];
+    protected $availableIncludes = ['member', 'meida'];
 
     public function transform(TeamProject $teamProject)
     {
@@ -56,5 +57,10 @@ class TeamProjectTransformer extends TransformerAbstract
                 }), 'pivot'),
             ]
         ];
+    }
+
+    public function includeMedia(TeamProject $teamProject)
+    {
+        return $this->item($teamProject->media, new MediaTransformer());
     }
 }

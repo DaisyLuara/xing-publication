@@ -19,8 +19,17 @@ class TeamProjectExport extends AbstractExport
 {
     public function __construct($request)
     {
-        $this->start_date = $request->start_date;
-        $this->end_date = $request->end_date;
+        $this->start_date_begin = $request->start_date_begin;
+        $this->end_date_begin = $request->end_date_begin;
+
+        $this->start_date_online = $request->start_date_online;
+        $this->end_date_online = $request->end_date_online;
+
+        $this->start_date_launch = $request->start_date_launch;
+        $this->end_date_launch = $request->end_date_launch;
+
+        $this->name = $request->name;
+        $this->status = $request->status;
         $this->fileName = '团队节目人员配置信息';
     }
 
@@ -43,6 +52,23 @@ class TeamProjectExport extends AbstractExport
         ];
         $sql = DB::table('team_projects as tp')->join('team_project_members as tpm', 'tp.id', '=', 'tpm.team_project_id')
             ->join('users', 'tp.applicant', '=', 'users.id')
+            ->where(function ($q) {
+                if ($this->name) {
+                    $q->whereRaw("project_name like '%" . $this->name . "%'");
+                }
+                if ($this->status) {
+                    $q->whereRaw("status='$this->status'");
+                }
+                if ($this->start_date_begin && $this->end_date_begin) {
+                    $q->whereRaw("begin_date between '$this->start_date_begin' and '$this->end_date_begin'");
+                }
+                if ($this->start_date_online && $this->end_date_online) {
+                    $q->whereRaw("online_date between '$this->start_date_online' and '$this->end_date_online'");
+                }
+                if ($this->start_date_launch && $this->end_date_launch) {
+                    $q->whereRaw("launch_date between '$this->start_date_launch' and '$this->end_date_launch'");
+                }
+            })
             ->selectRaw("users.name as applicant,tp.type as project_type,project_name,online_date,launch_date,project_attribute,link_attribute,xo_attribute,h5_attribute,art_innovate,dynamic_innovate,interact_innovate,remark,tpm.type as type,group_concat(concat(user_name, ':', rate)) as username")
             ->groupBy(DB::raw("belong,tpm.type"));
         $case = "";
