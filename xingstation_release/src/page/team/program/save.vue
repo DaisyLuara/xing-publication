@@ -628,8 +628,8 @@ export default {
           this.programForm.applicant = res.applicant;
           this.programForm.applicant_name = res.applicant_name;
           this.programForm.type = res.type;
-          // this.getProject(res.project_name);
           this.programForm.belong = res.belong;
+          this.getProject(res.belong);
           this.programForm.link_attribute = res.link_attribute;
           this.programForm.h5_attribute = res.h5_attribute;
           this.h5Rate = res.h5_attribute === 2 ? this.h5Rate2 : this.h5Rate1;
