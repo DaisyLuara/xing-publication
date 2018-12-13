@@ -362,7 +362,7 @@
             :on-exceed="handleExceed"
             class="upload-demo"
           >
-            <el-button size="small" type="primary">点击上传</el-button>
+            <el-button size="mini" type="success">点击上传</el-button>
             <div slot="tip" style="display:inline-block" class="el-upload__tip">支持类型：zip、rar</div>
             <div
               v-if="fileList.length !==0"
@@ -565,25 +565,9 @@ export default {
       );
     },
     beforeRemove(file, fileList) {
-      if (file.type) {
-        return this.$confirm(`确定移除 ${file.name}？`);
-      } else {
-        const isFile =
-          file.raw.type === "application/zip" || file.raw.type === "";
-        if (!isFile) {
-          return true;
-        } else {
-          return this.$confirm(`确定移除 ${file.name}？`);
-        }
-      }
+      return this.$confirm(`确定移除 ${file.name}？`);
     },
-    beforeUpload(file) {
-      const isFile = file.type === "application/zip" || file.type === "";
-      if (!isFile) {
-        this.$message.error("上传文件仅支持zip、rar格式!");
-        return isFile;
-      }
-    },
+    beforeUpload(file) {},
     // 上传成功后的处理
     handleSuccess(response, file, fileList) {
       this.fileList.push(response);
