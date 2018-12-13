@@ -149,8 +149,6 @@ class CouponController extends Controller
             }
         }
 
-        Log::info('coupon_batch_policies', $couponBatchPolicies);
-
         if (count($couponBatchPolicies) == 0) {
             abort(500, '无可用优惠券');
         }
