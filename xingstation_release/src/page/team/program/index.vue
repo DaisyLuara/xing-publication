@@ -94,7 +94,7 @@
           <div>
             <el-button
               v-if="role.name === 'legal-affairs-manager' || role.name === 'bonus-manager'"
-              type="info"
+              type="success"
               size="small"
               @click="downloadTable()"
             >下载</el-button>
