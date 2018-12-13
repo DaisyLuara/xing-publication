@@ -326,8 +326,7 @@ class CouponController extends Controller
         if ($couponBatch->third_code) {
 
             $user = WeChatUser::query()->findOrFail($userID, ['mallcoo_open_user_id']);
-            $mallcooUser = ThirdPartyUser::query()->findOrFail($user->mallcoo_open_user_id, ['mobile']);
-            $result = $this->sendMallCooCoupon($mallcooUser->mobile, $couponBatch->third_code);
+            $result = $this->sendMallCooCoupon($user->mallcoo_open_user_id, $couponBatch->third_code);
             if ($result['Code'] != 1) {
                 abort(500, $result['Message']);
             }
@@ -468,10 +467,10 @@ class CouponController extends Controller
         }
     }
 
-    private function sendMallCooCoupon($mobile, $picmID)
+    private function sendMallCooCoupon($open_user_id, $picmID)
     {
         $mall_coo = app('mall_coo');
-        $sUrl = 'https://openapi10.mallcoo.cn/Coupon/v1/Send/ByMobile/';
+        $sUrl = 'https://openapi10.mallcoo.cn/Coupon/v1/Send/ByOpenUserID/';
 
         $data = [
             'UserList' => [

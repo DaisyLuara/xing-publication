@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\MallCoo\V1\Request\MallCooRequest;
 use App\Http\Controllers\Admin\WeChat\V1\Models\ThirdPartyUser;
 use App\Models\WeChatUser;
 use App\Http\Controllers\Controller;
+use function GuzzleHttp\Psr7\parse_query;
 use Illuminate\Http\Request;
 use DB;
 
@@ -47,6 +48,7 @@ class UserController extends Controller
         $mallCardApplyTime = $userInfo['MallCardApplyTime'];
 
         $redirect_url = urldecode($request->get('redirect_url'));
+        $queries = parse_query(parse_url($redirect_url, PHP_URL_QUERY), false);
         $redirect_url = add_query_string($redirect_url, 'open_user_id', $openUserId);
 
         DB::beginTransaction();
@@ -64,7 +66,7 @@ class UserController extends Controller
                 ]
             );
 
-            WeChatUser::query()->updateOrCreate(['id' => $request->user_id], ['mallcoo_open_user_id' => $thirdPartyUser->mallcoo_open_user_id]);
+            WeChatUser::query()->updateOrCreate(['id' => $queries['user_id']], ['mallcoo_open_user_id' => $thirdPartyUser->mallcoo_open_user_id]);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();//事务回滚
