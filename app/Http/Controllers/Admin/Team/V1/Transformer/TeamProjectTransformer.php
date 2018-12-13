@@ -9,7 +9,7 @@ use League\Fractal\TransformerAbstract;
 class TeamProjectTransformer extends TransformerAbstract
 {
 
-    protected $availableIncludes = ['member', 'meida'];
+    protected $availableIncludes = ['media'];
 
     public function transform(TeamProject $teamProject)
     {
@@ -26,7 +26,7 @@ class TeamProjectTransformer extends TransformerAbstract
             'xo_attribute' => $teamProject->xo_attribute,
             'begin_date' => $teamProject->begin_date,
             'online_date' => $teamProject->online_date,
-            'launch_date' => $teamProject->project->online != 0 ? date('Y-m-d', $teamProject->project->online / 1000) : null,
+            'launch_date' => $teamProject->launch_date,
             'art_innovate' => $teamProject->art_innovate,
             'dynamic_innovate' => $teamProject->dynamic_innovate,
             'interact_innovate' => $teamProject->interact_innovate,
@@ -61,6 +61,9 @@ class TeamProjectTransformer extends TransformerAbstract
 
     public function includeMedia(TeamProject $teamProject)
     {
+        if (!$teamProject->media) {
+            return null;
+        }
         return $this->item($teamProject->media, new MediaTransformer());
     }
 }

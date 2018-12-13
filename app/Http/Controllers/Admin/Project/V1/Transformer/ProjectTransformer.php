@@ -27,6 +27,7 @@ class ProjectTransformer extends TransformerAbstract
             'created_at' => $project->date,
             'policy_id' => $project->policy_id,
             'updated_at' => formatClientDate($project->clientdate),
+            'launch_date' => $project->online != 0 ? date('Y-m-d', $project->online / 1000) : null
         ];
     }
 

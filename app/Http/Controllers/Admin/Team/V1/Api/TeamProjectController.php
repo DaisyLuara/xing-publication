@@ -30,14 +30,10 @@ class TeamProjectController extends Controller
             $query->whereRaw("begin_date between '$request->start_date_begin' and '$request->end_date_begin' ");
         }
         if ($request->has('start_date_online') && $request->has('end_date_online')) {
-            $query->whereRaw("begin_date between '$request->start_date_online' and '$request->end_date_online' ");
+            $query->whereRaw("online_date between '$request->start_date_online' and '$request->end_date_online' ");
         }
         if ($request->has('start_date_launch') && $request->has('end_date_launch')) {
-            $query->whereHas('', function ($q) use ($request) {
-                $startDate = strtotime($request->start_date_launch . ' 00:00:00') * 1000;
-                $endDate = strtotime($request->end_date_launch . ' 00:00:00') * 1000;
-                $q->whereRaw("online between '$startDate' and '$endDate'");
-            });
+            $query->whereRaw("launch_date between '$request->start_date_online' and '$request->end_date_online' ");
         }
         /** @var  $user \App\Models\User */
         $user = $this->user();
@@ -64,7 +60,7 @@ class TeamProjectController extends Controller
             });
         }
 
-        $teamProject = $query->paginate(10);
+        $teamProject = $query->orderBy('begin_date', 'desc')->paginate(10);
 
         return $this->response()->paginator($teamProject, new TeamProjectListTransformer());
     }

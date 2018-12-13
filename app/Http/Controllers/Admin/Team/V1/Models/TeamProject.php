@@ -19,6 +19,7 @@ class TeamProject extends Model
         'xo_attribute',
         'begin_date',
         'online_date',
+        'launch_date',
         'art_innovate',
         'dynamic_innovate',
         'interact_innovate',
@@ -38,13 +39,9 @@ class TeamProject extends Model
         return $this->belongsTo(User::class, 'applicant', 'id');
     }
 
-    public function project()
-    {
-        return $this->setConnection('ar')->belongsTo(Project::class, 'belong', 'versionname');
-    }
-
     public function media()
     {
         return $this->belongsTo(Media::class, 'media_id', 'id');
     }
+
 }

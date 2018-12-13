@@ -15,8 +15,6 @@ use League\Fractal\TransformerAbstract;
 class TeamProjectListTransformer extends TransformerAbstract
 {
 
-    protected $availableIncludes = ['member'];
-
     protected $projectAttributeMapping = [
         '1' => '基础条目',
         '2' => '通用节目',
@@ -49,7 +47,7 @@ class TeamProjectListTransformer extends TransformerAbstract
             'xo_attribute' => $teamProject->xo_attribute == 1 ? '是' : '否',
             'begin_date' => $teamProject->begin_date,
             'online_date' => $teamProject->online_date,
-            'launch_date' => $teamProject->project->online != 0 ? date('Y-m-d', $teamProject->project->online / 1000) : null,
+            'launch_date' => $teamProject->launch_date,
             'art_innovate' => $teamProject->art_innovate,
             'dynamic_innovate' => $teamProject->dynamic_innovate,
             'interact_innovate' => $teamProject->interact_innovate,

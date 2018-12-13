@@ -50,7 +50,7 @@ class TeamProjectExport extends AbstractExport
             '3' => '定制节目',
             '4' => '定制项目'
         ];
-        $sql = DB::table('team_projects as tp')->join('team_project_members as tpm', 'tp.id', '=', 'tpm.team_project_id')
+        $sql = DB::table('team_projects as tp')->leftJoin('team_project_members as tpm', 'tp.id', '=', 'tpm.team_project_id')
             ->join('users', 'tp.applicant', '=', 'users.id')
             ->where(function ($q) {
                 if ($this->name) {

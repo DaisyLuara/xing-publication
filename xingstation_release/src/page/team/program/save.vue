@@ -619,13 +619,12 @@ export default {
       };
       getProgramDetails(this, this.programID, params)
         .then(res => {
-          let mediaIds = [];
-          let mediaData = res.media.data;
-          mediaData.map(r => {
-            mediaIds.push(r.id);
-          });
-          this.contractForm.ids = mediaIds;
-          this.fileList = mediaData;
+            let mediaData = [];
+          if(res.media){
+              this.ids = res.media.id;
+              mediaData.push(res.media);
+          }
+          this.fileList = mediaData
           this.programForm.applicant = res.applicant;
           this.programForm.applicant_name = res.applicant_name;
           this.programForm.type = res.type;
