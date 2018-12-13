@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Exports\CouponExport;
 use App\Exports\MarketingExport;
 use App\Exports\MarketingTopExport;
 use App\Exports\OldMarketingExport;
@@ -59,6 +60,9 @@ class ExcelServiceProvider extends ServiceProvider
         });
         $this->app->bind('person_reward', function ($app) {
             return new PersonRewardExport($app->request);
+        });
+        $this->app->bind('coupon', function ($app) {
+            return new CouponExport($app->request);
         });
     }
 }

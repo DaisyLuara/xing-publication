@@ -15,7 +15,7 @@ class ExportRequest extends FormRequest
     public function rules()
     {
         return [
-            'type' => ['required', Rule::in(['marketing', 'point', 'project', 'daily_average', 'project_point', 'marketing_top', 'old_marketing','person_reward'])]
+            'type' => ['required', Rule::in(['marketing', 'point', 'project', 'daily_average', 'project_point', 'marketing_top', 'old_marketing','person_reward','coupon'])]
         ];
     }
 }
