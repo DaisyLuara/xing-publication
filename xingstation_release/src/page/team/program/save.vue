@@ -25,7 +25,7 @@
                   v-for="item in projectList"
                   :key="item.alias"
                   :label="item.name"
-                  :value="item.alias + ',' + item.name"
+                  :value="item.alias"
                 />
               </el-select>
             </el-form-item>
@@ -291,77 +291,86 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item
-              :rules="[{ required: true, message: '请输入艺术风格创新点', trigger: 'submit' }]"
-              label="艺术风格创新点"
-              prop="art_innovate"
-              label-width="120px"
-            >
-              <el-input
-                v-model="programForm.art_innovate"
-                :autosize="{ minRows: 2}"
-                :maxlength="1000"
-                type="textarea"
-                placeholder="请填写艺术风格创新点"
-                class="text-input"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item
-              :rules="[{ required: true, message: '请输入动效体验创新点', trigger: 'submit' }]"
-              label="动效体验创新点"
-              prop="dynamic_innovate"
-              label-width="120px"
-            >
-              <el-input
-                v-model="programForm.dynamic_innovate"
-                :autosize="{ minRows: 2}"
-                :maxlength="1000"
-                type="textarea"
-                placeholder="请填写动效体验创新点"
-                class="text-input"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item
-              :rules="[{ required: true, message: '请输入交互技术创新点', trigger: 'submit' }]"
-              label="交互技术创新点"
-              prop="interact_innovate"
-              label-width="120px"
-            >
-              <el-input
-                v-model="programForm.interact_innovate"
-                :autosize="{ minRows: 2}"
-                :maxlength="1000"
-                type="textarea"
-                placeholder="请填写交互技术创新点"
-                class="text-input"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label-width="120px" label="备注" prop="remark">
-              <el-input
-                v-model="programForm.remark"
-                :autosize="{ minRows: 2}"
-                :maxlength="1000"
-                type="textarea"
-                placeholder="请填写备注"
-                class="text-input"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
+        <el-form-item
+          :rules="[{ required: true, message: '请输入艺术风格创新点', trigger: 'submit' }]"
+          label="艺术风格创新点"
+          prop="art_innovate"
+          label-width="120px"
+        >
+          <el-input
+            v-model="programForm.art_innovate"
+            :autosize="{ minRows: 2}"
+            :maxlength="1000"
+            type="textarea"
+            placeholder="请填写艺术风格创新点"
+            class="text-input"
+          />
+        </el-form-item>
+        <el-form-item
+          :rules="[{ required: true, message: '请输入动效体验创新点', trigger: 'submit' }]"
+          label="动效体验创新点"
+          prop="dynamic_innovate"
+          label-width="120px"
+        >
+          <el-input
+            v-model="programForm.dynamic_innovate"
+            :autosize="{ minRows: 2}"
+            :maxlength="1000"
+            type="textarea"
+            placeholder="请填写动效体验创新点"
+            class="text-input"
+          />
+        </el-form-item>
+        <el-form-item
+          :rules="[{ required: true, message: '请输入交互技术创新点', trigger: 'submit' }]"
+          label="交互技术创新点"
+          prop="interact_innovate"
+          label-width="120px"
+        >
+          <el-input
+            v-model="programForm.interact_innovate"
+            :autosize="{ minRows: 2}"
+            :maxlength="1000"
+            type="textarea"
+            placeholder="请填写交互技术创新点"
+            class="text-input"
+          />
+        </el-form-item>
+        <el-form-item label-width="120px" label="备注" prop="remark">
+          <el-input
+            v-model="programForm.remark"
+            :autosize="{ minRows: 2}"
+            :maxlength="1000"
+            type="textarea"
+            placeholder="请填写备注"
+            class="text-input"
+          />
+        </el-form-item>
+        <el-form-item label="上传素材" prop="ids">
+          <el-upload
+            ref="upload"
+            :action="SERVER_URL + '/api/media'"
+            :data="{type: 'package'}"
+            :headers="formHeader"
+            :before-upload="beforeUpload"
+            :on-success="handleSuccess"
+            :on-remove="handleRemove"
+            :on-preview="handlePreview"
+            :before-remove="beforeRemove"
+            :file-list="fileList"
+            :limit="1"
+            :on-exceed="handleExceed"
+            class="upload-demo"
+          >
+            <el-button size="small" type="primary">点击上传</el-button>
+            <div slot="tip" style="display:inline-block" class="el-upload__tip">支持类型：zip、rar</div>
+            <div
+              v-if="fileList.length !==0"
+              slot="tip"
+              style="color: #ff5722;font-size: 12px;"
+            >点击文件名称可以下载</div>
+          </el-upload>
+        </el-form-item>
         <el-form-item>
           <!-- 产品经理可以保存 -->
           <el-button
@@ -408,7 +417,8 @@ import {
   RadioGroup,
   Radio,
   Col,
-  Dialog
+  Dialog,
+  Upload
 } from "element-ui";
 import {
   saveProgram,
@@ -420,6 +430,8 @@ import {
   getSearchTeamRateList
 } from "service";
 import { Cookies } from "utils/cookies";
+import auth from "service/auth";
+const SERVER_URL = process.env.SERVER_URL;
 
 export default {
   components: {
@@ -433,10 +445,17 @@ export default {
     ElInput: Input,
     ElRadioGroup: RadioGroup,
     ElRadio: Radio,
-    ElDialog: Dialog
+    ElDialog: Dialog,
+    ElUpload: Upload
   },
   data() {
     return {
+      SERVER_URL: SERVER_URL,
+      formHeader: {
+        Authorization: "Bearer " + auth.getToken()
+      },
+      fileList: [],
+      ids: [],
       disabledChange: true,
       form: {
         total: 0
@@ -521,6 +540,54 @@ export default {
     h5Handle(val) {
       this.h5Rate = val === 1 ? this.h5Rate1 : this.h5Rate2;
     },
+    handleRemove(file, fileList) {
+      this.fileList = fileList;
+    },
+    handlePreview(file) {
+      let url = file.url;
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", url, true);
+      xhr.responseType = "blob";
+      xhr.onload = () => {
+        var urlObject = window.URL || window.webkitURL || window;
+        let a = document.createElement("a");
+        a.href = urlObject.createObjectURL(new Blob([xhr.response]));
+        a.download = file.name;
+        a.click();
+      };
+      xhr.send();
+    },
+    handleExceed(files, fileList) {
+      this.$message.warning(
+        `当前限制选择 1 个文件，本次选择了 ${
+          files.length
+        } 个文件，共选择了 ${files.length + fileList.length} 个文件`
+      );
+    },
+    beforeRemove(file, fileList) {
+      if (file.type) {
+        return this.$confirm(`确定移除 ${file.name}？`);
+      } else {
+        const isFile =
+          file.raw.type === "application/zip" || file.raw.type === "";
+        if (!isFile) {
+          return true;
+        } else {
+          return this.$confirm(`确定移除 ${file.name}？`);
+        }
+      }
+    },
+    beforeUpload(file) {
+      const isFile = file.type === "application/zip" || file.type === "";
+      if (!isFile) {
+        this.$message.error("上传文件仅支持zip、rar格式!");
+        return isFile;
+      }
+    },
+    // 上传成功后的处理
+    handleSuccess(response, file, fileList) {
+      this.fileList.push(response);
+    },
     // 比列
     getTeamRateList() {
       getSearchTeamRateList(this)
@@ -547,13 +614,22 @@ export default {
     },
     getProgramDetails() {
       this.setting.loading = true;
-      getProgramDetails(this, this.programID)
+      let params = {
+        include: "media"
+      };
+      getProgramDetails(this, this.programID, params)
         .then(res => {
+          let mediaData = [];
+          if (res.media) {
+            this.ids = res.media.id;
+            mediaData.push(res.media);
+          }
+          this.fileList = mediaData;
           this.programForm.applicant = res.applicant;
           this.programForm.applicant_name = res.applicant_name;
           this.programForm.type = res.type;
+          this.programForm.belong = res.belong;
           this.getProject(res.project_name);
-          this.programForm.belong = res.belong + "," + res.project_name;
           this.programForm.link_attribute = res.link_attribute;
           this.programForm.h5_attribute = res.h5_attribute;
           this.h5Rate = res.h5_attribute === 2 ? this.h5Rate2 : this.h5Rate1;
@@ -788,13 +864,27 @@ export default {
       }
     },
     submit(formName) {
+      let mediaIds = [];
+      if (this.fileList.length > 0) {
+        this.fileList.map(r => {
+          mediaIds.push(r.id);
+        });
+        this.ids = mediaIds.join(",");
+      } else {
+        this.$message({
+          type: "warning",
+          message: "素材必须上传"
+        });
+        return;
+      }
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.setting.loading = true;
           let member = {};
           let args = {
-            belong: this.programForm.belong.split(",")[0],
-            project_name: this.programForm.belong.split(",")[1],
+            belong: this.programForm.belong,
+            // project_name: this.programForm.belong.split(",")[1],
+            // launch_date: this.programForm.belong.split(",")[2],
             applicant: this.programForm.applicant,
             project_attribute: this.programForm.project_attribute,
             link_attribute: this.programForm.link_attribute,
@@ -804,7 +894,8 @@ export default {
             art_innovate: this.programForm.art_innovate,
             dynamic_innovate: this.programForm.dynamic_innovate,
             interact_innovate: this.programForm.interact_innovate,
-            type: this.programForm.type
+            type: this.programForm.type,
+            media_id: this.ids
           };
           if (this.programForm.interaction.length > 0) {
             member.interaction = this.programForm.interaction;

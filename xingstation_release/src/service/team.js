@@ -48,10 +48,10 @@ const modifyProgram = (context, params, id) => {
   })
 }
 // 得到项目详情
-const getProgramDetails = (context, id) => {
+const getProgramDetails = (context, id, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .get(HOST + TEAM_API + '/' + id)
+      .get(HOST + TEAM_API + '/' + id, { params: params })
       .then(response => {
         resolve(response.data)
       })

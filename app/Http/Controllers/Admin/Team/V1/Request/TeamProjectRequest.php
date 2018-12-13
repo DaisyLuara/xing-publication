@@ -17,7 +17,6 @@ class TeamProjectRequest extends \App\Http\Requests\Request
         switch ($this->method()) {
             case 'POST':
                 return [
-                    'project_name' => 'required',
                     'belong' => 'required|unique:team_projects',
                     'project_attribute' => Rule::in([1, 2, 3, 4]),
                     'link_attribute' => Rule::in([0, 1]),
@@ -28,7 +27,8 @@ class TeamProjectRequest extends \App\Http\Requests\Request
                     'interact_innovate' => 'required|max:1000',
                     'remark' => 'max:1000',
                     'type' => Rule::in([0, 1]),
-                    'member.*.rate' => 'numeric'
+                    'member.*.rate' => 'numeric',
+                    'media_id' => 'required|integer'
                 ];
                 break;
             case 'PATCH':
@@ -43,7 +43,8 @@ class TeamProjectRequest extends \App\Http\Requests\Request
                     'interact_innovate' => 'max:1000',
                     'remark' => 'max:1000',
                     'type' => Rule::in([0, 1]),
-                    'member.*.rate' => 'numeric'
+                    'member.*.rate' => 'numeric',
+                    'media_id' => 'integer'
                 ];
                 break;
             default:
