@@ -451,39 +451,6 @@ export default {
     getProgramList() {
       this.setting.loading = true;
       let args = this.setArgs();
-      // let args = {
-      //   page: this.pagination.currentPage,
-      //   alias: this.filters.alias,
-      //   status: this.filters.status,
-      //   start_date_begin: handleDateTypeTransform(this.filters.beginDate[0]),
-      //   end_date_begin: handleDateTypeTransform(this.filters.beginDate[1]),
-      //   start_date_online: handleDateTypeTransform(this.filters.onlineDate[0]),
-      //   end_date_online: handleDateTypeTransform(this.filters.onlineDate[1]),
-      //   start_date_launch: handleDateTypeTransform(this.filters.launchDate[0]),
-      //   end_date_launch: handleDateTypeTransform(this.filters.launchDate[1]),
-      //   own: this.own
-      // };
-      // if (this.filters.alias === "") {
-      //   delete args.alias;
-      // }
-      // if (this.own === "") {
-      //   delete args.own;
-      // }
-      // if (!this.filters.status) {
-      //   delete args.status;
-      // }
-      // if (JSON.stringify(this.filters.beginDate) === "[]") {
-      //   delete args.start_date_begin;
-      //   delete args.end_date_begin;
-      // }
-      // if (JSON.stringify(this.filters.onlineDate) === "[]") {
-      //   delete args.start_date_online;
-      //   delete args.end_date_online;
-      // }
-      // if (JSON.stringify(this.filters.launchDate) === "[]") {
-      //   delete args.start_date_launch;
-      //   delete args.end_date_launch;
-      // }
       getProgramList(this, args)
         .then(res => {
           this.tableData = res.data;
