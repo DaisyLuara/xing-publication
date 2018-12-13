@@ -16,7 +16,6 @@ use App\Http\Controllers\Admin\Common\V1\Request\CouponRequest;
 use App\Http\Controllers\Admin\Coupon\V1\Models\UserCouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\Common\V1\Transformer\CouponTransformer;
-use App\Http\Controllers\Admin\WeChat\V1\Models\ThirdPartyUser;
 use App\Http\Controllers\Controller;
 use App\Models\WeChatUser;
 use Carbon\Carbon;
@@ -478,7 +477,7 @@ class CouponController extends Controller
                     'BussinessID' => null,
                     'TraceID' => uniqid() . config('mall_coo.app_id'),
                     'PICMID' => $picmID,
-                    'Mobile' => $mobile,
+                    'OpenUserID' => $open_user_id,
                 ]
             ]
         ];
