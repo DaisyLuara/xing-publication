@@ -10,6 +10,7 @@ use App\Exports\PointDailyAverageExport;
 use App\Exports\PointExport;
 use App\Exports\ProjectByPointExport;
 use App\Exports\ProjectExport;
+use App\Exports\TeamProjectExport;
 use Illuminate\Support\ServiceProvider;
 
 class ExcelServiceProvider extends ServiceProvider
@@ -59,6 +60,9 @@ class ExcelServiceProvider extends ServiceProvider
         });
         $this->app->bind('person_reward', function ($app) {
             return new PersonRewardExport($app->request);
+        });
+        $this->app->bind('team_project', function ($app) {
+            return new TeamProjectExport($app->request);
         });
     }
 }

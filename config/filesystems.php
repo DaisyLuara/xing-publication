@@ -82,15 +82,15 @@ return [
         'qiniu_bw' => [
             'driver' => 'qiniu',
             'domains' => [
-                'default' => '', //你的七牛域名
+                'default' => 'cdn.exe666.com', //你的七牛域名
                 'https' => '',         //你的HTTPS域名
                 'custom' => '',                //你的自定义域名
             ],
-            'access_key' => '',  //AccessKey
-            'secret_key' => '',  //SecretKey
-            'bucket' => '',  //Bucket名字
+            'access_key' => 'nC8VTjw612h_bLnKrZW-B1o3ZvN7CTOPPnmGuYMp',  //AccessKey
+            'secret_key' => 'XDAkO7Gj-JORvuKelsbEF9IZXzYgCTbdWbuBtcah',  //SecretKey
+            'bucket' => 'exe666',  //Bucket名字
             'notify_url' => '',  //持久化处理回调地址
-            'url' => '',  // 填写文件访问根url
+            'url' => 'http://cdn.exe666.com',  // 填写文件访问根url
         ],
     ],
 
