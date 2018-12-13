@@ -345,6 +345,10 @@ class CouponController extends Controller
                     'picm_id' => $data[0]['PICMID'],
                     'trace_id' => $data[0]['TraceID'],
                     'status' => 3,
+                    'wx_user_id' => $userID,
+                    'qiniu_id' => $gameAttributePayload && isset($gameAttributePayload['id']) ? $gameAttributePayload['id'] : 0,
+                    'oid' => $gameAttributePayload && isset($gameAttributePayload['utm_source']) ? $gameAttributePayload['utm_source'] : 0,
+                    'belong' => $gameAttributePayload && isset($gameAttributePayload['utm_campaign']) ? $gameAttributePayload['utm_campaign'] : '',
                 ]);
                 $couponBatch->decrement('stock');
                 DB::commit();
