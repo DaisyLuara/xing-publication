@@ -26,19 +26,18 @@ class UserController extends Controller
 
     public function callback(Request $request)
     {
-
         $ticket = $request->get('Ticket');
 
         //获取用户UserToken
         $mall_coo = app('mall_coo');
         $result = $mall_coo->getTokenByTicket($ticket);
-        abort_if($result['Code'] !== 1, 500, result['Message']);
+        abort_if($result['Code'] !== 1, 500, $result['Message']);
 
         //获取会员信息
-        $response = $mall_coo->getUserInfoByOpenUserID($result['Data']['OpenUserId']);
-        abort_if($result['Code'] !== 1, 500, result['Message']);
+        $result = $mall_coo->getUserInfoByOpenUserID($result['Data']['OpenUserId']);
+        abort_if($result['Code'] !== 1, 500, $result['Message']);
 
-        $userInfo = $response['Data'];
+        $userInfo = $result['Data'];
         $openUserId = $userInfo['OpenUserID'];
         $mobile = $userInfo['Mobile'];
         $mallCooWxOpenId = $userInfo['WXOpenID'];
@@ -64,7 +63,8 @@ class UserController extends Controller
                     'mall_card_apply_time' => $mallCardApplyTime,
                 ]
             );
-            WeChatUser::query()->update(['id' => $request->user_id], ['mallcoo_open_user_id' => $thirdPartyUser->id]);
+
+            WeChatUser::query()->updateOrCreate(['id' => $request->user_id], ['mallcoo_open_user_id' => $thirdPartyUser->mallcoo_open_user_id]);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();//事务回滚
