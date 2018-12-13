@@ -17,7 +17,7 @@ class UserController extends Controller
     public function oauth(MallCooRequest $request)
     {
         $userID = decrypt($request->sign);
-        $redirect_url = $request->get('redirect_url');
+        $redirect_url = urldecode($request->get('redirect_url'));
         $redirect_url = add_query_string($redirect_url, 'user_id', $userID);
 
         $mall_coo = app('mall_coo');
