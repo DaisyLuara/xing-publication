@@ -9,7 +9,6 @@
 namespace App\Exports;
 
 use DB;
-use Carbon\Carbon;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
@@ -28,7 +27,7 @@ class TeamProjectExport extends AbstractExport
         $this->start_date_launch = $request->start_date_launch;
         $this->end_date_launch = $request->end_date_launch;
 
-        $this->name = $request->name;
+        $this->alias = $request->alias;
         $this->status = $request->status;
         $this->fileName = '团队节目人员配置信息';
     }
@@ -53,8 +52,8 @@ class TeamProjectExport extends AbstractExport
         $sql = DB::table('team_projects as tp')->leftJoin('team_project_members as tpm', 'tp.id', '=', 'tpm.team_project_id')
             ->join('users', 'tp.applicant', '=', 'users.id')
             ->where(function ($q) {
-                if ($this->name) {
-                    $q->whereRaw("project_name like '%" . $this->name . "%'");
+                if ($this->alias) {
+                    $q->whereRaw("belong='$this->alias'");
                 }
                 if ($this->status) {
                     $q->whereRaw("status='$this->status'");

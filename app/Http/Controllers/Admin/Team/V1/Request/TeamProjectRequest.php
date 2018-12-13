@@ -17,7 +17,6 @@ class TeamProjectRequest extends \App\Http\Requests\Request
         switch ($this->method()) {
             case 'POST':
                 return [
-                    'project_name' => 'required',
                     'belong' => 'required|unique:team_projects',
                     'project_attribute' => Rule::in([1, 2, 3, 4]),
                     'link_attribute' => Rule::in([0, 1]),
