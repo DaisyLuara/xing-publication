@@ -25,7 +25,7 @@
                   v-for="item in projectList"
                   :key="item.alias"
                   :label="item.name"
-                  :value="item.alias + ',' + item.name + ',' +item.launch_date"
+                  :value="item.alias"
                 />
               </el-select>
             </el-form-item>
@@ -529,9 +529,6 @@ export default {
     }
   },
   methods: {
-    test(v) {
-      console.log(v);
-    },
     async detailInit() {
       try {
         await this.getTeamRateList();
@@ -622,18 +619,17 @@ export default {
       };
       getProgramDetails(this, this.programID, params)
         .then(res => {
-            let mediaData = [];
-          if(res.media){
-              this.ids = res.media.id;
-              mediaData.push(res.media);
+          let mediaData = [];
+          if (res.media) {
+            this.ids = res.media.id;
+            mediaData.push(res.media);
           }
-          this.fileList = mediaData
+          this.fileList = mediaData;
           this.programForm.applicant = res.applicant;
           this.programForm.applicant_name = res.applicant_name;
           this.programForm.type = res.type;
-          this.getProject(res.project_name);
-          this.programForm.belong =
-            res.belong + "," + res.project_name + "," + res.launch_date;
+          // this.getProject(res.project_name);
+          this.programForm.belong = res.belong;
           this.programForm.link_attribute = res.link_attribute;
           this.programForm.h5_attribute = res.h5_attribute;
           this.h5Rate = res.h5_attribute === 2 ? this.h5Rate2 : this.h5Rate1;
@@ -886,9 +882,9 @@ export default {
           this.setting.loading = true;
           let member = {};
           let args = {
-            belong: this.programForm.belong.split(",")[0],
-            project_name: this.programForm.belong.split(",")[1],
-            launch_date: this.programForm.belong.split(",")[2],
+            belong: this.programForm.belong,
+            // project_name: this.programForm.belong.split(",")[1],
+            // launch_date: this.programForm.belong.split(",")[2],
             applicant: this.programForm.applicant,
             project_attribute: this.programForm.project_attribute,
             link_attribute: this.programForm.link_attribute,
