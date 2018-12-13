@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use function GuzzleHttp\Psr7\parse_query;
 use Illuminate\Http\Request;
 use DB;
+use Log;
 
 
 class UserController extends Controller
@@ -47,8 +48,9 @@ class UserController extends Controller
         $birthday = $userInfo['Birthday'];
         $mallCardApplyTime = $userInfo['MallCardApplyTime'];
 
-        $redirect_url = urldecode($request->get('redirect_url'));
+        $redirect_url = urldecode(urldecode($request->get('redirect_url')));
         $queries = parse_query(parse_url($redirect_url, PHP_URL_QUERY), false);
+        Log::info('redirect_queries', $queries);
         $redirect_url = add_query_string($redirect_url, 'open_user_id', $openUserId);
 
         DB::beginTransaction();
