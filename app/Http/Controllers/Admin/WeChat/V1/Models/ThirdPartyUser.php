@@ -39,7 +39,7 @@ class ThirdPartyUser extends Model
 
     public function mallcoo_score_histories()
     {
-        return $this->hasMany(MallcooScoreHistory::class, 'mallcoo_open_user_id', 'mallcoo_wx_open_id');
+        return $this->hasMany(MallcooScoreHistory::class, 'mallcoo_open_user_id', 'mallcoo_open_user_id');
     }
 
 
