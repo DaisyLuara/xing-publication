@@ -9,14 +9,10 @@
 namespace App\Http\Controllers\Admin\Team\V1\Request;
 
 
-use Dingo\Api\Http\FormRequest;
+use App\Http\Requests\Request;
 
-class TeamSystemDetailRequest extends FormRequest
+class TeamSystemDetailRequest extends Request
 {
-    public function authorize()
-    {
-        return true;
-    }
 
     public function rules()
     {

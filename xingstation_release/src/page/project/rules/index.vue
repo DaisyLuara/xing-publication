@@ -64,13 +64,30 @@
                 <el-form-item label="优惠券描述">
                   <span>{{ scope.row.description }}</span>
                 </el-form-item>
-                <el-form-item label="图片">
-                  <a :href="scope.row.image_url" target="_blank" style="color: blue">查看</a>
+                <el-form-item
+                  label="h5图片">
+                  <a
+                    :href="scope.row.image_url"
+                    target="_blank"
+                    style="color: blue">查看</a>
                 </el-form-item>
-                <el-form-item label="金额">
+                <el-form-item
+                  label="大屏图片">
+                  <a
+                    :href="scope.row.bs_image_url"
+                    target="_blank"
+                    style="color: blue">查看</a>
+                </el-form-item>
+                <el-form-item
+                  label="金额">
                   <span>{{ scope.row.amount }}</span>
                 </el-form-item>
-                <el-form-item label="库存总数">
+                <el-form-item
+                  label="积分">
+                  <span>{{ scope.row.credit }}</span>
+                </el-form-item>
+                <el-form-item
+                  label="库存总数">
                   <span>{{ scope.row.count }}</span>
                 </el-form-item>
                 <el-form-item label="优先级">
@@ -344,8 +361,10 @@ export default {
         sort_order: data.sort_order,
         title: data.title,
         dynamic_stock_status: data.dynamic_stock_status,
-        write_off_status: data.write_off_status
-      };
+        write_off_status: data.write_off_status,
+        credit: data.credit,
+        bs_image_url: data.bs_image_url
+      }
       if (!args.image_url) {
         delete args.image_url;
       }

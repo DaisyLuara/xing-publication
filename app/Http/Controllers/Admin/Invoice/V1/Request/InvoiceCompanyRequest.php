@@ -9,14 +9,10 @@
 namespace App\Http\Controllers\Admin\Invoice\V1\Request;
 
 
-use Dingo\Api\Http\FormRequest;
+use App\Http\Requests\Request;
 
-class InvoiceCompanyRequest extends FormRequest
+class InvoiceCompanyRequest extends Request
 {
-    public function authorize()
-    {
-        return true;
-    }
 
     public function rules()
     {

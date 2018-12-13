@@ -3,7 +3,7 @@
     <div v-loading="setting.loading" :element-loading-text="setting.loadingText" class="pane">
       <div
         class="pane-title"
-      >{{ programID ? (((role.name==='project-manager' && status===1) || role.name === 'legal-affairs-manager') ? '修改项目' : '查看项目') : '新增项目'}}</div>
+      >{{ programID ? (((role.name==='project-manager' && status===1) || role.name === 'legal-affairs-manager' || role.name === 'bonus-manager') ? '修改项目' : '查看项目') : '新增项目'}}</div>
       <el-form ref="programForm" :model="programForm" label-position="left" label-width="80px">
         <el-row>
           <el-col :span="12">
@@ -17,7 +17,6 @@
                 :loading="searchLoading"
                 remote
                 :remote-method="getProject"
-                :disabled="role.name === 'legal-affairs-manager'"
                 placeholder="请输入节目名称"
                 filterable
                 clearable
@@ -26,7 +25,7 @@
                   v-for="item in projectList"
                   :key="item.alias"
                   :label="item.name"
-                  :value="item.alias + ',' + item.name"
+                  :value="item.alias"
                 />
               </el-select>
             </el-form-item>
@@ -46,18 +45,18 @@
           <el-col :span="12">
             <el-form-item label="节目属性" prop="project_attribute">
               <el-radio-group v-model="programForm.project_attribute">
-                <el-radio :label="1" :disabled="role.name === 'legal-affairs-manager'">基础条目</el-radio>
-                <el-radio :label="2" :disabled="role.name === 'legal-affairs-manager'">通用节目</el-radio>
-                <el-radio :label="3" :disabled="role.name === 'legal-affairs-manager'">定制节目</el-radio>
-                <el-radio :label="4" :disabled="role.name === 'legal-affairs-manager'">定制项目</el-radio>
+                <el-radio :label="1">基础条目</el-radio>
+                <el-radio :label="2">通用节目</el-radio>
+                <el-radio :label="3">定制节目</el-radio>
+                <el-radio :label="4">定制项目</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="联动属性" prop="link_attribute">
               <el-radio-group v-model="programForm.link_attribute">
-                <el-radio :label="1" :disabled="role.name === 'legal-affairs-manager'">是</el-radio>
-                <el-radio :label="0" :disabled="role.name === 'legal-affairs-manager'">否</el-radio>
+                <el-radio :label="1">是</el-radio>
+                <el-radio :label="0">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -66,16 +65,16 @@
           <el-col :span="12">
             <el-form-item label="H5属性" prop="h5_attribute">
               <el-radio-group v-model="programForm.h5_attribute" @change="h5Handle">
-                <el-radio :label="1" :disabled="role.name === 'legal-affairs-manager'">基础模版</el-radio>
-                <el-radio :label="2" :disabled="role.name === 'legal-affairs-manager'">复杂模版</el-radio>
+                <el-radio :label="1">基础模版</el-radio>
+                <el-radio :label="2">复杂模版</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="小偶属性" prop="xo_attribute">
               <el-radio-group v-model="programForm.xo_attribute">
-                <el-radio :label="1" :disabled="role.name === 'legal-affairs-manager'">是</el-radio>
-                <el-radio :label="0" :disabled="role.name === 'legal-affairs-manager'">否</el-radio>
+                <el-radio :label="1">是</el-radio>
+                <el-radio :label="0">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -84,8 +83,8 @@
           <el-col :span="12">
             <el-form-item label="节目类型" prop="type">
               <el-radio-group v-model="programForm.type">
-                <el-radio :label="0" :disabled="role.name === 'legal-affairs-manager'">正常节目</el-radio>
-                <el-radio :label="1" :disabled="role.name === 'legal-affairs-manager'">提前节目</el-radio>
+                <el-radio :label="0">正常节目</el-radio>
+                <el-radio :label="1">提前节目</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -117,7 +116,7 @@
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.interaction,interactionRate,'interaction')"
-              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager') ? '修改':'详情' }}</el-button>
+              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager' || role.name === 'bonus-manager') ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -144,7 +143,7 @@
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.originality,creativeRate,'creative')"
-              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager') ? '修改':'详情' }}</el-button>
+              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager' || role.name === 'bonus-manager') ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -176,7 +175,7 @@
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.h5,h5Rate,'H5')"
-              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager') ? '修改':'详情' }}</el-button>
+              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager' || role.name === 'bonus-manager') ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -203,7 +202,7 @@
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.animation,animateRate,'animate')"
-              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager') ? '修改':'详情' }}</el-button>
+              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager' || role.name === 'bonus-manager') ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -232,7 +231,7 @@
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.plan,wholeRate,'whole')"
-              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager') ? '修改':'详情' }}</el-button>
+              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager' || role.name === 'bonus-manager') ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -259,7 +258,7 @@
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.tester,testRate,'test')"
-              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager') ? '修改':'详情' }}</el-button>
+              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager'|| role.name === 'bonus-manager') ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -288,28 +287,94 @@
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.operation,platformRate,'platform')"
-              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager') ? '修改':'详情' }}</el-button>
+              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager'|| role.name === 'bonus-manager') ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="项目说明" prop="remark">
-              <el-input
-                v-model="programForm.remark"
-                :autosize="{ minRows: 2, maxRows: 11}"
-                :maxlength="150"
-                type="textarea"
-                placeholder="请填写项目说明"
-                class="text-input"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
+        <el-form-item
+          :rules="[{ required: true, message: '请输入艺术风格创新点', trigger: 'submit' }]"
+          label="艺术风格创新点"
+          prop="art_innovate"
+          label-width="120px"
+        >
+          <el-input
+            v-model="programForm.art_innovate"
+            :autosize="{ minRows: 2}"
+            :maxlength="1000"
+            type="textarea"
+            placeholder="请填写艺术风格创新点"
+            class="text-input"
+          />
+        </el-form-item>
+        <el-form-item
+          :rules="[{ required: true, message: '请输入动效体验创新点', trigger: 'submit' }]"
+          label="动效体验创新点"
+          prop="dynamic_innovate"
+          label-width="120px"
+        >
+          <el-input
+            v-model="programForm.dynamic_innovate"
+            :autosize="{ minRows: 2}"
+            :maxlength="1000"
+            type="textarea"
+            placeholder="请填写动效体验创新点"
+            class="text-input"
+          />
+        </el-form-item>
+        <el-form-item
+          :rules="[{ required: true, message: '请输入交互技术创新点', trigger: 'submit' }]"
+          label="交互技术创新点"
+          prop="interact_innovate"
+          label-width="120px"
+        >
+          <el-input
+            v-model="programForm.interact_innovate"
+            :autosize="{ minRows: 2}"
+            :maxlength="1000"
+            type="textarea"
+            placeholder="请填写交互技术创新点"
+            class="text-input"
+          />
+        </el-form-item>
+        <el-form-item label-width="120px" label="备注" prop="remark">
+          <el-input
+            v-model="programForm.remark"
+            :autosize="{ minRows: 2}"
+            :maxlength="1000"
+            type="textarea"
+            placeholder="请填写备注"
+            class="text-input"
+          />
+        </el-form-item>
+        <el-form-item label="上传素材" prop="ids">
+          <el-upload
+            ref="upload"
+            :action="SERVER_URL + '/api/media'"
+            :data="{type: 'package'}"
+            :headers="formHeader"
+            :before-upload="beforeUpload"
+            :on-success="handleSuccess"
+            :on-remove="handleRemove"
+            :on-preview="handlePreview"
+            :before-remove="beforeRemove"
+            :file-list="fileList"
+            :limit="1"
+            :on-exceed="handleExceed"
+            class="upload-demo"
+          >
+            <el-button size="mini" type="success">点击上传</el-button>
+            <div slot="tip" style="display:inline-block" class="el-upload__tip">支持类型：zip、rar</div>
+            <div
+              v-if="fileList.length !==0"
+              slot="tip"
+              style="color: #ff5722;font-size: 12px;"
+            >点击文件名称可以下载</div>
+          </el-upload>
+        </el-form-item>
         <el-form-item>
           <!-- 产品经理可以保存 -->
           <el-button
-            v-if="(role.name === 'project-manager' && (status === 1 || status === 2)) || role.name === 'legal-affairs-manager'"
+            v-if="(role.name === 'project-manager' && (status === 1 || status === 2)) || role.name === 'legal-affairs-manager'|| role.name === 'bonus-manager'"
             type="primary"
             @click="submit('programForm')"
           >保存</el-button>
@@ -330,7 +395,7 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false,disabledChange = true">取 消</el-button>
         <el-button
-          v-if="(role.name === 'project-manager' && (status === 1 || status === 2)) || role.name === 'legal-affairs-manager'"
+          v-if="(role.name === 'project-manager' && (status === 1 || status === 2)) || role.name === 'legal-affairs-manager'|| role.name === 'bonus-manager'"
           type="primary"
           @click="rateSubmit"
         >确 定</el-button>
@@ -352,7 +417,8 @@ import {
   RadioGroup,
   Radio,
   Col,
-  Dialog
+  Dialog,
+  Upload
 } from "element-ui";
 import {
   saveProgram,
@@ -364,6 +430,8 @@ import {
   getSearchTeamRateList
 } from "service";
 import { Cookies } from "utils/cookies";
+import auth from "service/auth";
+const SERVER_URL = process.env.SERVER_URL;
 
 export default {
   components: {
@@ -377,10 +445,17 @@ export default {
     ElInput: Input,
     ElRadioGroup: RadioGroup,
     ElRadio: Radio,
-    ElDialog: Dialog
+    ElDialog: Dialog,
+    ElUpload: Upload
   },
   data() {
     return {
+      SERVER_URL: SERVER_URL,
+      formHeader: {
+        Authorization: "Bearer " + auth.getToken()
+      },
+      fileList: [],
+      ids: [],
       disabledChange: true,
       form: {
         total: 0
@@ -397,6 +472,9 @@ export default {
       status: 1,
       programID: "",
       programForm: {
+        art_innovate: "",
+        dynamic_innovate: "",
+        interact_innovate: "",
         type: 0,
         applicant: "",
         belong: "",
@@ -440,19 +518,59 @@ export default {
     let user_info = JSON.parse(Cookies.get("user_info"));
     this.role = user_info.roles.data[0];
     this.getUserList();
-    this.getTeamRateList();
+
     if (this.programID) {
-      this.getProgramDetails();
+      this.detailInit();
     } else {
       this.setting.loading = true;
-
+      this.getTeamRateList();
       this.programForm.applicant_name = user_info.name;
       this.programForm.applicant = user_info.id;
     }
   },
   methods: {
+    async detailInit() {
+      try {
+        await this.getTeamRateList();
+        await this.getProgramDetails();
+      } catch (e) {
+        console.log(e);
+      }
+    },
     h5Handle(val) {
       this.h5Rate = val === 1 ? this.h5Rate1 : this.h5Rate2;
+    },
+    handleRemove(file, fileList) {
+      this.fileList = fileList;
+    },
+    handlePreview(file) {
+      let url = file.url;
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", url, true);
+      xhr.responseType = "blob";
+      xhr.onload = () => {
+        var urlObject = window.URL || window.webkitURL || window;
+        let a = document.createElement("a");
+        a.href = urlObject.createObjectURL(new Blob([xhr.response]));
+        a.download = file.name;
+        a.click();
+      };
+      xhr.send();
+    },
+    handleExceed(files, fileList) {
+      this.$message.warning(
+        `当前限制选择 1 个文件，本次选择了 ${
+          files.length
+        } 个文件，共选择了 ${files.length + fileList.length} 个文件`
+      );
+    },
+    beforeRemove(file, fileList) {
+      return this.$confirm(`确定移除 ${file.name}？`);
+    },
+    beforeUpload(file) {},
+    // 上传成功后的处理
+    handleSuccess(response, file, fileList) {
+      this.fileList.push(response);
     },
     // 比列
     getTeamRateList() {
@@ -480,13 +598,22 @@ export default {
     },
     getProgramDetails() {
       this.setting.loading = true;
-      getProgramDetails(this, this.programID)
+      let params = {
+        include: "media"
+      };
+      getProgramDetails(this, this.programID, params)
         .then(res => {
+          let mediaData = [];
+          if (res.media) {
+            this.ids = res.media.id;
+            mediaData.push(res.media);
+          }
+          this.fileList = mediaData;
           this.programForm.applicant = res.applicant;
           this.programForm.applicant_name = res.applicant_name;
           this.programForm.type = res.type;
+          this.programForm.belong = res.belong;
           this.getProject(res.project_name);
-          this.programForm.belong = res.belong + "," + res.project_name;
           this.programForm.link_attribute = res.link_attribute;
           this.programForm.h5_attribute = res.h5_attribute;
           this.h5Rate = res.h5_attribute === 2 ? this.h5Rate2 : this.h5Rate1;
@@ -500,6 +627,9 @@ export default {
           this.programForm.plan = res.member.plan;
           this.programForm.tester = res.member.tester;
           this.programForm.remark = res.remark;
+          this.programForm.art_innovate = res.art_innovate;
+          this.programForm.dynamic_innovate = res.dynamic_innovate;
+          this.programForm.interact_innovate = res.interact_innovate;
           this.status = res.status;
           if (res.member.animation.length > 0) {
             res.member.animation.map(r => {
@@ -718,20 +848,38 @@ export default {
       }
     },
     submit(formName) {
+      let mediaIds = [];
+      if (this.fileList.length > 0) {
+        this.fileList.map(r => {
+          mediaIds.push(r.id);
+        });
+        this.ids = mediaIds.join(",");
+      } else {
+        this.$message({
+          type: "warning",
+          message: "素材必须上传"
+        });
+        return;
+      }
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.setting.loading = true;
           let member = {};
           let args = {
-            belong: this.programForm.belong.split(",")[0],
-            project_name: this.programForm.belong.split(",")[1],
+            belong: this.programForm.belong,
+            // project_name: this.programForm.belong.split(",")[1],
+            // launch_date: this.programForm.belong.split(",")[2],
             applicant: this.programForm.applicant,
             project_attribute: this.programForm.project_attribute,
             link_attribute: this.programForm.link_attribute,
             h5_attribute: this.programForm.h5_attribute,
             xo_attribute: this.programForm.xo_attribute,
             remark: this.programForm.remark,
-            type: this.programForm.type
+            art_innovate: this.programForm.art_innovate,
+            dynamic_innovate: this.programForm.dynamic_innovate,
+            interact_innovate: this.programForm.interact_innovate,
+            type: this.programForm.type,
+            media_id: this.ids
           };
           if (this.programForm.interaction.length > 0) {
             member.interaction = this.programForm.interaction;

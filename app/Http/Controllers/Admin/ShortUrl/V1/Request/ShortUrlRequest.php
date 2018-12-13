@@ -2,16 +2,10 @@
 
 namespace App\Http\Controllers\Admin\ShortUrl\V1\Request;
 
-use Dingo\Api\Http\FormRequest;
+use App\Http\Requests\Request;
 
-class ShortUrlRequest extends FormRequest
+class ShortUrlRequest extends Request
 {
-    public function authorize()
-    {
-        return true;
-    }
-
-
     public function rules()
     {
         switch ($this->method()) {
