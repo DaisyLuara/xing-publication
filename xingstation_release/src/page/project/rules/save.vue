@@ -73,8 +73,14 @@
             class="coupon-form-input"
           />
         </el-form-item>
-        <el-form-item label="图片链接" prop="image_url">
+        <el-form-item label="积分" prop="credit">
+          <el-input v-model="couponForm.credit" class="coupon-form-input"/>
+        </el-form-item>
+        <el-form-item label="h5图片链接" prop="image_url">
           <el-input v-model="couponForm.image_url" class="coupon-form-input"/>
+        </el-form-item>
+        <el-form-item label="大屏图片链接" prop="bs_image_url">
+          <el-input v-model="couponForm.bs_image_url" class="coupon-form-input"/>
         </el-form-item>
         <el-form-item label="跳转链接" prop="redirect_url">
           <el-input v-model="couponForm.redirect_url" class="coupon-form-input"/>
@@ -267,7 +273,9 @@ export default {
         start_date: "",
         end_date: "",
         is_active: 1,
-        write_off_status: 1
+        write_off_status: 1,
+        bs_image_url: "",
+        credit: 0
       },
       couponID: ""
     };
@@ -321,6 +329,8 @@ export default {
             this.user_name = result.user.name;
             this.couponForm.dynamic_stock_status = result.dynamic_stock_status;
             this.couponForm.write_off_status = result.write_off_status;
+            this.couponForm.credit = result.credit;
+            this.couponForm.bs_image_url = result.bs_image_url;
             if (result.is_fixed_date === 1) {
               this.dateShow = true;
             } else {
@@ -381,7 +391,9 @@ export default {
         sort_order: this.couponForm.sort_order,
         title: this.couponForm.title,
         dynamic_stock_status: this.couponForm.dynamic_stock_status,
-        write_off_status: this.couponForm.write_off_status
+        write_off_status: this.couponForm.write_off_status,
+        bs_image_url: this.couponForm.bs_image_url,
+        credit: this.couponForm.credit
       };
       if (!this.couponForm.image_url) {
         delete args.image_url;

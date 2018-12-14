@@ -2,19 +2,10 @@
 
 namespace App\Http\Controllers\Admin\Media\V1\Request;
 
-use Dingo\Api\Http\FormRequest;
+use App\Http\Requests\Request;
 
-class MediaRequest extends FormRequest
+class MediaRequest extends Request
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
-    {
-        return true;
-    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -27,11 +18,11 @@ class MediaRequest extends FormRequest
         switch ($this->method()) {
             case "GET":
                 return [
-                    'type' => 'required|string|in:image,video,file',
+                    'type' => 'required|string|in:image,video,file,package',
                 ];
             case 'POST':
                 $rules = [
-                    'type' => 'required|string|in:image,video,file',
+                    'type' => 'required|string|in:image,video,file,package',
                 ];
 
                 if ($this->type == 'image') {

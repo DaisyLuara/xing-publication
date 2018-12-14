@@ -24,6 +24,7 @@ class PointTransformer extends TransformerAbstract
             'count' => (int)$point->count,
             'marketid' => (int)$point->marketid,
             'areaid' => (int)$point->areaid,
+            'attribute_id' => $point->attribute->first() ? $point->attribute->first()->id : null
         ];
     }
 

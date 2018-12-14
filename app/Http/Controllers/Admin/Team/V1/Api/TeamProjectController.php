@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Team\V1\Api;
 
+use App\Http\Controllers\Admin\Project\V1\Models\Project;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
 use App\Http\Controllers\Admin\Team\V1\Request\TeamProjectRequest;
 use App\Http\Controllers\Admin\Team\V1\Transformer\TeamProjectListTransformer;
@@ -30,7 +31,10 @@ class TeamProjectController extends Controller
             $query->whereRaw("begin_date between '$request->start_date_begin' and '$request->end_date_begin' ");
         }
         if ($request->has('start_date_online') && $request->has('end_date_online')) {
-            $query->whereRaw("begin_date between '$request->start_date_online' and '$request->end_date_online' ");
+            $query->whereRaw("online_date between '$request->start_date_online' and '$request->end_date_online' ");
+        }
+        if ($request->has('start_date_launch') && $request->has('end_date_launch')) {
+            $query->whereRaw("launch_date between '$request->start_date_launch' and '$request->end_date_launch' ");
         }
         /** @var  $user \App\Models\User */
         $user = $this->user();
@@ -57,7 +61,7 @@ class TeamProjectController extends Controller
             });
         }
 
-        $teamProject = $query->paginate(10);
+        $teamProject = $query->orderBy('begin_date', 'desc')->paginate(10);
 
         return $this->response()->paginator($teamProject, new TeamProjectListTransformer());
     }
@@ -69,17 +73,15 @@ class TeamProjectController extends Controller
         if (!$user->hasRole('project-manager')) {
             abort(403, '无操作权限');
         }
-        if ($request->project_attribute <= 2) {
-            $factor = 0.8;
-        } else {
-            $factor = 1;
-        }
+
+        $project = Project::query()->where('versionname', $request->belong)->first();
         $teamProject->fill((array_merge($request->all(),
             [
                 'status' => 1,
                 'applicant' => $user->id,
                 'begin_date' => Carbon::now()->toDateString(),
-                'factor' => $factor
+                'project_name' => $project->name,
+                'launch_date' => $project->online != 0 ? date('Y-m-d', $project->online / 1000) : null,
             ]
         )))->save();
         $member = $request->member;
@@ -102,7 +104,7 @@ class TeamProjectController extends Controller
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if (!$user->hasRole('project-manager') && !$user->hasRole('legal-affairs-manager')) {
+        if (!$user->hasRole('project-manager') && !$user->hasRole('legal-affairs-manager') && !$user->hasRole('bonus-manager')) {
             abort(403, '无操作权限');
         }
         if ($user->hasRole('project-manager') && $teamProject->status > 2) {

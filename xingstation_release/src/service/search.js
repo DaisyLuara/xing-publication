@@ -16,6 +16,7 @@ const BD_MANAGER_API = '/api/bd_manager/query'
 const CUSTOMER_API = '/api/customer/query'
 const USER_API = '/api/user/query'
 const TEAM_RATE_API = '/api/team_rate/query'
+const FORMAT_API = '/api/attribute/query'
 const HOST = process.env.SERVER_URL
 
 // 区域
@@ -250,6 +251,19 @@ const getSearchTeamRateList = context => {
       })
   })
 }
+// 业态
+const getFormatsList = context => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + FORMAT_API)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
 export {
   getSearchAeraList,
   getSearchMarketList,
@@ -268,5 +282,6 @@ export {
   getSearchLegalManagerList,
   getSearchPolicyList,
   getSearchCompanyList,
-  getSearchSceneList
+  getSearchSceneList,
+  getFormatsList
 }

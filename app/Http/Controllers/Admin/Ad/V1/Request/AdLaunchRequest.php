@@ -2,15 +2,10 @@
 
 namespace App\Http\Controllers\Admin\Ad\V1\Request;
 
-use Dingo\Api\Http\FormRequest;
+use App\Http\Requests\Request;
 
-class AdLaunchRequest extends FormRequest
+class AdLaunchRequest extends Request
 {
-    public function authorize()
-    {
-        return true;
-    }
-
 
     public function rules()
     {

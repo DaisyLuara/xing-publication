@@ -23,11 +23,48 @@ class MallCoo
      * @param string $sPublicKey 公钥
      * @param string $sPrivateKey 私钥
      */
-    public function __construct($sMallid, $sAppID, $sPublicKey, $sPrivateKey){
+    public function __construct($sMallid, $sAppID, $sPublicKey, $sPrivateKey)
+    {
         $this->m_Mallid = $sMallid;
         $this->m_AppID = $sAppID;
         $this->m_PublicKey = $sPublicKey;
         $this->m_PrivateKey = $sPrivateKey;
+    }
+
+    /**
+     * 授权链接
+     * @param $sCallbackUrl
+     * @return string
+     */
+    public function oauth($sCallbackUrl)
+    {
+        $sUrl = 'https://m.mallcoo.cn/a/open/User/V2/OAuth/CardInfo/';
+        $sUrl .= '?AppID=' . $this->m_AppID . '&PublicKey=' . $this->m_PublicKey . '&CallbackUrl=' . urlencode($sCallbackUrl);
+        return $sUrl;
+    }
+
+    /**
+     * 通过 Ticket 获取 Token
+     *
+     * @param string $sTicket Ticket
+     * @return
+     */
+    public function getTokenByTicket($sTicket)
+    {
+        $sUrl = 'https://openapi10.mallcoo.cn/User/OAuth/v1/GetToken/ByTicket/';
+        return $this->send($sUrl, ['Ticket' => $sTicket]);
+    }
+
+    /**
+     * 根据OpenUserID获取会员信息接口
+     *
+     * @param $openUserId
+     * @return array
+     */
+    public function getUserInfoByOpenUserID($openUserId)
+    {
+        $sUrl = 'https://openapi10.mallcoo.cn/User/AdvancedInfo/v1/Get/ByOpenUserID/';
+        return $this->send($sUrl, ['OpenUserId' => $openUserId]);
     }
 
     /**
@@ -37,18 +74,19 @@ class MallCoo
      * @param array $aPostData 请求参数
      * @return array
      */
-    public function send($sUrl, $aPostData = []){
+    public function send($sUrl, $aPostData = [])
+    {
         $sPostData = json_encode($aPostData);
-        $nTimeStamp = date('YmdHis',time());
-        $sS = "{publicKey:".$this->m_PublicKey.",timeStamp:".$nTimeStamp.",data:".$sPostData.",privateKey:".$this->m_PrivateKey."}";
+        $nTimeStamp = date('YmdHis', time());
+        $sS = "{publicKey:" . $this->m_PublicKey . ",timeStamp:" . $nTimeStamp . ",data:" . $sPostData . ",privateKey:" . $this->m_PrivateKey . "}";
         $sSign = strtoupper(substr(md5($sS), 8, 16));
         $aHeader = array(
             'Content-Type: application/json; charset=utf-8',
             'Content-Length: ' . strlen($sPostData),
-            'AppID: '.$this->m_AppID,
-            'TimeStamp: '.$nTimeStamp,
-            'PublicKey: '.$this->m_PublicKey,
-            'Sign: '.$sSign,
+            'AppID: ' . $this->m_AppID,
+            'TimeStamp: ' . $nTimeStamp,
+            'PublicKey: ' . $this->m_PublicKey,
+            'Sign: ' . $sSign,
         );
         $sR = $this->curl_post($sUrl, $aHeader, $sPostData);
         return json_decode(html_entity_decode($sR), true);
@@ -63,7 +101,8 @@ class MallCoo
      * @param string $cookie
      * @return string
      */
-    private function curl_post($url, $aHeader, $sParams, $cookie='') {
+    private function curl_post($url, $aHeader, $sParams, $cookie = '')
+    {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
@@ -74,7 +113,7 @@ class MallCoo
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
         $result = curl_exec($ch);
-        if ($result === false){
+        if ($result === false) {
             // log curl_error($ch);
         }
         curl_close($ch);

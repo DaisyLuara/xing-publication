@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin\Payment\V1\Request;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\Request;
 use Illuminate\Validation\Rule;
 
-class PaymentRequest extends FormRequest
+class PaymentRequest extends Request
 {
     /**
      * Determine if the user is authorized to make this request.

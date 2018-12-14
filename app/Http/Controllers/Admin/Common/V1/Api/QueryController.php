@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\Ad\V1\Models\Advertiser;
 use App\Http\Controllers\Admin\Ad\V1\Transformer\AdTradeTransformer;
 use App\Http\Controllers\Admin\Ad\V1\Transformer\AdvertisementTransformer;
 use App\Http\Controllers\Admin\Ad\V1\Transformer\AdvertiserTransformer;
+use App\Http\Controllers\Admin\Attribute\V1\Models\Attribute;
+use App\Http\Controllers\Admin\Attribute\V1\Transformer\AttributeTransformer;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
 use App\Http\Controllers\Admin\Company\V1\Transformer\CustomerTransformer;
@@ -49,6 +51,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
+use DB;
 
 class QueryController extends Controller
 {
@@ -408,5 +411,13 @@ class QueryController extends Controller
         $query = $teamRate->query();
         $teamRate = $query->get();
         return $this->response()->collection($teamRate, new TeamRateTransformer());
+    }
+
+    public function attributeQuery(Request $request)
+    {
+        /** @var \Baum\Node $node */
+        $node = Attribute::query()->where('name', '业态')->first();
+        $attribute = $node->getDescendants();
+        return $this->response()->collection($attribute, new AttributeTransformer());
     }
 }
