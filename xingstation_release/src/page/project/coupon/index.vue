@@ -147,7 +147,6 @@
           </el-table-column>
           <el-table-column :show-overflow-tooltip="true" prop="code" label="优惠券编码" min-width="100"/>
           <el-table-column :show-overflow-tooltip="true" prop="name" label="优惠券名称" min-width="100"/>
-          <el-table-column :show-overflow-tooltip="true" prop="name" label="名称" min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="status"
