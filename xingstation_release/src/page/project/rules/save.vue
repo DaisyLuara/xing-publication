@@ -26,6 +26,47 @@
         <el-form-item label="创建人" prop="user_name">
           <el-input v-model="user_name" :disabled="true" class="coupon-form-input"/>
         </el-form-item>
+        <el-form-item label="商场" prop="marketid">
+          <el-select
+            v-model="couponForm.marketid"
+            :remote-method="getMarket"
+            :loading="searchLoading"
+            :multiple-limit="1"
+            multiple
+            placeholder="请搜索"
+            filterable
+            remote
+            clearable
+            @change="marketChangeHandle"
+            class="coupon-form-select"
+          >
+            <el-option
+              v-for="item in marketList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="点位" prop="oid">
+          <el-select
+            v-model="couponForm.oid"
+            :loading="searchLoading"
+            :multiple-limit="10"
+            placeholder="请选择"
+            multiple
+            filterable
+            clearable
+            class="coupon-form-select"
+          >
+            <el-option
+              v-for="item in pointList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="标题" prop="title">
           <el-input
             type="textarea"
@@ -181,7 +222,9 @@ import {
   historyBack,
   getCouponDetial,
   getSearchCompanyList,
-  saveCoupon
+  saveCoupon,
+  getSearchMarketList,
+  getSearchPointList
 } from "service";
 
 import {
@@ -255,6 +298,9 @@ export default {
       },
       disabledWriteStatus: false,
       user_name: "",
+      marketList: [],
+      pointList: [],
+      searchLoading: false,
       couponForm: {
         name: "",
         title: "",
@@ -280,7 +326,9 @@ export default {
         is_active: 1,
         write_off_status: 1,
         bs_image_url: "",
-        credit: 0
+        credit: 0,
+        marketid: [],
+        oid: []
       },
       couponID: ""
     };
@@ -336,6 +384,10 @@ export default {
             this.couponForm.write_off_status = result.write_off_status;
             this.couponForm.credit = result.credit;
             this.couponForm.bs_image_url = result.bs_image_url;
+            this.couponForm.oid = result.oid ? oid : [];
+            this.couponForm.marketid = result.marketid
+              ? Array(result.marketid)
+              : [];
             if (result.is_fixed_date === 1) {
               this.dateShow = true;
             } else {
@@ -359,6 +411,50 @@ export default {
     });
   },
   methods: {
+    marketChangeHandle() {
+      this.couponForm.oid = [];
+      this.getPoint();
+    },
+    getPoint() {
+      let args = {
+        include: "market",
+        market_id: this.couponForm.marketid
+      };
+      this.searchLoading = true;
+      return getSearchPointList(this, args)
+        .then(response => {
+          this.pointList = response.data;
+          this.searchLoading = false;
+        })
+        .catch(err => {
+          this.searchLoading = false;
+          console.log(err);
+        });
+    },
+    getMarket(query) {
+      if (query !== "") {
+        this.searchLoading = true;
+        let args = {
+          name: query,
+          include: "area"
+        };
+        return getSearchMarketList(this, args)
+          .then(response => {
+            this.marketList = response.data;
+            if (this.marketList.length == 0) {
+              this.couponForm.marketid = [];
+              this.marketList = [];
+            }
+            this.searchLoading = false;
+          })
+          .catch(err => {
+            console.log(err);
+            this.searchLoading = false;
+          });
+      } else {
+        this.marketList = [];
+      }
+    },
     fixedDateHandle(val) {
       if (val === 0) {
         this.dateShow = false;
@@ -398,7 +494,9 @@ export default {
         dynamic_stock_status: this.couponForm.dynamic_stock_status,
         write_off_status: this.couponForm.write_off_status,
         bs_image_url: this.couponForm.bs_image_url,
-        credit: this.couponForm.credit
+        credit: this.couponForm.credit,
+        marketid: this.couponForm.marketid.join(","),
+        oid: this.couponForm.oid
       };
       if (!this.couponForm.image_url) {
         delete args.image_url;
