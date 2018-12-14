@@ -42,7 +42,7 @@ class CouponExport extends AbstractExport
         }
 
         if (!is_null($this->startDate) && !is_null($this->endDate)) {
-            $query->whereIn('coupons.created_at', [$this->startDate, $this->endDate]);
+            $query->whereBetween('coupons.created_at', [$this->startDate, $this->endDate]);
         }
 
         if (!is_null($this->shopCustomerId)) {
