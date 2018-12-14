@@ -14,14 +14,14 @@ class RollBackCharacterData extends Command
      *
      * @var string
      */
-    protected $signature = 'yqDataClean:rollback_faceCharacter';
+    protected $signature = 'yqDataClean:rollback_looknum_character';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = '数据回滚face_character';
+    protected $description = '数据回滚围观人数人群特征';
 
     /**
      * Create a new command instance.

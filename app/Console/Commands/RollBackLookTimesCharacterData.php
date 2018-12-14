@@ -2,26 +2,25 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\Admin\Team\V1\Models\TeamBonusRecord;
 use Illuminate\Console\Command;
 use DB;
 use Carbon\Carbon;
 
-class RollbackTeamData extends Command
+class RollBackLookTimesCharacterData extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'yqDataClean:rollback_team_bonus';
+    protected $signature = 'yqDataClean:rollback_looktimes_character';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = '数据回滚团队绩效';
+    protected $description = '数据回滚围观人次渗透率';
 
     /**
      * Create a new command instance.
@@ -45,13 +44,13 @@ class RollbackTeamData extends Command
             return $this->error('时间输入有误！');
         }
 
-        if ($date >= '2018-11-21') {
-            TeamBonusRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
-            TeamBonusRecord::create(['date' => $date]);
+        if ($date >= '2018-07-24') {
+            FaceCharacterTimes::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
+            FaceCharacterTimes::create(['date' => $date]);
         } else {
-            TeamBonusRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-11-21'")->delete();
+            FaceCharacterTimes::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-07-24'")->delete();
         }
-        DB::table('team_bonuses')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
-        DB::table('team_person_rewards')->whereRaw("date_format(date,'%Y-%m-%d')>='$date' and belong<>'system'")->delete();
+
+        DB::connection('ar')->table('xs_face_character_count_times')->whereRaw("date_format(date,'%Y-%m-%d') >='$date'")->delete();
     }
 }
