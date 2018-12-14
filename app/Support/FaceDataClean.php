@@ -1827,6 +1827,9 @@ function teamBonusClean()
                     $factor = 0.2;
                 }
             }
+            if ($factor == 0) {
+                continue;
+            }
             $count[] = [
                 'project_name' => $item->name,
                 'belong' => $item->belong,
