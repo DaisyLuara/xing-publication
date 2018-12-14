@@ -95,6 +95,9 @@
         </div>
         <div class="total-wrap">
           <span class="label">总数:{{ pagination.total }}</span>
+          <div>
+            <el-button type="success" size="small" @click="exportList">导出</el-button>
+          </div>
         </div>
         <el-table :data="tableData" style="width: 100%">
           <el-table-column type="expand">
@@ -158,7 +161,12 @@
               <span v-if="scope.row.status===3">未使用</span>
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="created_at" label="创建时间" min-width="100"/>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="created_at"
+            label="创建时间"
+            min-width="100"
+          />
           <el-table-column
             :show-overflow-tooltip="true"
             prop="use_date"
@@ -199,7 +207,8 @@ import {
   putInCouponList,
   getSearchShopCustomerList,
   getSearchCompanyList,
-  getSearchCouponList
+  getSearchCouponList,
+  getExcelData
 } from "service";
 import {
   Button,
@@ -327,6 +336,22 @@ export default {
     this.getCompanyList();
   },
   methods: {
+    exportList() {
+      let args = this.setArgs();
+      args.type = "coupon";
+      delete args.page;
+      getExcelData(this, args)
+        .then(response => {
+          const a = document.createElement("a");
+          a.href = response;
+          a.download = "download";
+          a.click();
+          window.URL.revokeObjectURL(response);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
     resetSearch(formName) {
       this.$refs[formName].resetFields();
       this.pagination.currentPage = 1;
@@ -379,8 +404,7 @@ export default {
         this.marketList = [];
       }
     },
-    putInCouponList() {
-      this.setting.loading = true;
+    setArgs() {
       let args = {
         include: "couponBatch.company,point.market.area,customer",
         page: this.pagination.currentPage,
@@ -413,6 +437,43 @@ export default {
           }
         }
       }
+      return args;
+    },
+    putInCouponList() {
+      this.setting.loading = true;
+      let args = this.setArgs();
+      // let args = {
+      //   include: "couponBatch.company,point.market.area,customer",
+      //   page: this.pagination.currentPage,
+      //   coupon_batch_id: this.filters.coupon_batch_id[0],
+      //   status: this.filters.status,
+      //   company_id: this.filters.company_id,
+      //   shop_customer_id: this.filters.shop_customer_id
+      // };
+      // if (this.filters.coupon_batch_id.length === 0) {
+      //   delete args.coupon_batch_id;
+      // }
+      // if (this.filters.status === "") {
+      //   delete args.status;
+      // }
+      // if (this.filters.company_id === "") {
+      //   delete args.company_id;
+      // }
+      // if (this.filters.shop_customer_id === "") {
+      //   delete args.shop_customer_id;
+      // }
+      // if (this.filters.dataValue) {
+      //   if (this.filters.dataValue.length !== 0) {
+      //     if (this.filters.dataValue[0]) {
+      //       args.start_date = handleDateTimeTransform(
+      //         this.filters.dataValue[0]
+      //       );
+      //     }
+      //     if (this.filters.dataValue[1]) {
+      //       args.end_date = handleDateTimeTransform(this.filters.dataValue[1]);
+      //     }
+      //   }
+      // }
       putInCouponList(this, args)
         .then(response => {
           let data = response.data;
