@@ -150,7 +150,7 @@ class CouponController extends Controller
             }
         }
 
-        if (count($couponBatchPolicies) == 0) {
+        if (collect($couponBatchPolicies)->sum('rate') == 0) {
             abort(500, '无可用优惠券');
         }
 
@@ -204,7 +204,7 @@ class CouponController extends Controller
             }
         }
 
-        if (count($couponBatchPolicies) == 0) {
+        if (collect($couponBatchPolicies)->sum('rate') == 0) {
             abort(500, '无可用优惠券');
         }
 
