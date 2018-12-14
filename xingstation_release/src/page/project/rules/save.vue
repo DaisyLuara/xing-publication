@@ -9,7 +9,12 @@
           label="公司"
           prop="company_id"
         >
-          <el-select v-model="couponForm.company_id" placeholder="请选择公司" class="coupon-form-select">
+          <el-select
+            v-model="couponForm.company_id"
+            placeholder="请选择公司"
+            class="coupon-form-select"
+            :disabled="couponID ? true : false"
+          >
             <el-option
               v-for="item in companyList"
               :key="item.id"
