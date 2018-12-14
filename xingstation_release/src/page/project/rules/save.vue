@@ -78,7 +78,7 @@
             class="coupon-form-input"
           />
         </el-form-item>
-        <el-form-item label="积分" prop="credit">
+        <el-form-item label="兑换价格（嗨蚪）" prop="credit">
           <el-input v-model="couponForm.credit" class="coupon-form-input"/>
         </el-form-item>
         <el-form-item label="h5图片链接" prop="image_url">
