@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -47,6 +48,12 @@ class CouponExport extends AbstractExport
         if (!is_null($this->shopCustomerId)) {
             $query->where('coupons.shop_customer_id', '=', $this->shopCustomerId);
         }
+
+        $loginUser = Auth::user();
+        if ($loginUser->hasRole('user')) {
+            $query->where('coupon_batches.bd_user_id', '=', $loginUser->id);
+        }
+
         $query = $query->selectRaw("coupons.code as '编码',coupon_batches.name as '名称',
                        case coupons.status
                        when 0 then '未领取'
