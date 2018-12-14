@@ -9,13 +9,15 @@
 namespace App\Http\Controllers\Admin\Coupon\V1\Transformer;
 
 use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
+use App\Http\Controllers\Admin\Point\V1\Transformer\MarketTransformer;
+use App\Http\Controllers\Admin\Point\V1\Transformer\PointTransformer;
 use App\Http\Controllers\Admin\User\V1\Transformer\UserTransformer;
 use League\Fractal\TransformerAbstract;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 
 class CouponBatchTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['user', 'company', 'wechat'];
+    protected $availableIncludes = ['user', 'company', 'wechat', 'market', 'point'];
 
     public function transform(CouponBatch $couponBatch)
     {
@@ -67,5 +69,28 @@ class CouponBatchTransformer extends TransformerAbstract
     public function includeWechat(CouponBatch $couponBatch)
     {
         return $this->item($couponBatch->wechat, new WecahtCouponBatchTransformer());
+    }
+
+    public function includeMarket(CouponBatch $couponBatch)
+    {
+        if (!$couponBatch->marketPointCouponBatches) {
+            return null;
+        }
+
+        return $this->item($couponBatch->marketPointCouponBatches->first()->market, new MarketTransformer());
+    }
+
+    public function includePoint(CouponBatch $couponBatch)
+    {
+        if (!$couponBatch->marketPointCouponBatches) {
+            return null;
+        }
+
+        $points = collect();
+        $couponBatch->marketPointCouponBatches->each(function ($item) use($points){
+            $points->push($item->point);
+        });
+
+        return $this->collection($points, new PointTransformer());
     }
 }
