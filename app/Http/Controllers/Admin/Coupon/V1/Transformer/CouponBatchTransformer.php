@@ -73,7 +73,7 @@ class CouponBatchTransformer extends TransformerAbstract
 
     public function includeMarket(CouponBatch $couponBatch)
     {
-        if (!$couponBatch->marketPointCouponBatches->first()->market) {
+        if (!$couponBatch->marketPointCouponBatches->first()) {
             return null;
         }
 
