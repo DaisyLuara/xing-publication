@@ -15,7 +15,7 @@ class CustomerRequest extends Request
                     'name' => 'required|string',
                     'phone' => 'required|regex:/^1[3456789]\d{9}$/|unique:customers',
                     'telephone' => 'filled',
-                    'password' => 'filled',
+                    'password' => 'required|string|min:8',
                 ];
                 break;
             case 'PATCH':
@@ -23,7 +23,7 @@ class CustomerRequest extends Request
                     'name' => 'filled|string',
                     'phone' => 'filled|regex:/^1[3456789]\d{9}$/',
                     'telephone' => 'filled',
-                    'password' => 'filled',
+                    'password' => 'required|string|min:8',
                 ];
                 break;
         }
