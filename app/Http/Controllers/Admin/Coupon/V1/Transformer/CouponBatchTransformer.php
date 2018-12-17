@@ -73,7 +73,7 @@ class CouponBatchTransformer extends TransformerAbstract
 
     public function includeMarket(CouponBatch $couponBatch)
     {
-        if (!$couponBatch->marketPointCouponBatches) {
+        if (!$couponBatch->marketPointCouponBatches->first()->market) {
             return null;
         }
 
@@ -82,14 +82,16 @@ class CouponBatchTransformer extends TransformerAbstract
 
     public function includePoint(CouponBatch $couponBatch)
     {
-        if (!$couponBatch->marketPointCouponBatches) {
-            return null;
-        }
-
         $points = collect();
         $couponBatch->marketPointCouponBatches->each(function ($item) use($points){
-            $points->push($item->point);
+            if ($item->point) {
+                $points->push($item->point);
+            }
         });
+
+        if ($points->isEmpty()) {
+            return null;
+        }
 
         return $this->collection($points, new PointTransformer());
     }
