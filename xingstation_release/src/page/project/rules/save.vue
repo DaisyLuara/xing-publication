@@ -342,6 +342,7 @@ export default {
     this.couponID = this.$route.params.uid;
     this.setting.loadingText = "拼命加载中";
     this.setting.loading = true;
+
     //获取公司列表
     let companyPromise = getSearchCompanyList(this)
       .then(result => {
@@ -354,10 +355,21 @@ export default {
     Promise.all([companyPromise]).then(() => {
       if (this.couponID) {
         let args = {
-          include: "user,company"
+          include: "user,company,market,point"
         };
         getCouponDetial(this, this.couponID, args)
           .then(result => {
+            result.market
+              ? this.couponForm.marketid.push(result.market.id)
+              : [];
+            result.point
+              ? result.point.data.map(r => {
+                  let id = r.id;
+                  this.couponForm.oid.push(id);
+                })
+              : [];
+            this.getMarket(result.market.name);
+            this.getPoint();
             this.couponForm.name = result.name;
             this.couponForm.description = result.description;
             this.couponForm.company_id = result.company.id;
@@ -384,10 +396,6 @@ export default {
             this.couponForm.write_off_status = result.write_off_status;
             this.couponForm.credit = result.credit;
             this.couponForm.bs_image_url = result.bs_image_url;
-            this.couponForm.oid = result.oid ? oid : [];
-            this.couponForm.marketid = result.marketid
-              ? Array(result.marketid)
-              : [];
             if (result.is_fixed_date === 1) {
               this.dateShow = true;
             } else {
@@ -403,6 +411,7 @@ export default {
           })
           .catch(error => {
             console.log(error);
+            this.setting.loading = false;
           });
       } else {
         this.user_name = user.name;
