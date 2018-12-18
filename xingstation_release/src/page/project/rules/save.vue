@@ -368,8 +368,12 @@ export default {
                   this.couponForm.oid.push(id);
                 })
               : [];
-            this.getMarket(result.market.name);
-            this.getPoint();
+            if (result.market) {
+              this.getMarket(result.market.name);
+            }
+            if (result.point) {
+              this.getPoint();
+            }
             this.couponForm.name = result.name;
             this.couponForm.description = result.description;
             this.couponForm.company_id = result.company.id;
