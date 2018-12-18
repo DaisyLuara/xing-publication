@@ -41,10 +41,7 @@ class ContractReceiveDateController extends Controller
             });
         }
 
-        $contractReceiveDate = $query->whereHas('receiveDate', function ($q) use ($currentDate) {
-            $q->whereRaw("'$currentDate' between date_add(receive_date, interval - 5 day) and date_add(receive_date, interval 3 day)");
-        })
-            ->paginate(10);
+        $contractReceiveDate = $query->paginate(10);
         return $this->response()->paginator($contractReceiveDate, new ContractTransformer());
     }
 }
