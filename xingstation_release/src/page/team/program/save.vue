@@ -771,49 +771,51 @@ export default {
 
     // 添加人员 均分比列
     peopleHandle(val, rate, type) {
+      switch (type) {
+        case "interaction":
+          this.addRate("interaction", val, rate);
+          break;
+        case "creative":
+          this.addRate("originality", val, rate);
+          break;
+        case "H5":
+          this.addRate("h5", val, rate);
+          break;
+        case "animate":
+          this.addRate("animation", val, rate);
+          break;
+        case "whole":
+          this.addRate("plan", val, rate);
+          break;
+        case "test":
+          this.addRate("tester", val, rate);
+          break;
+        case "platform":
+          this.addRate("operation", val, rate);
+          break;
+      }
+    },
+    addRate(obj, val, rate) {
       let length = val.length;
       if (length > 0) {
         let averageRate = (rate / length).toFixed(4);
-        switch (type) {
-          case "interaction":
-            this.addRate("interaction", val, averageRate);
-            break;
-          case "creative":
-            this.addRate("originality", val, averageRate);
-            break;
-          case "H5":
-            this.addRate("h5", val, averageRate);
-            break;
-          case "animate":
-            this.addRate("animation", val, averageRate);
-            break;
-          case "whole":
-            this.addRate("plan", val, averageRate);
-            break;
-          case "test":
-            this.addRate("tester", val, averageRate);
-            break;
-          case "platform":
-            this.addRate("operation", val, averageRate);
-            break;
-        }
-      }
-    },
-    addRate(obj, val, averageRate) {
-      this.programForm[obj] = [];
-      val.map(r => {
-        this.userList.filter(item => {
-          if (item.id === r) {
-            this.programForm[obj].push({
-              user_id: item.id,
-              user_name: item.name
-            });
-          }
+        this.programForm[obj] = [];
+        val.map(r => {
+          this.userList.filter(item => {
+            if (item.id === r) {
+              this.programForm[obj].push({
+                user_id: item.id,
+                user_name: item.name
+              });
+            }
+          });
         });
-      });
-      this.programForm[obj].map(i => {
-        i.rate = averageRate;
-      });
+        this.programForm[obj].map(i => {
+          i.rate = averageRate;
+        });
+      } else {
+        this.programForm[obj] = [];
+      }
     },
     getUserList() {
       this.searchLoading = true;
@@ -867,8 +869,6 @@ export default {
           let member = {};
           let args = {
             belong: this.programForm.belong,
-            // project_name: this.programForm.belong.split(",")[1],
-            // launch_date: this.programForm.belong.split(",")[2],
             applicant: this.programForm.applicant,
             project_attribute: this.programForm.project_attribute,
             link_attribute: this.programForm.link_attribute,
