@@ -22,7 +22,7 @@ class ContractReceiveDateController extends Controller
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        $currentDate = Carbon::now()->toDateString();
+
         $query = $contract->query();
         if ($request->name) {
             $query->where('name', $request->name);
