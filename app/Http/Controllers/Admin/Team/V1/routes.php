@@ -19,7 +19,6 @@ $api->version('v1', [
             //比例分配
             $api->get('team_rate/{team_rate}', 'TeamRateController@show');
             $api->get('team_rate', 'TeamRateController@index');
-            $api->post('team_rate', 'TeamRateController@store');
             $api->patch('team_rate/{team_rate}', 'TeamRateController@update');
 
             //平台项目
