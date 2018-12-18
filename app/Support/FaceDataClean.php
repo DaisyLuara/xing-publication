@@ -1751,7 +1751,7 @@ function teamBonusClean()
             ->selectRaw("versionname,online")
             ->get();
         foreach ($projectList as $item) {
-            TeamProject::query()->where('belong', $item->versionname)->update(['launch_date' => date('Y-m-d', $item->online)]);
+            TeamProject::query()->where('belong', $item->versionname)->update(['launch_date' => date('Y-m-d', $item->online / 1000)]);
         }
 
         $faceCount1 = DB::connection('ar')->table('xs_face_count_log as fcl')
@@ -1782,7 +1782,7 @@ function teamBonusClean()
             $uCPAMoney = round($item->omo_outnum * 0.2, 2);
             $totalMoney = $player7Money + $player15Money + $player21Money + $uCPAMoney;
 
-            $launchDate = date('Y-m-d', $item->online);
+            $launchDate = date('Y-m-d', $item->online / 1000);
 
             $teamProject = TeamProject::query()->where('belong', $item->belong)->first();
             //投放时长 当前日期-投放日期

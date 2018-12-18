@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\Coupon\V1\Models\UserCouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\Common\V1\Transformer\CouponTransformer;
 use App\Http\Controllers\Controller;
+use App\Models\WeChatUser;
 use Carbon\Carbon;
 use DB;
 use Log;
@@ -96,16 +97,56 @@ class CouponController extends Controller
             $query->where('gender', '=', $request->gender);
         }
 
-        $couponBatchPolicies = $query->join('coupon_batches', 'coupon_batch_id', '=', 'coupon_batches.id')->where('policy_id', '=', $policy->id)->get();
+        $couponBatchPolicies = $query->join('coupon_batches', 'coupon_batch_id', '=', 'coupon_batches.id')
+            ->where('policy_id', '=', $policy->id)
+            ->where('coupon_batches.is_active', 1)
+            ->get();
 
         if ($couponBatchPolicies->isEmpty()) {
             abort(500, '无可用优惠券');
         }
 
         $couponBatchPolicies = $couponBatchPolicies->toArray();
+
+        /**
+         * @todo 优化查询逻辑
+         */
         foreach ($couponBatchPolicies as $key => $couponBatchPolicy) {
-            if (!$couponBatchPolicy->pmg_status && !$couponBatchPolicy->dmg_status && $couponBatchPolicy->stock <= 0) {
-                unset($couponBatchPolicies[$key]);
+
+            //设置了库存上限的券
+            if (!$couponBatchPolicy->pmg_status && !$couponBatchPolicy->dmg_status) {
+
+                //剩余库存为0 不出券
+                Log::info('coupon_batch_id:' . $couponBatchPolicy->id . ':current_stock:' . $couponBatchPolicy->stock, []);
+                if ($couponBatchPolicy->stock <= 0) {
+                    unset($couponBatchPolicies[$key]);
+                    continue;
+                }
+
+                //动态库存=剩余库存-未使用
+                if ($couponBatchPolicy->dynamic_stock_status) {
+                    $count = Coupon::query()->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
+                        ->whereIn('status', [0, 3])
+                        ->where('coupon_batch_id', $couponBatchPolicy->id)->count('id');
+                    $dynamicStock = $couponBatchPolicy->stock - $count;
+                    Log::info('coupon_batch_id:' . $couponBatchPolicy->id . ':dynamic_stock:' . $dynamicStock, []);
+                    if ($dynamicStock <= 0) {
+                        unset($couponBatchPolicies[$key]);
+                        continue;
+                    }
+
+                }
+
+                //当天库存为0 不出券
+                $now = Carbon::now()->toDateString();
+                $coupon = Coupon::query()->where('coupon_batch_id', $couponBatchPolicy->id)
+                    ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
+                    ->selectRaw("count(coupon_batch_id) as day_receive")->first();
+
+                Log::info('coupon_batch_id:' . $couponBatchPolicy->id . ':daily_stock:' . $coupon->day_receive, []);
+                if ($coupon->day_receive >= $couponBatchPolicy->day_max_get) {
+                    unset($couponBatchPolicies[$key]);
+                }
             }
         }
 
@@ -195,16 +236,8 @@ class CouponController extends Controller
         Log::info('game_attribute_payload', $gameAttributePayload);
 
         abort_if(!isset($gameAttributePayload['coupon_batch_id']), 404, 'coupon batch not found!');
-        $couponBatch = CouponBatch::query()->findOrFail($gameAttributePayload['coupon_batch_id']);
+        $couponBatch = CouponBatch::query()->where('is_active', 1)->findOrFail($gameAttributePayload['coupon_batch_id']);
         $couponBatchId = $couponBatch->id;
-
-        //时间日期
-        $now = Carbon::now()->timestamp;
-        $startDate = strtotime($couponBatch->start_date);
-        $endDdate = strtotime($couponBatch->end_date);
-
-        abort_if($now <= $startDate, 500, '活动未开启!');
-        abort_if($now >= $endDdate, 500, '活动已结束!');
 
         //动态库存校验
         if ($couponBatch->dynamic_stock_status) {
@@ -221,12 +254,76 @@ class CouponController extends Controller
             abort(500, '优惠券已发完!');
         }
 
-        $code = uniqid();
 
-        //第三方优惠券
+        //当天库存校验
+        $now = Carbon::now()->toDateString();
+        if (!$couponBatch->dmg_status) {
+            $coupon = Coupon::query()->where('coupon_batch_id', $couponBatchId)
+                ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
+                ->selectRaw("count(coupon_batch_id) as day_receive")->first();
+
+            if ($coupon->day_receive >= $couponBatch->day_max_get) {
+                abort(500, '该券今日已发完，明天再来领取吧！');
+            }
+        }
+
+        //每人库存校验
+        if (!$couponBatch->pmg_status) {
+            if (in_array($couponBatch->id, [3, 4, 5, 6])) {
+                //按微信客户端 发送优惠券(活动期间 限制领取张数)
+                $couponBatchIds = [3, 4, 5, 6];
+                $coupons = Coupon::query()->where('wx_user_id', $userID)->whereIn('coupon_batch_id', $couponBatchIds)->get();
+
+                $couponBatchId = $this->scoreToCoupon($userID, ['FarmSchool', 'FarmSchoolHigh']);
+
+            } elseif (in_array($couponBatch->id, [7, 8, 9, 10])) {
+                //按微信客户端 发送优惠券(活动期间 每天限制领取张数)
+                $couponBatchIds = [7, 8, 9, 10];
+                $coupons = Coupon::query()->where('wx_user_id', $userID)
+                    ->whereIn('coupon_batch_id', $couponBatchIds)
+                    ->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
+                    ->get();
+
+                if ($coupons->count() >= $couponBatch->people_max_get) {
+                    abort(500, '您今天已经领过了，请明天再来!');
+                }
+
+            } else if ($mobile) {
+                //按手机号码 发送优惠券
+                Log::info('mobile', $request->all());
+                $couponBatchIds = [$couponBatchId];
+                $coupons = Coupon::query()->where('mobile', $mobile)->whereIn('coupon_batch_id', $couponBatchIds)->get();
+            } else if ($request->has('qiniu_id')) {
+                //活动期间 每人每天领取次数
+                $coupons = Coupon::query()->where('wx_user_id', $userID)
+                    ->where('coupon_batch_id', $couponBatchId)
+                    ->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
+                    ->get();
+
+                if ($coupons->count() >= $couponBatch->people_max_get) {
+                    abort(500, '您今天已经领过了，请明天再来!');
+                }
+            } else {
+                //根据微信客户端 发送优惠券
+                Log::info('wx_user_id', [$userID]);
+                $coupons = Coupon::query()->where('wx_user_id', $userID)
+                    ->where('coupon_batch_id', $couponBatchId)
+                    ->get();
+
+                if ($coupons->count() >= $couponBatch->people_max_get) {
+                    abort(500, '您今天已经领过了，请明天再来!');
+                }
+            }
+
+            if ($coupons->count() >= $couponBatch->people_max_get) {
+                abort(500, '优惠券每人最多领取' . $couponBatch->people_max_get . '张');
+            }
+        }
+
         if ($couponBatch->third_code) {
 
-            $result = $this->sendMallCooCoupon($mobile, $couponBatch->third_code);
+            $user = WeChatUser::query()->findOrFail($userID, ['mallcoo_open_user_id']);
+            $result = $this->sendMallCooCoupon($user->mallcoo_open_user_id, $couponBatch->third_code);
             if ($result['Code'] != 1) {
                 abort(500, $result['Message']);
             }
@@ -236,110 +333,81 @@ class CouponController extends Controller
             }
 
             $data = $result['Data'];
-            $coupon = Coupon::create([
-                'code' => $data[0]['VCode'],
-                'mobile' => $mobile,
-                'coupon_batch_id' => $couponBatch->id,
-                'picm_id' => $data[0]['PICMID'],
-                'trace_id' => $data[0]['TraceID'],
-                'status' => 3,
-            ]);
-            $couponBatch->decrement('stock');
+            DB::beginTransaction();
+            try {
 
+                $coupon = Coupon::create([
+                    'code' => $data[0]['VCode'],
+                    'mobile' => $mobile,
+                    'coupon_batch_id' => $couponBatch->id,
+                    'picm_id' => $data[0]['PICMID'],
+                    'trace_id' => $data[0]['TraceID'],
+                    'status' => 3,
+                    'wx_user_id' => $userID,
+                    'qiniu_id' => $gameAttributePayload && isset($gameAttributePayload['id']) ? $gameAttributePayload['id'] : 0,
+                    'oid' => $gameAttributePayload && isset($gameAttributePayload['utm_source']) ? $gameAttributePayload['utm_source'] : 0,
+                    'belong' => $gameAttributePayload && isset($gameAttributePayload['utm_campaign']) ? $gameAttributePayload['utm_campaign'] : '',
+                ]);
+                $couponBatch->decrement('stock');
+                DB::commit();
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+                abort(500, $e->getMessage());
+            }
         } else {
 
-            $now = Carbon::now()->toDateString();
-            if (!$couponBatch->dmg_status) {
-                $coupon = Coupon::query()->where('coupon_batch_id', $couponBatchId)
-                    ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
-                    ->selectRaw("count(coupon_batch_id) as day_receive")->first();
-
-                if ($coupon->day_receive >= $couponBatch->day_max_get) {
-                    abort(500, '该券今日已发完，明天再来领取吧！');
-                }
-            }
-
-            if (!$couponBatch->pmg_status) {
-                if (in_array($couponBatch->id, [3, 4, 5, 6])) {
-                    //按微信客户端 发送优惠券(活动期间 限制领取张数)
-                    $couponBatchIds = [3, 4, 5, 6];
-                    $coupons = Coupon::query()->where('wx_user_id', $userID)->whereIn('coupon_batch_id', $couponBatchIds)->get();
-
-                    $couponBatchId = $this->scoreToCoupon($userID, ['FarmSchool', 'FarmSchoolHigh']);
-
-                } elseif (in_array($couponBatch->id, [7, 8, 9, 10])) {
-                    //按微信客户端 发送优惠券(活动期间 每天限制领取张数)
-                    $couponBatchIds = [7, 8, 9, 10];
-                    $coupons = Coupon::query()->where('wx_user_id', $userID)
-                        ->whereIn('coupon_batch_id', $couponBatchIds)
-                        ->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
-                        ->get();
-
-                    if ($coupons->count() >= $couponBatch->people_max_get) {
-                        abort(500, '您今天已经领过了，请明天再来!');
-                    }
-
-                } else if ($mobile) {
-                    //按手机号码 发送优惠券
-                    Log::info('mobile', $request->all());
-                    $couponBatchIds = [$couponBatchId];
-                    $coupons = Coupon::query()->where('mobile', $mobile)->whereIn('coupon_batch_id', $couponBatchIds)->get();
-                } else if ($request->has('qiniu_id')) {
-                    //活动期间 每人每天领取次数
-                    $coupons = Coupon::query()->where('wx_user_id', $userID)
-                        ->where('coupon_batch_id', $couponBatchId)
-                        ->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
-                        ->get();
-
-                    if ($coupons->count() >= $couponBatch->people_max_get) {
-                        abort(500, '您今天已经领过了，请明天再来!');
-                    }
-                } else {
-                    //根据微信客户端 发送优惠券
-                    Log::info('wx_user_id', [$userID]);
-                    $coupons = Coupon::query()->where('wx_user_id', $userID)
-                        ->where('coupon_batch_id', $couponBatchId)
-                        ->get();
-
-                    if ($coupons->count() >= $couponBatch->people_max_get) {
-                        abort(500, '您今天已经领过了，请明天再来!');
-                    }
-                }
-
-                if ($coupons->count() >= $couponBatch->people_max_get) {
-                    abort(500, '优惠券每人最多领取' . $couponBatch->people_max_get . '张');
-                }
-            }
-
+            $code = uniqid();
             //微信卡券二维码
             $wechatCouponBatch = $couponBatch->wechat;
             $prefix = 'h5_code';
             $qrcodeUrl = couponQrCode($code, 200, $prefix, $wechatCouponBatch);
 
-            $coupon = Coupon::create([
-                'code' => $code,
-                'mobile' => $mobile,
-                'coupon_batch_id' => $couponBatchId,
-                'status' => 3,
-                'wx_user_id' => $userID,
-                'qiniu_id' => $gameAttributePayload && isset($gameAttributePayload['id']) ? $gameAttributePayload['id'] : 0,
-                'oid' => $gameAttributePayload && isset($gameAttributePayload['utm_source']) ? $gameAttributePayload['utm_source'] : 0,
-                'belong' => $gameAttributePayload && isset($gameAttributePayload['utm_campaign']) ? $gameAttributePayload['utm_campaign'] : '',
-            ]);
-
-            $coupon->setAttribute('qrcode_url', $qrcodeUrl);
-
-            //不使用系统核销 领取优惠券后 ，自动减去库存
-            if (!$couponBatch->write_off_status && !$couponBatch->pmg_status && !$couponBatch->pmg_status) {
-
-                $couponBatch->decrement('stock');
+            //券的有效期
+            if ($couponBatch->is_fixed_date) {
+                $startDate = Carbon::createFromTimeString($couponBatch->start_date);;
+                $endDate = Carbon::createFromTimeString($couponBatch->end_date);
+            } else {
+                $startDate = Carbon::now()->addDays($couponBatch->delay_effective_day);
+                $endDate = Carbon::now()->addDays($couponBatch->delay_effective_day + $couponBatch->effective_day);
             }
 
-            if ($mobile) {
-                $this->sendCouponMsg($mobile, $couponBatch, $easySms);
-            }
+            DB::beginTransaction();
+            try {
 
+                $coupon = Coupon::create([
+                    'code' => $code,
+                    'mobile' => $mobile,
+                    'coupon_batch_id' => $couponBatchId,
+                    'status' => 3,
+                    'wx_user_id' => $userID,
+                    'qiniu_id' => $gameAttributePayload && isset($gameAttributePayload['id']) ? $gameAttributePayload['id'] : 0,
+                    'oid' => $gameAttributePayload && isset($gameAttributePayload['utm_source']) ? $gameAttributePayload['utm_source'] : 0,
+                    'belong' => $gameAttributePayload && isset($gameAttributePayload['utm_campaign']) ? $gameAttributePayload['utm_campaign'] : '',
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
+                ]);
+
+
+                $coupon->setAttribute('qrcode_url', $qrcodeUrl);
+
+                //不使用系统核销 领取优惠券后 ，自动减去库存
+                if (!$couponBatch->write_off_status && !$couponBatch->pmg_status && !$couponBatch->pmg_status) {
+
+                    $couponBatch->decrement('stock');
+                }
+
+                DB::commit();
+
+                if ($mobile) {
+                    $this->sendCouponMsg($mobile, $couponBatch, $easySms);
+                }
+            } catch (\Exception $e) {
+                DB::rollback();//事务回滚
+                abort(500, $e->getMessage());
+            }
         }
+
 
         return $this->response->item($coupon, new CouponTransformer());
     }
@@ -400,10 +468,10 @@ class CouponController extends Controller
         }
     }
 
-    private function sendMallCooCoupon($mobile, $picmID)
+    private function sendMallCooCoupon($open_user_id, $picmID)
     {
         $mall_coo = app('mall_coo');
-        $sUrl = 'https://openapi10.mallcoo.cn/Coupon/v1/Send/ByMobile/';
+        $sUrl = 'https://openapi10.mallcoo.cn/Coupon/v1/Send/ByOpenUserID/';
 
         $data = [
             'UserList' => [
@@ -411,7 +479,7 @@ class CouponController extends Controller
                     'BussinessID' => null,
                     'TraceID' => uniqid() . config('mall_coo.app_id'),
                     'PICMID' => $picmID,
-                    'Mobile' => $mobile,
+                    'OpenUserID' => $open_user_id,
                 ]
             ]
         ];

@@ -44,6 +44,7 @@ class PointDailyAverageExport extends AbstractExport
             ->join('avr_official_area as aoa', 'ao.areaid', '=', 'aoa.areaid')
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
             ->join('avr_official_scene as aos', 'ao.sid', '=', 'aos.sid')
+            ->leftJoin('avr_official_contract as aoc', 'ao.oid', '=', 'aoc.oid')
             ->join('admin_staff', 'ao.bd_uid', '=', 'admin_staff.uid')
             ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '{$this->startDate}' and '{$this->endDate}' and ao.marketid<>15 and aos.name<>'EXE颜镜店' and aos.name<>'星视度研发' and admin_staff.realname<>'颜镜店'")
             ->whereNotIn('fcl.oid', [16, 19, 30, 31, 177, 182, 327, 328, 329, 334, 335, 540])
@@ -51,23 +52,22 @@ class PointDailyAverageExport extends AbstractExport
             ->orderBy('aoa.areaid', 'desc')
             ->orderBy('aom.marketid', 'desc')
             ->orderBy('ao.oid', 'desc')
-            ->selectRaw("aoa.name as areaName,aom.name as marketName,ao.name as pointName,aos.name as scene,ao.type as type,admin_staff.realname as BDName,count(*) as days, sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(playernum7) as playernum7,sum(playernum15) as playernum15,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum,sum(oanum) as oanum,sum(phonenum) as phonenum,sum(omo_scannum) as omo_scannum,sum(oatimes) as oatimes,sum(phonetimes) as phonetimes,sum(coupontimes) as coupontimes,sum(verifytimes) as verifytimes,concat_ws(',', date_format(min(fcl.date), '%Y-%m-%d'), date_format(max(fcl.date), '%Y-%m-%d')) as date")
+            ->selectRaw("aoa.name as areaName,aom.name as marketName,ao.name as pointName,aos.name as scene,aoc.type as type,admin_staff.realname as BDName,count(*) as days, sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(playernum7) as playernum7,sum(playernum15) as playernum15,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum,sum(oanum) as oanum,sum(phonenum) as phonenum,sum(omo_scannum) as omo_scannum,sum(oatimes) as oatimes,sum(phonetimes) as phonetimes,sum(coupontimes) as coupontimes,sum(verifytimes) as verifytimes,concat_ws(',', date_format(min(fcl.date), '%Y-%m-%d'), date_format(max(fcl.date), '%Y-%m-%d')) as date")
             ->get();
         $total = [];
         $typeMapping = [
             'free' => '免费入驻',
             'pay' => '付费入驻',
-            'adpart' => '广告分成',
             'sell' => '出售',
             'lease' => '租借',
             'activity' => '活动',
             'agent' => '代理',
-            'test' => '测试'
+            'tmp' => '过桥'
         ];
         $faceCount->each(function ($item) use (&$data, &$total, $typeMapping) {
             $aa = [
                 'pointName' => $item->areaName . '-' . $item->marketName . '-' . $item->pointName,
-                'type' => $typeMapping[$item->type],
+                'type' => $item->type ? $typeMapping[$item->type] : null,
                 'scene' => $item->scene,
                 'BDName' => $item->BDName,
                 'playtimes7' => $item->playtimes7,

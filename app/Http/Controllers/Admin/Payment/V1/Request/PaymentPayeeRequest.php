@@ -8,17 +8,11 @@
 
 namespace App\Http\Controllers\Admin\Payment\V1\Request;
 
-
-use Dingo\Api\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class PaymentPayeeRequest extends FormRequest
+class PaymentPayeeRequest extends \App\Http\Requests\Request
 {
-    public function authorize()
-    {
-        return true;
-    }
 
     public function rules(Request $request)
     {

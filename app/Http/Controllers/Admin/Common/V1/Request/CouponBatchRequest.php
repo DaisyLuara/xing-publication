@@ -2,15 +2,10 @@
 
 namespace App\Http\Controllers\Admin\Common\V1\Request;
 
-use Dingo\Api\Http\FormRequest;
+use App\Http\Requests\Request;
 
-class CouponBatchRequest extends FormRequest
+class CouponBatchRequest extends Request
 {
-    public function authorize()
-    {
-        return true;
-    }
-
     public function rules()
     {
         return [
