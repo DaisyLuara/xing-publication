@@ -62,7 +62,7 @@ class ProjectLaunchController extends Controller
             $query->whereIn('tvoid', $ids);
         }
 
-        if ($request->visiable) {
+        if ($request->has('visiable')) {
             $visiable = $request->visiable;
             $query->whereHas('point', function ($query) use ($visiable) {
                 $query->where('visiable', '=', $visiable);
