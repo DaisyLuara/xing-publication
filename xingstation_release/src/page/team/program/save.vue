@@ -349,11 +349,10 @@
         <el-form-item label="上传素材" prop="ids">
           <el-upload
             ref="upload"
-            :action="SERVER_URL + '/api/media'"
-            :data="{type: 'package'}"
-            :headers="formHeader"
-            :before-upload="beforeUpload"
+            :action="Domain"
+            :data="uploadForm"
             :on-success="handleSuccess"
+            :before-upload="beforeUpload"
             :on-remove="handleRemove"
             :on-preview="handlePreview"
             :before-remove="beforeRemove"
@@ -363,7 +362,7 @@
             class="upload-demo"
           >
             <el-button size="mini" type="success">点击上传</el-button>
-            <div slot="tip" style="display:inline-block" class="el-upload__tip">支持类型：zip、rar</div>
+            <div slot="tip" style="display:inline-block" class="el-upload__tip">支持类型：zip、rar,不能超过100M</div>
             <div
               v-if="fileList.length !==0"
               slot="tip"
@@ -427,11 +426,11 @@ import {
   modifyProgram,
   getSearchUserList,
   getSearchProjectList,
-  getSearchTeamRateList
+  getSearchTeamRateList,
+  getQiniuToken,
+  getMediaUpload
 } from "service";
 import { Cookies } from "utils/cookies";
-import auth from "service/auth";
-const SERVER_URL = process.env.SERVER_URL;
 
 export default {
   components: {
@@ -450,9 +449,12 @@ export default {
   },
   data() {
     return {
-      SERVER_URL: SERVER_URL,
-      formHeader: {
-        Authorization: "Bearer " + auth.getToken()
+      Domain: "http://upload.qiniu.com",
+      uploadToken: "",
+      uploadKey: "",
+      uploadForm: {
+        token: "",
+        key: ""
       },
       fileList: [],
       ids: [],
@@ -518,7 +520,7 @@ export default {
     let user_info = JSON.parse(Cookies.get("user_info"));
     this.role = user_info.roles.data[0];
     this.getUserList();
-
+    this.getQiniuToken();
     if (this.programID) {
       this.detailInit();
     } else {
@@ -542,6 +544,16 @@ export default {
     },
     handleRemove(file, fileList) {
       this.fileList = fileList;
+    },
+    getQiniuToken() {
+      getQiniuToken(this)
+        .then(res => {
+          this.uploadToken = res;
+          this.uploadForm.token = this.uploadToken;
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
     handlePreview(file) {
       let url = file.url;
@@ -567,10 +579,43 @@ export default {
     beforeRemove(file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`);
     },
-    beforeUpload(file) {},
+    beforeUpload(file) {
+      let isLt100M = file.size / 1024 / 1024 < 1;
+      let suffix = file.name;
+      let key = encodeURI(`${suffix}`);
+      if (!isLt100M) {
+        this.uploadForm.token = "";
+        return this.$message.error("上传大小不能超过 10MB!");
+      } else {
+        this.uploadForm.token = this.uploadToken;
+      }
+      this.uploadForm.key = key;
+      return this.uploadForm;
+    },
     // 上传成功后的处理
     handleSuccess(response, file, fileList) {
-      this.fileList.push(response);
+      let key = response.key;
+      let name = file.raw.name;
+      let size = file.size;
+      this.getMediaUpload(key, name, size);
+      
+    },
+    getMediaUpload(key, name, size) {
+      let params = {
+        key: key,
+        name: name,
+        size: size
+      };
+      getMediaUpload(this, params)
+        .then(res => {
+          this.fileList.push(res);
+        })
+        .catch(err => {
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
+        });
     },
     // 比列
     getTeamRateList() {
