@@ -346,7 +346,10 @@
             class="text-input"
           />
         </el-form-item>
-        <el-form-item label="上传素材" prop="ids">
+        <el-form-item 
+          label="上传素材" 
+          prop="ids"
+          style="width:800px;">
           <el-upload
             ref="upload"
             :action="Domain"
