@@ -619,52 +619,69 @@ export default {
           this.h5Rate = res.h5_attribute === 2 ? this.h5Rate2 : this.h5Rate1;
           this.programForm.project_attribute = res.project_attribute;
           this.programForm.xo_attribute = res.xo_attribute;
-          this.programForm.animation = res.member.animation;
-          this.programForm.h5 = res.member.h5;
-          this.programForm.interaction = res.member.interaction;
-          this.programForm.originality = res.member.originality;
-          this.programForm.operation = res.member.operation;
-          this.programForm.plan = res.member.plan;
-          this.programForm.tester = res.member.tester;
           this.programForm.remark = res.remark;
           this.programForm.art_innovate = res.art_innovate;
           this.programForm.dynamic_innovate = res.dynamic_innovate;
           this.programForm.interact_innovate = res.interact_innovate;
           this.status = res.status;
-          if (res.member.animation.length > 0) {
-            res.member.animation.map(r => {
-              this.programForm.animate.push(r.user_id);
-            });
-          }
-          if (res.member.plan.length > 0) {
-            res.member.plan.map(r => {
-              this.programForm.whole.push(r.user_id);
-            });
-          }
-          if (res.member.interaction.length > 0) {
-            res.member.interaction.map(r => {
-              this.programForm.interactionVal.push(r.user_id);
-            });
-          }
-          if (res.member.h5.length > 0) {
-            res.member.h5.map(r => {
-              this.programForm.H5Val.push(r.user_id);
-            });
-          }
-          if (res.member.tester.length > 0) {
-            res.member.tester.map(r => {
-              this.programForm.test.push(r.user_id);
-            });
-          }
-          if (res.member.operation.length > 0) {
-            res.member.operation.map(r => {
-              this.programForm.platform.push(r.user_id);
-            });
-          }
-          if (res.member.originality.length > 0) {
-            res.member.originality.map(r => {
-              this.programForm.creative.push(r.user_id);
-            });
+          if(JSON.stringify(res.member) !== '[]'){
+            if (res.member.animation) {
+              this.programForm.animation = res.member.animation;
+              res.member.animation.map(r => {
+                this.programForm.animate.push(r.user_id);
+              });
+            }else{
+              this.programForm.animation = []
+            }
+            if (res.member.plan.length > 0) {
+              this.programForm.plan = res.member.plan;
+  
+              res.member.plan.map(r => {
+                this.programForm.whole.push(r.user_id);
+              });
+            }else{
+              his.programForm.plan = []
+            }
+            if (res.member.interaction.length > 0) {
+              this.programForm.interaction = res.member.interaction;
+              res.member.interaction.map(r => {
+                this.programForm.interactionVal.push(r.user_id);
+              });
+            }else{
+              this.programForm.interaction = []
+            }
+            if (res.member.h5) {
+              this.programForm.h5 = res.member.h5;
+              res.member.h5.map(r => {
+                this.programForm.H5Val.push(r.user_id);
+              });
+            }else{
+              this.programForm.h5 = []
+            }
+            if (res.member.tester.length > 0) {
+              this.programForm.tester = res.member.tester;
+              res.member.tester.map(r => {
+                this.programForm.test.push(r.user_id);
+              });
+            }else{
+              this.programForm.tester = []
+            }
+            if (res.member.operation.length > 0) {
+              this.programForm.operation = res.member.operation;
+              res.member.operation.map(r => {
+                this.programForm.platform.push(r.user_id);
+              });
+            }else{
+              this.programForm.operation = []
+            }
+            if (res.member.originality.length > 0) {
+              this.programForm.originality = res.member.originality;
+              res.member.originality.map(r => {
+                this.programForm.creative.push(r.user_id);
+              });
+            }else{
+               this.programForm.originality = []
+            }
           }
           this.setting.loading = false;
         })
@@ -867,8 +884,6 @@ export default {
           let member = {};
           let args = {
             belong: this.programForm.belong,
-            // project_name: this.programForm.belong.split(",")[1],
-            // launch_date: this.programForm.belong.split(",")[2],
             applicant: this.programForm.applicant,
             project_attribute: this.programForm.project_attribute,
             link_attribute: this.programForm.link_attribute,
