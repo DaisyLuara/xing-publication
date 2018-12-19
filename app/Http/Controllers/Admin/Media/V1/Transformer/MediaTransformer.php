@@ -9,8 +9,6 @@ class MediaTransformer extends TransformerAbstract
 {
     public function transform(Media $media)
     {
-        $disk = \Storage::disk('qiniu');
-        $domain = $disk->getDriver()->downloadUrl();
         return [
             'id' => $media->id,
             'company_id' => $media->company_id,
@@ -18,7 +16,7 @@ class MediaTransformer extends TransformerAbstract
             'name' => $media->name,
             'type' => $media->type,
             'size' => $media->size,
-            'url' => $media->type == 'package' ? $domain . $media->url : $media->url,
+            'url' => $media->url,
             'height' => $media->height,
             'width' => $media->width,
             'created_at' => $media->created_at->toDateTimeString(),
