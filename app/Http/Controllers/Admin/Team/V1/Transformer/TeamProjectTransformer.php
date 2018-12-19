@@ -14,7 +14,7 @@ class TeamProjectTransformer extends TransformerAbstract
     public function transform(TeamProject $teamProject)
     {
         $member = $teamProject->member->toArray();
-        $member1 = collect(array_column($member,'pivot'))->groupBy("type")->toArray();
+        $member = collect(array_column($member,'pivot'))->groupBy("type")->toArray();
         return [
             'id' => $teamProject->id,
             'project_name' => $teamProject->project_name,
@@ -34,34 +34,7 @@ class TeamProjectTransformer extends TransformerAbstract
             'remark' => $teamProject->remark,
             'status' => $teamProject->status,
             'type' => $teamProject->type,
-            'member1' =>$member1,
-            'member' => [
-                'interaction' => array_column(array_filter($member, function ($arr) {
-                    return $arr['pivot']['type'] == 'interaction';
-                }), 'pivot'),
-                'originality' => array_column(array_filter($member, function ($arr) {
-                    return $arr['pivot']['type'] == 'originality';
-                }), 'pivot'),
-                'h5' => array_column(array_filter($member, function ($arr) {
-                    return $arr['pivot']['type'] == 'h5';
-                }), 'pivot'),
-                'animation' => array_column(array_filter($member, function ($arr) {
-                    return $arr['pivot']['type'] == 'animation';
-                }), 'pivot'),
-                'plan' => array_column(array_filter($member, function ($arr) {
-                    return $arr['pivot']['type'] == 'plan';
-                }), 'pivot'),
-                'tester' => array_column(array_filter($member, function ($arr) {
-                    return $arr['pivot']['type'] == 'tester';
-                }), 'pivot'),
-                'operation' => array_column(array_filter($member, function ($arr) {
-                    return $arr['pivot']['type'] == 'operation';
-                }), 'pivot'),
-                'tester_quality' => array_column(array_filter($member, function ($arr) {
-                    return $arr['pivot']['type'] == 'tester_quality';
-                }), 'pivot'),
-
-            ]
+            'member' =>$member,
         ];
     }
 
