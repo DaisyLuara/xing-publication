@@ -17,7 +17,7 @@ class TeamProjectRequest extends \App\Http\Requests\Request
         switch ($this->method()) {
             case 'POST':
                 return [
-                    'belong' => 'required|unique:team_projects',
+                    'belong' => 'required|unique:team_projects|exists:ar.ar_product_list,versionname',
                     'project_attribute' => Rule::in([1, 2, 3, 4]),
                     'link_attribute' => Rule::in([0, 1]),
                     'h5_attribute' => Rule::in([1, 2]),
@@ -27,13 +27,17 @@ class TeamProjectRequest extends \App\Http\Requests\Request
                     'interact_innovate' => 'required|max:1000',
                     'remark' => 'max:1000',
                     'type' => Rule::in([0, 1]),
-                    'member.*.rate' => 'numeric',
-                    'media_id' => 'required|integer'
+                    'member.*.*.rate' => 'required|numeric',
+                    'member.*.*.user_id' => 'required|integer|exists:users,id',
+                    'media_id' => 'required|integer|exists:media,id'
                 ];
                 break;
             case 'PATCH':
                 return [
-                    'belong' => Rule::unique('team_projects')->ignore($request->id),
+                    'belong' => [
+                        'required','exists:ar.ar_product_list,versionname',
+                         Rule::unique('team_projects')->ignore($request->id),
+                    ],
                     'project_attribute' => Rule::in([1, 2, 3, 4]),
                     'link_attribute' => Rule::in([0, 1]),
                     'h5_attribute' => Rule::in([1, 2]),
@@ -43,8 +47,9 @@ class TeamProjectRequest extends \App\Http\Requests\Request
                     'interact_innovate' => 'max:1000',
                     'remark' => 'max:1000',
                     'type' => Rule::in([0, 1]),
-                    'member.*.rate' => 'numeric',
-                    'media_id' => 'integer'
+                    'member.*.*.rate' => 'required|numeric',
+                    'member.*.*.user_id' => 'required|integer|exists:users,id',
+                    'media_id' => 'required|integer|exists:media,id'
                 ];
                 break;
             default:
