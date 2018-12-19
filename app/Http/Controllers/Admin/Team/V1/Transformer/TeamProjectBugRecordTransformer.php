@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Team\V1\Transformer;
 
 use App\Http\Controllers\Admin\Team\V1\Models\TeamProjectBugRecord;
 use App\Http\Controllers\Admin\User\V1\Transformer\UserTransformer;
+use Carbon\Carbon;
 use League\Fractal\TransformerAbstract;
 
 class TeamProjectBugRecordTransformer extends TransformerAbstract
@@ -19,7 +20,7 @@ class TeamProjectBugRecordTransformer extends TransformerAbstract
             'project_name' => $teamProjectBugRecord->project_name,
             'belong' => $teamProjectBugRecord->belong,
             'bug_num' => $teamProjectBugRecord->bug_num,
-            'date' => $teamProjectBugRecord->date,
+            'date' => Carbon::parse($teamProjectBugRecord->date)->timezone('PRC')->toDateString(),
             'recorder_id' => $teamProjectBugRecord->recorder_id,
             'description' => $teamProjectBugRecord->description,
         ];

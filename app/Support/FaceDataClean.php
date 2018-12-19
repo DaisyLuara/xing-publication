@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\Face\V1\Models\FacePermeabilityRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceCouponRecord;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamBonusRecord;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
+use App\Http\Controllers\Admin\Team\V1\Models\TeamProjectBugRecord;
 
 /**
  * 围观人次清洗
@@ -1776,17 +1777,21 @@ function teamBonusClean()
 
         $count = [];
         foreach ($faceCount as $item) {
+            //数据奖金池 B  $totalMoney
             $player7Money = round($item->playernum7 * 0.01, 2);
             $player15Money = round($item->playernum15 * 0.02, 2);
             $player21Money = round($item->playernum21 * 0.05, 2);
             $uCPAMoney = round($item->omo_outnum * 0.2, 2);
             $totalMoney = $player7Money + $player15Money + $player21Money + $uCPAMoney;
 
+            //节目的投放日期
             $launchDate = date('Y-m-d', $item->online / 1000);
 
             $teamProject = TeamProject::query()->where('belong', $item->belong)->first();
             //投放时长 当前日期-投放日期
             $launchTime = (new Carbon($date))->diffInDays($launchDate);
+
+            //新颖性系数T $factor
             $factor = 0;
             if ($teamProject) {
                 if ($launchTime <= 30) {
@@ -1802,7 +1807,7 @@ function teamBonusClean()
                         }
                         if ($advanceTime < 60) {
                             if ($teamProject->project_attribute <= 2) {
-                                $factor = 0.8;
+                                $factor = 0.9;
                             } else {
                                 $factor = 1;
                             }
@@ -1811,52 +1816,98 @@ function teamBonusClean()
                     //运营确认
                     if ($teamProject->status == 3 && $teamProject->type == 0) {
                         if ($teamProject->project_attribute <= 2) {
-                            $factor = 0.8;
+                            $factor = 0.9;
                         } else {
                             $factor = 1;
                         }
                     }
                 }
+                //已投放一个月
                 if ($launchTime > 30 && $launchTime <= 60) {
+                    $factor = 0.8;
+                }
+                //已投放两个月
+                if ($launchTime > 60 && $launchTime <= 90) {
+                    $factor = 0.7;
+                }
+                //已投放三个月
+                if ($launchTime > 90 && $launchTime <= 120) {
                     $factor = 0.6;
                 }
-                if ($launchTime > 60 && $launchTime <= 90) {
+                //已投放四个月
+                if ($launchTime > 120 && $launchTime <= 150) {
+                    $factor = 0.5;
+                }
+                //已投放五个月
+                if ($launchTime > 150 && $launchTime <= 180) {
                     $factor = 0.4;
                 }
-                if ($launchTime > 90 && $launchTime <= 120) {
+                //已投放六个月
+                if ($launchTime > 210 && $launchTime <= 240) {
+                    $factor = 0.3;
+                }
+                //已投放七个月
+                if ($launchTime > 240 && $launchTime <= 270) {
                     $factor = 0.2;
                 }
+                //已投放八个月
+                if ($launchTime > 270 && $launchTime <= 300) {
+                    $factor = 0.1;
+                }
+
             }
             $count[] = [
                 'project_name' => $item->name,
                 'belong' => $item->belong,
-                'money' => $totalMoney,
-                'factor' => $factor,
+                'money' => $totalMoney, //B
+                'factor' => $factor,  //T
                 'date' => $date
             ];
         }
+
         DB::table('team_bonuses')->insert($count);
 
         $data = DB::table('team_projects as tp')
             ->join('team_project_members as tpm', 'tp.id', '=', 'tpm.team_project_id')
             ->join('team_bonuses as tb', 'tp.belong', '=', 'tb.belong')
             ->whereRaw("date_format(date,'%Y-%m-%d')='$date'")
-            ->selectRaw("user_id,tp.project_name as project_name,tp.belong as belong,money,factor,rate,tpm.type as type")
+            ->selectRaw("user_id,tp.id as team_project_id,tp.project_name as project_name,tp.belong as belong,money,factor,rate,tpm.type as type")
             ->get();
 
         $rewards = [];
+        $rewards_future = [];
+        $date_future = Carbon::parse($date)->addDays(90)->toDateString();
+
         foreach ($data as $item) {
-            $rewards[] = [
-                'user_id' => $item->user_id,
-                'project_name' => $item->project_name,
-                'belong' => $item->belong,
-                'type' => $item->type,
-                'experience_money' => round($item->money * $item->factor * $item->rate, 6),
-                'total' => round($item->money * $item->factor * $item->rate, 6),
-                'date' => $date
-            ];
+            if (in_array($item->type, ['tester_quality', 'operation_quality'])) {
+                $rewards_future[] = [
+                    'user_id' => $item->user_id,
+                    'project_name' => $item->project_name,
+                    'belong' => $item->belong,
+                    'type' => $item->type,
+                    'experience_money' => round($item->money * $item->factor * $item->rate, 6),
+                    'total' => round($item->money * $item->factor * $item->rate, 6),
+                    'date' => $date,
+                    'get_date' => $date_future,
+                    'status'=>0,
+                    'team_project_id'=>$item->team_project_id
+                ];
+            } else {
+                $rewards[] = [
+                    'user_id' => $item->user_id,
+                    'project_name' => $item->project_name,
+                    'belong' => $item->belong,
+                    'type' => $item->type,
+                    'experience_money' => round($item->money * $item->factor * $item->rate, 6),
+                    'total' => round($item->money * $item->factor * $item->rate, 6),
+                    'date' => $date
+                ];
+            }
         }
+
         DB::table('team_person_rewards')->insert($rewards);
+        DB::table('team_person_future_rewards')->insert($rewards_future);
+
 
         $date = (new Carbon($date))->addDay(1)->toDateString();
     }
