@@ -52,7 +52,7 @@ class MediaController extends Controller
         $domain = $disk->getDriver()->downloadUrl();
         $data = [
             'name' => $request->name,
-            'url' => $domain . $request->key,
+            'url' => $domain . urlencode($request->key),
             'size' => $request->size,
             'height' => 0,
             'width' => 0,

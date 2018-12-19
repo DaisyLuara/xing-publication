@@ -61,7 +61,7 @@ class TeamProjectController extends Controller
             });
         }
 
-        $teamProject = $query->orderBy('begin_date', 'desc')->paginate(10);
+        $teamProject = $query->orderBy('created_at', 'desc')->paginate(10);
 
         return $this->response()->paginator($teamProject, new TeamProjectListTransformer());
     }
