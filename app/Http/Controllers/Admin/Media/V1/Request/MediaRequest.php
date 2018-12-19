@@ -18,11 +18,11 @@ class MediaRequest extends Request
         switch ($this->method()) {
             case "GET":
                 return [
-                    'type' => 'required|string|in:image,video,file,package',
+                    'type' => 'required|string|in:image,video,file',
                 ];
             case 'POST':
                 $rules = [
-                    'type' => 'required|string|in:image,video,file,package',
+                    'type' => 'required|string|in:image,video,file',
                 ];
 
                 if ($this->type == 'image') {
