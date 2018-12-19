@@ -161,6 +161,45 @@ let router = {
             import(/* webpackChunkName: "page/project/coupon/index" */ 'page/project/coupon/index')
         }
       ]
+    },
+    {
+      path: 'wx_cardpackage',
+      name: '微信卡券',
+      redirect: 'wx_cardpackage',
+      meta: {
+        title: '微信卡券'
+      },
+      component: () =>
+        import(/* webpackChunkName: "page/project/wx/routerView" */ 'page/project/wx/routerView'),
+      children: [
+        {
+          path: '/',
+          name: '微信卡券配置',
+          meta: {
+            title: '微信卡券配置'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/project/wx/index" */ 'page/project/wx/index')
+        },
+        {
+          path: 'add',
+          name: '微信卡券新增',
+          meta: {
+            title: '微信卡券新增'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/project/rules/save" */ 'page/project/wx/save')
+        },
+        {
+          path: 'use',
+          name: '微信卡券使用设置',
+          meta: {
+            title: '微信卡券使用设置'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/project/rules/save" */ 'page/project/wx/use')
+        }
+      ]
     }
   ]
 }
