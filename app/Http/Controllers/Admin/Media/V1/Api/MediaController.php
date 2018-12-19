@@ -15,8 +15,6 @@ class MediaController extends Controller
 
     public function store(MediaRequest $request, Media $media, ImageUploadHandler $uploader)
     {
-        $user = $this->user();
-        $companyID = $user->company_id;
         /** @var  $file \Illuminate\Http\UploadedFile */
         $file = $request->file;
 
@@ -36,7 +34,6 @@ class MediaController extends Controller
             'name' => $file->getClientOriginalName(),
             'type' => $file->getMimeType(),
             'url' => $url,
-            'company_id' => $companyID,
             'height' => $height,
             'width' => $width,
         ];
