@@ -15,9 +15,9 @@
           <el-table-column type="expand">
             <template slot-scope="scope">
               <el-form label-position="left" inline class="demo-table-expand">
-                <el-form-item label="交互技术">
+                <!-- <el-form-item label="交互技术">
                   <span>{{ scope.row.interaction }}</span>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="交互技术-中间件">
                   <span>{{ scope.row.interaction_api }}</span>
                 </el-form-item>
@@ -65,8 +65,8 @@
           </el-table-column>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="interaction"
-            label="交互技术"
+            prop="interaction_api"
+            label="交互技术-中间件"
             min-width="70"
           />
           <el-table-column :show-overflow-tooltip="true" prop="h5_1" label="H5基础" min-width="70"/>

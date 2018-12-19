@@ -83,48 +83,48 @@ let router = {
         }
       ]
     },
-    {
-      path: 'platform',
-      name: '平台项目',
-      redirect: 'platform',
-      meta: {
-        title: '平台项目'
-      },
-      component: () =>
-        import(/* webpackChunkName: "page/team/platform/routerView" */ 'page/team/platform/routerView'),
-      children: [
-        {
-          path: '/',
-          name: '平台项目列表',
-          meta: {
-            title: '平台项目列表'
-          },
-          component: () =>
-            import(/* webpackChunkName: "page/team/platform/index" */ 'page/team/platform/index')
-        }
-      ]
-    },
-    {
-      path: 'detail',
-      name: '平台明细',
-      redirect: 'detail',
-      meta: {
-        title: '平台明细'
-      },
-      component: () =>
-        import(/* webpackChunkName: "page/team/detail/routerView" */ 'page/team/detail/routerView'),
-      children: [
-        {
-          path: '/',
-          name: '平台明细列表',
-          meta: {
-            title: '平台明细列表'
-          },
-          component: () =>
-            import(/* webpackChunkName: "page/team/detail/index" */ 'page/team/detail/index')
-        }
-      ]
-    }
+    // {
+    //   path: 'platform',
+    //   name: '平台项目',
+    //   redirect: 'platform',
+    //   meta: {
+    //     title: '平台项目'
+    //   },
+    //   component: () =>
+    //     import(/* webpackChunkName: "page/team/platform/routerView" */ 'page/team/platform/routerView'),
+    //   children: [
+    //     {
+    //       path: '/',
+    //       name: '平台项目列表',
+    //       meta: {
+    //         title: '平台项目列表'
+    //       },
+    //       component: () =>
+    //         import(/* webpackChunkName: "page/team/platform/index" */ 'page/team/platform/index')
+    //     }
+    //   ]
+    // },
+    // {
+    //   path: 'detail',
+    //   name: '平台明细',
+    //   redirect: 'detail',
+    //   meta: {
+    //     title: '平台明细'
+    //   },
+    //   component: () =>
+    //     import(/* webpackChunkName: "page/team/detail/routerView" */ 'page/team/detail/routerView'),
+    //   children: [
+    //     {
+    //       path: '/',
+    //       name: '平台明细列表',
+    //       meta: {
+    //         title: '平台明细列表'
+    //       },
+    //       component: () =>
+    //         import(/* webpackChunkName: "page/team/detail/index" */ 'page/team/detail/index')
+    //     }
+    //   ]
+    // }
   ]
 }
 
