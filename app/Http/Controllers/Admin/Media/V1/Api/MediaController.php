@@ -46,8 +46,18 @@ class MediaController extends Controller
         return $this->response->item($media, new MediaTransformer());
     }
 
-    public function update(Request $request)
+    public function create(Request $request, Media $media)
     {
-        //
+        $disk = \Storage::disk('qiniu');
+        $domain = $disk->getDriver()->downloadUrl();
+        $data = [
+            'name' => $request->name,
+            'url' => $domain . urlencode($request->key),
+            'size' => $request->size,
+            'height' => 0,
+            'width' => 0,
+        ];
+        $media->fill($data)->save();
+        return $this->response->item($media, new MediaTransformer());
     }
 }

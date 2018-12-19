@@ -80,7 +80,7 @@ $api->version('v1', [
             $api->get('customer/query', 'QueryController@customerQuery');
             $api->get('user/query', 'QueryController@userQuery');
             $api->get('team_rate/query', 'QueryController@teamRateQuery');
-            $api->get('attribute/query','QueryController@attributeQuery');
+            $api->get('attribute/query', 'QueryController@attributeQuery');
 
             //消息通知
             $api->get('user/notifications', 'NotificationsController@index');
@@ -95,6 +95,8 @@ $api->version('v1', [
 
             $api->get('times_stats', 'ChartDataTimesController@index');//人次列表
             $api->post('chart_data_times', 'ChartDataTimesController@chart');//人次图表
+
+            $api->get('qiniu_oauth', 'QiniuController@oauth');
         });
 
         $api->get('website/fcpe', 'WebsiteController@getFCpe');

@@ -7,6 +7,8 @@ const SYSTEM_BONUS_API = '/api/system_bonus'
 const SYSTEM_DISTRIBTION_BONUS_API = '/api/distribution_bonus'
 const SYSTEM_DETAIL_API = '/api/system_detail'
 const PERSON_REWARD_API = '/api/person_reward'
+const QINNIU_API = '/api/qiniu_oauth'
+const MEDIA_UPLOAD_AP = '/api/media_upload'
 
 // 得到项目列表
 const getProgramList = (context, params) => {
@@ -277,6 +279,33 @@ const getSystemlMoneyDetail = (context, id) => {
       })
   })
 }
+// 获得七牛token
+const getQiniuToken = context => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + QINNIU_API)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+// 传给后台七牛的key和文件name
+const getMediaUpload = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .post(HOST + MEDIA_UPLOAD_AP, params)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
 
 export {
   getProgramList,
@@ -298,5 +327,7 @@ export {
   getPersonRewardTotal,
   saveSystemDetailMoney,
   modifySystemDetailMoney,
-  getSystemlMoneyDetail
+  getSystemlMoneyDetail,
+  getQiniuToken,
+  getMediaUpload
 }
