@@ -43,6 +43,13 @@ $api->version('v1', [
             //个人中心奖金
             $api->get('person_reward', 'TeamPersonRewardController@index');
             $api->get('person_reward/total', 'TeamPersonRewardController@totalReward');
+
+            //bug记录--暂时没有删除
+            $api->get('team_project_bug_records', 'TeamProjectBugRecordController@index');
+            $api->get('/{team_project_bug_record}', 'TeamProjectBugRecordController@show');
+            $api->post('team_project_bug_records', ['middleware' => ['role:bonus-manager|legal-affairs-manager'], 'uses' => 'TeamProjectBugRecordController@store']);
+            $api->patch('team_project_bug_records/{team_project_bug_record}', ['middleware' => ['role:bonus-manager|legal-affairs-manager'], 'uses' => 'TeamProjectBugRecordController@update']);
+
         });
     });
 

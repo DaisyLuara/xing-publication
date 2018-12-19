@@ -39,18 +39,12 @@ class TeamProjectController extends Controller
         /** @var  $user \App\Models\User */
         $user = $this->user();
 
-        if (!$user->hasRole('tester') && !$user->hasRole('operation') && !$user->hasRole('legal-affairs-manager') && !$user->hasRole('bonus-manager')) {
-            $query->where(function ($query) use ($user) {
-                $query->where('applicant', $user->id)
-                    ->orWhere(function ($q) use ($user) {
-                        $q->whereHas('member', function ($q) use ($user) {
-                            $q->where('id', $user->id);
-                        });
-                    });
-            });
-        }
-
-        if ($request->has('own') && $request->own == 'true') {
+        if (($request->has('own') && $request->own == 'true')
+            || (
+                !$user->hasRole('tester') && !$user->hasRole('operation')
+                && !$user->hasRole('legal-affairs-manager')
+                && !$user->hasRole('bonus-manager')
+            )) {
             $query->where(function ($query) use ($user) {
                 $query->where('applicant', $user->id)
                     ->orWhere(function ($q) use ($user) {
