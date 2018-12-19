@@ -362,7 +362,11 @@
             class="upload-demo"
           >
             <el-button size="mini" type="success">点击上传</el-button>
-            <div slot="tip" style="display:inline-block" class="el-upload__tip">支持类型：zip、rar,不能超过100M</div>
+            <div
+              slot="tip"
+              style="display:inline-block"
+              class="el-upload__tip"
+            >支持类型：zip、rar,不能超过100M</div>
             <div
               v-if="fileList.length !==0"
               slot="tip"
@@ -580,12 +584,14 @@ export default {
       return this.$confirm(`确定移除 ${file.name}？`);
     },
     beforeUpload(file) {
-      let isLt100M = file.size / 1024 / 1024 < 1;
-      let suffix = file.name;
+      let isLt100M = file.size / 1024 / 1024 < 100;
+      let time = new Date().getTime();
+      let random = parseInt(Math.random() * 10 + 1, 10);
+      let suffix = time + "_" + random + "_" + file.name;
       let key = encodeURI(`${suffix}`);
       if (!isLt100M) {
         this.uploadForm.token = "";
-        return this.$message.error("上传大小不能超过 10MB!");
+        return this.$message.error("上传大小不能超过 100MB!");
       } else {
         this.uploadForm.token = this.uploadToken;
       }
@@ -598,7 +604,6 @@ export default {
       let name = file.raw.name;
       let size = file.size;
       this.getMediaUpload(key, name, size);
-      
     },
     getMediaUpload(key, name, size) {
       let params = {
