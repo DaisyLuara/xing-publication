@@ -42,6 +42,8 @@ class CouponBatchRequest extends Request
                     'effective_day' => 'alpha_num',
                     'title' => 'filled',
                     'credit' => 'alpha_num|nullable',
+                    'marketid' => 'integer|nullable',
+                    'oid' => 'array|max:10',
                 ];
                 break;
             case 'PATCH':
@@ -63,6 +65,8 @@ class CouponBatchRequest extends Request
                     'delay_effective_day' => 'alpha_num',
                     'effective_day' => 'alpha_num',
                     'credit' => 'alpha_num|nullable',
+                    'marketid' => 'integer|nullable',
+                    'oid' => 'array|max:10',
                 ];
 
                 break;
