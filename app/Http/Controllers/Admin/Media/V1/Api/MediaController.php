@@ -46,8 +46,14 @@ class MediaController extends Controller
         return $this->response->item($media, new MediaTransformer());
     }
 
-    public function update(Request $request)
+    public function create(Request $request, Media $media)
     {
-        //
+        $data = [
+            'name' => $request->name,
+            'url' => $request->key,
+            'type' => 'package'
+        ];
+        $media->fill($data)->save();
+        return $this->response->item($media, new MediaTransformer());
     }
 }

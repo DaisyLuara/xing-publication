@@ -15,13 +15,8 @@ class QiniuController extends Controller
 {
     public function oauth()
     {
-        $accessKey = 'QwzBG0rrX-sFVvFft2A2vhqNVAnM1Nrg8PGf3VX4';
-        $secretKey = '95j_UlL2_PrSYw2q-5Z2R8e29B3V39PXIFZ5IEcf';
-        $bucket = 'publication';
-
-        $auth = new Auth($accessKey, $secretKey);
-        $token = $auth->uploadToken($bucket);
-
-        return response()->json($token);
+        $disk = \Storage::disk('qiniu');
+        $token = $disk->getDriver()->uploadToken();
+        return $token;
     }
 }
