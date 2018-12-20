@@ -18,6 +18,7 @@ class CreateTeamPersonFutureRewardTable extends Migration
             $table->integer('user_id');
             $table->string('project_name');
             $table->string('belong');
+            $table->string('type')->comment("interaction:交互技术,originality:节目创意,h5:H5开发,animation:设计动画,plan:节目统筹,tester:节目测试,operation:平台运营,system:平台奖");
             $table->string('experience_money')->nullable()->comment('体验绩效');
             $table->string('xo_money')->nullable()->comment('小偶绩效');
             $table->string('link_money')->nullable()->comment('联动绩效');

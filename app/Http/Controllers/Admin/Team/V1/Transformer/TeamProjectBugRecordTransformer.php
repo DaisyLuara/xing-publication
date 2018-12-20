@@ -20,9 +20,13 @@ class TeamProjectBugRecordTransformer extends TransformerAbstract
             'project_name' => $teamProjectBugRecord->project_name,
             'belong' => $teamProjectBugRecord->belong,
             'bug_num' => $teamProjectBugRecord->bug_num,
+            'user_id' => $teamProjectBugRecord->user_id,
+            'duty' => $teamProjectBugRecord->duty,
             'date' => Carbon::parse($teamProjectBugRecord->date)->timezone('PRC')->toDateString(),
             'recorder_id' => $teamProjectBugRecord->recorder_id,
             'description' => $teamProjectBugRecord->description,
+            'created_at'=> Carbon::parse($teamProjectBugRecord->created_at)->timezone('PRC')->toDateTimeString(),
+            'updated_at'=> Carbon::parse($teamProjectBugRecord->updated_at)->timezone('PRC')->toDateTimeString(),
         ];
     }
 

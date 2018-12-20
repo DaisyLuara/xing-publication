@@ -12,6 +12,8 @@ class TeamProjectBugRecord extends Model
         'team_project_id',
         'project_name',
         'belong',
+        'user_id',
+        'duty',
         'bug_num',
         'date',
         'recorder_id',
@@ -25,4 +27,9 @@ class TeamProjectBugRecord extends Model
     public function team_project(){
         return $this->belongsTo(TeamProject::class,'team_project_id','id');
     }
+
+    public function user(){
+        return $this->belongsTo(User::class,'user_id','id');
+    }
+
 }

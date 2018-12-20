@@ -9,22 +9,27 @@
 namespace App\Http\Controllers\Admin\Team\V1\Api;
 
 
-use App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward;
-use App\Http\Controllers\Admin\Team\V1\Transformer\TeamPersonRewardTransformer;
+use App\Http\Controllers\Admin\Team\V1\Models\TeamPersonFutureReward;
+use App\Http\Controllers\Admin\Team\V1\Transformer\TeamPersonFutureRewardTransformer;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class TeamPersonRewardController extends Controller
+class TeamPersonFutureRewardController extends Controller
 {
     /**
-     * 个人奖金列表
+     * 个人冻结奖金列表
      * @param Request $request
-     * @param TeamPersonReward $teamPersonReward
+     * @param TeamPersonFutureReward $teamFuturePersonReward
      * @return \Dingo\Api\Http\Response
      */
-    public function index(Request $request, TeamPersonReward $teamPersonReward)
+    public function index(Request $request, TeamPersonFutureReward $teamFuturePersonReward)
     {
-        $query = $teamPersonReward->query();
+        $query = $teamFuturePersonReward->query();
+
+        if($request->has("status")){
+            $query->where('status', '=', $request->status);
+        }
+
         if ($request->has('start_date') && $request->has('end_date')) {
             $query->whereRaw("date_format(date,'%Y-%m-%d') between '$request->start_date' and '$request->end_date' ");
         }
@@ -32,13 +37,21 @@ class TeamPersonRewardController extends Controller
             $query->where('project_name', 'like', '%' . $request->name . '%');
         }
         $user = $this->user();
-        $teamPersonReward = $query->where('user_id', $user->id)->paginate(10);
-        return $this->response()->paginator($teamPersonReward, new TeamPersonRewardTransformer());
+        $teamFuturePersonReward = $query->where('user_id', $user->id)->paginate(10);
+        return $this->response()->paginator($teamFuturePersonReward, new TeamPersonFutureRewardTransformer());
     }
 
-    public function totalReward(Request $request, TeamPersonReward $teamPersonReward)
+    /**
+     * 个人冻结总绩效
+     * @param Request $request
+     * @param TeamPersonFutureReward $teamFuturePersonReward
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function totalReward(Request $request, TeamPersonFutureReward $teamFuturePersonReward)
     {
-        $query = $teamPersonReward->query();
+        $query = $teamFuturePersonReward->query();
+
+        $query->where('status', '=', 0);
 
         if ($request->has('start_date') && $request->has('end_date')) {
             $query->whereRaw("date_format(date,'%Y-%m-%d') between '$request->start_date' and '$request->end_date' ");
