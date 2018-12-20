@@ -12,6 +12,8 @@ namespace App\Http\Controllers\Admin\Coupon\V1\Models;
 use App\Http\Controllers\Admin\Activity\V1\Models\Activity;
 use App\Http\Controllers\Admin\Activity\V1\Models\ActivityCouponBatch;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
+use App\Http\Controllers\Admin\Point\V1\Models\Market;
+use App\Http\Controllers\Admin\Point\V1\Models\Point;
 use App\Models\Model;
 use App\Models\User;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -45,6 +47,8 @@ class CouponBatch extends Model
         'redirect_url',
         'title',
         'campaign_id',
+        'marketid',
+        'oid',
         'credit',
         'sort_order',
         'dynamic_stock_status',
@@ -86,5 +90,10 @@ class CouponBatch extends Model
     public function activityCouponBatches()
     {
         return $this->hasMany(ActivityCouponBatch::class, 'coupon_batch_id', 'id');
+    }
+
+    public function marketPointCouponBatches()
+    {
+        return $this->hasMany(MarketPointCouponBatch::class, 'coupon_batch_id', 'id');
     }
 }

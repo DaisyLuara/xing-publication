@@ -1,162 +1,109 @@
 <template>
-  <div 
-    class="root">
-    <div 
+  <div class="root">
+    <div
       v-loading="setting.loading"
-      :element-loading-text="setting.loadingText" 
-      class="item-list-wrap">
-      <div 
-        class="item-content-wrap">
+      :element-loading-text="setting.loadingText"
+      class="item-list-wrap"
+    >
+      <div class="item-content-wrap">
         <!-- 搜素条件 -->
-        <div 
-          class="search-wrap">
-          <el-form 
-            ref="searchForm" 
-            :model="searchForm" 
-            :inline="true">
-            <el-row 
-              :gutter="20">
-              <el-col
-                :span="8">
-                <el-form-item 
-                  label=""
-                  prop="name">
-                  <el-input 
+        <div class="search-wrap">
+          <el-form ref="searchForm" :model="searchForm" :inline="true">
+            <el-row :gutter="20">
+              <el-col :span="8">
+                <el-form-item label prop="name">
+                  <el-input
                     v-model="searchForm.name"
                     clearable
-                    placeholder="场地名称" 
-                    class="item-input"/>
+                    placeholder="场地名称"
+                    class="item-input"
+                  />
                 </el-form-item>
               </el-col>
-              <el-col
-                :span="8">
-                <el-form-item 
-                  label="" 
-                  prop="area_id">
-                  <el-select 
-                    v-model="searchForm.area_id" 
-                    placeholder="区域" 
-                    filterable 
-                    clearable>
+              <el-col :span="8">
+                <el-form-item label prop="area_id">
+                  <el-select v-model="searchForm.area_id" placeholder="区域" filterable clearable>
                     <el-option
                       v-for="item in areaList"
                       :key="item.id"
                       :label="item.name"
-                      :value="item.id"/>
+                      :value="item.id"
+                    />
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col
-                :span="8">
-                <el-form-item 
-                  label="" 
-                  prop="type">
-                  <el-select 
-                    v-model="searchForm.type" 
-                    placeholder="场地类型" 
-                    filterable 
-                    clearable>
+              <el-col :span="8">
+                <el-form-item label prop="type">
+                  <el-select v-model="searchForm.type" placeholder="场地类型" filterable clearable>
                     <el-option
                       v-for="item in typeList"
                       :key="item.id"
                       :label="item.name"
-                      :value="item.id"/>
+                      :value="item.id"
+                    />
                   </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-row 
-              :gutter="20">
-              <el-col
-                :span="8">
-                <el-form-item 
-                  label="" 
-                  prop="permission">
-                  <el-select 
-                    v-model="searchForm.permission" 
-                    placeholder="场地权限" 
+            <el-row :gutter="20">
+              <el-col :span="8">
+                <el-form-item label prop="permission">
+                  <el-select
+                    v-model="searchForm.permission"
+                    placeholder="场地权限"
                     multiple
-                    filterable 
-                    clearable>
+                    filterable
+                    clearable
+                  >
                     <el-option
                       v-for="item in permissionList"
                       :key="item.id"
                       :label="item.name"
-                      :value="item.id"/>
+                      :value="item.id"
+                    />
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col
-                :span="8">
-                <el-form-item 
-                  label="" 
-                  prop="mode">
-                  <el-select 
-                    v-model="searchForm.mode" 
-                    placeholder="合作模式" 
-                    filterable 
-                    clearable>
+              <el-col :span="8">
+                <el-form-item label prop="mode">
+                  <el-select v-model="searchForm.mode" placeholder="合作模式" filterable clearable>
                     <el-option
                       v-for="item in modeList"
                       :key="item.id"
                       :label="item.name"
-                      :value="item.id"/>
+                      :value="item.id"
+                    />
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col
-                :span="8">
-                <el-button 
-                  type="primary" 
-                  size="small"
-                  @click="search('searchForm')">搜索</el-button>
-                <el-button
-                  type="default" 
-                  size="small"
-                  @click="resetSearch('searchForm')">重置</el-button>
+              <el-col :span="8">
+                <el-button type="primary" size="small" @click="search('searchForm')">搜索</el-button>
+                <el-button type="default" size="small" @click="resetSearch('searchForm')">重置</el-button>
               </el-col>
             </el-row>
           </el-form>
         </div>
         <!-- 场地列表 -->
-        <div 
-          class="total-wrap">
-          <span 
-            class="label">
-            总数:{{ pagination.total }} 
-          </span>
+        <div class="total-wrap">
+          <span class="label">总数:{{ pagination.total }}</span>
           <div>
-            <el-button 
-              size="small" 
-              type="success"
-              @click="addSite">新建场地</el-button>
+            <el-button size="small" type="success" @click="addSite">新建场地</el-button>
           </div>
         </div>
-        <el-table 
-          :data="tableData" 
-          style="width: 100%" >
-          <el-table-column 
-            type="expand">
-            <template 
-              slot-scope="scope">
-              <el-form 
-                label-position="left" 
-                inline 
-                class="demo-table-expand">
-                <el-form-item 
-                  label="ID:">
-                  <span>{{ scope.row.id }}</span> 
+        <el-table :data="tableData" style="width: 100%">
+          <el-table-column type="expand">
+            <template slot-scope="scope">
+              <el-form label-position="left" inline class="demo-table-expand">
+                <el-form-item label="ID:">
+                  <span>{{ scope.row.id }}</span>
                 </el-form-item>
-                <el-form-item 
-                  label="场地名称:">
-                  <span>{{ scope.row.name }}</span> 
+                <el-form-item label="场地名称:">
+                  <span>{{ scope.row.name }}</span>
                 </el-form-item>
-                <el-form-item 
-                  label="区域:">
-                  <span>{{ scope.row.area.name }}</span> 
+                <el-form-item label="区域:">
+                  <span>{{ scope.row.area.name }}</span>
                 </el-form-item>
-                <el-form-item 
-                  label="场地类型:">
+                <el-form-item label="场地类型:">
                   <span>
                     {{ scope.row.contract ? (scope.row.contract.type === 'free' ? '免费入驻'
                     : scope.row.contract.type === 'pay'? '付费入驻'
@@ -166,101 +113,57 @@
                     : scope.row.contract.type === 'agent'? '代理'
                     : scope.row.contract.type === 'tmp'? '过桥'
                     :''):'' }}
-                  </span> 
+                  </span>
                 </el-form-item>
-                <el-form-item 
-                  label="场地权限:">
+                <el-form-item label="场地权限:">
                   <span>
                     {{ scope.row.share ? ((scope.row.share.site === 0
-                      && scope.row.share.vipad === 0
-                      && scope.row.share.ad === 0
+                    && scope.row.share.vipad === 0
+                    && scope.row.share.ad === 0
                     && scope.row.share.agent === 0) ? '无' : permissionHandle(scope.row)) : '' }}
-                  </span> 
+                  </span>
                 </el-form-item>
-                <el-form-item 
-                  label="合同:">
-                  <span>
-                    {{ scope.row.contract ? (scope.row.contract.contract === 0 ? '无': '有'):'' }}
-                  </span> 
+                <el-form-item label="合同:">
+                  <span>{{ scope.row.contract ? (scope.row.contract.contract === 0 ? '无': '有'):'' }}</span>
                 </el-form-item>
-                <el-form-item 
-                  label="合同公司:">
-                  <span>
-                    {{ scope.row.contract.contract_company }}
-                  </span> 
+                <el-form-item label="合同公司:">
+                  <span>{{ scope.row.contract ? scope.row.contract.contract_company : '' }}</span>
                 </el-form-item>
-                <el-form-item 
-                  label="合同编号:">
-                  <span>
-                    {{ scope.row.contract.contract_num }}
-                  </span> 
+                <el-form-item label="合同编号:">
+                  <span>{{ scope.row.contract ? scope.row.contract.contract_num : '' }}</span>
                 </el-form-item>
-                <el-form-item 
-                  label="合同联系人:">
-                  <span>
-                    {{ scope.row.contract.contract_user }}
-                  </span> 
+                <el-form-item label="合同联系人:">
+                  <span>{{ scope.row.contract ? scope.row.contract.contract_user : '' }}</span>
                 </el-form-item>
-                <el-form-item 
-                  label="合同联系方式:">
-                  <span>
-                    {{ scope.row.contract.contract_phone }}
-                  </span> 
+                <el-form-item label="合同联系方式:">
+                  <span>{{ scope.row.contract ? scope.row.contract.contract_phone : '' }}</span>
                 </el-form-item>
-                <el-form-item 
-                  label="合作模式:">
+                <el-form-item label="合作模式:">
                   <span>
                     {{ scope.row.contract ? (scope.row.contract.mode === 'none' ? '无要求'
                     : scope.row.contract.mode === 'part'? '分成'
                     : scope.row.contract.mode === 'exchange'? '置换'
                     :''):'' }}
-                  </span> 
+                  </span>
                 </el-form-item>
-                <el-form-item 
-                  label="租金元/年:">
-                  <span>
-                    {{ scope.row.contract ? (scope.row.contract.pay):'' }}
-                  </span> 
+                <el-form-item label="租金元/年:">
+                  <span>{{ scope.row.contract ? (scope.row.contract.pay):'' }}</span>
                 </el-form-item>
-                <el-form-item 
-                  label="入驻时间:">
-                  <span>
-                    {{ scope.row.contract ? (scope.row.contract.enter_sdate + '~' + scope.row.contract.enter_edate) : '' }}
-                  </span> 
+                <el-form-item label="入驻时间:">
+                  <span>{{ scope.row.contract ? (scope.row.contract.enter_sdate + '~' + scope.row.contract.enter_edate) : '' }}</span>
                 </el-form-item>
-                <el-form-item 
-                  label="运营时间:">
-                  <span>
-                    {{ scope.row.contract ? (scope.row.contract.oper_sdate + '~' + scope.row.contract.oper_edate) : '' }}
-                  </span> 
+                <el-form-item label="运营时间:">
+                  <span>{{ scope.row.contract ? (scope.row.contract.oper_sdate + '~' + scope.row.contract.oper_edate) : '' }}</span>
                 </el-form-item>
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column
-            :show-overflow-tooltip="true"
-            prop="id"
-            label="ID"
-            width="80"/>
-          <el-table-column
-            :show-overflow-tooltip="true"
-            prop="name"
-            label="场地名称"
-            min-width="100"/>
-          <el-table-column
-            :show-overflow-tooltip="true"
-            prop="area"
-            label="区域"
-            min-width="80">
-            <template slot-scope="scope">
-              {{ scope.row.area.name }}
-            </template>
+          <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" width="80"/>
+          <el-table-column :show-overflow-tooltip="true" prop="name" label="场地名称" min-width="100"/>
+          <el-table-column :show-overflow-tooltip="true" prop="area" label="区域" min-width="80">
+            <template slot-scope="scope">{{ scope.row.area.name }}</template>
           </el-table-column>
-          <el-table-column
-            :show-overflow-tooltip="true"
-            prop=""
-            label="场地类型"
-            min-width="100">
+          <el-table-column :show-overflow-tooltip="true" prop label="场地类型" min-width="100">
             <template slot-scope="scope">
               {{ scope.row.contract ? (scope.row.contract.type === 'free' ? '免费入驻'
               : scope.row.contract.type === 'pay'? '付费入驻'
@@ -272,23 +175,15 @@
               :''):'' }}
             </template>
           </el-table-column>
-          <el-table-column
-            :show-overflow-tooltip="true"
-            prop=""
-            label="场地权限"
-            min-width="100">
+          <el-table-column :show-overflow-tooltip="true" prop label="场地权限" min-width="100">
             <template slot-scope="scope">
               {{ scope.row.share ? ((scope.row.share.site === 0
-                && scope.row.share.vipad === 0
-                && scope.row.share.ad === 0
+              && scope.row.share.vipad === 0
+              && scope.row.share.ad === 0
               && scope.row.share.agent === 0) ? '无' : permissionHandle(scope.row)) : '' }}
             </template>
           </el-table-column>
-          <el-table-column
-            :show-overflow-tooltip="true"
-            prop=""
-            label="合作模式"
-            min-width="100">
+          <el-table-column :show-overflow-tooltip="true" prop label="合作模式" min-width="100">
             <template slot-scope="scope">
               {{ scope.row.contract ? (scope.row.contract.mode === 'none' ? '无要求'
               : scope.row.contract.mode === 'part'? '分成'
@@ -296,33 +191,17 @@
               :''):'' }}
             </template>
           </el-table-column>
-          <el-table-column
-            :show-overflow-tooltip="true"
-            prop="date"
-            label="时间"
-            min-width="100">
-            <template slot-scope="scope">
-              {{ scope.row.contract ? scope.row.contract.date:'' }}
-            </template>
+          <el-table-column :show-overflow-tooltip="true" prop="date" label="时间" min-width="100">
+            <template slot-scope="scope">{{ scope.row.contract ? scope.row.contract.date:'' }}</template>
           </el-table-column>
-          <el-table-column 
-            label="操作" 
-            min-width="180">
-            <template 
-              slot-scope="scope">
-              <el-button 
-                size="mini" 
-                type="warning"
-                @click="editSite(scope.row)">编辑</el-button>
-              <el-button 
-                size="small" 
-                type="primary"
-                @click="pointLink(scope.row)">点位</el-button>
+          <el-table-column label="操作" min-width="180">
+            <template slot-scope="scope">
+              <el-button size="mini" type="warning" @click="editSite(scope.row)">编辑</el-button>
+              <el-button size="small" type="primary" @click="pointLink(scope.row)">点位</el-button>
             </template>
           </el-table-column>
         </el-table>
-        <div 
-          class="pagination-wrap">
+        <div class="pagination-wrap">
           <el-pagination
             :total="pagination.total"
             :page-size="pagination.pageSize"
@@ -331,13 +210,13 @@
             @current-change="changePage"
           />
         </div>
-      </div>  
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { getSiteMarketList, getSearchAeraList } from 'service'
+import { getSiteMarketList, getSearchAeraList } from "service";
 
 import {
   Button,
@@ -352,97 +231,97 @@ import {
   Option,
   Row,
   Col
-} from 'element-ui'
+} from "element-ui";
 
 export default {
   components: {
-    'el-table': Table,
-    'el-table-column': TableColumn,
-    'el-button': Button,
-    'el-input': Input,
-    'el-pagination': Pagination,
-    'el-form': Form,
-    'el-form-item': FormItem,
-    'el-select': Select,
-    'el-option': Option,
-    'el-row': Row,
-    'el-col': Col
+    "el-table": Table,
+    "el-table-column": TableColumn,
+    "el-button": Button,
+    "el-input": Input,
+    "el-pagination": Pagination,
+    "el-form": Form,
+    "el-form-item": FormItem,
+    "el-select": Select,
+    "el-option": Option,
+    "el-row": Row,
+    "el-col": Col
   },
   data() {
     return {
       searchForm: {
-        name: '',
-        area_id: '',
-        type: '',
-        mode: '',
+        name: "",
+        area_id: "",
+        type: "",
+        mode: "",
         permission: []
       },
       modeList: [
         {
-          id: 'part',
-          name: '分成'
+          id: "part",
+          name: "分成"
         },
         {
-          id: 'exchange',
-          name: '置换'
+          id: "exchange",
+          name: "置换"
         },
         {
-          id: 'none',
-          name: '无要求'
+          id: "none",
+          name: "无要求"
         }
       ],
       permissionList: [
         {
-          id: 'agent',
-          name: '代理'
+          id: "agent",
+          name: "代理"
         },
         {
-          id: 'site',
-          name: '场地主'
+          id: "site",
+          name: "场地主"
         },
         {
-          id: 'ad',
-          name: '广告主'
+          id: "ad",
+          name: "广告主"
         },
         {
-          id: 'vipad',
-          name: 'VIP广告主'
+          id: "vipad",
+          name: "VIP广告主"
         }
       ],
       typeList: [
         {
-          id: 'sell',
-          name: '出售'
+          id: "sell",
+          name: "出售"
         },
         {
-          id: 'lease',
-          name: '租借'
+          id: "lease",
+          name: "租借"
         },
         {
-          id: 'activity',
-          name: '活动'
+          id: "activity",
+          name: "活动"
         },
         {
-          id: 'agent',
-          name: '代理'
+          id: "agent",
+          name: "代理"
         },
         {
-          id: 'tmp',
-          name: '过桥'
+          id: "tmp",
+          name: "过桥"
         },
         {
-          id: 'free',
-          name: '免费入驻'
+          id: "free",
+          name: "免费入驻"
         },
         {
-          id: 'pay',
-          name: '付费入驻'
+          id: "pay",
+          name: "付费入驻"
         }
       ],
       areaList: [],
       setting: {
         loading: false,
-        loadingText: '拼命加载中'
+        loadingText: "拼命加载中"
       },
       pagination: {
         total: 0,
@@ -450,112 +329,112 @@ export default {
         currentPage: 1
       },
       tableData: []
-    }
+    };
   },
   created() {
-    this.getAeraList()
-    this.getMarketList()
+    this.getAeraList();
+    this.getMarketList();
   },
   methods: {
     addSite() {
       this.$router.push({
-        path: '/market/site/add'
-      })
+        path: "/market/site/add"
+      });
     },
     editSite(data) {
       this.$router.push({
-        path: '/market/site/edit/' + data.id
-      })
+        path: "/market/site/edit/" + data.id
+      });
     },
     pointLink(data) {
       this.$router.push({
-        path: '/market/point',
+        path: "/market/point",
         query: {
           marketid: data.id,
           areaid: data.area.id
         }
-      })
+      });
     },
     getMarketList() {
-      this.setting.loading = true
+      this.setting.loading = true;
       let args = {
         page: this.pagination.currentPage,
-        include: 'share,contract,area',
+        include: "share,contract,area",
         market_name: this.searchForm.name,
         areaid: this.searchForm.area_id,
         contract_type: this.searchForm.type,
         contract_mode: this.searchForm.mode,
-        share_users: this.searchForm.permission.join(',')
-      }
+        share_users: this.searchForm.permission.join(",")
+      };
       if (!this.searchForm.name) {
-        delete args.market_name
+        delete args.market_name;
       }
       if (!this.searchForm.area_id) {
-        delete args.areaid
+        delete args.areaid;
       }
       if (!this.searchForm.type) {
-        delete args.contract_type
+        delete args.contract_type;
       }
       if (!this.searchForm.mode) {
-        delete args.contract_mode
+        delete args.contract_mode;
       }
       if (this.searchForm.permission.length === 0) {
-        delete args.share_users
+        delete args.share_users;
       }
       getSiteMarketList(this, args)
         .then(res => {
-          this.tableData = res.data
-          this.pagination.total = res.meta.pagination.total
-          this.setting.loading = false
+          this.tableData = res.data;
+          this.pagination.total = res.meta.pagination.total;
+          this.setting.loading = false;
         })
         .catch(err => {
-          this.setting.loading = false
-        })
+          this.setting.loading = false;
+        });
     },
     permissionHandle(data) {
-      let site = data.share.site
-      let vipad = data.share.vipad
-      let ad = data.share.ad
-      let agent = data.share.agent
-      let permission = []
+      let site = data.share.site;
+      let vipad = data.share.vipad;
+      let ad = data.share.ad;
+      let agent = data.share.agent;
+      let permission = [];
       if (site === 1) {
-        permission.push('场地主')
+        permission.push("场地主");
       }
       if (vipad === 1) {
-        permission.push('VIP广告主')
+        permission.push("VIP广告主");
       }
       if (ad === 1) {
-        permission.push('广告主')
+        permission.push("广告主");
       }
       if (agent === 1) {
-        permission.push('代理')
+        permission.push("代理");
       }
-      return permission.join(',')
+      return permission.join(",");
     },
     getAeraList() {
       getSearchAeraList(this)
         .then(result => {
-          this.areaList = result.data
+          this.areaList = result.data;
         })
         .catch(err => {
-          console.log(err)
-        })
+          console.log(err);
+        });
     },
     changePage(currentPage) {
-      this.pagination.currentPage = currentPage
-      this.getMarketList()
+      this.pagination.currentPage = currentPage;
+      this.getMarketList();
     },
     search() {
-      this.pagination.currentPage = 1
-      this.getMarketList()
+      this.pagination.currentPage = 1;
+      this.getMarketList();
     },
     resetSearch(formName) {
-      this.$refs[formName].resetFields()
-      this.pagination.currentPage = 1
-      this.getMarketList()
+      this.$refs[formName].resetFields();
+      this.pagination.currentPage = 1;
+      this.getMarketList();
     }
   }
-}
+};
 </script>
 
 <style lang="less" scoped>
