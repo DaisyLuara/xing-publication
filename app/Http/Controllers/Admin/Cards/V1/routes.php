@@ -12,7 +12,7 @@ $api->version('v1', [
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
             //批量查询卡券列表
-            $api->get('cards/list', 'CardsController@list');
+            $api->get('cards/list', 'CardsController@index');
 
             //获取单个卡券详情
             $api->get('cards/{cards}', 'CardsController@show');
