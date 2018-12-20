@@ -1,5 +1,10 @@
 <template>
   <div class="root">
+    <div class="item-content-title">
+      <div class="total-wrap">
+        <span class="label">创建优惠券</span>
+      </div>
+    </div>
     <div
       v-loading="setting.loading"
       :element-loading-text="setting.loadingText"
@@ -21,7 +26,7 @@
             label-width="180px"
           >
             <el-form-item
-              :rules="{required: true, message: '优惠券名称不能为空', trigger: 'submit'}"
+              :rules="{required: true, message: '库存只能是大于0的数字', trigger: 'submit'}"
               label="库存"
               prop="discount"
             >
@@ -69,6 +74,7 @@
             :rules="rules"
             label-width="180px"
           >
+
             <el-form-item
               label="适用门店"
               prop="is_fixed_date"
@@ -86,6 +92,7 @@
               </el-radio-group>
             </el-form-item>
             <el-form-item
+              :rules="{required: true, message: '操作提示不能为空且长度不超过16个汉字或32个英文字母', trigger: 'submit'}"
               label="操作提示"
               prop="discount"
             >
@@ -96,20 +103,21 @@
               <div class="message">建议引导用户到店出示卡券，由店员完成核销操作</div>
             </el-form-item>
           </el-form>
+          <div class="item-button">
+            <el-button
+              plain
+              size="medium"
+              @click="goBack()"
+            >上一步</el-button>
+            <el-button
+              type="success"
+              size="medium"
+              @click.stop="()=>{ show = false}"
+            >提交审核</el-button>
+          </div>
         </div>
       </div>
-      <div class="item-button">
-        <el-button
-          plain
-          size="medium"
-          @click="goBack()"
-        >上一步</el-button>
-        <el-button
-          type="success"
-          size="medium"
-          @click.stop="()=>{ show = false}"
-        >提交审核</el-button>
-      </div>
+
     </div>
   </div>
 </template>
@@ -227,19 +235,31 @@ export default {
 .root {
   font-size: 14px;
   color: #5e6d82;
-
+  .item-content-title {
+    padding: 20px;
+    background: #fff;
+    .total-wrap {
+      margin-top: 5px;
+      margin-left: 20px;
+      margin-bottom: 10px;
+      .label {
+        font-size: 20px;
+        margin: 5px 0;
+      }
+    }
+  }
   .item-list-wrap {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     font-size: 16px;
     background: #fff;
-    padding: 30px;
+    padding: 0 50px 30px 50px;
     .item-content-right {
       width: 1000px;
       text-align: left;
       padding: 20px 10px;
-      margin: 0 auto;
+      // margin: 0 auto;
       border: 1px solid #e7e7eb;
       background: #f4f5f9;
       .coupon-form-input {
@@ -295,6 +315,16 @@ export default {
           transform: translate(-50%, -50%);
         }
       }
+      .item-button {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        //align-items: center;
+        margin: 50px 100px;
+        .el-button {
+          margin: 0 20px;
+        }
+      }
       .item-content-wrap {
         padding: 0 20px;
         .el-form-item__label {
@@ -314,15 +344,6 @@ export default {
         width: 60px;
         border-radius: 50%;
         margin: 0 30px;
-      }
-    }
-    .item-button {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      margin: 50px auto;
-      .el-button {
-        margin: 0 20px;
       }
     }
   }

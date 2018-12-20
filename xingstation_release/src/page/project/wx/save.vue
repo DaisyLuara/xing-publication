@@ -1,10 +1,44 @@
 <template>
   <div class="root">
+    <div class="item-content-title">
+      <div class="total-wrap">
+        <span class="label">创建优惠券</span>
+      </div>
+    </div>
     <div
       v-loading="setting.loading"
       :element-loading-text="setting.loadingText"
       class="item-list-wrap"
     >
+      <div class="item-content-left">
+        <div class="item-content-left-card">
+          <div class="logo">
+            <img src="https://cdn.exe666.com/fe/marketing/img/tiger/icon.png">
+          </div>
+          <div class="tickMsg">
+            <p class="title">测试</p>
+            <el-button
+              type="success"
+              size="medium"
+              class="confirm"
+            >使用</el-button>
+            <p><span class="title-span">可用时间：</span><span>2018-11-12</span></p>
+          </div>
+          <div class="cardUsage">
+            <img src="https://cdn.exe666.com/fe/marketing/img/tiger/icon.png">
+            <p class="title">23232323</p>
+          </div>
+          <div class="shop">
+            <p class="title">适用门店</p>
+          </div>
+          <div class="public">
+            <p class="title">公众号</p>
+          </div>
+        </div>
+        <div class="item-content-left-bt">
+          <p class="title">自定义入口（选填）</p>
+        </div>
+      </div>
       <div class="item-content-right">
         <!-- 基本信息-->
         <div class="item-content-right-top">
@@ -33,21 +67,27 @@
               label="卡券颜色"
               prop="color"
             >
-              <el-select
-                v-model="couponForm.company_id"
+              <el-input
+                v-model="input"
+                suffix-icon="el-icon-caret-bottom"
                 placeholder="请选择颜色"
-                class="coupon-form-select"
-              >
-                <el-option
-                  v-for="item in colorList"
-                  :key="item.id"
-                  :label="item.color"
-                  :value="item.id"
-                />
-              </el-select>
+              ></el-input>
+              <div class="colorList">
+                <ul>
+                  <a
+                    v-for="item in colorList"
+                    :key="item.id"
+                    :value="item.id"
+                    :style="item.style"
+                  >
+                    <li></li>
+                  </a>
+
+                </ul>
+              </div>
             </el-form-item>
             <el-form-item
-              :rules="{required: true, message: '优惠券名称不能为空', trigger: 'submit'}"
+              :rules="{required: true, message: '折扣额度只能是大于1且小于10的数字', trigger: 'submit'}"
               label="折扣额度"
               prop="discount"
             >
@@ -59,7 +99,7 @@
               <div class="message"> 请填写1-9.9之间的数字，精确到小数点后1位</div>
             </el-form-item>
             <el-form-item
-              :rules="{required: true, message: '优惠券名称不能为空', trigger: 'submit'}"
+              :rules="{required: true, message: '卡券名称不能为空且长度不超过9个汉字或18个英文字母', trigger: 'submit'}"
               label="折扣券标题"
               prop="name"
             >
@@ -91,27 +131,25 @@
                 <div class="box-segmentation">
                   <el-radio :label="0">领取后，
                     <el-select
-                      v-model="couponForm.company_id"
-                      placeholder="请选择颜色"
+                      v-model="couponForm"
+                      placeholder="当天"
                       class="coupon-form-select"
                     >
                       <el-option
-                        v-for="item in colorList"
+                        v-for="item in dataList"
                         :key="item.id"
-                        :label="item.color"
-                        :value="item.id"
+                        :value="item.dataTime"
                       />
                     </el-select><span class="select">生效,有效天数</span>
                     <el-select
-                      v-model="couponForm.company_id"
-                      placeholder="请选择颜色"
+                      v-model="couponForm"
+                      placeholder="30天"
                       class="coupon-form-select"
                     >
                       <el-option
-                        v-for="item in colorList"
+                        v-for="item in dataList"
                         :key="item.id"
-                        :label="item.color"
-                        :value="item.id"
+                        :value="item.dataTime"
                       />
                     </el-select>
 
@@ -130,6 +168,21 @@
                 </div>
                 <div class="box-segmentation">
                   <el-radio :label="0">部分时段</el-radio>
+                </div>
+                <div
+                  class="box-segmentation"
+                  v-show="checkDataShow"
+                >
+                  <el-checkbox-group v-model="checkList">
+                    <span class="check-data">日期</span>
+                    <el-checkbox label="周一"></el-checkbox>
+                    <el-checkbox label="周二"></el-checkbox>
+                    <el-checkbox label="周三"></el-checkbox>
+                    <el-checkbox label="周四"></el-checkbox>
+                    <el-checkbox label="周五"></el-checkbox>
+                    <el-checkbox label="周六"></el-checkbox>
+                    <el-checkbox label="周日"></el-checkbox>
+                  </el-checkbox-group>
                 </div>
 
               </el-radio-group>
@@ -152,7 +205,6 @@
             label-width="180px"
           >
             <el-form-item
-              :rules="{required: true, message: '优惠券名称不能为空', trigger: 'submit'}"
               label="领券限制"
               prop="discount"
             >
@@ -164,7 +216,6 @@
               <div class="message">每个用户领券上限，如不填，则默认为1</div>
             </el-form-item>
             <el-form-item
-              :rules="{required: true, message: '优惠券名称不能为空', trigger: 'submit'}"
               label="使用条件"
               prop="discount"
             >
@@ -189,16 +240,14 @@
               </div>
               <div>
                 <span>优惠共享</span>
-
                 <el-select
-                  v-model="couponForm.company_id"
-                  placeholder="请选择颜色"
+                  v-model="couponForm"
+                  placeholder="请选择"
                   class="coupon-form-select"
                 >
                   <el-option
-                    v-for="item in colorList"
+                    v-for="item in shareList"
                     :key="item.id"
-                    :label="item.color"
                     :value="item.id"
                   />
                 </el-select>
@@ -207,7 +256,7 @@
               <div class="message">使用条件的设置会在券上展示，请务必仔细确认。</div>
             </el-form-item>
             <el-form-item
-              :rules="{required: true, message: '优惠券名称不能为空', trigger: 'submit'}"
+              :rules="{required: true, message: '请上传封面图片', trigger: 'submit'}"
               label="封面图片"
               prop="discount"
             >
@@ -218,9 +267,12 @@
                 class="confirm"
                 @click="upload()"
               >上传</el-button>
+              <div class="uploadImg ">
+                <img src="https://cdn.exe666.com/fe/marketing/img/tiger/icon.png">
+              </div>
             </el-form-item>
             <el-form-item
-              :rules="{required: true, message: '优惠券名称不能为空', trigger: 'submit'}"
+              :rules="{required: true, message: '简介不能为空且长度不超过12个汉字', trigger: 'submit'}"
               label="封面简介"
               prop="discount"
             >
@@ -231,7 +283,6 @@
               />
             </el-form-item>
             <el-form-item
-              :rules="{required: true, message: '优惠券名称不能为空', trigger: 'submit'}"
               label="使用须知"
               prop="discount"
             >
@@ -244,7 +295,6 @@
               />
             </el-form-item>
             <el-form-item
-              :rules="{required: true, message: '优惠券名称不能为空', trigger: 'submit'}"
               label="图文介绍"
               prop="discount"
             >
@@ -283,7 +333,7 @@
               >
                 <img
                   class="uploadIcon"
-                  src="https://cdn.exe666.com/fe/marketing/img/tiger/icon.png"
+                  src="https://cdn.exe666.com/fe/marketing/img/jia.png"
                 >
               </div>
             </el-form-item>
@@ -317,7 +367,9 @@ import {
   Option,
   Tooltip,
   Upload,
-  Checkbox
+  Checkbox,
+  CheckboxGroup,
+  Autocomplete
 } from "element-ui";
 
 export default {
@@ -333,7 +385,9 @@ export default {
     "el-option": Option,
     "el-tooltip": Tooltip,
     "el-upload": Upload,
-    "el-checkbox": Checkbox
+    "el-checkbox": Checkbox,
+    "el-checkbox-group": CheckboxGroup,
+    "el-autocomplete": Autocomplete
   },
   data() {
     var checkEndDate = (rule, value, callback) => {
@@ -375,7 +429,9 @@ export default {
       show: false,
       checked: false,
       checkedShow: false,
+      checkDataShow: true,
       companyList: [],
+      input: '',
       filters: {
         name: "",
         company_id: ""
@@ -384,11 +440,102 @@ export default {
         loading: false,
         loadingText: '拼命加载中'
       },
+      checkList: [],
       rules: {
         end_date: [{ validator: checkEndDate, trigger: "submit" }],
         sort_order: [{ validator: checkSortOrder, trigger: "submit" }]
       },
-      colorList: [{ color: "#000" }, { color: "#fff" },],
+      colorList: [
+        {
+          id: 1,
+          style: {
+            background: "#63b359"
+          }
+        },
+        {
+          id: 2,
+          style: {
+            background: "#2c9f67"
+          }
+        },
+        {
+          id: 2,
+          style: {
+            background: "#509fc9"
+          }
+        },
+        {
+          id: 2,
+          style: {
+            background: "#5885cf"
+          }
+        },
+        {
+          id: 2,
+          style: {
+            background: "#9062c0"
+          }
+        },
+        {
+          id: 2,
+          style: {
+            background: "#d09a45"
+          }
+        },
+        {
+          id: 2,
+          style: {
+            background: "#e4b138"
+          }
+        },
+        {
+          id: 2,
+          style: {
+            background: "#ee903c"
+          }
+        },
+        {
+          id: 2,
+          style: {
+            background: "	#f08500"
+          }
+        },
+        {
+          id: 2,
+          style: {
+            background: "#a9d92d"
+          }
+        },
+      ],
+      shareList: [
+        {
+          id: 1,
+          share: "请选择",
+        },
+        {
+          id: 2,
+          share: "不与其他优惠共享",
+        },
+        {
+          id: 3,
+          share: "可与其他优惠共享",
+        },
+      ],
+      dataList: [
+        {
+          id: 1,
+          dataTime: "当天",
+        },
+        {
+          id: 2,
+          dataTime: "1天",
+        },
+        {
+          id: 3,
+          dataTime: "2天",
+        },
+
+      ],
       couponForm: {
         is_fixed_date: "",
         description: "",
@@ -399,6 +546,10 @@ export default {
     };
   },
   created() {
+
+  },
+  mounted() {
+    this.restaurants = this.loadAll();
   },
   methods: {
     next() {
@@ -410,6 +561,27 @@ export default {
     upload() {
       console.log("上传")
     },
+    querySearch(queryString, cb) {
+      var restaurants = this.restaurants;
+      var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    createFilter(queryString) {
+      return (restaurant) => {
+        return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+      };
+    },
+    handleSelect(item) {
+      console.log(item);
+    },
+    loadAll() {
+      return [
+        { "value": "三" },
+        { "value": "新" },
+        { "value": "泷" },
+      ]
+    }
   }
 };
 </script>
@@ -418,6 +590,19 @@ export default {
 .root {
   font-size: 14px;
   color: #5e6d82;
+  .item-content-title {
+    padding: 20px;
+    background: #fff;
+    .total-wrap {
+      margin-top: 5px;
+      margin-left: 20px;
+      margin-bottom: 10px;
+      .label {
+        font-size: 20px;
+        margin: 5px 0;
+      }
+    }
+  }
 
   .item-list-wrap {
     display: flex;
@@ -425,16 +610,138 @@ export default {
     justify-content: flex-start;
     font-size: 16px;
     background: #fff;
-    padding: 30px;
+    padding: 0 50px;
+    .item-content-left {
+      width: 350px;
+      height: 672px;
+      background: #f6f6f8;
+      background-image: url("https://cdn.exe666.com/fe/marketing/img/bg.png");
+      background-size: 100% auto;
+      background-repeat: no-repeat;
+      margin-right: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      .item-content-left-card {
+        background: #fff;
+        width: 250px;
+        border-radius: 10px;
+        margin-top: 50px;
+        .logo {
+          width: 100%;
+          margin: 0 auto;
+          text-align: center;
+          img {
+            width: 50px;
+            border-radius: 50%;
+            margin-top: -25px;
+          }
+        }
+        .tickMsg {
+          width: 100%;
+          margin: 0 auto;
+          text-align: center;
+          // border-bottom:1px dashed #8d8d8d;
+          .title {
+            font-size: 20px;
+            color: #000;
+          }
+          .title-spa {
+            font-size: 14px;
+            color: #000;
+          }
+          span {
+            font-size: 14px;
+          }
+        }
+        .cardUsage {
+          width: 200px;
+          margin: 0 auto;
+          text-align: center;
+          border-top: 1px dashed #e7e7eb;
+          padding: 15px 0;
+          img {
+            width: 200px;
+          }
+          p {
+            width: 200px;
+            color: #fff;
+            text-align: left;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 0;
+            margin: 0;
+          }
+        }
+        .shop {
+          width: 200px;
+          border-bottom: 1px solid #e7e7eb;
+          padding: 15px 0;
+          margin: 0 auto;
+          text-align: center;
+          p {
+            width: 200px;
+            color: #000;
+            text-align: left;
+            padding: 0;
+            margin: 0;
+            font-size: 14px;
+          }
+        }
+        .public {
+          width: 200px;
+          padding: 15px 0;
+          margin: 0 auto;
+          text-align: center;
+          p {
+            width: 200px;
+            color: #000;
+            text-align: left;
+            padding: 0;
+            margin: 0;
+            font-size: 14px;
+          }
+        }
+      }
+      .item-content-left-bt {
+        width: 250px;
+        margin: 0 auto;
+        background: #fff;
+        border-radius: 10px;
+        text-align: center;
+        margin-top: 10px;
+
+        p {
+          width: 200px;
+          color: #000;
+          text-align: left;
+          padding: 0;
+          margin: 0;
+          font-size: 14px;
+          padding: 15px;
+        }
+      }
+    }
     .item-content-right {
       width: 1000px;
       text-align: left;
       padding: 20px 10px;
-      margin: 0 auto;
       border: 1px solid #e7e7eb;
       background: #f4f5f9;
+      .check-data {
+        font-size: 16px;
+        margin-right: 20px;
+      }
+      .el-input {
+        width: 200px;
+      }
+      .el-autocomplete-261-item-0 {
+        display: inline-block;
+      }
       .coupon-form-input {
         width: 200px;
+      }
+      .coupon-form-select {
+        width: 180px;
       }
       .coupon-form {
         width: 350px;
@@ -446,6 +753,9 @@ export default {
       .message {
         font-size: 12px;
         color: #8d8d8d;
+      }
+      .uploadImg {
+        margin-top: 15px;
       }
       .message-box {
         margin-left: 88px;
@@ -472,6 +782,22 @@ export default {
         justify-content: space-around;
         align-items: center;
       }
+      .colorList {
+        width: 166px;
+        text-align: center;
+        margin: 0 10px;
+        a {
+          display: inline-block;
+          margin: 10px 0px 10px 10px;
+          line-height: 20px;
+
+          li {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+          }
+        }
+      }
       .detail {
         width: 350px;
         height: 60px;
@@ -486,6 +812,7 @@ export default {
           transform: translate(-50%, -50%);
         }
       }
+
       .item-content-wrap {
         padding: 0 20px;
         .el-form-item__label {
