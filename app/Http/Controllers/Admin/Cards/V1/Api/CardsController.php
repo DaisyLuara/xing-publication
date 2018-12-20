@@ -61,22 +61,6 @@ class CardsController extends Controller
     }
 
 
-    //更改卡券信息
-    public function update(Request $request)
-    {
-        $authorizer_id = $request->has('authorizer_id')  ? $request->get('authorizer_id') : '';
-        $card = $this->getCard($authorizer_id);
-        $cardId = $request->has('card_id') ? $request->get('card_id') : '';
-
-        $type = $request->has('card_type')? $request->get('card_type'):'GENERAL_COUPON';
-
-
-        $result = $card->update($cardId, $type, $attributes);
-
-        return $result;
-    }
-
-
     //删除卡券
     public function delete(Request $request)
     {
@@ -107,24 +91,9 @@ class CardsController extends Controller
         }
 
         if($reduceStockValue >= 1 ) {
-            $card->reductStock($card, $reduceStockValue);
+            $card->reduceStock($card, $reduceStockValue);
         }
 
     }
 
-
-    //创建卡券
-    public function create(Request $request)
-    {
-
-        $authorizer_id = $request->has('authorizer_id')  ? $request->get('authorizer_id') : '';
-        $card = $this->getCard($authorizer_id);
-
-        $cardType = $request->has('card_type')? $request->get('card_type'):'GENERAL_COUPON';
-
-        $attributes = 
-
-        $card->create($cardType,$attributes);
-
-    }
 }

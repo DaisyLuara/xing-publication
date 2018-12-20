@@ -30,10 +30,9 @@ $api->version('v1', [
             $api->get('cards/stock','CardsController@stock');
 
             //上传图片接口
-            $api->get('cards/uploadpic','CardsController@uploadpic')
+            $api->get('cards/uploadpic','CardsController@uploadpic');
 
         });
-
     });
 
 });
