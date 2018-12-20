@@ -88,15 +88,15 @@ class CouponBatchController extends Controller
             $couponBatch->wechat()->update($request['wechat']);
         }
 
+        //商场点位重新绑定
+        $couponBatch->marketPointCouponBatches()->delete();
         if ($request->filled('marketid') && empty($request->oid)) {
-            $couponBatch->marketPointCouponBatches()->delete();
             $couponBatch->marketPointCouponBatches()->create([
                 'marketid' => $request->marketid,
             ]);
         }
 
         if ($request->oid) {
-            $couponBatch->marketPointCouponBatches()->delete();
             foreach ($request->oid as $oid) {
                 $couponBatch->marketPointCouponBatches()->create([
                     'marketid' => $request->marketid,
