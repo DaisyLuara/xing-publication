@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers\Admin\Cards\V1\Api;
 
-use App\Http\Controllers\Admin\Cards\V1\Models\WxThird;
+use App\Http\Controllers\Admin\WeChat\V1\Models\WxThird;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use EasyWeChat;
