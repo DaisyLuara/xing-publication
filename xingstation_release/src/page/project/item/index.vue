@@ -831,9 +831,9 @@ export default {
         tpl_id: this.filters.tpl_id,
         visiable: this.filters.visiable
       };
-      // if(this.filters.visiable === '') {
-      //   delete searchArgs.visiable
-      // }
+      if(this.filters.visiable === '') {
+        delete searchArgs.visiable
+      }
       getPutProjectList(this, searchArgs)
         .then(response => {
           let data = response.data;

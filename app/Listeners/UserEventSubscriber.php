@@ -20,21 +20,6 @@ class UserEventSubscriber
      */
     public function onUserLogin($event)
     {
-        $user = $event->user;
-        Log::info('on_user_login', ['user' => $user]);
-
-        //刷新tower access token
-        try {
-            $userToken = Socialite::driver('tower')
-                ->stateless()
-                ->refresh($user->tower_access_token, $user->tower_refresh_token);
-
-        } catch (Exception $exception) {
-            Log::info($exception, $exception->getMessage());
-        }
-
-
-        $user->update(['tower_access_token' => $userToken['access_token'], 'tower_refresh_token' => $userToken['refresh_token']]);
     }
 
     /**
