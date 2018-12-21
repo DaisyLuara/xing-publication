@@ -246,6 +246,24 @@
                     <el-checkbox label="周日"></el-checkbox>
                   </el-checkbox-group>
                 </div>
+                <div class="addDateTime "><span class="time">添加时间段</span><span class="time">删除时间段</span></div>
+                <div class="addInput box-segmentation">
+                  <span>时间：</span>
+                  <a class="dataRange">
+                    <el-input
+                      v-model="base_info.title"
+                      class="coupon-form-input"
+                      style="width:100px"
+                    />
+                    <span class="to">至</span>
+                    <el-input
+                      v-model="base_info.title"
+                      class="coupon-form-input"
+                      style="width:100px"
+                    />
+                  </a>
+                </div>
+                <div class="message box-segmentation">请使用24小时制输入时间，格式如11:00至14:30</div>
               </el-radio-group>
             </el-form-item>
           </el-form>
@@ -325,7 +343,7 @@
                   <div class="message-box">填写本券适用的商品、类目或服务</div>
                   <span>不适用的商品</span>
                   <el-input
-                    v-model="cadvanced_info.use_condition.reject_category"
+                    v-model="advanced_info.use_condition.reject_category"
                     class="coupon-form-input"
                   />
                   <div class="message-box">填写本券不适用的商品、类目或服务</div>
@@ -1070,8 +1088,37 @@ export default {
           top: 5px;
         }
       }
+      .addDateTime {
+        line-height: 30px;
+        padding: 0 10px;
+        font-size: 14px;
+        color: #000;
+        margin-left: 12px;
+        .time {
+          display: inline-block;
+          color: #409eff;
+          font-size: 14px;
+          margin: 0 10px 0 0;
+        }
+        span {
+          margin: 0;
+        }
+      }
+      .addInput {
+        .dataRange {
+          display: inline-block;
+        }
+        span {
+          font-size: 14px;
+          margin: 0;
+        }
+        .to {
+          margin: 0 5px;
+          font-size: 14px;
+        }
+      }
       .check-data {
-        font-size: 16px;
+        font-size: 14px;
         margin-right: 20px;
       }
       .el-input {
