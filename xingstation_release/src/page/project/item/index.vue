@@ -51,16 +51,16 @@
                 </el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-form-item label prop="tpl_id">
+                <el-form-item label prop="tpl_name">
                   <el-select
-                    v-model="filters.tpl_id"
+                    v-model="filters.tpl_name"
                     :loading="marketLoading"
-                    placeholder="请选择模板名"
+                    placeholder="请选择模板"
                     filterable
                     clearable
                   >
                     <el-option
-                      v-for="item in templateNameList"
+                      v-for="item in templateList"
                       :key="item.id"
                       :label="item.name"
                       :value="item.id"
@@ -698,12 +698,6 @@ export default {
       }
     },
     resetSearch(formName) {
-      // this.filters.market = [];
-      // this.filters.area = "";
-      // this.filters.name = "";
-      // this.filters.scene = "";
-      // this.filters.tpl_name = "";
-      // this.filters.tpl_id = "";
       this.$refs[formName].resetFields();
       this.pagination.currentPage = 1;
       this.editCondition.conditionList = [];
