@@ -9,7 +9,7 @@ use EasyWeChat;
 class CardsController extends Controller
 {
 
-    //获取实例
+    //获取卡片实例
     protected function getCard($authorizer_id)
     {
         $app = EasyWeChat::openPlatform();
@@ -21,14 +21,24 @@ class CardsController extends Controller
 
     }
 
+    protected function getMaterial($authorizer_id)
+    {
+        $app = EasyWeChat::openPlatform();
+        componentVerify($app);
+        $official_account = getOfficialAccount($authorizer_id, $app);
+        $material = $official_account->material;
+
+        return $material;
+    }
+
     //上传图片
     public function uploadPic(Request $request)
     {
         $authorizer_id = $request->has('authorizer_id')  ? $request->get('authorizer_id') : '';
-        $card = $this->getCard($authorizer_id);
+        $material = $this->getMaterial($authorizer_id);
         $path = $request->has('path')  ? $request->get('path') : '';
 
-        $result = $card->material->uploadImage($path);
+        $result = $material->uploadImage($path);
 
         return $result;
     }
@@ -37,10 +47,10 @@ class CardsController extends Controller
     public function uploadThumb(Request $request)
     {
         $authorizer_id = $request->has('authorizer_id')  ? $request->get('authorizer_id') : '';
-        $card = $this->getCard($authorizer_id);
+        $material = $this->getMaterial($authorizer_id);
         $path = $request->has('path')  ? $request->get('path') : '';
 
-        $result = $card->material->uploadThumb($path);
+        $result = $material->uploadThumb($path);
 
         return $result;
 
@@ -50,7 +60,7 @@ class CardsController extends Controller
     public function uploadArticle(Request $request)
     {
         $authorizer_id = $request->has('authorizer_id')  ? $request->get('authorizer_id') : '';
-        $card = $this->getCard($authorizer_id);
+        $material = $this->getMaterial($authorizer_id);
         $title = $request->has('title')  ? $request->get('title') : '';
         $mediaId = $request->has('media_id') ? $request->get('media_id') : '';
 
@@ -59,7 +69,7 @@ class CardsController extends Controller
             'thumb_media_id' => $mediaId,
         ]);
 
-        $result = $card->material->uploadArticle($article);
+        $result = $material->uploadArticle($article);
 
         return $result;
     }
