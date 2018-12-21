@@ -15,19 +15,19 @@ $api->version('v1', [
             $api->get('cards/list', 'CardsController@index');
 
             //获取单个卡券详情
-            $api->get('cards/{cards}', 'CardsController@show');
+            $api->get('cards/show', 'CardsController@show');
 
             //更改卡券信息
-            $api->patch('cards/{cards}', 'CardsController@update');
+            $api->patch('cards/update', 'CardsController@update');
 
             //删除卡券
-            $api->delete('cards/{cards}', 'CardstController@destroy');
+            $api->delete('cards/delete', 'CardsController@destroy');
 
             //创建卡券
-            $api->post('cards/create', 'CardstController@store');
+            $api->post('cards/create', 'CardsController@store');
 
             //修改库存接口
-            $api->get('cards/stock','CardsController@stock');
+            $api->patch('cards/stock','CardsController@stock');
 
             //上传图片接口
             $api->post('cards/uploadPic','CardsController@uploadPic');
