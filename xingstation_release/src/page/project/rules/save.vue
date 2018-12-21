@@ -26,6 +26,47 @@
         <el-form-item label="创建人" prop="user_name">
           <el-input v-model="user_name" :disabled="true" class="coupon-form-input"/>
         </el-form-item>
+        <el-form-item label="商场" prop="marketid">
+          <el-select
+            v-model="couponForm.marketid"
+            :remote-method="getMarket"
+            :loading="searchLoading"
+            :multiple-limit="1"
+            multiple
+            placeholder="请搜索"
+            filterable
+            remote
+            clearable
+            @change="marketChangeHandle"
+            class="coupon-form-select"
+          >
+            <el-option
+              v-for="item in marketList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="点位" prop="oid">
+          <el-select
+            v-model="couponForm.oid"
+            :loading="searchLoading"
+            :multiple-limit="10"
+            placeholder="请选择"
+            multiple
+            filterable
+            clearable
+            class="coupon-form-select"
+          >
+            <el-option
+              v-for="item in pointList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="标题" prop="title">
           <el-input
             type="textarea"
@@ -78,7 +119,7 @@
             class="coupon-form-input"
           />
         </el-form-item>
-        <el-form-item label="积分" prop="credit">
+        <el-form-item label="兑换价格（嗨蚪）" prop="credit">
           <el-input v-model="couponForm.credit" class="coupon-form-input"/>
         </el-form-item>
         <el-form-item label="h5图片链接" prop="image_url">
@@ -181,7 +222,9 @@ import {
   historyBack,
   getCouponDetial,
   getSearchCompanyList,
-  saveCoupon
+  saveCoupon,
+  getSearchMarketList,
+  getSearchPointList
 } from "service";
 
 import {
@@ -255,6 +298,9 @@ export default {
       },
       disabledWriteStatus: false,
       user_name: "",
+      marketList: [],
+      pointList: [],
+      searchLoading: false,
       couponForm: {
         name: "",
         title: "",
@@ -280,7 +326,9 @@ export default {
         is_active: 1,
         write_off_status: 1,
         bs_image_url: "",
-        credit: 0
+        credit: 0,
+        marketid: [],
+        oid: []
       },
       couponID: ""
     };
@@ -294,6 +342,7 @@ export default {
     this.couponID = this.$route.params.uid;
     this.setting.loadingText = "拼命加载中";
     this.setting.loading = true;
+
     //获取公司列表
     let companyPromise = getSearchCompanyList(this)
       .then(result => {
@@ -306,10 +355,23 @@ export default {
     Promise.all([companyPromise]).then(() => {
       if (this.couponID) {
         let args = {
-          include: "user,company"
+          include: "user,company,market,point"
         };
         getCouponDetial(this, this.couponID, args)
           .then(result => {
+            result.market
+              ? this.couponForm.marketid.push(result.market.id)
+              : [];
+            result.point
+              ? result.point.data.map(r => {
+                  let id = r.id;
+                  this.couponForm.oid.push(id);
+                })
+              : [];
+            if (result.market) {
+              this.getMarket(result.market.name);
+              this.getPoint();
+            }
             this.couponForm.name = result.name;
             this.couponForm.description = result.description;
             this.couponForm.company_id = result.company.id;
@@ -351,6 +413,7 @@ export default {
           })
           .catch(error => {
             console.log(error);
+            this.setting.loading = false;
           });
       } else {
         this.user_name = user.name;
@@ -359,6 +422,50 @@ export default {
     });
   },
   methods: {
+    marketChangeHandle() {
+      this.couponForm.oid = [];
+      this.getPoint();
+    },
+    getPoint() {
+      let args = {
+        include: "market",
+        market_id: this.couponForm.marketid
+      };
+      this.searchLoading = true;
+      return getSearchPointList(this, args)
+        .then(response => {
+          this.pointList = response.data;
+          this.searchLoading = false;
+        })
+        .catch(err => {
+          this.searchLoading = false;
+          console.log(err);
+        });
+    },
+    getMarket(query) {
+      if (query !== "") {
+        this.searchLoading = true;
+        let args = {
+          name: query,
+          include: "area"
+        };
+        return getSearchMarketList(this, args)
+          .then(response => {
+            this.marketList = response.data;
+            if (this.marketList.length == 0) {
+              this.couponForm.marketid = [];
+              this.marketList = [];
+            }
+            this.searchLoading = false;
+          })
+          .catch(err => {
+            console.log(err);
+            this.searchLoading = false;
+          });
+      } else {
+        this.marketList = [];
+      }
+    },
     fixedDateHandle(val) {
       if (val === 0) {
         this.dateShow = false;
@@ -398,7 +505,9 @@ export default {
         dynamic_stock_status: this.couponForm.dynamic_stock_status,
         write_off_status: this.couponForm.write_off_status,
         bs_image_url: this.couponForm.bs_image_url,
-        credit: this.couponForm.credit
+        credit: this.couponForm.credit,
+        marketid: this.couponForm.marketid.join(","),
+        oid: this.couponForm.oid
       };
       if (!this.couponForm.image_url) {
         delete args.image_url;

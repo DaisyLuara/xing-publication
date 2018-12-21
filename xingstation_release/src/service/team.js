@@ -4,6 +4,8 @@ const TEAM_API = '/api/team_project'
 const TEAM_RATE_API = '/api/team_rate'
 const PERSON_REWARD_API = '/api/person_reward'
 const FUTURE_REWARD_API = '/api/person_future_reward'
+const QINNIU_API = '/api/qiniu_oauth'
+const MEDIA_UPLOAD_AP = '/api/media_upload'
 
 // 得到项目列表
 const getProgramList = (context, params) => {
@@ -203,6 +205,33 @@ const getEventDetails = (context, id) => {
       })
   })
 }
+// 获得七牛token
+const getQiniuToken = context => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + QINNIU_API)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+// 传给后台七牛的key和文件name
+const getMediaUpload = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .post(HOST + MEDIA_UPLOAD_AP, params)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
 
 export {
   getProgramList,
@@ -219,5 +248,7 @@ export {
   getEventList,
   saveEvent,
   modifyEvent,
-  getEventDetails
+  getEventDetails,
+  getQiniuToken,
+  getMediaUpload
 }

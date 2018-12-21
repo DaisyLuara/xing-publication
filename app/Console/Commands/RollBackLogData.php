@@ -14,14 +14,14 @@ class RollBackLogData extends Command
      *
      * @var string
      */
-    protected $signature = 'yqDataClean:rollback_faceLog';
+    protected $signature = 'yqDataClean:rollback_looknum_permeability';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = '数据回滚face_log';
+    protected $description = '数据回滚围观人数渗透率';
 
     /**
      * Create a new command instance.

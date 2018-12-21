@@ -19,7 +19,7 @@ class ProjectLaunchController extends Controller
 
         if ($ar_user_id) {
             $query->whereHas('point', function ($query) use ($ar_user_id) {
-                    $query->where('bd_uid', '=', $ar_user_id);
+                $query->where('bd_uid', '=', $ar_user_id);
             });
         }
 
@@ -60,6 +60,13 @@ class ProjectLaunchController extends Controller
         if ($request->ids) {
             $ids = explode(',', $request->ids);
             $query->whereIn('tvoid', $ids);
+        }
+
+        if ($request->has('visiable')) {
+            $visiable = $request->visiable;
+            $query->whereHas('point', function ($query) use ($visiable) {
+                $query->where('visiable', '=', $visiable);
+            });
         }
 
         $projects = $query->orderBy('tvoid', 'desc')->paginate(10);

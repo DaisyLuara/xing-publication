@@ -25,6 +25,7 @@ app('Dingo\Api\Exception\Handler')->register(function (Exception $exception) {
 include app_path('Http/Controllers/Admin/Ad/V1/routes.php');
 include app_path('Http/Controllers/Admin/Common/V1/routes.php');
 include app_path('Http/Controllers/Admin/Company/V1/routes.php');
+include app_path('Http/Controllers/Admin/Cards/V1/routes.php');
 include app_path('Http/Controllers/Admin/Device/V1/routes.php');
 include app_path('Http/Controllers/Admin/Point/V1/routes.php');
 include app_path('Http/Controllers/Admin/Face/V1/routes.php');
