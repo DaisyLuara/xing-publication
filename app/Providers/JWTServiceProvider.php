@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Auth\Provider;
+namespace App\Providers;
 
 use Dingo\Api\Auth\Provider\JWT as JWTProvider;
 use Dingo\Api\Routing\Route;
@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
-class JWT extends JWTProvider
+class JWTServiceProvider extends JWTProvider
 {
 
     /**
