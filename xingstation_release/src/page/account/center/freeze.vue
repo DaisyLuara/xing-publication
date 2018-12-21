@@ -182,7 +182,9 @@ export default {
       tableData: []
     };
   },
-  created() {},
+  created() {
+    this.getPersonRewardList()
+  },
   methods: {
     getProject(query) {
       if (query !== "") {

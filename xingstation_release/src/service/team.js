@@ -136,7 +136,7 @@ const getPersonRewardTotal = (context, params) => {
   })
 }
 // 冻结明细列表
-const getFutureRewardList =  (context, params) => {
+const getFutureRewardList = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
       .get(HOST + FUTURE_REWARD_API, { params: params })
@@ -149,7 +149,60 @@ const getFutureRewardList =  (context, params) => {
   })
 }
 
+// 重大列表
+const getEventList = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + FUTURE_REWARD_API, { params: params })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
 
+// 保存重大事件
+const saveEvent = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .post(HOST + TEAM_API, params)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+// 修改重大事件
+const modifyEvent = (context, params, id) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .patch(HOST + TEAM_API + '/' + id, params)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+// 得到重大事件详情
+const getEventDetails = (context, id) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + TEAM_RATE_API + '/' + id)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
 
 export {
   getProgramList,
@@ -162,5 +215,9 @@ export {
   modifyTeamRate,
   getPersonRewardList,
   getPersonRewardTotal,
-  getFutureRewardList
+  getFutureRewardList,
+  getEventList,
+  saveEvent,
+  modifyEvent,
+  getEventDetails
 }

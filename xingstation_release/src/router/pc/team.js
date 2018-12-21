@@ -101,30 +101,29 @@ let router = {
           },
           component: () =>
             import(/* webpackChunkName: "page/team/duty/index" */ 'page/team/duty/index')
+        },
+        {
+          path: 'add',
+          name: '新增责任',
+          meta: {
+            title: '新增责任',
+            permission: ''
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/team/duty/save" */ 'page/team/duty/save')
+        },
+        {
+          path: 'edit/:uid',
+          name: '修改责任',
+          meta: {
+            title: '修改责任',
+            permission: ''
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/team/duty/save" */ 'page/team/duty/save')
         }
       ]
-    },
-    // {
-    //   path: 'detail',
-    //   name: '平台明细',
-    //   redirect: 'detail',
-    //   meta: {
-    //     title: '平台明细'
-    //   },
-    //   component: () =>
-    //     import(/* webpackChunkName: "page/team/detail/routerView" */ 'page/team/detail/routerView'),
-    //   children: [
-    //     {
-    //       path: '/',
-    //       name: '平台明细列表',
-    //       meta: {
-    //         title: '平台明细列表'
-    //       },
-    //       component: () =>
-    //         import(/* webpackChunkName: "page/team/detail/index" */ 'page/team/detail/index')
-    //     }
-    //   ]
-    // }
+    }
   ]
 }
 

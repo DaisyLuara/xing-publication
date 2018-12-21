@@ -520,7 +520,7 @@ export default {
     this.getUserList();
 
     if (this.programID) {
-      this.detailInit();
+      // this.detailInit();
     } else {
       this.setting.loading = true;
       this.getTeamRateList();
