@@ -370,8 +370,6 @@ export default {
               : [];
             if (result.market) {
               this.getMarket(result.market.name);
-            }
-            if (result.point) {
               this.getPoint();
             }
             this.couponForm.name = result.name;
