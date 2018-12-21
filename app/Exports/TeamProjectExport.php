@@ -149,7 +149,7 @@ class TeamProjectExport extends AbstractExport
                             ]
                         ]
                     ]);
-                $event->sheet->getDelegate()->freezePane('A1');
+                $event->sheet->getDelegate()->freezePane('A3');
             }
         ];
     }
