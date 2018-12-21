@@ -28,47 +28,47 @@
             label-width="150px"
           >
 
-            <el-radio
+            <!-- <el-radio
               v-model="radio"
               label="1"
             >我要创建普通优惠券</el-radio>
             <el-form-item>
               <template slot-scope="scope">传统优惠券的电子版，可在微信中收纳、传播和使用。只可领取到我的卡券自己使用</template>
-            </el-form-item>
+            </el-form-item> -->
             <el-radio
-              v-model="radio"
-              label="2"
+              v-model="card_type"
+              :label="DISCOUNT.card_type"
             >折扣券</el-radio>
             <el-form-item>
               <template slot-scope="scope">可为用户提供消费折扣</template>
             </el-form-item>
             <el-radio
-              v-model="radio"
-              label="3"
+              v-model="card_type"
+              :label="CASH.card_type"
             >代金券</el-radio>
             <el-form-item>
               <template slot-scope="scope">可为用户提供抵扣现金服务。可设置成为"满*元，减*元"</template>
             </el-form-item>
             <el-radio
-              v-model="radio"
-              label="4"
+              v-model="card_type"
+              :label="GIFT.card_type"
             >兑换券</el-radio>
             <el-form-item>
               <template slot-scope="scope">可为用户提供消费送赠品服务</template>
             </el-form-item>
             <el-radio
-              v-model="radio"
-              label="5"
+              v-model="card_type"
+              :label="GROUPON.card_type"
             >团购券</el-radio>
             <el-form-item>
               <template slot-scope="scope">可为用户提供团购套餐服务</template>
             </el-form-item>
             <el-radio
-              v-model="radio"
-              label="6"
+              v-model="card_type"
+              :label="GENERAL_COUPON.card_type"
             >优惠券</el-radio>
             <el-form-item>
-              <template slot-scope="scope">即“通用券”，建议当以上四种无法满足需求时采用</template>
+              <template slot-scope="scope">即“通用券”，建议当以上四种无法满足需求时采用{{card_type}}</template>
             </el-form-item>
 
             <el-form-item>
@@ -193,6 +193,13 @@ export default {
   },
   data() {
     return {
+      card_type: 'DISCOUNT',
+      GROUPON: { card_type: 'GROUPON', title: '团购券' },
+      CASH: { card_type: 'CASH', title: '代金券' },
+      DISCOUNT: { card_type: 'DISCOUNT', title: '折扣券' },
+      GIFT: { card_type: 'GIFT', title: '兑换券' },
+      GENERAL_COUPON: { card_type: 'GENERAL_COUPON', title: '优惠券' }
+      ,
       loading: true,
       title: '',
       radio: "1",
@@ -242,7 +249,10 @@ export default {
       console.log("提交券类型")
       this.templateVisible = false
       this.$router.push({
-        path: "/project/wx_cardpackage/add/"
+        path: "/project/wx_cardpackage/add/",
+        query: {
+          card_type: this.card_type
+        }
       });
     },
     linkToView() {
@@ -292,9 +302,9 @@ export default {
       margin-left: 80px;
     }
     .confirm {
-      width: 180px;
+      width: 120px;
       height: 50px;
-      margin: 30px 100px;
+      margin: 30px 60px;
     }
     .item-content-wrap {
       .total-wrap {

@@ -10,19 +10,25 @@
       :element-loading-text="setting.loadingText"
       class="item-list-wrap"
     >
-      <div class="item-content-left">
+      <div
+        class="item-content-left"
+        :style="linkageColor"
+      >
         <div class="item-content-left-card">
           <div class="logo">
             <img src="https://cdn.exe666.com/fe/marketing/img/tiger/icon.png">
           </div>
           <div class="tickMsg">
-            <p class="title">测试</p>
-            <el-button
-              type="success"
-              size="medium"
-              class="confirm"
-            >使用</el-button>
-            <p><span class="title-span">可用时间：</span><span>2018-11-12</span></p>
+            <p
+              class="title"
+              v-if="card_type!=='CASH'"
+            >{{base_info.title}}</p>
+            <p
+              class="title"
+              v-if="card_type==='CASH'"
+            >{{null===reduce_cost||''===reduce_cost?'代金券标题':reduce_cost+'元代金券'}}</p>
+            <div class="use-button"><span :style="linkageColor">使用</span></div>
+            <p><span class="title-span">可用时间：</span><span v-if="null!==startDate">{{startDate}}-{{endDate}}</span><span>周一至周日</span></p>
           </div>
           <div class="cardUsage">
             <img src="https://cdn.exe666.com/fe/marketing/img/tiger/icon.png">
@@ -54,31 +60,36 @@
             :rules="rules"
             label-width="180px"
           >
-            <el-form-item
-              label="商户"
-              prop="description"
-            >
+            <el-form-item label="商户">
               <img
                 class="icon"
                 src="https://cdn.exe666.com/fe/marketing/img/tiger/icon.png"
               >
             </el-form-item>
-            <el-form-item
-              label="卡券颜色"
-              prop="color"
-            >
-              <el-input
-                v-model="input"
-                suffix-icon="el-icon-caret-bottom"
-                placeholder="请选择颜色"
-              ></el-input>
-              <div class="colorList">
+            <el-form-item label="卡券颜色">
+
+              <div
+                class="colorList-input"
+                @click="()=>{colorListShow=true}"
+              >
+                <a :style="linkageColor"></a>
+                <input
+                  v-show="inputShow"
+                  type="text"
+                  placeholder="请选择颜色"
+                >
+              </div>
+              <div
+                class="colorList"
+                v-show="colorListShow"
+              >
                 <ul>
                   <a
                     v-for="item in colorList"
                     :key="item.id"
-                    :value="item.id"
+                    :value="item.color"
                     :style="item.style"
+                    @click="changeColor(item)"
                   >
                     <li></li>
                   </a>
@@ -87,69 +98,123 @@
               </div>
             </el-form-item>
             <el-form-item
+              v-if="card_type==='DISCOUNT'"
               :rules="{required: true, message: '折扣额度只能是大于1且小于10的数字', trigger: 'submit'}"
               label="折扣额度"
-              prop="discount"
             >
               <el-input
-                v-model="couponForm.name"
+                v-model="discount"
                 class="coupon-form-input"
               />
               <span>折</span>
               <div class="message"> 请填写1-9.9之间的数字，精确到小数点后1位</div>
             </el-form-item>
+            <!-- 折扣券标题 -->
             <el-form-item
+              v-if="card_type==='DISCOUNT'"
               :rules="{required: true, message: '卡券名称不能为空且长度不超过9个汉字或18个英文字母', trigger: 'submit'}"
               label="折扣券标题"
-              prop="name"
             >
               <el-input
-                v-model="couponForm.name"
+                v-model="base_info.title"
                 class="coupon-form-input"
                 style="width:250px"
               />
               <div class="message"> 建议填写折扣券“折扣额度”及自定义内容，描述卡券提供的具体优惠</div>
             </el-form-item>
+            <!-- 兑换券 -->
             <el-form-item
-              label="有效期"
-              prop="time"
+              v-if="card_type==='GIFT'"
+              :rules="{required: true, message: '卡券名称不能为空且长度不超过9个汉字或18个英文字母', trigger: 'submit'}"
+              label="兑换券标题"
             >
-              <el-radio-group v-model="couponForm.is_fixed_date">
+              <el-input
+                v-model="base_info.title"
+                class="coupon-form-input"
+                style="width:250px"
+              />
+              <div class="message"> 建议填写兑换券提供的服务或礼品名称，描述卡券提供的具体优惠</div>
+            </el-form-item>
+            <!-- 优惠券券 -->
+            <el-form-item
+              v-if="card_type==='GENERAL_COUPON'"
+              :rules="{required: true, message: '卡券名称不能为空且长度不超过9个汉字或18个英文字母', trigger: 'submit'}"
+              label="优惠券标题"
+            >
+              <el-input
+                v-model="base_info.title"
+                class="coupon-form-input"
+                style="width:250px"
+              />
+              <div class="message"> 建议填写优惠券提供的服务或商品名称，描述卡券提供的具体优惠</div>
+            </el-form-item>
+            <!-- 团购券 -->
+
+            <el-form-item
+              v-if="card_type==='GROUPON'"
+              :rules="{required: true, message: '卡券名称不能为空且长度不超过9个汉字或18个英文字母', trigger: 'submit'}"
+              label="团购券标题"
+            >
+              <el-input
+                v-model="base_info.title"
+                class="coupon-form-input"
+                style="width:250px"
+              />
+              <div class="message">建议填写团购券提供的服务或商品名称、对应金额，描述卡券提供的具体优惠</div>
+            </el-form-item>
+
+            <!-- 代金券 -->
+            <el-form-item
+              v-if="card_type==='CASH'"
+              :rules="{required: true, message: '折扣额度只能是大于1且小于10的数字', trigger: 'submit'}"
+              label="减免金额"
+            >
+              <el-input
+                v-model="reduce_cost"
+                class="coupon-form-input"
+              />
+              <span>元</span>
+            </el-form-item>
+            <el-form-item label="有效期">
+              <el-radio-group v-model="base_info.date_info.type">
                 <div class="box-segmentation">
-                  <el-radio :label="1">固定时间
+                  <el-radio :label="dateType.RANGE">固定时间
                     <el-date-picker
-                      v-model="value13"
+                      v-model="startToEndDate"
                       type="daterange"
                       start-placeholder="开始日期"
                       end-placeholder="结束日期"
                       :default-time="['00:00:00', '23:59:59']"
                       class="picker"
+                      @change="logTimeChange"
                     >
                     </el-date-picker>
                   </el-radio>
                 </div>
                 <div class="box-segmentation">
-                  <el-radio :label="0">领取后，
+                  <el-radio :label="dateType.TERM">领取后，{{base_info.fixed_begin_term}}-{{base_info.fixed_term}}
                     <el-select
-                      v-model="couponForm"
+                      v-model="base_info.fixed_begin_term"
                       placeholder="当天"
                       class="coupon-form-select"
                     >
                       <el-option
                         v-for="item in dataList"
                         :key="item.id"
-                        :value="item.dataTime"
+                        :value="item.count"
+                        :label="item.title"
                       />
                     </el-select><span class="select">生效,有效天数</span>
                     <el-select
-                      v-model="couponForm"
+                      v-model="base_info.fixed_term"
                       placeholder="30天"
                       class="coupon-form-select"
                     >
                       <el-option
                         v-for="item in dataList"
                         :key="item.id"
-                        :value="item.dataTime"
+                        :value="item.count"
+                        :label="item.title"
                       />
                     </el-select>
 
@@ -158,10 +223,7 @@
 
               </el-radio-group>
             </el-form-item>
-            <el-form-item
-              label="可用时段"
-              prop="is_fixed_date"
-            >
+            <el-form-item label="可用时段">
               <el-radio-group v-model="couponForm.is_fixed_date">
                 <div class="box-segmentation">
                   <el-radio :label="1">全部时段</el-radio>
@@ -184,7 +246,6 @@
                     <el-checkbox label="周日"></el-checkbox>
                   </el-checkbox-group>
                 </div>
-
               </el-radio-group>
             </el-form-item>
           </el-form>
@@ -204,38 +265,71 @@
             :rules="rules"
             label-width="180px"
           >
-            <el-form-item
-              label="领券限制"
-              prop="discount"
-            >
+            <el-form-item label="领券限制">
               <el-input
-                v-model="couponForm.name"
+                v-model="base_info.get_limit"
                 class="coupon-form-input"
               />
               <span>张</span>
               <div class="message">每个用户领券上限，如不填，则默认为1</div>
             </el-form-item>
-            <el-form-item
-              label="使用条件"
-              prop="discount"
-            >
-              <el-checkbox v-model="checked">适用范围　(至少填写一项)</el-checkbox>
-              <div
-                class="goods"
-                v-show="checked"
-              >
-                <span>适用的商品</span>
-                <el-input
-                  v-model="couponForm.name"
-                  class="coupon-form-input"
-                />
-                <div class="message-box">填写本券适用的商品、类目或服务</div>
-                <span>不适用的商品</span>
-                <el-input
-                  v-model="couponForm.name"
-                  class="coupon-form-input"
-                />
-                <div class="message-box">填写本券不适用的商品、类目或服务</div>
+            <el-form-item label="使用条件">
+              <!-- 代金券 -->
+              <div v-if="card_type==='CASH'">
+                <el-checkbox v-model="checked">最低消费
+                  <span>满
+                    <el-input
+                      v-model="least_cost"
+                      class="coupon-form-input"
+                    />元可用</span>
+                </el-checkbox>
+              </div>
+
+              <!-- 兑换券 -->
+              <div v-if="card_type==='GIFT'">
+                <el-checkbox v-model="checked">消费
+                  <span v-show="checked">
+                    <el-select
+                      v-model="couponForm"
+                      placeholder="金额"
+                      class="coupon-form-select"
+                    >
+                      <el-option
+                        v-for="item in dataList"
+                        :key="item.id"
+                        :value="item.dataTime"
+                      />
+
+                    </el-select>
+                    <b>满
+                      <el-input
+                        v-model="couponForm.name"
+                        class="coupon-form-input"
+                      />元可用</b>
+                  </span>
+                </el-checkbox>
+              </div>
+
+              <!-- 折扣券 -->
+              <div v-if="card_type==='CASH'||card_type==='DISCOUNT'">
+                <el-checkbox v-model="checked">适用范围　(至少填写一项)</el-checkbox>
+                <div
+                  class="goods"
+                  v-show="checked"
+                >
+                  <span>适用的商品</span>
+                  <el-input
+                    v-model="advanced_info.use_condition.accept_category"
+                    class="coupon-form-input"
+                  />
+                  <div class="message-box">填写本券适用的商品、类目或服务</div>
+                  <span>不适用的商品</span>
+                  <el-input
+                    v-model="cadvanced_info.use_condition.reject_category"
+                    class="coupon-form-input"
+                  />
+                  <div class="message-box">填写本券不适用的商品、类目或服务</div>
+                </div>
 
               </div>
               <div>
@@ -248,7 +342,8 @@
                   <el-option
                     v-for="item in shareList"
                     :key="item.id"
-                    :value="item.id"
+                    :value="item.count"
+                    :label="item.share"
                   />
                 </el-select>
               </div>
@@ -258,15 +353,18 @@
             <el-form-item
               :rules="{required: true, message: '请上传封面图片', trigger: 'submit'}"
               label="封面图片"
-              prop="discount"
             >
               <div class="message">图片建议尺寸：850像素*350像素，大小不超过2M</div>
-              <el-button
-                type="success"
-                size="medium"
-                class="confirm"
-                @click="upload()"
-              >上传</el-button>
+              <!-- 上传图片 -->
+              <div class="confirm">
+                <div class="upload-confirm"><span>上传</span></div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  class="camera"
+                  @change="upload"
+                >
+              </div>
               <div class="uploadImg ">
                 <img src="https://cdn.exe666.com/fe/marketing/img/tiger/icon.png">
               </div>
@@ -274,62 +372,81 @@
             <el-form-item
               :rules="{required: true, message: '简介不能为空且长度不超过12个汉字', trigger: 'submit'}"
               label="封面简介"
-              prop="discount"
             >
               <el-input
-                v-model="couponForm.name"
+                v-model="advanced_info.abstract.abstract"
                 placeholder="请输入封面图片的简介内容"
+                :maxlength="12"
                 class="coupon-form-input"
               />
             </el-form-item>
             <el-form-item
-              label="使用须知"
-              prop="discount"
+              :rules="{required: true, message: '简介不能为空且长度不超过12个汉字', trigger: 'submit'}"
+              label="优惠说明"
             >
+              <div class="message">（本行是非自定义内容，无需填写）</div>
+              <el-input
+                v-if="card_type==='GROUPON'||card_type==='GENERAL_COUPON'"
+                type="textarea"
+                :maxlength="500"
+                placeholder="请输入自定义优惠说明内容"
+                v-model="detail"
+                class="coupon-form-input"
+              />
+            </el-form-item>
+            <el-form-item label="使用须知">
               <el-input
                 type="textarea"
                 :maxlength="500"
                 placeholder="请填写使用本优惠券的注意事项"
-                v-model="couponForm.title"
+                v-model="base_info.description"
                 class="coupon-form-input"
               />
             </el-form-item>
-            <el-form-item
-              label="图文介绍"
-              prop="discount"
-            >
+            <el-form-item label="图文介绍">
               <div class="message">图片建议尺寸：900像素 * 500像素，大小不超过2M。
                 至少上传1组图文，最多输入5000字</div>
               <div
                 class="article-item"
-                v-show="show"
+                v-for="(textImage,index) in advanced_info.text_image_list"
+                :key="textImage.id"
               >
                 <div class="article-item-t">
-                  <img src="https://cdn.exe666.com/fe/marketing/img/tiger/icon.png">
+                  <!-- <img :src="textImage.image_url"> -->
+                  <div class="upload-button">上传图片</div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    class="camera"
+                    @change="upload"
+                  >
                   <el-input
                     type="textarea"
                     :maxlength="500"
                     placeholder="图文内容建议上传商品、服务、环境等优质图片，并辅之以简单描述"
-                    v-model="couponForm.title"
+                    v-model="textImage.text"
                     class="coupon-form"
                   />
                 </div>
-                <div class="article-item-b">
+                <div
+                  class="article-item-b"
+                  v-if="textImage.flag"
+                >
                   <el-button
                     type="success"
                     size="medium"
-                    @click="upload()"
+                    @click="confirme(index)"
                   >确定</el-button>
                   <el-button
                     plain
                     size="medium"
-                    @click.stop="()=>{ show = false}"
+                    @click.stop="cancel(index)"
                   >取消</el-button>
                 </div>
               </div>
               <div
                 class="detail"
-                @click.stop="()=>{ show = true}"
+                @click.stop="addTextImageList()"
               >
                 <img
                   class="uploadIcon"
@@ -420,10 +537,149 @@ export default {
       }
     };
     return {
+      inputShow: true,
+      colorListShow: false,
+      startToEndDate: null,
+      startDate: null,
+      endDate: null,
+      dateType: { RANGE: 'DATE_TYPE_FIX _TIME_RANGE', TERM: 'DATE_TYPE_FIX_TERM' },
+      linkageColor: { background: "#f6f6f8" },
+      card_type: this.$route.query.card_type,
+      detail: '',
+      least_cost: null,
+      reduce_cost: null,
+      gift: '',
+      discount: null,
+      card_types: {
+        GROUPON: {
+          "card": {
+            "card_type": "GROUPON",
+            "groupon": {
+              "base_info": {
+              },
+              "advanced_info": {
+              },
+              "deal_detail": "示例"
+            }
+          }
+        }, CASH: {
+          "card": {
+            "card_type": "CASH",
+            "cash": {
+              "base_info": {
+              },
+              "advanced_info": {
+              },
+              "least_cost": 1000,
+              "reduce_cost": 100,
+            }
+          }
+        }, GIFT: {
+          "card": {
+            "card_type": "GIFT",
+            "gift": {
+              "base_info": {
+              },
+              "advanced_info": {
+
+              },
+              "gift": "可兑换音乐木盒一个"
+            }
+          }
+        }, DISCOUNT: {
+          "card": {
+            "card_type": "DISCOUNT",
+            "discount": {
+              "base_info": {
+              },
+              "advanced_info": {
+              },
+              "discount": 30
+            }
+          }
+        }, GENERAL_COUPON: {
+          "card": {
+            "card_type": "GENERAL_COUPON",
+            "general_coupon": {
+              "base_info": {
+              },
+              "advanced_info": {
+              },
+              "default_detail": "优惠券专用，填写优惠详情"
+            }
+          }
+        }      },
+      base_info: {
+        //true
+        "logo_url":
+          "http://mmbiz.qpic.cn/mmbiz/iaL1LJM1mF9aRKPZJkmG8xXhiaHqkKSVMMWeN3hLut7X7hicFNjakmxibMLGWpXrEXB33367o7zHN0CwngnQY7zb7g/0",
+        "brand_name": "微信餐厅",//true
+        "code_type": "CODE_TYPE_TEXT",//true
+        "title": "",//true
+        "color": "Color010",//true
+        "notice": "使用时向服务员出示此券",//true
+        "service_phone": "020-88888888",
+        //true
+        "description": "",
+        //true
+        "date_info": {
+          //true
+          "type": 'DATE_TYPE_FIX _TIME_RANGE',
+          //true
+          "begin_timestamp": 1397577600,
+          //true
+          "end_timestamp": 1472724261
+        },
+        //true
+        "sku": {
+          //true
+          "quantity": 500000
+        },
+        //true
+        "fixed_term": null,
+        "fixed_begin_term": null,
+        "use_limit": 100,
+        "get_limit": 3,
+        "use_custom_code": false,
+        "bind_openid": false,
+        "can_share": true,
+        "can_give_friend": true
+      },
+      advanced_info: {
+        "use_condition": {
+          "accept_category": "鞋类",
+          "reject_category": "阿迪达斯",
+          "can_use_with_other_discount": true
+        },
+        "abstract": {
+          "abstract": "",
+          "icon_url_list": [
+            "http://mmbiz.qpic.cn/mmbiz/p98FjXy8LacgHxp3sJ3vn97bGLz0ib0Sfz1bjiaoOYA027iasqSG0sjpiby4vce3AtaPu6cIhBHkt6IjlkY9YnDsfw/0"
+          ]
+        },
+        "text_image_list": [],
+        "time_limit": [
+          {
+            "type": "MONDAY",
+            "begin_hour": 0,
+            "end_hour": 10,
+            "begin_minute": 10,
+            "end_minute": 59
+          },
+          {
+            "type": "HOLIDAY"
+          }
+        ],
+        "business_service": [
+          "BIZ_SERVICE_FREE_WIFI",
+          "BIZ_SERVICE_WITH_PET",
+          "BIZ_SERVICE_FREE_PARK",
+          "BIZ_SERVICE_DELIVER"
+        ]
+      },
       loading: true,
       title: '',
       radio: "1",
-      value13: "",
       dialogImageUrl: '',
       dialogVisible: false,
       show: false,
@@ -448,60 +704,70 @@ export default {
       colorList: [
         {
           id: 1,
+          color: 'Color010',
           style: {
             background: "#63b359"
           }
         },
         {
           id: 2,
+          color: 'Color020',
           style: {
             background: "#2c9f67"
           }
         },
         {
-          id: 2,
+          id: 3,
+          color: 'Color030',
           style: {
             background: "#509fc9"
           }
         },
         {
-          id: 2,
+          id: 4,
+          color: 'Color040',
           style: {
             background: "#5885cf"
           }
         },
         {
-          id: 2,
+          id: 5,
+          color: 'Color050',
           style: {
             background: "#9062c0"
           }
         },
         {
-          id: 2,
+          id: 6,
+          color: 'Color060',
           style: {
             background: "#d09a45"
           }
         },
         {
-          id: 2,
+          id: 7,
+          color: 'Color070',
           style: {
             background: "#e4b138"
           }
         },
         {
-          id: 2,
+          id: 8,
+          color: 'Color080',
           style: {
             background: "#ee903c"
           }
         },
         {
-          id: 2,
+          id: 9,
+          color: 'Color090',
           style: {
             background: "	#f08500"
           }
         },
         {
-          id: 2,
+          id: 10,
+          color: 'Color100',
           style: {
             background: "#a9d92d"
           }
@@ -509,30 +775,36 @@ export default {
       ],
       shareList: [
         {
-          id: 1,
+          id: 0,
+          count: 0,
           share: "请选择",
         },
         {
-          id: 2,
+          id: 1,
+          count: 1,
           share: "不与其他优惠共享",
         },
         {
-          id: 3,
+          id: 2,
+          count: 2,
           share: "可与其他优惠共享",
         },
       ],
       dataList: [
         {
+          id: 0,
+          title: '当天',
+          count: 0,
+        },
+        {
           id: 1,
-          dataTime: "当天",
+          title: '1天',
+          count: 1,
         },
         {
           id: 2,
-          dataTime: "1天",
-        },
-        {
-          id: 3,
-          dataTime: "2天",
+          title: '2天',
+          count: 2,
         },
 
       ],
@@ -549,9 +821,54 @@ export default {
 
   },
   mounted() {
-    this.restaurants = this.loadAll();
+
   },
   methods: {
+    logTimeChange(val) {
+      this.startDate = this.dateFormat(val[0], 'yyyy.MM.dd')
+      this.endDate = this.dateFormat(val[1], 'yyyy.MM.dd')
+      this.base_info.date_info.begin_timestamp = val[0].getTime() / 1000
+      this.base_info.date_info.end_timestamp = val[1].getTime() / 1000
+    },
+    //添加文本图片
+    addTextImageList() {
+      let text_image = {
+        "image_url": "http://mmbiz.qpic.cn/mmbiz/p98FjXy8LacgHxp3sJ3vn97bGLz0ib0Sfz1bjiaoOYA027iasqSG0sjpiby4vce3AtaPu6cIhBHkt6IjlkY9YnDsfw/0",
+        "text": "",
+        "flag": true
+      }
+      this.advanced_info.text_image_list.push(text_image);
+    },
+    //时间格式化
+    dateFormat(date, fmt) {
+      let o = {
+        'M+': date.getMonth() + 1,
+        'd+': date.getDate(),
+        'h+': date.getHours(),
+        'm+': date.getMinutes(),
+        's+': date.getSeconds(),
+        'q+': Math.floor((date.getMonth() + 3) / 3),
+        S: date.getMilliseconds()
+      }
+      if (/(y+)/.test(fmt))
+        fmt = fmt.replace(
+          RegExp.$1,
+          (date.getFullYear() + '').substr(4 - RegExp.$1.length)
+        )
+      for (let k in o)
+        if (new RegExp('(' + k + ')').test(fmt))
+          fmt = fmt.replace(
+            RegExp.$1,
+            RegExp.$1.length == 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length)
+          )
+      return fmt
+    },
+    changeColor(item) {
+      this.linkageColor = item.style;
+      this.base_info.color = item.color;
+      this.inputShow = false;
+      this.colorListShow = false;
+    },
     next() {
       console.log("提交券类型")
       this.$router.push({
@@ -561,27 +878,13 @@ export default {
     upload() {
       console.log("上传")
     },
-    querySearch(queryString, cb) {
-      var restaurants = this.restaurants;
-      var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
-      // 调用 callback 返回建议列表的数据
-      cb(results);
+    confirme(index) {
+      this.advanced_info.text_image_list[index].flag = false
     },
-    createFilter(queryString) {
-      return (restaurant) => {
-        return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
-      };
+    cancel(index) {
+      this.advanced_info.text_image_list.splice(index, 1)
     },
-    handleSelect(item) {
-      console.log(item);
-    },
-    loadAll() {
-      return [
-        { "value": "三" },
-        { "value": "新" },
-        { "value": "泷" },
-      ]
-    }
+
   }
 };
 </script>
@@ -622,6 +925,7 @@ export default {
       display: flex;
       flex-direction: column;
       align-items: center;
+      padding: 0 20px;
       .item-content-left-card {
         background: #fff;
         width: 250px;
@@ -635,6 +939,17 @@ export default {
             width: 50px;
             border-radius: 50%;
             margin-top: -25px;
+          }
+        }
+        .use-button {
+          text-align: center;
+          margin: 0 auto;
+          span {
+            width: 80px;
+            line-height: 25px;
+            border-radius: 8px;
+            display: inline-block;
+            color: #000;
           }
         }
         .tickMsg {
@@ -727,6 +1042,34 @@ export default {
       padding: 20px 10px;
       border: 1px solid #e7e7eb;
       background: #f4f5f9;
+      .colorList-input {
+        width: 200px;
+        height: 30px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-left: 10px;
+        position: relative;
+
+        a {
+          width: 20px;
+          height: 20px;
+          display: inline-block;
+          margin: 0 10px;
+          position: absolute;
+          left: 5px;
+          top: 5px;
+          background: rgba(0, 0, 0, 0.5);
+        }
+        input {
+          width: 150px;
+          height: 20px;
+          background: #f6f6f8;
+          display: inline-block;
+          position: absolute;
+          left: 5px;
+          top: 5px;
+        }
+      }
       .check-data {
         font-size: 16px;
         margin-right: 20px;
@@ -741,7 +1084,7 @@ export default {
         width: 200px;
       }
       .coupon-form-select {
-        width: 180px;
+        width: 150px;
       }
       .coupon-form {
         width: 350px;
@@ -769,11 +1112,44 @@ export default {
       .picker {
         margin-left: 15px;
       }
+      .confirm {
+        position: relative;
+        input {
+          display: inline-block;
+          width: 100px;
+          opacity: 0;
+        }
+        .upload-confirm {
+          width: 100px;
+          line-height: 30px;
+          position: absolute;
+          left: 0;
+          top: 1px;
+          background: #67c23a;
+          color: #fff;
+          text-align: center;
+          border-radius: 5px;
+        }
+      }
       .article-item-t {
         width: 350px;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
+        input {
+          display: inline-block;
+          width: 350px;
+          height: 50px;
+          opacity: 0;
+          position: absolute;
+        }
+        .upload-button {
+          width: 350px;
+          line-height: 50px;
+          background: #f4f5f9;
+          margin: 0px auto;
+          text-align: center;
+        }
       }
       .article-item-b {
         width: 200px;
@@ -798,6 +1174,9 @@ export default {
           }
         }
       }
+      // .upload{
+
+      // }
       .detail {
         width: 350px;
         height: 60px;
