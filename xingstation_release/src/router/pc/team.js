@@ -83,27 +83,27 @@ let router = {
         }
       ]
     },
-    // {
-    //   path: 'platform',
-    //   name: '平台项目',
-    //   redirect: 'platform',
-    //   meta: {
-    //     title: '平台项目'
-    //   },
-    //   component: () =>
-    //     import(/* webpackChunkName: "page/team/platform/routerView" */ 'page/team/platform/routerView'),
-    //   children: [
-    //     {
-    //       path: '/',
-    //       name: '平台项目列表',
-    //       meta: {
-    //         title: '平台项目列表'
-    //       },
-    //       component: () =>
-    //         import(/* webpackChunkName: "page/team/platform/index" */ 'page/team/platform/index')
-    //     }
-    //   ]
-    // },
+    {
+      path: 'duty',
+      name: '重大责任',
+      redirect: 'duty',
+      meta: {
+        title: '重大责任'
+      },
+      component: () =>
+        import(/* webpackChunkName: "page/team/duty/routerView" */ 'page/team/duty/routerView'),
+      children: [
+        {
+          path: '/',
+          name: '重大责任列表',
+          meta: {
+            title: '重大责任列表'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/team/duty/index" */ 'page/team/duty/index')
+        }
+      ]
+    },
     // {
     //   path: 'detail',
     //   name: '平台明细',

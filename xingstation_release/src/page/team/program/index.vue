@@ -86,24 +86,19 @@
           <span class="label">
             总数:{{ pagination.total }}
             <el-checkbox
-              v-if="role.name === 'tester' || role.name === 'legal-affairs-manager' || role.name === 'operation'"
+              v-if="tester || legalAffairsManager || operation"
               v-model="own"
               @change="meSearch"
             >关于我的</el-checkbox>
           </span>
           <div>
             <el-button
-              v-if="role.name === 'legal-affairs-manager' || role.name === 'bonus-manager'"
+              v-if="legalAffairsManager || bonusManage"
               type="success"
               size="small"
               @click="downloadTable()"
             >下载</el-button>
-            <el-button
-              v-if="role.name === 'project-manager'"
-              type="success"
-              size="small"
-              @click="addProgram()"
-            >新增项目</el-button>
+            <el-button v-if="projectManage" type="success" size="small" @click="addProgram()">新增项目</el-button>
           </div>
         </div>
         <el-table :data="tableData" style="width: 100%">
@@ -147,7 +142,7 @@
                   <span>{{ scope.row.remark }}</span>
                 </el-form-item>
                 <el-form-item label="状态">
-                  <span>{{ scope.row.status }}</span>
+                  <span>{{ scope.row.status === 1 ? '进行中' : scope.row.status === 2 ? '测试已确认' : scope.row.status === 3 ? '运营已确认' : '主管已确认' }}</span>
                 </el-form-item>
               </el-form>
             </template>
@@ -184,16 +179,20 @@
             label="投放时间"
             min-width="100"
           />
-          <el-table-column :show-overflow-tooltip="true" prop="status" label="状态" min-width="100"/>
+          <el-table-column :show-overflow-tooltip="true" prop="status" label="状态" min-width="100">
+            <template
+              slot-scope="scope"
+            >{{ scope.row.status === 1 ? '进行中' : scope.row.status === 2 ? '测试已确认' : scope.row.status === 3 ? '运营已确认' : '主管已确认' }}</template>
+          </el-table-column>
           <el-table-column label="操作" min-width="150">
             <template slot-scope="scope">
               <el-button
                 size="small"
                 type="warning"
                 @click="editHandle(scope.row)"
-              >{{ ((role.name === 'project-manager' && (scope.row.status === '进行中' || scope.row.status === '测试已确认')) || role.name === 'legal-affairs-manager' || role.name === 'bonus-manager' ) ? '修改': '查看' }}</el-button>
+              >{{ ((projectManage && (scope.row.status === 1 || scope.row.status === 2)) || legalAffairsManager || bonusManage ) ? '修改': '查看' }}</el-button>
               <el-button
-                v-if="(role.name === 'tester' && scope.row.status === '进行中') || (role.name === 'operation' && scope.row.status === '测试已确认') || ((role.name === 'legal-affairs-manager' && scope.row.status === '运营已确认' && scope.row.type === '提前节目') || (role.name === 'bonus-manager' && scope.row.status === '运营已确认' && scope.row.type === '提前节目'))"
+                v-if="(tester && scope.row.status === 1) || (operation && scope.row.status === 2) || ((legalAffairsManager && scope.row.status === 3 && scope.row.type === '提前节目') || (bonusManage && scope.row.status === 3 && scope.row.type === '提前节目'))"
                 size="small"
                 @click="confirmProgram(scope.row)"
               >确认</el-button>
@@ -217,6 +216,7 @@
 <script>
 import {
   getProgramList,
+  getPersonRewardTotal,
   getSearchProjectList,
   handleDateTypeTransform,
   confirmProgram,
@@ -346,17 +346,44 @@ export default {
       searchLoading: false
     };
   },
+  computed: {
+    projectManage: function() {
+      return this.role.find(r => {
+        return r.name === "project-manager";
+      });
+    },
+    bonusManage: function() {
+      return this.role.find(r => {
+        return r.name === "bonus-manager";
+      });
+    },
+    operation: function() {
+      return this.role.find(r => {
+        return r.name === "operation";
+      });
+    },
+    legalAffairsManager: function() {
+      return this.role.find(r => {
+        return r.name === "legal-affairs-manager";
+      });
+    },
+    tester: function() {
+      return this.role.find(r => {
+        return r.name === "tester";
+      });
+    },
+  },
   created() {
     this.getProgramList();
     let user_info = JSON.parse(Cookies.get("user_info"));
-    this.role = user_info.roles.data[0];
+    this.role = user_info.roles.data;
   },
   methods: {
     downloadTable() {
       let args = this.setArgs();
       delete args.own;
       delete args.page;
-      args.type = 'team_project'
+      args.type = "team_project";
       return getExcelData(this, args)
         .then(response => {
           const a = document.createElement("a");
@@ -573,6 +600,10 @@ export default {
         .label {
           font-size: 14px;
           margin: 5px 0;
+        }
+        .label-money{
+          font-size: 18px;
+          font-weight: 700;
         }
       }
       .pagination-wrap {

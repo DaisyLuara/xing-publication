@@ -282,13 +282,6 @@
 
 <script>
 import {
-  getTeamSystemProject,
-  saveTeamSystemProject,
-  systemDistribute,
-  getSystemBonus,
-  getDistributionBonus,
-  handleDateTypeTransform,
-  systemReject
 } from 'service'
 import { Cookies } from 'utils/cookies'
 import {
@@ -431,9 +424,9 @@ export default {
     }
   },
   created() {
-    this.getTeamSystemProject()
-    this.getSystemBonus()
-    this.getDistributionBonus()
+    // this.getTeamSystemProject()
+    // this.getSystemBonus()
+    // this.getDistributionBonus()
     let user_info = JSON.parse(Cookies.get('user_info'))
     this.role = user_info.roles.data[0]
     this.applyForm.applicant_name = user_info.name
