@@ -30,7 +30,13 @@ $api->version('v1', [
             $api->get('cards/stock','CardsController@stock');
 
             //上传图片接口
-            $api->get('cards/uploadpic','CardsController@uploadpic');
+            $api->post('cards/uploadPic','CardsController@uploadPic');
+
+            //上传缩略图
+            $api->post('cards/uploadThumb','CardsController@uploadThumb');
+
+            //上传图文消息
+            $api->post('cards/uploadArticle','CardsController@uploadArticle');
 
         });
     });
