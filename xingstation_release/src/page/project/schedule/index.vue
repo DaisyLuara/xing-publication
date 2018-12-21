@@ -248,9 +248,6 @@ import {
   getSearchModuleList,
   getSearchProjectList,
   modifyTemplate,
-  getSearchMarketList,
-  getSearchAeraList,
-  getSearchPointList
 } from 'service'
 
 export default {
@@ -303,7 +300,7 @@ export default {
   },
   methods: {
     modifyTemplateName(item) {
-      this.loading = true
+      this.loading = false
       this.title = '修改模板'
       let name = item.name
       this.templateForm = {
