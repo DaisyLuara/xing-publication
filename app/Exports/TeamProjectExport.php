@@ -72,7 +72,7 @@ class TeamProjectExport extends AbstractExport
             ->groupBy(DB::raw("belong,tpm.type"));
         $case = "";
         foreach ($typeMapping as $key => $value) {
-            $case = $case . ",case type when '$key' then username else null end '$key'";
+            $case = $case . ",max(case type when '$key' then username else null end) '$key'";
         }
         $project = DB::table(DB::raw("({$sql->toSql()}) as a"))
             ->selectRaw("applicant,project_type,project_name,online_date,launch_date,project_attribute,link_attribute,xo_attribute,h5_attribute,art_innovate,dynamic_innovate,interact_innovate,remark" . $case)

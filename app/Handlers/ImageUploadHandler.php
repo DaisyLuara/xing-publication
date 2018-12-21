@@ -6,7 +6,7 @@ use Log;
 
 class ImageUploadHandler
 {
-    protected $allowed_ext = ['doc', 'docx', 'pdf', 'png', 'jpg', 'jpeg', 'zip', 'rar'];
+    protected $allowed_ext = ['doc', 'docx', 'pdf', 'png', 'jpg', 'jpeg'];
 
     public function save($file, $request)
     {
@@ -18,11 +18,6 @@ class ImageUploadHandler
         $extension = strtolower($format);
         $file_prefix = str_plural($request->type);
         $disk = \Storage::disk('qiniu');
-
-        if ($request->type == 'package') {
-            $file_prefix = "publication/team/" . str_plural($request->type);
-            $disk = \Storage::disk('qiniu_bw');
-        }
 
         $filename = $file_prefix . '_' . time() . '_' . str_random(10) . '.' . $extension;
         $result = $disk->put($filename, fopen($file, 'r'));

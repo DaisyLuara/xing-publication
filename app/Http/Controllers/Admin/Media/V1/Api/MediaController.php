@@ -15,8 +15,6 @@ class MediaController extends Controller
 
     public function store(MediaRequest $request, Media $media, ImageUploadHandler $uploader)
     {
-        $user = $this->user();
-        $companyID = $user->company_id;
         /** @var  $file \Illuminate\Http\UploadedFile */
         $file = $request->file;
 
@@ -36,7 +34,6 @@ class MediaController extends Controller
             'name' => $file->getClientOriginalName(),
             'type' => $file->getMimeType(),
             'url' => $url,
-            'company_id' => $companyID,
             'height' => $height,
             'width' => $width,
         ];
@@ -46,8 +43,18 @@ class MediaController extends Controller
         return $this->response->item($media, new MediaTransformer());
     }
 
-    public function update(Request $request)
+    public function create(Request $request, Media $media)
     {
-        //
+        $disk = \Storage::disk('qiniu');
+        $domain = $disk->getDriver()->downloadUrl();
+        $data = [
+            'name' => $request->name,
+            'url' => $domain . urlencode($request->key),
+            'size' => $request->size,
+            'height' => 0,
+            'width' => 0,
+        ];
+        $media->fill($data)->save();
+        return $this->response->item($media, new MediaTransformer());
     }
 }
