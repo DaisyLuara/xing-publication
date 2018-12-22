@@ -25,6 +25,7 @@ $api->version('v1', [
             //个人中心奖金
             $api->get('person_reward', 'TeamPersonRewardController@index');
             $api->get('person_reward/total', 'TeamPersonRewardController@totalReward');
+
             //个人中心冻结奖金
             $api->get('person_future_reward', 'TeamPersonFutureRewardController@index');
             $api->get('person_future_reward/total', 'TeamPersonFutureRewardController@totalReward');

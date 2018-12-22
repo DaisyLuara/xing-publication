@@ -30,15 +30,18 @@ class TeamProjectBugRecordController extends Controller
     {
         $query = $teamProjectBugRecord->query();
 
-        if ($request->has("alias")&&$request->alias) {
+        if ($request->has("alias") && $request->alias) {
             $query = $query->where('belong', $request->alias);
         }
 
-        if ($request->has("occur_date")&&$request->occur_date) {
-            $query = $query->where('occur_date', Carbon::parse($request->occur_date)->toDateString());
+        if ($request->has("start_occur_date") && $request->has("end_occur_date")) {
+            $query->whereBetween("occur_date", [
+                Carbon::parse($request->start_occur_date)->toDateString(),
+                Carbon::parse($request->end_occur_date)->toDateString()
+            ]);
         }
 
-        $teamProjectBugRecord = $query->groupBy("team_project_id", "date")->paginate(10);
+        $teamProjectBugRecord = $query->groupBy("team_project_id", "occur_date")->paginate(10);
 
         return $this->response()->paginator($teamProjectBugRecord, new TeamProjectBugRecordTransformer());
     }
@@ -63,7 +66,7 @@ class TeamProjectBugRecordController extends Controller
         }
 
         //项目(项目必须是已经被确认了的，状态为3或者4)
-        $teamProject = TeamProject::where('belong',$belong)->first();
+        $teamProject = TeamProject::where('belong', $belong)->first();
         if (!$teamProject || !in_array($teamProject->status, [3, 4])) {
             abort(422, "该项目还未被确认，暂时无法添加重大事件");
         }
@@ -118,14 +121,14 @@ class TeamProjectBugRecordController extends Controller
         $current_user_id = $this->user->id;
 
         //新项目判断(项目必须是已经被确认了的，状态为3或者4)
-        $teamProject = TeamProject::where('belong',$belong)->first();
+        $teamProject = TeamProject::where('belong', $belong)->first();
         if (!$teamProject || !in_array($teamProject->status, [3, 4])) {
             abort(422, "该项目还未被确认，暂时无法添加重大事件");
         }
 
         //默认是下一个季度第一天
         $date = Carbon::now()->addQuarter()->startOfQuarter()->toDateString();
-        if(Carbon::parse($teamProjectBugRecord->occur_date)->startOfQuarter()->addMonths(3)->toDateString() != $date){
+        if (Carbon::parse($teamProjectBugRecord->occur_date)->startOfQuarter()->addMonths(3)->toDateString() != $date) {
             abort(422, "不是本季度的重大责任不可再修改");
         }
         if ($occur_date >= $date || $occur_date < Carbon::parse($date)->subMonths(3)->toDateString()) {
@@ -179,12 +182,12 @@ class TeamProjectBugRecordController extends Controller
             if (check_arr($result)) {
                 DB::commit();
                 return $this->response()->noContent()->setStatusCode(200);
-            }else{
-                abort("500","更新出错");
+            } else {
+                abort("500", "更新出错");
             }
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             DB::rollBack();
-            abort("500",$e->getMessage());
+            abort("500", $e->getMessage());
         }
 
     }

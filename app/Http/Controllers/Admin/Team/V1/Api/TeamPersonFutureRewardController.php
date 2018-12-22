@@ -16,29 +16,36 @@ use Illuminate\Http\Request;
 
 class TeamPersonFutureRewardController extends Controller
 {
+
+
     /**
      * 个人冻结奖金列表
      * @param Request $request
-     * @param TeamPersonFutureReward $teamFuturePersonReward
+     * @param TeamPersonFutureReward $teamPersonFutureReward
      * @return \Dingo\Api\Http\Response
      */
-    public function index(Request $request, TeamPersonFutureReward $teamFuturePersonReward)
+    public function index(Request $request, TeamPersonFutureReward $teamPersonFutureReward)
     {
-        $query = $teamFuturePersonReward->query();
+        $query = $teamPersonFutureReward->query();
 
-        if($request->has("status")){
-            $query->where('status', '=', $request->status);
+        if ($request->has('alias')) {
+            $query->where('belong', $request->alias);
         }
 
-        if ($request->has('start_date') && $request->has('end_date')) {
+        if ($request->has('start_date') && $request->has('end_date')
+            && $request->start_date && $request->end_date) {
             $query->whereRaw("date_format(date,'%Y-%m-%d') between '$request->start_date' and '$request->end_date' ");
         }
-        if ($request->has('name')) {
-            $query->where('project_name', 'like', '%' . $request->name . '%');
-        }
+
         $user = $this->user();
-        $teamFuturePersonReward = $query->where('user_id', $user->id)->paginate(10);
-        return $this->response()->paginator($teamFuturePersonReward, new TeamPersonFutureRewardTransformer());
+        $teamPersonFuturePersonRewards = $query->where('user_id', $user->id)
+            ->groupBy("belong")
+            ->paginate(10);
+
+//        $teamPersonFuturePersonRewards = $teamPersonFuturePersonRewards->toArray();
+//        $teamPersonFuturePersonRewards['data']=$results;
+
+        return $this->response()->paginator($teamPersonFuturePersonRewards, new TeamPersonFutureRewardTransformer($request));
     }
 
     /**

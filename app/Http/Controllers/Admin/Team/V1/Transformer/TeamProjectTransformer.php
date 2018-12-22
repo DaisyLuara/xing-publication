@@ -21,7 +21,7 @@ class TeamProjectTransformer extends TransformerAbstract
             'belong' => $teamProject->belong,
             'applicant' => $teamProject->applicant,
             'applicant_name' => $teamProject->applicantUser ? $teamProject->applicantUser->name : '',
-            'project_attribute' => $teamProject->project_attribute,
+            'project_attribute' => (int)$teamProject->project_attribute,
             'hidol_attribute' => $teamProject->hidol_attribute,
             'individual_attribute' => $teamProject->individual_attribute,
             'contract_id' => $teamProject->contract_id,

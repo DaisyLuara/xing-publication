@@ -138,7 +138,7 @@ class TeamProjectController extends Controller
         /** @var  $user \App\Models\User */
         $user = $this->user();
         if ($user->hasRole('project-manager') && $teamProject->status > 2) {
-            abort(403, '项目已无法修改');
+            abort(403, '项目已确认，无法修改');
         }
 
         $params = $request->all();
@@ -168,6 +168,7 @@ class TeamProjectController extends Controller
         unset($params['status']);
         $params['project_name'] = $project->name;
         $params['launch_date'] = $project->online != 0 ? date('Y-m-d', $project->online / 1000) : null;
+        $params['interaction_attribute'] = implode(",", $params['interaction_attribute']);
         $teamProject->update($params);
 
 
