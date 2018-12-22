@@ -1789,7 +1789,10 @@ function teamBonusClean()
 
             $teamProject = TeamProject::query()->where('belong', $item->belong)->first();
             //投放时长 当前日期-投放日期
-            $launchTime = $date >= $launchDate ? (new Carbon($date))->diffInDays($launchDate) : 1000;
+            $launchTime = (new Carbon($date))->diffInDays($launchDate);
+            if ($date < $launchDate && $launchTime > 60) {
+                $launchTime = 1000;
+            }
 
             //新颖性系数T $factor
             $factor = 0;
@@ -1899,7 +1902,7 @@ function teamBonusClean()
                         'get_date' => $date_future,
                         'status' => 0,
                         'team_project_id' => $item->team_project_id,
-                        'created_at'=>$now
+                        'created_at' => $now
                     ];
                 } else {
                     $rewards[] = [
@@ -1923,7 +1926,7 @@ function teamBonusClean()
                 //得到不同测试/运营的人，在本季度第一天的统计，取消扣除的奖金
                 $quarterDate = Carbon::parse($date)->startOfQuarter()->toDateString();
 
-                echo "quarterDate========".$quarterDate;
+                echo "quarterDate========" . $quarterDate;
 
                 $users_bug_num = DB::table('team_project_bug_records')
                     ->where('date', $quarterDate)->groupby("user_id")
@@ -1960,10 +1963,10 @@ function teamBonusClean()
 
                 $future_rewards_array = $future_rewards
                     ->selectRaw("user_id,project_name,belong,type,experience_money,total,date")
-                    ->get()->map(function($value){
+                    ->get()->map(function ($value) {
                         return (array)$value;
                     })->toArray();
-                $result[]  = DB::table('team_person_rewards')->insert($future_rewards_array);
+                $result[] = DB::table('team_person_rewards')->insert($future_rewards_array);
 
                 $future_rewards->update(['status' => 1]);
             }

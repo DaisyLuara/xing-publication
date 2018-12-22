@@ -16,6 +16,7 @@ class TeamProjectBugRecord extends Model
         'duty',
         'bug_num',
         'date',
+        'occur_date',
         'recorder_id',
         'description',
     ];

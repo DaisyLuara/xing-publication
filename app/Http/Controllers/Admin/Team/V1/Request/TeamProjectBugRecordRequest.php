@@ -13,15 +13,15 @@ class TeamProjectBugRecordRequest extends Request
         switch ($this->method()) {
             case 'POST':
                 return [
-                    'team_project_id' => 'required|integer|exists:team_projects,id',
-                    'bug_num' => 'required|integer|min:1',
+                    'belong' => 'required|string|exists:team_projects,belong',
+                    "occur_date" => "required|date",
                     'description' => 'string',
                 ];
                 break;
             case 'PATCH':
                 return [
-                    'team_project_id' => 'required|integer|exists:team_projects,id',
-                    'bug_num' => 'required|integer|min:0',
+                    "belong" => 'required|string|exists:team_projects,belong',
+                    "occur_date" => "required|date",
                     'description' => 'string',
                 ];
                 break;
