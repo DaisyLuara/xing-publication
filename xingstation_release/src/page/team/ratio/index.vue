@@ -18,7 +18,7 @@
                 <el-form-item label="交互技术-中间件">
                   <span>{{ scope.row.interaction_api }}</span>
                 </el-form-item>
-                <el-form-item label="交互技术-联动引擎">
+                <el-form-item label="交互技术-交互引擎">
                   <span>{{ scope.row.interaction_linkage }}</span>
                 </el-form-item>
                 <el-form-item label="H5基础">
@@ -30,7 +30,7 @@
                 <el-form-item label="运营基本">
                   <span>{{ scope.row.operation }}</span>
                 </el-form-item>
-                <el-form-item label="运营保质">
+                <el-form-item label="运营验收">
                   <span>{{ scope.row.operation_quality }}</span>
                 </el-form-item>
                 <el-form-item label="节目创意">
@@ -48,7 +48,7 @@
                 <el-form-item label="测试基本">
                   <span>{{ scope.row.tester }}</span>
                 </el-form-item>
-                <el-form-item label="测试保质">
+                <el-form-item label="测试总责">
                   <span>{{ scope.row.tester_quality }}</span>
                 </el-form-item>
                 <el-form-item label="后端IT技术对接">
@@ -62,8 +62,8 @@
           </el-table-column>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="interaction_api"
-            label="交互技术-中间件"
+            prop="interaction_linkage"
+            label="交互技术-交互引擎"
             min-width="70"
           />
           <el-table-column 
@@ -101,7 +101,7 @@
           />
           <el-table-column :show-overflow-tooltip="true" prop="tester" label="测试基本" min-width="70"/>
           <el-table-column
-            v-if="role.name === legalAffairsManager || role.name === bonusManage"
+            v-if="legalAffairsManager || bonusManage"
             label="操作"
             min-width="90"
           >

@@ -123,6 +123,27 @@ let router = {
             import(/* webpackChunkName: "page/team/duty/save" */ 'page/team/duty/save')
         }
       ]
+    },
+    {
+      path: 'operation',
+      name: '运营文档',
+      redirect: 'operation',
+      meta: {
+        title: '运营文档'
+      },
+      component: () =>
+        import(/* webpackChunkName: "page/team/operation/routerView" */ 'page/team/operation/routerView'),
+      children: [
+        {
+          path: '/',
+          name: '运营文档列表',
+          meta: {
+            title: '运营文档列表'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/team/operation/index" */ 'page/team/operation/index')
+        }
+      ]
     }
   ]
 }

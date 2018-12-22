@@ -3,7 +3,7 @@
     <div v-loading="setting.loading" :element-loading-text="setting.loadingText" class="pane">
       <div
         class="pane-title"
-      >{{ programID ? (((role.name==='project-manager' && status===1) || role.name === 'legal-affairs-manager' || role.name === 'bonus-manager') ? '修改项目' : '查看项目') : '新增项目'}}</div>
+      >{{ programID ? (((projectManage && status===1) || legalAffairsManager || bonusManage) ? '修改项目' : '查看项目') : '新增项目'}}</div>
       <el-form ref="programForm" :model="programForm" label-position="left" label-width="80px">
         <el-row>
           <el-col :span="12">
@@ -41,22 +41,76 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-form-item label="节目属性" prop="project_attribute">
+          <el-radio-group v-model="programForm.project_attribute">
+            <el-radio :label="0">不计入</el-radio>
+            <el-radio :label="1">基础条目</el-radio>
+            <el-radio :label="2">简单条目</el-radio>
+            <el-radio :label="5">简单条目</el-radio>
+            <el-radio :label="6">通用节目</el-radio>
+            <el-radio :label="7">项目</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="节目属性" prop="project_attribute">
-              <el-radio-group v-model="programForm.project_attribute">
-                <el-radio :label="1">基础条目</el-radio>
-                <el-radio :label="2">通用节目</el-radio>
-                <el-radio :label="3">定制节目</el-radio>
-                <el-radio :label="4">定制项目</el-radio>
+            <el-form-item label="节目类型" prop="type">
+              <el-radio-group v-model="programForm.type">
+                <el-radio :label="1">提前节目</el-radio>
+                <el-radio :label="0">正常节目</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
+            <el-form-item label="定制属性" prop="individual_attribute">
+              <el-radio-group v-model="programForm.individual_attribute" @change="handleCustom">
+                <el-radio :label="1">定制</el-radio>
+                <el-radio :label="0">不定制</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="合同编号" prop="type">
+              <el-select
+                v-model="programForm.contract_id"
+                :disabled="contractDisable"
+                placeholder="请选择合同编号"
+              >
+                <el-option
+                  v-for="item in cotractList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="合同金额" prop="money">
+              <el-input
+                v-model="programForm.money"
+                :disabled="true"
+                placeholder="请输入合同金额"
+                class="item-input"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
             <el-form-item label="联动属性" prop="link_attribute">
               <el-radio-group v-model="programForm.link_attribute">
-                <el-radio :label="1">是</el-radio>
                 <el-radio :label="0">否</el-radio>
+                <el-radio :label="1">是</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="Hidol属性" prop="hidol_attribute">
+              <el-radio-group v-model="programForm.hidol_attribute">
+                <el-radio :label="0">否</el-radio>
+                <el-radio :label="1">是</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -71,57 +125,29 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="小偶属性" prop="xo_attribute">
-              <el-radio-group v-model="programForm.xo_attribute">
-                <el-radio :label="1">是</el-radio>
-                <el-radio :label="0">否</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="节目类型" prop="type">
-              <el-radio-group v-model="programForm.type">
-                <el-radio :label="0">正常节目</el-radio>
-                <el-radio :label="1">提前节目</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="交互技术" prop="interactionVal">
-              <span
-                style="color: #999;font-size:14px;margin-right: 15px;"
-              >{{ interactionRate }} * 系数</span>
-              <el-select
-                v-model="programForm.interactionVal"
-                :loading="searchLoading"
-                :multiple-limit="5"
-                multiple
-                placeholder="请添加人员"
-                filterable
-                clearable
-                @change="peopleHandle($event,interactionRate,'interaction')"
+            <el-form-item
+              :rules="[{ required: true, message: '请选择交互属性', trigger: 'submit' }]"
+              label="交互属性"
+              prop="interaction_attribute"
+            >
+              <el-checkbox-group
+                v-model="programForm.interaction_attribute"
+                :min="1"
+                @change="interactionHandle"
               >
-                <el-option
-                  v-for="item in userList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                />
-              </el-select>
-              <el-button
-                type="text"
-                size="mini"
-                @click="modifyHandle(programForm.interaction,interactionRate,'interaction')"
-              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager' || role.name === 'bonus-manager') ? '修改':'详情' }}</el-button>
+                <el-checkbox label="interaction_api">中间件调用</el-checkbox>
+                <el-checkbox label="interaction_linkage">交互引擎</el-checkbox>
+              </el-checkbox-group>
             </el-form-item>
           </el-col>
+        </el-row>
+        <h2 class="title">节目制造团队</h2>
+        <el-row>
           <el-col :span="12">
             <el-form-item label="节目创意" prop="creative">
-              <span style="color: #999;font-size:14px;margin-right: 7px;">{{ creativeRate }} * 系数</span>
+              <span
+                style="color: #999;font-size:14px;margin-right: 15px;"
+              >{{ rate.originality }} * 系数</span>
               <el-select
                 v-model="programForm.creative"
                 :loading="searchLoading"
@@ -130,7 +156,7 @@
                 placeholder="请添加人员"
                 filterable
                 clearable
-                @change="peopleHandle($event,creativeRate,'creative')"
+                @change="peopleHandle($event,rate.originality,'creative')"
               >
                 <el-option
                   v-for="item in userList"
@@ -142,74 +168,13 @@
               <el-button
                 type="text"
                 size="mini"
-                @click="modifyHandle(programForm.originality,creativeRate,'creative')"
-              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager' || role.name === 'bonus-manager') ? '修改':'详情' }}</el-button>
+                @click="modifyHandle(programForm.originality,rate.originality,'creative')"
+              >{{(projectManage || legalAffairsManager || bonusManage) ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="H5开发" prop="H5Val">
-              <span
-                :style="h5Rate==='0.1' ? 'margin-right: 15px;' : 'margin-right: 0;'"
-                style="color: #999;font-size:14px;"
-              >{{ h5Rate }} * 系数</span>
-              <el-select
-                v-model="programForm.H5Val"
-                :loading="searchLoading"
-                :multiple-limit="5"
-                multiple
-                placeholder="请添加人员"
-                filterable
-                clearable
-                @change="peopleHandle($event,h5Rate,'H5')"
-              >
-                <el-option
-                  v-for="item in userList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                />
-              </el-select>
-              <el-button
-                type="text"
-                size="mini"
-                @click="modifyHandle(programForm.h5,h5Rate,'H5')"
-              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager' || role.name === 'bonus-manager') ? '修改':'详情' }}</el-button>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="设计动画" prop="animate">
-              <span style="color: #999;font-size:14px;">{{ animateRate }} * 系数</span>
-              <el-select
-                v-model="programForm.animate"
-                :loading="searchLoading"
-                :multiple-limit="5"
-                multiple
-                placeholder="请添加人员"
-                filterable
-                clearable
-                @change="peopleHandle($event,animateRate,'animate')"
-              >
-                <el-option
-                  v-for="item in userList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                />
-              </el-select>
-              <el-button
-                type="text"
-                size="mini"
-                @click="modifyHandle(programForm.animation,animateRate,'animate')"
-              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager' || role.name === 'bonus-manager') ? '修改':'详情' }}</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="12">
             <el-form-item label="节目统筹" prop="whole">
-              <span style="color: #999;font-size:14px;margin-right: 8px;">{{ wholeRate }} * 系数</span>
+              <span style="color: #999;font-size:14px;">{{ rate.plan }} * 系数</span>
               <el-select
                 v-model="programForm.whole"
                 :loading="searchLoading"
@@ -218,7 +183,7 @@
                 placeholder="请添加人员"
                 filterable
                 clearable
-                @change="peopleHandle($event,wholeRate,'whole')"
+                @change="peopleHandle($event,rate.plan,'whole')"
               >
                 <el-option
                   v-for="item in userList"
@@ -230,67 +195,38 @@
               <el-button
                 type="text"
                 size="mini"
-                @click="modifyHandle(programForm.plan,wholeRate,'whole')"
-              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager' || role.name === 'bonus-manager') ? '修改':'详情' }}</el-button>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="节目测试" prop="test">
-              <span style="color: #999;font-size:14px;">{{ testRate }} * 系数</span>
-              <el-select
-                v-model="programForm.test"
-                :loading="searchLoading"
-                :multiple-limit="5"
-                multiple
-                placeholder="请添加人员"
-                filterable
-                clearable
-                @change="peopleHandle($event,testRate,'test')"
-              >
-                <el-option
-                  v-for="item in userList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                />
-              </el-select>
-              <el-button
-                type="text"
-                size="mini"
-                @click="modifyHandle(programForm.tester,testRate,'test')"
-              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager'|| role.name === 'bonus-manager') ? '修改':'详情' }}</el-button>
+                @click="modifyHandle(programForm.plan,rate.plan,'whole')"
+              >{{(projectManage || legalAffairsManager || bonusManage) ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="平台运营" prop="platform">
-              <span style="color: #999;font-size:14px;margin-right: 8px;">{{ platformRate }} * 系数</span>
-              <el-select
-                v-model="programForm.platform"
-                :loading="searchLoading"
-                :multiple-limit="5"
-                multiple
-                placeholder="请添加人员"
-                filterable
-                clearable
-                @change="peopleHandle($event,platformRate,'platform')"
-              >
-                <el-option
-                  v-for="item in userList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                />
-              </el-select>
-              <el-button
-                type="text"
-                size="mini"
-                @click="modifyHandle(programForm.operation,platformRate,'platform')"
-              >{{(role.name === 'project-manager' || role.name === 'legal-affairs-manager'|| role.name === 'bonus-manager') ? '修改':'详情' }}</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
+        <el-form-item label="节目交互文档" prop="fileIds" style="width:800px;" label-width="120px">
+          <el-upload
+            ref="upload"
+            :action="Domain"
+            :data="uploadForm"
+            :on-success="handleSuccess"
+            :before-upload="beforeUpload"
+            :on-remove="handleRemove"
+            :on-preview="handlePreview"
+            :before-remove="beforeRemove"
+            :file-list="fileList1"
+            :on-exceed="handleExceed"
+            class="upload-demo"
+          >
+            <el-button size="mini" type="success">点击上传</el-button>
+            <div
+              slot="tip"
+              style="display:inline-block;margin-left: 10px;"
+              class="el-upload__tip"
+            >支持类型：doc（docx）、pdf</div>
+            <div
+              v-if="fileList1.length !==0"
+              slot="tip"
+              style="color: #ff5722;font-size: 12px;"
+            >点击文件名称可以下载</div>
+          </el-upload>
+        </el-form-item>
         <el-form-item
           :rules="[{ required: true, message: '请输入艺术风格创新点', trigger: 'submit' }]"
           label="艺术风格创新点"
@@ -346,41 +282,293 @@
             class="text-input"
           />
         </el-form-item>
-        <el-form-item 
-          label="上传素材" 
-          prop="ids"
-          style="width:800px;">
-          <el-upload
-            ref="upload"
-            :action="Domain"
-            :data="uploadForm"
-            :on-success="handleSuccess"
-            :before-upload="beforeUpload"
-            :on-remove="handleRemove"
-            :on-preview="handlePreview"
-            :before-remove="beforeRemove"
-            :file-list="fileList"
-            :limit="1"
-            :on-exceed="handleExceed"
-            class="upload-demo"
-          >
-            <el-button size="mini" type="success">点击上传</el-button>
-            <div
-              slot="tip"
-              style="display:inline-block"
-              class="el-upload__tip"
-            >支持类型：zip、rar,不能超过100M</div>
-            <div
-              v-if="fileList.length !==0"
-              slot="tip"
-              style="color: #ff5722;font-size: 12px;"
-            >点击文件名称可以下载</div>
-          </el-upload>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="设计动画" prop="animat">
+              <span style="color: #999;font-size:14px;margin-right: 8px;">{{ rate.animation }} * 系数</span>
+              <el-select
+                v-model="programForm.animat"
+                :loading="searchLoading"
+                :multiple-limit="5"
+                multiple
+                placeholder="请添加人员"
+                filterable
+                clearable
+                @change="peopleHandle($event,rate.animation,'animat')"
+              >
+                <el-option
+                  v-for="item in userList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+              <el-button
+                type="text"
+                size="mini"
+                @click="modifyHandle(programForm.animation,rate.animation,'animat')"
+              >{{(projectManage || legalAffairsManager || bonusManage) ? '修改':'详情' }}</el-button>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="设计动画.Hidol" prop="animatHidol" label-width="105px">
+              <span style="color: #999;font-size:14px;">{{ rate.animation_hidol }} * 系数</span>
+              <el-select
+                v-model="programForm.animatHidol"
+                :loading="searchLoading"
+                :multiple-limit="5"
+                multiple
+                placeholder="请添加人员"
+                filterable
+                clearable
+                @change="peopleHandle($event,rate.animation_hidol,'animatHidol')"
+              >
+                <el-option
+                  v-for="item in userList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+              <el-button
+                type="text"
+                size="mini"
+                @click="modifyHandle(programForm.animation_hidol,rate.animation_hidol,'animatHidol')"
+              >{{(projectManage || legalAffairsManager || bonusManage) ? '修改':'详情' }}</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="Hidol专利" prop="hidol">
+              <span
+                style="color: #999;font-size:14px;margin-right: 8px;"
+              >{{ rate.hidol_patent }} * 系数</span>
+              <el-select
+                v-model="programForm.hidol"
+                :loading="searchLoading"
+                :multiple-limit="5"
+                multiple
+                placeholder="请添加人员"
+                filterable
+                clearable
+                @change="peopleHandle($event,rate.hidol_patent,'hidol')"
+              >
+                <el-option
+                  v-for="item in userList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+              <el-button
+                type="text"
+                size="mini"
+                @click="modifyHandle(programForm.hidol_patent,rate.hidol_patent,'hidol')"
+              >{{(projectManage || legalAffairsManager || bonusManage) ? '修改':'详情' }}</el-button>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="上传素材" prop="ids">
+              <el-upload
+                ref="upload"
+                :action="Domain"
+                :data="uploadForm"
+                :on-success="handleSuccess"
+                :before-upload="beforeUpload"
+                :on-remove="handleRemove"
+                :on-preview="handlePreview"
+                :before-remove="beforeRemove"
+                :file-list="fileList"
+                :limit="1"
+                :on-exceed="handleExceed"
+                class="upload-demo"
+              >
+                <el-button size="mini" type="success">点击上传</el-button>
+                <div
+                  slot="tip"
+                  style="display:inline-block;margin-left: 10px;"
+                  class="el-upload__tip"
+                >支持类型：zip、rar,不能超过100M</div>
+                <div
+                  v-if="fileList.length !==0"
+                  slot="tip"
+                  style="color: #ff5722;font-size: 12px;"
+                >点击文件名称可以下载</div>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <h2 class="title">中后台团队</h2>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="交互技术" prop="interactionVal">
+              <span
+                style="color: #999;font-size:14px;margin-right: 15px;"
+              >{{ interactionRate }} * 系数</span>
+              <el-select
+                v-model="programForm.interactionVal"
+                :loading="searchLoading"
+                :multiple-limit="5"
+                multiple
+                placeholder="请添加人员"
+                filterable
+                clearable
+                @change="peopleHandle($event,interactionRate,'interaction')"
+              >
+                <el-option
+                  v-for="item in userList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+              <el-button
+                type="text"
+                size="mini"
+                @click="modifyHandle(programForm.interaction,interactionRate,'interaction')"
+              >{{(projectManage || legalAffairsManager || bonusManage) ? '修改':'详情' }}</el-button>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="后端IT技术" prop="backend">
+              <span
+                style="color: #999;font-size:14px;margin-right: 8px;"
+              >{{ rate.backend_docking }} * 系数</span>
+              <el-select
+                v-model="programForm.backend"
+                :loading="searchLoading"
+                :multiple-limit="5"
+                multiple
+                placeholder="请添加人员"
+                filterable
+                clearable
+                @change="peopleHandle($event,rate.backend_docking,'backend')"
+              >
+                <el-option
+                  v-for="item in userList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+              <el-button
+                type="text"
+                size="mini"
+                @click="modifyHandle(programForm.backend_docking,rate.backend_docking,'backend')"
+              >{{(projectManage || legalAffairsManager || bonusManage) ? '修改':'详情' }}</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="节目测试" prop="test">
+              <span style="color: #999;font-size:14px;margin-right: 8px;">{{ rate.tester }} * 系数</span>
+              <el-select
+                v-model="programForm.test"
+                :loading="searchLoading"
+                :multiple-limit="5"
+                multiple
+                placeholder="请添加人员"
+                filterable
+                clearable
+                @change="peopleHandle($event,rate.tester,'test')"
+              >
+                <el-option
+                  v-for="item in userList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+              <el-button
+                type="text"
+                size="mini"
+                @click="modifyHandle(programForm.tester,rate.tester,'test')"
+              >{{(projectManage || legalAffairsManager|| bonusManage) ? '修改':'详情' }}</el-button>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="节目测试责任总责奖金0.06部分,系统将自动计算。"
+                placement="right"
+              >
+                <i class="el-icon-info"/>
+              </el-tooltip>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="H5开发" prop="H5Val">
+              <span
+                :style="h5Rate === '0.1' ? 'margin-right: 15px;' : 'margin-right: 0;'"
+                style="color: #999;font-size:14px;"
+              >{{ h5Rate }} * 系数</span>
+              <el-select
+                v-model="programForm.H5Val"
+                :loading="searchLoading"
+                :multiple-limit="5"
+                multiple
+                placeholder="请添加人员"
+                filterable
+                clearable
+                @change="peopleHandle($event,h5Rate,'H5')"
+              >
+                <el-option
+                  v-for="item in userList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+              <el-button
+                type="text"
+                size="mini"
+                @click="modifyHandle(programForm.h5,h5Rate,'H5')"
+              >{{(projectManage || legalAffairsManager || bonusManage) ? '修改':'详情' }}</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="平台运营" prop="platform">
+              <span style="color: #999;font-size:14px;margin-right: 8px;">{{ rate.operation }} * 系数</span>
+              <el-select
+                v-model="programForm.platform"
+                :loading="searchLoading"
+                :multiple-limit="5"
+                multiple
+                placeholder="请添加人员"
+                filterable
+                clearable
+                @change="peopleHandle($event,rate.operation,'platform')"
+              >
+                <el-option
+                  v-for="item in userList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+              <el-button
+                type="text"
+                size="mini"
+                @click="modifyHandle(programForm.operation,rate.operation,'platform')"
+              >{{(projectManage || legalAffairsManager|| bonusManage) ? '修改':'详情' }}</el-button>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="平台运营验收奖金0.02部分,系统将自动计算。"
+                placement="right"
+              >
+                <i class="el-icon-info"/>
+              </el-tooltip>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
         <el-form-item>
           <!-- 产品经理可以保存 -->
           <el-button
-            v-if="(role.name === 'project-manager' && (status === 1 || status === 2)) || role.name === 'legal-affairs-manager'|| role.name === 'bonus-manager'"
+            v-if="(projectManage && (status === 1 || status === 2)) || legalAffairsManager|| bonusManage"
             type="primary"
             @click="submit('programForm')"
           >保存</el-button>
@@ -401,7 +589,7 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false,disabledChange = true">取 消</el-button>
         <el-button
-          v-if="(role.name === 'project-manager' && (status === 1 || status === 2)) || role.name === 'legal-affairs-manager'|| role.name === 'bonus-manager'"
+          v-if="(projectManage && (status === 1 || status === 2)) || legalAffairsManager|| bonusManage"
           type="primary"
           @click="rateSubmit"
         >确 定</el-button>
@@ -422,9 +610,12 @@ import {
   MessageBox,
   RadioGroup,
   Radio,
+  CheckboxGroup,
+  Checkbox,
   Col,
   Dialog,
-  Upload
+  Upload,
+  Tooltip
 } from "element-ui";
 import {
   saveProgram,
@@ -451,8 +642,11 @@ export default {
     ElInput: Input,
     ElRadioGroup: RadioGroup,
     ElRadio: Radio,
+    ElCheckboxGroup: CheckboxGroup,
+    ElCheckbox: Checkbox,
     ElDialog: Dialog,
-    ElUpload: Upload
+    ElUpload: Upload,
+    ElTooltip: Tooltip
   },
   data() {
     return {
@@ -463,8 +657,11 @@ export default {
         token: "",
         key: ""
       },
+      cotractList: [],
       fileList: [],
+      fileList1: [],
       ids: [],
+      fileIds: [],
       disabledChange: true,
       form: {
         total: 0
@@ -481,10 +678,13 @@ export default {
       status: 1,
       programID: "",
       programForm: {
+        hidol_attribute: 0,
+        contract_id: "",
         art_innovate: "",
         dynamic_innovate: "",
         interact_innovate: "",
         type: 0,
+        individual_attribute: 0,
         applicant: "",
         belong: "",
         remark: "",
@@ -492,44 +692,77 @@ export default {
         project_attribute: 1,
         link_attribute: 0,
         h5_attribute: 1,
-        xo_attribute: 0,
+        interaction_attribute: ["interaction_linkage"],
         interactionVal: [],
         H5Val: [],
         creative: [],
         platform: [],
         test: [],
+        animateHidol: [],
         animate: [],
+        hidol: [],
+        backend: [],
         whole: [],
         operation: [],
+        operation_quality: [],
         interaction: [],
         originality: [],
         h5: [],
         plan: [],
         animation: [],
-        tester: []
+        animation_hidol: [],
+        hidol_patent: [],
+        backend_docking: [],
+        tester: [],
+        tester_quality: []
       },
       type: "",
       userList: [],
+      rate: {
+        backend_docking: null,
+        interaction_linkage: null,
+        interaction_api: null,
+        originality: null,
+        h5_1: null,
+        h5_2: null,
+        tester: null,
+        operation: null,
+        animation: null,
+        hidol_patent: null,
+        animation_hidol: null,
+        plan: null
+      },
       interactionRate: null,
-      creativeRate: null,
-      h5Rate1: null,
       h5Rate: null,
-      h5Rate2: null,
-      testRate: null,
-      platformRate: null,
-      animateRate: null,
-      wholeRate: null,
-      role: null
+      role: null,
+      contractDisable: true
     };
+  },
+  computed: {
+    projectManage: function() {
+      return this.role.find(r => {
+        return r.name === "project-manager";
+      });
+    },
+    bonusManage: function() {
+      return this.role.find(r => {
+        return r.name === "bonus-manager";
+      });
+    },
+    legalAffairsManager: function() {
+      return this.role.find(r => {
+        return r.name === "legal-affairs-manager";
+      });
+    }
   },
   created() {
     this.programID = this.$route.params.uid;
     let user_info = JSON.parse(Cookies.get("user_info"));
-    this.role = user_info.roles.data[0];
+    this.role = user_info.roles.data;
     this.getUserList();
     this.getQiniuToken();
     if (this.programID) {
-      // this.detailInit();
+      this.detailInit();
     } else {
       this.setting.loading = true;
       this.getTeamRateList();
@@ -547,10 +780,41 @@ export default {
       }
     },
     h5Handle(val) {
-      this.h5Rate = val === 1 ? this.h5Rate1 : this.h5Rate2;
+      let idArr = [];
+      this.h5Rate = val === 1 ? this.rate.h5_1 : this.rate.h5_2;
+      if (JSON.stringify(this.programForm.h5) !== "[]") {
+        this.programForm.h5.map(r => {
+          idArr.push(r.user_id);
+        });
+        this.peopleHandle(idArr, this.h5Rate, "H5");
+      }
     },
     handleRemove(file, fileList) {
       this.fileList = fileList;
+    },
+    interactionHandle(val) {
+      let idArr = [];
+      if (val.length === 2) {
+        this.interactionRate =
+          parseFloat(this.rate.interaction_linkage) +
+          parseFloat(this.rate.interaction_api);
+      } else if (val.length === 1) {
+        let value = val[0];
+        if (value === "interaction_api") {
+          this.interactionRate = this.rate.interaction_api;
+        } else {
+          this.interactionRate = this.rate.interaction_linkage;
+        }
+      }
+      if (JSON.stringify(this.programForm.interaction) !== "[]") {
+        this.programForm.interaction.map(r => {
+          idArr.push(r.user_id);
+        });
+        this.peopleHandle(idArr, this.interactionRate, "interaction");
+      }
+    },
+    handleCustom(val) {
+      this.contractDisable = val === 1 ? false : true;
     },
     getQiniuToken() {
       getQiniuToken(this)
@@ -587,10 +851,11 @@ export default {
       return this.$confirm(`确定移除 ${file.name}？`);
     },
     beforeUpload(file) {
+      let name = file.name;
       let isLt100M = file.size / 1024 / 1024 < 100;
       let time = new Date().getTime();
       let random = parseInt(Math.random() * 10 + 1, 10);
-      let suffix = time + "_" + random + "_" + file.name;
+      let suffix = time + "_" + random + "_" + name;
       let key = encodeURI(`${suffix}`);
       if (!isLt100M) {
         this.uploadForm.token = "";
@@ -604,11 +869,12 @@ export default {
     // 上传成功后的处理
     handleSuccess(response, file, fileList) {
       let key = response.key;
-      let name = file.raw.name;
+      let name = file.name;
       let size = file.size;
-      this.getMediaUpload(key, name, size);
+      let type = name.substring(name.lastIndexOf("."));
+      this.getMediaUpload(key, name, size, type);
     },
-    getMediaUpload(key, name, size) {
+    getMediaUpload(key, name, size, type) {
       let params = {
         key: key,
         name: name,
@@ -616,7 +882,12 @@ export default {
       };
       getMediaUpload(this, params)
         .then(res => {
-          this.fileList.push(res);
+          if (type === ".docx" || type === ".doc" || type === ".pdf") {
+            this.fileList1.push(res);
+          }
+          if (type === ".zip" || type === ".rar") {
+            this.fileList.push(res);
+          }
         })
         .catch(err => {
           this.$message({
@@ -630,15 +901,20 @@ export default {
       getSearchTeamRateList(this)
         .then(res => {
           let data = res.data[0];
-          this.interactionRate = data.interaction;
-          this.creativeRate = data.originality;
-          this.h5Rate1 = data.h5_1;
-          this.testRate = data.tester;
-          this.platformRate = data.operation;
-          this.wholeRate = data.plan;
-          this.animateRate = data.animation;
-          this.h5Rate2 = data.h5_2;
-          this.h5Rate = this.h5Rate1;
+          this.rate.interaction_linkage = data.interaction_linkage;
+          this.interactionRate = this.rate.interaction_linkage;
+          this.rate.originality = data.originality;
+          this.rate.h5_1 = data.h5_1;
+          this.rate.tester = data.tester;
+          this.rate.operation = data.operation;
+          this.rate.plan = data.plan;
+          this.rate.hidol_patent = data.hidol_patent;
+          this.rate.animation = data.animation;
+          this.rate.animation_hidol = data.animation_hidol;
+          this.rate.h5_2 = data.h5_2;
+          this.rate.interaction_api = data.interaction_api;
+          this.rate.backend_docking = data.backend_docking;
+          this.h5Rate = this.rate.h5_1;
           this.setting.loading = false;
         })
         .catch(err => {
@@ -656,12 +932,22 @@ export default {
       };
       getProgramDetails(this, this.programID, params)
         .then(res => {
-          let mediaData = [];
-          if (res.media) {
-            this.ids = res.media.id;
-            mediaData.push(res.media);
+          let planMediaData = [];
+          if (res.plan_media.length > 0) {
+            res.plan_media.map(r => {
+              this.ids.push(r.id);
+              planMediaData.push(r);
+            });
           }
-          this.fileList = mediaData;
+          let animationMediaData = [];
+          if (res.animation_media.length > 0) {
+            res.animation_media.map(r => {
+              this.fileIds.push(r.id);
+              animationMediaData.push(r);
+            });
+          }
+          this.fileList1 = planMediaData;
+          this.fileList = animationMediaData;
           this.programForm.applicant = res.applicant;
           this.programForm.applicant_name = res.applicant_name;
           this.programForm.type = res.type;
@@ -669,71 +955,119 @@ export default {
           this.getProject(res.project_name);
           this.programForm.link_attribute = res.link_attribute;
           this.programForm.h5_attribute = res.h5_attribute;
-          this.h5Rate = res.h5_attribute === 2 ? this.h5Rate2 : this.h5Rate1;
+          this.programForm.interaction_attribute = res.interaction_attribute;
+          this.programForm.contract_id = res.contract_id;
+          // res.interaction_attribute === 1 ? getContractList() : ''
+          this.h5Rate =
+            res.h5_attribute === 2 ? this.rate.h5_2 : this.rate.h5_1;
           this.programForm.project_attribute = res.project_attribute;
+          this.programForm.individual_attribute = res.individual_attribute;
           this.programForm.xo_attribute = res.xo_attribute;
-          this.programForm.remark = res.remark;
+          (this.programForm.hidol_attribute = res.hidol_attribute),
+            (this.programForm.remark = res.remark);
           this.programForm.art_innovate = res.art_innovate;
           this.programForm.dynamic_innovate = res.dynamic_innovate;
           this.programForm.interact_innovate = res.interact_innovate;
+          this.interactionRate =
+            res.interaction_attribute.length === 2
+              ? parseFloat(this.rate.interaction_linkage) +
+                parseFloat(this.rate.interaction_api)
+              : res.interaction_attribute[0] === "interaction_api"
+              ? this.rate.interaction_api
+              : this.rate.interaction_linkage;
+
           this.status = res.status;
-          if(JSON.stringify(res.member) !== '[]'){
+          if (JSON.stringify(res.member) !== "[]") {
+            // 动画设计
             if (res.member.animation) {
               this.programForm.animation = res.member.animation;
               res.member.animation.map(r => {
-                this.programForm.animate.push(r.user_id);
+                this.programForm.animat.push(r.user_id);
               });
-            }else{
-              this.programForm.animation = []
+            } else {
+              this.programForm.animation = [];
             }
+            // 节目统筹
             if (res.member.plan.length > 0) {
               this.programForm.plan = res.member.plan;
-  
+
               res.member.plan.map(r => {
                 this.programForm.whole.push(r.user_id);
               });
-            }else{
-              his.programForm.plan = []
+            } else {
+              his.programForm.plan = [];
             }
+            // 交互技术
             if (res.member.interaction.length > 0) {
               this.programForm.interaction = res.member.interaction;
               res.member.interaction.map(r => {
                 this.programForm.interactionVal.push(r.user_id);
               });
-            }else{
-              this.programForm.interaction = []
+            } else {
+              this.programForm.interaction = [];
             }
+            // h5
             if (res.member.h5) {
               this.programForm.h5 = res.member.h5;
               res.member.h5.map(r => {
                 this.programForm.H5Val.push(r.user_id);
               });
-            }else{
-              this.programForm.h5 = []
+            } else {
+              this.programForm.h5 = [];
             }
+            // 测试
             if (res.member.tester.length > 0) {
               this.programForm.tester = res.member.tester;
               res.member.tester.map(r => {
                 this.programForm.test.push(r.user_id);
               });
-            }else{
-              this.programForm.tester = []
+            } else {
+              this.programForm.tester = [];
             }
+            // 运营
             if (res.member.operation.length > 0) {
               this.programForm.operation = res.member.operation;
               res.member.operation.map(r => {
                 this.programForm.platform.push(r.user_id);
               });
-            }else{
-              this.programForm.operation = []
+            } else {
+              this.programForm.operation = [];
             }
+            // 节目创意
             if (res.member.originality.length > 0) {
               this.programForm.originality = res.member.originality;
               res.member.originality.map(r => {
                 this.programForm.creative.push(r.user_id);
               });
-            }else{
-               this.programForm.originality = []
+            } else {
+              this.programForm.originality = [];
+            }
+            // 动画设计.Hidol
+            if (res.member.animation_hidol.length > 0) {
+              this.programForm.animation_hidol = res.member.animation_hidol;
+              res.member.animation_hidol.map(r => {
+                this.programForm.animatHidol.push(r.user_id);
+              });
+            } else {
+              this.programForm.animation_hidol = [];
+            }
+            // 后端iT技术
+            if (res.member.backend_docking.length > 0) {
+              this.programForm.backend_docking = res.member.backend_docking;
+              res.member.backend_docking.map(r => {
+                this.programForm.backend.push(r.user_id);
+              });
+            } else {
+              this.programForm.backend_docking = [];
+            }
+            // Hidol专利
+            if (res.member.hidol_patent.length > 0) {
+              this.programForm.hidol_patent = res.member.hidol_patent;
+              res.member.hidol_patent.map(r => {
+                this.programForm.hidol.push(r.user_id);
+              });
+            } else {
+              this.programForm.hidol_patent = [];
             }
           }
           this.setting.loading = false;
@@ -768,7 +1102,7 @@ export default {
           case "H5":
             this.peopleList = JSON.parse(JSON.stringify(this.programForm.h5));
             break;
-          case "animate":
+          case "animat":
             this.peopleList = JSON.parse(
               JSON.stringify(this.programForm.animation)
             );
@@ -786,6 +1120,21 @@ export default {
               JSON.stringify(this.programForm.operation)
             );
             break;
+          case "animatHidol":
+            this.peopleList = JSON.parse(
+              JSON.stringify(this.programForm.animation_hidol)
+            );
+            break;
+          case "hidol":
+            this.peopleList = JSON.parse(
+              JSON.stringify(this.programForm.hidol_patent)
+            );
+            break;
+          case "backend":
+            this.peopleList = JSON.parse(
+              JSON.stringify(this.programForm.backend_docking)
+            );
+            break;
         }
       }
     },
@@ -798,28 +1147,40 @@ export default {
           this.performanceChange("interaction", sum);
           break;
         case "creative":
-          this.creativeRate = this.form.total;
+          this.rate.originality = this.form.total;
           this.performanceChange("originality", sum);
           break;
         case "H5":
           this.h5Rate = this.form.total;
           this.performanceChange("h5", sum);
           break;
-        case "animate":
-          this.animateRate = this.form.total;
+        case "animat":
+          this.rate.animation = this.form.total;
           this.performanceChange("animation", sum);
           break;
         case "whole":
-          this.wholeRate = this.form.total;
+          this.rate.plan = this.form.total;
           this.performanceChange("plan", sum);
           break;
         case "test":
-          this.testRate = this.form.total;
+          this.rate.tester = this.form.total;
           this.performanceChange("tester", sum);
           break;
         case "platform":
-          this.platformRate = this.form.total;
+          this.rate.operation = this.form.total;
           this.performanceChange("operation", sum);
+          break;
+        case "animatHidol":
+          this.rate.animation_hidol = this.form.total;
+          this.performanceChange("animation_hidol", val, rate);
+          break;
+        case "hidol":
+          this.rate.hidol_patent = this.form.total;
+          this.performanceChange("hidol_patent", val, rate);
+          break;
+        case "backend":
+          this.rate.backend_docking = this.form.total;
+          this.performanceChange("backend_docking", val, rate);
           break;
       }
       this.disabledChange = true;
@@ -838,9 +1199,9 @@ export default {
         });
       }
     },
-
     // 添加人员 均分比列
     peopleHandle(val, rate, type) {
+      console.log(val);
       switch (type) {
         case "interaction":
           this.addRate("interaction", val, rate);
@@ -851,7 +1212,7 @@ export default {
         case "H5":
           this.addRate("h5", val, rate);
           break;
-        case "animate":
+        case "animat":
           this.addRate("animation", val, rate);
           break;
         case "whole":
@@ -862,6 +1223,15 @@ export default {
           break;
         case "platform":
           this.addRate("operation", val, rate);
+          break;
+        case "animatHidol":
+          this.addRate("animation_hidol", val, rate);
+          break;
+        case "hidol":
+          this.addRate("hidol_patent", val, rate);
+          break;
+        case "backend":
+          this.addRate("backend_docking", val, rate);
           break;
       }
     },
@@ -920,19 +1290,34 @@ export default {
       }
     },
     submit(formName) {
-      let mediaIds = [];
-      if (this.fileList.length > 0) {
-        this.fileList.map(r => {
-          mediaIds.push(r.id);
+      let planMediaIds = [];
+      if (this.fileList1.length > 0) {
+        this.fileList1.map(r => {
+          planMediaIds.push(r.id);
         });
-        this.ids = mediaIds.join(",");
+        this.ids = planMediaIds.join(",");
       } else {
         this.$message({
           type: "warning",
-          message: "素材必须上传"
+          message: "节目交互文档必须上传"
         });
         return;
       }
+
+      let animationMediaIds = [];
+      if (this.fileList.length > 0) {
+        this.fileList.map(r => {
+          animationMediaIds.push(r.id);
+        });
+        this.fileIds = animationMediaIds.join(",");
+      } else {
+        this.$message({
+          type: "warning",
+          message: "设计动画素材必须上传"
+        });
+        return;
+      }
+
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.setting.loading = true;
@@ -943,13 +1328,18 @@ export default {
             project_attribute: this.programForm.project_attribute,
             link_attribute: this.programForm.link_attribute,
             h5_attribute: this.programForm.h5_attribute,
-            xo_attribute: this.programForm.xo_attribute,
+            individual_attribute: this.programForm.individual_attribute,
+            hidol_attribute: this.programForm.hidol_attribute,
             remark: this.programForm.remark,
             art_innovate: this.programForm.art_innovate,
             dynamic_innovate: this.programForm.dynamic_innovate,
             interact_innovate: this.programForm.interact_innovate,
             type: this.programForm.type,
-            media_id: this.ids
+            animation_media: this.ids,
+            plan_media: this.fileIds,
+            // xo_attribute测试用 到时候删掉 这个属性已经不要了
+            xo_attribute: 0,
+            interaction_attribute: this.programForm.interaction_attribute
           };
           if (this.programForm.interaction.length > 0) {
             member.interaction = this.programForm.interaction;
@@ -968,9 +1358,49 @@ export default {
           }
           if (this.programForm.tester.length > 0) {
             member.tester = this.programForm.tester;
+            let tester = JSON.stringify(this.programForm.tester);
+            this.programForm.tester_quality = [];
+            JSON.parse(tester).map(r => {
+              this.programForm.tester_quality.push({
+                user_id: r.user_id,
+                user_name: r.user_name,
+                rate: (r.rate * 2).toFixed(4)
+              });
+            });
+            member.tester_quality = this.programForm.tester_quality;
           }
           if (this.programForm.operation.length > 0) {
             member.operation = this.programForm.operation;
+            this.programForm.operation_quality = [];
+            let operation = JSON.stringify(this.programForm.operation);
+            JSON.parse(operation).map(r => {
+              this.programForm.operation_quality.push({
+                user_id: r.user_id,
+                user_name: r.user_name,
+                rate: (r.rate / 2).toFixed(4)
+              });
+            });
+            member.operation_quality = this.programForm.operation_quality;
+          }
+          if (this.programForm.backend_docking.length > 0) {
+            member.backend_docking = this.programForm.backend_docking;
+          }
+          if (this.programForm.hidol_patent.length > 0) {
+            member.hidol_patent = this.programForm.hidol_patent;
+          }
+          if (this.programForm.animation_hidol.length > 0) {
+            member.animation_hidol = this.programForm.animation_hidol;
+          }
+          if (this.programForm.individual_attribute === 1) {
+            if (this.programForm.contract_id === "") {
+              this.$message({
+                type: "warning",
+                message: "为定制的时候合同编号，不能为空"
+              });
+              return;
+            } else {
+              args.contract_id = this.programForm.contract_id;
+            }
           }
           args.member = member;
           if (this.programID) {
@@ -1046,6 +1476,10 @@ export default {
       flex-direction: row;
       justify-content: space-between;
     }
+  }
+  .title {
+    font-weight: 600;
+    margin-bottom: 15px;
   }
   .hint {
     font-size: 20px;

@@ -125,7 +125,7 @@
 </template>
 
 <script>
-import { getPersonRewardList } from "service";
+import { getFutureRewardList } from "service";
 import {
   Select,
   Option,
@@ -183,7 +183,7 @@ export default {
     };
   },
   created() {
-    this.getPersonRewardList()
+    this.getFutureRewardList()
   },
   methods: {
     getProject(query) {
@@ -209,7 +209,7 @@ export default {
       }
     },
 
-    getPersonRewardList() {
+    getFutureRewardList() {
       this.setting.loading = true;
       let args = {
         page: this.pagination.currentPage,
@@ -222,7 +222,7 @@ export default {
       if (this.filters.status === "") {
         delete args.status;
       }
-      getPersonRewardList(this, args)
+      getFutureRewardList(this, args)
         .then(res => {
           this.tableData = res.data;
           this.pagination.total = res.meta.pagination.total;
@@ -239,15 +239,15 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields();
       this.pagination.currentPage = 1;
-      this.getPersonRewardList();
+      this.getFutureRewardList();
     },
     changePage(currentPage) {
       this.pagination.currentPage = currentPage;
-      this.getPersonRewardList();
+      this.getFutureRewardList();
     },
     search() {
       this.pagination.currentPage = 1;
-      this.getPersonRewardList();
+      this.getFutureRewardList();
     }
   }
 };

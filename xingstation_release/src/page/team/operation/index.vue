@@ -8,23 +8,8 @@
       <div class="program-content-wrap">
         <div class="search-wrap">
           <el-form ref="filters" :model="filters" :inline="true">
-            <el-form-item label prop="alias">
-              <el-select
-                v-model="filters.alias"
-                :loading="searchLoading"
-                remote
-                :remote-method="getProject"
-                placeholder="请输入节目名称"
-                filterable
-                clearable
-              >
-                <el-option
-                  v-for="item in projectList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.alias"
-                />
-              </el-select>
+            <el-form-item label prop="name">
+              <el-input v-model="filters.name" clearable placeholder="请输入文档名称"/>
             </el-form-item>
             <el-form-item label prop="beginDate">
               <el-date-picker
@@ -44,78 +29,39 @@
           </el-form>
         </div>
         <div class="total-wrap">
-          <span class="label">
-            总数：{{ pagination.total }}
-          </span>
-          <el-button 
-            v-if="legalAffairsManager || bonusManage" 
-            type="success"
-            size="small"
-            @click="addDuty">新增责任</el-button>
+          <span class="label">总数：{{ pagination.total }}</span>
+          <el-button v-if="operation" type="success" size="small" @click="addDocument">新增文档</el-button>
         </div>
         <el-table :data="tableData" style="width: 100%">
-          <el-table-column type="expand">
+          <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="100"/>
+          <el-table-column :show-overflow-tooltip="true" prop="name" label="文档名称" min-width="100"/>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="created_at"
+            label="上传日期"
+            min-width="100"
+          />
+          <el-table-column label="操作" min-width="150">
             <template slot-scope="scope">
-              <el-form label-position="left" inline class="demo-table-expand">
-                <el-form-item label="ID">
-                  <span>{{ scope.row.id }}</span>
-                </el-form-item>
-                <el-form-item label="名称">
-                  <span>{{ scope.row.name }}</span>
-                </el-form-item>
-                <el-form-item label="发生日期">
-                  <span>{{ scope.row.date }}</span>
-                </el-form-item>
-                <el-form-item label="测试">
-                  <span>{{ scope.row.test }}</span>
-                </el-form-item>
-                <el-form-item label="运营">
-                  <span>{{ scope.row.operation }}</span>
-                </el-form-item>
-                <el-form-item label="备注">
-                  <span>{{ scope.row.remark }}</span>
-                </el-form-item>
-              </el-form>
+              <el-button
+                v-if="operation"
+                type="primary"
+                size="small"
+                @click="editHandle(scope.row)"
+              >编辑</el-button>
+              <el-button
+                v-if="operation"
+                type="error"
+                size="small"
+                @click="deleteDocument(scope.row)"
+              >删除</el-button>
+              <el-button
+                v-if="legalAffairsManager || bonusManage"
+                size="small"
+                @click="downloadDocument(scope.row)"
+              >下载</el-button>
             </template>
           </el-table-column>
-          <el-table-column 
-            :show-overflow-tooltip="true" 
-            prop="id" 
-            label="ID" 
-            min-width="100"/>
-          <el-table-column
-            :show-overflow-tooltip="true"
-            prop="name"
-            label="名称"
-            min-width="100"
-          />
-          <el-table-column 
-            :show-overflow-tooltip="true" 
-            prop="date" 
-            label="发生日期" 
-            min-width="100"/>
-          <el-table-column 
-            :show-overflow-tooltip="true" 
-            prop="test" 
-            label="测试" 
-            min-width="100"/>
-          <el-table-column
-            :show-overflow-tooltip="true"
-            prop="operation"
-            label="运营"
-            min-width="100"
-          />
-          <el-table-column
-            v-if="legalAffairsManager || bonusManage"   
-            label="操作" 
-            min-width="150">
-            <template slot-scope="scope">
-              <el-button 
-                type="primary" 
-                size="small"
-                @click="editHandle(scope.row)">编辑</el-button>
-            </template>
-          </el-table-column >
         </el-table>
         <div class="pagination-wrap">
           <el-pagination
@@ -132,11 +78,16 @@
 </template>
 
 <script>
-import { getEventList,getSearchProjectList } from "service";
+import {
+  deleteOperationDocument,
+  getOperationDocumentList,
+  saveOperationDocument,
+  modifyOperationDocument,
+  getOperationDocumentDetails,
+  handleDateTypeTransform
+} from "service";
 import { Cookies } from "utils/cookies";
 import {
-  Select,
-  Option,
   Button,
   Input,
   Table,
@@ -151,8 +102,6 @@ import {
 export default {
   components: {
     "el-table": Table,
-    "el-select": Select,
-    "el-option": Option,
     "el-table-column": TableColumn,
     "el-button": Button,
     "el-input": Input,
@@ -213,9 +162,8 @@ export default {
         ]
       },
       searchLoading: false,
-      projectList: [],
       filters: {
-        alias: "",
+        name: "",
         beginDate: []
       },
       setting: {
@@ -227,16 +175,14 @@ export default {
         pageSize: 10,
         currentPage: 1
       },
-      role: "",
-      tableData: [{
-        id:1,
-        name:'aaa',
-        date: '2018-09-09',
-        test: 'a',
-        operation: 'b',
-        remark:'发生了xxxxxxxxxx重大bug，发生了xxxxxxxxxx重大bug，导致了发生了xxxxxxxxxx重大bug发生了xxxxxxxxxx重大bug，导致了发生了xxxxxxxxxx重大bug'
-
-      }]
+      role: null,
+      tableData: [
+        {
+          id: 1,
+          name: "aaa",
+          created_at: "2018-09-09"
+        }
+      ]
     };
   },
   computed: {
@@ -250,58 +196,80 @@ export default {
         return r.name === "bonus-manager";
       });
     },
+    operation: function() {
+      return this.role.find(r => {
+        return r.name === "operation";
+      });
+    }
   },
   created() {
     let user_info = JSON.parse(Cookies.get("user_info"));
     this.role = user_info.roles.data;
+    // this.getOperationDocumentList();
   },
   methods: {
-    getProject(query) {
-      if (query !== "") {
-        this.searchLoading = true;
-        let args = {
-          name: query
-        };
-        return getSearchProjectList(this, args)
-          .then(response => {
-            this.projectList = response.data;
-            if (this.projectList.length == 0) {
-              this.filters.alias = "";
-              this.projectList = [];
-            }
-            this.searchLoading = false;
-          })
-          .catch(err => {
-            this.searchLoading = false;
+    editHandle(data) {},
+    addDocument() {},
+    deleteDocument(data) {
+      this.$confirm("确认删除吗?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          let id = data.id;
+          deleteOperationDocument(this, id)
+            .then(res => {
+              this.$message({
+                type: "success",
+                message: "删除成功!"
+              });
+              this.getOperationDocumentList();
+            })
+            .catch(err => {
+              this.$message({
+                type: "warning",
+                message: err.response.data.message
+              });
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消确认"
           });
-      } else {
-        this.projectList = [];
-      }
+        });
     },
-    editHandle(data) {
-      this.$router.push({
-        path: "duty/edit/" + data.id
-      });
+    downloadDocument(data) {
+      let url = data.url;
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", url, true);
+      xhr.responseType = "blob";
+      xhr.onload = () => {
+        var urlObject = window.URL || window.webkitURL || window;
+        let a = document.createElement("a");
+        a.href = urlObject.createObjectURL(new Blob([xhr.response]));
+        a.download = data.name;
+        a.click();
+      };
+      xhr.send();
     },
-    addDuty() {
-      this.$router.push({
-        path: "duty/add"
-      });
-    },
-    getEventList() {
+    getOperationDocumentList() {
       this.setting.loading = true;
       let args = {
         page: this.pagination.currentPage,
-        alias: this.filters.alias,
-        status: this.filters.status
+        name: this.filters.name,
+        start_date: handleDateTypeTransform(this.filters.beginDate[0]),
+        end_date: handleDateTypeTransform(this.filters.beginDate[1])
       };
-      if (this.filters.alias === "") {
-        delete args.alias;
+      if (this.filters.name === "") {
+        delete args.name;
       }
-      if (this.filters.status === "") {
-        delete args.status;
+      if (JSON.stringify(this.filters.beginDate) === "[]") {
+        delete args.start_date_begin;
+        delete args.end_date_begin;
       }
-      getEventList(this, args)
+      getOperationDocumentList(this, args)
         .then(res => {
           this.tableData = res.data;
           this.pagination.total = res.meta.pagination.total;
@@ -318,15 +286,15 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields();
       this.pagination.currentPage = 1;
-      this.getEventList();
+      this.getOperationDocumentList();
     },
     changePage(currentPage) {
       this.pagination.currentPage = currentPage;
-      this.getEventList();
+      this.getOperationDocumentList();
     },
     search() {
       this.pagination.currentPage = 1;
-      this.getEventList();
+      this.getOperationDocumentList();
     }
   }
 };

@@ -233,6 +233,74 @@ const getMediaUpload = (context, params) => {
   })
 }
 
+// 运营文档列表
+const getOperationDocumentList = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + FUTURE_REWARD_API, { params: params })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+// 保存运营文档
+const saveOperationDocument = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .post(HOST + TEAM_API, params)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+// 修改运营文档
+const modifyOperationDocument = (context, params, id) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .patch(HOST + TEAM_API + '/' + id, params)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+// 得到运营文档详情
+const getOperationDocumentDetails = (context, id) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + TEAM_RATE_API + '/' + id)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+// 删除运营文档详情
+const deleteOperationDocument = (context, id) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .delete(HOST + TEAM_RATE_API + '/' + id)
+      .then(response => {
+        resolve(response)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
 export {
   getProgramList,
   saveProgram,
@@ -250,5 +318,10 @@ export {
   modifyEvent,
   getEventDetails,
   getQiniuToken,
-  getMediaUpload
+  getMediaUpload,
+  getOperationDocumentList,
+  saveOperationDocument,
+  modifyOperationDocument,
+  getOperationDocumentDetails,
+  deleteOperationDocument
 }

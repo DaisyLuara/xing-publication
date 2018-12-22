@@ -16,12 +16,12 @@
         </el-form-item>
         <el-form-item
           prop="interaction_linkage"
-          label="交互技术-联动引擎"
-          :rules="{required: true, message: '交互技术-联动引擎不能为空', trigger: 'submit'}"
+          label="交互技术-交互引擎"
+          :rules="{required: true, message: '交互技术-交互引擎不能为空', trigger: 'submit'}"
         >
           <el-input
             v-model="rateForm.interaction_linkage"
-            placeholder="请输入交互技术-联动引擎"
+            placeholder="请输入交互技术-交互引擎"
             class="item-input"
           />
         </el-form-item>
@@ -67,12 +67,12 @@
         </el-form-item>
         <el-form-item
           prop="operation_quality"
-          label="运营保质"
-          :rules="{required: true, message: '运营保质不能为空', trigger: 'submit'}"
+          label="运营验收"
+          :rules="{required: true, message: '运营验收不能为空', trigger: 'submit'}"
         >
           <el-input 
             v-model="rateForm.operation_quality" 
-            placeholder="请输入运营保质" 
+            placeholder="请输入运营验收" 
             class="item-input"/>
         </el-form-item>
         <el-form-item
@@ -128,12 +128,12 @@
         </el-form-item>
         <el-form-item
           prop="tester_quality"
-          label="测试保质"
-          :rules="{required: true, message: '测试保质不能为空', trigger: 'submit'}"
+          label="测试总责"
+          :rules="{required: true, message: '测试总责不能为空', trigger: 'submit'}"
         >
           <el-input 
             v-model="rateForm.tester_quality" 
-            placeholder="请输入测试保质" 
+            placeholder="请输入测试总责" 
             class="item-input"/>
         </el-form-item>
         <el-form-item
