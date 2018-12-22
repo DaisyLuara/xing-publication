@@ -51,7 +51,24 @@ class CouponBatchController extends Controller
             'company_id' => $company->id,
             'create_user_id' => $this->user->id,
             'bd_user_id' => $company->user_id,
-        ], $request->all()))->save();
+        ], $request->except(['marketid', 'oid'])))->save();
+
+        //绑定商场
+        if ($request->filled('marketid') && empty($request->oid)) {
+           $couponBatch->marketPointCouponBatches()->create([
+               'marketid' => $request->marketid,
+           ]);
+        }
+
+        //绑定点位
+        if ($request->oid) {
+            foreach ($request->oid as $oid) {
+                $couponBatch->marketPointCouponBatches()->create([
+                    'marketid' => $request->marketid,
+                    'oid' => $oid,
+                ]);
+            }
+        }
 
         if ($request->has('wechat')) {
             $wechatCouponBatch = WechatCouponBatch::query()->create($request->get('wechat'));
@@ -66,9 +83,26 @@ class CouponBatchController extends Controller
 
     public function update(CouponBatch $couponBatch, Request $request)
     {
-        $couponBatch->update($request->all());
+        $couponBatch->update($request->except(['marketid', 'oid']));
         if ($request->wechat && $couponBatch->wechat) {
             $couponBatch->wechat()->update($request['wechat']);
+        }
+
+        //商场点位重新绑定
+        $couponBatch->marketPointCouponBatches()->delete();
+        if ($request->filled('marketid') && empty($request->oid)) {
+            $couponBatch->marketPointCouponBatches()->create([
+                'marketid' => $request->marketid,
+            ]);
+        }
+
+        if ($request->oid) {
+            foreach ($request->oid as $oid) {
+                $couponBatch->marketPointCouponBatches()->create([
+                    'marketid' => $request->marketid,
+                    'oid' => $oid,
+                ]);
+            }
         }
 
         activity('coupon_batch')->on($couponBatch)->withProperties($request->all())->log('修改优惠券规则');

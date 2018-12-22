@@ -1,16 +1,16 @@
 <template>
-  <div class="platform-root">
+  <div class="duty-root">
     <router-view/>
   </div>
 </template>
 <script>
 export default {
-  name: 'PlatformView'
+  name: 'DutyView'
 }
 </script>
 
 <style lang="less" scoped>
-.platform-root {
+.duty-root {
   height: 100%;
   background-color: #eff2f7;
 }

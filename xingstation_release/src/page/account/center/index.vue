@@ -55,6 +55,13 @@
               class="label">
               累计奖金(¥):<span class="count">{{ moneyTotal }}</span>
             </span>
+            <span 
+              class="label"
+              style="margin-left:20px;">
+              冻结奖金: 
+              <span class="count">{{ freezeTotal }}</span>
+              <span class="details" style="margin-left:20px;cursor:pointer;" @click="freezeDetail">明细</span>
+            </span>
           </div>
         </div>
         <el-table 
@@ -85,20 +92,8 @@
                   <span>{{ scope.row.type }}</span> 
                 </el-form-item>
                 <el-form-item 
-                  label="体验绩效">
+                  label="节目制造">
                   <span>{{ scope.row.experience_money }}</span> 
-                </el-form-item>
-                <el-form-item 
-                  label="平台绩效">
-                  <span>{{ scope.row.system_money }}</span> 
-                </el-form-item>
-                <el-form-item 
-                  label="小偶绩效">
-                  <span>{{ scope.row.xo_money }}</span> 
-                </el-form-item>
-                <el-form-item 
-                  label="联动绩效">
-                  <span>{{ scope.row.link_money }}</span> 
                 </el-form-item>
                 <el-form-item 
                   label="总计">
@@ -130,22 +125,7 @@
           <el-table-column
             :show-overflow-tooltip="true"
             prop="experience_money"
-            label="体验绩效"
-            min-width="100"/>
-          <el-table-column
-            :show-overflow-tooltip="true"
-            prop="system_money"
-            label="平台绩效"
-            min-width="100"/>
-          <el-table-column
-            :show-overflow-tooltip="true"
-            prop="xo_money"
-            label="小偶绩效"
-            min-width="100"/>
-          <el-table-column
-            :show-overflow-tooltip="true"
-            prop="link_money"
-            label="联动绩效"
+            label="节目制造"
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
@@ -199,6 +179,7 @@ export default {
   },
   data() {
     return {
+      freezeTotal:0,
       filters: {
         name: '',
         beginDate: [
@@ -274,6 +255,11 @@ export default {
     this.getPersonRewardTotal()
   },
   methods: {
+    freezeDetail(){
+      this.$router.push({
+        path:'/account/center/freeze'
+      })
+    },
     getPersonRewardTotal() {
       let args = {
         name: this.filters.name,
@@ -414,6 +400,9 @@ export default {
           margin: 5px 0;
           .count {
             color: #03a9f4;
+          }
+          .details{
+            color: #00BCD4;
           }
         }
       }

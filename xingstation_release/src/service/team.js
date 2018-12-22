@@ -1,12 +1,11 @@
 const HOST = process.env.SERVER_URL
 
 const TEAM_API = '/api/team_project'
-const TEAM_SYSTEM_API = '/api/team_system_project'
 const TEAM_RATE_API = '/api/team_rate'
-const SYSTEM_BONUS_API = '/api/system_bonus'
-const SYSTEM_DISTRIBTION_BONUS_API = '/api/distribution_bonus'
-const SYSTEM_DETAIL_API = '/api/system_detail'
 const PERSON_REWARD_API = '/api/person_reward'
+const FUTURE_REWARD_API = '/api/person_future_reward'
+const QINNIU_API = '/api/qiniu_oauth'
+const MEDIA_UPLOAD_AP = '/api/media_upload'
 
 // 得到项目列表
 const getProgramList = (context, params) => {
@@ -112,104 +111,6 @@ const modifyTeamRate = (context, id, params) => {
       })
   })
 }
-// 新建平台申请
-const saveTeamSystemProject = (context, params) => {
-  return new Promise(function(resolve, reject) {
-    context.$http
-      .post(HOST + TEAM_SYSTEM_API, params)
-      .then(response => {
-        resolve(response.data)
-      })
-      .catch(error => {
-        reject(error)
-      })
-  })
-}
-
-// 获得平台申请列表
-const getTeamSystemProject = (context, params) => {
-  return new Promise(function(resolve, reject) {
-    context.$http
-      .get(HOST + TEAM_SYSTEM_API, { params: params })
-      .then(response => {
-        resolve(response.data)
-      })
-      .catch(error => {
-        reject(error)
-      })
-  })
-}
-
-// 奖金分配
-const systemDistribute = (context, id, params) => {
-  return new Promise(function(resolve, reject) {
-    context.$http
-      .post(HOST + TEAM_SYSTEM_API + '/distribute/' + id, params)
-      .then(response => {
-        resolve(response.data)
-      })
-      .catch(error => {
-        reject(error)
-      })
-  })
-}
-
-// 平台总奖金
-const getSystemBonus = (context, params) => {
-  return new Promise(function(resolve, reject) {
-    context.$http
-      .get(HOST + SYSTEM_BONUS_API, { params: params })
-      .then(response => {
-        resolve(response.data)
-      })
-      .catch(error => {
-        reject(error)
-      })
-  })
-}
-// 平台已分配奖金
-const getDistributionBonus = (context, params) => {
-  return new Promise(function(resolve, reject) {
-    context.$http
-      .get(HOST + SYSTEM_DISTRIBTION_BONUS_API, { params: params })
-      .then(response => {
-        resolve(response.data)
-      })
-      .catch(error => {
-        reject(error)
-      })
-  })
-}
-
-// 平台驳回
-const systemReject = (context, id, params) => {
-  return new Promise(function(resolve, reject) {
-    context.$http
-      .post(HOST + TEAM_SYSTEM_API + '/reject/' + id, params)
-      .then(response => {
-        resolve(response.data)
-      })
-      .catch(error => {
-        reject(error)
-      })
-  })
-}
-
-// 平台明细列表
-
-const getSystemDetails = (context, params) => {
-  return new Promise(function(resolve, reject) {
-    context.$http
-      .get(HOST + SYSTEM_DETAIL_API, { params: params })
-      .then(response => {
-        resolve(response.data)
-      })
-      .catch(error => {
-        reject(error)
-      })
-  })
-}
-
 // 个人奖金列表
 const getPersonRewardList = (context, params) => {
   return new Promise(function(resolve, reject) {
@@ -236,12 +137,11 @@ const getPersonRewardTotal = (context, params) => {
       })
   })
 }
-
-// 法务新增平台明细分配
-const saveSystemDetailMoney = (context, params) => {
+// 冻结明细列表
+const getFutureRewardList = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .post(HOST + SYSTEM_DETAIL_API, params)
+      .get(HOST + FUTURE_REWARD_API, { params: params })
       .then(response => {
         resolve(response.data)
       })
@@ -251,11 +151,11 @@ const saveSystemDetailMoney = (context, params) => {
   })
 }
 
-// 法务修改平台明细分配
-const modifySystemDetailMoney = (context, id, params) => {
+// 重大列表
+const getEventList = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .patch(HOST + SYSTEM_DETAIL_API + '/' + id, params)
+      .get(HOST + FUTURE_REWARD_API, { params: params })
       .then(response => {
         resolve(response.data)
       })
@@ -264,13 +164,136 @@ const modifySystemDetailMoney = (context, id, params) => {
       })
   })
 }
-// 平台明细分配详情
-const getSystemlMoneyDetail = (context, id) => {
+
+// 保存重大事件
+const saveEvent = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .get(HOST + SYSTEM_DETAIL_API + '/' + id)
+      .post(HOST + TEAM_API, params)
       .then(response => {
         resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+// 修改重大事件
+const modifyEvent = (context, params, id) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .patch(HOST + TEAM_API + '/' + id, params)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+// 得到重大事件详情
+const getEventDetails = (context, id) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + TEAM_RATE_API + '/' + id)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+// 获得七牛token
+const getQiniuToken = context => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + QINNIU_API)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+// 传给后台七牛的key和文件name
+const getMediaUpload = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .post(HOST + MEDIA_UPLOAD_AP, params)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+// 运营文档列表
+const getOperationDocumentList = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + FUTURE_REWARD_API, { params: params })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+// 保存运营文档
+const saveOperationDocument = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .post(HOST + TEAM_API, params)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+// 修改运营文档
+const modifyOperationDocument = (context, params, id) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .patch(HOST + TEAM_API + '/' + id, params)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+// 得到运营文档详情
+const getOperationDocumentDetails = (context, id) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + TEAM_RATE_API + '/' + id)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+// 删除运营文档详情
+const deleteOperationDocument = (context, id) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .delete(HOST + TEAM_RATE_API + '/' + id)
+      .then(response => {
+        resolve(response)
       })
       .catch(error => {
         reject(error)
@@ -287,16 +310,18 @@ export {
   getTeamRate,
   getTeamRateDetails,
   modifyTeamRate,
-  saveTeamSystemProject,
-  getTeamSystemProject,
-  systemDistribute,
-  getSystemBonus,
-  getDistributionBonus,
-  systemReject,
-  getSystemDetails,
   getPersonRewardList,
   getPersonRewardTotal,
-  saveSystemDetailMoney,
-  modifySystemDetailMoney,
-  getSystemlMoneyDetail
+  getFutureRewardList,
+  getEventList,
+  saveEvent,
+  modifyEvent,
+  getEventDetails,
+  getQiniuToken,
+  getMediaUpload,
+  getOperationDocumentList,
+  saveOperationDocument,
+  modifyOperationDocument,
+  getOperationDocumentDetails,
+  deleteOperationDocument
 }

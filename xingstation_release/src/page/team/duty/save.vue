@@ -1,0 +1,247 @@
+<template>
+  <div class="item-wrap-template">
+    <div v-loading="setting.loading" :element-loading-text="setting.loadingText" class="pane">
+      <div class="pane-title">{{ dutyId ? '修改事件' : '新增事件'}}</div>
+      <el-form ref="dutyForm" :model="dutyForm" label-width="150px" class="duty-form">
+        <el-form-item
+          prop="project_id"
+          label="节目名称"
+          :rules="{required: true, message: '节目名称不能为空', trigger: 'submit'}"
+        >
+          <el-select
+            v-model="dutyForm.project_id"
+            placeholder="请选择节目名称"
+            clearable
+            class="coupon-form-select"
+          >
+            <el-option
+              v-for="item in projectList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item prop="test" label="测试">
+          <el-input v-model="dutyForm.test" :disabled="true" class="item-input"/>
+        </el-form-item>
+        <el-form-item prop="operation" label="运营">
+          <el-input v-model="dutyForm.operation" :disabled="true" class="item-input"/>
+        </el-form-item>
+        <el-form-item
+          :rules="{required: true, message: '发生日期不能为空', trigger: 'submit'}"
+          label="发生日期"
+          prop="date"
+        >
+          <el-date-picker
+            v-model="dutyForm.date"
+            :picker-options="pickerOptions"
+            type="date"
+            placeholder="选择日期"
+            class="coupon-form-date"
+          />
+        </el-form-item>
+        <el-form-item
+          :rules="[{ required: true, message: '请输入备注', trigger: 'submit' }]"
+          label="备注"
+          prop="remark"
+        >
+          <el-input
+            v-model="dutyForm.remark"
+            :autosize="{ minRows: 2}"
+            :maxlength="1000"
+            type="textarea"
+            placeholder="请填写备注"
+            class="text-input"
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" size="small" @click="submit('dutyForm')">保存</el-button>
+          <el-button size="small" @click="historyBack">返回</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+  </div>
+</template>
+
+<script>
+import { saveEvent, modifyEvent, getEventDetails, historyBack } from "service";
+import {
+  Form,
+  FormItem,
+  Button,
+  Input,
+  MessageBox,
+  DatePicker,
+  Select,
+  Option
+} from "element-ui";
+
+export default {
+  components: {
+    ElForm: Form,
+    ElFormItem: FormItem,
+    ElButton: Button,
+    ElInput: Input,
+    ElDatePicker: DatePicker,
+    ElSelect: Select,
+    ElOption: Option
+  },
+  data() {
+    return {
+      dutyForm: {
+        project_id: "",
+        test: "",
+        operation: "",
+        date: "",
+        remark: ""
+      },
+      pickerOptions: {
+        disabledDate: time => {
+          let month = new Date().getMonth()+1
+          let year = new Date().getFullYear()
+          if( 10 <= month && month <=12 ){
+            return (
+              time.getTime() > new Date(`${year}/12/31`).getTime() ||
+              time.getTime() < new Date(`${year}/10/01`).getTime()
+            )
+          }
+
+          if( 7 <= month && month <= 9 ){
+            return (
+              time.getTime() > new Date(`${year}/09/30`).getTime() ||
+              time.getTime() < new Date(`${year}/07/01`).getTime()
+            )
+          }
+
+          if( 4 <= month && month <= 6 ){
+            return (
+              time.getTime() > new Date(`${year}/06/30`).getTime() ||
+              time.getTime() < new Date(`${year}/04/01`).getTime()
+            )
+          }
+
+          if( 1 <= month && month <= 3 ){
+            return (
+              time.getTime() > new Date(`${year}/03/31`).getTime() ||
+              time.getTime() < new Date(`${year}/01/01`).getTime()
+            )
+          }
+          
+        }
+      },
+      projectList: [],
+      dutyId: "",
+      setting: {
+        isOpenSelectAll: true,
+        loading: false,
+        loadingText: "拼命加载中"
+      }
+    };
+  },
+  created() {
+    this.dutyId = this.$route.params.uid;
+    // this.getEventDetails();
+  },
+  methods: {
+    historyBack() {
+      historyBack();
+    },
+    getEventDetails() {
+      this.setting.loading = true;
+      getEventDetails(this, this.dutyId)
+        .then(res => {
+          this.rateForm = res;
+          delete this.rateForm.id;
+          this.setting.loading = false;
+        })
+        .catch(err => {
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
+          this.setting.loading = false;
+        });
+    },
+    submit(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.setting.loading = true;
+          let args = this.rateForm;
+          if (this.dutyId) {
+            modifyEvent(this, this.dutyId, args)
+              .then(res => {
+                this.$message({
+                  type: "success",
+                  message: "修改成功"
+                });
+                this.$router.push({
+                  path: "/team/duty"
+                });
+                this.setting.loading = false;
+              })
+              .catch(err => {
+                this.$message({
+                  type: "warning",
+                  message: err.response.data.message
+                });
+                this.setting.loading = false;
+              });
+          } else {
+            saveEvent(this, args)
+              .then(res => {
+                this.$message({
+                  type: "success",
+                  message: "保存成功"
+                });
+                this.$router.push({
+                  path: "/team/duty"
+                });
+                this.setting.loading = false;
+              })
+              .catch(err => {
+                this.$message({
+                  type: "warning",
+                  message: err.response.data.message
+                });
+                this.setting.loading = false;
+              });
+          }
+        }
+      });
+    }
+  }
+};
+</script>
+
+<style lang="less" scoped>
+.item-wrap-template {
+  .pane {
+    border-radius: 5px;
+    background-color: white;
+    padding: 20px 40px 80px;
+
+    .el-select,
+    .item-input,
+    .el-date-editor.el-input {
+      width: 350px;
+    }
+    .item-list {
+      .program-title {
+        color: #555;
+        font-size: 14px;
+      }
+    }
+    .duty-form{
+      width: 900px;
+    }
+    .pane-title {
+      padding-bottom: 20px;
+      font-size: 18px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+}
+</style>

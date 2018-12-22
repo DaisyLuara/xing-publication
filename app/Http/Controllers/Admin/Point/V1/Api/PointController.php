@@ -161,7 +161,11 @@ class PointController extends Controller
                 unset($contract['oid']);
             }
 
-            $point->contract()->getResults()->update($contract);
+            if($point_contract = $point->contract()->getResults()){
+                $point_contract->update($contract);
+            }else {
+                $point->contract()->create($contract);
+            }
         }
 
         if ($request->has('share')) {
@@ -169,7 +173,13 @@ class PointController extends Controller
             if (isset($share['oid'])) {
                 unset($share['oid']);
             }
-            $point->share()->getResults()->update($share);
+
+            if($point_share = $point->share()->getResults()){
+                $point_share->update($share);
+            }else{
+                $point->share()->create($share);
+            }
+
         }
 
         return $this->response->item($point, new PointTransformer());

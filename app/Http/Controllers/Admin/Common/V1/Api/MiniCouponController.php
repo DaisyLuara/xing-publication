@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Common\V1\Transformer\CouponTransformer;
 use App\Http\Controllers\Admin\Common\V1\Request\MiniCouponRequest;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
+use App\Http\Controllers\Admin\Point\V1\Models\UserActivation;
 use App\Http\Controllers\Admin\User\V1\Models\ArMemberSession;
 use function GuzzleHttp\Psr7\parse_query;
 use App\Http\Controllers\Controller;
@@ -77,12 +78,14 @@ class MiniCouponController extends Controller
     /**
      * 获取可用 优惠券规则列表
      */
-    public function couponBatchesIndex(Request $request, CouponBatch $couponBatch)
+    public function couponBatchesIndex(MiniCouponRequest $request, CouponBatch $couponBatch)
     {
         /**
          * @todo  多个商户参加活动 优惠券配置
          * 新增字段 campaign_id 硬编码 获取活动ID为1的优惠券
          */
+        $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
+
         $query = $couponBatch->query();
 
         if ($request->has('scene')) {
@@ -100,6 +103,28 @@ class MiniCouponController extends Controller
         if ($request->has('acid')) {
             $query->whereHas('activityCouponBatches', function ($q) use ($request) {
                 $q->where('activity_id', $request->acid);
+            });
+        }
+
+        if ($request->has('oid')) {
+            //用户已激活点位
+            $oids = UserActivation::query()->where('uid', $member->uid)->pluck('oid')->toArray();
+            abort_if(!in_array($request->oid, $oids), 500, '无可用优惠券');
+
+            //优惠券对用点位
+            $query->whereHas('marketPointCouponBatches', function ($q) use($request) {
+                $q->where('oid', $request->oid);
+            });
+        }
+
+        if ($request->has('marketid')) {
+            //用户已激活商场
+            $marketids = UserActivation::query()->where('uid', $member->uid)->pluck('marketid')->toArray();
+            abort_if(!in_array($request->marketid, $marketids), 500, '无可用优惠券');
+
+            //优惠券对应商场
+            $query->whereHas('marketPointCouponBatches', function ($q) use($request) {
+                $q->where('marketid', $request->marketid);
             });
         }
 

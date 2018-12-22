@@ -49,7 +49,7 @@ class RollbackTeamData extends Command
             TeamBonusRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
             TeamBonusRecord::create(['date' => $date]);
         } else {
-            TeamBonusRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-11-21'");
+            TeamBonusRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-11-21'")->delete();
         }
         DB::table('team_bonuses')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
         DB::table('team_person_rewards')->whereRaw("date_format(date,'%Y-%m-%d')>='$date' and belong<>'system'")->delete();

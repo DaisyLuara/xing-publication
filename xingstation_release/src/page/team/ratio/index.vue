@@ -15,17 +15,11 @@
           <el-table-column type="expand">
             <template slot-scope="scope">
               <el-form label-position="left" inline class="demo-table-expand">
-                <!-- <el-form-item label="交互技术">
-                  <span>{{ scope.row.interaction }}</span>
-                </el-form-item> -->
                 <el-form-item label="交互技术-中间件">
                   <span>{{ scope.row.interaction_api }}</span>
                 </el-form-item>
-                <el-form-item label="交互技术-联动引擎">
+                <el-form-item label="交互技术-交互引擎">
                   <span>{{ scope.row.interaction_linkage }}</span>
-                </el-form-item>
-                <el-form-item label="后端IT技术对接">
-                  <span>{{ scope.row.backend_docking }}</span>
                 </el-form-item>
                 <el-form-item label="H5基础">
                   <span>{{ scope.row.h5_1 }}</span>
@@ -33,17 +27,17 @@
                 <el-form-item label="H5复杂">
                   <span>{{ scope.row.h5_2 }}</span>
                 </el-form-item>
-                <el-form-item label="节目统筹">
-                  <span>{{ scope.row.plan }}</span>
-                </el-form-item>
-                <el-form-item label="运营基础">
+                <el-form-item label="运营基本">
                   <span>{{ scope.row.operation }}</span>
                 </el-form-item>
-                <el-form-item label="运营保质">
+                <el-form-item label="运营验收">
                   <span>{{ scope.row.operation_quality }}</span>
                 </el-form-item>
                 <el-form-item label="节目创意">
                   <span>{{ scope.row.originality }}</span>
+                </el-form-item>
+                <el-form-item label="Hidol专利">
+                  <span>{{ scope.row.hidol_patent }}</span>
                 </el-form-item>
                 <el-form-item label="设计动画">
                   <span>{{ scope.row.animation }}</span>
@@ -51,31 +45,46 @@
                 <el-form-item label="设计动画-Hidol对接">
                   <span>{{ scope.row.animation_hidol }}</span>
                 </el-form-item>
-                <el-form-item label="Hidol专利">
-                  <span>{{ scope.row.hidol_patent }}</span>
-                </el-form-item>
-                <el-form-item label="测试基础">
+                <el-form-item label="测试基本">
                   <span>{{ scope.row.tester }}</span>
                 </el-form-item>
-                <el-form-item label="测试保质">
+                <el-form-item label="测试总责">
                   <span>{{ scope.row.tester_quality }}</span>
+                </el-form-item>
+                <el-form-item label="后端IT技术对接">
+                  <span>{{ scope.row.backend_docking }}</span>
+                </el-form-item>
+                <el-form-item label="节目统筹">
+                  <span>{{ scope.row.plan }}</span>
                 </el-form-item>
               </el-form>
             </template>
           </el-table-column>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="interaction_api"
-            label="交互技术-中间件"
+            prop="interaction_linkage"
+            label="交互技术-交互引擎"
             min-width="70"
           />
-          <el-table-column :show-overflow-tooltip="true" prop="h5_1" label="H5基础" min-width="70"/>
-          <el-table-column :show-overflow-tooltip="true" prop="h5_2" label="H5复杂" min-width="70"/>
-          <el-table-column :show-overflow-tooltip="true" prop="plan" label="节目统筹" min-width="70"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="h5_1" 
+            label="H5基础" 
+            min-width="70"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="h5_2" 
+            label="H5复杂" 
+            min-width="70"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="plan" 
+            label="节目统筹" 
+            min-width="70"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="operation"
-            label="平台运营"
+            label="运营基本"
             min-width="70"
           />
           <el-table-column
@@ -90,9 +99,9 @@
             label="设计动画"
             min-width="70"
           />
-          <el-table-column :show-overflow-tooltip="true" prop="tester" label="节目测试" min-width="70"/>
+          <el-table-column :show-overflow-tooltip="true" prop="tester" label="测试基本" min-width="70"/>
           <el-table-column
-            v-if="role.name === 'legal-affairs-manager' || role.name === 'bonus-manager'"
+            v-if="legalAffairsManager || bonusManage"
             label="操作"
             min-width="90"
           >
@@ -152,10 +161,22 @@ export default {
       tableData: []
     };
   },
+  computed: {
+    bonusManage: function() {
+      return this.role.find(r => {
+        return r.name === "bonus-manager";
+      });
+    },
+    legalAffairsManager: function() {
+      return this.role.find(r => {
+        return r.name === "legal-affairs-manager";
+      });
+    }
+  },
   created() {
     this.getTeamRate();
     let user_info = JSON.parse(Cookies.get("user_info"));
-    this.role = user_info.roles.data[0];
+    this.role = user_info.roles.data;
   },
   methods: {
     editHandle(data) {

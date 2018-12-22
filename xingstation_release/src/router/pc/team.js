@@ -83,48 +83,68 @@ let router = {
         }
       ]
     },
-    // {
-    //   path: 'platform',
-    //   name: '平台项目',
-    //   redirect: 'platform',
-    //   meta: {
-    //     title: '平台项目'
-    //   },
-    //   component: () =>
-    //     import(/* webpackChunkName: "page/team/platform/routerView" */ 'page/team/platform/routerView'),
-    //   children: [
-    //     {
-    //       path: '/',
-    //       name: '平台项目列表',
-    //       meta: {
-    //         title: '平台项目列表'
-    //       },
-    //       component: () =>
-    //         import(/* webpackChunkName: "page/team/platform/index" */ 'page/team/platform/index')
-    //     }
-    //   ]
-    // },
-    // {
-    //   path: 'detail',
-    //   name: '平台明细',
-    //   redirect: 'detail',
-    //   meta: {
-    //     title: '平台明细'
-    //   },
-    //   component: () =>
-    //     import(/* webpackChunkName: "page/team/detail/routerView" */ 'page/team/detail/routerView'),
-    //   children: [
-    //     {
-    //       path: '/',
-    //       name: '平台明细列表',
-    //       meta: {
-    //         title: '平台明细列表'
-    //       },
-    //       component: () =>
-    //         import(/* webpackChunkName: "page/team/detail/index" */ 'page/team/detail/index')
-    //     }
-    //   ]
-    // }
+    {
+      path: 'duty',
+      name: '重大责任',
+      redirect: 'duty',
+      meta: {
+        title: '重大责任'
+      },
+      component: () =>
+        import(/* webpackChunkName: "page/team/duty/routerView" */ 'page/team/duty/routerView'),
+      children: [
+        {
+          path: '/',
+          name: '重大责任列表',
+          meta: {
+            title: '重大责任列表'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/team/duty/index" */ 'page/team/duty/index')
+        },
+        {
+          path: 'add',
+          name: '新增责任',
+          meta: {
+            title: '新增责任',
+            permission: ''
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/team/duty/save" */ 'page/team/duty/save')
+        },
+        {
+          path: 'edit/:uid',
+          name: '修改责任',
+          meta: {
+            title: '修改责任',
+            permission: ''
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/team/duty/save" */ 'page/team/duty/save')
+        }
+      ]
+    },
+    {
+      path: 'operation',
+      name: '运营文档',
+      redirect: 'operation',
+      meta: {
+        title: '运营文档'
+      },
+      component: () =>
+        import(/* webpackChunkName: "page/team/operation/routerView" */ 'page/team/operation/routerView'),
+      children: [
+        {
+          path: '/',
+          name: '运营文档列表',
+          meta: {
+            title: '运营文档列表'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/team/operation/index" */ 'page/team/operation/index')
+        }
+      ]
+    }
   ]
 }
 
