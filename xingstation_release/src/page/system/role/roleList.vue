@@ -19,12 +19,18 @@
         <el-button size="small" type="success" @click="linkToAddRole">新增角色</el-button>
       </div>
       <el-table ref="userTable" :data="tableData" highlight-current-row style="width: 100%">
-        <el-table-column prop="id" label="ID"/>
-        <el-table-column prop="name" label="角色名"/>
-        <el-table-column prop="status" label="状态"/>
-        <el-table-column prop="created_at" label="创建时间"/>
-        <el-table-column label="操作" width="150">
+        <el-table-column prop="id" label="ID" min-width="100"/>
+        <el-table-column prop="name" label="角色名" min-width="150"/>
+        <el-table-column prop="status" label="状态" min-width="100"/>
+        <el-table-column prop="created_at" label="创建时间" min-width="150"/>
+        <el-table-column label="操作" min-width="100">
           <template slot-scope="scope">
+            <el-switch
+              style="display: inline-block;margin-right:20px;"
+              v-model="status"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+            />
             <el-button size="small" type="warning" @click="linkToEdit(scope.row)">修改</el-button>
           </template>
         </el-table-column>
@@ -51,12 +57,14 @@ import {
   Pagination,
   Form,
   FormItem,
-  MessageBox
+  MessageBox,
+  Switch
 } from "element-ui";
 
 export default {
   name: "UserList",
   components: {
+    "el-switch": Switch,
     "el-table": Table,
     "el-table-column": TableColumn,
     "el-button": Button,
@@ -67,6 +75,7 @@ export default {
   },
   data() {
     return {
+      status: 1, // 启用为1 禁用为0
       tableData: [
         {
           id: 1,
