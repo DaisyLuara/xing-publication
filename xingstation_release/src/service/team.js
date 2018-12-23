@@ -6,6 +6,7 @@ const PERSON_REWARD_API = '/api/person_reward'
 const FUTURE_REWARD_API = '/api/person_future_reward'
 const QINNIU_API = '/api/qiniu_oauth'
 const MEDIA_UPLOAD_AP = '/api/media_upload'
+const EVENT_API = '/api/team_project_bug_records'
 
 // 得到项目列表
 const getProgramList = (context, params) => {
@@ -137,6 +138,20 @@ const getPersonRewardTotal = (context, params) => {
       })
   })
 }
+
+// 个人冻结奖金金额
+const getPersonFutureRewardTotal = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + FUTURE_REWARD_API + '/total', { params: params })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
 // 冻结明细列表
 const getFutureRewardList = (context, params) => {
   return new Promise(function(resolve, reject) {
@@ -155,7 +170,7 @@ const getFutureRewardList = (context, params) => {
 const getEventList = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .get(HOST + FUTURE_REWARD_API, { params: params })
+      .get(HOST + EVENT_API, { params: params })
       .then(response => {
         resolve(response.data)
       })
@@ -169,7 +184,7 @@ const getEventList = (context, params) => {
 const saveEvent = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .post(HOST + TEAM_API, params)
+      .post(HOST + EVENT_API, params)
       .then(response => {
         resolve(response.data)
       })
@@ -182,7 +197,7 @@ const saveEvent = (context, params) => {
 const modifyEvent = (context, params, id) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .patch(HOST + TEAM_API + '/' + id, params)
+      .patch(HOST + EVENT_API + '/' + id, params)
       .then(response => {
         resolve(response.data)
       })
@@ -196,7 +211,7 @@ const modifyEvent = (context, params, id) => {
 const getEventDetails = (context, id) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .get(HOST + TEAM_RATE_API + '/' + id)
+      .get(HOST + EVENT_API + '/' + id)
       .then(response => {
         resolve(response.data)
       })
@@ -323,5 +338,6 @@ export {
   saveOperationDocument,
   modifyOperationDocument,
   getOperationDocumentDetails,
-  deleteOperationDocument
+  deleteOperationDocument,
+  getPersonFutureRewardTotal
 }

@@ -26,89 +26,71 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label prop="status">
-              <el-select
-                v-model="filters.status"
-                placeholder="请选择重大责任有无"
-                filterable
-                clearable
-              >
-                <el-option
-                  v-for="item in statusList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                />
-              </el-select>
-            </el-form-item>
             <el-form-item label prop>
-              <el-button type="primary" size="small" @click="search()">搜索</el-button>
+              <el-button type="primary" size="small" @click="search">搜索</el-button>
               <el-button size="small" @click="resetForm('filters')">重置</el-button>
             </el-form-item>
           </el-form>
         </div>
         <div class="total-wrap">
-          <span class="label">
-            冻结明细列表
-          </span>
+          <span class="label">冻结明细列表</span>
         </div>
         <el-table :data="tableData" style="width: 100%">
           <el-table-column type="expand">
             <template slot-scope="scope">
               <el-form label-position="left" inline class="demo-table-expand">
                 <el-form-item label="ID">
-                  <span>1</span>
+                  <span>{{ id }}</span>
                 </el-form-item>
                 <el-form-item label="名称">
-                  <span>狗年大吉</span>
+                  <span>{{ project_name }}</span>
                 </el-form-item>
                 <el-form-item label="已发奖金">
-                  <span>999</span>
+                  <span>{{ got_money }}</span>
                 </el-form-item>
                 <el-form-item label="冻结奖金">
-                  <span>666</span>
+                  <span>{{ freeze_money }}</span>
                 </el-form-item>
                 <el-form-item label="重大责任">
-                  <span>无</span>
+                  <span>{{ experience_money }}</span>
                 </el-form-item>
                 <el-form-item label="扣除奖金">
-                  <span>0</span>
+                  <span>{{ deduction_money }}</span>
                 </el-form-item>
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column 
-            :show-overflow-tooltip="true" 
-            prop="id" 
-            label="ID" 
-            min-width="100"/>
+          <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="project_name"
             label="名称"
             min-width="100"
           />
-          <el-table-column 
-            :show-overflow-tooltip="true" 
-            prop="date" 
-            label="已发奖金" 
-            min-width="100"/>
-          <el-table-column 
-            :show-overflow-tooltip="true" 
-            prop="type" 
-            label="冻结奖金" 
-            min-width="100"/>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="got_money"
+            label="已发奖金"
+            min-width="100"
+          />
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="freeze_money"
+            label="冻结奖金"
+            min-width="100"
+          />
           <el-table-column
             :show-overflow-tooltip="true"
             prop="experience_money"
             label="重大责任"
             min-width="100"
           />
-          <el-table-column 
-            :show-overflow-tooltip="true" 
-            prop="total" 
-            label="扣除奖金" 
-            min-width="100"/>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="deduction_money"
+            label="扣除奖金"
+            min-width="100"
+          />
         </el-table>
         <div class="pagination-wrap">
           <el-pagination
@@ -125,7 +107,7 @@
 </template>
 
 <script>
-import { getFutureRewardList } from "service";
+import { getFutureRewardList, getSearchProjectList } from "service";
 import {
   Select,
   Option,
@@ -153,21 +135,10 @@ export default {
   },
   data() {
     return {
-      statusList: [
-        {
-          id: 1,
-          name: "有"
-        },
-        {
-          id: 0,
-          name: "无"
-        }
-      ],
       searchLoading: false,
       projectList: [],
       filters: {
-        alias: "",
-        status: ""
+        alias: ""
       },
       setting: {
         loading: false,
@@ -183,7 +154,7 @@ export default {
     };
   },
   created() {
-    this.getFutureRewardList()
+    this.getFutureRewardList();
   },
   methods: {
     getProject(query) {
@@ -213,14 +184,10 @@ export default {
       this.setting.loading = true;
       let args = {
         page: this.pagination.currentPage,
-        alias: this.filters.alias,
-        status: this.filters.status
+        alias: this.filters.alias
       };
       if (this.filters.alias === "") {
         delete args.alias;
-      }
-      if (this.filters.status === "") {
-        delete args.status;
       }
       getFutureRewardList(this, args)
         .then(res => {

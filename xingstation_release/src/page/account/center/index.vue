@@ -152,7 +152,8 @@
 import {
   getPersonRewardList,
   getPersonRewardTotal,
-  handleDateTypeTransform
+  handleDateTypeTransform,
+  getPersonFutureRewardTotal
 } from 'service'
 import {
   Button,
@@ -253,12 +254,31 @@ export default {
   created() {
     this.getPersonRewardList()
     this.getPersonRewardTotal()
+    this.getPersonFutureRewardTotal()
   },
   methods: {
     freezeDetail(){
       this.$router.push({
         path:'/account/center/freeze'
       })
+    },
+    getPersonFutureRewardTotal(){
+      let args = {
+        name: this.filters.name,
+        start_date: handleDateTypeTransform(this.filters.beginDate[0]),
+        end_date: handleDateTypeTransform(this.filters.beginDate[1])
+      }
+      !this.filters.name ? delete args.name : args
+      getPersonFutureRewardTotal(this, args)
+        .then(res => {
+          this.freezeTotal = res.total_reward
+        })
+        .catch(err => {
+          this.$message({
+            type: 'warning',
+            message: err.response.data.message
+          })
+        })
     },
     getPersonRewardTotal() {
       let args = {
@@ -315,6 +335,7 @@ export default {
       this.pagination.currentPage = 1
       this.getPersonRewardList()
       this.getPersonRewardTotal()
+      this.getPersonFutureRewardTotal()
     },
     changePage(currentPage) {
       this.pagination.currentPage = currentPage
@@ -324,6 +345,7 @@ export default {
       this.pagination.currentPage = 1
       this.getPersonRewardList()
       this.getPersonRewardTotal()
+      this.getPersonFutureRewardTotal()
     }
   }
 }

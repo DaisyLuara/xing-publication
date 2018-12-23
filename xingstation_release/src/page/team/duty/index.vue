@@ -44,14 +44,13 @@
           </el-form>
         </div>
         <div class="total-wrap">
-          <span class="label">
-            总数：{{ pagination.total }}
-          </span>
-          <el-button 
-            v-if="legalAffairsManager || bonusManage" 
+          <span class="label">总数：{{ pagination.total }}</span>
+          <el-button
+            v-if="legalAffairsManager || bonusManage"
             type="success"
             size="small"
-            @click="addDuty">新增责任</el-button>
+            @click="addDuty"
+          >新增责任</el-button>
         </div>
         <el-table :data="tableData" style="width: 100%">
           <el-table-column type="expand">
@@ -60,20 +59,20 @@
                 <el-form-item label="ID">
                   <span>{{ scope.row.id }}</span>
                 </el-form-item>
-                <el-form-item label="名称">
-                  <span>{{ scope.row.name }}</span>
+                <el-form-item label="节目名称">
+                  <span>{{ scope.row.project_name }}</span>
                 </el-form-item>
                 <el-form-item label="发生日期">
-                  <span>{{ scope.row.date }}</span>
+                  <span>{{ scope.row.occur_date }}</span>
                 </el-form-item>
                 <el-form-item label="测试">
-                  <span>{{ scope.row.test }}</span>
+                  <span>{{ scope.row.tester_text }}</span>
                 </el-form-item>
                 <el-form-item label="运营">
-                  <span>{{ scope.row.operation }}</span>
+                  <span>{{ scope.row.operation_text }}</span>
                 </el-form-item>
                 <el-form-item label="备注">
-                  <span>{{ scope.row.remark }}</span>
+                  <span>{{ scope.row.description }}</span>
                 </el-form-item>
               </el-form>
             </template>
@@ -85,37 +84,33 @@
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="name"
-            label="名称"
+            prop="project_name"
+            label="节目名称"
             min-width="100"
           />
-          <el-table-column 
-            :show-overflow-tooltip="true" 
-            prop="date" 
-            label="发生日期" 
-            min-width="100"/>
-          <el-table-column 
-            :show-overflow-tooltip="true" 
-            prop="test" 
-            label="测试" 
-            min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="operation"
+            prop="occur_date"
+            label="发生日期"
+            min-width="100"
+          />
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="tester_text"
+            label="测试"
+            min-width="100"
+          />
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="operation_text"
             label="运营"
             min-width="100"
           />
-          <el-table-column
-            v-if="legalAffairsManager || bonusManage"   
-            label="操作" 
-            min-width="150">
+          <el-table-column v-if="legalAffairsManager || bonusManage" label="操作" min-width="150">
             <template slot-scope="scope">
-              <el-button 
-                type="primary" 
-                size="small"
-                @click="editHandle(scope.row)">编辑</el-button>
+              <el-button type="primary" size="small" @click="editHandle(scope.row)">编辑</el-button>
             </template>
-          </el-table-column >
+          </el-table-column>
         </el-table>
         <div class="pagination-wrap">
           <el-pagination
@@ -132,7 +127,11 @@
 </template>
 
 <script>
-import { getEventList,getSearchProjectList } from "service";
+import {
+  getEventList,
+  getSearchProjectList,
+  handleDateTypeTransform
+} from "service";
 import { Cookies } from "utils/cookies";
 import {
   Select,
@@ -228,15 +227,7 @@ export default {
         currentPage: 1
       },
       role: "",
-      tableData: [{
-        id:1,
-        name:'aaa',
-        date: '2018-09-09',
-        test: 'a',
-        operation: 'b',
-        remark:'发生了xxxxxxxxxx重大bug，发生了xxxxxxxxxx重大bug，导致了发生了xxxxxxxxxx重大bug发生了xxxxxxxxxx重大bug，导致了发生了xxxxxxxxxx重大bug'
-
-      }]
+      tableData: []
     };
   },
   computed: {
@@ -249,11 +240,12 @@ export default {
       return this.role.find(r => {
         return r.name === "bonus-manager";
       });
-    },
+    }
   },
   created() {
     let user_info = JSON.parse(Cookies.get("user_info"));
     this.role = user_info.roles.data;
+    this.getEventList();
   },
   methods: {
     getProject(query) {
@@ -293,13 +285,15 @@ export default {
       let args = {
         page: this.pagination.currentPage,
         alias: this.filters.alias,
-        status: this.filters.status
+        start_occur_date: handleDateTypeTransform(this.filters.beginDate[0]),
+        end_occur_date: handleDateTypeTransform(this.filters.beginDate[1])
       };
       if (this.filters.alias === "") {
         delete args.alias;
       }
-      if (this.filters.status === "") {
-        delete args.status;
+      if (JSON.stringify(this.filters.beginDate) === "[]") {
+        delete args.start_occur_date;
+        delete args.end_occur_date;
       }
       getEventList(this, args)
         .then(res => {

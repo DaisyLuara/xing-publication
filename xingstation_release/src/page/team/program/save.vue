@@ -933,18 +933,14 @@ export default {
       getProgramDetails(this, this.programID, params)
         .then(res => {
           let planMediaData = [];
-          if (res.plan_media.length > 0) {
+          if (res.plan_media) {
             res.plan_media.map(r => {
-              this.ids.push(r.id);
               planMediaData.push(r);
             });
           }
           let animationMediaData = [];
-          if (res.animation_media.length > 0) {
-            res.animation_media.map(r => {
-              this.fileIds.push(r.id);
-              animationMediaData.push(r);
-            });
+          if (res.animation_media) {
+            animationMediaData.push(res.animation_media);
           }
           this.fileList1 = planMediaData;
           this.fileList = animationMediaData;
@@ -1295,7 +1291,7 @@ export default {
         this.fileList1.map(r => {
           planMediaIds.push(r.id);
         });
-        this.ids = planMediaIds.join(",");
+        this.fileIds = planMediaIds.join(",");
       } else {
         this.$message({
           type: "warning",
@@ -1309,7 +1305,7 @@ export default {
         this.fileList.map(r => {
           animationMediaIds.push(r.id);
         });
-        this.fileIds = animationMediaIds.join(",");
+        this.ids = animationMediaIds.join(",");
       } else {
         this.$message({
           type: "warning",
@@ -1335,10 +1331,8 @@ export default {
             dynamic_innovate: this.programForm.dynamic_innovate,
             interact_innovate: this.programForm.interact_innovate,
             type: this.programForm.type,
-            animation_media: this.ids,
-            plan_media: this.fileIds,
-            // xo_attribute测试用 到时候删掉 这个属性已经不要了
-            xo_attribute: 0,
+            animation_media_id: this.ids,
+            plan_media_id: this.fileIds,
             interaction_attribute: this.programForm.interaction_attribute
           };
           if (this.programForm.interaction.length > 0) {

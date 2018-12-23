@@ -4,21 +4,24 @@
       <div class="pane-title">{{ dutyId ? '修改事件' : '新增事件'}}</div>
       <el-form ref="dutyForm" :model="dutyForm" label-width="150px" class="duty-form">
         <el-form-item
-          prop="project_id"
+          prop="belong"
           label="节目名称"
           :rules="{required: true, message: '节目名称不能为空', trigger: 'submit'}"
         >
           <el-select
-            v-model="dutyForm.project_id"
-            placeholder="请选择节目名称"
+            v-model="dutyForm.belong"
+            :loading="searchLoading"
+            remote
+            :remote-method="getProject"
+            placeholder="请输入节目名称"
+            filterable
             clearable
-            class="coupon-form-select"
           >
             <el-option
               v-for="item in projectList"
               :key="item.id"
               :label="item.name"
-              :value="item.id"
+              :value="item.alias"
             />
           </el-select>
         </el-form-item>
@@ -31,10 +34,10 @@
         <el-form-item
           :rules="{required: true, message: '发生日期不能为空', trigger: 'submit'}"
           label="发生日期"
-          prop="date"
+          prop="occur_date"
         >
           <el-date-picker
-            v-model="dutyForm.date"
+            v-model="dutyForm.occur_date"
             :picker-options="pickerOptions"
             type="date"
             placeholder="选择日期"
@@ -44,10 +47,10 @@
         <el-form-item
           :rules="[{ required: true, message: '请输入备注', trigger: 'submit' }]"
           label="备注"
-          prop="remark"
+          prop="description"
         >
           <el-input
-            v-model="dutyForm.remark"
+            v-model="dutyForm.description"
             :autosize="{ minRows: 2}"
             :maxlength="1000"
             type="textarea"
@@ -65,7 +68,13 @@
 </template>
 
 <script>
-import { saveEvent, modifyEvent, getEventDetails, historyBack } from "service";
+import {
+  saveEvent,
+  modifyEvent,
+  getEventDetails,
+  historyBack,
+  getSearchProjectList
+} from "service";
 import {
   Form,
   FormItem,
@@ -90,47 +99,47 @@ export default {
   data() {
     return {
       dutyForm: {
-        project_id: "",
+        belong: "",
         test: "",
         operation: "",
-        date: "",
-        remark: ""
+        occur_date: "",
+        description: ""
       },
       pickerOptions: {
         disabledDate: time => {
-          let month = new Date().getMonth()+1
-          let year = new Date().getFullYear()
-          if( 10 <= month && month <=12 ){
+          let month = new Date().getMonth() + 1;
+          let year = new Date().getFullYear();
+          if (10 <= month && month <= 12) {
             return (
               time.getTime() > new Date(`${year}/12/31`).getTime() ||
               time.getTime() < new Date(`${year}/10/01`).getTime()
-            )
+            );
           }
 
-          if( 7 <= month && month <= 9 ){
+          if (7 <= month && month <= 9) {
             return (
               time.getTime() > new Date(`${year}/09/30`).getTime() ||
               time.getTime() < new Date(`${year}/07/01`).getTime()
-            )
+            );
           }
 
-          if( 4 <= month && month <= 6 ){
+          if (4 <= month && month <= 6) {
             return (
               time.getTime() > new Date(`${year}/06/30`).getTime() ||
               time.getTime() < new Date(`${year}/04/01`).getTime()
-            )
+            );
           }
 
-          if( 1 <= month && month <= 3 ){
+          if (1 <= month && month <= 3) {
             return (
               time.getTime() > new Date(`${year}/03/31`).getTime() ||
               time.getTime() < new Date(`${year}/01/01`).getTime()
-            )
+            );
           }
-          
         }
       },
       projectList: [],
+      searchLoading: false,
       dutyId: "",
       setting: {
         isOpenSelectAll: true,
@@ -147,12 +156,34 @@ export default {
     historyBack() {
       historyBack();
     },
+    getProject(query) {
+      if (query !== "") {
+        this.searchLoading = true;
+        let args = {
+          name: query
+        };
+        return getSearchProjectList(this, args)
+          .then(response => {
+            this.projectList = response.data;
+            if (this.projectList.length == 0) {
+              this.projectList = [];
+            }
+            this.searchLoading = false;
+          })
+          .catch(err => {
+            this.searchLoading = false;
+          });
+      } else {
+        this.projectList = [];
+      }
+    },
     getEventDetails() {
       this.setting.loading = true;
       getEventDetails(this, this.dutyId)
         .then(res => {
-          this.rateForm = res;
-          delete this.rateForm.id;
+          this.dutyForm.belong = res.belong;
+          this.dutyForm.occur_date = res.occur_date;
+          this.dutyForm.description = res.description;
           this.setting.loading = false;
         })
         .catch(err => {
@@ -167,7 +198,9 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.setting.loading = true;
-          let args = this.rateForm;
+          let args = this.dutyForm;
+          delete this.dutyForm.test;
+          delete this.dutyForm.operation;
           if (this.dutyId) {
             modifyEvent(this, this.dutyId, args)
               .then(res => {
@@ -232,7 +265,7 @@ export default {
         font-size: 14px;
       }
     }
-    .duty-form{
+    .duty-form {
       width: 900px;
     }
     .pane-title {
