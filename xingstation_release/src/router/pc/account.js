@@ -1,5 +1,3 @@
-import auth from 'service/auth'
-
 let router = {
   path: 'account',
   redirect: 'account/account',
