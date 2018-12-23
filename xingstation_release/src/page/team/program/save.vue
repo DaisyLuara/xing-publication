@@ -563,6 +563,14 @@
               </el-tooltip>
             </el-form-item>
           </el-col>
+          <el-col 
+            v-if="testFile"
+            :span="12">
+            <el-form-item
+              label="测试文档">
+              <div @click="handlePreview(testFile)" style="cursor:pointer;">{{testFile.name}}</div>
+            </el-form-item>
+          </el-col>
         </el-row>
 
         <el-form-item>
@@ -657,6 +665,7 @@ export default {
         token: "",
         key: ""
       },
+      testFile: null,
       cotractList: [],
       fileList: [],
       fileList1: [],
@@ -928,11 +937,14 @@ export default {
     getProgramDetails() {
       this.setting.loading = true;
       let params = {
-        include: "media"
+        include: "contract"
       };
       getProgramDetails(this, this.programID, params)
         .then(res => {
           let planMediaData = [];
+          if (res.tester_media) {
+            this.testFile = res.tester_media
+          }
           if (res.plan_media) {
             res.plan_media.map(r => {
               planMediaData.push(r);
@@ -1197,7 +1209,6 @@ export default {
     },
     // 添加人员 均分比列
     peopleHandle(val, rate, type) {
-      console.log(val);
       switch (type) {
         case "interaction":
           this.addRate("interaction", val, rate);

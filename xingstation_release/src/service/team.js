@@ -61,10 +61,10 @@ const getProgramDetails = (context, id, params) => {
   })
 }
 // 确认项目
-const confirmProgram = (context, id) => {
+const confirmProgram = (context, id, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .post(HOST + TEAM_API + '/confirm/' + id)
+      .post(HOST + TEAM_API + '/confirm/' + id, params)
       .then(response => {
         resolve(response.data)
       })
