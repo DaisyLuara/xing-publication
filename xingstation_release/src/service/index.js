@@ -41,3 +41,6 @@ export * from './search'
 
 // 节目
 export * from './project'
+
+// 角色
+export * from './role'

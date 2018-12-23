@@ -122,7 +122,6 @@
 </template>
 <script>
 import { getManageableRoles, getUserList, deleteUser } from 'service'
-import auth from 'service/auth'
 import {
   Button,
   Input,
