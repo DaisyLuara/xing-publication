@@ -83,6 +83,10 @@ class TeamProjectBugRecordController extends Controller
         //得到项目对应的测试与运营人员
         $members = $teamProject->member()->wherePivotIn('type', ['tester_quality', 'operation_quality'])->get();
 
+        if($members->isEmpty()){
+            abort(422,"该项目没有对应的测试与运营人员没，不可添加重大责任");
+        }
+
         //得到插入bug记录中的数组
         $params = [];
         $now = Carbon::now('PRC');

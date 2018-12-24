@@ -87,11 +87,11 @@ class TeamProjectController extends Controller
         foreach ($plan_media_ids as $plan_media_id) {
             $media = Media::find($plan_media_id);
             if (!$media) {
-                abort("422","上传的交互文档中存在找不到对象");
+                abort("422", "上传的交互文档中存在找不到对象");
             }
         }
 
-        $member = $params['member'];
+        $member = $params['member'] ?? [];
         if ($member['tester'] || $member['tester_quality']) {
             $tester_ids = array_column($member['tester'] ?? [], 'user_id');
             $tester_quality_ids = array_column($member['tester_quality'] ?? [], 'user_id');
@@ -157,11 +157,11 @@ class TeamProjectController extends Controller
         foreach ($plan_media_ids as $plan_media_id) {
             $media = Media::find($plan_media_id);
             if (!$media) {
-                abort("422","上传的交互文档中存在找不到对象");
+                abort("422", "上传的交互文档中存在找不到对象");
             }
         }
 
-        $member = $params['member'];
+        $member = $params['member'] ?? [];
         if ($member['tester'] || $member['tester_quality']) {
             $tester_ids = array_column($member['tester'] ?? [], 'user_id');
             $tester_quality_ids = array_column($member['tester_quality'] ?? [], 'user_id');
@@ -179,7 +179,7 @@ class TeamProjectController extends Controller
 
         $project = Project::query()->where('versionname', $params['belong'])->first();
 
-        if(!$params['tester_media_id']){
+        if (!$params['tester_media_id']) {
             unset($params['tester_media_id']);
         }
         unset($params['applicant']);
