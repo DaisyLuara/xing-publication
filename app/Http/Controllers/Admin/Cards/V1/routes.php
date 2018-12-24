@@ -26,6 +26,9 @@ $api->version('v1', [
             //创建卡券
             $api->post('cards/create', 'CardsController@store');
 
+            //获取用户授权信息
+            $api->post('cards/getinfo','CardsController@getInfo');
+
             //修改库存接口
             $api->patch('cards/stock','CardsController@stock');
 
