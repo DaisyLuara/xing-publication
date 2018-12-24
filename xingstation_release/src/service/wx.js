@@ -1,10 +1,67 @@
-const COUPON_API = '/api/coupon/batches'
-const HOST = process.env.SERVER_URL
+const CARD_API = '/api/cards/list'
+const SINGLECARD_API = '/api/cards/show/'
+const UPDATE_SINGLECARD_API = '/api/cards/update/'
+const DELETE_SINGLECARD_API = '/api/cards/delete/'
+//新增
 
-const getCouponList = (context, args) => {
+const HOST = process.env.SERVER_URL
+//查卡券列表
+const getCardList = (context, args) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .get(HOST + COUPON_API, { params: args })
+      .get(HOST + CARD_API, { params: args })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+//获取单个卡券详情
+const getSingleCard = (context, args) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + SINGLECARD_API, { params: args })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+//修改单个卡券
+const modifySingleCard = (context, args) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .patch(HOST + UPDATE_SINGLECARD_API, { params: args })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+//删除单个卡券
+const deleteSingleCard = (context, args) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .delete(HOST + DELETE_SINGLECARD_API, { params: args })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+//新增卡券
+const addSingleCard = (context, args) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .post(HOST + DELETE_SINGLECARD_API, { params: args })
       .then(response => {
         resolve(response.data)
       })
@@ -14,4 +71,10 @@ const getCouponList = (context, args) => {
   })
 }
 
-export { getCouponList }
+export {
+  getCardList,
+  getSingleCard,
+  modifySingleCard,
+  deleteSingleCard,
+  addSingleCard
+}

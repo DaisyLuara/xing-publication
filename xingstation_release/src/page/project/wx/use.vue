@@ -22,25 +22,31 @@
           <el-form
             ref="couponForm"
             :model="couponForm"
-            :rules="rules"
             label-width="180px"
           >
             <el-form-item
-              :rules="{required: true, message: '库存只能是大于0的数字', trigger: 'submit'}"
               label="库存"
               prop="discount"
             >
               <el-input
-                v-model="couponForm.name"
+                v-model="sku.quantity"
                 class="coupon-form-input"
               />
               <span>份</span>
+              <div
+                class="errMessage"
+                v-show="submitCheck.inventory"
+              >库存只能是大于0的数字</div>
             </el-form-item>
             <el-form-item>
-              <el-checkbox-group v-model="checkList">
-                <el-checkbox label="用户可以分享领券链接"></el-checkbox>
-                <el-checkbox label="用户领券后可转赠其他好友"></el-checkbox>
-              </el-checkbox-group>
+              <el-checkbox
+                v-model="can_share"
+                label="用户可以分享领券链接"
+              ></el-checkbox>
+              <el-checkbox
+                v-model="can_give_friend"
+                label="用户领券后可转赠其他好友"
+              ></el-checkbox>
             </el-form-item>
             <el-form-item
               label="核销方式"
@@ -48,15 +54,16 @@
             >
               <el-radio-group v-model="couponForm.is_fixed_date">
                 <div class="box-segmentation">
-                  <el-radio :label="1">自助买单</el-radio>
+                  <el-radio :label="1">用扫码核销</el-radio>
                 </div>
-                <div class="box-segmentation">
-                  <el-radio :label="2">自助核销</el-radio>
+                <div
+                  class="box-segmentation-b"
+                  v-show="verificationList"
+                >
+                  <el-radio :label="0"> 二维码</el-radio>
+                  <el-radio :label="1">条形码</el-radio>
+                  <el-radio :label="2">仅卡券号</el-radio>
                 </div>
-                <div class="box-segmentation">
-                  <el-radio :label="3">用扫码核销</el-radio>
-                </div>
-
               </el-radio-group>
             </el-form-item>
           </el-form>
@@ -71,7 +78,6 @@
           <el-form
             ref="couponForm"
             :model="couponForm"
-            :rules="rules"
             label-width="180px"
           >
 
@@ -83,23 +89,20 @@
                 <div class="box-segmentation">
                   <el-radio :label="4">全部门店适用</el-radio>
                 </div>
-                <div class="box-segmentation">
-                  <el-radio :label="5">指定门店适用</el-radio>
-                </div>
-                <div class="box-segmentation">
-                  <el-radio :label="6">无指定门店</el-radio>
-                </div>
               </el-radio-group>
             </el-form-item>
             <el-form-item
-              :rules="{required: true, message: '操作提示不能为空且长度不超过16个汉字或32个英文字母', trigger: 'submit'}"
               label="操作提示"
               prop="discount"
             >
               <el-input
-                v-model="couponForm.name"
+                v-model="notice"
                 class="coupon-form-input"
               />
+              <div
+                class="errMessage"
+                v-show="submitCheck.operatingHints"
+              >操作提示不能为空且长度不超过16个汉字或32个英文字母</div>
               <div class="message">建议引导用户到店出示卡券，由店员完成核销操作</div>
             </el-form-item>
           </el-form>
@@ -112,7 +115,7 @@
             <el-button
               type="success"
               size="medium"
-              @click.stop="()=>{ show = false}"
+              @click.stop="submit()"
             >提交审核</el-button>
           </div>
         </div>
@@ -160,55 +163,28 @@ export default {
     "el-checkbox-group": CheckboxGroup,
   },
   data() {
-    var checkEndDate = (rule, value, callback) => {
-      if (!value) {
-        callback();
-        return;
-      }
-      if (
-        new Date(value.replace(/\-/g, "/")).getTime() <
-        new Date(this.couponForm.start_date.replace(/\-/g, "/")).getTime()
-      ) {
-        callback(new Error("结束日期要大于开始日期"));
-      } else {
-        callback();
-      }
-    };
-    var checkSortOrder = (rule, value, callback) => {
-      if (!value) {
-        callback();
-        return;
-      }
-      if (/^[0-9]+.?[0-9]*$/.test(value)) {
-        if (parseInt(value) < 1 || parseInt(value) > 100) {
-          callback(new Error("优先级只能是1-100"));
-        } else {
-          callback();
-        }
-      } else {
-        callback("优先级只能是数字");
-      }
-    };
     return {
+      sku: {
+        "quantity": null
+      },
+      can_share: false,
+      can_give_friend: false,
+      data: null,
+      notice: null,
+      card_type: this.$route.params.card_type,
+      verificationList: false,
       loading: true,
       title: '',
       radio: "1",
-      show: false,
-      checked: false,
-      checkedShow: false,
-      checkList: [],
-      filters: {
-        name: "",
-        company_id: ""
-      },
       setting: {
         loading: false,
         loadingText: "拼命加载中"
       },
-      rules: {
-        end_date: [{ validator: checkEndDate, trigger: "submit" }],
-        sort_order: [{ validator: checkSortOrder, trigger: "submit" }]
+      submitCheck: {
+        inventory: false,
+        operatingHints: false,
       },
+
       couponForm: {
         is_fixed_date: "",
         description: "",
@@ -220,6 +196,12 @@ export default {
   },
   created() {
   },
+  mounted() {
+    console.log('..................')
+    if (this.$route.params.card !== undefined) {
+      this.data = this.$route.params.card
+    }
+  },
   methods: {
     goBack() {
       console.log("提交券类型")
@@ -227,6 +209,59 @@ export default {
         path: "/project/wx_cardpackage/add/"
       });
     },
+    submit() {
+      console.log("---------------")
+      console.log(this.data)
+      if (null === this.data) {
+        this.$router.go(-1);
+        // this.$router.push({
+        //   path: "/project/wx_cardpackage/add/",
+        //   query: {
+        //     card_type: this.card_type
+        //   }
+        // });
+        return
+      }
+
+      //团购券
+      if (this.card_type === 'GROUPON') {
+        this.data.groupon.base_info.sku = this.sku
+        this.data.groupon.base_info.can_share = this.can_share
+        this.data.groupon.base_info.can_give_friend = this.can_give_friend
+        this.data.groupon.base_info.notice = this.notice
+      }
+      //代金券
+      else if (this.card_type === 'CASH') {
+        this.data.cash.base_info.sku = this.sku
+        this.data.cash.base_info.can_share = this.can_share
+        this.data.cash.base_info.can_give_friend = this.can_give_friend
+        this.data.cash.base_info.notice = this.notice
+      }
+      //折扣券
+      else if (this.card_type === 'DISCOUNT') {
+        this.data.discount.base_info.sku = this.sku
+        this.data.discount.base_info.can_share = this.can_share
+        this.data.discount.base_info.can_give_friend = this.can_give_friend
+        this.data.discount.base_info.notice = this.notice
+      }
+      //兑换券
+      else if (this.card_type === 'GIFT') {
+        this.data.gift.base_info.sku = this.sku
+        this.data.gift.base_info.can_share = this.can_share
+        this.data.gift.base_info.can_give_friend = this.can_give_friend
+        this.data.gift.base_info.notice = this.notice
+      }
+      //优惠券
+      else {
+        this.data.general_coupon.base_info.sku = this.sku
+        this.data.general_coupon.base_info.can_share = this.can_share
+        this.data.general_coupon.base_info.can_give_friend = this.can_give_friend
+        this.data.general_coupon.base_info.notice = this.notice
+      }
+      console.log('..............')
+      console.log(this.data)
+      //请求后台接口
+    }
   }
 };
 </script>
@@ -276,11 +311,18 @@ export default {
         font-size: 12px;
         color: #8d8d8d;
       }
+      .errMessage {
+        color: #e15f63;
+        font-size: 12px;
+      }
       .message-box {
         margin-left: 88px;
       }
       .box-segmentation {
-        margin: 0 20px 20px 20px;
+        margin: 13px;
+      }
+      .box-segmentation-b {
+        margin-left: 45px;
       }
       .select {
         margin: 0 10px;

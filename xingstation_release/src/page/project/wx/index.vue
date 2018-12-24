@@ -27,14 +27,6 @@
             :model="templateForm"
             label-width="150px"
           >
-
-            <!-- <el-radio
-              v-model="radio"
-              label="1"
-            >我要创建普通优惠券</el-radio>
-            <el-form-item>
-              <template slot-scope="scope">传统优惠券的电子版，可在微信中收纳、传播和使用。只可领取到我的卡券自己使用</template>
-            </el-form-item> -->
             <el-radio
               v-model="card_type"
               :label="DISCOUNT.card_type"
@@ -126,11 +118,6 @@
             <template slot-scope="scope">
               <el-button
                 size="small"
-                type="warning"
-                @click="linkToView(scope.row)"
-              >详情</el-button>
-              <el-button
-                size="small"
                 @click="linkToEdit(scope.row)"
               >修改</el-button>
               <el-button
@@ -157,6 +144,7 @@
 <script>
 import {
   getCouponList,
+  getSingleCard
 } from "service";
 
 import {
@@ -198,8 +186,8 @@ export default {
       CASH: { card_type: 'CASH', title: '代金券' },
       DISCOUNT: { card_type: 'DISCOUNT', title: '折扣券' },
       GIFT: { card_type: 'GIFT', title: '兑换券' },
-      GENERAL_COUPON: { card_type: 'GENERAL_COUPON', title: '优惠券' }
-      ,
+      GENERAL_COUPON: { card_type: 'GENERAL_COUPON', title: '优惠券' },
+      card_id: '',
       loading: true,
       title: '',
       radio: "1",
@@ -237,7 +225,63 @@ export default {
   },
   created() {
   },
+  mounted() {
+    this.getCardList()
+  },
   methods: {
+    //卡券列表查询
+    getCardList() {
+      let params = {
+        authorizer_id: 6,
+      }
+      getCardList(this, params)
+        .then(res => {
+          console.log("========")
+          console.log(res)
+          let card_id_list = res.card_id_list;
+          for (var i = 0; i < card_id_list.length; i++) {
+            this.card_id = card_id_list[i]
+            this.getSingleCard();
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    //卡券详情查询
+    getSingleCard() {
+      if (this.card_id != undefined) {
+        let params = {
+          authorizer_id: 6,
+          card_id: this.card_id
+        }
+        getSingleCard(this, params)
+          .then(res => {
+            console.log("?????????")
+            console.log(res)
+            this.cardDetailsHandle(res.card)
+          })
+          .catch(err => {
+            console.log(err);
+          });
+
+      }
+    },
+    //删除卡券
+    deleteSingleCard() {
+      let params = {
+        authorizer_id: 6,
+        card_id: this.card_id
+      }
+      deleteSingleCard(this, params)
+        .then(res => {
+          console.log(res)
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+
     addCoupon() {
       console.log("新增")
       this.templateForm.name = ''
