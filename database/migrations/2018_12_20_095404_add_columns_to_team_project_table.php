@@ -19,7 +19,7 @@ class AddColumnsToTeamProjectTable extends Migration
             $table->integer('individual_attribute')->default(0)->after("hidol_attribute")->comment("定制属性：0 否 1 是");
             $table->integer('contract_id')->nullable()->after("individual_attribute")->comment('定制合同ID');
             $table->string('interaction_attribute')->after("contract_id")->comment("交互技术属性：interaction_api中间件属性,interaction_linkage联动引擎属性(多个以都=逗号隔开)");
-            $table->integer('plan_media_id')->nullable()->after("media_id")->comment("[节目交互]文档");
+            $table->string('plan_media_id')->nullable()->after("media_id")->comment("[节目交互]文档,多选，逗号隔开");
             $table->integer('animation_media_id')->nullable()->after("media_id")->comment("设计动画素材");
             $table->integer('tester_media_id')->nullable()->after("media_id")->comment("测试文档资料");
             $table->integer('operation_media_id')->nullable()->after("media_id")->comment("运营文档资料");

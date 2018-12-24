@@ -16,7 +16,7 @@ class TeamProjectBugRecordTransformer extends TransformerAbstract
     {
         $items = TeamProjectBugRecord::with("user")
             ->where("team_project_id", $teamProjectBugRecord->team_project_id)
-            ->where("date", $teamProjectBugRecord->date)
+            ->where("occur_date", $teamProjectBugRecord->occur_date)
             ->get()->map(function ($value) {
                 return [
                     "user_id" => $value->user_id,

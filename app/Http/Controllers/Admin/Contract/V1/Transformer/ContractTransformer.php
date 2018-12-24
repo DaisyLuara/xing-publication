@@ -46,8 +46,8 @@ class ContractTransformer extends TransformerAbstract
             'legal_ma_message' => $contract->legal_ma_message,
             'bd_ma_message' => $contract->bd_ma_message,
             'receive_date' => join(',', array_column($contract->receiveDate->toArray(), 'receive_date')),
-            'created_at' => $contract->created_at->toDateTimeString(),
-            'updated_at' => $contract->updated_at->toDateTimeString(),
+            'created_at' => $contract->created_at ? $contract->created_at->toDateTimeString() : null,
+            'updated_at' => $contract->updated_at ? $contract->updated_at->toDateTimeString() : null,
         ];
     }
 

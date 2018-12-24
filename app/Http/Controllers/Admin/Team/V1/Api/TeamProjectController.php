@@ -82,6 +82,15 @@ class TeamProjectController extends Controller
         $user = $this->user();
         $params = $request->all();
 
+        //判断交互文档
+        $plan_media_ids = explode(',', $params['plan_media_id']);
+        foreach ($plan_media_ids as $plan_media_id) {
+            $media = Media::find($plan_media_id);
+            if (!$media) {
+                abort("422","上传的交互文档中存在找不到对象");
+            }
+        }
+
         $member = $params['member'];
         if ($member['tester'] || $member['tester_quality']) {
             $tester_ids = array_column($member['tester'] ?? [], 'user_id');
@@ -143,6 +152,15 @@ class TeamProjectController extends Controller
 
         $params = $request->all();
 
+        //判断交互文档
+        $plan_media_ids = explode(',', $params['plan_media_id']);
+        foreach ($plan_media_ids as $plan_media_id) {
+            $media = Media::find($plan_media_id);
+            if (!$media) {
+                abort("422","上传的交互文档中存在找不到对象");
+            }
+        }
+
         $member = $params['member'];
         if ($member['tester'] || $member['tester_quality']) {
             $tester_ids = array_column($member['tester'] ?? [], 'user_id');
@@ -161,6 +179,9 @@ class TeamProjectController extends Controller
 
         $project = Project::query()->where('versionname', $params['belong'])->first();
 
+        if(!$params['tester_media_id']){
+            unset($params['tester_media_id']);
+        }
         unset($params['applicant']);
         unset($params['begin_date']);
         unset($params['online_date']);
@@ -186,14 +207,12 @@ class TeamProjectController extends Controller
      */
     public function confirm(Request $request, TeamProject $teamProject)
     {
-
         /** @var  $user \App\Models\User */
         $user = $this->user();
-
         if ($user->hasRole('tester') && $teamProject->status == 1) {
-            $media = Media::find($request->get('media_id')??0);
-            if(!$media){
-                abort("422","请上传测试用例");
+            $media = Media::find($request->get('media_id') ?? 0);
+            if (!$media) {
+                abort("422", "请上传测试用例");
             }
             $teamProject->status = 2;
             $teamProject->tester_media_id = $media->id;
@@ -202,12 +221,7 @@ class TeamProjectController extends Controller
         }
 
         if ($user->hasRole('operation') && $teamProject->status == 2) {
-            $media = Media::find($request->get('media_id')??0);
-            if(!$media){
-                abort("422","请上传运营文档");
-            }
             $teamProject->status = 3;
-            $teamProject->operation_media_id = $media->id;
             $teamProject->update();
             return $this->response()->noContent()->setStatusCode(200);
         }

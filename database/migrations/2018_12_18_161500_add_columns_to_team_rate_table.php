@@ -36,8 +36,8 @@ class AddColumnsToTeamRateTable extends Migration
                 'h5_2' => 0.1,               // H5开发复杂
                 'tester' => 0.03,            // 测试基本
                 'tester_quality' => 0.06,    // 测试保质
-                'operation' => 0.02,         // 运营基本
-                'operation_quality' => 0.04, // 运营保质
+                'operation' => 0.04,         // 运营基本
+                'operation_quality' => 0.02, // 运营保质
             ]);
     }
 

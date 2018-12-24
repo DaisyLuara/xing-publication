@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin\Team\V1\Transformer;
 
 
 use App\Http\Controllers\Admin\Team\V1\Models\TeamPersonFutureReward;
-use App\Models\Model;
+use App\Http\Controllers\Admin\Team\V1\Models\TeamProjectBugRecord;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use League\Fractal\TransformerAbstract;
@@ -22,6 +22,12 @@ class TeamPersonFutureRewardTransformer extends TransformerAbstract
 
     public function transform(TeamPersonFutureReward $teamPersonFutureReward)
     {
+        $bug_records = TeamProjectBugRecord::where("belong",$teamPersonFutureReward->belong)
+            ->where("user_id",$teamPersonFutureReward->user_id)
+            ->selectRaw("date_format(occur_date,'%Y-%m-%d') as occur_date")
+            ->get()->toArray();
+
+
         $status_money = TeamPersonFutureReward::where('user_id', $teamPersonFutureReward->user_id)
             ->where('belong', $teamPersonFutureReward->belong);
         if ($this->start_date && $this->end_date) {
@@ -40,6 +46,7 @@ class TeamPersonFutureRewardTransformer extends TransformerAbstract
             'freeze_money' => $status_money[0] ?? 0,
             'deduction_money' => $status_money[-1] ?? 0,
             'got_money' => $status_money[1] ?? 0,
+            'bug_record' => implode(',',array_column($bug_records,'occur_date')),
         ];
     }
 }

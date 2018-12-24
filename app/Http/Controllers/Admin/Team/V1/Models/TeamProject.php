@@ -72,9 +72,5 @@ class TeamProject extends Model
         return $this->belongsTo(Media::class, 'animation_media_id', 'id');
     }
 
-    public function plan_media()
-    {
-        return $this->belongsTo(Media::class, 'plan_media_id', 'id');
-    }
 
 }

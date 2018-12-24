@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Team\V1\Transformer;
 
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
+use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
 use League\Fractal\TransformerAbstract;
 
@@ -15,6 +16,11 @@ class TeamProjectTransformer extends TransformerAbstract
     {
         $member = $teamProject->member->toArray();
         $member = collect(array_column($member, 'pivot'))->groupBy("type")->toArray();
+
+        $plan_medias = $teamProject->plan_media_id ?
+            Media::whereIn('id', explode(',', $teamProject->plan_media_id))->get()->toArray()
+            : null;
+
         return [
             'id' => $teamProject->id,
             'project_name' => $teamProject->project_name,
@@ -40,10 +46,9 @@ class TeamProjectTransformer extends TransformerAbstract
             'type' => $teamProject->type,
             'member' => $member,
             'media' => $teamProject->media ? $teamProject->media->toArray() : [],
-            'plan_media' => $teamProject->plan_media ? $teamProject->plan_media->toArray() : [],
-            'animation_media' => $teamProject->animation_media ? $teamProject->plan_media->toArray() : [],
-            'tester_media' => $teamProject->tester_media ? $teamProject->plan_media->toArray() : [],
-            'operation_media' => $teamProject->operation_media ? $teamProject->plan_media->toArray() : [],
+            'plan_media' => $plan_medias,
+            'animation_media' => $teamProject->animation_media ? $teamProject->animation_media->toArray() : null,
+            'tester_media' => $teamProject->tester_media ? $teamProject->tester_media->toArray() : null,
         ];
     }
 

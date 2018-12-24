@@ -73,12 +73,7 @@ class TeamProjectListTransformer extends TransformerAbstract
             'interact_innovate' => $teamProject->interact_innovate,
             'remark' => $teamProject->remark,
             'status' => $teamProject->status,
-            'type' => $teamProject->type == 1 ? '提前节目' : '正常节目',
-            'media' => $teamProject->media ? $teamProject->media->toArray() : [],
-            'plan_media' => $teamProject->plan_media ? $teamProject->plan_media->toArray() : [],
-            'animation_media' => $teamProject->animation_media ? $teamProject->plan_media->toArray() : [],
-            'tester_media' => $teamProject->tester_media ? $teamProject->plan_media->toArray() : [],
-            'operation_media' => $teamProject->operation_media ? $teamProject->plan_media->toArray() : [],
+            'type' => $teamProject->type == 1 ? '提前节目' : '正常节目'
         ];
     }
 

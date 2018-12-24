@@ -42,9 +42,6 @@ class TeamPersonFutureRewardController extends Controller
             ->groupBy("belong")
             ->paginate(10);
 
-//        $teamPersonFuturePersonRewards = $teamPersonFuturePersonRewards->toArray();
-//        $teamPersonFuturePersonRewards['data']=$results;
-
         return $this->response()->paginator($teamPersonFuturePersonRewards, new TeamPersonFutureRewardTransformer($request));
     }
 
