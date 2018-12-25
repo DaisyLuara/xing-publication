@@ -69,12 +69,4 @@ class RoleController extends Controller
             abort(403, '无操作权限');
         }
     }
-
-    private function checkRole(Role $role)
-    {
-        if ($role->name == 'admin' || $role->name == 'super-admin') {
-            abort(403, "系统基本角色不可更改");
-        }
-    }
-
 }
