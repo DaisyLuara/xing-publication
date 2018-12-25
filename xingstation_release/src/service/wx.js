@@ -1,10 +1,11 @@
+const HOST = process.env.SERVER_URL
+
 const CARD_API = '/api/cards/list'
 const SINGLECARD_API = '/api/cards/show/'
 const UPDATE_SINGLECARD_API = '/api/cards/update/'
 const DELETE_SINGLECARD_API = '/api/cards/delete/'
 //新增
-
-const HOST = process.env.SERVER_URL
+const ADD_SINGLECARD_API = '/api/cards/delete/'
 //查卡券列表
 const getCardList = (context, args) => {
   return new Promise(function(resolve, reject) {
@@ -61,7 +62,7 @@ const deleteSingleCard = (context, args) => {
 const addSingleCard = (context, args) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .post(HOST + DELETE_SINGLECARD_API, { params: args })
+      .post(HOST + ADD_SINGLECARD_API, { params: args })
       .then(response => {
         resolve(response.data)
       })

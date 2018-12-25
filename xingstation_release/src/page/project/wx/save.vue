@@ -349,7 +349,6 @@
                         :key="item.id"
                         :value="item.dataTime"
                       />
-
                     </el-select>
                     <b>满
                       <el-input
@@ -392,7 +391,6 @@
                   >不适用商品不能为空且长度不能超过15个汉字或30个英文字母</div>
                   <div class="message-box">填写本券不适用的商品、类目或服务</div>
                 </div>
-
               </div>
               <div>
                 <span>优惠共享</span>
@@ -409,7 +407,6 @@
                   />
                 </el-select>
               </div>
-
               <div class="message">使用条件的设置会在券上展示，请务必仔细确认。</div>
             </el-form-item>
             <el-form-item label="封面图片">
@@ -570,7 +567,7 @@
 import {
   getQiniuToken,
   getMediaUpload,
-  getSingleCard
+  getSingleCard,
 } from "service";
 
 import {
@@ -890,7 +887,7 @@ export default {
         description: "",
         color: "",
         discount: "",
-        time: ""
+        time: "",
       },
       testData: {
         "card_type": "DISCOUNT",
@@ -898,9 +895,10 @@ export default {
           "base_info": {
             "id": "pbLatjnP97_F9PudzBARQhn7xR7A",
             "logo_url": "http://mmbiz.qpic.cn/mmbiz/p98FjXy8LafmY25YclQ7vw5noBxeVH3DG5AKFR1ZsRgMgsvjll7EkUsZib00J964AEpTjkNXF2HorJHt5mtt45Q/0?wx_fmt=png",
-            "code_type": "CODE_TYPE_NONE",
+            "code_type": "CODE_TYPE_TEXT",
             "brand_name": "微信餐厅",
             "title": "9折优惠券",
+            "use_all_locations": true,
             "date_info": {
               "type": "DATE_TYPE_FIX_TERM",
               "fixed_term": 30,
@@ -1330,10 +1328,21 @@ export default {
       console.log("提交券类型")
       //处理提交的数据
       let card = this.dataHandle()
-      this.$router.push({
-        name: "微信卡券使用设置",
-        params: { 'card': card, 'card_type': this.card_type }
-      });
+      //更新
+      if (this.card_id != undefined) {
+        this.$router.push({
+          name: "微信卡券使用设置",
+          params: { 'card': card, 'card_type': this.card_type, 'card_id': this.card_id }
+        })
+
+      }
+      //新增
+      else {
+        this.$router.push({
+          name: "微信卡券使用设置",
+          params: { 'card': card, 'card_type': this.card_type }
+        })
+      }
     },
     dataHandle() {
       let card = this.card_types[this.card_type]
@@ -1547,7 +1556,7 @@ export default {
       }
       return true
     },
-    //时间戳转化为
+    //时间戳转化为日期
     formatDateTime(timeStamp) {
       var date = new Date()
       date.setTime(timeStamp * 1000)
@@ -1564,7 +1573,13 @@ export default {
       second = second < 10 ? ('0' + second) : second
       return y + '-' + m + '-' + d
     },
-  }
+  },
+  //前进刷新  后退不刷新
+  beforeRouteLeave(to, from, nextTo) {
+    // 设置下一个路由的 meta
+    to.meta.keepAlive = true;  // 让 A 缓存，即不刷新
+    nextTo();
+  },
 };
 </script>
 

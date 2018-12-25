@@ -60,7 +60,7 @@
               :label="GENERAL_COUPON.card_type"
             >优惠券</el-radio>
             <el-form-item>
-              <template slot-scope="scope">即“通用券”，建议当以上四种无法满足需求时采用{{card_type}}</template>
+              <template slot-scope="scope">即“通用券”，建议当以上四种无法满足需求时采用</template>
             </el-form-item>
 
             <el-form-item>
@@ -68,31 +68,31 @@
                 type="success"
                 size="medium"
                 class="confirm"
-                @click="submit('templateForm')"
+                @click="submit()"
               >确定</el-button>
             </el-form-item>
           </el-form>
         </el-dialog>
         <el-table
-          :data="tableData"
+          :data="dataList"
           style="width: 100%"
         >
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="type"
+            prop="typeName"
             label="卡券类型"
             min-width="100"
           />
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="all_type"
+            prop="title"
             label="全部卡券"
             min-width="100"
           >
           </el-table-column>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="time"
+            prop="dateDetail"
             label="卡券有效期"
             min-width="100"
           >
@@ -106,10 +106,55 @@
           </el-table-column>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="count"
+            prop="quantity"
             label="库存"
             min-width="100"
           >
+          </el-table-column>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop=""
+            label="库存修改"
+            min-width="100"
+          >
+            <template slot-scope="scope">
+
+              <el-popover
+                placement="bottom"
+                width="300"
+                v-model="visible2"
+              >
+                <el-radio-group v-model="modify">
+                  <el-radio :label="modify.add">增加</el-radio>
+                  <el-radio :label="modify.reduce">减少</el-radio>
+                </el-radio-group>
+                <div>
+                  <el-input
+                    v-model="modify.quantity"
+                    class="coupon-form-input"
+                  />
+                  <span>份</span>
+                </div>
+
+                <div
+                  class="message"
+                  style="font-size:12px"
+                >每个用户领券上限，如不填，则默认为1</div>
+                <div style="text-align: center; margin: 0">
+                  <el-button
+                    size="mini"
+                    @click="visible2 = false"
+                  >取消</el-button>
+                  <el-button
+                    type="primary"
+                    size="mini"
+                    @click="visible2 = false"
+                  >确定</el-button>
+                </div>
+                <el-button slot="reference"><i class="el-icon-edit"></i></el-button>
+              </el-popover>
+
+            </template>
           </el-table-column>
           <el-table-column
             label="操作"
@@ -144,7 +189,8 @@
 <script>
 import {
   getCouponList,
-  getSingleCard
+  getSingleCard,
+  deleteSingleCard
 } from "service";
 
 import {
@@ -160,7 +206,8 @@ import {
   FormItem,
   MessageBox,
   RadioGroup,
-  Radio
+  Radio,
+  Popover
 } from "element-ui";
 
 export default {
@@ -177,7 +224,7 @@ export default {
     "el-dialog": Dialog,
     'el-radio-group': RadioGroup,
     'el-radio': Radio,
-
+    'el-popover': Popover
   },
   data() {
     return {
@@ -188,22 +235,21 @@ export default {
       GIFT: { card_type: 'GIFT', title: '兑换券' },
       GENERAL_COUPON: { card_type: 'GENERAL_COUPON', title: '优惠券' },
       card_id: '',
+      card_id_list: [],
       loading: true,
       title: '',
       radio: "1",
-      companyList: [],
-      templateForm: {
-        company_id: null
-      },
       templateVisible: false,
-      filters: {
-        name: "",
-        company_id: ""
+      visible2: false,
+      dataList: [
+        { card_id: "1111", typeName: "代金券", card_type: "CASH", title: "0元代金券", dateDetail: "2018-12-10", status: "已投放", quantity: 100000 }
+      ],
+      modify: {
+        add: 1,
+        reduce: 0,
+        quantity: 0,
       },
       templateForm: {
-        company_id: '',
-        name: '',
-        id: ''
       },
       setting: {
         loading: false,
@@ -214,64 +260,92 @@ export default {
         pageSize: 10,
         currentPage: 1
       },
-      tableData: [
-        { type: "折扣券", all_type: "1元换购", time: "2018-12-12", status: "已使用", count: "0", }
-      ],
+      cardType: '',
       setting: {
         loading: false,
         loadingText: '拼命加载中'
       },
+      obj: {
+        GFIT: { prop: 'gfit', typeName: '兑换券' },
+        DISCOUNT: { prop: 'discount', typeName: '折扣劵' },
+        CASH: { prop: 'cash', typeName: '代金券' },
+        GENERAL_COUPON: { prop: 'general_coupon', typeName: '优惠劵' },
+        GROUPON: { prop: 'groupon', typeName: '团购劵' }      }
     };
   },
   created() {
   },
   mounted() {
-    this.getCardList()
+    //this.getCardList()
   },
   methods: {
     //卡券列表查询
     getCardList() {
       let params = {
-        authorizer_id: 6,
+        authorizer_id: 6
       }
       getCardList(this, params)
         .then(res => {
           console.log("========")
           console.log(res)
-          let card_id_list = res.card_id_list;
-          for (var i = 0; i < card_id_list.length; i++) {
-            this.card_id = card_id_list[i]
-            this.getSingleCard();
-          }
+          this.card_id_list = res.card_id_list;
         })
         .catch(err => {
           console.log(err);
         });
     },
-    //卡券详情查询
-    getSingleCard() {
-      if (this.card_id != undefined) {
-        let params = {
-          authorizer_id: 6,
-          card_id: this.card_id
-        }
-        getSingleCard(this, params)
-          .then(res => {
-            console.log("?????????")
-            console.log(res)
-            this.cardDetailsHandle(res.card)
-          })
-          .catch(err => {
-            console.log(err);
-          });
-
+    listHandle() {
+      for (let i = 0; i < this.card_id_list.length; i++) {
+        this.getSingleCard(this.card_id_list[i])
       }
     },
-    //删除卡券
-    deleteSingleCard() {
+    //卡券详情查询
+    getSingleCard(card_id) {
       let params = {
         authorizer_id: 6,
-        card_id: this.card_id
+        card_id: card_id
+      }
+      getSingleCard(this, params)
+        .then(res => {
+          let card = res.card
+          let object = this.obj[cart.card_type]
+          let data = { card_id: card[object.prop].base_info.id, card_type: cart.card_type, typeName: object.typeName, title: card[object.prop].base_info.title }
+          //库存
+          data.quantity = card[object.prop].base_info.sku.quantity
+          //审核中
+          if (card[object.prop].base_info.status = 'CARD_STATUS_NOT_VERIFY') {
+            data.status = '审核中'
+          }
+          //待投放
+          else if (card[object.prop].base_info.status = 'CARD_STATUS_VERIFY_OK') {
+            data.status = '待投放'
+          }
+          //已投放
+          else if (card[object.prop].base_info.status = 'CARD_STATUS_DISPATCH') {
+            data.status = '已投放'
+          } else {
+            data.status = ''
+          }
+          if (card[object.prop].base_info.date_info.type = 'DATE_TYPE_FIX_TIME_RANGE') {
+            data.dateDetail = this.formatDateTime(card[object.prop].base_info.date_info.begin_timestamp) +
+              '至' + this.formatDateTime(card[object.prop].base_info.date_info.end_timestamp)
+          } else {
+            data.dateDetail = '领取后' + card[object.prop].base_info.date_info.fixed_begin_term === 0 ? '当' :
+              card[object.prop].base_info.date_info.fixed_begin_term + '天生效' + card[object.prop].base_info.date_info.fixed_term + '天有效'
+          }
+          this.dataList.push(data)
+        })
+        .catch(err => {
+          console.log(err);
+        });
+
+
+    },
+    //删除卡券
+    deleteSingleCard(args) {
+      let params = {
+        authorizer_id: 6,
+        card_id: args.card_id
       }
       deleteSingleCard(this, params)
         .then(res => {
@@ -281,11 +355,26 @@ export default {
           console.log(err);
         });
     },
+    //时间戳转化为日期
+    formatDateTime(timeStamp) {
+      var date = new Date()
+      date.setTime(timeStamp * 1000)
+      var y = date.getFullYear()
+      var m = date.getMonth() + 1
+      m = m < 10 ? ('0' + m) : m
+      var d = date.getDate()
+      d = d < 10 ? ('0' + d) : d
+      var h = date.getHours()
+      h = h < 10 ? ('0' + h) : h
+      var minute = date.getMinutes()
+      var second = date.getSeconds()
+      minute = minute < 10 ? ('0' + minute) : minute
+      second = second < 10 ? ('0' + second) : second
+      return y + '-' + m + '-' + d
+    },
 
     addCoupon() {
       console.log("新增")
-      this.templateForm.name = ''
-      this.templateForm.company_id = ''
       this.templateVisible = true
       this.title = '创建优惠券'
     },
@@ -299,18 +388,18 @@ export default {
         }
       });
     },
-    linkToView() {
-      console.log("查看")
-      //this.setting.loading = true;
+    linkToEdit(args) {
+      this.$router.push({
+        path: '/project/wx_cardpackage/add/',
+        query: {
+          card_id: args.card_id,
+          card_type: args.card_type
+        }
+      })
     },
-    linkToEdit() {
-      console.log("修改")
-      // this.$router.push({
-      //   path: "/project/rules/edit/" + currentCoupon.id
-      // });
-    },
-    linkToDelete() {
+    linkToDelete(args) {
       console.log("删除")
+      this.deleteSingleCard(args)
     },
     changePage(currentPage) {
       this.pagination.currentPage = currentPage;
@@ -345,10 +434,17 @@ export default {
     .el-radio {
       margin-left: 80px;
     }
+    .el-input {
+      width: 100px;
+    }
     .confirm {
       width: 120px;
       height: 50px;
       margin: 30px 60px;
+    }
+    .coupon-form-input {
+      width: 100px;
+      display: inline-block;
     }
     .item-content-wrap {
       .total-wrap {
@@ -364,6 +460,7 @@ export default {
           margin: 5px 0;
         }
       }
+
       .pagination-wrap {
         margin: 10px auto;
         text-align: right;

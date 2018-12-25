@@ -52,19 +52,24 @@
               label="核销方式"
               prop="is_fixed_date"
             >
-              <el-radio-group v-model="couponForm.is_fixed_date">
-                <div class="box-segmentation">
-                  <el-radio :label="1">用扫码核销</el-radio>
-                </div>
-                <div
-                  class="box-segmentation-b"
-                  v-show="verificationList"
-                >
-                  <el-radio :label="0"> 二维码</el-radio>
-                  <el-radio :label="1">条形码</el-radio>
-                  <el-radio :label="2">仅卡券号</el-radio>
-                </div>
-              </el-radio-group>
+
+              <div class="box-segmentation">
+                <el-checkbox
+                  v-model="couponForm.verification"
+                  label="扫码核销"
+                ></el-checkbox>
+              </div>
+
+              <div
+                class="box-segmentation-b"
+                v-show="verificationList"
+              >
+                <el-radio-group v-model="code_type">
+                  <el-radio :label="code_types.QRCODE">二维码</el-radio>
+                  <el-radio :label="code_types.BARCODE">条形码</el-radio>
+                  <el-radio :label="code_types.TEXT">仅卡券号</el-radio>
+                </el-radio-group>
+              </div>
             </el-form-item>
           </el-form>
         </div>
@@ -80,16 +85,18 @@
             :model="couponForm"
             label-width="180px"
           >
-
             <el-form-item
               label="适用门店"
               prop="is_fixed_date"
             >
-              <el-radio-group v-model="couponForm.is_fixed_date">
-                <div class="box-segmentation">
-                  <el-radio :label="4">全部门店适用</el-radio>
-                </div>
-              </el-radio-group>
+
+              <div class="box-segmentation">
+                <el-checkbox
+                  v-model="use_all_locations"
+                  label="全部门店通用"
+                ></el-checkbox>
+              </div>
+
             </el-form-item>
             <el-form-item
               label="操作提示"
@@ -127,7 +134,8 @@
 
 <script>
 import {
-  getCouponList,
+  addSingleCard,
+  modifySingleCard
 } from "service";
 
 import {
@@ -172,10 +180,37 @@ export default {
       data: null,
       notice: null,
       card_type: this.$route.params.card_type,
+      card_id: this.$route.params.card_id,
       verificationList: false,
       loading: true,
       title: '',
       radio: "1",
+      code_types: { QRCODE: 'CODE_TYPE_QRCODE', BARCODE: 'CODE_TYPE_BARCODE', TEXT: 'CODE_TYPE_TEXT' },
+      code_type: null,
+      use_all_locations: false,
+      type: '',
+      card_types: {
+        GROUPON: {
+          "card_type": "GROUPON",
+          "groupon": {
+          }
+        }, CASH: {
+          "card_type": "CASH",
+          "cash": {
+          }
+        }, GIFT: {
+          "card_type": "GIFT",
+          "gift": {
+          }
+        }, DISCOUNT: {
+          "card_type": "DISCOUNT",
+          "discount": {
+          }
+        }, GENERAL_COUPON: {
+          "card_type": "GENERAL_COUPON",
+          "general_coupon": {
+          }
+        }      },
       setting: {
         loading: false,
         loadingText: "拼命加载中"
@@ -184,25 +219,80 @@ export default {
         inventory: false,
         operatingHints: false,
       },
-
       couponForm: {
-        is_fixed_date: "",
+        verification: "",
+        use_all_locations: "",
+        code: "",
         description: "",
         color: "",
         discount: "",
-        time: ""
+        time: "",
+
+
       },
     };
+  },
+  watch: {
+    verification(val, oldVal) {
+      this.verificationList = val
+      if (!val) {
+        this.code_type = null
+      }
+    },
+
+  },
+  computed: {
+    verification() {
+      return this.couponForm.verification;
+    },
   },
   created() {
   },
   mounted() {
     console.log('..................')
+    console.log(this.$route.params.card)
+    console.log(this.$route.params.card_id)
+    console.log('..................>')
     if (this.$route.params.card !== undefined) {
       this.data = this.$route.params.card
+      //更新新增判断过滤
+      if (this.$route.params.card_id !== undefined) {
+        //初始化数据
+        this.useInit()
+      }
     }
   },
   methods: {
+    //新增
+    addSingleCard(args) {
+      addSingleCard(this, args)
+        .then(res => {
+          console.log(res)
+          if (res.errcode === 0) {
+            this.$router.push({
+              path: '/project/wx_cardpackage/index/'
+            })
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    //修改
+    modifySingleCard(args) {
+      modifySingleCard(this, args)
+        .then(res => {
+          console.log(res)
+          if (res.errcode === 0) {
+            this.$router.push({
+              path: '/project/wx_cardpackage/index/'
+            })
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
     goBack() {
       console.log("提交券类型")
       this.$router.push({
@@ -214,53 +304,104 @@ export default {
       console.log(this.data)
       if (null === this.data) {
         this.$router.go(-1);
-        // this.$router.push({
-        //   path: "/project/wx_cardpackage/add/",
-        //   query: {
-        //     card_type: this.card_type
-        //   }
-        // });
         return
       }
-
       //团购券
       if (this.card_type === 'GROUPON') {
-        this.data.groupon.base_info.sku = this.sku
-        this.data.groupon.base_info.can_share = this.can_share
-        this.data.groupon.base_info.can_give_friend = this.can_give_friend
-        this.data.groupon.base_info.notice = this.notice
+        this.dataHandle('groupon')
       }
       //代金券
       else if (this.card_type === 'CASH') {
-        this.data.cash.base_info.sku = this.sku
-        this.data.cash.base_info.can_share = this.can_share
-        this.data.cash.base_info.can_give_friend = this.can_give_friend
-        this.data.cash.base_info.notice = this.notice
+        this.dataHandle('cash')
       }
       //折扣券
       else if (this.card_type === 'DISCOUNT') {
-        this.data.discount.base_info.sku = this.sku
-        this.data.discount.base_info.can_share = this.can_share
-        this.data.discount.base_info.can_give_friend = this.can_give_friend
-        this.data.discount.base_info.notice = this.notice
+        this.dataHandle('discount')
       }
       //兑换券
       else if (this.card_type === 'GIFT') {
-        this.data.gift.base_info.sku = this.sku
-        this.data.gift.base_info.can_share = this.can_share
-        this.data.gift.base_info.can_give_friend = this.can_give_friend
-        this.data.gift.base_info.notice = this.notice
+        this.dataHandle('gift')
       }
       //优惠券
       else {
-        this.data.general_coupon.base_info.sku = this.sku
-        this.data.general_coupon.base_info.can_share = this.can_share
-        this.data.general_coupon.base_info.can_give_friend = this.can_give_friend
-        this.data.general_coupon.base_info.notice = this.notice
+        this.dataHandle('general_coupon')
       }
       console.log('..............')
       console.log(this.data)
+      if (this.card_id !== undefined) {
+        this.update()
+      } else {
+        this.save()
+      }
       //请求后台接口
+    },
+    //新增
+    save() {
+      let card = { card: this.data }
+      this.addSingleCard(card);
+    },
+    //修改
+    update() {
+      let card = this.updateFilter()
+      //let query = '?authorizer_id=6&card_id=' + this.card_id
+      let query = {
+        authorizer_id: 6,
+        card_id: this.card_id
+      }
+      console.log('更新')
+      console.log(card)
+      this.modifySingleCard(query, card)
+    },
+    updateFilter() {
+      let card = this.card_types[this.card_type]
+      card[this.type].base_info = this.data[this.type].base_info
+      return card
+    },
+    dataHandle(type) {
+      this.type = type
+      this.data[type].base_info.sku = this.sku
+      this.data[type].base_info.can_share = this.can_share
+      this.data[type].base_info.can_give_friend = this.can_give_friend
+      this.data[type].base_info.notice = this.notice
+      this.data[type].base_info.code_type = this.code_type
+      this.data[type].base_info.use_all_locations = this.use_all_locations
+    },
+    useInit() {
+      //团购券
+      if (this.card_type === 'GROUPON') {
+        this.dataHandleInit('groupon')
+      }
+      //代金券
+      else if (this.card_type === 'CASH') {
+        this.dataHandleInit('cash')
+      }
+      //折扣券
+      else if (this.card_type === 'DISCOUNT') {
+        this.dataHandleInit('discount')
+      }
+      //兑换券
+      else if (this.card_type === 'GIFT') {
+        this.dataHandleInit('gift')
+      }
+      //优惠券
+      else {
+        this.dataHandleInit('general_coupon')
+      }
+    },
+    dataHandleInit(type) {
+      this.sku = this.data[type].base_info.sku
+      this.can_share = this.data[type].base_info.can_share
+      this.can_give_friend = this.data[type].base_info.can_give_friend
+      this.notice = this.data[type].base_info.notice
+      this.code_type = this.data[type].base_info.code_type
+      this.use_all_locations = this.data[type].base_info.use_all_locations
+      if (this.code_type === this.code_types.QRCODE ||
+        this.code_type === this.code_types.BARCODE ||
+        this.code_type === this.code_types.TEXT) {
+        this.verificationList = true
+        this.couponForm.verification = true
+      }
+
     }
   }
 };
@@ -320,6 +461,7 @@ export default {
       }
       .box-segmentation {
         margin: 13px;
+        margin-top: 0;
       }
       .box-segmentation-b {
         margin-left: 45px;
