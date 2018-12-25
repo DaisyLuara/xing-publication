@@ -27,10 +27,10 @@ $api->version('v1', [
             $api->post('cards/create', 'CardsController@store');
 
             //获取用户授权信息
-            $api->post('cards/getinfo','CardsController@getInfo');
+            $api->get('cards/getinfo','CardsController@getInfo');
 
             //修改库存接口
-            $api->patch('cards/stock','CardsController@stock');
+            $api->post('cards/stock','CardsController@stock');
 
             //上传图片接口
             $api->post('cards/uploadPic','CardsController@uploadPic');
