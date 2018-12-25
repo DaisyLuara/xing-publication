@@ -1008,7 +1008,6 @@ export default {
           this.h5Rate =
             res.h5_attribute === 2 ? this.rate.h5_2 : this.rate.h5_1;
           this.programForm.project_attribute = res.project_attribute;
-          this.programForm.xo_attribute = res.xo_attribute;
           (this.programForm.hidol_attribute = res.hidol_attribute),
             (this.programForm.remark = res.remark);
           this.programForm.art_innovate = res.art_innovate;
@@ -1034,17 +1033,17 @@ export default {
               this.programForm.animation = [];
             }
             // 节目统筹
-            if (res.member.plan.length > 0) {
+            if (res.member.plan) {
               this.programForm.plan = res.member.plan;
 
               res.member.plan.map(r => {
                 this.programForm.whole.push(r.user_id);
               });
             } else {
-              his.programForm.plan = [];
+              this.programForm.plan = [];
             }
             // 交互技术
-            if (res.member.interaction.length > 0) {
+            if (res.member.interaction) {
               this.programForm.interaction = res.member.interaction;
               res.member.interaction.map(r => {
                 this.programForm.interactionVal.push(r.user_id);
@@ -1062,7 +1061,7 @@ export default {
               this.programForm.h5 = [];
             }
             // 测试
-            if (res.member.tester.length > 0) {
+            if (res.member.tester) {
               this.programForm.tester = res.member.tester;
               res.member.tester.map(r => {
                 this.programForm.test.push(r.user_id);
@@ -1071,7 +1070,7 @@ export default {
               this.programForm.tester = [];
             }
             // 运营
-            if (res.member.operation.length > 0) {
+            if (res.member.operation) {
               this.programForm.operation = res.member.operation;
               res.member.operation.map(r => {
                 this.programForm.platform.push(r.user_id);
@@ -1080,7 +1079,7 @@ export default {
               this.programForm.operation = [];
             }
             // 节目创意
-            if (res.member.originality.length > 0) {
+            if (res.member.originality) {
               this.programForm.originality = res.member.originality;
               res.member.originality.map(r => {
                 this.programForm.creative.push(r.user_id);
@@ -1089,7 +1088,7 @@ export default {
               this.programForm.originality = [];
             }
             // 动画设计.Hidol
-            if (res.member.animation_hidol.length > 0) {
+            if (res.member.animation_hidol) {
               this.programForm.animation_hidol = res.member.animation_hidol;
               res.member.animation_hidol.map(r => {
                 this.programForm.animatHidol.push(r.user_id);
@@ -1098,7 +1097,7 @@ export default {
               this.programForm.animation_hidol = [];
             }
             // 后端iT技术
-            if (res.member.backend_docking.length > 0) {
+            if (res.member.backend_docking) {
               this.programForm.backend_docking = res.member.backend_docking;
               res.member.backend_docking.map(r => {
                 this.programForm.backend.push(r.user_id);
@@ -1107,7 +1106,7 @@ export default {
               this.programForm.backend_docking = [];
             }
             // Hidol专利
-            if (res.member.hidol_patent.length > 0) {
+            if (res.member.hidol_patent) {
               this.programForm.hidol_patent = res.member.hidol_patent;
               res.member.hidol_patent.map(r => {
                 this.programForm.hidol.push(r.user_id);
