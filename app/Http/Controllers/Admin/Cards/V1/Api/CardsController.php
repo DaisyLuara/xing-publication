@@ -137,14 +137,13 @@ class CardsController extends Controller
         $reduceStockValue = $request->has('reduce_stock_value') ? $request->get('reduce_stock_value') : '0';
 
         if ($increaseStockValue >= 1) {
-            $result = $card->increaseStock($cardId, $increaseStockValue);
+           return  $card->increaseStock($cardId, $increaseStockValue);
         }
 
         if ($reduceStockValue >= 1) {
-            $result = $card->reduceStock($cardId, $reduceStockValue);
+            return $card->reduceStock($cardId, $reduceStockValue);
         }
 
-        return $result;
     }
 
     //创建卡券
@@ -168,8 +167,11 @@ class CardsController extends Controller
         $authorizer_id = $request->has('authorizer_id') ? $request->get('authorizer_id') : '';
         $card = $this->getCard($authorizer_id);
 
-        $cardId = $request->has('card_id') ? $request->get('card_id') : '';
+//        $cardId = $request->has('card_id') ? $request->get('card_id') : '';
         $cardArr = $request->json()->all();
+
+//        dd($cardArr);
+
         $cardType = $cardArr['card_type'];
         $attributes = $cardArr[strtolower($cardType)];
 
