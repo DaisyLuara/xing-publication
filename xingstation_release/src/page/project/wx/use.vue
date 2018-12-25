@@ -104,6 +104,7 @@
             >
               <el-input
                 v-model="notice"
+                :maxlength="16"
                 class="coupon-form-input"
               />
               <div

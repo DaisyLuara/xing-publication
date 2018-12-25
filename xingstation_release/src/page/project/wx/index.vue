@@ -113,47 +113,54 @@
           </el-table-column>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop=""
             label="库存修改"
             min-width="100"
           >
             <template slot-scope="scope">
-
               <el-popover
                 placement="bottom"
                 width="300"
-                v-model="visible2"
+                v-model="scope.row.visible"
               >
-                <el-radio-group v-model="modify">
-                  <el-radio :label="modify.add">增加</el-radio>
-                  <el-radio :label="modify.reduce">减少</el-radio>
-                </el-radio-group>
-                <div>
-                  <el-input
-                    v-model="modify.quantity"
-                    class="coupon-form-input"
+                <el-radio
+                  v-model="modifyChange"
+                  :label="0"
+                >增加</el-radio>
+                <el-radio
+                  v-model="modifyChange"
+                  :label="1"
+                >减少</el-radio>
+
+                <div style="margin:10px 0"><input
+                    type="text"
+                    v-model="modifyQuantity"
+                    style="width: 200px;
+                           font-size: 14px;
+                            border: 1px solid #8d8d8d;
+                            border-radius:5px;
+                            height:30px;
+                            padding:0 10px;
+                            "
                   />
                   <span>份</span>
                 </div>
-
                 <div
                   class="message"
-                  style="font-size:12px"
+                  style="font-size:12px;margin:10px 0"
                 >每个用户领券上限，如不填，则默认为1</div>
-                <div style="text-align: center; margin: 0">
-                  <el-button
-                    size="mini"
-                    @click="visible2 = false"
-                  >取消</el-button>
+                <div style="text-align: left; margin: 0">
                   <el-button
                     type="primary"
                     size="mini"
-                    @click="visible2 = false"
+                    @click="scope.row.visible = false"
                   >确定</el-button>
+                  <el-button
+                    size="mini"
+                    @click="scope.row.visible = false"
+                  >取消</el-button>
                 </div>
                 <el-button slot="reference"><i class="el-icon-edit"></i></el-button>
               </el-popover>
-
             </template>
           </el-table-column>
           <el-table-column
@@ -240,15 +247,12 @@ export default {
       title: '',
       radio: "1",
       templateVisible: false,
-      visible2: false,
       dataList: [
-        { card_id: "1111", typeName: "代金券", card_type: "CASH", title: "0元代金券", dateDetail: "2018-12-10", status: "已投放", quantity: 100000 }
+        { card_id: "1111", visible: false, typeName: "代金券", card_type: "CASH", title: "0元代金券", dateDetail: "2018-12-10", status: "已投放", quantity: 100000 },
+        { card_id: "1111", visible: false, typeName: "代金券", card_type: "CASH", title: "0元代金券", dateDetail: "2018-12-10", status: "已投放", quantity: 100000 }
       ],
-      modify: {
-        add: 1,
-        reduce: 0,
-        quantity: 0,
-      },
+      modifyChange: true,
+      modifyQuantity: null,
       templateForm: {
       },
       setting: {
@@ -420,7 +424,17 @@ export default {
   .item-list-wrap {
     background: #fff;
     padding: 30px;
-
+    .el-popover {
+      .coupon-form-input {
+        width: 200px;
+        display: inline-block;
+        .input {
+          width: 200px;
+          font-size: 14px;
+          border: 1px solid #8d8d8d;
+        }
+      }
+    }
     .el-form-item {
       margin: 0;
       padding: 0;
@@ -442,10 +456,7 @@ export default {
       height: 50px;
       margin: 30px 60px;
     }
-    .coupon-form-input {
-      width: 100px;
-      display: inline-block;
-    }
+
     .item-content-wrap {
       .total-wrap {
         margin-top: 5px;

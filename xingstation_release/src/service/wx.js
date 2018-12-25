@@ -4,8 +4,8 @@ const CARD_API = '/api/cards/list'
 const SINGLECARD_API = '/api/cards/show/'
 const UPDATE_SINGLECARD_API = '/api/cards/update/'
 const DELETE_SINGLECARD_API = '/api/cards/delete/'
-//新增
-const ADD_SINGLECARD_API = '/api/cards/delete/'
+const ADD_SINGLECARD_API = '/api/cards/create/'
+const MODIFY_INVENTORY_API = '/api/cards/stock/'
 //查卡券列表
 const getCardList = (context, args) => {
   return new Promise(function(resolve, reject) {
@@ -71,11 +71,25 @@ const addSingleCard = (context, args) => {
       })
   })
 }
+//修改库存
+const modifyInventory = (context, args) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .post(HOST + MODIFY_INVENTORY_API, { params: args })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
 
 export {
   getCardList,
   getSingleCard,
   modifySingleCard,
   deleteSingleCard,
-  addSingleCard
+  addSingleCard,
+  modifyInventory
 }

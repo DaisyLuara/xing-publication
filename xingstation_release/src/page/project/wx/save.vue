@@ -121,6 +121,7 @@
                 v-model="base_info.title"
                 class="coupon-form-input"
                 style="width:250px"
+                :maxlength="9"
               />
               <div
                 class="errMessage"
@@ -135,6 +136,7 @@
             >
               <el-input
                 v-model="base_info.title"
+                :maxlength="9"
                 class="coupon-form-input"
                 style="width:250px"
               />
@@ -377,6 +379,7 @@
                   />
                   <div
                     class="errMessage"
+                    :maxlength="15"
                     v-show="submitCheck.commodity"
                   >适用商品不能为空且长度不能超过15个汉字或30个英文字母</div>
                   <div class="message-box">填写本券适用的商品、类目或服务</div>
@@ -387,6 +390,7 @@
                   />
                   <div
                     class="errMessage"
+                    :maxlength="15"
                     v-show="submitCheck.noCommodity"
                   >不适用商品不能为空且长度不能超过15个汉字或30个英文字母</div>
                   <div class="message-box">填写本券不适用的商品、类目或服务</div>
@@ -731,7 +735,7 @@ export default {
         //true
         "description": "",
         //true
-        "get_limit": 3,
+        "get_limit": null,
       },
       //使用日期，有效期的信息
       date_info: {
