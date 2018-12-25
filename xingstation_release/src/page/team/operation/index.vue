@@ -249,13 +249,7 @@ export default {
         currentPage: 1
       },
       role: null,
-      tableData: [
-        {
-          id: 1,
-          name: "aaa",
-          created_at: "2018-09-09"
-        }
-      ],
+      tableData: [],
       editId: null
     };
   },
