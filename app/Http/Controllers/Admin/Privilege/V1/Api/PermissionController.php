@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\Privilege\V1\Request\PermissionRequest;
 use App\Http\Controllers\Admin\Privilege\V1\Transformer\PermissionTransformer;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Admin\Privilege\V1\Models\Permission;
+use Illuminate\Http\Request;
 
 class PermissionController extends Controller
 {
@@ -21,18 +22,10 @@ class PermissionController extends Controller
         return $this->response()->item($permission, new PermissionTransformer());
     }
 
-    public function tree()
+    public function index(Request $request)
     {
-        $permission = Permission::query()
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->toHierarchy();
-        return response()->json($permission);
-    }
-
-    public function index(){
-        /** @var \Baum\Node $node */
-        
+        $permission = Permission::query()->where('parent_id', $request->parent_id)->paginate(10);
+        return $this->response()->paginator($permission, new PermissionTransformer());
     }
 
     public function store(PermissionRequest $request)

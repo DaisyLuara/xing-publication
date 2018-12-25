@@ -221,31 +221,27 @@ export default {
     onSubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.submiting = true;
-          role
-            .saveRole(this, this[formName], this.roleID)
+          this.setting.loading = true;
+            saveRole(this, this[formName], this.roleID)
             .then(result => {
               this.$message({
                 message: this.roleID ? "修改成功" : "添加成功",
                 type: "success"
               });
-              this.submiting = false;
+              this.setting.loading = false;
               this.$router.push({
                 path: "/system/role/"
               });
             })
             .catch(error => {
-              this.submiting = false;
+              this.setting.loading = false;
               console.log(error);
             });
-        } else {
-          console.log("error submit");
-          return;
         }
       });
     },
-    historyBack() {
-      historyBack();
+      historyBack(){
+          historyBack()
     }
   }
 };

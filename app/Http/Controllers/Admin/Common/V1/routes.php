@@ -81,6 +81,7 @@ $api->version('v1', [
             $api->get('user/query', 'QueryController@userQuery');
             $api->get('team_rate/query', 'QueryController@teamRateQuery');
             $api->get('attribute/query', 'QueryController@attributeQuery');
+            $api->get('permission/query', 'QueryController@permissionQuery');
 
             //消息通知
             $api->get('user/notifications', 'NotificationsController@index');

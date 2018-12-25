@@ -52,6 +52,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use DB;
+use App\Http\Controllers\Admin\Privilege\V1\Models\Permission;
 
 class QueryController extends Controller
 {
@@ -419,5 +420,15 @@ class QueryController extends Controller
         $node = Attribute::query()->where('name', '业态')->first();
         $attribute = $node->getDescendants();
         return $this->response()->collection($attribute, new AttributeTransformer());
+    }
+
+
+    public function permissionQuery()
+    {
+        $permission = Permission::query()
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->toHierarchy();
+        return response()->json($permission);
     }
 }

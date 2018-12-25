@@ -10,7 +10,7 @@ namespace App\Http\Controllers\Admin\Privilege\V1\Transformer;
 
 
 use League\Fractal\TransformerAbstract;
-use Spatie\Permission\Models\Permission;
+use App\Http\Controllers\Admin\Privilege\V1\Models\Permission;
 
 class PermissionTransformer extends TransformerAbstract
 {
