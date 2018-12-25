@@ -75,8 +75,10 @@
               <el-select
                 v-model="programForm.contract_id"
                 :disabled="contractDisable"
+                filterable
                 clearable
                 placeholder="请选择合同编号"
+                @change="contractHandle"
               >
                 <el-option
                   v-for="item in contractList"
@@ -686,6 +688,7 @@ export default {
       status: 1,
       programID: "",
       programForm: {
+        money: "",
         hidol_attribute: 0,
         contract_id: "",
         art_innovate: "",
@@ -839,11 +842,21 @@ export default {
         this.peopleHandle(idArr, this.interactionRate, "interaction");
       }
     },
+    contractHandle(val) {
+      let contractChoose = {};
+      this.contractList.filter(r => {
+        if (r.id === val) {
+          contractChoose = r;
+          return;
+        }
+      });
+      this.programForm.money = contractChoose.amount;
+    },
     handleCustom(val) {
       if (val === 1) {
-        this.programForm.contract_id === "";
         this.contractDisable = false;
       } else {
+        this.programForm.contract_id = "";
         this.contractDisable = true;
       }
     },
@@ -986,12 +999,15 @@ export default {
           this.programForm.link_attribute = res.link_attribute;
           this.programForm.h5_attribute = res.h5_attribute;
           this.programForm.interaction_attribute = res.interaction_attribute;
-          this.programForm.contract_id = res.contract_id;
-          // res.interaction_attribute === 1 ? getContractList() : ''
+          this.programForm.individual_attribute = res.individual_attribute;
+          if (res.individual_attribute === 1) {
+            this.programForm.contract_id = res.contract_id;
+            this.programForm.money = res.contract.amount;
+          }
+          this.contractDisable = res.individual_attribute === 1 ? false : true;
           this.h5Rate =
             res.h5_attribute === 2 ? this.rate.h5_2 : this.rate.h5_1;
           this.programForm.project_attribute = res.project_attribute;
-          this.programForm.individual_attribute = res.individual_attribute;
           this.programForm.xo_attribute = res.xo_attribute;
           (this.programForm.hidol_attribute = res.hidol_attribute),
             (this.programForm.remark = res.remark);

@@ -99,11 +99,7 @@
             class="text-input"
           />
         </el-form-item>
-        <el-form-item
-          :rules="[{ required: true, message: '请上传运营文档', trigger: 'submit' }]"
-          label="运营文档"
-          prop="ids"
-        >
+        <el-form-item label="运营文档" prop="ids">
           <el-upload
             ref="upload"
             :action="Domain"
@@ -127,7 +123,7 @@
         </el-form-item>
         <el-form-item label-position="right">
           <el-button size="small" @click="cancel">取 消</el-button>
-          <el-button size="small" type="primary" @click="submit">确 定</el-button>
+          <el-button size="small" type="primary" @click="submit('documentForm')">确 定</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -284,7 +280,7 @@ export default {
     let user_info = JSON.parse(Cookies.get("user_info"));
     this.role = user_info.roles.data;
     this.getQiniuToken();
-    // this.getOperationDocumentList();
+    this.getOperationDocumentList();
   },
   methods: {
     cancel() {
@@ -294,7 +290,7 @@ export default {
       }
       this.dialogFormVisible = false;
     },
-    submit() {
+    submit(formName) {
       let operationMediaIds = [];
       if (this.fileList.length > 0) {
         this.fileList.map(r => {
@@ -308,12 +304,12 @@ export default {
         });
         return;
       }
+      let args = {
+        name: this.documentForm.document_name,
+        media_id: this.ids
+      };
       this.$refs[formName].validate(valid => {
         if (valid) {
-          let args = {
-            name: this.documentForm.document_name,
-            operation_media_id: operationMediaIds
-          };
           if (this.editId) {
             args.id = this.editId;
             modifyOperationDocument(this, args, this.editId)
@@ -323,9 +319,7 @@ export default {
                   message: "修改成功",
                   type: "success"
                 });
-                this.$router.push({
-                  path: "/team/operation"
-                });
+                this.getOperationDocumentList();
               })
               .catch(err => {
                 this.$message({
@@ -341,9 +335,7 @@ export default {
                   message: "提交成功",
                   type: "success"
                 });
-                this.$router.push({
-                  path: "/team/operation"
-                });
+                this.getOperationDocumentList();
               })
               .catch(err => {
                 this.$message({
@@ -430,13 +422,15 @@ export default {
       this.getOperationDocumentDetails(data.id);
     },
     getOperationDocumentDetails(id) {
+      this.editId = id;
       getOperationDocumentDetails(this, id)
         .then(res => {
           this.documentForm.document_name = res.name;
           let operationMediaData = [];
-          if (res.operation_media) {
-            operationMediaData.push(res.operation_media);
+          if (res.media) {
+            operationMediaData.push(res.media);
           }
+          this.fileList = operationMediaData;
           this.loading = false;
         })
         .catch(err => {
@@ -454,8 +448,12 @@ export default {
         type: "warning"
       })
         .then(() => {
-          let id = data.id;
-          deleteOperationDocument(this, id)
+          let ids = Array.of(data.id);
+          console.log(ids);
+          let args = {
+            ids: ids
+          };
+          deleteOperationDocument(this, args)
             .then(res => {
               this.$message({
                 type: "success",
@@ -478,7 +476,7 @@ export default {
         });
     },
     downloadDocument(data) {
-      let url = data.url;
+      let url = data.media.url;
       const xhr = new XMLHttpRequest();
       xhr.open("GET", url, true);
       xhr.responseType = "blob";
@@ -486,7 +484,7 @@ export default {
         var urlObject = window.URL || window.webkitURL || window;
         let a = document.createElement("a");
         a.href = urlObject.createObjectURL(new Blob([xhr.response]));
-        a.download = data.name;
+        a.download = data.media.name;
         a.click();
       };
       xhr.send();
@@ -503,8 +501,8 @@ export default {
         delete args.name;
       }
       if (JSON.stringify(this.filters.beginDate) === "[]") {
-        delete args.start_date_begin;
-        delete args.end_date_begin;
+        delete args.start_date;
+        delete args.end_date;
       }
       getOperationDocumentList(this, args)
         .then(res => {
