@@ -18,10 +18,10 @@ class MediaInfoController extends Controller
         if ($request->has("name") && $request->name) {
             $query = $query->where("name", "like", "%" . $request->name . "%");
         }
-        if ($request->start_time && $request->end_time) {
+        if ($request->start_date && $request->end_date) {
             $query = $query->whereBetween("date", [
-                Carbon::parse($request->start_time)->toDateString(),
-                Carbon::parse($request->end_time)->toDateString()
+                Carbon::parse($request->start_date)->toDateString(),
+                Carbon::parse($request->end_date)->toDateString()
             ]);
         }
         $mediaInfo = $query->orderby("id", "desc")->paginate(10);

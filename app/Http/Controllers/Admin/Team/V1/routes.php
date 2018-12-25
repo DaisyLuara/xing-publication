@@ -20,7 +20,7 @@ $api->version('v1', [
             //分配比例
             $api->get('team_rate/{team_rate}', 'TeamRateController@show');
             $api->get('team_rate', 'TeamRateController@index');
-            $api->patch('team_rate/{team_rate}', 'TeamRateController@update');
+            $api->patch('team_rate/{team_rate}', ['middleware' => ['role:legal-affairs-manager|bonus-manager'], 'uses' => 'TeamRateController@update']);
 
             //个人中心奖金
             $api->get('person_reward', 'TeamPersonRewardController@index');
@@ -35,8 +35,6 @@ $api->version('v1', [
             $api->get('team_project_bug_records/{team_project_bug_record}', 'TeamProjectBugRecordController@show');
             $api->post('team_project_bug_records', ['middleware' => ['role:bonus-manager|legal-affairs-manager'], 'uses' => 'TeamProjectBugRecordController@store']);
             $api->patch('team_project_bug_records/{team_project_bug_record}', ['middleware' => ['role:bonus-manager|legal-affairs-manager'], 'uses' => 'TeamProjectBugRecordController@update']);
-
-
 
 
             //平台项目

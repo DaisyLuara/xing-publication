@@ -15,9 +15,9 @@ $api->version('v1', [
 
             $api->get('media_infos', ['middleware' => ['role:bonus-manager|legal-affairs-manager|operation'], 'uses' => 'MediaInfoController@index']);
             $api->get('media_infos/{media_info}', ['middleware' => ['role:bonus-manager|legal-affairs-manager|operation'], 'uses' => 'MediaInfoController@show']);
-            $api->post('media_infos', ['middleware' => ['role:bonus-manager|legal-affairs-manager|operation'], 'uses' => 'MediaInfoController@store']);
-            $api->patch('media_infos/{media_info}', ['middleware' => ['role:bonus-manager|legal-affairs-manager|operation'], 'uses' => 'MediaInfoController@update']);
-            $api->delete('media_infos', ['middleware' => ['role:bonus-manager|legal-affairs-manager|operation'], 'uses' => 'MediaInfoController@destroy']);
+            $api->post('media_infos', ['middleware' => ['role:operation'], 'uses' => 'MediaInfoController@store']);
+            $api->patch('media_infos/{media_info}', ['middleware' => ['role:operation'], 'uses' => 'MediaInfoController@update']);
+            $api->delete('media_infos', ['middleware' => ['role:operation'], 'uses' => 'MediaInfoController@destroy']);
 
         });
     });
