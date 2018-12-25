@@ -2,7 +2,7 @@
   <div class="add-role-wrap">
     <div v-loading="setting.loading" :element-loading-text="setting.loadingText">
       <div class="role-title">角色{{ $route.name }}</div>
-      <el-form ref="roleForm" :model="roleForm" label-width="120px" class="roleForm">
+      <el-form ref="roleForm" :model="roleForm" label-width="100px" class="roleForm">
         <el-form-item
           :rules="[{ required: true, message: '角色名称不能为空',trigger:'submit'}]"
           label="角色名称"
@@ -11,11 +11,11 @@
           <el-input v-model="roleForm.name" placeholder="输入角色名称" class="role-form-input"/>
         </el-form-item>
         <el-form-item
-          :rules="[{ required: true, message: '角色英文名称不能为空',trigger:'submit'}]"
+          :rules="[{ required: true, message: '显示名称不能为空',trigger:'submit'}]"
           label="显示名称"
           prop="display_name"
         >
-          <el-input v-model="roleForm.display_name" placeholder="输入角色英文名称" class="role-form-input"/>
+          <el-input v-model="roleForm.display_name" placeholder="输入显示名称" class="role-form-input"/>
         </el-form-item>
         <el-form-item label="权限">
           <el-table :data="allPerms" border ref="permsTable" class="role-table">
@@ -222,7 +222,7 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.setting.loading = true;
-            saveRole(this, this[formName], this.roleID)
+          saveRole(this, this[formName], this.roleID)
             .then(result => {
               this.$message({
                 message: this.roleID ? "修改成功" : "添加成功",
@@ -240,8 +240,8 @@ export default {
         }
       });
     },
-      historyBack(){
-          historyBack()
+    historyBack() {
+      historyBack();
     }
   }
 };

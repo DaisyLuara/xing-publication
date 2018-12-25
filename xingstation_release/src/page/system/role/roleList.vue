@@ -67,14 +67,7 @@ export default {
   },
   data() {
     return {
-      status: 1, // 启用为1 禁用为0
-      tableData: [
-        {
-          id: 1,
-          name: "管理员",
-          created_at: "2018-09-09"
-        }
-      ],
+      tableData: [],
       setting: {
         loading: false,
         loadingText: "拼命加载中"
@@ -93,9 +86,9 @@ export default {
     this.getRoleList();
   },
   methods: {
-    linkToEdit(currentUser) {
+    linkToEdit(data) {
       this.$router.push({
-        path: "/system/role/edit/" + currentUser.id
+        path: "/system/role/edit/" + data.id
       });
     },
     getRoleList() {
@@ -126,7 +119,6 @@ export default {
         type: "warning"
       })
         .then(() => {
-          this.setting.loadingText = "删除中";
           this.setting.loading = true;
           deleteRole(this, id)
             .then(response => {
