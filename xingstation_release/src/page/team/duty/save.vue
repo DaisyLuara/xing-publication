@@ -16,6 +16,7 @@
             placeholder="请输入节目名称"
             filterable
             clearable
+            @change="projectHandle"
           >
             <el-option
               v-for="item in projectList"
@@ -150,9 +151,20 @@ export default {
   },
   created() {
     this.dutyId = this.$route.params.uid;
-    // this.getEventDetails();
+    this.getEventDetails();
   },
   methods: {
+    projectHandle(val) {
+      let projectChoose = {};
+      this.contractList.filter(r => {
+        if (r.id === val) {
+          projectChoose = r;
+          return;
+        }
+      });
+      this.dutyForm.test = projectChoose.tester;
+      this.dutyForm.operation = projectChoose.operation;
+    },
     historyBack() {
       historyBack();
     },
@@ -184,6 +196,8 @@ export default {
           this.dutyForm.belong = res.belong;
           this.dutyForm.occur_date = res.occur_date;
           this.dutyForm.description = res.description;
+          this.dutyForm.test = res.tester_text;
+          this.dutyForm.operation = res.operation_text;
           this.setting.loading = false;
         })
         .catch(err => {

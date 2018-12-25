@@ -7,6 +7,7 @@ const FUTURE_REWARD_API = '/api/person_future_reward'
 const QINNIU_API = '/api/qiniu_oauth'
 const MEDIA_UPLOAD_AP = '/api/media_upload'
 const EVENT_API = '/api/team_project_bug_records'
+const OPERATION_MEDIA_API = '/api/media_infos'
 
 // 得到项目列表
 const getProgramList = (context, params) => {
@@ -194,7 +195,7 @@ const saveEvent = (context, params) => {
   })
 }
 // 修改重大事件
-const modifyEvent = (context, params, id) => {
+const modifyEvent = (context, id, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
       .patch(HOST + EVENT_API + '/' + id, params)
@@ -252,7 +253,7 @@ const getMediaUpload = (context, params) => {
 const getOperationDocumentList = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .get(HOST + FUTURE_REWARD_API, { params: params })
+      .get(HOST + OPERATION_MEDIA_API, { params: params })
       .then(response => {
         resolve(response.data)
       })
@@ -266,7 +267,7 @@ const getOperationDocumentList = (context, params) => {
 const saveOperationDocument = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .post(HOST + TEAM_API, params)
+      .post(HOST + OPERATION_MEDIA_API, params)
       .then(response => {
         resolve(response.data)
       })
@@ -279,7 +280,7 @@ const saveOperationDocument = (context, params) => {
 const modifyOperationDocument = (context, params, id) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .patch(HOST + TEAM_API + '/' + id, params)
+      .patch(HOST + OPERATION_MEDIA_API + '/' + id, params)
       .then(response => {
         resolve(response.data)
       })
@@ -293,7 +294,7 @@ const modifyOperationDocument = (context, params, id) => {
 const getOperationDocumentDetails = (context, id) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .get(HOST + TEAM_RATE_API + '/' + id)
+      .get(HOST + OPERATION_MEDIA_API + '/' + id)
       .then(response => {
         resolve(response.data)
       })
@@ -303,10 +304,10 @@ const getOperationDocumentDetails = (context, id) => {
   })
 }
 // 删除运营文档详情
-const deleteOperationDocument = (context, id) => {
+const deleteOperationDocument = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .delete(HOST + TEAM_RATE_API + '/' + id)
+      .delete(HOST + OPERATION_MEDIA_API, { params: params })
       .then(response => {
         resolve(response)
       })
