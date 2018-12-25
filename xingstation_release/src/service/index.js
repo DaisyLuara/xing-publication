@@ -44,3 +44,6 @@ export * from './project'
 
 // 角色
 export * from './role'
+
+// 权限
+export * from './permission'

@@ -12,7 +12,7 @@
         </el-form-item>
         <el-form-item
           :rules="[{ required: true, message: '角色英文名称不能为空',trigger:'submit'}]"
-          label="角色英文名称"
+          label="显示名称"
           prop="display_name"
         >
           <el-input v-model="roleForm.display_name" placeholder="输入角色英文名称" class="role-form-input"/>
@@ -21,7 +21,7 @@
           <el-table :data="allPerms" border ref="permsTable" class="role-table">
             <el-table-column label="一级">
               <template slot-scope="scope">
-                <el-checkbox-group @change="handleChange(scope.row)" v-model="roleForm.perms">
+                <el-checkbox-group @change="handleChange(scope.row)" v-model="roleForm.ids">
                   <el-checkbox :label="scope.row.id">{{scope.row.display_name}}</el-checkbox>
                 </el-checkbox-group>
               </template>
@@ -31,7 +31,7 @@
                 <el-table :data="scope.row.children" :show-header="false">
                   <el-table-column>
                     <template slot-scope="scope">
-                      <el-checkbox-group @change="handleChange(scope.row)" v-model="roleForm.perms">
+                      <el-checkbox-group @change="handleChange(scope.row)" v-model="roleForm.ids">
                         <el-checkbox :label="scope.row.id">{{scope.row.display_name}}</el-checkbox>
                       </el-checkbox-group>
                     </template>
@@ -45,7 +45,7 @@
                   <el-table-column>
                     <template slot-scope="scope">
                       <el-checkbox
-                        v-model="roleForm.perms"
+                        v-model="roleForm.ids"
                         @change="handleChange(thirdChild)"
                         v-for="thirdChild in scope.row.children"
                         v-bind:data="thirdChild"
@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import { historyBack, saveRole, getRoleInfoByRid } from "service";
+import { historyBack, saveRole, getRoleInfo, getPermission } from "service";
 import {
   Button,
   Input,
@@ -160,7 +160,7 @@ export default {
     },
     selectChildPerm(checkedPerm, type) {
       let subPerm = [],
-        checkedPerms = this.roleForm.perms;
+        checkedPerms = this.roleForm.ids;
       if (checkedPerm.children && checkedPerm.children.length > 0) {
         subPerm = checkedPerm.children;
         for (let i in subPerm) {
@@ -187,7 +187,7 @@ export default {
       }
     },
     selectParentPerm(parentPerm, permsName, times) {
-      let checkedPerms = this.roleForm.perms;
+      let checkedPerms = this.roleForm.ids;
       for (let per in parentPerm) {
         let nameArry = parentPerm[per].name.split(".");
         if (nameArry[times] == permsName[times]) {
@@ -206,8 +206,8 @@ export default {
       }
     },
     handleChange(checkedPerm) {
-      let checkedPerms = this.roleForm.perms;
-      if (this.roleForm.perms.includes(checkedPerm.id)) {
+      let checkedPerms = this.roleForm.ids;
+      if (this.roleForm.ids.includes(checkedPerm.id)) {
         // 选中: 所有子权限
         this.selectChildPerm(checkedPerm, "select");
         // 选择: 所有父权限

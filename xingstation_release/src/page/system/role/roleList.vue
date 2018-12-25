@@ -21,7 +21,6 @@
       <el-table ref="userTable" :data="tableData" highlight-current-row style="width: 100%">
         <el-table-column prop="id" label="ID" min-width="100"/>
         <el-table-column prop="name" label="角色名" min-width="150"/>
-        <el-table-column prop="status" label="状态" min-width="100"/>
         <el-table-column prop="created_at" label="创建时间" min-width="150"/>
         <el-table-column label="操作" min-width="100">
           <template slot-scope="scope">
@@ -73,7 +72,6 @@ export default {
         {
           id: 1,
           name: "管理员",
-          status: "启用",
           created_at: "2018-09-09"
         }
       ],
@@ -92,7 +90,7 @@ export default {
     };
   },
   created() {
-    // this.getRoleList();
+    this.getRoleList();
   },
   methods: {
     linkToEdit(currentUser) {
