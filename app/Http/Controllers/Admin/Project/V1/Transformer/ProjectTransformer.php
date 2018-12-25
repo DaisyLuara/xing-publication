@@ -34,9 +34,8 @@ class ProjectTransformer extends TransformerAbstract
             'created_at' => $project->date,
             'policy_id' => $project->policy_id,
             'updated_at' => formatClientDate($project->clientdate),
-            'tester' => $member && $member['tester'] ? implode(',', array_column($member['tester'], 'user_name')) : null,
-            'operation' => $member && $member['operation'] ? implode(',', array_column($member['operation'], 'user_name')) : null
-
+            'tester' => ($member && $member['tester']) ? implode(',', array_column($member['tester'], 'user_name')) : null,
+            'operation' => ($member && $member['operation']) ? implode(',', array_column($member['operation'], 'user_name')) : null
         ];
     }
 
