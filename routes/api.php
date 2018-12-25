@@ -44,3 +44,4 @@ include app_path("Http/Controllers/Admin/Payment/V1/routes.php");
 include app_path("Http/Controllers/Admin/Media/V1/routes.php");
 include app_path("Http/Controllers/Admin/Team/V1/routes.php");
 include app_path("Http/Controllers/Admin/MallCoo/V1/routes.php");
+include app_path("Http/Controllers/Admin/Privilege/V1/routes.php");
