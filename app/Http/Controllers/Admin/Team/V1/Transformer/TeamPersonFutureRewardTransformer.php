@@ -22,8 +22,8 @@ class TeamPersonFutureRewardTransformer extends TransformerAbstract
 
     public function transform(TeamPersonFutureReward $teamPersonFutureReward)
     {
-        $bug_records = TeamProjectBugRecord::where("belong",$teamPersonFutureReward->belong)
-            ->where("user_id",$teamPersonFutureReward->user_id)
+        $bug_records = TeamProjectBugRecord::where("belong", $teamPersonFutureReward->belong)
+            ->where("user_id", $teamPersonFutureReward->user_id)
             ->selectRaw("date_format(occur_date,'%Y-%m-%d') as occur_date")
             ->get()->toArray();
 
@@ -46,7 +46,7 @@ class TeamPersonFutureRewardTransformer extends TransformerAbstract
             'freeze_money' => $status_money[0] ?? 0,
             'deduction_money' => $status_money[-1] ?? 0,
             'got_money' => $status_money[1] ?? 0,
-            'bug_record' => implode(',',array_column($bug_records,'occur_date')),
+            'bug_record' => implode(',', array_column($bug_records ?? [], 'occur_date')),
         ];
     }
 }

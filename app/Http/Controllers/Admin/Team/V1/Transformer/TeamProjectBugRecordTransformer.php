@@ -35,10 +35,10 @@ class TeamProjectBugRecordTransformer extends TransformerAbstract
             'description' => $teamProjectBugRecord->description,
             'created_at' => Carbon::parse($teamProjectBugRecord->created_at)->timezone('PRC')->toDateTimeString(),
             'updated_at' => Carbon::parse($teamProjectBugRecord->updated_at)->timezone('PRC')->toDateTimeString(),
-            "tester" => $items['tester_quality'] ? array_column($items['tester_quality'], 'name') : [],
-            "tester_text" => $items['tester_quality'] ? implode(",", array_column($items['tester_quality'], 'name')) : '',
-            "operation" => $items['operation_quality'] ? array_column($items['operation_quality'], 'name') : [],
-            "operation_text" => $items['operation_quality'] ? implode(",", array_column($items['operation_quality'], 'name')) : '',
+            "tester" => isset($items['tester_quality']) ? array_column($items['tester_quality']??[], 'name') : null,
+            "tester_text" => isset($items['tester_quality']) ? implode(",", array_column($items['tester_quality']??[], 'name')) : null,
+            "operation" => isset($items['operation_quality']) ? array_column($items['operation_quality']??[], 'name') : null,
+            "operation_text" => isset($items['operation_quality']) ? implode(",", array_column($items['operation_quality']??[], 'name')) : null,
         ];
     }
 
