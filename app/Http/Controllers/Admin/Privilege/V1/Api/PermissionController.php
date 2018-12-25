@@ -21,13 +21,18 @@ class PermissionController extends Controller
         return $this->response()->item($permission, new PermissionTransformer());
     }
 
-    public function index()
+    public function tree()
     {
         $permission = Permission::query()
             ->orderBy('created_at', 'desc')
             ->get()
             ->toHierarchy();
         return response()->json($permission);
+    }
+
+    public function index(){
+        /** @var \Baum\Node $node */
+        
     }
 
     public function store(PermissionRequest $request)

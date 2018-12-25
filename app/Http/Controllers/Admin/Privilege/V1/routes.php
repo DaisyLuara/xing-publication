@@ -16,6 +16,8 @@ $api->version('v1', [
             $api->patch('permission/{permission}', 'PermissionController@update');
             $api->delete('permission/{permission}', 'PermissionController@destroy');
 
+            $api->get('permission_tree', 'PermissionController@tree');
+
             $api->get('role/{role}', 'RoleController@show');
             $api->get('role', 'RoleController@index');
             $api->post('role', 'RoleController@store');
