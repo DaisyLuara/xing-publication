@@ -1,7 +1,7 @@
 <template>
   <div class="add-role-wrap">
     <div v-loading="setting.loading" :element-loading-text="setting.loadingText">
-      <div class="role-title">{{ $route.name }}</div>
+      <div class="role-title">角色{{ $route.name }}</div>
       <el-form ref="roleForm" :model="roleForm" label-width="100px" class="roleForm">
         <el-form-item
           :rules="[{ required: true, message: '角色名称不能为空',trigger:'submit'}]"

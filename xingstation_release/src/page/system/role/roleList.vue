@@ -60,7 +60,6 @@ import {
 } from "element-ui";
 
 export default {
-  name: "UserList",
   components: {
     "el-table": Table,
     "el-table-column": TableColumn,

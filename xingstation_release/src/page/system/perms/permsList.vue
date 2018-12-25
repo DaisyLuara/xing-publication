@@ -1,0 +1,329 @@
+<template>
+  <div
+    v-loading="setting.loading"
+    :element-loading-text="setting.loadingText"
+    class="user-list-wrap"
+  >
+    <div class="user-list-content">
+      <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+        <el-tab-pane label="一级菜单" name="first">
+          <div class="search-wrap">
+            <el-form :model="filters" :inline="true">
+              <el-form-item label>
+                <el-input v-model="filters.name" style="width:200px" placeholder="请输入名称" clearable/>
+              </el-form-item>
+              <el-button type="primary" size="small" @click="search">搜索</el-button>
+              <el-button type="default" size="small" @click="resetSearch">重置</el-button>
+            </el-form>
+          </div>
+          <div class="actions-wrap">
+            <span class="label">数量: {{ pagination.total }}</span>
+            <el-button size="small" type="success" @click="addFirstPerms">新增权限</el-button>
+          </div>
+          <el-table ref="userTable" :data="firstTableData" style="width: 100%">
+            <el-table-column prop="id" label="ID" min-width="100"/>
+            <el-table-column prop="name" label="名称" min-width="150"/>
+            <el-table-column prop="display_name" label="英文名称" min-width="150"/>
+            <el-table-column label="操作" min-width="150">
+              <template slot-scope="scope">
+                <el-button size="small" @click="showSencodMenu(scope.row)">查看</el-button>
+                <el-button size="small" type="warning" @click="modifyFirstPerms(scope.row)">修改</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="pagination-wrap">
+            <el-pagination
+              :total="pagination.total"
+              :page-size="pagination.pageSize"
+              :current-page="pagination.currentPage"
+              layout="prev, pager, next, jumper, total"
+              @current-change="changePage"
+            />
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="一级／二级菜单" name="second" :disabled="secondTabDisable">
+          <div class="actions-wrap">
+            <span class="label">数量: {{ pagination.total }}</span>
+            <!-- 模板增加 -->
+            <div>
+              <el-button size="small" type="success" @click="addSecondPerms">新增二级菜单</el-button>
+            </div>
+          </div>
+          <el-collapse v-model="activeNames" accordion>
+            <el-collapse-item v-for="(item, index) in secondTableData" :name="index" :key="item.id">
+              <template slot="title">
+                {{ item.name }}
+                <el-button
+                  type="primary"
+                  icon="el-icon-edit"
+                  circle
+                  size="mini"
+                  @click="modifySecondPerms(item)"
+                />
+              </template>
+              <div class="actions-wrap">
+                <span class="label">数目: {{ item.perms.data.length }}</span>
+                <div>
+                  <el-button size="small" @click="addThirdPerms(index)">增加</el-button>
+                </div>
+              </div>
+              <el-table :data="item.perms.data" style="width: 100%">
+                <el-table-column prop label="节目名称" min-width="150">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.name" placeholder="名称" :maxlength="20"/>
+                  </template>
+                </el-table-column>
+                <el-table-column label="操作" min-width="100">
+                  <template slot-scope="scope">
+                    <el-button
+                      v-if="scope.row.name"
+                      size="mini"
+                      type="warning"
+                      @click="editPerms(scope.row)"
+                    >编辑</el-button>
+                    <el-button
+                      v-if="!scope.row.name"
+                      size="mini"
+                      type="danger"
+                      icon="el-icon-delete"
+                      @click="deleteAddPerms(index, scope.$index, scope.row)"
+                    />
+                    <el-button
+                      v-if="!scope.row.name"
+                      size="mini"
+                      style="background-color: #8bc34a;border-color: #8bc34a; color: #fff;"
+                      @click="savePerms(scope.row)"
+                    >保存</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-collapse-item>
+          </el-collapse>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
+    <el-dialog :title="title" :visible.sync="permsVisible" @close="dialogClose">
+      <el-form v-loading="loading" ref="permsForm" :model="permsForm" label-width="80px">
+        <el-form-item
+          :rules="[{ type: 'string', required: true, message: '请输入名称', trigger: 'submit' }]"
+          label="名称"
+          prop="name"
+        >
+          <el-input v-model="permsForm.name" placeholder="请输入名称" class="item-input"/>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" size="small" @click="submit('permsForm')">完成</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+  </div>
+</template>
+<script>
+import { getPermissionList, getPermissionInfo, savePermission } from "service";
+import {
+  Collapse,
+  CollapseItem,
+  Button,
+  Input,
+  Table,
+  TableColumn,
+  Pagination,
+  Form,
+  FormItem,
+  MessageBox,
+  TabPane,
+  Tabs,
+  Dialog
+} from "element-ui";
+
+export default {
+  components: {
+    "el-collapse": Collapse,
+    "el-collapse-item": CollapseItem,
+    "el-table": Table,
+    "el-table-column": TableColumn,
+    "el-button": Button,
+    "el-input": Input,
+    "el-pagination": Pagination,
+    "el-form": Form,
+    "el-form-item": FormItem,
+    "el-tabs": Tabs,
+    "el-tab-pane": TabPane,
+    "el-dialog": Dialog
+  },
+  data() {
+    return {
+      loading: true,
+      permsVisible: false,
+      title: "",
+      permsForm: {
+        name: ""
+      },
+      secondTabDisable: true,
+      activeName: "first",
+      activeNames: 0,
+      firstTableData: [
+        {
+          id: 1,
+          name: "节目",
+          display_name: "project"
+        }
+      ],
+      secondTableData: [
+        {
+          id: 1,
+          name: "节目投放",
+          perms: {
+            data: [
+              {
+                id: 1,
+                name: "编辑"
+              },
+              {
+                id: 2,
+                name: "增加"
+              }
+            ]
+          }
+        }
+      ],
+      tap: null,
+      setting: {
+        loading: false,
+        loadingText: "拼命加载中"
+      },
+      filters: {
+        name: ""
+      },
+      pagination: {
+        total: 0,
+        pageSize: 10,
+        currentPage: 1
+      }
+    };
+  },
+  created() {
+    // this.getPermissionList();
+  },
+  methods: {
+    modifySecondPerms(item) {
+      this.tap = "second";
+      this.loading = false;
+      this.permsVisible = true;
+    },
+    modifyFirstPerms() {
+      this.tap = "first";
+      this.loading = false;
+      this.permsVisible = true;
+    },
+    submit(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+        }
+      });
+    },
+    addFirstPerms() {
+      this.tap = "first";
+      this.loading = false;
+      this.permsForm.name = "";
+      this.permsVisible = true;
+    },
+    addSecondPerms() {
+      this.tap = "second";
+      this.loading = false;
+      this.permsForm.name = "";
+      this.permsVisible = true;
+    },
+    dialogClose() {
+      this.permsVisible = false;
+    },
+    showSencodMenu(data) {
+      this.secondTabDisable = false;
+      this.activeName = "second";
+    },
+    handleClick(val) {
+      this.secondTabDisable = true;
+    },
+    addThirdPerms(index) {
+      let perms_id = this.secondTableData[index].id;
+      let td = {
+        id: "",
+        name: ""
+        // perms_id: perms_id
+      };
+      this.secondTableData[index].perms.data.push(td);
+    },
+    savePerms(data) {},
+    deleteAddPerms(pIndex, index, r) {
+      this.secondTableData[pIndex].perms.data.splice(index, 1);
+    },
+    modifyTemplateName(name) {},
+    editPerms(data) {},
+    getPermissionList() {
+      this.setting.loading = true;
+      let args = {
+        page: this.pagination.currentPage,
+        name: this.filters.name
+      };
+      if (this.filters.name === "") {
+        delete args.name;
+      }
+      return getPermissionList(this, args)
+        .then(response => {
+          this.setting.loading = false;
+          this.tableData = response.data;
+          this.pagination.total = response.meta.pagination.total;
+        })
+        .catch(error => {
+          this.setting.loading = false;
+        });
+    },
+    changePage(currentPage) {
+      this.pagination.currentPage = currentPage;
+      this.getPermissionList();
+    },
+    search() {
+      this.pagination.currentPage = 1;
+      this.getPermissionList();
+    },
+    resetSearch() {
+      this.filters.name = "";
+      this.pagination.currentPage = 1;
+      this.getPermissionList();
+    }
+  }
+};
+</script>
+
+<style lang="less" scoped>
+.user-list-wrap {
+  h1 {
+    text-align: center;
+  }
+}
+.user-list-content {
+  .photo_img {
+    width: 100%;
+    padding: 5px;
+  }
+  .item-input {
+    width: 300px;
+  }
+  .actions-wrap {
+    margin-top: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 16px;
+    align-items: center;
+    margin-bottom: 10px;
+    .label {
+      font-size: 14px;
+    }
+  }
+  .pagination-wrap {
+    margin: 10px auto;
+    text-align: right;
+  }
+}
+</style>

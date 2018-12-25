@@ -1,7 +1,7 @@
 <template>
   <div class="add-user-wrap">
     <div v-loading="setting.loading" :element-loading-text="setting.loadingText">
-      <div class="user-title">用户{{ $route.name }}</div>
+      <div class="user-title">{{ $route.name }}</div>
       <el-form ref="userForm" :model="userForm" :rules="rules" label-width="80px" class="userForm">
         <el-form-item label="姓名" prop="user.name">
           <el-input v-model="userForm.user.name" :maxlength="10" class="user-form-input"/>

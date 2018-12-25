@@ -1,5 +1,3 @@
-import auth from 'service/auth'
-
 export default {
   path: 'system',
   name: '权限',
@@ -38,7 +36,7 @@ export default {
           path: 'edit/:uid',
           component: () =>
             import(/* webpackChunkName: "page/system/user/userSave" */ 'page/system/user/userSave'),
-          name: '修改',
+          name: '修改用户',
           meta: {}
         }
       ]
@@ -70,9 +68,41 @@ export default {
           path: 'edit/:uid',
           component: () =>
             import(/* webpackChunkName: "page/system/role/roleSave" */ 'page/system/role/roleSave'),
-          name: '修改',
+          name: '修改角色',
           meta: {}
         }
+      ]
+    },
+    {
+      // 角色主页，也是角色列表页
+      path: 'perms',
+      component: () =>
+        import(/* webpackChunkName: "page/system/perms/permsView" */ 'page/system/perms/permsView'),
+      meta: {
+        title: '权限管理'
+      },
+      children: [
+        {
+          path: '/',
+          component: () =>
+            import(/* webpackChunkName: "page/system/perms/permsList" */ 'page/system/perms/permsList'),
+          name: '权限管理',
+          meta: {}
+        }
+        // {
+        //   path: 'add',
+        //   component: () =>
+        //     import(/* webpackChunkName: "page/system/perms/permsSave" */ 'page/system/perms/permsSave'),
+        //   name: '新增权限',
+        //   meta: {}
+        // },
+        // {
+        //   path: 'edit/:uid',
+        //   component: () =>
+        //     import(/* webpackChunkName: "page/system/perms/permsSave" */ 'page/system/perms/permsSave'),
+        //   name: '修改权限',
+        //   meta: {}
+        // }
       ]
     }
   ]
