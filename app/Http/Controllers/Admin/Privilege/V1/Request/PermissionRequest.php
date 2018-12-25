@@ -8,24 +8,24 @@
 
 namespace App\Http\Controllers\Admin\Privilege\V1\Request;
 
-
 use App\Http\Requests\Request;
+use Illuminate\Validation\Rule;
 
 class PermissionRequest extends Request
 {
-    public function rules()
+    public function rules(Request $request)
     {
         switch ($this->method()) {
             case 'POST':
                 return [
                     'name' => 'required|unique:permissions',
-                    'display_name' => 'required|unique:permissions'
+                    'display_name' => 'required'
                 ];
                 break;
             case 'PATCH':
                 return [
-                    'name' => 'filled|unique:permissions',
-                    'display_name' => 'filled|unique:permissions',
+                    'name' => Rule::unique('roles')->ignore($request->id),
+                    'display_name' => 'filled',
                 ];
                 break;
             default:

@@ -8,12 +8,12 @@
 
 namespace App\Http\Controllers\Admin\Privilege\V1\Request;
 
-
 use App\Http\Requests\Request;
+use Illuminate\Validation\Rule;
 
 class RoleRequest extends Request
 {
-    public function rules()
+    public function rules(Request $request)
     {
         switch ($this->method()) {
             case 'POST':
@@ -24,8 +24,8 @@ class RoleRequest extends Request
                 break;
             case 'PATCH':
                 return [
-                    'name' => 'regex:/^[a-zA-Z]+$/|unique:roles',
-                    'display_name' => 'unique:roles',
+                    'name' => Rule::unique('roles')->ignore($request->id),
+                    'display_name' => 'filled',
                 ];
                 break;
             default:

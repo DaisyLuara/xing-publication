@@ -21,14 +21,22 @@ class RoleController extends Controller
         return $this->response()->item($role, new RoleTransformer());
     }
 
-    public function index()
+    public function index(Role $role)
     {
-        $roles = Role::query()->paginate(10);
+        $query = $role->query();
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
+        if (!$user->isSuperAdmin()) {
+            $query->where("name", '<>', 'super-admin');
+        }
+        $roles = $query->paginate(10);
         return $this->response()->paginator($roles, new RoleTransformer());
     }
 
     public function store(RoleRequest $request, Role $role)
     {
+        $this->checkUser();
+
         $role->fill($request->all())->save();
         $ids = $request->ids;
         $role->givePermissionTo($ids);
@@ -38,6 +46,8 @@ class RoleController extends Controller
 
     public function update(RoleRequest $request, Role $role)
     {
+        $this->checkUser();
+
         $role->update($request->all());
         $role->syncPermissions($request->ids);
         return $this->response()->noContent();
@@ -45,8 +55,26 @@ class RoleController extends Controller
 
     public function destroy(Role $role)
     {
+        $this->checkUser();
+
         $role->delete();
         return $this->response()->noContent()->setStatusCode(204);
+    }
+
+    private function checkUser()
+    {
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
+        if (!$user->isAdmin() && !$user->isSuperAdmin()) {
+            abort(403, '无操作权限');
+        }
+    }
+
+    private function checkRole(Role $role)
+    {
+        if ($role->name == 'admin' || $role->name == 'super-admin') {
+            abort(403, "系统基本角色不可更改");
+        }
     }
 
 }

@@ -20,6 +20,6 @@ class Role extends BaseRole
 
     public function permission()
     {
-        return $this->belongsToMany(Permission::class, 'role_has_permissions', 'role_id', 'permission_id')->select('id', 'display_name', 'parent_id', 'lft', 'rgt', 'depth');
+        return $this->belongsToMany(Permission::class, 'role_has_permissions', 'role_id', 'permission_id');
     }
 }

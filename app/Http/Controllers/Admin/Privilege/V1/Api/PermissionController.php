@@ -32,7 +32,7 @@ class PermissionController extends Controller
 
     public function store(PermissionRequest $request)
     {
-        $this->checkPermission();
+        $this->checkUser();
 
         Permission::create($request->all());
         return $this->response()->noContent()->setStatusCode(201);
@@ -40,7 +40,9 @@ class PermissionController extends Controller
 
     public function update(PermissionRequest $request, Permission $permission)
     {
-        $this->checkPermission();
+        $this->checkUser();
+
+        $this->checkPermission($permission);
 
         $permission->update($request->all());
         return $this->response()->noContent()->setStatusCode(200);
@@ -48,18 +50,27 @@ class PermissionController extends Controller
 
     public function destroy(Permission $permission)
     {
-        $this->checkPermission();
+        $this->checkUser();
+
+        $this->checkPermission($permission);
 
         $permission->delete();
         return $this->response()->noContent()->setStatusCode(204);
     }
 
-    private function checkPermission()
+    private function checkUser()
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
         if (!$user->isAdmin() && !$user->isSuperAdmin()) {
             abort(403, '无操作权限');
+        }
+    }
+
+    private function checkPermission(Permission $permission)
+    {
+        if ($permission->name == "system") {
+            abort(403, "系统基本权限不可更改");
         }
     }
 
