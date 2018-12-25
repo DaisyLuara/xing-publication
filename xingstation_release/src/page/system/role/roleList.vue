@@ -67,29 +67,29 @@ export default {
   },
   data() {
     return {
-      tableData: [
-      ],
-      setting: {
-        loading: false,
-        loadingText: "拼命加载中"
-      },
-      filters: {
-          display_name: ""
-      },
-      pagination: {
-        total: 0,
-        pageSize: 10,
-        currentPage: 1
-      }
-    };
+        tableData: [],
+            setting: {
+                loading: false,
+                loadingText: "拼命加载中"
+            },
+            filters: {
+                display_name: ""
+            },
+            pagination: {
+                total: 0,
+                pageSize: 10,
+                currentPage: 1
+            }
+
+    }
   },
   created() {
     this.getRoleList();
   },
   methods: {
-    linkToEdit(currentUser) {
+    linkToEdit(data) {
       this.$router.push({
-        path: "/system/role/edit/" + currentUser.id
+        path: "/system/role/edit/" + data.id
       });
     },
     getRoleList() {
@@ -120,7 +120,6 @@ export default {
         type: "warning"
       })
         .then(() => {
-          this.setting.loadingText = "删除中";
           this.setting.loading = true;
           deleteRole(this, id)
             .then(response => {
