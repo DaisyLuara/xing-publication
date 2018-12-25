@@ -15,9 +15,8 @@ class CardsController extends Controller
         $app = EasyWeChat::openPlatform();
         componentVerify($app);
         $official_account = getOfficialAccount($authorizer_id, $app);
-        $card = $official_account->card;
 
-        return $card;
+        return $official_account->card;
     }
 
     //获取素材实例
@@ -26,9 +25,8 @@ class CardsController extends Controller
         $app = EasyWeChat::openPlatform();
         componentVerify($app);
         $official_account = getOfficialAccount($authorizer_id, $app);
-        $material = $official_account->material;
 
-        return $material;
+        return $official_account->material;
     }
 
     //获取用户授权信息
@@ -55,9 +53,7 @@ class CardsController extends Controller
         $material = $this->getMaterial($authorizer_id);
         $path = $request->has('path') ? $request->get('path') : '';
 
-        $result = $material->uploadImage($path);
-
-        return $result;
+        return $material->uploadImage($path);
     }
 
     //上传缩略图
@@ -67,9 +63,7 @@ class CardsController extends Controller
         $material = $this->getMaterial($authorizer_id);
         $path = $request->has('path') ? $request->get('path') : '';
 
-        $result = $material->uploadThumb($path);
-
-        return $result;
+        return  $material->uploadThumb($path);
     }
 
     //上传图文消息
@@ -85,9 +79,7 @@ class CardsController extends Controller
             'thumb_media_id' => $mediaId,
         ]);
 
-        $result = $material->uploadArticle($article);
-
-        return $result;
+        return $material->uploadArticle($article);
     }
 
     //查询单个卡券列表
@@ -97,9 +89,7 @@ class CardsController extends Controller
         $card = $this->getCard($authorizer_id);
         $cardId = $request->has('card_id') ? $request->get('card_id') : '';
 
-        $cardInfo = $card->get($cardId);
-
-        return $cardInfo;
+        return $card->get($cardId);
     }
 
     //批量查询卡券列表
@@ -109,10 +99,7 @@ class CardsController extends Controller
         $card = $this->getCard($authorizer_id);
         $statusList = $request->has('status_list') ? $request->get('status_list') : '';
 
-        $cardlist = $card->list($offset = 0, $count = 50, $statusList);
-
-        return $cardlist;
-
+        return $card->list($offset = 0, $count = 50, $statusList);
     }
 
 
@@ -153,13 +140,10 @@ class CardsController extends Controller
         $card = $this->getCard($authorizer_id);
 
         $cardArr = $request->json()->all();
-
         $cardType = array_key_exists('card_type', $cardArr) ? $cardArr['card_type'] : '';
         $attributes = array_key_exists(strtolower($cardType), $cardArr) ? $cardArr[strtolower($cardType)] : '';
 
-        $result = $card->create($cardType, $attributes);
-
-        return $result;
+        return $card->create($cardType, $attributes);
     }
 
     //更改卡券信息
@@ -170,14 +154,10 @@ class CardsController extends Controller
 
         $cardId = $request->has('card_id') ? $request->get('card_id') : '';
         $cardArr = $request->json()->all();
-
         $cardType = array_key_exists('card_type', $cardArr) ? $cardArr['card_type'] : '';
         $attributes = array_key_exists(strtolower($cardType), $cardArr) ? $cardArr[strtolower($cardType)] : '';
 
-
-        $result = $card->update($cardId, $cardType, $attributes);
-
-        return $result;
+        return $card->update($cardId, $cardType, $attributes);
     }
 
 }
