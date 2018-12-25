@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\Http\Controllers\Admin\Privilege\V1\Models\Permission;
+use App\Http\Controllers\Admin\Privilege\V1\Models\Role;
 
 class UpdatePermissionSeeder extends Seeder
 {
@@ -17,5 +18,11 @@ class UpdatePermissionSeeder extends Seeder
         foreach ($permissions as $permission) {
             Permission::create(['name' => $permission->name, 'display_name' => $permission->display_name]);
         }
+
+        $superAdmin = Role::findByName('super-admin');
+        $superAdmin->givePermissionTo(['system']);
+
+        $admin = Role::findByName('admin');
+        $admin->givePermissionTo(['system']);
     }
 }
