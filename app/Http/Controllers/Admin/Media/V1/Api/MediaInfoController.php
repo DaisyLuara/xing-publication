@@ -29,6 +29,11 @@ class MediaInfoController extends Controller
 
     }
 
+    public function show(MediaInfo $mediaInfo)
+    {
+        return $this->response()->item($mediaInfo, new MediaInfoTransformer());
+    }
+
     public function store(MediaInfoRequest $request, MediaInfo $mediaInfo)
     {
         /** @var  $user \App\Models\User */
