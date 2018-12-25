@@ -8,10 +8,10 @@
 
 namespace App\Http\Controllers\Admin\Privilege\V1\Request;
 
-use App\Http\Requests\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Http\Request;
 
-class RoleRequest extends Request
+class RoleRequest extends \App\Http\Requests\Request
 {
     public function rules(Request $request)
     {

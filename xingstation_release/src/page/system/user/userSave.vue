@@ -21,15 +21,15 @@
           <el-input v-model="userForm.user.repassword" type="password" class="user-form-input"/>
         </el-form-item>
         <el-form-item label="角色" prop="user.role_id">
-          <el-checkbox-group v-model="userForm.user.role_id" @change="rolesChange">
-            <el-checkbox
+          <el-radio-group v-model="userForm.user.role_id" @change="rolesChange">
+            <el-radio
               v-for="role in allRoles"
               :data="role"
               :key="role.id"
               :label="role.id"
               class="role-radio"
-            >{{ role.display_name }}</el-checkbox>
-          </el-checkbox-group>
+            >{{ role.display_name }}</el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item v-if="legelFlag" label="主管" prop="user.parent_id">
           <el-select
@@ -70,10 +70,10 @@ import {
   Input,
   Form,
   FormItem,
-  CheckboxGroup,
+    RadioGroup,
   Select,
   Option,
-  Checkbox
+    Radio
 } from "element-ui";
 
 export default {
@@ -83,8 +83,8 @@ export default {
     "el-input": Input,
     "el-form": Form,
     "el-form-item": FormItem,
-    "el-checkbox-group": CheckboxGroup,
-    "el-checkbox": Checkbox,
+    "el-radio-group": RadioGroup,
+    "el-radio": Radio,
     "el-select": Select,
     "el-option": Option
   },

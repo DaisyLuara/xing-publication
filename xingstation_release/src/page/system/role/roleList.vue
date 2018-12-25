@@ -8,7 +8,7 @@
       <div class="search-wrap">
         <el-form :model="filters" :inline="true">
           <el-form-item label>
-            <el-input v-model="filters.name" style="width:200px" placeholder="请输入角色名称" clearable/>
+            <el-input v-model="filters.display_name" style="width:200px" placeholder="请输入角色名称" clearable/>
           </el-form-item>
           <el-button type="primary" size="small" @click="search">搜索</el-button>
           <el-button type="default" size="small" @click="resetSearch">重置</el-button>
@@ -20,7 +20,7 @@
       </div>
       <el-table ref="userTable" :data="tableData" highlight-current-row style="width: 100%">
         <el-table-column prop="id" label="ID" min-width="100"/>
-        <el-table-column prop="name" label="角色名" min-width="150"/>
+        <el-table-column prop="display_name" label="角色名" min-width="150"/>
         <el-table-column prop="created_at" label="创建时间" min-width="150"/>
         <el-table-column label="操作" min-width="100">
           <template slot-scope="scope">
@@ -67,20 +67,14 @@ export default {
   },
   data() {
     return {
-      status: 1, // 启用为1 禁用为0
       tableData: [
-        {
-          id: 1,
-          name: "管理员",
-          created_at: "2018-09-09"
-        }
       ],
       setting: {
         loading: false,
         loadingText: "拼命加载中"
       },
       filters: {
-        name: ""
+          display_name: ""
       },
       pagination: {
         total: 0,
@@ -103,10 +97,10 @@ export default {
       let pageNum = this.pagination.currentPage;
       let args = {
         page: pageNum,
-        name: this.filters.name
+          display_name: this.filters.display_name
       };
-      if (this.filters.name === "") {
-        delete args.name;
+      if (this.filters.display_name === "") {
+        delete args.display_name;
       }
       return getRoleList(this, args)
         .then(response => {

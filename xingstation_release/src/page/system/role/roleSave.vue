@@ -143,8 +143,8 @@ export default {
           let roleInfo = result;
           this.roleForm.name = roleInfo.name;
           this.roleForm.display_name = roleInfo.display_name;
-          for (let i = 0, rL = roleInfo.ids.length; i < rL; i++) {
-            this.roleForm.ids.push(roleInfo.ids[i].id);
+          for (let i = 0, rL = roleInfo.permission.length; i < rL; i++) {
+            this.roleForm.ids.push(roleInfo.permission[i].id);
           }
           this.setting.loading = false;
           this.permsLoading = false;
@@ -222,6 +222,10 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.setting.loading = true;
+          let args = this[formName]
+          if(this.roleID){
+              args.id = this.roleID
+          }
             saveRole(this, this[formName], this.roleID)
             .then(result => {
               this.$message({
