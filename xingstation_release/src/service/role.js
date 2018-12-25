@@ -1,19 +1,6 @@
-const ROLE_API = '/api/tenants/roles'
-const PERMISSION_API = '/api/users/permissions'
+const ROLE_API = '/api/role'
 const HOST = process.env.SERVER_URL
 
-const getManageablePers = context => {
-  return new Promise(function(resolve, reject) {
-    context.$http
-      .get(HOST + PERMISSION_API)
-      .then(response => {
-        resolve(response.data)
-      })
-      .catch(error => {
-        reject(error)
-      })
-  })
-}
 // 详情
 const getRoleInfoByRid = (context, rid) => {
   if (!rid) {
@@ -35,7 +22,7 @@ const saveRole = (context, args, rid) => {
   if (rid) {
     return new Promise(function(resolve, reject) {
       context.$http
-        .put(HOST + ROLE_API + '/' + rid, args)
+        .patch(HOST + ROLE_API + '/' + rid, args)
         .then(response => {
           resolve(response.data)
         })
@@ -56,7 +43,7 @@ const saveRole = (context, args, rid) => {
     })
   }
 }
-// 详情
+// 角色列表
 const getRoleList = (context, args) => {
   return new Promise(function(resolve, reject) {
     context.$http
@@ -69,4 +56,18 @@ const getRoleList = (context, args) => {
       })
   })
 }
-export { getManageablePers, saveRole, getRoleInfoByRid, getRoleList }
+
+// 删除角色
+const deleteRole = (context, id) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .delete(HOST + ROLE_API + '/' + id)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+export { saveRole, getRoleInfoByRid, getRoleList, deleteRole }

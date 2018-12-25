@@ -25,12 +25,7 @@
         <el-table-column prop="created_at" label="创建时间" min-width="150"/>
         <el-table-column label="操作" min-width="100">
           <template slot-scope="scope">
-            <el-switch
-              style="display: inline-block;margin-right:20px;"
-              v-model="status"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-            />
+            <el-button size="small" type="danger">删除</el-button>
             <el-button size="small" type="warning" @click="linkToEdit(scope.row)">修改</el-button>
           </template>
         </el-table-column>
