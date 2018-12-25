@@ -451,8 +451,8 @@ export default {
       this.dialogFormVisible = false;
     },
     submit() {
-      let testerMediaIds = []
-      let args = {}
+      let testerMediaIds = [];
+      let args = {};
       if (this.fileList.length > 0) {
         this.fileList.map(r => {
           testerMediaIds.push(r.id);
@@ -479,7 +479,7 @@ export default {
           let status = row.status;
           let testerMediaIds = [];
           if (status === 1) {
-            this.confirmId = id
+            this.confirmId = id;
             this.dialogFormVisible = true;
           } else {
             this.confirmProgram(id);
@@ -602,7 +602,7 @@ export default {
         end_date_online: handleDateTypeTransform(this.filters.onlineDate[1]),
         start_date_launch: handleDateTypeTransform(this.filters.launchDate[0]),
         end_date_launch: handleDateTypeTransform(this.filters.launchDate[1]),
-        own: this.own
+        own: this.own === true ? 1 : 0
       };
       if (this.filters.alias === "") {
         delete args.alias;
