@@ -84,11 +84,9 @@ class TeamProjectController extends Controller
 
         //判断交互文档
         $plan_media_ids = explode(',', $request->plan_media_id);
-        foreach ($plan_media_ids as $plan_media_id) {
-            $media = Media::find($plan_media_id);
-            if (!$media) {
-                abort("422", "上传的交互文档中存在找不到对象");
-            }
+        $plan_medias = Media::query()->whereIn('id',$plan_media_ids)->pluck('id')->toArray();
+        if(array_diff($plan_media_ids,$plan_medias)){
+            abort("422", "上传的交互文档中存在找不到对象");
         }
 
         $member = $request->member ?? [];
@@ -154,11 +152,9 @@ class TeamProjectController extends Controller
 
         //判断交互文档
         $plan_media_ids = explode(',', $request->plan_media_id);
-        foreach ($plan_media_ids as $plan_media_id) {
-            $media = Media::find($plan_media_id);
-            if (!$media) {
-                abort("422", "上传的交互文档中存在找不到对象");
-            }
+        $plan_medias = Media::query()->whereIn('id',$plan_media_ids)->pluck('id')->toArray();
+        if(array_diff($plan_media_ids,$plan_medias)){
+            abort("422", "上传的交互文档中存在找不到对象");
         }
 
         $member = $request->member ?? [];
@@ -179,13 +175,12 @@ class TeamProjectController extends Controller
 
         $project = Project::query()->where('versionname', $request->belong)->first();
 
-        if (isset($params['tester_media_id'])) {
+        if (isset($params['tester_media_id']) && !$params['tester_media_id']) {
             unset($params['tester_media_id']);
         }
         unset($params['applicant']);
         unset($params['begin_date']);
         unset($params['online_date']);
-        unset($params['status']);
         unset($params['status']);
         $params['project_name'] = $project->name;
         $params['launch_date'] = $project->online != 0 ? date('Y-m-d', $project->online / 1000) : null;
