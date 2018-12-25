@@ -222,11 +222,11 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.setting.loading = true;
-          let args = this[formName]
-          if(this.roleID){
-              args.id = this.roleID
+          let args = this[formName];
+          if (this.roleID) {
+            args.id = this.roleID;
           }
-          saveRole(this,args, this.roleID)
+          saveRole(this, args, this.roleID)
             .then(result => {
               this.$message({
                 message: this.roleID ? "修改成功" : "添加成功",

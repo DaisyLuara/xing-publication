@@ -8,7 +8,12 @@
       <div class="search-wrap">
         <el-form :model="filters" :inline="true">
           <el-form-item label>
-            <el-input v-model="filters.display_name" style="width:200px" placeholder="请输入角色名称" clearable/>
+            <el-input
+              v-model="filters.display_name"
+              style="width:200px"
+              placeholder="请输入角色名称"
+              clearable
+            />
           </el-form-item>
           <el-button type="primary" size="small" @click="search">搜索</el-button>
           <el-button type="default" size="small" @click="resetSearch">重置</el-button>
@@ -67,21 +72,20 @@ export default {
   },
   data() {
     return {
-        tableData: [],
-            setting: {
-                loading: false,
-                loadingText: "拼命加载中"
-            },
-            filters: {
-                display_name: ""
-            },
-            pagination: {
-                total: 0,
-                pageSize: 10,
-                currentPage: 1
-            }
-
-    }
+      tableData: [],
+      setting: {
+        loading: false,
+        loadingText: "拼命加载中"
+      },
+      filters: {
+        display_name: ""
+      },
+      pagination: {
+        total: 0,
+        pageSize: 10,
+        currentPage: 1
+      }
+    };
   },
   created() {
     this.getRoleList();
@@ -97,7 +101,7 @@ export default {
       let pageNum = this.pagination.currentPage;
       let args = {
         page: pageNum,
-          display_name: this.filters.display_name
+        display_name: this.filters.display_name
       };
       if (this.filters.display_name === "") {
         delete args.display_name;
