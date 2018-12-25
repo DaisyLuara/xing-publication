@@ -17,6 +17,7 @@ const CUSTOMER_API = '/api/customer/query'
 const USER_API = '/api/user/query'
 const TEAM_RATE_API = '/api/team_rate/query'
 const FORMAT_API = '/api/attribute/query'
+const PERMISSION_API = '/api/permission/query'
 const HOST = process.env.SERVER_URL
 
 // 区域
@@ -264,6 +265,20 @@ const getFormatsList = context => {
       })
   })
 }
+
+// 权限树状结构
+const getPermission = (context, args) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + PERMISSION_API, { params: args })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
 export {
   getSearchAeraList,
   getSearchMarketList,
@@ -283,5 +298,6 @@ export {
   getSearchPolicyList,
   getSearchCompanyList,
   getSearchSceneList,
-  getFormatsList
+  getFormatsList,
+  getPermission
 }

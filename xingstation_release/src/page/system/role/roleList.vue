@@ -25,7 +25,7 @@
         <el-table-column prop="created_at" label="创建时间" min-width="150"/>
         <el-table-column label="操作" min-width="100">
           <template slot-scope="scope">
-            <el-button size="small" type="danger">删除</el-button>
+            <el-button size="small" type="danger" @click="deleteRole(scope.row)">删除</el-button>
             <el-button size="small" type="warning" @click="linkToEdit(scope.row)">修改</el-button>
           </template>
         </el-table-column>
@@ -43,7 +43,7 @@
   </div>
 </template>
 <script>
-import { getRoleList } from "service";
+import { getRoleList, deleteRole } from "service";
 import {
   Button,
   Input,
@@ -52,14 +52,12 @@ import {
   Pagination,
   Form,
   FormItem,
-  MessageBox,
-  Switch
+  MessageBox
 } from "element-ui";
 
 export default {
   name: "UserList",
   components: {
-    "el-switch": Switch,
     "el-table": Table,
     "el-table-column": TableColumn,
     "el-button": Button,
@@ -120,6 +118,38 @@ export default {
         })
         .catch(error => {
           this.setting.loading = false;
+        });
+    },
+    deleteRole(data) {
+      let id = data.id;
+      MessageBox.confirm("确认删除选中角色?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.setting.loadingText = "删除中";
+          this.setting.loading = true;
+          deleteRole(this, id)
+            .then(response => {
+              this.setting.loading = false;
+              this.$message({
+                type: "success",
+                message: "删除成功！"
+              });
+              this.pagination.currentPage = 1;
+              this.getRoleList();
+            })
+            .catch(error => {
+              this.setting.loading = false;
+              this.$message({
+                type: "warning",
+                message: error.response.data.message
+              });
+            });
+        })
+        .catch(e => {
+          console.log(e);
         });
     },
     changePage(currentPage) {

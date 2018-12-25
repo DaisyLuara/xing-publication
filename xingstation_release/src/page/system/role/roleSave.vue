@@ -17,12 +17,6 @@
         >
           <el-input v-model="roleForm.display_name" placeholder="输入角色英文名称" class="role-form-input"/>
         </el-form-item>
-        <el-form-item
-          label="角色描述"
-          prop="descripte"
-        >
-          <el-input v-model="roleForm.descripte" placeholder="输入角色描述" class="role-form-input"/>
-        </el-form-item>
         <el-form-item label="权限">
           <el-table :data="allPerms" border ref="permsTable" class="role-table">
             <el-table-column label="一级">
@@ -84,7 +78,8 @@ import {
   CheckboxGroup,
   Checkbox,
   Table,
-  TableColumn
+  TableColumn,
+  MessageBox
 } from "element-ui";
 
 export default {
@@ -107,304 +102,62 @@ export default {
       roleForm: {
         name: "",
         display_name: "",
-        descripte: "",
-        perms: []
+        ids: []
       },
-      roleID: "",
-      allPerms: [
-        {
-          id: 1,
-          sort: 0,
-          status: 1,
-          name: "main",
-          display_name: "首页",
-          description: "首页",
-          parent_id: null,
-          lft: 1,
-          rgt: 2,
-          depth: 0,
-          created_at: "2017-08-31 01:31:55",
-          updated_at: "2017-08-31 01:31:55",
-          children: []
-        },
-        {
-          id: 2,
-          sort: 0,
-          status: 1,
-          name: "system",
-          display_name: "权限",
-          description: "权限",
-          parent_id: null,
-          lft: 3,
-          rgt: 26,
-          depth: 0,
-          created_at: "2017-08-31 01:31:55",
-          updated_at: "2017-08-31 01:31:56",
-          children: [
-            {
-              id: 3,
-              sort: 0,
-              status: 1,
-              name: "system.user",
-              display_name: "用户",
-              description: "用户",
-              parent_id: 2,
-              lft: 4,
-              rgt: 9,
-              depth: 1,
-              created_at: "2017-08-31 01:31:55",
-              updated_at: "2017-08-31 01:31:55",
-              children: [
-                {
-                  id: 4,
-                  sort: 0,
-                  status: 1,
-                  name: "system.user.view",
-                  display_name: "列表",
-                  description: "列表",
-                  parent_id: 3,
-                  lft: 5,
-                  rgt: 6,
-                  depth: 2,
-                  created_at: "2017-08-31 01:31:55",
-                  updated_at: "2017-08-31 01:31:55",
-                  children: []
-                },
-                {
-                  id: 5,
-                  sort: 0,
-                  status: 1,
-                  name: "system.user.edit",
-                  display_name: "\u7f16\u8f91",
-                  description: "\u7f16\u8f91\u7528\u6237\u5217\u8868",
-                  parent_id: 3,
-                  lft: 7,
-                  rgt: 8,
-                  depth: 2,
-                  created_at: "2017-08-31 01:31:55",
-                  updated_at: "2017-08-31 01:31:55",
-                  children: []
-                }
-              ]
-            },
-            {
-              id: 6,
-              sort: 0,
-              status: 1,
-              name: "system.role",
-              display_name: "角色",
-              description: "角色",
-              parent_id: 2,
-              lft: 10,
-              rgt: 15,
-              depth: 1,
-              created_at: "2017-08-31 01:31:55",
-              updated_at: "2017-08-31 01:31:55",
-              children: [
-                {
-                  id: 7,
-                  sort: 0,
-                  status: 1,
-                  name: "system.role.view",
-                  display_name: "列表",
-                  description: "列表",
-                  parent_id: 6,
-                  lft: 11,
-                  rgt: 12,
-                  depth: 2,
-                  created_at: "2017-08-31 01:31:55",
-                  updated_at: "2017-08-31 01:31:55",
-                  children: []
-                },
-                {
-                  id: 8,
-                  sort: 0,
-                  status: 1,
-                  name: "system.role.edit",
-                  display_name: "编辑",
-                  description: "编辑",
-                  parent_id: 6,
-                  lft: 13,
-                  rgt: 14,
-                  depth: 2,
-                  created_at: "2017-08-31 01:31:55",
-                  updated_at: "2017-08-31 01:31:55",
-                  children: []
-                }
-              ]
-            }
-          ]
-        },
-        {
-          id: 12,
-          sort: 0,
-          status: 1,
-          name: "cms",
-          display_name: "节目",
-          description: "节目",
-          parent_id: null,
-          lft: 27,
-          rgt: 34,
-          depth: 1,
-          created_at: "2017-08-31 01:31:55",
-          updated_at: "2017-08-31 01:31:56",
-          children: [
-            {
-              id: 13,
-              sort: 0,
-              status: 1,
-              name: "cms.store",
-              display_name: "节目投放",
-              description: "节目投放",
-              parent_id: 12,
-              lft: 28,
-              rgt: 33,
-              depth: 2,
-              created_at: "2017-08-31 01:31:55",
-              updated_at: "2017-08-31 01:31:56",
-              children: [
-                {
-                  id: 14,
-                  sort: 0,
-                  status: 1,
-                  name: "cms.store.view",
-                  display_name: "列表",
-                  description: "列表",
-                  parent_id: 13,
-                  lft: 29,
-                  rgt: 30,
-                  depth: 3,
-                  created_at: "2017-08-31 01:31:55",
-                  updated_at: "2017-08-31 01:31:56",
-                  children: []
-                },
-                {
-                  id: 15,
-                  sort: 0,
-                  status: 1,
-                  name: "cms.store.edit",
-                  display_name: "新增",
-                  description: "新增",
-                  parent_id: 13,
-                  lft: 31,
-                  rgt: 32,
-                  depth: 3,
-                  created_at: "2017-08-31 01:31:55",
-                  updated_at: "2017-08-31 01:31:56",
-                  children: []
-                }
-              ]
-            },
-            {
-              id: 90,
-              sort: 0,
-              status: 1,
-              name: "cms.store",
-              display_name: "模版排期",
-              description: "模版排期",
-              parent_id: 12,
-              lft: 28,
-              rgt: 33,
-              depth: 2,
-              created_at: "2017-08-31 01:31:55",
-              updated_at: "2017-08-31 01:31:56",
-              children: [
-                {
-                  id: 91,
-                  sort: 0,
-                  status: 1,
-                  name: "cms.store.view",
-                  display_name: "列表",
-                  description: "列表",
-                  parent_id: 13,
-                  lft: 29,
-                  rgt: 30,
-                  depth: 3,
-                  created_at: "2017-08-31 01:31:55",
-                  updated_at: "2017-08-31 01:31:56",
-                  children: []
-                },
-                {
-                  id: 92,
-                  sort: 0,
-                  status: 1,
-                  name: "cms.store.edit",
-                  display_name: "编辑",
-                  description: "编辑",
-                  parent_id: 13,
-                  lft: 31,
-                  rgt: 32,
-                  depth: 3,
-                  created_at: "2017-08-31 01:31:55",
-                  updated_at: "2017-08-31 01:31:56",
-                  children: []
-                }
-              ]
-            },
-            {
-              id: 93,
-              sort: 0,
-              status: 1,
-              name: "cms.store",
-              display_name: "节目列表",
-              description: "节目列表",
-              parent_id: 12,
-              lft: 28,
-              rgt: 33,
-              depth: 2,
-              created_at: "2017-08-31 01:31:55",
-              updated_at: "2017-08-31 01:31:56",
-              children: [
-                {
-                  id: 94,
-                  sort: 0,
-                  status: 1,
-                  name: "cms.store.view",
-                  display_name: "列表",
-                  description: "列表",
-                  parent_id: 13,
-                  lft: 29,
-                  rgt: 30,
-                  depth: 3,
-                  created_at: "2017-08-31 01:31:55",
-                  updated_at: "2017-08-31 01:31:56",
-                  children: []
-                },
-                {
-                  id: 95,
-                  sort: 0,
-                  status: 1,
-                  name: "cms.store.edit",
-                  display_name: "编辑",
-                  description: "编辑",
-                  parent_id: 13,
-                  lft: 31,
-                  rgt: 32,
-                  depth: 3,
-                  created_at: "2017-08-31 01:31:55",
-                  updated_at: "2017-08-31 01:31:56",
-                  children: []
-                }
-              ]
-            }
-          ]
-        }
-      ]
+
+      roleID: null,
+      allPerms: [],
+      permsLoading: true
     };
   },
   created: function() {
     this.roleID = this.$route.params.uid;
-  },
-  getRoleInfoByRid() {
-    getRoleInfoByRid(this, this.roleID)
-      .then(res => {
-        this.roleForm = res;
+    // 获取所有权限
+    getPermission(this)
+      .then(result => {
+        this.setting.loading = true;
+        let pers = result;
+        for (let per in pers) {
+          this.allPerms.push(pers[per]);
+        }
+        if (this.roleID) {
+          this.getRoleInfo();
+        } else {
+          this.setting.loading = false;
+          this.permsLoading = false;
+        }
       })
-      .catch(err => {
-        console.log(err);
+      .catch(error => {
+        this.setting.loading = false;
+        this.permsLoading = false;
+        this.$message({
+          type: "warning",
+          message: error.response.data.message
+        });
       });
   },
   methods: {
+    getRoleInfo() {
+      getRoleInfo(this, this.roleID)
+        .then(result => {
+          let roleInfo = result;
+          this.roleForm.name = roleInfo.name;
+          this.roleForm.display_name = roleInfo.display_name;
+          for (let i = 0, rL = roleInfo.ids.length; i < rL; i++) {
+            this.roleForm.ids.push(roleInfo.ids[i].id);
+          }
+          this.setting.loading = false;
+          this.permsLoading = false;
+        })
+        .catch(error => {
+          this.setting.loading = false;
+          this.permsLoading = false;
+          this.$message({
+            type: "warning",
+            message: error.response.data.message
+          });
+        });
+    },
     selectChildPerm(checkedPerm, type) {
       let subPerm = [],
         checkedPerms = this.roleForm.perms;
@@ -468,25 +221,25 @@ export default {
     onSubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          // delete this[formName].user.repassword;
-          // this.loading = true;
-          // saveUser(this, this[formName].user, this.roleID)
-          //   .then(result => {
-          //     this.loading = false;
-          //     this.$message({
-          //       message: this.roleID ? "修改成功" : "添加成功",
-          //       type: "success"
-          //     });
-          //     // todo是否返回用户列表
-          //     this.$router.push({
-          //       path: "/system/user/"
-          //     });
-          //   })
-          //   .catch(error => {
-          //     this.loading = false;
-          //     console.log(error);
-          //   });
+          this.submiting = true;
+          role
+            .saveRole(this, this[formName], this.roleID)
+            .then(result => {
+              this.$message({
+                message: this.roleID ? "修改成功" : "添加成功",
+                type: "success"
+              });
+              this.submiting = false;
+              this.$router.push({
+                path: "/system/role/"
+              });
+            })
+            .catch(error => {
+              this.submiting = false;
+              console.log(error);
+            });
         } else {
+          console.log("error submit");
           return;
         }
       });

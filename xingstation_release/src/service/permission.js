@@ -1,14 +1,14 @@
-const ROLE_API = '/api/role'
+const PERMISSION_API = '/api/permission'
 const HOST = process.env.SERVER_URL
 
 // 详情
-const getRoleInfo = (context, rid) => {
+const getPermissionInfo = (context, id) => {
   if (!rid) {
     return false
   }
   return new Promise(function(resolve, reject) {
     context.$http
-      .get(HOST + ROLE_API + '/' + rid)
+      .get(HOST + PERMISSION_API + '/' + id)
       .then(response => {
         resolve(response.data)
       })
@@ -18,11 +18,11 @@ const getRoleInfo = (context, rid) => {
   })
 }
 // 保存修改
-const saveRole = (context, args, rid) => {
-  if (rid) {
+const savePermission = (context, args, id) => {
+  if (id) {
     return new Promise(function(resolve, reject) {
       context.$http
-        .patch(HOST + ROLE_API + '/' + rid, args)
+        .patch(HOST + PERMISSION_API + '/' + id, args)
         .then(response => {
           resolve(response.data)
         })
@@ -33,7 +33,7 @@ const saveRole = (context, args, rid) => {
   } else {
     return new Promise(function(resolve, reject) {
       context.$http
-        .post(HOST + ROLE_API, args)
+        .post(HOST + PERMISSION_API, args)
         .then(response => {
           resolve(response.data)
         })
@@ -43,11 +43,11 @@ const saveRole = (context, args, rid) => {
     })
   }
 }
-// 角色列表
-const getRoleList = (context, args) => {
+// 权限列表
+const getPermissionList = (context, args) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .get(HOST + ROLE_API, { params: args })
+      .get(HOST + PERMISSION_API, { params: args })
       .then(response => {
         resolve(response.data)
       })
@@ -57,11 +57,11 @@ const getRoleList = (context, args) => {
   })
 }
 
-// 删除角色
-const deleteRole = (context, id) => {
+// 删除权限
+const deletePermission = (context, id) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .delete(HOST + ROLE_API + '/' + id)
+      .delete(HOST + PERMISSION_API + '/' + id)
       .then(response => {
         resolve(response.data)
       })
@@ -70,4 +70,10 @@ const deleteRole = (context, id) => {
       })
   })
 }
-export { saveRole, getRoleInfo, getRoleList, deleteRole }
+
+export {
+  savePermission,
+  getPermissionInfo,
+  getPermissionList,
+  deletePermission
+}
