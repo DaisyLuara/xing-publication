@@ -83,7 +83,7 @@ class TeamProjectController extends Controller
         $params = $request->all();
 
         //判断交互文档
-        $plan_media_ids = explode(',', $params['plan_media_id']);
+        $plan_media_ids = explode(',', $request->plan_media_id);
         foreach ($plan_media_ids as $plan_media_id) {
             $media = Media::find($plan_media_id);
             if (!$media) {
@@ -91,15 +91,15 @@ class TeamProjectController extends Controller
             }
         }
 
-        $member = $params['member'] ?? [];
-        if ($member['tester'] || $member['tester_quality']) {
+        $member = $request->member ?? [];
+        if (isset($member['tester']) || isset($member['tester_quality'])) {
             $tester_ids = array_column($member['tester'] ?? [], 'user_id');
             $tester_quality_ids = array_column($member['tester_quality'] ?? [], 'user_id');
             if (count($tester_ids) != count($tester_quality_ids) || array_diff($tester_quality_ids, $tester_ids) || array_diff($tester_ids, $tester_quality_ids)) {
                 abort("422", "tester与tester_quality人员需一致");
             }
         }
-        if ($member['operation'] || $member['operation_quality']) {
+        if (isset($member['operation']) || isset($member['operation_quality'])) {
             $operation_ids = array_column($member['operation'] ?? [], 'user_id');
             $operation_quality_ids = array_column($member['operation_quality'] ?? [], 'user_id');
             if (count($operation_ids) != count($operation_quality_ids) || array_diff($operation_quality_ids, $operation_ids) || array_diff($operation_ids, $operation_quality_ids)) {
@@ -107,14 +107,14 @@ class TeamProjectController extends Controller
             }
         }
 
-        $project = Project::query()->where('versionname', $params['belong'])->first();
+        $project = Project::query()->where('versionname', $request->belong)->first();
 
         $params['status'] = 1;
         $params['applicant'] = $user->id;
         $params['begin_date'] = Carbon::now()->toDateString();
         $params['project_name'] = $project->name;
         $params['launch_date'] = $project->online != 0 ? date('Y-m-d', $project->online / 1000) : null;
-        $params['interaction_attribute'] = implode(",", $params['interaction_attribute']);
+        $params['interaction_attribute'] = implode(",", $request->interaction_attribute??[]);
 
         $teamProject->fill($params)->save();
         $this->memberStore($member, $teamProject);
@@ -153,7 +153,7 @@ class TeamProjectController extends Controller
         $params = $request->all();
 
         //判断交互文档
-        $plan_media_ids = explode(',', $params['plan_media_id']);
+        $plan_media_ids = explode(',', $request->plan_media_id);
         foreach ($plan_media_ids as $plan_media_id) {
             $media = Media::find($plan_media_id);
             if (!$media) {
@@ -161,15 +161,15 @@ class TeamProjectController extends Controller
             }
         }
 
-        $member = $params['member'] ?? [];
-        if ($member['tester'] || $member['tester_quality']) {
+        $member = $request->member ?? [];
+        if (isset($member['tester']) || isset($member['tester_quality'])) {
             $tester_ids = array_column($member['tester'] ?? [], 'user_id');
             $tester_quality_ids = array_column($member['tester_quality'] ?? [], 'user_id');
             if (count($tester_ids) != count($tester_quality_ids) || array_diff($tester_quality_ids, $tester_ids) || array_diff($tester_ids, $tester_quality_ids)) {
                 abort("422", "tester与tester_quality人员需一致");
             }
         }
-        if ($member['operation'] || $member['operation_quality']) {
+        if (isset($member['operation']) || isset($member['operation_quality'])) {
             $operation_ids = array_column($member['operation'] ?? [], 'user_id');
             $operation_quality_ids = array_column($member['operation_quality'] ?? [], 'user_id');
             if (count($operation_ids) != count($operation_quality_ids) || array_diff($operation_quality_ids, $operation_ids) || array_diff($operation_ids, $operation_quality_ids)) {
@@ -177,9 +177,9 @@ class TeamProjectController extends Controller
             }
         }
 
-        $project = Project::query()->where('versionname', $params['belong'])->first();
+        $project = Project::query()->where('versionname', $request->belong)->first();
 
-        if (!$params['tester_media_id']) {
+        if (isset($params['tester_media_id'])) {
             unset($params['tester_media_id']);
         }
         unset($params['applicant']);
@@ -189,7 +189,7 @@ class TeamProjectController extends Controller
         unset($params['status']);
         $params['project_name'] = $project->name;
         $params['launch_date'] = $project->online != 0 ? date('Y-m-d', $project->online / 1000) : null;
-        $params['interaction_attribute'] = implode(",", $params['interaction_attribute']);
+        $params['interaction_attribute'] = implode(",", $request->interaction_attribute??[]);
         $teamProject->update($params);
 
 

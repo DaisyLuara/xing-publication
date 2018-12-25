@@ -38,9 +38,8 @@ class MediaInfoController extends Controller
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        $params = $request->all();
-        $mediaInfo->fill(array_merge($params, [
-            'type' => $params['type'] ?? 'project_operation',
+        $mediaInfo->fill(array_merge($request->all(), [
+            'type' => $request->type ?? 'project_operation',
             'date' => Carbon::now('PRC')->toDateString(),
             'recorder_id' => $user->id
         ]))->save();
