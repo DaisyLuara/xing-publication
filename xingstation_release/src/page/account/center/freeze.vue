@@ -52,7 +52,7 @@
                   <span>{{ freeze_money }}</span>
                 </el-form-item>
                 <el-form-item label="重大责任">
-                  <span>{{ experience_money }}</span>
+                  <span>{{ bug_record }}</span>
                 </el-form-item>
                 <el-form-item label="扣除奖金">
                   <span>{{ deduction_money }}</span>
@@ -81,7 +81,7 @@
           />
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="experience_money"
+            prop="bug_record"
             label="重大责任"
             min-width="100"
           />

@@ -75,13 +75,14 @@
               <el-select
                 v-model="programForm.contract_id"
                 :disabled="contractDisable"
+                clearable
                 placeholder="请选择合同编号"
               >
                 <el-option
-                  v-for="item in cotractList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  v-for="item in contractList"
+                  :key="item.id"
+                  :label="item.contract_number"
+                  :value="item.id"
                 ></el-option>
               </el-select>
             </el-form-item>
@@ -563,11 +564,8 @@
               </el-tooltip>
             </el-form-item>
           </el-col>
-          <el-col 
-            v-if="testFile"
-            :span="12">
-            <el-form-item
-              label="测试文档">
+          <el-col v-if="testFile" :span="12">
+            <el-form-item label="测试文档">
               <div @click="handlePreview(testFile)" style="cursor:pointer;">{{testFile.name}}</div>
             </el-form-item>
           </el-col>
@@ -634,7 +632,8 @@ import {
   getSearchProjectList,
   getSearchTeamRateList,
   getQiniuToken,
-  getMediaUpload
+  getMediaUpload,
+  getContractReceiptList
 } from "service";
 import { Cookies } from "utils/cookies";
 
@@ -666,7 +665,7 @@ export default {
         key: ""
       },
       testFile: null,
-      cotractList: [],
+      contractList: [],
       fileList: [],
       fileList1: [],
       ids: [],
@@ -769,12 +768,14 @@ export default {
     let user_info = JSON.parse(Cookies.get("user_info"));
     this.role = user_info.roles.data;
     this.getUserList();
+
     this.getQiniuToken();
     if (this.programID) {
       this.detailInit();
     } else {
       this.setting.loading = true;
       this.getTeamRateList();
+      this.getContractReceiptList();
       this.programForm.applicant_name = user_info.name;
       this.programForm.applicant = user_info.id;
     }
@@ -784,9 +785,25 @@ export default {
       try {
         await this.getTeamRateList();
         await this.getProgramDetails();
+        await this.getContractReceiptList();
       } catch (e) {
         console.log(e);
       }
+    },
+    getContractReceiptList() {
+      let args = {
+        type: 0
+      };
+      getContractReceiptList(this, args)
+        .then(res => {
+          this.contractList = res;
+        })
+        .catch(err => {
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
+        });
     },
     h5Handle(val) {
       let idArr = [];
@@ -823,7 +840,12 @@ export default {
       }
     },
     handleCustom(val) {
-      this.contractDisable = val === 1 ? false : true;
+      if (val === 1) {
+        this.programForm.contract_id === "";
+        this.contractDisable = false;
+      } else {
+        this.contractDisable = true;
+      }
     },
     getQiniuToken() {
       getQiniuToken(this)
@@ -943,7 +965,7 @@ export default {
         .then(res => {
           let planMediaData = [];
           if (res.tester_media) {
-            this.testFile = res.tester_media
+            this.testFile = res.tester_media;
           }
           if (res.plan_media) {
             res.plan_media.map(r => {
