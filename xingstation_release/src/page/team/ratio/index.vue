@@ -63,7 +63,7 @@
           <el-table-column
             :show-overflow-tooltip="true"
             prop="interaction_linkage"
-            label="交互技术-交互引擎"
+            label="交互引擎"
             min-width="70"
           />
           <el-table-column 
