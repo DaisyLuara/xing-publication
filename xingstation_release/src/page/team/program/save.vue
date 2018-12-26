@@ -433,7 +433,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="后端IT技术" prop="backend">
+            <el-form-item label="后端IT技术" prop="backend" label-width="100px">
               <span
                 style="color: #999;font-size:14px;margin-right: 8px;"
               >{{ rate.backend_docking }} * 系数</span>
@@ -499,7 +499,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="H5开发" prop="H5Val">
+            <el-form-item label="H5开发" prop="H5Val" label-width="100px">
               <span
                 :style="h5Rate === '0.1' ? 'margin-right: 15px;' : 'margin-right: 0;'"
                 style="color: #999;font-size:14px;"
