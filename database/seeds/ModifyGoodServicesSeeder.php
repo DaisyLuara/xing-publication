@@ -20,12 +20,12 @@ class ModifyGoodServicesSeeder extends Seeder
         DB::table('goods_services')->where('id', 7)
             ->update(['name' => '卓有：星视度智能互动一体机']);
         DB::table('goods_services')->where('id', 8)
-            ->update(['name' => '域展：43寸壁挂式一体机']);
+            ->update(['name' => '域展：智能互动屏']);
         DB::table('goods_services')->where('id', 9)
-            ->update(['name' => '域展：70寸箱体式镜面一体机定制款']);
-        DB::table('goods_services')->where('id', 10)
-            ->update(['name' => '域展：32寸壁挂式镜面一体机定制款']);
-        DB::table('goods_services')->where('id', 11)
             ->update(['name' => '域展：星视度智能互动一体机']);
+        DB::table('goods_services')->where('id', 10)
+            ->delete();
+        DB::table('goods_services')->where('id', 11)
+            ->delete();
     }
 }
