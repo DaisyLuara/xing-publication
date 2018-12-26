@@ -51,7 +51,7 @@ class TeamProjectController extends Controller
         /** @var  $user \App\Models\User */
         $user = $this->user();
 
-        if (($request->has('own') && $request->own == 'true')
+        if (($request->has('own') && $request->own)
             ||
             !$user->hasRole('tester|operation|legal-affairs-manager|bonus-manager')
         ) {
@@ -81,29 +81,8 @@ class TeamProjectController extends Controller
         /** @var  $user \App\Models\User */
         $user = $this->user();
         $params = $request->all();
-
-        //判断交互文档
-        $plan_media_ids = explode(',', $request->plan_media_id);
-        $plan_medias = Media::query()->whereIn('id',$plan_media_ids)->pluck('id')->toArray();
-        if(array_diff($plan_media_ids,$plan_medias)){
-            abort("422", "上传的交互文档中存在找不到对象");
-        }
-
         $member = $request->member ?? [];
-        if (isset($member['tester']) || isset($member['tester_quality'])) {
-            $tester_ids = array_column($member['tester'] ?? [], 'user_id');
-            $tester_quality_ids = array_column($member['tester_quality'] ?? [], 'user_id');
-            if (count($tester_ids) != count($tester_quality_ids) || array_diff($tester_quality_ids, $tester_ids) || array_diff($tester_ids, $tester_quality_ids)) {
-                abort("422", "tester与tester_quality人员需一致");
-            }
-        }
-        if (isset($member['operation']) || isset($member['operation_quality'])) {
-            $operation_ids = array_column($member['operation'] ?? [], 'user_id');
-            $operation_quality_ids = array_column($member['operation_quality'] ?? [], 'user_id');
-            if (count($operation_ids) != count($operation_quality_ids) || array_diff($operation_quality_ids, $operation_ids) || array_diff($operation_ids, $operation_quality_ids)) {
-                abort("422", "operation与operation_quality人员需一致");
-            }
-        }
+        $this->checkParams($request);
 
         $project = Project::query()->where('versionname', $request->belong)->first();
 
@@ -112,7 +91,7 @@ class TeamProjectController extends Controller
         $params['begin_date'] = Carbon::now()->toDateString();
         $params['project_name'] = $project->name;
         $params['launch_date'] = $project->online != 0 ? date('Y-m-d', $project->online / 1000) : null;
-        $params['interaction_attribute'] = implode(",", $request->interaction_attribute??[]);
+        $params['interaction_attribute'] = implode(",", $request->interaction_attribute ?? []);
 
         $teamProject->fill($params)->save();
         $this->memberStore($member, $teamProject);
@@ -149,11 +128,39 @@ class TeamProjectController extends Controller
         }
 
         $params = $request->all();
+        $member = $request->member ?? [];
+        $this->checkParams($request);
 
+        $project = Project::query()->where('versionname', $request->belong)->first();
+
+        if (isset($params['tester_media_id']) && !$params['tester_media_id']) {
+            unset($params['tester_media_id']);
+        }
+        unset($params['applicant']);
+        unset($params['begin_date']);
+        unset($params['online_date']);
+        unset($params['status']);
+        $params['project_name'] = $project->name;
+        $params['launch_date'] = $project->online != 0 ? date('Y-m-d', $project->online / 1000) : null;
+        $params['interaction_attribute'] = implode(",", $request->interaction_attribute ?? []);
+        $teamProject->update($params);
+
+        $teamProject->member()->detach();
+        $this->memberStore($member, $teamProject);
+        return $this->response()->noContent()->setStatusCode(200);
+    }
+
+
+    /**
+     * 更新、保存的参数判断
+     * @param $request
+     */
+    public function checkParams($request)
+    {
         //判断交互文档
         $plan_media_ids = explode(',', $request->plan_media_id);
-        $plan_medias = Media::query()->whereIn('id',$plan_media_ids)->pluck('id')->toArray();
-        if(array_diff($plan_media_ids,$plan_medias)){
+        $plan_medias = Media::query()->whereIn('id', $plan_media_ids)->pluck('id')->toArray();
+        if (array_diff($plan_media_ids, $plan_medias)) {
             abort("422", "上传的交互文档中存在找不到对象");
         }
 
@@ -172,25 +179,6 @@ class TeamProjectController extends Controller
                 abort("422", "operation与operation_quality人员需一致");
             }
         }
-
-        $project = Project::query()->where('versionname', $request->belong)->first();
-
-        if (isset($params['tester_media_id']) && !$params['tester_media_id']) {
-            unset($params['tester_media_id']);
-        }
-        unset($params['applicant']);
-        unset($params['begin_date']);
-        unset($params['online_date']);
-        unset($params['status']);
-        $params['project_name'] = $project->name;
-        $params['launch_date'] = $project->online != 0 ? date('Y-m-d', $project->online / 1000) : null;
-        $params['interaction_attribute'] = implode(",", $request->interaction_attribute??[]);
-        $teamProject->update($params);
-
-
-        $teamProject->member()->detach();
-        $this->memberStore($member, $teamProject);
-        return $this->response()->noContent()->setStatusCode(200);
     }
 
 

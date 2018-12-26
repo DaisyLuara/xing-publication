@@ -14,7 +14,7 @@ use Illuminate\Validation\Rule;
 class PaymentPayeeRequest extends \App\Http\Requests\Request
 {
 
-    public function rules(Request $request)
+    public function rules()
     {
         switch ($this->method()) {
             case 'POST':
@@ -26,7 +26,7 @@ class PaymentPayeeRequest extends \App\Http\Requests\Request
                 break;
             case 'PATCH':
                 return [
-                    'name' => Rule::unique('payment_payees')->ignore($request->id),
+                    'name' => Rule::unique('payment_payees')->ignore($this->route('payment')->id),
                     'account_bank' => 'string',
                     'account_number' => 'alpha_num',
                 ];
