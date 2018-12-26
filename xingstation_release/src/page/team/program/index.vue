@@ -471,28 +471,28 @@ export default {
       }
     },
     confirmProgramHandle(row) {
-      this.$confirm("确认通过吗?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          let id = row.id;
-          let status = row.status;
-          let testerMediaIds = [];
-          if (status === 1) {
-            this.confirmId = id;
-            this.dialogFormVisible = true;
-          } else {
-            this.confirmProgram(id);
-          }
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消确认"
-          });
-        });
+      // this.$confirm("确认通过吗?", "提示", {
+      //   confirmButtonText: "确定",
+      //   cancelButtonText: "取消",
+      //   type: "warning"
+      // })
+      //   .then(() => {
+      let id = row.id;
+      let status = row.status;
+      let testerMediaIds = [];
+      if (status === 1) {
+        this.confirmId = id;
+        this.dialogFormVisible = true;
+      } else {
+        this.confirmProgram(id);
+      }
+      // })
+      // .catch(() => {
+      //   this.$message({
+      //     type: "info",
+      //     message: "已取消确认"
+      //   });
+      // });
     },
     confirmProgram(id, args) {
       confirmProgram(this, id, args)
