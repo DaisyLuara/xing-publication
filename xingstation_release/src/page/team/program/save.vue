@@ -3,7 +3,7 @@
     <div v-loading="setting.loading" :element-loading-text="setting.loadingText" class="pane">
       <div
         class="pane-title"
-      >{{ programID ? (((projectManage && status===1) || legalAffairsManager || bonusManage) ? '修改项目' : '查看项目') : '新增项目'}}</div>
+      >{{ programID ? (((projectManage && status===1) || legalAffairsManager || bonusManage) ? '修改节目' : '查看节目') : '新增节目'}}</div>
       <el-form ref="programForm" :model="programForm" label-position="left" label-width="80px">
         <el-row>
           <el-col :span="12">
@@ -1502,7 +1502,7 @@ export default {
         to.meta.keepAlive = false;
       }
       next();
-    }else{
+    } else {
       to.meta.keepAlive = false;
       next();
     }

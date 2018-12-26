@@ -98,7 +98,7 @@
               size="small"
               @click="downloadTable()"
             >下载</el-button>
-            <el-button v-if="projectManage" type="success" size="small" @click="addProgram()">新增项目</el-button>
+            <el-button v-if="projectManage" type="success" size="small" @click="addProgram()">新增节目</el-button>
           </div>
         </div>
         <el-table :data="tableData" style="width: 100%">
