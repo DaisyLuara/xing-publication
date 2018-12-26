@@ -12,7 +12,7 @@ class TeamProjectRequest extends \App\Http\Requests\Request
      *
      * @return array
      */
-    public function rules(Request $request)
+    public function rules()
     {
         switch ($this->method()) {
             case 'POST':
@@ -45,7 +45,7 @@ class TeamProjectRequest extends \App\Http\Requests\Request
                 return [
                     'belong' => [
                         'required', 'exists:ar.ar_product_list,versionname',
-                        Rule::unique('team_projects')->ignore($request->id),
+                        Rule::unique('team_projects')->ignore($this->route("team_project")->id),
                     ],
                     'project_attribute' => Rule::in([0, 1, 2, 5, 6, 7]),
                     'hidol_attribute' => Rule::in([0, 1]),
