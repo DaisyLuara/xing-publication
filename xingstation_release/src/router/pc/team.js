@@ -25,7 +25,8 @@ let router = {
           name: '节目列表',
           meta: {
             title: '节目列表',
-            permission: ''
+            permission: '',
+            keepAlive: true
           },
           component: () =>
             import(/* webpackChunkName: "page/team/program/index" */ 'page/team/program/index')

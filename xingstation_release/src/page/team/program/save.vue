@@ -727,6 +727,7 @@ export default {
         tester: [],
         tester_quality: []
       },
+      isRefresh: false,
       type: "",
       userList: [],
       rate: {
@@ -1449,6 +1450,7 @@ export default {
             args.id = this.programID;
             modifyProgram(this, args, this.programID)
               .then(res => {
+                this.isRefresh = true;
                 this.$message({
                   message: "修改成功",
                   type: "success"
@@ -1468,6 +1470,7 @@ export default {
           } else {
             saveProgram(this, args)
               .then(res => {
+                this.isRefresh = true;
                 this.$message({
                   message: "提交成功",
                   type: "success"
@@ -1490,6 +1493,19 @@ export default {
     },
     historyBack() {
       historyBack();
+    }
+  },
+  beforeRouteLeave(to, from, next) {
+    if (!this.isRefresh) {
+      if (to.path == "/team/program") {
+        to.meta.keepAlive = true;
+      } else {
+        to.meta.keepAlive = false;
+      }
+      next();
+    }else{
+      to.meta.keepAlive = false;
+      next();
     }
   }
 };

@@ -423,6 +423,8 @@ export default {
       });
     }
   },
+  activated() {},
+  deactivated() {},
   created() {
     this.getProgramList();
     let user_info = JSON.parse(Cookies.get("user_info"));
