@@ -213,13 +213,14 @@ class MiniCouponController extends Controller
                 'code' => uniqid(),
                 'coupon_batch_id' => $couponBatch->id,
                 'status' => 3,
+                'oid' => $request->input('oid'),
                 'member_uid' => $memberUID,
                 'start_date' => $startDate,
                 'end_date' => $endDate,
             ]);
 
-            //减少库存
-            if (!$couponBatch->pmg_status && !$couponBatch->pmg_status) {
+            //不使用系统核销 领取优惠券后 ，自动减去库存
+            if (!$couponBatch->write_off_status && !$couponBatch->pmg_status && !$couponBatch->pmg_status) {
                 $couponBatch->decrement('stock');
             }
 
