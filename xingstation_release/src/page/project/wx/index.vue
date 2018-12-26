@@ -62,7 +62,6 @@
             <el-form-item>
               <template slot-scope="scope">即“通用券”，建议当以上四种无法满足需求时采用</template>
             </el-form-item>
-
             <el-form-item>
               <el-button
                 type="success"
@@ -256,7 +255,6 @@ export default {
       card_id_list: [],
       loading: true,
       title: '',
-      radio: "1",
       submitCheck: {
         quantityCheck1: false,
         quantityCheck2: false
@@ -277,11 +275,6 @@ export default {
         pageSize: 10,
         currentPage: 1
       },
-      cardType: '',
-      setting: {
-        loading: false,
-        loadingText: '拼命加载中'
-      },
       obj: {
         GFIT: { prop: 'gfit', typeName: '兑换券' },
         DISCOUNT: { prop: 'discount', typeName: '折扣劵' },
@@ -293,6 +286,7 @@ export default {
   created() {
   },
   mounted() {
+    //查询优惠劵列表
     this.getCardList()
   },
   methods: {
@@ -303,9 +297,12 @@ export default {
       }
       getCardList(this, params)
         .then(res => {
-          console.log("========")
+          console.log("卡劵列表card_id========")
           console.log(res)
-          this.card_id_list = res.card_id_list;
+          this.card_id_list = res.card_id_list
+          this.pagination.total = this.card_id_list.length
+          //根据卡劵id循环查询卡劵信息
+          this.listHandle()
         })
         .catch(err => {
           console.log(err);
@@ -322,6 +319,8 @@ export default {
         authorizer_id: 6,
         card_id: card_id
       }
+      console.log('卡劵查询详情参数==============>')
+      console.log(params)
       getSingleCard(this, params)
         .then(res => {
           let card = res.card
@@ -366,7 +365,9 @@ export default {
       }
       deleteSingleCard(this, params)
         .then(res => {
+          console.log('删除成功==============>')
           console.log(res)
+          this.getCardList()
         })
         .catch(err => {
           console.log(err);

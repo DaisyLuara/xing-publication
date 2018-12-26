@@ -16,7 +16,8 @@
       >
         <div class="item-content-left-card">
           <div class="logo">
-            <img src="https://cdn.exe666.com/fe/marketing/img/tiger/icon.png">
+            <!-- <img src="https://cdn.exe666.com/fe/marketing/img/tiger/icon.png"> -->
+            <img :src="this.base_info.logo_url">
           </div>
           <div class="tickMsg">
             <p
@@ -64,11 +65,10 @@
             <el-form-item label="商户">
               <img
                 class="icon"
-                src="https://cdn.exe666.com/fe/marketing/img/tiger/icon.png"
+                :src="this.base_info.logo_url"
               >
             </el-form-item>
             <el-form-item label="卡券颜色">
-
               <div
                 class="colorList-input"
                 @click="()=>{colorListShow=true}"
@@ -261,7 +261,6 @@
                 </div>
                 <div v-if="!timeFrameShow">
                   <div class="box-segmentation">
-                    <!-- <el-checkbox-group v-model="checkList"> -->
                     <span class="check-data">日期</span>
                     <el-checkbox
                       v-for="(timeLimit,index) in timeLimitType"
@@ -271,7 +270,6 @@
                       v-model="timeLimit.isClick"
                       @change="addTimeLimit(index,timeLimit)"
                     ></el-checkbox>
-                    <!-- </el-checkbox-group> -->
                   </div>
                   <div class="addDateTime "><span
                       class="time"
@@ -350,7 +348,7 @@
                 <el-checkbox v-model="giftChecked">消费
                   <span v-show="giftChecked">
                     <el-select
-                      v-model="couponForm.is_fixed_date"
+                      v-model="couponForm.is_money"
                       placeholder="金额"
                       class="coupon-form-select"
                     >
@@ -523,7 +521,7 @@
                       class="upload-demo"
                     >
                       <el-button
-                        @click="test(index)"
+                        @click="changeIndex(index)"
                         size="mini"
                         type="success"
                       >点击上传</el-button>
@@ -639,7 +637,6 @@ export default {
       timeFrameShow: true,
       colorListShow: false,
       startToEndDate: [],
-      dateType: { RANGE: 'DATE_TYPE_FIX_TIME_RANGE', TERM: 'DATE_TYPE_FIX_TERM' },
       card_type: this.$route.query.card_type,
       card_id: this.$route.query.card_id,
       detail: '',
@@ -650,35 +647,54 @@ export default {
       beginToEndHourMinute: [],
       flag: 7,
       index: null,
+      base_info: {
+        "logo_url":
+          "http://mmbiz.qpic.cn/mmbiz/iaL1LJM1mF9aRKPZJkmG8xXhiaHqkKSVMMWeN3hLut7X7hicFNjakmxibMLGWpXrEXB33367o7zHN0CwngnQY7zb7g/0",
+        "brand_name": "微信餐厅",//true
+        "code_type": null,//true
+        "title": "",//true
+        "color": null,//true
+        "notice": "使用时向服务员出示此券",//true
+        "service_phone": "020-88888888",        //true
+        "description": "", //true
+        "get_limit": null,
+      },
+      //使用日期，有效期的信息
+      date_info: {
+        "type": 'DATE_TYPE_FIX_TIME_RANGE' //true
+      },
+      begin_timestamp: null,  //true
+      end_timestamp: null,//true
+      fixed_term: 2,
+      fixed_begin_term: 0,
+      use_condition: {
+        "accept_category": "",
+        "reject_category": "",
+        "can_use_with_other_discount": null
+      },
+      abstract: {
+        "abstract": "",
+        "icon_url_list": []
+      },
+      text_image_list: [],
+      time_limit: [],
+      advanced_info: {},
+      dateType: { RANGE: 'DATE_TYPE_FIX_TIME_RANGE', TERM: 'DATE_TYPE_FIX_TERM' },
       submitCheck: {
-        //颜色
-        color: false,
-        //标题检查
-        titleCheck: false,
-        //日期
-        dateCheck: false,
-        //上传
-        uploadCheck: false,
-        //封面简介
-        introductionCheck: false,
-        //优惠说明
-        privilegeCheck: false,
-        //折扣额度
-        discountAmount: false,
-        //适用商品
-        commodity: false,
-        //不适用商品
-        noCommodity: false,
-        //消费
-        consumptionAmount: false,
-        //消费2
-        ConsumptionAmount: false,
-        //减免金额
-        creditAmount: false,
-        //图文介绍
-        graphicIntroduction: false,
-        //优惠共享
-        discountsShare: false
+        color: false, //颜色
+        titleCheck: false,//标题检查
+        dateCheck: false,//日期
+        uploadCheck: false, //上传
+        introductionCheck: false,//封面简介
+        privilegeCheck: false, //优惠说明
+        discountAmount: false,//折扣额度
+        commodity: false,//适用商品
+        noCommodity: false,//不适用商品
+        consumptionAmount: false, //消费
+        ConsumptionAmount: false,//消费2
+        creditAmount: false, //减免金额
+        graphicIntroduction: false, //图文介绍
+        discountsShare: false//优惠共享
       },
       leftDetail: {
         color: { "background": "#f6f6f8" },
@@ -714,91 +730,6 @@ export default {
         { type: "SATURDAY", title: "周六", sort: 6, isClick: true },
         { type: "SUNDAY", title: "周日", sort: 7, isClick: true }
       ],
-      card_types: {
-        GROUPON: {
-          "card_type": "GROUPON",
-          "groupon": {
-            "deal_detail": ""
-          }
-        }, CASH: {
-          "card_type": "CASH",
-          "cash": {
-            "least_cost": null,
-            "reduce_cost": null,
-          }
-        }, GIFT: {
-          "card_type": "GIFT",
-          "gift": {
-            "gift": ""
-          }
-        }, DISCOUNT: {
-          "card_type": "DISCOUNT",
-          "discount": {
-            "discount": null
-          }
-        }, GENERAL_COUPON: {
-          "card_type": "GENERAL_COUPON",
-          "general_coupon": {
-            "default_detail": ""
-          }
-        }      },
-      base_info: {
-        //true
-        "logo_url":
-          "http://mmbiz.qpic.cn/mmbiz/iaL1LJM1mF9aRKPZJkmG8xXhiaHqkKSVMMWeN3hLut7X7hicFNjakmxibMLGWpXrEXB33367o7zHN0CwngnQY7zb7g/0",
-        "brand_name": "微信餐厅",//true
-        "code_type": null,//true
-        "title": "",//true
-        "color": null,//true
-        "notice": "使用时向服务员出示此券",//true
-        "service_phone": "020-88888888",
-        //true
-        "description": "",
-        //true
-        "get_limit": null,
-      },
-      //使用日期，有效期的信息
-      date_info: {
-        //true
-        "type": 'DATE_TYPE_FIX_TIME_RANGE'
-      },
-      //true
-      begin_timestamp: null,
-      //true
-      end_timestamp: null,
-      fixed_term: 2,
-      fixed_begin_term: 0,
-      use_condition: {
-        "accept_category": "",
-        "reject_category": "",
-        "can_use_with_other_discount": null
-      },
-      abstract: {
-        "abstract": "",
-        "icon_url_list": []
-      },
-      text_image_list: [],
-      time_limit: [],
-      advanced_info: {},
-      loading: true,
-      title: '',
-      radio: "1",
-      dialogImageUrl: '',
-      dialogVisible: false,
-      show: false,
-      checkedShow: false,
-      checkDataShow: true,
-      companyList: [],
-      input: '',
-      filters: {
-        name: "",
-        company_id: ""
-      },
-      setting: {
-        loading: false,
-        loadingText: '拼命加载中'
-      },
-      checkList: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
       colorList: [
         {
           id: 1,
@@ -871,6 +802,38 @@ export default {
           }
         },
       ],
+      card_types: {
+        GROUPON: {
+          "card_type": "GROUPON",
+          "groupon": {
+            "deal_detail": ""
+          }
+        }, CASH: {
+          "card_type": "CASH",
+          "cash": {
+            "least_cost": null,
+            "reduce_cost": null,
+          }
+        }, GIFT: {
+          "card_type": "GIFT",
+          "gift": {
+            "gift": ""
+          }
+        }, DISCOUNT: {
+          "card_type": "DISCOUNT",
+          "discount": {
+            "discount": null
+          }
+        }, GENERAL_COUPON: {
+          "card_type": "GENERAL_COUPON",
+          "general_coupon": {
+            "default_detail": ""
+          }
+        }      },
+      setting: {
+        loading: false,
+        loadingText: '拼命加载中'
+      },
       shareList: [
         {
           id: 0,
@@ -918,80 +881,78 @@ export default {
           count: 1,
         },
       ],
+
       couponForm: {
-        is_fixed_date: 0,
-        description: "",
-        color: "",
-        discount: "",
-        time: "",
+        is_fixed_date: 1,
+        is_money: 0
       },
       testData: {
-        "card_type": "DISCOUNT",
-        "discount": {
-          "base_info": {
-            "id": "pbLatjnP97_F9PudzBARQhn7xR7A",
-            "logo_url": "http://mmbiz.qpic.cn/mmbiz/p98FjXy8LafmY25YclQ7vw5noBxeVH3DG5AKFR1ZsRgMgsvjll7EkUsZib00J964AEpTjkNXF2HorJHt5mtt45Q/0?wx_fmt=png",
-            "code_type": "CODE_TYPE_TEXT",
-            "brand_name": "微信餐厅",
-            "title": "9折优惠券",
-            "use_all_locations": true,
-            "date_info": {
-              "type": "DATE_TYPE_FIX_TERM",
-              "fixed_term": 30,
-              "fixed_begin_term": 0
-              // "type": "DATE_TYPE_FIX_TIME_RANGE",
-              // "begin_timestamp": 1397577600,
-              // "end_timestamp": 1472724261
-            },
-            "color": "#10AD61",
-            "notice": "到店使用",
-            "description": "",
-            "location_id_list": [
-              218384742,
-              402521653,
-              402521608
-            ],
-            "get_limit": 4,
-            "can_share": true,
-            "can_give_friend": true,
-            "status": "CARD_STATUS_VERIFY_OK",
-            "sku": {
-              "quantity": 100096,
-              "total_quantity": 100100
-            },
-            "create_time": 1457525546,
-            "update_time": 1457526240,
-            "area_code_list": []
-          },
-          "discount": 10,
-          "advanced_info": {
-            "time_limit": [
-              {
-                "type": "MONDAY"
-              },
-              {
-                "type": "TUESDAY"
-              }
-            ],
-            "text_image_list": [{
-              "image_url": "http://mmbiz.qpic.cn/mmbiz/p98FjXy8LacgHxp3sJ3vn97bGLz0ib0Sfz1bjiaoOYA027iasqSG0sjpiby4vce3AtaPu6cIhBHkt6IjlkY9YnDsfw/0",
-              "text": "此菜品精选食材，以独特的烹饪方法，最大程度地刺激食 客的味蕾"
-            },
-            {
-              "image_url": "http://mmbiz.qpic.cn/mmbiz/p98FjXy8LacgHxp3sJ3vn97bGLz0ib0Sfz1bjiaoOYA027iasqSG0sj piby4vce3AtaPu6cIhBHkt6IjlkY9YnDsfw/0",
-              "text": "此菜品迎合大众口味，老少皆宜，营养均衡"
-            }],
-            "business_service": [],
-            "consume_share_card_list": [],
-            "abstract": {
-              "abstract": "点击了解更多",
-              "icon_url_list": [
-                "http://mmbiz.qpic.cn/mmbiz/p98FjXy8LafiawSeJeqBzk8qC40iaKIwUPm4TSCelulzEbAywKr7tWjkd5vRjbmFloUFeThfwhwMUZIXmsCtJpyQ/0?wx_fmt=jpeg"
-              ]
-            },
-            "share_friends": false
-          }
-        }
+        // "card_type": "DISCOUNT",
+        // "discount": {
+        //   "base_info": {
+        //     "id": "pbLatjnP97_F9PudzBARQhn7xR7A",
+        //     "logo_url": "http://mmbiz.qpic.cn/mmbiz/p98FjXy8LafmY25YclQ7vw5noBxeVH3DG5AKFR1ZsRgMgsvjll7EkUsZib00J964AEpTjkNXF2HorJHt5mtt45Q/0?wx_fmt=png",
+        //     "code_type": "CODE_TYPE_TEXT",
+        //     "brand_name": "微信餐厅",
+        //     "title": "9折优惠券",
+        //     "use_all_locations": true,
+        //     "date_info": {
+        //       "type": "DATE_TYPE_FIX_TERM",
+        //       "fixed_term": 30,
+        //       "fixed_begin_term": 0
+        //       // "type": "DATE_TYPE_FIX_TIME_RANGE",
+        //       // "begin_timestamp": 1397577600,
+        //       // "end_timestamp": 1472724261
+        //     },
+        //     "color": "#10AD61",
+        //     "notice": "到店使用",
+        //     "description": "",
+        //     "location_id_list": [
+        //       218384742,
+        //       402521653,
+        //       402521608
+        //     ],
+        //     "get_limit": 4,
+        //     "can_share": true,
+        //     "can_give_friend": true,
+        //     "status": "CARD_STATUS_VERIFY_OK",
+        //     "sku": {
+        //       "quantity": 100096,
+        //       "total_quantity": 100100
+        //     },
+        //     "create_time": 1457525546,
+        //     "update_time": 1457526240,
+        //     "area_code_list": []
+        //   },
+        //   "discount": 10,
+        //   "advanced_info": {
+        //     "time_limit": [
+        //       {
+        //         "type": "MONDAY"
+        //       },
+        //       {
+        //         "type": "TUESDAY"
+        //       }
+        //     ],
+        //     "text_image_list": [{
+        //       "image_url": "http://mmbiz.qpic.cn/mmbiz/p98FjXy8LacgHxp3sJ3vn97bGLz0ib0Sfz1bjiaoOYA027iasqSG0sjpiby4vce3AtaPu6cIhBHkt6IjlkY9YnDsfw/0",
+        //       "text": "此菜品精选食材，以独特的烹饪方法，最大程度地刺激食 客的味蕾"
+        //     },
+        //     {
+        //       "image_url": "http://mmbiz.qpic.cn/mmbiz/p98FjXy8LacgHxp3sJ3vn97bGLz0ib0Sfz1bjiaoOYA027iasqSG0sj piby4vce3AtaPu6cIhBHkt6IjlkY9YnDsfw/0",
+        //       "text": "此菜品迎合大众口味，老少皆宜，营养均衡"
+        //     }],
+        //     "business_service": [],
+        //     "consume_share_card_list": [],
+        //     "abstract": {
+        //       "abstract": "点击了解更多",
+        //       "icon_url_list": [
+        //         "http://mmbiz.qpic.cn/mmbiz/p98FjXy8LafiawSeJeqBzk8qC40iaKIwUPm4TSCelulzEbAywKr7tWjkd5vRjbmFloUFeThfwhwMUZIXmsCtJpyQ/0?wx_fmt=jpeg"
+        //       ]
+        //     },
+        //     "share_friends": false
+        //   }
+        // }
       }
     };
   },
@@ -1046,15 +1007,223 @@ export default {
     this.getQiniuToken();
   },
   mounted() {
-    this.testData.discount.advanced_info.use_condition =
-      {
-        "accept_category": "ceshi",
-        "reject_category": "ceshi",
-        "can_use_with_other_discount": true
-      }
-    //this.cardDetailsHandle(this.testData)
+    //本地测试
+    //this.test()
+    //线上
+    this.getSingleCard()
   },
   methods: {
+    test() {
+      // this.testData.discount.advanced_info.use_condition =
+      //   {
+      //     "accept_category": "ceshi",
+      //     "reject_category": "ceshi",
+      //     "can_use_with_other_discount": true
+      //   }
+      this.cardDetailsHandle(this.testData)
+    },
+    //以下为查询卡劵修改初始化操作
+    //卡劵修改
+    getSingleCard() {
+      if (this.card_id != undefined) {
+        let params = {
+          authorizer_id: 6,
+          card_id: this.card_id
+        }
+        //查询卡劵详情
+        getSingleCard(this, params)
+          .then(res => {
+            console.log("查询卡劵详情?????????")
+            console.log(res)
+            this.cardDetailsHandle(res.card)
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
+    },
+    //初始化卡劵信息
+    cardDetailsHandle(data) {
+      this.code_type = data.card_type
+      if (this.card_type === 'GROUPON') {
+        this.detail = data.groupon.deal_detail
+        this.base_info = data.groupon.base_info
+        this.commonHandleInit('groupon', data)
+      }
+      //代金券
+      else if (this.card_type === 'CASH') {
+        this.least_cost = data.cash.least_cost
+        this.reduce_cost = data.cash.reduce_cost
+        this.commonHandleInit('cash', data)
+      }
+      //折扣券
+      else if (this.card_type === 'DISCOUNT') {
+        this.discount = data.discount.discount
+        this.base_info = data.discount.base_info
+        this.commonHandleInit('discount', data)
+      }
+      //兑换券
+      else if (this.card_type === 'GIFT') {
+        this.gift = data.gift.gift
+        this.base_info = data.gift.base_info
+        this.commonHandleInit('gift', data)
+      }
+      //优惠券
+      else {
+        this.detail = data.general_coupon.default_detail
+        this.base_info = data.general_coupon.base_info
+        this.commonHandleInit('general_coupon', data)
+      }
+
+    },
+    commonHandleInit(type, data) {
+      this.colorHandle(data[type].base_info.color)
+      this.useConditionInit(data[type].advanced_info.use_condition)
+      this.abstractInit(data[type].advanced_info.abstract)
+      this.textImageInit(data[type].advanced_info.text_image_list)
+      this.dateInfoInit(data[type].base_info.date_info)
+      this.timelimitInit(data[type].advanced_info.time_limit)
+    },
+    //颜色
+    colorHandle(color) {
+      this.leftDetail.color = { "background": color }
+      this.inputShow = false
+    },
+    //封面
+    useConditionInit(use_condition) {
+      if (use_condition !== null && use_condition != undefined && use_condition != '') {
+        this.use_condition = use_condition
+        this.cashOrDiscountchecked = true
+      }
+    },
+    //封面初始化
+    abstractInit(abstract) {
+      this.abstract = abstract
+      this.leftDetail.icon_url = abstract.icon_url_list[0]
+      this.leftDetail.abstract = abstract.abstract
+    },
+    //图文介绍初始化
+    textImageInit(text_image_list) {
+      let array = new Array()
+      for (let i = 0; i < text_image_list.length; i++) {
+        let text_image = {
+          "image_url": text_image_list[i].image_url,
+          "text": text_image_list[i].text,
+          "flag": false,
+          "isUpload": false
+        }
+        array.push(text_image)
+      }
+      this.text_image_list = array
+    },
+    //有效期初始化
+    dateInfoInit(date_info) {
+      this.date_info.type = date_info.type
+      if (date_info.type === 'DATE_TYPE_FIX_TIME_RANGE') {
+        this.begin_timestamp = date_info.begin_timestamp
+        this.end_timestamp = date_info.end_timestamp
+        let begin = this.formatDateTime(this.begin_timestamp)
+        let end = this.formatDateTime(this.end_timestamp)
+        this.startToEndDate.push(begin)
+        this.startToEndDate.push(end)
+        this.leftDetail.startDate = new Date(begin)
+        this.leftDetail.endDate = new Date(end)
+        this.changeDataType()
+      } else {
+        this.fixed_term = date_info.fixed_term
+        this.fixed_begin_term = date_info.fixed_begin_term
+        var dateTime = new Date()
+        this.leftDetail.formatStartDate = this.dateFormat(this.addTime(dateTime, this.fixed_begin_term), 'yyyy.MM.dd')
+        this.leftDetail.formatEndDate = this.dateFormat(this.addTime(dateTime, this.fixed_term), 'yyyy.MM.dd')
+      }
+    },
+    //时段
+    timelimitInit(time_limit) {
+      if (this.isSegment(time_limit)) {
+        this.couponForm.is_fixed_date = 0
+      } else {
+        this.couponForm.is_fixed_date = 1
+      }
+      for (let j = 0; j < this.saveTimeLimit.length; j++) {
+        let flag = false
+        for (let i = 0; i < time_limit.length; i++) {
+          if (this.saveTimeLimit[j].type === time_limit[i].type) {
+            flag = true
+            break
+          }
+        }
+        if (!flag) {
+          this.timeLimitType[j].isClick = false
+          this.saveTimeLimit[j] = undefined
+        }
+      }
+      this.changeTimeSegment()
+    },
+    //是否是部分时段
+    isSegment(time_limit) {
+      if (time_limit.length < 7) {
+        return true
+      }
+      for (let i = 0; i < time_limit.length; i++) {
+        if ((time_limit[i].begin_hour !== null || time_limit[i].begin_hour !== '' || time_limit[i].begin_hour !== undefined) ||
+          (time_limit[i].begin_minute !== null || time_limit[i].begin_minute !== '' || time_limit[i].begin_minute !== undefined) ||
+          (time_limit[i].end_hour !== null || time_limit[i].end_hour !== '' || time_limit[i].end_hour !== undefined) ||
+          (time_limit[i].end_minute !== null || time_limit[i].end_minute !== '' || time_limit[i].end_minute !== undefined)) {
+          return false
+        }
+      }
+      return true
+    },
+    //下一步卡劵信息处理
+    dataHandle() {
+      let card = this.card_types[this.card_type]
+      let advancedInfo = this.advancedInfoHandle()
+      let dateInfo = this.dateInfoHandle()
+      //团购券
+      if (this.card_type === 'GROUPON') {
+        card.groupon.deal_detail = this.detail
+        card.groupon.base_info = this.base_info
+        card.groupon.advanced_info = advancedInfo
+        card.groupon.base_info.date_info = dateInfo
+      }
+      //代金券
+      else if (this.card_type === 'CASH') {
+        card.cash.least_cost = this.least_cost
+        card.cash.reduce_cost = this.reduce_cost
+        card.cash.base_info = this.base_info
+        card.cash.advanced_info = advancedInfo
+        card.cash.base_info.date_info = dateInfo
+
+      }
+      //折扣券
+      else if (this.card_type === 'DISCOUNT') {
+        card.discount.discount = this.discount
+        card.discount.base_info = this.base_info
+        card.discount.advanced_info = advancedInfo
+        card.discount.base_info.date_info = dateInfo
+
+      }
+      //兑换券
+      else if (this.card_type === 'GIFT') {
+        card.gift.gift = this.gift
+        card.gift.base_info = this.base_info
+        card.gift.advanced_info = advancedInfo
+        card.gift.base_info.date_info = dateInfo
+
+      }
+      //优惠券
+      else {
+        card.general_coupon.default_detail = this.detail
+        card.general_coupon.base_info = this.base_info
+        card.general_coupon.advanced_info = advancedInfo
+        card.general_coupon.base_info.date_info = dateInfo
+
+      }
+      return card
+      console.log('============>')
+      console.log(card)
+    },
+
     //有效期
     dateInfoHandle() {
       let date_info = { type: this.date_info.type }
@@ -1145,6 +1314,7 @@ export default {
         this.leftDetail.timeSegment = strs
       }
     },
+    //时间改变
     changeDataType() {
       //固定时间
       if (this.date_info.type === 'DATE_TYPE_FIX_TIME_RANGE') {
@@ -1166,7 +1336,7 @@ export default {
     changeTitle() {
       this.leftDetail.title = this.base_info.title;
     },
-    test(i) {
+    changeIndex(i) {
       this.index = i;
     },
     //获取七牛token
@@ -1361,6 +1531,7 @@ export default {
     next() {
       console.log("提交券类型")
       if (!this.validate()) {
+        alert("校验不通过")
         return
       }
       //处理提交的数据
@@ -1371,7 +1542,6 @@ export default {
           name: "微信卡券使用设置",
           params: { 'card': card, 'card_type': this.card_type, 'card_id': this.card_id }
         })
-
       }
       //新增
       else {
@@ -1381,54 +1551,6 @@ export default {
         })
       }
     },
-    dataHandle() {
-      let card = this.card_types[this.card_type]
-      let advancedInfo = this.advancedInfoHandle()
-      let dateInfo = this.dateInfoHandle()
-      //团购券
-      if (this.card_type === 'GROUPON') {
-        card.groupon.deal_detail = this.detail
-        card.groupon.base_info = this.base_info
-        card.groupon.advanced_info = advancedInfo
-        card.groupon.base_info.date_info = dateInfo
-      }
-      //代金券
-      else if (this.card_type === 'CASH') {
-        card.cash.least_cost = this.least_cost
-        card.cash.reduce_cost = this.reduce_cost
-        card.cash.base_info = this.base_info
-        card.cash.advanced_info = advancedInfo
-        card.cash.base_info.date_info = dateInfo
-
-      }
-      //折扣券
-      else if (this.card_type === 'DISCOUNT') {
-        card.discount.discount = this.discount
-        card.discount.base_info = this.base_info
-        card.discount.advanced_info = advancedInfo
-        card.discount.base_info.date_info = dateInfo
-
-      }
-      //兑换券
-      else if (this.card_type === 'GIFT') {
-        card.gift.gift = this.gift
-        card.gift.base_info = this.base_info
-        card.gift.advanced_info = advancedInfo
-        card.gift.base_info.date_info = dateInfo
-
-      }
-      //优惠券
-      else {
-        card.general_coupon.default_detail = this.detail
-        card.general_coupon.base_info = this.base_info
-        card.general_coupon.advanced_info = advancedInfo
-        card.general_coupon.base_info.date_info = dateInfo
-
-      }
-      return card
-      console.log('============>')
-      console.log(card)
-    },
     upload() {
       console.log("上传")
     },
@@ -1437,160 +1559,6 @@ export default {
     },
     cancel(index) {
       this.text_image_list.splice(index, 1)
-    },
-    //以下为查询卡劵修改初始化操作
-    //卡劵修改
-    getSingleCard() {
-      if (this.card_id != undefined) {
-        let params = {
-          authorizer_id: 6,
-          card_id: "pNN6q0hCnCbyEQ8BoytyD7IUdorM"
-        }
-        //查询卡劵详情
-        getSingleCard(this, params)
-          .then(res => {
-            console.log("?????????")
-            console.log(res)
-            this.cardDetailsHandle(res.card)
-          })
-          .catch(err => {
-            console.log(err);
-          });
-
-      }
-    },
-    cardDetailsHandle(data) {
-      this.code_type = data.card_type
-      if (this.card_type === 'GROUPON') {
-        this.detail = data.groupon.deal_detail
-        this.base_info = data.groupon.base_info
-        this.commonHandleInit('groupon', data)
-      }
-      //代金券
-      else if (this.card_type === 'CASH') {
-        this.least_cost = data.cash.least_cost
-        this.reduce_cost = data.cash.reduce_cost
-        this.colorHandle(data.cash.base_info.color)
-      }
-      //折扣券
-      else if (this.card_type === 'DISCOUNT') {
-        this.discount = data.discount.discount
-        this.base_info = data.discount.base_info
-        this.commonHandleInit('discount', data)
-      }
-      //兑换券
-      else if (this.card_type === 'GIFT') {
-        this.gift = data.gift.gift
-        this.base_info = data.gift.base_info
-        commonHandleInit('gift', data)
-      }
-      //优惠券
-      else {
-        this.detail = data.general_coupon.default_detail
-        this.base_info = data.general_coupon.base_info
-        commonHandleInit('general_coupon', data)
-      }
-
-    },
-    commonHandleInit(type, data) {
-      this.colorHandle(data[type].base_info.color)
-      this.useConditionInit(data[type].advanced_info.use_condition)
-      this.abstractInit(data[type].advanced_info.abstract)
-      this.textImageInit(data[type].advanced_info.text_image_list)
-      this.dateInfoInit(data[type].base_info.date_info)
-      this.timelimitInit(data[type].advanced_info.time_limit)
-    },
-    //颜色
-    colorHandle(color) {
-      this.leftDetail.color = { "background": color }
-      this.inputShow = false
-    },
-    //封面
-    useConditionInit(use_condition) {
-      if (use_condition !== null && use_condition != undefined && use_condition != '') {
-        this.use_condition = use_condition
-        this.cashOrDiscountchecked = true
-      }
-    },
-    //封面初始化
-    abstractInit(abstract) {
-      this.abstract = abstract
-      this.leftDetail.icon_url = abstract.icon_url_list[0]
-      this.leftDetail.abstract = abstract.abstract
-    },
-    //图文介绍初始化
-    textImageInit(text_image_list) {
-      let array = new Array()
-      for (let i = 0; i < text_image_list.length; i++) {
-        let text_image = {
-          "image_url": text_image_list[i].image_url,
-          "text": text_image_list[i].text,
-          "flag": false,
-          "isUpload": false
-        }
-        array.push(text_image)
-      }
-      this.text_image_list = array
-    },
-    //有效期初始化
-    dateInfoInit(date_info) {
-      this.date_info.type = date_info.type
-      if (date_info.type === 'DATE_TYPE_FIX_TIME_RANGE') {
-        // this.begin_timestamp = date_info.begin_timestamp
-        // this.end_timestamp = date_info.end_timestamp
-        this.begin_timestamp = date_info.begin_timestamp
-        this.end_timestamp = date_info.end_timestamp
-        let begin = this.formatDateTime(this.begin_timestamp)
-        let end = this.formatDateTime(this.end_timestamp)
-        this.startToEndDate.push(begin)
-        this.startToEndDate.push(end)
-        this.leftDetail.startDate = new Date(begin)
-        this.leftDetail.endDate = new Date(end)
-        this.changeDataType()
-      } else {
-        this.fixed_term = date_info.fixed_term
-        this.fixed_begin_term = date_info.fixed_begin_term
-        var dateTime = new Date()
-        this.leftDetail.formatStartDate = this.dateFormat(this.addTime(dateTime, this.fixed_begin_term), 'yyyy.MM.dd')
-        this.leftDetail.formatEndDate = this.dateFormat(this.addTime(dateTime, this.fixed_term), 'yyyy.MM.dd')
-      }
-    },
-    //时段
-    timelimitInit(time_limit) {
-      if (this.isSegment(time_limit)) {
-        this.couponForm.is_fixed_date = 0
-      } else {
-        this.couponForm.is_fixed_date = 1
-      }
-      for (let j = 0; j < this.saveTimeLimit.length; j++) {
-        let flag = false
-        for (let i = 0; i < time_limit.length; i++) {
-          if (this.saveTimeLimit[j].type === time_limit[i].type) {
-            flag = true
-            break
-          }
-        }
-        if (!flag) {
-          this.timeLimitType[j].isClick = false
-          this.saveTimeLimit[j] = undefined
-        }
-      }
-      this.changeTimeSegment()
-    },
-    //是否是部分时段
-    isSegment(time_limit) {
-      if (time_limit.length < 7) {
-        return true
-      }
-      for (let i = 0; i < time_limit.length; i++) {
-        if ((time_limit[i].begin_hour !== null || time_limit[i].begin_hour !== '' || time_limit[i].begin_hour !== undefined) ||
-          (time_limit[i].begin_minute !== null || time_limit[i].begin_minute !== '' || time_limit[i].begin_minute !== undefined) ||
-          (time_limit[i].end_hour !== null || time_limit[i].end_hour !== '' || time_limit[i].end_hour !== undefined) ||
-          (time_limit[i].end_minute !== null || time_limit[i].end_minute !== '' || time_limit[i].end_minute !== undefined)) {
-          return false
-        }
-      }
-      return true
     },
     //时间戳转化为日期
     formatDateTime(timeStamp) {
@@ -1626,67 +1594,55 @@ export default {
       let flag = true
       let reg = /^[0-9]*$/
       let reg1 = /^0\.([1-9]|\d[1-9])$|^[1-9]\d{0,8}\.\d{0,2}$|^[1-9]\d{0,8}$/
-      //颜色
-      this.submitCheck.color = false,
-        //标题检查
-        this.submitCheck.titleCheck = false,
-        //日期
-        this.submitCheck.dateCheck = false,
-        //上传
-        this.submitCheck.uploadCheck = false,
-        //封面简介
-        this.submitCheck.introductionCheck = false,
-        //优惠说明
-        this.submitCheck.privilegeCheck = false,
-        //折扣额度
-        this.submitCheck.discountAmount = false,
-        //适用商品
-        this.submitCheck.commodity = false,
-        //不适用商品
-        this.submitCheck.noCommodity = false,
-        //消费
-        this.submitCheck.consumptionAmount = false,
-        //消费2
-        this.submitCheck.ConsumptionAmount = false,
-        //减免金额
-        this.submitCheck.creditAmount = false,
-        //图文介绍
-        this.submitCheck.graphicIntroduction = false,
-        //优惠共享
-        this.submitCheck.discountsShare = false
-
+      this.submitCheck.color = false,//颜色
+        this.submitCheck.titleCheck = false,//标题检查
+        this.submitCheck.dateCheck = false,  //日期
+        this.submitCheck.uploadCheck = false,   //上传  
+        this.submitCheck.introductionCheck = false, //封面简介   
+        this.submitCheck.privilegeCheck = false,  //优惠说明      
+        this.submitCheck.discountAmount = false, //折扣额度      
+        this.submitCheck.commodity = false, //适用商品       
+        this.submitCheck.noCommodity = false, //不适用商品        
+        this.submitCheck.consumptionAmount = false,//消费        
+        this.submitCheck.ConsumptionAmount = false,//消费2        
+        this.submitCheck.creditAmount = false,//减免金额        
+        this.submitCheck.graphicIntroduction = false,//图文介绍
+        this.submitCheck.discountsShare = false //优惠共享
       //颜色校验
       if (this.base_info.color === null) {
+        alert("1")
         //显示提醒颜色的提示语
         this.submitCheck.color = true
         flag = false
-
       }
       if (this.abstract.icon_url_list.length === 0) {
+        alert("2")
         this.submitCheck.uploadCheck = true
         flag = false
-
       }
       //标题base_info.title
-      if (this.base_info.title === '' || this.base_info.title === null || this.characterLength(this.base_info.title) > 18) {
+      if ((this.card_type !== 'CASH') && (this.base_info.title === '' || this.base_info.title === null || this.characterLength(this.base_info.title) > 18)) {
+        alert("3")
         this.submitCheck.titleCheck = true
         flag = false
-
       }
       //日期
       if (this.date_info.type === 'DATE_TYPE_FIX_TIME_RANGE') {
         if (this.begin_timestamp === null || this.end_timestamp === null) {
+          alert("4")
           this.submitCheck.dateCheck = true
           flag = false
         }
       }
       //上传图片
       if (this.abstract.icon_url_list.length === 0) {
+        alert("5")
         this.submitCheck.uploadCheck = true
         flag = false
       }
       //封面简介
       if (this.abstract.abstract === '' || this.abstract.abstract === null || this.characterLength(this.abstract.abstract) >= 24) {
+        alert("6")
         this.submitCheck.introductionCheck = true
         flag = false
       }
@@ -1694,6 +1650,7 @@ export default {
       for (let i = 0; i < this.text_image_list.length; i++) {
         if (this.text_image_list[i].image_url === '' || this.text_image_list[i].image_url === null ||
           this.text_image_list[i].text === '' || this.text_image_list[i].text === null) {
+          alert("7")
           this.submitCheck.graphicIntroduction = true
           flag = false
           break
@@ -1701,6 +1658,7 @@ export default {
       }
       //优惠共享 
       if (this.use_condition.can_use_with_other_discount === null || this.use_condition.can_use_with_other_discount === '') {
+        alert("8")
         this.submitCheck.discountsShare = true
         flag = false
       }
@@ -1712,13 +1670,14 @@ export default {
       }
       //代金券
       if (this.card_type === 'CASH') {
-
         if (this.reduce_cost === null || this.reduce_cost === '' || this.reduce_cost <= 0.01 || !reg1.test(this.reduce_cost)) {
+          alert("9")
           this.submitCheck.creditAmount = true
           flag = false
         }
         if (this.cashChecked) {
           if (this.least_cost === null || this.least_cost === '' || this.least_cost <= 0 || !reg1.test(this.least_cost)) {
+            alert("10")
             this.submitCheck.consumptionAmount = true
             flag = false
           }
@@ -1726,11 +1685,13 @@ export default {
         if (this.cashOrDiscountchecked) {
           if (this.use_condition.accept_category === null ||
             this.use_condition.accept_category === '') {
+            alert("11")
             this.submitCheck.commodity = true
             flag = false
           } if (
             this.use_condition.reject_category === null ||
             this.use_condition.reject_category === '') {
+            alert("12")
             this.submitCheck.noCommodity = true
             flag = false
           }
@@ -1850,7 +1811,6 @@ export default {
           width: 100%;
           margin: 0 auto;
           text-align: center;
-          // border-bottom:1px dashed #8d8d8d;
           .title {
             font-size: 20px;
             color: #000;
@@ -1952,9 +1912,6 @@ export default {
           left: 5px;
           top: 5px;
           z-index: 3;
-          // background-color: #000;
-          // opacity: 0.1;
-          // filter: alpha(opacity=10);
         }
         input {
           width: 150px;
@@ -2009,7 +1966,7 @@ export default {
         width: 200px;
       }
       .coupon-form-select {
-        width: 150px;
+        width: 165px;
       }
       .coupon-form {
         width: 350px;
