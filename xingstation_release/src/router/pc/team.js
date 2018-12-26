@@ -25,7 +25,8 @@ let router = {
           name: '节目列表',
           meta: {
             title: '节目列表',
-            permission: ''
+            permission: '',
+            keepAlive: true
           },
           component: () =>
             import(/* webpackChunkName: "page/team/program/index" */ 'page/team/program/index')
@@ -84,44 +85,64 @@ let router = {
       ]
     },
     {
-      path: 'platform',
-      name: '平台项目',
-      redirect: 'platform',
+      path: 'duty',
+      name: '重大责任',
+      redirect: 'duty',
       meta: {
-        title: '平台项目'
+        title: '重大责任'
       },
       component: () =>
-        import(/* webpackChunkName: "page/team/platform/routerView" */ 'page/team/platform/routerView'),
+        import(/* webpackChunkName: "page/team/duty/routerView" */ 'page/team/duty/routerView'),
       children: [
         {
           path: '/',
-          name: '平台项目列表',
+          name: '重大责任列表',
           meta: {
-            title: '平台项目列表'
+            title: '重大责任列表'
           },
           component: () =>
-            import(/* webpackChunkName: "page/team/platform/index" */ 'page/team/platform/index')
+            import(/* webpackChunkName: "page/team/duty/index" */ 'page/team/duty/index')
+        },
+        {
+          path: 'add',
+          name: '新增责任',
+          meta: {
+            title: '新增责任',
+            permission: ''
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/team/duty/save" */ 'page/team/duty/save')
+        },
+        {
+          path: 'edit/:uid',
+          name: '修改责任',
+          meta: {
+            title: '修改责任',
+            permission: ''
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/team/duty/save" */ 'page/team/duty/save')
         }
       ]
     },
     {
-      path: 'detail',
-      name: '平台明细',
-      redirect: 'detail',
+      path: 'operation',
+      name: '运营文档',
+      redirect: 'operation',
       meta: {
-        title: '平台明细'
+        title: '运营文档'
       },
       component: () =>
-        import(/* webpackChunkName: "page/team/detail/routerView" */ 'page/team/detail/routerView'),
+        import(/* webpackChunkName: "page/team/operation/routerView" */ 'page/team/operation/routerView'),
       children: [
         {
           path: '/',
-          name: '平台明细列表',
+          name: '运营文档列表',
           meta: {
-            title: '平台明细列表'
+            title: '运营文档列表'
           },
           component: () =>
-            import(/* webpackChunkName: "page/team/detail/index" */ 'page/team/detail/index')
+            import(/* webpackChunkName: "page/team/operation/index" */ 'page/team/operation/index')
         }
       ]
     }

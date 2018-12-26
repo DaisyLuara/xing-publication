@@ -14,13 +14,19 @@ use App\Models\Model;
 class TeamRate extends Model
 {
     protected $fillable = [
-        'interaction',
         'originality',
+        'plan',
+        'animation',
+        'animation_hidol',
+        'hidol_patent',
+        'interaction_api',
+        'interaction_linkage',
+        'backend_docking',
         'h5_1',
         'h5_2',
-        'animation',
-        'plan',
         'tester',
-        'operation'
+        'tester_quality',
+        'operation',
+        'operation_quality',
     ];
 }

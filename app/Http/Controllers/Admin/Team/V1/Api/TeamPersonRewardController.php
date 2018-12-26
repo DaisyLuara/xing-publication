@@ -16,6 +16,12 @@ use Illuminate\Http\Request;
 
 class TeamPersonRewardController extends Controller
 {
+    /**
+     * 个人奖金列表
+     * @param Request $request
+     * @param TeamPersonReward $teamPersonReward
+     * @return \Dingo\Api\Http\Response
+     */
     public function index(Request $request, TeamPersonReward $teamPersonReward)
     {
         $query = $teamPersonReward->query();

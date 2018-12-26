@@ -1,16 +1,16 @@
 <template>
-  <div class="detail-root">
+  <div class="operation-root">
     <router-view/>
   </div>
 </template>
 <script>
 export default {
-  name: 'DetailView'
+  name: 'OperationView'
 }
 </script>
 
 <style lang="less" scoped>
-.detail-root {
+.operation-root {
   height: 100%;
   background-color: #eff2f7;
 }
