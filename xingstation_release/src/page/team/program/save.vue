@@ -46,7 +46,6 @@
             <el-radio :label="0">不计入</el-radio>
             <el-radio :label="1">基础条目</el-radio>
             <el-radio :label="2">简单条目</el-radio>
-            <el-radio :label="5">简单条目</el-radio>
             <el-radio :label="6">通用节目</el-radio>
             <el-radio :label="7">项目</el-radio>
           </el-radio-group>
