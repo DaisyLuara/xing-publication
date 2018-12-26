@@ -1928,20 +1928,19 @@ function teamBonusClean()
 
                 echo "quarterDate========" . $quarterDate;
 
-                $users_bug_num = DB::table('team_project_bug_records')
-                    ->where('date', $quarterDate)->groupby("user_id")
-                    ->selectRaw("user_id,sum(bug_num) as num")
+                $users_bugs = DB::table('team_project_bug_records')
+                    ->where('date', $quarterDate)->groupby("user_id","duty")
+                    ->selectRaw("user_id,duty,sum(bug_num) as num")
                     ->get();
 
-
-                foreach ($users_bug_num as $user_bug_num) {
-                    if ($user_bug_num->num == 1) {
+                foreach ($users_bugs as $user_bug) {
+                    if ($user_bug->num == 1) {
                         $start_date = Carbon::parse($quarterDate)->subMonths(3)->toDateString();
                         $end_date = Carbon::parse($quarterDate)->subMonths(2)->toDateString();
-                    } else if ($user_bug_num->num == 2) {
+                    } else if ($user_bug->num == 2) {
                         $start_date = Carbon::parse($quarterDate)->subMonths(3)->toDateString();
                         $end_date = Carbon::parse($quarterDate)->subMonths(1)->toDateString();
-                    } else if ($user_bug_num->num > 3) {
+                    } else if ($user_bug->num > 3) {
                         $start_date = Carbon::parse($quarterDate)->subMonths(3)->toDateString();
                         $end_date = $quarterDate;
                     } else {
@@ -1949,9 +1948,10 @@ function teamBonusClean()
                     }
 
                     DB::table("team_person_future_rewards")
-                        ->where('user_id', '=', $user_bug_num->user_id)
+                        ->where('user_id', '=', $user_bug->user_id)
                         ->where('date', '>=', $start_date)
                         ->where('date', '<', $end_date)
+                        ->where('type','=',$user_bug->duty)
                         ->where('status', '=', 0)
                         ->update(['status' => -1]);
                 }
@@ -1973,18 +1973,18 @@ function teamBonusClean()
 
 
             if (check_arr($result)) {
-                echo "执行至" . $date . "<br/>";
+                echo "执行至" . $date . "\n";
                 DB::commit();
                 $date = (new Carbon($date))->addDay(1)->toDateString();
                 TeamBonusRecord::create(['date' => $date]);
             } else {
                 DB::rollback();
-                echo "执行至" . $date . ':fail' . json_encode($result) . "<br/>";
+                echo "执行至" . $date . ':fail' . json_encode($result) . "\n";
                 return false;
             }
         } catch (Exception $e) {
             DB::rollback();
-            echo "执行至" . $date . ':出错，' . $e->getMessage() . "<br/>";
+            echo "执行至" . $date . ':出错，' . $e->getMessage() . "\n";
             return false;
         }
     }
