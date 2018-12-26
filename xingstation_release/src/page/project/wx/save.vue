@@ -96,6 +96,10 @@
 
                 </ul>
               </div>
+              <div
+                class="errMessage"
+                v-show="submitCheck.color"
+              >请选择颜色</div>
             </el-form-item>
             <el-form-item
               v-if="card_type==='DISCOUNT'"
@@ -125,7 +129,7 @@
               />
               <div
                 class="errMessage"
-                v-show="submitCheck.TitleCheck"
+                v-show="submitCheck.titleCheck"
               >卡券名称不能为空且长度不超过9个汉字或18个英文字母</div>
               <div class="message"> 建议填写折扣券“折扣额度”及自定义内容，描述卡券提供的具体优惠</div>
             </el-form-item>
@@ -142,7 +146,7 @@
               />
               <div
                 class="errMessage"
-                v-show="submitCheck.TitleCheck"
+                v-show="submitCheck.titleCheck"
               >卡券名称不能为空且长度不超过9个汉字或18个英文字母</div>
               <div class="message"> 建议填写兑换券提供的服务或礼品名称，描述卡券提供的具体优惠</div>
             </el-form-item>
@@ -239,6 +243,10 @@
                 </div>
 
               </el-radio-group>
+              <div
+                class="errMessage"
+                v-show="submitCheck.dateCheck"
+              >请选择日期</div>
             </el-form-item>
             <el-form-item label="可用时段">
               <el-radio-group
@@ -333,7 +341,7 @@
                 </el-checkbox>
                 <div
                   class="errMessage"
-                  v-show="submitCheck.ConsumptionAmount"
+                  v-show="submitCheck.consumptionAmount"
                 >消费金额大于0且只能到百分位</div>
               </div>
 
@@ -342,26 +350,27 @@
                 <el-checkbox v-model="giftChecked">消费
                   <span v-show="giftChecked">
                     <el-select
-                      v-model="couponForm"
+                      v-model="couponForm.is_fixed_date"
                       placeholder="金额"
                       class="coupon-form-select"
                     >
                       <el-option
-                        v-for="item in dataList"
+                        v-for="item in moneyList"
                         :key="item.id"
-                        :value="item.dataTime"
+                        :value="item.count"
+                        :label="item.title"
                       />
                     </el-select>
                     <b>满
                       <el-input
-                        v-model="couponForm.name"
+                        v-model="gift"
                         class="coupon-form-input"
                       />元可用</b>
                   </span>
                 </el-checkbox>
                 <div
                   class="errMessage"
-                  v-show="submitCheck.consumptionAmount"
+                  v-show="submitCheck.ConsumptionAmount"
                 >消费金额大于0且只能到百分位</div>
               </div>
 
@@ -411,6 +420,10 @@
                   />
                 </el-select>
               </div>
+              <div
+                class="errMessage"
+                v-show="submitCheck.discountsShare"
+              >请选择优惠共享</div>
               <div class="message">使用条件的设置会在券上展示，请务必仔细确认。</div>
             </el-form-item>
             <el-form-item label="封面图片">
@@ -442,7 +455,7 @@
               </div>
               <div
                 class="errMessage"
-                v-show="submitCheck.UploadCheck"
+                v-show="submitCheck.uploadCheck"
               >请上传封面图片</div>
             </el-form-item>
             <el-form-item label="封面简介">
@@ -454,7 +467,7 @@
               />
               <div
                 class="errMessage"
-                v-show="submitCheck.IntroductionCheck"
+                v-show="submitCheck.introductionCheck"
               >简介不能为空且长度不超过12个汉字</div>
             </el-form-item>
             <el-form-item label="优惠说明">
@@ -638,12 +651,16 @@ export default {
       flag: 7,
       index: null,
       submitCheck: {
+        //颜色
+        color: false,
         //标题检查
-        TitleCheck: false,
-        //上传检查
-        UploadCheck: false,
+        titleCheck: false,
+        //日期
+        dateCheck: false,
+        //上传
+        uploadCheck: false,
         //封面简介
-        IntroductionCheck: false,
+        introductionCheck: false,
         //优惠说明
         privilegeCheck: false,
         //折扣额度
@@ -654,12 +671,15 @@ export default {
         noCommodity: false,
         //消费
         consumptionAmount: false,
+        //消费2
+        ConsumptionAmount: false,
         //减免金额
         creditAmount: false,
         //图文介绍
-        graphicIntroduction: false
+        graphicIntroduction: false,
+        //优惠共享
+        discountsShare: false
       },
-
       leftDetail: {
         color: { "background": "#f6f6f8" },
         title: '',
@@ -747,7 +767,7 @@ export default {
       //true
       end_timestamp: null,
       fixed_term: 2,
-      fixed_begin_term: 1,
+      fixed_begin_term: 0,
       use_condition: {
         "accept_category": "",
         "reject_category": "",
@@ -886,8 +906,20 @@ export default {
         },
 
       ],
+      moneyList: [
+        {
+          id: 0,
+          title: '金额',
+          count: 0,
+        },
+        {
+          id: 1,
+          title: '指定商品',
+          count: 1,
+        },
+      ],
       couponForm: {
-        is_fixed_date: 1,
+        is_fixed_date: 0,
         description: "",
         color: "",
         discount: "",
@@ -1025,7 +1057,6 @@ export default {
   methods: {
     //有效期
     dateInfoHandle() {
-      //有效期
       let date_info = { type: this.date_info.type }
       if (date_info.type === 'DATE_TYPE_FIX_TIME_RANGE') {
         date_info.begin_timestamp = this.begin_timestamp
@@ -1133,7 +1164,6 @@ export default {
     },
     //改变标题
     changeTitle() {
-      alert(this.base_info.title)
       this.leftDetail.title = this.base_info.title;
     },
     test(i) {
@@ -1330,6 +1360,9 @@ export default {
     },
     next() {
       console.log("提交券类型")
+      if (!this.validate()) {
+        return
+      }
       //处理提交的数据
       let card = this.dataHandle()
       //更新
@@ -1428,7 +1461,6 @@ export default {
     },
     cardDetailsHandle(data) {
       this.code_type = data.card_type
-
       if (this.card_type === 'GROUPON') {
         this.detail = data.groupon.deal_detail
         this.base_info = data.groupon.base_info
@@ -1577,6 +1609,170 @@ export default {
       second = second < 10 ? ('0' + second) : second
       return y + '-' + m + '-' + d
     },
+    //字符长度
+    characterLength(s) {
+      var len = 0;
+      for (var i = 0; i < s.length; i++) {
+        if (s.charCodeAt(i) > 127 || s.charCodeAt(i) == 94) {
+          len += 2;
+        } else {
+          len++;
+        }
+      }
+      return len;
+    },
+    //校验
+    validate() {
+      let flag = true
+      let reg = /^[0-9]*$/
+      let reg1 = /^0\.([1-9]|\d[1-9])$|^[1-9]\d{0,8}\.\d{0,2}$|^[1-9]\d{0,8}$/
+      //颜色
+      this.submitCheck.color = false,
+        //标题检查
+        this.submitCheck.titleCheck = false,
+        //日期
+        this.submitCheck.dateCheck = false,
+        //上传
+        this.submitCheck.uploadCheck = false,
+        //封面简介
+        this.submitCheck.introductionCheck = false,
+        //优惠说明
+        this.submitCheck.privilegeCheck = false,
+        //折扣额度
+        this.submitCheck.discountAmount = false,
+        //适用商品
+        this.submitCheck.commodity = false,
+        //不适用商品
+        this.submitCheck.noCommodity = false,
+        //消费
+        this.submitCheck.consumptionAmount = false,
+        //消费2
+        this.submitCheck.ConsumptionAmount = false,
+        //减免金额
+        this.submitCheck.creditAmount = false,
+        //图文介绍
+        this.submitCheck.graphicIntroduction = false,
+        //优惠共享
+        this.submitCheck.discountsShare = false
+
+      //颜色校验
+      if (this.base_info.color === null) {
+        //显示提醒颜色的提示语
+        this.submitCheck.color = true
+        flag = false
+
+      }
+      if (this.abstract.icon_url_list.length === 0) {
+        this.submitCheck.uploadCheck = true
+        flag = false
+
+      }
+      //标题base_info.title
+      if (this.base_info.title === '' || this.base_info.title === null || this.characterLength(this.base_info.title) > 18) {
+        this.submitCheck.titleCheck = true
+        flag = false
+
+      }
+      //日期
+      if (this.date_info.type === 'DATE_TYPE_FIX_TIME_RANGE') {
+        if (this.begin_timestamp === null || this.end_timestamp === null) {
+          this.submitCheck.dateCheck = true
+          flag = false
+        }
+      }
+      //上传图片
+      if (this.abstract.icon_url_list.length === 0) {
+        this.submitCheck.uploadCheck = true
+        flag = false
+      }
+      //封面简介
+      if (this.abstract.abstract === '' || this.abstract.abstract === null || this.characterLength(this.abstract.abstract) >= 24) {
+        this.submitCheck.introductionCheck = true
+        flag = false
+      }
+      //图文介绍
+      for (let i = 0; i < this.text_image_list.length; i++) {
+        if (this.text_image_list[i].image_url === '' || this.text_image_list[i].image_url === null ||
+          this.text_image_list[i].text === '' || this.text_image_list[i].text === null) {
+          this.submitCheck.graphicIntroduction = true
+          flag = false
+          break
+        }
+      }
+      //优惠共享 
+      if (this.use_condition.can_use_with_other_discount === null || this.use_condition.can_use_with_other_discount === '') {
+        this.submitCheck.discountsShare = true
+        flag = false
+      }
+      if (this.card_type === 'GROUPON') {
+        if (this.detail === '' || this.detail === null || this.characterLength(this.detail) > 600) {
+          this.submitCheck.privilegeCheck = true
+          flag = false
+        }
+      }
+      //代金券
+      if (this.card_type === 'CASH') {
+
+        if (this.reduce_cost === null || this.reduce_cost === '' || this.reduce_cost <= 0.01 || !reg1.test(this.reduce_cost)) {
+          this.submitCheck.creditAmount = true
+          flag = false
+        }
+        if (this.cashChecked) {
+          if (this.least_cost === null || this.least_cost === '' || this.least_cost <= 0 || !reg1.test(this.least_cost)) {
+            this.submitCheck.consumptionAmount = true
+            flag = false
+          }
+        }
+        if (this.cashOrDiscountchecked) {
+          if (this.use_condition.accept_category === null ||
+            this.use_condition.accept_category === '') {
+            this.submitCheck.commodity = true
+            flag = false
+          } if (
+            this.use_condition.reject_category === null ||
+            this.use_condition.reject_category === '') {
+            this.submitCheck.noCommodity = true
+            flag = false
+          }
+        }
+      }
+      //折扣券
+      if (this.card_type === 'DISCOUNT') {
+        if (this.cashOrDiscountchecked) {
+          if (this.use_condition.accept_category === null ||
+            this.use_condition.accept_category === '') {
+            this.submitCheck.commodity = true
+            flag = false
+          } if (
+            this.use_condition.reject_category === null ||
+            this.use_condition.reject_category === '') {
+            this.submitCheck.noCommodity = true
+            flag = false
+          }
+        }
+        if (this.discount === null || this.discount === '' || !reg1.test(this.discount) || this.discount <= 0 || this.discount > 10) {
+          this.submitCheck.discountAmount = true
+          flag = false
+        }
+      }
+      //兑换券
+      if (this.card_type === 'GIFT') {
+        if (this.giftChecked) {
+          if (this.gift === '' || this.gift === null || this.gift <= 0 || !reg1.test(this.gift)) {
+            this.submitCheck.ConsumptionAmount = true
+            flag = false
+          }
+        }
+      }
+      //优惠券
+      if (this.card_type === 'GENERAL_COUPON') {
+        if (this.detail === '' || this.detail === null || this.characterLength(this.detail) > 600) {
+          this.submitCheck.privilegeCheck = true
+          flag = false
+        }
+      }
+      return flag
+    }
   },
   //前进刷新  后退不刷新
   beforeRouteLeave(to, from, nextTo) {
@@ -1907,9 +2103,6 @@ export default {
           }
         }
       }
-      // .upload{
-
-      // }
       .detail {
         width: 350px;
         height: 60px;

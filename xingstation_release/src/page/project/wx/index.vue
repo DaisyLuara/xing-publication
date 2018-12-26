@@ -119,7 +119,7 @@
             <template slot-scope="scope">
               <el-popover
                 placement="bottom"
-                width="300"
+                width="250"
                 v-model="scope.row.visible"
               >
                 <el-radio
@@ -136,7 +136,7 @@
                     v-model="modifyQuantity"
                     style="width: 200px;
                            font-size: 14px;
-                            border: 1px solid #8d8d8d;
+                            border: 1px solid #ebeef5;
                             border-radius:5px;
                             height:30px;
                             padding:0 10px;
@@ -145,18 +145,28 @@
                   <span>份</span>
                 </div>
                 <div
+                  class="errMessage"
+                  style="font-size:12px;margin:10px 0"
+                  v-show="submitCheck.quantityCheck1"
+                >库存不能小于1</div>
+                <div
+                  class="errMessage"
+                  style="font-size:12px;margin:10px 0"
+                  v-show="submitCheck.quantityCheck2"
+                >减少库存量不能大于已有库存量</div>
+                <div
                   class="message"
                   style="font-size:12px;margin:10px 0"
                 >每个用户领券上限，如不填，则默认为1</div>
                 <div style="text-align: left; margin: 0">
                   <el-button
-                    type="primary"
+                    type="success"
                     size="mini"
-                    @click="scope.row.visible = false"
+                    @click="confirmModify(scope.row)"
                   >确定</el-button>
                   <el-button
                     size="mini"
-                    @click="scope.row.visible = false"
+                    @click="cancleModify(scope.row)"
                   >取消</el-button>
                 </div>
                 <el-button slot="reference"><i class="el-icon-edit"></i></el-button>
@@ -195,9 +205,10 @@
 
 <script>
 import {
-  getCouponList,
+  getCardList,
   getSingleCard,
-  deleteSingleCard
+  deleteSingleCard,
+  modifyInventory
 } from "service";
 
 import {
@@ -246,12 +257,14 @@ export default {
       loading: true,
       title: '',
       radio: "1",
+      submitCheck: {
+        quantityCheck1: false,
+        quantityCheck2: false
+      },
       templateVisible: false,
       dataList: [
-        { card_id: "1111", visible: false, typeName: "代金券", card_type: "CASH", title: "0元代金券", dateDetail: "2018-12-10", status: "已投放", quantity: 100000 },
-        { card_id: "1111", visible: false, typeName: "代金券", card_type: "CASH", title: "0元代金券", dateDetail: "2018-12-10", status: "已投放", quantity: 100000 }
       ],
-      modifyChange: true,
+      modifyChange: 0,
       modifyQuantity: null,
       templateForm: {
       },
@@ -280,7 +293,7 @@ export default {
   created() {
   },
   mounted() {
-    //this.getCardList()
+    this.getCardList()
   },
   methods: {
     //卡券列表查询
@@ -312,10 +325,12 @@ export default {
       getSingleCard(this, params)
         .then(res => {
           let card = res.card
-          let object = this.obj[cart.card_type]
-          let data = { card_id: card[object.prop].base_info.id, card_type: cart.card_type, typeName: object.typeName, title: card[object.prop].base_info.title }
+          let object = this.obj[card.card_type]
+          let data = { card_id: card[object.prop].base_info.id, card_type: card.card_type, typeName: object.typeName, title: card[object.prop].base_info.title }
           //库存
           data.quantity = card[object.prop].base_info.sku.quantity
+          //库存修改弹框出现的状态
+          data.visible = false
           //审核中
           if (card[object.prop].base_info.status = 'CARD_STATUS_NOT_VERIFY') {
             data.status = '审核中'
@@ -342,8 +357,6 @@ export default {
         .catch(err => {
           console.log(err);
         });
-
-
     },
     //删除卡券
     deleteSingleCard(args) {
@@ -358,6 +371,45 @@ export default {
         .catch(err => {
           console.log(err);
         });
+    },
+    //修改库存
+    modifyInventory(args) {
+      modifyInventory(this, args)
+        .then(res => {
+          console.log(res)
+          //库存修改成功以后刷新页面
+          if (res.errcode === 0) {
+            this.getCardList()
+            console.log("修改成功")
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    //确认修改库存
+    confirmModify(args) {
+      if (!this.validate()) {
+        return
+      }
+      let updateParams = {
+        authorizer_id: 6,
+        card_id: args.card_id,
+        increase_stock_value: 0,
+        reduce_stock_value: 0
+      }
+      //增加
+      if (this.modifyChange === 0) {
+        updateParams.increase_stock_value = this.modifyQuantity
+      } else {
+        updateParams.reduce_stock_value = this.modifyQuantity
+      }
+      this.modifyInventory(args)
+      args.visible = false
+    },
+    //取消修改库存
+    cancleModify(args) {
+      args.visible = false
     },
     //时间戳转化为日期
     formatDateTime(timeStamp) {
@@ -407,10 +459,28 @@ export default {
     },
     changePage(currentPage) {
       this.pagination.currentPage = currentPage;
-      //this.getCouponList();
     },
     dialogClose() {
       this.templateVisible = false
+    },
+    //校验
+    validate(data) {
+      this.submitCheck.quantityCheck1 = false
+      this.submitCheck.quantityCheck2 = false
+      let flag = true
+      let reg = /^[0-9]*$/
+      //库存校验
+      if (this.modifyQuantity === '' || this.modifyQuantity === null || !reg.test(this.modifyQuantity) || this.modifyQuantity <= 0) {
+        this.submitCheck.quantityCheck1 = true
+        flag = false
+      }
+      if (this.modifyChange !== 0) {
+        if (data.quantity < this.modifyQuantity) {
+          this.submitCheck.quantityCheck2 = true
+          flag = false
+        }
+      }
+      return flag
     },
   }
 };
@@ -434,6 +504,10 @@ export default {
           border: 1px solid #8d8d8d;
         }
       }
+    }
+    .errMessage {
+      color: #e15f63;
+      font-size: 12px;
     }
     .el-form-item {
       margin: 0;

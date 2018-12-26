@@ -176,7 +176,8 @@ let router = {
           path: '/',
           name: '微信卡券配置',
           meta: {
-            title: '微信卡券配置'
+            title: '微信卡券配置',
+            keepAlive: false // 不需要被缓存
           },
           component: () =>
             import(/* webpackChunkName: "page/project/wx/index" */ 'page/project/wx/index')
@@ -196,7 +197,7 @@ let router = {
           name: '微信卡券使用设置',
           meta: {
             title: '微信卡券使用设置',
-            keepAlive: false // 需要被缓存
+            keepAlive: false // 不需要被缓存
           },
           component: () =>
             import(/* webpackChunkName: "page/project/wx/use" */ 'page/project/wx/use')

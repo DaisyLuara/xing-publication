@@ -31,6 +31,7 @@
               <el-input
                 v-model="sku.quantity"
                 class="coupon-form-input"
+                :disabled="disabled"
               />
               <span>份</span>
               <div
@@ -52,7 +53,6 @@
               label="核销方式"
               prop="is_fixed_date"
             >
-
               <div class="box-segmentation">
                 <el-checkbox
                   v-model="couponForm.verification"
@@ -176,6 +176,7 @@ export default {
       sku: {
         "quantity": null
       },
+      disabled: false,
       can_share: false,
       can_give_friend: false,
       data: null,
@@ -218,7 +219,7 @@ export default {
       },
       submitCheck: {
         inventory: false,
-        operatingHints: false,
+        operatingHints: false
       },
       couponForm: {
         verification: "",
@@ -301,6 +302,9 @@ export default {
       });
     },
     submit() {
+      if (!this.validate()) {
+        return
+      }
       console.log("---------------")
       console.log(this.data)
       if (null === this.data) {
@@ -334,7 +338,6 @@ export default {
       } else {
         this.save()
       }
-      //请求后台接口
     },
     //新增
     save() {
@@ -343,20 +346,15 @@ export default {
     },
     //修改
     update() {
-      let card = this.updateFilter()
-      //let query = '?authorizer_id=6&card_id=' + this.card_id
+      let card = this.data
       let query = {
         authorizer_id: 6,
-        card_id: this.card_id
+        card_id: this.card_id,
+        card: card
       }
       console.log('更新')
       console.log(card)
-      this.modifySingleCard(query, card)
-    },
-    updateFilter() {
-      let card = this.card_types[this.card_type]
-      card[this.type].base_info = this.data[this.type].base_info
-      return card
+      this.modifySingleCard(query)
     },
     dataHandle(type) {
       this.type = type
@@ -402,8 +400,38 @@ export default {
         this.verificationList = true
         this.couponForm.verification = true
       }
-
-    }
+      this.disabled = true
+    },
+    //
+    characterLength(s) {
+      var len = 0;
+      for (var i = 0; i < s.length; i++) {
+        if (s.charCodeAt(i) > 127 || s.charCodeAt(i) == 94) {
+          len += 2;
+        } else {
+          len++;
+        }
+      }
+      return len;
+    },
+    //校验
+    validate() {
+      this.submitCheck.inventory = false
+      this.submitCheck.operatingHints = false
+      let flag = true
+      let reg = /^[0-9]*$/
+      //库存校验
+      if (!reg.test(this.sku.quantity) || this.sku.quantity <= 0 || this.sku.quantity === '' || this.sku.quantity === null) {
+        this.submitCheck.inventory = true
+        flag = false
+      }
+      //操作提示
+      if (this.notice === null || this.notice === '' || this.characterLength(this.notice) > 32) {
+        this.submitCheck.operatingHints = true
+        flag = false
+      }
+      return flag
+    },
   }
 };
 </script>
