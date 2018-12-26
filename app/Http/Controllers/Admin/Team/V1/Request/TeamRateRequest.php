@@ -19,19 +19,38 @@ class TeamRateRequest extends Request
         switch ($this->method()) {
             case 'POST':
                 return [
-
+                    "originality" => "required|numeric",
+                    "plan" => "required|numeric",
+                    "animation" => "required|numeric",
+                    "animation_hidol" => "required|numeric",
+                    "hidol_patent" => "required|numeric",
+                    "interaction_api" => "required|numeric",
+                    "interaction_linkage" => "required|numeric",
+                    "backend_docking" => "required|numeric",
+                    "h5_1" => "required|numeric",
+                    "h5_2" => "required|numeric",
+                    "tester" => "required|numeric",
+                    "tester_quality" => "required|numeric",
+                    "operation" => "required|numeric",
+                    "operation_quality" => "required|numeric"
                 ];
                 break;
             case 'PATCH':
                 return [
-                    'interaction' => 'numeric',
-                    'originality' => 'numeric',
-                    'h5_1' => 'numeric',
-                    'h5_2' => 'numeric',
-                    'animation' => 'numeric',
-                    'plan' => 'numeric',
-                    'tester' => 'numeric',
-                    'operation' => 'numeric'
+                    "originality" => "required|numeric",
+                    "plan" => "required|numeric",
+                    "animation" => "required|numeric",
+                    "animation_hidol" => "required|numeric",
+                    "hidol_patent" => "required|numeric",
+                    "interaction_api" => "required|numeric",
+                    "interaction_linkage" => "required|numeric",
+                    "backend_docking" => "required|numeric",
+                    "h5_1" => "required|numeric",
+                    "h5_2" => "required|numeric",
+                    "tester" => "required|numeric",
+                    "tester_quality" => "required|numeric",
+                    "operation" => "required|numeric",
+                    "operation_quality" => "required|numeric"
                 ];
                 break;
             default:

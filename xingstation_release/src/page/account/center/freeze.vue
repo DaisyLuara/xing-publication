@@ -6,109 +6,91 @@
       class="program-list-wrap"
     >
       <div class="program-content-wrap">
+        <div class="search-wrap">
+          <el-form ref="filters" :model="filters" :inline="true">
+            <el-form-item label prop="alias">
+              <el-select
+                v-model="filters.alias"
+                :loading="searchLoading"
+                remote
+                :remote-method="getProject"
+                placeholder="请输入节目名称"
+                filterable
+                clearable
+              >
+                <el-option
+                  v-for="item in projectList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.alias"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label prop>
+              <el-button type="primary" size="small" @click="search">搜索</el-button>
+              <el-button size="small" @click="resetForm('filters')">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </div>
         <div class="total-wrap">
-          <div>
-            <span class="label">比例配置列表</span>
-          </div>
+          <span class="label">冻结明细列表</span>
         </div>
         <el-table :data="tableData" style="width: 100%">
           <el-table-column type="expand">
             <template slot-scope="scope">
               <el-form label-position="left" inline class="demo-table-expand">
-                <el-form-item label="交互技术-中间件">
-                  <span>{{ scope.row.interaction_api }}</span>
+                <el-form-item label="ID">
+                  <span>{{ id }}</span>
                 </el-form-item>
-                <el-form-item label="交互技术-交互引擎">
-                  <span>{{ scope.row.interaction_linkage }}</span>
+                <el-form-item label="名称">
+                  <span>{{ project_name }}</span>
                 </el-form-item>
-                <el-form-item label="H5基础">
-                  <span>{{ scope.row.h5_1 }}</span>
+                <el-form-item label="已发奖金">
+                  <span>{{ got_money }}</span>
                 </el-form-item>
-                <el-form-item label="H5复杂">
-                  <span>{{ scope.row.h5_2 }}</span>
+                <el-form-item label="冻结奖金">
+                  <span>{{ freeze_money }}</span>
                 </el-form-item>
-                <el-form-item label="运营基本">
-                  <span>{{ scope.row.operation }}</span>
+                <el-form-item label="重大责任">
+                  <span>{{ bug_record }}</span>
                 </el-form-item>
-                <el-form-item label="运营验收">
-                  <span>{{ scope.row.operation_quality }}</span>
-                </el-form-item>
-                <el-form-item label="节目创意">
-                  <span>{{ scope.row.originality }}</span>
-                </el-form-item>
-                <el-form-item label="Hidol专利">
-                  <span>{{ scope.row.hidol_patent }}</span>
-                </el-form-item>
-                <el-form-item label="设计动画">
-                  <span>{{ scope.row.animation }}</span>
-                </el-form-item>
-                <el-form-item label="设计动画-Hidol对接">
-                  <span>{{ scope.row.animation_hidol }}</span>
-                </el-form-item>
-                <el-form-item label="测试基本">
-                  <span>{{ scope.row.tester }}</span>
-                </el-form-item>
-                <el-form-item label="测试总责">
-                  <span>{{ scope.row.tester_quality }}</span>
-                </el-form-item>
-                <el-form-item label="后端IT技术对接">
-                  <span>{{ scope.row.backend_docking }}</span>
-                </el-form-item>
-                <el-form-item label="节目统筹">
-                  <span>{{ scope.row.plan }}</span>
+                <el-form-item label="扣除奖金">
+                  <span>{{ deduction_money }}</span>
                 </el-form-item>
               </el-form>
             </template>
           </el-table-column>
+          <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="interaction_linkage"
-            label="交互引擎"
-            min-width="70"
-          />
-          <el-table-column 
-            :show-overflow-tooltip="true" 
-            prop="h5_1" 
-            label="H5基础" 
-            min-width="70"/>
-          <el-table-column 
-            :show-overflow-tooltip="true" 
-            prop="h5_2" 
-            label="H5复杂" 
-            min-width="70"/>
-          <el-table-column 
-            :show-overflow-tooltip="true" 
-            prop="plan" 
-            label="节目统筹" 
-            min-width="70"/>
-          <el-table-column
-            :show-overflow-tooltip="true"
-            prop="operation"
-            label="运营基本"
-            min-width="70"
+            prop="project_name"
+            label="名称"
+            min-width="100"
           />
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="originality"
-            label="节目创意"
-            min-width="70"
+            prop="got_money"
+            label="已发奖金"
+            min-width="100"
           />
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="animation"
-            label="设计动画"
-            min-width="70"
+            prop="freeze_money"
+            label="冻结奖金"
+            min-width="100"
           />
-          <el-table-column :show-overflow-tooltip="true" prop="tester" label="测试基本" min-width="70"/>
           <el-table-column
-            v-if="legalAffairsManager || bonusManage"
-            label="操作"
-            min-width="90"
-          >
-            <template slot-scope="scope">
-              <el-button size="small" type="warning" @click="editHandle(scope.row)">修改</el-button>
-            </template>
-          </el-table-column>
+            :show-overflow-tooltip="true"
+            prop="bug_record"
+            label="重大责任"
+            min-width="100"
+          />
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="deduction_money"
+            label="扣除奖金"
+            min-width="100"
+          />
         </el-table>
         <div class="pagination-wrap">
           <el-pagination
@@ -125,29 +107,39 @@
 </template>
 
 <script>
-import { getTeamRate } from "service";
-import { Cookies } from "utils/cookies";
+import { getFutureRewardList, getSearchProjectList } from "service";
 import {
+  Select,
+  Option,
   Button,
+  Input,
   Table,
   TableColumn,
   Pagination,
-  MessageBox,
   Form,
-  FormItem
+  FormItem,
+  MessageBox
 } from "element-ui";
 
 export default {
   components: {
     "el-table": Table,
+    "el-select": Select,
+    "el-option": Option,
     "el-table-column": TableColumn,
     "el-button": Button,
+    "el-input": Input,
     "el-pagination": Pagination,
     "el-form": Form,
     "el-form-item": FormItem
   },
   data() {
     return {
+      searchLoading: false,
+      projectList: [],
+      filters: {
+        alias: ""
+      },
       setting: {
         loading: false,
         loadingText: "拼命加载中"
@@ -161,32 +153,43 @@ export default {
       tableData: []
     };
   },
-  computed: {
-    bonusManage: function() {
-      return this.role.find(r => {
-        return r.name === "bonus-manager";
-      });
-    },
-    legalAffairsManager: function() {
-      return this.role.find(r => {
-        return r.name === "legal-affairs-manager";
-      });
-    }
-  },
   created() {
-    this.getTeamRate();
-    let user_info = JSON.parse(Cookies.get("user_info"));
-    this.role = user_info.roles.data;
+    this.getFutureRewardList();
   },
   methods: {
-    editHandle(data) {
-      this.$router.push({
-        path: "ratio/edit/" + data.id
-      });
+    getProject(query) {
+      if (query !== "") {
+        this.searchLoading = true;
+        let args = {
+          name: query
+        };
+        return getSearchProjectList(this, args)
+          .then(response => {
+            this.projectList = response.data;
+            if (this.projectList.length == 0) {
+              this.filters.alias = "";
+              this.projectList = [];
+            }
+            this.searchLoading = false;
+          })
+          .catch(err => {
+            this.searchLoading = false;
+          });
+      } else {
+        this.projectList = [];
+      }
     },
-    getTeamRate() {
+
+    getFutureRewardList() {
       this.setting.loading = true;
-      getTeamRate(this)
+      let args = {
+        page: this.pagination.currentPage,
+        alias: this.filters.alias
+      };
+      if (this.filters.alias === "") {
+        delete args.alias;
+      }
+      getFutureRewardList(this, args)
         .then(res => {
           this.tableData = res.data;
           this.pagination.total = res.meta.pagination.total;
@@ -200,9 +203,18 @@ export default {
           this.setting.loading = false;
         });
     },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+      this.pagination.currentPage = 1;
+      this.getFutureRewardList();
+    },
     changePage(currentPage) {
       this.pagination.currentPage = currentPage;
-      this.getTeamRate();
+      this.getFutureRewardList();
+    },
+    search() {
+      this.pagination.currentPage = 1;
+      this.getFutureRewardList();
     }
   }
 };
@@ -275,8 +287,14 @@ export default {
         align-items: center;
         margin-bottom: 10px;
         .label {
-          font-size: 14px;
+          font-size: 18px;
           margin: 5px 0;
+          .count {
+            color: #03a9f4;
+          }
+          .details {
+            color: #00bcd4;
+          }
         }
       }
       .pagination-wrap {

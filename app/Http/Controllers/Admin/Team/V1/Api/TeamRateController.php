@@ -38,9 +38,6 @@ class TeamRateController extends Controller
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if (!$user->hasRole('legal-affairs-manager') && !$user->hasRole('bonus-manager')) {
-            abort(403, '无操作权限');
-        }
         $teamRate->update($request->all());
         return $this->response()->noContent()->setStatusCode(200);
     }

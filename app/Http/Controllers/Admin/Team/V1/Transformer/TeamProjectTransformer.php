@@ -2,25 +2,36 @@
 
 namespace App\Http\Controllers\Admin\Team\V1\Transformer;
 
-use App\Http\Controllers\Admin\Media\V1\Transformer\MediaTransformer;
+use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
+use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
 use League\Fractal\TransformerAbstract;
 
 class TeamProjectTransformer extends TransformerAbstract
 {
 
-    protected $availableIncludes = ['media'];
+    protected $availableIncludes = ['contract'];
 
     public function transform(TeamProject $teamProject)
     {
         $member = $teamProject->member->toArray();
+        $member = collect(array_column($member, 'pivot'))->groupBy("type")->toArray();
+
+        $plan_medias = $teamProject->plan_media_id ?
+            Media::whereIn('id', explode(',', $teamProject->plan_media_id))->get()->toArray()
+            : null;
+
         return [
             'id' => $teamProject->id,
             'project_name' => $teamProject->project_name,
             'belong' => $teamProject->belong,
             'applicant' => $teamProject->applicant,
-            'applicant_name' => $teamProject->applicantUser->name,
-            'project_attribute' => $teamProject->project_attribute,
+            'applicant_name' => $teamProject->applicantUser ? $teamProject->applicantUser->name : '',
+            'project_attribute' => (int)$teamProject->project_attribute,
+            'hidol_attribute' => $teamProject->hidol_attribute,
+            'individual_attribute' => $teamProject->individual_attribute,
+            'contract_id' => $teamProject->contract_id,
+            'interaction_attribute' => $teamProject->interaction_attribute ? explode(',', $teamProject->interaction_attribute) : [],
             'link_attribute' => $teamProject->link_attribute,
             'h5_attribute' => $teamProject->h5_attribute,
             'xo_attribute' => $teamProject->xo_attribute,
@@ -33,37 +44,21 @@ class TeamProjectTransformer extends TransformerAbstract
             'remark' => $teamProject->remark,
             'status' => $teamProject->status,
             'type' => $teamProject->type,
-            'member' => [
-                'interaction' => array_column(array_filter($member, function ($arr) {
-                    return $arr['pivot']['type'] == 'interaction';
-                }), 'pivot'),
-                'originality' => array_column(array_filter($member, function ($arr) {
-                    return $arr['pivot']['type'] == 'originality';
-                }), 'pivot'),
-                'h5' => array_column(array_filter($member, function ($arr) {
-                    return $arr['pivot']['type'] == 'h5';
-                }), 'pivot'),
-                'animation' => array_column(array_filter($member, function ($arr) {
-                    return $arr['pivot']['type'] == 'animation';
-                }), 'pivot'),
-                'plan' => array_column(array_filter($member, function ($arr) {
-                    return $arr['pivot']['type'] == 'plan';
-                }), 'pivot'),
-                'tester' => array_column(array_filter($member, function ($arr) {
-                    return $arr['pivot']['type'] == 'tester';
-                }), 'pivot'),
-                'operation' => array_column(array_filter($member, function ($arr) {
-                    return $arr['pivot']['type'] == 'operation';
-                }), 'pivot'),
-            ]
+            'member' => $member,
+            'media' => $teamProject->media ? $teamProject->media->toArray() : [],
+            'plan_media' => $plan_medias,
+            'animation_media' => $teamProject->animation_media ? $teamProject->animation_media->toArray() : null,
+            'tester_media' => $teamProject->tester_media ? $teamProject->tester_media->toArray() : null,
         ];
     }
 
-    public function includeMedia(TeamProject $teamProject)
+    public function includeContract(TeamProject $teamProject)
     {
-        if (!$teamProject->media) {
-            return null;
+        $contract = $teamProject->contract;
+        if ($contract) {
+            return $this->item($contract, new ContractTransformer());
         }
-        return $this->item($teamProject->media, new MediaTransformer());
+        return null;
     }
+
 }
