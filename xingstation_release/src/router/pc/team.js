@@ -11,10 +11,10 @@ let router = {
   children: [
     {
       path: 'program',
-      name: '节目管理',
+      name: '节目智造',
       redirect: 'program',
       meta: {
-        title: '节目管理',
+        title: '节目智造',
         permission: ''
       },
       component: () =>
@@ -55,19 +55,19 @@ let router = {
     },
     {
       path: 'ratio',
-      name: '比例配置',
+      name: '智造比例',
       redirect: 'ratio',
       meta: {
-        title: '比例配置'
+        title: '智造比例'
       },
       component: () =>
         import(/* webpackChunkName: "page/team/ratio/routerView" */ 'page/team/ratio/routerView'),
       children: [
         {
           path: '/',
-          name: '比例配置列表',
+          name: '智造比例列表',
           meta: {
-            title: '比例配置列表'
+            title: '智造比例列表'
           },
           component: () =>
             import(/* webpackChunkName: "page/team/ratio/index" */ 'page/team/ratio/index')

@@ -8,7 +8,7 @@
       <div class="program-content-wrap">
         <div class="total-wrap">
           <div>
-            <span class="label">比例配置列表</span>
+            <span class="label">智造比例列表</span>
           </div>
         </div>
         <el-table :data="tableData" style="width: 100%">

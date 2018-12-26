@@ -3,7 +3,7 @@
     <div v-loading="setting.loading" :element-loading-text="setting.loadingText" class="pane">
       <div
         class="pane-title"
-      >{{ programID ? (((projectManage && status===1) || legalAffairsManager || bonusManage) ? '修改项目' : '查看项目') : '新增项目'}}</div>
+      >{{ programID ? (((projectManage && status===1) || legalAffairsManager || bonusManage) ? '修改节目' : '查看节目') : '新增节目'}}</div>
       <el-form ref="programForm" :model="programForm" label-position="left" label-width="80px">
         <el-row>
           <el-col :span="12">
@@ -202,33 +202,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="节目交互文档" prop="fileIds" style="width:800px;" label-width="120px">
-          <el-upload
-            ref="upload"
-            :action="Domain"
-            :data="uploadForm"
-            :on-success="handleSuccess"
-            :before-upload="beforeUpload"
-            :on-remove="handleRemove"
-            :on-preview="handlePreview"
-            :before-remove="beforeRemove"
-            :file-list="fileList1"
-            :on-exceed="handleExceed"
-            class="upload-demo"
-          >
-            <el-button size="mini" type="success">点击上传</el-button>
-            <div
-              slot="tip"
-              style="display:inline-block;margin-left: 10px;"
-              class="el-upload__tip"
-            >支持类型：doc（docx）、pdf</div>
-            <div
-              v-if="fileList1.length !==0"
-              slot="tip"
-              style="color: #ff5722;font-size: 12px;"
-            >点击文件名称可以下载</div>
-          </el-upload>
-        </el-form-item>
         <el-form-item
           :rules="[{ required: true, message: '请输入艺术风格创新点', trigger: 'submit' }]"
           label="艺术风格创新点"
@@ -668,9 +641,7 @@ export default {
       testFile: null,
       contractList: [],
       fileList: [],
-      fileList1: [],
       ids: [],
-      fileIds: [],
       disabledChange: true,
       form: {
         total: 0
@@ -926,9 +897,6 @@ export default {
       };
       getMediaUpload(this, params)
         .then(res => {
-          if (type === ".docx" || type === ".doc" || type === ".pdf") {
-            this.fileList1.push(res);
-          }
           if (type === ".zip" || type === ".rar") {
             this.fileList.push(res);
           }
@@ -980,16 +948,10 @@ export default {
           if (res.tester_media) {
             this.testFile = res.tester_media;
           }
-          if (res.plan_media) {
-            res.plan_media.map(r => {
-              planMediaData.push(r);
-            });
-          }
           let animationMediaData = [];
           if (res.animation_media) {
             animationMediaData.push(res.animation_media);
           }
-          this.fileList1 = planMediaData;
           this.fileList = animationMediaData;
           this.programForm.applicant = res.applicant;
           this.programForm.applicant_name = res.applicant_name;
@@ -1334,20 +1296,6 @@ export default {
       }
     },
     submit(formName) {
-      let planMediaIds = [];
-      if (this.fileList1.length > 0) {
-        this.fileList1.map(r => {
-          planMediaIds.push(r.id);
-        });
-        this.fileIds = planMediaIds.join(",");
-      } else {
-        this.$message({
-          type: "warning",
-          message: "节目交互文档必须上传"
-        });
-        return;
-      }
-
       let animationMediaIds = [];
       if (this.fileList.length > 0) {
         this.fileList.map(r => {
@@ -1380,7 +1328,6 @@ export default {
             interact_innovate: this.programForm.interact_innovate,
             type: this.programForm.type,
             animation_media_id: this.ids,
-            plan_media_id: this.fileIds,
             interaction_attribute: this.programForm.interaction_attribute
           };
           if (this.programForm.interaction.length > 0) {
@@ -1502,7 +1449,7 @@ export default {
         to.meta.keepAlive = false;
       }
       next();
-    }else{
+    } else {
       to.meta.keepAlive = false;
       next();
     }
