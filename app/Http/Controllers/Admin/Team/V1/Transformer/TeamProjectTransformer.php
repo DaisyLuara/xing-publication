@@ -17,10 +17,6 @@ class TeamProjectTransformer extends TransformerAbstract
         $member = $teamProject->member->toArray();
         $member = collect(array_column($member, 'pivot'))->groupBy("type")->toArray();
 
-        $plan_medias = $teamProject->plan_media_id ?
-            Media::whereIn('id', explode(',', $teamProject->plan_media_id))->get()->toArray()
-            : null;
-
         return [
             'id' => $teamProject->id,
             'project_name' => $teamProject->project_name,
@@ -46,7 +42,6 @@ class TeamProjectTransformer extends TransformerAbstract
             'type' => $teamProject->type,
             'member' => $member,
             'media' => $teamProject->media ? $teamProject->media->toArray() : [],
-            'plan_media' => $plan_medias,
             'animation_media' => $teamProject->animation_media ? $teamProject->animation_media->toArray() : null,
             'tester_media' => $teamProject->tester_media ? $teamProject->tester_media->toArray() : null,
         ];

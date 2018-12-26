@@ -34,7 +34,7 @@ class TeamProject extends Model
         'operation_media_id',
         'tester_media_id',
         'animation_media_id',
-        'plan_media_id',
+//        'plan_media_id',
     ];
 
     public function contract()

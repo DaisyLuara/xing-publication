@@ -157,13 +157,6 @@ class TeamProjectController extends Controller
      */
     public function checkParams($request)
     {
-        //判断交互文档
-        $plan_media_ids = explode(',', $request->plan_media_id);
-        $plan_medias = Media::query()->whereIn('id', $plan_media_ids)->pluck('id')->toArray();
-        if (array_diff($plan_media_ids, $plan_medias)) {
-            abort("422", "上传的交互文档中存在找不到对象");
-        }
-
         $member = $request->member ?? [];
         if (isset($member['tester']) || isset($member['tester_quality'])) {
             $tester_ids = array_column($member['tester'] ?? [], 'user_id');
