@@ -121,12 +121,13 @@ class MiniCouponController extends Controller
             //用户已激活商场
             $marketids = UserActivation::query()->where('uid', $member->uid)->pluck('marketid')->toArray();
             abort_if(!in_array($request->marketid, $marketids), 500, '无可用优惠券');
-
-            //优惠券对应商场
-            $query->whereHas('marketPointCouponBatches', function ($q) use($request) {
-                $q->where('marketid', $request->marketid);
-            });
         }
+
+        //优惠券对应商场
+        $query->whereHas('marketPointCouponBatches', function ($q) use($request, $member) {
+            $marketId = $request->marketid ?: $member->marketid;
+            $q->where('marketid', $marketId);
+        });
 
         $per_page = $request->get('per_page') ? : 5;
         $couponBatches = $query->orderByDesc('sort_order')->paginate($per_page);
@@ -169,6 +170,12 @@ class MiniCouponController extends Controller
             abort(500, '优惠券已发完!');
         }
 
+        //扫码领取记录
+        if ($request->has('qiniu_id')) {
+            $coupon = Coupon::query()->where('qiniu_id', $request->get('qiniu_id'))->first();
+            abort_if($coupon, 500, '该券已被领取!');
+        }
+
         //每天最大领取量
         if (!$couponBatch->dmg_status) {
             $dateString = Carbon::now()->toDateString();
@@ -189,7 +196,7 @@ class MiniCouponController extends Controller
                 ->get();
 
             if ($coupons->count() >= $couponBatch->people_max_get) {
-                abort(500, '您今天已经领过了，请明天再来!');
+                abort(500, '优惠券每人最多领取' . $couponBatch->people_max_get . '张');
             }
         }
 
@@ -215,6 +222,7 @@ class MiniCouponController extends Controller
                 'status' => 3,
                 'oid' => $request->input('oid'),
                 'member_uid' => $memberUID,
+                'qiniu_id' => $request->get('qiniu_id') ? : 0,
                 'start_date' => $startDate,
                 'end_date' => $endDate,
             ]);

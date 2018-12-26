@@ -23,8 +23,6 @@ class UserController extends Controller
         $mall_coo = app('mall_coo');
         $callback_url = 'http://' . $request->getHost() . '/api/mallcoo/user/callback?redirect_url=' . urlencode(($redirect_url));
 
-        activity('mallcoo')->withProperties(['user_id' => $userID, 'callback_url' => $callback_url])->log('猫酷授权跳转');
-
         return $mall_coo->oauth($callback_url);
     }
 
