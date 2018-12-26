@@ -1531,7 +1531,7 @@ export default {
     next() {
       console.log("提交券类型")
       if (!this.validate()) {
-        alert("校验不通过")
+        //alert("校验不通过")
         return
       }
       //处理提交的数据
@@ -1610,39 +1610,39 @@ export default {
         this.submitCheck.discountsShare = false //优惠共享
       //颜色校验
       if (this.base_info.color === null) {
-        alert("1")
+        //alert("1")
         //显示提醒颜色的提示语
         this.submitCheck.color = true
         flag = false
       }
       if (this.abstract.icon_url_list.length === 0) {
-        alert("2")
+        //alert("2")
         this.submitCheck.uploadCheck = true
         flag = false
       }
       //标题base_info.title
       if ((this.card_type !== 'CASH') && (this.base_info.title === '' || this.base_info.title === null || this.characterLength(this.base_info.title) > 18)) {
-        alert("3")
+        // alert("3")
         this.submitCheck.titleCheck = true
         flag = false
       }
       //日期
       if (this.date_info.type === 'DATE_TYPE_FIX_TIME_RANGE') {
         if (this.begin_timestamp === null || this.end_timestamp === null) {
-          alert("4")
+          // alert("4")
           this.submitCheck.dateCheck = true
           flag = false
         }
       }
       //上传图片
       if (this.abstract.icon_url_list.length === 0) {
-        alert("5")
+        //alert("5")
         this.submitCheck.uploadCheck = true
         flag = false
       }
       //封面简介
       if (this.abstract.abstract === '' || this.abstract.abstract === null || this.characterLength(this.abstract.abstract) >= 24) {
-        alert("6")
+        //alert("6")
         this.submitCheck.introductionCheck = true
         flag = false
       }
@@ -1650,7 +1650,7 @@ export default {
       for (let i = 0; i < this.text_image_list.length; i++) {
         if (this.text_image_list[i].image_url === '' || this.text_image_list[i].image_url === null ||
           this.text_image_list[i].text === '' || this.text_image_list[i].text === null) {
-          alert("7")
+          //alert("7")
           this.submitCheck.graphicIntroduction = true
           flag = false
           break
@@ -1658,7 +1658,7 @@ export default {
       }
       //优惠共享 
       if (this.use_condition.can_use_with_other_discount === null || this.use_condition.can_use_with_other_discount === '') {
-        alert("8")
+        // alert("8")
         this.submitCheck.discountsShare = true
         flag = false
       }
@@ -1671,13 +1671,13 @@ export default {
       //代金券
       if (this.card_type === 'CASH') {
         if (this.reduce_cost === null || this.reduce_cost === '' || this.reduce_cost <= 0.01 || !reg1.test(this.reduce_cost)) {
-          alert("9")
+          // alert("9")
           this.submitCheck.creditAmount = true
           flag = false
         }
         if (this.cashChecked) {
           if (this.least_cost === null || this.least_cost === '' || this.least_cost <= 0 || !reg1.test(this.least_cost)) {
-            alert("10")
+            //alert("10")
             this.submitCheck.consumptionAmount = true
             flag = false
           }
@@ -1685,13 +1685,13 @@ export default {
         if (this.cashOrDiscountchecked) {
           if (this.use_condition.accept_category === null ||
             this.use_condition.accept_category === '') {
-            alert("11")
+            //alert("11")
             this.submitCheck.commodity = true
             flag = false
           } if (
             this.use_condition.reject_category === null ||
             this.use_condition.reject_category === '') {
-            alert("12")
+            // alert("12")
             this.submitCheck.noCommodity = true
             flag = false
           }
