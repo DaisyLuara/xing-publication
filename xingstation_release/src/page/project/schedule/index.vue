@@ -50,7 +50,7 @@
         :key="item.id" >
         <template 
           slot="title">
-          {{ item.name }} ( {{ item.area.name + item.market.name + item.point.name }} ) 
+          {{ item.name }}
           <el-button 
             type="primary" 
             icon="el-icon-edit" 
@@ -205,65 +205,6 @@
         :model="templateForm" 
         label-width="150px" >
         <el-form-item 
-          :rules="[{ type: 'number', required: true, message: '请选择区域', trigger: 'submit' }]"
-          label="区域" 
-          prop="area_id" >
-          <el-select 
-            v-model="templateForm.area_id" 
-            placeholder="请选择区域" 
-            filterable 
-            clearable 
-            class="item-select"
-            @change="areaChangeHandle">
-            <el-option
-              v-for="item in areaList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"/>
-          </el-select>
-        </el-form-item>
-        <el-form-item 
-          :rules="[{ required: true, message: '请搜索商场', trigger: 'submit' }]"
-          label="商场" 
-          prop="market_id">
-          <el-select 
-            v-model="templateForm.market_id" 
-            :loading="searchLoading" 
-            :remote-method="getMarket" 
-            :multiple-limit="1"
-            multiple 
-            placeholder="请搜索商场" 
-            filterable 
-            remote 
-            clearable 
-            class="item-select"
-            @change="marketChangeHandle" >
-            <el-option
-              v-for="item in marketList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"/>
-          </el-select>
-        </el-form-item>
-        <el-form-item 
-          :rules="[{ type: 'number', required: true, message: '请选择点位', trigger: 'submit' }]"
-          label="点位" 
-          prop="point_id" >
-          <el-select 
-            v-model="templateForm.point_id" 
-            :loading="searchLoading" 
-            filterable 
-            placeholder="请选择点位" 
-            clearable
-            class="item-select">
-            <el-option
-              v-for="item in pointList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"/>
-          </el-select>
-        </el-form-item>
-        <el-form-item 
           :rules="[{ type: 'string', required: true, message: '请输入名称', trigger: 'submit' }]"
           label="模板名" 
           prop="name" >
@@ -307,9 +248,6 @@ import {
   getSearchModuleList,
   getSearchProjectList,
   modifyTemplate,
-  getSearchMarketList,
-  getSearchAeraList,
-  getSearchPointList
 } from 'service'
 
 export default {
@@ -338,9 +276,6 @@ export default {
       templateForm: {
         tpl_id: '',
         name: '',
-        area_id: '',
-        market_id: [],
-        point_id: ''
       },
       projectList: [],
       tableData: [],
@@ -349,9 +284,6 @@ export default {
         pageSize: 10,
         currentPage: 1
       },
-      areaList: [],
-      marketList: [],
-      pointList: [],
       searchForm: {
         name: ''
       },
@@ -364,26 +296,17 @@ export default {
   },
   created() {
     this.getModuleList()
-    this.getAreaList()
     this.getScheduleList()
   },
   methods: {
     modifyTemplateName(item) {
-      this.loading = true
+      this.loading = false
       this.title = '修改模板'
       let name = item.name
-      let area_id = item.area.id
-      let market_id = item.market.id
-      let point_id = item.point.id
       this.templateForm = {
         tpl_id: item.id,
         name: name,
-        area_id: area_id,
-        market_id: market_id,
-        point_id: point_id
       }
-      this.getMarket()
-      this.getPoint()
       this.templateVisible = true
     },
     projectChangeHandle(pIndex, index, val) {
@@ -459,9 +382,6 @@ export default {
     },
     addTemplate() {
       this.templateForm.name = ''
-      this.templateForm.area_id = ''
-      this.templateForm.market_id = []
-      this.templateForm.point_id = ''
       this.templateForm.tpl_id = ''
       this.templateVisible = true
       this.title = '增加模板'
@@ -538,60 +458,6 @@ export default {
           this.setting.loading = false
         })
     },
-    getAreaList() {
-      return getSearchAeraList(this)
-        .then(response => {
-          let data = response.data
-          this.areaList = data
-        })
-        .catch(error => {
-          console.log(error)
-          this.setting.loading = false
-        })
-    },
-    getMarket(query) {
-      if (query !== '') {
-        this.searchLoading = true
-        let args = {
-          name: query,
-          include: 'area',
-          area_id: this.templateForm.area_id
-        }
-        return getSearchMarketList(this, args)
-          .then(response => {
-            this.marketList = response.data
-            if (this.marketList.length == 0) {
-              this.templateForm.market_id = []
-              this.marketList = []
-            }
-            this.searchLoading = false
-          })
-          .catch(err => {
-            console.log(err)
-            this.searchLoading = false
-          })
-      } else {
-        this.marketList = []
-      }
-    },
-    getPoint() {
-      let args = {
-        include: 'market',
-        market_id: this.templateForm.market_id[0]
-      }
-      this.searchLoading = true
-      return getSearchPointList(this, args)
-        .then(response => {
-          this.pointList = response.data
-          this.searchLoading = false
-          this.loading = false
-        })
-        .catch(err => {
-          this.searchLoading = false
-          this.loading = false
-          console.log(err)
-        })
-    },
     submit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -631,15 +497,6 @@ export default {
           }
         }
       })
-    },
-    areaChangeHandle() {
-      this.templateForm.market_id = []
-      this.templateForm.point_id = ''
-      this.getMarket()
-    },
-    marketChangeHandle() {
-      this.templateForm.point_id = ''
-      this.getPoint()
     },
     search() {
       this.pagination.currentPage = 1
