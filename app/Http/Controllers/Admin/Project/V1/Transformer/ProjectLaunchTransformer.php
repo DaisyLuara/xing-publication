@@ -37,6 +37,8 @@ class ProjectLaunchTransformer extends TransformerAbstract
 
         $tpls = ProjectLaunchTpl::whereIn('tvid', $tplIds)->get();
 
+        //dd($tpls);
+
         $tpldata = $this->collection($tpls, new ProjectLaunchTplTransformer());
 
         $data['day1template'] = $tpldata->getData()->firstWhere('tvid', $projectLaunch->day1_tvid);
@@ -48,7 +50,7 @@ class ProjectLaunchTransformer extends TransformerAbstract
         $data['day7template'] = $tpldata->getData()->firstWhere('tvid', $projectLaunch->day7_tvid);
         $data['divtemplate'] = $tpldata->getData()->firstWhere('tvid', $projectLaunch->div_tvid);
         $data['weekdaytemplate'] = $tpldata->getData()->firstWhere('tvid', $projectLaunch->weekday_tvid);
-        $data['weekendtemplate'] = $tpldata->getData()->firstWhere('tvid', $projectLaunch->weekday_tvid);
+        $data['weekendtemplate'] = $tpldata->getData()->firstWhere('tvid', $projectLaunch->weekend_tvid);
 
 
         return $data;
