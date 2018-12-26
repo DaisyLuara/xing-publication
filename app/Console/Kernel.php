@@ -34,58 +34,61 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        //点位排名通知
-        $schedule->call(function () {
-            $data = $this->getRankingData();
-            for ($i = 0; $i < count($data); $i++) {
-                WeekRankingJob::dispatch($data[$i])->onQueue('weekRanking');
-            }
-        })->weekly()->fridays()->at('10:25');
+        if (env('APP_ENV') !== 'local') {
 
-        //count数据清洗
-        $schedule->call(function () {
-            ActivePlayerJob::dispatch()->onQueue('data-clean');
-        })->daily()->at('7:00');
+            //点位排名通知
+            $schedule->call(function () {
+                $data = $this->getRankingData();
+                for ($i = 0; $i < count($data); $i++) {
+                    WeekRankingJob::dispatch($data[$i])->onQueue('weekRanking');
+                }
+            })->weekly()->fridays()->at('10:25');
 
-        //围观渗透率
-        $schedule->call(function () {
-            FaceLogJob::dispatch()->onQueue('data-clean');
-        })->daily()->at('7:10');
+            //count数据清洗
+            $schedule->call(function () {
+                ActivePlayerJob::dispatch()->onQueue('data-clean');
+            })->daily()->at('7:00');
 
-        //时间段与人群特征数据清洗
-        $schedule->call(function () {
-            CharacterJob::dispatch()->onQueue('data-clean');
-        })->daily()->at('7:20');
+            //围观渗透率
+            $schedule->call(function () {
+                FaceLogJob::dispatch()->onQueue('data-clean');
+            })->daily()->at('7:10');
 
-        //围观人次渗透率
-        $schedule->call(function () {
-            FaceLogTimesJob::dispatch()->onQueue('data-clean');
-        })->daily()->at('7:30');
+            //时间段与人群特征数据清洗
+            $schedule->call(function () {
+                CharacterJob::dispatch()->onQueue('data-clean');
+            })->daily()->at('7:20');
 
-        //人次时间段与人群特征数据清洗
-        $schedule->call(function () {
-            CharacterTimesJob::dispatch()->onQueue('data-clean');
-        })->daily()->at('7:40');
+            //围观人次渗透率
+            $schedule->call(function () {
+                FaceLogTimesJob::dispatch()->onQueue('data-clean');
+            })->daily()->at('7:30');
 
-        //7s,15s,21s人群特征数据清洗
-        $schedule->call(function () {
-            FacePlaytimesCharacterJob::dispatch()->onQueue('data-clean');
-        })->daily()->at('6:00');
+            //人次时间段与人群特征数据清洗
+            $schedule->call(function () {
+                CharacterTimesJob::dispatch()->onQueue('data-clean');
+            })->daily()->at('7:40');
 
-        //7s,15s,21s渗透率
-        $schedule->call(function () {
-            FacePlaytimesLogJob::dispatch()->onQueue('data-clean');
-        })->daily()->at('6:10');
+            //7s,15s,21s人群特征数据清洗
+            $schedule->call(function () {
+                FacePlaytimesCharacterJob::dispatch()->onQueue('data-clean');
+            })->daily()->at('6:00');
 
-        //月活玩家清洗(按人和商场去重)
-        $schedule->call(function () {
-            MauJob::dispatch()->onQueue('data-clean');
-        })->monthlyOn(1, '6:00');
+            //7s,15s,21s渗透率
+            $schedule->call(function () {
+                FacePlaytimesLogJob::dispatch()->onQueue('data-clean');
+            })->daily()->at('6:10');
 
-        //绩效清洗
-        $schedule->call(function () {
-            TeamBonusJob::dispatch()->onQueue('data-clean');
-        })->daily()->at('8:00');
+            //月活玩家清洗(按人和商场去重)
+            $schedule->call(function () {
+                MauJob::dispatch()->onQueue('data-clean');
+            })->monthlyOn(1, '6:00');
+
+            //绩效清洗
+            $schedule->call(function () {
+                TeamBonusJob::dispatch()->onQueue('data-clean');
+            })->daily()->at('8:00');
+        }
     }
 
 
