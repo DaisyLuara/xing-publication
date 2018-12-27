@@ -1809,19 +1809,19 @@ function teamBonusClean()
                             $factor = 1.1;
                         }
                         if ($advanceTime < 60) {
-                            if ($teamProject->project_attribute <= 2) {
-                                $factor = 0.9;
-                            } else {
+                            if ($teamProject->individual_attribute) {
                                 $factor = 1;
+                            } else {
+                                $factor = 0.9;
                             }
                         }
                     }
                     //运营确认
                     if ($teamProject->status == 3 && $teamProject->type == 0) {
-                        if ($teamProject->project_attribute <= 2) {
-                            $factor = 0.9;
-                        } else {
+                        if ($teamProject->individual_attribute) {
                             $factor = 1;
+                        } else {
+                            $factor = 0.9;
                         }
                     }
                 }
