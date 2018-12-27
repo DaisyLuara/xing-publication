@@ -6,17 +6,22 @@ use App\Http\Controllers\Admin\WeChat\V1\Models\WxThird;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use EasyWeChat;
+use user;
 
 class CardsController extends Controller
 {
     //获取卡片实例
     protected function getCard($authorizer_id)
     {
-        $app = EasyWeChat::openPlatform();
-        componentVerify($app);
-        $official_account = getOfficialAccount($authorizer_id, $app);
-
-        return $official_account->card;
+        $user = $this->user();
+        if ($user->hasPermissionTo('wechat_card')) {
+            $app = EasyWeChat::openPlatform();
+            componentVerify($app);
+            $official_account = getOfficialAccount($authorizer_id, $app);
+            return $official_account->card;
+        } else {
+            abort(403, "无微信卡券权限,请联系管理员");
+        }
     }
 
     //获取素材实例
@@ -30,14 +35,13 @@ class CardsController extends Controller
     }
 
     //获取用户授权信息
-    public function getInfo($authorizer_id)
+    public function getInfo(Request $request)
     {
+        $authorizer_id = $request->has('authorizer_id') ? $request->get('authorizer_id') : '';
         $app = EasyWeChat::openPlatform();
         componentVerify($app);
-
         $brandNameDefault = $openPlatform->getAuthorizerOption($authorizer_id, 'nick_name');
         $logoUrlDefault = $openPlatform->getAuthorizerOption($authorizer_id, 'head_img');
-
         $info = [
             'logo_url' => $logoUrlDefault,
             'brand_name' => $brandNameDefault,
@@ -63,7 +67,7 @@ class CardsController extends Controller
         $material = $this->getMaterial($authorizer_id);
         $path = $request->has('path') ? $request->get('path') : '';
 
-        return  $material->uploadThumb($path);
+        return $material->uploadThumb($path);
     }
 
     //上传图文消息
@@ -82,7 +86,7 @@ class CardsController extends Controller
         return $material->uploadArticle($article);
     }
 
-    //查询单个卡券列表
+    //查询单个卡券信息
     public function show(Request $request)
     {
         $authorizer_id = $request->has('authorizer_id') ? $request->get('authorizer_id') : '';
