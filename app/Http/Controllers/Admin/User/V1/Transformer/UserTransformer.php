@@ -24,7 +24,6 @@ class UserTransformer extends TransformerAbstract
             'created_at' => $user->created_at->toDateTimeString(),
             'updated_at' => $user->updated_at->toDateTimeString(),
             'pivot' => $user->pivot,
-            'permission' => $user->getAllPermissions()
         ];
     }
 
