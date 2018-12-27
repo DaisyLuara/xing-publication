@@ -3,7 +3,7 @@ const HOST = process.env.SERVER_URL
 
 // 详情
 const getPermissionInfo = (context, id) => {
-  if (!rid) {
+  if (!id) {
     return false
   }
   return new Promise(function(resolve, reject) {
