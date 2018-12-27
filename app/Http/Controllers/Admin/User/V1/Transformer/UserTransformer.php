@@ -23,7 +23,8 @@ class UserTransformer extends TransformerAbstract
             'ar_user_id' => $user->ar_user_id,
             'created_at' => $user->created_at->toDateTimeString(),
             'updated_at' => $user->updated_at->toDateTimeString(),
-            'pivot'=>$user->pivot,
+            'pivot' => $user->pivot,
+            'permission' => $user->getAllPermissions()
         ];
     }
 
@@ -36,4 +37,5 @@ class UserTransformer extends TransformerAbstract
     {
         return $this->collection($user->getAllPermissions(), new PermissionTransformer());
     }
+
 }
