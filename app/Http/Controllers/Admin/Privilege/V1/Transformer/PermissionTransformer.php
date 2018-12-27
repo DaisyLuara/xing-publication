@@ -20,6 +20,7 @@ class PermissionTransformer extends TransformerAbstract
             'id' => $permission->id,
             'name' => $permission->name,
             'display_name' => $permission->display_name,
+            'children' => $permission->getDescendants()->toHierarchy(),
             'created_at' => $permission->created_at->toDateString(),
             'updated_at' => $permission->updated_at->toDateString(),
         ];
