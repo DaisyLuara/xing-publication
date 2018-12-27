@@ -869,11 +869,16 @@ export default {
     },
     beforeUpload(file) {
       let name = file.name;
+      let type = name.substring(name.lastIndexOf("."));
       let isLt100M = file.size / 1024 / 1024 < 100;
       let time = new Date().getTime();
       let random = parseInt(Math.random() * 10 + 1, 10);
       let suffix = time + "_" + random + "_" + name;
       let key = encodeURI(`${suffix}`);
+      if (!(type === ".zip" || type === ".rar")) {
+        this.uploadForm.token = "";
+        return this.$message.error("类型只支持zip、rar");
+      }
       if (!isLt100M) {
         this.uploadForm.token = "";
         return this.$message.error("上传大小不能超过 100MB!");

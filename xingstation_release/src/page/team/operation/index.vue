@@ -118,7 +118,7 @@
               slot="tip"
               style="display:inline-block"
               class="el-upload__tip"
-            >支持文件类型：doc(.docx)、.pdf</div>
+            >文件类型只支持docx、doc、pdf、ppt、pptx、xlsx、xls</div>
           </el-upload>
         </el-form-item>
         <el-form-item label-position="right">
@@ -372,9 +372,21 @@ export default {
       let random = parseInt(Math.random() * 10 + 1, 10);
       let suffix = time + "_" + random + "_" + name;
       let key = encodeURI(`${suffix}`);
-      if (!(type === ".docx" || type === ".doc" || type === ".pdf")) {
+      if (
+        !(
+          type === ".docx" ||
+          type === ".doc" ||
+          type === ".pdf" ||
+          type === ".ppt" ||
+          type === ".pptx" ||
+          type === ".xlsx" ||
+          type === ".xls"
+        )
+      ) {
         this.uploadForm.token = "";
-        return this.$message.error("文件类型只支持(docx、doc、pdf)");
+        return this.$message.error(
+          "文件类型只支持docx、doc、pdf、ppt、pptx、xlsx、xls"
+        );
       }
       if (!isLt100M) {
         this.uploadForm.token = "";
