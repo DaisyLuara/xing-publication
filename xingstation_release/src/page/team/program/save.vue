@@ -701,6 +701,8 @@ export default {
       type: "",
       userList: [],
       rate: {
+        tester_quality: null,
+        operation_quality: null,
         backend_docking: null,
         interaction_linkage: null,
         interaction_api: null,
@@ -919,6 +921,8 @@ export default {
           this.rate.h5_1 = data.h5_1;
           this.rate.tester = data.tester;
           this.rate.operation = data.operation;
+          this.rate.tester_quality = data.tester_quality;
+          this.rate.operation_quality = data.operation_quality;
           this.rate.plan = data.plan;
           this.rate.hidol_patent = data.hidol_patent;
           this.rate.animation = data.animation;
@@ -1349,11 +1353,17 @@ export default {
             member.tester = this.programForm.tester;
             let tester = JSON.stringify(this.programForm.tester);
             this.programForm.tester_quality = [];
+            let testerMulriple = parseFloat(
+              (
+                parseFloat(this.rate.tester_quality) /
+                parseFloat(this.rate.tester)
+              ).toFixed(1)
+            );
             JSON.parse(tester).map(r => {
               this.programForm.tester_quality.push({
                 user_id: r.user_id,
                 user_name: r.user_name,
-                rate: (r.rate * 2).toFixed(4)
+                rate: (r.rate * testerMulriple).toFixed(4)
               });
             });
             member.tester_quality = this.programForm.tester_quality;
@@ -1361,12 +1371,18 @@ export default {
           if (this.programForm.operation.length > 0) {
             member.operation = this.programForm.operation;
             this.programForm.operation_quality = [];
+            let operationMulriple = parseFloat(
+              (
+                parseFloat(this.rate.operation_quality) /
+                parseFloat(this.rate.operation)
+              ).toFixed(1)
+            );
             let operation = JSON.stringify(this.programForm.operation);
             JSON.parse(operation).map(r => {
               this.programForm.operation_quality.push({
                 user_id: r.user_id,
                 user_name: r.user_name,
-                rate: (r.rate / 2).toFixed(4)
+                rate: (r.rate * operationMulriple).toFixed(4)
               });
             });
             member.operation_quality = this.programForm.operation_quality;

@@ -151,13 +151,15 @@ export default {
   },
   created() {
     this.dutyId = this.$route.params.uid;
-    this.getEventDetails();
+    if (this.dutyId) {
+      this.getEventDetails();
+    }
   },
   methods: {
     projectHandle(val) {
       let projectChoose = {};
-      this.contractList.filter(r => {
-        if (r.id === val) {
+      this.projectList.filter(r => {
+        if (r.alias === val) {
           projectChoose = r;
           return;
         }
@@ -194,6 +196,8 @@ export default {
       getEventDetails(this, this.dutyId)
         .then(res => {
           this.dutyForm.belong = res.belong;
+          let project_name = res.project_name
+          this.getProject(project_name)
           this.dutyForm.occur_date = res.occur_date;
           this.dutyForm.description = res.description;
           this.dutyForm.test = res.tester_text;
