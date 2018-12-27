@@ -30,12 +30,7 @@
         </div>
         <div class="total-wrap">
           <span class="label">总数：{{ pagination.total }}</span>
-          <el-button
-            v-if="operation"
-            type="success"
-            size="small"
-            @click="dialogFormVisible = true"
-          >新增文档</el-button>
+          <el-button v-if="operation" type="success" size="small" @click="addOperation">新增文档</el-button>
         </div>
         <el-table :data="tableData" style="width: 100%">
           <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="100"/>
@@ -277,11 +272,11 @@ export default {
     this.getOperationDocumentList();
   },
   methods: {
+    addOperation() {
+      this.dialogFormVisible = true;
+    },
     cancel() {
-      if (!this.editId) {
-        this.documentForm.document_name = "";
-        this.ids = [];
-      }
+      this.resetUploadForm()
       this.dialogFormVisible = false;
     },
     submit(formName) {
@@ -313,9 +308,11 @@ export default {
                   message: "修改成功",
                   type: "success"
                 });
+                this.resetUploadForm();
                 this.getOperationDocumentList();
               })
               .catch(err => {
+                this.resetUploadForm();
                 this.$message({
                   message: err.response.data.message,
                   type: "warning"
@@ -329,9 +326,11 @@ export default {
                   message: "提交成功",
                   type: "success"
                 });
+                this.resetUploadForm();
                 this.getOperationDocumentList();
               })
               .catch(err => {
+                this.resetUploadForm();
                 this.$message({
                   message: err.response.data.message,
                   type: "warning"
@@ -340,6 +339,11 @@ export default {
           }
         }
       });
+    },
+    resetUploadForm() {
+      this.editId = null;
+      this.$refs["documentForm"].resetFields();
+      this.fileList = [];
     },
     getQiniuToken() {
       getQiniuToken(this)
