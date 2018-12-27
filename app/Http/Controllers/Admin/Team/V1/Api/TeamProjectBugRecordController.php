@@ -139,7 +139,7 @@ class TeamProjectBugRecordController extends Controller
             abort(422, "事件发生时间只能是本季度");
         }
 
-        DB::BeginTransaction();
+        DB::beginTransaction();
         try {
             //删除原本的重大责任
             $result[] = DB::table("team_project_bug_records")
