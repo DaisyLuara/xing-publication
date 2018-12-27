@@ -176,98 +176,7 @@ export default {
       activeName: "first",
       activeNames: 0,
       parent_id: 0,
-      dataTest: [
-        {
-          id: 54,
-          name: "company",
-          display_name: "公司",
-          children: [],
-          created_at: "2018-12-24",
-          updated_at: "2018-12-24"
-        },
-        {
-          id: 55,
-          name: "system",
-          display_name: "设置",
-          children: {
-            "64": {
-              id: 64,
-              name: "system.user",
-              guard_name: "web",
-              display_name: "用户管理",
-              parent_id: 55,
-              lft: 4,
-              rgt: 5,
-              depth: 1,
-              created_at: "2018-12-24 17:59:03",
-              updated_at: "2018-12-24 17:59:03",
-              children: []
-            },
-            "66": {
-              id: 66,
-              name: "system.role",
-              guard_name: "web",
-              display_name: "角色管理",
-              parent_id: 55,
-              lft: 6,
-              rgt: 13,
-              depth: 1,
-              created_at: "2018-12-25 09:38:26",
-              updated_at: "2018-12-27 15:37:00",
-              children: [
-                {
-                  id: 67,
-                  name: "system.role.edit",
-                  guard_name: "web",
-                  display_name: "编辑",
-                  parent_id: 66,
-                  lft: 7,
-                  rgt: 8,
-                  depth: 2,
-                  created_at: "2018-12-25 11:55:42",
-                  updated_at: "2018-12-25 11:55:42",
-                  children: []
-                },
-                {
-                  id: 68,
-                  name: "system.role.view",
-                  guard_name: "web",
-                  display_name: "查看",
-                  parent_id: 66,
-                  lft: 9,
-                  rgt: 10,
-                  depth: 2,
-                  created_at: "2018-12-25 11:55:51",
-                  updated_at: "2018-12-25 11:55:51",
-                  children: []
-                },
-                {
-                  id: 70,
-                  name: "system.role.test",
-                  guard_name: "web",
-                  display_name: "测试",
-                  parent_id: 66,
-                  lft: 11,
-                  rgt: 12,
-                  depth: 2,
-                  created_at: "2018-12-27 15:37:00",
-                  updated_at: "2018-12-27 15:37:00",
-                  children: []
-                }
-              ]
-            }
-          },
-          created_at: "2018-12-24",
-          updated_at: "2018-12-27"
-        }
-      ],
-      firstTableData: [
-        {
-          id: 1,
-          name: "节目",
-          display_name: "project"
-        }
-      ],
+      firstTableData: [],
       secondTableData: [],
       tap: null,
       setting: {
@@ -286,8 +195,7 @@ export default {
     };
   },
   created() {
-    this.firstTableData = this.dataTest;
-    // this.getPermissionList();
+    this.getPermissionList();
   },
   methods: {
     modifySecondPerms(item) {
