@@ -6,7 +6,7 @@
   >
     <div class="user-list-content">
       <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-        <el-tab-pane label="一级菜单" name="first">
+        <el-tab-pane label="父权限" name="first">
           <div class="search-wrap">
             <el-form :model="filters" :inline="true">
               <el-form-item label>
@@ -24,9 +24,9 @@
             <el-table-column prop="id" label="ID" min-width="100"/>
             <el-table-column prop="name" label="名称" min-width="150"/>
             <el-table-column prop="display_name" label="英文名称" min-width="150"/>
-            <el-table-column label="操作" min-width="150">
+            <el-table-column label="操作" min-width="180">
               <template slot-scope="scope">
-                <el-button size="small" @click="showSencodMenu(scope.row)">查看</el-button>
+                <el-button size="small" @click="showSencodMenu(scope.row)">查看子权限</el-button>
                 <el-button size="small" type="warning" @click="modifyFirstPerms(scope.row)">修改</el-button>
               </template>
             </el-table-column>
@@ -41,12 +41,12 @@
             />
           </div>
         </el-tab-pane>
-        <el-tab-pane label="一级／二级菜单" name="second" :disabled="secondTabDisable">
+        <el-tab-pane label="子权限" name="second" :disabled="secondTabDisable">
           <div class="actions-wrap">
             <span class="label">数量: {{ pagination.total }}</span>
             <!-- 模板增加 -->
             <div>
-              <el-button size="small" type="success" @click="addSecondPerms">新增二级菜单</el-button>
+              <el-button size="small" type="success" @click="addSecondPerms">新增二级权限</el-button>
             </div>
           </div>
           <el-collapse v-model="activeNames" accordion>
@@ -105,11 +105,18 @@
     <el-dialog :title="title" :visible.sync="permsVisible" @close="dialogClose">
       <el-form v-loading="loading" ref="permsForm" :model="permsForm" label-width="80px">
         <el-form-item
-          :rules="[{ type: 'string', required: true, message: '请输入名称', trigger: 'submit' }]"
-          label="名称"
+          :rules="[{ type: 'string', required: true, message: '请输入中文名称', trigger: 'submit' }]"
+          label="中文名称"
           prop="name"
         >
-          <el-input v-model="permsForm.name" placeholder="请输入名称" class="item-input"/>
+          <el-input v-model="permsForm.display_name" placeholder="请输入中文名称" class="item-input"/>
+        </el-form-item>
+        <el-form-item
+          :rules="[{ type: 'string', required: true, message: '请输入英文名称', trigger: 'submit' }]"
+          label="英文名称"
+          prop="name"
+        >
+          <el-input v-model="permsForm.name" placeholder="请输入英文名称" class="item-input"/>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" size="small" @click="submit('permsForm')">完成</el-button>
@@ -157,11 +164,13 @@ export default {
       permsVisible: false,
       title: "",
       permsForm: {
-        name: ""
+        name: "",
+        display_name: ""
       },
       secondTabDisable: true,
       activeName: "first",
       activeNames: 0,
+      parent_id: 0,
       firstTableData: [
         {
           id: 1,
@@ -195,6 +204,7 @@ export default {
       filters: {
         name: ""
       },
+      permsId: null,
       pagination: {
         total: 0,
         pageSize: 10,
@@ -219,10 +229,31 @@ export default {
     submit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+          let args = {
+            name: this.permsForm.name,
+            display_name: this.permsForm.display_name,
+            parent_id: this.parent_id
+          };
+          if (this.permsId) {
+          } else {
+            savePermission(this, args)
+              .then(res => {
+                this.permsVisible = false;
+                this.getPermissionList();
+                console.log(res);
+              })
+              .catch(err => {
+                this.$message({
+                  type: "warning",
+                  message: err.response.data.message
+                });
+              });
+          }
         }
       });
     },
     addFirstPerms() {
+      this.parent_id = 0;
       this.tap = "first";
       this.loading = false;
       this.permsForm.name = "";
@@ -245,11 +276,11 @@ export default {
       this.secondTabDisable = true;
     },
     addThirdPerms(index) {
-      let perms_id = this.secondTableData[index].id;
+      let parent_id = this.secondTableData[index].id;
       let td = {
         id: "",
-        name: ""
-        // perms_id: perms_id
+        name: "",
+        parent_id: parent_id
       };
       this.secondTableData[index].perms.data.push(td);
     },
@@ -263,15 +294,16 @@ export default {
       this.setting.loading = true;
       let args = {
         page: this.pagination.currentPage,
-        name: this.filters.name
+        display_name: this.filters.name
       };
       if (this.filters.name === "") {
-        delete args.name;
+        delete args.display_name;
       }
       return getPermissionList(this, args)
         .then(response => {
           this.setting.loading = false;
-          this.tableData = response.data;
+          console.log(response)
+          // this.tableData = response.data;
           this.pagination.total = response.meta.pagination.total;
         })
         .catch(error => {
