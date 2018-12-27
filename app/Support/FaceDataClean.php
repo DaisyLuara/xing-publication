@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\Team\V1\Models\TeamBonusRecord;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
 use app\Support\Jenner\Zebra\ArrayGroupBy;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 /**
  * 围观人次清洗
@@ -1929,7 +1930,7 @@ function teamBonusClean()
                 echo "quarterDate========" . $quarterDate;
 
                 $users_bugs = DB::table('team_project_bug_records')
-                    ->where('date', $quarterDate)->groupby("user_id","duty")
+                    ->where('date', $quarterDate)->groupby("user_id", "duty")
                     ->selectRaw("user_id,duty,sum(bug_num) as num")
                     ->get();
 
@@ -1951,7 +1952,7 @@ function teamBonusClean()
                         ->where('user_id', '=', $user_bug->user_id)
                         ->where('date', '>=', $start_date)
                         ->where('date', '<', $end_date)
-                        ->where('type','=',$user_bug->duty)
+                        ->where('type', '=', $user_bug->duty)
                         ->where('status', '=', 0)
                         ->update(['status' => -1]);
                 }
@@ -1978,12 +1979,12 @@ function teamBonusClean()
                 $date = (new Carbon($date))->addDay(1)->toDateString();
                 TeamBonusRecord::create(['date' => $date]);
             } else {
-                DB::rollback();
+                DB::rollBack();
                 echo "执行至" . $date . ':fail' . json_encode($result) . "\n";
                 return false;
             }
         } catch (Exception $e) {
-            DB::rollback();
+            DB::rollBack();
             echo "执行至" . $date . ':出错，' . $e->getMessage() . "\n";
             return false;
         }
