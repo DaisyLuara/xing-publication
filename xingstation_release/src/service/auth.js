@@ -4,7 +4,7 @@ const HOST = process.env.SERVER_URL
 const DOMAIN = process.env.DOMAIN
 const LOGIN_API = '/api/authorizations'
 const LOGOUT_API = '/api/authorizations/current'
-const USERINFO_API = '/api/user?include=permissions,roles'
+const USERINFO_API = '/api/user?include=roles'
 const IMAGE_CAPTCHA = '/api/captchas'
 const USER_API = '/api/user'
 const SMS_CAPTCHA = '/api/verificationCodes'

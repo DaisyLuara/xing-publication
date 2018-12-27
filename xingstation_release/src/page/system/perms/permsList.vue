@@ -22,11 +22,10 @@
           </div>
           <el-table ref="userTable" :data="firstTableData" style="width: 100%">
             <el-table-column prop="id" label="ID" min-width="100"/>
-            <el-table-column prop="name" label="名称" min-width="150"/>
-            <el-table-column prop="display_name" label="英文名称" min-width="150"/>
+            <el-table-column prop="display_name" label="名称" min-width="150"/>
             <el-table-column label="操作" min-width="180">
               <template slot-scope="scope">
-                <el-button size="small" @click="showSencodMenu(scope.row)">查看子权限</el-button>
+                <el-button size="small" @click="showSencodMenu(scope.row,scope.$index)">查看子权限</el-button>
                 <el-button size="small" type="warning" @click="modifyFirstPerms(scope.row)">修改</el-button>
               </template>
             </el-table-column>
@@ -52,7 +51,7 @@
           <el-collapse v-model="activeNames" accordion>
             <el-collapse-item v-for="(item, index) in secondTableData" :name="index" :key="item.id">
               <template slot="title">
-                {{ item.display_name }}
+                {{ item.display_name  }} ({{ item.name }})
                 <el-button
                   type="primary"
                   icon="el-icon-edit"
@@ -165,6 +164,7 @@ export default {
   },
   data() {
     return {
+        index: null,
       loading: true,
       permsVisible: false,
       title: "",
@@ -290,14 +290,14 @@ export default {
     dialogClose() {
       this.permsVisible = false;
     },
-    showSencodMenu(data) {
+    showSencodMenu(data,index) {
+        this.index = index
       this.parent_id = data.id;
       this.secondTableData = [];
       let secondData = data.children;
       for (let sData in secondData) {
         this.secondTableData.push(secondData[sData]);
       }
-      console.log(this.secondTableData);
       this.secondTabDisable = false;
       this.activeName = "second";
     },
@@ -305,7 +305,6 @@ export default {
       this.secondTabDisable = true;
     },
     addThirdPerms(index) {
-      console.log(this.secondTableData[index]);
       let parent_id = this.secondTableData[index].id;
       let td = {
         id: "",
@@ -318,7 +317,7 @@ export default {
       let args = {
         name: data.name,
         display_name: data.display_name,
-        parent_id: parent_id
+        parent_id: data.parent_id
       };
       savePermission(this, args)
         .then(res => {
@@ -326,7 +325,7 @@ export default {
             type: "success",
             message: "保存成功"
           });
-          this.showSencodMenu(this.parent_id);
+            this.getPermissionList()
           this.tap = "second";
         })
         .catch(err => {
@@ -343,7 +342,7 @@ export default {
       let args = {
         name: data.name,
         display_name: data.display_name,
-        parent_id: parent_id
+        parent_id: data.parent_id
       };
       savePermission(this, args, data.id)
         .then(res => {
@@ -351,7 +350,7 @@ export default {
             type: "success",
             message: "修改成功"
           });
-          this.showSencodMenu(this.parent_id);
+            this.getPermissionList()
           this.tap = "second";
         })
         .catch(err => {
@@ -374,6 +373,9 @@ export default {
         .then(response => {
           this.setting.loading = false;
           this.firstTableData = response.data;
+          if(this.index !== null){
+              this.showSencodMenu(this.firstTableData[this.index],this.index)
+          }
           this.pagination.total = response.meta.pagination.total;
         })
         .catch(error => {
