@@ -235,7 +235,7 @@
               slot="tip"
               style="display:inline-block"
               class="el-upload__tip"
-            >支持文件类型：doc(.docx)、.pdf</div>
+            >支持文件类型：doc(.docx)、.pdf、.xlsx、.xls</div>
           </el-upload>
         </el-form-item>
         <el-form-item label-position="right">
@@ -471,12 +471,6 @@ export default {
       }
     },
     confirmProgramHandle(row) {
-      // this.$confirm("确认通过吗?", "提示", {
-      //   confirmButtonText: "确定",
-      //   cancelButtonText: "取消",
-      //   type: "warning"
-      // })
-      //   .then(() => {
       let id = row.id;
       let status = row.status;
       let testerMediaIds = [];
@@ -486,13 +480,6 @@ export default {
       } else {
         this.confirmProgram(id);
       }
-      // })
-      // .catch(() => {
-      //   this.$message({
-      //     type: "info",
-      //     message: "已取消确认"
-      //   });
-      // });
     },
     confirmProgram(id, args) {
       confirmProgram(this, id, args)
@@ -542,9 +529,19 @@ export default {
       let random = parseInt(Math.random() * 10 + 1, 10);
       let suffix = time + "_" + random + "_" + name;
       let key = encodeURI(`${suffix}`);
-      if (!(type === ".docx" || type === ".doc" || type === ".pdf")) {
+      if (
+        !(
+          type === ".docx" ||
+          type === ".doc" ||
+          type === ".pdf" ||
+          type === ".xlsx" ||
+          type === ".xls"
+        )
+      ) {
         this.uploadForm.token = "";
-        return this.$message.error("文件类型只支持(docx、doc、pdf)");
+        return this.$message.error(
+          "文件类型只支持(docx、doc、pdf、.xlsx、.xls)"
+        );
       }
       if (!isLt100M) {
         this.uploadForm.token = "";
