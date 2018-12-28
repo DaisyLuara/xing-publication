@@ -24,15 +24,9 @@ export default {
         })
         context.setting.submiting = false
         this.refreshUserInfo(context).then(res => {
-          if (context.$cookie.get('permissions').indexOf('setting') > -1) {
-            context.$router.push({
-              path: '/'
-            })
-          } else {
-            context.$router.push({
-              path: redirect ? redirect : '/'
-            })
-          }
+          context.$router.push({
+            path: redirect ? redirect : '/'
+          })
         })
       })
       .catch(err => {
