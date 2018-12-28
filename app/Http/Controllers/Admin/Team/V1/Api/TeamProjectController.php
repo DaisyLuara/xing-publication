@@ -130,9 +130,6 @@ class TeamProjectController extends Controller
         $params = $request->all();
         $member = $request->member ?? [];
         $this->checkParams($request);
-        if (isset($params['type']) && $teamProject->status > 2 && $teamProject->type != $params['type']) {
-            abort(403, '项目已确认，无法修改节目类型');
-        }
 
         $project = Project::query()->where('versionname', $request->belong)->first();
 
