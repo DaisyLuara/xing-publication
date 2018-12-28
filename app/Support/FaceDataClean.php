@@ -1790,10 +1790,7 @@ function teamBonusClean()
 
             $teamProject = TeamProject::query()->where('belong', $item->belong)->first();
             //投放时长 当前日期-投放日期
-            $launchTime = (new Carbon($date))->diffInDays($launchDate);
-            if ($date < $launchDate && $launchTime > 60) {
-                $launchTime = 1000;
-            }
+            $launchTime = $date >= $launchDate ? (new Carbon($date))->diffInDays($launchDate) : 1000;
 
             //新颖性系数T $factor
             $factor = 0;
