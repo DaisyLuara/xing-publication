@@ -46,7 +46,7 @@ class UserTransformer extends TransformerAbstract
         foreach ($permissions as $permission) {
             $permId[] = $permission->id;
         }
-        return Permission::query()->whereIn('id', $permId)->get()->toHierarchy();
+        return Permission::query()->whereIn('id', $permId)->selectRaw('id,name,parent_id')->get()->toHierarchy();
     }
 
 }
