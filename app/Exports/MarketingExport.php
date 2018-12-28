@@ -14,12 +14,16 @@ class MarketingExport extends AbstractExport
         $this->startDate = $request->start_date;
         $this->endDate = $request->end_date;
         $this->fileName = '营销创意成果';
+        $this->sceneId = $request->scene_id;
     }
 
     public function collection()
     {
-        $faceCount = DB::connection('ar')->table('xs_face_count_log')
-            ->join('ar_product_list', 'belong', '=', 'versionname')
+        $query = DB::connection('ar')->table('xs_face_count_log');
+        if ($this->sceneId) {
+            $query->where('ao.sid', '=', $this->sceneId);
+        }
+        $faceCount = $query->join('ar_product_list', 'belong', '=', 'versionname')
             ->join('avr_official as ao', 'xs_face_count_log.oid', '=', 'ao.oid')
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
             ->join('avr_official_scene as aos', 'ao.sid', '=', 'aos.sid')
