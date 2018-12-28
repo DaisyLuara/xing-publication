@@ -40,22 +40,22 @@
             <template slot-scope="scope">
               <el-form label-position="left" inline class="demo-table-expand">
                 <el-form-item label="ID">
-                  <span>{{ id }}</span>
+                  <span>{{ scope.row.id }}</span>
                 </el-form-item>
                 <el-form-item label="名称">
-                  <span>{{ project_name }}</span>
+                  <span>{{ scope.row.project_name }}</span>
                 </el-form-item>
                 <el-form-item label="已发奖金">
-                  <span>{{ got_money }}</span>
+                  <span>{{ scope.row.got_money }}</span>
                 </el-form-item>
                 <el-form-item label="冻结奖金">
-                  <span>{{ freeze_money }}</span>
+                  <span>{{ scope.row.freeze_money }}</span>
                 </el-form-item>
                 <el-form-item label="重大责任">
-                  <span>{{ bug_record }}</span>
+                  <span>{{ scope.row.bug_record }}</span>
                 </el-form-item>
                 <el-form-item label="扣除奖金">
-                  <span>{{ deduction_money }}</span>
+                  <span>{{ scope.row.deduction_money }}</span>
                 </el-form-item>
               </el-form>
             </template>
