@@ -1801,7 +1801,7 @@ function teamBonusClean()
                     //主管确认
                     if ($teamProject->status == 4) {
                         //提前制作时间 投放时间-上线时间
-                        $advanceTime = $launchDate >= date('Y-m-d',$teamProject->online_date)  ? (new Carbon($launchDate))->diffInDays($teamProject->online_date) : 0;
+                        $advanceTime = $launchDate >= Carbon::parse($teamProject->online_date)->toDateString()  ? (new Carbon($launchDate))->diffInDays($teamProject->online_date) : 0;
                         if ($advanceTime >= 90) {
                             $factor = 1.2;
                         }
