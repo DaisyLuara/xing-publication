@@ -56,7 +56,6 @@
                 @click="deleteDocument(scope.row)"
               >删除</el-button>
               <el-button
-                v-if="legalAffairsManager || bonusManage"
                 size="small"
                 @click="downloadDocument(scope.row)"
               >下载</el-button>
