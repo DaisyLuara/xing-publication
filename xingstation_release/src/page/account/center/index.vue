@@ -220,7 +220,7 @@ export default {
   },
   created() {
     let user_info = JSON.parse(Cookies.get("user_info"));
-    this.role = user_info.roles.data;
+    this.roles = user_info.roles.data;
     this.getPersonRewardList();
     this.getPersonRewardTotal();
     this.getPersonFutureRewardTotal();
