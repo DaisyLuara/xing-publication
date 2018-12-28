@@ -106,9 +106,9 @@ import {
   getPersonRewardList,
   getPersonRewardTotal,
   handleDateTypeTransform,
-  getPersonFutureRewardTotal,
-  Cookies
+  getPersonFutureRewardTotal
 } from "service";
+import { Cookies } from "utils/cookies";
 import {
   Button,
   Input,
