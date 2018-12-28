@@ -34,6 +34,11 @@ class UserTransformer extends TransformerAbstract
         return $this->collection($user->roles, new RoleTransformer());
     }
 
+//    public function includePermissions(User $user)
+//    {
+//        return $this->collection($user->getAllPermissions(), new PermissionTransformer());
+//    }
+
     private function getUserPermission(User $user)
     {
         $permissions = $user->getAllPermissions();
@@ -43,4 +48,5 @@ class UserTransformer extends TransformerAbstract
         }
         return Permission::query()->whereIn('id', $permId)->get()->toHierarchy();
     }
+
 }
