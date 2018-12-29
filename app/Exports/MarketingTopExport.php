@@ -21,12 +21,16 @@ class MarketingTopExport extends AbstractExport
         $this->startDate = $request->start_date;
         $this->endDate = $request->end_date;
         $this->fileName = '营销创意成果点位top100';
+        $this->sceneId = $request->scene_id;
     }
 
     public function collection()
     {
-        $faceCount1 = DB::connection('ar')->table('xs_face_count_log as fcl')
-            ->join('ar_product_list as apl', 'belong', '=', 'versionname')
+        $query = DB::connection('ar')->table('xs_face_count_log as fcl');
+        if ($this->sceneId) {
+            $query->whereRaw("ao.sid='$this->sceneId'");
+        }
+        $faceCount1 = $query->join('ar_product_list as apl', 'belong', '=', 'versionname')
             ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
             ->join('avr_official_scene as aos', 'ao.sid', '=', 'aos.sid')
