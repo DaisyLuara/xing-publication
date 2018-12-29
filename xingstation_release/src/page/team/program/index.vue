@@ -465,6 +465,10 @@ export default {
     },
     cancel() {
       this.dialogFormVisible = false;
+      this.resetUploadForm();
+    },
+    resetUploadForm() {
+      this.fileList = [];
     },
     submit() {
       let testerMediaIds = [];
@@ -503,9 +507,11 @@ export default {
             message: "确认成功!"
           });
           this.dialogFormVisible = false;
+          this.resetUploadForm();
           this.getProgramList();
         })
         .catch(err => {
+          this.resetUploadForm();
           this.$message({
             type: "warning",
             message: err.response.data.message

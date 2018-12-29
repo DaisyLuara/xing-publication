@@ -661,7 +661,8 @@ function mergeActiveOmoLook()
     while ($date < $currentDate) {
         $sql1 = DB::connection('ar')->table('face_count_log as fcl')
             ->whereRaw("date_format(fcl.date,'%Y-%m-%d')='$date'")
-            ->selectRaw("fcl.oid,fcl.belong,looknum,playernum,outnum,scannum,lovenum");
+            ->selectRaw("fcl.oid,fcl.belong,looknum,playernum,outnum,scannum,lovenum")
+            ->groupBy(DB::raw("fcl.oid,fcl.belong"));
 
         $clientDate = strtotime($date . ' 00:00:00') * 1000;
         $sql2 = DB::connection('ar')->table('xs_face_active_player')

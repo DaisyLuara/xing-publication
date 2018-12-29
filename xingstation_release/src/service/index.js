@@ -41,3 +41,6 @@ export * from './search'
 
 // 节目
 export * from './project'
+
+//微信卡包
+export * from './wx'
