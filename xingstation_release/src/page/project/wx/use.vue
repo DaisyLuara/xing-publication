@@ -263,8 +263,8 @@ export default {
   },
   methods: {
     //新增
-    addSingleCard(args) {
-      addSingleCard(this, args)
+    addSingleCard(args, args1) {
+      addSingleCard(this, args, args1)
         .then(res => {
           console.log(res)
           if (res.errcode === 0) {
@@ -278,8 +278,8 @@ export default {
         });
     },
     //修改
-    modifySingleCard(args) {
-      modifySingleCard(this, args)
+    modifySingleCard(args, args1) {
+      modifySingleCard(this, args, args1)
         .then(res => {
           console.log(res)
           if (res.errcode === 0) {
@@ -338,20 +338,17 @@ export default {
     },
     //新增
     save() {
-      let card = { card: this.data }
-      this.addSingleCard(card);
+      let card = this.data
+      let params = '?authorizer_id=6'
+      this.addSingleCard(params, card);
     },
     //修改
     update() {
       let card = this.data
-      let query = {
-        authorizer_id: 6,
-        card_id: this.card_id,
-        card: card
-      }
+      let params = '?authorizer_id=6&card_id=' + this.card_id
       console.log('更新')
       console.log(card)
-      this.modifySingleCard(query)
+      this.modifySingleCard(params, card)
     },
     dataHandle(type) {
       this.type = type
