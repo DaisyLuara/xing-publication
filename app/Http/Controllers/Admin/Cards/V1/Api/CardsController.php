@@ -13,15 +13,10 @@ class CardsController extends Controller
     //获取卡片实例
     protected function getCard($authorizer_id)
     {
-        $user = $this->user();
-        if ($user->hasPermissionTo('wechat_card')) {
-            $app = EasyWeChat::openPlatform();
-            componentVerify($app);
-            $official_account = getOfficialAccount($authorizer_id, $app);
-            return $official_account->card;
-        } else {
-            abort(403, "无微信卡券权限,请联系管理员");
-        }
+        $app = EasyWeChat::openPlatform();
+        componentVerify($app);
+        $official_account = getOfficialAccount($authorizer_id, $app);
+        return $official_account->card;
     }
 
     //获取素材实例
