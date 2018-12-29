@@ -211,7 +211,7 @@
       </div>
     </div>
     <el-dialog :visible.sync="dialogFormVisible" :close-on-click-modal="false" :show-close="false">
-      <el-form label-position="left" label-width="80px">
+      <el-form :model="testForm" ref="testForm" label-position="left" label-width="80px">
         <el-form-item
           :rules="[{ required: true, message: '请上传测试文档', trigger: 'submit' }]"
           label="测试文档"
@@ -238,9 +238,17 @@
             >支持文件类型：doc(.docx)、.pdf、.xlsx、.xls</div>
           </el-upload>
         </el-form-item>
+        <el-form-item label="测试备注" prop="test_remark">
+          <el-input
+            v-model="testForm.test_remark"
+            :maxlength="1000"
+            type="textarea"
+            placeholder="请填写测试备注"
+          />
+        </el-form-item>
         <el-form-item label-position="right">
           <el-button size="small" @click="cancel">取 消</el-button>
-          <el-button size="small" type="primary" @click="submit">确 定</el-button>
+          <el-button size="small" type="primary" @click="submit('testForm')">确 定</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -294,6 +302,9 @@ export default {
   },
   data() {
     return {
+      testForm: {
+        test_remark: ""
+      },
       own: "",
       Domain: "http://upload.qiniu.com",
       uploadToken: "",
@@ -454,6 +465,7 @@ export default {
       this.resetUploadForm();
     },
     resetUploadForm() {
+      this.testForm.test_remark = "";
       this.fileList = [];
     },
     submit() {
@@ -465,6 +477,10 @@ export default {
         });
         this.ids = testerMediaIds.join(",");
         args.media_id = this.ids;
+        args.test_remark = this.testForm.test_remark;
+        if (!this.testForm.test_remark) {
+          delete args.test_remark;
+        }
         this.confirmProgram(this.confirmId, args);
       } else {
         this.$message({

@@ -1913,7 +1913,8 @@ function teamBonusClean()
                         'type' => $item->type,
                         'experience_money' => round($item->money * $item->factor * $item->rate, 6),
                         'total' => round($item->money * $item->factor * $item->rate, 6),
-                        'date' => $date
+                        'date' => $date,
+                        'get_date' => $date,
                     ];
                 }
             }
@@ -1963,7 +1964,7 @@ function teamBonusClean()
                     ->where('status', '=', 0);
 
                 $future_rewards_array = $future_rewards
-                    ->selectRaw("user_id,project_name,belong,type,experience_money,total,date")
+                    ->selectRaw("user_id,project_name,belong,type,experience_money,total,date,get_date")
                     ->get()->map(function ($value) {
                         return (array)$value;
                     })->toArray();

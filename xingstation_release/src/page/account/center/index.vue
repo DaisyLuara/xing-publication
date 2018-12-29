@@ -22,6 +22,17 @@
                 align="right"
               ></el-date-picker>
             </el-form-item>
+            <el-form-item label prop="getDate">
+              <el-date-picker
+                v-model="filters.getDate"
+                :clearable="false"
+                :picker-options="pickerOptions"
+                type="daterange"
+                start-placeholder="发放开始时间"
+                end-placeholder="发放结束时间"
+                align="right"
+              ></el-date-picker>
+            </el-form-item>
             <el-form-item label prop>
               <el-button type="primary" size="small" @click="search()">搜索</el-button>
               <el-button size="small" @click="resetForm('filters')">重置</el-button>
@@ -77,7 +88,13 @@
             label="名称"
             min-width="100"
           />
-          <el-table-column :show-overflow-tooltip="true" prop="date" label="获取时间" min-width="100"/>
+          <el-table-column :show-overflow-tooltip="true" prop="date" label="获取日期" min-width="100"/>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="get_date"
+            label="发放日期"
+            min-width="100"
+          />
           <el-table-column :show-overflow-tooltip="true" prop="type" label="类型" min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
@@ -140,7 +157,8 @@ export default {
         beginDate: [
           new Date().getTime() - 3600 * 1000 * 24 * 6,
           new Date().getTime()
-        ]
+        ],
+        getDate: []
       },
       setting: {
         loading: false,
@@ -235,9 +253,15 @@ export default {
       let args = {
         name: this.filters.name,
         start_date: handleDateTypeTransform(this.filters.beginDate[0]),
-        end_date: handleDateTypeTransform(this.filters.beginDate[1])
+        end_date: handleDateTypeTransform(this.filters.beginDate[1]),
+        start_get_date: handleDateTypeTransform(this.filters.getDate[0]),
+        end_get_date: handleDateTypeTransform(this.filters.getDate[1])
       };
       !this.filters.name ? delete args.name : args;
+      if (JSON.stringify(this.filters.getDate) === "[]") {
+        delete args.start_get_date;
+        delete args.end_get_date;
+      }
       getPersonFutureRewardTotal(this, args)
         .then(res => {
           this.freezeTotal = res.total_reward;
@@ -253,9 +277,15 @@ export default {
       let args = {
         name: this.filters.name,
         start_date: handleDateTypeTransform(this.filters.beginDate[0]),
-        end_date: handleDateTypeTransform(this.filters.beginDate[1])
+        end_date: handleDateTypeTransform(this.filters.beginDate[1]),
+        start_get_date: handleDateTypeTransform(this.filters.getDate[0]),
+        end_get_date: handleDateTypeTransform(this.filters.getDate[1])
       };
       !this.filters.name ? delete args.name : args;
+      if (JSON.stringify(this.filters.getDate) === "[]") {
+        delete args.start_get_date;
+        delete args.end_get_date;
+      }
       getPersonRewardTotal(this, args)
         .then(res => {
           this.moneyTotal = res.total_reward;
@@ -273,7 +303,9 @@ export default {
         page: this.pagination.currentPage,
         name: this.filters.name,
         start_date: handleDateTypeTransform(this.filters.beginDate[0]),
-        end_date: handleDateTypeTransform(this.filters.beginDate[1])
+        end_date: handleDateTypeTransform(this.filters.beginDate[1]),
+        start_get_date: handleDateTypeTransform(this.filters.getDate[0]),
+        end_get_date: handleDateTypeTransform(this.filters.getDate[1])
       };
       if (this.filters.name === "") {
         delete args.name;
@@ -284,6 +316,10 @@ export default {
       if (JSON.stringify(this.filters.beginDate) === "[]") {
         delete args.start_date;
         delete args.end_date;
+      }
+      if (JSON.stringify(this.filters.getDate) === "[]") {
+        delete args.start_get_date;
+        delete args.end_get_date;
       }
       getPersonRewardList(this, args)
         .then(res => {
