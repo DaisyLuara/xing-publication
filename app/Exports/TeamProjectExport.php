@@ -48,9 +48,9 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
             'hidol_patent' => "Hidol专利",
             'plan' => '节目统筹',
             'tester' => '节目测试',
-            'tester_quality' => '节目测试责任',
+            'tester_quality' => '节目测试总责',
             'operation' => '平台运营',
-            'operation_quality' => '平台运营责任'
+            'operation_quality' => '平台运营总责'
         ];
         $projectAttributeMapping = [
             '0' => '不计入',
@@ -69,8 +69,8 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
             '4' => '主管已确认'
         ];
         $interactionAttributeMapping = [
-            'interaction_api' => '中间件属性',
-            'interaction_linkage' => '联动引擎属性'
+            'interaction_api' => '中间件调用',
+            'interaction_linkage' => '交互引擎'
         ];
         $sql = DB::table('team_projects as tp')
             ->leftJoin('team_project_members as tpm', 'tp.id', '=', 'tpm.team_project_id')
@@ -97,7 +97,7 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
             users.name as applicant,
             tp.type as project_type,
             project_name,tp.status,online_date,launch_date,
-            project_attribute,link_attribute,xo_attribute,h5_attribute,
+            project_attribute,link_attribute,h5_attribute,
             interaction_attribute,hidol_attribute,
             individual_attribute,contracts.contract_number,contracts.amount,
             art_innovate,dynamic_innovate,interact_innovate,
@@ -113,7 +113,7 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
         $project = DB::table(DB::raw("({$sql->toSql()}) as a"))
             ->selectRaw("applicant,
             project_type,project_name,status,online_date,launch_date,
-            project_attribute,link_attribute,xo_attribute,h5_attribute,
+            project_attribute,link_attribute,h5_attribute,
             interaction_attribute,hidol_attribute,
             individual_attribute,contract_number,amount,
             art_innovate,dynamic_innovate,interact_innovate,remark" . $case)
@@ -132,7 +132,6 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
                     'launch_date' => $item->launch_date,
                     'project_attribute' => $projectAttributeMapping[$item->project_attribute],
                     'link_attribute' => $item->link_attribute == 1 ? '是' : '否',
-                    'xo_attribute' => $item->xo_attribute == 1 ? '是' : '否',
                     'h5_attribute' => $item->h5_attribute == 1 ? '基础' : '复杂',
                     'interaction_attribute' => implode(',', $interaction_attribute_text),
                     'hidol_attribute' => $item->hidol_attribute == 1 ? '是' : '否',
@@ -153,7 +152,7 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
 
 
         $header1 = ["申请人", "节目类", "节目名称", "状态", "上线时间", "投放时间", "节目属性", "联动属性",
-            "小偶属性", "H5属性", "交互属性", "Hidol属性", "定制属性", "合同编号", "合同金额",
+            "H5属性", "交互属性", "Hidol属性", "定制属性", "合同编号", "合同金额",
             "艺术风格创新点", "动效体验创新点", "交互技术创新点"];
         foreach ($typeMapping as $item) {
             $header1[] = $item;

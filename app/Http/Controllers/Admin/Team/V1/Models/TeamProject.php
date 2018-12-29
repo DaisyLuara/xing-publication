@@ -34,6 +34,7 @@ class TeamProject extends Model
         'operation_media_id',
         'tester_media_id',
         'animation_media_id',
+        'test_remark',
 //        'plan_media_id',
     ];
 
