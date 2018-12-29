@@ -220,7 +220,7 @@ class MiniCouponController extends Controller
                 'code' => uniqid(),
                 'coupon_batch_id' => $couponBatch->id,
                 'status' => 3,
-                'oid' => $request->input('oid'),
+                'oid' => $member->oid,
                 'member_uid' => $memberUID,
                 'qiniu_id' => $request->get('qiniu_id') ? : 0,
                 'start_date' => $startDate,
