@@ -344,7 +344,11 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="上传素材" prop="ids">
+            <el-form-item
+              :rules="[{ required: true, message: '请上传素材', trigger: 'submit' }]"
+              label="上传素材"
+              prop=""
+            >
               <el-upload
                 ref="upload"
                 :action="Domain"
@@ -1305,6 +1309,8 @@ export default {
       }
     },
     submit(formName) {
+      console.log(this.ids)
+      this.getQiniuToken();
       let animationMediaIds = [];
       if (this.fileList.length > 0) {
         this.fileList.map(r => {
