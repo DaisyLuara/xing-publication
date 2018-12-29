@@ -33,10 +33,10 @@ const getSingleCard = (context, args) => {
   })
 }
 //修改单个卡券
-const modifySingleCard = (context, args) => {
+const modifySingleCard = (context, args, args1) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .patch(HOST + UPDATE_SINGLECARD_API, { params: args })
+      .patch(HOST + UPDATE_SINGLECARD_API + args, { params: args1 })
       .then(response => {
         resolve(response.data)
       })
@@ -59,10 +59,10 @@ const deleteSingleCard = (context, args) => {
   })
 }
 //新增卡券
-const addSingleCard = (context, args) => {
+const addSingleCard = (context, args, args1) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .post(HOST + ADD_SINGLECARD_API, { params: args })
+      .post(HOST + ADD_SINGLECARD_API + args, { params: args1 })
       .then(response => {
         resolve(response.data)
       })
