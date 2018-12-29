@@ -36,7 +36,7 @@ const getSingleCard = (context, args) => {
 const modifySingleCard = (context, args, args1) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .patch(HOST + UPDATE_SINGLECARD_API + args, { params: args1 })
+      .patch(HOST + UPDATE_SINGLECARD_API + args, args1)
       .then(response => {
         resolve(response.data)
       })
@@ -62,7 +62,7 @@ const deleteSingleCard = (context, args) => {
 const addSingleCard = (context, args, args1) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .post(HOST + ADD_SINGLECARD_API + args, { params: args1 })
+      .post(HOST + ADD_SINGLECARD_API + args, args1)
       .then(response => {
         resolve(response.data)
       })
@@ -75,7 +75,7 @@ const addSingleCard = (context, args, args1) => {
 const modifyInventory = (context, args) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .post(HOST + MODIFY_INVENTORY_API, { params: args })
+      .post(HOST + MODIFY_INVENTORY_API, args)
       .then(response => {
         resolve(response.data)
       })
