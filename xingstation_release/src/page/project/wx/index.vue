@@ -394,7 +394,7 @@ export default {
     },
     //确认修改库存
     confirmModify(args) {
-      if (!this.validate()) {
+      if (!this.validate(args)) {
         return
       }
       let updateParams = {

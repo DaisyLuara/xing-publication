@@ -1,11 +1,11 @@
 const HOST = process.env.SERVER_URL
 
 const CARD_API = '/api/cards/list'
-const SINGLECARD_API = '/api/cards/show/'
-const UPDATE_SINGLECARD_API = '/api/cards/update/'
-const DELETE_SINGLECARD_API = '/api/cards/delete/'
-const ADD_SINGLECARD_API = '/api/cards/create/'
-const MODIFY_INVENTORY_API = '/api/cards/stock/'
+const SINGLECARD_API = '/api/cards/show'
+const UPDATE_SINGLECARD_API = '/api/cards/update'
+const DELETE_SINGLECARD_API = '/api/cards/delete'
+const ADD_SINGLECARD_API = '/api/cards/create'
+const MODIFY_INVENTORY_API = '/api/cards/stock'
 //查卡券列表
 const getCardList = (context, args) => {
   return new Promise(function(resolve, reject) {
