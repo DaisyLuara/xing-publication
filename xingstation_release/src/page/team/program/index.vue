@@ -238,10 +238,7 @@
             >支持文件类型：doc(.docx)、.pdf、.xlsx、.xls</div>
           </el-upload>
         </el-form-item>
-        <el-form-item
-          label="测试备注"
-          prop="test_remark"
-        >
+        <el-form-item label="测试备注" prop="test_remark">
           <el-input
             v-model="testForm.test_remark"
             :maxlength="1000"
@@ -468,6 +465,7 @@ export default {
       this.resetUploadForm();
     },
     resetUploadForm() {
+      this.testForm.test_remark = "";
       this.fileList = [];
     },
     submit() {
@@ -479,6 +477,10 @@ export default {
         });
         this.ids = testerMediaIds.join(",");
         args.media_id = this.ids;
+        args.test_remark = this.testForm.test_remark;
+        if (!this.testForm.test_remark) {
+          delete args.test_remark;
+        }
         this.confirmProgram(this.confirmId, args);
       } else {
         this.$message({
