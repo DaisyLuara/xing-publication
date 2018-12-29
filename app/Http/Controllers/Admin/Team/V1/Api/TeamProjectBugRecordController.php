@@ -41,7 +41,9 @@ class TeamProjectBugRecordController extends Controller
             ]);
         }
 
-        $teamProjectBugRecord = $query->groupBy("team_project_id", "occur_date")->paginate(10);
+        $teamProjectBugRecord = $query->groupBy("team_project_id", "occur_date")
+            ->orderBy("occur_date","desc")
+            ->paginate(10);
 
         return $this->response()->paginator($teamProjectBugRecord, new TeamProjectBugRecordTransformer());
     }
