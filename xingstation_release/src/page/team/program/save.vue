@@ -1,10 +1,17 @@
 <template>
   <div class="item-wrap-template">
-    <div v-loading="setting.loading" :element-loading-text="setting.loadingText" class="pane">
-      <div
-        class="pane-title"
-      >{{ programID ? (((role.name==='project-manager' && status===1) || role.name === 'legal-affairs-manager' || role.name === 'bonus-manager') ? '修改项目' : '查看项目') : '新增项目'}}</div>
-      <el-form ref="programForm" :model="programForm" label-position="left" label-width="80px">
+    <div
+      v-loading="setting.loading"
+      :element-loading-text="setting.loadingText"
+      class="pane"
+    >
+      <div class="pane-title">{{ programID ? (((role.name==='project-manager' && status===1) || role.name === 'legal-affairs-manager' || role.name === 'bonus-manager') ? '修改项目' : '查看项目') : '新增项目'}}</div>
+      <el-form
+        ref="programForm"
+        :model="programForm"
+        label-position="left"
+        label-width="80px"
+      >
         <el-row>
           <el-col :span="12">
             <el-form-item
@@ -31,7 +38,10 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="申请人" prop="applicant_name">
+            <el-form-item
+              label="申请人"
+              prop="applicant_name"
+            >
               <el-input
                 v-model="programForm.applicant_name"
                 :disabled="true"
@@ -43,7 +53,10 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="节目属性" prop="project_attribute">
+            <el-form-item
+              label="节目属性"
+              prop="project_attribute"
+            >
               <el-radio-group v-model="programForm.project_attribute">
                 <el-radio :label="1">基础条目</el-radio>
                 <el-radio :label="2">通用节目</el-radio>
@@ -53,7 +66,10 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="联动属性" prop="link_attribute">
+            <el-form-item
+              label="联动属性"
+              prop="link_attribute"
+            >
               <el-radio-group v-model="programForm.link_attribute">
                 <el-radio :label="1">是</el-radio>
                 <el-radio :label="0">否</el-radio>
@@ -63,15 +79,24 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="H5属性" prop="h5_attribute">
-              <el-radio-group v-model="programForm.h5_attribute" @change="h5Handle">
+            <el-form-item
+              label="H5属性"
+              prop="h5_attribute"
+            >
+              <el-radio-group
+                v-model="programForm.h5_attribute"
+                @change="h5Handle"
+              >
                 <el-radio :label="1">基础模版</el-radio>
                 <el-radio :label="2">复杂模版</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="小偶属性" prop="xo_attribute">
+            <el-form-item
+              label="小偶属性"
+              prop="xo_attribute"
+            >
               <el-radio-group v-model="programForm.xo_attribute">
                 <el-radio :label="1">是</el-radio>
                 <el-radio :label="0">否</el-radio>
@@ -81,7 +106,10 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="节目类型" prop="type">
+            <el-form-item
+              label="节目类型"
+              prop="type"
+            >
               <el-radio-group v-model="programForm.type">
                 <el-radio :label="0">正常节目</el-radio>
                 <el-radio :label="1">提前节目</el-radio>
@@ -91,10 +119,11 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="交互技术" prop="interactionVal">
-              <span
-                style="color: #999;font-size:14px;margin-right: 15px;"
-              >{{ interactionRate }} * 系数</span>
+            <el-form-item
+              label="交互技术"
+              prop="interactionVal"
+            >
+              <span style="color: #999;font-size:14px;margin-right: 15px;">{{ interactionRate }} * 系数</span>
               <el-select
                 v-model="programForm.interactionVal"
                 :loading="searchLoading"
@@ -120,7 +149,10 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="节目创意" prop="creative">
+            <el-form-item
+              label="节目创意"
+              prop="creative"
+            >
               <span style="color: #999;font-size:14px;margin-right: 7px;">{{ creativeRate }} * 系数</span>
               <el-select
                 v-model="programForm.creative"
@@ -149,7 +181,10 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="H5开发" prop="H5Val">
+            <el-form-item
+              label="H5开发"
+              prop="H5Val"
+            >
               <span
                 :style="h5Rate==='0.1' ? 'margin-right: 15px;' : 'margin-right: 0;'"
                 style="color: #999;font-size:14px;"
@@ -179,7 +214,10 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="设计动画" prop="animate">
+            <el-form-item
+              label="设计动画"
+              prop="animate"
+            >
               <span style="color: #999;font-size:14px;">{{ animateRate }} * 系数</span>
               <el-select
                 v-model="programForm.animate"
@@ -208,7 +246,10 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="节目统筹" prop="whole">
+            <el-form-item
+              label="节目统筹"
+              prop="whole"
+            >
               <span style="color: #999;font-size:14px;margin-right: 8px;">{{ wholeRate }} * 系数</span>
               <el-select
                 v-model="programForm.whole"
@@ -235,7 +276,10 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="节目测试" prop="test">
+            <el-form-item
+              label="节目测试"
+              prop="test"
+            >
               <span style="color: #999;font-size:14px;">{{ testRate }} * 系数</span>
               <el-select
                 v-model="programForm.test"
@@ -264,7 +308,10 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="平台运营" prop="platform">
+            <el-form-item
+              label="平台运营"
+              prop="platform"
+            >
               <span style="color: #999;font-size:14px;margin-right: 8px;">{{ platformRate }} * 系数</span>
               <el-select
                 v-model="programForm.platform"
@@ -336,7 +383,11 @@
             class="text-input"
           />
         </el-form-item>
-        <el-form-item label-width="120px" label="备注" prop="remark">
+        <el-form-item
+          label-width="120px"
+          label="备注"
+          prop="remark"
+        >
           <el-input
             v-model="programForm.remark"
             :autosize="{ minRows: 2}"
@@ -346,10 +397,11 @@
             class="text-input"
           />
         </el-form-item>
-        <el-form-item 
-          label="上传素材" 
+        <el-form-item
+          label="上传素材"
           prop="ids"
-          style="width:800px;">
+          style="width:800px;"
+        >
           <el-upload
             ref="upload"
             :action="Domain"
@@ -364,7 +416,10 @@
             :on-exceed="handleExceed"
             class="upload-demo"
           >
-            <el-button size="mini" type="success">点击上传</el-button>
+            <el-button
+              size="mini"
+              type="success"
+            >点击上传</el-button>
             <div
               slot="tip"
               style="display:inline-block"
@@ -389,16 +444,33 @@
       </el-form>
     </div>
     <!-- 修改比列 -->
-    <el-dialog :visible.sync="dialogFormVisible" :show-close="false" title="绩效更改">
-      <el-form :model="form" label-width="90px">
+    <el-dialog
+      :visible.sync="dialogFormVisible"
+      :show-close="false"
+      title="绩效更改"
+    >
+      <el-form
+        :model="form"
+        label-width="90px"
+      >
         <el-form-item label="总点数">
-          <el-input v-model="form.total" :disabled="disabledChange"/>
+          <el-input
+            v-model="form.total"
+            :disabled="disabledChange"
+          />
         </el-form-item>
-        <el-form-item v-for="item in peopleList" :key="item.id" :label="item.user_name">
-          <el-input v-model="item.rate"/>
+        <el-form-item
+          v-for="item in peopleList"
+          :key="item.id"
+          :label="item.user_name"
+        >
+          <el-input v-model="item.rate" />
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogFormVisible = false,disabledChange = true">取 消</el-button>
         <el-button
           v-if="(role.name === 'project-manager' && (status === 1 || status === 2)) || role.name === 'legal-affairs-manager'|| role.name === 'bonus-manager'"
@@ -579,7 +651,7 @@ export default {
     handleExceed(files, fileList) {
       this.$message.warning(
         `当前限制选择 1 个文件，本次选择了 ${
-          files.length
+        files.length
         } 个文件，共选择了 ${files.length + fileList.length} 个文件`
       );
     },
@@ -617,6 +689,7 @@ export default {
       getMediaUpload(this, params)
         .then(res => {
           this.fileList.push(res);
+          console.log(this.fileList)
         })
         .catch(err => {
           this.$message({
