@@ -25,6 +25,7 @@ class TeamPersonReward extends Model
         'total',
         'date',
         'type',
+        'get_date'
     ];
     public $timestamps = false;
 

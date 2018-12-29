@@ -44,6 +44,7 @@ class TeamProjectTransformer extends TransformerAbstract
             'media' => $teamProject->media ? $teamProject->media->toArray() : [],
             'animation_media' => $teamProject->animation_media ? $teamProject->animation_media->toArray() : null,
             'tester_media' => $teamProject->tester_media ? $teamProject->tester_media->toArray() : null,
+            'test_remark' => $teamProject->test_remark,
         ];
     }
 

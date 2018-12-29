@@ -136,6 +136,11 @@ class TeamProjectController extends Controller
         if (isset($params['tester_media_id']) && !$params['tester_media_id']) {
             unset($params['tester_media_id']);
         }
+
+        if (isset($params['test_remark']) && !$params['test_remark']) {
+            unset($params['test_remark']);
+        }
+
         unset($params['applicant']);
         unset($params['begin_date']);
         unset($params['online_date']);
@@ -189,6 +194,9 @@ class TeamProjectController extends Controller
             $media = Media::find($request->get('media_id') ?? 0);
             if (!$media) {
                 abort("422", "请上传测试用例");
+            }
+            if($request->has('test_remark') && $request->test_remark){
+                $teamProject->test_remark = $request->test_remark;
             }
             $teamProject->status = 2;
             $teamProject->tester_media_id = $media->id;

@@ -73,7 +73,8 @@ class TeamProjectListTransformer extends TransformerAbstract
             'interact_innovate' => $teamProject->interact_innovate,
             'remark' => $teamProject->remark,
             'status' => $teamProject->status,
-            'type' => $teamProject->type == 1 ? '提前节目' : '正常节目'
+            'type' => $teamProject->type == 1 ? '提前节目' : '正常节目',
+            'test_remark' => $teamProject->test_remark,
         ];
     }
 
