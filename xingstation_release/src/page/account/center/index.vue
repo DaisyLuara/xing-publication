@@ -14,7 +14,7 @@
             <el-form-item label prop="beginDate">
               <el-date-picker
                 v-model="filters.beginDate"
-                :clearable="false"
+                :clearable="true"
                 :picker-options="pickerOptions"
                 type="daterange"
                 start-placeholder="开始时间"
@@ -25,7 +25,7 @@
             <el-form-item label prop="getDate">
               <el-date-picker
                 v-model="filters.getDate"
-                :clearable="false"
+                :clearable="true"
                 :picker-options="pickerOptions"
                 type="daterange"
                 start-placeholder="发放开始时间"
@@ -251,17 +251,11 @@ export default {
     },
     getPersonFutureRewardTotal() {
       let args = {
-        name: this.filters.name,
-        start_date: handleDateTypeTransform(this.filters.beginDate[0]),
-        end_date: handleDateTypeTransform(this.filters.beginDate[1]),
-        start_get_date: handleDateTypeTransform(this.filters.getDate[0]),
-        end_get_date: handleDateTypeTransform(this.filters.getDate[1])
+        name: this.filters.name
       };
       !this.filters.name ? delete args.name : args;
-      if (JSON.stringify(this.filters.getDate) === "[]") {
-        delete args.start_get_date;
-        delete args.end_get_date;
-      }
+      args = this.dateHandle(args);
+
       getPersonFutureRewardTotal(this, args)
         .then(res => {
           this.freezeTotal = res.total_reward;
@@ -275,17 +269,10 @@ export default {
     },
     getPersonRewardTotal() {
       let args = {
-        name: this.filters.name,
-        start_date: handleDateTypeTransform(this.filters.beginDate[0]),
-        end_date: handleDateTypeTransform(this.filters.beginDate[1]),
-        start_get_date: handleDateTypeTransform(this.filters.getDate[0]),
-        end_get_date: handleDateTypeTransform(this.filters.getDate[1])
+        name: this.filters.name
       };
       !this.filters.name ? delete args.name : args;
-      if (JSON.stringify(this.filters.getDate) === "[]") {
-        delete args.start_get_date;
-        delete args.end_get_date;
-      }
+      args = this.dateHandle(args);
       getPersonRewardTotal(this, args)
         .then(res => {
           this.moneyTotal = res.total_reward;
@@ -297,15 +284,34 @@ export default {
           });
         });
     },
+    dateHandle(args) {
+      if (
+        JSON.stringify(this.filters.getDate) === "[]" ||
+        JSON.stringify(this.filters.getDate) === "null"
+      ) {
+        delete args.start_get_date;
+        delete args.end_get_date;
+      } else {
+        args.start_get_date = handleDateTypeTransform(this.filters.getDate[0]);
+        args.end_get_date = handleDateTypeTransform(this.filters.getDate[1]);
+      }
+      if (
+        JSON.stringify(this.filters.beginDate) === "[]" ||
+        JSON.stringify(this.filters.beginDate) === "null"
+      ) {
+        delete args.start_date;
+        delete args.end_date;
+      } else {
+        args.start_date = handleDateTypeTransform(this.filters.beginDate[0]);
+        args.end_date = handleDateTypeTransform(this.filters.beginDate[1]);
+      }
+      return args;
+    },
     getPersonRewardList() {
       this.setting.loading = true;
       let args = {
         page: this.pagination.currentPage,
-        name: this.filters.name,
-        start_date: handleDateTypeTransform(this.filters.beginDate[0]),
-        end_date: handleDateTypeTransform(this.filters.beginDate[1]),
-        start_get_date: handleDateTypeTransform(this.filters.getDate[0]),
-        end_get_date: handleDateTypeTransform(this.filters.getDate[1])
+        name: this.filters.name
       };
       if (this.filters.name === "") {
         delete args.name;
@@ -313,14 +319,8 @@ export default {
       if (!this.filters.status) {
         delete args.status;
       }
-      if (JSON.stringify(this.filters.beginDate) === "[]") {
-        delete args.start_date;
-        delete args.end_date;
-      }
-      if (JSON.stringify(this.filters.getDate) === "[]") {
-        delete args.start_get_date;
-        delete args.end_get_date;
-      }
+      args = this.dateHandle(args);
+
       getPersonRewardList(this, args)
         .then(res => {
           this.tableData = res.data;
