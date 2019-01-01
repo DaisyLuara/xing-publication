@@ -288,6 +288,7 @@ export default {
   mounted() {
     //查询优惠劵列表
     this.getCardList()
+    sessionStorage.setItem('isRefresh', 0)
   },
   methods: {
     //卡券列表查询

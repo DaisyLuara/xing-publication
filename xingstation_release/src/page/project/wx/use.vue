@@ -260,6 +260,7 @@ export default {
         this.useInit()
       }
     }
+    sessionStorage.setItem('isRefresh', 0)
   },
   methods: {
     //新增
@@ -269,7 +270,7 @@ export default {
           console.log(res)
           if (res.errcode === 0) {
             this.$router.push({
-              path: '/project/wx_cardpackage/index/'
+              path: '/project/wx_cardpackage'
             })
           }
         })
