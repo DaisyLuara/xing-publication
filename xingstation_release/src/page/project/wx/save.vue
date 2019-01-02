@@ -1735,12 +1735,18 @@ export default {
       return flag
     }
   },
-  //前进刷新  后退不刷新
-  beforeRouteLeave(to, from, nextTo) {
-    // 设置下一个路由的 meta
-    to.meta.keepAlive = true;  // 让 A 缓存，即不刷新
+  beforeRouteEnter(to, from, nextTo) {
+    if (from.name === '微信卡券配置' && to.name === '微信卡券新增') {
+      let isRefresh = sessionStorage.getItem('isRefresh')
+      if (isRefresh === '0') {
+        sessionStorage.setItem('isRefresh', null)
+        window.location.reload()
+      } else {
+        sessionStorage.setItem('isRefresh', 0)
+      }
+    }
     nextTo();
-  },
+  }
 };
 </script>
 
