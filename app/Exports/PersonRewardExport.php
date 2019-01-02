@@ -29,30 +29,39 @@ class PersonRewardExport extends AbstractExport implements ShouldAutoSize
 
     public function collection()
     {
+        $team_project_rate = DB::table('team_project_members as tpm')
+            ->join("team_projects as tp", "tp.id", "=", "tpm.team_project_id")
+            ->whereRaw("tpm.type in ('originality','plan','animation')")
+            ->whereRaw("date_format(tp.launch_date, '%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
+            ->groupBy("tp.belong")
+            ->selectRaw("tp.belong,sum(rate) as 'rate_total'");
+
         //member_program_num
         //0不计入 1基础条目 2简单条目 5简单条目 6通用节目 7 项目（其中的3 定制节目 4 定制项目已弃用）
         $member_program_num = DB::table("team_project_members as tpm")
             ->join("team_projects as tp", "tp.id", "=", "tpm.team_project_id")
+            ->join(DB::raw("({$team_project_rate->toSql()}) as rate_total"), 'rate_total.belong', '=', 'tp.belong')
             ->whereRaw("tpm.type in ('originality','plan','animation')")
             ->whereRaw("date_format(tp.launch_date, '%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
             ->groupBy("tpm.user_id", "tpm.user_name")
             ->selectRaw("tpm.user_id,tpm.user_name,
-	            sum(case tp.project_attribute 
+	           sum( (case tp.project_attribute 
     			    when 1 then 1 
     			    when 2 then 1 
     			    when 5 then 1 
     			    else 0 
-    		        end) as item_num,
-    	        sum(case tp.project_attribute 
-    			        when 3 then 1 
-    			        when 6 then 1
-    			        else 0 
-   		 	        end) as program_num,
-   		        sum(case project_attribute
-    		        	when 4 then 1 
-    		        	when 7 then 1 
-    		        	else 0 
-   		 	        end) as project_num ");
+    		        end)*(tpm.rate/rate_total.rate_total) )as item_num,
+    	       sum((case tp.project_attribute 
+    			    when 3 then 1 
+    			    when 6 then 1
+    			    else 0 
+   		 	        end)*(tpm.rate/rate_total.rate_total)) as program_num,
+   		       sum((case project_attribute
+    		        when 4 then 1 
+    		        when 7 then 1 
+    		        else 0 
+   		 	        end)*(tpm.rate/rate_total.rate_total)) as project_num
+   		 	         ");
 
         $startMonth = Carbon::parse($this->startDate)->timezone('PRC')->format("Y-m");
         $endMonth = Carbon::parse($this->endDate)->timezone('PRC')->format("Y-m");
@@ -60,10 +69,10 @@ class PersonRewardExport extends AbstractExport implements ShouldAutoSize
         $header1 = ["用户ID", "用户名"];
         $selectRaw = "tpr.user_id,users.name,";
         for ($temp_month = $startMonth; $temp_month <= $endMonth; $temp_month = Carbon::parse($temp_month)->addMonth()->format("Y-m")) {
-            $header1[] = "体验绩效_" . $temp_month ;
-            $selectRaw .= " sum(case date_format(tpr.date,'%Y-%m') when '" . $temp_month . "' then tpr.experience_money else 0 end ) as '体验绩效_" . $temp_month . "',";
+            $header1[] = "体验绩效_" . $temp_month;
+            $selectRaw .= " round(sum(case date_format(tpr.date,'%Y-%m') when '" . $temp_month . "' then tpr.experience_money else 0 end ),2) as '体验绩效_" . $temp_month . "',";
         }
-        $header1 = array_merge($header1,["体验绩效总计","平台奖","条目数量","节目数量","项目数量","累计节目数量"]);
+        $header1 = array_merge($header1, ["体验绩效总计", "平台奖", "条目数量", "节目数量", "项目数量", "累计节目数量"]);
         $selectRaw .= " sum(experience_money) as 'experience_money',sum(system_money) as 'system_money'";
 
         $member_money = DB::table("team_person_rewards as tpr")
@@ -78,10 +87,10 @@ class PersonRewardExport extends AbstractExport implements ShouldAutoSize
         //汇总
         $totalData = DB::table(DB::raw("({$member_program_num->toSql()}) as V1"))
             ->leftJoin(DB::raw("({$member_money->toSql()}) as V2"), 'V1.user_id', '=', 'V2.user_id')
-            ->selectRaw("V2.*,V1.item_num,V1.program_num,V1.project_num,(V1.item_num/2+V1.program_num+V1.project_num*2) as average_program")
+            ->selectRaw("V2.*,round(V1.item_num,2) as 'item_num',round(V1.program_num,2) as 'program_num',round(V1.project_num,2) as 'project_num',round((V1.item_num/2+V1.program_num+V1.project_num*2),2) as 'average_program'")
             ->get()->map(function ($item) {
                 return (array)$item;
-        })->toArray();
+            })->toArray();
 
 
         $header2 = [];
@@ -89,9 +98,9 @@ class PersonRewardExport extends AbstractExport implements ShouldAutoSize
             $header2[] = '';
         }
 
-        $data = collect(array_merge([$header1,$header2],$totalData));
+        $data = collect(array_merge([$header1, $header2], $totalData));
 
-        $this->header_num = count($header1)-1;
+        $this->header_num = count($header1) - 1;
         $this->data = $data;
         return $data;
     }
@@ -108,7 +117,7 @@ class PersonRewardExport extends AbstractExport implements ShouldAutoSize
                 $event->sheet->getDelegate()->setMergeCells($cellArray);
 
                 //黑线框
-                $event->sheet->getDelegate()->getStyle('A1:' .$this->change($this->header_num).$this->data->count())
+                $event->sheet->getDelegate()->getStyle('A1:' . $this->change($this->header_num) . $this->data->count())
                     ->applyFromArray([
                         'borders' => [
                             'allBorders' => [
@@ -119,13 +128,13 @@ class PersonRewardExport extends AbstractExport implements ShouldAutoSize
 
                 //水平居中 垂直居中
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:' .$this->change($this->header_num). $this->data->count())
+                    ->getStyle('A1:' . $this->change($this->header_num) . $this->data->count())
                     ->getAlignment()
                     ->setVertical(Alignment::VERTICAL_CENTER)
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:'.$this->change($this->header_num).'2')
+                    ->getStyle('A1:' . $this->change($this->header_num) . '2')
                     ->applyFromArray([
                         'font' => [
                             'bold' => 'true'
