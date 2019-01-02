@@ -39,14 +39,14 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
     public function collection()
     {
         $typeMapping = [
-            'interaction' => '交互技术',
-            'backend_docking' => '后端IT技术对接',
             'originality' => '节目创意',
-            'h5' => 'H5开发',
+            'plan' => '节目统筹',
             'animation' => '设计动画',
             'animation_hidol' => "设计动画.Hidol",
             'hidol_patent' => "Hidol专利",
-            'plan' => '节目统筹',
+            'interaction' => '交互技术',
+            'backend_docking' => '后端IT技术对接',
+            'h5' => 'H5开发',
             'tester' => '节目测试',
             'tester_quality' => '节目测试总责',
             'operation' => '平台运营',
@@ -101,7 +101,7 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
             interaction_attribute,hidol_attribute,
             individual_attribute,contracts.contract_number,contracts.amount,
             art_innovate,dynamic_innovate,interact_innovate,
-            tp.remark,tpm.type as type,group_concat(concat(user_name, ':', rate)) as username")
+            tp.remark,tp.test_remark,tpm.type as type,group_concat(concat(user_name, ':', rate)) as username")
             ->groupBy(DB::raw("belong,tpm.type"));
 
 
@@ -116,7 +116,7 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
             project_attribute,link_attribute,h5_attribute,
             interaction_attribute,hidol_attribute,
             individual_attribute,contract_number,amount,
-            art_innovate,dynamic_innovate,interact_innovate,remark" . $case)
+            art_innovate,dynamic_innovate,interact_innovate,remark,test_remark" . $case)
             ->groupBy("project_name")
             ->get()->map(function ($item) use ($typeMapping, $statusMapping, $projectAttributeMapping, $interactionAttributeMapping) {
                 $interaction_attribute_text = Collect(explode(',', $item->interaction_attribute))
@@ -146,18 +146,19 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
                 foreach ($typeMapping as $key => $value) {
                     $result[$key] = $item->$key;
                 }
+                $result['test_remark'] = $item->test_remark;
                 $result['remark'] = $item->remark;
                 return $result;
             });
 
 
-        $header1 = ["申请人", "节目类", "节目名称", "状态", "上线时间", "投放时间", "节目属性", "联动属性",
+        $header1 = ["申请人", "节目类型", "节目名称", "状态", "上线时间", "投放时间", "节目属性", "联动属性",
             "H5属性", "交互属性", "Hidol属性", "定制属性", "合同编号", "合同金额",
             "艺术风格创新点", "动效体验创新点", "交互技术创新点"];
         foreach ($typeMapping as $item) {
             $header1[] = $item;
         }
-        $header1[] = "备注";
+        $header1 = array_merge($header1,["测试备注","节目备注"]);
 
         $header2 = [];
         foreach ($header1 as $header) {
@@ -183,7 +184,7 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
                 $event->sheet->getDelegate()->setMergeCells($cellArray);
 
                 //黑线框
-                $event->sheet->getDelegate()->getStyle('A1:AE' . $this->data->count())
+                $event->sheet->getDelegate()->getStyle('A1:'.$this->change(count($this->header)-1) . $this->data->count())
                     ->applyFromArray([
                         'borders' => [
                             'allBorders' => [
@@ -194,13 +195,13 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
 
                 //水平居中 垂直居中
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:AE' . $this->data->count())
+                    ->getStyle('A1:'.$this->change(count($this->header)-1) . $this->data->count())
                     ->getAlignment()
                     ->setVertical(Alignment::VERTICAL_CENTER)
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:AE2')
+                    ->getStyle('A1:'.$this->change(count($this->header)-1) .'2')
                     ->applyFromArray([
                         'font' => [
                             'bold' => 'true'

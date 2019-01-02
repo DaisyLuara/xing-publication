@@ -8,115 +8,90 @@
 
 namespace App\Exports;
 
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use Carbon\Carbon;
-use DB;
+use Illuminate\Support\Facades\DB;
 
-class PersonRewardExport extends AbstractExport
+class PersonRewardExport extends AbstractExport implements ShouldAutoSize
 {
+    protected $header_num;
+    protected $data;
+
     public function __construct($request)
     {
-        $this->startDate = $request->start_date;
-        $this->endDate = $request->end_date;
+        $this->startDate = Carbon::parse($request->start_date)->timezone('PRC')->toDateString();
+        $this->endDate = Carbon::parse($request->end_date)->timezone('PRC')->toDateString();
         $this->fileName = '星视度智造团队奖励';
     }
 
     public function collection()
     {
-        //人员统计
-        $member = DB::table("team_person_rewards as tpr")
+        //member_program_num
+        //0不计入 1基础条目 2简单条目 5简单条目 6通用节目 7 项目（其中的3 定制节目 4 定制项目已弃用）
+        $member_program_num = DB::table("team_project_members as tpm")
+            ->join("team_projects as tp", "tp.id", "=", "tpm.team_project_id")
+            ->whereRaw("tpm.type in ('originality','plan','animation')")
+            ->whereRaw("date_format(tp.launch_date, '%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
+            ->groupBy("tpm.user_id", "tpm.user_name")
+            ->selectRaw("tpm.user_id,tpm.user_name,
+	            sum(case tp.project_attribute 
+    			    when 1 then 1 
+    			    when 2 then 1 
+    			    when 5 then 1 
+    			    else 0 
+    		        end) as item_num,
+    	        sum(case tp.project_attribute 
+    			        when 3 then 1 
+    			        when 6 then 1
+    			        else 0 
+   		 	        end) as program_num,
+   		        sum(case project_attribute
+    		        	when 4 then 1 
+    		        	when 7 then 1 
+    		        	else 0 
+   		 	        end) as project_num ");
+
+        $startMonth = Carbon::parse($this->startDate)->timezone('PRC')->format("Y-m");
+        $endMonth = Carbon::parse($this->endDate)->timezone('PRC')->format("Y-m");
+
+        $header1 = ["用户ID", "用户名"];
+        $selectRaw = "tpr.user_id,users.name,";
+        for ($temp_month = $startMonth; $temp_month <= $endMonth; $temp_month = Carbon::parse($temp_month)->addMonth()->format("Y-m")) {
+            $header1[] = "体验绩效_" . $temp_month ;
+            $selectRaw .= " sum(case date_format(tpr.date,'%Y-%m') when '" . $temp_month . "' then tpr.experience_money else 0 end ) as '体验绩效_" . $temp_month . "',";
+        }
+        $header1 = array_merge($header1,["体验绩效总计","平台奖","条目数量","节目数量","项目数量","累计节目数量"]);
+        $selectRaw .= " sum(experience_money) as 'experience_money',sum(system_money) as 'system_money'";
+
+        $member_money = DB::table("team_person_rewards as tpr")
             ->join('users', 'tpr.user_id', '=', 'users.id')
-            ->whereRaw("date_format(date, '%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
-            ->groupBy(DB::raw("user_id"))
-            ->selectRaw("user_id,users.name as username");
-
-        //个人节目统计
-        $projectSql = DB::table('team_person_rewards as tpr')
-            ->join('team_projects as tp', 'tpr.belong', '=', 'tp.belong')
-            ->whereRaw("date_format(launch_date, '%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
-            ->groupBy(DB::raw("user_id, tpr.belong"))
-            ->selectRaw("user_id,tpr.belong, project_attribute");
-        $project = DB::table(DB::raw("({$projectSql->toSql()}) as b"))
-            ->groupBy(DB::raw("user_id"))
-            ->selectRaw("user_id,count(project_attribute = 2 or project_attribute = 3 or null) as projectnum,count(project_attribute = 1 or null) itemnum");
-
-        //体验绩效统计
-        $groupDate = DB::table('team_person_rewards as tpr')->join('team_projects as tp', 'tpr.belong', '=', 'tp.belong')
-            ->whereRaw("date_format(date,'%Y-%m-%d') between '$this->startDate' and '$this->endDate' ")
-            ->selectRaw("date_format(min(launch_date),'%Y-%m') as startDate,date_format(max(launch_date),'%Y-%m') as endDate")
-            ->first();
-        $startDate = $groupDate->startDate;
-        $endDate = $groupDate->endDate;
-        $dates = [$startDate];
-        while ((new Carbon($endDate))->gt(new Carbon($startDate))) {
-            $startDate = date_format((new Carbon($startDate))->addMonth(1), 'Y-m');
-            $dates[] = $startDate;
-        }
-        $this->datenum = count($dates);
-        $sql = DB::table('team_person_rewards as tpr')->join('team_projects as tp', 'tpr.belong', '=', 'tp.belong')
-            ->whereRaw("date_format(date,'%Y-%m-%d') between '$this->startDate' and '$this->endDate' and tpr.belong<>'system'")
-            ->groupBy(DB::raw("user_id,date_format(launch_date,'%Y-%m')"))
-            ->selectRaw("user_id, sum(experience_money) as experience_money, date_format(launch_date, '%Y-%m') as date");
-        $Max = "";
-        for ($i = 0; $i < sizeof($dates); $i++) {
-            $Max = $Max . ",max(case a.date when '$dates[$i]' then experience_money else 0 end) '$dates[$i]'";
-        }
-        $personReward = DB::table(DB::raw("({$sql->toSql()}) as a"))
-            ->groupBy(DB::raw("user_id"))
-            ->selectRaw("user_id" . $Max);
-
-        //平台奖励统计
-        $system = DB::table('team_person_rewards as tpr')
-            ->whereRaw("date_format(date, '%Y-%m-%d') between '$this->startDate' and '$this->endDate' and belong = 'system'")
-            ->groupBy(DB::raw("user_id"))
-            ->selectRaw("user_id, sum(system_money) as system_money");
+            ->join("team_projects as tp", "tp.belong", "=", "tpr.belong")
+            ->whereRaw("date_format(tp.launch_date, '%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
+            ->whereRaw("date_format(tpr.date, '%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
+            ->whereRaw("tpr.type in ('originality','plan','animation')")
+            ->groupBy("tpr.user_id")
+            ->selectRaw($selectRaw);
 
         //汇总
-        $totalData = DB::table(DB::raw("({$member->toSql()}) as a"))
-            ->join(DB::raw("({$project->toSql()}) as b"), function ($join) {
-                $join->on('a.user_id', '=', 'b.user_id');
-            }, null, null, 'left')
-            ->join(DB::raw("({$personReward->toSql()}) as c"), function ($join) {
-                $join->on('a.user_id', '=', 'c.user_id');
-            }, null, null, 'left')
-            ->join(DB::raw("({$system->toSql()}) as d"), function ($join) {
-                $join->on('a.user_id', '=', 'd.user_id');
-            }, null, null, 'left')
-            ->selectRaw("username,ifnull(projectnum,0) as projectnum,ifnull(itemnum,0) as itemnum,c.*,d.system_money")
-            ->get();
-        $data = collect();
-        $header1 = ['姓名', '节目', '条目', '折算节目数量'];
-        for ($i = 0; $i < count($dates); $i++) {
-            $header1 = array_merge($header1, ['体验奖' . $dates[$i]]);
-        }
-        $header1 = array_merge($header1, ['体验奖总计', '平台奖']);
-        $header2 = ['', '', '', '', '', ''];
-        for ($i = 0; $i < count($dates); $i++) {
-            $header2 = array_merge($header2, ['']);
-        }
-        $data->push($header1);
-        $data->push($header2);
+        $totalData = DB::table(DB::raw("({$member_program_num->toSql()}) as V1"))
+            ->leftJoin(DB::raw("({$member_money->toSql()}) as V2"), 'V1.user_id', '=', 'V2.user_id')
+            ->selectRaw("V2.*,V1.item_num,V1.program_num,V1.project_num,(V1.item_num/2+V1.program_num+V1.project_num*2) as average_program")
+            ->get()->map(function ($item) {
+                return (array)$item;
+        })->toArray();
 
-        $totalData->each(function ($item) use (&$data, $dates) {
 
-            $item = json_decode(json_encode($item), true);
-            $aa = [
-                'user_name' => $item['username'],
-                'project_num' => $item['projectnum'],
-                'item_num' => $item['itemnum'],
-                'average_project' => $item['projectnum'] + $item['itemnum'] / 2,
-            ];
-            $total = 0;
-            for ($i = 0; $i < count($dates); $i++) {
-                $aa[$dates[$i]] = $item[$dates[$i]] ? $item[$dates[$i]] : 0;
-                $total = $total + $item[$dates[$i]];
-            }
-            $aa['total'] = $total;
-            $aa['system_monye'] = $item['system_money']?$item['system_money']:0;
-            $data->push($aa);
-        });
+        $header2 = [];
+        foreach ($header1 as $header) {
+            $header2[] = '';
+        }
+
+        $data = collect(array_merge([$header1,$header2],$totalData));
+
+        $this->header_num = count($header1)-1;
         $this->data = $data;
         return $data;
     }
@@ -125,34 +100,15 @@ class PersonRewardExport extends AbstractExport
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $cellArray =
-                    [
-                        'A1:A2', 'B1:B2', 'C1:C2', 'D1:D2',
-                        $this->change(4 + $this->datenum) . '1:' . $this->change(4 + $this->datenum) . '2',
-                        $this->change(5 + $this->datenum) . '1:' . $this->change(5 + $this->datenum) . '2'
-                    ];
-                for ($i = 0; $i < $this->datenum; $i++) {
-                    $num = 4 + $i;
-                    $cellArray[] = $this->change($num) . '1:' . $this->change($num) . '2';
+
+                $cellArray = [];
+                for ($i = 0; $i <= $this->header_num; $i++) {
+                    $cellArray[] = $this->change($i) . '1:' . $this->change($i) . '2';
                 }
                 $event->sheet->getDelegate()->setMergeCells($cellArray);
 
-                $event->sheet->getDelegate()
-                    ->getStyle('A1:' . $this->change((5 + $this->datenum)) . $this->data->count())
-                    ->getAlignment()
-                    ->setVertical(Alignment::VERTICAL_CENTER)
-                    ->setHorizontal(Alignment::HORIZONTAL_CENTER);
-
-                $event->sheet->getDelegate()
-                    ->getStyle('A1:' . $this->change((5 + $this->datenum)) . '2')
-                    ->applyFromArray([
-                        'font' => [
-                            'bold' => 'true'
-                        ]
-                    ]);
-
-                $event->sheet->getDelegate()
-                    ->getStyle('A1:' . $this->change((5 + $this->datenum)) . $this->data->count())
+                //黑线框
+                $event->sheet->getDelegate()->getStyle('A1:' .$this->change($this->header_num).$this->data->count())
                     ->applyFromArray([
                         'borders' => [
                             'allBorders' => [
@@ -160,6 +116,22 @@ class PersonRewardExport extends AbstractExport
                             ]
                         ]
                     ]);
+
+                //水平居中 垂直居中
+                $event->sheet->getDelegate()
+                    ->getStyle('A1:' .$this->change($this->header_num). $this->data->count())
+                    ->getAlignment()
+                    ->setVertical(Alignment::VERTICAL_CENTER)
+                    ->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+                $event->sheet->getDelegate()
+                    ->getStyle('A1:'.$this->change($this->header_num).'2')
+                    ->applyFromArray([
+                        'font' => [
+                            'bold' => 'true'
+                        ]
+                    ]);
+
                 $event->sheet->getDelegate()->freezePane('A3');
             }
         ];
