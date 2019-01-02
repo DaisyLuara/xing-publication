@@ -270,7 +270,7 @@ export default {
           console.log(res)
           if (res.errcode === 0) {
             this.$router.push({
-              path: '/project/wx_cardpackage'
+              path: '/project/wx_cardpackage/'
             })
           }
         })
@@ -285,7 +285,7 @@ export default {
           console.log(res)
           if (res.errcode === 0) {
             this.$router.push({
-              path: '/project/wx_cardpackage/index/'
+              path: '/project/wx_cardpackage/'
             })
           }
         })
