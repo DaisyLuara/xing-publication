@@ -14,7 +14,7 @@ class AddColumnsToTeamProjectTable extends Migration
     public function up()
     {
         Schema::table('team_projects', function (Blueprint $table) {
-            $table->string('project_attribute')->comment('0不计入 1基础条目 2简单条目 5简单条目 6通用节目 7 项目（其中的3 定制节目 4 定制项目已弃用）')->change();
+            $table->string('project_attribute')->comment('0不计入 1基础条目 2简单条目 3通用节目 4项目')->change();
             $table->integer('hidol_attribute')->default(0)->after("project_attribute")->comment("Hidol属性：0 否 1 是");
             $table->integer('individual_attribute')->default(0)->after("hidol_attribute")->comment("定制属性：0 否 1 是");
             $table->integer('contract_id')->nullable()->after("individual_attribute")->comment('定制合同ID');

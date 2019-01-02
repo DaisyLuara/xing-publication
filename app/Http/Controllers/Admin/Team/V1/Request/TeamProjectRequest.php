@@ -18,7 +18,7 @@ class TeamProjectRequest extends \App\Http\Requests\Request
             case 'POST':
                 return [
                     'belong' => 'required|unique:team_projects|exists:ar.ar_product_list,versionname',
-                    'project_attribute' => ['required', Rule::in([0, 1, 2, 5, 6, 7])],
+                    'project_attribute' => ['required', Rule::in([0, 1, 2, 3, 4])],
                     'hidol_attribute' => ['required', Rule::in([0, 1])],
                     'individual_attribute' => ['required', Rule::in([0, 1])],
                     'contract_id' => 'nullable|integer|exists:contracts,id',
@@ -46,7 +46,7 @@ class TeamProjectRequest extends \App\Http\Requests\Request
                         'required', 'exists:ar.ar_product_list,versionname',
                         Rule::unique('team_projects')->ignore($this->route("team_project")->id),
                     ],
-                    'project_attribute' => Rule::in([0, 1, 2, 5, 6, 7]),
+                    'project_attribute' => Rule::in([0, 1, 2, 3, 4]),
                     'hidol_attribute' => Rule::in([0, 1]),
                     'individual_attribute' => Rule::in([0, 1]),
                     'contract_id' => 'nullable|integer|exists:contracts,id',
