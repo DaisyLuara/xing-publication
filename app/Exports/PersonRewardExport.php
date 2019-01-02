@@ -47,18 +47,15 @@ class PersonRewardExport extends AbstractExport implements ShouldAutoSize
             ->selectRaw("tpm.user_id,tpm.user_name,
 	           sum( (case tp.project_attribute 
     			    when 1 then 1 
-    			    when 2 then 1 
-    			    when 5 then 1 
+    			    when 2 then 1
     			    else 0 
     		        end)*(tpm.rate/rate_total.rate_total) )as item_num,
     	       sum((case tp.project_attribute 
-    			    when 3 then 1 
-    			    when 6 then 1
+    			    when 3 then 1
     			    else 0 
    		 	        end)*(tpm.rate/rate_total.rate_total)) as program_num,
    		       sum((case project_attribute
-    		        when 4 then 1 
-    		        when 7 then 1 
+    		        when 4 then 1
     		        else 0 
    		 	        end)*(tpm.rate/rate_total.rate_total)) as project_num
    		 	         ");

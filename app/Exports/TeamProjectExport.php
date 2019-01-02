@@ -55,13 +55,11 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
         $projectAttributeMapping = [
             '0' => '不计入',
             '1' => '基础条目',
-            '2' => '通用节目',
-            '3' => '定制节目*',
-            '4' => '定制项目*',
-            '5' => '简单条目',
-            '6' => '通用节目',
-            '7' => '项目',
+            '2' => '简单条目',
+            '3' => '通用节目',
+            '4' => '项目',
         ];
+
         $statusMapping = [
             '1' => '进行中',
             '2' => '测试已确认',
