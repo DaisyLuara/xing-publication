@@ -1781,11 +1781,11 @@ function teamBonusClean()
         $count = [];
         foreach ($faceCount as $item) {
             //数据奖金池 B  $totalMoney
-            $player7Money = round($item->playernum7 * 0.01, 2);
-            $player15Money = round($item->playernum15 * 0.02, 2);
-            $player21Money = round($item->playernum21 * 0.05, 2);
-            $uCPAMoney = round($item->omo_outnum * 0.2, 2);
-            $totalMoney = $player7Money + $player15Money + $player21Money + $uCPAMoney;
+            $player7Money = $item->playernum7 * 0.01;
+            $player15Money = $item->playernum15 * 0.02;
+            $player21Money = $item->playernum21 * 0.05;
+            $uCPAMoney = $item->omo_outnum * 0.2;
+            $totalMoney = round($player7Money + $player15Money + $player21Money + $uCPAMoney,2);
 
             //节目的投放日期
             $launchDate = date('Y-m-d', $item->online / 1000);
