@@ -63,7 +63,27 @@ class MiniCouponController extends Controller
 
         $couponQuery = Coupon::query();
         if ($request->has('status')) {
-            $couponQuery->where('status', $request->get('status'));
+            $now = Carbon::now()->toDateTimeString();
+
+            switch ($request->get('status')) {
+                case 0:
+                case 1:
+                case 2:
+                    $couponQuery->where('status', $request->get('status'));
+                    break;
+                case 3:
+                    //可使用卡券
+                    $couponQuery->where('status', $request->get('status'))
+                        ->where('end_date', '>', $now);
+                    break;
+                case 4:
+                    //已过期卡券
+                    $couponQuery->where('status', '=', '3')
+                        ->where('end_date', '<', $now);
+                    break;
+                default:
+                    return null;
+            }
         }
 
         if ($request->has('coupon_batch_id')) {
