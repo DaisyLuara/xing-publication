@@ -1757,6 +1757,7 @@ function teamBonusClean()
             TeamProject::query()->where('belong', $item->versionname)->update(['launch_date' => date('Y-m-d', $item->online / 1000)]);
         }
 
+        //符合要求的点位当日的数据
         $faceCount1 = DB::connection('ar')->table('xs_face_count_log as fcl')
             ->join('ar_product_list as apl', 'belong', '=', 'versionname')
             ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
@@ -1770,23 +1771,21 @@ function teamBonusClean()
             ->orderBy('looknum', 'desc')
             ->selectRaw("date_format(fcl.date, '%Y-%m-%d') as date,apl.name as name,apl.online as online,fcl.belong as belong,sum(playernum7)as playernum7,sum(playernum15) as playernum15 ,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum");
 
-        $faceCount2 = DB::connection('ar')->table(DB::raw("({$faceCount1->toSql()}) a,(select @gn := 0)  b"))
-            ->selectRaw("  @gn := case when (@date=date and @name = name) then @gn + 1 else 1 end gn,@date:=date date,@name := name name,online,belong,playernum7,playernum15,playernum21,omo_outnum");
-
-        $faceCount = DB::connection('ar')->table(DB::raw("({$faceCount2->toSql()}) c"))
-            ->selectRaw("name,online,belong,sum(playernum7) as playernum7,sum(playernum15) as playernum15,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum")
-            ->whereRaw("gn<=100")
+        //每个节目每天的前100个点位数据汇总
+        $faceCount = DB::connection('ar')->table(DB::raw("({$faceCount1->toSql()}) v"))
+            ->selectRaw("@date:=date date,@name := name name,online,belong,sum(playernum7) as playernum7,sum(playernum15) as playernum15,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum")
+            ->whereRaw("(@gn :=(case when (@date = date and @name = name) then @gn + 1 else 1 end)) <= 100")
             ->groupBy('name')
             ->get();
 
         $count = [];
         foreach ($faceCount as $item) {
             //数据奖金池 B  $totalMoney
-            $player7Money = round($item->playernum7 * 0.01, 2);
-            $player15Money = round($item->playernum15 * 0.02, 2);
-            $player21Money = round($item->playernum21 * 0.05, 2);
-            $uCPAMoney = round($item->omo_outnum * 0.2, 2);
-            $totalMoney = $player7Money + $player15Money + $player21Money + $uCPAMoney;
+            $player7Money = $item->playernum7 * 0.01;
+            $player15Money = $item->playernum15 * 0.02;
+            $player21Money = $item->playernum21 * 0.05;
+            $uCPAMoney = $item->omo_outnum * 0.2;
+            $totalMoney = round($player7Money + $player15Money + $player21Money + $uCPAMoney,2);
 
             //节目的投放日期
             $launchDate = date('Y-m-d', $item->online / 1000);
@@ -1955,7 +1954,7 @@ function teamBonusClean()
                         ->where('date', '<', $end_date)
                         ->where('type', '=', $user_bug->duty)
                         ->where('status', '=', 0)
-                        ->update(['status' => -1]);
+                        ->update(['status' => -1, 'updated_at' => $now]);
                 }
 
                 //发放当前需发放的rewards
@@ -1970,7 +1969,7 @@ function teamBonusClean()
                     })->toArray();
                 $result[] = DB::table('team_person_rewards')->insert($future_rewards_array);
 
-                $future_rewards->update(['status' => 1]);
+                $future_rewards->update(['status' => 1, 'updated_at' => $now]);
             }
 
 

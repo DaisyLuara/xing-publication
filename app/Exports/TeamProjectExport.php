@@ -13,6 +13,7 @@ use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 
 class TeamProjectExport extends AbstractExport implements ShouldAutoSize
@@ -134,7 +135,7 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
                     'interaction_attribute' => implode(',', $interaction_attribute_text),
                     'hidol_attribute' => $item->hidol_attribute == 1 ? '是' : '否',
                     'individual_attribute' => $item->individual_attribute == 1 ? '是' : '否',
-                    'contract_number' => $item->contract_number,
+                    'contract_number' => "\t" . $item->contract_number . "\t",
                     'contract_amount' => $item->amount,
                     'art_innovate' => $item->art_innovate,
                     'dynamic_innovate' => $item->dynamic_innovate,
@@ -156,7 +157,7 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
         foreach ($typeMapping as $item) {
             $header1[] = $item;
         }
-        $header1 = array_merge($header1,["测试备注","节目备注"]);
+        $header1 = array_merge($header1, ["测试备注", "节目备注"]);
 
         $header2 = [];
         foreach ($header1 as $header) {
@@ -181,8 +182,11 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
                 }
                 $event->sheet->getDelegate()->setMergeCells($cellArray);
 
+                //编码被科学计数问题
+                $event->sheet->getStyle('A1:A' . $this->data->count())->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
+
                 //黑线框
-                $event->sheet->getDelegate()->getStyle('A1:'.$this->change(count($this->header)-1) . $this->data->count())
+                $event->sheet->getDelegate()->getStyle('A1:' . $this->change(count($this->header) - 1) . $this->data->count())
                     ->applyFromArray([
                         'borders' => [
                             'allBorders' => [
@@ -193,13 +197,13 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
 
                 //水平居中 垂直居中
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:'.$this->change(count($this->header)-1) . $this->data->count())
+                    ->getStyle('A1:' . $this->change(count($this->header) - 1) . $this->data->count())
                     ->getAlignment()
                     ->setVertical(Alignment::VERTICAL_CENTER)
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:'.$this->change(count($this->header)-1) .'2')
+                    ->getStyle('A1:' . $this->change(count($this->header) - 1) . '2')
                     ->applyFromArray([
                         'font' => [
                             'bold' => 'true'
