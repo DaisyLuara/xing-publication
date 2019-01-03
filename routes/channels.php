@@ -14,3 +14,10 @@
 Broadcast::channel('App.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
+
+//arMember认证
+Broadcast::channel('member.{z}', function ($member, $z) {
+    return $member->z == $z;
+});
+
+
