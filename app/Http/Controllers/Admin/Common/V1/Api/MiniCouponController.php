@@ -130,7 +130,10 @@ class MiniCouponController extends Controller
         });
 
         $per_page = $request->get('per_page') ? : 5;
-        $couponBatches = $query->orderByDesc('sort_order')->paginate($per_page);
+        $now = Carbon::now()->toDateTimeString();
+        $couponBatches = $query->where('start_date', '<=', $now)
+            ->where('end_date', '>=', $now)
+            ->orderByDesc('sort_order')->paginate($per_page);
 
         abort_if($couponBatches->isEmpty(), 500, '无可用优惠券');
 
