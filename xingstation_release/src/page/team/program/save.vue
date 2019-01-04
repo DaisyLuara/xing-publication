@@ -44,8 +44,8 @@
         <el-form-item label="节目属性" prop="project_attribute">
           <el-radio-group v-model="programForm.project_attribute">
             <el-radio :label="0">不计入</el-radio>
-            <el-radio :label="1">基础条目</el-radio>
             <el-radio :label="2">简单条目</el-radio>
+            <el-radio :label="1">基础条目</el-radio>
             <el-radio :label="3">通用节目</el-radio>
             <el-radio :label="4">项目</el-radio>
           </el-radio-group>
