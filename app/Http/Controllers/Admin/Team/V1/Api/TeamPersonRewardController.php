@@ -16,12 +16,23 @@ use Illuminate\Http\Request;
 
 class TeamPersonRewardController extends Controller
 {
+    /**
+     * 个人奖金列表
+     * @param Request $request
+     * @param TeamPersonReward $teamPersonReward
+     * @return \Dingo\Api\Http\Response
+     */
     public function index(Request $request, TeamPersonReward $teamPersonReward)
     {
         $query = $teamPersonReward->query();
         if ($request->has('start_date') && $request->has('end_date')) {
             $query->whereRaw("date_format(date,'%Y-%m-%d') between '$request->start_date' and '$request->end_date' ");
         }
+
+        if ($request->has('start_get_date') && $request->has('end_get_date')) {
+            $query->whereRaw("date_format(get_date,'%Y-%m-%d') between '$request->start_get_date' and '$request->end_get_date' ");
+        }
+
         if ($request->has('name')) {
             $query->where('project_name', 'like', '%' . $request->name . '%');
         }
@@ -36,6 +47,10 @@ class TeamPersonRewardController extends Controller
 
         if ($request->has('start_date') && $request->has('end_date')) {
             $query->whereRaw("date_format(date,'%Y-%m-%d') between '$request->start_date' and '$request->end_date' ");
+        }
+
+        if ($request->has('start_get_date') && $request->has('end_get_date')) {
+            $query->whereRaw("date_format(get_date,'%Y-%m-%d') between '$request->start_get_date' and '$request->end_get_date' ");
         }
 
         if ($request->has('name')) {

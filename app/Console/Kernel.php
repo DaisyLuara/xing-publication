@@ -13,6 +13,7 @@ use App\Jobs\FacePlaytimesLogJob;
 use App\Jobs\MauJob;
 use App\Jobs\TeamBonusJob;
 use App\Jobs\WeekRankingJob;
+use App\Jobs\ContractReceiveDatesJob;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -87,6 +88,11 @@ class Kernel extends ConsoleKernel
             //绩效清洗
             $schedule->call(function () {
                 TeamBonusJob::dispatch()->onQueue('data-clean');
+            })->daily()->at('8:00');
+
+            //合同收款日期通知
+            $schedule->call(function () {
+                ContractReceiveDatesJob::dispatch()->onQueue('data-clean');
             })->daily()->at('8:00');
         }
     }

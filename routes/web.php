@@ -12,5 +12,8 @@
 */
 
 
+//Route::get('/foo', function () {
+//    $exitCode = Artisan::call('xingstation:restart',['did'=>'fFVr6jwCMU2nPjJd8JNFji']);
+//
 Auth::routes();
 Route::get('/', 'HomeController@index')->name('home');

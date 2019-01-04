@@ -17,6 +17,7 @@ const CUSTOMER_API = '/api/customer/query'
 const USER_API = '/api/user/query'
 const TEAM_RATE_API = '/api/team_rate/query'
 const FORMAT_API = '/api/attribute/query'
+const CONTRACT_RECEIPT_API = '/api/contract/query'
 const HOST = process.env.SERVER_URL
 
 // 区域
@@ -264,6 +265,21 @@ const getFormatsList = context => {
       })
   })
 }
+
+// 收款合同
+
+const getContractReceiptList = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + CONTRACT_RECEIPT_API, { params: params })
+      .then(response => {
+        resolve(response.data.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
 export {
   getSearchAeraList,
   getSearchMarketList,
@@ -283,5 +299,6 @@ export {
   getSearchPolicyList,
   getSearchCompanyList,
   getSearchSceneList,
-  getFormatsList
+  getFormatsList,
+  getContractReceiptList
 }
