@@ -150,10 +150,7 @@ class MiniCouponController extends Controller
         });
 
         $per_page = $request->get('per_page') ? : 5;
-        $now = Carbon::now()->toDateTimeString();
-        $couponBatches = $query->where('start_date', '<=', $now)
-            ->where('end_date', '>=', $now)
-            ->orderByDesc('sort_order')->paginate($per_page);
+        $couponBatches = $query->orderByDesc('sort_order')->paginate($per_page);
 
         abort_if($couponBatches->isEmpty(), 500, '无可用优惠券');
 
@@ -188,6 +185,9 @@ class MiniCouponController extends Controller
         Log::info('mini_coupon_store', $request->all());
         $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
         $memberUID = $member->uid;
+
+        $now = Carbon::now()->toDateTimeString();
+        abort_if($couponBatch->end_date < $now, 500, '该券已过期!');
 
         if (!$couponBatch->dmg_status && !$couponBatch->pmg_status && $couponBatch->stock <= 0) {
             abort(500, '优惠券已发完!');
