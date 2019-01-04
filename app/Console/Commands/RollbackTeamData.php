@@ -2,10 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\Admin\Team\V1\Models\TeamBonusRecord;
-use Illuminate\Console\Command;
-use DB;
 use Carbon\Carbon;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class RollbackTeamData extends Command
 {
@@ -40,18 +39,32 @@ class RollbackTeamData extends Command
      */
     public function handle()
     {
-        $date = $this->ask("输入回滚时间：");
+        $date = Carbon::parse($this->ask("输入回滚日期(eg: 2018-01-01)："))->toDateString();
         if ($date < '2017-04-21' || $date >= Carbon::now()->toDateString()) {
             return $this->error('时间输入有误！');
         }
 
-        if ($date >= '2018-11-21') {
-            TeamBonusRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
-            TeamBonusRecord::create(['date' => $date]);
-        } else {
-            TeamBonusRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-11-21'")->delete();
+        $now = date("Y-m-d H:i:s");
+        DB::beginTransaction();
+        try {
+            if ($date >= '2018-11-21') {
+                DB::table('team_bonus_records')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
+                DB::table('team_bonus_records')->create(['date' => $date, 'created_at' => $now]);
+            } else {
+                DB::table('team_bonus_records')->whereRaw("date_format(date,'%Y-%m-%d')>'2018-11-21'")->delete();
+            }
+
+            DB::table('team_bonuses')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
+            DB::table('team_person_rewards')->whereRaw("date_format(get_date,'%Y-%m-%d')>='$date' and belong<>'system'")->delete();
+
+            DB::table('team_person_future_rewards')->whereRaw("date_format(get_date,'%Y-%m-%d')>='$date'")
+                ->update(['status' => 0, 'updated_at' => $now]);
+
+            DB::commit();
+            echo "回滚执行成功\n";
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->error("出错：" . $e->getMessage());
         }
-        DB::table('team_bonuses')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
-        DB::table('team_person_rewards')->whereRaw("date_format(date,'%Y-%m-%d')>='$date' and belong<>'system'")->delete();
     }
 }
