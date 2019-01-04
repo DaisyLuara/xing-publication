@@ -119,7 +119,11 @@
             class="coupon-form-input"
           />
         </el-form-item>
-        <el-form-item label="兑换价格（嗨蚪）" prop="credit">
+        <el-form-item
+          :rules="{required: true, message: '兑换价格（嗨蚪）不能为空', trigger: 'submit'}"
+          label="兑换价格（嗨蚪）"
+          prop="credit"
+        >
           <el-input v-model="couponForm.credit" class="coupon-form-input"/>
         </el-form-item>
         <el-form-item label="h5图片链接" prop="image_url">
