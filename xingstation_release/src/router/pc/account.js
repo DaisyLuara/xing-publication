@@ -29,7 +29,8 @@ let router = {
           },
           component: () =>
             import(/* webpackChunkName: "page/account/account/index" */ 'page/account/account/index')
-        }
+        },
+        
       ]
     },
     {
@@ -50,9 +51,18 @@ let router = {
           },
           component: () =>
             import(/* webpackChunkName: "page/account/center/index" */ 'page/account/center/index')
+        },
+        {
+          path: 'freeze',
+          name: '冻结明细列表',
+          meta: {
+            title: '冻结明细列表'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/account/center/freeze" */ 'page/account/center/freeze')
         }
       ]
-    }
+    },
   ]
 }
 

@@ -313,7 +313,6 @@ export default {
   },
   data() {
     let va = (rule, value, callback) => {
-      console.log(value)
       let validateResult = validate.account(value)
       if (!validateResult.validate) {
         this.validateError.account = true
@@ -494,7 +493,6 @@ export default {
       auth
         .sendSmsCaptcha(this, args)
         .then(sendResult => {
-          console.log(sendResult)
           this.accountForm.verification_key = sendResult.key
           let that = this
           // 改变发送验证码的文字，倒计时,开启语音验证码

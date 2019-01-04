@@ -193,6 +193,12 @@ class MiniCouponController extends Controller
             abort(500, '优惠券已发完!');
         }
 
+        //扫码领取记录
+        if ($request->has('qiniu_id')) {
+            $coupon = Coupon::query()->where('qiniu_id', $request->get('qiniu_id'))->first();
+            abort_if($coupon, 500, '该券已被领取!');
+        }
+
         //每天最大领取量
         if (!$couponBatch->dmg_status) {
             $dateString = Carbon::now()->toDateString();
@@ -213,7 +219,7 @@ class MiniCouponController extends Controller
                 ->get();
 
             if ($coupons->count() >= $couponBatch->people_max_get) {
-                abort(500, '您今天已经领过了，请明天再来!');
+                abort(500, '优惠券每人最多领取' . $couponBatch->people_max_get . '张');
             }
         }
 
@@ -239,6 +245,7 @@ class MiniCouponController extends Controller
                 'status' => 3,
                 'oid' => $member->oid,
                 'member_uid' => $memberUID,
+                'qiniu_id' => $request->get('qiniu_id') ? : 0,
                 'start_date' => $startDate,
                 'end_date' => $endDate,
             ]);

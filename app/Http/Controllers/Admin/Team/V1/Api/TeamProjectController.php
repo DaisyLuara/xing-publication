@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Team\V1\Api;
 
+use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Http\Controllers\Admin\Project\V1\Models\Project;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
 use App\Http\Controllers\Admin\Team\V1\Request\TeamProjectRequest;
@@ -13,11 +14,22 @@ use Illuminate\Http\Request;
 
 class TeamProjectController extends Controller
 {
+    /**
+     * 项目详情
+     * @param TeamProject $teamProject
+     * @return \Dingo\Api\Http\Response
+     */
     public function show(TeamProject $teamProject)
     {
         return $this->response()->item($teamProject, new TeamProjectTransformer());
     }
 
+    /**
+     * 项目列表
+     * @param TeamProjectRequest $request
+     * @param TeamProject $teamProject
+     * @return \Dingo\Api\Http\Response
+     */
     public function index(TeamProjectRequest $request, TeamProject $teamProject)
     {
         $query = $teamProject->query();
@@ -39,18 +51,10 @@ class TeamProjectController extends Controller
         /** @var  $user \App\Models\User */
         $user = $this->user();
 
-        if (!$user->hasRole('tester') && !$user->hasRole('operation') && !$user->hasRole('legal-affairs-manager') && !$user->hasRole('bonus-manager')) {
-            $query->where(function ($query) use ($user) {
-                $query->where('applicant', $user->id)
-                    ->orWhere(function ($q) use ($user) {
-                        $q->whereHas('member', function ($q) use ($user) {
-                            $q->where('id', $user->id);
-                        });
-                    });
-            });
-        }
-
-        if ($request->has('own') && $request->own == 'true') {
+        if (($request->has('own') && $request->own)
+            ||
+            !$user->hasRole('tester|operation|legal-affairs-manager|bonus-manager')
+        ) {
             $query->where(function ($query) use ($user) {
                 $query->where('applicant', $user->id)
                     ->orWhere(function ($q) use ($user) {
@@ -66,30 +70,40 @@ class TeamProjectController extends Controller
         return $this->response()->paginator($teamProject, new TeamProjectListTransformer());
     }
 
+    /**
+     * 保存项目
+     * @param TeamProjectRequest $request
+     * @param TeamProject $teamProject
+     * @return \Dingo\Api\Http\Response
+     */
     public function store(TeamProjectRequest $request, TeamProject $teamProject)
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if (!$user->hasRole('project-manager')) {
-            abort(403, '无操作权限');
-        }
+        $params = $request->all();
+        $member = $request->member ?? [];
+        $this->checkParams($request);
 
         $project = Project::query()->where('versionname', $request->belong)->first();
-        $teamProject->fill((array_merge($request->all(),
-            [
-                'status' => 1,
-                'applicant' => $user->id,
-                'begin_date' => Carbon::now()->toDateString(),
-                'project_name' => $project->name,
-                'launch_date' => $project->online != 0 ? date('Y-m-d', $project->online / 1000) : null,
-            ]
-        )))->save();
-        $member = $request->member;
+
+        $params['status'] = 1;
+        $params['applicant'] = $user->id;
+        $params['begin_date'] = Carbon::now()->toDateString();
+        $params['project_name'] = $project->name;
+        $params['launch_date'] = $project->online != 0 ? date('Y-m-d', $project->online / 1000) : null;
+        $params['interaction_attribute'] = implode(",", $request->interaction_attribute ?? []);
+
+        $teamProject->fill($params)->save();
         $this->memberStore($member, $teamProject);
         return $this->response()->noContent()->setStatusCode(201);
 
     }
 
+    /**
+     * 保存对应项目成员
+     * @param $member
+     * @param TeamProject $teamProject
+     */
     private function memberStore($member, TeamProject $teamProject)
     {
         foreach ($member as $key => $value) {
@@ -97,33 +111,95 @@ class TeamProjectController extends Controller
                 $teamProject->member()->attach($item['user_id'], ['user_name' => $item['user_name'], 'type' => $key, 'rate' => $item['rate']]);
             }
         }
-
     }
 
+    /**
+     * 修改项目
+     * @param TeamProjectRequest $request
+     * @param TeamProject $teamProject
+     * @return \Dingo\Api\Http\Response
+     */
     public function update(TeamProjectRequest $request, TeamProject $teamProject)
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if (!$user->hasRole('project-manager') && !$user->hasRole('legal-affairs-manager') && !$user->hasRole('bonus-manager')) {
-            abort(403, '无操作权限');
-        }
         if ($user->hasRole('project-manager') && $teamProject->status > 2) {
-            abort(403, '项目已无法修改');
+            abort(403, '项目已确认，无法修改');
         }
-        $teamProject->update($request->all());
-        $member = $request->member;
+
+        $params = $request->all();
+        $member = $request->member ?? [];
+        $this->checkParams($request);
+
+        $project = Project::query()->where('versionname', $request->belong)->first();
+
+        if (isset($params['tester_media_id']) && !$params['tester_media_id']) {
+            unset($params['tester_media_id']);
+        }
+
+        if (isset($params['test_remark']) && !$params['test_remark']) {
+            unset($params['test_remark']);
+        }
+
+        unset($params['applicant']);
+        unset($params['begin_date']);
+        unset($params['online_date']);
+        unset($params['status']);
+        $params['project_name'] = $project->name;
+        $params['launch_date'] = $project->online != 0 ? date('Y-m-d', $project->online / 1000) : null;
+        $params['interaction_attribute'] = implode(",", $request->interaction_attribute ?? []);
+        $teamProject->update($params);
+
         $teamProject->member()->detach();
         $this->memberStore($member, $teamProject);
         return $this->response()->noContent()->setStatusCode(200);
     }
 
+
+    /**
+     * 更新、保存的参数判断
+     * @param $request
+     */
+    public function checkParams($request)
+    {
+        $member = $request->member ?? [];
+        if (isset($member['tester']) || isset($member['tester_quality'])) {
+            $tester_ids = array_column($member['tester'] ?? [], 'user_id');
+            $tester_quality_ids = array_column($member['tester_quality'] ?? [], 'user_id');
+            if (count($tester_ids) != count($tester_quality_ids) || array_diff($tester_quality_ids, $tester_ids) || array_diff($tester_ids, $tester_quality_ids)) {
+                abort("422", "tester与tester_quality人员需一致");
+            }
+        }
+        if (isset($member['operation']) || isset($member['operation_quality'])) {
+            $operation_ids = array_column($member['operation'] ?? [], 'user_id');
+            $operation_quality_ids = array_column($member['operation_quality'] ?? [], 'user_id');
+            if (count($operation_ids) != count($operation_quality_ids) || array_diff($operation_quality_ids, $operation_ids) || array_diff($operation_ids, $operation_quality_ids)) {
+                abort("422", "operation与operation_quality人员需一致");
+            }
+        }
+    }
+
+
+    /**
+     * 测试、运营、主管确认
+     * @param Request $request
+     * @param TeamProject $teamProject
+     * @return \Dingo\Api\Http\Response
+     */
     public function confirm(Request $request, TeamProject $teamProject)
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
-
         if ($user->hasRole('tester') && $teamProject->status == 1) {
+            $media = Media::find($request->get('media_id') ?? 0);
+            if (!$media) {
+                abort("422", "请上传测试用例");
+            }
+            if($request->has('test_remark') && $request->test_remark){
+                $teamProject->test_remark = $request->test_remark;
+            }
             $teamProject->status = 2;
+            $teamProject->tester_media_id = $media->id;
             $teamProject->update();
             return $this->response()->noContent()->setStatusCode(200);
         }

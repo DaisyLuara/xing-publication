@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin\Team\V1\Models;
 
+use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
-use App\Http\Controllers\Admin\Project\V1\Models\Project;
 use App\Models\Model;
 use App\Models\User;
 
@@ -14,6 +14,10 @@ class TeamProject extends Model
         'belong',
         'applicant',
         'project_attribute',
+        'hidol_attribute',
+        'individual_attribute',
+        'contract_id',
+        'interaction_attribute',
         'link_attribute',
         'h5_attribute',
         'xo_attribute',
@@ -26,8 +30,18 @@ class TeamProject extends Model
         'remark',
         'status',
         'type',
-        'media_id'
+        'media_id',
+        'operation_media_id',
+        'tester_media_id',
+        'animation_media_id',
+        'test_remark',
+//        'plan_media_id',
     ];
+
+    public function contract()
+    {
+        return $this->belongsTo(Contract::class, 'contract_id', 'id');
+    }
 
     public function member()
     {
@@ -43,5 +57,21 @@ class TeamProject extends Model
     {
         return $this->belongsTo(Media::class, 'media_id', 'id');
     }
+
+    public function operation_media()
+    {
+        return $this->belongsTo(Media::class, 'operation_media_id', 'id');
+    }
+
+    public function tester_media()
+    {
+        return $this->belongsTo(Media::class, 'tester_media_id', 'id');
+    }
+
+    public function animation_media()
+    {
+        return $this->belongsTo(Media::class, 'animation_media_id', 'id');
+    }
+
 
 }

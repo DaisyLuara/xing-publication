@@ -27,9 +27,9 @@ class TeamSystemProjectTransformer extends TransformerAbstract
             'name' => $teamSystemProject->name,
             'applicant' => $teamSystemProject->applicant,
             'applicant_name' => $teamSystemProject->user->name,
-            'status' => $this->statusMapping[$teamSystemProject->status],
+            'status' => $this->statusMapping[$teamSystemProject->status] ?? '未知',
             'remark' => $teamSystemProject->remark,
-            'reject_message'=>$teamSystemProject->reject_message,
+            'reject_message' => $teamSystemProject->reject_message,
             'created_at' => $teamSystemProject->created_at->toDateString(),
             'updated_at' => $teamSystemProject->updated_at->toDateString()
         ];
