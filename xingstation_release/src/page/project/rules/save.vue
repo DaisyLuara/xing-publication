@@ -148,6 +148,9 @@
           prop="amount"
         >
           <el-input v-model="couponForm.amount" :maxlength="6" class="coupon-form-input"/>
+          <el-tooltip class="item" effect="dark" content="金额必须为整数" placement="right">
+            <i class="el-icon-info"/>
+          </el-tooltip>
         </el-form-item>
         <el-form-item
           :rules="{required: true, message: '库存总数不能为空', trigger: 'submit'}"
