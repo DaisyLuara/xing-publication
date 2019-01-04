@@ -1,11 +1,11 @@
 const HOST = process.env.SERVER_URL
 
 const CARD_API = '/api/cards/list'
-const SINGLECARD_API = '/api/cards/show/'
-const UPDATE_SINGLECARD_API = '/api/cards/update/'
-const DELETE_SINGLECARD_API = '/api/cards/delete/'
-const ADD_SINGLECARD_API = '/api/cards/create/'
-const MODIFY_INVENTORY_API = '/api/cards/stock/'
+const SINGLECARD_API = '/api/cards/show'
+const UPDATE_SINGLECARD_API = '/api/cards/update'
+const DELETE_SINGLECARD_API = '/api/cards/delete'
+const ADD_SINGLECARD_API = '/api/cards/create'
+const MODIFY_INVENTORY_API = '/api/cards/stock'
 //查卡券列表
 const getCardList = (context, args) => {
   return new Promise(function(resolve, reject) {
@@ -33,10 +33,10 @@ const getSingleCard = (context, args) => {
   })
 }
 //修改单个卡券
-const modifySingleCard = (context, args) => {
+const modifySingleCard = (context, args, args1) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .patch(HOST + UPDATE_SINGLECARD_API, { params: args })
+      .patch(HOST + UPDATE_SINGLECARD_API + args, args1)
       .then(response => {
         resolve(response.data)
       })
@@ -59,10 +59,10 @@ const deleteSingleCard = (context, args) => {
   })
 }
 //新增卡券
-const addSingleCard = (context, args) => {
+const addSingleCard = (context, args, args1) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .post(HOST + ADD_SINGLECARD_API, { params: args })
+      .post(HOST + ADD_SINGLECARD_API + args, args1)
       .then(response => {
         resolve(response.data)
       })
@@ -75,7 +75,7 @@ const addSingleCard = (context, args) => {
 const modifyInventory = (context, args) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .post(HOST + MODIFY_INVENTORY_API, { params: args })
+      .post(HOST + MODIFY_INVENTORY_API, args)
       .then(response => {
         resolve(response.data)
       })

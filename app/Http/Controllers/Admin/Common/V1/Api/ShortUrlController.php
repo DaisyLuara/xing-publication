@@ -34,7 +34,13 @@ class ShortUrlController extends Controller
     public function redirect(string $short_path, Request $request)
     {
         $hashIds = new Hashids();
-        $shortUrl = ShortUrl::findOrFail($hashIds->decode($short_path)[0]);
+        $idArr = $hashIds->decode($short_path);
+        if (empty($idArr)) {
+            ding()->with('other')->text('短链接跳转失败:' . $request->getUri());
+            abort(404, '您访问的页面不存在!');
+        }
+
+        $shortUrl = ShortUrl::findOrFail($idArr[0]);
         $application = '';
         foreach ($this->applications as $key => $value) {
             if (Agent::match($key)) {

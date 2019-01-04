@@ -63,7 +63,27 @@ class MiniCouponController extends Controller
 
         $couponQuery = Coupon::query();
         if ($request->has('status')) {
-            $couponQuery->where('status', $request->get('status'));
+            $now = Carbon::now()->toDateTimeString();
+
+            switch ($request->get('status')) {
+                case 0:
+                case 1:
+                case 2:
+                    $couponQuery->where('status', $request->get('status'));
+                    break;
+                case 3:
+                    //可使用卡券
+                    $couponQuery->where('status', $request->get('status'))
+                        ->where('end_date', '>', $now);
+                    break;
+                case 4:
+                    //已过期卡券
+                    $couponQuery->where('status', '=', '3')
+                        ->where('end_date', '<', $now);
+                    break;
+                default:
+                    return null;
+            }
         }
 
         if ($request->has('coupon_batch_id')) {
@@ -165,6 +185,9 @@ class MiniCouponController extends Controller
         Log::info('mini_coupon_store', $request->all());
         $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
         $memberUID = $member->uid;
+
+        $now = Carbon::now()->toDateTimeString();
+        abort_if($couponBatch->end_date < $now, 500, '该券已过期!');
 
         if (!$couponBatch->dmg_status && !$couponBatch->pmg_status && $couponBatch->stock <= 0) {
             abort(500, '优惠券已发完!');

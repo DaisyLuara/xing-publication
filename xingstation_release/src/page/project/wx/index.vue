@@ -188,7 +188,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <div class="pagination-wrap">
+        <!-- <div class="pagination-wrap">
           <el-pagination
             :total="pagination.total"
             :page-size="pagination.pageSize"
@@ -196,7 +196,7 @@
             layout="prev, pager, next, jumper, total"
             @current-change="changePage"
           />
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -276,7 +276,7 @@ export default {
         currentPage: 1
       },
       obj: {
-        GFIT: { prop: 'gfit', typeName: '兑换券' },
+        GIFT: { prop: 'gift', typeName: '兑换券' },
         DISCOUNT: { prop: 'discount', typeName: '折扣劵' },
         CASH: { prop: 'cash', typeName: '代金券' },
         GENERAL_COUPON: { prop: 'general_coupon', typeName: '优惠劵' },
@@ -288,10 +288,12 @@ export default {
   mounted() {
     //查询优惠劵列表
     this.getCardList()
+    sessionStorage.setItem('isRefresh', 0)
   },
   methods: {
     //卡券列表查询
     getCardList() {
+      this.dataList = [];
       let params = {
         authorizer_id: 6
       }
@@ -300,7 +302,6 @@ export default {
           console.log("卡劵列表card_id========")
           console.log(res)
           this.card_id_list = res.card_id_list
-          this.pagination.total = this.card_id_list.length
           //根据卡劵id循环查询卡劵信息
           this.listHandle()
         })
@@ -331,27 +332,31 @@ export default {
           //库存修改弹框出现的状态
           data.visible = false
           //审核中
-          if (card[object.prop].base_info.status = 'CARD_STATUS_NOT_VERIFY') {
+          if (card[object.prop].base_info.status === 'CARD_STATUS_NOT_VERIFY') {
             data.status = '审核中'
           }
           //待投放
-          else if (card[object.prop].base_info.status = 'CARD_STATUS_VERIFY_OK') {
+          else if (card[object.prop].base_info.status === 'CARD_STATUS_VERIFY_OK') {
             data.status = '待投放'
           }
           //已投放
-          else if (card[object.prop].base_info.status = 'CARD_STATUS_DISPATCH') {
+          else if (card[object.prop].base_info.status === 'CARD_STATUS_DISPATCH') {
             data.status = '已投放'
-          } else {
+          }
+          else {
             data.status = ''
           }
-          if (card[object.prop].base_info.date_info.type = 'DATE_TYPE_FIX_TIME_RANGE') {
+          if (card[object.prop].base_info.date_info.type === 'DATE_TYPE_FIX_TIME_RANGE') {
             data.dateDetail = this.formatDateTime(card[object.prop].base_info.date_info.begin_timestamp) +
               '至' + this.formatDateTime(card[object.prop].base_info.date_info.end_timestamp)
           } else {
             data.dateDetail = '领取后' + card[object.prop].base_info.date_info.fixed_begin_term === 0 ? '当' :
               card[object.prop].base_info.date_info.fixed_begin_term + '天生效' + card[object.prop].base_info.date_info.fixed_term + '天有效'
           }
-          this.dataList.push(data)
+          if (card[object.prop].base_info.status !== 'CARD_STATUS_DELETE') {
+            this.dataList.push(data)
+            this.pagination.total++
+          }
         })
         .catch(err => {
           console.log(err);
@@ -390,7 +395,7 @@ export default {
     },
     //确认修改库存
     confirmModify(args) {
-      if (!this.validate()) {
+      if (!this.validate(args)) {
         return
       }
       let updateParams = {
@@ -405,7 +410,7 @@ export default {
       } else {
         updateParams.reduce_stock_value = this.modifyQuantity
       }
-      this.modifyInventory(args)
+      this.modifyInventory(updateParams)
       args.visible = false
     },
     //取消修改库存
@@ -458,9 +463,9 @@ export default {
       console.log("删除")
       this.deleteSingleCard(args)
     },
-    changePage(currentPage) {
-      this.pagination.currentPage = currentPage;
-    },
+    // changePage(currentPage) {
+    //   this.pagination.currentPage = currentPage;
+    // },
     dialogClose() {
       this.templateVisible = false
     },
