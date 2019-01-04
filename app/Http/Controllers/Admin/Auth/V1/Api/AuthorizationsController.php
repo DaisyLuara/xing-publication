@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Auth\V1\Api;
 
 use App\Http\Controllers\Admin\Auth\V1\Request\AuthorizationRequest;
 use App\Http\Controllers\Admin\Auth\V1\Request\SocialBindRequest;
+use App\Http\Controllers\Admin\User\V1\Models\ArMemberSession;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Auth;
@@ -72,6 +73,24 @@ class AuthorizationsController extends Controller
         if (!$token = Auth::guard('customer')->attempt($credentials)) {
             return $this->response->errorUnauthorized('用户名或密码错误');
         }
+
+        return $this->response->array([
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'expires_in' => Auth::guard('api')->factory()->getTTL() * 60
+        ])->setStatusCode(201);
+    }
+
+    /**
+     * AR用户授权
+     * @param Request $request
+     * @return mixed
+     */
+    public function arMemberSessionLogin(Request $request)
+    {
+        $request->validate(['z' => 'required']);
+        $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
+        $token = Auth::guard('arMemberSession')->login($member);
 
         return $this->response->array([
             'access_token' => $token,
