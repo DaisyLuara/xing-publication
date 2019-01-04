@@ -57,6 +57,7 @@ class RollbackTeamData extends Command
             DB::table('team_bonuses')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
             DB::table('team_person_rewards')->whereRaw("date_format(get_date,'%Y-%m-%d')>='$date' and belong<>'system'")->delete();
 
+            DB::table('team_person_future_rewards')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
             DB::table('team_person_future_rewards')->whereRaw("date_format(get_date,'%Y-%m-%d')>='$date'")
                 ->update(['status' => 0, 'updated_at' => $now]);
 
