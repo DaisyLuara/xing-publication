@@ -49,7 +49,7 @@ class RollbackTeamData extends Command
         try {
             if ($date >= '2018-11-21') {
                 DB::table('team_bonus_records')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
-                DB::table('team_bonus_records')->create(['date' => $date, 'created_at' => $now]);
+                DB::table('team_bonus_records')->insert(['date' => $date, 'created_at' => $now]);
             } else {
                 DB::table('team_bonus_records')->whereRaw("date_format(date,'%Y-%m-%d')>'2018-11-21'")->delete();
             }
