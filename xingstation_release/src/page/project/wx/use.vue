@@ -89,14 +89,12 @@
               label="适用门店"
               prop="is_fixed_date"
             >
-
               <div class="box-segmentation">
                 <el-checkbox
                   v-model="use_all_locations"
                   label="全部门店通用"
                 ></el-checkbox>
               </div>
-
             </el-form-item>
             <el-form-item
               label="操作提示"
@@ -180,6 +178,7 @@ export default {
       can_share: false,
       can_give_friend: false,
       data: null,
+      updateData: null,
       notice: null,
       card_type: this.$route.params.card_type,
       card_id: this.$route.params.card_id,
@@ -209,7 +208,8 @@ export default {
           "card_type": "GENERAL_COUPON",
           "general_coupon": {
           }
-        }      },
+        }
+      },
       setting: {
         loading: false,
         loadingText: "拼命加载中"
@@ -226,8 +226,6 @@ export default {
         color: "",
         discount: "",
         time: "",
-
-
       },
     };
   },
@@ -345,7 +343,7 @@ export default {
     },
     //修改
     update() {
-      let card = this.data
+      let card = this.updateData
       let params = '?authorizer_id=6&card_id=' + this.card_id
       console.log('更新')
       console.log(card)
@@ -359,6 +357,25 @@ export default {
       this.data[type].base_info.notice = this.notice
       this.data[type].base_info.code_type = this.code_type
       this.data[type].base_info.use_all_locations = this.use_all_locations
+      this.updateDataHandle(type)
+    },
+    updateDataHandle(type) {
+      //处理更新的数据
+      this.updateData = this.card_types[this.card_type]
+      this.updateData[type].base_info = {}
+      this.updateData[type].base_info.title = this.data[type].base_info.title
+      this.updateData[type].base_info.date_info = this.data[type].base_info.date_info
+      this.updateData[type].base_info.description = this.data[type].base_info.description
+      this.updateData[type].base_info.get_limit = this.data[type].base_info.get_limit
+      this.updateData[type].base_info.can_share = this.data[type].base_info.can_share
+      this.updateData[type].base_info.can_give_friend = this.data[type].base_info.can_give_friend
+      this.updateData[type].base_info.use_all_locations = this.data[type].base_info.use_all_locations
+      this.updateData[type].base_info.code_type = this.data[type].base_info.code_type
+      this.updateData[type].base_info.color = this.data[type].base_info.color
+      this.updateData[type].advanced_info = {}
+      this.updateData[type].advanced_info.time_limit = this.data[type].advanced_info.time_limit
+      this.updateData[type].advanced_info.text_image_list = this.data[type].advanced_info.text_image_list
+      this.updateData[type].advanced_info.abstract = this.data[type].advanced_info.abstract
     },
     useInit() {
       //团购券

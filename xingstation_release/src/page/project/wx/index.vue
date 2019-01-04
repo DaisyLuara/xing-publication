@@ -145,12 +145,12 @@
                 </div>
                 <div
                   class="errMessage"
-                  style="font-size:12px;margin:10px 0"
+                  style="font-size:12px;margin:10px 0;color:#e15f63;"
                   v-show="submitCheck.quantityCheck1"
                 >库存不能小于1</div>
                 <div
                   class="errMessage"
-                  style="font-size:12px;margin:10px 0"
+                  style="font-size:12px;margin:10px 0;color:#e15f63;"
                   v-show="submitCheck.quantityCheck2"
                 >减少库存量不能大于已有库存量</div>
                 <div
@@ -331,6 +331,12 @@ export default {
           data.quantity = card[object.prop].base_info.sku.quantity
           //库存修改弹框出现的状态
           data.visible = false
+          //代金券标题处理
+          if (card.card_type === 'CASH') {
+            data.title = card[object.prop].reduce_cost + '元代金券'
+          } else {
+            data.title = card[object.prop].base_info.title
+          }
           //审核中
           if (card[object.prop].base_info.status === 'CARD_STATUS_NOT_VERIFY') {
             data.status = '审核中'
@@ -350,8 +356,8 @@ export default {
             data.dateDetail = this.formatDateTime(card[object.prop].base_info.date_info.begin_timestamp) +
               '至' + this.formatDateTime(card[object.prop].base_info.date_info.end_timestamp)
           } else {
-            data.dateDetail = '领取后' + card[object.prop].base_info.date_info.fixed_begin_term === 0 ? '当' :
-              card[object.prop].base_info.date_info.fixed_begin_term + '天生效' + card[object.prop].base_info.date_info.fixed_term + '天有效'
+            data.dateDetail = '领取后' + (card[object.prop].base_info.date_info.fixed_begin_term === 0 ? '当' :
+              card[object.prop].base_info.date_info.fixed_begin_term) + '天生效' + card[object.prop].base_info.date_info.fixed_term + '天有效'
           }
           if (card[object.prop].base_info.status !== 'CARD_STATUS_DELETE') {
             this.dataList.push(data)
