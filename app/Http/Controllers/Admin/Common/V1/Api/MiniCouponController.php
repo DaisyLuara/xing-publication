@@ -186,6 +186,9 @@ class MiniCouponController extends Controller
         $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
         $memberUID = $member->uid;
 
+        $now = Carbon::now()->toDateTimeString();
+        abort_if($couponBatch->end_date < $now, 500, '该券已过期!');
+
         if (!$couponBatch->dmg_status && !$couponBatch->pmg_status && $couponBatch->stock <= 0) {
             abort(500, '优惠券已发完!');
         }
