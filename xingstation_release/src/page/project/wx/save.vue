@@ -422,7 +422,6 @@
                   v-model="use_condition.can_use_with_other_discount"
                   placeholder="请选择"
                   class="coupon-form-select"
-                  :disabled="disabled"
                 >
                   <el-option
                     v-for="item in shareList"
@@ -991,6 +990,7 @@ export default {
       else if (this.card_type === 'CASH') {
         this.least_cost = data.cash.least_cost
         this.reduce_cost = data.cash.reduce_cost
+        this.base_info = data.cash.base_info
         this.commonHandleInit('cash', data)
       }
       //折扣券
