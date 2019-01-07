@@ -241,7 +241,6 @@ export default {
             type: "success",
             message: "删除成功！"
           });
-          this.pagination.currentPage = 1;
           this.getPermissionList();
         })
         .catch(error => {

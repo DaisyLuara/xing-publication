@@ -13,33 +13,11 @@ class UpdatePermissionSeeder extends Seeder
      */
     public function run()
     {
+        $permsData = Permission::all();
         Permission::query()->delete();
         app()['cache']->forget('spatie.permission.cache');
-        $permsData = [
-            ['name' => 'company', 'display_name' => '公司'],
-            ['name' => 'system', 'display_name' => '设置'],
-            ['name' => 'contract', 'display_name' => '合同'],
-            ['name' => 'project', 'display_name' => '节目'],
-            ['name' => 'verify', 'display_name' => '审核'],
-            ['name' => 'device', 'display_name' => '设备'],
-            ['name' => 'ad', 'display_name' => '广告'],
-            ['name' => 'point', 'display_name' => '点位'],
-            ['name' => 'setting', 'display_name' => '配置'],
-            ['name' => 'team', 'display_name' => '团队'],
-            ['name' => 'report', 'display_name' => '数据'],
-            ['name' => 'home', 'display_name' => '主页'],
-            ['name' => 'download', 'display_name' => '下载'],
-            ['name' => 'account', 'display_name' => '账户'],
-            ['name' => 'resource', 'display_name' => '资源'],
-            ['name' => 'invoice', 'display_name' => '票据'],
-            ['name' => 'payments', 'display_name' => '付款'],
-            ['name' => 'finance_bill', 'display_name' => '财务开票'],
-            ['name' => 'finance_pay', 'display_name' => '财务付款'],
-            ['name' => 'auditing', 'display_name' => '审批'],
-            ['name' => 'wechat_card', 'display_name' => '微信卡券'],
-        ];
         foreach ($permsData as $item) {
-            Permission::create(['name' => $item['name'], 'display_name' => $item['display_name']]);
+            Permission::create(['name' => $item->name, 'display_name' => $item->display_name]);
         }
 
         #system二级菜单
