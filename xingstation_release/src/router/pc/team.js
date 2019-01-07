@@ -1,3 +1,4 @@
+import auth from 'service/auth'
 let router = {
   path: 'team',
   redirect: 'team/program',
@@ -131,7 +132,9 @@ let router = {
 router.redirect = () => {
   let routes = router.children
   for (let route of routes) {
-    return '/team/' + route.path
+    if (auth.checkPathPermission(route)) {
+      return '/team/' + route.path
+    }
   }
 }
 
