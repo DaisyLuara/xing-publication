@@ -22,9 +22,9 @@ let router = {
       children: [
         {
           path: '/',
-          name: '节目列表',
+          name: '节目智造列表',
           meta: {
-            title: '节目列表',
+            title: '节目智造列表',
             permission: '',
             keepAlive: true
           },
