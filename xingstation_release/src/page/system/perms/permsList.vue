@@ -23,10 +23,11 @@
           <el-table ref="userTable" :data="firstTableData" style="width: 100%">
             <el-table-column prop="id" label="ID" min-width="100"/>
             <el-table-column prop="display_name" label="名称" min-width="150"/>
-            <el-table-column label="操作" min-width="180">
+            <el-table-column label="操作" min-width="200">
               <template slot-scope="scope">
                 <el-button size="small" @click="showSencodMenu(scope.row,scope.$index)">查看子权限</el-button>
                 <el-button size="small" type="warning" @click="modifyFirstPerms(scope.row)">修改</el-button>
+                <el-button size="small" type="danger" @click="deletePerms(scope.row)">修改</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -63,6 +64,7 @@
               <div class="actions-wrap">
                 <span class="label">数目: {{ item.children.length }}</span>
                 <div>
+                  <el-button size="small" type="danger" @click="deletePerms(item)">增加</el-button>
                   <el-button size="small" @click="addThirdPerms(index)">增加</el-button>
                 </div>
               </div>
@@ -98,6 +100,12 @@
                       style="background-color: #8bc34a;border-color: #8bc34a; color: #fff;"
                       @click="savePerms(scope.row)"
                     >保存</el-button>
+                    <el-button
+                      v-if="scope.row.created_at"
+                      size="mini"
+                      type="danger"
+                      @click="deletePerms(scope.row)"
+                    >删除</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -130,7 +138,12 @@
   </div>
 </template>
 <script>
-import { getPermissionList, getPermissionInfo, savePermission } from "service";
+import {
+  getPermissionList,
+  getPermissionInfo,
+  savePermission,
+  deletePermission
+} from "service";
 import {
   Collapse,
   CollapseItem,
@@ -198,6 +211,38 @@ export default {
     this.getPermissionList();
   },
   methods: {
+    deletePerms(data) {
+      let id = data.id;
+      MessageBox.confirm("确认删除此权限?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.setting.loadingText = "删除中";
+          this.setting.loading = true;
+          this.deletePermission(id);
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+    deletePermission(id) {
+      deletePermission(this, id)
+        .then(response => {
+          this.setting.loading = false;
+          this.$message({
+            type: "success",
+            message: "删除成功！"
+          });
+          this.pagination.currentPage = 1;
+          this.getPermissionList();
+        })
+        .catch(error => {
+          this.setting.loading = false;
+          console.log(error);
+        });
+    },
     modifySecondPerms(item) {
       this.permsId = item.id;
       this.tap = "second";
