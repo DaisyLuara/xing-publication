@@ -1,4 +1,5 @@
-export default {
+import auth from 'service/auth'
+let router = {
   path: 'system',
   name: '权限',
   component: () =>
@@ -110,3 +111,13 @@ export default {
     }
   ]
 }
+
+router.redirect = () => {
+  let routes = router.children
+  for (let route of routes) {
+    if (auth.checkPathPermission(route)) {
+      return '/team/' + route.path
+    }
+  }
+}
+export default router
