@@ -10,11 +10,11 @@ $api->version('v1', [
     ], function ($api) {
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
-            $api->get('permission/{permission}', ['middleware' => ['permission:system.perms.read'], 'uses' => 'PermissionController@show']);
-            $api->get('permission', ['middleware' => ['permission:system.perms.read'], 'uses' => 'PermissionController@index']);
-            $api->post('permission', ['middleware' => ['permission:system.perms.create'], 'uses' => 'PermissionController@store']);
-            $api->patch('permission/{permission}', ['middleware' => ['permission:system.perms.update'], 'uses' => 'PermissionController@update']);
-            $api->delete('permission/{permission}', ['middleware' => ['permission:system.perms.delete'], 'uses' => 'PermissionController@destroy']);
+            $api->get('permission/{permission}', ['middleware' => ['permission:system.permission.read'], 'uses' => 'PermissionController@show']);
+            $api->get('permission', ['middleware' => ['permission:system.permission.read'], 'uses' => 'PermissionController@index']);
+            $api->post('permission', ['middleware' => ['permission:system.permission.create'], 'uses' => 'PermissionController@store']);
+            $api->patch('permission/{permission}', ['middleware' => ['permission:system.permission.update'], 'uses' => 'PermissionController@update']);
+            $api->delete('permission/{permission}', ['middleware' => ['permission:system.permission.delete'], 'uses' => 'PermissionController@destroy']);
 
             $api->get('role/{role}', ['middleware' => ['permission:system.role.read'], 'uses' => 'RoleController@show']);
             $api->get('role', ['middleware' => ['permission:system.role.read'], 'uses' => 'RoleController@index']);

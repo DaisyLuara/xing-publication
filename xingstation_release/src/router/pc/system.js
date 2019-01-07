@@ -90,12 +90,12 @@ let router = {
     },
     {
       // 角色主页，也是角色列表页
-      path: 'perms',
+      path: 'permission',
       component: () =>
         import(/* webpackChunkName: "page/system/perms/permsView" */ 'page/system/perms/permsView'),
       meta: {
         title: '权限管理',
-        permission: 'system.perms'
+        permission: 'system.permission'
       },
       children: [
         {
@@ -104,7 +104,7 @@ let router = {
             import(/* webpackChunkName: "page/system/perms/permsList" */ 'page/system/perms/permsList'),
           name: '权限管理',
           meta: {
-            permission: 'system.perms.read'
+            permission: 'system.permission.read'
           }
         }
       ]
