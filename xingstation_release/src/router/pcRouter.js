@@ -9,7 +9,6 @@ import equipment from 'router/pc/equipment'
 import home from 'router/pc/home'
 import report from 'router/pc/report'
 import market from 'router/pc/market'
-import setting from 'router/pc/setting'
 
 export default {
   path: '/',
@@ -22,7 +21,6 @@ export default {
     home,
     system,
     project,
-    setting,
     market,
     inform,
     account,
