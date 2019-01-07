@@ -138,9 +138,6 @@ export default {
               case "report":
                 m.src = require("../assets/images/icons/report-icon.png");
                 break;
-              case "setting":
-                m.src = require("../assets/images/icons/setting-icon.png");
-                break;
               default:
                 m.src = "";
                 break;
