@@ -116,7 +116,7 @@ router.redirect = () => {
   let routes = router.children
   for (let route of routes) {
     if (auth.checkPathPermission(route)) {
-      return '/team/' + route.path
+      return '/system/' + route.path
     }
   }
 }

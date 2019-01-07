@@ -10,17 +10,17 @@ $api->version('v1', [
     ], function ($api) {
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
-            $api->get('permission/{permission}', 'PermissionController@show');
-            $api->get('permission', 'PermissionController@index');
-            $api->post('permission', 'PermissionController@store');
-            $api->patch('permission/{permission}', 'PermissionController@update');
-            $api->delete('permission/{permission}', 'PermissionController@destroy');
+            $api->get('permission/{permission}', ['middleware' => ['permission:system.perms.read'], 'uses' => 'PermissionController@show']);
+            $api->get('permission', ['middleware' => ['permission:system.perms.read'], 'uses' => 'PermissionController@index']);
+            $api->post('permission', ['middleware' => ['permission:system.perms.create'], 'uses' => 'PermissionController@store']);
+            $api->patch('permission/{permission}', ['middleware' => ['permission:system.perms.update'], 'uses' => 'PermissionController@update']);
+            $api->delete('permission/{permission}', ['middleware' => ['permission:system.perms.delete'], 'uses' => 'PermissionController@destroy']);
 
-            $api->get('role/{role}', 'RoleController@show');
-            $api->get('role', 'RoleController@index');
-            $api->post('role', 'RoleController@store');
-            $api->patch('role/{role}', 'RoleController@update');
-            $api->delete('role/{role}', 'RoleController@destroy');
+            $api->get('role/{role}', ['middleware' => ['permission:system.role.read'], 'uses' => 'RoleController@show']);
+            $api->get('role', ['middleware' => ['permission:system.role.read'], 'uses' => 'RoleController@index']);
+            $api->post('role', ['middleware' => ['permission:system.role.create'], 'uses' => 'RoleController@store']);
+            $api->patch('role/{role}', ['middleware' => ['permission:system.role.update'], 'uses' => 'RoleController@update']);
+            $api->delete('role/{role}', ['middleware' => ['permission:system.role.delete'], 'uses' => 'RoleController@destroy']);
         });
     });
 

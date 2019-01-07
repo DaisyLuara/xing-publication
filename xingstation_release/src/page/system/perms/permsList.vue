@@ -337,7 +337,7 @@ export default {
         });
     },
     deleteAddPerms(pIndex, index, r) {
-      this.secondTableData[pIndex].perms.data.splice(index, 1);
+      this.secondTableData[pIndex].children.splice(index, 1);
     },
     editPerms(data) {
       let args = {

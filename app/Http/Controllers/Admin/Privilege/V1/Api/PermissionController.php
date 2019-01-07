@@ -24,7 +24,7 @@ class PermissionController extends Controller
 
     public function index(Request $request)
     {
-        $permission = Permission::query()->where('parent_id',0)->paginate(10);
+        $permission = Permission::query()->where('parent_id', 0)->paginate(10);
         return $this->response()->paginator($permission, new PermissionTransformer());
     }
 
@@ -52,7 +52,7 @@ class PermissionController extends Controller
 
         $this->checkPermission($permission);
 
-        $permission->delete();
+        $permission->descendantsAndSelf()->delete();
         return $this->response()->noContent()->setStatusCode(204);
     }
 
@@ -67,7 +67,8 @@ class PermissionController extends Controller
 
     private function checkPermission(Permission $permission)
     {
-        if ($permission->name == "system") {
+        $perms = explode('.', $permission->name);
+        if ($perms[0] == "system") {
             abort(403, "系统基本权限不可更改");
         }
     }
