@@ -303,6 +303,7 @@ export default {
     },
     handleClick(val) {
       this.secondTabDisable = true;
+      this.index = null
     },
     addThirdPerms(index) {
       let parent_id = this.secondTableData[index].id;
@@ -387,11 +388,11 @@ export default {
       this.getPermissionList();
     },
     search() {
-      this.pagination.currentPage = 1;
+        this.pagination.currentPage = 1;
       this.getPermissionList();
     },
     resetSearch() {
-      this.filters.name = "";
+        this.filters.name = "";
       this.pagination.currentPage = 1;
       this.getPermissionList();
     }
