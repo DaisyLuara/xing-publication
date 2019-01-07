@@ -7,7 +7,7 @@ export default {
     title: '权限',
     permission: 'system'
   },
-  redirect: 'system/user',
+  // redirect: 'system/user',
   children: [
     {
       // 用户主页，也是用户列表页
@@ -25,7 +25,7 @@ export default {
             import(/* webpackChunkName: "page/system/user/userList" */ 'page/system/user/userList'),
           name: '用户管理',
           meta: {
-            permission: 'system.user.view'
+            permission: 'system.user.read'
           }
         },
         {
@@ -34,7 +34,7 @@ export default {
             import(/* webpackChunkName: "page/system/user/userSave" */ 'page/system/user/userSave'),
           name: '新增用户',
           meta: {
-            permission: 'system.user.edit'
+            permission: 'system.user.create'
           }
         },
         {
@@ -43,7 +43,7 @@ export default {
             import(/* webpackChunkName: "page/system/user/userSave" */ 'page/system/user/userSave'),
           name: '修改用户',
           meta: {
-            permission: 'system.user.edit'
+            permission: 'system.user.update'
           }
         }
       ]
@@ -64,7 +64,7 @@ export default {
             import(/* webpackChunkName: "page/system/role/roleList" */ 'page/system/role/roleList'),
           name: '角色管理',
           meta: {
-            permission: 'system.role.edit'
+            permission: 'system.role.read'
           }
         },
         {
@@ -73,7 +73,7 @@ export default {
             import(/* webpackChunkName: "page/system/role/roleSave" */ 'page/system/role/roleSave'),
           name: '新增角色',
           meta: {
-            permission: 'system.role.view'
+            permission: 'system.role.create'
           }
         },
         {
@@ -82,7 +82,7 @@ export default {
             import(/* webpackChunkName: "page/system/role/roleSave" */ 'page/system/role/roleSave'),
           name: '修改角色',
           meta: {
-            permission: 'system.role.view'
+            permission: 'system.role.update'
           }
         }
       ]
@@ -103,7 +103,7 @@ export default {
             import(/* webpackChunkName: "page/system/perms/permsList" */ 'page/system/perms/permsList'),
           name: '权限管理',
           meta: {
-            permission: 'system.perms.edit'
+            permission: 'system.perms.read'
           }
         }
       ]
