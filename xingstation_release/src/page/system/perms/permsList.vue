@@ -69,7 +69,7 @@
               <div class="actions-wrap">
                 <span class="label">数目: {{ item.children.length }}</span>
                 <div>
-                  <el-button size="small" @click="addThirdPerms(index)">增加</el-button>
+                  <el-button size="small" @click="addThirdPerms(item,index)">增加</el-button>
                   <el-button size="small" type="danger" @click="deletePerms(item)">删除</el-button>
                 </div>
               </div>
@@ -204,6 +204,7 @@ export default {
       filters: {
         name: ""
       },
+      parentData: null,
       permsId: null,
       pagination: {
         total: 0,
@@ -329,18 +330,21 @@ export default {
       this.tap = "first";
       this.loading = false;
       this.permsForm.name = "";
+      this.permsForm.display_name = "";
       this.permsVisible = true;
     },
     addSecondPerms() {
       this.tap = "second";
       this.loading = false;
-      this.permsForm.name = "";
+      this.permsForm.name = this.parentData.name + ".";
+      this.permsForm.display_name = "";
       this.permsVisible = true;
     },
     dialogClose() {
       this.permsVisible = false;
     },
     showSencodMenu(data, index) {
+      this.parentData = data;
       this.index = index;
       this.parent_id = data.id;
       this.secondTableData = [];
@@ -355,11 +359,12 @@ export default {
       this.secondTabDisable = true;
       this.index = null;
     },
-    addThirdPerms(index) {
+    addThirdPerms(item, index) {
       let parent_id = this.secondTableData[index].id;
       let td = {
         id: "",
-        name: "",
+        name: item.name + ".",
+        display_name: "",
         parent_id: parent_id
       };
       this.secondTableData[index].children.push(td);
