@@ -210,6 +210,78 @@ export default {
           }
         }
       },
+      colorList: [
+        {
+          id: 1,
+          color: 'Color010',
+          style: {
+            background: "#63b359"
+          }
+        },
+        {
+          id: 2,
+          color: 'Color020',
+          style: {
+            background: "#2c9f67"
+          }
+        },
+        {
+          id: 3,
+          color: 'Color030',
+          style: {
+            background: "#509fc9"
+          }
+        },
+        {
+          id: 4,
+          color: 'Color040',
+          style: {
+            background: "#5885cf"
+          }
+        },
+        {
+          id: 5,
+          color: 'Color050',
+          style: {
+            background: "#9062c0"
+          }
+        },
+        {
+          id: 6,
+          color: 'Color060',
+          style: {
+            background: "#d09a45"
+          }
+        },
+        {
+          id: 7,
+          color: 'Color070',
+          style: {
+            background: "#e4b138"
+          }
+        },
+        {
+          id: 8,
+          color: 'Color080',
+          style: {
+            background: "#ee903c"
+          }
+        },
+        {
+          id: 9,
+          color: 'Color090',
+          style: {
+            background: "	#f08500"
+          }
+        },
+        {
+          id: 10,
+          color: 'Color100',
+          style: {
+            background: "#a9d92d"
+          }
+        },
+      ],
       setting: {
         loading: false,
         loadingText: "拼命加载中"
@@ -372,6 +444,13 @@ export default {
       this.updateData[type].base_info.use_all_locations = this.data[type].base_info.use_all_locations
       this.updateData[type].base_info.code_type = this.data[type].base_info.code_type
       this.updateData[type].base_info.color = this.data[type].base_info.color
+      //颜色处理
+      for (let i = 0; i < this.colorList.length; i++) {
+        if (this.data[type].base_info.color === this.colorList[i].style.background) {
+          this.updateData[type].base_info.color = this.colorList[i].color
+          break;
+        }
+      }
       this.updateData[type].advanced_info = {}
       this.updateData[type].advanced_info.time_limit = this.data[type].advanced_info.time_limit
       this.updateData[type].advanced_info.text_image_list = this.data[type].advanced_info.text_image_list
