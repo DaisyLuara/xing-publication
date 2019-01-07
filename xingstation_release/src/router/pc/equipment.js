@@ -2,7 +2,6 @@ import auth from 'service/auth'
 
 let router = {
   path: 'equipment',
-  redirect: 'equipment/item',
   name: '设备',
   meta: {
     title: '设备',
@@ -14,9 +13,9 @@ let router = {
     {
       path: 'item',
       name: '设备管理',
-      redirect: 'item',
       meta: {
-        title: '设备管理'
+        title: '设备管理',
+        permission: 'device.item'
       },
       component: () =>
         import(/* webpackChunkName: "page/equipment/item/routerView" */ 'page/equipment/item/routerView'),
@@ -25,7 +24,8 @@ let router = {
           path: '/',
           name: '设备管理列表',
           meta: {
-            title: '设备管理列表'
+            title: '设备管理列表',
+            permission: 'device.item.read'
           },
           component: () =>
             import(/* webpackChunkName: "page/equipment/item/index" */ 'page/equipment/item/index')
@@ -35,9 +35,9 @@ let router = {
     {
       path: 'map',
       name: '地图总览',
-      redirect: 'map',
       meta: {
-        title: '地图总览'
+        title: '地图总览',
+        permission: 'device.map'
       },
       component: () =>
         import(/* webpackChunkName: "page/equipment/map/routerView" */ 'page/equipment/map/routerView'),
@@ -46,7 +46,8 @@ let router = {
           path: '/',
           name: '热力图',
           meta: {
-            title: '热力图'
+            title: '热力图',
+            permission: 'device.map.read'
           },
           component: () =>
             import(/* webpackChunkName: "page/equipment/map/index" */ 'page/equipment/map/index')
@@ -56,9 +57,9 @@ let router = {
     {
       path: 'feedback',
       name: '数据回流',
-      redirect: 'list',
       meta: {
-        title: '数据回流'
+        title: '数据回流',
+        permission: 'device.feedback'
       },
       component: () =>
         import(/* webpackChunkName: "page/equipment/feedback/routerView" */ 'page/equipment/feedback/routerView'),
@@ -67,7 +68,8 @@ let router = {
           path: '/',
           name: '数据回流列表',
           meta: {
-            title: '数据回流列表'
+            title: '数据回流列表',
+            permission: 'device.feedback.read'
           },
           component: () =>
             import(/* webpackChunkName: "page/equipment/feedback/index" */ 'page/equipment/feedback/index')
@@ -80,7 +82,9 @@ let router = {
 router.redirect = () => {
   let routes = router.children
   for (let route of routes) {
-    return '/equipment/' + route.path
+    if (auth.checkPathPermission(route)) {
+      return '/equipment/' + route.path
+    }
   }
 }
 

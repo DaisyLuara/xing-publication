@@ -1,10 +1,12 @@
+import auth from 'service/auth'
+
 let router = {
   path: 'market',
   redirect: 'market/site',
   name: '场地',
   meta: {
     title: '场地',
-    permission: ''
+    permission: 'market'
   },
   component: () =>
     import(/* webpackChunkName: "page/market/marketView" */ 'page/market/marketView'),
@@ -12,9 +14,9 @@ let router = {
     {
       path: 'site',
       name: '场地管理',
-      redirect: 'site',
       meta: {
-        title: '场地管理'
+        title: '场地管理',
+        permission: 'market.site'
       },
       component: () =>
         import(/* webpackChunkName: "page/market/site/routerView" */ 'page/market/site/routerView'),
@@ -23,7 +25,8 @@ let router = {
           path: '/',
           name: '场地列表',
           meta: {
-            title: '场地列表'
+            title: '场地列表',
+            permission: 'market.site.read'
           },
           component: () =>
             import(/* webpackChunkName: "page/market/site/index" */ 'page/market/site/index')
@@ -33,23 +36,27 @@ let router = {
           component: () =>
             import(/* webpackChunkName: "page/market/site/save" */ 'page/market/site/save'),
           name: '新增场地',
-          meta: {}
+          meta: {
+            permission: 'market.site.create'
+          }
         },
         {
           path: 'edit/:uid',
           component: () =>
             import(/* webpackChunkName: "page/market/site/save" */ 'page/market/site/save'),
           name: '修改',
-          meta: {}
+          meta: {
+            permission: 'market.site.update'
+          }
         }
       ]
     },
     {
       path: 'point',
       name: '点位管理',
-      redirect: 'point',
       meta: {
-        title: '点位管理'
+        title: '点位管理',
+        permission: 'market.point'
       },
       component: () =>
         import(/* webpackChunkName: "page/market/point/routerView" */ 'page/market/point/routerView'),
@@ -58,7 +65,8 @@ let router = {
           path: '/',
           name: '点位列表',
           meta: {
-            title: '点位列表'
+            title: '点位列表',
+            permission: 'market.point.read'
           },
           component: () =>
             import(/* webpackChunkName: "page/market/point/index" */ 'page/market/point/index')
@@ -68,14 +76,18 @@ let router = {
           component: () =>
             import(/* webpackChunkName: "page/market/point/save" */ 'page/market/point/save'),
           name: '新增点位',
-          meta: {}
+          meta: {
+            permission: 'market.point.create'
+          }
         },
         {
           path: 'edit/:uid',
           component: () =>
             import(/* webpackChunkName: "page/market/point/save" */ 'page/market/point/save'),
           name: '修改',
-          meta: {}
+          meta: {
+            permission: 'market.point.update'
+          }
         }
       ]
     }
@@ -85,7 +97,9 @@ let router = {
 router.redirect = () => {
   let routes = router.children
   for (let route of routes) {
-    return '/market/' + route.path
+    if (auth.checkPathPermission(route)) {
+      return '/market/' + route.path
+    }
   }
 }
 

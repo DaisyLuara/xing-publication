@@ -14,10 +14,9 @@ let router = {
     {
       path: 'detail',
       name: '详细数据',
-      redirect: 'detail',
       meta: {
         title: '详细数据',
-        permission: ''
+        permission: 'report.datail'
       },
       component: () =>
         import(/* webpackChunkName: "page/report/detail/routerView" */ 'page/report/detail/routerView'),
@@ -27,7 +26,7 @@ let router = {
           name: '详细数据展示',
           meta: {
             title: '详细数据展示',
-            permission: ''
+            permission: 'report.datail.read'
           },
           component: () =>
             import(/* webpackChunkName: "page/report/detail/index" */ 'page/report/detail/index')
@@ -40,7 +39,9 @@ let router = {
 router.redirect = () => {
   let routes = router.children
   for (let route of routes) {
-    return '/report/' + route.path
+    if (auth.checkPathPermission(route)) {
+      return '/report/' + route.path
+    }
   }
 }
 

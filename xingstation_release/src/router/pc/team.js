@@ -13,10 +13,9 @@ let router = {
     {
       path: 'program',
       name: '节目管理',
-      redirect: 'program',
       meta: {
         title: '节目管理',
-        permission: ''
+        permission: 'team.program'
       },
       component: () =>
         import(/* webpackChunkName: "page/team/program/routerView" */ 'page/team/program/routerView'),
@@ -26,7 +25,7 @@ let router = {
           name: '节目列表',
           meta: {
             title: '节目列表',
-            permission: ''
+            permission: 'team.program.read'
           },
           component: () =>
             import(/* webpackChunkName: "page/team/program/index" */ 'page/team/program/index')
@@ -36,7 +35,7 @@ let router = {
           name: '新增节目',
           meta: {
             title: '新增节目',
-            permission: ''
+            permission: 'team.program.create'
           },
           component: () =>
             import(/* webpackChunkName: "page/team/program/save" */ 'page/team/program/save')
@@ -46,7 +45,7 @@ let router = {
           name: '修改节目',
           meta: {
             title: '修改节目',
-            permission: ''
+            permission: 'team.program.update'
           },
           component: () =>
             import(/* webpackChunkName: "page/team/program/save" */ 'page/team/program/save')
@@ -56,9 +55,9 @@ let router = {
     {
       path: 'ratio',
       name: '比例配置',
-      redirect: 'ratio',
       meta: {
-        title: '比例配置'
+        title: '比例配置',
+        permission: 'team.ratio'
       },
       component: () =>
         import(/* webpackChunkName: "page/team/ratio/routerView" */ 'page/team/ratio/routerView'),
@@ -67,7 +66,8 @@ let router = {
           path: '/',
           name: '比例配置列表',
           meta: {
-            title: '比例配置列表'
+            title: '比例配置列表',
+            permission: 'team.ratio.read'
           },
           component: () =>
             import(/* webpackChunkName: "page/team/ratio/index" */ 'page/team/ratio/index')
@@ -77,7 +77,7 @@ let router = {
           name: '修改比例',
           meta: {
             title: '修改比例',
-            permission: ''
+            permission: 'team.ratio.update'
           },
           component: () =>
             import(/* webpackChunkName: "page/team/ratio/save" */ 'page/team/ratio/save')
@@ -87,9 +87,9 @@ let router = {
     {
       path: 'platform',
       name: '平台项目',
-      redirect: 'platform',
       meta: {
-        title: '平台项目'
+        title: '平台项目',
+        permission: 'team.platform'
       },
       component: () =>
         import(/* webpackChunkName: "page/team/platform/routerView" */ 'page/team/platform/routerView'),
@@ -98,7 +98,8 @@ let router = {
           path: '/',
           name: '平台项目列表',
           meta: {
-            title: '平台项目列表'
+            title: '平台项目列表',
+            permission: 'team.platform.read'
           },
           component: () =>
             import(/* webpackChunkName: "page/team/platform/index" */ 'page/team/platform/index')
@@ -108,9 +109,9 @@ let router = {
     {
       path: 'detail',
       name: '平台明细',
-      redirect: 'detail',
       meta: {
-        title: '平台明细'
+        title: '平台明细',
+        permission: 'team.detail'
       },
       component: () =>
         import(/* webpackChunkName: "page/team/detail/routerView" */ 'page/team/detail/routerView'),
@@ -119,7 +120,8 @@ let router = {
           path: '/',
           name: '平台明细列表',
           meta: {
-            title: '平台明细列表'
+            title: '平台明细列表',
+            permission: 'team.detail.read'
           },
           component: () =>
             import(/* webpackChunkName: "page/team/detail/index" */ 'page/team/detail/index')
