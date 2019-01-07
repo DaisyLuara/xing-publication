@@ -27,7 +27,12 @@
               <template slot-scope="scope">
                 <el-button size="small" @click="showSencodMenu(scope.row,scope.$index)">查看子权限</el-button>
                 <el-button size="small" type="warning" @click="modifyFirstPerms(scope.row)">修改</el-button>
-                <el-button size="small" type="danger" @click="deletePerms(scope.row)">修改</el-button>
+                <el-button
+                  v-if="scope.row.name !== 'system'"
+                  size="small"
+                  type="danger"
+                  @click="deletePerms(scope.row)"
+                >删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -64,8 +69,8 @@
               <div class="actions-wrap">
                 <span class="label">数目: {{ item.children.length }}</span>
                 <div>
-                  <el-button size="small" type="danger" @click="deletePerms(item)">增加</el-button>
                   <el-button size="small" @click="addThirdPerms(index)">增加</el-button>
+                  <el-button size="small" type="danger" @click="deletePerms(item)">删除</el-button>
                 </div>
               </div>
               <el-table :data="item.children" style="width: 100%">
