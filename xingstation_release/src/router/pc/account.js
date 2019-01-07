@@ -5,7 +5,7 @@ let router = {
   name: '',
   meta: {
     title: '',
-    permission: 'account'
+    permission: ''
   },
   component: () =>
     import(/* webpackChunkName: "page/account/accountView" */ 'page/account/accountView'),
