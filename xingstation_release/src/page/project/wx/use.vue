@@ -271,7 +271,7 @@ export default {
           id: 9,
           color: 'Color090',
           style: {
-            background: "	#f08500"
+            background: "#f08500"
           }
         },
         {
