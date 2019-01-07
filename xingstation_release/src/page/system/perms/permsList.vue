@@ -51,7 +51,7 @@
           <el-collapse v-model="activeNames" accordion>
             <el-collapse-item v-for="(item, index) in secondTableData" :name="index" :key="item.id">
               <template slot="title">
-                {{ item.display_name  }} ({{ item.name }})
+                {{ item.display_name }} ({{ item.name }})
                 <el-button
                   type="primary"
                   icon="el-icon-edit"
@@ -164,7 +164,7 @@ export default {
   },
   data() {
     return {
-        index: null,
+      index: null,
       loading: true,
       permsVisible: false,
       title: "",
@@ -290,8 +290,8 @@ export default {
     dialogClose() {
       this.permsVisible = false;
     },
-    showSencodMenu(data,index) {
-        this.index = index
+    showSencodMenu(data, index) {
+      this.index = index;
       this.parent_id = data.id;
       this.secondTableData = [];
       let secondData = data.children;
@@ -303,7 +303,7 @@ export default {
     },
     handleClick(val) {
       this.secondTabDisable = true;
-      this.index = null
+      this.index = null;
     },
     addThirdPerms(index) {
       let parent_id = this.secondTableData[index].id;
@@ -326,7 +326,7 @@ export default {
             type: "success",
             message: "保存成功"
           });
-            this.getPermissionList()
+          this.getPermissionList();
           this.tap = "second";
         })
         .catch(err => {
@@ -351,7 +351,7 @@ export default {
             type: "success",
             message: "修改成功"
           });
-            this.getPermissionList()
+          this.getPermissionList();
           this.tap = "second";
         })
         .catch(err => {
@@ -374,8 +374,8 @@ export default {
         .then(response => {
           this.setting.loading = false;
           this.firstTableData = response.data;
-          if(this.index !== null){
-              this.showSencodMenu(this.firstTableData[this.index],this.index)
+          if (this.index !== null) {
+            this.showSencodMenu(this.firstTableData[this.index], this.index);
           }
           this.pagination.total = response.meta.pagination.total;
         })
@@ -388,11 +388,11 @@ export default {
       this.getPermissionList();
     },
     search() {
-        this.pagination.currentPage = 1;
+      this.pagination.currentPage = 1;
       this.getPermissionList();
     },
     resetSearch() {
-        this.filters.name = "";
+      this.filters.name = "";
       this.pagination.currentPage = 1;
       this.getPermissionList();
     }
