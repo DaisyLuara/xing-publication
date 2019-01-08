@@ -44,9 +44,21 @@
         <el-form-item label="节目属性" prop="project_attribute">
           <el-radio-group v-model="programForm.project_attribute">
             <el-radio :label="0">不计入</el-radio>
-            <el-radio :label="1">基础条目</el-radio>
-            <el-radio :label="2">简单条目</el-radio>
-            <el-radio :label="3">通用节目</el-radio>
+            <el-radio :label="2">简单条目
+              <el-tooltip class="item" effect="dark" content="0.1个条目（如简单换Logo等）" placement="bottom">
+                <i class="el-icon-info"/>
+              </el-tooltip>
+            </el-radio>
+            <el-radio :label="1">基础条目
+              <el-tooltip class="item" effect="dark" content="1个条目（如镜视界类节目）" placement="bottom">
+                <i class="el-icon-info"/>
+              </el-tooltip>
+            </el-radio>
+            <el-radio :label="3">节目
+              <el-tooltip class="item" effect="dark" content="1个节目（如创新玩法类节目）" placement="bottom">
+                <i class="el-icon-info"/>
+              </el-tooltip>
+            </el-radio>
             <el-radio :label="4">项目</el-radio>
           </el-radio-group>
         </el-form-item>
@@ -347,7 +359,7 @@
             <el-form-item
               :rules="[{ required: true, message: '请上传素材', trigger: 'submit' }]"
               label="上传素材"
-              prop=""
+              prop
             >
               <el-upload
                 ref="upload"
@@ -1309,7 +1321,7 @@ export default {
       }
     },
     submit(formName) {
-      console.log(this.ids)
+      console.log(this.ids);
       this.getQiniuToken();
       let animationMediaIds = [];
       if (this.fileList.length > 0) {

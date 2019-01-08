@@ -37,7 +37,7 @@ class PersonRewardExport extends AbstractExport implements ShouldAutoSize
             ->selectRaw("tp.belong,sum(rate) as 'rate_total'");
 
         //member_program_num
-        //0不计入 1基础条目 2简单条目 5简单条目 6通用节目 7 项目（其中的3 定制节目 4 定制项目已弃用）
+        //0不计入 1基础条目 2简单条目 3 通用节目 4项目
         $member_program_num = DB::table("team_project_members as tpm")
             ->join("team_projects as tp", "tp.id", "=", "tpm.team_project_id")
             ->join(DB::raw("({$team_project_rate->toSql()}) as rate_total"), 'rate_total.belong', '=', 'tp.belong')
@@ -45,32 +45,32 @@ class PersonRewardExport extends AbstractExport implements ShouldAutoSize
             ->whereRaw("date_format(tp.launch_date, '%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
             ->groupBy("tpm.user_id", "tpm.user_name")
             ->selectRaw("tpm.user_id,tpm.user_name,
-	           sum( (case tp.project_attribute 
+	           round(sum( (case tp.project_attribute 
     			    when 1 then 1 
-    			    when 2 then 1
+    			    when 2 then 0.1
     			    else 0 
-    		        end)*(tpm.rate/rate_total.rate_total) )as item_num,
-    	       sum((case tp.project_attribute 
+    		        end)*(tpm.rate/rate_total.rate_total) ),2)as item_num,
+    	       round(sum((case tp.project_attribute 
     			    when 3 then 1
     			    else 0 
-   		 	        end)*(tpm.rate/rate_total.rate_total)) as program_num,
-   		       sum((case project_attribute
+   		 	        end)*(tpm.rate/rate_total.rate_total)),2)as program_num,
+   		       round(sum((case project_attribute
     		        when 4 then 1
     		        else 0 
-   		 	        end)*(tpm.rate/rate_total.rate_total)) as project_num
+   		 	        end)*(tpm.rate/rate_total.rate_total)),2) as project_num
    		 	         ");
 
         $startMonth = Carbon::parse($this->startDate)->timezone('PRC')->format("Y-m");
         $endMonth = Carbon::parse($this->endDate)->timezone('PRC')->format("Y-m");
 
         $header1 = ["用户ID", "用户名"];
-        $selectRaw = "tpr.user_id,users.name,";
+        $selectRaw = "tpr.user_id,users.name as 'user_name',";
         for ($temp_month = $startMonth; $temp_month <= $endMonth; $temp_month = Carbon::parse($temp_month)->addMonth()->format("Y-m")) {
             $header1[] = "体验绩效_" . $temp_month;
             $selectRaw .= " round(sum(case date_format(tpr.date,'%Y-%m') when '" . $temp_month . "' then tpr.experience_money else 0 end ),2) as '体验绩效_" . $temp_month . "',";
         }
         $header1 = array_merge($header1, ["体验绩效总计", "平台奖", "条目数量", "节目数量", "项目数量", "累计节目数量"]);
-        $selectRaw .= " sum(experience_money) as 'experience_money',sum(system_money) as 'system_money'";
+        $selectRaw .= " round(sum(experience_money),2) as 'experience_money',round(sum(system_money),2) as 'system_money'";
 
         $member_money = DB::table("team_person_rewards as tpr")
             ->join('users', 'tpr.user_id', '=', 'users.id')
@@ -84,11 +84,10 @@ class PersonRewardExport extends AbstractExport implements ShouldAutoSize
         //汇总
         $totalData = DB::table(DB::raw("({$member_program_num->toSql()}) as V1"))
             ->leftJoin(DB::raw("({$member_money->toSql()}) as V2"), 'V1.user_id', '=', 'V2.user_id')
-            ->selectRaw("V2.*,round(V1.item_num,2) as 'item_num',round(V1.program_num,2) as 'program_num',round(V1.project_num,2) as 'project_num',round((V1.item_num/2+V1.program_num+V1.project_num*2),2) as 'average_program'")
+            ->selectRaw("V2.*,V1.*,round((V1.item_num/2+V1.program_num+V1.project_num*2),3) as 'average_program'")
             ->get()->map(function ($item) {
                 return (array)$item;
             })->toArray();
-
 
         $header2 = [];
         foreach ($header1 as $header) {

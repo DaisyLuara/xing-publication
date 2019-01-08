@@ -108,6 +108,7 @@
               <el-input
                 v-model="discount"
                 class="coupon-form-input"
+                :disabled="disabled"
               />
               <span>折</span>
               <div
@@ -184,6 +185,7 @@
               <el-input
                 v-model="reduce_cost"
                 class="coupon-form-input"
+                :disabled="disabled"
               />
               <span>元</span>
               <div
@@ -330,11 +332,15 @@
             <el-form-item label="使用条件">
               <!-- 代金券 -->
               <div v-if="card_type==='CASH'">
-                <el-checkbox v-model="cashChecked">最低消费
+                <el-checkbox
+                  v-model="cashChecked"
+                  :disabled="disabled"
+                >最低消费
                   <span>满
                     <el-input
                       v-model="least_cost"
                       class="coupon-form-input"
+                      :disabled="disabled"
                     />元可用</span>
                 </el-checkbox>
                 <div
@@ -345,12 +351,16 @@
 
               <!-- 兑换券 -->
               <div v-if="card_type==='GIFT'">
-                <el-checkbox v-model="giftChecked">消费
+                <el-checkbox
+                  v-model="giftChecked"
+                  :disabled="disabled"
+                >消费
                   <span v-show="giftChecked">
                     <el-select
                       v-model="couponForm.is_money"
                       placeholder="金额"
                       class="coupon-form-select"
+                      :disabled="disabled"
                     >
                       <el-option
                         v-for="item in moneyList"
@@ -363,6 +373,7 @@
                       <el-input
                         v-model="gift"
                         class="coupon-form-input"
+                        :disabled="disabled"
                       />元可用</b>
                   </span>
                 </el-checkbox>
@@ -383,6 +394,7 @@
                   <el-input
                     v-model="use_condition.accept_category"
                     class="coupon-form-input"
+                    :disabled="disabled"
                   />
                   <div
                     class="errMessage"
@@ -394,6 +406,7 @@
                   <el-input
                     v-model="use_condition.reject_category"
                     class="coupon-form-input"
+                    :disabled="disabled"
                   />
                   <div
                     class="errMessage"
@@ -631,6 +644,7 @@ export default {
       cashOrDiscountchecked: false,
       giftChecked: false,
       cashChecked: false,
+      disabled: false,
       fileList: [],
       ids: [],
       inputShow: true,
@@ -886,74 +900,7 @@ export default {
         is_fixed_date: 1,
         is_money: 0
       },
-      testData: {
-        // "card_type": "DISCOUNT",
-        // "discount": {
-        //   "base_info": {
-        //     "id": "pbLatjnP97_F9PudzBARQhn7xR7A",
-        //     "logo_url": "http://mmbiz.qpic.cn/mmbiz/p98FjXy8LafmY25YclQ7vw5noBxeVH3DG5AKFR1ZsRgMgsvjll7EkUsZib00J964AEpTjkNXF2HorJHt5mtt45Q/0?wx_fmt=png",
-        //     "code_type": "CODE_TYPE_TEXT",
-        //     "brand_name": "微信餐厅",
-        //     "title": "9折优惠券",
-        //     "use_all_locations": true,
-        //     "date_info": {
-        //       "type": "DATE_TYPE_FIX_TERM",
-        //       "fixed_term": 30,
-        //       "fixed_begin_term": 0
-        //       // "type": "DATE_TYPE_FIX_TIME_RANGE",
-        //       // "begin_timestamp": 1397577600,
-        //       // "end_timestamp": 1472724261
-        //     },
-        //     "color": "#10AD61",
-        //     "notice": "到店使用",
-        //     "description": "",
-        //     "location_id_list": [
-        //       218384742,
-        //       402521653,
-        //       402521608
-        //     ],
-        //     "get_limit": 4,
-        //     "can_share": true,
-        //     "can_give_friend": true,
-        //     "status": "CARD_STATUS_VERIFY_OK",
-        //     "sku": {
-        //       "quantity": 100096,
-        //       "total_quantity": 100100
-        //     },
-        //     "create_time": 1457525546,
-        //     "update_time": 1457526240,
-        //     "area_code_list": []
-        //   },
-        //   "discount": 10,
-        //   "advanced_info": {
-        //     "time_limit": [
-        //       {
-        //         "type": "MONDAY"
-        //       },
-        //       {
-        //         "type": "TUESDAY"
-        //       }
-        //     ],
-        //     "text_image_list": [{
-        //       "image_url": "http://mmbiz.qpic.cn/mmbiz/p98FjXy8LacgHxp3sJ3vn97bGLz0ib0Sfz1bjiaoOYA027iasqSG0sjpiby4vce3AtaPu6cIhBHkt6IjlkY9YnDsfw/0",
-        //       "text": "此菜品精选食材，以独特的烹饪方法，最大程度地刺激食 客的味蕾"
-        //     },
-        //     {
-        //       "image_url": "http://mmbiz.qpic.cn/mmbiz/p98FjXy8LacgHxp3sJ3vn97bGLz0ib0Sfz1bjiaoOYA027iasqSG0sj piby4vce3AtaPu6cIhBHkt6IjlkY9YnDsfw/0",
-        //       "text": "此菜品迎合大众口味，老少皆宜，营养均衡"
-        //     }],
-        //     "business_service": [],
-        //     "consume_share_card_list": [],
-        //     "abstract": {
-        //       "abstract": "点击了解更多",
-        //       "icon_url_list": [
-        //         "http://mmbiz.qpic.cn/mmbiz/p98FjXy8LafiawSeJeqBzk8qC40iaKIwUPm4TSCelulzEbAywKr7tWjkd5vRjbmFloUFeThfwhwMUZIXmsCtJpyQ/0?wx_fmt=jpeg"
-        //       ]
-        //     },
-        //     "share_friends": false
-        //   }
-        // }
-      }
+      testData: {}
     };
   },
   watch: {
@@ -1007,21 +954,10 @@ export default {
     this.getQiniuToken();
   },
   mounted() {
-    //本地测试
-    //this.test()
     //线上
     this.getSingleCard()
   },
   methods: {
-    test() {
-      // this.testData.discount.advanced_info.use_condition =
-      //   {
-      //     "accept_category": "ceshi",
-      //     "reject_category": "ceshi",
-      //     "can_use_with_other_discount": true
-      //   }
-      this.cardDetailsHandle(this.testData)
-    },
     //以下为查询卡劵修改初始化操作
     //卡劵修改
     getSingleCard() {
@@ -1054,6 +990,7 @@ export default {
       else if (this.card_type === 'CASH') {
         this.least_cost = data.cash.least_cost
         this.reduce_cost = data.cash.reduce_cost
+        this.base_info = data.cash.base_info
         this.commonHandleInit('cash', data)
       }
       //折扣券
@@ -1074,7 +1011,7 @@ export default {
         this.base_info = data.general_coupon.base_info
         this.commonHandleInit('general_coupon', data)
       }
-
+      this.disabled = true
     },
     commonHandleInit(type, data) {
       this.colorHandle(data[type].base_info.color)
@@ -1083,11 +1020,21 @@ export default {
       this.textImageInit(data[type].advanced_info.text_image_list)
       this.dateInfoInit(data[type].base_info.date_info)
       this.timelimitInit(data[type].advanced_info.time_limit)
+      this.defaultSelected(type)
     },
     //颜色
     colorHandle(color) {
       this.leftDetail.color = { "background": color }
       this.inputShow = false
+    },
+    //最低消费是否点击
+    defaultSelected(type) {
+      if (type === 'cash' && this.least_cost != null && this.least_cost != undefined && this.least_cost != '') {
+        this.cashChecked = true
+      }
+      if (type === 'gift' && this.gift != null && this.gift != undefined) {
+        this.giftChecked = true
+      }
     },
     //封面
     useConditionInit(use_condition) {
