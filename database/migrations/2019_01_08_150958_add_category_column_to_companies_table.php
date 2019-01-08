@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddCategoryColumnToCompanyTable extends Migration
+class AddCategoryColumnToCompaniesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class AddCategoryColumnToCompanyTable extends Migration
      */
     public function up()
     {
-        Schema::table('company', function (Blueprint $table) {
+        Schema::table('companies', function (Blueprint $table) {
             $table->smallInteger('category')->after('address')->default(0)->comment('0:客户，1：供应商');
         });
     }
@@ -25,7 +25,7 @@ class AddCategoryColumnToCompanyTable extends Migration
      */
     public function down()
     {
-        Schema::table('company', function (Blueprint $table) {
+        Schema::table('companies', function (Blueprint $table) {
             $table->dropColumn('category');
         });
     }
