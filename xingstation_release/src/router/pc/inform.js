@@ -5,7 +5,7 @@ let router = {
   name: '通知',
   meta: {
     title: '通知',
-    permission: ''
+    permission: 'inform'
   },
   component: () =>
     import(/* webpackChunkName: "page/inform/informView" */ 'page/inform/informView'),
@@ -15,7 +15,7 @@ let router = {
       name: '消息管理',
       meta: {
         title: '消息管理',
-        permission: ''
+        permission: 'inform.list'
       },
       component: () =>
         import(/* webpackChunkName: "page/inform/list/routerView" */ 'page/inform/list/routerView'),
@@ -25,7 +25,7 @@ let router = {
           name: '消息列表',
           meta: {
             title: '消息列表',
-            permission: ''
+            permission: 'inform.list.read'
           },
           component: () =>
             import(/* webpackChunkName: "page/inform/list/index" */ 'page/inform/list/index')
