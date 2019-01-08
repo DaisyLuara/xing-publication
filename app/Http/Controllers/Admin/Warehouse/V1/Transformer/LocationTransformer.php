@@ -17,7 +17,7 @@ class LocationTransformer extends TransformerAbstract
             'id' => $location->id,
             'name' => $location->name, //库位名称
             'warehouse' => $location->warehouse->name, //对应仓库名称
-            'warehouse_id' => $location->warehouse_id, //对应仓库ID
+            'warehouse_id' => (int)$location->warehouse_id, //对应仓库ID
             'created_at' => $location->created_at->toDateTimeString(),
             'updated_at' => $location->updated_at->toDateTimeString(),
         ];
