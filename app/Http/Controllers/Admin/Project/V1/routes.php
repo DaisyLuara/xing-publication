@@ -17,17 +17,22 @@ $api->version('v1', [
             $api->patch('project_ad_launch', 'ProjectAdLaunchController@update');
 
             //节目投放
-            $api->get('projects', 'ProjectController@index');
-            $api->patch('projects', ['middleware' => ['role:super-admin|admin'], 'uses' => 'ProjectController@update']);
-            $api->get('projects/launch', ['middleware' => ['role:super-admin|admin'], 'uses' => 'ProjectLaunchController@index']);
-            $api->post('projects/launch', ['middleware' => ['role:super-admin|admin'], 'uses' => 'ProjectLaunchController@store']);
-            $api->patch('projects/launches', ['middleware' => ['role:super-admin|admin'], 'uses' => 'ProjectLaunchController@update']);
-            $api->get('projects/launches/tpl', 'ProjectLaunchTplController@index');
-            $api->post('projects/launches/tpl', 'ProjectLaunchTplController@store');
-            $api->patch('projects/launches/tpl/{projectLaunchTpl}', 'ProjectLaunchTplController@update');
-            $api->post('projects/schedules', 'ProjectLaunchTplScheduleController@store');
-            $api->patch('projects/schedules/{projectLaunchTplSchedule}', 'ProjectLaunchTplScheduleController@update');
-            $api->get('projects/launches/tpl', 'ProjectLaunchTplController@index');
+            $api->get('projects/launch', ['middleware' => ['permission:project.item.read'], 'uses' => 'ProjectLaunchController@index']);
+            $api->post('projects/launch', ['middleware' => ['permission:project.item.create'], 'uses' => 'ProjectLaunchController@store']);
+            $api->patch('projects/launches', ['middleware' => ['permission:project.item.update'], 'uses' => 'ProjectLaunchController@update']);
+
+            //模版排期
+            //模版
+            $api->get('projects/launches/tpl', ['middleware' => ['permission:project.schedule.read'], 'uses' => 'ProjectLaunchTplController@index']);
+            $api->post('projects/launches/tpl', ['middleware' => ['permission:project.schedule.create'], 'uses' => 'ProjectLaunchTplController@store']);
+            $api->patch('projects/launches/tpl/{projectLaunchTpl}', ['middleware' => ['permission:project.schedule.update'], 'uses' => 'ProjectLaunchTplController@update']);
+            //模版子条目
+            $api->post('projects/schedules', ['middleware' => ['permission:project.schedule.childCreate'], 'uses' => 'ProjectLaunchTplScheduleController@store']);
+            $api->patch('projects/schedules/{projectLaunchTplSchedule}', ['middleware' => ['permission:project.schedule.childUpdate'], 'uses' => 'ProjectLaunchTplScheduleController@update']);
+
+            //节目列表
+            $api->get('projects', ['middleware' => ['permission:project.list.read'], 'uses' => 'ProjectController@index']);
+            $api->patch('projects', ['middleware' => ['permission:project.list.update'], 'uses' => 'ProjectController@update']);
 
             //节目模板
             $api->get('project_template', 'ProjectTemplateController@index');

@@ -10,30 +10,29 @@ $api->version('v1', [
     ], function ($api) {
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
-            $api->get('coupon/policies/{policy}', 'PolicyController@show');
-            $api->get('coupon/policies', 'PolicyController@index');
-            $api->post('company/{company}/coupon/policy', 'PolicyController@store');
-            $api->patch('coupon/policy/{policy}', 'PolicyController@update');
-
             //优惠券策略
-            $api->post('policy/{policy}', 'PolicyController@storeBatchPolicy');
-            $api->patch('policy/{policy}/batch_policy/{batch_policy_id}', 'PolicyController@updateBatchPolicy');
-            $api->delete('policy/{policy}/batch_policy/{batch_policy_id}', 'PolicyController@destroyBatchPolicy');
+            $api->get('coupon/policies/{policy}', 'PolicyController@show');
+            $api->get('coupon/policies', ['middleware' => ['permission:project.strategy.read'], 'uses' => 'PolicyController@index']);
+            $api->post('company/{company}/coupon/policy', ['middleware' => ['permission:project.strategy.create'], 'uses' => 'PolicyController@store']);
+            $api->patch('coupon/policy/{policy}', ['middleware' => ['permission:project.strategy.update'], 'uses' => 'PolicyController@update']);
+            //子条目
+            $api->post('policy/{policy}', ['middleware' => ['permission:project.strategy.childCreate'], 'uses' => 'PolicyController@storeBatchPolicy']);
+            $api->patch('policy/{policy}/batch_policy/{batch_policy_id}', ['middleware' => ['permission:project.strategy.childUpdate'], 'uses' => 'PolicyController@updateBatchPolicy']);
+            $api->delete('policy/{policy}/batch_policy/{batch_policy_id}', ['middleware' => ['permission:project.strategy.childDelete'], 'uses' => 'PolicyController@destroyBatchPolicy']);
 
             //优惠券规则
             $api->get('coupon/batches/{couponBatch}', 'CouponBatchController@show');
-            $api->get('coupon/batches', 'CouponBatchController@index');
-            $api->post('company/{company}/coupon/batch', 'CouponBatchController@store');
-            $api->patch('coupon/batches/{couponBatch}', 'CouponBatchController@update');
+            $api->get('coupon/batches', ['middleware' => ['permission:project.rules.read'], 'uses' => 'CouponBatchController@index']);
+            $api->post('company/{company}/coupon/batch', ['middleware' => ['permission:project.rules.create'], 'uses' => 'CouponBatchController@store']);
+            $api->patch('coupon/batches/{couponBatch}', ['middleware' => ['permission:project.rules.update'], 'uses' => 'CouponBatchController@update']);
 
             //优惠券投放
-            $api->get('coupons', 'CouponController@index');
+            $api->get('coupons', ['middleware' => ['permission:project.coupon.read'], 'uses' => 'CouponController@index']);
 
             //同步猫酷优惠券规则
             $api->get('coupon/sync', 'CouponBatchController@syncMallCooCouponBatch');
 
         });
-
 
     });
 
