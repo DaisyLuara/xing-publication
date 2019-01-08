@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateWarehousesTable extends Migration {
+class CreateErpWarehousesTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,12 +12,11 @@ class CreateWarehousesTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('warehouses', function(Blueprint $table)
+		Schema::create('erp_warehouses', function(Blueprint $table)
 		{
 			$table->integer('id', true)->comment('仓库ID');
 			$table->string('name')->nullable()->comment('仓库名称');
 			$table->string('address')->default('')->comment('仓库地址');
-			$table->string('remark')->nullable()->comment('备注');
 			$table->timestamps();
 			$table->softDeletes();
 		});
@@ -31,7 +30,7 @@ class CreateWarehousesTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('warehouses');
+		Schema::drop('erp_warehouses');
 	}
 
 }
