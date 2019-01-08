@@ -84,10 +84,10 @@ $api->version('v1', [
             $api->get('permission/query', 'QueryController@permissionQuery');
 
             //消息通知
-            $api->get('user/notifications', 'NotificationsController@index');
+            $api->get('user/notifications', ['middleware' => ['permission:inform.list.read'], 'uses' => 'NotificationsController@index']);
             $api->get('user/notifications/stats', 'NotificationsController@stats');
             $api->patch('user/read/notifications', 'NotificationsController@read');
-            $api->get('user/activities', 'ActivityLogController@index');
+            $api->get('user/activities', ['middleware' => ['permission:inform.operate.read'], 'uses' => 'ActivityLogController@index']);
 
             //数据统计
             $api->get('stats', 'ChartDataController@index');//列表
