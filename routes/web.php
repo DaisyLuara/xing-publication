@@ -11,9 +11,10 @@
 |
 */
 
+// Authentication Routes...
+$this->get('login', 'Auth\LoginController@showLoginForm')->name('login');
+$this->post('login', 'Auth\LoginController@login');
+$this->post('logout', 'Auth\LoginController@logout')->name('logout');
 
-//Route::get('/foo', function () {
-//    $exitCode = Artisan::call('xingstation:restart',['did'=>'fFVr6jwCMU2nPjJd8JNFji']);
-//
-Auth::routes();
 Route::get('/', 'HomeController@index')->name('home');
+Route::get('/home', 'HomeController@index');
