@@ -245,7 +245,10 @@ export default {
         })
         .catch(error => {
           this.setting.loading = false;
-          console.log(error);
+            this.$message({
+                type: 'warning',
+                message: error.response.data.message
+            })
         });
     },
     modifySecondPerms(item) {

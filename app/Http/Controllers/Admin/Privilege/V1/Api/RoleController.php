@@ -35,8 +35,6 @@ class RoleController extends Controller
 
     public function store(RoleRequest $request, Role $role)
     {
-        $this->checkUser();
-
         $role->fill($request->all())->save();
         $ids = $request->ids;
         $role->givePermissionTo($ids);
@@ -46,8 +44,6 @@ class RoleController extends Controller
 
     public function update(RoleRequest $request, Role $role)
     {
-        $this->checkUser();
-
         $role->update($request->all());
         $role->syncPermissions($request->ids);
         return $this->response()->noContent();
@@ -55,18 +51,8 @@ class RoleController extends Controller
 
     public function destroy(Role $role)
     {
-        $this->checkUser();
-
         $role->delete();
         return $this->response()->noContent()->setStatusCode(204);
     }
 
-    private function checkUser()
-    {
-        /** @var  $user \App\Models\User */
-        $user = $this->user();
-        if (!$user->isAdmin() && !$user->isSuperAdmin()) {
-            abort(403, '无操作权限');
-        }
-    }
 }

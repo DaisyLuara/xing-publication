@@ -253,8 +253,11 @@ export default {
               this.getUserList()
             })
             .catch(error => {
+                this.$message({
+                    type: 'warning',
+                    message: error.response.data.message
+                })
               this.setting.loading = false
-              console.log(error)
             })
         })
         .catch(e => {

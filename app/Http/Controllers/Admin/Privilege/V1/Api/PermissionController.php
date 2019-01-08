@@ -30,16 +30,12 @@ class PermissionController extends Controller
 
     public function store(PermissionRequest $request)
     {
-        $this->checkUser();
-
         Permission::create($request->all());
         return $this->response()->noContent()->setStatusCode(201);
     }
 
     public function update(PermissionRequest $request, Permission $permission)
     {
-        $this->checkUser();
-
         $this->checkPermission($permission);
 
         $permission->update($request->all());
@@ -48,22 +44,12 @@ class PermissionController extends Controller
 
     public function destroy(Permission $permission)
     {
-        $this->checkUser();
-
         $this->checkPermission($permission);
 
         $permission->descendantsAndSelf()->delete();
         return $this->response()->noContent()->setStatusCode(204);
     }
 
-    private function checkUser()
-    {
-        /** @var  $user \App\Models\User */
-        $user = $this->user();
-        if (!$user->isAdmin() && !$user->isSuperAdmin()) {
-            abort(403, '无操作权限');
-        }
-    }
 
     private function checkPermission(Permission $permission)
     {
