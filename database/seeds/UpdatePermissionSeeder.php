@@ -13,6 +13,8 @@ class UpdatePermissionSeeder extends Seeder
      */
     public function run()
     {
+        DB::table('permissions')->delete();
+
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
         $permsData = [
             ['name' => 'home', 'display_name' => '主页'],
@@ -36,8 +38,6 @@ class UpdatePermissionSeeder extends Seeder
             ['name' => 'auditing', 'display_name' => '审批'],
             ['name' => 'wechat_card', 'display_name' => '微信卡券'],
         ];
-        DB::table('permissions')->delete();
-
         foreach ($permsData as $item) {
             Permission::create(['name' => $item['name'], 'display_name' => $item['display_name']]);
         }
@@ -46,7 +46,7 @@ class UpdatePermissionSeeder extends Seeder
         #首页
         $home = Permission::findByName('home');
         $homeSecondData = [
-            ['name' => 'home.item', 'display_name' => '节目投放']
+            ['name' => 'home.item', 'display_name' => '首页管理']
         ];
         foreach ($homeSecondData as $item) {
             $obj = Permission::create(['name' => $item['name'], 'display_name' => $item['display_name'], 'parent_id' => $home->id]);
