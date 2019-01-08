@@ -81,6 +81,7 @@ $api->version('v1', [
             $api->get('user/query', 'QueryController@userQuery');
             $api->get('team_rate/query', 'QueryController@teamRateQuery');
             $api->get('attribute/query', 'QueryController@attributeQuery');
+            $api->get('erp_warehouse/query', 'QueryController@warehouseQuery');//仓库搜索
 
             //消息通知
             $api->get('user/notifications', 'NotificationsController@index');

@@ -351,6 +351,11 @@ class QueryController extends Controller
         return $this->response->collection($goodsService, new GoodsServiceTransformer());
     }
 
+    public function warehouseQuery(Request $request)
+    {
+        return DB::table('erp_warehouses')->get();
+    }
+
     public function bdManagerQuery(Request $request)
     {
         $role = Role::findByName('bd-manager');
