@@ -15,8 +15,8 @@ class Attribute extends Model
         'display_name'
     ];
 
-    public function warehouse()
+    public function attributeValues()
     {
-        return $this->belongsTo(warehouse::class, 'warehouse_id', 'id');
+        return $this->hasMany(AttributeValue::class,'attribute_id','id');
     }
 }

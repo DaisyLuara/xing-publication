@@ -17,6 +17,8 @@ $api->version('v1', [
             $api->post('product/create','ProductController@store');
             //编辑产品
             $api->patch('product/{product}', 'ProductController@update');
+            //产品属性列表
+            $api->get('attribute/list','AttributeController@list');
             //根据产品SKU，查出对应产品属性
             $api->get('product_attribute','ProductAttributeController@index');
 
