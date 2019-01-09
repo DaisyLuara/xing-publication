@@ -82,6 +82,7 @@ $api->version('v1', [
             $api->get('team_rate/query', 'QueryController@teamRateQuery');
             $api->get('attribute/query', 'QueryController@attributeQuery');
             $api->get('permission/query', 'QueryController@permissionQuery');
+            $api->get('role/query', 'QueryController@roleQuery');
 
             //消息通知
             $api->get('user/notifications', ['middleware' => ['permission:inform.list.read'], 'uses' => 'NotificationsController@index']);

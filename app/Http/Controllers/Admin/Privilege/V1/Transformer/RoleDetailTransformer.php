@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: yangqiang
- * Date: 2018/12/24
- * Time: 下午5:08
+ * Date: 2019/1/9
+ * Time: 下午1:59
  */
 
 namespace App\Http\Controllers\Admin\Privilege\V1\Transformer;
@@ -12,7 +12,7 @@ namespace App\Http\Controllers\Admin\Privilege\V1\Transformer;
 use League\Fractal\TransformerAbstract;
 use App\Http\Controllers\Admin\Privilege\V1\Models\Role;
 
-class RoleTransformer extends TransformerAbstract
+class RoleDetailTransformer extends TransformerAbstract
 {
     public function transform(Role $role)
     {
@@ -20,6 +20,7 @@ class RoleTransformer extends TransformerAbstract
             'id' => $role->id,
             'name' => $role->name,
             'display_name' => $role->display_name,
+            'permission' => $role->permission->toArray(),
             'created_at' => $role->created_at->toDateString(),
             'updated_at' => $role->updated_at->toDateString(),
         ];

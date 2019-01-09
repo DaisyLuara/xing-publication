@@ -18,8 +18,8 @@ class RoleRequest extends \App\Http\Requests\Request
         switch ($this->method()) {
             case 'POST':
                 return [
-                    'name' => 'required|regex:/^[a-zA-Z]+$/|unique:roles',
-                    'display_name' => 'required|unique:roles',
+                    'name' => 'required|unique:roles',
+                    'display_name' => 'required',
                 ];
                 break;
             case 'PATCH':

@@ -2,11 +2,11 @@
 /**
  * Created by PhpStorm.
  * User: yangqiang
- * Date: 2018/12/21
- * Time: 下午4:54
+ * Date: 2019/1/9
+ * Time: 上午10:47
  */
 
-namespace App\Http\Controllers\Admin\Privilege\V1\Api;
+namespace App\Http\Controllers\Admin\Company\V1\Api;
 
 
 use App\Http\Controllers\Admin\Privilege\V1\Models\Role;
@@ -15,7 +15,7 @@ use App\Http\Controllers\Admin\Privilege\V1\Transformer\RoleDetailTransformer;
 use App\Http\Controllers\Admin\Privilege\V1\Transformer\RoleTransformer;
 use App\Http\Controllers\Controller;
 
-class RoleController extends Controller
+class CompanyRoleController extends Controller
 {
     public function show(Role $role)
     {
@@ -25,18 +25,13 @@ class RoleController extends Controller
     public function index(Role $role)
     {
         $query = $role->query();
-        /** @var  $user \App\Models\User */
-        $user = $this->user();
-        if (!$user->isSuperAdmin()) {
-            $query->where("name", '<>', 'super-admin');
-        }
-        $roles = $query->paginate(10);
+        $roles = $query->where('guard_name', 'shop')->paginate(10);
         return $this->response()->paginator($roles, new RoleTransformer());
     }
 
     public function store(RoleRequest $request, Role $role)
     {
-        $role->fill($request->all())->save();
+        $role->fill(array_merge($request->all(), ['guard_name' => 'shop']))->save();
         $ids = $request->ids;
         $role->givePermissionTo($ids);
 

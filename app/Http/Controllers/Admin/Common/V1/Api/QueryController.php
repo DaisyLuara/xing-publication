@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceKind;
 use App\Http\Controllers\Admin\Invoice\V1\Transformer\InvoiceKindTransformer;
+use App\Http\Controllers\Admin\Privilege\V1\Transformer\RoleTransformer;
 use App\Models\Customer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
@@ -50,7 +51,7 @@ use App\Http\Controllers\Admin\User\V1\Transformer\UserTransformer;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role;
+use App\Http\Controllers\Admin\Privilege\V1\Models\Role;
 use DB;
 use App\Http\Controllers\Admin\Privilege\V1\Models\Permission;
 
@@ -430,5 +431,12 @@ class QueryController extends Controller
             ->get()
             ->toHierarchy();
         return response()->json($permission);
+    }
+
+    public function roleQuery(Request $request, Role $role)
+    {
+        $query = $role->query();
+        $role = $query->where('guard_name', $request->guard)->get();
+        return $this->response()->collection($role, new RoleTransformer());
     }
 }
