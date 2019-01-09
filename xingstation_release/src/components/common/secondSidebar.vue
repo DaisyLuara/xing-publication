@@ -41,7 +41,6 @@ export default {
         if (route.path == "/") {
           for (let m of route["children"]) {
             if (m.path == this.module) {
-              console.log(m);
               return m;
             }
           }

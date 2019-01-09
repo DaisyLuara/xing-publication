@@ -15,7 +15,6 @@ let router = {
       path: 'item',
       name: '节目投放',
       meta: {
-        title: '节目投放',
         permission: 'project.item'
       },
       component: () =>
@@ -46,7 +45,6 @@ let router = {
       path: 'schedule',
       name: '模板排期',
       meta: {
-        title: '模板排期',
         permission: 'project.schedule'
       },
       component: () =>
