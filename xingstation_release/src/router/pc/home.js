@@ -12,8 +12,6 @@ let router = {
   children: [
     {
       path: 'item',
-      name: '首页管理',
-      redirect: 'item',
       meta: {
         title: '首页管理',
         permission: 'home.item'

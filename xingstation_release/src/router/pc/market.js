@@ -13,7 +13,6 @@ let router = {
   children: [
     {
       path: 'site',
-      name: '场地管理',
       meta: {
         title: '场地管理',
         permission: 'market.site'
@@ -53,7 +52,6 @@ let router = {
     },
     {
       path: 'point',
-      name: '点位管理',
       meta: {
         title: '点位管理',
         permission: 'market.point'

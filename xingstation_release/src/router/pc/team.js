@@ -22,7 +22,6 @@ let router = {
       children: [
         {
           path: '/',
-          name: '节目列表',
           meta: {
             title: '节目列表',
             permission: 'team.program.read'
@@ -54,7 +53,6 @@ let router = {
     },
     {
       path: 'ratio',
-      name: '比例配置',
       meta: {
         title: '比例配置',
         permission: 'team.ratio'
@@ -86,7 +84,6 @@ let router = {
     },
     {
       path: 'platform',
-      name: '平台项目',
       meta: {
         title: '平台项目',
         permission: 'team.platform'
@@ -108,7 +105,6 @@ let router = {
     },
     {
       path: 'detail',
-      name: '平台明细',
       meta: {
         title: '平台明细',
         permission: 'team.detail'

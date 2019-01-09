@@ -13,7 +13,6 @@ let router = {
   children: [
     {
       path: 'detail',
-      name: '详细数据',
       meta: {
         title: '详细数据',
         permission: 'report.datail'

@@ -12,7 +12,6 @@ let router = {
   children: [
     {
       path: 'item',
-      name: '设备管理',
       meta: {
         title: '设备管理',
         permission: 'device.item'
@@ -34,7 +33,6 @@ let router = {
     },
     {
       path: 'map',
-      name: '地图总览',
       meta: {
         title: '地图总览',
         permission: 'device.map'
@@ -56,7 +54,6 @@ let router = {
     },
     {
       path: 'feedback',
-      name: '数据回流',
       meta: {
         title: '数据回流',
         permission: 'device.feedback'

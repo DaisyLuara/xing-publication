@@ -13,8 +13,8 @@ let router = {
   children: [
     {
       path: 'item',
-      name: '节目投放',
       meta: {
+        title: '节目投放',
         permission: 'project.item'
       },
       component: () =>
@@ -22,7 +22,6 @@ let router = {
       children: [
         {
           path: '/',
-          name: '节目投放详情列表',
           meta: {
             title: '节目投放详情列表',
             permission: 'project.item.read'
@@ -34,8 +33,8 @@ let router = {
           path: 'add',
           component: () =>
             import(/* webpackChunkName: "page/project/item/itemSave" */ 'page/project/item/itemSave'),
-          name: '新增投放节目',
           meta: {
+            title: '新增投放节目',
             permission: 'project.item.create'
           }
         }
@@ -43,8 +42,8 @@ let router = {
     },
     {
       path: 'schedule',
-      name: '模板排期',
       meta: {
+        title: '模板排期',
         permission: 'project.schedule'
       },
       component: () =>
@@ -64,7 +63,6 @@ let router = {
     },
     {
       path: 'list',
-      name: '节目列表',
       meta: {
         title: '节目列表',
         permission: 'project.list'
@@ -86,7 +84,6 @@ let router = {
     },
     {
       path: 'rules',
-      name: '优惠券规则',
       meta: {
         title: '优惠券规则',
         permission: 'project.rules'
@@ -128,7 +125,6 @@ let router = {
     },
     {
       path: 'strategy',
-      name: '优惠券策略',
       meta: {
         title: '优惠券策略',
         permission: 'project.strategy'
@@ -150,7 +146,6 @@ let router = {
     },
     {
       path: 'coupon',
-      name: '优惠券',
       meta: {
         title: '优惠券',
         permission: 'project.coupon'

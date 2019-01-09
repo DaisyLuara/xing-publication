@@ -12,7 +12,6 @@ let router = {
   children: [
     {
       path: 'item',
-      name: '广告投放',
       meta: {
         title: '广告投放',
         permission: 'ad.item'
@@ -43,7 +42,6 @@ let router = {
     },
     {
       path: 'url',
-      name: '短链接',
       meta: {
         title: '短链接',
         permission: 'ad.url'
