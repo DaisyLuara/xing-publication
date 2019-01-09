@@ -432,4 +432,9 @@ class QueryController extends Controller
         $attribute = $node->getDescendants();
         return $this->response()->collection($attribute, new AttributeTransformer());
     }
+
+    public function erpAttributeQuery(Request $request)
+    {
+        return DB::table('erp_attributes')->get();
+    }
 }
