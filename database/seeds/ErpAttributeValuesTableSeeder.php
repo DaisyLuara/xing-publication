@@ -26,15 +26,15 @@ class ErpAttributeValuesTableSeeder extends Seeder
         ]);
         AttributeValue::query()->create([
             'attribute_id' => '2',
-            'display_name' => '红色'
+            'value' => '红色'
         ]);
         AttributeValue::query()->create([
             'attribute_id' => '2',
-            'display_name' => '黄色'
+            'value' => '黄色'
         ]);
         AttributeValue::query()->create([
             'attribute_id' => '2',
-            'display_name' => '蓝色'
+            'value' => '蓝色'
         ]);
     }
 }
