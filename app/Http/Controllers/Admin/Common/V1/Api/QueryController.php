@@ -444,4 +444,10 @@ class QueryController extends Controller
         $companies = $query->where('category', '=', 1)->get();
         return $this->response->collection($companies, new CompanyTransformer());
     }
+
+    public function erpSkuQuery(Company $company, Request $request)
+    {
+        return DB::table('erp_products')->distinct()->get(['sku']);
+    }
+
 }
