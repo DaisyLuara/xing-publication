@@ -1,114 +1,60 @@
 <template>
-  <div 
+  <div
     v-loading="setting.loading"
-    :element-loading-text="setting.loadingText" 
-    class="user-list-wrap" >
-    <div 
-      class="user-list-content">
-      <div 
-        class="search-wrap">
-        <el-form 
-          :model="filters"
-          :inline="true">
-          <el-form-item 
-            label="">
-            <el-input 
-              v-model="filters.phone" 
-              style="width:200px" 
-              placeholder="请输入搜索的手机号" 
-              clearable/>
-          </el-form-item>
-          <el-form-item 
-            label="">
-            <el-input 
-              v-model="filters.name" 
+    :element-loading-text="setting.loadingText"
+    class="user-list-wrap"
+  >
+    <div class="user-list-content">
+      <div class="search-wrap">
+        <el-form :model="filters" :inline="true">
+          <el-form-item label>
+            <el-input
+              v-model="filters.phone"
               style="width:200px"
-              placeholder="请输入搜索的名字" 
-              clearable/>
+              placeholder="请输入搜索的手机号"
+              clearable
+            />
           </el-form-item>
-          <el-form-item
-            label="">
-            <el-select 
-              v-model="filters.role_id" 
-              placeholder="请选择角色" 
-              filterable 
-              clearable>
+          <el-form-item label>
+            <el-input v-model="filters.name" style="width:200px" placeholder="请输入搜索的名字" clearable/>
+          </el-form-item>
+          <el-form-item label>
+            <el-select v-model="filters.role_id" placeholder="请选择角色" filterable clearable>
               <el-option
                 v-for="item in roleList"
                 :key="item.id"
                 :label="item.display_name"
-                :value="item.id"/>
+                :value="item.id"
+              />
             </el-select>
           </el-form-item>
-          <el-button 
-            type="primary" 
-            size="small"
-            @click="search" >搜索</el-button>
-          <el-button 
-            type="default" 
-            size="small"
-            @click="resetSearch" >重置</el-button>
+          <el-button type="primary" size="small" @click="search">搜索</el-button>
+          <el-button type="default" size="small" @click="resetSearch">重置</el-button>
         </el-form>
       </div>
-      <div 
-        class="actions-wrap">
-        <span
-          class="label">
-          用户数量: {{ pagination.total }}
-        </span>
-        <el-button 
-          size="small" 
-          type="success"
-          @click="linkToAddUser">新增用户</el-button>
+      <div class="actions-wrap">
+        <span class="label">用户数量: {{ pagination.total }}</span>
+        <el-button size="small" type="success" @click="linkToAddUser">新增用户</el-button>
       </div>
-      <el-table 
-        ref="userTable" 
-        :data="userList" 
-        highlight-current-row
-        style="width: 100%">
-        <el-table-column 
-          prop="name" 
-          label="姓名"/>
-        <el-table-column 
-          prop="phone" 
-          label="手机号码"/>
-        <el-table-column 
-          prop="role" 
-          label="角色"/>
-        <el-table-column 
-          prop="bind_weixin" 
-          label="是否绑定微信">
-          <template 
-            slot-scope="scope">
+      <el-table ref="userTable" :data="userList" highlight-current-row style="width: 100%">
+        <el-table-column prop="name" label="姓名"/>
+        <el-table-column prop="phone" label="手机号码"/>
+        <el-table-column prop="role" label="角色"/>
+        <el-table-column prop="bind_weixin" label="是否绑定微信">
+          <template slot-scope="scope">
             <span>{{ scope.row.bind_weixin === true ? '是' : '否' }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="created_at"
-          label="创建时间"
-        />
-        <el-table-column
-          prop="updated_at"
-          label="修改时间"
-        />
-        <el-table-column 
-          label="操作" 
-          width="150">
-          <template 
-            slot-scope="scope">
-            <el-button 
-              size="small" 
-              type="warning"
-              @click="linkToEdit(scope.row)">修改</el-button>
-            <el-button 
-              size="small" 
-              type="danger"
-              @click="deleteUsers(scope.row)">删除</el-button>
+        <el-table-column prop="created_at" label="创建时间"/>
+        <el-table-column prop="updated_at" label="修改时间"/>
+        <el-table-column label="操作" width="150">
+          <template slot-scope="scope">
+            <el-button size="small" type="warning" @click="linkToEdit(scope.row)">修改</el-button>
+            <el-button size="small" type="danger" @click="deleteUsers(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <div 
-        class="pagination-wrap">
+      <div class="pagination-wrap">
         <el-pagination
           :total="pagination.total"
           :page-size="pagination.pageSize"
@@ -121,7 +67,7 @@
   </div>
 </template>
 <script>
-import { getManageableRoles, getUserList, deleteUser } from 'service'
+import { getSearchRole, getUserList, deleteUser } from "service";
 import {
   Button,
   Input,
@@ -133,20 +79,20 @@ import {
   MessageBox,
   Select,
   Option
-} from 'element-ui'
+} from "element-ui";
 
 export default {
-  name: 'UserList',
+  name: "UserList",
   components: {
-    'el-table': Table,
-    'el-table-column': TableColumn,
-    'el-button': Button,
-    'el-input': Input,
-    'el-pagination': Pagination,
-    'el-form': Form,
-    'el-form-item': FormItem,
-    'el-select': Select,
-    'el-option': Option
+    "el-table": Table,
+    "el-table-column": TableColumn,
+    "el-button": Button,
+    "el-input": Input,
+    "el-pagination": Pagination,
+    "el-form": Form,
+    "el-form-item": FormItem,
+    "el-select": Select,
+    "el-option": Option
   },
   data() {
     return {
@@ -154,138 +100,141 @@ export default {
       roleList: [],
       setting: {
         loading: false,
-        loadingText: '拼命加载中'
+        loadingText: "拼命加载中"
       },
       filters: {
-        phone: '',
-        role_id: '',
-        name: ''
+        phone: "",
+        role_id: "",
+        name: ""
       },
       pagination: {
         total: 100,
         pageSize: 10,
         currentPage: 1
       }
-    }
+    };
   },
   created() {
-    this.getUserList()
-    this.getRoleList()
+    this.getUserList();
+    this.getRoleList();
   },
   methods: {
     linkToEdit(currentUser) {
       this.$router.push({
-        path: '/system/user/edit/' + currentUser.id
-      })
+        path: "/system/user/edit/" + currentUser.id
+      });
     },
     getRoleList() {
-      getManageableRoles(this)
+      let args = {
+        guard_name: "web"
+      };
+      getSearchRole(this, args)
         .then(result => {
-          this.roleList = result.data
+          this.roleList = result.data;
         })
         .catch(error => {
-          console.log(error)
-        })
+          console.log(error);
+        });
     },
     getUserList() {
       if (this.setting.loading == true) {
-        return false
+        return false;
       }
-      let pageNum = this.pagination.currentPage
+      let pageNum = this.pagination.currentPage;
       let args = {
-        include: 'roles',
+        include: "roles",
         page: pageNum,
         phone: this.filters.phone,
         role_id: this.filters.role_id,
         name: this.filters.name
+      };
+      if (this.filters.role_id === "") {
+        delete args.role_id;
       }
-      if (this.filters.role_id === '') {
-        delete args.role_id
+      if (this.filters.name === "") {
+        delete args.name;
       }
-      if (this.filters.name === '') {
-        delete args.name
+      if (this.filters.phone === "") {
+        delete args.phone;
       }
-      if (this.filters.phone === '') {
-        delete args.phone
-      }
-      this.setting.loadingText = '拼命加载中'
-      this.setting.loading = true
+      this.setting.loadingText = "拼命加载中";
+      this.setting.loading = true;
       return getUserList(this, args)
         .then(response => {
-          this.setting.loading = false
-          this.userList = response.data
-          this.pagination.total = response.meta.pagination.total
-          this.handleRole()
+          this.setting.loading = false;
+          this.userList = response.data;
+          this.pagination.total = response.meta.pagination.total;
+          this.handleRole();
         })
         .catch(error => {
-          this.setting.loading = false
-        })
+          this.setting.loading = false;
+        });
     },
     handleRole() {
       if (this.userList.length != 0) {
-        let userListLen = this.userList.length
+        let userListLen = this.userList.length;
         for (let i = 0; i < userListLen; i++) {
-          let thisUser = this.userList[i]
-          let thisRoles = thisUser.roles
-          let rolesNameCombined = thisRoles.data[0].display_name
-          this.userList[i].role = rolesNameCombined
+          let thisUser = this.userList[i];
+          let thisRoles = thisUser.roles;
+          let rolesNameCombined = thisRoles.data[0].display_name;
+          this.userList[i].role = rolesNameCombined;
         }
       }
     },
     deleteUsers(users) {
-      let id = users.id
-      MessageBox.confirm('确认删除选中用户?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
+      let id = users.id;
+      MessageBox.confirm("确认删除选中用户?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
       })
         .then(() => {
-          this.setting.loadingText = '删除中'
-          this.setting.loading = true
+          this.setting.loadingText = "删除中";
+          this.setting.loading = true;
           deleteUser(this, id)
             .then(response => {
-              this.setting.loading = false
+              this.setting.loading = false;
               this.$message({
-                type: 'success',
-                message: '删除成功！'
-              })
-              this.pagination.currentPage = 1
-              this.getUserList()
+                type: "success",
+                message: "删除成功！"
+              });
+              this.pagination.currentPage = 1;
+              this.getUserList();
             })
             .catch(error => {
-                this.$message({
-                    type: 'warning',
-                    message: error.response.data.message
-                })
-              this.setting.loading = false
-            })
+              this.$message({
+                type: "warning",
+                message: error.response.data.message
+              });
+              this.setting.loading = false;
+            });
         })
         .catch(e => {
-          console.log(e)
-        })
+          console.log(e);
+        });
     },
     changePage(currentPage) {
-      this.pagination.currentPage = currentPage
-      this.getUserList()
+      this.pagination.currentPage = currentPage;
+      this.getUserList();
     },
     search() {
-      this.pagination.currentPage = 1
-      this.getUserList()
+      this.pagination.currentPage = 1;
+      this.getUserList();
     },
     resetSearch() {
-      this.filters.phone = ''
-      this.filters.name = ''
-      this.filters.role_id = ''
-      this.pagination.currentPage = 1
-      this.getUserList()
+      this.filters.phone = "";
+      this.filters.name = "";
+      this.filters.role_id = "";
+      this.pagination.currentPage = 1;
+      this.getUserList();
     },
     linkToAddUser() {
       this.$router.push({
-        path: '/system/user/add'
-      })
+        path: "/system/user/add"
+      });
     }
   }
-}
+};
 </script>
 
 <style lang="less" scoped>

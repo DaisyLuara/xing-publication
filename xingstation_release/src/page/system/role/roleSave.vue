@@ -112,8 +112,11 @@ export default {
   },
   created: function() {
     this.roleID = this.$route.params.uid;
+    let args = {
+      guard_name: "web"
+    };
     // 获取所有权限
-    getPermission(this)
+    getPermission(this, args)
       .then(result => {
         this.setting.loading = true;
         let pers = result;

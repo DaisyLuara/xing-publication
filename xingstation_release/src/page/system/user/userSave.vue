@@ -62,7 +62,7 @@ import {
   saveUser,
   historyBack,
   getSearchLegalManagerList,
-  getManageableRoles,
+  getSearchRole,
   getSearchBDManagerList
 } from "service";
 import {
@@ -70,10 +70,10 @@ import {
   Input,
   Form,
   FormItem,
-    RadioGroup,
+  RadioGroup,
   Select,
   Option,
-    Radio
+  Radio
 } from "element-ui";
 
 export default {
@@ -179,7 +179,10 @@ export default {
     this.setting.loadingText = "拼命加载中";
     this.setting.loading = true;
     // 获取当前用户可分配的角色
-    let rolesPromise = getManageableRoles(this)
+    let args = {
+      guard_name: "web"
+    };
+    let rolesPromise = getSearchRole(this, args)
       .then(result => {
         this.allRoles = result.data;
       })

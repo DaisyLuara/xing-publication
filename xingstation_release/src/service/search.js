@@ -18,6 +18,7 @@ const USER_API = '/api/user/query'
 const TEAM_RATE_API = '/api/team_rate/query'
 const FORMAT_API = '/api/attribute/query'
 const PERMISSION_API = '/api/permission/query'
+const ROLE_API = '/api/role/query'
 const HOST = process.env.SERVER_URL
 
 // 区域
@@ -279,6 +280,19 @@ const getPermission = (context, args) => {
       })
   })
 }
+// 角色
+const getSearchRole = (context, args) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + ROLE_API, { params: args })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
 export {
   getSearchAeraList,
   getSearchMarketList,
@@ -299,5 +313,6 @@ export {
   getSearchCompanyList,
   getSearchSceneList,
   getFormatsList,
-  getPermission
+  getPermission,
+  getSearchRole
 }
