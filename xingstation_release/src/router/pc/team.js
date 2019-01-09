@@ -12,7 +12,6 @@ let router = {
   children: [
     {
       path: 'program',
-      name: '节目管理',
       meta: {
         title: '节目管理',
         permission: 'team.program'

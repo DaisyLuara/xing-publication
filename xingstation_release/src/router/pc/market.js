@@ -82,7 +82,7 @@ let router = {
           path: 'edit/:uid',
           component: () =>
             import(/* webpackChunkName: "page/market/point/save" */ 'page/market/point/save'),
-          name: '修改',
+          name: '点位修改',
           meta: {
             permission: 'market.point.update'
           }
