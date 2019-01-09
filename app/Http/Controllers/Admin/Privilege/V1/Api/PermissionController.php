@@ -24,7 +24,7 @@ class PermissionController extends Controller
 
     public function index(Request $request)
     {
-        $permission = Permission::query()->where('parent_id', 0)->paginate(10);
+        $permission = Permission::query()->where('parent_id', 0)->where('guard_name','web')->paginate(10);
         return $this->response()->paginator($permission, new PermissionTransformer());
     }
 

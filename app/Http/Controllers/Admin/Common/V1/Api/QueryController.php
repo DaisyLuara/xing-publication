@@ -424,9 +424,10 @@ class QueryController extends Controller
     }
 
 
-    public function permissionQuery()
+    public function permissionQuery(Request $request)
     {
         $permission = Permission::query()
+            ->where('guard_name', $request->guard_name)
             ->orderBy('created_at', 'desc')
             ->get()
             ->toHierarchy();
@@ -436,7 +437,7 @@ class QueryController extends Controller
     public function roleQuery(Request $request, Role $role)
     {
         $query = $role->query();
-        $role = $query->where('guard_name', $request->guard)->get();
+        $role = $query->where('guard_name', $request->guard_name)->get();
         return $this->response()->collection($role, new RoleTransformer());
     }
 }

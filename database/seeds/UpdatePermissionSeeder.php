@@ -13,7 +13,7 @@ class UpdatePermissionSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('permissions')->delete();
+        DB::table('permissions')->where('guard_name', 'web')->delete();
 
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
         $permsData = [
@@ -200,13 +200,15 @@ class UpdatePermissionSeeder extends Seeder
         $company = Permission::findByName('company');
         $companySecondData = [
             ['name' => 'company.customers', 'display_name' => '公司管理'],
+            ['name' => 'company.role', 'display_name' => '角色管理'],
+            ['name' => 'company.permission', 'display_name' => '权限管理'],
         ];
         foreach ($companySecondData as $item) {
             $obj = Permission::create(['name' => $item['name'], 'display_name' => $item['display_name'], 'parent_id' => $company->id]);
             $this->createThirdPermission($obj, $item);
         }
 
-        $allPermission = Permission::all();
+        $allPermission = Permission::query()->where('guard_name', 'web')->get();
         $superAdmin = Role::findByName('super-admin');
         $superAdmin->givePermissionTo($allPermission);
 

@@ -30,7 +30,7 @@ class RoleController extends Controller
         if (!$user->isSuperAdmin()) {
             $query->where("name", '<>', 'super-admin');
         }
-        $roles = $query->paginate(10);
+        $roles = $query->where('guard_name', 'web')->paginate(10);
         return $this->response()->paginator($roles, new RoleTransformer());
     }
 
