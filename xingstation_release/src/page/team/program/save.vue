@@ -59,7 +59,7 @@
                 <i class="el-icon-info"/>
               </el-tooltip>
             </el-radio>
-            <el-radio :label="4">项目</el-radio>
+            <el-radio :label="4">更多</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-row>
