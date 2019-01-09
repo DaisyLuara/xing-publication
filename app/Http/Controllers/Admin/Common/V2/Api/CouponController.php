@@ -29,7 +29,6 @@ class CouponController extends Controller
     public function generateCoupon(CouponRequest $request, EasySms $easySms)
     {
         $mobile = $request->has('mobile') ? $request->get('mobile') : '';
-        $userID = $request->has('sign') ? decrypt($request->get('sign')) : 0;
 
         $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
         $memberUID = $member->uid;
@@ -90,92 +89,56 @@ class CouponController extends Controller
             }
         }
 
-        if ($couponBatch->third_code) {
+        $code = uniqid();
+        //微信卡券二维码
+        $wechatCouponBatch = $couponBatch->wechat;
+        $prefix = 'h5_code';
+        $qrcodeUrl = couponQrCode($code, 200, $prefix, $wechatCouponBatch);
 
-            $user = WeChatUser::query()->findOrFail($userID, ['mallcoo_open_user_id']);
-            $result = $this->sendMallCooCoupon($user->mallcoo_open_user_id, $couponBatch->third_code);
-            if ($result['Code'] != 1) {
-                abort(500, $result['Message']);
-            }
-
-            if (!$result['Data'][0]['IsSuccess']) {
-                abort(500, $result['Data'][0]['FailReason']);
-            }
-
-            $data = $result['Data'];
-            DB::beginTransaction();
-            try {
-
-                $coupon = Coupon::create([
-                    'code' => $data[0]['VCode'],
-                    'mobile' => $mobile,
-                    'coupon_batch_id' => $couponBatch->id,
-                    'picm_id' => $data[0]['PICMID'],
-                    'trace_id' => $data[0]['TraceID'],
-                    'status' => 3,
-                    'member_uid' => $memberUID,
-                    'qiniu_id' => $request->qiniu_id ?? 0,
-                    'oid' => $request->oid ?? 0,
-                    'belong' => $request->belong ?? '',
-                ]);
-                $couponBatch->decrement('stock');
-                DB::commit();
-
-            } catch (\Exception $e) {
-                DB::rollBack();
-                abort(500, $e->getMessage());
-            }
+        //券的有效期
+        if ($couponBatch->is_fixed_date) {
+            $startDate = Carbon::createFromTimeString($couponBatch->start_date);;
+            $endDate = Carbon::createFromTimeString($couponBatch->end_date);
         } else {
-            $code = uniqid();
-            //微信卡券二维码
-            $wechatCouponBatch = $couponBatch->wechat;
-            $prefix = 'h5_code';
-            $qrcodeUrl = couponQrCode($code, 200, $prefix, $wechatCouponBatch);
-
-            //券的有效期
-            if ($couponBatch->is_fixed_date) {
-                $startDate = Carbon::createFromTimeString($couponBatch->start_date);;
-                $endDate = Carbon::createFromTimeString($couponBatch->end_date);
-            } else {
-                $startDate = Carbon::now()->addDays($couponBatch->delay_effective_day);
-                $endDate = Carbon::now()->addDays($couponBatch->delay_effective_day + $couponBatch->effective_day);
-            }
-
-            DB::beginTransaction();
-            try {
-
-                $coupon = Coupon::create([
-                    'code' => $code,
-                    'mobile' => $mobile,
-                    'coupon_batch_id' => $couponBatchId,
-                    'status' => 3,
-                    'member_uid' => $memberUID,
-                    'qiniu_id' => $request->qiniu_id ?? 0,
-                    'oid' => $member->oid,
-                    'belong' => $request->belong ?? '',
-                    'start_date' => $startDate,
-                    'end_date' => $endDate,
-                ]);
-
-
-                $coupon->setAttribute('qrcode_url', $qrcodeUrl);
-
-                //不使用系统核销 领取优惠券后 ，自动减去库存
-                if (!$couponBatch->write_off_status && !$couponBatch->pmg_status && !$couponBatch->pmg_status) {
-
-                    $couponBatch->decrement('stock');
-                }
-
-                DB::commit();
-
-                if ($mobile) {
-                    $this->sendCouponMsg($mobile, $couponBatch, $easySms);
-                }
-            } catch (\Exception $e) {
-                DB::rollback();//事务回滚
-                abort(500, $e->getMessage());
-            }
+            $startDate = Carbon::now()->addDays($couponBatch->delay_effective_day);
+            $endDate = Carbon::now()->addDays($couponBatch->delay_effective_day + $couponBatch->effective_day);
         }
+
+        DB::beginTransaction();
+        try {
+
+            $coupon = Coupon::create([
+                'code' => $code,
+                'mobile' => $mobile,
+                'coupon_batch_id' => $couponBatchId,
+                'status' => 3,
+                'member_uid' => $memberUID,
+                'qiniu_id' => $request->qiniu_id ?? 0,
+                'oid' => $member->oid,
+                'belong' => $request->belong ?? '',
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+            ]);
+
+
+            $coupon->setAttribute('qrcode_url', $qrcodeUrl);
+
+            //不使用系统核销 领取优惠券后 ，自动减去库存
+            if (!$couponBatch->write_off_status && !$couponBatch->pmg_status && !$couponBatch->pmg_status) {
+
+                $couponBatch->decrement('stock');
+            }
+
+            DB::commit();
+
+            if ($mobile) {
+                $this->sendCouponMsg($mobile, $couponBatch, $easySms);
+            }
+        } catch (\Exception $e) {
+            DB::rollback();//事务回滚
+            abort(500, $e->getMessage());
+        }
+    
 
         return $this->response->item($coupon, new CouponTransformer());
     }
