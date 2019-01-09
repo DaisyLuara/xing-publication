@@ -72,6 +72,12 @@ class ShortUrlController extends Controller
             $queryString = build_query($queryArr);
         }
 
+        if ($shortUrl->id == 221) {
+            $queryArr = parse_query($queryString);
+            $queryArr['coupon_batch_id'] = array_random([190, 193, 194, 195, 196]);
+            $queryString = build_query($queryArr);
+        }
+
 
         //大屏跳转参数加密
         $cookieExpire = time() + 3600 * 24 * 7;
