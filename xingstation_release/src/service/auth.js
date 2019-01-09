@@ -261,7 +261,10 @@ function hasPermission(name, perms) {
   for (let i in perms) {
     if (name == perms[i]['name']) {
       return true
-    } else if (name.indexOf(perms[i]['name']) == 0) {
+    } else if (
+      (name.indexOf(perms[i]['name']) == 0) == 0 &&
+      perms[i].children.length > 0
+    ) {
       return hasPermission(name, perms[i]['children'])
     }
   }
