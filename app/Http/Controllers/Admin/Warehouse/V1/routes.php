@@ -49,6 +49,9 @@ $api->version('v1', [
 
             //产品库存明细，列出产品名称、产品颜色、仓库、库位、库存数量
             $api->get('location_product','LocationProductController@list');
+
+            //合同页面出厂详情
+            $api->get('contract_product','ProductChuchangController@index');
         });
     });
 
