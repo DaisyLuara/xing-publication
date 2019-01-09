@@ -437,4 +437,25 @@ class QueryController extends Controller
     {
         return DB::table('erp_attributes')->get();
     }
+
+    public function erpSupplierQuery(Company $company, Request $request)
+    {
+
+        $query = $company->query();
+
+        /** @var  $loginUser \App\Models\User */
+        $loginUser = $this->user;
+
+        if (!$loginUser->isAdmin() && !$loginUser->hasRole('legal-affairs') && !$loginUser->hasRole('legal-affairs-manager')) {
+            $query->where('user_id', '=', $loginUser->id);
+        }
+
+        if ($request->name) {
+            $query->where('name', 'like', '%' . $request->name . '%')->get();
+        }
+
+        $companies = $query->where('category', '=', 1)->get();
+        return $this->response->collection($companies, new CompanyTransformer());
+
+    }
 }
