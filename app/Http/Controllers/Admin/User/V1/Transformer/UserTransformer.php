@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\User\V1\Transformer;
 use App\Http\Controllers\Admin\Privilege\V1\Models\Permission;
 use App\Models\User;
 use League\Fractal\TransformerAbstract;
+use App\Http\Controllers\Admin\Privilege\V1\Transformer\RoleTransformer;
 
 class UserTransformer extends TransformerAbstract
 {
@@ -31,7 +32,7 @@ class UserTransformer extends TransformerAbstract
 
     public function includeRoles(User $user)
     {
-        return $this->collection($user->roles, new RoleTransformer());
+        return $this->collection($user->role, new RoleTransformer());
     }
 
     private function getUserPermission(User $user)
