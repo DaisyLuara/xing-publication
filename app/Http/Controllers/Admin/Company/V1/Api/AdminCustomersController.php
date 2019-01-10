@@ -12,7 +12,7 @@ class AdminCustomersController extends Controller
 {
     public function index(Company $company, Customer $customer)
     {
-        $this->authorize('index', [$customer, $company]);
+//        $this->authorize('index', [$customer, $company]);
 
         $query = $customer->query();
 
@@ -25,7 +25,7 @@ class AdminCustomersController extends Controller
 
     public function show(Company $company, Customer $customer)
     {
-        $this->authorize('show', [$customer, $company]);
+//        $this->authorize('show', [$customer, $company]);
 
         return $this->response->item($customer, new CustomerTransformer());
     }
