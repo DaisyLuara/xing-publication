@@ -13,6 +13,35 @@ use Illuminate\Http\Request;
 
 class WarehouseChangeController extends Controller
 {
+    //单个调拨记录列表
+    public function show(WarehouseChange $warehousechange)
+    {
+        return $this->response()->item($warehousechange, new WarehouseChangeTransformer())->setStatusCode(200);
+    }
+
+    //调拨记录列表
+    public function list(Request $request, WarehouseChange $warehousechange)
+    {
+        $query = $warehousechange->query();
+        //根据sku查询
+        if ($request->sku) {
+            $query->where('sku', $request->sku);
+        }
+
+        //根据调出库位查询
+        if ($request->out_location) {
+            $query->where('out_location', $request->out_location);
+        }
+
+        //根据调入库位查询
+        if ($request->in_location) {
+            $query->where('in_location', $request->in_location);
+        }
+
+        $warehousechange = $query->paginate(10);
+        return $this->response()->paginator($warehousechange, new WarehouseChangeTransformer());
+    }
+
     //硬件出厂，批量增加调拨记录
     public function chuchang(Request $request, WarehouseChange $warehousechange)
     {
@@ -54,14 +83,5 @@ class WarehouseChangeController extends Controller
         LocationProduct::query()->where([['location_id', '=', $request->in_location], ['product_sku', '=', $request->sku]])->increment('stock', $request->num);
 
         return $this->response->item($warehousechange, new WarehouseChangeTransformer());
-    }
-
-    //调拨记录列表
-    public function list(Request $request, WarehouseChange $warehousechange)
-    {
-        $sku = $request->has('sku') ? $request->get('sku') : '';
-        $query = $warehousechange->query();
-        $warehousechange = $query->paginate(10);
-        return $this->response()->paginator($warehousechange, new WarehouseChangeTransformer());
     }
 }

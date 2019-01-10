@@ -19,17 +19,12 @@ class ProductAttributeTransformer extends TransformerAbstract
 
     public function transform(ProductAttribute $productAttribute)
     {
-//
-//        dd($productAttribute->attribute);
         return [
-            'id' =>  $productAttribute->id,
-            'sku' => $productAttribute->product_sku, //硬件型号
-//            'supplier' => $product->company->name,//供应商
-        'attributes_id' => $productAttribute->attributes_id,
+            'id' => $productAttribute->id,
+            'sku' => $productAttribute->product_sku, //产品SKU
+            'attributes_id' => $productAttribute->attributes_id,
             'attributes_name' => $productAttribute->attribute->display_name,
             'attributes_value' => $productAttribute->attributes_value,
-//            'created_at' => $productAttribute->created_at->toDateTimeString(),
-//            'updated_at' => $productAttribute->updated_at->toDateTimeString(),
         ];
     }
 

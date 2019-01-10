@@ -46,6 +46,8 @@ $api->version('v1', [
             $api->post('warehousechange/create','WarehousechangeController@create');
             //调拨记录列表
             $api->get('warehousechange/list','WarehouseChangeController@list');
+            //单个调拨记录详情
+            $api->get('warehousechange/{warehousechange}','WarehouseChangeController@show');
 
             //产品库存明细，列出产品名称、产品颜色、仓库、库位、库存数量
             $api->get('location_product','LocationProductController@list');
