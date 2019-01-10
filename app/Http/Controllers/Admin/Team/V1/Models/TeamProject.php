@@ -10,6 +10,7 @@ use App\Models\User;
 class TeamProject extends Model
 {
     protected $fillable = [
+        'copyright_project_id',
         'project_name',
         'belong',
         'applicant',
@@ -71,6 +72,11 @@ class TeamProject extends Model
     public function animation_media()
     {
         return $this->belongsTo(Media::class, 'animation_media_id', 'id');
+    }
+
+    public function copyright_project()
+    {
+        return $this->belongsTo(TeamProject::class, 'copyright_project_id', 'id');
     }
 
 

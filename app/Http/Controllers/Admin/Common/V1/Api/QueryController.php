@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\Ad\V1\Transformer\AdvertisementTransformer;
 use App\Http\Controllers\Admin\Ad\V1\Transformer\AdvertiserTransformer;
 use App\Http\Controllers\Admin\Attribute\V1\Models\Attribute;
 use App\Http\Controllers\Admin\Attribute\V1\Transformer\AttributeTransformer;
+use App\Http\Controllers\Admin\Common\V1\Transformer\TeamProjectTransformer;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
 use App\Http\Controllers\Admin\Company\V1\Transformer\CustomerTransformer;
@@ -20,6 +21,7 @@ use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceKind;
 use App\Http\Controllers\Admin\Invoice\V1\Transformer\InvoiceKindTransformer;
+use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
 use App\Models\Customer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
@@ -161,6 +163,25 @@ class QueryController extends Controller
         $project = $query->where('name', 'like', "%{$request->name}%")->get();
         return $this->response->collection($project, new ProjectTransformer());
     }
+
+    /**
+     * 团队节目远程搜索
+     * @param Request $request
+     * @param TeamProject $teamProject
+     * @return \Dingo\Api\Http\Response
+     */
+    public function teamProjectQuery(Request $request, TeamProject $teamProject)
+    {
+        $query = $teamProject->query();
+
+        if ($request->belong) {
+            $query->where('belong', '=', $request->belong);
+        }
+
+        $team_project = $query->where('project_name', 'like', "%{$request->project_name}%")->get();
+        return $this->response->collection($team_project, new TeamProjectTransformer());
+    }
+
 
     public function launchTplQuery(Request $request, ProjectLaunchTpl $projectLaunchTpl)
     {
