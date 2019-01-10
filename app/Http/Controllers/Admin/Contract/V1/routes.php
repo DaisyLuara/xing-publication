@@ -29,6 +29,10 @@ $api->version('v1', [
 
             //待审批数
             $api->get('auditing_count', 'ContractController@count');
+
+            //硬件出厂详情
+//            $api->get('contract_hardware','HardwareChuchangController@index');
+
         });
     });
 
