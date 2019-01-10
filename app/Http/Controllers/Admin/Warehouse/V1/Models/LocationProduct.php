@@ -12,7 +12,7 @@ class LocationProduct extends Model
 
     protected $fillable = [
         'location_id',
-        'product_id',
+        'product_sku',
         'stock',
     ];
     public $timestamps = false;

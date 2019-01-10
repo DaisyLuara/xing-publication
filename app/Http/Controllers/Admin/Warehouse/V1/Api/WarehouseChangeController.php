@@ -54,6 +54,9 @@ class WarehouseChangeController extends Controller
             foreach ($content as $item) {
                 //记录库存明细
                 $warehousechange->fill(array_merge($item, ['out_location' => $request->out_location, 'in_location' => $request->in_location]))->saveOrFail();
+                //判断之后直接入库
+                LocationProduct::firstOrCreate(['location_id' => $request->out_location], ['product_sku' => $request->sku]);
+                LocationProduct::firstOrCreate(['location_id' => $request->in_location], ['product_sku' => $request->sku]);
                 //出库库位，减少库存
                 LocationProduct::query()->where([['location_id', '=', $request->out_location], ['product_sku', '=', $item['sku']]])->decrement('stock', $item['num']);
                 //硬件出厂，入场库位为商场，商场库存就增加了
@@ -61,7 +64,7 @@ class WarehouseChangeController extends Controller
             }
 
             //合同状态改为已出厂
-            Contract::find($contract_id)->update(['hardware_status' => 2]);
+            Contract::find($contract_id)->update(['product_status' => 2]);
             //记录出厂详情
             ProductChuchang::Create(['contract_id' => $contract_id, 'product_content' => \GuzzleHttp\json_encode($content)]);
         }
@@ -76,7 +79,9 @@ class WarehouseChangeController extends Controller
         //记录库存变化
         $warehousechange->fill($request->all())->saveOrFail();
         //$request->num 调整数量;$request->in_location 调入库位，增加;$request->out_location 调出库位，减少
-
+        //判断之后直接入库
+        LocationProduct::firstOrCreate(['location_id' => $request->out_location], ['product_sku' => $request->sku]);
+        LocationProduct::firstOrCreate(['location_id' => $request->in_location], ['product_sku' => $request->sku]);
         //对某件商品的调出库位，减少库存量，并记录
         LocationProduct::query()->where([['location_id', '=', $request->out_location], ['product_sku', '=', $request->sku]])->decrement('stock', $request->num);
         //对某件商品的调入库位，增加库存量，并记录
