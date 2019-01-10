@@ -20,7 +20,7 @@ $api->version('v1', [
             //产品属性列表
             $api->get('attribute/list','AttributeController@list');
             //根据产品SKU，查出对应产品属性
-            $api->get('product_attribute','ProductAttributeController@index');
+            $api->get('product_attribute','ProductAttributeController@list');
 
             //仓库列表
             $api->get('warehouse/list','WarehouseController@index');

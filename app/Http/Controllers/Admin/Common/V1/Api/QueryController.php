@@ -450,4 +450,9 @@ class QueryController extends Controller
         return DB::table('erp_products')->distinct()->get(['sku']);
     }
 
+    public function erpLocationQuery(Company $company, Request $request)
+    {
+        return DB::table('erp_locations')->select('id','name')->get();
+    }
+
 }
