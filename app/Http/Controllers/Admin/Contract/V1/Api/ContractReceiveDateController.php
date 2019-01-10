@@ -24,10 +24,10 @@ class ContractReceiveDateController extends Controller
         $user = $this->user();
 
         $query = $contract->query();
-        if ($request->name) {
+        if ($request->has('name')) {
             $query->where('name', 'like', '%' . $request->name . '%');
         }
-        if ($request->company_name) {
+        if ($request->has('company_name')) {
             $query->whereHas('company', function ($q) use ($request) {
                 $q->where('name', '%' . $request->company_name . '%');
             });
