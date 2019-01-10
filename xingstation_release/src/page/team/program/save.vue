@@ -62,6 +62,24 @@
             <el-radio :label="4">更多</el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-form-item label="远程节目" prop="copyright_project_id">
+          <el-select
+            v-model="programForm.copyright_project_id"
+            :loading="searchLoading"
+            remote
+            :remote-method="getSearchCopyrightProject"
+            placeholder="无原创节目"
+            filterable
+            clearable
+          >
+            <el-option
+              v-for="item in copyrightProjectList"
+              :key="item.id"
+              :label="item.project_name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
         <el-row>
           <el-col :span="12">
             <el-form-item label="节目类型" prop="type">
@@ -623,7 +641,8 @@ import {
   getSearchTeamRateList,
   getQiniuToken,
   getMediaUpload,
-  getContractReceiptList
+  getContractReceiptList,
+  getSearchCopyrightProject
 } from "service";
 import { Cookies } from "utils/cookies";
 
@@ -656,6 +675,7 @@ export default {
       },
       testFile: null,
       contractList: [],
+      copyrightProjectList: [],
       fileList: [],
       ids: [],
       disabledChange: true,
@@ -674,6 +694,7 @@ export default {
       status: 1,
       programID: "",
       programForm: {
+        copyright_project_id: null,
         money: "",
         hidol_attribute: 0,
         contract_id: "",
@@ -756,6 +777,7 @@ export default {
     }
   },
   created() {
+    this.getSearchCopyrightProject("丛林");
     this.programID = this.$route.params.uid;
     let user_info = JSON.parse(Cookies.get("user_info"));
     this.role = user_info.roles.data;
@@ -807,6 +829,7 @@ export default {
         this.peopleHandle(idArr, this.h5Rate, "H5");
       }
     },
+
     handleRemove(file, fileList) {
       this.fileList = fileList;
     },
@@ -987,6 +1010,10 @@ export default {
           this.programForm.h5_attribute = res.h5_attribute;
           this.programForm.interaction_attribute = res.interaction_attribute;
           this.programForm.individual_attribute = res.individual_attribute;
+          this.programForm.copyright_project_id = res.copyright_project_id;
+          if (res.copyright_project_id) {
+            this.getSearchCopyrightProject(res.copyright_project_name);
+          }
           if (res.individual_attribute === 1) {
             this.programForm.contract_id = res.contract_id;
             this.programForm.money = res.contract.amount;
@@ -1320,6 +1347,27 @@ export default {
         this.projectList = [];
       }
     },
+    getSearchCopyrightProject(query) {
+      if (query !== "") {
+        this.searchLoading = true;
+        let args = {
+          project_name: query
+        };
+        return getSearchCopyrightProject(this, args)
+          .then(response => {
+            this.copyrightProjectList = response;
+            if (this.copyrightProjectList.length == 0) {
+              this.copyrightProjectList = [];
+            }
+            this.searchLoading = false;
+          })
+          .catch(err => {
+            this.searchLoading = false;
+          });
+      } else {
+        this.copyrightProjectList = [];
+      }
+    },
     submit(formName) {
       console.log(this.ids);
       this.getQiniuToken();
@@ -1355,8 +1403,10 @@ export default {
             interact_innovate: this.programForm.interact_innovate,
             type: this.programForm.type,
             animation_media_id: this.ids,
+            copyright_project_id: this.programForm.copyright_project_id,
             interaction_attribute: this.programForm.interaction_attribute
           };
+
           if (this.programForm.interaction.length > 0) {
             member.interaction = this.programForm.interaction;
           }
