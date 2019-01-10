@@ -29,7 +29,7 @@ class ContractReceiveDateController extends Controller
         }
         if ($request->has('company_name')) {
             $query->whereHas('company', function ($q) use ($request) {
-                $q->where('name', '%' . $request->company_name . '%');
+                $q->where('name', 'like', '%' . $request->company_name . '%');
             });
         }
         if ($request->has('contract_number')) {
