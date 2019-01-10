@@ -37,7 +37,7 @@ class UpdatePermissionForShopSeeder extends Seeder
         #账户
         $account = Permission::findByName('shop_account', 'shop');
         $accountSecondData = [
-            ['name' => 'shop_account.item', 'display_name' => '我的资料']
+            ['name' => 'shop_account.datum', 'display_name' => '我的资料']
         ];
         foreach ($accountSecondData as $item) {
             $obj = Permission::create(['name' => $item['name'], 'display_name' => $item['display_name'], 'parent_id' => $account->id, 'guard_name' => 'shop']);
@@ -79,7 +79,7 @@ class UpdatePermissionForShopSeeder extends Seeder
         #数据
         $report = Permission::findByName('shop_report', 'shop');
         $reportSecondData = [
-            ['name' => 'shop_report.list', 'display_name' => '数据管理'],
+            ['name' => 'shop_report.detail', 'display_name' => '数据管理'],
         ];
         foreach ($reportSecondData as $item) {
             $obj = Permission::create(['name' => $item['name'], 'display_name' => $item['display_name'], 'parent_id' => $report->id, 'guard_name' => 'shop']);
@@ -87,10 +87,10 @@ class UpdatePermissionForShopSeeder extends Seeder
         }
 
         #核销
-        $verify = Permission::findByName('shop_verify', 'shop');
+        $verify = Permission::findByName('shop_coupon', 'shop');
         $verifySecondData = [
-            ['name' => 'shop_verify.list', 'display_name' => '核销列表'],
-            ['name' => 'shop_verify.rules', 'display_name' => '优惠券规则'],
+            ['name' => 'shop_coupon.list', 'display_name' => '核销列表'],
+            ['name' => 'shop_coupon.rules', 'display_name' => '优惠券规则'],
         ];
         foreach ($verifySecondData as $item) {
             $obj = Permission::create(['name' => $item['name'], 'display_name' => $item['display_name'], 'parent_id' => $verify->id, 'guard_name' => 'shop']);
