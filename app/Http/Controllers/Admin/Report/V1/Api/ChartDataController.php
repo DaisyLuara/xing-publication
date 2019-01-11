@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Admin\Report\V1\Api;
 
-use App\Http\Controllers\Admin\Common\V1\Request\ChartDataRequest;
 use App\Http\Controllers\Admin\Common\V1\Request\ExportRequest;
 use App\Http\Controllers\Admin\Face\V1\Models\XsFaceCharacterCount;
 use App\Http\Controllers\Admin\Face\V1\Models\XsFaceCountLog;
 use App\Http\Controllers\Admin\Face\V1\Models\XsFaceLog;
 use App\Http\Controllers\Admin\Face\V1\Transformer\FaceCountTransformer;
+use App\Http\Controllers\Admin\Report\V1\Request\ChartDataRequest;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use DB;
