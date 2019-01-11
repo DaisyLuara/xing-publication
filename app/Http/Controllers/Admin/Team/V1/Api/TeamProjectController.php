@@ -82,6 +82,7 @@ class TeamProjectController extends Controller
         $params = $request->all();
         $member = $request->member ?? [];
         $this->checkParams($request);
+        $params = $this->dealParams($params, 'create');
 
         $teamProject->fill($params)->save();
         $this->memberStore($member, $teamProject);
