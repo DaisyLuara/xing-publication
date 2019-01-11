@@ -37,7 +37,7 @@ class ErpAttributesTableSeeder extends Seeder
             'address' => '虚拟仓库'
         ]);
 
-        if (env('APP_ENV') = 'develop') {
+        if (env('APP_ENV') == 'develop') {
             AttributeValue::query()->create([
                 'attribute_id' => '1',
                 'value' => '测试产品名称1'
