@@ -1027,6 +1027,11 @@ export default {
           this.programForm.individual_attribute = res.individual_attribute;
           this.programForm.copyright_project_id = res.copyright_project_id;
           this.programForm.copyright_attribute = res.copyright_attribute;
+          if (res.copyright_attribute === 0) {
+            this.copyrightFlag = false;
+          } else {
+            this.copyrightFlag = true;
+          }
           if (res.copyright_project_id) {
             this.getSearchCopyrightProject(res.copyright_project_name);
           }
@@ -1072,7 +1077,7 @@ export default {
             // 后端iT技术
             this.peopleArrHandle(res, "backend_docking", "backend");
             // Hidol专利
-            this.peopleArrHandle(res, "hidol_patent", "hidol_patent");
+            this.peopleArrHandle(res, "hidol_patent", "hidol");
           }
           this.setting.loading = false;
         })
