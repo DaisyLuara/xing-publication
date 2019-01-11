@@ -55,7 +55,7 @@ let router = {
       path: 'ratio',
       meta: {
         title: '智造比例',
-        permission: 'team.ratio',
+        permission: 'team.ratio'
       },
       component: () =>
         import(/* webpackChunkName: "page/team/ratio/routerView" */ 'page/team/ratio/routerView'),
@@ -84,8 +84,8 @@ let router = {
     {
       path: 'duty',
       meta: {
-          title: '重大责任',
-          permission:'team.duty',
+        title: '重大责任',
+        permission: 'team.duty'
       },
       component: () =>
         import(/* webpackChunkName: "page/team/duty/routerView" */ 'page/team/duty/routerView'),
@@ -95,7 +95,7 @@ let router = {
           name: '重大责任列表',
           meta: {
             title: '重大责任列表',
-              permission: 'team.duty.read'
+            permission: 'team.duty.read'
           },
           component: () =>
             import(/* webpackChunkName: "page/team/duty/index" */ 'page/team/duty/index')
@@ -124,7 +124,7 @@ let router = {
       path: 'operation',
       meta: {
         title: '运营文档',
-            permission: 'team.operation'
+        permission: 'team.operation'
       },
       component: () =>
         import(/* webpackChunkName: "page/team/operation/routerView" */ 'page/team/operation/routerView'),
