@@ -78,32 +78,27 @@ class ContractController extends Controller
         if (($user->hasRole('user') || $user->hasRole('bd-manager')) && !$user->parent_id) {
             abort(500, '无所属主管，无法新增合同申请');
         }
-        $role = Role::findByName('legal-affairs');
-        $legals = $role->users()->get();
-        foreach ($legals as $legal) {
-            if ($legal->hasPermissionTo('auditing')) {
-                if ($user->hasRole('legal-affairs') || $user->hasRole('legal-affairs-manager')) {
-                    $contract->fill(array_merge($request->all(), ['status' => 3, 'handler' => null]))->save();
-                } else {
-                    $contract->fill(array_merge($request->all(), ['status' => 1, 'handler' => $legal->id]))->save();
-                }
-                //文档存储
-                $ids = explode(',', $request->ids);
-                foreach ($ids as $id) {
-                    $contract->media()->attach($id);
-                }
 
-                if ($request->type == 0 && $request->has('receive_date')) {
-                    //收款日期存储
-                    $dates = explode(',', $request->receive_date);
-                    foreach ($dates as $date) {
-                        ContractReceiveDate::create(['contract_id' => $contract->id, 'receive_date' => $date, 'receive_status' => 0]);
-                    }
-                }
-                return $this->response()->item($contract, new ContractTransformer())->setStatusCode(201);
+        if ($user->hasRole('legal-affairs') || $user->hasRole('legal-affairs-manager')) {
+            $contract->fill(array_merge($request->all(), ['status' => 3, 'handler' => null]))->save();
+        } else {
+            $legalId = getProcessStaffId('legal-affairs', 'contract');
+            $contract->fill(array_merge($request->all(), ['status' => 1, 'handler' => $legalId]))->save();
+        }
+        //文档存储
+        $ids = explode(',', $request->ids);
+        foreach ($ids as $id) {
+            $contract->media()->attach($id);
+        }
+
+        if ($request->type == 0 && $request->has('receive_date')) {
+            //收款日期存储
+            $dates = explode(',', $request->receive_date);
+            foreach ($dates as $date) {
+                ContractReceiveDate::create(['contract_id' => $contract->id, 'receive_date' => $date, 'receive_status' => 0]);
             }
         }
-        abort(500, "无审批的法务,请联系管理员");
+        return $this->response()->item($contract, new ContractTransformer())->setStatusCode(201);
     }
 
 //    public function update(ContractRequest $request, Contract $contract)
@@ -155,7 +150,7 @@ class ContractController extends Controller
             $contract->update(array_merge($request->all(), ['status' => 5, 'handler' => $contract->applicant]));
             ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
 
-            $ids = explode(',',$request->ids);
+            $ids = explode(',', $request->ids);
             $contract->media()->detach();
             foreach ($ids as $id) {
                 $contract->media()->attach($id);

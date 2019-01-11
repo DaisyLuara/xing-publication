@@ -30,6 +30,11 @@ class CreateProcessStaffTable extends Migration
         $finance = $financeRole->users()->first();
         DB::table('process_staffs')->insert(['user_id' => $finance->id, 'role' => 'finance', 'line' => 'invoice']);
         DB::table('process_staffs')->insert(['user_id' => $finance->id, 'role' => 'finance', 'line' => 'payment']);
+
+        $auditorRole = Role::findByName('auditor');
+        $auditor = $auditorRole->users()->first();
+        DB::table('process_staffs')->insert(['user_id' => $auditor->id, 'role' => 'auditor', 'line' => 'payment']);
+
     }
 
     /**

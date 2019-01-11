@@ -393,3 +393,16 @@ function excelExport(ExportRequest $request)
     Excel::store($export, $fileName, 'qiniu');
     return $path . urlencode($fileName);
 }
+
+function getProcessStaffId($role, $line)
+{
+    $staff = DB::table('process_staffs')
+        ->where('role', $role)
+        ->where('line', $line)
+        ->select(['user_id'])
+        ->first();
+    if (!$staff) {
+        abort(500, "无审批人员,请联系管理员");
+    }
+    return $staff->user_id;
+}
