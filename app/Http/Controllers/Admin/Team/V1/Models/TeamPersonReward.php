@@ -42,7 +42,9 @@ class TeamPersonReward extends Model
         'backend_docking' => "后端IT技术支持",
         'tester_quality' => "节目测试-责任",
         'operation_quality' => "平台运营-责任",
+    ];
 
+    public static $typeCopyrightMapping = [
         'interaction|copyright' => '交互技术(原创)',
         'originality|copyright' => '节目创意(原创)',
         'h5|copyright' => 'H5开发(原创)',

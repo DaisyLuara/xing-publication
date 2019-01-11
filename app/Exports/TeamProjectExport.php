@@ -49,34 +49,35 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
         $sql = DB::table('team_projects as tp')
             ->leftJoin('team_project_members as tpm', 'tp.id', '=', 'tpm.team_project_id')
             ->leftJoin('contracts', 'tp.contract_id', '=', 'contracts.id')
+            ->leftJoin('team_projects as tp2', 'tp2.id', '=', 'tp.copyright_project_id')
             ->join('users', 'tp.applicant', '=', 'users.id')
             ->where(function ($q) {
                 if ($this->alias) {
-                    $q->whereRaw("belong='$this->alias'");
+                    $q->whereRaw("tp.belong='$this->alias'");
                 }
                 if ($this->status) {
-                    $q->whereRaw("status='$this->status'");
+                    $q->whereRaw("tp.status='$this->status'");
                 }
                 if ($this->start_date_begin && $this->end_date_begin) {
-                    $q->whereRaw("begin_date between '$this->start_date_begin' and '$this->end_date_begin'");
+                    $q->whereRaw("tp.begin_date between '$this->start_date_begin' and '$this->end_date_begin'");
                 }
                 if ($this->start_date_online && $this->end_date_online) {
-                    $q->whereRaw("online_date between '$this->start_date_online' and '$this->end_date_online'");
+                    $q->whereRaw("tp.online_date between '$this->start_date_online' and '$this->end_date_online'");
                 }
                 if ($this->start_date_launch && $this->end_date_launch) {
-                    $q->whereRaw("launch_date between '$this->start_date_launch' and '$this->end_date_launch'");
+                    $q->whereRaw("tp.launch_date between '$this->start_date_launch' and '$this->end_date_launch'");
                 }
             })
             ->selectRaw("
             users.name as applicant,
             tp.type as project_type,
-            project_name,tp.status,online_date,launch_date,
-            project_attribute,link_attribute,h5_attribute,
-            interaction_attribute,hidol_attribute,
-            individual_attribute,contracts.contract_number,contracts.amount,
-            art_innovate,dynamic_innovate,interact_innovate,
-            tp.remark,tp.test_remark,tpm.type as type,group_concat(concat(user_name, ':', rate)) as username")
-            ->groupBy(DB::raw("belong,tpm.type"));
+            tp.project_name,IFNULL(tp2.project_name,'无') as copyright_project,tp.status,tp.online_date,tp.launch_date,
+            tp.project_attribute,tp.link_attribute,tp.h5_attribute,
+            tp.interaction_attribute,tp.hidol_attribute,
+            tp.individual_attribute,contracts.contract_number,contracts.amount,
+            tp.art_innovate,tp.dynamic_innovate,tp.interact_innovate,
+            tp.remark,tp.test_remark,tpm.type as type,group_concat(concat(tpm.user_name, ':', rate)) as username")
+            ->groupBy(DB::raw("tp.belong,tpm.type"));
 
 
         $case = "";
@@ -86,7 +87,7 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
 
         $project = DB::table(DB::raw("({$sql->toSql()}) as a"))
             ->selectRaw("applicant,
-            project_type,project_name,status,online_date,launch_date,
+            project_type,project_name,copyright_project,status,online_date,launch_date,
             project_attribute,link_attribute,h5_attribute,
             interaction_attribute,hidol_attribute,
             individual_attribute,contract_number,amount,
@@ -101,6 +102,7 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
                     'applicant' => $item->applicant,
                     'project_type' => $item->project_type == 1 ? '提前' : '正常',
                     'project_name' => $item->project_name,
+                    'copyright_project'=>$item->copyright_project,
                     'status' => $statusMapping[$item->status],
                     'online_date' => $item->online_date,
                     'launch_date' => $item->launch_date,
@@ -126,7 +128,7 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
             });
 
 
-        $header1 = ["申请人", "节目类型", "节目名称", "状态", "上线时间", "投放时间", "节目属性", "联动属性",
+        $header1 = ["申请人", "节目类型", "节目名称","原创节目名称", "状态", "上线时间", "投放时间", "节目属性", "联动属性",
             "H5属性", "交互属性", "Hidol属性", "定制属性", "合同编号", "合同金额",
             "艺术风格创新点", "动效体验创新点", "交互技术创新点"];
         foreach ($typeMapping as $item) {
