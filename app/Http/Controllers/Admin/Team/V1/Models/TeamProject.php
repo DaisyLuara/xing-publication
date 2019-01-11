@@ -39,6 +39,32 @@ class TeamProject extends Model
 //        'plan_media_id',
     ];
 
+    public static $projectAttributeMapping = [
+        '0' => '不计入',
+        '1' => '基础条目',
+        '2' => '简单条目',
+        '3' => '节目',
+        '4' => '项目',
+    ];
+    public static  $h5AttributeMapping = [
+        '1' => '基础模版',
+        '2' => '复杂模版',
+    ];
+
+    public static  $statusMapping = [
+        '1' => '进行中',
+        '2' => '测试已确认',
+        '3' => '运营已确认',
+        '4' => '主管已确认'
+    ];
+    public static  $interactionAttributeMapping = [
+        'interaction_api' => '中间件属性',
+        'interaction_linkage' => '联动引擎属性'
+    ];
+
+
+
+
     public function contract()
     {
         return $this->belongsTo(Contract::class, 'contract_id', 'id');

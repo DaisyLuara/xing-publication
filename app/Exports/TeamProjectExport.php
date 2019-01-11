@@ -8,6 +8,8 @@
 
 namespace App\Exports;
 
+use App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward;
+use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
 use DB;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Events\AfterSheet;
@@ -39,38 +41,11 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
 
     public function collection()
     {
-        $typeMapping = [
-            'originality' => '节目创意',
-            'plan' => '节目统筹',
-            'animation' => '设计动画',
-            'animation_hidol' => "设计动画.Hidol",
-            'hidol_patent' => "Hidol专利",
-            'interaction' => '交互技术',
-            'backend_docking' => '后端IT技术对接',
-            'h5' => 'H5开发',
-            'tester' => '节目测试',
-            'tester_quality' => '节目测试总责',
-            'operation' => '平台运营',
-            'operation_quality' => '平台运营总责'
-        ];
-        $projectAttributeMapping = [
-            '0' => '不计入',
-            '1' => '基础条目',
-            '2' => '简单条目',
-            '3' => '通用节目',
-            '4' => '项目',
-        ];
+        $typeMapping = TeamPersonReward::$typeMapping;
+        $projectAttributeMapping = TeamProject::$projectAttributeMapping;
+        $statusMapping = TeamProject::$statusMapping;
+        $interactionAttributeMapping = TeamProject::$interactionAttributeMapping;
 
-        $statusMapping = [
-            '1' => '进行中',
-            '2' => '测试已确认',
-            '3' => '运营已确认',
-            '4' => '主管已确认'
-        ];
-        $interactionAttributeMapping = [
-            'interaction_api' => '中间件调用',
-            'interaction_linkage' => '交互引擎'
-        ];
         $sql = DB::table('team_projects as tp')
             ->leftJoin('team_project_members as tpm', 'tp.id', '=', 'tpm.team_project_id')
             ->leftJoin('contracts', 'tp.contract_id', '=', 'contracts.id')

@@ -18,34 +18,11 @@ class TeamProjectListTransformer extends TransformerAbstract
 
     protected $availableIncludes = ['contract'];
 
-    protected $projectAttributeMapping = [
-        '0' => '不计入',
-        '1' => '基础条目',
-        '2' => '简单条目',
-        '3' => '节目',
-        '4' => '项目',
-    ];
-    protected $h5AttributeMapping = [
-        '1' => '基础模版',
-        '2' => '复杂模版',
-    ];
-
-    protected $statusMapping = [
-        '1' => '进行中',
-        '2' => '测试已确认',
-        '3' => '运营已确认',
-        '4' => '主管已确认'
-    ];
-    protected $interactionAttributeMapping = [
-        'interaction_api' => '中间件属性',
-        'interaction_linkage' => '联动引擎属性'
-    ];
-
 
     public function transform(TeamProject $teamProject)
     {
         $interaction_attribute_text = Collect(explode(',', $teamProject->interaction_attribute))->map(function ($value) {
-            return $this->interactionAttributeMapping[$value] ?? "--";
+            return (TeamProject::$interactionAttributeMapping)[$value] ?? "--";
         })->toArray();
 
         return [
@@ -56,14 +33,14 @@ class TeamProjectListTransformer extends TransformerAbstract
             'belong' => $teamProject->belong,
             'applicant' => $teamProject->applicant,
             'applicant_name' => $teamProject->applicantUser ? $teamProject->applicantUser->name : '',
-            'project_attribute' => $this->projectAttributeMapping[$teamProject->project_attribute] ?? '无',
+            'project_attribute' => (TeamProject::$projectAttributeMapping)[$teamProject->project_attribute] ?? '无',
             'hidol_attribute' => $teamProject->hidol_attribute == 1 ? '是' : '否',
             'individual_attribute' => $teamProject->individual_attribute == 1 ? '是' : '否',
             'contract_id' => $teamProject->contract_id,
             'contract_amount' => $teamProject->contract ? $teamProject->contract->amount : null,
             'interaction_attribute' => implode(',', $interaction_attribute_text),
             'link_attribute' => $teamProject->link_attribute == 1 ? '是' : '否',
-            'h5_attribute' => $this->h5AttributeMapping[$teamProject->h5_attribute] ?? "无",
+            'h5_attribute' => (TeamProject::$h5AttributeMapping)[$teamProject->h5_attribute] ?? "无",
             'begin_date' => (string)$teamProject->begin_date,
             'online_date' => (string)$teamProject->online_date,
             'launch_date' => (string)$teamProject->launch_date,
