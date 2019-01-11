@@ -10,6 +10,7 @@ use App\Models\User;
 class TeamProject extends Model
 {
     protected $fillable = [
+        'copyright_attribute',
         'copyright_project_id',
         'project_name',
         'belong',

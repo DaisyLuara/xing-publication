@@ -50,6 +50,7 @@ class AdminCompaniesController extends Controller
             'name' => $request->name,
             'internal_name' => $request->internal_name,
             'address' => $request->address,
+            'category' => $request->category,
             'description' => $request->description,
             'logo' => $request->logo
         ];

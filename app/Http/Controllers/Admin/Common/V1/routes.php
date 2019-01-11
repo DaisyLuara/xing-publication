@@ -84,6 +84,11 @@ $api->version('v1', [
             $api->get('attribute/query', 'QueryController@attributeQuery');
             $api->get('permission/query', 'QueryController@permissionQuery');
             $api->get('role/query', 'QueryController@roleQuery');
+            $api->get('erp_warehouse/query', 'QueryController@warehouseQuery');//流程管理ERP仓库搜索
+            $api->get('erp_attribute/query', 'QueryController@erpAttributeQuery');//流程管理ERP商品属性搜索
+            $api->get('erp_supplier/query','QueryController@erpSupplierQuery');//供应商搜索
+            $api->get('erp_sku/query','QueryController@erpSkuQuery');//sku下拉列表
+            $api->get('erp_location/query','QueryController@erpLocationQuery');//库位下拉列表
 
             //消息通知
             $api->get('user/notifications', ['middleware' => ['permission:inform.list.read'], 'uses' => 'NotificationsController@index']);

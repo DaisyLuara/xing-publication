@@ -17,6 +17,7 @@ class CompanyTransformer extends TransformerAbstract
             'name' => $company->name,
             'internal_name' => $company->internal_name,
             'address' => $company->address,
+            'category' => $company->category,
             'status' => (int)$company->status,
             'description' => $company->description,
             'logo' => $company->logo,

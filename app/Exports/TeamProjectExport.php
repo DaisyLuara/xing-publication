@@ -71,7 +71,8 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
             ->selectRaw("
             users.name as applicant,
             tp.type as project_type,
-            tp.project_name,IFNULL(tp2.project_name,'无') as copyright_project,tp.status,tp.online_date,tp.launch_date,
+            tp.project_name,tp.status,tp.online_date,tp.launch_date,
+            tp.copyright_attribute,IFNULL(tp2.project_name,'无') as copyright_project,
             tp.project_attribute,tp.link_attribute,tp.h5_attribute,
             tp.interaction_attribute,tp.hidol_attribute,
             tp.individual_attribute,contracts.contract_number,contracts.amount,
@@ -87,7 +88,8 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
 
         $project = DB::table(DB::raw("({$sql->toSql()}) as a"))
             ->selectRaw("applicant,
-            project_type,project_name,copyright_project,status,online_date,launch_date,
+            project_type,project_name,status,online_date,launch_date,
+            copyright_attribute,copyright_project,
             project_attribute,link_attribute,h5_attribute,
             interaction_attribute,hidol_attribute,
             individual_attribute,contract_number,amount,
@@ -102,10 +104,11 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
                     'applicant' => $item->applicant,
                     'project_type' => $item->project_type == 1 ? '提前' : '正常',
                     'project_name' => $item->project_name,
-                    'copyright_project'=>$item->copyright_project,
                     'status' => $statusMapping[$item->status],
                     'online_date' => $item->online_date,
                     'launch_date' => $item->launch_date,
+                    'copyright_attribute' => $item->copyright_attribute == 1 ? '是' : '否',
+                    'copyright_project'=>$item->copyright_project,
                     'project_attribute' => $projectAttributeMapping[$item->project_attribute],
                     'link_attribute' => $item->link_attribute == 1 ? '是' : '否',
                     'h5_attribute' => $item->h5_attribute == 1 ? '基础' : '复杂',
@@ -128,7 +131,7 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
             });
 
 
-        $header1 = ["申请人", "节目类型", "节目名称","原创节目名称", "状态", "上线时间", "投放时间", "节目属性", "联动属性",
+        $header1 = ["申请人", "节目类型", "节目名称", "状态", "上线时间", "投放时间", "原创属性","原创节目名称","节目属性", "联动属性",
             "H5属性", "交互属性", "Hidol属性", "定制属性", "合同编号", "合同金额",
             "艺术风格创新点", "动效体验创新点", "交互技术创新点"];
         foreach ($typeMapping as $item) {

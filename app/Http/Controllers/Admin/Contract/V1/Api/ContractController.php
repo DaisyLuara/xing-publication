@@ -4,15 +4,16 @@ namespace App\Http\Controllers\Admin\Contract\V1\Api;
 
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
 use App\Http\Controllers\Admin\Contract\V1\Models\ContractHistory;
+use App\Http\Controllers\Admin\Contract\V1\Models\ContractProduct;
 use App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate;
 use App\Http\Controllers\Admin\Contract\V1\Request\ContractRequest;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Invoice\V1\Models\Invoice;
-use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Http\Controllers\Admin\Payment\V1\Models\Payment;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
+
 
 class ContractController extends Controller
 {
@@ -63,6 +64,9 @@ class ContractController extends Controller
             $query->where('status', '=', 3);
         } elseif ($user->hasRole('legal-affairs') || $user->hasRole('legal-affairs-manager')) {
             $query->whereRaw("(applicant = $user->id or handler = $user->id or status=3)");
+        } elseif ($user->hasRole('purchasing')) {
+            //角色为采购时，查询条件为：已审批完成(status=3),product_status为非0（1未出厂or2已出厂）
+            $query->whereRaw("(status = 3 and product_status != 0)");
         } else {
             $query->whereRaw("(applicant = $user->id or handler = $user->id)");
         }
@@ -96,6 +100,24 @@ class ContractController extends Controller
             $dates = explode(',', $request->receive_date);
             foreach ($dates as $date) {
                 ContractReceiveDate::create(['contract_id' => $contract->id, 'receive_date' => $date, 'receive_status' => 0]);
+                if ($request->type == 0 && $request->has('receive_date')) {
+                    //收款日期存储
+                    $dates = explode(',', $request->receive_date);
+                    foreach ($dates as $date) {
+                        ContractReceiveDate::create(['contract_id' => $contract->id, 'receive_date' => $date, 'receive_status' => 0]);
+                    }
+                }
+
+                $param = $request->all();
+                if ($request->product_status == 1 && $request->has('product_content')) {
+                    //硬件合同存储
+                    $content = $param['product_content'];
+                    foreach ($content as $item) {
+                        $item['contract_id'] = $contract->id;
+                        ContractProduct::query()->create($item);
+                    }
+                }
+                return $this->response()->item($contract, new ContractTransformer())->setStatusCode(201);
             }
         }
         return $this->response()->item($contract, new ContractTransformer())->setStatusCode(201);

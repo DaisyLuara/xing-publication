@@ -55,6 +55,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Http\Request;
+use DB;
 
 class QueryController extends Controller
 {
@@ -177,6 +178,10 @@ class QueryController extends Controller
 
         if ($request->belong) {
             $query->where('belong', '=', $request->belong);
+        }
+
+        if ($request->has('copyright_attribute')) {
+            $query->where('copyright_attribute', '=', $request->copyright_attribute ?? 0);
         }
 
         $team_project = $query->where('project_name', 'like', "%{$request->project_name}%")->get();
@@ -373,6 +378,11 @@ class QueryController extends Controller
         return $this->response->collection($goodsService, new GoodsServiceTransformer());
     }
 
+    public function warehouseQuery(Request $request)
+    {
+        return DB::table('erp_warehouses')->get();
+    }
+
     public function bdManagerQuery(Request $request)
     {
         $role = Role::findByName('bd-manager');
@@ -467,4 +477,27 @@ class QueryController extends Controller
         $role = $query->where('guard_name', $request->guard_name)->get();
         return $this->response()->collection($role, new RoleTransformer());
     }
+
+    public function erpAttributeQuery(Request $request)
+    {
+        return DB::table('erp_attributes')->get();
+    }
+
+    public function erpSupplierQuery(Company $company, Request $request)
+    {
+        $query = $company->query();
+        $companies = $query->where('category', '=', 1)->get();
+        return $this->response->collection($companies, new CompanyTransformer());
+    }
+
+    public function erpSkuQuery(Company $company, Request $request)
+    {
+        return DB::table('erp_products')->distinct()->get(['sku']);
+    }
+
+    public function erpLocationQuery(Company $company, Request $request)
+    {
+        return DB::table('erp_locations')->select('id', 'name')->get();
+    }
+
 }

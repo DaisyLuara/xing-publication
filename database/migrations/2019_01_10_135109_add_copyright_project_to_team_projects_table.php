@@ -16,7 +16,6 @@ class AddCopyrightProjectToTeamProjectsTable extends Migration
         Schema::table('team_projects', function (Blueprint $table) {
             $table->string('project_attribute')->comment('0不计入 1基础条目 2简单条目 3通用节目 4项目')->change();
             $table->integer('copyright_project_id')->nullable()->after("id")->comment("原创节目");
-
         });
     }
 
