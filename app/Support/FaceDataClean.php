@@ -1785,7 +1785,7 @@ function teamBonusClean()
             $player15Money = $item->playernum15 * 0.02;
             $player21Money = $item->playernum21 * 0.05;
             $uCPAMoney = $item->omo_outnum * 0.2;
-            $totalMoney = round($player7Money + $player15Money + $player21Money + $uCPAMoney,2);
+            $totalMoney = round($player7Money + $player15Money + $player21Money + $uCPAMoney, 2);
 
             //节目的投放日期
             $launchDate = date('Y-m-d', $item->online / 1000);
@@ -1801,7 +1801,7 @@ function teamBonusClean()
                     //主管确认
                     if ($teamProject->status == 4) {
                         //提前制作时间 投放时间-上线时间
-                        $advanceTime = $launchDate >= Carbon::parse($teamProject->online_date)->toDateString()  ? (new Carbon($launchDate))->diffInDays($teamProject->online_date) : 0;
+                        $advanceTime = $launchDate >= Carbon::parse($teamProject->online_date)->toDateString() ? (new Carbon($launchDate))->diffInDays($teamProject->online_date) : 0;
                         if ($advanceTime >= 90) {
                             $factor = 1.2;
                         }
@@ -1877,11 +1877,24 @@ function teamBonusClean()
 
             $result[] = DB::table('team_bonuses')->insert($count);
 
+            $data_copyright = DB::table('team_projects as tp')
+                ->join('team_projects as tp2', 'tp.copyright_project_id', '=', 'tp2.id')
+                ->join('team_project_members as tpm', 'tp2.id', '=', 'tpm.team_project_id')
+                ->join('team_bonuses as tb', 'tp.belong', '=', 'tb.belong')
+                ->whereRaw("date_format(tb.date,'%Y-%m-%d')='$date' 
+                and tp.contract_id > 0 
+                and tpm.type not in ('operation_quality','tester_quality')")
+                ->selectRaw("tpm.user_id,tp.id as team_project_id,tp.project_name as project_name,tp.belong as belong,
+                money * 0.2 as 'money',factor,rate,concat(tpm.type,'|copyright') as type");
+
             $data = DB::table('team_projects as tp')
                 ->join('team_project_members as tpm', 'tp.id', '=', 'tpm.team_project_id')
                 ->join('team_bonuses as tb', 'tp.belong', '=', 'tb.belong')
-                ->whereRaw("date_format(date,'%Y-%m-%d')='$date'")
-                ->selectRaw("user_id,tp.id as team_project_id,tp.project_name as project_name,tp.belong as belong,money,factor,rate,tpm.type as type")
+                ->whereRaw("date_format(tb.date,'%Y-%m-%d')='$date'")
+                ->selectRaw("user_id,tp.id as team_project_id,tp.project_name as project_name,tp.belong as belong,
+                case  when tp.contract_id > 0 then money * 0.8 else money end as 'money',
+                factor,rate,tpm.type as type")
+                ->unionAll($data_copyright)
                 ->get();
 
             $rewards = [];
