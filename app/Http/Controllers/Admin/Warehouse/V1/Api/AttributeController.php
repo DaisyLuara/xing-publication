@@ -12,8 +12,8 @@ class AttributeController extends Controller
     public function list(Attribute $attribute)
     {
         $query = $attribute->query();
-        $product = $query->orderBy('created_at', 'asc')->paginate(10);
-        return $this->response()->paginator($product, new AttributeTransformer())->setStatusCode(200);
+        $product = $query->orderBy('created_at', 'asc')->get();
+        return $this->response()->collection($product, new AttributeTransformer())->setStatusCode(200);
     }
 
 }
