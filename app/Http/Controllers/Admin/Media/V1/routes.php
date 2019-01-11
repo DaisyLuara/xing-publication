@@ -11,6 +11,14 @@ $api->version('v1', [
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
             $api->post('media', 'MediaController@store');
             $api->post('media_upload', 'MediaController@create');
+
+
+            $api->get('media_infos', 'MediaInfoController@index');
+            $api->get('media_infos/{media_info}', ['middleware' => ['role:bonus-manager|legal-affairs-manager|operation'], 'uses' => 'MediaInfoController@show']);
+            $api->post('media_infos', ['middleware' => ['role:operation'], 'uses' => 'MediaInfoController@store']);
+            $api->patch('media_infos/{media_info}', ['middleware' => ['role:operation'], 'uses' => 'MediaInfoController@update']);
+            $api->delete('media_infos', ['middleware' => ['role:operation'], 'uses' => 'MediaInfoController@destroy']);
+
         });
     });
 

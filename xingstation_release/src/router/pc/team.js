@@ -22,8 +22,9 @@ let router = {
         {
           path: '/',
           meta: {
-            title: '节目列表',
-            permission: 'team.program.read'
+            title: '节目智造列表',
+            permission: 'team.program.read',
+            keepAlive: true
           },
           component: () =>
             import(/* webpackChunkName: "page/team/program/index" */ 'page/team/program/index')
@@ -53,17 +54,16 @@ let router = {
     {
       path: 'ratio',
       meta: {
-        title: '比例配置',
-        permission: 'team.ratio'
+        title: '智造比例',
+        permission: 'team.ratio',
       },
       component: () =>
         import(/* webpackChunkName: "page/team/ratio/routerView" */ 'page/team/ratio/routerView'),
       children: [
         {
           path: '/',
-          name: '比例配置列表',
           meta: {
-            title: '比例配置列表',
+            title: '智造比例列表',
             permission: 'team.ratio.read'
           },
           component: () =>
@@ -82,44 +82,62 @@ let router = {
       ]
     },
     {
-      path: 'platform',
+      path: 'duty',
       meta: {
-        title: '平台项目',
-        permission: 'team.platform'
+          title: '重大责任',
+          permission:'team.duty',
       },
       component: () =>
-        import(/* webpackChunkName: "page/team/platform/routerView" */ 'page/team/platform/routerView'),
+        import(/* webpackChunkName: "page/team/duty/routerView" */ 'page/team/duty/routerView'),
       children: [
         {
           path: '/',
-          name: '平台项目列表',
+          name: '重大责任列表',
           meta: {
-            title: '平台项目列表',
-            permission: 'team.platform.read'
+            title: '重大责任列表',
+              permission: 'team.duty.read'
           },
           component: () =>
-            import(/* webpackChunkName: "page/team/platform/index" */ 'page/team/platform/index')
+            import(/* webpackChunkName: "page/team/duty/index" */ 'page/team/duty/index')
+        },
+        {
+          path: 'add',
+          meta: {
+            title: '新增责任',
+            permission: 'team.duty.create'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/team/duty/save" */ 'page/team/duty/save')
+        },
+        {
+          path: 'edit/:uid',
+          meta: {
+            title: '修改责任',
+            permission: 'team.duty.update'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/team/duty/save" */ 'page/team/duty/save')
         }
       ]
     },
     {
-      path: 'detail',
+      path: 'operation',
       meta: {
-        title: '平台明细',
-        permission: 'team.detail'
+        title: '运营文档',
+            permission: 'team.operation'
       },
       component: () =>
-        import(/* webpackChunkName: "page/team/detail/routerView" */ 'page/team/detail/routerView'),
+        import(/* webpackChunkName: "page/team/operation/routerView" */ 'page/team/operation/routerView'),
       children: [
         {
           path: '/',
-          name: '平台明细列表',
+          name: '运营文档列表',
           meta: {
             title: '平台明细列表',
-            permission: 'team.detail.read'
+            permission: 'team.operation.read'
           },
           component: () =>
-            import(/* webpackChunkName: "page/team/detail/index" */ 'page/team/detail/index')
+            import(/* webpackChunkName: "page/team/operation/index" */ 'page/team/operation/index')
         }
       ]
     }

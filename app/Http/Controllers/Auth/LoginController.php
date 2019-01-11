@@ -38,8 +38,17 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    protected function redirectTo()
+    public function username()
     {
-        return '/telescope';
+        return 'phone';
     }
+
+    protected function authenticated(Request $request, $user)
+    {
+        if ($user->hasRole('super-admin|admin')) {
+            return redirect()->to($this->redirectPath());
+        }
+        return redirect()->intended($this->redirectPath());
+    }
+
 }

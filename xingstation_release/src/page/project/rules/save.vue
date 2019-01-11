@@ -119,7 +119,11 @@
             class="coupon-form-input"
           />
         </el-form-item>
-        <el-form-item label="兑换价格（嗨蚪）" prop="credit">
+        <el-form-item
+          :rules="{required: true, message: '兑换价格（嗨蚪）不能为空', trigger: 'submit'}"
+          label="兑换价格（嗨蚪）"
+          prop="credit"
+        >
           <el-input v-model="couponForm.credit" class="coupon-form-input"/>
         </el-form-item>
         <el-form-item label="h5图片链接" prop="image_url">
@@ -138,8 +142,15 @@
           <el-radio v-model="couponForm.type" :label="1">优惠券</el-radio>
           <el-radio v-model="couponForm.type" :label="2">小样</el-radio>
         </el-form-item>
-        <el-form-item label="金额" prop="amount">
+        <el-form-item
+          :rules="{required: true, message: '金额不能为空', trigger: 'submit'}"
+          label="金额"
+          prop="amount"
+        >
           <el-input v-model="couponForm.amount" :maxlength="6" class="coupon-form-input"/>
+          <el-tooltip class="item" effect="dark" content="金额必须为整数" placement="right">
+            <i class="el-icon-info"/>
+          </el-tooltip>
         </el-form-item>
         <el-form-item
           :rules="{required: true, message: '库存总数不能为空', trigger: 'submit'}"
@@ -155,14 +166,22 @@
         >
           <el-input v-model="couponForm.stock" :maxlength="6" class="coupon-form-input"/>
         </el-form-item>
-        <el-form-item label="每人最大获取数" prop="people_max_get">
+        <el-form-item
+          :rules="{required: true, message: '每人最大获取数不能为空', trigger: 'submit'}"
+          label="每人最大获取数"
+          prop="people_max_get"
+        >
           <el-input v-model="couponForm.people_max_get" :maxlength="6" class="coupon-form-input"/>
         </el-form-item>
         <el-form-item label="是否开启每人无限领取" prop="pmg_status">
           <el-radio v-model="couponForm.pmg_status" :label="1">开启</el-radio>
           <el-radio v-model="couponForm.pmg_status" :label="0">关闭</el-radio>
         </el-form-item>
-        <el-form-item label="每天最大获取数" prop="day_max_get">
+        <el-form-item
+          :rules="{required: true, message: '每天最大获取数不能为空', trigger: 'submit'}"
+          label="每天最大获取数"
+          prop="day_max_get"
+        >
           <el-input v-model="couponForm.day_max_get" :maxlength="6" class="coupon-form-input"/>
         </el-form-item>
         <el-form-item label="是否开启每天无限领取" prop="dmg_status">
@@ -271,7 +290,7 @@ export default {
     };
     var checkSortOrder = (rule, value, callback) => {
       if (!value) {
-        callback();
+        callback("优先级不能为空");
         return;
       }
       if (/^[0-9]+.?[0-9]*$/.test(value)) {
@@ -470,6 +489,8 @@ export default {
       if (val === 0) {
         this.dateShow = false;
       } else {
+        this.couponForm.delay_effective_day = 0;
+        this.couponForm.effective_day = 0;
         this.dateShow = true;
       }
     },
@@ -539,6 +560,20 @@ export default {
           delete args.delay_effective_day;
         }
       } else {
+        if (this.couponForm.delay_effective_day === "") {
+          this.$message({
+            message: "延后生效日期不能为空！",
+            type: "warning"
+          });
+          return;
+        }
+        if (this.couponForm.effective_day === "") {
+          this.$message({
+            message: "有效天数不能为空！",
+            type: "warning"
+          });
+          return;
+        }
         delete args.start_date;
         delete args.end_date;
       }

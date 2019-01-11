@@ -2,18 +2,23 @@
 
 namespace App\Http\Controllers\Admin\Team\V1\Models;
 
+use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
-use App\Http\Controllers\Admin\Project\V1\Models\Project;
 use App\Models\Model;
 use App\Models\User;
 
 class TeamProject extends Model
 {
     protected $fillable = [
+        'copyright_project_id',
         'project_name',
         'belong',
         'applicant',
         'project_attribute',
+        'hidol_attribute',
+        'individual_attribute',
+        'contract_id',
+        'interaction_attribute',
         'link_attribute',
         'h5_attribute',
         'xo_attribute',
@@ -26,8 +31,44 @@ class TeamProject extends Model
         'remark',
         'status',
         'type',
-        'media_id'
+        'media_id',
+        'operation_media_id',
+        'tester_media_id',
+        'animation_media_id',
+        'test_remark',
+//        'plan_media_id',
     ];
+
+    public static $projectAttributeMapping = [
+        '0' => '不计入',
+        '1' => '基础条目',
+        '2' => '简单条目',
+        '3' => '节目',
+        '4' => '项目',
+    ];
+    public static  $h5AttributeMapping = [
+        '1' => '基础模版',
+        '2' => '复杂模版',
+    ];
+
+    public static  $statusMapping = [
+        '1' => '进行中',
+        '2' => '测试已确认',
+        '3' => '运营已确认',
+        '4' => '主管已确认'
+    ];
+    public static  $interactionAttributeMapping = [
+        'interaction_api' => '中间件属性',
+        'interaction_linkage' => '联动引擎属性'
+    ];
+
+
+
+
+    public function contract()
+    {
+        return $this->belongsTo(Contract::class, 'contract_id', 'id');
+    }
 
     public function member()
     {
@@ -43,5 +84,26 @@ class TeamProject extends Model
     {
         return $this->belongsTo(Media::class, 'media_id', 'id');
     }
+
+    public function operation_media()
+    {
+        return $this->belongsTo(Media::class, 'operation_media_id', 'id');
+    }
+
+    public function tester_media()
+    {
+        return $this->belongsTo(Media::class, 'tester_media_id', 'id');
+    }
+
+    public function animation_media()
+    {
+        return $this->belongsTo(Media::class, 'animation_media_id', 'id');
+    }
+
+    public function copyright_project()
+    {
+        return $this->belongsTo(TeamProject::class, 'copyright_project_id', 'id');
+    }
+
 
 }

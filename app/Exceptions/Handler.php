@@ -3,9 +3,10 @@
 namespace App\Exceptions;
 
 use Exception;
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\URL;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 
 class Handler extends ExceptionHandler
@@ -39,14 +40,17 @@ class Handler extends ExceptionHandler
     /**
      * Report or log an exception.
      *
-     * @param  \Exception $exception
-     * @return void
+     * @param Exception $exception
+     * @return mixed
+     * @throws Exception
      */
     public function report(Exception $exception)
     {
-
         if ($this->shouldReport($exception) && env('APP_ENV') == 'production') {
-            ding()->with('other')->text($exception->getMessage() . PHP_EOL . $exception->getFile() . PHP_EOL . $exception->getLine());
+            $route = request()->route();
+            ding()->with('other')->text($exception->getMessage() . PHP_EOL . $exception->getFile() . PHP_EOL . $exception->getLine()
+                . "\n" . "完整URL: " . URL::current()
+                . "\n" . "请求方式: " . ($route->methods ? implode(',', $route->methods ?? []) : ""));
         }
 
         return parent::report($exception);
@@ -55,9 +59,10 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Exception $exception
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @param Exception $exception
+     * @return \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\Response
+     * @throws AuthenticationException
      */
     public function render($request, Exception $exception)
     {

@@ -63,7 +63,27 @@ class MiniCouponController extends Controller
 
         $couponQuery = Coupon::query();
         if ($request->has('status')) {
-            $couponQuery->where('status', $request->get('status'));
+            $now = Carbon::now()->toDateTimeString();
+
+            switch ($request->get('status')) {
+                case 0:
+                case 1:
+                case 2:
+                    $couponQuery->where('status', $request->get('status'));
+                    break;
+                case 3:
+                    //可使用卡券
+                    $couponQuery->where('status', $request->get('status'))
+                        ->where('end_date', '>', $now);
+                    break;
+                case 4:
+                    //已过期卡券
+                    $couponQuery->where('status', '=', '3')
+                        ->where('end_date', '<', $now);
+                    break;
+                default:
+                    return null;
+            }
         }
 
         if ($request->has('coupon_batch_id')) {
@@ -121,12 +141,13 @@ class MiniCouponController extends Controller
             //用户已激活商场
             $marketids = UserActivation::query()->where('uid', $member->uid)->pluck('marketid')->toArray();
             abort_if(!in_array($request->marketid, $marketids), 500, '无可用优惠券');
-
-            //优惠券对应商场
-            $query->whereHas('marketPointCouponBatches', function ($q) use($request) {
-                $q->where('marketid', $request->marketid);
-            });
         }
+
+        //优惠券对应商场
+        $query->whereHas('marketPointCouponBatches', function ($q) use($request, $member) {
+            $marketId = $request->marketid ?: $member->marketid;
+            $q->where('marketid', $marketId);
+        });
 
         $per_page = $request->get('per_page') ? : 5;
         $couponBatches = $query->orderByDesc('sort_order')->paginate($per_page);
@@ -165,8 +186,17 @@ class MiniCouponController extends Controller
         $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
         $memberUID = $member->uid;
 
+        $now = Carbon::now()->toDateTimeString();
+        abort_if($couponBatch->end_date < $now, 500, '该券已过期!');
+
         if (!$couponBatch->dmg_status && !$couponBatch->pmg_status && $couponBatch->stock <= 0) {
             abort(500, '优惠券已发完!');
+        }
+
+        //扫码领取记录
+        if ($request->has('qiniu_id')) {
+            $coupon = Coupon::query()->where('qiniu_id', $request->get('qiniu_id'))->first();
+            abort_if($coupon, 500, '该券已被领取!');
         }
 
         //每天最大领取量
@@ -189,7 +219,7 @@ class MiniCouponController extends Controller
                 ->get();
 
             if ($coupons->count() >= $couponBatch->people_max_get) {
-                abort(500, '您今天已经领过了，请明天再来!');
+                abort(500, '优惠券每人最多领取' . $couponBatch->people_max_get . '张');
             }
         }
 
@@ -213,13 +243,15 @@ class MiniCouponController extends Controller
                 'code' => uniqid(),
                 'coupon_batch_id' => $couponBatch->id,
                 'status' => 3,
+                'oid' => $member->oid,
                 'member_uid' => $memberUID,
+                'qiniu_id' => $request->get('qiniu_id') ? : 0,
                 'start_date' => $startDate,
                 'end_date' => $endDate,
             ]);
 
-            //减少库存
-            if (!$couponBatch->pmg_status && !$couponBatch->pmg_status) {
+            //不使用系统核销 领取优惠券后 ，自动减去库存
+            if (!$couponBatch->write_off_status && !$couponBatch->pmg_status && !$couponBatch->pmg_status) {
                 $couponBatch->decrement('stock');
             }
 

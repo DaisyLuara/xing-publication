@@ -31,6 +31,22 @@ if (!function_exists('distance')) {
     }
 }
 
+/**
+ * 判断数组中是否全为true
+ */
+if (!function_exists('check_arr')) {
+    function check_arr($rs)
+    {
+        foreach ($rs as $v) {
+            if (!$v) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+
 if (!function_exists('getArUserID')) {
     function getArUserID(User $user, Request $request)
     {

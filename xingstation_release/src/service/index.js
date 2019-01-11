@@ -47,3 +47,6 @@ export * from './role'
 
 // 权限
 export * from './permission'
+
+//微信卡包
+export * from './wx'

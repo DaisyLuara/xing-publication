@@ -19,6 +19,8 @@ const TEAM_RATE_API = '/api/team_rate/query'
 const FORMAT_API = '/api/attribute/query'
 const PERMISSION_API = '/api/permission/query'
 const ROLE_API = '/api/role/query'
+const CONTRACT_RECEIPT_API = '/api/contract/query'
+const TEAM_PROJECT_API = '/api/team_projects/query'
 const HOST = process.env.SERVER_URL
 
 // 区域
@@ -269,11 +271,24 @@ const getFormatsList = context => {
 
 // 权限树状结构
 const getPermission = (context, args) => {
+    return new Promise(function (resolve, reject) {
+        context.$http
+            .get(HOST + PERMISSION_API, {params: args})
+            .then(response => {
+                resolve(response.data)
+            }).catch(err => {
+            reject(err)
+        })
+    })
+}
+// 收款合同
+
+const getContractReceiptList = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .get(HOST + PERMISSION_API, { params: args })
+      .get(HOST + CONTRACT_RECEIPT_API, { params: params })
       .then(response => {
-        resolve(response.data)
+        resolve(response.data.data)
       })
       .catch(error => {
         reject(error)
@@ -286,7 +301,19 @@ const getSearchRole = (context, args) => {
     context.$http
       .get(HOST + ROLE_API, { params: args })
       .then(response => {
-        resolve(response.data)
+          resolve(response.data)
+      }).catch(error => {
+        reject(error)
+    })
+  })
+}
+
+const getSearchCopyrightProject = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + TEAM_PROJECT_API, { params: params })
+      .then(response => {
+        resolve(response.data.data)
       })
       .catch(error => {
         reject(error)
@@ -314,5 +341,7 @@ export {
   getSearchSceneList,
   getFormatsList,
   getPermission,
-  getSearchRole
+  getSearchRole,
+  getContractReceiptList,
+  getSearchCopyrightProject
 }

@@ -53,9 +53,24 @@ class ProjectLaunchController extends Controller
             });
         }
 
-        if ($request->tpl_name && $request->tpl_id) {
-            $query->where($request->tpl_name, '=', $request->tpl_id);
+        if ($request->tpl_name) {
+            $query->where($request->tpl_name, '!=', 0);
         }
+
+        if ($request->tpl_id) {
+            $tplId = $request->tpl_id;
+            $query->where('day1_tvid', '=', $tplId)
+                ->orWhere('day2_tvid', '=', $tplId)
+                ->orWhere('day3_tvid', '=', $tplId)
+                ->orWhere('day4_tvid', '=', $tplId)
+                ->orWhere('day5_tvid', '=', $tplId)
+                ->orWhere('day6_tvid', '=', $tplId)
+                ->orWhere('day7_tvid', '=', $tplId)
+                ->orWhere('div_tvid', '=', $tplId)
+                ->orWhere('weekday_tvid', '=', $tplId)
+                ->orWhere('weekend_tvid', '=', $tplId);
+        }
+
 
         if ($request->ids) {
             $ids = explode(',', $request->ids);

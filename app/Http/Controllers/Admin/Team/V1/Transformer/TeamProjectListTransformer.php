@@ -9,51 +9,58 @@
 namespace App\Http\Controllers\Admin\Team\V1\Transformer;
 
 
+use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
 use League\Fractal\TransformerAbstract;
 
 class TeamProjectListTransformer extends TransformerAbstract
 {
 
-    protected $projectAttributeMapping = [
-        '1' => '基础条目',
-        '2' => '通用节目',
-        '3' => '定制节目',
-        '4' => '定制项目'
-    ];
-    protected $h5AttributeMapping = [
-        '1' => '基础模版',
-        '2' => '复杂模版',
-    ];
+    protected $availableIncludes = ['contract'];
 
-    protected $statusMapping = [
-        '1' => '进行中',
-        '2' => '测试已确认',
-        '3' => '运营已确认',
-        '4' => '主管已确认'
-    ];
 
     public function transform(TeamProject $teamProject)
     {
+        $interaction_attribute_text = Collect(explode(',', $teamProject->interaction_attribute))->map(function ($value) {
+            return (TeamProject::$interactionAttributeMapping)[$value] ?? "--";
+        })->toArray();
+
         return [
             'id' => $teamProject->id,
+            'copyright_project_id' => $teamProject->copyright_project_id,
+            'copyright_project_name' => $teamProject->copyright_project?$teamProject->copyright_project->project_name:'无',
             'project_name' => $teamProject->project_name,
             'belong' => $teamProject->belong,
             'applicant' => $teamProject->applicant,
-            'applicant_name' => $teamProject->applicantUser->name,
-            'project_attribute' => $this->projectAttributeMapping[$teamProject->project_attribute],
+            'applicant_name' => $teamProject->applicantUser ? $teamProject->applicantUser->name : '',
+            'project_attribute' => (TeamProject::$projectAttributeMapping)[$teamProject->project_attribute] ?? '无',
+            'hidol_attribute' => $teamProject->hidol_attribute == 1 ? '是' : '否',
+            'individual_attribute' => $teamProject->individual_attribute == 1 ? '是' : '否',
+            'contract_id' => $teamProject->contract_id,
+            'contract_amount' => $teamProject->contract ? $teamProject->contract->amount : null,
+            'interaction_attribute' => implode(',', $interaction_attribute_text),
             'link_attribute' => $teamProject->link_attribute == 1 ? '是' : '否',
-            'h5_attribute' => $this->h5AttributeMapping[$teamProject->h5_attribute],
-            'xo_attribute' => $teamProject->xo_attribute == 1 ? '是' : '否',
-            'begin_date' => $teamProject->begin_date,
-            'online_date' => $teamProject->online_date,
-            'launch_date' => $teamProject->launch_date,
+            'h5_attribute' => (TeamProject::$h5AttributeMapping)[$teamProject->h5_attribute] ?? "无",
+            'begin_date' => (string)$teamProject->begin_date,
+            'online_date' => (string)$teamProject->online_date,
+            'launch_date' => (string)$teamProject->launch_date,
             'art_innovate' => $teamProject->art_innovate,
             'dynamic_innovate' => $teamProject->dynamic_innovate,
             'interact_innovate' => $teamProject->interact_innovate,
             'remark' => $teamProject->remark,
-            'status' => $this->statusMapping[$teamProject->status],
-            'type' => $teamProject->type == 1 ? '提前节目' : '正常节目'
+            'status' => $teamProject->status,
+            'type' => $teamProject->type == 1 ? '提前节目' : '正常节目',
+            'test_remark' => $teamProject->test_remark,
         ];
     }
+
+    public function includeContract(TeamProject $teamProject)
+    {
+        $contract = $teamProject->contract;
+        if ($contract) {
+            return $this->item($contract, new ContractTransformer());
+        }
+        return null;
+    }
+
 }

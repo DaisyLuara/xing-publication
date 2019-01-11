@@ -48,6 +48,10 @@ return [
         'shop' => [
             'driver' => 'jwt',
             'provider' => 'customers',
+        ],
+        'arMemberSession' => [
+            'driver' => 'jwt',
+            'provider' => 'arMemberSession',
         ]
     ],
 
@@ -76,6 +80,10 @@ return [
         'customers' => [
             'driver' => 'eloquent',
             'model' => App\Models\Customer::class,
+        ],
+        'arMemberSession' => [
+            'driver' => 'eloquent',
+            'model' => App\Http\Controllers\Admin\User\V1\Models\ArMemberSession::class,
         ],
     ],
 

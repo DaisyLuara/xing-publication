@@ -8,19 +8,34 @@ $api->version('v1', [
         'limit' => config('api.rate_limits.access.limit'),
         'expires' => config('api.rate_limits.access.expires'),
     ], function ($api) {
-        $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
+        $api->group(['middleware' => ["api.auth","ConvertEmptyStringsToNull"], 'model' => 'App\Models\User'], function ($api) {
+
+            //节目智造管理
             $api->get('team_project/{team_project}', 'TeamProjectController@show');
             $api->get('team_project', 'TeamProjectController@index');
-            $api->post('team_project', 'TeamProjectController@store');
-            $api->patch('team_project/{team_project}', 'TeamProjectController@update');
+            $api->post('team_project', ['middleware' => ['role:project-manager'], 'uses' => 'TeamProjectController@store']);
+            $api->patch('team_project/{team_project}', ['middleware' => ['role:project-manager|legal-affairs-manager|bonus-manager'], 'uses' => 'TeamProjectController@update']);
+            $api->post('team_project/confirm/{team_project}', ['middleware' => ['role:tester|operation|legal-affairs-manager|bonus-manager'], 'uses' => 'TeamProjectController@confirm']);
 
-            $api->post('team_project/confirm/{team_project}', 'TeamProjectController@confirm');
-
-            //比例分配
+            //分配比例
             $api->get('team_rate/{team_rate}', 'TeamRateController@show');
             $api->get('team_rate', 'TeamRateController@index');
-            $api->post('team_rate', 'TeamRateController@store');
-            $api->patch('team_rate/{team_rate}', 'TeamRateController@update');
+            $api->patch('team_rate/{team_rate}', ['middleware' => ['role:legal-affairs-manager|bonus-manager'], 'uses' => 'TeamRateController@update']);
+
+            //个人中心奖金
+            $api->get('person_reward', 'TeamPersonRewardController@index');
+            $api->get('person_reward/total', 'TeamPersonRewardController@totalReward');
+
+            //个人中心冻结奖金
+            $api->get('person_future_reward', 'TeamPersonFutureRewardController@index');
+            $api->get('person_future_reward/total', 'TeamPersonFutureRewardController@totalReward');
+
+            //重大事件bug记录
+            $api->get('team_project_bug_records', 'TeamProjectBugRecordController@index');
+            $api->get('team_project_bug_records/{team_project_bug_record}', 'TeamProjectBugRecordController@show');
+            $api->post('team_project_bug_records', ['middleware' => ['role:bonus-manager|legal-affairs-manager'], 'uses' => 'TeamProjectBugRecordController@store']);
+            $api->patch('team_project_bug_records/{team_project_bug_record}', ['middleware' => ['role:bonus-manager|legal-affairs-manager'], 'uses' => 'TeamProjectBugRecordController@update']);
+
 
             //平台项目
             $api->get('team_system_project/{team_system_project}', 'TeamSystemProjectController@show');
@@ -41,9 +56,6 @@ $api->version('v1', [
             $api->patch('system_detail/{team_person_reward}', 'TeamSystemProjectController@detailUpdate');
 
 
-            //个人中心奖金
-            $api->get('person_reward', 'TeamPersonRewardController@index');
-            $api->get('person_reward/total', 'TeamPersonRewardController@totalReward');
         });
     });
 

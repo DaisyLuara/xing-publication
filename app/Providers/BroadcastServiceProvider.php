@@ -14,7 +14,8 @@ class BroadcastServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Broadcast::routes();
+        // 多用户认证
+        Broadcast::routes(["middleware" => "auth:api,customer,arMemberSession"]);
 
         require base_path('routes/channels.php');
     }

@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\Ad\V1\Transformer\AdvertisementTransformer;
 use App\Http\Controllers\Admin\Ad\V1\Transformer\AdvertiserTransformer;
 use App\Http\Controllers\Admin\Attribute\V1\Models\Attribute;
 use App\Http\Controllers\Admin\Attribute\V1\Transformer\AttributeTransformer;
+use App\Http\Controllers\Admin\Common\V1\Transformer\TeamProjectTransformer;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
 use App\Http\Controllers\Admin\Company\V1\Transformer\CustomerTransformer;
@@ -18,17 +19,15 @@ use App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractReceiveDateTransformer;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
-use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceKind;
-use App\Http\Controllers\Admin\Invoice\V1\Transformer\InvoiceKindTransformer;
-use App\Http\Controllers\Admin\Privilege\V1\Transformer\RoleTransformer;
-use App\Models\Customer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\PolicyTransformer;
 use App\Http\Controllers\Admin\Invoice\V1\Models\GoodsService;
 use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany;
+use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceKind;
 use App\Http\Controllers\Admin\Invoice\V1\Transformer\GoodsServiceTransformer;
 use App\Http\Controllers\Admin\Invoice\V1\Transformer\InvoiceCompanyTransformer;
+use App\Http\Controllers\Admin\Invoice\V1\Transformer\InvoiceKindTransformer;
 use App\Http\Controllers\Admin\Payment\V1\Models\PaymentPayee;
 use App\Http\Controllers\Admin\Payment\V1\Transformer\PaymentPayeeTransformer;
 use App\Http\Controllers\Admin\Point\V1\Models\Area;
@@ -39,21 +38,23 @@ use App\Http\Controllers\Admin\Point\V1\Transformer\AreaTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\MarketTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\PointTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\SceneTransformer;
+use App\Http\Controllers\Admin\Privilege\V1\Models\Permission;
+use App\Http\Controllers\Admin\Privilege\V1\Models\Role;
+use App\Http\Controllers\Admin\Privilege\V1\Transformer\RoleTransformer;
 use App\Http\Controllers\Admin\Project\V1\Models\Project;
 use App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTpl;
 use App\Http\Controllers\Admin\Project\V1\Transformer\ProjectLaunchTplTransformer;
 use App\Http\Controllers\Admin\Project\V1\Transformer\ProjectTransformer;
+use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamRate;
 use App\Http\Controllers\Admin\Team\V1\Transformer\TeamRateTransformer;
 use App\Http\Controllers\Admin\User\V1\Models\ArUser;
 use App\Http\Controllers\Admin\User\V1\Transformer\ArUserTransformer;
 use App\Http\Controllers\Admin\User\V1\Transformer\UserTransformer;
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Admin\Privilege\V1\Models\Role;
-use DB;
-use App\Http\Controllers\Admin\Privilege\V1\Models\Permission;
 
 class QueryController extends Controller
 {
@@ -140,6 +141,12 @@ class QueryController extends Controller
         return $this->response->collection($points, new PointTransformer());
     }
 
+    /**
+     * 节目远程搜索
+     * @param Request $request
+     * @param Project $project
+     * @return \Dingo\Api\Http\Response
+     */
     public function projectQuery(Request $request, Project $project)
     {
         $user = $this->user();
@@ -157,6 +164,25 @@ class QueryController extends Controller
         $project = $query->where('name', 'like', "%{$request->name}%")->get();
         return $this->response->collection($project, new ProjectTransformer());
     }
+
+    /**
+     * 团队节目远程搜索
+     * @param Request $request
+     * @param TeamProject $teamProject
+     * @return \Dingo\Api\Http\Response
+     */
+    public function teamProjectQuery(Request $request, TeamProject $teamProject)
+    {
+        $query = $teamProject->query();
+
+        if ($request->belong) {
+            $query->where('belong', '=', $request->belong);
+        }
+
+        $team_project = $query->where('project_name', 'like', "%{$request->project_name}%")->get();
+        return $this->response->collection($team_project, new TeamProjectTransformer());
+    }
+
 
     public function launchTplQuery(Request $request, ProjectLaunchTpl $projectLaunchTpl)
     {
@@ -321,9 +347,10 @@ class QueryController extends Controller
             $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
         }
 
-//        if ($request->has('type')) {
-//            $query->where('type', $request->type);
-//        }
+        if ($request->has('type')) {
+            $query->where('type', $request->type);
+        }
+
         if ($user->hasRole('user') || $user->hasRole('bd-manager')) {
             $query->where('applicant', '=', $user->id);
         }
