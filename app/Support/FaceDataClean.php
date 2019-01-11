@@ -1892,7 +1892,7 @@ function teamBonusClean()
                 ->join('team_bonuses as tb', 'tp.belong', '=', 'tb.belong')
                 ->whereRaw("date_format(tb.date,'%Y-%m-%d')='$date'")
                 ->selectRaw("user_id,tp.id as team_project_id,tp.project_name as project_name,tp.belong as belong,
-                case  when tp.contract_id > 0 then money * 0.8 else money end as 'money',
+                case  when tp.contract_id > 0 and tp.copyright_project_id > 0  then money * 0.8 else money end as 'money',
                 factor,rate,tpm.type as type")
                 ->unionAll($data_copyright)
                 ->get();
