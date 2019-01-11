@@ -15,7 +15,7 @@ let router = {
       path: 'detail',
       meta: {
         title: '详细数据',
-        permission: 'report.datail'
+        permission: 'report.detail'
       },
       component: () =>
         import(/* webpackChunkName: "page/report/detail/routerView" */ 'page/report/detail/routerView'),
@@ -25,7 +25,7 @@ let router = {
           name: '详细数据展示',
           meta: {
             title: '详细数据展示',
-            permission: 'report.datail.read'
+            permission: 'report.detail.read'
           },
           component: () =>
             import(/* webpackChunkName: "page/report/detail/index" */ 'page/report/detail/index')
