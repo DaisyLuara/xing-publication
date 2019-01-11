@@ -44,6 +44,7 @@ class AdminCustomersController extends Controller
             'company_id' => $company->id,
         ]);
 
+        activity('customer')->on($customer)->withProperties($request->all())->log('新增公司联系人');
 
         return $this->response->item($customer, new CustomerTransformer())
             ->setStatusCode(201);
@@ -59,6 +60,7 @@ class AdminCustomersController extends Controller
         }
 
         $customer->update($input);
+        activity('customer')->on($customer)->withProperties($request->all())->log('修改公司联系人');
         return $this->response->item($customer, new CustomerTransformer());
     }
 
