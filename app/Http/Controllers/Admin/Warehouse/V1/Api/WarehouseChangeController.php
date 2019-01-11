@@ -50,9 +50,10 @@ class WarehouseChangeController extends Controller
         if ($request->has('product_content') && $request->has('contract_id')) {
             $contract_id = $param['contract_id'];
             $content = $param['product_content'];
-
             foreach ($content as $item) {
                 //记录库存明细,商场库存增加(默认location_id=2)
+                unset($item['out_location_name']);
+                unset($item['attribute']);
                 $warehousechange->create(array_merge($item, ['in_location' => 2]));
                 //判断之后直接入库
                 LocationProduct::updateOrCreate(['location_id' => $item['out_location'], 'product_sku' => $item['sku']]);
