@@ -27,6 +27,7 @@ class TeamProjectListTransformer extends TransformerAbstract
 
         return [
             'id' => $teamProject->id,
+            'copyright_attribute' => $teamProject->copyright_attribute == 1 ? '是' : '否',
             'copyright_project_id' => $teamProject->copyright_project_id,
             'copyright_project_name' => $teamProject->copyright_project?$teamProject->copyright_project->project_name:'无',
             'project_name' => $teamProject->project_name,

@@ -78,20 +78,10 @@ class TeamProjectController extends Controller
      */
     public function store(TeamProjectRequest $request, TeamProject $teamProject)
     {
-        /** @var  $user \App\Models\User */
-        $user = $this->user();
+
         $params = $request->all();
         $member = $request->member ?? [];
         $this->checkParams($request);
-
-        $project = Project::query()->where('versionname', $request->belong)->first();
-
-        $params['status'] = 1;
-        $params['applicant'] = $user->id;
-        $params['begin_date'] = Carbon::now()->toDateString();
-        $params['project_name'] = $project->name;
-        $params['launch_date'] = $project->online != 0 ? date('Y-m-d', $project->online / 1000) : null;
-        $params['interaction_attribute'] = implode(",", $request->interaction_attribute ?? []);
 
         $teamProject->fill($params)->save();
         $this->memberStore($member, $teamProject);
@@ -129,30 +119,59 @@ class TeamProjectController extends Controller
 
         $params = $request->all();
         $member = $request->member ?? [];
+
         $this->checkParams($request);
+        $params = $this->dealParams($params, 'update');
 
-        $project = Project::query()->where('versionname', $request->belong)->first();
-
-        if (isset($params['tester_media_id']) && !$params['tester_media_id']) {
-            unset($params['tester_media_id']);
-        }
-
-        if (isset($params['test_remark']) && !$params['test_remark']) {
-            unset($params['test_remark']);
-        }
-
-        unset($params['applicant']);
-        unset($params['begin_date']);
-        unset($params['online_date']);
-        unset($params['status']);
-        $params['project_name'] = $project->name;
-        $params['launch_date'] = $project->online != 0 ? date('Y-m-d', $project->online / 1000) : null;
-        $params['interaction_attribute'] = implode(",", $request->interaction_attribute ?? []);
         $teamProject->update($params);
 
         $teamProject->member()->detach();
         $this->memberStore($member, $teamProject);
         return $this->response()->noContent()->setStatusCode(200);
+    }
+
+    /**
+     * 处理参数
+     * @param $params
+     * @param null $type
+     * @return mixed
+     */
+    public function dealParams($params, $type = null)
+    {
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
+        $project = Project::query()->where('versionname', $params['belong'])->first();
+
+        if ($params['copyright_attribute'] == 0) {
+            $params['copyright_project_id'] = null;
+        }
+
+        if ($params['individual_attribute'] == 0) {
+            $params['contract_id'] = null;
+        }
+
+        if ($type == 'create') {
+            $params['status'] = 1;
+            $params['applicant'] = $user->id;
+            $params['begin_date'] = Carbon::now()->toDateString();
+        } else if ($type == 'update') {
+            if (isset($params['tester_media_id']) && !$params['tester_media_id']) {
+                unset($params['tester_media_id']);
+            }
+            if (isset($params['test_remark']) && !$params['test_remark']) {
+                unset($params['test_remark']);
+            }
+            unset($params['applicant']);
+            unset($params['begin_date']);
+            unset($params['online_date']);
+            unset($params['status']);
+        }
+
+        $params['project_name'] = $project->name;
+        $params['launch_date'] = $project->online != 0 ? date('Y-m-d', $project->online / 1000) : null;
+        $params['interaction_attribute'] = implode(",", $params['interaction_attribute'] ?? []);
+
+        return $params;
     }
 
 
@@ -177,6 +196,7 @@ class TeamProjectController extends Controller
                 abort("422", "operation与operation_quality人员需一致");
             }
         }
+
     }
 
 
@@ -195,7 +215,7 @@ class TeamProjectController extends Controller
             if (!$media) {
                 abort("422", "请上传测试用例");
             }
-            if($request->has('test_remark') && $request->test_remark){
+            if ($request->has('test_remark') && $request->test_remark) {
                 $teamProject->test_remark = $request->test_remark;
             }
             $teamProject->status = 2;

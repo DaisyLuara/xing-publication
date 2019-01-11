@@ -16,6 +16,7 @@ class TeamProjectTransformer extends TransformerAbstract
             'id' => $teamProject->id,
             'project_name' => $teamProject->project_name,
             'belong' => $teamProject->belong,
+            'copyright_attribute' => $teamProject->copyright_attribute == 1 ? '是' : '否'
         ];
     }
 

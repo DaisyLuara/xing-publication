@@ -178,6 +178,10 @@ class QueryController extends Controller
             $query->where('belong', '=', $request->belong);
         }
 
+        if ($request->has('copyright_attribute')) {
+            $query->where('copyright_attribute', '=', $request->copyright_attribute ?? 0);
+        }
+
         $team_project = $query->where('project_name', 'like', "%{$request->project_name}%")->get();
         return $this->response->collection($team_project, new TeamProjectTransformer());
     }

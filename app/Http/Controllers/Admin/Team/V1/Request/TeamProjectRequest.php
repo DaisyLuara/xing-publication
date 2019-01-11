@@ -18,11 +18,19 @@ class TeamProjectRequest extends \App\Http\Requests\Request
             case 'POST':
                 return [
                     'belong' => 'required|unique:team_projects|exists:ar.ar_product_list,versionname',
-                    'copyright_project_id' => 'nullable|integer|exists:team_projects,id',
+                    'copyright_attribute' => ['required', Rule::in([0, 1])],
+                    'copyright_project_id' => ['nullable','required_if:copyright_attribute,1','integer',
+                        Rule::exists('team_projects', 'id')->where(function ($query) {
+                            $query->where('copyright_attribute', 0);
+                        })],
                     'project_attribute' => ['required', Rule::in([0, 1, 2, 3, 4])],
                     'hidol_attribute' => ['required', Rule::in([0, 1])],
                     'individual_attribute' => ['required', Rule::in([0, 1])],
-                    'contract_id' => 'nullable|required_if:individual_attribute,1|integer|exists:contracts,id',
+                    'contract_id' => ['nullable','required_if:individual_attribute,1','integer',
+                        Rule::exists('contracts', 'id')->where(function ($query) {
+                            $query->where('type', 0);
+                        })
+                    ],
                     'interaction_attribute' => "required|array",
                     'link_attribute' => ['required', Rule::in([0, 1])],
                     'h5_attribute' => ['required', Rule::in([1, 2])],
@@ -44,19 +52,25 @@ class TeamProjectRequest extends \App\Http\Requests\Request
             case 'PATCH':
                 return [
                     'belong' => [
-                        'required', 'exists:ar.ar_product_list,versionname',
+                        'required','exists:ar.ar_product_list,versionname',
                         Rule::unique('team_projects')->ignore($this->route("team_project")->id),
                     ],
-                    'copyright_project_id' => ['nullable','integer',
+                    'copyright_attribute' => ['required', Rule::in([0, 1])],
+                    'copyright_project_id' => ['nullable', 'required_if:copyright_attribute,1', 'integer',
                         Rule::notIn([$this->route("team_project")->id]),
-                        Rule::exists('team_projects','id')
-                       ],
+                        Rule::exists('team_projects', 'id')->where(function ($query) {
+                            $query->where('copyright_attribute', 0);
+                        })
+                    ],
                     'project_attribute' => Rule::in([0, 1, 2, 3, 4]),
                     'hidol_attribute' => Rule::in([0, 1]),
                     'individual_attribute' => Rule::in([0, 1]),
-                    'contract_id' => 'nullable|required_if:individual_attribute,1|integer|exists:contracts,id',
+                    'contract_id' => ['nullable','required_if:individual_attribute,1','integer',
+                        Rule::exists('contracts', 'id')->where(function ($query) {
+                            $query->where('type', 0);
+                        })],
                     'interaction_attribute' => "required|array",
-                    'link_attribute' =>  Rule::in([0, 1]),
+                    'link_attribute' => Rule::in([0, 1]),
                     'h5_attribute' => Rule::in([1, 2]),
                     'xo_attribute' => Rule::in([0, 1]),
                     'art_innovate' => 'max:1000',
