@@ -8,6 +8,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Admin\Common\V1\Request\ExportRequest;
 
 /**
  *求两个已知经纬度之间的距离,单位为千米
@@ -365,3 +366,14 @@ if (!function_exists('add_query_string')) {
     }
 }
 
+function excelExport(ExportRequest $request)
+{
+    $type = $request->type;
+
+    $path = config('filesystems')['disks']['qiniu']['url'];
+    $export = app($type);
+
+    $fileName = $export->fileName . '_' . time() . '_' . '.' . 'xlsx';
+    Excel::store($export, $fileName, 'qiniu');
+    return $path . urlencode($fileName);
+}

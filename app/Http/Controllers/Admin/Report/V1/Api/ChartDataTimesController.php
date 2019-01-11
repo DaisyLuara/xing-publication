@@ -6,11 +6,10 @@
  * Time: 上午10:07
  */
 
-namespace App\Http\Controllers\Admin\Common\V1\Api;
+namespace App\Http\Controllers\Admin\Report\V1\Api;
 
 
 use App\Http\Controllers\Admin\Common\V1\Request\ChartDataRequest;
-use App\Http\Controllers\Admin\Common\V1\Transformer\ChartDataTimesTransformer;
 use App\Http\Controllers\Admin\Face\V1\Models\XsFaceCharacterCountTimes;
 use App\Http\Controllers\Admin\Face\V1\Models\XsFaceCountLog;
 use App\Http\Controllers\Admin\Face\V1\Models\XsFaceLogTimes;
@@ -20,11 +19,11 @@ use App\Http\Controllers\Admin\Face\V1\Models\XsFacePlayTimes21Character;
 use App\Http\Controllers\Admin\Face\V1\Models\XsFacePlayTimes21Permeability;
 use App\Http\Controllers\Admin\Face\V1\Models\XsFacePlayTimes7Character;
 use App\Http\Controllers\Admin\Face\V1\Models\XsFacePlayTimes7Permeability;
+use App\Http\Controllers\Admin\Report\V1\Transformer\ChartDataTimesTransformer;
 use App\Http\Controllers\Controller;
-use function GuzzleHttp\Psr7\str;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 
 class ChartDataTimesController extends Controller
 {

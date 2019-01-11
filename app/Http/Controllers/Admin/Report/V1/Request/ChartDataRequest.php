@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Common\V1\Request;
+namespace App\Http\Controllers\Admin\Report\V1\Request;
 
 use App\Http\Requests\Request;
 

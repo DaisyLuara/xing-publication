@@ -90,13 +90,7 @@ $api->version('v1', [
             $api->patch('user/read/notifications', 'NotificationsController@read');
             $api->get('user/activities', ['middleware' => ['permission:inform.operate.read'], 'uses' => 'ActivityLogController@index']);
 
-            //数据统计
-            $api->get('stats', 'ChartDataController@index');//列表
-            $api->post('chart_data', 'ChartDataController@chart');//人数图表
             $api->get('export', 'ExportController@store');//导出
-
-            $api->get('times_stats', 'ChartDataTimesController@index');//人次列表
-            $api->post('chart_data_times', 'ChartDataTimesController@chart');//人次图表
 
             $api->get('qiniu_oauth', 'QiniuController@oauth');
         });
