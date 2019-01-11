@@ -21,6 +21,7 @@ class Contract extends Model
         'status',
         'processing_person',
         'type',
+        'product_status',
         'amount',
         'remark',
         'legal_message',
@@ -56,6 +57,12 @@ class Contract extends Model
     public function receiveDate()
     {
         return $this->hasMany(ContractReceiveDate::class, 'contract_id', 'id');
+    }
+
+    //合同硬件，和合同收款日期类似
+    public function product()
+    {
+        return $this->hasMany(ContractProduct::class, 'contract_id', 'id');
     }
 
     public function contractHistory()

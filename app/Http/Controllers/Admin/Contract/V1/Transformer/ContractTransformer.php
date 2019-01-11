@@ -26,6 +26,12 @@ class ContractTransformer extends TransformerAbstract
         '2' => '其它合同',
     ];
 
+    protected $productstatusMapping = [
+        '0' => '无硬件',
+        '1' => '未出厂',
+        '2' => '已出厂',
+    ];
+
     public function transform(Contract $contract)
     {
         return [
@@ -46,6 +52,8 @@ class ContractTransformer extends TransformerAbstract
             'legal_ma_message' => $contract->legal_ma_message,
             'bd_ma_message' => $contract->bd_ma_message,
             'receive_date' => join(',', array_column($contract->receiveDate->toArray(), 'receive_date')),
+            'product_status' => $this->productstatusMapping[$contract->product_status],
+            'product_content' => $contract->product,
             'created_at' => $contract->created_at->toDateTimeString(),
             'updated_at' => $contract->updated_at->toDateTimeString(),
         ];
@@ -60,4 +68,11 @@ class ContractTransformer extends TransformerAbstract
     {
         return $this->collection($contract->receiveDate, new ContractReceiveDateTransformer());
     }
+
+    //查出对应硬件信息的总库存
+    public function includeHardware(Contract $contract)
+    {
+        return $this->item($contract->hardware, new ProductTransformer());
+    }
+
 }

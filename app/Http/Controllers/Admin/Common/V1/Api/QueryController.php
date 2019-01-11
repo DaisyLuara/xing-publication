@@ -376,6 +376,11 @@ class QueryController extends Controller
         return $this->response->collection($goodsService, new GoodsServiceTransformer());
     }
 
+    public function warehouseQuery(Request $request)
+    {
+        return DB::table('erp_warehouses')->get();
+    }
+
     public function bdManagerQuery(Request $request)
     {
         $role = Role::findByName('bd-manager');
@@ -452,4 +457,27 @@ class QueryController extends Controller
         $attribute = $node->getDescendants();
         return $this->response()->collection($attribute, new AttributeTransformer());
     }
+
+    public function erpAttributeQuery(Request $request)
+    {
+        return DB::table('erp_attributes')->get();
+    }
+
+    public function erpSupplierQuery(Company $company, Request $request)
+    {
+        $query = $company->query();
+        $companies = $query->where('category', '=', 1)->get();
+        return $this->response->collection($companies, new CompanyTransformer());
+    }
+
+    public function erpSkuQuery(Company $company, Request $request)
+    {
+        return DB::table('erp_products')->distinct()->get(['sku']);
+    }
+
+    public function erpLocationQuery(Company $company, Request $request)
+    {
+        return DB::table('erp_locations')->select('id','name')->get();
+    }
+
 }
