@@ -24,8 +24,8 @@ class TeamPersonRewardTransformer extends TransformerAbstract
             'user_name' => $teamPersonReward->user->name,
             'project_name' => $teamPersonReward->project_name,
             'type' => (TeamPersonReward::$typeMapping)[$teamPersonReward->type]??'--',
-            'experience_money' => $teamPersonReward->experience_money ? round($teamPersonReward->experience_money, 2) : 0,
-            'total' => $teamPersonReward->total ? round($teamPersonReward->total, 2) : 0,
+            'experience_money' => $teamPersonReward->experience_money ? round($teamPersonReward->experience_money, 6) : 0,
+            'total' => $teamPersonReward->total ? round($teamPersonReward->total, 6) : 0,
             'date' => (new Carbon($teamPersonReward->date))->toDateString(),
             'get_date' => (new Carbon($teamPersonReward->date))->toDateString()
         ];
