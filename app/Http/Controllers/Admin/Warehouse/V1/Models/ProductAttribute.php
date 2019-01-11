@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin\Warehouse\V1\Models;
 
-use App\Http\Controllers\Admin\Warehouse\V1\Models\Attribute;
 use App\Models\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 

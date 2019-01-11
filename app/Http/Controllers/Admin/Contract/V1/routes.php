@@ -29,7 +29,7 @@ $api->version('v1', [
 
             //待审批数
             $api->get('auditing_count', 'ContractController@count');
-            
+
         });
     });
 

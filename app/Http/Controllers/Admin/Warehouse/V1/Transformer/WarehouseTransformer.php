@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin\Warehouse\V1\Transformer;
 use App\Http\Controllers\Admin\Warehouse\V1\Models\Warehouse;
 use League\Fractal\TransformerAbstract;
 
-
 class WarehouseTransformer extends TransformerAbstract
 {
 

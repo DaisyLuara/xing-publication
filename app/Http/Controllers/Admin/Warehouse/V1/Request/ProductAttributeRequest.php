@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin\Warehouse\V1\Request;
 
 use App\Http\Requests\Request;
-use Illuminate\Validation\Rule;
 
 class ProductAttributeRequest extends Request
 {
@@ -18,7 +17,6 @@ class ProductAttributeRequest extends Request
             case 'POST':
                 return [
                     'name' => 'required|max:50',
-//                    'warehouse_id' => 'required|max:50'
                 ];
                 break;
             case 'PATCH':

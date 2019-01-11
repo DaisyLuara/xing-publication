@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers\Admin\Warehouse\V1\Transformer;
 
-
 use App\Http\Controllers\Admin\Warehouse\V1\Models\Product;
 use League\Fractal\TransformerAbstract;
-
 
 class ProductTransformer extends TransformerAbstract
 {
@@ -23,11 +21,6 @@ class ProductTransformer extends TransformerAbstract
             'created_at' => $product->created_at->toDateTimeString(),
             'updated_at' => $product->updated_at->toDateTimeString(),
         ];
-    }
-
-    public function includeCompany(Product $product)
-    {
-        return $this->collection($product->media, new CompanyTransformer());
     }
 
     public function includeAttributes(Product $product)

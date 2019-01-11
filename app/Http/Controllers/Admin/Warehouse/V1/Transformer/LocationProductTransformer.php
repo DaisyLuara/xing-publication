@@ -18,7 +18,6 @@ class LocationProductTransformer extends TransformerAbstract
             'sku' => $locationProduct->product_sku,
             'location' => $locationProduct->location->name,
             'warehouse' => $warehouse[0]['name'],
-//            'product' => $locationProduct->product,
             'stock' => (int)$locationProduct->stock,
         ];
     }

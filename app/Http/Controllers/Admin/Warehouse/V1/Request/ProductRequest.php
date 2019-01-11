@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin\Warehouse\V1\Request;
 
 use App\Http\Requests\Request;
-use Illuminate\Validation\Rule;
 
 class ProductRequest extends Request
 {

@@ -16,7 +16,7 @@ class WarehouseChangeController extends Controller
     //单个调拨记录列表
     public function show(WarehouseChange $warehousechange)
     {
-        return $this->response()->item($warehousechange, new WarehouseChangeTransformer())->setStatusCode(200);
+        return $this->response()->item($warehousechange, new WarehouseChangeTransformer());
     }
 
     //调拨记录列表

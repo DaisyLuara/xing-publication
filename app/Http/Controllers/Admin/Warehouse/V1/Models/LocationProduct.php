@@ -3,7 +3,6 @@
 
 namespace App\Http\Controllers\Admin\Warehouse\V1\Models;
 
-//use App\Http\Controllers\Admin\Warehouse\V1\Models\Product;
 use App\Models\Model;
 
 class LocationProduct extends Model

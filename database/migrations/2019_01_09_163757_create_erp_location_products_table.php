@@ -17,7 +17,7 @@ class CreateErpLocationProductsTable extends Migration {
 			$table->increments('id');
 			$table->integer('location_id')->nullable()->comment('库位ID');
 			$table->string('product_sku')->nullable()->comment('产品sku');
-			$table->integer('stock')->nullable()->comment('库存数量');
+            $table->integer('stock')->default(0)->comment('库存数量');
 		});
 	}
 

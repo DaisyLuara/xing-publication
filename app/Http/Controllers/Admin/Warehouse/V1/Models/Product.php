@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers\Admin\Warehouse\V1\Models;
 
-
 use App\Models\Model;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
-use App\Http\Controllers\Admin\Warehouse\V1\Models\ProductAttribute;
-use App\Models\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model

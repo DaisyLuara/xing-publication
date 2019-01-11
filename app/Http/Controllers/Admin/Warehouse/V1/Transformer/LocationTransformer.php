@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin\Warehouse\V1\Transformer;
 use App\Http\Controllers\Admin\Warehouse\V1\Models\Location;
 use League\Fractal\TransformerAbstract;
 
-
 class LocationTransformer extends TransformerAbstract
 {
     protected $availableIncludes = ['hardware'];

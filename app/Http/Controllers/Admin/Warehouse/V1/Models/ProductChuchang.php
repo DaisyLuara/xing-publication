@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin\Warehouse\V1\Models;
 
-use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceReceipt;
 use App\Models\Model;
 
 class ProductChuchang extends Model
@@ -14,9 +13,4 @@ class ProductChuchang extends Model
     ];
 
     public $timestamps = false;
-
-    public function contract()
-    {
-        return $this->belongsTo(Contract::class, 'contract_id', 'id');
-    }
 }

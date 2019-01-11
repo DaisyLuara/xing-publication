@@ -3,6 +3,7 @@
 use Illuminate\Database\Seeder;
 use App\Http\Controllers\Admin\Warehouse\V1\Models\Attribute;
 use App\Http\Controllers\Admin\Warehouse\V1\Models\Location;
+use App\Http\Controllers\Admin\Warehouse\V1\Models\Warehouse;
 use App\Http\Controllers\Admin\Warehouse\V1\Models\AttributeValue;
 
 class ErpAttributesTableSeeder extends Seeder
@@ -30,6 +31,10 @@ class ErpAttributesTableSeeder extends Seeder
             'name' => '商场',
             'warehouse_id' => '1'
 
+        ]);
+        Warehouse::query()->create([
+            'name' => '虚拟仓库',
+            'address' => '虚拟仓库'
         ]);
 
         if (env('APP_ENV') = 'develop') {
