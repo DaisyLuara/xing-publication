@@ -18,10 +18,4 @@ class WarehouseChange extends Model
         'num',
         'remark'
     ];
-
-    public function hardware()
-    {
-        return $this->belongsTo(Product::class, 'hardware_id', 'id');
-    }
-
 }

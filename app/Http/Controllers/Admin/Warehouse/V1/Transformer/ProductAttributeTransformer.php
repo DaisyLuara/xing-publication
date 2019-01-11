@@ -2,15 +2,9 @@
 
 namespace App\Http\Controllers\Admin\Warehouse\V1\Transformer;
 
-use App\Http\Controllers\Admin\Company\V1\Models\Company;
-use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
-use App\Http\Controllers\Admin\Warehouse\V1\Models\Product;
-use App\Http\Controllers\Admin\Media\V1\Transformer\MediaTransformer;
-use App\Http\Controllers\Admin\User\V1\Transformer\UserTransformer;
 use App\Http\Controllers\Admin\Warehouse\V1\Models\ProductAttribute;
 use League\Fractal\TransformerAbstract;
-use App\Http\Controllers\Admin\Contract\V1\Models\HardwareChange;
-use Illuminate\Http\Request;
+
 
 class ProductAttributeTransformer extends TransformerAbstract
 {
@@ -26,11 +20,6 @@ class ProductAttributeTransformer extends TransformerAbstract
             'attributes_name' => $productAttribute->attribute->display_name,
             'attributes_value' => $productAttribute->attributes_value,
         ];
-    }
-
-    public function includeCompany(Product $product)
-    {
-        return $this->collection($product->media, new CompanyTransformer());
     }
 
     public function includeAttributes(ProductAttribute $productAttribute)

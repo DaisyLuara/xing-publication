@@ -41,7 +41,7 @@ class ProductController extends Controller
             'sku' => $request->sku,
             'supplier' => $request->supplier
         ];
-        $product->fill(array_merge($productData));
+        $product->fill($productData);
         $product->saveOrFail();
 
         $param = $request->all();
@@ -63,8 +63,9 @@ class ProductController extends Controller
         $attributeData = $param['attribute'];
 
         foreach ($attributeData as $item) {
-           //找出属性表对应SKU，更新属性值
-            ProductAttribute::query()->where([['product_sku', '=', $request->sku], ['attributes_id', '=', $item['attributes_id']]])->update($item);
+            //找出属性表对应SKU，更新属性值
+            ProductAttribute::query()->where('product_sku', $request->sku)
+                ->where('attributes_id', $item['attributes_id'])->update($item);
         }
         return $this->response()->item($product, new ProductTransformer())->setStatusCode(200);
     }
