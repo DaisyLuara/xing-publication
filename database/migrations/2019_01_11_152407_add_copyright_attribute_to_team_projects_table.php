@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddCopyrightProjectToTeamProjectsTable extends Migration
+class AddCopyrightAttributeToTeamProjectsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,8 +14,7 @@ class AddCopyrightProjectToTeamProjectsTable extends Migration
     public function up()
     {
         Schema::table('team_projects', function (Blueprint $table) {
-            $table->string('project_attribute')->comment('0不计入 1基础条目 2简单条目 3通用节目 4项目')->change();
-            $table->integer('copyright_project_id')->nullable()->after("id")->comment("原创节目");
+            $table->integer('copyright_attribute')->after("id")->default(0)->comment("是否为原创 0:原创节目 1:非原创节目");
         });
     }
 
@@ -27,7 +26,7 @@ class AddCopyrightProjectToTeamProjectsTable extends Migration
     public function down()
     {
         Schema::table('team_projects', function (Blueprint $table) {
-            $table->dropColumn("copyright_project_id");
+            $table->dropColumn("copyright_attribute");
         });
     }
 }
