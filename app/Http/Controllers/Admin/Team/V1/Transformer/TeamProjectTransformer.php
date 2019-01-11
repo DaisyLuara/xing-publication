@@ -19,6 +19,8 @@ class TeamProjectTransformer extends TransformerAbstract
 
         return [
             'id' => $teamProject->id,
+            'copyright_project_id' => $teamProject->copyright_project_id,
+            'copyright_project_name' => $teamProject->copyright_project?$teamProject->copyright_project->project_name:'无',
             'project_name' => $teamProject->project_name,
             'belong' => $teamProject->belong,
             'applicant' => $teamProject->applicant,
@@ -30,7 +32,6 @@ class TeamProjectTransformer extends TransformerAbstract
             'interaction_attribute' => $teamProject->interaction_attribute ? explode(',', $teamProject->interaction_attribute) : [],
             'link_attribute' => $teamProject->link_attribute,
             'h5_attribute' => $teamProject->h5_attribute,
-            'xo_attribute' => $teamProject->xo_attribute,
             'begin_date' => $teamProject->begin_date,
             'online_date' => $teamProject->online_date,
             'launch_date' => $teamProject->launch_date,

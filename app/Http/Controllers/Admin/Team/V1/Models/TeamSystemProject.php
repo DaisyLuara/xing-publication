@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yangqiang
- * Date: 2018/11/30
- * Time: 上午10:10
- */
 
 namespace App\Http\Controllers\Admin\Team\V1\Models;
 
@@ -21,6 +15,13 @@ class TeamSystemProject extends Model
         'remark',
         'reject_message'
     ];
+
+    public static $statusMapping = [
+        '1' => '申请中',
+        '2' => '已分配',
+        '3' => '已驳回'
+    ];
+
 
     public function user()
     {

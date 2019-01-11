@@ -63,7 +63,8 @@ $api->version('v1', [
             $api->get('ad_trade/query', 'QueryController@adTradeQuery');//广告行业搜索
             $api->get('advertiser/query', 'QueryController@advertiserQuery');//广告主搜索
             $api->get('advertisement/query', 'QueryController@advertisementQuery');//广告搜索
-            $api->get('projects/query', 'QueryController@projectQuery');
+            $api->get('projects/query', 'QueryController@projectQuery');//节目搜索
+            $api->get('team_projects/query', 'QueryController@teamProjectQuery');//团队节目搜索
             $api->get('coupon_batch/query', 'QueryController@couponBatchQuery');
             $api->get('company/query', 'QueryController@companyQuery');
             $api->get('staffs', 'QueryController@arUserQueryIndex');
