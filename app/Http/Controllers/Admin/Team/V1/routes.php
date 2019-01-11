@@ -8,7 +8,7 @@ $api->version('v1', [
         'limit' => config('api.rate_limits.access.limit'),
         'expires' => config('api.rate_limits.access.expires'),
     ], function ($api) {
-        $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
+        $api->group(['middleware' => ["api.auth","ConvertEmptyStringsToNull"], 'model' => 'App\Models\User'], function ($api) {
 
             //节目智造管理
             $api->get('team_project/{team_project}', 'TeamProjectController@show');

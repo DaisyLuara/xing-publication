@@ -62,7 +62,7 @@
             <el-radio :label="4">更多</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="远程节目" prop="copyright_project_id">
+        <el-form-item label="原创节目" prop="copyright_project_id">
           <el-select
             v-model="programForm.copyright_project_id"
             :loading="searchLoading"
