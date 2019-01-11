@@ -16,8 +16,7 @@ class ProductChuchangController extends Controller
         if ($request->id) {
             $query->where('contract_id', $request->id);
         }
-
-        $productChuchang = $query->paginate(10);
-        return $this->response()->paginator($productChuchang, new ProductChuchangTransformer());
+        $productChuchang = $query->get();
+        return $this->response()->collection($productChuchang, new ProductChuchangTransformer())->setStatusCode(200);
     }
 }
