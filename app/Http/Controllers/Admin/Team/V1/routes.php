@@ -32,10 +32,10 @@ $api->version('v1', [
             $api->get('person_future_reward/total', 'TeamPersonFutureRewardController@totalReward');
 
             //重大事件bug记录
-            $api->get('team_project_bug_records', 'TeamProjectBugRecordController@index');
+            $api->get('team_project_bug_records', ['middleware' => ['permission:team.duty.read'], 'uses' => 'TeamProjectBugRecordController@index']);
             $api->get('team_project_bug_records/{team_project_bug_record}', 'TeamProjectBugRecordController@show');
-            $api->post('team_project_bug_records', ['middleware' => ['role:bonus-manager|legal-affairs-manager'], 'uses' => 'TeamProjectBugRecordController@store']);
-            $api->patch('team_project_bug_records/{team_project_bug_record}', ['middleware' => ['role:bonus-manager|legal-affairs-manager'], 'uses' => 'TeamProjectBugRecordController@update']);
+            $api->post('team_project_bug_records', ['middleware' => ['permission:team.duty.create'], 'uses' => 'TeamProjectBugRecordController@store']);
+            $api->patch('team_project_bug_records/{team_project_bug_record}', ['middleware' => ['permission:team.duty.update'], 'uses' => 'TeamProjectBugRecordController@update']);
 
 
             //平台项目
