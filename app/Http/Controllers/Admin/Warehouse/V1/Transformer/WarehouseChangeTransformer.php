@@ -13,6 +13,7 @@ class WarehouseChangeTransformer extends TransformerAbstract
         return [
             'id' => $warehouseChange->id,
             'sku' => isset($warehouseChange->product->sku) ? $warehouseChange->product->sku : '',
+            'product_id' =>isset($warehouseChange->product->id)?$warehouseChange->product->id : '',
             'out_location' => isset($warehouseChange->outLocation->name) ? $warehouseChange->outLocation->name : '', //调出库位
             'in_location' => isset($warehouseChange->inLocation->name) ? $warehouseChange->inLocation->name : '', //调入库位
             'num' => $warehouseChange->num,//调整数量
