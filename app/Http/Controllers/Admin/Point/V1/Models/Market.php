@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin\Point\V1\Models;
 
+use App\Http\Controllers\Admin\Company\V1\Models\Company;
+use App\Http\Controllers\Admin\Company\V1\Models\Store;
 use App\Models\ArModel;
 
 
@@ -34,5 +36,15 @@ class Market extends ArModel
     public function share()
     {
         return $this->hasOne(MarketShare::class, 'marketid', 'marketid');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'companyid', 'id');
+    }
+
+    public function stores()
+    {
+        return $this->hasMany(Store::class, 'market_id', 'marketid');
     }
 }

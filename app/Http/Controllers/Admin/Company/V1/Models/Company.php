@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Company\V1\Models;
 
+use App\Http\Controllers\Admin\Point\V1\Models\Market;
 use App\Models\User;
 use App\Models\Model;
 use App\Models\Customer;
@@ -20,6 +21,16 @@ class Company extends Model
     public function customers()
     {
         return $this->hasMany(Customer::class);
+    }
+
+    public function markets()
+    {
+        return $this->hasMany(Market::class, 'companyid', 'id');
+    }
+
+    public function stores()
+    {
+        return $this->hasMany(Store::class, 'company_id', 'id');
     }
 
     public function isCompanyCustomer($model)
