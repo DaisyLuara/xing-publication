@@ -14,7 +14,7 @@ class AlterWarehouseChanges extends Migration
     public function up()
     {
         Schema::table('erp_warehouse_changes', function (Blueprint $table) {
-            $table->dropColumn('product_sku');
+            $table->dropColumn('sku');
             $table->integer('product_id')->after('id')->nullable()->comment('产品ID');
         });
     }
