@@ -1954,7 +1954,7 @@ function teamBonusClean()
                     } else if ($user_bug->num == 2) {
                         $start_date = Carbon::parse($quarterDate)->subMonths(3)->toDateString();
                         $end_date = Carbon::parse($quarterDate)->subMonths(1)->toDateString();
-                    } else if ($user_bug->num > 3) {
+                    } else if ($user_bug->num >= 3) {
                         $start_date = Carbon::parse($quarterDate)->subMonths(3)->toDateString();
                         $end_date = $quarterDate;
                     } else {
