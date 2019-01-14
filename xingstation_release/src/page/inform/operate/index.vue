@@ -1,50 +1,56 @@
 <template>
-  <div 
-    class="root">
-    <div  
+  <div class="root">
+    <div
       v-loading="setting.loading"
       :element-loading-text="setting.loadingText"
-      class="item-list-wrap">
-      <div 
-        class="item-content-wrap">
-        <div 
-          class="actions-wrap">
-          <span 
-            class="label">
-            通知数量: {{ pagination.total }}
-          </span>
+      class="item-list-wrap"
+    >
+      <div class="item-content-wrap">
+        <div class="search-wrap">
+          <el-form ref="searchForm" :model="filters" :inline="true">
+            <el-form-item label prop="log_name">
+              <el-input v-model="filters.log_name" placeholder="请输入名称" clearable style="width: 250px;"/>
+            </el-form-item>
+            <el-form-item label prop="causer_id">
+              <el-select
+                v-model="filters.causer_id"
+                placeholder="请选择用户"
+                filterable
+                clearable
+                style="width: 250px;"
+              >
+                <el-option
+                  v-for="item in userList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+            <el-button type="primary" size="small" @click="search()">搜索</el-button>
+            <el-button type="default" size="small" @click="resetSearch">重置</el-button>
+          </el-form>
         </div>
-        <el-table 
-          ref="multipleTable" 
-          :data="tableData" 
-          style="width: 100%" 
-          type="expand">
-          <el-table-column 
-            type="expand">
-            <template 
-              slot-scope="scope">
-              <el-form 
-                label-position="left" 
-                inline 
-                class="demo-table-expand">
-                <el-form-item 
-                  label="操作名称">
+        <div class="actions-wrap">
+          <span class="label">通知数量: {{ pagination.total }}</span>
+        </div>
+        <el-table ref="multipleTable" :data="tableData" style="width: 100%" type="expand">
+          <el-table-column type="expand">
+            <template slot-scope="scope">
+              <el-form label-position="left" inline class="demo-table-expand">
+                <el-form-item label="操作名称">
                   <span>{{ scope.row.log_name }}</span>
                 </el-form-item>
-                <el-form-item 
-                  label="操作人">
+                <el-form-item label="操作人">
                   <span>{{ scope.row.causer.name }}</span>
                 </el-form-item>
-                <el-form-item 
-                  label="描述">
+                <el-form-item label="描述">
                   <span>{{ scope.row.description }}</span>
                 </el-form-item>
-                <el-form-item 
-                  label="创建时间">
+                <el-form-item label="创建时间">
                   <span>{{ scope.row.created_at }}</span>
                 </el-form-item>
-                <el-form-item 
-                  label="更新时间">
+                <el-form-item label="更新时间">
                   <span>{{ scope.row.updated_at }}</span>
                 </el-form-item>
               </el-form>
@@ -56,22 +62,10 @@
             label="操作名称"
             min-width="130"
           />
-          <el-table-column
-            :show-overflow-tooltip="true"
-            prop="name"
-            label="操作人"
-            min-width="100"
-          >
-            <template 
-              slot-scope="scope">
-              {{ scope.row.causer.name }}
-            </template>
+          <el-table-column :show-overflow-tooltip="true" prop="name" label="操作人" min-width="100">
+            <template slot-scope="scope">{{ scope.row.causer.name }}</template>
           </el-table-column>
-          <el-table-column
-            prop="description"
-            label="描述"
-            min-width="150"
-          />
+          <el-table-column prop="description" label="描述" min-width="150"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="created_at"
@@ -85,8 +79,7 @@
             min-width="120"
           />
         </el-table>
-        <div 
-          class="pagination-wrap">
+        <div class="pagination-wrap">
           <el-pagination
             :total="pagination.total"
             :page-size="pagination.pageSize"
@@ -101,7 +94,7 @@
 </template>
 
 <script>
-import { getActivitiesList } from 'service'
+import { getActivitiesList, getSearchUserList } from "service";
 
 import {
   Button,
@@ -112,61 +105,101 @@ import {
   MessageBox,
   DatePicker,
   FormItem,
-  Form
-} from 'element-ui'
+  Form,
+  Select,
+  Option
+} from "element-ui";
 
 export default {
   components: {
-    'el-table': Table,
-    'el-date-picker': DatePicker,
-    'el-table-column': TableColumn,
-    'el-button': Button,
-    'el-input': Input,
-    'el-form-item': FormItem,
-    'el-form': Form,
-    'el-pagination': Pagination
+    "el-table": Table,
+    "el-date-picker": DatePicker,
+    "el-table-column": TableColumn,
+    "el-button": Button,
+    "el-input": Input,
+    "el-form-item": FormItem,
+    "el-form": Form,
+    "el-pagination": Pagination,
+    "el-select": Select,
+    "el-option": Option
   },
   data() {
     return {
+      filters: {
+        log_name: "",
+        causer_id: ""
+      },
       setting: {
-        loadingText: '拼命加在中...',
+        loadingText: "拼命加在中...",
         loading: false
       },
       tableData: [],
+      userList: [],
       pagination: {
         total: 0,
         pageSize: 10,
         currentPage: 1
       }
-    }
+    };
   },
   created() {
-    this.getActivitiesList()
+    this.getActivitiesList();
+    this.getSearchUserList();
   },
   methods: {
+    getSearchUserList() {
+      getSearchUserList(this)
+        .then(res => {
+          this.userList = res.data;
+        })
+        .catch(err => {
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
+        });
+    },
     getActivitiesList() {
-      this.setting.loading = true
+      this.setting.loading = true;
       let args = {
-        include: 'causer',
+        include: "causer",
+        log_name: this.filters.log_name,
+        causer_id: this.filters.causer_id,
         page: this.pagination.currentPage
+      };
+      if (this.filters.log_name === "") {
+        delete args.log_name;
+      }
+      if (this.filters.causer_id === "") {
+        delete args.causer_id;
       }
       getActivitiesList(this, args)
         .then(response => {
-          this.tableData = response.data
-          this.pagination.total = response.meta.pagination.total
-          this.setting.loading = false
+          this.tableData = response.data;
+          this.pagination.total = response.meta.pagination.total;
+          this.setting.loading = false;
         })
         .catch(err => {
-          this.setting.loading = false
-          console.log(err)
-        })
+          this.setting.loading = false;
+          console.log(err);
+        });
+    },
+    search() {
+      this.pagination.currentPage = 1;
+      this.getActivitiesList();
     },
     changePage(currentPage) {
-      this.pagination.currentPage = currentPage
-      this.getActivitiesList()
+      this.pagination.currentPage = currentPage;
+      this.getActivitiesList();
+    },
+    resetSearch() {
+      this.filters.log_name = "";
+      this.filters.causer_id = "";
+      this.pagination.currentPage = 1;
+      this.getActivitiesList();
     }
   }
-}
+};
 </script>
 
 <style lang="less" scoped>
