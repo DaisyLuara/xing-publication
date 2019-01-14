@@ -22,6 +22,7 @@ class ProductRequest extends Request
                 break;
             case 'PATCH':
                 return [
+                    'id'=>'required',
                     'sku' => 'required|max:50',
                     'supplier' => 'required|max:50'
                 ];

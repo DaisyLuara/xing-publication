@@ -11,7 +11,7 @@ class ProductAttribute extends Model
     use SoftDeletes;
 
     public $fillable = [
-        'product_sku',
+        'product_id',
         'attributes_id',
         'attributes_value'
     ];
