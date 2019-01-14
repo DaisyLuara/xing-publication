@@ -26,6 +26,12 @@ $api->version('v1', [
             $api->get('points/{point}', 'PointController@show');
             $api->post('point', ['middleware' => ['role:super-admin|admin|project-manager'], 'uses' => 'PointController@store']);
             $api->patch('points/{point}', ['middleware' => ['role:super-admin|admin|project-manager'], 'uses' => 'PointController@update']);
+
+            //门店
+            $api->get('stores', 'StoreController@index');
+            $api->get('stores/{store}', 'StoreController@show');
+            $api->post('stores', ['middleware' => ['role:super-admin|admin|user|bd-manager|legal-affairs|legal-affairs-manager'], 'uses' => 'StoreController@store']);
+            $api->patch('stores/{store}', ['middleware' => ['role:super-admin|admin|user|bd-manager|legal-affairs|legal-affairs-manager'], 'uses' => 'StoreController@update']);
         });
     });
 

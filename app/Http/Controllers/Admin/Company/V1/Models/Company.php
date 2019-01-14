@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Company\V1\Models;
 
 use App\Http\Controllers\Admin\Point\V1\Models\Market;
+use App\Http\Controllers\Admin\Point\V1\Models\Store;
 use App\Models\User;
 use App\Models\Model;
 use App\Models\Customer;
@@ -25,7 +26,7 @@ class Company extends Model
 
     public function markets()
     {
-        return $this->hasMany(Market::class, 'companyid', 'id');
+        return $this->setConnection('ar')->hasMany(Market::class, 'companyid', 'id');
     }
 
     public function stores()
