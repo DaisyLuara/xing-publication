@@ -31,12 +31,6 @@ class UpdatePermissionSeeder extends Seeder
             ['name' => 'invoice', 'display_name' => '票据'],
             ['name' => 'payment', 'display_name' => '付款'],
             ['name' => 'company', 'display_name' => '公司'],
-
-            ['name' => 'download', 'display_name' => '下载'],
-            ['name' => 'finance_bill', 'display_name' => '财务开票'],
-            ['name' => 'finance_pay', 'display_name' => '财务付款'],
-            ['name' => 'auditing', 'display_name' => '审批'],
-            ['name' => 'wechat_card', 'display_name' => '微信卡券'],
         ];
         foreach ($permsData as $item) {
             Permission::create(['name' => $item['name'], 'display_name' => $item['display_name']]);
@@ -74,6 +68,7 @@ class UpdatePermissionSeeder extends Seeder
             ['name' => 'project.rules', 'display_name' => '优惠券规则'],
             ['name' => 'project.strategy', 'display_name' => '优惠券策略'],
             ['name' => 'project.coupon', 'display_name' => '优惠券'],
+            ['name' => 'project.wx_cardpackage', 'display_name' => '微信卡券'],
         ];
         foreach ($projectSecondData as $item) {
             $obj = Permission::create(['name' => $item['name'], 'display_name' => $item['display_name'], 'parent_id' => $project->id]);

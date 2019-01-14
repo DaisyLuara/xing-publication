@@ -28,7 +28,7 @@ $api->version('v1', [
 
             //优惠券投放
             $api->get('coupons', ['middleware' => ['permission:project.coupon.read'], 'uses' => 'CouponController@index']);
-
+            $api->get('coupons/export', ['middleware' => ['permission:project.coupon.download'], 'uses' => 'CouponController@export']);
             //同步猫酷优惠券规则
             $api->get('coupon/sync', 'CouponBatchController@syncMallCooCouponBatch');
 
