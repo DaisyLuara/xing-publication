@@ -16,6 +16,7 @@ class AlterWarehouseChanges extends Migration
         Schema::table('erp_warehouse_changes', function (Blueprint $table) {
             $table->dropColumn('sku');
             $table->integer('product_id')->after('id')->nullable()->comment('产品ID');
+            $table->string('remark', 255)->nullable()->comment('调拨记录备注')->change();
         });
     }
 
@@ -28,6 +29,7 @@ class AlterWarehouseChanges extends Migration
     {
         Schema::table('erp_warehouse_changes', function (Blueprint $table) {
             $table->string('sku')->nullable()->comment('产品SKU');
+            $table->string('remark', 255)->nullable()->comment('调拨记录备注');
         });
     }
 }
