@@ -207,7 +207,7 @@ import {
   getSearchShopCustomerList,
   getSearchCompanyList,
   getSearchCouponList,
-  getExcelData
+  getExcelCouponsData
 } from "service";
 import {
   Button,
@@ -339,7 +339,7 @@ export default {
       let args = this.setArgs();
       args.type = "coupon";
       delete args.page;
-      getExcelData(this, args)
+      getExcelCouponsData(this, args)
         .then(response => {
           const a = document.createElement("a");
           a.href = response;

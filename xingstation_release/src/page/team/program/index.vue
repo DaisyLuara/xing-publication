@@ -262,7 +262,7 @@ import {
   getSearchProjectList,
   handleDateTypeTransform,
   confirmProgram,
-  getExcelData,
+  getExcelTeamData,
   getMediaUpload,
   getQiniuToken
 } from "service";
@@ -448,7 +448,7 @@ export default {
       delete args.own;
       delete args.page;
       args.type = "team_project";
-      return getExcelData(this, args)
+      return getExcelTeamData(this, args)
         .then(response => {
           const a = document.createElement("a");
           a.href = response;
