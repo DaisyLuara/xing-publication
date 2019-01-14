@@ -170,17 +170,18 @@ let router = {
       name: '微信卡券',
       redirect: 'wx_cardpackage',
       meta: {
-        title: '微信卡券'
+        title: '微信卡券',
+        permission: 'project.wx_cardpackage'
       },
       component: () =>
         import(/* webpackChunkName: "page/project/wx/routerView" */ 'page/project/wx/routerView'),
       children: [
         {
           path: '/',
-          name: '微信卡券配置',
           meta: {
             title: '微信卡券配置',
-            keepAlive: false // 不需要被缓存
+            keepAlive: false, // 不需要被缓存,
+            permission: 'project.wx_cardpackage.read'
           },
           component: () =>
             import(/* webpackChunkName: "page/project/wx/index" */ 'page/project/wx/index')
@@ -190,17 +191,18 @@ let router = {
           name: '微信卡券新增',
           meta: {
             title: '微信卡券新增',
-            keepAlive: true // 需要被缓存
+            keepAlive: true,// 需要被缓存
+            permission: 'project.wx_cardpackage.create'
           },
           component: () =>
             import(/* webpackChunkName: "page/project/wx/save" */ 'page/project/wx/save')
         },
         {
           path: 'use',
-          name: '微信卡券使用设置',
           meta: {
             title: '微信卡券使用设置',
-            keepAlive: false // 不需要被缓存
+            keepAlive: false, // 不需要被缓存
+            permission: 'project.wx_cardpackage.use'
           },
           component: () =>
             import(/* webpackChunkName: "page/project/wx/use" */ 'page/project/wx/use')
