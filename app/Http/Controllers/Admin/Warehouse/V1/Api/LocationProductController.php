@@ -14,9 +14,9 @@ class LocationProductController extends Controller
     public function list(Request $request, LocationProduct $locationProduct)
     {
         $query = $locationProduct->query();
-        //根据产品SKU查询
-        if ($request->sku) {
-            $query->where('product_sku', $request->sku);
+        //根据产品SKU查询,传入product_id
+        if ($request->id) {
+            $query->where('product_id', $request->id);
         }
 
         //根据库位查询
