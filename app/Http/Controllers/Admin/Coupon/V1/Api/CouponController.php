@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Admin\Coupon\V1\Api;
 
 
+use App\Http\Controllers\Admin\Common\V1\Request\ExportRequest;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
 use App\Http\Controllers\Admin\Coupon\V1\Request\CouponRequest;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponTransformer;
@@ -57,4 +58,8 @@ class CouponController extends Controller
     }
 
 
+    public function export(ExportRequest $request)
+    {
+        return excelExport($request);
+    }
 }
