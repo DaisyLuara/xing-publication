@@ -15,6 +15,7 @@ class CompanyRequest extends Request
                     'name' => 'required|string',
                     'address' => 'required|string',
                     'phone' => 'required|regex:/^1[3456789]\d{9}$/|unique:customers',
+                    "bd_user_id" => "required|exists:users,id",
                 ];
                 break;
             case 'PATCH':
