@@ -16,9 +16,9 @@ $api->version('v1', [
             $api->patch('invoice/{invoice}', ['middleware' => ['permission:invoice.list.update'], 'uses' => 'InvoiceController@update']);
             $api->delete('invoice/{invoice}', ['middleware' => ['permission:invoice.list.delete'], 'uses' => 'InvoiceController@destroy']);
 
-            $api->post('invoice/reject/{invoice}', 'InvoiceController@reject');
-            $api->post('invoice/auditing/{invoice}', 'InvoiceController@auditing');
-            $api->post('invoice/receive/{invoice}', 'InvoiceController@receive');
+            $api->post('invoice/reject/{invoice}', ['middleware' => ['permission:invoice.list.reject'], 'uses' => 'InvoiceController@reject']);
+            $api->post('invoice/auditing/{invoice}', ['middleware' => ['permission:invoice.list.auditing'], 'uses' => 'InvoiceController@auditing']);
+            $api->post('invoice/receive/{invoice}', ['middleware' => ['permission:invoice.list.receive'], 'uses' => 'InvoiceController@receive']);
 
             //开票公司
             $api->get('invoice_company/{invoice_company}', 'InvoiceCompanyController@show');

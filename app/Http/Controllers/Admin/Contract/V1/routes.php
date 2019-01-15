@@ -17,9 +17,9 @@ $api->version('v1', [
             $api->patch('contract/{contract}', ['middleware' => ['permission:contract.list.update'], 'uses' => 'ContractController@update']);
             $api->delete('contract/{contract}', ['middleware' => ['permission:contract.list.delete'], 'uses' => 'ContractController@destroy']);
 
-            $api->post('contract/reject/{contract}', 'ContractController@reject');
-            $api->post('contract/auditing/{contract}', 'ContractController@auditing');
-            $api->post('contract/special_auditing/{contract}', 'ContractController@specialAuditing');
+            $api->post('contract/reject/{contract}', ['middleware' => ['permission:contract.list.reject'], 'uses' => 'ContractController@reject']);
+            $api->post('contract/auditing/{contract}', ['middleware' => ['permission:contract.list.auditing'], 'uses' => 'ContractController@auditing']);
+            $api->post('contract/special_auditing/{contract}', ['middleware' => ['permission:contract.list.special_auditing'], 'uses' => 'ContractController@specialAuditing']);
 
             //收款提示
             $api->get('remind_contract', ['middleware' => ['permission:contract.collection.read'], 'uses' => 'ContractReceiveDateController@index']);

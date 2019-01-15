@@ -16,9 +16,9 @@ $api->version('v1', [
             $api->patch('payment/{payment}', ['middleware' => ['permission:payment.list.update'], 'uses' => 'PaymentController@update']);
             $api->delete('payment/{payment}', ['middleware' => ['permission:payment.list.delete'], 'uses' => 'PaymentController@destroy']);
 
-            $api->post('payment/reject/{payment}', 'PaymentController@reject');
-            $api->post('payment/auditing/{payment}', 'PaymentController@auditing');
-            $api->post('payment/receive/{payment}', 'PaymentController@receive');
+            $api->post('payment/reject/{payment}', ['middleware' => ['permission:payment.list.reject'], 'uses' => 'PaymentController@reject']);
+            $api->post('payment/auditing/{payment}', ['middleware' => ['permission:payment.list.auditing'], 'uses' => 'PaymentController@auditing']);
+            $api->post('payment/receive/{payment}', ['middleware' => ['permission:payment.list.receive'], 'uses' => 'PaymentController@receive']);
 
             $api->get('payment_payee/{payment_payee}', ['middleware' => ['permission:payment.payee.read'], 'uses' => 'PaymentPayeeController@show']);
             $api->get('payment_payee', ['middleware' => ['permission:payment.payee.read'], 'uses' => 'PaymentPayeeController@index']);
