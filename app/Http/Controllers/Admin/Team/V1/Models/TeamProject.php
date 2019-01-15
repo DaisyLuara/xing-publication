@@ -45,7 +45,7 @@ class TeamProject extends Model
         '1' => '基础条目',
         '2' => '简单条目',
         '3' => '节目',
-        '4' => '项目',
+        '4' => '更多',
     ];
     public static  $h5AttributeMapping = [
         '1' => '基础模版',
