@@ -44,7 +44,7 @@ $api->version('v1', [
             //硬件出厂,批量增加调拨记录
             $api->post('warehousechange/chuchang', ['middleware' => ['role:purchasing'], 'uses' => 'WarehouseChangeController@chuchang']);
             //新增调拨记录
-            $api->post('warehousechange/create', ['middleware' => ['role:purchasing'], 'uses' => 'WarehousechangeController@create']);
+            $api->post('warehousechange/create', ['middleware' => ['role:purchasing'], 'uses' => 'WarehouseChangeController@create']);
             //调拨记录列表
             $api->get('warehousechange/list', 'WarehouseChangeController@list');
             //单个调拨记录详情
