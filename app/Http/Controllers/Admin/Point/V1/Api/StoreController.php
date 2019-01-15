@@ -67,7 +67,7 @@ class StoreController extends Controller
     {
         $store->update($request->all());
 
-        if ($request->has('contract_id')) {
+        if ($request->filled('contract_id')) {
             $store->contract()->update($request->only(['start_date', 'end_date']));
         }
 
