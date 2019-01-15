@@ -17,7 +17,7 @@ class StoreTransformer extends TransformerAbstract
     public function transform(Store $store)
     {
         return [
-            'id' => (int)$store->marketid,
+            'id' => (int)$store->id,
             'type' => (int)$store->type,
             'name' => $store->name,
             'logo' => $store->logo,
