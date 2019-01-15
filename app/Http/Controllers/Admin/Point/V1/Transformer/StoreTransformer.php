@@ -20,7 +20,6 @@ class StoreTransformer extends TransformerAbstract
             'id' => (int)$store->id,
             'type' => (int)$store->type,
             'name' => $store->name,
-            'logo' => $store->logo,
             'phone' => $store->phone,
             'address' => $store->address,
             'description' => $store->description,
@@ -60,20 +59,18 @@ class StoreTransformer extends TransformerAbstract
 
     public function includeMedia(Store $store)
     {
-        if (!$store->media) {
-            return null;
+        $media = $store->media;
+        if ($media) {
+            return $this->item($store->media, new MediaTransformer());
         }
-
-        return $this->item($store->media, new MediaTransformer());
     }
 
     public function includeUser(Store $store)
     {
-        if (!$store->user) {
-            return null;
+        $user = $store->user;
+        if ($user) {
+            return $this->item($store->user, new UserTransformer());
         }
-
-        return $this->item($store->user, new UserTransformer());
     }
 
 

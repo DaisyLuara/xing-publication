@@ -11,7 +11,7 @@ use App\Models\User;
 class Store extends Model
 {
 
-    protected $fillable = ['company_id', 'type', 'marketid', 'areaid', 'user_id', 'contract_id', 'name', 'logo', 'phone', 'address','description'];
+    protected $fillable = ['company_id', 'type', 'marketid', 'areaid', 'user_id', 'contract_id', 'name', 'media_id', 'phone', 'address','description'];
 
     public function company()
     {
