@@ -56,15 +56,18 @@ class AdminCompaniesController extends Controller
         $company->fill(array_merge($companyData, ['user_id' => $this->user()->id]));
         $company->save();
 
-        $customerData = [
-            'name' => $request->customer_name,
-            'position' => $request->position,
-            'phone' => $request->phone,
-            'telephone' => $request->telephone,
-            'password' => bcrypt($request->password),
-            'company_id' => $company->id,
-        ];
-        Customer::create($customerData);
+        //公司类型为客户时，才需填写联系，为供应商时不需要填写
+        if ($request->category == 0) {
+            $customerData = [
+                'name' => $request->customer_name,
+                'position' => $request->position,
+                'phone' => $request->phone,
+                'telephone' => $request->telephone,
+                'password' => bcrypt($request->password),
+                'company_id' => $company->id,
+            ];
+            Customer::create($customerData);
+        }
 
         return $this->response->item($company, new CompanyTransformer())
             ->setStatusCode(201);
