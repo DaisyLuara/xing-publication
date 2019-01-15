@@ -19,6 +19,7 @@ const TEAM_RATE_API = '/api/team_rate/query'
 const FORMAT_API = '/api/attribute/query'
 const CONTRACT_RECEIPT_API = '/api/contract/query'
 const TEAM_PROJECT_API = '/api/team_projects/query'
+const BD_API = '/api/bd_users/query'
 const HOST = process.env.SERVER_URL
 
 // 区域
@@ -294,6 +295,19 @@ const getSearchCopyrightProject = (context, params) => {
       })
   })
 }
+
+const getSearchBDList = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + BD_API, { params: params })
+      .then(response => {
+        resolve(response.data.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
 export {
   getSearchAeraList,
   getSearchMarketList,
@@ -315,5 +329,6 @@ export {
   getSearchSceneList,
   getFormatsList,
   getContractReceiptList,
-  getSearchCopyrightProject
+  getSearchCopyrightProject,
+  getSearchBDList
 }
