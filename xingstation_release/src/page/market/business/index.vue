@@ -107,7 +107,8 @@
                   <span>{{ scope.row.user ? scope.row.user.name : '无' }}</span>
                 </el-form-item>
                 <el-form-item label="商户LOGO:">
-                  <span>{{ scope.row.logo }}</span>
+                  <img :src="scope.row.media.url" v-if="scope.row.media" style="width:180px;height:180px;">
+                  <!-- <span>{{ scope.row.media ? scope.row.media.url : ''}}</span> -->
                 </el-form-item>
                 <el-form-item label="修改时间:">
                   <span>{{ scope.row.updated_at }}</span>

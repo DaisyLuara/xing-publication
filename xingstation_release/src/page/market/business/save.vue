@@ -107,8 +107,10 @@
           </el-tab-pane>
           <el-tab-pane v-loading="contractFlag" label="合约配置" name="second">
             <el-form-item label="合同" prop="contract">
-              <el-radio v-model="businessForm.contract" :label="0">无</el-radio>
-              <el-radio v-model="businessForm.contract" :label="1">有</el-radio>
+              <el-radio-group v-model="businessForm.contract" @change="handleContract">
+                <el-radio :label="0">无</el-radio>
+                <el-radio :label="1">有</el-radio>
+              </el-radio-group>
             </el-form-item>
             <el-form-item label="合同编号" prop="contract_id" v-if="contractShow">
               <el-select v-model="businessForm.contract_id" placeholder="请选择合同编号">
@@ -317,6 +319,13 @@ export default {
         this.marketShow = false;
       }
     },
+    handleContract(val) {
+      if (val === 1) {
+        this.contractShow = true;
+      } else {
+        this.contractShow = false;
+      }
+    },
     companyHandle(val) {
       let args = {
         company_id: val
@@ -376,15 +385,30 @@ export default {
       this.setting.loading = true;
       let id = this.businessID;
       let args = {
-        include: "company,market,area,contract,media"
+        include: "company,market,area,contract,media,user"
       };
       getBusinessDetail(this, args, id)
         .then(res => {
           console.log(res);
           this.businessForm.name = res.name;
           this.businessForm.areaid = res.area.id;
-          this.businessForm.marketid = res.market.id;
-          this.businessForm.attribute_id = res.attribute_id;
+          this.businessForm.company_id = res.company.id;
+          this.businessForm.marketid = res.market ? res.market.id : null;
+          this.businessForm.market = res.market ? 1 : 2;
+          this.businessForm.phone = res.phone;
+          this.businessForm.address = res.address;
+          this.businessForm.description = res.description;
+          this.businessForm.type = res.type;
+          this.businessForm.start_date = res.start_date ? res.start_date : "";
+          this.businessForm.end_date = res.end_date ? res.end_date : "";
+          this.businessForm.contract_id = res.contract ? res.contract.id : null;
+          this.businessForm.user_id = res.user ? res.user.id : null;
+          this.businessForm.contract = res.contract ? 1 : 0;
+          this.contractShow = res.contract ? true : false;
+          this.marketShow = res.market ? true : false;
+          this.businessForm.media_id = res.media ? res.media.id : null;
+          this.logoUrl = res.media ? res.media.url : "";
+          this.companyHandle(this.businessForm.company_id);
           this.setting.loading = false;
         })
         .catch(err => {
