@@ -23,7 +23,7 @@ class AdminCompaniesController extends Controller
 
         if ($currentUser->isAdmin() || $currentUser->hasRole('legal-affairs') || $currentUser->hasRole('legal-affairs-manager')) {
             $companies = $query->orderByDesc('id')->paginate(10);
-        } else {
+        } elseif ($currentUser->hasRole('user|bd-manager')) {
             $companies = $query->whereHas('user', function ($q) use ($currentUser) {
                 if ($currentUser->hasRole('user')) {
                     $q->where('id', $currentUser->id);
@@ -31,8 +31,14 @@ class AdminCompaniesController extends Controller
                     $q->where('parent_id', $currentUser->id);
                 }
             })->orderByDesc('id')->paginate(10);
+        } else {
+            $companies = $query->whereHas('user', function ($q) use ($currentUser) {
+                if ($currentUser->hasRole('purchasing')) {
+                    $q->where('id', $currentUser->id);
+                }
+            })->orderByDesc('id')->paginate(10);
         }
-
+        
         return $this->response->paginator($companies, new CompanyTransformer());
     }
 
