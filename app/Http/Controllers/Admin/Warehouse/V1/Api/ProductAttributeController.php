@@ -24,17 +24,17 @@ class ProductAttributeController extends Controller
         return $this->response()->paginator($product, new ProductAttributeTransformer())->setStatusCode(200);
     }
 
-    //根据产品SKU，查出对应产品属性
+    //根据产品SKU，查出对应产品属性,传参改为product_id
     public function list(ProductAttributeRequest $request, ProductAttribute $productAttribute)
     {
         $query = $productAttribute->query();
         //根据产品SKU查询
-        if ($request->sku) {
-            $query->where('product_sku', $request->sku);
+        if ($request->id) {
+            $query->where('product_id', $request->id);
         }
         $product = $query->select('attributes_id', 'attributes_value')->orderBy('attributes_id', 'asc')->get()->toArray();
 
-        $supplier = Product::query()->where('sku', $request->sku)->get(['supplier'])->toArray();
+        $supplier = Product::query()->where('id', $request->id)->get(['supplier'])->toArray();
 
         $company = Company::query()->where('id',$supplier)->select('name', 'internal_name')->get()->toArray();
 

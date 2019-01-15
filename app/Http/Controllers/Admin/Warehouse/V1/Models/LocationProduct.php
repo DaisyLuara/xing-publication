@@ -9,10 +9,10 @@ class LocationProduct extends Model
 {
     protected $table = 'erp_location_products';
 
-    protected $fillable = [
+    public $fillable = [
         'location_id',
-        'product_sku',
-        'stock',
+        'product_id',
+        'stock'
     ];
     public $timestamps = false;
 
@@ -21,9 +21,8 @@ class LocationProduct extends Model
         return $this->belongsTo(Location::class, 'location_id', 'id');
     }
 
-
     public function product()
     {
-        return $this->belongsTo(Product::class, 'product_sku', 'sku');
+        return $this->belongsTo(Product::class, 'product_id', 'id');
     }
 }

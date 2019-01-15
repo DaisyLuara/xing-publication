@@ -12,10 +12,23 @@ class WarehouseChange extends Model
     protected $table = 'erp_warehouse_changes';
 
     public $fillable = [
-        'sku',
+        'product_id',
         'out_location',
         'in_location',
         'num',
         'remark'
     ];
+
+    public function product(){
+        return $this->belongsTo(Product::class,'product_id','id');
+    }
+
+    public function outLocation(){
+        return $this->belongsTo(Location::class,'out_location','id');
+    }
+
+    public function inLocation(){
+        return $this->belongsTo(Location::class, 'in_location', 'id');
+    }
+
 }

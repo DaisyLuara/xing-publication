@@ -15,8 +15,8 @@ class LocationProductTransformer extends TransformerAbstract
 
         return [
             'id' => $locationProduct->id,
-            'sku' => $locationProduct->product_sku,
-            'location' => $locationProduct->location->name,
+            'sku' => isset($locationProduct->product->sku)?$locationProduct->product->sku:'',
+            'location' => isset($locationProduct->location->name)?$locationProduct->location->name:'',
             'warehouse' => $warehouse[0]['name'],
             'stock' => (int)$locationProduct->stock,
         ];

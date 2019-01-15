@@ -14,7 +14,7 @@ class ProductAttributeTransformer extends TransformerAbstract
     {
         return [
             'id' => $productAttribute->id,
-            'sku' => $productAttribute->product_sku, //产品SKU
+            'product_id' => $productAttribute->product_id, //产品ID
             'attributes_id' => $productAttribute->attributes_id,
             'attributes_name' => $productAttribute->attribute->display_name,
             'attributes_value' => $productAttribute->attributes_value,

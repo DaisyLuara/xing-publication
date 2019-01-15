@@ -17,7 +17,7 @@ class ProductTransformer extends TransformerAbstract
             'id' => $product->id,
             'sku' => $product->sku, //硬件型号
             'supplier' => $product->supplier,//供应商ID
-            'supplier_name' => $product->company->name,//供应商
+            'supplier_name' => isset($product->company->name)?$product->company->name:'',//供应商
             'created_at' => $product->created_at->toDateTimeString(),
             'updated_at' => $product->updated_at->toDateTimeString(),
         ];
