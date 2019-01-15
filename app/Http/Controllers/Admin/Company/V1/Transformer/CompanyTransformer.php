@@ -38,7 +38,9 @@ class CompanyTransformer extends TransformerAbstract
 
     public function includeBdUser(Company $company)
     {
-        return $this->item($company->bdUser, new UserTransformer());
+        if ($company->bdUser) {
+            return $this->item($company->bdUser, new UserTransformer());
+        }
     }
 
 }
