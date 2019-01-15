@@ -74,6 +74,7 @@ $api->version('v1', [
             $api->get('invoice_kind/query', 'QueryController@invoiceKindQuery');
             $api->get('goods_service/query', 'QueryController@goodsServiceQuery');
             $api->get('bd_manager/query', 'QueryController@bdManagerQuery');
+            $api->get('bd_users/query', 'QueryController@bdAndBdManagerQuery');
             $api->get('legal_manager/query', 'QueryController@legalManagerQuery');
             $api->get('invoice_company/query', 'QueryController@invoiceCompanyQuery');
             $api->get('payment_payee/query', 'QueryController@paymentPayeeQuery');

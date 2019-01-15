@@ -23,7 +23,7 @@ class CreateStoresTable extends Migration
             $table->unsignedInteger('user_id')->nullable()->comment('所属BD');
             $table->unsignedInteger('contract_id')->nullable()->comment('合同ID');
             $table->string('name')->comment('门店名称');
-            $table->string('logo')->nullable()->comment('门店logo');
+            $table->unsignedInteger('media_id')->nullable()->comment('门店logo图片ID');
             $table->string('phone')->nullable()->comment('门店电话');
             $table->string('address')->nullable()->comment('门店地址');
             $table->text('description')->nullable()->comment('门店描述');

@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin\Point\V1\Models;
 
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
+use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Models\Model;
+use App\Models\User;
 
 class Store extends Model
 {
@@ -18,17 +20,28 @@ class Store extends Model
 
     public function market()
     {
-        return $this->setConnection('ar')->belongsTo(Market::class, 'marketid', 'marketid');
+        return $this->belongsTo(Market::class, 'marketid', 'marketid');
     }
 
     public function area()
     {
-        return $this->setConnection('ar')->belongsTo(Area::class, 'areaid', 'areaid');
+        return $this->belongsTo(Area::class, 'areaid', 'areaid');
     }
 
     public function contract()
     {
-        return $this->hasOne(Contract::class, 'contract_id', 'id');
+        return $this->belongsTo(Contract::class, 'contract_id', 'id');
     }
+
+    public function media()
+    {
+        return $this->belongsTo(Media::class, 'media_id', 'id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
 
 }

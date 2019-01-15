@@ -53,14 +53,23 @@ class StoreController extends Controller
 
     public function store(StoreRequest $request, Store $store)
     {
-        $store->fill($request->all())->saveOrFail();
+        $store->fill($request->all());
+        $store->save();
+
+        if ($request->has('contract_id')) {
+            $store->contract()->update($request->only(['start_date', 'end_date']));
+        }
 
         return $this->response->item($store, new StoreTransformer());
     }
 
-    public function update(Request $request, Store $store)
+    public function update(StoreRequest $request, Store $store)
     {
         $store->update($request->all());
+
+        if ($request->has('contract_id')) {
+            $store->contract()->update($request->only(['start_date', 'end_date']));
+        }
 
         return $this->response->item($store, new StoreTransformer());
     }

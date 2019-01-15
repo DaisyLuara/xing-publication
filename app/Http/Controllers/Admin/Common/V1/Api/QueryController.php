@@ -350,6 +350,10 @@ class QueryController extends Controller
             $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
         }
 
+        if ($request->company_id) {
+            $query->where('company_id', $request->company_id);
+        }
+
         if ($request->has('type')) {
             $query->where('type', $request->type);
         }
@@ -478,6 +482,19 @@ class QueryController extends Controller
     public function erpLocationQuery(Company $company, Request $request)
     {
         return DB::table('erp_locations')->select('id','name')->get();
+    }
+
+    public function bdAndBdManagerQuery(Request $request)
+    {
+        $bdRole = Role::findByName('user');
+        $bds = $bdRole->users()->get();
+
+        $bdManagerRole = Role::findByName('bd-manager');
+        $bdManagers = $bdManagerRole->users()->get();
+
+        $merged = $bds->merge($bdManagers);
+
+        return $this->response->collection($merged, new UserTransformer());
     }
 
 }
