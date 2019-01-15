@@ -26,10 +26,10 @@ class UpdatePermissionSeeder extends Seeder
             ['name' => 'team', 'display_name' => '团队'],
             ['name' => 'report', 'display_name' => '数据'],
             ['name' => 'inform', 'display_name' => '通知'],
-            ['name' => 'account', 'display_name' => '账户'],
             ['name' => 'contract', 'display_name' => '合同'],
             ['name' => 'invoice', 'display_name' => '票据'],
             ['name' => 'payment', 'display_name' => '付款'],
+            ['name' => 'storage', 'display_name' => '仓库'],
             ['name' => 'company', 'display_name' => '公司'],
         ];
         foreach ($permsData as $item) {
@@ -143,17 +143,6 @@ class UpdatePermissionSeeder extends Seeder
             $this->createThirdPermission($obj, $item);
         }
 
-        #账户
-        $account = Permission::findByName('account');
-        $accountSecondData = [
-            ['name' => 'account.account', 'display_name' => '账号管理'],
-            ['name' => 'account.center', 'display_name' => '个人中心'],
-        ];
-        foreach ($accountSecondData as $item) {
-            $obj = Permission::create(['name' => $item['name'], 'display_name' => $item['display_name'], 'parent_id' => $account->id]);
-            $this->createThirdPermission($obj, $item);
-        }
-
         #合同
         $contract = Permission::findByName('contract');
         $contractSecondData = [
@@ -188,6 +177,20 @@ class UpdatePermissionSeeder extends Seeder
         ];
         foreach ($paymentSecondData as $item) {
             $obj = Permission::create(['name' => $item['name'], 'display_name' => $item['display_name'], 'parent_id' => $payment->id]);
+            $this->createThirdPermission($obj, $item);
+        }
+
+        #仓库
+        $storage = Permission::findByName('storage');
+        $storageSecondData = [
+            ['name' => 'storage.list', 'display_name' => '库存明细'],
+            ['name' => 'storage.records', 'display_name' => '调拨记录'],
+            ['name' => 'storage.store', 'display_name' => '仓库管理'],
+            ['name' => 'storage.location', 'display_name' => '库位管理'],
+            ['name' => 'storage.product', 'display_name' => '产品管理'],
+        ];
+        foreach ($storageSecondData as $item) {
+            $obj = Permission::create(['name' => $item['name'], 'display_name' => $item['display_name'], 'parent_id' => $storage->id]);
             $this->createThirdPermission($obj, $item);
         }
 

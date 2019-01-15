@@ -3,9 +3,10 @@ import auth from 'service/auth'
 let router = {
   path: 'account',
   name: '',
+    redirect:'account/account',
   meta: {
     title: '',
-    permission: 'account'
+    permission: ''
   },
   component: () =>
     import(/* webpackChunkName: "page/account/accountView" */ 'page/account/accountView'),
@@ -14,7 +15,7 @@ let router = {
       path: 'account',
       meta: {
         title: '账号管理',
-        permission: 'account.account'
+        permission: ''
       },
       component: () =>
         import(/* webpackChunkName: "page/account/account/routerView" */ 'page/account/account/routerView'),
@@ -24,19 +25,19 @@ let router = {
           name: '账号详情',
           meta: {
             title: '账号详情',
-            permission: 'account.account.read'
+            permission: ''
           },
           component: () =>
             import(/* webpackChunkName: "page/account/account/index" */ 'page/account/account/index')
         },
-        
+
       ]
     },
     {
       path: 'center',
       meta: {
         title: '个人中心',
-        permission: 'account.center'
+        permission: ''
       },
       component: () =>
         import(/* webpackChunkName: "page/account/center/routerView" */ 'page/account/center/routerView'),
@@ -46,7 +47,7 @@ let router = {
           name: '个人中心列表',
           meta: {
             title: '个人中心列表',
-            permission: 'account.center.read'
+            permission: ''
           },
           component: () =>
             import(/* webpackChunkName: "page/account/center/index" */ 'page/account/center/index')
@@ -68,9 +69,9 @@ let router = {
 router.redirect = () => {
   let routes = router.children
   for (let route of routes) {
-    if (auth.checkPathPermission(route)) {
+    // if (auth.checkPathPermission(route)) {
       return '/account/' + route.path
-    }
+    // }
   }
 }
 
