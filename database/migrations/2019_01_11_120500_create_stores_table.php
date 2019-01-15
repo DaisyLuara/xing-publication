@@ -20,6 +20,8 @@ class CreateStoresTable extends Migration
             $table->enum('type', [1, 2])->default(1)->comment('1:自营, 2:连锁');
             $table->unsignedInteger('marketid')->nullable()->comment('场地ID');
             $table->unsignedInteger('areaid')->comment('区域ID');
+            $table->unsignedInteger('user_id')->nullable()->comment('所属BD');
+            $table->unsignedInteger('contract_id')->nullable()->comment('合同ID');
             $table->string('name')->comment('门店名称');
             $table->string('logo')->nullable()->comment('门店logo');
             $table->string('phone')->nullable()->comment('门店电话');
