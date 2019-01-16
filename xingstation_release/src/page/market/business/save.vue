@@ -100,6 +100,7 @@
             <el-form-item label="商户详情" prop="description">
               <el-input
                 v-model="businessForm.description"
+                type="textarea"
                 placeholder="请输入商户详情"
                 class="item-input"
               />
@@ -357,8 +358,6 @@ export default {
         });
     },
     handleAvatarSuccess(res, file) {
-      console.log(res);
-      console.log(file);
       this.businessForm.media_id = res.id;
       this.logoUrl = URL.createObjectURL(file.raw);
     },
