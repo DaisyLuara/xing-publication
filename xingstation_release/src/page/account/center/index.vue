@@ -72,7 +72,7 @@
                 <el-form-item label="类型">
                   <span>{{ scope.row.type }}</span>
                 </el-form-item>
-                <el-form-item label="节目制造">
+                <el-form-item label="节目智造">
                   <span>{{ scope.row.experience_money }}</span>
                 </el-form-item>
                 <el-form-item label="总计">
@@ -99,7 +99,7 @@
           <el-table-column
             :show-overflow-tooltip="true"
             prop="experience_money"
-            label="节目制造"
+            label="节目智造"
             min-width="100"
           />
           <el-table-column :show-overflow-tooltip="true" prop="total" label="总计" min-width="100"/>
