@@ -54,10 +54,6 @@ class ErpAttributesTableSeeder extends Seeder
         ]);
         AttributeValue::query()->create([
             'attribute_id' => '1',
-            'value' => '2.5版单屏机器'
-        ]);
-        AttributeValue::query()->create([
-            'attribute_id' => '1',
             'value' => '1.0版镜面屏一体机'
         ]);
         AttributeValue::query()->create([
