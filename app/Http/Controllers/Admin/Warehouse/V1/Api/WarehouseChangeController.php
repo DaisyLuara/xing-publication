@@ -57,7 +57,6 @@ class WarehouseChangeController extends Controller
                 unset($item['out_location_name']);
                 unset($item['attribute']);
                 unset($item['product_sku']);
-                $warehousechange->create(array_merge($item, ['in_location' => 2]));
                 //判断之后直接入库
                 LocationProduct::updateOrCreate(['location_id' => $item['out_location'], 'product_id' => $item['product_id']]);
                 LocationProduct::updateOrCreate(['location_id' => 2, 'product_id' => $item['product_id']]);
@@ -82,6 +81,7 @@ class WarehouseChangeController extends Controller
                 LocationProduct::query()->where('location_id', 2)
                     ->where('product_id', $item['product_id'])
                     ->increment('stock', $item['num']);
+                $warehousechange->create(array_merge($item, ['in_location' => 2]));
             }
 
             //合同状态改为已出厂
@@ -97,8 +97,7 @@ class WarehouseChangeController extends Controller
     //新增调拨记录
     public function create(Request $request, WarehouseChange $warehousechange)
     {
-        //记录库存变化
-        $warehousechange->fill($request->all())->saveOrFail();
+
         //$request->num 调整数量;$request->in_location 调入库位，增加;$request->out_location 调出库位，减少
         //判断之后直接入库
         LocationProduct::updateOrCreate(['location_id' => $request->out_location, 'product_id' => $request->product_id]);
@@ -124,7 +123,8 @@ class WarehouseChangeController extends Controller
         LocationProduct::query()->where('location_id', $request->in_location)
             ->where('product_id', $request->product_id)
             ->increment('stock', $request->num);
-
+        //记录库存变化
+        $warehousechange->fill($request->all())->saveOrFail();
         return $this->response->item($warehousechange, new WarehouseChangeTransformer());
     }
 }
