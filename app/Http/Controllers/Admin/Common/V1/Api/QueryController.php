@@ -21,6 +21,9 @@ use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceKind;
 use App\Http\Controllers\Admin\Invoice\V1\Transformer\InvoiceKindTransformer;
+use App\Http\Controllers\Admin\Point\V1\Models\MarketConfig;
+use App\Http\Controllers\Admin\Point\V1\Models\Store;
+use App\Http\Controllers\Admin\Point\V1\Transformer\StoreTransformer;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
 use App\Models\Customer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
@@ -495,6 +498,43 @@ class QueryController extends Controller
         $merged = $bds->merge($bdManagers);
 
         return $this->response->collection($merged, new UserTransformer());
+    }
+
+    public function storeQuery(Request $request, Store $store)
+    {
+        $query = $store->query();
+
+        if ($request->has('company_id')) {
+            $query->where('company_id', '=', $request->company_id);
+        }
+
+        $stores = $query->get();
+
+        return $this->response->collection($stores, new StoreTransformer());
+    }
+
+    public function marketConfigQuery(Request $request, MarketConfig $marketConfig)
+    {
+        $query = $marketConfig->query();
+
+        if ($request->has('company_id')) {
+            $query->where('company_id', '=', $request->company_id);
+        }
+
+        $marketConfigs = $query->get();
+
+        $markets = collect();
+        $marketConfigs->each(function ($item) use($markets){
+            if ($item->market) {
+                $markets->push($item->market);
+            }
+        });
+
+        if ($markets->isEmpty()) {
+            return null;
+        }
+
+        return $this->response->collection($markets, new MarketTransformer());
     }
 
 }

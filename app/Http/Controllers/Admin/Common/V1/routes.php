@@ -88,6 +88,8 @@ $api->version('v1', [
             $api->get('erp_supplier/query','QueryController@erpSupplierQuery');//供应商搜索
             $api->get('erp_sku/query','QueryController@erpSkuQuery');//sku下拉列表
             $api->get('erp_location/query','QueryController@erpLocationQuery');//库位下拉列表
+            $api->get('stores/query', 'QueryController@storeQuery');//商户搜索
+            $api->get('company/markets/query', 'QueryController@marketConfigQuery');//商户搜索
 
             //消息通知
             $api->get('user/notifications', 'NotificationsController@index');
