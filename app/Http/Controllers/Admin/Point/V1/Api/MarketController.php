@@ -81,6 +81,10 @@ class MarketController extends Controller
             $market->share()->create($request->share);
         }
 
+        if ($request->has('marketConfig')) {
+            $market->marketConfig()->create($request->marketConfig);
+        }
+
         return $this->response->item($market, new MarketTransformer());
     }
 
@@ -102,6 +106,14 @@ class MarketController extends Controller
                 unset($share['marketid']);
             }
             $market->share()->getResults()->update($share);
+        }
+
+        if ($request->has('marketConfig')) {
+            $marketConfig = $request->marketConfig;
+            if (isset($marketConfig['marketid'])) {
+                unset($marketConfig['marketid']);
+            }
+            $market->marketConfig()->getResults()->update($marketConfig);
         }
 
         return $this->response->item($market, new MarketTransformer());
