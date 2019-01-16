@@ -48,7 +48,7 @@ class AdminCompaniesController extends Controller
         return $this->response->item($company, new CompanyTransformer());
     }
 
-    public function store(CompanyRequest $request, Company $company)
+    public function store(CompanyRequest $request, Company $company, Customer $customer)
     {
         $companyData = [
             'name' => $request->name,
@@ -60,8 +60,8 @@ class AdminCompaniesController extends Controller
         ];
         $company->fill(array_merge($companyData, ['user_id' => $this->user()->id]));
         $company->save();
+        activity('company')->on($company)->withProperties($request->all())->log('新增公司信息');
 
-        //公司类型为客户时，才需填写联系，为供应商时不需要填写
         if ($request->category == 0) {
             $customerData = [
                 'name' => $request->customer_name,
@@ -73,6 +73,7 @@ class AdminCompaniesController extends Controller
             ];
             Customer::create($customerData);
         }
+        activity('customer')->on($customer)->withProperties($companyData)->log('新增公司联系人');
 
         return $this->response->item($company, new CompanyTransformer())
             ->setStatusCode(201);
@@ -81,9 +82,10 @@ class AdminCompaniesController extends Controller
 
     public function update(CompanyRequest $request, Company $company)
     {
-        $this->authorize('update', $company);
+//        $this->authorize('update', $company);
 
         $company->update($request->all());
+        activity('company')->on($company)->withProperties($request->all())->log('修改公司信息');
         return $this->response->item($company, new CompanyTransformer());
     }
 }
