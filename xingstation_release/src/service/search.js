@@ -282,7 +282,7 @@ const getContractReceiptList = (context, params) => {
       })
   })
 }
-
+// 原创节目
 const getSearchCopyrightProject = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
@@ -295,7 +295,7 @@ const getSearchCopyrightProject = (context, params) => {
       })
   })
 }
-
+// bd
 const getSearchBDList = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
