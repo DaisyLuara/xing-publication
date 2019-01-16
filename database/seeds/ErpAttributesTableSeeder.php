@@ -36,33 +36,65 @@ class ErpAttributesTableSeeder extends Seeder
             'name' => '虚拟仓库',
             'address' => '虚拟仓库'
         ]);
-
-        if (env('APP_ENV') == 'develop') {
-            AttributeValue::query()->create([
-                'attribute_id' => '1',
-                'value' => '测试产品名称1'
-            ]);
-            AttributeValue::query()->create([
-                'attribute_id' => '1',
-                'value' => '测试产品名称2'
-            ]);
-            AttributeValue::query()->create([
-                'attribute_id' => '1',
-                'value' => '测试产品名称3'
-            ]);
-            AttributeValue::query()->create([
-                'attribute_id' => '2',
-                'value' => '红色'
-            ]);
-            AttributeValue::query()->create([
-                'attribute_id' => '2',
-                'value' => '黄色'
-            ]);
-            AttributeValue::query()->create([
-                'attribute_id' => '2',
-                'value' => '蓝色'
-            ]);
-        }
-
+        AttributeValue::query()->create([
+            'attribute_id' => '1',
+            'value' => '2.0版单屏机器'
+        ]);
+        AttributeValue::query()->create([
+            'attribute_id' => '1',
+            'value' => '2.5版单屏机器'
+        ]);
+        AttributeValue::query()->create([
+            'attribute_id' => '1',
+            'value' => '3.0版小S双屏机器'
+        ]);
+        AttributeValue::query()->create([
+            'attribute_id' => '1',
+            'value' => '3.0版大K双屏机器'
+        ]);
+        AttributeValue::query()->create([
+            'attribute_id' => '1',
+            'value' => '2.5版单屏机器'
+        ]);
+        AttributeValue::query()->create([
+            'attribute_id' => '1',
+            'value' => '1.0版镜面屏一体机'
+        ]);
+        AttributeValue::query()->create([
+            'attribute_id' => '1',
+            'value' => '1.0版43寸大平板'
+        ]);
+        AttributeValue::query()->create([
+            'attribute_id' => '1',
+            'value' => '1.0版43寸大平板'
+        ]);
+        AttributeValue::query()->create([
+            'attribute_id' => '1',
+            'value' => '3.0版大K双屏样机'
+        ]);
+        AttributeValue::query()->create([
+            'attribute_id' => '2',
+            'value' => '红+白'
+        ]);
+        AttributeValue::query()->create([
+            'attribute_id' => '2',
+            'value' => '红色'
+        ]);
+        AttributeValue::query()->create([
+            'attribute_id' => '2',
+            'value' => '白色'
+        ]);
+        AttributeValue::query()->create([
+            'attribute_id' => '2',
+            'value' => '银色'
+        ]);
+        AttributeValue::query()->create([
+            'attribute_id' => '2',
+            'value' => '香槟金'
+        ]);
+        AttributeValue::query()->create([
+            'attribute_id' => '2',
+            'value' => '黑色'
+        ]);
     }
 }
