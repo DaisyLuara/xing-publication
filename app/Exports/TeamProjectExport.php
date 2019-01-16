@@ -107,7 +107,7 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
                     'status' => $statusMapping[$item->status],
                     'online_date' => $item->online_date,
                     'launch_date' => $item->launch_date,
-                    'copyright_attribute' => $item->copyright_attribute == 1 ? '是' : '否',
+                    'copyright_attribute' => $item->copyright_attribute == 1 ? '否' : '是',
                     'copyright_project'=>$item->copyright_project,
                     'project_attribute' => $projectAttributeMapping[$item->project_attribute],
                     'link_attribute' => $item->link_attribute == 1 ? '是' : '否',
