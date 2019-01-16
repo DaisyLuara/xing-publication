@@ -9,15 +9,17 @@
 namespace App\Http\Controllers\Admin\Coupon\V1\Transformer;
 
 use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
+use App\Http\Controllers\Admin\Point\V1\Models\Store;
 use App\Http\Controllers\Admin\Point\V1\Transformer\MarketTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\PointTransformer;
+use App\Http\Controllers\Admin\Point\V1\Transformer\StoreTransformer;
 use App\Http\Controllers\Admin\User\V1\Transformer\UserTransformer;
 use League\Fractal\TransformerAbstract;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 
 class CouponBatchTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['user', 'company', 'wechat', 'market', 'point'];
+    protected $availableIncludes = ['user', 'company', 'wechat', 'market', 'point', 'writeOffMarket', 'writeOffStore'];
 
     public function transform(CouponBatch $couponBatch)
     {
@@ -50,6 +52,8 @@ class CouponBatchTransformer extends TransformerAbstract
             'dynamic_stock_status' => $couponBatch->dynamic_stock_status,
             'write_off_status' => $couponBatch->write_off_status,
             'credit' => $couponBatch->credit,
+            'scene_type' => $couponBatch->scene_type,
+            'updated_at' => $couponBatch->updated_at->toDateTimeString(),
         ];
     }
 
@@ -94,5 +98,27 @@ class CouponBatchTransformer extends TransformerAbstract
         }
 
         return $this->collection($points, new PointTransformer());
+    }
+
+    public function includeWriteOffMarket(CouponBatch $couponBatch)
+    {
+        $market = $couponBatch->writeOffMarket;
+        if ($market) {
+            return $this->item($market, new MarketTransformer());
+        }
+    }
+
+    public function includeWriteOffStore(CouponBatch $couponBatch)
+    {
+        if (!$couponBatch->write_off_sid) {
+            return null;
+        }
+
+        $stores = collect();
+        foreach ($couponBatch->write_off_sid as $store_id) {
+            $stores->push(Store::find($store_id));
+        }
+
+        return $this->collection($stores, new StoreTransformer());
     }
 }

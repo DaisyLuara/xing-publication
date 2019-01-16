@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\Coupon\V1\Models\WechatCouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Request\CouponBatchRequest;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class CouponBatchController extends Controller
@@ -37,8 +38,37 @@ class CouponBatchController extends Controller
             $query->where('name', 'like', '%' . $request->name . '%');
         }
 
+        if ($request->filled('create_user_name')) {
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->create_user_name . '%');
+            });
+        }
+
         if ($request->has('company_id')) {
             $query->where('company_id', $request->get('company_id'));
+        }
+
+        if ($request->has('scene_type')) {
+            $query->where('scene_type', $request->get('scene_type'));
+        }
+
+        if ($request->has('status')) {
+            $now = Carbon::now()->toDateTimeString();
+
+            switch ($request->get('status')) {
+                case 1:
+                    $query->where('end_date', '>', $now)
+                        ->where('start_date', '<', $now);
+                    break;
+                case 2:
+                    $query->where('start_date', '>', $now);
+                    break;
+                case 3:
+                    $query->where('end_date', '<', $now);
+                    break;
+                default:
+                    return null;
+            }
         }
 
         $couponBatch = $query->orderByDesc('id')->paginate(10);

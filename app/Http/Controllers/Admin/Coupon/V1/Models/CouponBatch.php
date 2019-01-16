@@ -55,7 +55,12 @@ class CouponBatch extends Model
         'write_off_status',
         'channel',
         'wechat_coupon_batch_id',
+        'scene_type',
+        'write_off_mid',
+        'write_off_sid',
     ];
+
+    protected $casts = [ 'write_off_sid' => 'array' ];
 
     public function coupon()
     {
@@ -96,4 +101,10 @@ class CouponBatch extends Model
     {
         return $this->hasMany(MarketPointCouponBatch::class, 'coupon_batch_id', 'id');
     }
+
+    public function writeOffMarket()
+    {
+        return $this->belongsTo(Market::class, 'write_off_mid', 'marketid');
+    }
+
 }
