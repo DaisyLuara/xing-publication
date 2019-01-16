@@ -110,7 +110,7 @@ class CouponBatchTransformer extends TransformerAbstract
 
     public function includeWriteOffStore(CouponBatch $couponBatch)
     {
-        if (!$couponBatch->write_off_sid) {
+        if (empty($couponBatch->write_off_sid)) {
             return null;
         }
 
