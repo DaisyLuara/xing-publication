@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Point\V1\Models;
 
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
+use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Models\ArModel;
 
 
@@ -45,5 +46,10 @@ class Market extends ArModel
     public function stores()
     {
         return $this->hasMany(Store::class, 'marketid', 'marketid');
+    }
+
+    public function marketConfig()
+    {
+        return $this->setConnection('mysql')->hasOne(MarketConfig::class,'id', 'marketid');
     }
 }
