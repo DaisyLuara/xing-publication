@@ -113,7 +113,8 @@ class MarketController extends Controller
             if (isset($marketConfig['marketid'])) {
                 unset($marketConfig['marketid']);
             }
-            $market->marketConfig()->getResults()->update($marketConfig);
+
+            $market->marketConfig()->updateOrCreate(['id' => $market->marketid], $marketConfig);
         }
 
         return $this->response->item($market, new MarketTransformer());
