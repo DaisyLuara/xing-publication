@@ -37,7 +37,7 @@ class TeamPersonReward extends Model
         'tester' => '节目测试',
         'operation' => '平台运营',
         'system' => '平台奖',
-        'animation_hidol' => '设计动画',
+        'animation_hidol' => '设计动画·Hidol',
         'hidol_patent' => 'Hidol专利',
         'backend_docking' => "后端IT技术支持",
         'tester_quality' => "节目测试-责任",
