@@ -45,7 +45,7 @@
                 :before-upload="beforeAvatarUpload"
               >
                 <img v-if="logoUrl" :src="logoUrl" class="avatar">
-                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                <i v-else class="el-icon-plus avatar-uploader-icon"/>
               </el-upload>
             </el-form-item>
             <el-form-item label="场地电话" prop="phone">
