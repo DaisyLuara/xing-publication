@@ -14,11 +14,7 @@ use League\Fractal\TransformerAbstract;
 
 class TeamSystemProjectTransformer extends TransformerAbstract
 {
-    protected $statusMapping = [
-        '1' => '申请中',
-        '2' => '已分配',
-        '3' => '已驳回'
-    ];
+
 
     public function transform(TeamSystemProject $teamSystemProject)
     {
@@ -27,7 +23,7 @@ class TeamSystemProjectTransformer extends TransformerAbstract
             'name' => $teamSystemProject->name,
             'applicant' => $teamSystemProject->applicant,
             'applicant_name' => $teamSystemProject->user->name,
-            'status' => $this->statusMapping[$teamSystemProject->status] ?? '未知',
+            'status' => (TeamSystemProject::$statusMapping)[$teamSystemProject->status] ?? '未知',
             'remark' => $teamSystemProject->remark,
             'reject_message' => $teamSystemProject->reject_message,
             'created_at' => $teamSystemProject->created_at->toDateString(),

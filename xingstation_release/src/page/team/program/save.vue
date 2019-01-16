@@ -64,6 +64,43 @@
         </el-form-item>
         <el-row>
           <el-col :span="12">
+            <el-form-item label="原创属性" prop="copyright_attribute">
+              <el-radio-group
+                v-model="programForm.copyright_attribute"
+                @change="copyrightAttributeHandle"
+              >
+                <el-radio :label="0">原创节目</el-radio>
+                <el-radio :label="1">非原创节目</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-if="copyrightFlag">
+            <el-form-item
+              :rules="[{ required: true, message: '请输入原创节目', trigger: 'submit' }]"
+              label="原创节目"
+              prop="copyright_project_id"
+            >
+              <el-select
+                v-model="programForm.copyright_project_id"
+                :loading="searchLoading"
+                remote
+                :remote-method="getSearchCopyrightProject"
+                placeholder="无原创节目"
+                filterable
+                clearable
+              >
+                <el-option
+                  v-for="item in copyrightProjectList"
+                  :key="item.id"
+                  :label="item.project_name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
             <el-form-item label="节目类型" prop="type">
               <el-radio-group v-model="programForm.type">
                 <el-radio :label="1">提前节目</el-radio>
@@ -623,7 +660,8 @@ import {
   getSearchTeamRateList,
   getQiniuToken,
   getMediaUpload,
-  getContractReceiptList
+  getContractReceiptList,
+  getSearchCopyrightProject
 } from "service";
 import { Cookies } from "utils/cookies";
 
@@ -656,6 +694,7 @@ export default {
       },
       testFile: null,
       contractList: [],
+      copyrightProjectList: [],
       fileList: [],
       ids: [],
       disabledChange: true,
@@ -674,6 +713,8 @@ export default {
       status: 1,
       programID: "",
       programForm: {
+        copyright_attribute: 0,
+        copyright_project_id: null,
         money: "",
         hidol_attribute: 0,
         contract_id: "",
@@ -714,6 +755,7 @@ export default {
         tester_quality: []
       },
       isRefresh: false,
+      copyrightFlag: false,
       type: "",
       userList: [],
       rate: {
@@ -756,6 +798,7 @@ export default {
     }
   },
   created() {
+    this.getSearchCopyrightProject("丛林");
     this.programID = this.$route.params.uid;
     let user_info = JSON.parse(Cookies.get("user_info"));
     this.role = user_info.roles.data;
@@ -797,6 +840,13 @@ export default {
           });
         });
     },
+    copyrightAttributeHandle(val) {
+      if (val === 0) {
+        this.copyrightFlag = false;
+      } else {
+        this.copyrightFlag = true;
+      }
+    },
     h5Handle(val) {
       let idArr = [];
       this.h5Rate = val === 1 ? this.rate.h5_1 : this.rate.h5_2;
@@ -807,6 +857,7 @@ export default {
         this.peopleHandle(idArr, this.h5Rate, "H5");
       }
     },
+
     handleRemove(file, fileList) {
       this.fileList = fileList;
     },
@@ -936,21 +987,8 @@ export default {
       getSearchTeamRateList(this)
         .then(res => {
           let data = res.data[0];
-          this.rate.interaction_linkage = data.interaction_linkage;
+          this.rate = data;
           this.interactionRate = this.rate.interaction_linkage;
-          this.rate.originality = data.originality;
-          this.rate.h5_1 = data.h5_1;
-          this.rate.tester = data.tester;
-          this.rate.operation = data.operation;
-          this.rate.tester_quality = data.tester_quality;
-          this.rate.operation_quality = data.operation_quality;
-          this.rate.plan = data.plan;
-          this.rate.hidol_patent = data.hidol_patent;
-          this.rate.animation = data.animation;
-          this.rate.animation_hidol = data.animation_hidol;
-          this.rate.h5_2 = data.h5_2;
-          this.rate.interaction_api = data.interaction_api;
-          this.rate.backend_docking = data.backend_docking;
           this.h5Rate = this.rate.h5_1;
           this.setting.loading = false;
         })
@@ -987,6 +1025,16 @@ export default {
           this.programForm.h5_attribute = res.h5_attribute;
           this.programForm.interaction_attribute = res.interaction_attribute;
           this.programForm.individual_attribute = res.individual_attribute;
+          this.programForm.copyright_project_id = res.copyright_project_id;
+          this.programForm.copyright_attribute = res.copyright_attribute;
+          if (res.copyright_attribute === 0) {
+            this.copyrightFlag = false;
+          } else {
+            this.copyrightFlag = true;
+          }
+          if (res.copyright_project_id) {
+            this.getSearchCopyrightProject(res.copyright_project_name);
+          }
           if (res.individual_attribute === 1) {
             this.programForm.contract_id = res.contract_id;
             this.programForm.money = res.contract.amount;
@@ -1011,96 +1059,25 @@ export default {
           this.status = res.status;
           if (JSON.stringify(res.member) !== "[]") {
             // 动画设计
-            if (res.member.animation) {
-              this.programForm.animation = res.member.animation;
-              res.member.animation.map(r => {
-                this.programForm.animat.push(r.user_id);
-              });
-            } else {
-              this.programForm.animation = [];
-            }
+            this.peopleArrHandle(res, "animation", "animat");
             // 节目统筹
-            if (res.member.plan) {
-              this.programForm.plan = res.member.plan;
-
-              res.member.plan.map(r => {
-                this.programForm.whole.push(r.user_id);
-              });
-            } else {
-              this.programForm.plan = [];
-            }
+            this.peopleArrHandle(res, "plan", "whole");
             // 交互技术
-            if (res.member.interaction) {
-              this.programForm.interaction = res.member.interaction;
-              res.member.interaction.map(r => {
-                this.programForm.interactionVal.push(r.user_id);
-              });
-            } else {
-              this.programForm.interaction = [];
-            }
+            this.peopleArrHandle(res, "interaction", "interactionVal");
             // h5
-            if (res.member.h5) {
-              this.programForm.h5 = res.member.h5;
-              res.member.h5.map(r => {
-                this.programForm.H5Val.push(r.user_id);
-              });
-            } else {
-              this.programForm.h5 = [];
-            }
+            this.peopleArrHandle(res, "h5", "H5Val");
             // 测试
-            if (res.member.tester) {
-              this.programForm.tester = res.member.tester;
-              res.member.tester.map(r => {
-                this.programForm.test.push(r.user_id);
-              });
-            } else {
-              this.programForm.tester = [];
-            }
+            this.peopleArrHandle(res, "tester", "test");
             // 运营
-            if (res.member.operation) {
-              this.programForm.operation = res.member.operation;
-              res.member.operation.map(r => {
-                this.programForm.platform.push(r.user_id);
-              });
-            } else {
-              this.programForm.operation = [];
-            }
+            this.peopleArrHandle(res, "operation", "platform");
             // 节目创意
-            if (res.member.originality) {
-              this.programForm.originality = res.member.originality;
-              res.member.originality.map(r => {
-                this.programForm.creative.push(r.user_id);
-              });
-            } else {
-              this.programForm.originality = [];
-            }
+            this.peopleArrHandle(res, "originality", "creative");
             // 动画设计.Hidol
-            if (res.member.animation_hidol) {
-              this.programForm.animation_hidol = res.member.animation_hidol;
-              res.member.animation_hidol.map(r => {
-                this.programForm.animatHidol.push(r.user_id);
-              });
-            } else {
-              this.programForm.animation_hidol = [];
-            }
+            this.peopleArrHandle(res, "animation_hidol", "animatHidol");
             // 后端iT技术
-            if (res.member.backend_docking) {
-              this.programForm.backend_docking = res.member.backend_docking;
-              res.member.backend_docking.map(r => {
-                this.programForm.backend.push(r.user_id);
-              });
-            } else {
-              this.programForm.backend_docking = [];
-            }
+            this.peopleArrHandle(res, "backend_docking", "backend");
             // Hidol专利
-            if (res.member.hidol_patent) {
-              this.programForm.hidol_patent = res.member.hidol_patent;
-              res.member.hidol_patent.map(r => {
-                this.programForm.hidol.push(r.user_id);
-              });
-            } else {
-              this.programForm.hidol_patent = [];
-            }
+            this.peopleArrHandle(res, "hidol_patent", "hidol");
           }
           this.setting.loading = false;
         })
@@ -1112,6 +1089,19 @@ export default {
           this.setting.loading = false;
         });
     },
+
+    // 人员数组变化
+    peopleArrHandle(res, name, oldName) {
+      if (res.member[name]) {
+        this.programForm[name] = res.member[name];
+        res.member[name].map(r => {
+          this.programForm[oldName].push(r.user_id);
+        });
+      } else {
+        this.programForm[name] = [];
+      }
+    },
+
     // 自定义比列修改modifyHandle，rateSubmit，performanceChange
     modifyHandle(obj, rate, type) {
       let length = obj.length;
@@ -1320,6 +1310,28 @@ export default {
         this.projectList = [];
       }
     },
+    getSearchCopyrightProject(query) {
+      if (query !== "") {
+        this.searchLoading = true;
+        let args = {
+          project_name: query,
+          copyright_attribute: 0
+        };
+        return getSearchCopyrightProject(this, args)
+          .then(response => {
+            this.copyrightProjectList = response;
+            if (this.copyrightProjectList.length == 0) {
+              this.copyrightProjectList = [];
+            }
+            this.searchLoading = false;
+          })
+          .catch(err => {
+            this.searchLoading = false;
+          });
+      } else {
+        this.copyrightProjectList = [];
+      }
+    },
     submit(formName) {
       console.log(this.ids);
       this.getQiniuToken();
@@ -1355,8 +1367,11 @@ export default {
             interact_innovate: this.programForm.interact_innovate,
             type: this.programForm.type,
             animation_media_id: this.ids,
+            copyright_attribute: this.programForm.copyright_attribute,
+            copyright_project_id: this.programForm.copyright_project_id,
             interaction_attribute: this.programForm.interaction_attribute
           };
+
           if (this.programForm.interaction.length > 0) {
             member.interaction = this.programForm.interaction;
           }

@@ -10,6 +10,8 @@ use App\Models\User;
 class TeamProject extends Model
 {
     protected $fillable = [
+        'copyright_attribute',
+        'copyright_project_id',
         'project_name',
         'belong',
         'applicant',
@@ -37,6 +39,32 @@ class TeamProject extends Model
         'test_remark',
 //        'plan_media_id',
     ];
+
+    public static $projectAttributeMapping = [
+        '0' => '不计入',
+        '1' => '基础条目',
+        '2' => '简单条目',
+        '3' => '节目',
+        '4' => '更多',
+    ];
+    public static  $h5AttributeMapping = [
+        '1' => '基础模版',
+        '2' => '复杂模版',
+    ];
+
+    public static  $statusMapping = [
+        '1' => '进行中',
+        '2' => '测试已确认',
+        '3' => '运营已确认',
+        '4' => '主管已确认'
+    ];
+    public static  $interactionAttributeMapping = [
+        'interaction_api' => '中间件属性',
+        'interaction_linkage' => '联动引擎属性'
+    ];
+
+
+
 
     public function contract()
     {
@@ -71,6 +99,11 @@ class TeamProject extends Model
     public function animation_media()
     {
         return $this->belongsTo(Media::class, 'animation_media_id', 'id');
+    }
+
+    public function copyright_project()
+    {
+        return $this->belongsTo(TeamProject::class, 'copyright_project_id', 'id');
     }
 
 

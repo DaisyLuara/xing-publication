@@ -35,6 +35,9 @@ $api->version('v1', [
 
         //用户登录
         $api->post('customer/login', 'AuthorizationsController@customerLogin');
+
+        //AR用户授权
+        $api->post('arMemberSession/login', 'AuthorizationsController@arMemberSessionLogin');
     });
 
 

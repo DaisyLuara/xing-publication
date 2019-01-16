@@ -21,18 +21,23 @@ class AdminCompaniesController extends Controller
             $query->where('name', 'like', '%' . $request->name . '%');
         }
 
+        //角色为管理员，法务，法务主管时，查看所有公司数据
         if ($currentUser->isAdmin() || $currentUser->hasRole('legal-affairs') || $currentUser->hasRole('legal-affairs-manager')) {
             $companies = $query->orderByDesc('id')->paginate(10);
-        } else {
-            $companies = $query->whereHas('user', function ($q) use ($currentUser) {
-                if ($currentUser->hasRole('user')) {
-                    $q->where('id', $currentUser->id);
-                } else {
-                    $q->where('parent_id', $currentUser->id);
-                }
-            })->orderByDesc('id')->paginate(10);
+            return $this->response->paginator($companies, new CompanyTransformer());
+
         }
 
+        //角色为主管时，查看下属及自己
+        if ($currentUser->parent_id == $currentUser->id) {
+            $companies = $query->whereHas('user', function ($q) use ($currentUser) {
+                $q->where('parent_id', $currentUser->id);
+            })->orderByDesc('id')->paginate(10);
+            return $this->response->paginator($companies, new CompanyTransformer());
+        }
+
+        //查看自己数据
+        $companies = $query->where('user_id', $currentUser->id)->orderByDesc('id')->paginate(10);
         return $this->response->paginator($companies, new CompanyTransformer());
     }
 
@@ -49,6 +54,7 @@ class AdminCompaniesController extends Controller
             'name' => $request->name,
             'internal_name' => $request->internal_name,
             'address' => $request->address,
+            'category' => $request->category,
             'description' => $request->description,
             'logo' => $request->logo
         ];
@@ -56,15 +62,17 @@ class AdminCompaniesController extends Controller
         $company->save();
         activity('company')->on($company)->withProperties($request->all())->log('新增公司信息');
 
-        $customerData = [
-            'name' => $request->customer_name,
-            'position' => $request->position,
-            'phone' => $request->phone,
-            'telephone' => $request->telephone,
-            'password' => bcrypt($request->password),
-            'company_id' => $company->id,
-        ];
-        $customer->fill($customerData)->save();
+        if ($request->category == 0) {
+            $customerData = [
+                'name' => $request->customer_name,
+                'position' => $request->position,
+                'phone' => $request->phone,
+                'telephone' => $request->telephone,
+                'password' => bcrypt($request->password),
+                'company_id' => $company->id,
+            ];
+            Customer::create($customerData);
+        }
         activity('customer')->on($customer)->withProperties($companyData)->log('新增公司联系人');
 
         return $this->response->item($company, new CompanyTransformer())

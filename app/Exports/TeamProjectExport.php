@@ -8,6 +8,8 @@
 
 namespace App\Exports;
 
+use App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward;
+use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
 use DB;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Events\AfterSheet;
@@ -39,69 +41,44 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
 
     public function collection()
     {
-        $typeMapping = [
-            'originality' => '节目创意',
-            'plan' => '节目统筹',
-            'animation' => '设计动画',
-            'animation_hidol' => "设计动画.Hidol",
-            'hidol_patent' => "Hidol专利",
-            'interaction' => '交互技术',
-            'backend_docking' => '后端IT技术对接',
-            'h5' => 'H5开发',
-            'tester' => '节目测试',
-            'tester_quality' => '节目测试总责',
-            'operation' => '平台运营',
-            'operation_quality' => '平台运营总责'
-        ];
-        $projectAttributeMapping = [
-            '0' => '不计入',
-            '1' => '基础条目',
-            '2' => '简单条目',
-            '3' => '通用节目',
-            '4' => '项目',
-        ];
+        $typeMapping = TeamPersonReward::$typeMapping;
+        $projectAttributeMapping = TeamProject::$projectAttributeMapping;
+        $statusMapping = TeamProject::$statusMapping;
+        $interactionAttributeMapping = TeamProject::$interactionAttributeMapping;
 
-        $statusMapping = [
-            '1' => '进行中',
-            '2' => '测试已确认',
-            '3' => '运营已确认',
-            '4' => '主管已确认'
-        ];
-        $interactionAttributeMapping = [
-            'interaction_api' => '中间件调用',
-            'interaction_linkage' => '交互引擎'
-        ];
         $sql = DB::table('team_projects as tp')
             ->leftJoin('team_project_members as tpm', 'tp.id', '=', 'tpm.team_project_id')
             ->leftJoin('contracts', 'tp.contract_id', '=', 'contracts.id')
+            ->leftJoin('team_projects as tp2', 'tp2.id', '=', 'tp.copyright_project_id')
             ->join('users', 'tp.applicant', '=', 'users.id')
             ->where(function ($q) {
                 if ($this->alias) {
-                    $q->whereRaw("belong='$this->alias'");
+                    $q->whereRaw("tp.belong='$this->alias'");
                 }
                 if ($this->status) {
-                    $q->whereRaw("status='$this->status'");
+                    $q->whereRaw("tp.status='$this->status'");
                 }
                 if ($this->start_date_begin && $this->end_date_begin) {
-                    $q->whereRaw("begin_date between '$this->start_date_begin' and '$this->end_date_begin'");
+                    $q->whereRaw("tp.begin_date between '$this->start_date_begin' and '$this->end_date_begin'");
                 }
                 if ($this->start_date_online && $this->end_date_online) {
-                    $q->whereRaw("online_date between '$this->start_date_online' and '$this->end_date_online'");
+                    $q->whereRaw("tp.online_date between '$this->start_date_online' and '$this->end_date_online'");
                 }
                 if ($this->start_date_launch && $this->end_date_launch) {
-                    $q->whereRaw("launch_date between '$this->start_date_launch' and '$this->end_date_launch'");
+                    $q->whereRaw("tp.launch_date between '$this->start_date_launch' and '$this->end_date_launch'");
                 }
             })
             ->selectRaw("
             users.name as applicant,
             tp.type as project_type,
-            project_name,tp.status,online_date,launch_date,
-            project_attribute,link_attribute,h5_attribute,
-            interaction_attribute,hidol_attribute,
-            individual_attribute,contracts.contract_number,contracts.amount,
-            art_innovate,dynamic_innovate,interact_innovate,
-            tp.remark,tp.test_remark,tpm.type as type,group_concat(concat(user_name, ':', rate)) as username")
-            ->groupBy(DB::raw("belong,tpm.type"));
+            tp.project_name,tp.status,tp.online_date,tp.launch_date,
+            tp.copyright_attribute,IFNULL(tp2.project_name,'无') as copyright_project,
+            tp.project_attribute,tp.link_attribute,tp.h5_attribute,
+            tp.interaction_attribute,tp.hidol_attribute,
+            tp.individual_attribute,contracts.contract_number,contracts.amount,
+            tp.art_innovate,tp.dynamic_innovate,tp.interact_innovate,
+            tp.remark,tp.test_remark,tpm.type as type,group_concat(concat(tpm.user_name, ':', rate)) as username")
+            ->groupBy(DB::raw("tp.belong,tpm.type"));
 
 
         $case = "";
@@ -112,6 +89,7 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
         $project = DB::table(DB::raw("({$sql->toSql()}) as a"))
             ->selectRaw("applicant,
             project_type,project_name,status,online_date,launch_date,
+            copyright_attribute,copyright_project,
             project_attribute,link_attribute,h5_attribute,
             interaction_attribute,hidol_attribute,
             individual_attribute,contract_number,amount,
@@ -129,6 +107,8 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
                     'status' => $statusMapping[$item->status],
                     'online_date' => $item->online_date,
                     'launch_date' => $item->launch_date,
+                    'copyright_attribute' => $item->copyright_attribute == 1 ? '否' : '是',
+                    'copyright_project'=>$item->copyright_project,
                     'project_attribute' => $projectAttributeMapping[$item->project_attribute],
                     'link_attribute' => $item->link_attribute == 1 ? '是' : '否',
                     'h5_attribute' => $item->h5_attribute == 1 ? '基础' : '复杂',
@@ -151,7 +131,7 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
             });
 
 
-        $header1 = ["申请人", "节目类型", "节目名称", "状态", "上线时间", "投放时间", "节目属性", "联动属性",
+        $header1 = ["申请人", "节目类型", "节目名称", "状态", "上线时间", "投放时间", "原创属性","原创节目名称","节目属性", "联动属性",
             "H5属性", "交互属性", "Hidol属性", "定制属性", "合同编号", "合同金额",
             "艺术风格创新点", "动效体验创新点", "交互技术创新点"];
         foreach ($typeMapping as $item) {
