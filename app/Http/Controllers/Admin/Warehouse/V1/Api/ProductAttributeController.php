@@ -34,17 +34,19 @@ class ProductAttributeController extends Controller
         }
         $product = $query->select('attributes_id', 'attributes_value')->orderBy('attributes_id', 'asc')->get()->toArray();
 
-        $supplier = Product::query()->where('id', $request->id)->get(['supplier'])->toArray();
-
-        $company = Company::query()->where('id',$supplier)->select('name', 'internal_name')->get()->toArray();
-
-        $arr = [];
-        foreach ($product as $value){
-            $arr['supplier'] = $company;
-            $attribute = Attribute::query()->where('id', $value['attributes_id'])->select('name')->get()->toArray();
-            $arr[$attribute[0]['name']] = $value;
+        if ($request->id) {
+            $supplier = Product::query()->where('id', $request->id)->get(['supplier'])->toArray();
         }
 
-        return $arr;
+        if(isset($supplier)) {
+            $company = Company::query()->where('id', $supplier)->select('name', 'internal_name')->get()->toArray();
+            $arr = [];
+            foreach ($product as $value) {
+                $arr['supplier'] = $company;
+                $attribute = Attribute::query()->where('id', $value['attributes_id'])->select('name')->get()->toArray();
+                $arr[$attribute[0]['name']] = $value;
+            }
+            return $arr;
+        }
     }
 }
