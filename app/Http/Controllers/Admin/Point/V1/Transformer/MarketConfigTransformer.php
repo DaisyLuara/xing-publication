@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin\Point\V1\Transformer;
 use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Media\V1\Transformer\MediaTransformer;
-use App\Http\Controllers\Admin\Point\V1\Models\Market;
 use App\Http\Controllers\Admin\Point\V1\Models\MarketConfig;
 use App\Http\Controllers\Admin\User\V1\Transformer\UserTransformer;
 use League\Fractal\TransformerAbstract;

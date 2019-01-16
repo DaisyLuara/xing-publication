@@ -2,11 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Point\V1\Transformer;
 
-use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
-use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
-use App\Http\Controllers\Admin\Media\V1\Transformer\MediaTransformer;
 use App\Http\Controllers\Admin\Point\V1\Models\Market;
-use App\Http\Controllers\Admin\User\V1\Transformer\UserTransformer;
 use League\Fractal\TransformerAbstract;
 
 class MarketTransformer extends TransformerAbstract
@@ -19,6 +15,7 @@ class MarketTransformer extends TransformerAbstract
         return [
             'id' => (int)$market->marketid,
             'name' => (string)$market->name,
+            'updated_at' => $market->marketConfig ? $market->marketConfig->updated_at->toDateTimeString() : null,
         ];
     }
 
@@ -42,38 +39,6 @@ class MarketTransformer extends TransformerAbstract
             return $this->item($market->share, new MarketShareTransformer());
         }
     }
-
-//    public function includeCompany(Market $market)
-//    {
-//        $company = $market->marketConfig->company;
-//        if ($company) {
-//            return $this->item($company, new CompanyTransformer());
-//        }
-//    }
-//
-//    public function includeMedia(Market $market)
-//    {
-//        $media = $market->marketConfig->media;
-//        if ($media) {
-//            return $this->item($media, new MediaTransformer());
-//        }
-//    }
-//
-//    public function includeBdUser(Market $market)
-//    {
-//        $bdUser = $market->marketConfig->bdUser;
-//        if ($bdUser) {
-//            return $this->item($bdUser, new UserTransformer());
-//        }
-//    }
-//
-//    public function includeAdContract(Market $market)
-//    {
-//        $adContract = $market->marketConfig->adContract;
-//        if ($adContract) {
-//            return $this->item($adContract, new ContractTransformer());
-//        }
-//    }
 
     public function includeMarketConfig(Market $market)
     {
