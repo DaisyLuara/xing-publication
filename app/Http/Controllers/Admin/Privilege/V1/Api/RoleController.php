@@ -45,6 +45,7 @@ class RoleController extends Controller
 
     public function update(RoleRequest $request, Role $role)
     {
+        $this->checkRole($role);
         $role->update($request->all());
         $role->syncPermissions($request->ids);
         return $this->response()->noContent();
@@ -52,8 +53,15 @@ class RoleController extends Controller
 
     public function destroy(Role $role)
     {
+        $this->checkRole($role);
         $role->delete();
         return $this->response()->noContent()->setStatusCode(204);
     }
 
+    private function checkRole(Role $role)
+    {
+        if ($role->name == 'admin' || $role->name == 'super-admin') {
+            abort(403, '管理员角色不可变更');
+        }
+    }
 }
