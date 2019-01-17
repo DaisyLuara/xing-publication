@@ -14,7 +14,6 @@ $api->version('v1', [
             $api->get('contract/{contract}', 'ContractController@show');
             $api->get('contract', ['middleware' => ['permission:contract.list.read'], 'uses' => 'ContractController@index']);
             $api->post('contract', ['middleware' => ['permission:contract.list.create'], 'uses' => 'ContractController@store']);
-            $api->patch('contract/{contract}', ['middleware' => ['permission:contract.list.update'], 'uses' => 'ContractController@update']);
             $api->delete('contract/{contract}', ['middleware' => ['permission:contract.list.delete'], 'uses' => 'ContractController@destroy']);
 
             $api->post('contract/reject/{contract}', ['middleware' => ['permission:contract.list.reject'], 'uses' => 'ContractController@reject']);

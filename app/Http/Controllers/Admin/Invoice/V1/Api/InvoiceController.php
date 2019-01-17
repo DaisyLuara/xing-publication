@@ -106,25 +106,6 @@ class InvoiceController extends Controller
         return $this->response()->item($invoice, new InvoiceTransformer())->setStatusCode(201);
     }
 
-//    public function update(InvoiceRequest $request, Invoice $invoice)
-//    {
-//        /** @var  $user \App\Models\User */
-//        $user = $this->user();
-//        if (!$user->hasRole('user') && !$user->hasRole('bd-manager')) {
-//            abort(403, '无操作权限');
-//        }
-//        $invoice->update(array_merge($request->all(), ['handler' => $user->parent_id, 'status' => 1]));
-//        $content = $request->invoice_content;
-//        InvoiceContent::query()
-//            ->where('invoice_id', '=', $invoice['id'])
-//            ->delete();
-//        foreach ($content as $item) {
-//            $item['invoice_id'] = $invoice['id'];
-//            InvoiceContent::query()->create($item);
-//        }
-//
-//        return $this->response()->noContent()->setStatusCode(200);
-//    }
 
     public function destroy(Invoice $invoice)
     {
