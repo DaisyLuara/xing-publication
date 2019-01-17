@@ -129,6 +129,14 @@ class MarketController extends Controller
             $market->marketConfig()->updateOrCreate(['id' => $market->marketid], $marketConfig);
         }
 
+        if ($request->has('customer')) {
+            $market->marketConfig->writeOffCustomer()->update([
+                'name'     => $request->customer['name'],
+                'phone' => $request->customer['phone'],
+                'password' => bcrypt($request->customer['password']),
+            ]);
+        }
+
         return $this->response->item($market, new MarketTransformer());
     }
 }
