@@ -8,7 +8,7 @@
       <div class="item-content-wrap">
         <div class="search-wrap">
           <el-form ref="searchForm" :model="filters" :inline="true">
-            <el-form-item label prop="company_id">
+            <el-form-item label prop="name">
               <el-input v-model="filters.name" placeholder="请输入优惠券名称" clearable/>
             </el-form-item>
             <el-form-item label prop="company_id">
@@ -22,10 +22,29 @@
                 <el-option
                   v-for="item in companyList"
                   :key="item.id"
+                  :label="item.name +'('+ item.internal_name+')'"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label prop="scene_type">
+              <el-select
+                v-model="filters.scene_type"
+                placeholder="请选择优惠券类型"
+                filterable
+                clearable
+                class="item-select"
+              >
+                <el-option
+                  v-for="item in sceneTypeList"
+                  :key="item.id"
                   :label="item.name"
                   :value="item.id"
                 />
               </el-select>
+            </el-form-item>
+            <el-form-item label prop="create_user_name">
+              <el-input v-model="filters.create_user_name" placeholder="请输入创建人" clearable/>
             </el-form-item>
             <el-button type="primary" size="small" @click="search()">搜索</el-button>
           </el-form>
@@ -41,16 +60,16 @@
         </div>
         <el-tabs v-model="activeName" @tab-click="handleTab">
           <el-tab-pane label="全部" name="first">
-            <rulesTable :tableData="tableData"/>
+            <rulesTable :tableData="tableData" @getCouponList="getCouponList"/>
           </el-tab-pane>
           <el-tab-pane label="投放中" name="second">
-            <rulesTable :tableData="tableData"/>
+            <rulesTable :tableData="tableData" @getCouponList="getCouponList"/>
           </el-tab-pane>
           <el-tab-pane label="待投放" name="third">
-            <rulesTable :tableData="tableData"/>
+            <rulesTable :tableData="tableData" @getCouponList="getCouponList"/>
           </el-tab-pane>
           <el-tab-pane label="已结束" name="fourth">
-            <rulesTable :tableData="tableData"/>
+            <rulesTable :tableData="tableData" @getCouponList="getCouponList"/>
           </el-tab-pane>
         </el-tabs>
         <div class="pagination-wrap">
@@ -145,14 +164,34 @@ export default {
       },
       templateVisible: false,
       filters: {
-        name: "",
-        company_id: ""
+        scene_type: null,
+        company_id: null,
+        create_user_name: null,
+        name: ""
       },
       setting: {
         loading: false,
         loadingText: "拼命加载中"
       },
       status: 1,
+      sceneTypeList: [
+        {
+          id: 1,
+          name: "场地通用"
+        },
+        {
+          id: 2,
+          name: "场地自营"
+        },
+        {
+          id: 3,
+          name: "商户通用"
+        },
+        {
+          id: 4,
+          name: "商户自营"
+        }
+      ],
       pagination: {
         total: 0,
         pageSize: 10,
@@ -166,8 +205,17 @@ export default {
     this.getCompanyList();
   },
   methods: {
-    handleTab(val){
-      console.log(val)
+    handleTab() {
+      if (this.activeName === "first") {
+        this.status = null;
+      } else if (this.activeName === "second") {
+        this.status = 1;
+      } else if (this.activeName === "third") {
+        this.status = 2;
+      } else {
+        this.status = 3;
+      }
+        this.getCouponList();
     },
     thirdSubmit(formName) {
       this.$refs[formName].validate(valid => {
@@ -193,7 +241,10 @@ export default {
           this.companyList = result.data;
         })
         .catch(error => {
-          console.log(error);
+          this.$message({
+            type: "warning",
+            message: error.response.data.message
+          });
         });
     },
     thirdParty() {
@@ -211,14 +262,28 @@ export default {
     getCouponList() {
       this.setting.loading = true;
       let args = {
-        include: "user,company",
+        include: "user,company,writeOffMarket",
         page: this.pagination.currentPage,
         status: this.status,
         name: this.filters.name,
-        company_id: this.filters.company_id
+        company_id: this.filters.company_id,
+        create_user_name: this.filters.create_user_name,
+        scene_type: this.filters.scene_type
       };
+      if (!this.status) {
+        delete args.status;
+      }
       if (this.filters.company_id === "") {
         delete args.company_id;
+      }
+      if (this.filters.name === "") {
+        delete args.name;
+      }
+      if (!this.filters.create_user_name) {
+        delete args.create_user_name;
+      }
+      if (!this.filters.scene_type) {
+        delete args.scene_type;
       }
       getCouponList(this, args)
         .then(response => {

@@ -7,38 +7,17 @@
             <el-form-item label="ID">
               <span>{{ scope.row.id }}</span>
             </el-form-item>
-            <el-form-item label="公司">
-              <span>{{ scope.row.company.name }}</span>
-            </el-form-item>
-            <el-form-item label="创建人">
-              <span>{{ scope.row.user.name }}</span>
+            <el-form-item label="优惠券类型">
+              <span>{{ scope.row.scene_type === 1 ? '场地通用' : scope.row.scene_type === 2 ? '场地自营' : scope.row.scene_type === 3 ? '商户通用' : scope.row.scene_type === 4 ? '商户自营' : '无'}}</span>
             </el-form-item>
             <el-form-item label="优惠券名称">
               <span>{{ scope.row.name }}</span>
             </el-form-item>
-            <el-form-item label="标题">
-              <span>{{ scope.row.title }}</span>
+            <el-form-item label="公司名称">
+              <span>{{ scope.row.company.name }}</span>
             </el-form-item>
-            <el-form-item label="动态库存">
-              <span>{{ scope.row.dynamic_stock_status === 0 ? '关闭' : '开启'}}</span>
-            </el-form-item>
-            <el-form-item label="优惠券描述">
-              <span>{{ scope.row.description }}</span>
-            </el-form-item>
-            <el-form-item label="h5图片">
-              <a :href="scope.row.image_url" target="_blank" style="color: blue">查看</a>
-            </el-form-item>
-            <el-form-item label="大屏图片">
-              <a :href="scope.row.bs_image_url" target="_blank" style="color: blue">查看</a>
-            </el-form-item>
-            <el-form-item label="金额">
-              <span>{{ scope.row.amount }}</span>
-            </el-form-item>
-            <el-form-item label="积分">
-              <span>{{ scope.row.credit }}</span>
-            </el-form-item>
-            <el-form-item label="库存总数">
-              <span>{{ scope.row.count }}</span>
+            <el-form-item label="创建人">
+              <span>{{ scope.row.user.name }}</span>
             </el-form-item>
             <el-form-item label="优先级">
               <span>{{ scope.row.sort_order }}</span>
@@ -46,51 +25,42 @@
             <el-form-item label="剩余库存">
               <span>{{ scope.row.stock }}</span>
             </el-form-item>
-            <el-form-item label="每人最大获取数">
-              <span>{{ scope.row.people_max_get }}</span>
-            </el-form-item>
-            <el-form-item label="是否开启每人无限领取">
-              <span>{{ scope.row.pmg_status === 1 ? '开启' : '关闭' }}</span>
-            </el-form-item>
-            <el-form-item label="每天最大获取数">
-              <span>{{ scope.row.day_max_get }}</span>
-            </el-form-item>
-            <el-form-item label="是否开启每天无限领取">
-              <span>{{ scope.row.dmg_status === 1 ? '固定' : '不固定' }}</span>
-            </el-form-item>
-            <el-form-item label="是否固定日期">
-              <span>{{ scope.row.is_fixed_date === 1 ? '固定' : '不固定' }}</span>
-            </el-form-item>
-            <el-form-item v-if="scope.row.is_fixed_date === 0" label="延后生效天数">
-              <span>{{ scope.row.delay_effective_day }}</span>
-            </el-form-item>
-            <el-form-item v-if="scope.row.is_fixed_date === 0" label="有效天数">
-              <span>{{ scope.row.effective_day }}</span>
-            </el-form-item>
-            <el-form-item v-if="scope.row.is_fixed_date === 1" label="开始日期">
-              <span>{{ scope.row.start_date }}</span>
-            </el-form-item>
-            <el-form-item v-if="scope.row.is_fixed_date === 1" label="结束日期">
-              <span>{{ scope.row.end_date }}</span>
-            </el-form-item>
-            <el-form-item label="状态">
-              <span>{{ scope.row.is_active === 1 ? '启用' :'停用' }}</span>
+            <el-form-item label="修改时间">
+              <span>{{ scope.row.updated_at }}</span>
             </el-form-item>
           </el-form>
         </template>
       </el-table-column>
       <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="100"/>
-      <el-table-column :show-overflow-tooltip="true" prop="company_id" label="公司" min-width="100">
+      <el-table-column
+        :show-overflow-tooltip="true"
+        prop="scene_type"
+        label="优惠券类型"
+        min-width="100"
+      >
+        <template
+          slot-scope="scope"
+        >{{ scope.row.scene_type === 1 ? '场地通用' : scope.row.scene_type === 2 ? '场地自营' : scope.row.scene_type === 3 ? '商户通用' : scope.row.scene_type === 4 ? '商户自营' : '无'}}</template>
+      </el-table-column>
+      <el-table-column :show-overflow-tooltip="true" prop="name" label="优惠券名称" min-width="100"/>
+      <el-table-column
+        :show-overflow-tooltip="true"
+        prop="company_name"
+        label="公司名称"
+        min-width="100"
+      >
         <template slot-scope="scope">{{ scope.row.company.name }}</template>
       </el-table-column>
       <el-table-column :show-overflow-tooltip="true" prop="user_name" label="创建人" min-width="100">
         <template slot-scope="scope">{{ scope.row.user.name }}</template>
       </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" prop="name" label="名称" min-width="100"/>
-      <el-table-column :show-overflow-tooltip="true" prop="sort_order" label="优先级" min-width="100"/>
-      <el-table-column :show-overflow-tooltip="true" prop="amount" label="金额" min-width="100"/>
-      <el-table-column :show-overflow-tooltip="true" prop="count" label="库存总数" min-width="100"/>
       <el-table-column :show-overflow-tooltip="true" prop="stock" label="剩余库存" min-width="100"/>
+      <el-table-column
+        :show-overflow-tooltip="true"
+        prop="updated_at"
+        label="修改时间"
+        min-width="100"
+      />
       <el-table-column label="操作" min-width="150">
         <template slot-scope="scope">
           <el-button size="small" type="warning" @click="linkToEdit(scope.row)">编辑</el-button>
@@ -128,7 +98,12 @@ export default {
     "el-form-item": FormItem
   },
   data() {
-    return {};
+    return {
+      setting: {
+        loading: false,
+        loadingText: "拼命加载中"
+      }
+    };
   },
   methods: {
     linkToEdit(currentCoupon) {
@@ -144,6 +119,19 @@ export default {
     copyRules(data) {
       this.setting.loading = true;
       let company_id = data.company.id;
+      let write_off_sid = [];
+      if (data.writeOffStore) {
+        data.writeOffStore.data.map(r => {
+          let id = r.id;
+          write_off_sid.push(id);
+        });
+      } else {
+        write_off_sid = [];
+      }
+      let write_off_mid = null;
+      if (data.writeOffMarket) {
+        write_off_mid = data.writeOffMarket.id;
+      }
       let args = {
         name: data.name,
         description: data.description,
@@ -168,7 +156,10 @@ export default {
         dynamic_stock_status: data.dynamic_stock_status,
         write_off_status: data.write_off_status,
         credit: data.credit,
-        bs_image_url: data.bs_image_url
+        bs_image_url: data.bs_image_url,
+        write_off_sid: write_off_sid,
+        scene_type: data.scene_type,
+        write_off_mid: write_off_mid
       };
       if (!args.image_url) {
         delete args.image_url;
@@ -195,7 +186,7 @@ export default {
             message: "复制成功",
             type: "success"
           });
-          this.getCouponList();
+          this.$emit("getCouponList");
         })
         .catch(error => {
           this.loading = false;
@@ -206,5 +197,18 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.demo-table-expand {
+  font-size: 0;
+}
+
+.demo-table-expand label {
+  width: 90px;
+  color: #99a9bf;
+}
+.demo-table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  width: 50%;
+}
 </style>
 
