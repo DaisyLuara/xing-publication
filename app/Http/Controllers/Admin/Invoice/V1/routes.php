@@ -22,9 +22,9 @@ $api->version('v1', [
 
             //开票公司
             $api->get('invoice_company/{invoice_company}', 'InvoiceCompanyController@show');
-            $api->get('invoice_company', ['middleware' => ['permission:invoice.company.read'], 'uses' => 'InvoiceCompanyController@index']);
-            $api->post('invoice_company', ['middleware' => ['permission:invoice.company.create'], 'uses' => 'InvoiceCompanyController@store']);
-            $api->patch('invoice_company/{invoice_company}', ['middleware' => ['permission:invoice.company.update'], 'uses' => 'InvoiceCompanyController@update']);
+            $api->get('invoice_company', ['middleware' => ['permission:invoice.invoiceCompany.read'], 'uses' => 'InvoiceCompanyController@index']);
+            $api->post('invoice_company', ['middleware' => ['permission:invoice.invoiceCompany.create'], 'uses' => 'InvoiceCompanyController@store']);
+            $api->patch('invoice_company/{invoice_company}', ['middleware' => ['permission:invoice.invoiceCompany.update'], 'uses' => 'InvoiceCompanyController@update']);
 
             $api->get('invoice_history', ['middleware' => ['permission:invoice.history.read'], 'uses' => 'InvoiceHistoryController@index']);
 
