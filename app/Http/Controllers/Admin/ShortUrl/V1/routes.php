@@ -10,8 +10,8 @@ $api->version('v1', [
     ], function ($api) {
 
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
-            $api->get('short_urls', 'ShortUrlController@index');
-            $api->post('short_urls', 'ShortUrlController@store');
+            $api->get('short_urls', ['middleware' => ['permission:ad.url.read'], 'uses' => 'ShortUrlController@index']);
+            $api->post('short_urls', ['middleware' => ['permission:ad.url.create'], 'uses' => 'ShortUrlController@store']);
         });
     });
 

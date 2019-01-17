@@ -16,13 +16,13 @@ $api->version('v1', [
 
 
             // 权限设置
-            $api->get('system/users', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminUsersController@index']);
-            $api->get('system/users/{user}', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminUsersController@show']);
-            $api->post('system/users', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminUsersController@store']);
-            $api->patch('system/users/{user}', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminUsersController@update']);
-            $api->get('system/roles', ['middleware' => ['role:super-admin|admin'], 'uses' => 'RolesController@index']);
-            $api->delete('system/users/{user}', ['middleware' => ['role:super-admin|admin'], 'uses' => 'AdminUsersController@destroy']);
+            $api->get('system/users', ['middleware' => ['permission:system.user.read'], 'uses' => 'AdminUsersController@index']);
+            $api->get('system/users/{user}', ['middleware' => ['permission:system.user.read'], 'uses' => 'AdminUsersController@show']);
+            $api->post('system/users', ['middleware' => ['permission:system.user.create'], 'uses' => 'AdminUsersController@store']);
+            $api->patch('system/users/{user}', ['middleware' => ['permission:system.user.update'], 'uses' => 'AdminUsersController@update']);
+            $api->delete('system/users/{user}', ['middleware' => ['permission:system.user.delete'], 'uses' => 'AdminUsersController@destroy']);
 
+            $api->get('system/roles', 'RolesController@index');
         });
     });
 

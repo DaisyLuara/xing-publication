@@ -1,3 +1,4 @@
+import auth from 'service/auth'
 let router = {
   path: 'team',
   redirect: 'team/program',
@@ -11,21 +12,18 @@ let router = {
   children: [
     {
       path: 'program',
-      name: '节目智造',
-      redirect: 'program',
       meta: {
-        title: '节目智造',
-        permission: ''
+        title: '节目管理',
+        permission: 'team.program'
       },
       component: () =>
         import(/* webpackChunkName: "page/team/program/routerView" */ 'page/team/program/routerView'),
       children: [
         {
           path: '/',
-          name: '节目智造列表',
           meta: {
             title: '节目智造列表',
-            permission: '',
+            permission: 'team.program.read',
             keepAlive: true
           },
           component: () =>
@@ -36,7 +34,7 @@ let router = {
           name: '新增节目',
           meta: {
             title: '新增节目',
-            permission: ''
+            permission: 'team.program.create'
           },
           component: () =>
             import(/* webpackChunkName: "page/team/program/save" */ 'page/team/program/save')
@@ -46,7 +44,7 @@ let router = {
           name: '修改节目',
           meta: {
             title: '修改节目',
-            permission: ''
+            permission: 'team.program.update'
           },
           component: () =>
             import(/* webpackChunkName: "page/team/program/save" */ 'page/team/program/save')
@@ -55,19 +53,18 @@ let router = {
     },
     {
       path: 'ratio',
-      name: '智造比例',
-      redirect: 'ratio',
       meta: {
-        title: '智造比例'
+        title: '智造比例',
+        permission: 'team.ratio'
       },
       component: () =>
         import(/* webpackChunkName: "page/team/ratio/routerView" */ 'page/team/ratio/routerView'),
       children: [
         {
           path: '/',
-          name: '智造比例列表',
           meta: {
-            title: '智造比例列表'
+            title: '智造比例列表',
+            permission: 'team.ratio.read'
           },
           component: () =>
             import(/* webpackChunkName: "page/team/ratio/index" */ 'page/team/ratio/index')
@@ -77,7 +74,7 @@ let router = {
           name: '修改比例',
           meta: {
             title: '修改比例',
-            permission: ''
+            permission: 'team.ratio.update'
           },
           component: () =>
             import(/* webpackChunkName: "page/team/ratio/save" */ 'page/team/ratio/save')
@@ -86,10 +83,9 @@ let router = {
     },
     {
       path: 'duty',
-      name: '重大责任',
-      redirect: 'duty',
       meta: {
-        title: '重大责任'
+        title: '重大责任',
+        permission: 'team.duty'
       },
       component: () =>
         import(/* webpackChunkName: "page/team/duty/routerView" */ 'page/team/duty/routerView'),
@@ -98,27 +94,26 @@ let router = {
           path: '/',
           name: '重大责任列表',
           meta: {
-            title: '重大责任列表'
+            title: '重大责任列表',
+            permission: 'team.duty.read'
           },
           component: () =>
             import(/* webpackChunkName: "page/team/duty/index" */ 'page/team/duty/index')
         },
         {
           path: 'add',
-          name: '新增责任',
           meta: {
             title: '新增责任',
-            permission: ''
+            permission: 'team.duty.create'
           },
           component: () =>
             import(/* webpackChunkName: "page/team/duty/save" */ 'page/team/duty/save')
         },
         {
           path: 'edit/:uid',
-          name: '修改责任',
           meta: {
             title: '修改责任',
-            permission: ''
+            permission: 'team.duty.update'
           },
           component: () =>
             import(/* webpackChunkName: "page/team/duty/save" */ 'page/team/duty/save')
@@ -127,10 +122,9 @@ let router = {
     },
     {
       path: 'operation',
-      name: '运营文档',
-      redirect: 'operation',
       meta: {
-        title: '运营文档'
+        title: '运营文档',
+        permission: 'team.operation'
       },
       component: () =>
         import(/* webpackChunkName: "page/team/operation/routerView" */ 'page/team/operation/routerView'),
@@ -139,7 +133,8 @@ let router = {
           path: '/',
           name: '运营文档列表',
           meta: {
-            title: '运营文档列表'
+            title: '平台明细列表',
+            permission: 'team.operation.read'
           },
           component: () =>
             import(/* webpackChunkName: "page/team/operation/index" */ 'page/team/operation/index')
@@ -152,7 +147,9 @@ let router = {
 router.redirect = () => {
   let routes = router.children
   for (let route of routes) {
-    return '/team/' + route.path
+    if (auth.checkPathPermission(route)) {
+      return '/team/' + route.path
+    }
   }
 }
 

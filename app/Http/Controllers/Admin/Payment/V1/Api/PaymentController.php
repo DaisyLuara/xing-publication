@@ -46,7 +46,7 @@ class PaymentController extends Controller
 
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if ($user->hasPermissionTo('finance_pay')) {
+        if ($user->id == getProcessStaffId('finance', 'payment')) {
             $query->whereRaw("(handler=$user->id or status=4)");
         } else if ($user->hasRole('operation')) {
             $query->whereRaw("(status=3 or status=4)");
@@ -65,15 +65,13 @@ class PaymentController extends Controller
             abort(500, '无所属主管，无法新增付款申请');
         }
         if ($user->hasRole('legal-affairs')) {
-            $permission = Permission::findByName('finance_pay');
-            $finance = $permission->users()->first();
-            $payment->fill(array_merge($request->all(), ['status' => 3, 'handler' => $finance->id, 'receive_status' => 0]))->save();
+            $financeId = getProcessStaffId('finance', 'payment');
+            $payment->fill(array_merge($request->all(), ['status' => 3, 'handler' => $financeId, 'receive_status' => 0]))->save();
         }
 
         if ($user->hasRole('legal-affairs-manager')) {
-            $permission = Permission::findByName('finance_pay');
-            $finance = $permission->users()->first();
-            $payment->fill(array_merge($request->all(), ['status' => 3, 'handler' => $finance->id, 'receive_status' => 0]))->save();
+            $financeId = getProcessStaffId('finance', 'payment');
+            $payment->fill(array_merge($request->all(), ['status' => 3, 'handler' => $financeId, 'receive_status' => 0]))->save();
         }
 
 
@@ -82,13 +80,8 @@ class PaymentController extends Controller
         }
 
         if ($user->hasRole('bd-manager')) {
-            $role = Role::findByName('legal-affairs');
-            $legals = $role->users()->get();
-            foreach ($legals as $legal) {
-                if ($legal->hasPermissionTo('auditing')) {
-                    $payment->fill(array_merge($request->all(), ['status' => 1, 'handler' => $legal->id, 'receive_status' => 0]))->save();
-                }
-            }
+            $legalId = getProcessStaffId('legal-affairs', 'payment');
+            $payment->fill(array_merge($request->all(), ['status' => 1, 'handler' => $legalId, 'receive_status' => 0]))->save();
         }
         //附件存储
         if ($request->ids) {
@@ -100,18 +93,6 @@ class PaymentController extends Controller
         return $this->response()->noContent();
     }
 
-//
-//    public function update(PaymentRequest $request, Payment $payment)
-//    {
-//        /** @var  $user \App\Models\User */
-//        $user = $this->user();
-//        if (!$user->hasRole('user') && !$user->hasRole('bd-manager')) {
-//            abort(403, '无操作权限');
-//        }
-//        $payment->update(array_merge($request->all(), ['status' => 1, 'handler' => $user->parent_id]));
-//
-//        return $this->response()->item($payment, new PaymentTransformer());
-//    }
 
     public function destroy(Payment $payment)
     {
@@ -136,22 +117,17 @@ class PaymentController extends Controller
         $user = $this->user();
 
         if ($user->hasRole('bd-manager')) {
-            $role = Role::findByName('legal-affairs');
-            $legals = $role->users()->get();
-            foreach ($legals as $legal) {
-                if ($legal->hasPermissionTo('auditing')) {
-                    $payment->status = 2;
-                    $payment->handler = $legal->id;
-                    if (!$request->has('bd_ma_message')) {
-                        abort(500, '没有填写意见');
-                    }
-                    $payment->bd_ma_message = $request->bd_ma_message;
-                    $payment->update();
-                    PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
-                }
+            $legalId = getProcessStaffId('legal-affairs', 'payment');
+            $payment->status = 2;
+            $payment->handler = $legalId;
+            if (!$request->has('bd_ma_message')) {
+                abort(500, '没有填写意见');
             }
-        } else if ($user->hasRole('legal-affairs')) {
+            $payment->bd_ma_message = $request->bd_ma_message;
+            $payment->update();
+            PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
 
+        } else if ($user->hasRole('legal-affairs')) {
             $payment->handler = $user->parent_id;
             if (!$request->has('legal_message')) {
                 abort(500, '没有填写意见');
@@ -161,25 +137,19 @@ class PaymentController extends Controller
             PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
         } else if ($user->hasRole('legal-affairs-manager')) {
 
-            $role = Role::findByName('auditor');
-            $auditors = $role->users()->get();
-            foreach ($auditors as $auditor) {
-                if ($auditor->hasPermissionTo('auditing')) {
-                    $payment->handler = $auditor->id;
-                    $payment->legal_ma_message = $request->legal_ma_message;
-                    if (!$request->has('legal_ma_message')) {
-                        abort(500, '没有填写意见');
-                    }
-                    $payment->update();
-                    PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
-                }
+            $auditorId = getProcessStaffId('auditor', 'payment');
+            $payment->handler = $auditorId;
+            $payment->legal_ma_message = $request->legal_ma_message;
+            if (!$request->has('legal_ma_message')) {
+                abort(500, '没有填写意见');
             }
-        } else if ($user->hasRole('auditor')) {
+            $payment->update();
+            PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
 
-            $permission = Permission::findByName('finance_pay');
-            $finance = $permission->users()->first();
+        } else if ($user->hasRole('auditor')) {
+            $financeId = getProcessStaffId('finance', 'payment');
             $payment->status = 3;
-            $payment->handler = $finance->id;
+            $payment->handler = $financeId;
             if (!$request->has('auditor_message')) {
                 abort(500, '没有填写意见');
             }
@@ -201,7 +171,7 @@ class PaymentController extends Controller
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if (!$user->hasPermissionTo('finance_pay')) {
+        if ($user->id != getProcessStaffId('finance', 'payment')) {
             abort(403, "无操作权限");
         }
         $payment->receive_status = 1;

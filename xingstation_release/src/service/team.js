@@ -8,6 +8,8 @@ const QINNIU_API = '/api/qiniu_oauth'
 const MEDIA_UPLOAD_AP = '/api/media_upload'
 const EVENT_API = '/api/team_project_bug_records'
 const OPERATION_MEDIA_API = '/api/media_infos'
+const EXCEL_TEAM_API = '/api/team_project_export'
+
 
 // 得到项目列表
 const getProgramList = (context, params) => {
@@ -316,7 +318,19 @@ const deleteOperationDocument = (context, params) => {
       })
   })
 }
-
+// 导出
+const getExcelTeamData = (context, args) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + EXCEL_TEAM_API, { params: args })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
 export {
   getProgramList,
   saveProgram,
@@ -340,5 +354,6 @@ export {
   modifyOperationDocument,
   getOperationDocumentDetails,
   deleteOperationDocument,
-  getPersonFutureRewardTotal
+  getPersonFutureRewardTotal,
+  getExcelTeamData
 }

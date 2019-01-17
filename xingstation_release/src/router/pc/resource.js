@@ -13,8 +13,6 @@ let router = {
   children: [
     {
       path: 'picture',
-      name: '图片管理',
-      redirect: 'picture',
       meta: {
         title: '图片管理',
         permission: ''

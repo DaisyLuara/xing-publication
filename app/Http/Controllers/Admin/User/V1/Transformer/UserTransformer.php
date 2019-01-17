@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Admin\User\V1\Transformer;
 
+use App\Http\Controllers\Admin\Privilege\V1\Models\Permission;
 use App\Models\User;
 use League\Fractal\TransformerAbstract;
+use App\Http\Controllers\Admin\Privilege\V1\Transformer\RoleTransformer;
 
 class UserTransformer extends TransformerAbstract
 {
@@ -23,17 +25,24 @@ class UserTransformer extends TransformerAbstract
             'ar_user_id' => $user->ar_user_id,
             'created_at' => $user->created_at->toDateTimeString(),
             'updated_at' => $user->updated_at->toDateTimeString(),
-            'pivot'=>$user->pivot,
+            'pivot' => $user->pivot,
+            'permissions' => $this->getUserPermission($user)
         ];
     }
 
     public function includeRoles(User $user)
     {
-        return $this->collection($user->roles, new RoleTransformer());
+        return $this->collection($user->role, new RoleTransformer());
     }
 
-    public function includePermissions(User $user)
+    private function getUserPermission(User $user)
     {
-        return $this->collection($user->getAllPermissions(), new PermissionTransformer());
+        $permissions = $user->getAllPermissions();
+        $permId = [];
+        foreach ($permissions as $permission) {
+            $permId[] = $permission->id;
+        }
+        return Permission::query()->whereIn('id', $permId)->selectRaw('id,name,parent_id')->get()->toHierarchy();
     }
+
 }

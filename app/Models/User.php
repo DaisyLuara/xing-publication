@@ -9,8 +9,8 @@ use Spatie\Activitylog\Traits\CausesActivity;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Spatie\Permission\Traits\HasRoles;
-use Spatie\Permission\Models\Role;
 use Auth;
+use App\Http\Controllers\Admin\Privilege\V1\Models\Role;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -129,5 +129,16 @@ class User extends Authenticatable implements JWTSubject
     public function getSystemRoles()
     {
         return $this->isSuperAdmin() ? Role::all() : Role::where('name', '<>', 'super-admin')->get();
+    }
+
+    public function role()
+    {
+        return $this->morphToMany(
+            Role::class,
+            'model',
+            config('permission.table_names.model_has_roles'),
+            config('permission.column_names.model_morph_key'),
+            'role_id'
+        );
     }
 }

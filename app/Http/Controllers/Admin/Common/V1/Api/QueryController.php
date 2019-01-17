@@ -19,20 +19,18 @@ use App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractReceiveDateTransformer;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
-use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceKind;
-use App\Http\Controllers\Admin\Invoice\V1\Transformer\InvoiceKindTransformer;
 use App\Http\Controllers\Admin\Point\V1\Models\MarketConfig;
 use App\Http\Controllers\Admin\Point\V1\Models\Store;
 use App\Http\Controllers\Admin\Point\V1\Transformer\StoreTransformer;
-use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
-use App\Models\Customer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\PolicyTransformer;
 use App\Http\Controllers\Admin\Invoice\V1\Models\GoodsService;
 use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany;
+use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceKind;
 use App\Http\Controllers\Admin\Invoice\V1\Transformer\GoodsServiceTransformer;
 use App\Http\Controllers\Admin\Invoice\V1\Transformer\InvoiceCompanyTransformer;
+use App\Http\Controllers\Admin\Invoice\V1\Transformer\InvoiceKindTransformer;
 use App\Http\Controllers\Admin\Payment\V1\Models\PaymentPayee;
 use App\Http\Controllers\Admin\Payment\V1\Transformer\PaymentPayeeTransformer;
 use App\Http\Controllers\Admin\Point\V1\Models\Area;
@@ -43,19 +41,23 @@ use App\Http\Controllers\Admin\Point\V1\Transformer\AreaTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\MarketTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\PointTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\SceneTransformer;
+use App\Http\Controllers\Admin\Privilege\V1\Models\Permission;
+use App\Http\Controllers\Admin\Privilege\V1\Models\Role;
+use App\Http\Controllers\Admin\Privilege\V1\Transformer\RoleTransformer;
 use App\Http\Controllers\Admin\Project\V1\Models\Project;
 use App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTpl;
 use App\Http\Controllers\Admin\Project\V1\Transformer\ProjectLaunchTplTransformer;
 use App\Http\Controllers\Admin\Project\V1\Transformer\ProjectTransformer;
+use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamRate;
 use App\Http\Controllers\Admin\Team\V1\Transformer\TeamRateTransformer;
 use App\Http\Controllers\Admin\User\V1\Models\ArUser;
 use App\Http\Controllers\Admin\User\V1\Transformer\ArUserTransformer;
 use App\Http\Controllers\Admin\User\V1\Transformer\UserTransformer;
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role;
 use DB;
 
 class QueryController extends Controller
@@ -465,6 +467,29 @@ class QueryController extends Controller
         return $this->response()->collection($attribute, new AttributeTransformer());
     }
 
+
+    public function permissionQuery(Request $request)
+    {
+        $permission = Permission::query()
+            ->where('guard_name', $request->guard_name)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->toHierarchy();
+        return response()->json($permission);
+    }
+
+    public function roleQuery(Request $request, Role $role)
+    {
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
+        $query = $role->query();
+        if (!$user->isSuperAdmin()) {
+            $query->where('name', '<>', 'super-admin');
+        }
+        $role = $query->where('guard_name', $request->guard_name)->get();
+        return $this->response()->collection($role, new RoleTransformer());
+    }
+
     public function erpAttributeQuery(Request $request)
     {
         return DB::table('erp_attributes')->get();
@@ -479,12 +504,12 @@ class QueryController extends Controller
 
     public function erpSkuQuery(Company $company, Request $request)
     {
-        return DB::table('erp_products')->select('id','sku')->get();
+        return DB::table('erp_products')->select('id', 'sku')->get();
     }
 
     public function erpLocationQuery(Company $company, Request $request)
     {
-        return DB::table('erp_locations')->select('id','name')->get();
+        return DB::table('erp_locations')->select('id', 'name')->get();
     }
 
     public function bdAndBdManagerQuery(Request $request)

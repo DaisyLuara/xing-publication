@@ -1,6 +1,7 @@
 const PROJECT_API = '/api/projects/launch'
 const MODIFY_PROJECT_API = '/api/projects/launches'
 const PROJECTLIST_API = '/api/projects'
+const EXCEL_COUPONS_API = '/api/coupons/export'
 const HOST = process.env.SERVER_URL
 
 const getPutProjectList = (context, args) => {
@@ -63,11 +64,25 @@ const modifyProjectLaunch = (context, args) => {
       })
   })
 }
+// 到出优惠券
+const getExcelCouponsData = (context, args) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + EXCEL_COUPONS_API, { params: args })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
 
 export {
   getPutProjectList,
   getProjectListDetails,
   modifyProject,
   savePorjectLaunch,
-  modifyProjectLaunch
+  modifyProjectLaunch,
+  getExcelCouponsData
 }

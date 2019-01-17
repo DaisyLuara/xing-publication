@@ -4,11 +4,10 @@ const HOST = process.env.SERVER_URL
 const DOMAIN = process.env.DOMAIN
 const LOGIN_API = '/api/authorizations'
 const LOGOUT_API = '/api/authorizations/current'
-const USERINFO_API = '/api/user?include=permissions,roles'
+const USERINFO_API = '/api/user?include=roles'
 const IMAGE_CAPTCHA = '/api/captchas'
 const USER_API = '/api/user'
 const SMS_CAPTCHA = '/api/verificationCodes'
-const TOWER_OUTH_TOKEN = '/api/oauth/token?include=permissions,roles'
 export default {
   login(context, creds, redirect) {
     context.setting.submiting = true
@@ -24,15 +23,9 @@ export default {
         })
         context.setting.submiting = false
         this.refreshUserInfo(context).then(res => {
-          if (context.$cookie.get('permissions').indexOf('setting') > -1) {
-            context.$router.push({
-              path: '/'
-            })
-          } else {
-            context.$router.push({
-              path: redirect ? redirect : '/'
-            })
-          }
+          context.$router.push({
+            path: redirect ? redirect : '/'
+          })
         })
       })
       .catch(err => {
@@ -90,6 +83,7 @@ export default {
     context.$cookie.delete('jwt_ttl', { domain: DOMAIN })
     context.$cookie.delete('jwt_begin_time', { domain: DOMAIN })
     context.$cookie.delete('permissions', { domain: DOMAIN })
+    localStorage.removeItem('permissions')
     let setIntervalValue =
       context.$store.state.notificationCount.setIntervalValue
     clearInterval(setIntervalValue)
@@ -100,15 +94,23 @@ export default {
       context.$http
         .get(HOST + USERINFO_API)
         .then(response => {
+          localStorage.removeItem('permissions')
           context.$cookie.delete('permissions', { domain: DOMAIN })
           context.$cookie.delete('user_info', { domain: DOMAIN })
           let result = response.data
-          context.$cookie.set(
+          localStorage.setItem(
             'permissions',
-            JSON.stringify(result.permissions),
-            { domain: DOMAIN }
+            JSON.stringify(result.permissions)
           )
-          context.$cookie.set('user_info', JSON.stringify(result), {
+          let userInfo = {
+            id: result.id,
+            name: result.name,
+            created_at: result.created_at,
+            ar_user_id: result.ar_user_id,
+            bind_weixin: result.bind_weixin,
+            roles: result.roles
+          }
+          context.$cookie.set('user_info', JSON.stringify(userInfo), {
             domain: DOMAIN
           })
           //context.$store.commit('setCurUserInfo', result.data)
@@ -124,13 +126,9 @@ export default {
     return Cookies.get('jwt_token')
   },
 
-  getTowerAccessToken() {
-    let user_info = Cookies.get('jwt_token')
-    return user_info.tower_access_token
-  },
-
   getUserInfo() {
-    let permissions = Cookies.get('permissions')
+    // let permissions = Cookies.get('permissions')
+    let permissions = localStorage.getItem('permissions')
     if (permissions) {
       return JSON.parse(permissions)
     }
@@ -254,9 +252,20 @@ function hasPermission(name, perms) {
   if (!perms) {
     return false
   }
-  for (let i in perms.data) {
-    if (name == perms.data[i]['name']) {
+  if (name == perms.name) {
+    return true
+  }
+  if (perms.children && perms.children.length == 0) {
+    return false
+  }
+  for (let i in perms) {
+    if (name == perms[i]['name']) {
       return true
+    } else if (
+      (name.indexOf(perms[i]['name']) == 0) &&
+      perms[i].children.length > 0
+    ) {
+      return hasPermission(name, perms[i]['children'])
     }
   }
   return false

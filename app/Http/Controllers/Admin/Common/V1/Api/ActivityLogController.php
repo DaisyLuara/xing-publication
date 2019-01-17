@@ -16,14 +16,14 @@ class ActivityLogController extends Controller
         $query = $activity->query();
         if (!$user->isAdmin()) {
             $query->where('causer_id', '=', $user->id);
+        } elseif ($request->has('causer_id')) {
+            $query->where('causer_id', '=', $request->causer_id);
         }
 
-        if ($request->causer_name) {
-            $causerName = $request->causer_name;
-            $query->whereHas('causer', function ($query) use ($causerName) {
-                $query->where('name', 'like', "%$causerName%");
-            });
+        if ($request->has('log_name')) {
+            $query->where('log_name', $request->log_name);
         }
+
 
         $activityLogs = $query->orderBy('id', 'desc')->paginate(10);
 

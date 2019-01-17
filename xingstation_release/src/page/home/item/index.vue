@@ -86,7 +86,7 @@ import Highcharts from 'highcharts'
 import VueHighcharts from 'vue-highcharts'
 Vue.use(VueHighcharts)
 
-import { getChartData } from 'service'
+import { getHomeChartData } from 'service'
 
 export default {
   components: {
@@ -495,23 +495,23 @@ export default {
     },
     // 业态前5
     getSceneFiveChartData() {
-      this.getChartData('scene', '3')
+      this.getHomeChartData('scene', '3')
     },
     getPointTenChartData() {
-      this.getChartData('point', '2')
+      this.getHomeChartData('point', '2')
     },
     getAgeChartData(attributeId, name) {
       if (attributeId) {
         // 行业年龄
-        this.getChartData('user', '4', attributeId, name)
+        this.getHomeChartData('user', '4', attributeId, name)
       } else {
-        this.getChartData('age', '4')
+        this.getHomeChartData('age', '4')
       }
     },
     getActiveChartData() {
-      this.getChartData('active', '9')
+      this.getHomeChartData('active', '9')
     },
-    getChartData(type, id, charType, name) {
+    getHomeChartData(type, id, charType, name) {
       let args = {
         start_date: this.handleDateTransform(this.dataValue[0]),
         end_date: this.handleDateTransform(
@@ -548,7 +548,7 @@ export default {
           }
           break
       }
-      return getChartData(this, args)
+      return getHomeChartData(this, args)
         .then(response => {
           switch (type) {
             case 'scene':
