@@ -473,7 +473,12 @@ class QueryController extends Controller
 
     public function roleQuery(Request $request, Role $role)
     {
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
         $query = $role->query();
+        if (!$user->isSuperAdmin()) {
+            $query->where('name', '<>', 'super-admin');
+        }
         $role = $query->where('guard_name', $request->guard_name)->get();
         return $this->response()->collection($role, new RoleTransformer());
     }
@@ -492,7 +497,7 @@ class QueryController extends Controller
 
     public function erpSkuQuery(Company $company, Request $request)
     {
-        return DB::table('erp_products')->select('id','sku')->get();
+        return DB::table('erp_products')->select('id', 'sku')->get();
     }
 
     public function erpLocationQuery(Company $company, Request $request)
