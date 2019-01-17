@@ -45,7 +45,7 @@ return [
             'driver' => 'jwt',
             'provider' => 'users',
         ],
-        'customer' => [
+        'shop' => [
             'driver' => 'jwt',
             'provider' => 'customers',
         ],

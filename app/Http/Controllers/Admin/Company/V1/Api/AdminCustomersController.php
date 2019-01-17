@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Company\V1\Api;
 
 use App\Http\Controllers\Admin\Company\V1\Transformer\CustomerTransformer;
 use App\Http\Controllers\Admin\Company\V1\Request\CustomerRequest;
+use App\Http\Controllers\Admin\Privilege\V1\Models\Role;
 use App\Models\Customer;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Controller;
@@ -34,7 +35,7 @@ class AdminCustomersController extends Controller
     {
         $this->authorize('store', [$customer, $company]);
 
-        /** @var Customer $user */
+        /** @var  $customer \App\Models\Customer */
         $customer = Customer::create([
             'name' => $request->name,
             'position' => $request->position,
@@ -43,6 +44,8 @@ class AdminCustomersController extends Controller
             'password' => bcrypt($request->password),
             'company_id' => $company->id,
         ]);
+        $role = Role::findById($request->role_id, 'shop');
+        $customer->assignRole($role);
 
         activity('customer')->on($customer)->withProperties($request->all())->log('新增公司联系人');
 

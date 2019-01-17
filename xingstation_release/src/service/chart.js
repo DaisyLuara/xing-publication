@@ -1,6 +1,6 @@
 const CHART_API = '/api/chart_data'
 const CHART_TIMES_API = '/api/chart_data_times'
-const EXCEL_API = '/api/export'
+const EXCEL_API = '/api/chart_data/export'
 const HOST = process.env.SERVER_URL
 
 const getChartData = (context, args) => {

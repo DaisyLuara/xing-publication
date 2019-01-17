@@ -17,6 +17,8 @@ const CUSTOMER_API = '/api/customer/query'
 const USER_API = '/api/user/query'
 const TEAM_RATE_API = '/api/team_rate/query'
 const FORMAT_API = '/api/attribute/query'
+const PERMISSION_API = '/api/permission/query'
+const ROLE_API = '/api/role/query'
 const CONTRACT_RECEIPT_API = '/api/contract/query'
 const TEAM_PROJECT_API = '/api/team_projects/query'
 const HOST = process.env.SERVER_URL
@@ -267,6 +269,18 @@ const getFormatsList = context => {
   })
 }
 
+// 权限树状结构
+const getPermission = (context, args) => {
+    return new Promise(function (resolve, reject) {
+        context.$http
+            .get(HOST + PERMISSION_API, {params: args})
+            .then(response => {
+                resolve(response.data)
+            }).catch(err => {
+            reject(err)
+        })
+    })
+}
 // 收款合同
 
 const getContractReceiptList = (context, params) => {
@@ -279,6 +293,18 @@ const getContractReceiptList = (context, params) => {
       .catch(error => {
         reject(error)
       })
+  })
+}
+// 角色
+const getSearchRole = (context, args) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + ROLE_API, { params: args })
+      .then(response => {
+          resolve(response.data)
+      }).catch(error => {
+        reject(error)
+    })
   })
 }
 
@@ -314,6 +340,8 @@ export {
   getSearchCompanyList,
   getSearchSceneList,
   getFormatsList,
+  getPermission,
+  getSearchRole,
   getContractReceiptList,
   getSearchCopyrightProject
 }

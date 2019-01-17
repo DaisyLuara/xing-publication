@@ -21,6 +21,20 @@ $api->version('v1', [
             $api->get('companies/{company}/customers/{customer}', 'AdminCustomersController@show');
             $api->post('companies/{company}/customers', ['middleware' => ['permission:company'], 'uses' => 'AdminCustomersController@store']);
             $api->patch('companies/{company}/customers/{customer}', ['middleware' => ['permission:company'], 'uses' => 'AdminCustomersController@update']);
+
+            //商户权限
+            $api->get('company_permission/{permission}', 'CompanyPermissionController@show');
+            $api->get('company_permission', 'CompanyPermissionController@index');
+            $api->post('company_permission', 'CompanyPermissionController@store');
+            $api->patch('company_permission/{permission}', 'CompanyPermissionController@update');
+            $api->delete('company_permission/{permission}', 'CompanyPermissionController@destroy');
+
+            //商户角色
+            $api->get('company_role/{role}', 'CompanyRoleController@show');
+            $api->get('company_role', 'CompanyRoleController@index');
+            $api->post('company_role', 'CompanyRoleController@store');
+            $api->patch('company_role/{role}', 'CompanyRoleController@update');
+            $api->delete('company_role/{role}', 'CompanyRoleController@destroy');
         });
     });
 

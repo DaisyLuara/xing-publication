@@ -2,21 +2,19 @@ import auth from 'service/auth'
 
 let router = {
   path: 'home',
-  redirect: 'home/item',
   name: '首页',
   meta: {
     title: '首页',
-    permission: 'home',
+    permission: 'home'
   },
   component: () =>
     import(/* webpackChunkName: "page/home/homeView" */ 'page/home/homeView'),
   children: [
     {
       path: 'item',
-      name: '首页管理',
-      redirect: 'item',
       meta: {
         title: '首页管理',
+        permission: 'home.item'
       },
       component: () =>
         import(/* webpackChunkName: "page/home/item/routerView" */ 'page/home/item/routerView'),
@@ -26,19 +24,22 @@ let router = {
           name: '首页详情',
           meta: {
             title: '首页详情',
+            permission: 'home.item.read'
           },
           component: () =>
-            import(/* webpackChunkName: "page/home/item/index" */ 'page/home/item/index'),
-        },
-      ],
-    },
-  ],
+            import(/* webpackChunkName: "page/home/item/index" */ 'page/home/item/index')
+        }
+      ]
+    }
+  ]
 }
 
 router.redirect = () => {
   let routes = router.children
   for (let route of routes) {
-    return '/home/' + route.path
+    if (auth.checkPathPermission(route)) {
+      return '/home/' + route.path
+    }
   }
 }
 
