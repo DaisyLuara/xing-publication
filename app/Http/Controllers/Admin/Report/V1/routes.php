@@ -10,7 +10,7 @@ $api->version('v1', [
     ], function ($api) {
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
             //首页数据
-            $api->post('home/chart_data', ['middleware' => ['permission:home.item.read'], 'uses' => 'ChartDataController@chart']);
+            $api->post('home_chart_data', ['middleware' => ['permission:home.item.read'], 'uses' => 'ChartDataController@chart']);
 
             //人数
             $api->get('stats', ['middleware' => ['permission:report.detail.read'], 'uses' => 'ChartDataController@index']);
