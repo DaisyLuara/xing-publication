@@ -25,7 +25,7 @@ class UpdatePermissionSeeder extends Seeder
             ['name' => 'device', 'display_name' => '设备'],
             ['name' => 'team', 'display_name' => '团队'],
             ['name' => 'report', 'display_name' => '数据'],
-            ['name' => 'inform', 'display_name' => '通知'],
+//            ['name' => 'inform', 'display_name' => '通知'],
             ['name' => 'contract', 'display_name' => '合同'],
             ['name' => 'invoice', 'display_name' => '票据'],
             ['name' => 'payment', 'display_name' => '付款'],
@@ -132,16 +132,16 @@ class UpdatePermissionSeeder extends Seeder
             $this->createThirdPermission($obj, $item);
         }
 
-        #通知
-        $inform = Permission::findByName('inform');
-        $informSecondData = [
-            ['name' => 'inform.list', 'display_name' => '消息管理'],
-            ['name' => 'inform.operate', 'display_name' => '操作记录'],
-        ];
-        foreach ($informSecondData as $item) {
-            $obj = Permission::create(['name' => $item['name'], 'display_name' => $item['display_name'], 'parent_id' => $inform->id]);
-            $this->createThirdPermission($obj, $item);
-        }
+//        #通知
+//        $inform = Permission::findByName('inform');
+//        $informSecondData = [
+//            ['name' => 'inform.list', 'display_name' => '消息管理'],
+//            ['name' => 'inform.operate', 'display_name' => '操作记录'],
+//        ];
+//        foreach ($informSecondData as $item) {
+//            $obj = Permission::create(['name' => $item['name'], 'display_name' => $item['display_name'], 'parent_id' => $inform->id]);
+//            $this->createThirdPermission($obj, $item);
+//        }
 
         #合同
         $contract = Permission::findByName('contract');
@@ -159,7 +159,7 @@ class UpdatePermissionSeeder extends Seeder
         $invoice = Permission::findByName('invoice');
         $invoiceSecondData = [
             ['name' => 'invoice.list', 'display_name' => '开票管理'],
-            ['name' => 'invoice.company', 'display_name' => '开票公司'],
+            ['name' => 'invoice.invoiceCompany', 'display_name' => '开票公司'],
             ['name' => 'invoice.history', 'display_name' => '我已审批'],
             ['name' => 'invoice.receipt', 'display_name' => '收款管理']
         ];
