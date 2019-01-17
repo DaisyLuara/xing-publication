@@ -1457,7 +1457,7 @@ export default {
     },
     changeReportType() {
       if (this.reportValue === 'point') {
-        if (!this.point_id) {
+        if (!this.searchForm.point_id) {
           this.$message({
             message: '点位数据下载，请选择点位',
             type: 'warning'
