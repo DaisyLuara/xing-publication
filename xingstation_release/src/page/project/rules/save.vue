@@ -124,15 +124,15 @@
             <el-form-item label="适用场景" prop="scene_type">
               <el-radio-group v-model="couponForm.scene_type" @change="handleSceneType">
                 <el-tooltip class="item" effect="dark" content="仅供某一特定商户核销" placement="top">
-                  <el-radio :label="1">商场通用</el-radio>
+                  <el-radio :label="1">场地通用</el-radio>
                 </el-tooltip>
                 <el-tooltip class="item" effect="dark" content="可在同一主体下，多家连锁商户核销" placement="top">
-                  <el-radio :label="2">商场自营</el-radio>
+                  <el-radio :label="2">场地自营</el-radio>
                 </el-tooltip>
-                <el-tooltip class="item" effect="dark" content="仅供某一特定商场核销" placement="top">
+                <el-tooltip class="item" effect="dark" content="仅供某一特定场地核销" placement="top">
                   <el-radio :label="3">商户通用</el-radio>
                 </el-tooltip>
-                <el-tooltip class="item" effect="dark" content="可在同一商场下的多家商户核销" placement="top">
+                <el-tooltip class="item" effect="dark" content="可在同一场地下的多家商户核销" placement="top">
                   <el-radio :label="4">商户自营</el-radio>
                 </el-tooltip>
               </el-radio-group>
@@ -144,7 +144,7 @@
                 placeholder="请选择核销场地"
                 filterable
                 clearable
-                
+                :disabled="writeOffMarketShow"
                 class="coupon-form-select"
               >
                 <el-option
@@ -380,6 +380,7 @@ export default {
     };
     return {
       multipleNum: 0,
+      writeOffMarketShow:false,
       writeOffSiteShow: false,
       peopleReceiveShow: true,
       peopleDayShow: true,
@@ -499,9 +500,10 @@ export default {
         this.writeOffSiteShow = false;
         this.multipleNum = 0;
       } else if (val === 2) {
+        this.writeOffMarketShow = false
         this.writeOffSiteShow = true;
         this.writeOffSidRules = null;
-        this.couponForm.write_off_sid = null
+        this.couponForm.write_off_sid = []
         this.writeOffMidRules = {
           required: true,
           message: "核销场地不能为空",
@@ -509,12 +511,17 @@ export default {
         };
         this.multipleNum = 1;
       } else if (val === 3) {
+        this.couponForm.write_off_mid = null
+        this.writeOffMarketShow = true
         this.writeOffSiteShow = false;
         this.writeOffMidRules = null;
         this.writeOffSidRules = null;
         this.multipleNum = 0;
       } else {
-        this.writeOffSiteShow = true;
+        this.couponForm.write_off_mid = null
+        this.couponForm.write_off_sid=[]
+        this.writeOffMarketShow = true
+        this.writeOffSiteShow = false;
         this.writeOffMidRules = null;
         this.writeOffSidRules = {
           required: true,
@@ -720,6 +727,12 @@ export default {
         write_off_mid: this.couponForm.write_off_mid,
         write_off_sid: this.couponForm.write_off_sid
       };
+      console.log(args.write_off_sid.length)
+      if(args.write_off_sid.length === 0){
+        this.writeOffSiteList.map(r=>{
+          args.write_off_sid.push(r.id)
+        })
+      }
       if (!this.couponForm.image_url) {
         delete args.image_url;
       }
@@ -764,6 +777,7 @@ export default {
         delete args.start_date;
         delete args.end_date;
       }
+      console.log(args)
       this.$refs[formName].validate(valid => {
         if (valid) {
           saveCoupon(this, args, this.couponID, company_id)
