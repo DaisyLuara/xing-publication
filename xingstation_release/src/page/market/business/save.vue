@@ -435,7 +435,7 @@ export default {
       this.setting.loading = true;
       let id = this.businessID;
       let args = {
-        include: "company,market,area,contract,media,user"
+        include: "company,market,area,contract,media,user,customer"
       };
       getBusinessDetail(this, args, id)
         .then(res => {

@@ -826,7 +826,7 @@ export default {
       let id = this.siteID;
       let args = {
         include:
-          "share,contract,area,marketConfig.company,marketConfig.media,marketConfig.bdUser,marketConfig.adContract"
+          "share,contract,area,marketConfig.company,marketConfig.media,marketConfig.bdUser,marketConfig.adContract,marketConfig.customer"
       };
       getSiteMarketDetail(this, args, id)
         .then(res => {
@@ -897,10 +897,10 @@ export default {
             this.siteForm.marketConfig.description =
               res.marketConfig.description;
           }
-          if(res.customer){
-            this.siteForm.customer.phone = res.customer.phone
-            this.siteForm.customer.name = res.customer.name
-            this.siteForm.customer.password = res.customer.password
+          if (res.customer) {
+            this.siteForm.customer.phone = res.customer.phone;
+            this.siteForm.customer.name = res.customer.name;
+            this.siteForm.customer.password = res.customer.password;
           }
           this.setting.loading = false;
         })
