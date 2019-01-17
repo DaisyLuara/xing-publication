@@ -17,7 +17,7 @@ $api->version('v1', [
             $api->patch('team_project/{team_project}', ['middleware' => ['permission:team.program.update'], 'uses' => 'TeamProjectController@update']);
             $api->post('team_project/confirm/{team_project}', ['middleware' => ['permission:team.program.confirm'], 'uses' => 'TeamProjectController@confirm']);
 
-            $api->get('team_project_export', ['middleware' => ['permission:project.program.download'], 'uses' => 'TeamProjectController@export']);
+            $api->get('team_project_export', ['middleware' => ['permission:team.program.download'], 'uses' => 'TeamProjectController@export']);
             //分配比例
             $api->get('team_rate/{team_rate}', 'TeamRateController@show');
             $api->get('team_rate', ['middleware' => ['permission:team.ratio.read'], 'uses' => 'TeamRateController@index']);
