@@ -49,7 +49,7 @@
         label="公司名称"
         min-width="100"
       >
-        <template slot-scope="scope">{{ scope.row.company.name }}</template>
+        <template slot-scope="scope">{{ scope.row.company.name + scope.row.company.internal_name }}</template>
       </el-table-column>
       <el-table-column :show-overflow-tooltip="true" prop="user_name" label="创建人" min-width="100">
         <template slot-scope="scope">{{ scope.row.user.name }}</template>
