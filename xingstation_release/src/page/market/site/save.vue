@@ -8,7 +8,7 @@
             <el-form-item label="场地名称" prop="name">
               <el-input v-model="siteForm.name" placeholder="请输入场地名称" class="item-input"/>
             </el-form-item>
-            <el-form-item label="公司名称" prop="company_id">
+            <el-form-item label="公司名称" prop="marketConfig.company_id">
               <el-select
                 v-model="siteForm.marketConfig.company_id"
                 placeholder="请选择公司名称"
@@ -48,21 +48,21 @@
                 <i v-else class="el-icon-plus avatar-uploader-icon"/>
               </el-upload>
             </el-form-item>
-            <el-form-item label="场地电话" prop="phone">
+            <el-form-item label="场地电话" prop="marketConfig.phone">
               <el-input
                 v-model="siteForm.marketConfig.phone"
                 placeholder="请输入场地电话"
                 class="item-input"
               />
             </el-form-item>
-            <el-form-item label="场地地址" prop="address">
+            <el-form-item label="场地地址" prop="marketConfig.address">
               <el-input
                 v-model="siteForm.marketConfig.address"
                 placeholder="请输入场地地址"
                 class="item-input"
               />
             </el-form-item>
-            <el-form-item label="场地详情" prop="description">
+            <el-form-item label="场地详情" prop="marketConfig.description">
               <el-input
                 type="textarea"
                 v-model="siteForm.marketConfig.description"
@@ -384,7 +384,6 @@ import {
   getContractReceiptList,
   getSearchCompanyList
 } from "service";
-const SERVER_URL = process.env.SERVER_URL;
 
 import {
   Form,
@@ -405,6 +404,7 @@ import {
   Upload
 } from "element-ui";
 
+const SERVER_URL = process.env.SERVER_URL;
 export default {
   components: {
     ElForm: Form,
@@ -584,7 +584,7 @@ export default {
           coupon_off: 100
         },
         marketConfig: {
-          bd_user_id: "",
+          bd_user_id: null,
           phone: "",
           address: "",
           description: "",
@@ -847,7 +847,8 @@ export default {
             }
             this.siteForm.marketConfig.phone = res.marketConfig.phone;
             this.siteForm.marketConfig.address = res.marketConfig.address;
-            this.siteForm.marketConfig.description = res.marketConfig.description;
+            this.siteForm.marketConfig.description =
+              res.marketConfig.description;
           }
           this.setting.loading = false;
         })
