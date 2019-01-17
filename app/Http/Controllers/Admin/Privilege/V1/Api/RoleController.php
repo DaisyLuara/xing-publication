@@ -45,7 +45,6 @@ class RoleController extends Controller
 
     public function update(RoleRequest $request, Role $role)
     {
-        $this->checkRole($role);
         $role->update($request->all());
         $role->syncPermissions($request->ids);
         return $this->response()->noContent();

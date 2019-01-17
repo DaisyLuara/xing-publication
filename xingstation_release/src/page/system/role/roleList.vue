@@ -29,7 +29,7 @@
         <el-table-column prop="created_at" label="创建时间" min-width="150"/>
         <el-table-column label="操作" min-width="100">
           <template slot-scope="scope">
-            <el-button size="small" type="danger" @click="deleteRole(scope.row)" v-if="scope.row.name!=='admin' || scope.row.name!=='super-admin'">删除</el-button>
+            <el-button v-if="scope.row.name!=='admin' && scope.row.name!=='super-admin'" size="small" type="danger" @click="deleteRole(scope.row)" >删除</el-button>
             <el-button size="small" type="warning" @click="linkToEdit(scope.row)">修改</el-button>
           </template>
         </el-table-column>
