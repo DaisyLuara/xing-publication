@@ -1,6 +1,7 @@
 const CHART_API = '/api/chart_data'
 const CHART_TIMES_API = '/api/chart_data_times'
 const EXCEL_API = '/api/chart_data/export'
+const HOME_CHART_API = '/api/home_chart_data'
 const HOST = process.env.SERVER_URL
 
 const getChartData = (context, args) => {
@@ -39,4 +40,16 @@ const getTimesChartData = (context, args) => {
       })
   })
 }
-export { getTimesChartData, getExcelData, getChartData }
+const getHomeChartData = (context, args) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .post(HOST + HOME_CHART_API, args)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+export { getTimesChartData, getExcelData, getChartData,getHomeChartData }

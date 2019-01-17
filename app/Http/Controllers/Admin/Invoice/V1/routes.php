@@ -13,7 +13,6 @@ $api->version('v1', [
             $api->get('invoice/{invoice}', 'InvoiceController@show');
             $api->get('invoice', ['middleware' => ['permission:invoice.list.read'], 'uses' => 'InvoiceController@index']);
             $api->post('invoice', ['middleware' => ['permission:invoice.list.create'], 'uses' => 'InvoiceController@store']);
-            $api->patch('invoice/{invoice}', ['middleware' => ['permission:invoice.list.update'], 'uses' => 'InvoiceController@update']);
             $api->delete('invoice/{invoice}', ['middleware' => ['permission:invoice.list.delete'], 'uses' => 'InvoiceController@destroy']);
 
             $api->post('invoice/reject/{invoice}', ['middleware' => ['permission:invoice.list.reject'], 'uses' => 'InvoiceController@reject']);
