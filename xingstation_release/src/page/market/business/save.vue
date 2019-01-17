@@ -105,6 +105,28 @@
                 class="item-input"
               />
             </el-form-item>
+            <el-form-item label="核销员姓名" prop="customer.name">
+              <el-input
+                v-model="businessForm.customer.name"
+                placeholder="请输入核销员姓名"
+                class="item-input"
+              />
+            </el-form-item>
+            <el-form-item label="核销员电话" prop="customer.phone">
+              <el-input
+                v-model="businessForm.customer.phone"
+                :maxlength="11"
+                placeholder="请输入核销员电话"
+                class="item-input"
+              />
+            </el-form-item>
+            <el-form-item label="密码" prop="customer.password">
+              <el-input
+                v-model="businessForm.customer.password"
+                placeholder="请输入密码"
+                class="item-input"
+              />
+            </el-form-item>
           </el-tab-pane>
           <el-tab-pane v-loading="contractFlag" label="合约配置" name="second">
             <el-form-item label="合同" prop="contract">
@@ -278,11 +300,40 @@ export default {
         contract_id: null,
         user_id: null,
         start_date: "",
-        end_date: ""
+        end_date: "",
+        customer: {
+          phone: "",
+          name: "",
+          password: ""
+        }
       },
       markteList: [],
       areaList: [],
       rules: {
+        "customer.password": [
+          {
+            validator: (rule, value, callback) => {
+              if (value && value.length < 8) {
+                callback("密码长度不能小于8位");
+              } else {
+                callback();
+              }
+            },
+            trigger: "submit"
+          }
+        ],
+        "customer.phone": [
+          {
+            validator: (rule, value, callback) => {
+              if (!/^1[3456789]\d{9}$/.test(value) && value) {
+                callback("手机格式不正确,请重新输入");
+              } else {
+                callback();
+              }
+            },
+            trigger: "submit"
+          }
+        ],
         name: [{ required: true, message: "请输入名称", trigger: "submit" }],
         areaid: [{ required: true, message: "请选择区域", trigger: "submit" }],
         company_id: [
@@ -388,7 +439,6 @@ export default {
       };
       getBusinessDetail(this, args, id)
         .then(res => {
-          console.log(res);
           this.businessForm.name = res.name;
           this.businessForm.areaid = res.area.id;
           this.businessForm.company_id = res.company.id;
@@ -407,6 +457,11 @@ export default {
           this.marketShow = res.market ? true : false;
           this.businessForm.media_id = res.media ? res.media.id : null;
           this.logoUrl = res.media ? res.media.url : "";
+          if (res.customer) {
+            this.businessForm.customer.phone = res.customer.phone;
+            this.businessForm.customer.name = res.customer.name;
+            this.businessForm.customer.password = res.customer.password;
+          }
           this.companyHandle(this.businessForm.company_id);
           this.setting.loading = false;
         })
@@ -482,7 +537,6 @@ export default {
           }
           delete args.contract;
           delete args.market;
-          console.log(args);
           if (this.businessID) {
             modifyBusiness(this, args, this.businessID)
               .then(res => {

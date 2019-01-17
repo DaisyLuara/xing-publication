@@ -8,7 +8,7 @@
             <el-form-item label="场地名称" prop="name">
               <el-input v-model="siteForm.name" placeholder="请输入场地名称" class="item-input"/>
             </el-form-item>
-            <el-form-item label="公司名称" prop="company_id">
+            <el-form-item label="公司名称" prop="marketConfig.company_id">
               <el-select
                 v-model="siteForm.marketConfig.company_id"
                 placeholder="请选择公司名称"
@@ -48,25 +48,43 @@
                 <i v-else class="el-icon-plus avatar-uploader-icon"/>
               </el-upload>
             </el-form-item>
-            <el-form-item label="场地电话" prop="phone">
+            <el-form-item label="场地电话" prop="marketConfig.phone">
               <el-input
                 v-model="siteForm.marketConfig.phone"
                 placeholder="请输入场地电话"
                 class="item-input"
               />
             </el-form-item>
-            <el-form-item label="场地地址" prop="address">
+            <el-form-item label="场地地址" prop="marketConfig.address">
               <el-input
                 v-model="siteForm.marketConfig.address"
                 placeholder="请输入场地地址"
                 class="item-input"
               />
             </el-form-item>
-            <el-form-item label="场地详情" prop="description">
+            <el-form-item label="场地详情" prop="marketConfig.description">
               <el-input
                 type="textarea"
                 v-model="siteForm.marketConfig.description"
                 placeholder="请输入场地详情"
+                class="item-input"
+              />
+            </el-form-item>
+            <el-form-item label="核销员姓名" prop="customer.name">
+              <el-input v-model="siteForm.customer.name" placeholder="请输入核销员姓名" class="item-input"/>
+            </el-form-item>
+            <el-form-item label="核销员电话" prop="customer.phone">
+              <el-input
+                v-model="siteForm.customer.phone"
+                :maxlength="11"
+                placeholder="请输入核销员电话"
+                class="item-input"
+              />
+            </el-form-item>
+            <el-form-item label="密码" prop="customer.password">
+              <el-input
+                v-model="siteForm.customer.password"
+                placeholder="请输入密码"
                 class="item-input"
               />
             </el-form-item>
@@ -384,7 +402,6 @@ import {
   getContractReceiptList,
   getSearchCompanyList
 } from "service";
-const SERVER_URL = process.env.SERVER_URL;
 
 import {
   Form,
@@ -405,6 +422,7 @@ import {
   Upload
 } from "element-ui";
 
+const SERVER_URL = process.env.SERVER_URL;
 export default {
   components: {
     ElForm: Form,
@@ -584,13 +602,18 @@ export default {
           coupon_off: 100
         },
         marketConfig: {
-          bd_user_id: "",
+          bd_user_id: null,
           phone: "",
           address: "",
           description: "",
           company_id: null,
           contract_id: null,
           media_id: null
+        },
+        customer: {
+          name: "",
+          phone: "",
+          password: ""
         }
       },
       contractList: [],
@@ -599,6 +622,30 @@ export default {
       areaList: [],
       rules: {
         name: [{ required: true, message: "请输入名称", trigger: "submit" }],
+        "customer.password": [
+          {
+            validator: (rule, value, callback) => {
+              if (value && value.length < 8) {
+                callback("密码长度不能小于8位");
+              } else {
+                callback();
+              }
+            },
+            trigger: "submit"
+          }
+        ],
+        "customer.phone": [
+          {
+            validator: (rule, value, callback) => {
+              if (!/^1[3456789]\d{9}$/.test(value) && value) {
+                callback("手机格式不正确,请重新输入");
+              } else {
+                callback();
+              }
+            },
+            trigger: "submit"
+          }
+        ],
         "marketConfig.company_id": [
           { required: true, message: "请选择公司", trigger: "submit" }
         ],
@@ -847,7 +894,13 @@ export default {
             }
             this.siteForm.marketConfig.phone = res.marketConfig.phone;
             this.siteForm.marketConfig.address = res.marketConfig.address;
-            this.siteForm.marketConfig.description = res.marketConfig.description;
+            this.siteForm.marketConfig.description =
+              res.marketConfig.description;
+          }
+          if(res.customer){
+            this.siteForm.customer.phone = res.customer.phone
+            this.siteForm.customer.name = res.customer.name
+            this.siteForm.customer.password = res.customer.password
           }
           this.setting.loading = false;
         })

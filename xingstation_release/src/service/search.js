@@ -20,6 +20,8 @@ const FORMAT_API = '/api/attribute/query'
 const CONTRACT_RECEIPT_API = '/api/contract/query'
 const TEAM_PROJECT_API = '/api/team_projects/query'
 const BD_API = '/api/bd_users/query'
+const STORES_API = '/api/stores/query'
+const COMPANY_MARKET_API = '/api/company/markets/query'
 const HOST = process.env.SERVER_URL
 
 // 区域
@@ -308,6 +310,33 @@ const getSearchBDList = (context, params) => {
       })
   })
 }
+// 商户
+const getStoresList = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + STORES_API, { params: params })
+      .then(response => {
+        resolve(response.data.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+// 公司商户
+
+const getCompanyMarketList = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + COMPANY_MARKET_API, { params: params })
+      .then(response => {
+        resolve(response.data.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
 export {
   getSearchAeraList,
   getSearchMarketList,
@@ -330,5 +359,7 @@ export {
   getFormatsList,
   getContractReceiptList,
   getSearchCopyrightProject,
-  getSearchBDList
+  getSearchBDList,
+  getStoresList,
+  getCompanyMarketList
 }
