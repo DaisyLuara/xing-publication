@@ -31,7 +31,7 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="100"/>
+      <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="80"/>
       <el-table-column
         :show-overflow-tooltip="true"
         prop="scene_type"

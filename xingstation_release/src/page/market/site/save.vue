@@ -70,6 +70,24 @@
                 class="item-input"
               />
             </el-form-item>
+            <el-form-item label="核销员姓名" prop="customer.name">
+              <el-input v-model="siteForm.customer.name" placeholder="请输入核销员姓名" class="item-input"/>
+            </el-form-item>
+            <el-form-item label="核销员电话" prop="customer.phone">
+              <el-input
+                v-model="siteForm.customer.phone"
+                :maxlength="11"
+                placeholder="请输入核销员电话"
+                class="item-input"
+              />
+            </el-form-item>
+            <el-form-item label="密码" prop="customer.password">
+              <el-input
+                v-model="siteForm.customer.password"
+                placeholder="请输入密码"
+                class="item-input"
+              />
+            </el-form-item>
           </el-tab-pane>
           <el-tab-pane label="合约配置" name="second">
             <el-form-item label="场地类型" prop="contract.type">
@@ -591,6 +609,11 @@ export default {
           company_id: null,
           contract_id: null,
           media_id: null
+        },
+        customer: {
+          name: "",
+          phone: "",
+          password: ""
         }
       },
       contractList: [],
@@ -599,6 +622,30 @@ export default {
       areaList: [],
       rules: {
         name: [{ required: true, message: "请输入名称", trigger: "submit" }],
+        "customer.password": [
+          {
+            validator: (rule, value, callback) => {
+              if (value && value.length < 8) {
+                callback("密码长度不能小于8位");
+              } else {
+                callback();
+              }
+            },
+            trigger: "submit"
+          }
+        ],
+        "customer.phone": [
+          {
+            validator: (rule, value, callback) => {
+              if (!/^1[3456789]\d{9}$/.test(value) && value) {
+                callback("手机格式不正确,请重新输入");
+              } else {
+                callback();
+              }
+            },
+            trigger: "submit"
+          }
+        ],
         "marketConfig.company_id": [
           { required: true, message: "请选择公司", trigger: "submit" }
         ],
@@ -849,6 +896,11 @@ export default {
             this.siteForm.marketConfig.address = res.marketConfig.address;
             this.siteForm.marketConfig.description =
               res.marketConfig.description;
+          }
+          if(res.customer){
+            this.siteForm.customer.phone = res.customer.phone
+            this.siteForm.customer.name = res.customer.name
+            this.siteForm.customer.password = res.customer.password
           }
           this.setting.loading = false;
         })
