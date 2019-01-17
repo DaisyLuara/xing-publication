@@ -61,13 +61,15 @@ class StoreController extends Controller
         }
 
         if ($request->has('customer')) {
-            $store->writeOffCustomer()->create([
+            $customer = $store->writeOffCustomer()->create([
                 'name'     => $request->customer['name'],
                 'company_id' => $request->company_id,
                 'phone' => $request->customer['phone'],
                 'password' => bcrypt($request->customer['password']),
                 'position' => '商户核销人员',
             ]);
+
+            $store->update(['write_off_customer_id' => $customer->id]);
         }
 
         return $this->response->item($store, new StoreTransformer());

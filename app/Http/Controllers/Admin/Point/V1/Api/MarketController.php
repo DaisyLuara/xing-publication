@@ -86,13 +86,15 @@ class MarketController extends Controller
         }
 
         if ($request->has('customer')) {
-            $market->marketConfig->writeOffCustomer()->create([
-                'name'     => $request->customer['name'],
-                'company_id' => $request->marketConfig['company_id'],
-                'phone' => $request->customer['phone'],
-                'password' => bcrypt($request->customer['password']),
-                'position' => '场地核销人员',
+            $customer = $market->marketConfig->writeOffCustomer()->create([
+                            'name' => $request->customer['name'],
+                            'company_id' => $request->marketConfig['company_id'],
+                            'phone' => $request->customer['phone'],
+                            'password' => bcrypt($request->customer['password']),
+                            'position' => '场地核销人员',
             ]);
+
+            $market->marketConfig->update(['write_off_customer_id' => $customer->id]);
         }
 
         return $this->response->item($market, new MarketTransformer());
