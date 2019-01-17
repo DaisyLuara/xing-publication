@@ -144,7 +144,7 @@
                 placeholder="请选择核销场地"
                 filterable
                 clearable
-                :disabled="writeOffMarketShow"
+                
                 class="coupon-form-select"
               >
                 <el-option
@@ -381,7 +381,6 @@ export default {
     return {
       multipleNum: 0,
       writeOffSiteShow: false,
-      writeOffMarketShow: false,
       peopleReceiveShow: true,
       peopleDayShow: true,
       activeName: "first",
@@ -497,27 +496,25 @@ export default {
           trigger: "submit"
         };
         this.writeOffSidRules = null;
-        this.writeOffMarketShow = false;
+        this.writeOffSiteShow = false;
         this.multipleNum = 0;
       } else if (val === 2) {
-        this.couponForm.write_off_mid=null
-        this.writeOffMarketShow = true;
-        this.writeOffMidRules = null;
-        this.writeOffSidRules = {
+        this.writeOffSiteShow = true;
+        this.writeOffSidRules = null;
+        this.couponForm.write_off_sid = null
+        this.writeOffMidRules = {
           required: true,
-          message: "核销商户不能为空",
+          message: "核销场地不能为空",
           trigger: "submit"
         };
         this.multipleNum = 1;
       } else if (val === 3) {
-        this.couponForm.write_off_mid=null
-        this.writeOffMarketShow = true;
+        this.writeOffSiteShow = false;
         this.writeOffMidRules = null;
         this.writeOffSidRules = null;
         this.multipleNum = 0;
       } else {
-        this.couponForm.write_off_mid=null
-        this.writeOffMarketShow = true;
+        this.writeOffSiteShow = true;
         this.writeOffMidRules = null;
         this.writeOffSidRules = {
           required: true,
