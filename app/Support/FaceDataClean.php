@@ -1881,8 +1881,9 @@ function teamBonusClean()
                 ->join('team_projects as tp2', 'tp.copyright_project_id', '=', 'tp2.id')
                 ->join('team_project_members as tpm', 'tp2.id', '=', 'tpm.team_project_id')
                 ->join('team_bonuses as tb', 'tp.belong', '=', 'tb.belong')
+                ->leftjoin('contracts', 'contracts.id', '=', 'tp.contract_id')
                 ->whereRaw("date_format(tb.date,'%Y-%m-%d')='$date' 
-                and tp.contract_id is null
+                and IFNull(contracts.amount,0) <= 0
                 and tpm.type not in ('operation_quality','tester_quality')")
                 ->selectRaw("tpm.user_id,tp.id as team_project_id,tp.project_name as project_name,tp.belong as belong,
                 money * 0.2 as 'money',factor,rate,concat(tpm.type,'|copyright') as type");
@@ -1890,9 +1891,10 @@ function teamBonusClean()
             $data = DB::table('team_projects as tp')
                 ->join('team_project_members as tpm', 'tp.id', '=', 'tpm.team_project_id')
                 ->join('team_bonuses as tb', 'tp.belong', '=', 'tb.belong')
+                ->leftjoin('contracts', 'contracts.id', '=', 'tp.contract_id')
                 ->whereRaw("date_format(tb.date,'%Y-%m-%d')='$date'")
                 ->selectRaw("user_id,tp.id as team_project_id,tp.project_name as project_name,tp.belong as belong,
-                case  when tp.contract_id is null and tp.copyright_project_id > 0  then money * 0.8 else money end as 'money',
+                case  when IFNull(contracts.amount,0) <= 0 and tp.copyright_project_id > 0  then money * 0.8 else money end as 'money',
                 factor,rate,tpm.type as type")
                 ->unionAll($data_copyright)
                 ->get();

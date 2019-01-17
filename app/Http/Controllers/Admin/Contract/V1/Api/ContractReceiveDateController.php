@@ -24,8 +24,13 @@ class ContractReceiveDateController extends Controller
         $user = $this->user();
 
         $query = $contract->query();
-        if ($request->name) {
-            $query->where('name', $request->name);
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+        if ($request->has('company_name')) {
+            $query->whereHas('company', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->company_name . '%');
+            });
         }
         if ($request->has('contract_number')) {
             $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
@@ -41,7 +46,7 @@ class ContractReceiveDateController extends Controller
             });
         }
 
-        $contractReceiveDate = $query->paginate(10);
+        $contractReceiveDate = $query->where('status', 3)->paginate(10);
         return $this->response()->paginator($contractReceiveDate, new ContractTransformer());
     }
 }

@@ -1194,15 +1194,15 @@ export default {
           break;
         case "animatHidol":
           this.rate.animation_hidol = this.form.total;
-          this.performanceChange("animation_hidol", val, rate);
+          this.performanceChange("animation_hidol", sum);
           break;
         case "hidol":
           this.rate.hidol_patent = this.form.total;
-          this.performanceChange("hidol_patent", val, rate);
+          this.performanceChange("hidol_patent", sum);
           break;
         case "backend":
           this.rate.backend_docking = this.form.total;
-          this.performanceChange("backend_docking", val, rate);
+          this.performanceChange("backend_docking", sum);
           break;
       }
       this.disabledChange = true;

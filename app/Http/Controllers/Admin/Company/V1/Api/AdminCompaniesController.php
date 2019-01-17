@@ -22,18 +22,23 @@ class AdminCompaniesController extends Controller
             $query->where('name', 'like', '%' . $request->name . '%');
         }
 
+        //角色为管理员，法务，法务主管时，查看所有公司数据
         if ($currentUser->isAdmin() || $currentUser->hasRole('legal-affairs') || $currentUser->hasRole('legal-affairs-manager')) {
             $companies = $query->orderByDesc('id')->paginate(10);
-        } else {
-            $companies = $query->whereHas('user', function ($q) use ($currentUser) {
-                if ($currentUser->hasRole('user')) {
-                    $q->where('id', $currentUser->id);
-                } else {
-                    $q->where('parent_id', $currentUser->id);
-                }
-            })->orderByDesc('id')->paginate(10);
+            return $this->response->paginator($companies, new CompanyTransformer());
+
         }
 
+        //角色为主管时，查看下属及自己
+        if ($currentUser->parent_id == $currentUser->id) {
+            $companies = $query->whereHas('user', function ($q) use ($currentUser) {
+                $q->where('parent_id', $currentUser->id);
+            })->orderByDesc('id')->paginate(10);
+            return $this->response->paginator($companies, new CompanyTransformer());
+        }
+
+        //查看自己数据
+        $companies = $query->where('user_id', $currentUser->id)->orderByDesc('id')->paginate(10);
         return $this->response->paginator($companies, new CompanyTransformer());
     }
 
@@ -44,7 +49,7 @@ class AdminCompaniesController extends Controller
         return $this->response->item($company, new CompanyTransformer());
     }
 
-    public function store(CompanyRequest $request, Company $company)
+    public function store(CompanyRequest $request, Company $company, Customer $customer)
     {
         $companyData = [
             'name' => $request->name,
@@ -56,19 +61,22 @@ class AdminCompaniesController extends Controller
         ];
         $company->fill(array_merge($companyData, ['user_id' => $this->user()->id]));
         $company->save();
+        activity('company')->on($company)->withProperties($request->all())->log('新增公司信息');
 
-        $customerData = [
-            'name' => $request->customer_name,
-            'position' => $request->position,
-            'phone' => $request->phone,
-            'telephone' => $request->telephone,
-            'password' => bcrypt($request->password),
-            'company_id' => $company->id,
-        ];
-        /** @var  $customer \App\Models\Customer */
-        $customer = Customer::create($customerData);
-        $role = Role::findById($request->role_id, 'shop');
-        $customer->assignRole($role);
+        if ($request->category == 0) {
+            $customerData = [
+                'name' => $request->customer_name,
+                'position' => $request->position,
+                'phone' => $request->phone,
+                'telephone' => $request->telephone,
+                'password' => bcrypt($request->password),
+                'company_id' => $company->id,
+            ];
+            Customer::create($customerData);
+            $role = Role::findById($request->role_id, 'shop');
+            $customer->assignRole($role);
+        }
+        activity('customer')->on($customer)->withProperties($companyData)->log('新增公司联系人');
 
         return $this->response->item($company, new CompanyTransformer())
             ->setStatusCode(201);
@@ -77,9 +85,10 @@ class AdminCompaniesController extends Controller
 
     public function update(CompanyRequest $request, Company $company)
     {
-        $this->authorize('update', $company);
+//        $this->authorize('update', $company);
 
         $company->update($request->all());
+        activity('company')->on($company)->withProperties($request->all())->log('修改公司信息');
         return $this->response->item($company, new CompanyTransformer());
     }
 }

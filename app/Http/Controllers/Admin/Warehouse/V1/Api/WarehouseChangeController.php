@@ -19,13 +19,13 @@ class WarehouseChangeController extends Controller
         return $this->response()->item($warehousechange, new WarehouseChangeTransformer());
     }
 
-    //调拨记录列表
+    //调拨记录列表,传参为product_id
     public function list(Request $request, WarehouseChange $warehousechange)
     {
         $query = $warehousechange->query();
         //根据sku查询
-        if ($request->sku) {
-            $query->where('sku', $request->sku);
+        if ($request->id) {
+            $query->where('product_id', $request->id);
         }
 
         //根据调出库位查询
@@ -54,16 +54,19 @@ class WarehouseChangeController extends Controller
                 //记录库存明细,商场库存增加(默认location_id=2)
                 unset($item['out_location_name']);
                 unset($item['attribute']);
-                $warehousechange->create(array_merge($item, ['in_location' => 2]));
-                //判断之后直接入库
-                LocationProduct::updateOrCreate(['location_id' => $item['out_location'], 'product_sku' => $item['sku']]);
-                LocationProduct::updateOrCreate(['location_id' => 2, 'product_sku' => $item['sku']]);
-                //出库库位，减少库存
-                LocationProduct::query()->where([['location_id', '=', $item['out_location']], ['product_sku', '=', $item['sku']]])->decrement('stock', $item['num']);
+                unset($item['product_sku']);
+                //检查记录
+                $this->checkRecord(2, $item['out_location'], $item['product_id']);
+                //出库
+                if ($item['out_location'] == 1) {
+                    $this->supplierLocationStock($item['product_id'],$item['num']);
+                } else {
+                    $this->checkoutLocationStock($item['out_location'], $item['product_id'], $item['num']);
+                }
                 //硬件出厂，入场库位默认为商场，
-                LocationProduct::query()->where([['location_id', '=', 2], ['product_sku', '=', $item['sku']]])->increment('stock', $item['num']);
+                $this->inLocation(2, $item['product_id'], $item['num']);
+                $warehousechange->create(array_merge($item, ['in_location' => 2]));
             }
-
             //合同状态改为已出厂
             Contract::find($contract_id)->update(['product_status' => 2]);
             //记录出厂详情
@@ -77,17 +80,59 @@ class WarehouseChangeController extends Controller
     //新增调拨记录
     public function create(Request $request, WarehouseChange $warehousechange)
     {
+
+        //$request->num 调整数量;$request->in_location 调入库位，增加;$request->out_location 调出库位，减少
+
+        $inLocation = $request->has('in_location') ? $request->get('in_location') : '';
+        $outLocation = $request->has('out_location') ? $request->get('out_location') : '';
+        $productId = $request->has('product_id') ? $request->get('product_id') : '';
+        $num = $request->has('num') ? $request->get('num') : '';
+
+        //检查记录
+        $this->checkRecord($inLocation, $outLocation, $productId);
+        //出库
+        if ($outLocation == 1) {
+            $this->supplierLocationStock($productId, $num);
+        } else {
+            $this->checkoutLocationStock($outLocation, $productId, $num);
+        }
+        //入库
+        $this->inLocation($inLocation, $productId, $num);
         //记录库存变化
         $warehousechange->fill($request->all())->saveOrFail();
-        //$request->num 调整数量;$request->in_location 调入库位，增加;$request->out_location 调出库位，减少
-        //判断之后直接入库
-        LocationProduct::firstOrCreate(['location_id' => $request->out_location], ['product_sku' => $request->sku]);
-        LocationProduct::firstOrCreate(['location_id' => $request->in_location], ['product_sku' => $request->sku]);
-        //对某件商品的调出库位，减少库存量，并记录
-        LocationProduct::query()->where([['location_id', '=', $request->out_location], ['product_sku', '=', $request->sku]])->decrement('stock', $request->num);
-        //对某件商品的调入库位，增加库存量，并记录
-        LocationProduct::query()->where([['location_id', '=', $request->in_location], ['product_sku', '=', $request->sku]])->increment('stock', $request->num);
-
         return $this->response->item($warehousechange, new WarehouseChangeTransformer());
+    }
+
+    //出库，库存不足报500
+    private function checkoutLocationStock($outLocation, $productId, $num)
+    {
+        $LocationProductModel = LocationProduct::query()->where('location_id', $outLocation)
+            ->where('product_id', $productId)
+            ->where('stock', '>=', $num)->first();
+        abort_if((!$LocationProductModel), 500, '出库库位库存不足');
+        $LocationProductModel->decrement('stock', $num);
+    }
+
+    //出库库位为供应商,locationId为1
+    private function supplierLocationStock($productId, $num)
+    {
+        LocationProduct::query()->where('location_id', 1)
+            ->where('product_id', $productId)
+            ->decrement('stock', $num);
+    }
+
+    //入库
+    private function inLocation($inLocation, $productId, $num)
+    {
+        LocationProduct::query()->where('location_id', $inLocation)
+            ->where('product_id', $productId)
+            ->increment('stock', $num);
+    }
+
+    //判断是否存在初始记录，不存在则初始化库存
+    private function checkRecord($inLocation, $outLocation, $productId)
+    {
+        LocationProduct::updateOrCreate(['location_id' => $inLocation, 'product_id' => $productId]);
+        LocationProduct::updateOrCreate(['location_id' => $outLocation, 'product_id' => $productId]);
     }
 }

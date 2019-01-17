@@ -13,8 +13,8 @@ $api->version('v1', [
             //公司管理
             $api->get('companies', 'AdminCompaniesController@index');
             $api->get('companies/{company}', 'AdminCompaniesController@show');
-            $api->post('companies', ['middleware' => ['role:user|bd-manager|legal-affairs|legal-affairs-manager'], 'uses' => 'AdminCompaniesController@store']);
-            $api->patch('companies/{company}', ['middleware' => ['role:user|bd-manager|legal-affairs|legal-affairs-manager'], 'uses' => 'AdminCompaniesController@update']);
+            $api->post('companies', ['middleware' => ['permission:company'], 'uses' => 'AdminCompaniesController@store']);
+            $api->patch('companies/{company}', ['middleware' => ['permission:company'], 'uses' => 'AdminCompaniesController@update']);
 
             //公司客户管理
             $api->get('companies/{company}/customers', 'AdminCustomersController@index');
