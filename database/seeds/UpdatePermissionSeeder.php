@@ -159,7 +159,7 @@ class UpdatePermissionSeeder extends Seeder
         $invoice = Permission::findByName('invoice');
         $invoiceSecondData = [
             ['name' => 'invoice.list', 'display_name' => '开票管理'],
-            ['name' => 'invoice.company', 'display_name' => '开票公司'],
+            ['name' => 'invoice.invoiceCompany', 'display_name' => '开票公司'],
             ['name' => 'invoice.history', 'display_name' => '我已审批'],
             ['name' => 'invoice.receipt', 'display_name' => '收款管理']
         ];
