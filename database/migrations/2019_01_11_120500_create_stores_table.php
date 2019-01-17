@@ -17,11 +17,12 @@ class CreateStoresTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('company_id');
             $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
-            $table->enum('type', [1, 2])->default(1)->comment('1:自营, 2:连锁');
+            $table->enum('type', [1, 2])->default(1)->comment('商户类型-1:自营, 2:连锁');
             $table->unsignedInteger('marketid')->nullable()->comment('场地ID');
             $table->unsignedInteger('areaid')->comment('区域ID');
             $table->unsignedInteger('user_id')->nullable()->comment('所属BD');
             $table->unsignedInteger('contract_id')->nullable()->comment('合同ID');
+            $table->unsignedInteger('write_off_customer_id')->nullable()->comment('商场核销人ID');
             $table->string('name')->comment('门店名称');
             $table->unsignedInteger('media_id')->nullable()->comment('门店logo图片ID');
             $table->string('phone')->nullable()->comment('门店电话');

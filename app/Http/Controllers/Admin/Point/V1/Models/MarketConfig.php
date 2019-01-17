@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Point\V1\Models;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
+use App\Models\Customer;
 use App\Models\Model;
 use App\Models\User;
 
@@ -12,7 +13,7 @@ class MarketConfig extends Model
 {
     protected $table = 'market_config';
 
-    protected $fillable = ['company_id', 'type', 'bd_user_id', 'marketid', 'areaid', 'user_id', 'contract_id', 'name', 'media_id', 'phone', 'address','description'];
+    protected $fillable = ['company_id', 'type', 'bd_user_id', 'marketid', 'areaid', 'user_id', 'contract_id', 'write_off_customer_id', 'name', 'media_id', 'phone', 'address','description'];
 
     public function company()
     {
@@ -37,6 +38,11 @@ class MarketConfig extends Model
     public function bdUser()
     {
         return $this->belongsTo(User::class, 'bd_user_id', 'id');
+    }
+
+    public function writeOffCustomer()
+    {
+        return $this->belongsTo(Customer::class, 'write_off_customer_id', 'id');
     }
 
 

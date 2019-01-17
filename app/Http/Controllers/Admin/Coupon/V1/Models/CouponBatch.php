@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\Activity\V1\Models\Activity;
 use App\Http\Controllers\Admin\Activity\V1\Models\ActivityCouponBatch;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Point\V1\Models\Market;
+use App\Http\Controllers\Admin\Point\V1\Models\MarketConfig;
 use App\Http\Controllers\Admin\Point\V1\Models\Point;
 use App\Models\Model;
 use App\Models\User;

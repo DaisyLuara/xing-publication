@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Point\V1\Transformer;
 
+use App\Http\Controllers\Admin\Company\V1\Transformer\CustomerTransformer;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
 use App\Http\Controllers\Admin\Media\V1\Transformer\MediaTransformer;
@@ -12,7 +13,7 @@ use League\Fractal\TransformerAbstract;
 class StoreTransformer extends TransformerAbstract
 {
 
-    protected $availableIncludes = ['company', 'market', 'area', 'contract', 'media', 'user'];
+    protected $availableIncludes = ['company', 'market', 'area', 'contract', 'media', 'user', 'writeOffCustomer'];
 
     public function transform(Store $store)
     {
@@ -72,6 +73,14 @@ class StoreTransformer extends TransformerAbstract
         $user = $store->user;
         if ($user) {
             return $this->item($store->user, new UserTransformer());
+        }
+    }
+
+    public function includeWriteOffCustomer(Store $store)
+    {
+        $customer = $store->writeOffCustomer;
+        if ($customer) {
+            return $this->item($customer, new CustomerTransformer());
         }
     }
 

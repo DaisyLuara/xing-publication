@@ -18,6 +18,7 @@ class CreateMarketConfigTable extends Migration
             $table->unsignedInteger('company_id')->nullable()->comment('商场所属公司id');
             $table->unsignedInteger('bd_user_id')->nullable()->comment('所属BD');
             $table->unsignedInteger('contract_id')->nullable()->comment('合同ID');
+            $table->unsignedInteger('write_off_customer_id')->nullable()->comment('商户核销人ID');
             $table->unsignedInteger('media_id')->nullable()->comment('商场logo图片ID');
             $table->string('phone')->nullable()->comment('商场电话');
             $table->string('address')->nullable()->comment('商场地址');
