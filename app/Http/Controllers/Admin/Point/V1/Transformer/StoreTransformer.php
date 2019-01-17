@@ -13,7 +13,7 @@ use League\Fractal\TransformerAbstract;
 class StoreTransformer extends TransformerAbstract
 {
 
-    protected $availableIncludes = ['company', 'market', 'area', 'contract', 'media', 'user', 'writeOffCustomer'];
+    protected $availableIncludes = ['company', 'market', 'area', 'contract', 'media', 'user', 'customer'];
 
     public function transform(Store $store)
     {
@@ -76,7 +76,7 @@ class StoreTransformer extends TransformerAbstract
         }
     }
 
-    public function includeWriteOffCustomer(Store $store)
+    public function includeCustomer(Store $store)
     {
         $customer = $store->writeOffCustomer;
         if ($customer) {

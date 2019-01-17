@@ -13,7 +13,7 @@ use League\Fractal\TransformerAbstract;
 class MarketConfigTransformer extends TransformerAbstract
 {
 
-    protected $availableIncludes = ['company', 'media', 'bdUser', 'adContract', 'writeOffCustomer'];
+    protected $availableIncludes = ['company', 'media', 'bdUser', 'adContract', 'customer'];
 
     public function transform(MarketConfig $marketConfig)
     {
@@ -57,7 +57,7 @@ class MarketConfigTransformer extends TransformerAbstract
         }
     }
 
-    public function includeWriteOffCustomer(MarketConfig $marketConfig)
+    public function includeCustomer(MarketConfig $marketConfig)
     {
         $customer = $marketConfig->writeOffCustomer;
         if ($customer) {

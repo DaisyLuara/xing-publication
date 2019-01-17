@@ -16,6 +16,7 @@ class CompanyRequest extends Request
                     'address' => 'required|string',
                     'phone' => 'required|regex:/^1[3456789]\d{9}$/|unique:customers',
                     "bd_user_id" => "required|exists:users,id",
+                    "internal_name" => "required|string"
                 ];
                 break;
             case 'PATCH':
@@ -32,6 +33,7 @@ class CompanyRequest extends Request
         return [
             'name' => '公司全称',
             'address' => '公司地址',
+            "internal_name" => '公司简称',
         ];
     }
 }
