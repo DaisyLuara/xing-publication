@@ -83,6 +83,15 @@ class StoreController extends Controller
             $store->contract()->update($request->only(['start_date', 'end_date']));
         }
 
+        if ($request->has('customer')) {
+            $store->writeOffCustomer()->update([
+                'name'     => $request->customer['name'],
+                'phone' => $request->customer['phone'],
+                'password' => bcrypt($request->customer['password']),
+            ]);
+
+        }
+
         return $this->response->item($store, new StoreTransformer());
     }
 }
