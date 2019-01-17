@@ -19,7 +19,7 @@ class UpdatePermissionForShopSeeder extends Seeder
 
         $roles = ['market_owner', 'activity_vip', 'ad_owner'];
         foreach ($roles as $item) {
-            Role::findByName($item)->update(['guard_name' => 'shop']);
+            Role::findByName($item, 'shop')->update(['guard_name' => 'shop']);
         }
 
         $permsData = [
@@ -28,7 +28,7 @@ class UpdatePermissionForShopSeeder extends Seeder
             ['name' => 'shop_resource', 'display_name' => '资源'],
             ['name' => 'shop_point', 'display_name' => '点位'],
             ['name' => 'shop_report', 'display_name' => '数据'],
-            ['name' => 'shop_verify', 'display_name' => '核销'],
+            ['name' => 'shop_coupon', 'display_name' => '核销'],
         ];
         foreach ($permsData as $item) {
             Permission::create(['name' => $item['name'], 'display_name' => $item['display_name'], 'guard_name' => 'shop']);
