@@ -10,13 +10,13 @@ $api->version('v1', [
     ], function ($api) {
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
             //产品列表
-            $api->get('product/list', 'ProductController@index');
+            $api->get('product/list', ['middleware' => ['permission::storage.product.read'], 'uses' => 'ProductController@index']);
             //产品详情
             $api->get('product/{product}', 'ProductController@show');
             //新增产品
-            $api->post('product/create', ['middleware' => ['role:purchasing'], 'uses' => 'ProductController@store']);
+            $api->post('product/create', ['middleware' => ['permission::storage.product.create'], 'uses' => 'ProductController@store']);
             //编辑产品
-            $api->patch('product/{product}', ['middleware' => ['role:purchasing'], 'uses' => 'ProductController@update']);
+            $api->patch('product/{product}', ['middleware' => ['permission::storage.product.update'], 'uses' => 'ProductController@update']);
 
             //产品属性列表
             $api->get('attribute/list', 'AttributeController@list');
@@ -24,35 +24,35 @@ $api->version('v1', [
             $api->get('product_attribute', 'ProductAttributeController@list');
 
             //仓库列表
-            $api->get('warehouse/list', 'WarehouseController@index');
+            $api->get('warehouse/list', ['middleware' => ['permission::storage.store.read'], 'uses' => 'WarehouseController@index']);
             //仓库详情
             $api->get('warehouse/{warehouse}', 'WarehouseController@show');
             //新增仓库
-            $api->post('warehouse/create', ['middleware' => ['role:purchasing'], 'uses' => 'WarehouseController@store']);
+            $api->post('warehouse/create', ['middleware' => ['permission::storage.store.create'], 'uses' => 'WarehouseController@store']);
             //编辑仓库
-            $api->patch('warehouse/{warehouse}', ['middleware' => ['role:purchasing'], 'uses' => 'WarehouseController@update']);
+            $api->patch('warehouse/{warehouse}', ['middleware' => ['permission::storage.store.update'], 'uses' => 'WarehouseController@update']);
 
             //库位列表
-            $api->get('location/list', 'LocationController@index');
+            $api->get('location/list', ['middleware' => ['permission::storage.location.read'], 'uses' => 'LocationController@index']);
             //库位详情
             $api->get('location/{location}', 'LocationController@show');
             //新增库位
-            $api->post('location/create', ['middleware' => ['role:purchasing'], 'uses' => 'LocationController@store']);
+            $api->post('location/create', ['middleware' => ['permission::storage.location.create'], 'uses' => 'LocationController@store']);
             //编辑库位
-            $api->patch('location/{location}', ['middleware' => ['role:purchasing'], 'uses' => 'LocationController@update']);
+            $api->patch('location/{location}', ['middleware' => ['permission::storage.location.update'], 'uses' => 'LocationController@update']);
 
-            //硬件出厂,批量增加调拨记录
-            $api->post('warehousechange/chuchang', ['middleware' => ['role:purchasing'], 'uses' => 'WarehouseChangeController@chuchang']);
             //新增调拨记录
-            $api->post('warehousechange/create', ['middleware' => ['role:purchasing'], 'uses' => 'WarehouseChangeController@create']);
+            $api->post('warehousechange/create', ['middleware' => ['permission::storage.records.create'], 'uses' => 'WarehouseChangeController@create']);
             //调拨记录列表
-            $api->get('warehousechange/list', 'WarehouseChangeController@list');
+            $api->get('warehousechange/list', ['middlerware' => ['permission::storage.records.read'], 'uses' => 'WarehouseChangeController@list']);
             //单个调拨记录详情
             $api->get('warehousechange/{warehousechange}', 'WarehouseChangeController@show');
 
             //产品库存明细，列出产品名称、产品颜色、仓库、库位、库存数量
-            $api->get('location_product', 'LocationProductController@list');
+            $api->get('location_product', ['middleware' => ['permission::storage.list.read'], 'uses' => 'LocationProductController@list']);
 
+            //硬件出厂,批量增加调拨记录
+            $api->post('warehousechange/chuchang', ['middleware' => ['permission::contract.list.leaveFactory_create'], 'uses' => 'WarehouseChangeController@chuchang']);
             //合同页面出厂详情
             $api->get('contract_product', 'ProductChuchangController@index');
         });
