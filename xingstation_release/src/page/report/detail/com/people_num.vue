@@ -669,8 +669,12 @@ export default {
           label: '节目数据'
         },
         {
+          value: 'program_num',
+          label: '智造团队节目数'
+        },
+        {
           value: 'person_reward',
-          label: '团队奖励'
+          label: '个人绩效'
         }
       ],
       shouldDialogShow: false,
@@ -1457,7 +1461,7 @@ export default {
     },
     changeReportType() {
       if (this.reportValue === 'point') {
-        if (!this.point_id) {
+        if (!this.searchForm.point_id) {
           this.$message({
             message: '点位数据下载，请选择点位',
             type: 'warning'
