@@ -8,12 +8,17 @@ class StoreRequest extends Request
 {
     public function rules()
     {
-        return [
-            'type' => 'required',
-            'company_id' => 'required',
-            'areaid' => 'required',
-            'name' => 'required|string',
-        ];
+        switch ($this->method()) {
+            case 'POST':
+                return [
+                    'type' => 'required',
+                    'company_id' => 'required',
+                    'areaid' => 'required',
+                    'name' => 'required|string',
+                ];
+            default:
+                return [];
+        }
     }
 
 }
