@@ -23,7 +23,7 @@ class AdminCompaniesController extends Controller
         }
 
         //角色为管理员，法务，法务主管时，查看所有公司数据
-        if ($currentUser->isAdmin() || $currentUser->hasRole('legal-affairs') || $currentUser->hasRole('legal-affairs-manager')) {
+        if ($currentUser->isAdmin() || $currentUser->hasRole('legal-affairs|legal-affairs-manager|operation')) {
             $companies = $query->orderByDesc('id')->paginate(10);
             return $this->response->paginator($companies, new CompanyTransformer());
 
