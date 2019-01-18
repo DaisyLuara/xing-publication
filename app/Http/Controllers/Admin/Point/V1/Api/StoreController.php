@@ -63,15 +63,26 @@ class StoreController extends Controller
 
         //商户核销人员配置
         if ($request->has('customer')) {
-            $customer = $store->writeOffCustomer()->create([
-                'name'     => $request->customer['name'],
-                'company_id' => $request->company_id,
-                'phone' => $request->customer['phone'],
-                'password' => bcrypt($request->customer['password']),
-                'position' => '商户核销人员',
-            ]);
+            if (count(array_filter($request->customer)))
+            {
+                abort_if(count(array_filter($request->customer)) < 3, 500, '核销人员信息不完整');
 
-            $store->update(['write_off_customer_id' => $customer->id]);
+                $customer = $store->writeOffCustomer()->create([
+                    'name'     => $request->customer['name'],
+                    'company_id' => $request->company_id,
+                    'phone' => $request->customer['phone'],
+                    'password' => bcrypt($request->customer['password']),
+                    'position' => '商户核销人员',
+                ]);
+
+                if (!$customer->hasRole('ad_owner')) {
+                    $customer->assignRole('ad_owner');
+                }
+
+                $store->update(['write_off_customer_id' => $customer->id]);
+            }
+
+
         }
 
         return $this->response->item($store, new StoreTransformer());

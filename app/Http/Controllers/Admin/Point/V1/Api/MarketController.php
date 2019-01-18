@@ -86,15 +86,24 @@ class MarketController extends Controller
         }
 
         if ($request->has('customer')) {
-            $customer = $market->marketConfig->writeOffCustomer()->create([
-                            'name' => $request->customer['name'],
-                            'company_id' => $request->marketConfig['company_id'],
-                            'phone' => $request->customer['phone'],
-                            'password' => bcrypt($request->customer['password']),
-                            'position' => '场地核销人员',
-            ]);
+            if (count(array_filter($request->customer))) {
+                abort_if(count(array_filter($request->customer)) < 3, 500, '核销人员信息不完整');
 
-            $market->marketConfig->update(['write_off_customer_id' => $customer->id]);
+                $customer = $market->marketConfig->writeOffCustomer()->create([
+                    'name' => $request->customer['name'],
+                    'company_id' => $request->marketConfig['company_id'],
+                    'phone' => $request->customer['phone'],
+                    'password' => bcrypt($request->customer['password']),
+                    'position' => '场地核销人员',
+                ]);
+
+                if (!$customer->hasRole('ad_owner')) {
+                    $customer->assignRole('ad_owner');
+                }
+
+                $market->marketConfig->update(['write_off_customer_id' => $customer->id]);
+            }
+
         }
 
         return $this->response->item($market, new MarketTransformer());
