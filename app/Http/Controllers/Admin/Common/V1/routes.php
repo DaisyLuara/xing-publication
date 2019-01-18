@@ -29,10 +29,12 @@ $api->version('v1', [
             $api->get('user/coupons/{code}', 'MiniCouponController@couponShow');//优惠券详情
 
             $api->post('user/coupon_batch/{couponBatch}', 'MiniCouponController@store');//发送优惠券
+            $api->post('user/random/coupon_batch', 'MiniCouponController@randomSending');//随机发送优惠券
             $api->any('coupon/batches', 'MiniCouponController@couponBatchesIndex');//优惠券规则列表
             $api->get('coupon/batches/{couponBatch}', 'MiniCouponController@couponBatchShow');//优惠券规则详情
 
             $api->get('activities', 'ActivitiesController@index');//活动列表
+            $api->post('activity_records', 'MiniCouponController@record'); //小程序操作记录
         });
 
         //淘宝接口
