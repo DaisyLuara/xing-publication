@@ -91,7 +91,7 @@ let router = {
       path: 'business',
       meta: {
         title: '商户管理',
-        permission: 'market.business'
+        permission: ''
       },
       component: () =>
         import(/* webpackChunkName: "page/market/business/routerView" */ 'page/market/business/routerView'),
@@ -100,7 +100,7 @@ let router = {
           path: '/',
           meta: {
             title: '商户管理列表',
-            permission: 'market.business.read'
+            permission: ''
           },
           component: () =>
             import(/* webpackChunkName: "page/market/business/index" */ 'page/market/business/index')
@@ -111,7 +111,7 @@ let router = {
             import(/* webpackChunkName: "page/market/business/save" */ 'page/market/business/save'),
           meta: {
             title: '新增商户',
-            permission: 'market.business.create'
+            permission: ''
           }
         },
         {
@@ -120,7 +120,7 @@ let router = {
             import(/* webpackChunkName: "page/market/business/save" */ 'page/market/business/save'),
           meta: {
             title: '商户修改',
-            permission: 'market.business.update'
+            permission: ''
           }
         }
       ]
