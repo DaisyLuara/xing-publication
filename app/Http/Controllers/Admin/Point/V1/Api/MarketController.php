@@ -139,11 +139,17 @@ class MarketController extends Controller
         }
 
         if ($request->has('customer')) {
-            $market->marketConfig->writeOffCustomer()->update([
-                'name'     => $request->customer['name'],
-                'phone' => $request->customer['phone'],
-                'password' => bcrypt($request->customer['password']),
-            ]);
+
+            if (count(array_filter($request->customer))) {
+                abort_if(count(array_filter($request->customer)) < 3, 500, '核销人员信息不完整');
+
+                $market->marketConfig->writeOffCustomer()->update([
+                    'name'     => $request->customer['name'],
+                    'phone' => $request->customer['phone'],
+                    'password' => bcrypt($request->customer['password']),
+                ]);
+            }
+
         }
 
         return $this->response->item($market, new MarketTransformer());
