@@ -34,7 +34,6 @@ $api->version('v1', [
             $api->get('coupon/batches/{couponBatch}', 'MiniCouponController@couponBatchShow');//优惠券规则详情
 
             $api->get('activities', 'ActivitiesController@index');//活动列表
-            $api->post('activity_records', 'MiniCouponController@record'); //小程序操作记录
         });
 
         //淘宝接口

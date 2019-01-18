@@ -10,7 +10,6 @@ namespace App\Http\Controllers\Admin\Common\V1\Api;
 
 use App\Http\Controllers\Admin\Activity\V1\Models\ActivityCouponBatch;
 use App\Http\Controllers\Admin\Common\V1\Models\FileUpload;
-use App\Http\Controllers\Admin\Common\V1\Models\MiniActivityRecord;
 use App\Http\Controllers\Admin\Common\V1\Models\XsCreditRecord;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
@@ -335,13 +334,5 @@ class MiniCouponController extends Controller
         return $this->response->item($coupon, new CouponTransformer());
     }
 
-    public function record(MiniActivityRecord $miniActivityRecord, Request $request)
-    {
-        $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
-        $miniActivityRecord->fill(array_merge(['member_uid' => $member->uid], $request->all()));
-        $miniActivityRecord->save();
-
-        return $this->response()->noContent()->setStatusCode(201);
-    }
 
 }
