@@ -289,7 +289,50 @@ class MiniCouponController extends Controller
         }
 
         return $this->response->item($coupon, new CouponTransformer());
-
     }
+
+    /**
+     * 小程序随机发放优惠券
+     * @param CouponBatch $couponBatch
+     * @param MiniCouponRequest $request
+     * @param Client $client
+     * @return \Dingo\Api\Http\Response
+     */
+    public function randomSending(CouponBatch $couponBatch, MiniCouponRequest $request, Client $client)
+    {
+        $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
+        $query = $couponBatch->query();
+
+        //优惠券对应商场
+        $query->whereHas('marketPointCouponBatches', function ($q) use($request, $member) {
+            $marketId = $request->marketid ?: $member->marketid;
+            $q->where('marketid', $marketId);
+        });
+
+        $couponBatches = $query->orderByDesc('sort_order')->get();
+
+        abort_if($couponBatches->isEmpty(), 500, '无可用优惠券');
+
+        //业务参数过滤
+        foreach ($couponBatches as $key => $couponBatch) {
+
+            if (!$couponBatch->pmg_status && !$couponBatch->dmg_status && $couponBatch->stock <= 0) {
+
+                $couponBatches->forget($key);
+            }
+        }
+
+        abort_if($couponBatches->isEmpty(), 500, '无可用优惠券');
+
+        $couponBatch = $couponBatches->random();
+        $this->store($couponBatch, $request, $client);
+
+        $coupon = Coupon::query()->whereHas('couponBatch',function ($q) use($couponBatch){
+            $q->where('coupon_batch_id', $couponBatch->id);
+        })->orderByDesc('id')->first();
+
+        return $this->response->item($coupon, new CouponTransformer());
+    }
+
 
 }
