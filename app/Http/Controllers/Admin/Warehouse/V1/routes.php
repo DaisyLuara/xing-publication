@@ -54,7 +54,7 @@ $api->version('v1', [
             //硬件出厂,批量增加调拨记录
             $api->post('warehousechange/chuchang', ['middleware' => ['permission::contract.list.leaveFactory_create'], 'uses' => 'WarehouseChangeController@chuchang']);
             //合同页面出厂详情
-            $api->get('contract_product', 'ProductChuchangController@index']);
+            $api->get('contract_product', 'ProductChuchangController@index');
         });
     });
 
