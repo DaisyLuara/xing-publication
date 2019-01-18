@@ -210,7 +210,6 @@ import {
   Button,
   Input,
   DatePicker,
-  MessageBox,
   Tabs,
   TabPane,
   RadioGroup,
@@ -218,7 +217,8 @@ import {
   Tooltip,
   Checkbox,
   CheckboxGroup,
-  Upload
+  Upload,
+  MessageBox
 } from "element-ui";
 const SERVER_URL = process.env.SERVER_URL;
 
@@ -460,13 +460,16 @@ export default {
           if (res.customer) {
             this.businessForm.customer.phone = res.customer.phone;
             this.businessForm.customer.name = res.customer.name;
-            this.businessForm.customer.password = res.customer.password;
+            this.businessForm.customer.password = null;
           }
           this.companyHandle(this.businessForm.company_id);
           this.setting.loading = false;
         })
         .catch(err => {
-          console.log(err);
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
           this.setting.loading = false;
         });
     },
@@ -477,7 +480,10 @@ export default {
           this.setting.loading = false;
         })
         .catch(error => {
-          console.log(error);
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
         });
     },
     areaHandle() {
@@ -502,7 +508,10 @@ export default {
           this.searchLoading = false;
         })
         .catch(err => {
-          console.log(err);
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
           this.setting.loading = false;
           this.searchLoading = false;
         });
@@ -549,7 +558,10 @@ export default {
                 });
               })
               .catch(err => {
-                console.log(err);
+                this.$message({
+                  message: err.response.data.message,
+                  type: "warning"
+                });
               });
           } else {
             saveBusiness(this, args)
@@ -563,7 +575,10 @@ export default {
                 });
               })
               .catch(err => {
-                console.log(err);
+                this.$message({
+                  message: err.response.data.message,
+                  type: "warning"
+                });
               });
           }
         } else {

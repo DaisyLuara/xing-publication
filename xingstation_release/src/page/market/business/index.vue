@@ -107,7 +107,11 @@
                   <span>{{ scope.row.user ? scope.row.user.name : '无' }}</span>
                 </el-form-item>
                 <el-form-item label="商户LOGO:">
-                  <img :src="scope.row.media.url" v-if="scope.row.media" style="width:180px;height:180px;">
+                  <img
+                    :src="scope.row.media.url"
+                    v-if="scope.row.media"
+                    style="width:180px;height:180px;"
+                  >
                   <!-- <span>{{ scope.row.media ? scope.row.media.url : ''}}</span> -->
                 </el-form-item>
                 <el-form-item label="修改时间:">
@@ -282,7 +286,10 @@ export default {
           this.searchLoading = false;
         })
         .catch(err => {
-          console.log(err);
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
           this.searchLoading = false;
         });
     },
@@ -319,6 +326,10 @@ export default {
           this.setting.loading = false;
         })
         .catch(err => {
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
           this.setting.loading = false;
         });
     },
@@ -328,7 +339,10 @@ export default {
           this.areaList = result.data;
         })
         .catch(err => {
-          console.log(err);
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
         });
     },
     changePage(currentPage) {

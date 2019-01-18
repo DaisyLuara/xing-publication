@@ -400,6 +400,10 @@ export default {
         })
         .catch(err => {
           this.setting.loading = false;
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
         });
     },
     permissionHandle(data) {
@@ -428,7 +432,10 @@ export default {
           this.areaList = result.data;
         })
         .catch(err => {
-          console.log(err);
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
         });
     },
     changePage(currentPage) {

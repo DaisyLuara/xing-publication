@@ -900,8 +900,7 @@ export default {
           if (res.marketConfig.customer) {
             this.siteForm.customer.phone = res.marketConfig.customer.phone;
             this.siteForm.customer.name = res.marketConfig.customer.name;
-            this.siteForm.customer.password =
-              res.marketConfig.customer.password;
+            this.siteForm.customer.password = null;
           }
           this.setting.loading = false;
         })
