@@ -897,6 +897,7 @@ export default {
         this.contractDisable = false;
       } else {
         this.programForm.contract_id = "";
+        this.programForm.money = "";
         this.contractDisable = true;
       }
     },
