@@ -14,6 +14,8 @@ use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\WechatCouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Request\CouponBatchRequest;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
+use App\Http\Controllers\Admin\Point\V1\Models\MarketConfig;
+use App\Http\Controllers\Admin\Point\V1\Models\Store;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -77,6 +79,9 @@ class CouponBatchController extends Controller
 
     public function store(Company $company, CouponBatch $couponBatch, CouponBatchRequest $request)
     {
+        //检查核销配置
+        $this->checkWriteOffCustomer($request);
+
         $couponBatch->fill(array_merge([
             'company_id' => $company->id,
             'create_user_id' => $this->user->id,
@@ -113,6 +118,9 @@ class CouponBatchController extends Controller
 
     public function update(CouponBatch $couponBatch, Request $request)
     {
+        //检查核销配置
+        $this->checkWriteOffCustomer($request);
+
         $couponBatch->update($request->except(['marketid', 'oid']));
         if ($request->wechat && $couponBatch->wechat) {
             $couponBatch->wechat()->update($request['wechat']);
@@ -162,5 +170,26 @@ class CouponBatchController extends Controller
             }
         }
 
+    }
+
+    private function checkWriteOffCustomer($request)
+    {
+        if ($request->filled('scene_type')) {
+            //场地核销人员
+            if ($request->filled('write_off_mid')) {
+                $market = MarketConfig::query()->findOrFail($request->write_off_mid);
+                abort_if(!$market->write_off_customer_id, 500, '该场地未指定核销人员');
+            }
+
+            //商户核销人员
+            if (!empty($request->write_off_sid)) {
+                foreach ($request->write_off_sid as $store_id) {
+                    $store = Store::query()->findOrFail($store_id);
+                    abort_if(!$store->write_off_customer_id, 500, '商户[' . $store->name . ']未指定核销人员');
+                }
+            }
+        }
+
+        return true;
     }
 }

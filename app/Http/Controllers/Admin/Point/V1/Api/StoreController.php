@@ -56,10 +56,12 @@ class StoreController extends Controller
         $store->fill($request->all());
         $store->save();
 
+        // 合约配置
         if ($request->filled('contract_id')) {
             $store->contract()->update($request->only(['start_date', 'end_date']));
         }
 
+        //商户核销人员配置
         if ($request->has('customer')) {
             $customer = $store->writeOffCustomer()->create([
                 'name'     => $request->customer['name'],
