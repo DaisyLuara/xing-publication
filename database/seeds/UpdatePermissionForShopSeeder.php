@@ -19,7 +19,7 @@ class UpdatePermissionForShopSeeder extends Seeder
 
         $roles = ['market_owner', 'activity_vip', 'ad_owner'];
         foreach ($roles as $item) {
-            Role::findByName($item, 'shop')->update(['guard_name' => 'shop']);
+            Role::findByName($item)->update(['guard_name' => 'shop']);
         }
 
         $permsData = [
