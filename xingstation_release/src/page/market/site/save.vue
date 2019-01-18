@@ -611,9 +611,9 @@ export default {
           media_id: null
         },
         customer: {
-          name: "",
-          phone: "",
-          password: ""
+          name: null,
+          phone: null,
+          password: null
         }
       },
       contractList: [],
@@ -897,10 +897,11 @@ export default {
             this.siteForm.marketConfig.description =
               res.marketConfig.description;
           }
-          if (res.customer) {
-            this.siteForm.customer.phone = res.customer.phone;
-            this.siteForm.customer.name = res.customer.name;
-            this.siteForm.customer.password = res.customer.password;
+          if (res.marketConfig.customer) {
+            this.siteForm.customer.phone = res.marketConfig.customer.phone;
+            this.siteForm.customer.name = res.marketConfig.customer.name;
+            this.siteForm.customer.password =
+              res.marketConfig.customer.password;
           }
           this.setting.loading = false;
         })
@@ -958,7 +959,7 @@ export default {
           }
 
           let args = this.siteForm;
-          delete args.permission;
+          // delete args.permission;
           if (this.siteID) {
             siteModifyMarket(this, args, this.siteID)
               .then(res => {
@@ -971,7 +972,10 @@ export default {
                 });
               })
               .catch(err => {
-                console.log(err);
+                this.$message({
+                  type: "warning",
+                  message: err.response.data.message
+                });
               });
           } else {
             siteSaveMarket(this, args)
@@ -985,7 +989,10 @@ export default {
                 });
               })
               .catch(err => {
-                console.log(err);
+                this.$message({
+                  type: "warning",
+                  message: err.response.data.message
+                });
               });
           }
         } else {

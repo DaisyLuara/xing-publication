@@ -380,8 +380,8 @@ export default {
     };
     return {
       multipleNum: 0,
-      writeOffMarketShow:false,
-      writeOffSiteShow: false,
+      writeOffMarketShow:true,
+      writeOffSiteShow: true,
       peopleReceiveShow: true,
       peopleDayShow: true,
       activeName: "first",
@@ -435,7 +435,7 @@ export default {
         credit: 0,
         marketid: [],
         oid: [],
-        scene_type: 1,
+        scene_type: null,
         write_off_mid: null,
         write_off_sid: []
       },
@@ -498,6 +498,7 @@ export default {
         };
         this.writeOffSidRules = null;
         this.writeOffSiteShow = false;
+        this.writeOffMarketShow = false;
         this.multipleNum = 0;
       } else if (val === 2) {
         this.writeOffMarketShow = false
