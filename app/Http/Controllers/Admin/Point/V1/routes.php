@@ -28,10 +28,10 @@ $api->version('v1', [
             $api->patch('points/{point}', ['middleware' => ['permission:market.point.update'], 'uses' => 'PointController@update']);
 
             //门店
-            $api->get('stores', 'StoreController@index');
+            $api->get('stores', ['middleware' => ['permission:market.business.read'], 'uses' => 'StoreController@index']);
             $api->get('stores/{store}', 'StoreController@show');
-            $api->post('stores', ['middleware' => ['role:super-admin|admin|user|bd-manager|legal-affairs|legal-affairs-manager'], 'uses' => 'StoreController@store']);
-            $api->patch('stores/{store}', ['middleware' => ['role:super-admin|admin|user|bd-manager|legal-affairs|legal-affairs-manager'], 'uses' => 'StoreController@update']);
+            $api->post('stores', ['middleware' => ['permission:market.business.create'], 'uses' => 'StoreController@store']);
+            $api->patch('stores/{store}', ['middleware' => ['permission:market.business.update'], 'uses' => 'StoreController@update']);
 
         });
     });
