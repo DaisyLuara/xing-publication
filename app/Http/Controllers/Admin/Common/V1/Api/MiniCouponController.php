@@ -325,13 +325,8 @@ class MiniCouponController extends Controller
         abort_if($couponBatches->isEmpty(), 500, '无可用优惠券');
 
         $couponBatch = $couponBatches->random();
-        $this->store($couponBatch, $request, $client);
 
-        $coupon = Coupon::query()->whereHas('couponBatch',function ($q) use($couponBatch){
-            $q->where('coupon_batch_id', $couponBatch->id);
-        })->orderByDesc('id')->first();
-
-        return $this->response->item($coupon, new CouponTransformer());
+        return $this->response->item($couponBatch, new CouponBatchTransformer());
     }
 
 
