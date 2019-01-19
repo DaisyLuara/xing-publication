@@ -64,7 +64,7 @@ class PersonRewardExport extends AbstractExport implements ShouldAutoSize
         $endMonth = Carbon::parse($this->endDate)->timezone('PRC')->format("Y-m");
 
         $header1 = ["用户ID", "用户名", "条目数量", "节目数量", "项目数量", "累计节目数量"];
-        $selectRaw = "tpr.user_id,concat('-',users.name) as 'user_name',";
+        $selectRaw = "tpr.user_id,users.name as 'user_name',";
         for ($temp_month = $startMonth; $temp_month <= $endMonth; $temp_month = Carbon::parse($temp_month)->addMonth()->format("Y-m")) {
             $header1[] = "体验绩效_" . $temp_month;
             $selectRaw .= " round(sum(case date_format(tpr.date,'%Y-%m') when '" . $temp_month . "' then tpr.experience_money else 0 end ),2) as '体验绩效_" . $temp_month . "',";
