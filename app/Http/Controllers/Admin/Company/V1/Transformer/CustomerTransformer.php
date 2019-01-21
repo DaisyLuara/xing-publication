@@ -25,6 +25,9 @@ class CustomerTransformer extends TransformerAbstract
 
     public function includeRoles(Customer $customer)
     {
+        if ($customer->role->count() == 0) {
+            return null;
+        }
         return $this->collection($customer->role, new RoleTransformer());
     }
 
