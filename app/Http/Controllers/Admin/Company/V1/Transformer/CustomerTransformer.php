@@ -19,7 +19,7 @@ class CustomerTransformer extends TransformerAbstract
             'phone' => $customer->phone,
             'telephone' => $customer->telephone,
             'created_at' => $customer->created_at->toDateTimeString(),
-            'updated_at' => $customer->updated_at->toDateTImeString()
+            'updated_at' => $customer->updated_at->toDateTImeString(),
         ];
     }
 

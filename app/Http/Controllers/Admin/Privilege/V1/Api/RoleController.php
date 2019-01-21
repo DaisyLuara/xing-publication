@@ -52,6 +52,9 @@ class RoleController extends Controller
 
     public function destroy(Role $role)
     {
+        if ($role->users()->count() != 0) {
+            abort(403, '该角色已关联用户，暂不可删除');
+        }
         $this->checkRole($role);
         $role->delete();
         return $this->response()->noContent()->setStatusCode(204);
