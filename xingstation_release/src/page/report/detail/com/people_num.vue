@@ -669,8 +669,12 @@ export default {
           label: '节目数据'
         },
         {
+          value: 'program_num',
+          label: '智造团队节目数'
+        },
+        {
           value: 'person_reward',
-          label: '团队奖励'
+          label: '个人绩效'
         }
       ],
       shouldDialogShow: false,

@@ -186,11 +186,14 @@
           </el-table-column>
           <el-table-column label="操作" min-width="150">
             <template slot-scope="scope">
-              <el-button
-                size="small"
-                type="warning"
-                @click="editHandle(scope.row)"
-              >{{ ((projectManage && (scope.row.status === 1 || scope.row.status === 2)) || legalAffairsManager || bonusManage ) ? '修改': '查看' }}</el-button>
+              <el-button v-if="((projectManage && (scope.row.status === 1 || scope.row.status === 2)) || legalAffairsManager || bonusManage )" size="small" type="warning" @click="editHandle(scope.row)">
+                <!-- {{ ( ? '修改': '查看' }} -->
+                修改
+              </el-button>
+              <el-button v-if="((!projectManage && (scope.row.status !== 1 || scope.row.status !== 2)) || !legalAffairsManager || !bonusManage )" size="small" type="primary" @click="detailHandle(scope.row)">
+                <!-- {{ ((projectManage && (scope.row.status === 1 || scope.row.status === 2)) || legalAffairsManager || bonusManage ) ? '修改': '详情' }} -->
+                详情
+              </el-button>
               <el-button
                 v-if="(tester && scope.row.status === 1) || (operation && scope.row.status === 2) || ((legalAffairsManager && scope.row.status === 3 && scope.row.type === '提前节目') || (bonusManage && scope.row.status === 3 && scope.row.type === '提前节目'))"
                 size="small"
@@ -602,6 +605,11 @@ export default {
     editHandle(data) {
       this.$router.push({
         path: "program/edit/" + data.id
+      });
+    },
+    detailHandle(data) {
+      this.$router.push({
+        path: "program/detail/" + data.id
       });
     },
     addProgram() {
