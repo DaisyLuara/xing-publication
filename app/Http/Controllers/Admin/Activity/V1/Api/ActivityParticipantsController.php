@@ -57,7 +57,6 @@ class ActivityParticipantsController extends Controller
 
         RedpackJob::dispatch($request->rank, $arWxUser->weixin);
 
-
     }
 
 
