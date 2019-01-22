@@ -13,6 +13,7 @@ class PlayingTypeTransformer extends TransformerAbstract
         return [
             'aid' => $playingType->aid,
             'name' => $playingType->name,
+            'image' => $playingType->image,
         ];
     }
 
