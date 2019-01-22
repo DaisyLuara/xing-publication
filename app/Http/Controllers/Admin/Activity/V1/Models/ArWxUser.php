@@ -9,8 +9,7 @@ use App\Models\Model;
 class ArWxUser extends Model
 {
     protected $connection = 'ar';
-    protected $table = 'news_openid';
-    protected $primaryKey = 'uid';
+    protected $table = 'news_user_open';
     public $timestamps = false;
 
 }
