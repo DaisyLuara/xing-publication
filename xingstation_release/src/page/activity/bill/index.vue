@@ -8,26 +8,13 @@
       <div class="item-content-wrap">
         <div class="search-wrap">
           <el-form ref="filters" :model="filters" :inline="true">
-            <el-form-item label prop="aid">
-              <el-select
-                v-model="filters.aid"
-                filterable
-                :loading="searchLoading"
-                clearable
-                placeholder="请选择玩法配置"
-              >
-                <el-option
-                  v-for="item in deployList"
-                  :key="item.aid"
-                  :label="item.aid +':'+item.name"
-                  :value="item.aid"
-                />
-              </el-select>
+            <el-form-item label prop="coupon_code">
+              <el-input v-model="filters.coupon_code" placeholder="优惠券code" clearable/>
             </el-form-item>
-            <el-form-item label prop="pass">
-              <el-select v-model="filters.pass" clearable placeholder="请选择状态">
+            <el-form-item label prop="coupon_batch_id">
+              <el-select v-model="filters.coupon_batch_id" clearable placeholder="请选择优惠券">
                 <el-option
-                  v-for="item in statusList"
+                  v-for="item in couponList"
                   :key="item.id"
                   :label="item.name"
                   :value="item.id"
@@ -46,70 +33,55 @@
             <template slot-scope="scope">
               <el-form label-position="left" inline class="demo-table-expand">
                 <el-form-item label="ID">
-                  <span>{{ scope.row.auid }}</span>
+                  <span>{{ scope.row.id }}</span>
                 </el-form-item>
-                <el-form-item label="账号">
-                  <span>{{ scope.row.uid }}</span>
+                <el-form-item label="优惠券code">
+                  <span>{{ scope.row.coupon_code }}</span>
                 </el-form-item>
-                <el-form-item label="昵称">
-                  <span>{{ scope.row.username }}</span>
+                <el-form-item label="优惠券">
+                  <span>{{ scope.row.couponBatch ? scope.row.couponBatch.name:'' }}</span>
                 </el-form-item>
-                <el-form-item label="状态">
-                  <span>{{ scope.row.pass === 0 ? '未提交' : scope.row.pass === 1 ? '已参与': scope.row.pass === 2 ?'失效' :''}}</span>
+                <el-form-item label="流水账号">
+                  <span>{{ scope.row.mch_billno }}</span>
                 </el-form-item>
-                <el-form-item label="数值">
-                  <span>{{ scope.row.value }}</span>
+                <el-form-item label="openID">
+                  <span>{{ scope.row.re_openid }}</span>
                 </el-form-item>
-                <el-form-item label="标识">{{ scope.row.kid }}</el-form-item>
-                <el-form-item label="玩法配置名称">{{ scope.row.playingType.name }}</el-form-item>
-                <el-form-item label="获得时间">
+                <el-form-item label="金额">{{ scope.row.total_amount/100 }}</el-form-item>
+                <el-form-item label="交易状态">{{ scope.row.return_code === 'SUCCESS'? '成功': '失败' }}</el-form-item>
+                <el-form-item label="交易时间">
                   <span>{{ scope.row.created_at }}</span>
-                </el-form-item>
-                <el-form-item label="头像">
-                  <a :href="scope.row.arUserInfo.avatar" target="_blank" style="color: blue">查看</a>
-                </el-form-item>
-                <el-form-item label="玩法配置图标">
-                  <a :href="scope.row.playingType.image" target="_blank" style="color: blue">查看</a>
-                </el-form-item>
-                <el-form-item label="凭证">
-                  <a :href="scope.row.link" target="_blank" style="color: blue">查看</a>
                 </el-form-item>
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="auid" label="ID" min-width="100"/>
-          <el-table-column :show-overflow-tooltip="true" prop="uid" label="账号" min-width="100"/>
-          <el-table-column prop="icon" label="昵称" min-width="130">
-            <template slot-scope="scope">
-              <div>{{ scope.row.username }}</div>
-              <img
-                :src="scope.row.arUserInfo ? scope.row.arUserInfo.avatar : ''"
-                alt
-                class="icon-item"
-              >
-            </template>
+          <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="100"/>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="coupon_code"
+            label="优惠券code"
+            min-width="100"
+          />
+          <el-table-column prop="icon" label="优惠券" min-width="130">
+            <template slot-scope="scope">{{ scope.row.couponBatch ? scope.row.couponBatch.name:'' }}</template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="deploy" label="玩法配置" min-width="100">
-            <template slot-scope="scope">
-              <div>{{ scope.row.playingType.name }}</div>
-              <img
-                :src="scope.row.playingType ? scope.row.playingType.image : ''"
-                alt
-                class="icon-item"
-              >
-            </template>
+          <el-table-column :show-overflow-tooltip="true" prop="mch_billno" label="流水账号"/>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="re_openid"
+            label="openID"
+            min-width="100"
+          />
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="total_amount"
+            label="金额"
+            min-width="100"
+          >
+            <template slot-scope="scope">{{ scope.row.total_amount/100 }}</template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="value" label="数值" min-width="100"/>
-          <el-table-column :show-overflow-tooltip="true" prop="kid" label="标识" min-width="100"/>
-          <el-table-column :show-overflow-tooltip="true" prop="link" label="凭证" min-width="100">
-            <template slot-scope="scope">
-              <img :src="scope.row.link" alt class="icon-item">
-            </template>
-          </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="pass" label="状态" min-width="100">
-            <template
-              slot-scope="scope"
-            >{{ scope.row.pass === 0 ? '未提交' : scope.row.pass === 1 ? '已参与': scope.row.pass === 2 ?'失效' :''}}</template>
+          <el-table-column :show-overflow-tooltip="true" prop="pass" label="交易状态" min-width="100">
+            <template slot-scope="scope">{{ scope.row.return_code === 'SUCCESS'? '成功': '失败' }}</template>
           </el-table-column>
           <el-table-column
             :show-overflow-tooltip="true"
@@ -119,7 +91,12 @@
           />
           <el-table-column label="操作" min-width="100">
             <template slot-scope="scope">
-              <el-button v-if="scope.row.playingType.aid === 32" size="small" type="warning">发红包</el-button>
+              <el-button
+                v-if="scope.row.return_code === 'FAIL'"
+                size="small"
+                type="warning"
+                @change="handleRetry(scope.row)"
+              >重发</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -138,7 +115,7 @@
 </template>
 
 <script>
-import { getSearchPlayingTypes, getActivityParticipantList } from "service";
+import { getSearchCouponList, getActivityBillList } from "service";
 
 import {
   Button,
@@ -169,10 +146,10 @@ export default {
     return {
       searchLoading: false,
       templateVisible: false,
-      deployList: [],
+      couponList: [],
       filters: {
-        aid: "",
-        pass: ""
+        coupon_code: "",
+        coupon_batch_id: ""
       },
       templateForm: {
         policy_id: null,
@@ -207,15 +184,16 @@ export default {
     };
   },
   created() {
-    this.getSearchPlayingTypes();
-    this.getActivityParticipantList();
+    this.getSearchCouponList();
+    this.getActivityBillList();
   },
   methods: {
-    getSearchPlayingTypes() {
+    handleRetry(data) {},
+    getSearchCouponList() {
       this.searchLoading = true;
-      getSearchPlayingTypes(this)
+      getSearchCouponList(this)
         .then(result => {
-          this.deployList = result;
+          this.couponList = result.data;
           this.searchLoading = false;
         })
         .catch(err => {
@@ -226,21 +204,21 @@ export default {
           });
         });
     },
-    getActivityParticipantList() {
+    getActivityBillList() {
       this.setting.loading = true;
       let args = {
         page: this.pagination.currentPage,
-        include: "playingType,arUserInfo",
-        aid: this.filters.aid,
-        pass: this.filters.pass
+        include: "couponBatch",
+        coupon_code: this.filters.coupon_code,
+        coupon_batch_id: this.filters.coupon_batch_id
       };
-      if (this.filters.aid === "") {
-        delete args.aid;
+      if (this.filters.coupon_code === "") {
+        delete args.coupon_code;
       }
-      if (this.filters.pass === "") {
-        delete args.pass;
+      if (this.filters.coupon_batch_id === "") {
+        delete args.coupon_batch_id;
       }
-      getActivityParticipantList(this, args)
+      getActivityBillList(this, args)
         .then(res => {
           this.tableData = res.data;
           this.pagination.total = res.meta.pagination.total;
@@ -256,17 +234,17 @@ export default {
     },
     changePage(currentPage) {
       this.pagination.currentPage = currentPage;
-      this.getActivityParticipantList();
+      this.getActivityBillList();
     },
     search() {
       this.pagination.currentPage = 1;
       this.tableData = [];
-      this.getActivityParticipantList();
+      this.getActivityBillList();
     },
     resetSearch(formName) {
       this.$refs[formName].resetFields();
       this.pagination.currentPage = 1;
-      this.getActivityParticipantList();
+      this.getActivityBillList();
     }
   }
 };

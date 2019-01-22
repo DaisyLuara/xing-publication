@@ -29,6 +29,25 @@ let router = {
             import(/* webpackChunkName: "page/activity/participants/index" */ 'page/activity/participants/index')
         }
       ]
+    },
+    {
+      path: 'bill',
+      meta: {
+        title: '流水'
+      },
+      component: () =>
+        import(/* webpackChunkName: "page/activity/bill/routerView" */ 'page/activity/bill/routerView'),
+      children: [
+        {
+          path: '/',
+          name: '流水列表',
+          meta: {
+            title: '流水列表'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/activity/bill/index" */ 'page/activity/bill/index')
+        }
+      ]
     }
   ]
 }
