@@ -1,83 +1,57 @@
 <template>
-  <div
-    class="main">
+  <div class="main">
     <headModule/>
-    <div
-      class="first-sidebar"
-      v-show="!iconMenuShow"
-      @mouseleave="leaveIcon">
-      <el-menu
-        :default-active="'/' + currModule"
-        router>
+    <div class="first-sidebar" v-show="!iconMenuShow" @mouseleave="leaveIcon">
+      <el-menu :default-active="'/' + currModule" router>
         <el-menu-item
           v-for="m in modules"
           v-if="m.path != 'inform'"
           :key="m.path"
           :index="'/' + m.path"
           class="menu-item"
-          @click="handleMenuHide">
-          <img
-            :src="m.src"
-            class="first-sidebar-icon">
+          @click="handleMenuHide"
+        >
+          <img :src="m.src" class="first-sidebar-icon">
           {{ m.meta.title }}
         </el-menu-item>
-        <el-menu-item
-          class=" menu-no-icon-item"
-          index="/inform"
-          @click="handleMenuHide">
-          <el-badge
-            :value="noticeCount"
-            :max="99"
-            class="item">
+        <el-menu-item class="menu-no-icon-item" index="/inform" @click="handleMenuHide">
+          <el-badge :value="noticeCount" :max="99" class="item">
             <img
               src="../assets/images/icons/notification-icon.png"
               class="first-sidebar-icon"
-              style="padding-right: 3px;">
+              style="padding-right: 3px;"
+            >
             通知
           </el-badge>
         </el-menu-item>
       </el-menu>
       <div class="menu-show">
-        <i 
-          class="el-icon-d-arrow-left left-icon-menu" 
-          @click="handleMenuHide"/>
+        <i class="el-icon-d-arrow-left left-icon-menu" @click="handleMenuHide"/>
       </div>
     </div>
-    <div
-      v-show="iconMenuShow"
-      class="first-icon-sidebar"
-      @mouseenter="iconEnter">
-      <el-menu
-        :default-active="'/' + currModule"
-        router>
+    <div v-show="iconMenuShow" class="first-icon-sidebar" @mouseenter="iconEnter">
+      <el-menu :default-active="'/' + currModule" router>
         <el-menu-item
           v-for="m in modules"
           v-if="m.path != 'inform'"
           :key="m.path"
           :index="'/' + m.path"
-          class="menu-item">
-          <img
-            :src="m.src"
-            class="first-sidebar-icon">
+          class="menu-item"
+        >
+          <img :src="m.src" class="first-sidebar-icon">
         </el-menu-item>
-        <el-menu-item
-          class="menu-item menu-icon-item"
-          index="/inform">
-          <el-badge
-            :value="noticeCount"
-            :max="99"
-            class="item">
+        <el-menu-item class="menu-item menu-icon-item" index="/inform">
+          <el-badge :value="noticeCount" :max="99" class="item">
             <img
               src="../assets/images/icons/notification-icon.png"
               class="first-sidebar-icon"
-              style="padding-right: 3px;">
+              style="padding-right: 3px;"
+            >
           </el-badge>
         </el-menu-item>
       </el-menu>
       <div class="menu-icon-show">
-        <i 
-          class="el-icon-d-arrow-right right-icon-menu" 
-          @click="handleMenuShow"/>
+        <i class="el-icon-d-arrow-right right-icon-menu" @click="handleMenuShow"/>
       </div>
     </div>
 
@@ -87,177 +61,179 @@
         :key="item.id"
         :class="{'active': active === item.id}"
         class="system-menu-item"
-        @click="systemMenu(item)">{{ item.name }}
-      </div>
+        @click="systemMenu(item)"
+      >{{ item.name }}</div>
     </div>
-    <div
-      class="modules">
+    <div class="modules">
       <router-view/>
     </div>
   </div>
 </template>
 
 <script>
-import { Menu, MenuItem, Button, Badge, Icon } from 'element-ui'
-import auth from 'service/auth'
-import { Cookies } from 'utils/cookies'
-import { notificationStats } from 'service'
+import { Menu, MenuItem, Button, Badge, Icon } from "element-ui";
+import auth from "service/auth";
+import { Cookies } from "utils/cookies";
+import { notificationStats } from "service";
 
-const NODE_ENV = process.env.NODE_ENV
+const NODE_ENV = process.env.NODE_ENV;
 
 export default {
-  name: 'Home',
+  name: "Home",
   components: {
-    'el-menu': Menu,
-    'el-menu-item': MenuItem,
-    'el-button': Button,
-    'el-badge': Badge
+    "el-menu": Menu,
+    "el-menu-item": MenuItem,
+    "el-button": Button,
+    "el-badge": Badge
   },
   data() {
     return {
       iconMenuShow: true,
       visible: false,
-      setIntervalValue: '',
+      setIntervalValue: "",
       systemMenuList: [
         {
-          id: 'zhongtai',
-          name: '中台系统'
+          id: "zhongtai",
+          name: "中台系统"
         },
         {
-          id: 'liucheng',
-          name: '流程管理'
+          id: "liucheng",
+          name: "流程管理"
         }
       ],
-      active: 'zhongtai'
-    }
+      active: "zhongtai"
+    };
   },
   computed: {
     modules() {
-      let items = []
+      let items = [];
       for (let route of this.$router.options.routes) {
-        if (route.path == '/') {
-          for (let m of route['children']) {
+        if (route.path == "/") {
+          for (let m of route["children"]) {
             if (!auth.checkPathPermission(m) || !m.meta || !m.meta.title) {
-              continue
+              continue;
             }
             switch (m.path) {
-              case 'project':
-                m.src = require('../assets/images/icons/project-icon.png')
-                break
-              case 'system':
-                m.src = require('../assets/images/icons/permission-icon.png')
-                break
-              case 'ad':
-                m.src = require('../assets/images/icons/advertisement-icon.png')
-                break
-              case 'equipment':
-                m.src = require('../assets/images/icons/device-icon.png')
-                break
-              case 'team':
-                m.src = require('../assets/images/icons/team-icon.png')
-                break
-              case 'market':
-                m.src = require('../assets/images/icons/market-icon.png')
-                break
-              case 'home':
-                m.src = require('../assets/images/icons/home-icon.png')
-                break
-              case 'report':
-                m.src = require('../assets/images/icons/report-icon.png')
-                break
-              case 'setting':
-                m.src = require('../assets/images/icons/setting-icon.png')
-                break
+              case "project":
+                m.src = require("../assets/images/icons/project-icon.png");
+                break;
+              case "system":
+                m.src = require("../assets/images/icons/permission-icon.png");
+                break;
+              case "ad":
+                m.src = require("../assets/images/icons/advertisement-icon.png");
+                break;
+              case "equipment":
+                m.src = require("../assets/images/icons/device-icon.png");
+                break;
+              case "team":
+                m.src = require("../assets/images/icons/team-icon.png");
+                break;
+              case "market":
+                m.src = require("../assets/images/icons/market-icon.png");
+                break;
+              case "home":
+                m.src = require("../assets/images/icons/home-icon.png");
+                break;
+              case "report":
+                m.src = require("../assets/images/icons/report-icon.png");
+                break;
+              case "setting":
+                m.src = require("../assets/images/icons/setting-icon.png");
+                break;
+              case "activity":
+                m.src = require("../assets/images/icons/activity-icon.png");
+                break;
               default:
-                m.src = ''
-                break
+                m.src = "";
+                break;
             }
-            items.push(m)
+            items.push(m);
           }
         }
       }
-      return items
+      return items;
     },
     currModule() {
-      let path = this.$store.getters.currRoute.path
+      let path = this.$store.getters.currRoute.path;
       for (let m of this.modules) {
-        if (path.indexOf('/' + m.path) == 0) {
-          return m.path
+        if (path.indexOf("/" + m.path) == 0) {
+          return m.path;
         }
       }
-      return ''
+      return "";
     },
     noticeCount() {
-      return this.$store.state.notificationCount.noticeCount
+      return this.$store.state.notificationCount.noticeCount;
     }
   },
   mounted() {},
   created() {
-    let userInfo = JSON.parse(this.$cookie.get('user_info'))
-    this.$store.commit('setCurUserInfo', userInfo)
-    this.notificationStats()
+    let userInfo = JSON.parse(this.$cookie.get("user_info"));
+    this.$store.commit("setCurUserInfo", userInfo);
+    this.notificationStats();
   },
   methods: {
     leaveIcon() {
-      this.iconMenuShow = true
+      this.iconMenuShow = true;
     },
     iconEnter() {
-      this.iconMenuShow = false
+      this.iconMenuShow = false;
     },
     handleMenuShow() {
-      this.iconMenuShow = false
+      this.iconMenuShow = false;
     },
     handleMenuHide() {
-      this.iconMenuShow = true
+      this.iconMenuShow = true;
     },
     systemMenu(item) {
-      this.active = item.id
+      this.active = item.id;
       switch (item.id) {
-        case 'zhongtai':
-          this.linkRedirect('ad')
-          break
-        case 'liucheng':
-          this.linkRedirect('flow')
-          break
+        case "zhongtai":
+          this.linkRedirect("ad");
+          break;
+        case "liucheng":
+          this.linkRedirect("flow");
+          break;
       }
     },
     linkRedirect(type) {
-      let permissions = this.$cookie.get('permissions')
-      let userInfo = this.$cookie.get('user_info')
-      let jwt_ttl = this.$cookie.get('jwt_ttl')
-      let token = this.$cookie.get('jwt_token')
-      let jwt_begin_time = this.$cookie.get('jwt_begin_time')
+      let permissions = this.$cookie.get("permissions");
+      let userInfo = this.$cookie.get("user_info");
+      let jwt_ttl = this.$cookie.get("jwt_ttl");
+      let token = this.$cookie.get("jwt_token");
+      let jwt_begin_time = this.$cookie.get("jwt_begin_time");
       window.location.href =
         process.env.SERVER_URL +
-        '/api/system_skip?permissions=' +
+        "/api/system_skip?permissions=" +
         permissions +
-        '&user_info=' +
+        "&user_info=" +
         userInfo +
-        '&type=' +
+        "&type=" +
         type +
-        '&token=' +
+        "&token=" +
         token +
-        '&jwt_ttl=' +
+        "&jwt_ttl=" +
         jwt_ttl +
-        '&jwt_begin_time=' +
-        jwt_begin_time
+        "&jwt_begin_time=" +
+        jwt_begin_time;
     },
     notificationStats() {
       return notificationStats(this)
         .then(response => {
-          response.setIntervalValue = this.setIntervalValue
-          this.$store.commit('saveNotificationState', response)
+          response.setIntervalValue = this.setIntervalValue;
+          this.$store.commit("saveNotificationState", response);
         })
         .catch(err => {
-          console.log(err)
-        })
+          console.log(err);
+        });
     }
   }
-}
+};
 </script>
 
 <style lang="less">
-@import '../assets/css/pcCommon.less';
+@import "../assets/css/pcCommon.less";
 
 .menu-icon-show {
   text-align: center;

@@ -9,6 +9,7 @@ import equipment from 'router/pc/equipment'
 import home from 'router/pc/home'
 import report from 'router/pc/report'
 import market from 'router/pc/market'
+import activity from 'router/pc/activity'
 
 export default {
   path: '/',
@@ -27,6 +28,7 @@ export default {
     ad,
     equipment,
     team,
-    report
-  ],
+    report,
+    activity
+  ]
 }
