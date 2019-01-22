@@ -28,6 +28,9 @@ class ActivityParticipantsController extends Controller
             if ($request->aid == 32) {
                 $query->where('pass', 1);
                 $query->orderByDesc('value')->orderBy('clientdate', 'asc');
+
+                $activityParticipants = $query->take(5)->get();
+                return $this->response->collection($activityParticipants, new ActivityParticipantsTransformer());
             }
         }
 
