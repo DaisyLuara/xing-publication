@@ -13,6 +13,8 @@ $api->version('v1', [
             //授权广告
             $api->get('wx_third', 'WxThirdController@index');
         });
+
+        $api->get('wx/redpack', 'WeChatController@redpack');
     });
 
 });
