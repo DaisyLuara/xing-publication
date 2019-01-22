@@ -37,7 +37,7 @@ class RedpackJob implements ShouldQueue
         $rankArr = [1000, 800, 600, 400, 200];
         $payment = EasyWeChat::payment();
         $redpack = $payment->redpack;
-        $totalAmount = $rankArr[$this->rank] * 100;
+        $totalAmount = 200 * 100;
 
         for ($i = 0; $i < $rankArr[$this->rank] / 200; $i++) {
 
