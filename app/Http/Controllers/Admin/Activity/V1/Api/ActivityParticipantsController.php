@@ -17,20 +17,27 @@ class ActivityParticipantsController extends Controller
     {
 
         $query = $activityParticipant->query();
-        $user = $this->user();
-
-        //玩法配置
-        if ($request->has('aid')) {
-            $query->where('aid', $request->aid);
-        }
 
         //状态
         if ($request->has('pass')) {
             $query->where('aid', $request->aid);
         }
 
+        //玩法配置
+        if ($request->has('aid')) {
+            $query->where('aid', $request->aid);
 
-        $activityParticipants = $query->orderByDesc('auid')->paginate(10);
+            //年会排行榜
+            if ($request->aid == 32) {
+                $query->where('pass', 1);
+                $query->orderByDesc('value')->orderBy('clientdate', 'asc');
+
+                $activityParticipants = $query->take(5)->get();
+                return $this->response->collection($activityParticipants, new ActivityParticipantsTransformer());
+            }
+        }
+
+        $activityParticipants = $query->paginate(10);
         return $this->response->paginator($activityParticipants, new ActivityParticipantsTransformer());
     }
 
