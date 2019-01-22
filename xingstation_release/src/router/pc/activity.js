@@ -6,7 +6,7 @@ let router = {
   name: '活动',
   meta: {
     title: '活动',
-    permission: ''
+    permission: 'activity'
   },
   component: () =>
     import(/* webpackChunkName: "page/activity/activityView" */ 'page/activity/activityView'),
@@ -21,12 +21,31 @@ let router = {
       children: [
         {
           path: '/',
-          name: '广告投放详情列表',
+          name: '活动参与者列表',
           meta: {
-            title: '广告投放详情列表'
+            title: '活动参与者列表'
           },
           component: () =>
             import(/* webpackChunkName: "page/activity/participants/index" */ 'page/activity/participants/index')
+        }
+      ]
+    },
+    {
+      path: 'bill',
+      meta: {
+        title: '交易流水'
+      },
+      component: () =>
+        import(/* webpackChunkName: "page/activity/bill/routerView" */ 'page/activity/bill/routerView'),
+      children: [
+        {
+          path: '/',
+          name: '流水列表',
+          meta: {
+            title: '流水列表'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/activity/bill/index" */ 'page/activity/bill/index')
         }
       ]
     }

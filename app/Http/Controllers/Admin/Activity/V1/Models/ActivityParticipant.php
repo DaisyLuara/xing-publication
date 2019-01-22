@@ -22,4 +22,9 @@ class ActivityParticipant extends Model
         return $this->belongsTo(ArMemberInfo::class, 'uid', 'uid');
     }
 
+    public function arWxUser()
+    {
+        return $this->belongsTo(ArWxUser::class, 'uid', 'uid');
+    }
+
 }
