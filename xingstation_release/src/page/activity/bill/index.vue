@@ -42,6 +42,17 @@
             <el-form-item label prop="re_openid">
               <el-input v-model="filters.re_openid" placeholder="请输入openID" clearable/>
             </el-form-item>
+            <el-form-item label prop="scene_id">
+              <el-select v-model="filters.scene_id" clearable placeholder="请选择场景">
+                <el-option
+                  v-for="item in sceneList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+
             <el-button type="primary" size="small" @click="search()">搜索</el-button>
             <el-button type="default" size="small" @click="resetSearch('filters')">重置</el-button>
           </el-form>
@@ -70,28 +81,34 @@
                 </el-form-item>
                 <el-form-item label="金额">{{ scope.row.total_amount/100 }}</el-form-item>
                 <el-form-item label="交易状态">{{ scope.row.return_code === 'SUCCESS'? '成功': '失败' }}</el-form-item>
+                <el-form-item label="场景">{{ scope.row.scene_id === 'PRODUCT_2'? '抽奖': '企业内部福利' }}</el-form-item>
                 <el-form-item label="交易时间">
                   <span>{{ scope.row.created_at }}</span>
                 </el-form-item>
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="100"/>
+          <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="60"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="coupon_code"
             label="优惠券code"
             min-width="100"
           />
-          <el-table-column prop="icon" label="优惠券" min-width="130">
+          <el-table-column prop="coupon_batch_id" label="优惠券" min-width="130">
             <template slot-scope="scope">{{ scope.row.couponBatch ? scope.row.couponBatch.name:'' }}</template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="mch_billno" label="流水账号"/>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="mch_billno"
+            label="流水账号"
+            min-width="100"
+          />
           <el-table-column
             :show-overflow-tooltip="true"
             prop="re_openid"
             label="openID"
-            min-width="100"
+            min-width="80"
           />
           <el-table-column
             :show-overflow-tooltip="true"
@@ -104,12 +121,9 @@
           <el-table-column :show-overflow-tooltip="true" prop="pass" label="交易状态" min-width="100">
             <template slot-scope="scope">{{ scope.row.return_code === 'SUCCESS'? '成功': '失败' }}</template>
           </el-table-column>
-          <el-table-column
-            :show-overflow-tooltip="true"
-            prop="created_at"
-            label="获得时间"
-            min-width="150"
-          />
+          <el-table-column :show-overflow-tooltip="true" prop="scene_id" label="场景" min-width="100">
+            <template slot-scope="scope">{{ scope.row.scene_id ==='PRODUCT_2' ? '抽奖' :'企业内部福利' }}</template>
+          </el-table-column>
           <el-table-column label="操作" min-width="100">
             <template slot-scope="scope">
               <el-button
@@ -173,7 +187,8 @@ export default {
         coupon_batch_id: "",
         return_code: "",
         mch_billno: "",
-        re_openid: ""
+        re_openid: "",
+        scene_id: ""
       },
       templateForm: {
         policy_id: null,
@@ -192,6 +207,16 @@ export default {
         {
           id: 2,
           name: "失效"
+        }
+      ],
+      sceneList: [
+        {
+          id: "PRODUCT_2",
+          name: "抽奖"
+        },
+        {
+          id: "PRODUCT_4",
+          name: "企业内部福利"
         }
       ],
       returnCodeList: [
@@ -247,7 +272,8 @@ export default {
         coupon_batch_id: this.filters.coupon_batch_id,
         return_code: this.filters.return_code,
         mch_billno: this.filters.mch_billno,
-        re_openid: this.filters.re_openid
+        re_openid: this.filters.re_openid,
+        scene_id: this.filters.scene_id
       };
       if (this.filters.coupon_code === "") {
         delete args.coupon_code;
@@ -263,6 +289,9 @@ export default {
       }
       if (this.filters.re_openid === "") {
         delete args.re_openid;
+      }
+      if (this.filters.scene_id === "") {
+        delete args.scene_id;
       }
       getActivityBillList(this, args)
         .then(res => {
