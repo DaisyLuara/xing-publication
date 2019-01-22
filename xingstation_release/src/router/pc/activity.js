@@ -21,9 +21,9 @@ let router = {
       children: [
         {
           path: '/',
-          name: '广告投放详情列表',
+          name: '活动参与者列表',
           meta: {
-            title: '广告投放详情列表'
+            title: '活动参与者列表'
           },
           component: () =>
             import(/* webpackChunkName: "page/activity/participants/index" */ 'page/activity/participants/index')
@@ -33,7 +33,7 @@ let router = {
     {
       path: 'bill',
       meta: {
-        title: '流水'
+        title: '交易流水'
       },
       component: () =>
         import(/* webpackChunkName: "page/activity/bill/routerView" */ 'page/activity/bill/routerView'),

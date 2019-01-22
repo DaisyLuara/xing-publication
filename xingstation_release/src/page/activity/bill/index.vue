@@ -9,10 +9,15 @@
         <div class="search-wrap">
           <el-form ref="filters" :model="filters" :inline="true">
             <el-form-item label prop="coupon_code">
-              <el-input v-model="filters.coupon_code" placeholder="优惠券code" clearable/>
+              <el-input v-model="filters.coupon_code" placeholder="请输入优惠券code" clearable/>
             </el-form-item>
             <el-form-item label prop="coupon_batch_id">
-              <el-select v-model="filters.coupon_batch_id" clearable placeholder="请选择优惠券">
+              <el-select
+                v-model="filters.coupon_batch_id"
+                filterable
+                clearable
+                placeholder="请选择优惠券"
+              >
                 <el-option
                   v-for="item in couponList"
                   :key="item.id"
@@ -20,6 +25,22 @@
                   :value="item.id"
                 />
               </el-select>
+            </el-form-item>
+            <el-form-item label prop="return_code">
+              <el-select v-model="filters.return_code" clearable placeholder="请选择交易状态">
+                <el-option
+                  v-for="item in returnCodeList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label prop="mch_billno">
+              <el-input v-model="filters.mch_billno" placeholder="请输入流水账号" clearable/>
+            </el-form-item>
+            <el-form-item label prop="re_openid">
+              <el-input v-model="filters.re_openid" placeholder="请输入openID" clearable/>
             </el-form-item>
             <el-button type="primary" size="small" @click="search()">搜索</el-button>
             <el-button type="default" size="small" @click="resetSearch('filters')">重置</el-button>
@@ -149,7 +170,10 @@ export default {
       couponList: [],
       filters: {
         coupon_code: "",
-        coupon_batch_id: ""
+        coupon_batch_id: "",
+        return_code: "",
+        mch_billno: "",
+        re_openid: ""
       },
       templateForm: {
         policy_id: null,
@@ -168,6 +192,16 @@ export default {
         {
           id: 2,
           name: "失效"
+        }
+      ],
+      returnCodeList: [
+        {
+          id: "SUCCESS",
+          name: "成功"
+        },
+        {
+          id: "FAIL",
+          name: "失败"
         }
       ],
       loading: false,
@@ -210,13 +244,25 @@ export default {
         page: this.pagination.currentPage,
         include: "couponBatch",
         coupon_code: this.filters.coupon_code,
-        coupon_batch_id: this.filters.coupon_batch_id
+        coupon_batch_id: this.filters.coupon_batch_id,
+        return_code: this.filters.return_code,
+        mch_billno: this.filters.mch_billno,
+        re_openid: this.filters.re_openid
       };
       if (this.filters.coupon_code === "") {
         delete args.coupon_code;
       }
       if (this.filters.coupon_batch_id === "") {
         delete args.coupon_batch_id;
+      }
+      if (this.filters.return_code === "") {
+        delete args.return_code;
+      }
+      if (this.filters.mch_billno === "") {
+        delete args.mch_billno;
+      }
+      if (this.filters.re_openid === "") {
+        delete args.re_openid;
       }
       getActivityBillList(this, args)
         .then(res => {
@@ -290,10 +336,10 @@ export default {
           margin-bottom: 0;
         }
         .el-select {
-          width: 250px;
+          width: 200px;
         }
         .item-input {
-          width: 230px;
+          width: 200px;
         }
         .warning {
           background: #ebf1fd;

@@ -66,10 +66,20 @@
                   <span>{{ scope.row.created_at }}</span>
                 </el-form-item>
                 <el-form-item label="头像">
-                  <a :href="scope.row.arUserInfo.avatar" target="_blank" style="color: blue">查看</a>
+                  <a
+                    v-if="scope.row.arUserInfo"
+                    :href="scope.row.arUserInfo.avatar"
+                    target="_blank"
+                    style="color: blue"
+                  >查看</a>
                 </el-form-item>
                 <el-form-item label="玩法配置图标">
-                  <a :href="scope.row.playingType.image" target="_blank" style="color: blue">查看</a>
+                  <a
+                    v-if="scope.row.playingType"
+                    :href="scope.row.playingType.image"
+                    target="_blank"
+                    style="color: blue"
+                  >查看</a>
                 </el-form-item>
                 <el-form-item label="凭证">
                   <a :href="scope.row.link" target="_blank" style="color: blue">查看</a>
@@ -143,7 +153,11 @@
 </template>
 
 <script>
-import { getSearchPlayingTypes, getActivityParticipantList } from "service";
+import {
+  getSearchPlayingTypes,
+  getActivityParticipantList,
+  sendRedPack
+} from "service";
 
 import {
   Button,
@@ -217,8 +231,36 @@ export default {
   },
   methods: {
     sendRedPack(data, index) {
-      console.log(data);
-      console.log(index);
+      this.$confirm("确定要发放红包吗?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          let args = {
+            auid: data.auid,
+            rank: index
+          };
+          sendRedPack(this, args)
+            .then(res => {
+              this.$message({
+                type: "success",
+                message: "发放成功"
+              });
+            })
+            .catch(err => {
+              this.$message({
+                type: "warning",
+                message: err.response.data.message
+              });
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消发放"
+          });
+        });
     },
     getSearchPlayingTypes() {
       this.searchLoading = true;
@@ -252,7 +294,12 @@ export default {
       getActivityParticipantList(this, args)
         .then(res => {
           this.tableData = res.data;
-          this.pagination.total = res.meta.pagination.total;
+          if (this.filters.aid !== 32) {
+            this.pagination.total = res.meta.pagination.total;
+          } else {
+            this.pagination.total = 5;
+          }
+
           this.setting.loading = false;
         })
         .catch(err => {
