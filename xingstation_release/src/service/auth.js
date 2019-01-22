@@ -108,7 +108,8 @@ export default {
             created_at: result.created_at,
             ar_user_id: result.ar_user_id,
             bind_weixin: result.bind_weixin,
-            roles: result.roles
+            roles: result.roles,
+            phone: result.phone
           }
           context.$cookie.set('user_info', JSON.stringify(userInfo), {
             domain: DOMAIN
@@ -262,7 +263,7 @@ function hasPermission(name, perms) {
     if (name == perms[i]['name']) {
       return true
     } else if (
-      (name.indexOf(perms[i]['name']) == 0) &&
+      name.indexOf(perms[i]['name']) == 0 &&
       perms[i].children.length > 0
     ) {
       return hasPermission(name, perms[i]['children'])
