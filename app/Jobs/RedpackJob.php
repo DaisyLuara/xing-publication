@@ -25,11 +25,13 @@ class RedpackJob implements ShouldQueue
 
     protected $rank;
     protected $openID;
+    protected $remark;
 
-    public function __construct(int $rank, string $openID)
+    public function __construct(int $rank, string $openID, string $remark)
     {
         $this->rank = $rank;
         $this->openID = $openID;
+        $this->remark = $remark;
     }
 
     public function handle()
@@ -50,7 +52,7 @@ class RedpackJob implements ShouldQueue
                 'total_amount' => $totalAmount,
                 'wishing' => '新年快乐!',
                 'act_name' => '排行榜！',
-                'remark' => '排行榜',
+                'remark' => $this->remark,
                 'scene_id' => 'PRODUCT_4',
             ];
 

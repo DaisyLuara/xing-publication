@@ -22,6 +22,7 @@ class RedPackBillTransformer extends TransformerAbstract
             'return_code' => $redPackBill->return_code,
             'result_code' => $redPackBill->result_code,
             'err_code_des' => $redPackBill->err_code_des,
+            'remark' => $redPackBill->remark,
             'created_at' => $redPackBill->created_at->toDateTimeString(),
             'updated_at' => $redPackBill->updated_at->toDateTimeString(),
         ];
