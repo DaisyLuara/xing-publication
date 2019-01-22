@@ -16,6 +16,7 @@ $api->version('v1', [
             //场地
             $api->get('activity_participants', 'ActivityParticipantsController@index');
         });
+        $api->post('activity_participants/redpack', 'ActivityParticipantsController@redPack');
     });
 
 });

@@ -10,6 +10,48 @@ use EasyWeChat;
 class WeChatController extends Controller
 {
 
+    public function redPack(){
+        //已经发送过红包
+        $payment = EasyWeChat::payment();
+        $redpack = $payment->redpack;
+
+        $mchBillno = date('YmdHis') . uniqid();
+        $redpackData = [
+            'mch_billno' => $mchBillno,
+            'send_name' => '测试',
+            're_openid' => $wxUser->openid,
+            'total_num' => 1,
+            'total_amount' => 100 * $couponBatch->amount,
+            'wishing' => '新年快乐!',
+            'act_name' => '刮卡抽奖！',
+            'remark' => '刮卡抽奖',
+            'scene_id' => 'PRODUCT_2',
+        ];
+
+        //发送红包
+        $result = $redpack->sendNormal($redpackData);
+
+        //添加流水记录
+        $redpackBillData = [
+            'coupon_batch_id' => $coupon->coupon_batch_id,
+            'coupon_code' => $coupon->code,
+        ];
+
+        $redpackBillData = array_merge($redpackData, $redpackBillData, $result);
+
+        RedPackBill::query()->create($redpackBillData);
+
+        //标记优惠券为已使用-不再发放现金红包
+        $coupon->update(['status' => 1]);
+
+        //如果错误 封装成 500, 方便前端处理
+        if ($result['result_code'] == 'FAIL') {
+//            ding()->with()->text();
+            abort(500, $result['return_msg']);
+        }
+
+        return $result;
+    }
 
 // ----------------------------------open_platform---------------------
 
