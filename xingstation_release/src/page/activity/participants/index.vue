@@ -53,32 +53,27 @@
                 </el-form-item>
                 <el-form-item label="昵称">
                   <div>{{ scope.row.username }}</div>
-                  <img
-                    :src="scope.row.arUserInfo ? scope.row.arUserInfo.avatar : ''"
-                    alt
-                    class="icon-item"
-                  >
-                </el-form-item>
-                <el-form-item label="玩法配置">
-                  <div>{{ scope.row.playingType.name }}</div>
-                  <img
-                    :src="scope.row.playingType ? scope.row.playingType.image : ''"
-                    alt
-                    class="icon-item"
-                  >
-                </el-form-item>
-                <el-form-item label="数值">
-                  <span>{{ scope.row.value }}</span>
-                </el-form-item>
-                <el-form-item label="标识">{{ scope.row.kid }}</el-form-item>
-                <el-form-item label="凭证">
-                  <img :src="scope.row.link" alt class="icon-item">
                 </el-form-item>
                 <el-form-item label="状态">
                   <span>{{ scope.row.pass === 0 ? '未提交' : scope.row.pass === 1 ? '已参与': scope.row.pass === 2 ?'失效' :''}}</span>
                 </el-form-item>
+
+                <el-form-item label="数值">
+                  <span>{{ scope.row.value }}</span>
+                </el-form-item>
+                <el-form-item label="标识">{{ scope.row.kid }}</el-form-item>
+                <el-form-item label="玩法配置名称">{{ scope.row.playingType.name }}</el-form-item>
                 <el-form-item label="获得时间">
                   <span>{{ scope.row.created_at }}</span>
+                </el-form-item>
+                <el-form-item label="头像">
+                  <a :href="scope.row.arUserInfo.avatar" target="_blank" style="color: blue">查看</a>
+                </el-form-item>
+                <el-form-item label="玩法配置图标">
+                  <a :href="scope.row.playingType.image" target="_blank" style="color: blue">查看</a>
+                </el-form-item>
+                <el-form-item label="凭证">
+                  <a :href="scope.row.link" target="_blank" style="color: blue">查看</a>
                 </el-form-item>
               </el-form>
             </template>
