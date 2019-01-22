@@ -13,8 +13,11 @@ $api->version('v1', [
 
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
-            //场地
+            //活动参与者
             $api->get('activity_participants', 'ActivityParticipantsController@index');
+
+            //红包流水
+            $api->get('red_pack_bills', 'RedPackBillController@index');
         });
     });
 

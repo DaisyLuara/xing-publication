@@ -8,9 +8,13 @@
 
 namespace App\Http\Controllers\Admin\Activity\V1\Models;
 
+use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
+use App\Models\Model;
 
-class RedPackBill
+class RedPackBill extends Model
 {
+    protected $table = 'redpack_bill';
+
     protected $fillable = [
         'coupon_batch_id',
         'coupon_code',
@@ -29,5 +33,10 @@ class RedPackBill
         'err_code_des',
         'send_listid',
     ];
+
+    public function couponBatch()
+    {
+        return $this->belongsTo(CouponBatch::class, 'coupon_batch_id', 'id');
+    }
 
 }
