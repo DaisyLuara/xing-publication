@@ -25,9 +25,9 @@ class UserRequest extends Request
                 break;
             case 'PATCH':
                 return [
-                    'name' => 'between:2,25|string',
-                    'phone' => 'regex:/^1[3456789]\d{9}$/',
-                    'password' => 'string|min:6'
+                    'name' => 'required|between:2,25|string',
+                    'phone' => 'required|regex:/^1[3456789]\d{9}$/',
+                    'password' => 'filled|string|min:6'
                 ];
                 break;
         }
