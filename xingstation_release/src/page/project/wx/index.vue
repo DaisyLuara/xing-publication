@@ -295,7 +295,8 @@ export default {
     getCardList() {
       this.dataList = [];
       let params = {
-        authorizer_id: 6
+        authorizer_id: 6,
+        status_list: 'CARD_STATUS_VERIFY_OK'
       }
       getCardList(this, params)
         .then(res => {
