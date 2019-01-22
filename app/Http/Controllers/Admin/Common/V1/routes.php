@@ -24,7 +24,7 @@ $api->version('v1', [
 
         });
 
-        $api->post('open/redpack', 'RedPackController@store');
+        $api->post('open/redpack/{code}', 'RedPackController@store');
 
         //小程序优惠券接口
         $api->group(['middleware' => 'api_sign', 'prefix' => 'mini'], function ($api) {
@@ -88,9 +88,9 @@ $api->version('v1', [
             $api->get('attribute/query', 'QueryController@attributeQuery');
             $api->get('erp_warehouse/query', 'QueryController@warehouseQuery');//流程管理ERP仓库搜索
             $api->get('erp_attribute/query', 'QueryController@erpAttributeQuery');//流程管理ERP商品属性搜索
-            $api->get('erp_supplier/query','QueryController@erpSupplierQuery');//供应商搜索
-            $api->get('erp_sku/query','QueryController@erpSkuQuery');//sku下拉列表
-            $api->get('erp_location/query','QueryController@erpLocationQuery');//库位下拉列表
+            $api->get('erp_supplier/query', 'QueryController@erpSupplierQuery');//供应商搜索
+            $api->get('erp_sku/query', 'QueryController@erpSkuQuery');//sku下拉列表
+            $api->get('erp_location/query', 'QueryController@erpLocationQuery');//库位下拉列表
             $api->get('playing_types/query', 'QueryController@playingTypeQuery');//玩法配置列表
 
             //消息通知

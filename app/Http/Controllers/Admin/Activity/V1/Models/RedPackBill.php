@@ -8,9 +8,12 @@
 
 namespace App\Http\Controllers\Admin\Activity\V1\Models;
 
+use App\Models\Model;
 
-class RedPackBill
+class RedPackBill extends Model
 {
+    protected $table = 'redpack_bill';
+
     protected $fillable = [
         'coupon_batch_id',
         'coupon_code',
