@@ -26,10 +26,10 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label prop="return_code">
-              <el-select v-model="filters.return_code" clearable placeholder="请选择交易状态">
+            <el-form-item label prop="result_code">
+              <el-select v-model="filters.result_code" clearable placeholder="请选择业务结果">
                 <el-option
-                  v-for="item in returnCodeList"
+                  v-for="item in resultCodeList"
                   :key="item.id"
                   :label="item.name"
                   :value="item.id"
@@ -80,11 +80,12 @@
                   <span>{{ scope.row.re_openid }}</span>
                 </el-form-item>
                 <el-form-item label="金额">{{ scope.row.total_amount/100 }}</el-form-item>
-                <el-form-item label="交易状态">{{ scope.row.return_code === 'SUCCESS'? '成功': '失败' }}</el-form-item>
+                <el-form-item label="业务结果">{{ scope.row.result_code === 'SUCCESS'? '成功': '失败' }}</el-form-item>
                 <el-form-item label="场景">{{ scope.row.scene_id === 'PRODUCT_2'? '抽奖': '企业内部福利' }}</el-form-item>
                 <el-form-item label="交易时间">
                   <span>{{ scope.row.created_at }}</span>
                 </el-form-item>
+                <el-form-item label="结果信息描述">{{ scope.row.err_code_des }}</el-form-item>
               </el-form>
             </template>
           </el-table-column>
@@ -118,8 +119,8 @@
           >
             <template slot-scope="scope">{{ scope.row.total_amount/100 }}</template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="pass" label="交易状态" min-width="100">
-            <template slot-scope="scope">{{ scope.row.return_code === 'SUCCESS'? '成功': '失败' }}</template>
+          <el-table-column :show-overflow-tooltip="true" prop="pass" label="业务结果" min-width="100">
+            <template slot-scope="scope">{{ scope.row.result_code === 'SUCCESS'? '成功': '失败' }}</template>
           </el-table-column>
           <el-table-column :show-overflow-tooltip="true" prop="scene_id" label="场景" min-width="100">
             <template slot-scope="scope">{{ scope.row.scene_id ==='PRODUCT_2' ? '抽奖' :'企业内部福利' }}</template>
@@ -127,7 +128,7 @@
           <el-table-column label="操作" min-width="100">
             <template slot-scope="scope">
               <el-button
-                v-if="scope.row.return_code === 'FAIL'"
+                v-if="scope.row.result_code === 'FAIL'"
                 size="small"
                 type="warning"
                 @change="handleRetry(scope.row)"
@@ -185,7 +186,7 @@ export default {
       filters: {
         coupon_code: "",
         coupon_batch_id: "",
-        return_code: "",
+        result_code: "",
         mch_billno: "",
         re_openid: "",
         scene_id: ""
@@ -219,7 +220,7 @@ export default {
           name: "企业内部福利"
         }
       ],
-      returnCodeList: [
+      resultCodeList: [
         {
           id: "SUCCESS",
           name: "成功"
@@ -270,7 +271,7 @@ export default {
         include: "couponBatch",
         coupon_code: this.filters.coupon_code,
         coupon_batch_id: this.filters.coupon_batch_id,
-        return_code: this.filters.return_code,
+        result_code: this.filters.result_code,
         mch_billno: this.filters.mch_billno,
         re_openid: this.filters.re_openid,
         scene_id: this.filters.scene_id
@@ -281,8 +282,8 @@ export default {
       if (this.filters.coupon_batch_id === "") {
         delete args.coupon_batch_id;
       }
-      if (this.filters.return_code === "") {
-        delete args.return_code;
+      if (this.filters.result_code === "") {
+        delete args.result_code;
       }
       if (this.filters.mch_billno === "") {
         delete args.mch_billno;
@@ -334,7 +335,7 @@ export default {
     padding: 30px;
 
     .el-form-item {
-      margin-bottom: 0;
+      margin-bottom: 10px;
     }
     .item-content-wrap {
       .demo-table-expand {
