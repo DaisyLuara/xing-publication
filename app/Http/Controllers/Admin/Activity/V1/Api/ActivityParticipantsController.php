@@ -51,7 +51,7 @@ class ActivityParticipantsController extends Controller
         $arWxUser = $activityParticipant->arWxUser;
 
         //如果有交易流水 无论失败与否 ，不再发送红包
-        $redpackBill = RedPackBill::query()->where('re_openid', $arWxUser->weixin)->first();
+        $redpackBill = RedPackBill::query()->where('re_openid', $arWxUser->openid)->first();
 
         abort_if($redpackBill, 500, '已经发送过了！');
 
