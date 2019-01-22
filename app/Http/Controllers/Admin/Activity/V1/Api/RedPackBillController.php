@@ -25,6 +25,22 @@ class RedPackBillController extends Controller
             $query->where('coupon_batch_id', $request->coupon_batch_id);
         }
 
+        //状态
+        if ($request->has('coupon_batch_id')) {
+            $query->where('return_code', 'SUCCESS');
+        }
+
+        //商户订单号
+        if ($request->has('mch_billno')) {
+            $query->where('mch_billno', 'like', '%' . $request->mch_billno . '%');
+        }
+
+        //用户open_id
+        if ($request->has('re_openid')) {
+            $query->where('re_openid', 'like', '%' . $request->re_openid . '%');
+        }
+
+
         $redPackBills = $query->orderByDesc('id')->paginate(10);
         return $this->response->paginator($redPackBills, new RedPackBillTransformer());
     }
