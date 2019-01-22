@@ -34,7 +34,7 @@ class RedPackController extends Controller
         $mchBillno = date('YmdHis') . uniqid();
         $redpackData = [
             'mch_billno' => $mchBillno,
-            'send_name' => '测试',
+            'send_name' => $couponBatch->amount . '元',
             're_openid' => $wxUser->openid,
             'total_num' => 1,
             'total_amount' => 100 * $couponBatch->amount,

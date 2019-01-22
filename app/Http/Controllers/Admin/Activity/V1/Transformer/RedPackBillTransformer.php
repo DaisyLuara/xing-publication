@@ -18,6 +18,7 @@ class RedPackBillTransformer extends TransformerAbstract
             'mch_billno' => $redPackBill->mch_billno,
             're_openid' => $redPackBill->re_openid,
             'total_amount' => $redPackBill->total_amount,
+            'scene_id' => $redPackBill->scene_id,
             'return_code' => $redPackBill->return_code,
             'created_at' => $redPackBill->created_at->toDateTimeString(),
             'updated_at' => $redPackBill->updated_at->toDateTimeString(),

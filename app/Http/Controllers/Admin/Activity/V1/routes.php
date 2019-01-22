@@ -18,6 +18,9 @@ $api->version('v1', [
 
             //红包流水
             $api->get('red_pack_bills', 'RedPackBillController@index');
+
+            //发送红包
+            $api->post('activity_participants/redpack', 'ActivityParticipantsController@redPack');
         });
     });
 
