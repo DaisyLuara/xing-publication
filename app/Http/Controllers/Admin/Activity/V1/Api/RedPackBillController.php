@@ -29,5 +29,9 @@ class RedPackBillController extends Controller
         return $this->response->paginator($redPackBills, new RedPackBillTransformer());
     }
 
+    public function resend(RedPackBill $redPackBill){
+
+
+    }
 
 }
