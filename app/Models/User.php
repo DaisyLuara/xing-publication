@@ -23,8 +23,6 @@ class User extends Authenticatable implements JWTSubject
         notify as protected laravelNotify;
     }
 
-    protected $guard_name = 'web';
-
     public function notify($instance)
     {
         // 如果要通知的人是当前用户，就不必通知了！
@@ -133,4 +131,14 @@ class User extends Authenticatable implements JWTSubject
         return $this->isSuperAdmin() ? Role::all() : Role::where('name', '<>', 'super-admin')->get();
     }
 
+    public function role()
+    {
+        return $this->morphToMany(
+            Role::class,
+            'model',
+            config('permission.table_names.model_has_roles'),
+            config('permission.column_names.model_morph_key'),
+            'role_id'
+        );
+    }
 }
