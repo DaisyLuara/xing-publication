@@ -40,6 +40,10 @@ class RedPackBillController extends Controller
             $query->where('re_openid', 'like', '%' . $request->re_openid . '%');
         }
 
+        //发放红包使用场景
+        if ($request->has('scene_id')) {
+            $query->where('scene_id', 'like', '%' . $request->scene_id . '%');
+        }
 
         $redPackBills = $query->orderByDesc('id')->paginate(10);
         return $this->response->paginator($redPackBills, new RedPackBillTransformer());
