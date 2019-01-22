@@ -79,6 +79,9 @@
                 <el-form-item label="openID">
                   <span>{{ scope.row.re_openid }}</span>
                 </el-form-item>
+                <el-form-item label="备注">
+                  <span>{{ scope.row.remark }}</span>
+                </el-form-item>
                 <el-form-item label="金额">{{ scope.row.total_amount/100 }}</el-form-item>
                 <el-form-item label="业务结果">{{ scope.row.result_code === 'SUCCESS'? '成功': '失败' }}</el-form-item>
                 <el-form-item label="场景">{{ scope.row.scene_id === 'PRODUCT_2'? '抽奖': '企业内部福利' }}</el-form-item>
@@ -105,12 +108,7 @@
             label="流水账号"
             min-width="100"
           />
-          <el-table-column
-            :show-overflow-tooltip="true"
-            prop="re_openid"
-            label="openID"
-            min-width="80"
-          />
+          <el-table-column :show-overflow-tooltip="true" prop="remark" label="备注" min-width="80"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="total_amount"
