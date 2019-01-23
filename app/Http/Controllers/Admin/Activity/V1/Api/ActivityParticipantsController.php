@@ -47,6 +47,9 @@ class ActivityParticipantsController extends Controller
         $activityParticipant = ActivityParticipant::query()
             ->with('arWxUser')
             ->where('auid', $request->auid)
+            ->whereHas('arWxUser', function ($query) {
+                $query->where('wiid', 6);
+            })
             ->where('aid', 32)//年会活动
             ->firstOrFail();
         $arWxUser = $activityParticipant->arWxUser;
