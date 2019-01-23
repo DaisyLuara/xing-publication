@@ -16,7 +16,7 @@ use Illuminate\Bus\Queueable;
 use EasyWeChat;
 use App\Http\Controllers\Admin\Activity\V1\Models\RedPackBill;
 
-class RedpackJob implements ShouldQueue
+class ResendRedpackJob implements ShouldQueue
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;

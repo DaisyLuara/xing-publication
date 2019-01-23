@@ -27,8 +27,6 @@ class RedpackJob implements ShouldQueue
 
     /**
      * RedpackJob constructor.
-     * @param int $rank
-     * @param string $openID
      * @param array $redPackData
      */
     public function __construct(array $redPackData)
@@ -53,7 +51,7 @@ class RedpackJob implements ShouldQueue
                 'send_name' => $this->redPackData['send_name'],
                 're_openid' => $this->redPackData['re_openid'],
                 'total_num' => 1,
-                'total_amount' => $perTotalAmount,
+                'total_amount' => $perTotalAmount * 100,
                 'wishing' => $this->redPackData['wishing'],
                 'act_name' => $this->redPackData['act_name'],
                 'remark' => $this->redPackData['remark'],
@@ -63,7 +61,9 @@ class RedpackJob implements ShouldQueue
             //发送红包
             $result = $redPack->sendNormal($redPackData);
 
-            $redPackBillData = array_merge($redPackData, $result);
+            //使用外部传入参数 记录流水
+            $this->redPackData['mch_billno'] = $mchBillNo;
+            $redPackBillData = array_merge($this->redPackData, $result);
 
             RedPackBill::query()->create($redPackBillData);
         }
