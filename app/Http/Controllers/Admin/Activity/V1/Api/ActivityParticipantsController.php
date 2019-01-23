@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Activity\V1\Api;
 
+use App\Http\Controllers\Admin\Activity\V1\Models\ArWxUser;
 use App\Http\Controllers\Admin\Activity\V1\Models\RankAmountConfig;
 use App\Http\Controllers\Admin\Activity\V1\Models\RedPackBill;
 use App\Http\Controllers\Admin\Activity\V1\Transformer\ActivityParticipantsTransformer;
@@ -47,12 +48,10 @@ class ActivityParticipantsController extends Controller
         $activityParticipant = ActivityParticipant::query()
             ->with('arWxUser')
             ->where('auid', $request->auid)
-            ->whereHas('arWxUser', function ($query) {
-                $query->where('wiid', 88);
-            })
             ->where('aid', 32)//年会活动
             ->firstOrFail();
-        $arWxUser = $activityParticipant->arWxUser;
+        $arWxUser = ArWxUser::query()->where('uid', $activityParticipant->uid)
+            ->where('wiid', 88)->firstOrFail();
 
         //当前用户 如果有交易流水 无论失败与否 ，不再发送红包
         $redpackBill = RedPackBill::query()->where('re_openid', $arWxUser->openid)->where('scene_id', 'PRODUCT_4')->first();
