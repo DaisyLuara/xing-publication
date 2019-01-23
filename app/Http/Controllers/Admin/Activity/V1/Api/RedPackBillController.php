@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Activity\V1\Api;
 use App\Http\Controllers\Admin\Activity\V1\Models\RedPackBill;
 use App\Http\Controllers\Admin\Activity\V1\Transformer\RedPackBillTransformer;
 use App\Http\Controllers\Controller;
+use App\Jobs\ResendRedpackJob;
 use Illuminate\Http\Request;
 
 class RedPackBillController extends Controller
@@ -51,8 +52,7 @@ class RedPackBillController extends Controller
 
     public function resend(RedPackBill $redPackBill)
     {
-
-
+        ResendRedpackJob::dispatch($redPackBill)->onQueue('resend-redpck');
     }
 
 }

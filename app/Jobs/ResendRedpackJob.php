@@ -15,6 +15,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Bus\Queueable;
 use EasyWeChat;
 use App\Http\Controllers\Admin\Activity\V1\Models\RedPackBill;
+use Log;
 
 class ResendRedpackJob implements ShouldQueue
 {
@@ -46,9 +47,11 @@ class ResendRedpackJob implements ShouldQueue
             'remark' => $this->redPackBill->remark,
             'scene_id' => $this->redPackBill->scene_id,
         ];
+        Log::info('resend-redpack-data', $redpackData);
 
         //发送红包
         $result = $redpack->sendNormal($redpackData);
+        Log::info('resend-result', $result);
         $this->redPackBill->update($result);
 
     }
