@@ -32,6 +32,9 @@ class RedPackBill extends Model
         'err_code',
         'err_code_des',
         'send_listid',
+        'remark',
+        'act_name',
+        'wishing',
     ];
 
     public function couponBatch()
