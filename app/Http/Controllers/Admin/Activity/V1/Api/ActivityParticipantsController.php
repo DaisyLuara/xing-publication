@@ -55,8 +55,24 @@ class ActivityParticipantsController extends Controller
 
         abort_if($redpackBill, 500, '已经发送过了！');
 
-        RedpackJob::dispatch($request->rank, $arWxUser->openid, '发送给' . $activityParticipant->username)->onQueue('redpack');
+        $rank = $request->rank;
+        $redPackData = [
+            'send_name' => "排行榜第" . ($rank + 1) . "名",
+            're_openid' => $arWxUser->openid,
+            'total_amount' => $this->getRankAmount($rank),
+            'wishing' => '新年快乐',
+            'act_name' => '新年排行榜',
+            'remark' => '发送给用户 ' . $activityParticipant->username,
+            'scene_id' => 'PRODUCT_4',
+        ];
+        RedpackJob::dispatch($redPackData)->onQueue('redpack');
 
+    }
+
+    private function getRankAmount($rank)
+    {
+        $amounts = [1000, 800, 600, 400, 200];
+        return $amounts[$rank];
     }
 
 

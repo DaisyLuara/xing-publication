@@ -23,45 +23,49 @@ class RedpackJob implements ShouldQueue
 
     public $tries = 1;
 
-    protected $rank;
-    protected $openID;
-    protected $remark;
+    protected $redPackData;
 
-    public function __construct(int $rank, string $openID, string $remark)
+    /**
+     * RedpackJob constructor.
+     * @param int $rank
+     * @param string $openID
+     * @param array $redPackData
+     */
+    public function __construct(array $redPackData)
     {
-        $this->rank = $rank;
-        $this->openID = $openID;
-        $this->remark = $remark;
+        $this->redPackData = $redPackData;
     }
 
     public function handle()
     {
-        $rankArr = [1000, 800, 600, 400, 200];
         $payment = EasyWeChat::payment();
-        $redpack = $payment->redpack;
-        $totalAmount = 200 * 100;
+        $redPack = $payment->redpack;
 
-        for ($i = 0; $i < $rankArr[$this->rank] / 200; $i++) {
+        $totalAmount = $this->redPackData['total_amount'];
+        $length = ceil($totalAmount / 200);
+        $perTotalAmount = $totalAmount <= 200 ? $totalAmount : 200;
 
-            $mchBillno = date('YmdHis') . uniqid();
-            $redpackData = [
-                'mch_billno' => $mchBillno,
-                'send_name' => '测试',
-                're_openid' => $this->openID,
+        for ($i = 1; $i <= $length; $i++) {
+
+            $mchBillNo = date('YmdHis') . uniqid();
+            $redPackData = [
+                'mch_billno' => $mchBillNo,
+                'send_name' => $this->redPackData['send_name'],
+                're_openid' => $this->redPackData['re_openid'],
                 'total_num' => 1,
-                'total_amount' => $totalAmount,
-                'wishing' => '新年快乐!',
-                'act_name' => '排行榜！',
-                'remark' => $this->remark,
-                'scene_id' => 'PRODUCT_4',
+                'total_amount' => $perTotalAmount,
+                'wishing' => $this->redPackData['wishing'],
+                'act_name' => $this->redPackData['act_name'],
+                'remark' => $this->redPackData['remark'],
+                'scene_id' => $this->redPackData['scene_id'],
             ];
 
             //发送红包
-            $result = $redpack->sendNormal($redpackData);
+            $result = $redPack->sendNormal($redPackData);
 
-            $redpackBillData = array_merge($redpackData, $result);
+            $redPackBillData = array_merge($redPackData, $result);
 
-            RedPackBill::query()->create($redpackBillData);
+            RedPackBill::query()->create($redPackBillData);
         }
 
     }
