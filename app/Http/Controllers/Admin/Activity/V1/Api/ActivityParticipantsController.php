@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Activity\V1\Api;
 
+use App\Http\Controllers\Admin\Activity\V1\Models\RankAmountConfig;
 use App\Http\Controllers\Admin\Activity\V1\Models\RedPackBill;
 use App\Http\Controllers\Admin\Activity\V1\Transformer\ActivityParticipantsTransformer;
 use App\Http\Controllers\Admin\Activity\V1\Models\ActivityParticipant;
@@ -50,16 +51,23 @@ class ActivityParticipantsController extends Controller
             ->firstOrFail();
         $arWxUser = $activityParticipant->arWxUser;
 
-        //如果有交易流水 无论失败与否 ，不再发送红包
-        $redpackBill = RedPackBill::query()->where('re_openid', $arWxUser->openid)->first();
+        //当前用户 如果有交易流水 无论失败与否 ，不再发送红包
+        $redpackBill = RedPackBill::query()->where('re_openid', $arWxUser->openid)->where('scene_id', 'PRODUCT_4')->first();
 
         abort_if($redpackBill, 500, '已经发送过了！');
 
         $rank = $request->rank;
+        $rankAmountConfig = RankAmountConfig::query()->where('rank', $rank + 1)->firstOrFail(['amount']);
+        $totalAmount = $rankAmountConfig->amount;
+
+        //检查当前奖项是否被发送了 - 注意 元转换成分
+        $hasSend = RedPackBill::query()->where('total_amount', $totalAmount * 100)->where('scene_id', 'PRODUCT_4')->first();
+        abort_if($hasSend, 500, '当前奖项已经被发送了');
+
         $redPackData = [
             'send_name' => "排行榜第" . ($rank + 1) . "名",
             're_openid' => $arWxUser->openid,
-            'total_amount' => $this->getRankAmount($rank),
+            'total_amount' => $totalAmount,
             'wishing' => '新年快乐',
             'act_name' => '新年排行榜',
             'remark' => '发送给用户 ' . $activityParticipant->username,
@@ -68,12 +76,5 @@ class ActivityParticipantsController extends Controller
         RedpackJob::dispatch($redPackData)->onQueue('redpack');
 
     }
-
-    private function getRankAmount($rank)
-    {
-        $amounts = [1000, 800, 600, 400, 200];
-        return $amounts[$rank];
-    }
-
 
 }

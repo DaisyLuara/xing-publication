@@ -39,34 +39,27 @@ class RedpackJob implements ShouldQueue
         $payment = EasyWeChat::payment();
         $redPack = $payment->redpack;
 
-        $totalAmount = $this->redPackData['total_amount'];
-        $length = ceil($totalAmount / 200);
-        $perTotalAmount = $totalAmount <= 200 ? $totalAmount : 200;
+        $mchBillNo = date('YmdHis') . uniqid();
+        $redPackData = [
+            'mch_billno' => $mchBillNo,
+            'send_name' => $this->redPackData['send_name'],
+            're_openid' => $this->redPackData['re_openid'],
+            'total_num' => 1,
+            'total_amount' => $this->redPackData['total_amount'] * 100,
+            'wishing' => $this->redPackData['wishing'],
+            'act_name' => $this->redPackData['act_name'],
+            'remark' => $this->redPackData['remark'],
+            'scene_id' => $this->redPackData['scene_id'],
+        ];
 
-        for ($i = 1; $i <= $length; $i++) {
+        //发送红包
+        $result = $redPack->sendNormal($redPackData);
 
-            $mchBillNo = date('YmdHis') . uniqid();
-            $redPackData = [
-                'mch_billno' => $mchBillNo,
-                'send_name' => $this->redPackData['send_name'],
-                're_openid' => $this->redPackData['re_openid'],
-                'total_num' => 1,
-                'total_amount' => $perTotalAmount * 100,
-                'wishing' => $this->redPackData['wishing'],
-                'act_name' => $this->redPackData['act_name'],
-                'remark' => $this->redPackData['remark'],
-                'scene_id' => $this->redPackData['scene_id'],
-            ];
+        //使用外部传入参数 记录流水
+        $this->redPackData['mch_billno'] = $mchBillNo;
+        $redPackBillData = array_merge($this->redPackData, $result);
 
-            //发送红包
-            $result = $redPack->sendNormal($redPackData);
-
-            //使用外部传入参数 记录流水
-            $this->redPackData['mch_billno'] = $mchBillNo;
-            $redPackBillData = array_merge($this->redPackData, $result);
-
-            RedPackBill::query()->create($redPackBillData);
-        }
+        RedPackBill::query()->create($redPackBillData);
 
     }
 
