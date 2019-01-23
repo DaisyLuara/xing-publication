@@ -364,9 +364,6 @@ export default {
     background: #fff;
     padding: 30px;
 
-    .el-form-item {
-      margin-bottom: 10px;
-    }
     .item-content-wrap {
       .demo-table-expand {
         font-size: 0;
@@ -377,7 +374,6 @@ export default {
       }
       .demo-table-expand .el-form-item {
         margin-right: 0;
-        margin-bottom: 0;
         width: 50%;
       }
       .icon-item {
@@ -393,7 +389,7 @@ export default {
         align-items: center;
         margin-bottom: 10px;
         .el-form-item {
-          margin-bottom: 0;
+          margin-bottom: 10px;
         }
         .el-select {
           width: 200px;
