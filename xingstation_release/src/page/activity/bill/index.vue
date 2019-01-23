@@ -89,6 +89,7 @@
                   <span>{{ scope.row.created_at }}</span>
                 </el-form-item>
                 <el-form-item label="结果信息描述">{{ scope.row.err_code_des }}</el-form-item>
+                <el-form-item label="类型">{{ scope.row.send_name }}</el-form-item>
               </el-form>
             </template>
           </el-table-column>
@@ -113,16 +114,22 @@
             :show-overflow-tooltip="true"
             prop="total_amount"
             label="金额"
-            min-width="100"
+            min-width="80"
           >
             <template slot-scope="scope">{{ scope.row.total_amount/100 }}</template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="pass" label="业务结果" min-width="100">
+          <el-table-column :show-overflow-tooltip="true" prop="pass" label="业务结果" min-width="80">
             <template slot-scope="scope">{{ scope.row.result_code === 'SUCCESS'? '成功': '失败' }}</template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="scene_id" label="场景" min-width="100">
+          <el-table-column :show-overflow-tooltip="true" prop="scene_id" label="场景" min-width="80">
             <template slot-scope="scope">{{ scope.row.scene_id ==='PRODUCT_2' ? '抽奖' :'企业内部福利' }}</template>
           </el-table-column>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="send_name"
+            label="类型"
+            min-width="80"
+          />
           <el-table-column label="操作" min-width="100">
             <template slot-scope="scope">
               <el-button
