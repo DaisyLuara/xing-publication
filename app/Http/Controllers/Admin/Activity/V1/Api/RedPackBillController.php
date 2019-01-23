@@ -52,6 +52,9 @@ class RedPackBillController extends Controller
 
     public function resend(RedPackBill $redPackBill)
     {
+        if ($redPackBill->result_code != 'FAIL') {
+            abort(500, '业务结果正常 无需重发');
+        }
         ResendRedpackJob::dispatch($redPackBill)->onQueue('resend-redpck');
     }
 

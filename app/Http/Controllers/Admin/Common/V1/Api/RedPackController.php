@@ -40,7 +40,7 @@ class RedPackController extends Controller
             'total_amount' => $couponBatch->amount,
             'wishing' => '新年快乐!',
             'act_name' => '刮卡抽奖！',
-            'remark' => '刮卡抽奖',
+            'remark' => '发送给用户 ' . $wxUser->nickname,
             'scene_id' => 'PRODUCT_2',
             'coupon_batch_id' => $coupon->coupon_batch_id,
             'coupon_code' => $coupon->code,
