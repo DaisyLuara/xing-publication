@@ -129,7 +129,7 @@
                 v-if="scope.row.result_code === 'FAIL'"
                 size="small"
                 type="warning"
-                @change="reSendRedPack(scope.row)"
+                @click="reSendRedPack(scope.row)"
               >重发</el-button>
             </template>
           </el-table-column>
@@ -260,10 +260,7 @@ export default {
           let id = data.id;
           reSendRedPack(this, id)
             .then(res => {
-              this.$message({
-                type: "success",
-                message: "发放成功"
-              });
+              this.getActivityBillList();
             })
             .catch(err => {
               this.$message({
