@@ -129,7 +129,7 @@
                 v-if="scope.row.result_code === 'FAIL'"
                 size="small"
                 type="warning"
-                @change="handleRetry(scope.row)"
+                @change="reSendRedPack(scope.row)"
               >重发</el-button>
             </template>
           </el-table-column>
@@ -149,7 +149,11 @@
 </template>
 
 <script>
-import { getSearchCouponList, getActivityBillList } from "service";
+import {
+  getSearchCouponList,
+  getActivityBillList,
+  reSendRedPack
+} from "service";
 
 import {
   Button,
@@ -246,7 +250,35 @@ export default {
     this.getActivityBillList();
   },
   methods: {
-    handleRetry(data) {},
+    reSendRedPack(data, index) {
+      this.$confirm("确定要重新发放红包吗?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          let id = data.id;
+          reSendRedPack(this, id)
+            .then(res => {
+              this.$message({
+                type: "success",
+                message: "发放成功"
+              });
+            })
+            .catch(err => {
+              this.$message({
+                type: "warning",
+                message: err.response.data.message
+              });
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消发放"
+          });
+        });
+    },
     getSearchCouponList() {
       this.searchLoading = true;
       getSearchCouponList(this)
