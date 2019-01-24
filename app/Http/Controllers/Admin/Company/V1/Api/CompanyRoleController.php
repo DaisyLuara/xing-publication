@@ -42,11 +42,15 @@ class CompanyRoleController extends Controller
     {
         $role->update($request->all());
         $role->syncPermissions($request->ids);
+        \Cache::getRedis()->connection()->del('publication_cache:spatie.permission.cache');
         return $this->response()->noContent();
     }
 
     public function destroy(Role $role)
     {
+        if ($role->users()->count() != 0) {
+            abort(403, '该角色已关联用户，暂不可删除');
+        }
         $role->delete();
         return $this->response()->noContent()->setStatusCode(204);
     }
