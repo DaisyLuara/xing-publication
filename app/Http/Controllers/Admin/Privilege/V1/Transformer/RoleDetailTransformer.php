@@ -20,7 +20,7 @@ class RoleDetailTransformer extends TransformerAbstract
             'id' => $role->id,
             'name' => $role->name,
             'display_name' => $role->display_name,
-            'permission' => $role->permission->toArray(),
+            'permission' => $role->permissions->toArray(),
             'created_at' => $role->created_at->toDateString(),
             'updated_at' => $role->updated_at->toDateString(),
         ];
