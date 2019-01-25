@@ -150,7 +150,7 @@ class MiniCouponController extends Controller
         });
 
         $per_page = $request->get('per_page') ? : 5;
-        $couponBatches = $query->orderByDesc('sort_order')->paginate($per_page);
+        $couponBatches = $query->where('is_active', 1)->orderByDesc('sort_order')->paginate($per_page);
 
         abort_if($couponBatches->isEmpty(), 500, '无可用优惠券');
 
