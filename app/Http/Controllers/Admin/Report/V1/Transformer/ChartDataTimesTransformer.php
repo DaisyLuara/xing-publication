@@ -6,7 +6,7 @@
  * Time: 下午4:45
  */
 
-namespace App\Http\Controllers\Admin\Common\V1\Transformer;
+namespace App\Http\Controllers\Admin\Report\V1\Transformer;
 
 
 use App\Http\Controllers\Admin\Face\V1\Models\XsFaceCountLog;

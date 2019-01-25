@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Admin\Privilege\V1\Models\Role;
 
 class AdminCompaniesController extends Controller
 {
@@ -22,7 +23,7 @@ class AdminCompaniesController extends Controller
         }
 
         //角色为管理员，法务，法务主管时，查看所有公司数据
-        if ($currentUser->isAdmin() || $currentUser->hasRole('legal-affairs') || $currentUser->hasRole('legal-affairs-manager')) {
+        if ($currentUser->isAdmin() || $currentUser->hasRole('legal-affairs|legal-affairs-manager|operation')) {
             $companies = $query->orderByDesc('id')->paginate(10);
             return $this->response->paginator($companies, new CompanyTransformer());
 
@@ -43,7 +44,7 @@ class AdminCompaniesController extends Controller
 
     public function show(Company $company)
     {
-        $this->authorize('show', $company);
+//        $this->authorize('show', $company);
 
         return $this->response->item($company, new CompanyTransformer());
     }
@@ -72,6 +73,8 @@ class AdminCompaniesController extends Controller
                 'company_id' => $company->id,
             ];
             Customer::create($customerData);
+            $role = Role::findById($request->role_id, 'shop');
+            $customer->assignRole($role);
         }
         activity('customer')->on($customer)->withProperties($companyData)->log('新增公司联系人');
 

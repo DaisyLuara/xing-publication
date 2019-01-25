@@ -54,7 +54,7 @@ class InvoiceController extends Controller
 
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if ($user->hasPermissionTo('finance_bill')) {
+        if ($user->id == getProcessStaffId('finance', 'invoice')) {
             $query->whereRaw("(handler=$user->id or status=4 or status=5)");
         } else if ($user->hasRole('operation')) {
             $query->whereRaw('(status=3 or status=4 or status=5)');
@@ -76,14 +76,12 @@ class InvoiceController extends Controller
         $content = $param['invoice_content'];
         unset($param['invoice_content']);
         if ($user->hasRole('legal-affairs')) {
-            $permission = Permission::findByName('finance_bill');
-            $finance = $permission->users()->first();
-            $invoice = Invoice::query()->create(array_merge($param, ['status' => 3, 'handler' => $finance->id]));
+            $financeId = getProcessStaffId('finance', 'invoice');
+            $invoice = Invoice::query()->create(array_merge($param, ['status' => 3, 'handler' => $financeId]));
         }
         if ($user->hasRole('legal-affairs-manager')) {
-            $permission = Permission::findByName('finance_bill');
-            $finance = $permission->users()->first();
-            $invoice = Invoice::query()->create(array_merge($param, ['status' => 3, 'handler' => $finance->id]));
+            $financeId = getProcessStaffId('finance', 'invoice');
+            $invoice = Invoice::query()->create(array_merge($param, ['status' => 3, 'handler' => $financeId]));
         }
         if ($user->hasRole('user')) {
             $invoice = Invoice::query()->create(array_merge($param, ['status' => 1, 'handler' => $user->parent_id]));
@@ -99,7 +97,7 @@ class InvoiceController extends Controller
             InvoiceContent::query()->create($item);
         }
         //文件存储
-        if($request->ids){
+        if ($request->ids) {
             $ids = explode(',', $request->ids);
             foreach ($ids as $id) {
                 $invoice->media()->attach($id);
@@ -108,34 +106,12 @@ class InvoiceController extends Controller
         return $this->response()->item($invoice, new InvoiceTransformer())->setStatusCode(201);
     }
 
-//    public function update(InvoiceRequest $request, Invoice $invoice)
-//    {
-//        /** @var  $user \App\Models\User */
-//        $user = $this->user();
-//        if (!$user->hasRole('user') && !$user->hasRole('bd-manager')) {
-//            abort(403, '无操作权限');
-//        }
-//        $invoice->update(array_merge($request->all(), ['handler' => $user->parent_id, 'status' => 1]));
-//        $content = $request->invoice_content;
-//        InvoiceContent::query()
-//            ->where('invoice_id', '=', $invoice['id'])
-//            ->delete();
-//        foreach ($content as $item) {
-//            $item['invoice_id'] = $invoice['id'];
-//            InvoiceContent::query()->create($item);
-//        }
-//
-//        return $this->response()->noContent()->setStatusCode(200);
-//    }
 
     public function destroy(Invoice $invoice)
     {
         if ($invoice->status != 1) {
             abort(403, "合同审批状态已更改，不可删除");
         }
-//        InvoiceContent::query()
-//            ->where('invoice_id', '=', $invoice['id'])
-//            ->delete();
         $invoice->delete();
         return $this->response()->noContent()->setStatusCode(204);
     }
@@ -169,10 +145,9 @@ class InvoiceController extends Controller
             InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'invoice_id' => $invoice->id], ['user_id' => $user->id, 'invoice_id' => $invoice->id]);
 
         } else if ($user->hasRole('legal-affairs-manager')) {
-            $permission = Permission::findByName('finance_bill');
-            $finance = $permission->users()->first();
+            $financeId = getProcessStaffId('finance', 'invoice');
             $invoice->status = 3;
-            $invoice->handler = $finance->id;
+            $invoice->handler = $financeId;
             if (!$request->has('legal_ma_message')) {
                 abort(500, '没有填写意见');
             }
@@ -206,16 +181,4 @@ class InvoiceController extends Controller
         return $this->response()->noContent();
     }
 
-//    public function receipt(Invoice $invoice)
-//    {
-//        /** @var  $user \App\Models\User */
-//        $user = $this->user();
-//        if (!$user->hasPermissionTo('finance_bill')) {
-//            abort(403, "无操作权限");
-//        }
-//        $invoice->receive_status = 1;
-//        $invoice->update();
-//        return $this->response()->noContent();
-//
-//    }
 }

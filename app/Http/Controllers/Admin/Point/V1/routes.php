@@ -16,16 +16,16 @@ $api->version('v1', [
             $api->get('point/map', 'PointController@map');
 
             //场地
-            $api->get('markets', 'MarketController@index');
+            $api->get('markets', ['middleware' => ['permission:market.site.read'], 'uses' => 'MarketController@index']);
             $api->get('markets/{market}', 'MarketController@show');
-            $api->post('market', ['middleware' => ['role:super-admin|admin|project-manager'], 'uses' => 'MarketController@store']);
-            $api->patch('market/{market}', ['middleware' => ['role:super-admin|admin|project-manager'], 'uses' => 'MarketController@update']);
+            $api->post('market', ['middleware' => ['permission:market.site.create'], 'uses' => 'MarketController@store']);
+            $api->patch('market/{market}', ['middleware' => ['permission:market.site.update'], 'uses' => 'MarketController@update']);
 
             //点位
-            $api->get('points', 'PointController@index');
+            $api->get('points', ['middleware' => ['permission:market.point.read'], 'uses' => 'PointController@index']);
             $api->get('points/{point}', 'PointController@show');
-            $api->post('point', ['middleware' => ['role:super-admin|admin|project-manager'], 'uses' => 'PointController@store']);
-            $api->patch('points/{point}', ['middleware' => ['role:super-admin|admin|project-manager'], 'uses' => 'PointController@update']);
+            $api->post('point', ['middleware' => ['permission:market.point.create'], 'uses' => 'PointController@store']);
+            $api->patch('points/{point}', ['middleware' => ['permission:market.point.update'], 'uses' => 'PointController@update']);
         });
     });
 

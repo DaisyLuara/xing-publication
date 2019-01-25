@@ -12,20 +12,19 @@ $api->version('v1', [
 
             //合同管理
             $api->get('contract/{contract}', 'ContractController@show');
-            $api->get('contract', 'ContractController@index');
-            $api->post('contract', 'ContractController@store');
-            $api->patch('contract/{contract}', 'ContractController@update');
-            $api->delete('contract/{contract}', 'ContractController@destroy');
+            $api->get('contract', ['middleware' => ['permission:contract.list.read'], 'uses' => 'ContractController@index']);
+            $api->post('contract', ['middleware' => ['permission:contract.list.create'], 'uses' => 'ContractController@store']);
+            $api->delete('contract/{contract}', ['middleware' => ['permission:contract.list.delete'], 'uses' => 'ContractController@destroy']);
 
-            $api->post('contract/reject/{contract}', 'ContractController@reject');
-            $api->post('contract/auditing/{contract}', 'ContractController@auditing');
-            $api->post('contract/special_auditing/{contract}', 'ContractController@specialAuditing');
+            $api->post('contract/reject/{contract}', ['middleware' => ['permission:contract.list.reject'], 'uses' => 'ContractController@reject']);
+            $api->post('contract/auditing/{contract}', ['middleware' => ['permission:contract.list.auditing'], 'uses' => 'ContractController@auditing']);
+            $api->post('contract/special_auditing/{contract}', ['middleware' => ['permission:contract.list.special_auditing'], 'uses' => 'ContractController@specialAuditing']);
 
             //收款提示
-            $api->get('remind_contract', 'ContractReceiveDateController@index');
+            $api->get('remind_contract', ['middleware' => ['permission:contract.collection.read'], 'uses' => 'ContractReceiveDateController@index']);
 
             // 审批历史
-            $api->get('contract_history', 'ContractHistoryController@index');
+            $api->get('contract_history', ['middleware' => ['permission:contract.history.read'], 'uses' => 'ContractHistoryController@index']);
 
             //待审批数
             $api->get('auditing_count', 'ContractController@count');

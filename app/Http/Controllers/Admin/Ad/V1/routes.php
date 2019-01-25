@@ -11,9 +11,9 @@ $api->version('v1', [
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
             //广告投放
-            $api->get('ad_launch', 'AdLaunchController@index');
-            $api->post('ad_launch', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'AdLaunchController@store']);
-            $api->patch('ad_launch', ['middleware' => ['role:super-admin|admin|user|project-manager'], 'uses' => 'AdLaunchController@update']);
+            $api->get('ad_launch', ['middleware' => ['permission:ad.item.read'], 'uses' => 'AdLaunchController@index']);
+            $api->post('ad_launch', ['middleware' => ['permission:ad.item.create'], 'uses' => 'AdLaunchController@store']);
+            $api->patch('ad_launch', ['middleware' => ['permission:ad.item.update'], 'uses' => 'AdLaunchController@update']);
 
             //广告
             $api->get('advertisement', 'AdvertisementController@index');

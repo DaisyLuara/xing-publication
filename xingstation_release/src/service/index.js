@@ -42,6 +42,12 @@ export * from './search'
 // 节目
 export * from './project'
 
+// 角色
+export * from './role'
+
+// 权限
+export * from './permission'
+
 //微信卡包
 export * from './wx'
 //活动

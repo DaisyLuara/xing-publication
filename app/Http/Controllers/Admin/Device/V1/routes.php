@@ -10,10 +10,10 @@ $api->version('v1', [
     ], function ($api) {
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
             //设备
-            $api->get('push', 'PushController@index');
+            $api->get('push', ['middleware' => ['permission:device.item.read'], 'uses' => 'PushController@index']);
 
             //天猫-数据回流
-            $api->get('tmall/feedback', 'FeedBackController@index');
+            $api->get('tmall/feedback', ['middleware' => ['permission:device.feedback.read'], 'uses' => 'FeedBackController@index']);
         });
     });
 

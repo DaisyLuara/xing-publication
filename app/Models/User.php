@@ -3,14 +3,14 @@
 namespace App\Models;
 
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Activitylog\Traits\CausesActivity;
-use Illuminate\Notifications\Notifiable;
-use Tymon\JWTAuth\Contracts\JWTSubject;
-use Spatie\Permission\Traits\HasRoles;
-use Spatie\Permission\Models\Role;
+use App\Http\Controllers\Admin\Privilege\V1\Models\Role;
 use Auth;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Spatie\Activitylog\Traits\CausesActivity;
+use Spatie\Permission\Traits\HasRoles;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -32,6 +32,8 @@ class User extends Authenticatable implements JWTSubject
         $this->increment('notification_count');
         $this->laravelNotify($instance);
     }
+
+    protected $guard_name = 'web';
 
     /**
      * The attributes that are mass assignable.

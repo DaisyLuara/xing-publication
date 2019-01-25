@@ -11,21 +11,20 @@ $api->version('v1', [
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
             $api->get('payment/{payment}', 'PaymentController@show');
-            $api->get('payment', 'PaymentController@index');
-            $api->post('payment', 'PaymentController@store');
-            $api->patch('payment/{payment}', 'PaymentController@update');
-            $api->delete('payment/{payment}', 'PaymentController@destroy');
+            $api->get('payment', ['middleware' => ['permission:payment.list.read'], 'uses' => 'PaymentController@index']);
+            $api->post('payment', ['middleware' => ['permission:payment.list.create'], 'uses' => 'PaymentController@store']);
+            $api->delete('payment/{payment}', ['middleware' => ['permission:payment.list.delete'], 'uses' => 'PaymentController@destroy']);
 
-            $api->post('payment/reject/{payment}', 'PaymentController@reject');
-            $api->post('payment/auditing/{payment}', 'PaymentController@auditing');
-            $api->post('payment/receive/{payment}', 'PaymentController@receive');
+            $api->post('payment/reject/{payment}', ['middleware' => ['permission:payment.list.reject'], 'uses' => 'PaymentController@reject']);
+            $api->post('payment/auditing/{payment}', ['middleware' => ['permission:payment.list.auditing'], 'uses' => 'PaymentController@auditing']);
+            $api->post('payment/receive/{payment}', ['middleware' => ['permission:payment.list.receive'], 'uses' => 'PaymentController@receive']);
 
             $api->get('payment_payee/{payment_payee}', 'PaymentPayeeController@show');
-            $api->get('payment_payee', 'PaymentPayeeController@index');
-            $api->post('payment_payee', 'PaymentPayeeController@store');
-            $api->patch('payment_payee/{payment_payee}', 'PaymentPayeeController@update');
+            $api->get('payment_payee', ['middleware' => ['permission:payment.payee.read'], 'uses' => 'PaymentPayeeController@index']);
+            $api->post('payment_payee', ['middleware' => ['permission:payment.payee.create'], 'uses' => 'PaymentPayeeController@store']);
+            $api->patch('payment_payee/{payment_payee}', ['middleware' => ['permission:payment.payee.update'], 'uses' => 'PaymentPayeeController@update']);
 
-            $api->get('payment_history', 'PaymentHistoryController@index');
+            $api->get('payment_history', ['middleware' => ['permission:payment.history.read'], 'uses' => 'PaymentHistoryController@index']);
         });
     });
 
