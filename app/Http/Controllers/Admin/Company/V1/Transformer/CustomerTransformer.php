@@ -19,13 +19,16 @@ class CustomerTransformer extends TransformerAbstract
             'phone' => $customer->phone,
             'telephone' => $customer->telephone,
             'created_at' => $customer->created_at->toDateTimeString(),
-            'updated_at' => $customer->updated_at->toDateTImeString()
+            'updated_at' => $customer->updated_at->toDateTImeString(),
         ];
     }
 
     public function includeRoles(Customer $customer)
     {
-        return $this->collection($customer->role, new RoleTransformer());
+        if ($customer->roles->count() == 0) {
+            return null;
+        }
+        return $this->collection($customer->roles, new RoleTransformer());
     }
 
     public function includeCompany(Customer $customer)

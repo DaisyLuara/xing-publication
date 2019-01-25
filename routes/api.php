@@ -47,4 +47,5 @@ include app_path("Http/Controllers/Admin/MallCoo/V1/routes.php");
 include app_path("Http/Controllers/Admin/Privilege/V1/routes.php");
 include app_path("Http/Controllers/Admin/Report/V1/routes.php");
 include app_path("Http/Controllers/Admin/Warehouse/V1/routes.php");
+include app_path("Http/Controllers/Admin/Activity/V1/routes.php");
 include app_path('Http/Controllers/Admin/Common/V2/routes.php');

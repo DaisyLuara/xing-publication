@@ -32,7 +32,7 @@ class UserTransformer extends TransformerAbstract
 
     public function includeRoles(User $user)
     {
-        return $this->collection($user->role, new RoleTransformer());
+        return $this->collection($user->roles, new RoleTransformer());
     }
 
     private function getUserPermission(User $user)

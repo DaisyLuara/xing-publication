@@ -10,60 +10,48 @@ use EasyWeChat;
 class WeChatController extends Controller
 {
 
-//    public function oauth(Request $request)
-//    {
-//        $officialAccount = EasyWeChat::officialAccount();
-//        $redirect_url = $officialAccount->oauth->getRedirectUrl();
-//        return $officialAccount->oauth->scopes(['snsapi_userinfo'])->setRequest($request)->redirect($redirect_url);
-//
-//    }
-//
-//    public function callback(Request $request)
-//    {
-//        $officialAccount = EasyWeChat::officialAccount();
-//        $user = $officialAccount->oauth->user();
-//
-//        $accessToken = $user->token['access_token'];
-//        $refreshToken = $user->token['refresh_token'];
-//        $openId = $user->token['openid'];
-//        dd($accessToken, $refreshToken, $openId);
-//    }
-//
-//    public function message(Request $request)
-//    {
-//        /** @var  \EasyWeChat\OpenPlatform\Application $officialAccount */
-//        $officialAccount = EasyWeChat::officialAccount();
-//        $text = new Text('test');
-//        return $officialAccount->customer_service->message($text)->to('ott1x1V0a7b_KKH2XnLs_-YISIso')->send();
-//    }
-//
-//    public function menu()
-//    {
-//        $officialAccount = EasyWeChat::officialAccount();
-//
-//        $button = [
-//            [
-//                'type' => 'click',
-//                'name' => 'test1',
-//                'key' => 'V0521_Test1',
-//            ]
-//        ];
-//        //return $officialAccount->menu->create($button);
-//        return $officialAccount->menu->delete();
-//    }
-//
-//    public function qrCode()
-//    {
-//        $payment = EasyWeChat::payment();
-//        return $payment->order->unify([
-//            'body' => '下单测试',
-//            'out_trade_no' => '20150806125346',
-//            'total_fee' => 1,
-//            'notify_url' => 'https://pay.weixin.qq.com/wxpay/pay.action', // 支付结果通知网址，如果不设置则会使用配置里的默认地址
-//            'trade_type' => 'JSAPI',
-//        ]);
-//    }
+    public function redPack(){
+        //已经发送过红包
+        $payment = EasyWeChat::payment();
+        $redpack = $payment->redpack;
 
+        $mchBillno = date('YmdHis') . uniqid();
+        $redpackData = [
+            'mch_billno' => $mchBillno,
+            'send_name' => '测试',
+            're_openid' => $wxUser->openid,
+            'total_num' => 1,
+            'total_amount' => 100 * $couponBatch->amount,
+            'wishing' => '新年快乐!',
+            'act_name' => '刮卡抽奖！',
+            'remark' => '刮卡抽奖',
+            'scene_id' => 'PRODUCT_2',
+        ];
+
+        //发送红包
+        $result = $redpack->sendNormal($redpackData);
+
+        //添加流水记录
+        $redpackBillData = [
+            'coupon_batch_id' => $coupon->coupon_batch_id,
+            'coupon_code' => $coupon->code,
+        ];
+
+        $redpackBillData = array_merge($redpackData, $redpackBillData, $result);
+
+        RedPackBill::query()->create($redpackBillData);
+
+        //标记优惠券为已使用-不再发放现金红包
+        $coupon->update(['status' => 1]);
+
+        //如果错误 封装成 500, 方便前端处理
+        if ($result['result_code'] == 'FAIL') {
+//            ding()->with()->text();
+            abort(500, $result['return_msg']);
+        }
+
+        return $result;
+    }
 
 // ----------------------------------open_platform---------------------
 

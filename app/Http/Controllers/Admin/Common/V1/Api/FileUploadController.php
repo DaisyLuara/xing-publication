@@ -11,8 +11,8 @@ class FileUploadController extends Controller
 {
     public function show(FileUploadRequest $request)
     {
-        $scene = $request->scene;
-        $scene = str_replace('istart:', '', $scene);
+        $scene = urldecode($request->scene);
+        $scene = str_replace('istar:', '', $scene);
         $id = explode('_', $scene)[0];
         $fileUpload = FileUpload::query()->findOrFail($id);
 

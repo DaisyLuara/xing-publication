@@ -44,7 +44,7 @@ class AdminCompaniesController extends Controller
 
     public function show(Company $company)
     {
-        $this->authorize('show', $company);
+//        $this->authorize('show', $company);
 
         return $this->response->item($company, new CompanyTransformer());
     }
