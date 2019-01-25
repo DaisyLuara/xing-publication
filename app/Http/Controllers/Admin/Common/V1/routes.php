@@ -21,7 +21,10 @@ $api->version('v1', [
             $api->post('open/coupon/batches/{couponBatch}', 'CouponController@getCouponBatch');//获取优惠券规则
             $api->post('open/coupons/{couponBatch}', 'CouponController@generateCoupon');//发送优惠券
             $api->post('open/user/coupon', 'CouponController@getUserCoupon');//获取用户优惠券
+
         });
+
+        $api->post('open/redpack/{code}', 'RedPackController@store');
 
         //小程序优惠券接口
         $api->group(['middleware' => 'api_sign', 'prefix' => 'mini'], function ($api) {
@@ -29,6 +32,7 @@ $api->version('v1', [
             $api->get('user/coupons/{code}', 'MiniCouponController@couponShow');//优惠券详情
 
             $api->post('user/coupon_batch/{couponBatch}', 'MiniCouponController@store');//发送优惠券
+            $api->post('user/random/coupon_batch', 'MiniCouponController@randomSending');//随机发送优惠券
             $api->any('coupon/batches', 'MiniCouponController@couponBatchesIndex');//优惠券规则列表
             $api->get('coupon/batches/{couponBatch}', 'MiniCouponController@couponBatchShow');//优惠券规则详情
 
@@ -89,6 +93,7 @@ $api->version('v1', [
             $api->get('erp_supplier/query', 'QueryController@erpSupplierQuery');//供应商搜索
             $api->get('erp_sku/query', 'QueryController@erpSkuQuery');//sku下拉列表
             $api->get('erp_location/query', 'QueryController@erpLocationQuery');//库位下拉列表
+            $api->get('playing_types/query', 'QueryController@playingTypeQuery');//玩法配置列表
 
             //消息通知
             $api->get('user/notifications', 'NotificationsController@index');
