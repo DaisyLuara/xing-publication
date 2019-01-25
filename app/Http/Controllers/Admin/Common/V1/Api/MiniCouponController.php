@@ -150,7 +150,7 @@ class MiniCouponController extends Controller
         });
 
         $per_page = $request->get('per_page') ? : 5;
-        $couponBatches = $query->orderByDesc('sort_order')->paginate($per_page);
+        $couponBatches = $query->where('is_active', 1)->orderByDesc('sort_order')->paginate($per_page);
 
         abort_if($couponBatches->isEmpty(), 500, '无可用优惠券');
 
@@ -186,8 +186,12 @@ class MiniCouponController extends Controller
         $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
         $memberUID = $member->uid;
 
-        $now = Carbon::now()->toDateTimeString();
-        abort_if($couponBatch->end_date < $now, 500, '该券已过期!');
+        abort_if(!$couponBatch->is_active, 500, '该券已被停用!');
+
+        if ($couponBatch->is_fixed_date) {
+            $now = Carbon::now()->toDateTimeString();
+            abort_if($couponBatch->end_date < $now, 500, '该券已过期!');
+        }
 
         if (!$couponBatch->dmg_status && !$couponBatch->pmg_status && $couponBatch->stock <= 0) {
             abort(500, '优惠券已发完!');
@@ -289,7 +293,45 @@ class MiniCouponController extends Controller
         }
 
         return $this->response->item($coupon, new CouponTransformer());
-
     }
+
+    /**
+     * 小程序随机发放优惠券
+     * @param CouponBatch $couponBatch
+     * @param MiniCouponRequest $request
+     * @param Client $client
+     * @return \Dingo\Api\Http\Response
+     */
+    public function randomSending(CouponBatch $couponBatch, MiniCouponRequest $request, Client $client)
+    {
+        $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
+        $query = $couponBatch->query();
+
+        //优惠券对应商场
+        $query->whereHas('marketPointCouponBatches', function ($q) use($request, $member) {
+            $marketId = $request->marketid ?: $member->marketid;
+            $q->where('marketid', $marketId);
+        });
+
+        $couponBatches = $query->orderByDesc('sort_order')->get();
+
+        abort_if($couponBatches->isEmpty(), 500, '无可用优惠券');
+
+        //业务参数过滤
+        foreach ($couponBatches as $key => $couponBatch) {
+
+            if (!$couponBatch->pmg_status && !$couponBatch->dmg_status && $couponBatch->stock <= 0) {
+
+                $couponBatches->forget($key);
+            }
+        }
+
+        abort_if($couponBatches->isEmpty(), 500, '无可用优惠券');
+
+        $couponBatch = $couponBatches->random();
+
+        return $this->response->item($couponBatch, new CouponBatchTransformer());
+    }
+
 
 }

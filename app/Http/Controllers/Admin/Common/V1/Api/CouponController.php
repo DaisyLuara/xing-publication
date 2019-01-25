@@ -288,6 +288,17 @@ class CouponController extends Controller
                     abort(500, '您今天已经领过了，请明天再来!');
                 }
 
+            } else if (in_array($couponBatch->id, [242, 241, 240, 239, 238, 237])) {
+                //按微信客户端 发送优惠券(活动期间 每天限制领取张数)
+                $couponBatchIds = [242, 241, 240, 239, 238, 237];
+                $coupons = Coupon::query()->where('wx_user_id', $userID)
+                    ->whereIn('coupon_batch_id', $couponBatchIds)
+                    ->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
+                    ->get();
+
+                if ($coupons->count() >= $couponBatch->people_max_get) {
+                    abort(500, '您今天已经领过了，请明天再来!');
+                }
             } else if ($mobile) {
                 //按手机号码 发送优惠券
                 Log::info('mobile', $request->all());
@@ -425,9 +436,16 @@ class CouponController extends Controller
             $query->whereBetween('created_at', [$request->get('start_date'), $request->get('end_date')]);
         }
 
-        $coupon = $query->where('wx_user_id', $userID)
-            ->where('coupon_batch_id', $request->get('coupon_batch_id'))
-            ->first();
+        $coupon_batch_id = $request->get('coupon_batch_id');
+        if (in_array($coupon_batch_id, [242, 241, 240, 239, 238, 237])) {
+            $coupon = $query->where('wx_user_id', $userID)
+                ->whereIn('coupon_batch_id', [242, 241, 240, 239, 238, 237])
+                ->first();
+        } else {
+            $coupon = $query->where('wx_user_id', $userID)
+                ->where('coupon_batch_id', $request->get('coupon_batch_id'))
+                ->first();
+        }
 
         abort_if(!$coupon, 204);
 

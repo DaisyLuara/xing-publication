@@ -21,6 +21,7 @@ const PERMISSION_API = '/api/permission/query'
 const ROLE_API = '/api/role/query'
 const CONTRACT_RECEIPT_API = '/api/contract/query'
 const TEAM_PROJECT_API = '/api/team_projects/query'
+const PLATYING_TYPES_API = '/api/playing_types/query'
 const HOST = process.env.SERVER_URL
 
 // 区域
@@ -308,10 +309,25 @@ const getSearchRole = (context, args) => {
   })
 }
 
+// 原生节目
 const getSearchCopyrightProject = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
       .get(HOST + TEAM_PROJECT_API, { params: params })
+      .then(response => {
+        resolve(response.data.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+// 玩法配置
+const getSearchPlayingTypes = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + PLATYING_TYPES_API, { params: params })
       .then(response => {
         resolve(response.data.data)
       })
@@ -343,5 +359,6 @@ export {
   getPermission,
   getSearchRole,
   getContractReceiptList,
-  getSearchCopyrightProject
+  getSearchCopyrightProject,
+  getSearchPlayingTypes
 }
