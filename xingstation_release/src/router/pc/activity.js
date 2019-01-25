@@ -6,7 +6,7 @@ let router = {
   name: '活动',
   meta: {
     title: '活动',
-    permission: ''
+    permission: 'activity'
   },
   component: () =>
     import(/* webpackChunkName: "page/activity/activityView" */ 'page/activity/activityView'),
@@ -14,16 +14,17 @@ let router = {
     {
       path: 'participants',
       meta: {
-        title: '活动参与者'
+        title: '活动参与者',
+        permission: 'activity.participants'
       },
       component: () =>
         import(/* webpackChunkName: "page/activity/participants/routerView" */ 'page/activity/participants/routerView'),
       children: [
         {
           path: '/',
-          name: '活动参与者列表',
           meta: {
-            title: '活动参与者列表'
+            title: '活动参与者列表',
+            permission: 'activity.participants.read'
           },
           component: () =>
             import(/* webpackChunkName: "page/activity/participants/index" */ 'page/activity/participants/index')
@@ -33,16 +34,17 @@ let router = {
     {
       path: 'bill',
       meta: {
-        title: '交易流水'
+        title: '交易流水',
+        permission: 'activity.bill'
       },
       component: () =>
         import(/* webpackChunkName: "page/activity/bill/routerView" */ 'page/activity/bill/routerView'),
       children: [
         {
           path: '/',
-          name: '流水列表',
           meta: {
-            title: '流水列表'
+            title: '流水列表',
+            permission: 'activity.bill.read'
           },
           component: () =>
             import(/* webpackChunkName: "page/activity/bill/index" */ 'page/activity/bill/index')
@@ -55,7 +57,9 @@ let router = {
 router.redirect = () => {
   let routes = router.children
   for (let route of routes) {
-    return '/activity/' + route.path
+    if (auth.checkPathPermission(route)) {
+      return '/activity/' + route.path
+    }
   }
 }
 
