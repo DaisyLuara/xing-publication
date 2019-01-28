@@ -95,31 +95,24 @@ class ContractController extends Controller
             $contract->media()->attach($id);
         }
 
+        //收款日期存储
         if ($request->type == 0 && $request->has('receive_date')) {
-            //收款日期存储
             $dates = explode(',', $request->receive_date);
             foreach ($dates as $date) {
                 ContractReceiveDate::create(['contract_id' => $contract->id, 'receive_date' => $date, 'receive_status' => 0]);
-                if ($request->type == 0 && $request->has('receive_date')) {
-                    //收款日期存储
-                    $dates = explode(',', $request->receive_date);
-                    foreach ($dates as $date) {
-                        ContractReceiveDate::create(['contract_id' => $contract->id, 'receive_date' => $date, 'receive_status' => 0]);
-                    }
-                }
-
-                $param = $request->all();
-                if ($request->product_status == 1 && $request->has('product_content')) {
-                    //硬件合同存储
-                    $content = $param['product_content'];
-                    foreach ($content as $item) {
-                        $item['contract_id'] = $contract->id;
-                        ContractProduct::query()->create($item);
-                    }
-                }
-                return $this->response()->item($contract, new ContractTransformer())->setStatusCode(201);
             }
         }
+
+        //硬件合同存储
+        $param = $request->all();
+        if ($request->product_status == 1 && $request->has('product_content')) {
+            $content = $param['product_content'];
+            foreach ($content as $item) {
+                $item['contract_id'] = $contract->id;
+                ContractProduct::query()->create($item);
+            }
+        }
+
         return $this->response()->item($contract, new ContractTransformer())->setStatusCode(201);
     }
 
@@ -129,7 +122,6 @@ class ContractController extends Controller
         if ($contract->status != 1) {
             abort(403, "合同审批状态已更改，不可删除");
         }
-//        ContractReceiveDate::query()->where('contract_id', $contract->id)->delete();
         $contract->delete();
         return $this->response()->noContent()->setStatusCode(204);
     }
