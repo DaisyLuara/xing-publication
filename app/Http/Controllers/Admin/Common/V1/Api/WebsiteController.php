@@ -12,9 +12,19 @@ use App\Http\Controllers\Admin\Common\V1\Models\WebsiteVisitor;
 use App\Http\Controllers\Admin\Common\V1\Request\WebsiteRequest;
 use App\Http\Controllers\Admin\Face\V1\Models\XsFaceCountLog;
 use App\Http\Controllers\Controller;
+use App\Mail\WebVisitor;
 
 class WebsiteController extends Controller
 {
+
+    protected $mailMapping = [
+//        '1' => 'bd@xingshidu.com',
+//        '2' => 'ma@xingshidu.com',
+//        '3' => 'bd@xingshidu.com',
+        1 => '2121023687@qq.com',
+        2 => '2121023687@qq.com',
+        3 => '2121023687@qq.com'
+    ];
 
     public function getFCpe()
     {
@@ -42,7 +52,10 @@ class WebsiteController extends Controller
         $data['name'] = $request->name;
         $data['remark'] = $request->remark;
         $data['subscribe'] = $request->subscribe;
-        WebsiteVisitor::create($data);
+        $data['type'] = $request->type;
+        $visitor = WebsiteVisitor::create($data);
+
+        \Mail::to($this->mailMapping[$request->type])->send(new WebVisitor($visitor));
         return $this->response()->noContent()->setStatusCode(201);
     }
 }
