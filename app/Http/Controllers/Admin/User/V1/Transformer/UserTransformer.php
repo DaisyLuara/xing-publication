@@ -9,8 +9,13 @@ use App\Http\Controllers\Admin\Privilege\V1\Transformer\RoleTransformer;
 
 class UserTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['roles', 'permissions'];
+    protected $availableIncludes = ['roles'];
 
+    /**
+     * @param User $user
+     * @return array
+     * @throws \Exception
+     */
     public function transform(User $user)
     {
         return [
@@ -35,6 +40,11 @@ class UserTransformer extends TransformerAbstract
         return $this->collection($user->roles, new RoleTransformer());
     }
 
+    /**
+     * @param User $user
+     * @return mixed
+     * @throws \Exception
+     */
     private function getUserPermission(User $user)
     {
         $permissions = $user->getAllPermissions();
