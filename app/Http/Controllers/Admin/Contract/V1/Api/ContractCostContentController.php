@@ -47,7 +47,8 @@ class ContractCostContentController extends Controller
 
     public function confirm(ContractCostContent $content)
     {
-        $content->update(['status' => 1]);
+        $user = $this->user();
+        $content->update(['status' => 1, 'operator' => $user->name]);
         return $this->response()->noContent();
     }
 }
