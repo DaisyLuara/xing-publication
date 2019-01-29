@@ -50,3 +50,5 @@ export * from './permission'
 
 //微信卡包
 export * from './wx'
+//活动
+export * from './activity'

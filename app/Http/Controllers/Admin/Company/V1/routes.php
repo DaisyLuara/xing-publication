@@ -24,17 +24,17 @@ $api->version('v1', [
 
             //商户权限
             $api->get('company_permission/{permission}', 'CompanyPermissionController@show');
-            $api->get('company_permission', 'CompanyPermissionController@index');
-            $api->post('company_permission', 'CompanyPermissionController@store');
-            $api->patch('company_permission/{permission}', 'CompanyPermissionController@update');
-            $api->delete('company_permission/{permission}', 'CompanyPermissionController@destroy');
+            $api->get('company_permission', ['middleware' => ['permission:company.permission.read'], 'uses' => 'CompanyPermissionController@index']);
+            $api->post('company_permission', ['middleware' => ['permission:company.permission.create'], 'uses' => 'CompanyPermissionController@store']);
+            $api->patch('company_permission/{permission}', ['middleware' => ['permission:company.permission.update'], 'uses' => 'CompanyPermissionController@update']);
+            $api->delete('company_permission/{permission}', ['middleware' => ['permission:company.permission.delete'], 'uses' => 'CompanyPermissionController@destroy']);
 
             //商户角色
             $api->get('company_role/{role}', 'CompanyRoleController@show');
-            $api->get('company_role', 'CompanyRoleController@index');
-            $api->post('company_role', 'CompanyRoleController@store');
-            $api->patch('company_role/{role}', 'CompanyRoleController@update');
-            $api->delete('company_role/{role}', 'CompanyRoleController@destroy');
+            $api->get('company_role', ['middleware' => ['permission:company.role.read'], 'uses' => 'CompanyRoleController@index']);
+            $api->post('company_role', ['middleware' => ['permission:company.role.create'], 'uses' => 'CompanyRoleController@store']);
+            $api->patch('company_role/{role}', ['middleware' => ['permission:company.role.update'], 'uses' => 'CompanyRoleController@update']);
+            $api->delete('company_role/{role}', ['middleware' => ['permission:company.role.delete'], 'uses' => 'CompanyRoleController@destroy']);
         });
     });
 

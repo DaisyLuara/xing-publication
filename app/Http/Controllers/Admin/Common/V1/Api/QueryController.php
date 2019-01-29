@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin\Common\V1\Api;
 
+use App\Http\Controllers\Admin\Activity\V1\Models\PlayingType;
+use App\Http\Controllers\Admin\Activity\V1\Transformer\PlayingTypeTransformer;
 use App\Http\Controllers\Admin\Ad\V1\Models\AdTrade;
 use App\Http\Controllers\Admin\Ad\V1\Models\Advertisement;
 use App\Http\Controllers\Admin\Ad\V1\Models\Advertiser;
@@ -561,5 +563,13 @@ class QueryController extends Controller
 
         return $this->response->collection($markets, new MarketTransformer());
     }
+
+    public function playingTypeQuery(PlayingType $playingType)
+    {
+        $query = $playingType->query();
+        $playingTypes = $query->orderByDesc('aid')->get();
+        return $this->response()->collection($playingTypes, new PlayingTypeTransformer());
+    }
+
 
 }

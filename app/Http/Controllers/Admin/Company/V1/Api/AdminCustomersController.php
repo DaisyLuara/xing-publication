@@ -33,7 +33,7 @@ class AdminCustomersController extends Controller
 
     public function store(CustomerRequest $request, Company $company, Customer $customer)
     {
-        $this->authorize('store', [$customer, $company]);
+//        $this->authorize('store', [$customer, $company]);
 
         /** @var  $customer \App\Models\Customer */
         $customer = Customer::create([
@@ -56,13 +56,16 @@ class AdminCustomersController extends Controller
 
     public function update(CustomerRequest $request, Company $company, Customer $customer)
     {
-        $this->authorize('update', [$customer, $company]);
+//        $this->authorize('update', [$customer, $company]);
         $input = $request->except('company_id');
         if (isset($input['password'])) {
             $input['password'] = bcrypt($input['password']);
         }
 
         $customer->update($input);
+        $role = Role::findById($request->role_id, 'shop');
+        $customer->assignRole($role);
+
         activity('customer')->on($customer)->withProperties($request->all())->log('修改公司联系人');
         return $this->response->item($customer, new CustomerTransformer());
     }

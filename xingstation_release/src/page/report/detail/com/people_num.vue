@@ -670,7 +670,7 @@ export default {
         },
         {
           value: 'person_reward',
-          label: '团队奖励'
+          label: '个人绩效'
         }
       ],
       shouldDialogShow: false,

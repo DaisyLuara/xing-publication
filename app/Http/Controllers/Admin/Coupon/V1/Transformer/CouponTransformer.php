@@ -26,6 +26,7 @@ class CouponTransformer extends TransformerAbstract
             'mobile' => $coupon->mobile,
             'wx_user_id' => $coupon->wx_user_id,
             'taobao_user_id' => $coupon->taobao_user_id,
+            'member_uid' => $coupon->member_uid,
             'created_at' => $coupon->created_at->toDateTimeString(),
             'use_date' => $coupon->use_date ? $coupon->use_date->toDatetimeString() : '',
             'effect_start_date' => $coupon->start_date ? $coupon->start_date->toDatetimeString() : '',

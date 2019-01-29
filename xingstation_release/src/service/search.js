@@ -24,6 +24,7 @@ const TEAM_PROJECT_API = '/api/team_projects/query'
 const BD_API = '/api/bd_users/query'
 const STORES_API = '/api/stores/query'
 const COMPANY_MARKET_API = '/api/company/markets/query'
+const PLATYING_TYPES_API = '/api/playing_types/query'
 const HOST = process.env.SERVER_URL
 
 // 区域
@@ -326,6 +327,7 @@ const getSearchCopyrightProject = (context, params) => {
       })
   })
 }
+
 // bd
 const getSearchBDList = (context, params) => {
   return new Promise(function(resolve, reject) {
@@ -358,6 +360,12 @@ const getCompanyMarketList = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
       .get(HOST + COMPANY_MARKET_API, { params: params })
+
+// 玩法配置
+const getSearchPlayingTypes = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + PLATYING_TYPES_API, { params: params })
       .then(response => {
         resolve(response.data.data)
       })
@@ -393,4 +401,5 @@ export {
   getSearchBDList,
   getStoresList,
   getCompanyMarketList
+  getSearchPlayingTypes
 }

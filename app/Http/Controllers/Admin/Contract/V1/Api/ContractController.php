@@ -60,15 +60,15 @@ class ContractController extends Controller
 
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if ($user->hasRole('operation')) {
-            $query->where('status', '=', 3);
+        if ($user->hasRole('user|bd-manager')) {
+            $query->whereRaw("(applicant = $user->id or handler = $user->id)");
         } elseif ($user->hasRole('legal-affairs') || $user->hasRole('legal-affairs-manager')) {
             $query->whereRaw("(applicant = $user->id or handler = $user->id or status=3)");
         } elseif ($user->hasRole('purchasing')) {
             //角色为采购时，查询条件为：已审批完成(status=3),product_status为非0（1未出厂or2已出厂）
             $query->whereRaw("(status = 3 and product_status != 0)");
         } else {
-            $query->whereRaw("(applicant = $user->id or handler = $user->id)");
+            $query->where('status', 3);
         }
         $contract = $query->orderBy('created_at', 'desc')->paginate(10);
         return $this->response()->paginator($contract, new ContractTransformer())->setStatusCode(200);
