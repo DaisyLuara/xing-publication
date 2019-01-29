@@ -22,6 +22,10 @@ class Contract extends Model
         'processing_person',
         'type',
         'product_status',
+        'kind',
+        'serve_target',
+        'special_num',
+        'common_num',
         'amount',
         'remark',
         'legal_message',
@@ -51,7 +55,7 @@ class Contract extends Model
 
     public function media()
     {
-        return $this->belongsToMany(Media::class, 'contract_media', 'contract_id','media_id');
+        return $this->belongsToMany(Media::class, 'contract_media', 'contract_id', 'media_id');
     }
 
     public function receiveDate()
