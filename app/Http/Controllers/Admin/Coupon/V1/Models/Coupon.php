@@ -30,8 +30,10 @@ class Coupon extends Model
         'taobao_user_id',
         'member_uid',
         'qiniu_id',
+        'channel',
         'oid',
         'belong',
+        'utm_source',
         'start_date',
         'end_date',
     ];
