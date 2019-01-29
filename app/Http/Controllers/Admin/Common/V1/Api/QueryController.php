@@ -17,7 +17,9 @@ use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
 use App\Http\Controllers\Admin\Company\V1\Transformer\CustomerTransformer;
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
+use App\Http\Controllers\Admin\Contract\V1\Models\ContractCostKind;
 use App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate;
+use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractCostKindTransformer;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractReceiveDateTransformer;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
@@ -514,5 +516,11 @@ class QueryController extends Controller
         return $this->response()->collection($playingTypes, new PlayingTypeTransformer());
     }
 
+    public function costKindQuery(ContractCostKind $contractCostKind)
+    {
+        $query = $contractCostKind->query();
+        $contractCostKind = $query->get();
+        return $this->response()->collection($contractCostKind, new ContractCostKindTransformer());
+    }
 
 }

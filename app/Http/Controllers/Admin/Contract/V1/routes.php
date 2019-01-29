@@ -29,6 +29,18 @@ $api->version('v1', [
             //待审批数
             $api->get('auditing_count', 'ContractController@count');
 
+            //成本管理
+            $api->get('contract_cost/{contract_cost}', 'ContractCostController@show');
+            $api->get('contract_cost', 'ContractCostController@index');
+            $api->post('contract_cost', 'ContractCostController@store');
+
+            //成本明细
+            $api->post('contract_cost/{contract_cost}/cost_content', 'ContractCostContentController@store');
+            $api->patch('contract_cost/{contract_cost}/cost_content/{content}', 'ContractCostContentController@update');
+            $api->delete('contract_cost/{contract_cost}/cost_content/{content}', 'ContractCostContentController@destroy');
+
+            //成本确认
+            $api->post('cost_content/{content}/confirm', 'ContractCostContentController@confirm');
         });
     });
 

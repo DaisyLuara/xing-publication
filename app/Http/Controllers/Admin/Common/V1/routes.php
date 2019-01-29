@@ -94,6 +94,7 @@ $api->version('v1', [
             $api->get('erp_sku/query', 'QueryController@erpSkuQuery');//sku下拉列表
             $api->get('erp_location/query', 'QueryController@erpLocationQuery');//库位下拉列表
             $api->get('playing_types/query', 'QueryController@playingTypeQuery');//玩法配置列表
+            $api->get('cost_kind/query', 'QueryController@costKindQuery');
 
             //消息通知
             $api->get('user/notifications', 'NotificationsController@index');
