@@ -41,12 +41,13 @@ class WebsiteController extends Controller
             $data['email'] = $contact;
         }
 
-        if (!filter_var($contact, FILTER_VALIDATE_EMAIL) && !preg_match('/^1[3456789]\d{9}$/', $contact)) {
-            abort(500, '手机格式错误');
-        } else {
-            $data['phone'] = $contact;
+        if (!filter_var($contact, FILTER_VALIDATE_EMAIL)) {
+            if (!preg_match('/^1[3456789]\d{9}$/', $contact)) {
+                abort(422, '手机格式错误');
+            } else {
+                $data['phone'] = $contact;
+            }
         }
-
         $data['name'] = $request->name;
         $data['remark'] = $request->remark;
         $data['subscribe'] = $request->subscribe;
