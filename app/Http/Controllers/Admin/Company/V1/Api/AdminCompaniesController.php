@@ -72,7 +72,7 @@ class AdminCompaniesController extends Controller
                 'password' => bcrypt($request->password),
                 'company_id' => $company->id,
             ];
-            Customer::create($customerData);
+            $customer=Customer::create($customerData);
             $role = Role::findById($request->role_id, 'shop');
             $customer->assignRole($role);
         }
