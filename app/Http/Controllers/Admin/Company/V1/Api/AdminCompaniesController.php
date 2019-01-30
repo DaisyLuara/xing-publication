@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Admin\Company\V1\Api;
 
-use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
-use App\Http\Controllers\Admin\Company\V1\Request\CompanyRequest;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
+use App\Http\Controllers\Admin\Company\V1\Request\CompanyRequest;
+use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
+use App\Http\Controllers\Admin\Privilege\V1\Models\Role;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Admin\Privilege\V1\Models\Role;
 
 class AdminCompaniesController extends Controller
 {
@@ -72,7 +72,7 @@ class AdminCompaniesController extends Controller
                 'password' => bcrypt($request->password),
                 'company_id' => $company->id,
             ];
-            Customer::create($customerData);
+            $customer = Customer::create($customerData);
             $role = Role::findById($request->role_id, 'shop');
             $customer->assignRole($role);
         }
