@@ -18,13 +18,11 @@ class WebsiteController extends Controller
 {
 
     protected $mailMapping = [
-//        '1' => 'bd@xingshidu.com',
-//        '2' => 'ma@xingshidu.com',
-//        '3' => 'bd@xingshidu.com',
-        1 => '2121023687@qq.com',
-        2 => '2121023687@qq.com',
-        3 => '2121023687@qq.com'
+        '1' => 'bd@xingshidu.com',
+        '2' => 'bd@xingshidu.com',
+        '3' => 'bd@xingshidu.com',
     ];
+
 
     public function getFCpe()
     {
