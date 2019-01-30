@@ -161,17 +161,19 @@ class ContractController extends Controller
                 'contract_number'
             ];
             $this->checkParam($request, $params);
-
-            $contract->status = 2;
-            $contract->handler = $user->parent_id;
-            $contract->contract_number = $request->contract_number;
-            $contract->legal_message = $request->legal_message;
+            $contract->fill(array_merge($request->all(), ['status' => 2, 'handler' => $user->parent_id]));
             $this->updateContractAndHistory($user, $contract);
         } else if ($user->hasRole('legal-affairs-manager')) {
             $params = [
-                'legal_ma_message'
+                'legal_ma_message',
+                'special_num',
+                'common_num'
             ];
             $this->checkParam($request, $params);
+            //特批合同需要带合同编号
+            if($contract->status==4){
+                $this->checkParam($request, ['contract_number']);
+            }
 
             $parentId = $contract->applicantUser->parent_id;
             // BD主管建的直接已审批,不经过自己
@@ -182,11 +184,8 @@ class ContractController extends Controller
                 $contract->status = 2;
                 $contract->handler = $parentId;
             }
-            //特批的合同审批时要带合同编号
-            if ($request->has('contract_number')) {
-                $contract->contract_number = $request->contract_number;
-            }
-            $contract->legal_ma_message = $request->legal_ma_message;
+
+            $contract->fill($request->all());
             $this->updateContractAndHistory($user, $contract);
         } else if ($user->hasRole('bd-manager')) {
             $params = [
