@@ -204,6 +204,6 @@ class CouponBatchController extends Controller
             }
         }
 
-        return $customers;
+        return array_unique($customers);
     }
 }
