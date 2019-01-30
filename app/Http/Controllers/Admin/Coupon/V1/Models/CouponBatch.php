@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Point\V1\Models\Market;
 use App\Http\Controllers\Admin\Point\V1\Models\MarketConfig;
 use App\Http\Controllers\Admin\Point\V1\Models\Point;
+use App\Models\Customer;
 use App\Models\Model;
 use App\Models\User;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -106,6 +107,11 @@ class CouponBatch extends Model
     public function writeOffMarket()
     {
         return $this->belongsTo(Market::class, 'write_off_mid', 'marketid');
+    }
+
+    public function writeOffCustomers()
+    {
+        return $this->belongsToMany(Customer::class, 'coupon_batch_write_off_customers')->withTimestamps();
     }
 
 }
