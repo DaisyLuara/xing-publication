@@ -53,8 +53,12 @@ class WebsiteController extends Controller
         $data['subscribe'] = $request->subscribe;
         $data['type'] = $request->type;
         $visitor = WebsiteVisitor::create($data);
-
-        \Mail::to($this->mailMapping[$request->type])->send(new WebVisitor($visitor));
+        
+        if (env('APP_ENV') == 'production') {
+            \Mail::to($this->mailMapping[$request->type])->send(new WebVisitor($visitor));
+        } else {
+            \Mail::to('yangqiang@jingfree.com')->send(new WebVisitor($visitor));
+        }
         return $this->response()->noContent()->setStatusCode(201);
     }
 }
