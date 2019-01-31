@@ -14,7 +14,10 @@ use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\WechatCouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Request\CouponBatchRequest;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
+use App\Http\Controllers\Admin\Point\V1\Models\MarketConfig;
+use App\Http\Controllers\Admin\Point\V1\Models\Store;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class CouponBatchController extends Controller
@@ -37,8 +40,37 @@ class CouponBatchController extends Controller
             $query->where('name', 'like', '%' . $request->name . '%');
         }
 
+        if ($request->filled('create_user_name')) {
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->create_user_name . '%');
+            });
+        }
+
         if ($request->has('company_id')) {
             $query->where('company_id', $request->get('company_id'));
+        }
+
+        if ($request->has('scene_type')) {
+            $query->where('scene_type', $request->get('scene_type'));
+        }
+
+        if ($request->has('status')) {
+            $now = Carbon::now()->toDateTimeString();
+
+            switch ($request->get('status')) {
+                case 1:
+                    $query->where('end_date', '>', $now)
+                        ->where('start_date', '<', $now);
+                    break;
+                case 2:
+                    $query->where('start_date', '>', $now);
+                    break;
+                case 3:
+                    $query->where('end_date', '<', $now);
+                    break;
+                default:
+                    return null;
+            }
         }
 
         $couponBatch = $query->orderByDesc('id')->paginate(10);
@@ -47,6 +79,9 @@ class CouponBatchController extends Controller
 
     public function store(Company $company, CouponBatch $couponBatch, CouponBatchRequest $request)
     {
+        //检查核销配置
+        $customers = $this->checkWriteOffCustomer($request);
+
         $couponBatch->fill(array_merge([
             'company_id' => $company->id,
             'create_user_id' => $this->user->id,
@@ -75,6 +110,11 @@ class CouponBatchController extends Controller
             $couponBatch->update(['wechat_coupon_batch_id' => $wechatCouponBatch->id]);
         }
 
+        //绑定核销人员
+        if ($customers) {
+            $couponBatch->writeOffCustomers()->attach($customers);
+        }
+
         activity('coupon_batch')->on($couponBatch)->withProperties($request->all())->log('新增优惠券规则');
 
         return $this->response->item($couponBatch, new CouponBatchTransformer())
@@ -83,6 +123,9 @@ class CouponBatchController extends Controller
 
     public function update(CouponBatch $couponBatch, Request $request)
     {
+        //检查核销配置
+        $customers = $this->checkWriteOffCustomer($request);
+
         $couponBatch->update($request->except(['marketid', 'oid']));
         if ($request->wechat && $couponBatch->wechat) {
             $couponBatch->wechat()->update($request['wechat']);
@@ -103,6 +146,12 @@ class CouponBatchController extends Controller
                     'oid' => $oid,
                 ]);
             }
+        }
+
+        //重新绑定核销人员
+        $couponBatch->writeOffCustomers()->detach();
+        if ($customers) {
+           $couponBatch->writeOffCustomers()->attach($customers);
         }
 
         activity('coupon_batch')->on($couponBatch)->withProperties($request->all())->log('修改优惠券规则');
@@ -132,5 +181,29 @@ class CouponBatchController extends Controller
             }
         }
 
+    }
+
+    private function checkWriteOffCustomer($request)
+    {
+        $customers = [];
+        if ($request->filled('scene_type')) {
+            //场地核销人员
+            if ($request->filled('write_off_mid')) {
+                $market = MarketConfig::query()->findOrFail($request->write_off_mid);
+                abort_if(!$market->write_off_customer_id, 500, '该场地未指定核销人员');
+                $customers[] = $market->write_off_customer_id;
+            }
+
+            //商户核销人员
+            if (!empty($request->write_off_sid)) {
+                foreach ($request->write_off_sid as $store_id) {
+                    $store = Store::query()->findOrFail($store_id);
+                    abort_if(!$store->write_off_customer_id, 500, '商户[' . $store->name . ']未指定核销人员');
+                    $customers[] = $store->write_off_customer_id;
+                }
+            }
+        }
+
+        return array_unique($customers);
     }
 }

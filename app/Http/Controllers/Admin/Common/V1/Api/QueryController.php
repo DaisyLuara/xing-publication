@@ -21,6 +21,9 @@ use App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractReceiveDateTransformer;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
+use App\Http\Controllers\Admin\Point\V1\Models\MarketConfig;
+use App\Http\Controllers\Admin\Point\V1\Models\Store;
+use App\Http\Controllers\Admin\Point\V1\Transformer\StoreTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\PolicyTransformer;
@@ -354,6 +357,10 @@ class QueryController extends Controller
             $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
         }
 
+        if ($request->company_id) {
+            $query->where('company_id', $request->company_id);
+        }
+
         if ($request->has('type')) {
             $query->where('type', $request->type);
         }
@@ -505,6 +512,56 @@ class QueryController extends Controller
     public function erpLocationQuery(Company $company, Request $request)
     {
         return DB::table('erp_locations')->select('id', 'name')->get();
+    }
+
+    public function bdAndBdManagerQuery(Request $request)
+    {
+        $bdRole = Role::findByName('user');
+        $bds = $bdRole->users()->get();
+
+        $bdManagerRole = Role::findByName('bd-manager');
+        $bdManagers = $bdManagerRole->users()->get();
+
+        $merged = $bds->merge($bdManagers);
+
+        return $this->response->collection($merged, new UserTransformer());
+    }
+
+    public function storeQuery(Request $request, Store $store)
+    {
+        $query = $store->query();
+
+        if ($request->has('company_id')) {
+            $query->where('company_id', '=', $request->company_id);
+        }
+
+        $stores = $query->get();
+
+        return $this->response->collection($stores, new StoreTransformer());
+    }
+
+    public function marketConfigQuery(Request $request, MarketConfig $marketConfig)
+    {
+        $query = $marketConfig->query();
+
+        if ($request->has('company_id')) {
+            $query->where('company_id', '=', $request->company_id);
+        }
+
+        $marketConfigs = $query->get();
+
+        $markets = collect();
+        $marketConfigs->each(function ($item) use($markets){
+            if ($item->market) {
+                $markets->push($item->market);
+            }
+        });
+
+        if ($markets->isEmpty()) {
+            return null;
+        }
+
+        return $this->response->collection($markets, new MarketTransformer());
     }
 
     public function playingTypeQuery(PlayingType $playingType)
