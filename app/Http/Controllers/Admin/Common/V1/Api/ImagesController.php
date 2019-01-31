@@ -23,6 +23,7 @@ class ImagesController extends Controller
                 Log::info('decrypt fail', [$exception->getMessage()]);
             }
         }
+        Log::info('image_request', $request->all());
         $path = $uploader->save($request->image, str_plural($request->type));
 
         $image->path = $path;
