@@ -111,8 +111,9 @@
           <el-col :span="12">
             <el-form-item label="定制属性" prop="individual_attribute">
               <el-radio-group v-model="programForm.individual_attribute" @change="handleCustom">
-                <el-radio :label="1">定制</el-radio>
-                <el-radio :label="0">不定制</el-radio>
+                <el-radio :label="0">非定制</el-radio>
+                <el-radio :label="1">定制特别节目</el-radio>
+                <el-radio :label="2">定制普通</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -1024,11 +1025,11 @@ export default {
           if (res.copyright_project_id) {
             this.getSearchCopyrightProject(res.copyright_project_name);
           }
-          if (res.individual_attribute === 1) {
+          if (res.individual_attribute === 1 || res.individual_attribute === 2) {
             this.programForm.contract_id = res.contract_id;
             this.programForm.money = res.contract.amount;
           }
-          this.contractDisable = res.individual_attribute === 1 ? false : true;
+          this.contractDisable = (res.individual_attribute === 1||res.individual_attribute === 2) ? false : true;
           this.h5Rate =
             res.h5_attribute === 2 ? this.rate.h5_2 : this.rate.h5_1;
           this.programForm.project_attribute = res.project_attribute;

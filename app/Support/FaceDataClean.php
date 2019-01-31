@@ -1744,6 +1744,7 @@ function getDateFormatCharacter($date)
  */
 function teamBonusClean()
 {
+    $main_type = 'CPE';
     $date = TeamBonusRecord::query()->max('date');
     $date = (new Carbon($date))->format('Y-m-d');
     $currentDate = Carbon::now()->toDateString();
@@ -1911,7 +1912,7 @@ function teamBonusClean()
                         'project_name' => $item->project_name,
                         'belong' => $item->belong,
                         'type' => $item->type,
-                        'experience_money' => round($item->money * $item->factor * $item->rate, 6),
+                        'main_type'=>$main_type,
                         'total' => round($item->money * $item->factor * $item->rate, 6),
                         'date' => $date,
                         'get_date' => $date_future,
@@ -1925,7 +1926,7 @@ function teamBonusClean()
                         'project_name' => $item->project_name,
                         'belong' => $item->belong,
                         'type' => $item->type,
-                        'experience_money' => round($item->money * $item->factor * $item->rate, 6),
+                        'main_type'=>$main_type,
                         'total' => round($item->money * $item->factor * $item->rate, 6),
                         'date' => $date,
                         'get_date' => $date,
@@ -1968,6 +1969,7 @@ function teamBonusClean()
                         ->where('date', '>=', $start_date)
                         ->where('date', '<', $end_date)
                         ->where('type', '=', $user_bug->duty)
+                        ->where('main_type','=', $main_type)
                         ->where('status', '=', 0)
                         ->update(['status' => -1, 'updated_at' => $now]);
                 }
@@ -1975,10 +1977,11 @@ function teamBonusClean()
                 //发放当前需发放的rewards
                 $future_rewards = DB::table("team_person_future_rewards")
                     ->where('get_date', '=', $date)
+                    ->where('main_type','=',$main_type)
                     ->where('status', '=', 0);
 
                 $future_rewards_array = $future_rewards
-                    ->selectRaw("user_id,project_name,belong,type,experience_money,total,date,get_date")
+                    ->selectRaw("user_id,project_name,belong,type,main_type,total,date,get_date")
                     ->get()->map(function ($value) {
                         return (array)$value;
                     })->toArray();
@@ -2006,4 +2009,19 @@ function teamBonusClean()
     }
 
     return true;
+}
+
+/**
+ * PBI 绩效奖金清洗
+ */
+function PBIBonusClean(){
+    //查询符合条件的合同
+    //1 收款合同 type = 0 ;
+    //2 合同状态为 3|4 已审批|特批
+    //3 合同总金额 amount <= 收款金额总和
+    //     contract_receive_dates -- invoice_receipts -- claim_status=1 已认领  sum(receipt_money)
+    //4 already_clean_bonus = 0 未清洗绩效
+
+    //（这些合同的收款总额 - 费用 ）
+
 }
