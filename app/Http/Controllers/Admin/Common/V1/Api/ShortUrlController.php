@@ -80,9 +80,13 @@ class ShortUrlController extends Controller
 
         if ($shortUrl->id == 276) {
             $queryArr = parse_query($queryString);
-            if (!isset($queryArr['coupon_batch_id'])) {
-                $queryArr['coupon_batch_id'] = array_random([252,253,254,255,256,257]);
+
+            if (isset($queryArr['oid']) && $queryArr['oid'] == 599) {
+                $queryArr['coupon_batch_id'] = array_random([253,254,255,256,257]);
+            } elseif (isset($queryArr['oid']) && $queryArr['oid'] == 657) {
+                $queryArr['coupon_batch_id'] = 252;
             }
+
             $queryString = build_query($queryArr);
         }
 
