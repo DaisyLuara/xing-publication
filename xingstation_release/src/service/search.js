@@ -21,6 +21,9 @@ const PERMISSION_API = '/api/permission/query'
 const ROLE_API = '/api/role/query'
 const CONTRACT_RECEIPT_API = '/api/contract/query'
 const TEAM_PROJECT_API = '/api/team_projects/query'
+const BD_API = '/api/bd_users/query'
+const STORES_API = '/api/stores/query'
+const COMPANY_MARKET_API = '/api/company/markets/query'
 const PLATYING_TYPES_API = '/api/playing_types/query'
 const HOST = process.env.SERVER_URL
 
@@ -272,15 +275,16 @@ const getFormatsList = context => {
 
 // 权限树状结构
 const getPermission = (context, args) => {
-    return new Promise(function (resolve, reject) {
-        context.$http
-            .get(HOST + PERMISSION_API, {params: args})
-            .then(response => {
-                resolve(response.data)
-            }).catch(err => {
-            reject(err)
-        })
-    })
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + PERMISSION_API, { params: args })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(err => {
+        reject(err)
+      })
+  })
 }
 // 收款合同
 
@@ -302,14 +306,15 @@ const getSearchRole = (context, args) => {
     context.$http
       .get(HOST + ROLE_API, { params: args })
       .then(response => {
-          resolve(response.data)
-      }).catch(error => {
+        resolve(response.data)
+      })
+      .catch(error => {
         reject(error)
-    })
+      })
   })
 }
 
-// 原生节目
+// 原创节目
 const getSearchCopyrightProject = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
@@ -322,6 +327,39 @@ const getSearchCopyrightProject = (context, params) => {
       })
   })
 }
+
+// bd
+const getSearchBDList = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + BD_API, { params: params })
+      .then(response => {
+        resolve(response.data.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+// 商户
+const getStoresList = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + STORES_API, { params: params })
+      .then(response => {
+        resolve(response.data.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+// 公司商户
+
+const getCompanyMarketList = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + COMPANY_MARKET_API, { params: params })
 
 // 玩法配置
 const getSearchPlayingTypes = (context, params) => {
@@ -360,5 +398,8 @@ export {
   getSearchRole,
   getContractReceiptList,
   getSearchCopyrightProject,
+  getSearchBDList,
+  getStoresList,
+  getCompanyMarketList
   getSearchPlayingTypes
 }

@@ -26,7 +26,9 @@ class Contract extends Model
         'remark',
         'legal_message',
         'legal_ma_message',
-        'bd_ma_message'
+        'bd_ma_message',
+        'start_date',
+        'end_date',
     ];
 
     public function company()
