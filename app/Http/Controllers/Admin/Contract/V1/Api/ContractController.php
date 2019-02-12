@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Invoice\V1\Models\Invoice;
 use App\Http\Controllers\Admin\Payment\V1\Models\Payment;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 
@@ -62,7 +63,7 @@ class ContractController extends Controller
         $user = $this->user();
         if ($user->hasRole('user|bd-manager')) {
             $query->whereRaw("(applicant = $user->id or handler = $user->id)");
-        } elseif ($user->hasRole('legal-affairs') || $user->hasRole('legal-affairs-manager')) {
+        } elseif ($user->hasRole('legal-affairs|legal-affairs-manager')) {
             $query->whereRaw("(applicant = $user->id or handler = $user->id or status=3)");
         } elseif ($user->hasRole('purchasing')) {
             //角色为采购时，查询条件为：已审批完成(status=3),product_status为非0（1未出厂or2已出厂）
@@ -79,15 +80,20 @@ class ContractController extends Controller
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if (($user->hasRole('user') || $user->hasRole('bd-manager')) && !$user->parent_id) {
+        if ($user->hasRole('user|bd-manager') && !$user->parent_id) {
             abort(500, '无所属主管，无法新增合同申请');
         }
 
-        if ($user->hasRole('legal-affairs') || $user->hasRole('legal-affairs-manager')) {
-            $contract->fill(array_merge($request->all(), ['status' => 3, 'handler' => null]))->save();
+        $product_status = 0;
+        if ($request->kind != 4) {
+            $product_status = 1;
+        }
+        //法务和法务主管建的直接已审批
+        if ($user->hasRole('legal-affairs|legal-affairs-manager')) {
+            $contract->fill(array_merge($request->all(), ['status' => 3, 'handler' => null, 'product_status' => $product_status]))->save();
         } else {
             $legalId = getProcessStaffId('legal-affairs', 'contract');
-            $contract->fill(array_merge($request->all(), ['status' => 1, 'handler' => $legalId]))->save();
+            $contract->fill(array_merge($request->all(), ['status' => 1, 'handler' => $legalId, 'product_status' => $product_status]))->save();
         }
         //文档存储
         $ids = explode(',', $request->ids);
@@ -95,29 +101,21 @@ class ContractController extends Controller
             $contract->media()->attach($id);
         }
 
+        //收款日期存储
         if ($request->type == 0 && $request->has('receive_date')) {
-            //收款日期存储
             $dates = explode(',', $request->receive_date);
             foreach ($dates as $date) {
                 ContractReceiveDate::create(['contract_id' => $contract->id, 'receive_date' => $date, 'receive_status' => 0]);
-                if ($request->type == 0 && $request->has('receive_date')) {
-                    //收款日期存储
-                    $dates = explode(',', $request->receive_date);
-                    foreach ($dates as $date) {
-                        ContractReceiveDate::create(['contract_id' => $contract->id, 'receive_date' => $date, 'receive_status' => 0]);
-                    }
-                }
+            }
+        }
 
-                $param = $request->all();
-                if ($request->product_status == 1 && $request->has('product_content')) {
-                    //硬件合同存储
-                    $content = $param['product_content'];
-                    foreach ($content as $item) {
-                        $item['contract_id'] = $contract->id;
-                        ContractProduct::query()->create($item);
-                    }
-                }
-                return $this->response()->item($contract, new ContractTransformer())->setStatusCode(201);
+        //硬件存储
+        if ($request->kind != 4 && $request->has('product_content')) {
+            $param = $request->all();
+            $content = $param['product_content'];
+            foreach ($content as $item) {
+                $item['contract_id'] = $contract->id;
+                ContractProduct::query()->create($item);
             }
         }
         return $this->response()->item($contract, new ContractTransformer())->setStatusCode(201);
@@ -129,7 +127,6 @@ class ContractController extends Controller
         if ($contract->status != 1) {
             abort(403, "合同审批状态已更改，不可删除");
         }
-//        ContractReceiveDate::query()->where('contract_id', $contract->id)->delete();
         $contract->delete();
         return $this->response()->noContent()->setStatusCode(204);
     }
@@ -138,79 +135,87 @@ class ContractController extends Controller
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
+        //法务驳回可以修改文件
         if ($user->hasRole('legal-affairs')) {
-            $contract->update(array_merge($request->all(), ['status' => 5, 'handler' => $contract->applicant]));
-            ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
-
             $ids = explode(',', $request->ids);
             $contract->media()->detach();
             foreach ($ids as $id) {
                 $contract->media()->attach($id);
             }
-
-        } else {
-            $contract->update(array_merge($request->all(), ['status' => 5, 'handler' => $contract->applicant]));
-            ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
         }
-        return $this->response()->item($contract, new ContractTransformer())->setStatusCode(200);
+        $contract->update(array_merge($request->all(), ['status' => 5, 'handler' => $contract->applicant]));
+        ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
 
+        return $this->response()->item($contract, new ContractTransformer())->setStatusCode(200);
     }
 
     public function auditing(Request $request, Contract $contract)
     {
         /**@var $user \App\Models\User */
         $user = $this->user();
+        abort_if($user->id != $contract->handler, 403, '无审批权限');
 
         if ($user->hasRole('legal-affairs')) {
-            $contract->status = 2;
-            $contract->handler = $user->parent_id;
-            $contract->contract_number = $request->contract_number;
-            if (!$request->has('legal_message')) {
-                abort(500, '没有填写意见');
-            }
-            $contract->legal_message = $request->legal_message;
-            $contract->update();
-            ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
+            $params = [
+                'legal_message',
+                'contract_number'
+            ];
+            $this->checkParam($request, $params);
+            $contract->fill(array_merge($request->all(), ['status' => 2, 'handler' => $user->parent_id]));
+            $this->updateContractAndHistory($user, $contract);
         } else if ($user->hasRole('legal-affairs-manager')) {
+            $params = [
+                'legal_ma_message',
+                'special_num',
+                'common_num'
+            ];
+            $this->checkParam($request, $params);
+            //特批合同需要带合同编号
+            if($contract->status==4){
+                $this->checkParam($request, ['contract_number']);
+            }
+
             $parentId = $contract->applicantUser->parent_id;
-            // BD主管建的直接已审批
+            // BD主管建的直接已审批,不经过自己
             if ($parentId == $contract->applicant) {
-                $contract->handler = null;
                 $contract->status = 3;
-                if ($request->has('contract_number')) {
-                    $contract->contract_number = $request->contract_number;
-                }
-                if (!$request->has('legal_ma_message')) {
-                    abort(500, '没有填写意见');
-                }
-                $contract->legal_ma_message = $request->legal_ma_message;
-                $contract->update();
-                ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
-                return $this->response()->item($contract, new ContractTransformer())->setStatusCode(201);
+                $contract->handler = null;
+            } else {
+                $contract->status = 2;
+                $contract->handler = $parentId;
             }
-            $contract->status = 2;
-            $contract->handler = $parentId;
-            if ($request->has('contract_number')) {
-                $contract->contract_number = $request->contract_number;
-            }
-            if (!$request->has('legal_ma_message')) {
-                abort(500, '没有填写意见');
-            }
-            $contract->legal_ma_message = $request->legal_ma_message;
-            $contract->update();
-            ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
+
+            $contract->fill($request->all());
+            $this->updateContractAndHistory($user, $contract);
         } else if ($user->hasRole('bd-manager')) {
+            $params = [
+                'bd_ma_message'
+            ];
+            $this->checkParam($request, $params);
+
             $contract->status = 3;
             $contract->handler = null;
-            if (!$request->has('bd_ma_message')) {
-                abort(500, '没有填写意见');
-            }
             $contract->bd_ma_message = $request->bd_ma_message;
-            $contract->update();
-            ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
+            $this->updateContractAndHistory($user, $contract);
         }
-
         return $this->response()->item($contract, new ContractTransformer())->setStatusCode(201);
+    }
+
+    private function checkParam(Request $request, array $param)
+    {
+        if (!$request->has($param)) {
+            abort(422, '请填写完整信息');
+        }
+    }
+
+    private function updateContractAndHistory(User $user, Contract $contract)
+    {
+        $contract->update();
+        $data = [
+            'user_id' => $user->id,
+            'contract_id' => $contract->id
+        ];
+        ContractHistory::updateOrCreate($data, $data);
     }
 
     public function specialAuditing(Request $request, Contract $contract)

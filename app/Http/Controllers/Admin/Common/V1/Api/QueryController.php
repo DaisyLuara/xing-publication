@@ -17,13 +17,12 @@ use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
 use App\Http\Controllers\Admin\Company\V1\Transformer\CustomerTransformer;
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
+use App\Http\Controllers\Admin\Contract\V1\Models\ContractCostKind;
 use App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate;
+use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractCostKindTransformer;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractReceiveDateTransformer;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
-use App\Http\Controllers\Admin\Point\V1\Models\MarketConfig;
-use App\Http\Controllers\Admin\Point\V1\Models\Store;
-use App\Http\Controllers\Admin\Point\V1\Transformer\StoreTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\PolicyTransformer;
@@ -37,12 +36,15 @@ use App\Http\Controllers\Admin\Payment\V1\Models\PaymentPayee;
 use App\Http\Controllers\Admin\Payment\V1\Transformer\PaymentPayeeTransformer;
 use App\Http\Controllers\Admin\Point\V1\Models\Area;
 use App\Http\Controllers\Admin\Point\V1\Models\Market;
+use App\Http\Controllers\Admin\Point\V1\Models\MarketConfig;
 use App\Http\Controllers\Admin\Point\V1\Models\Point;
 use App\Http\Controllers\Admin\Point\V1\Models\Scene;
+use App\Http\Controllers\Admin\Point\V1\Models\Store;
 use App\Http\Controllers\Admin\Point\V1\Transformer\AreaTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\MarketTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\PointTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\SceneTransformer;
+use App\Http\Controllers\Admin\Point\V1\Transformer\StoreTransformer;
 use App\Http\Controllers\Admin\Privilege\V1\Models\Permission;
 use App\Http\Controllers\Admin\Privilege\V1\Models\Role;
 use App\Http\Controllers\Admin\Privilege\V1\Transformer\RoleTransformer;
@@ -59,8 +61,8 @@ use App\Http\Controllers\Admin\User\V1\Transformer\UserTransformer;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\User;
-use Illuminate\Http\Request;
 use DB;
+use Illuminate\Http\Request;
 
 class QueryController extends Controller
 {
@@ -361,8 +363,14 @@ class QueryController extends Controller
             $query->where('company_id', $request->company_id);
         }
 
+        //收款合同，付款合同
         if ($request->has('type')) {
             $query->where('type', $request->type);
+        }
+
+        //合同成本
+        if ($request->has('cost') && $request->cost == 0) {
+            $query->doesntHave('contractCost');
         }
 
         if ($user->hasRole('user') || $user->hasRole('bd-manager')) {
@@ -551,7 +559,7 @@ class QueryController extends Controller
         $marketConfigs = $query->get();
 
         $markets = collect();
-        $marketConfigs->each(function ($item) use($markets){
+        $marketConfigs->each(function ($item) use ($markets) {
             if ($item->market) {
                 $markets->push($item->market);
             }
@@ -571,5 +579,11 @@ class QueryController extends Controller
         return $this->response()->collection($playingTypes, new PlayingTypeTransformer());
     }
 
+    public function costKindQuery(ContractCostKind $contractCostKind)
+    {
+        $query = $contractCostKind->query();
+        $contractCostKind = $query->get();
+        return $this->response()->collection($contractCostKind, new ContractCostKindTransformer());
+    }
 
 }

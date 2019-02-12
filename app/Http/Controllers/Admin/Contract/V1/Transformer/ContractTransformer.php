@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin\Contract\V1\Transformer;
 
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
 use App\Http\Controllers\Admin\Media\V1\Transformer\MediaTransformer;
-use App\Http\Controllers\Admin\User\V1\Transformer\UserTransformer;
 use League\Fractal\TransformerAbstract;
 
 class ContractTransformer extends TransformerAbstract
@@ -26,10 +25,18 @@ class ContractTransformer extends TransformerAbstract
         '2' => '其它合同',
     ];
 
-    protected $productstatusMapping = [
+    protected $productStatusMapping = [
         '0' => '无硬件',
         '1' => '未出厂',
         '2' => '已出厂',
+    ];
+
+    protected $kindMapping = [
+        '0' => '无',
+        '1' => '铺屏',
+        '2' => '销售',
+        '3' => '租赁',
+        '4' => '服务'
     ];
 
     public function transform(Contract $contract)
@@ -46,13 +53,18 @@ class ContractTransformer extends TransformerAbstract
             'handler' => $contract->handler,
             'handler_name' => $contract->handler ? $contract->handlerUser->name : null,
             'type' => $this->typeMapping[$contract->type],
+            'kind' => $this->kindMapping[$contract->kind],
+            'server_target' => $contract->server_target,
+            'recharge' => $contract->recharge,
+            'special_num' => $contract->special_num,
+            'common_num' => $contract->common_num,
             'amount' => $contract->amount,
             'remark' => $contract->remark,
             'legal_message' => $contract->legal_message,
             'legal_ma_message' => $contract->legal_ma_message,
             'bd_ma_message' => $contract->bd_ma_message,
             'receive_date' => join(',', array_column($contract->receiveDate->toArray(), 'receive_date')),
-            'product_status' => $this->productstatusMapping[$contract->product_status],
+            'product_status' => $this->productStatusMapping[$contract->product_status],
             'product_content' => $contract->product,
             'start_date' => $contract->start_date,
             'end_date' => $contract->end_date,
@@ -69,12 +81,6 @@ class ContractTransformer extends TransformerAbstract
     public function includeReceiveDate(Contract $contract)
     {
         return $this->collection($contract->receiveDate, new ContractReceiveDateTransformer());
-    }
-
-    //查出对应硬件信息的总库存
-    public function includeHardware(Contract $contract)
-    {
-        return $this->item($contract->hardware, new ProductTransformer());
     }
 
 }
