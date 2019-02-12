@@ -16,6 +16,7 @@ class CreateContractCostTable extends Migration
         Schema::create('contract_costs', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('contract_id');
+            $table->integer('applicant_id')->comment('所属人id');
             $table->string('applicant_name')->comment('所属人');
             $table->string('total_cost')->comment('总成本');
             $table->timestamps();

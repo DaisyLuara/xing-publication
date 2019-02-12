@@ -15,6 +15,7 @@ class ContractCost extends Model
 {
     protected $fillable = [
         'contract_id',
+        'applicant_id',
         'applicant_name',
         'total_cost'
     ];
