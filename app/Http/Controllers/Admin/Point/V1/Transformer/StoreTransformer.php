@@ -24,8 +24,6 @@ class StoreTransformer extends TransformerAbstract
             'phone' => $store->phone,
             'address' => $store->address,
             'description' => $store->description,
-            'start_date' => $store->contract->start_date,
-            'end_date' => $store->contract->end_date,
             'created_at' => $store->created_at->toDateTimeString(),
             'updated_at' => $store->updated_at->toDateTimeString(),
         ];
