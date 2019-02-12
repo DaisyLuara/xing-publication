@@ -74,4 +74,9 @@ class Contract extends Model
     {
         return $this->hasMany(ContractHistory::class, 'contract_id', 'id');
     }
+
+    public function contractCost()
+    {
+        return $this->hasOne(ContractCost::class, 'contract_id', 'id');
+    }
 }

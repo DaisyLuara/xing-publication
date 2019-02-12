@@ -27,13 +27,13 @@ class ContractCostContentTransformer extends TransformerAbstract
     {
         return [
             'id' => $content->id,
+            'creator_id' => $content->creator_id,
             'creator' => $content->creator,
             'kind_id' => $content->kind_id,
             'kind' => $this->kindMapping[$content->kind_id],
             'money' => $content->money,
             'remark' => $content->remark,
             'status' => $content->status,
-            'operator' => $content->operator,
             'created_at' => $content->created_at->toDateTimeString(),
             'updated_at' => $content->updated_at->toDateTimeString()
         ];

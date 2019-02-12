@@ -31,16 +31,16 @@ $api->version('v1', [
 
             //成本管理
             $api->get('contract_cost/{contract_cost}', 'ContractCostController@show');
-            $api->get('contract_cost', 'ContractCostController@index');
-            $api->post('contract_cost', 'ContractCostController@store');
+            $api->get('contract_cost', ['middleware' => ['permission:contract.cost.read'], 'uses' => 'ContractCostController@index']);
+            $api->post('contract_cost', ['middleware' => ['permission:contract.cost.create'], 'uses' => 'ContractCostController@store']);
 
             //成本明细
-            $api->post('contract_cost/{contract_cost}/cost_content', 'ContractCostContentController@store');
-            $api->patch('contract_cost/{contract_cost}/cost_content/{content}', 'ContractCostContentController@update');
-            $api->delete('contract_cost/{contract_cost}/cost_content/{content}', 'ContractCostContentController@destroy');
+            $api->post('contract_cost/{contract_cost}/cost_content', ['middleware' => ['permission:contract.cost.content_create'], 'uses' => 'ContractCostContentController@store']);
+            $api->patch('contract_cost/{contract_cost}/cost_content/{content}', ['middleware' => ['permission:contract.cost.content_update'], 'uses' => 'ContractCostContentController@update']);
+            $api->delete('contract_cost/{contract_cost}/cost_content/{content}', ['middleware' => ['permission:contract.cost.content_delete'], 'uses' => 'ContractCostContentController@destroy']);
 
             //成本确认
-            $api->post('cost_content/{content}/confirm', 'ContractCostContentController@confirm');
+            $api->post('cost_content/{content}/confirm', ['middleware' => ['permission:contract.cost.content_confirm'], 'uses' => 'ContractCostContentController@confirm']);
         });
     });
 

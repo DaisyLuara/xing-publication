@@ -356,8 +356,14 @@ class QueryController extends Controller
             $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
         }
 
+        //收款合同，付款合同
         if ($request->has('type')) {
             $query->where('type', $request->type);
+        }
+
+        //合同成本
+        if ($request->has('cost') && $request->cost == 0) {
+            $query->doesntHave('contractCost');
         }
 
         if ($user->hasRole('user') || $user->hasRole('bd-manager')) {
