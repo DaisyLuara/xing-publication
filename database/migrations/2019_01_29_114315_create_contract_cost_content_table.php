@@ -17,12 +17,12 @@ class CreateContractCostContentTable extends Migration
             $table->increments('id');
             $table->integer('cost_id')->comment('成本id');
             $table->integer('creator_id')->comment('创建人id');
-            $table->integer('creator')->comment('创建人');
+            $table->string('creator')->comment('创建人');
             $table->integer('kind_id')->comment('成本类型');
             $table->string('money')->comment('成本金额');
             $table->string('remark')->nullable()->comment('备注');
             $table->smallInteger('status')->comment('0:未确认,1:已确认');
-            $table->integer('operator')->comment('最后操作者');
+            $table->string('operator')->comment('最后操作者');
             $table->timestamps();
         });
     }

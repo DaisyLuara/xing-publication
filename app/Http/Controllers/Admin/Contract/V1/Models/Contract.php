@@ -23,7 +23,7 @@ class Contract extends Model
         'type',
         'product_status',
         'kind',
-        'server_target',
+        'serve_target',
         'recharge',
         'special_num',
         'common_num',
