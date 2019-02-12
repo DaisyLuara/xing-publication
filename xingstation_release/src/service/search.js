@@ -360,6 +360,14 @@ const getCompanyMarketList = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
       .get(HOST + COMPANY_MARKET_API, { params: params })
+      .then(response => {
+        resolve(response.data.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
 
 // 玩法配置
 const getSearchPlayingTypes = (context, params) => {
@@ -400,6 +408,6 @@ export {
   getSearchCopyrightProject,
   getSearchBDList,
   getStoresList,
-  getCompanyMarketList
+  getCompanyMarketList,
   getSearchPlayingTypes
 }
