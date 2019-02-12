@@ -56,7 +56,7 @@ class ContractCostContentController extends Controller
         $user = $this->user();
         abort_if($user->id != $content->creator_id, '403', '无操作权限');
         $content->delete();
-        $contractCost->update(['total_cost' => $request->total_cost]);
+        $contractCost->update(['total_cost' => $contractCost->total_cost - $content->money]);
         return $this->response()->noContent()->setStatusCode(204);
     }
 

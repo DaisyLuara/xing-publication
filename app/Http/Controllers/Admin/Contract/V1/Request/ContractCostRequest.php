@@ -19,6 +19,7 @@ class ContractCostRequest extends Request
             case 'POST':
                 return [
                     'contract_id' => 'required',
+                    'applicant_id' => 'required',
                     'applicant_name' => 'required',
                     'total_cost' => 'required',
                     'cost_content.*.creator' => 'required',
