@@ -362,7 +362,7 @@ class QueryController extends Controller
         if ($request->company_id) {
             $query->where('company_id', $request->company_id);
         }
-        
+
         //收款合同，付款合同
         if ($request->has('type')) {
             $query->where('type', $request->type);
