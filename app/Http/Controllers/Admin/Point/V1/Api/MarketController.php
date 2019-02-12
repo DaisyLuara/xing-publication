@@ -143,11 +143,21 @@ class MarketController extends Controller
             if (count(array_filter($request->customer))) {
                 abort_if(count(array_filter($request->customer)) < 3, 500, '核销人员信息不完整');
 
-                $market->marketConfig->writeOffCustomer()->update([
-                    'name'     => $request->customer['name'],
-                    'phone' => $request->customer['phone'],
-                    'password' => bcrypt($request->customer['password']),
-                ]);
+                $customer = $market->marketConfig->writeOffCustomer()->updateOrCreate(
+                    ['phone' => $request->customer['phone']],
+                    [
+                        'company_id' => $request->marketConfig['company_id'],
+                        'name' => $request->customer['name'],
+                        'password' => bcrypt($request->customer['password']),
+                        'position' => '场地核销人员',
+                    ]
+                );
+
+                if (!$customer->hasRole('ad_owner')) {
+                    $customer->assignRole('ad_owner');
+                }
+
+                $market->marketConfig->update(['write_off_customer_id' => $customer->id]);
             }
 
         }
