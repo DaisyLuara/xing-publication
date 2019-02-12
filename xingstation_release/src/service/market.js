@@ -2,6 +2,7 @@ const MARKETS_API = '/api/markets'
 const MARKET_API = '/api/market'
 const POINTS_API = '/api/points'
 const POINT_API = '/api/point'
+const BUSINESS_API = '/api/stores'
 const HOST = process.env.SERVER_URL
 
 // 场地里的场地列表
@@ -30,6 +31,7 @@ const getSitePointList = (context, params) => {
       })
   })
 }
+// 场地详情
 const getSiteMarketDetail = (context, params, id) => {
   return new Promise(function(resolve, reject) {
     context.$http
@@ -42,6 +44,7 @@ const getSiteMarketDetail = (context, params, id) => {
       })
   })
 }
+// 点位详情
 const getSitePointDetail = (context, params, id) => {
   return new Promise(function(resolve, reject) {
     context.$http
@@ -54,6 +57,7 @@ const getSitePointDetail = (context, params, id) => {
       })
   })
 }
+// 新增场地
 const siteSaveMarket = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
@@ -66,6 +70,7 @@ const siteSaveMarket = (context, params) => {
       })
   })
 }
+// 修改场地
 const siteModifyMarket = (context, params, id) => {
   return new Promise(function(resolve, reject) {
     context.$http
@@ -78,6 +83,7 @@ const siteModifyMarket = (context, params, id) => {
       })
   })
 }
+// 保存点位
 const siteSavePoint = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
@@ -90,10 +96,65 @@ const siteSavePoint = (context, params) => {
       })
   })
 }
+// 修改点位
 const siteModifyPoint = (context, params, id) => {
   return new Promise(function(resolve, reject) {
     context.$http
       .patch(HOST + POINTS_API + '/' + id, params)
+      .then(res => {
+        resolve(res.data)
+      })
+      .catch(err => {
+        reject(err)
+      })
+  })
+}
+// 商户列表
+const getBusinessList = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + BUSINESS_API, { params: params })
+      .then(res => {
+        resolve(res.data)
+      })
+      .catch(err => {
+        reject(err)
+      })
+  })
+}
+// 商户新增
+const saveBusiness = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .post(HOST + BUSINESS_API, params)
+      .then(res => {
+        resolve(res.data)
+      })
+      .catch(err => {
+        reject(err)
+      })
+  })
+}
+
+// 修改点位
+const modifyBusiness = (context, params, id) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .patch(HOST + BUSINESS_API + '/' + id, params)
+      .then(res => {
+        resolve(res.data)
+      })
+      .catch(err => {
+        reject(err)
+      })
+  })
+}
+
+// 点位详情
+const getBusinessDetail = (context, params, id) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + BUSINESS_API + '/' + id, { params: params })
       .then(res => {
         resolve(res.data)
       })
@@ -110,5 +171,9 @@ export {
   getSitePointDetail,
   getSiteMarketDetail,
   getSitePointList,
-  getSiteMarketList
+  getSiteMarketList,
+  getBusinessList,
+  saveBusiness,
+  modifyBusiness,
+  getBusinessDetail
 }

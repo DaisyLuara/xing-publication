@@ -22,7 +22,6 @@ let router = {
       children: [
         {
           path: '/',
-          name: '场地列表',
           meta: {
             title: '场地列表',
             permission: 'market.site.read'
@@ -34,8 +33,8 @@ let router = {
           path: 'add',
           component: () =>
             import(/* webpackChunkName: "page/market/site/save" */ 'page/market/site/save'),
-          name: '新增场地',
           meta: {
+            title: '新增场地',
             permission: 'market.site.create'
           }
         },
@@ -43,8 +42,8 @@ let router = {
           path: 'edit/:uid',
           component: () =>
             import(/* webpackChunkName: "page/market/site/save" */ 'page/market/site/save'),
-          name: '修改',
           meta: {
+            title: '场地修改',
             permission: 'market.site.update'
           }
         }
@@ -61,7 +60,6 @@ let router = {
       children: [
         {
           path: '/',
-          name: '点位列表',
           meta: {
             title: '点位列表',
             permission: 'market.point.read'
@@ -73,8 +71,8 @@ let router = {
           path: 'add',
           component: () =>
             import(/* webpackChunkName: "page/market/point/save" */ 'page/market/point/save'),
-          name: '新增点位',
-          meta: {
+            meta: {
+              name: '新增点位',
             permission: 'market.point.create'
           }
         },
@@ -82,9 +80,47 @@ let router = {
           path: 'edit/:uid',
           component: () =>
             import(/* webpackChunkName: "page/market/point/save" */ 'page/market/point/save'),
-          name: '点位修改',
           meta: {
+            title: '点位修改',
             permission: 'market.point.update'
+          }
+        }
+      ]
+    },
+    {
+      path: 'business',
+      meta: {
+        title: '商户管理',
+        permission: 'market.business'
+      },
+      component: () =>
+        import(/* webpackChunkName: "page/market/business/routerView" */ 'page/market/business/routerView'),
+      children: [
+        {
+          path: '/',
+          meta: {
+            title: '商户管理列表',
+            permission: 'market.business.read'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/market/business/index" */ 'page/market/business/index')
+        },
+        {
+          path: 'add',
+          component: () =>
+            import(/* webpackChunkName: "page/market/business/save" */ 'page/market/business/save'),
+          meta: {
+            title: '新增商户',
+            permission: 'market.business.create'
+          }
+        },
+        {
+          path: 'edit/:uid',
+          component: () =>
+            import(/* webpackChunkName: "page/market/business/save" */ 'page/market/business/save'),
+          meta: {
+            title: '商户修改',
+            permission: 'market.business.update'
           }
         }
       ]

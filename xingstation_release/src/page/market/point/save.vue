@@ -55,7 +55,8 @@
                   v-for="item in formatsList"
                   :label="item.id"
                   :key="item.id"
-                  class="role-radio">{{ item.name }}</el-radio>
+                  class="role-radio"
+                >{{ item.name }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-tab-pane>
@@ -684,7 +685,10 @@ export default {
           this.formatsList = res.data;
         })
         .catch(err => {
-          console.log(err);
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
         });
     },
     siteHandle() {
@@ -703,7 +707,10 @@ export default {
           this.contractFlag = false;
         })
         .catch(err => {
-          console.log(err);
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
           this.contractFlag = false;
         });
     },
@@ -723,7 +730,10 @@ export default {
           this.setting.loading = false;
         })
         .catch(err => {
-          console.log(err);
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
           this.setting.loading = false;
         });
     },
@@ -777,7 +787,10 @@ export default {
           this.setting.loading = false;
         })
         .catch(error => {
-          console.log(error);
+          this.$message({
+            type: "warning",
+            message: error.response.data.message
+          });
         });
     },
     areaHandle() {
@@ -802,7 +815,10 @@ export default {
           this.searchLoading = false;
         })
         .catch(err => {
-          console.log(err);
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
           this.setting.loading = false;
           this.searchLoading = false;
         });
@@ -862,7 +878,10 @@ export default {
                 });
               })
               .catch(err => {
-                console.log(err);
+                this.$message({
+                  type: "warning",
+                  message: err.response.data.message
+                });
               });
           } else {
             siteSavePoint(this, args)
@@ -876,7 +895,10 @@ export default {
                 });
               })
               .catch(err => {
-                console.log(err);
+                this.$message({
+                  type: "warning",
+                  message: err.response.data.message
+                });
               });
           }
         } else {

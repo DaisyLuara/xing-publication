@@ -66,6 +66,8 @@ class ContractTransformer extends TransformerAbstract
             'receive_date' => join(',', array_column($contract->receiveDate->toArray(), 'receive_date')),
             'product_status' => $this->productStatusMapping[$contract->product_status],
             'product_content' => $contract->product,
+            'start_date' => $contract->start_date,
+            'end_date' => $contract->end_date,
             'created_at' => $contract->created_at->toDateTimeString(),
             'updated_at' => $contract->updated_at->toDateTimeString(),
         ];
