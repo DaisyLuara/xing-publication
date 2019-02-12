@@ -19,7 +19,8 @@ class WebsiteRequest extends Request
         return [
             'name' => 'required|string',
             'contact' => 'required|string',
-            'remark' => 'string|max:150'
+            'remark' => 'string|max:150',
+            'type' => 'required|in:1,2,3'
         ];
     }
 }
