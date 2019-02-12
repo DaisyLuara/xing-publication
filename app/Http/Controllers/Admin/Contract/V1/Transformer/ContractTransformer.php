@@ -54,7 +54,7 @@ class ContractTransformer extends TransformerAbstract
             'handler_name' => $contract->handler ? $contract->handlerUser->name : null,
             'type' => $this->typeMapping[$contract->type],
             'kind' => $this->kindMapping[$contract->kind],
-            'server_target' => $contract->server_target,
+            'serve_target' => $contract->serve_target,
             'recharge' => $contract->recharge,
             'special_num' => $contract->special_num,
             'common_num' => $contract->common_num,
