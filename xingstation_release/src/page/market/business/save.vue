@@ -443,13 +443,18 @@ export default {
           this.businessForm.areaid = res.area.id;
           this.businessForm.company_id = res.company.id;
           this.businessForm.marketid = res.market ? res.market.id : null;
+          this.getMarket(res.market.name);
           this.businessForm.market = res.market ? 1 : 2;
           this.businessForm.phone = res.phone;
           this.businessForm.address = res.address;
           this.businessForm.description = res.description;
           this.businessForm.type = res.type;
-          this.businessForm.start_date = res.start_date ? res.start_date : "";
-          this.businessForm.end_date = res.end_date ? res.end_date : "";
+          this.businessForm.start_date = res.contract.start_date
+            ? res.contract.start_date
+            : "";
+          this.businessForm.end_date = res.contract.end_date
+            ? res.contract.end_date
+            : "";
           this.businessForm.contract_id = res.contract ? res.contract.id : null;
           this.businessForm.user_id = res.user ? res.user.id : null;
           this.businessForm.contract = res.contract ? 1 : 0;
