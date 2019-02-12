@@ -40,7 +40,6 @@ class ContractTransformer extends TransformerAbstract
     ];
 
     protected $targetMapping = [
-        '0' => null,
         '1' => '商户',
         '2' => '商场'
     ];
@@ -65,8 +64,8 @@ class ContractTransformer extends TransformerAbstract
             'handler_name' => $contract->handler ? $contract->handlerUser->name : null,
             'type' => $this->typeMapping[$contract->type],
             'kind' => $this->kindMapping[$contract->kind],
-            'serve_target' => $this->targetMapping[$contract->serve_target],
-            'recharge' => $this->chargeMapping[$contract->recharge],
+            'serve_target' => $contract->serve_target == null ? null : $this->targetMapping[$contract->serve_target],
+            'recharge' => $contract->recharge == null ? null : $this->chargeMapping[$contract->recharge],
             'special_num' => $contract->special_num,
             'common_num' => $contract->common_num,
             'amount' => $contract->amount,
