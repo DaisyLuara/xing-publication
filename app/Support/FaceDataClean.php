@@ -17,7 +17,8 @@ use App\Http\Controllers\Admin\Face\V1\Models\FacePlayCharacterRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceVerifyRecord;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamBonusRecord;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
-use \App\Http\Controllers\Admin\Team\V1\Models\TeamProjectMember;
+use App\Http\Controllers\Admin\Team\V1\Models\TeamProjectMember;
+use App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward;
 use app\Support\Jenner\Zebra\ArrayGroupBy;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -1745,7 +1746,7 @@ function getDateFormatCharacter($date)
  */
 function teamBonusClean()
 {
-    $main_type = 'CPE';
+    $main_type = TeamPersonReward::MAIN_TYPE_CPE;
     $date = TeamBonusRecord::query()->max('date');
     $date = (new Carbon($date))->format('Y-m-d');
     $currentDate = Carbon::now()->toDateString();
@@ -2017,7 +2018,7 @@ function teamBonusClean()
  */
 function PBIBonusClean()
 {
-    $main_type = 'PBI';
+    $main_type = TeamPersonReward::MAIN_TYPE_PBI;
 
     //查询符合条件的合同ID
     //1 收款合同 type = 0 ;
@@ -2027,7 +2028,7 @@ function PBIBonusClean()
         ->whereRaw("type = 0 and status in (3,4) and pbi_money is null and amount > 0")
         ->pluck('id')->toArray();
 
-    if(!$contract_ids){
+    if (!$contract_ids) {
         echo "没有符合条件的合同\n";
         exit;
     }
@@ -2111,7 +2112,7 @@ function PBIBonusClean()
             $rewards = [];
             foreach ($data as $item) {
                 $total = round($item->JS * $item->js_rate * $item->copyright_rate * $item->rate, 6);
-                if($total > 0){
+                if ($total > 0) {
                     $rewards[] = [
                         'user_id' => $item->user_id,
                         'project_name' => $item->project_name,
@@ -2127,7 +2128,7 @@ function PBIBonusClean()
             DB::table('team_person_rewards')->insert($rewards);
             //修改改合同的状态
             DB::table('contracts')->where('id', '=', $contract_with_pbi_money->contract_id)
-                ->update(['pbi_money' => $contract_with_pbi_money->pbi_money]);
+                ->update(['pbi_money' => $contract_with_pbi_money->pbi_money, 'pbi_date' => $now]);
 
             DB::commit();
             echo "PBI 绩效执行完成！";
