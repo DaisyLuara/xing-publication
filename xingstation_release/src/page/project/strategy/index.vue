@@ -50,7 +50,7 @@
         :key="item.id">
         <template 
           slot="title">
-          {{ item.id }} {{ item.name }} ( {{ item.company.name }} ) 
+          {{ item.id }} . {{ item.name }} ( {{ item.company.name }} ) 
           <el-button 
             type="primary"
             icon="el-icon-edit"
