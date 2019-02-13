@@ -8,6 +8,7 @@
 
 namespace App\Exports;
 
+use App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -24,7 +25,7 @@ class PersonRewardExport extends AbstractExport implements ShouldAutoSize
     {
         $this->startDate = Carbon::parse($request->start_date)->timezone('PRC')->toDateString();
         $this->endDate = Carbon::parse($request->end_date)->timezone('PRC')->toDateString();
-        $this->fileName = '星视度个人绩效及智造团队奖励';
+        $this->fileName = '星视度个人绩效';
     }
 
     public function collection()
@@ -34,7 +35,7 @@ class PersonRewardExport extends AbstractExport implements ShouldAutoSize
             ->whereRaw("tpm.type in ('originality','plan','animation')")
             ->whereRaw("date_format(tp.launch_date, '%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
             ->whereRaw("(case tp.type when 0 then tp.status = 3 else tp.status = 4 end) ")
-            ->groupBy("tp.id","tp.belong","tp.project_attribute")
+            ->groupBy("tp.id", "tp.belong", "tp.project_attribute")
             ->selectRaw("tp.id,tp.belong,tp.project_attribute,sum(rate) as 'rate_total'");
 
         //member_program_num
@@ -62,25 +63,26 @@ class PersonRewardExport extends AbstractExport implements ShouldAutoSize
 
         //得到这段时间得到绩效投放月份数组
         $months = DB::table('team_person_rewards as tpr')
-            ->join("team_projects as tp","tp.belong","=","tpr.belong")
-            ->whereRaw("date_format(tpr.get_date, '%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
+            ->join("team_projects as tp", "tp.belong", "=", "tpr.belong")
+            ->whereRaw("tpr.main_type ='" . TeamPersonReward::MAIN_TYPE_CPE . "' and date_format(tpr.get_date, '%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
             ->selectRaw("distinct(date_format(tp.launch_date,'%Y-%m') ) as 'month' ")
             ->pluck('month')->toArray();
 
         $header1 = ["用户ID", "用户名", "条目数量", "节目数量", "项目数量", "累计节目数量"];
         $selectRaw = "tpr.user_id,users.name as 'user_name',";
-        foreach ($months as $month){
+        foreach ($months as $month) {
             $header1[] = "体验绩效_" . $month;
-            $selectRaw .= " round(sum(case date_format(tp.launch_date,'%Y-%m') when '" . $month . "' then tpr.total else 0 end ),2) as '体验绩效_" . $month . "',";
+            $selectRaw .= " round(sum(case when (date_format(tp.launch_date,'%Y-%m') = '" . $month . "' and tpr.main_type = '" . TeamPersonReward::MAIN_TYPE_CPE . "') then tpr.total else 0 end ),2) as '体验绩效_" . $month . "',";
         }
-        $header1 = array_merge($header1, ["体验绩效总计"]);
-        $selectRaw .= " round(sum(total),2) as 'cpe_money'";
+        $header1 = array_merge($header1, ["体验绩效总计", "总计" . TeamPersonReward::MAIN_TYPE_PBI . "绩效", "总计" . TeamPersonReward::MAIN_TYPE_SYSTEM . "绩效"]);
+        $selectRaw .= " round(sum(case when tpr.main_type = '" . TeamPersonReward::MAIN_TYPE_CPE . "' then tpr.total else 0 end),2) as 'cpe_money',";
+        $selectRaw .= " round(sum(case when tpr.main_type = '" . TeamPersonReward::MAIN_TYPE_PBI . "' then tpr.total else 0 end),2) as 'pbi_money',";
+        $selectRaw .= " round(sum(case when tpr.main_type = '" . TeamPersonReward::MAIN_TYPE_SYSTEM . "' then tpr.total else 0 end),2) as 'system_money'";
 
         $member_money = DB::table("team_person_rewards as tpr")
             ->join('users', 'tpr.user_id', '=', 'users.id')
             ->join("team_projects as tp", "tp.belong", "=", "tpr.belong")
             ->whereRaw("date_format(tpr.get_date, '%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
-            ->whereRaw("tpr.main_type = 'CPE'")
             ->groupBy("tpr.user_id")
             ->selectRaw($selectRaw);
 
