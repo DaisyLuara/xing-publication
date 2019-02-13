@@ -62,7 +62,7 @@ class ContractCostController extends Controller
         }
         $contents = $request->cost_content;
         foreach ($contents as $content) {
-            ContractCostContent::create(array_merge($content, ['cost_id' => $contractCost->id, 'status' => $status, 'operator' => $content['creator']]));
+            ContractCostContent::create(array_merge($content, ['cost_id' => $contractCost->id, 'status' => $status]));
         }
 
         return $this->response()->noContent()->setStatusCode(201);

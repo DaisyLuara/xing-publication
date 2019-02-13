@@ -21,6 +21,5 @@ class ContractCostContent extends Model
         'money',
         'remark',
         'status',
-        'operator'
     ];
 }

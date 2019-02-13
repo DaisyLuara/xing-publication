@@ -22,7 +22,6 @@ class CreateContractCostContentTable extends Migration
             $table->string('money')->comment('成本金额');
             $table->string('remark')->nullable()->comment('备注');
             $table->smallInteger('status')->comment('0:未确认,1:已确认');
-            $table->string('operator')->comment('最后操作者');
             $table->timestamps();
         });
     }
