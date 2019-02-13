@@ -17,6 +17,7 @@ class ContractCost extends Model
         'contract_id',
         'applicant_id',
         'applicant_name',
+        'confirm_cost',
         'total_cost'
     ];
 

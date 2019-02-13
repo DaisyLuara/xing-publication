@@ -20,8 +20,16 @@ class ContractCostContentController extends Controller
 {
     public function store(ContractCostContentRequest $request, ContractCost $contractCost, ContractCostContent $costContent)
     {
-        $costContent->fill(array_merge($request->all(), ['cost_id' => $contractCost->id, 'status' => 0, 'operator' => $request->creator]))->save();
-        $contractCost->update(['total_cost' => $request->total_cost]);
+        $status = 0;
+        $confirm_cost = $contractCost->confirm_cost;
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
+        if ($user->hasRole('legal-affairs-manager')) {
+            $status = 1;
+            $confirm_cost = $confirm_cost + $request->money;
+        }
+        $costContent->fill(array_merge($request->all(), ['cost_id' => $contractCost->id, 'status' => $status, 'operator' => $request->creator]))->save();
+        $contractCost->update(['total_cost' => $request->total_cost, 'confirm_cost' => $confirm_cost]);
         return $this->response()->noContent()->setStatusCode(201);
     }
 
@@ -63,6 +71,7 @@ class ContractCostContentController extends Controller
     public function confirm(ContractCostContent $content)
     {
         $content->update(['status' => 1]);
+        ContractCost::query()->where('id', $content->cost_id)->increment('confirm_cost', $content->money);
         return $this->response()->noContent();
     }
 }
