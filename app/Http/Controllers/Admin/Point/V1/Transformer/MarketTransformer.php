@@ -8,13 +8,14 @@ use League\Fractal\TransformerAbstract;
 class MarketTransformer extends TransformerAbstract
 {
 
-    protected $availableIncludes = ['area', 'contract', 'share'];
+    protected $availableIncludes = ['area', 'contract', 'share', 'company', 'media', 'bdUser', 'adContract', 'marketConfig'];
 
     public function transform(Market $market)
     {
         return [
             'id' => (int)$market->marketid,
             'name' => (string)$market->name,
+            'updated_at' => $market->marketConfig ? $market->marketConfig->updated_at->toDateTimeString() : null,
         ];
     }
 
@@ -36,6 +37,14 @@ class MarketTransformer extends TransformerAbstract
         $share = $market->share;
         if ($share) {
             return $this->item($market->share, new MarketShareTransformer());
+        }
+    }
+
+    public function includeMarketConfig(Market $market)
+    {
+        $marketConfig = $market->marketConfig;
+        if ($marketConfig) {
+            return $this->item($marketConfig, new MarketConfigTransformer());
         }
     }
 }

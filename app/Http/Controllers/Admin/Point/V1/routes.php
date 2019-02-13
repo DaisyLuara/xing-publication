@@ -26,6 +26,13 @@ $api->version('v1', [
             $api->get('points/{point}', 'PointController@show');
             $api->post('point', ['middleware' => ['permission:market.point.create'], 'uses' => 'PointController@store']);
             $api->patch('points/{point}', ['middleware' => ['permission:market.point.update'], 'uses' => 'PointController@update']);
+
+            //门店
+            $api->get('stores', ['middleware' => ['permission:market.business.read'], 'uses' => 'StoreController@index']);
+            $api->get('stores/{store}', 'StoreController@show');
+            $api->post('stores', ['middleware' => ['permission:market.business.create'], 'uses' => 'StoreController@store']);
+            $api->patch('stores/{store}', ['middleware' => ['permission:market.business.update'], 'uses' => 'StoreController@update']);
+
         });
     });
 

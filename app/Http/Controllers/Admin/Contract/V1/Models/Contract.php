@@ -24,13 +24,16 @@ class Contract extends Model
         'product_status',
         'kind',
         'serve_target',
+        'recharge',
         'special_num',
         'common_num',
         'amount',
         'remark',
         'legal_message',
         'legal_ma_message',
-        'bd_ma_message'
+        'bd_ma_message',
+        'start_date',
+        'end_date',
     ];
 
     public function company()
@@ -72,5 +75,10 @@ class Contract extends Model
     public function contractHistory()
     {
         return $this->hasMany(ContractHistory::class, 'contract_id', 'id');
+    }
+
+    public function contractCost()
+    {
+        return $this->hasOne(ContractCost::class, 'contract_id', 'id');
     }
 }

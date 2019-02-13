@@ -81,6 +81,31 @@ class MarketController extends Controller
             $market->share()->create($request->share);
         }
 
+        if ($request->has('marketConfig')) {
+            $market->marketConfig()->create($request->marketConfig);
+        }
+
+        if ($request->has('customer')) {
+            if (count(array_filter($request->customer))) {
+                abort_if(count(array_filter($request->customer)) < 3, 500, '核销人员信息不完整');
+
+                $customer = $market->marketConfig->writeOffCustomer()->create([
+                    'name' => $request->customer['name'],
+                    'company_id' => $request->marketConfig['company_id'],
+                    'phone' => $request->customer['phone'],
+                    'password' => bcrypt($request->customer['password']),
+                    'position' => '场地核销人员',
+                ]);
+
+                if (!$customer->hasRole('ad_owner')) {
+                    $customer->assignRole('ad_owner');
+                }
+
+                $market->marketConfig->update(['write_off_customer_id' => $customer->id]);
+            }
+
+        }
+
         return $this->response->item($market, new MarketTransformer());
     }
 
@@ -102,6 +127,39 @@ class MarketController extends Controller
                 unset($share['marketid']);
             }
             $market->share()->getResults()->update($share);
+        }
+
+        if ($request->has('marketConfig')) {
+            $marketConfig = $request->marketConfig;
+            if (isset($marketConfig['marketid'])) {
+                unset($marketConfig['marketid']);
+            }
+
+            $market->marketConfig()->updateOrCreate(['id' => $market->marketid], $marketConfig);
+        }
+
+        if ($request->has('customer')) {
+
+            if (count(array_filter($request->customer))) {
+                abort_if(count(array_filter($request->customer)) < 3, 500, '核销人员信息不完整');
+
+                $customer = $market->marketConfig->writeOffCustomer()->updateOrCreate(
+                    ['phone' => $request->customer['phone']],
+                    [
+                        'company_id' => $request->marketConfig['company_id'],
+                        'name' => $request->customer['name'],
+                        'password' => bcrypt($request->customer['password']),
+                        'position' => '场地核销人员',
+                    ]
+                );
+
+                if (!$customer->hasRole('ad_owner')) {
+                    $customer->assignRole('ad_owner');
+                }
+
+                $market->marketConfig->update(['write_off_customer_id' => $customer->id]);
+            }
+
         }
 
         return $this->response->item($market, new MarketTransformer());

@@ -32,14 +32,18 @@ class ContractCostController extends Controller
 
         $query->whereHas('contract', function ($q) use ($request) {
             if ($request->contract_number) {
-                $q->where('contract_number', $request->contract_number);
+                $q->where('contract_number', 'like','%'.$request->contract_number.'%');
             }
 
             if ($request->contract_name) {
-                $q->where('name', 'liek', '%' . $request->contract_name . '%');
+                $q->where('name', 'like', '%' . $request->contract_name . '%');
             }
         });
-
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
+        if ($user->hasRole('user|bd-manager')) {
+            $query->where('applicant_id', $user->id);
+        }
         $contractCost = $query->orderBy('updated_at', 'desc')->paginate(10);
 
         return $this->response()->paginator($contractCost, new ContractCostTransformer());

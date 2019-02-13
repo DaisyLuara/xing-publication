@@ -23,7 +23,9 @@ class ContractCostTransformer extends TransformerAbstract
             'contract_id' => $contractCost->contract_id,
             'contract_number' => $contractCost->contract->contract_number,
             'contract_name' => $contractCost->contract->name,
+            'applicant_id' => $contractCost->applicant_id,
             'applicant_name' => $contractCost->applicant_name,
+            'total_cost' => $contractCost->total_cost,
             'created_at' => $contractCost->created_at->toDateTimeString(),
             'updated_at' => $contractCost->updated_at->toDateTimeString()
         ];

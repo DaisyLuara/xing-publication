@@ -153,24 +153,28 @@ class ContractController extends Controller
     {
         /**@var $user \App\Models\User */
         $user = $this->user();
+        abort_if($user->id != $contract->handler, 403, '无审批权限');
 
         if ($user->hasRole('legal-affairs')) {
-
-            if (!$request->has('legal_message')) {
-                abort(500, '没有填写意见');
-            }
-            $contract->status = 2;
-            $contract->handler = $user->parent_id;
-            $contract->contract_number = $request->contract_number;
-            $contract->legal_message = $request->legal_message;
-
+            $params = [
+                'legal_message',
+                'contract_number'
+            ];
+            $this->checkParam($request, $params);
+            $contract->fill(array_merge($request->all(), ['status' => 2, 'handler' => $user->parent_id]));
             $this->updateContractAndHistory($user, $contract);
-
         } else if ($user->hasRole('legal-affairs-manager')) {
-
-            if (!$request->has('legal_ma_message')) {
-                abort(500, '没有填写意见');
+            $params = [
+                'legal_ma_message',
+                'special_num',
+                'common_num'
+            ];
+            $this->checkParam($request, $params);
+            //特批合同需要带合同编号
+            if($contract->status==4){
+                $this->checkParam($request, ['contract_number']);
             }
+
             $parentId = $contract->applicantUser->parent_id;
             // BD主管建的直接已审批,不经过自己
             if ($parentId == $contract->applicant) {
@@ -180,21 +184,28 @@ class ContractController extends Controller
                 $contract->status = 2;
                 $contract->handler = $parentId;
             }
-            if ($request->has('contract_number')) {
-                $contract->contract_number = $request->contract_number;
-            }
-            $contract->legal_ma_message = $request->legal_ma_message;
+
+            $contract->fill($request->all());
             $this->updateContractAndHistory($user, $contract);
         } else if ($user->hasRole('bd-manager')) {
-            if (!$request->has('bd_ma_message')) {
-                abort(500, '没有填写意见');
-            }
+            $params = [
+                'bd_ma_message'
+            ];
+            $this->checkParam($request, $params);
+
             $contract->status = 3;
             $contract->handler = null;
             $contract->bd_ma_message = $request->bd_ma_message;
             $this->updateContractAndHistory($user, $contract);
         }
         return $this->response()->item($contract, new ContractTransformer())->setStatusCode(201);
+    }
+
+    private function checkParam(Request $request, array $param)
+    {
+        if (!$request->has($param)) {
+            abort(422, '请填写完整信息');
+        }
     }
 
     private function updateContractAndHistory(User $user, Contract $contract)

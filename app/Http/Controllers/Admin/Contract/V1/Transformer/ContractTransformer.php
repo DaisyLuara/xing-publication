@@ -32,11 +32,21 @@ class ContractTransformer extends TransformerAbstract
     ];
 
     protected $kindMapping = [
-        '0' => '无',
+        '0' => null,
         '1' => '铺屏',
         '2' => '销售',
         '3' => '租赁',
         '4' => '服务'
+    ];
+
+    protected $targetMapping = [
+        '1' => '商户',
+        '2' => '商场'
+    ];
+
+    protected $chargeMapping = [
+        '0' => '否',
+        '1' => '是'
     ];
 
     public function transform(Contract $contract)
@@ -54,8 +64,8 @@ class ContractTransformer extends TransformerAbstract
             'handler_name' => $contract->handler ? $contract->handlerUser->name : null,
             'type' => $this->typeMapping[$contract->type],
             'kind' => $this->kindMapping[$contract->kind],
-            'server_target' => $contract->server_target,
-            'recharge' => $contract->recharge,
+            'serve_target' => $contract->serve_target == null ? null : $this->targetMapping[$contract->serve_target],
+            'recharge' => $contract->recharge == null ? null : $this->chargeMapping[$contract->recharge],
             'special_num' => $contract->special_num,
             'common_num' => $contract->common_num,
             'amount' => $contract->amount,
@@ -66,6 +76,8 @@ class ContractTransformer extends TransformerAbstract
             'receive_date' => join(',', array_column($contract->receiveDate->toArray(), 'receive_date')),
             'product_status' => $this->productStatusMapping[$contract->product_status],
             'product_content' => $contract->product,
+            'start_date' => $contract->start_date,
+            'end_date' => $contract->end_date,
             'created_at' => $contract->created_at->toDateTimeString(),
             'updated_at' => $contract->updated_at->toDateTimeString(),
         ];

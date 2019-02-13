@@ -15,6 +15,7 @@ class ContractCostContent extends Model
 {
     protected $fillable = [
         'cost_id',
+        'creator_id',
         'creator',
         'kind_id',
         'money',
