@@ -543,6 +543,10 @@ class QueryController extends Controller
             $query->where('company_id', '=', $request->company_id);
         }
 
+        if ($request->has('market_id')) {
+            $query->where('marketid', '=', $request->market_id);
+        }
+
         $stores = $query->get();
 
         return $this->response->collection($stores, new StoreTransformer());
