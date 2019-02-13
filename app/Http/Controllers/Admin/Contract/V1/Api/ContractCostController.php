@@ -32,7 +32,7 @@ class ContractCostController extends Controller
 
         $query->whereHas('contract', function ($q) use ($request) {
             if ($request->contract_number) {
-                $q->where('contract_number', 'like','%'.$request->contract_number.'%');
+                $q->where('contract_number', 'like', '%' . $request->contract_number . '%');
             }
 
             if ($request->contract_name) {
@@ -51,11 +51,18 @@ class ContractCostController extends Controller
 
     public function store(ContractCostRequest $request, ContractCost $contractCost)
     {
-        $contractCost->fill($request->all())->save();
-
+        $status = 0;
+        /** @var  $user \App\Models\User */
+        $user = $this->user();
+        if ($user->hasRole('legal-affairs-manager')) {
+            $status = 1;
+            $contractCost->fill(array_merge($request->all(), ['confirm_cost' => $request->total_cost]))->save();
+        } else {
+            $contractCost->fill($request->all())->save();
+        }
         $contents = $request->cost_content;
         foreach ($contents as $content) {
-            ContractCostContent::create(array_merge($content, ['cost_id' => $contractCost->id, 'status' => 0, 'operator' => $content['creator']]));
+            ContractCostContent::create(array_merge($content, ['cost_id' => $contractCost->id, 'status' => $status, 'operator' => $content['creator']]));
         }
 
         return $this->response()->noContent()->setStatusCode(201);

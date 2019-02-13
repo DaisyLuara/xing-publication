@@ -18,6 +18,7 @@ class CreateContractCostTable extends Migration
             $table->integer('contract_id');
             $table->integer('applicant_id')->comment('所属人id');
             $table->string('applicant_name')->comment('所属人');
+            $table->string('confirm_cost')->default(0)->comment('已确认成本');
             $table->string('total_cost')->comment('总成本');
             $table->timestamps();
         });
