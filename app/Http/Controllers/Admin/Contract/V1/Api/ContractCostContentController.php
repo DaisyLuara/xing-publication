@@ -28,7 +28,7 @@ class ContractCostContentController extends Controller
             $status = 1;
             $confirm_cost = $confirm_cost + $request->money;
         }
-        $costContent->fill(array_merge($request->all(), ['cost_id' => $contractCost->id, 'status' => $status, 'operator' => $request->creator]))->save();
+        $costContent->fill(array_merge($request->all(), ['cost_id' => $contractCost->id, 'status' => $status]))->save();
         $contractCost->update(['total_cost' => $request->total_cost, 'confirm_cost' => $confirm_cost]);
         return $this->response()->noContent()->setStatusCode(201);
     }
@@ -38,22 +38,21 @@ class ContractCostContentController extends Controller
         if ($content->status == 1) {
             abort(403, '成本明细已确认,无法修改');
         }
+        /** @var  $user \App\Models\User */
         $user = $this->user();
-        abort_if(!$this->check($user, $content), '403', '无操作权限');
-        $content->update(array_merge($request->all(), ['operator' => $user->name]));
-        $contractCost->update(['total_cost' => $request->total_cost]);
-        return $this->response()->noContent();
-    }
+        if (!($user->hasRole('legal-affairs-manager') || $user->id == $content->creator_id)) {
+            abort_if('403', '无操作权限');
+        }
 
-    private function check(User $user, ContractCostContent $content)
-    {
+        $status = 0;
+        $confirm_cost = $contractCost->confirm_cost;
         if ($user->hasRole('legal-affairs-manager')) {
-            return true;
+            $status = 1;
+            $confirm_cost = $confirm_cost + $request->money;
         }
-        if ($user->id == $content->creator_id) {
-            return true;
-        }
-        return false;
+        $content->update(array_merge($request->all(), ['status' => $status]));
+        $contractCost->update(['total_cost' => $request->total_cost, 'confirm_cost' => $confirm_cost]);
+        return $this->response()->noContent();
     }
 
     public function destroy(Request $request, ContractCost $contractCost, ContractCostContent $content)
