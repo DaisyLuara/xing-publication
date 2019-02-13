@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\Face\V1\Models\FacePlayCharacterRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceVerifyRecord;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamBonusRecord;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
+use \App\Http\Controllers\Admin\Contract\V1\Models\Contract;
 use app\Support\Jenner\Zebra\ArrayGroupBy;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -1912,7 +1913,7 @@ function teamBonusClean()
                         'project_name' => $item->project_name,
                         'belong' => $item->belong,
                         'type' => $item->type,
-                        'main_type'=>$main_type,
+                        'main_type' => $main_type,
                         'total' => round($item->money * $item->factor * $item->rate, 6),
                         'date' => $date,
                         'get_date' => $date_future,
@@ -1926,7 +1927,7 @@ function teamBonusClean()
                         'project_name' => $item->project_name,
                         'belong' => $item->belong,
                         'type' => $item->type,
-                        'main_type'=>$main_type,
+                        'main_type' => $main_type,
                         'total' => round($item->money * $item->factor * $item->rate, 6),
                         'date' => $date,
                         'get_date' => $date,
@@ -1969,7 +1970,7 @@ function teamBonusClean()
                         ->where('date', '>=', $start_date)
                         ->where('date', '<', $end_date)
                         ->where('type', '=', $user_bug->duty)
-                        ->where('main_type','=', $main_type)
+                        ->where('main_type', '=', $main_type)
                         ->where('status', '=', 0)
                         ->update(['status' => -1, 'updated_at' => $now]);
                 }
@@ -1977,7 +1978,7 @@ function teamBonusClean()
                 //发放当前需发放的rewards
                 $future_rewards = DB::table("team_person_future_rewards")
                     ->where('get_date', '=', $date)
-                    ->where('main_type','=',$main_type)
+                    ->where('main_type', '=', $main_type)
                     ->where('status', '=', 0);
 
                 $future_rewards_array = $future_rewards
@@ -2014,14 +2015,64 @@ function teamBonusClean()
 /**
  * PBI 绩效奖金清洗
  */
-function PBIBonusClean(){
-    //查询符合条件的合同
+function PBIBonusClean()
+{
+    DB::beginTransaction();
+
+    //查询符合条件的合同ID
     //1 收款合同 type = 0 ;
     //2 合同状态为 3|4 已审批|特批
-    //3 合同总金额 amount <= 收款金额总和
-    //     contract_receive_dates -- invoice_receipts -- claim_status=1 已认领  sum(receipt_money)
-    //4 already_clean_bonus = 0 未清洗绩效
+    //3 pbi_money 为null
+    $contract_ids = DB::table('contracts')
+        ->whereRaw("type = 0 and status in (3,4) and pbi_money is null and amount > 0")
+        ->pluck('id')->toArray();
 
-    //（这些合同的收款总额 - 费用 ）
+    //符合要求合同的收款金额
+    $contract_receipt = DB::table('contract_receive_dates as crd')
+        ->leftJoin('invoice_receipts as ir', 'ir.id', '=', 'crd.invoice_receipt_id')
+        ->leftJoin('contracts as ct', 'ct.id', '=', 'crd.contract_id')
+        ->whereRaw('crd.receive_status = 1 and ir.claim_status = 1 and contract_id in (' . implode(',', $contract_ids) . ')')
+        ->groupBy('crd.contract_id')
+        ->selectRaw(" crd.contract_id,sum(ir.receipt_money) as 'receipt_money',ct.contract_number,ct.name,ct.special_num,ct.common_num,ct.amount");
+
+    //符合要求合同的花费金额
+    $contract_cost = DB::table('contract_costs as cc ')
+        ->whereRaw("contract_id in (" . implode(',', $contract_ids) . ")")
+        ->groupBy('contract_id')
+        ->selectRaw("contract_id,sum(total_cost) as cost");
+
+
+    //得到（合同总金额 amount <= 收款金额总和）合同，以及 节目制造营收JS值
+    $contracts_with_pbi_money = DB::table(DB::raw("({$contract_receipt->toSql()}) V1"))
+        ->leftJoin(DB::raw("({$contract_cost->toSql()}) V2"), 'V1.contract_id', '=', 'V2.contract_id')
+        ->whereRaw(" V1.amount <= V1.receipt_money ")
+        ->selectRaw("V1.* , V2.* , (V1.receipt_money - IFNULL(V2.cost,0)) as 'pbi_money',
+        case when (common_num > 0 and special_num > 0)
+             then (V1.receipt_money - IfNull(V2.cost,0) ) * 0.8 / special_num
+             when (common_num = 0 and special_num > 0)
+             then (V1.receipt_money - IfNull(V2.cost,0) ) / special_num
+             else 0
+             end as 'special_JS',
+        case when common_num > 0
+             then (V1.receipt_money - IfNull(V2.cost,0) ) * 0.2 / common_num
+             else 0
+             end as 'common_JS'
+             ")
+        ->get();
+
+    foreach($contracts_with_pbi_money->toArray() as $contract_with_pbi_money){
+        //查询出该合同的所有相关节目
+
+        //
+    }
+
+//    $contracts_with_pbi_money_array = $contracts_with_pbi_money->map(function($value){return (Array)$value;})->toArray();
+//    $contract_ids = array_column($contracts_with_pbi_money_array,'contract_id');
+//dd($contract_ids);
+dd($contracts_with_pbi_money->toArray());
+    exit;
+
+    DB::commit();
+
 
 }
