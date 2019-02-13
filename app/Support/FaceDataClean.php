@@ -2045,7 +2045,7 @@ function PBIBonusClean()
     $contract_cost = DB::table('contract_costs as cc ')
         ->whereRaw("contract_id in (" . implode(',', $contract_ids) . ")")
         ->groupBy('contract_id')
-        ->selectRaw("contract_id,sum(total_cost) as cost");
+        ->selectRaw("contract_id,sum(confirm_cost) as cost");
 
 
     //得到（合同总金额 amount <= 收款金额总和）合同，以及 节目制造营收JS值
