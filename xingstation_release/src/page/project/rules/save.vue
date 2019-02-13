@@ -137,15 +137,16 @@
                 </el-tooltip>
               </el-radio-group>
             </el-form-item>
-            <el-form-item :rules="writeOffMidRules" label="核销场地" prop="write_off_mid">
+            <el-form-item :rules="writeOffMidRules" label="适用场地" prop="write_off_mid">
               <el-select
                 v-model="couponForm.write_off_mid"
                 :loading="searchLoading"
-                placeholder="请选择核销场地"
+                placeholder="请选择适用场地"
                 filterable
                 clearable
                 :disabled="writeOffMarketShow"
                 class="coupon-form-select"
+                @change="writeOffMarketHandle"
               >
                 <el-option
                   v-for="item in writeOffMarketList"
@@ -155,14 +156,14 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item :rules="writeOffSidRules" label="核销商户" prop="write_off_sid">
+            <el-form-item :rules="writeOffSidRules" label="适用商户" prop="write_off_sid">
               <el-select
                 v-model="couponForm.write_off_sid"
                 :disabled="writeOffSiteShow"
                 :loading="searchLoading"
                 :multiple-limit="multipleNum"
                 multiple
-                placeholder="请选择核销商户"
+                placeholder="请选择适用商户"
                 filterable
                 clearable
                 class="coupon-form-select"
@@ -380,7 +381,7 @@ export default {
     };
     return {
       multipleNum: 0,
-      writeOffMarketShow:true,
+      writeOffMarketShow: true,
       writeOffSiteShow: true,
       peopleReceiveShow: true,
       peopleDayShow: true,
@@ -459,10 +460,20 @@ export default {
       this.getCompanyMarketList(val);
       this.getStoresList(val);
     },
-    getStoresList(val) {
+    writeOffMarketHandle() {
+      if (this.couponForm.scene_type === 1) {
+        this.getStoresList(this.couponForm.write_off_mid, true);
+      }
+    },
+    getStoresList(val, type) {
       let args = {
         company_id: val
       };
+      if (type) {
+        args.market_id = val;
+        delete args.company_id;
+      }
+
       getStoresList(this, args)
         .then(res => {
           this.writeOffSiteList = res;
@@ -501,10 +512,10 @@ export default {
         this.writeOffMarketShow = false;
         this.multipleNum = 0;
       } else if (val === 2) {
-        this.writeOffMarketShow = false
+        this.writeOffMarketShow = false;
         this.writeOffSiteShow = true;
         this.writeOffSidRules = null;
-        this.couponForm.write_off_sid = []
+        this.couponForm.write_off_sid = [];
         this.writeOffMidRules = {
           required: true,
           message: "核销场地不能为空",
@@ -512,16 +523,16 @@ export default {
         };
         this.multipleNum = 1;
       } else if (val === 3) {
-        this.couponForm.write_off_mid = null
-        this.writeOffMarketShow = true
+        this.couponForm.write_off_mid = null;
+        this.writeOffMarketShow = true;
         this.writeOffSiteShow = false;
         this.writeOffMidRules = null;
         this.writeOffSidRules = null;
         this.multipleNum = 0;
       } else {
-        this.couponForm.write_off_mid = null
-        this.couponForm.write_off_sid=[]
-        this.writeOffMarketShow = true
+        this.couponForm.write_off_mid = null;
+        this.couponForm.write_off_sid = [];
+        this.writeOffMarketShow = true;
         this.writeOffSiteShow = false;
         this.writeOffMidRules = null;
         this.writeOffSidRules = {
@@ -589,6 +600,9 @@ export default {
                 this.couponForm.write_off_sid.push(id);
               })
             : [];
+          if (result.writeOffMarket) {
+            this.couponForm.write_off_mid = result.writeOffMarket.id;
+          }
           this.couponForm.is_fixed_date = result.is_fixed_date;
           this.couponForm.delay_effective_day = result.delay_effective_day;
           this.couponForm.effective_day = result.effective_day;
@@ -602,8 +616,8 @@ export default {
           this.couponForm.write_off_status = result.write_off_status;
           this.couponForm.credit = result.credit;
           this.couponForm.bs_image_url = result.bs_image_url;
-          if (result.writeOffMarket) {
-            this.couponForm.write_off_mid = result.writeOffMarket.id;
+          if (result.scene_type === 1) {
+            this.getStoresList(this.couponForm.write_off_mid, true);
           }
           if (result.is_fixed_date === 1) {
             this.dateShow = true;
@@ -728,11 +742,10 @@ export default {
         write_off_mid: this.couponForm.write_off_mid,
         write_off_sid: this.couponForm.write_off_sid
       };
-      console.log(args.write_off_sid.length)
-      if(args.write_off_sid.length === 0){
-        this.writeOffSiteList.map(r=>{
-          args.write_off_sid.push(r.id)
-        })
+      if (args.write_off_sid.length === 0) {
+        this.writeOffSiteList.map(r => {
+          args.write_off_sid.push(r.id);
+        });
       }
       if (!this.couponForm.image_url) {
         delete args.image_url;
@@ -778,7 +791,6 @@ export default {
         delete args.start_date;
         delete args.end_date;
       }
-      console.log(args)
       this.$refs[formName].validate(valid => {
         if (valid) {
           saveCoupon(this, args, this.couponID, company_id)
