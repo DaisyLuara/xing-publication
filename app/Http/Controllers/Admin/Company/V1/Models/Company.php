@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Company\V1\Models;
 
+use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Http\Controllers\Admin\Point\V1\Models\Market;
 use App\Http\Controllers\Admin\Point\V1\Models\Store;
 use App\Models\User;
@@ -37,6 +38,11 @@ class Company extends Model
     public function stores()
     {
         return $this->hasMany(Store::class, 'company_id', 'id');
+    }
+
+    public function media()
+    {
+        return $this->belongsTo(Media::class, 'logo_media_id', 'id');
     }
 
     public function isCompanyCustomer($model)
