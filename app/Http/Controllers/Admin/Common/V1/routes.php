@@ -78,6 +78,7 @@ $api->version('v1', [
             $api->get('invoice_kind/query', 'QueryController@invoiceKindQuery');
             $api->get('goods_service/query', 'QueryController@goodsServiceQuery');
             $api->get('bd_manager/query', 'QueryController@bdManagerQuery');
+            $api->get('bd_users/query', 'QueryController@bdAndBdManagerQuery');
             $api->get('legal_manager/query', 'QueryController@legalManagerQuery');
             $api->get('invoice_company/query', 'QueryController@invoiceCompanyQuery');
             $api->get('payment_payee/query', 'QueryController@paymentPayeeQuery');
@@ -90,10 +91,13 @@ $api->version('v1', [
             $api->get('role/query', 'QueryController@roleQuery');
             $api->get('erp_warehouse/query', 'QueryController@warehouseQuery');//流程管理ERP仓库搜索
             $api->get('erp_attribute/query', 'QueryController@erpAttributeQuery');//流程管理ERP商品属性搜索
-            $api->get('erp_supplier/query', 'QueryController@erpSupplierQuery');//供应商搜索
-            $api->get('erp_sku/query', 'QueryController@erpSkuQuery');//sku下拉列表
-            $api->get('erp_location/query', 'QueryController@erpLocationQuery');//库位下拉列表
+            $api->get('erp_supplier/query','QueryController@erpSupplierQuery');//供应商搜索
+            $api->get('erp_sku/query','QueryController@erpSkuQuery');//sku下拉列表
+            $api->get('erp_location/query','QueryController@erpLocationQuery');//库位下拉列表
+            $api->get('stores/query', 'QueryController@storeQuery');//商户搜索
+            $api->get('company/markets/query', 'QueryController@marketConfigQuery');//商户搜索
             $api->get('playing_types/query', 'QueryController@playingTypeQuery');//玩法配置列表
+            $api->get('cost_kind/query', 'QueryController@costKindQuery');
 
             //消息通知
             $api->get('user/notifications', 'NotificationsController@index');
