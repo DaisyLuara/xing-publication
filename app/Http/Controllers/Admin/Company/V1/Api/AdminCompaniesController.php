@@ -22,6 +22,22 @@ class AdminCompaniesController extends Controller
             $query->where('name', 'like', '%' . $request->name . '%');
         }
 
+        if ($request->has('internal_name')) {
+            $query->where('internal_name', 'like', '%' . $request->internal_name . '%');
+        }
+
+        if ($request->has('category')) {
+            $query->where('category', '=', $request->category);
+        }
+
+        if ($request->has('status')) {
+            $query->where('status', '=', $request->status);
+        }
+
+        if ($request->has('bd_user_id')) {
+            $query->where('bd_user_id', '=', $request->bd_user_id);
+        }
+
         //角色为管理员，法务，法务主管时，查看所有公司数据
         if ($currentUser->isAdmin() || $currentUser->hasRole('legal-affairs|legal-affairs-manager|operation')) {
             $companies = $query->orderByDesc('id')->paginate(10);
