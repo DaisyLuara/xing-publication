@@ -21,18 +21,11 @@ class ContractRequest extends Request
                     'type' => Rule::in([0, 1, 2]),
                     'receive_date' => 'string|nullable',
                     'ids' => 'string',
-                    'product_status'=> Rule::in([0, 1, 2]),
+                    'product_status' => Rule::in([0, 1, 2]),
                     'remark' => 'string|nullable|max:1000',
-                    'amount' => 'string'
-                ];
-                break;
-            case 'PATCH':
-                return [
-                    'name' => 'max:50',
-                    'type' => Rule::in([0, 1, 2]),
-                    'receive_date' => 'string|nullable',
-                    'ids' => 'string',
-                    'remark' => 'string|nullable|max:1000'
+                    'amount' => 'string',
+                    'special_num' => 'required|integer',
+                    'common_num' => 'required|integer|max:2'
                 ];
                 break;
             default:
