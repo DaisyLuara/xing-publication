@@ -103,7 +103,7 @@
                 <el-form-item label="区域:">
                   <span>{{ scope.row.area.name}}</span>
                 </el-form-item>
-                <el-form-item label="所属BD:">
+                <el-form-item label="所属人:">
                   <span>{{ scope.row.user ? scope.row.user.name : '无' }}</span>
                 </el-form-item>
                 <el-form-item label="商户LOGO:">
@@ -149,7 +149,7 @@
           >
             <template slot-scope="scope">{{ scope.row.area.name}}</template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="db" label="所属BD" min-width="100">
+          <el-table-column :show-overflow-tooltip="true" prop="db" label="所属人" min-width="100">
             <template slot-scope="scope">{{ scope.row.user ? scope.row.user.name : '无' }}</template>
           </el-table-column>
           <el-table-column
