@@ -118,11 +118,11 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="所属人" prop="bd_user_id">
+            <el-form-item label="所属BD" prop="bd_user_id">
               <el-select
                 v-model="siteForm.marketConfig.bd_user_id"
                 :loading="searchLoading"
-                placeholder="请选择所属人"
+                placeholder="请选择所属BD"
               >
                 <el-option
                   v-for="item in BDList"
@@ -580,7 +580,7 @@ export default {
           ad_ads: 5,
           exchange_num: 0
         },
-        permission: ["场地主"],
+        permission: ["agent", "site", "ad", "vipad"],
         share: {
           offer: 2000,
           offer_off: 100,
@@ -661,10 +661,10 @@ export default {
           { validator: checkNumber, trigger: "submit" }
         ],
         "contract.enter_sdate": [
-          { message: "请选择合同开始时间", trigger: "submit" }
+          { required: true, message: "请选择合同开始时间", trigger: "submit" }
         ],
         "contract.enter_edate": [
-          { validator: checkEnterEndDate, trigger: "submit" }
+          { required: true, validator: checkEnterEndDate, trigger: "submit" }
         ],
         "contract.oper_sdate": [
           { required: true, message: "请选择入驻开始时间", trigger: "submit" }
