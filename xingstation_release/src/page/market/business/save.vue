@@ -145,11 +145,11 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="所属BD" prop="user_id">
+            <el-form-item label="所属人" prop="user_id">
               <el-select
                 v-model="businessForm.user_id"
                 :loading="searchLoading"
-                placeholder="请选择所属BD"
+                placeholder="请选择所属人"
               >
                 <el-option
                   v-for="item in BDList"

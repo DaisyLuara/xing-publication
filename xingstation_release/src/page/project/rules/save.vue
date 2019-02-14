@@ -742,7 +742,10 @@ export default {
         write_off_mid: this.couponForm.write_off_mid,
         write_off_sid: this.couponForm.write_off_sid
       };
-      if (args.write_off_sid.length === 0) {
+      if (
+        args.write_off_sid.length === 0 &&
+        (scene_type === 1 || scene_type === 3)
+      ) {
         this.writeOffSiteList.map(r => {
           args.write_off_sid.push(r.id);
         });
