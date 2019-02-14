@@ -590,4 +590,18 @@ class QueryController extends Controller
         return $this->response()->collection($contractCostKind, new ContractCostKindTransformer());
     }
 
+    public function adminCustomersQuery(Request $request, Customer $customer)
+    {
+        $query = $customer->query();
+        $company = Company::query()->findOrFail($request->company_id);
+
+        $customers = $query->whereHas('company', function ($q) use ($company) {
+            $q->where('id', $company->id);
+        })->orderByDesc('id')->get();
+
+        return $this->response->collection($customers, new CustomerTransformer());
+    }
+
+
+
 }

@@ -17,6 +17,7 @@
             <el-form-item label="公司名称" prop="company_id">
               <el-select
                 v-model="businessForm.company_id"
+                :loading="searchLoading"
                 placeholder="请选择公司名称"
                 filterable
                 clearable
@@ -106,11 +107,22 @@
               />
             </el-form-item>
             <el-form-item label="核销员姓名" prop="customer.name">
-              <el-input
+              <el-select
                 v-model="businessForm.customer.name"
-                placeholder="请输入核销员姓名"
-                class="item-input"
-              />
+                :loading="searchLoading"
+                filterable
+                allow-create
+                default-first-option
+                placeholder="核销员姓名"
+                @change="customerHandle"
+              >
+                <el-option
+                  v-for="item in customerList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
             </el-form-item>
             <el-form-item label="核销员电话" prop="customer.phone">
               <el-input
@@ -199,7 +211,8 @@ import {
   getSearchCompanyList,
   getSearchBDList,
   getContractReceiptList,
-  handleDateTimeTransform
+  handleDateTimeTransform,
+  getSearchCustomer
 } from "service";
 
 import {
@@ -266,6 +279,20 @@ export default {
       }
     };
     return {
+      options5: [
+        {
+          value: "HTML",
+          label: "HTML"
+        },
+        {
+          value: "CSS",
+          label: "CSS"
+        },
+        {
+          value: "JavaScript",
+          label: "JavaScript"
+        }
+      ],
       SERVER_URL: SERVER_URL,
       formHeader: {
         Authorization: "Bearer " + auth.getToken()
@@ -309,6 +336,7 @@ export default {
       },
       markteList: [],
       areaList: [],
+      customerList: [],
       rules: {
         "customer.password": [
           {
@@ -357,6 +385,7 @@ export default {
     this.businessID = this.$route.params.uid;
     this.getAreaList();
     this.getSearchBDList();
+
     if (this.businessID) {
       this.getBusinessDetail();
     } else {
@@ -364,6 +393,34 @@ export default {
     }
   },
   methods: {
+    customerHandle(val) {
+      this.customerList.map(r => {
+        if (val === this.businessForm.customer.name) {
+          this.businessForm.customer.phone = r.phone;
+          return;
+        }
+      });
+    },
+    getSearchCustomer(val) {
+      this.searchLoading = true;
+
+      let args = {
+        company_id: val
+      };
+      getSearchCustomer(this, args)
+        .then(res => {
+          this.customerList = res;
+          this.searchLoading = false;
+        })
+        .catch(err => {
+          this.searchLoading = false;
+
+          this.$message({
+            type: "warning",
+            message: err.response.date.message
+          });
+        });
+    },
     handleRelatedField(val) {
       if (val === 1) {
         this.marketShow = true;
@@ -382,6 +439,7 @@ export default {
       let args = {
         company_id: val
       };
+      this.getSearchCustomer(val);
       getContractReceiptList(this, args)
         .then(res => {
           this.contractList = res;
@@ -420,11 +478,15 @@ export default {
       return isLt2M;
     },
     getSearchCompanyList() {
+      this.searchLoading = true;
       getSearchCompanyList(this)
         .then(res => {
           this.companyList = res.data;
+          this.searchLoading = false;
         })
         .catch(err => {
+          this.searchLoading = false;
+
           this.$message({
             type: "warning",
             message: err.response.date.message
@@ -525,6 +587,7 @@ export default {
       historyBack();
     },
     submit(formName) {
+      console.log(this[formName]);
       this.$refs[formName].validate(valid => {
         if (valid) {
           let args = this.businessForm;

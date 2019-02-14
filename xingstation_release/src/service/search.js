@@ -25,6 +25,7 @@ const BD_API = '/api/bd_users/query'
 const STORES_API = '/api/stores/query'
 const COMPANY_MARKET_API = '/api/company/markets/query'
 const PLATYING_TYPES_API = '/api/playing_types/query'
+const CUSTOMERS_API = '/api/customers/query'
 const HOST = process.env.SERVER_URL
 
 // 区域
@@ -382,6 +383,21 @@ const getSearchPlayingTypes = (context, params) => {
       })
   })
 }
+
+// 联系人
+
+const getSearchCustomer = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + CUSTOMERS_API, { params: params })
+      .then(response => {
+        resolve(response.data.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
 export {
   getSearchAeraList,
   getSearchMarketList,
@@ -409,5 +425,6 @@ export {
   getSearchBDList,
   getStoresList,
   getCompanyMarketList,
-  getSearchPlayingTypes
+  getSearchPlayingTypes,
+  getSearchCustomer
 }
