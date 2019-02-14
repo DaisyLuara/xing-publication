@@ -123,16 +123,16 @@
           <el-tab-pane label="场景设置" name="second">
             <el-form-item label="适用场景" prop="scene_type">
               <el-radio-group v-model="couponForm.scene_type" @change="handleSceneType">
-                <el-tooltip class="item" effect="dark" content="仅供某一特定场地核销" placement="top">
+                <el-tooltip class="item" effect="dark" content="可在同一场地下的多家商户核销" placement="top">
                   <el-radio :label="1">场地通用</el-radio>
                 </el-tooltip>
-                <el-tooltip class="item" effect="dark" content="可在同一场地下的多家商户核销" placement="top">
+                <el-tooltip class="item" effect="dark" content="仅供某一特定场地核销" placement="top">
                   <el-radio :label="2">场地自营</el-radio>
                 </el-tooltip>
-                <el-tooltip class="item" effect="dark" content="仅供某一特定商户核销" placement="top">
+                <el-tooltip class="item" effect="dark" content="可在同一主体下，多家连锁商户核销" placement="top">
                   <el-radio :label="3">商户通用</el-radio>
                 </el-tooltip>
-                <el-tooltip class="item" effect="dark" content="可在同一主体下，多家连锁商户核销" placement="top">
+                <el-tooltip class="item" effect="dark" content="仅供某一特定商户核销" placement="top">
                   <el-radio :label="4">商户自营</el-radio>
                 </el-tooltip>
               </el-radio-group>
