@@ -13,17 +13,21 @@ class CustomerRequest extends Request
             case 'POST':
                 return [
                     'name' => 'required|string',
+                    'position' => 'required',
                     'phone' => 'required|regex:/^1[3456789]\d{9}$/|unique:customers',
                     'telephone' => 'filled',
                     'password' => 'required|string|min:8',
+                    'role_id' => 'required'
                 ];
                 break;
             case 'PATCH':
                 return [
                     'name' => 'filled|string',
+                    'position' => 'filled',
                     'phone' => 'filled|regex:/^1[3456789]\d{9}$/',
                     'telephone' => 'filled',
                     'password' => 'required|string|min:8',
+                    'role_id' => 'required'
                 ];
                 break;
         }

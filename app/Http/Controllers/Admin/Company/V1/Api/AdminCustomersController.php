@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Admin\Company\V1\Api;
 
-use App\Http\Controllers\Admin\Company\V1\Transformer\CustomerTransformer;
-use App\Http\Controllers\Admin\Company\V1\Request\CustomerRequest;
-use App\Http\Controllers\Admin\Privilege\V1\Models\Role;
-use App\Models\Customer;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
+use App\Http\Controllers\Admin\Company\V1\Request\CustomerRequest;
+use App\Http\Controllers\Admin\Company\V1\Transformer\CustomerTransformer;
+use App\Http\Controllers\Admin\Privilege\V1\Models\Role;
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 
 class AdminCustomersController extends Controller
 {

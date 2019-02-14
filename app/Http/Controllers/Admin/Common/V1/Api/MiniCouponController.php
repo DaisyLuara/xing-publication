@@ -250,6 +250,8 @@ class MiniCouponController extends Controller
                 'oid' => $member->oid,
                 'member_uid' => $memberUID,
                 'qiniu_id' => $request->get('qiniu_id') ? : 0,
+                'utm_source' => 2,
+                'channel' => $request->channel,
                 'start_date' => $startDate,
                 'end_date' => $endDate,
             ]);
