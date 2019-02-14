@@ -11,6 +11,7 @@
             <el-form-item label="公司名称" prop="marketConfig.company_id">
               <el-select
                 v-model="siteForm.marketConfig.company_id"
+                :loading="searchLoading"
                 placeholder="请选择公司名称"
                 filterable
                 clearable
@@ -71,8 +72,26 @@
               />
             </el-form-item>
             <el-form-item label="核销员姓名" prop="customer.name">
-              <el-input v-model="siteForm.customer.name" placeholder="请输入核销员姓名" class="item-input"/>
+              <el-select
+                v-model="siteForm.customer.name"
+                :loading="searchLoading"
+                filterable
+                allow-create
+                default-first-option
+                placeholder="核销员姓名"
+                @change="customerHandle"
+              >
+                <el-option
+                  v-for="item in customerList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
             </el-form-item>
+            <!-- <el-form-item label="核销员姓名" prop="customer.name">
+              <el-input v-model="siteForm.customer.name" placeholder="请输入核销员姓名" class="item-input"/>
+            </el-form-item>-->
             <el-form-item label="核销员电话" prop="customer.phone">
               <el-input
                 v-model="siteForm.customer.phone"
@@ -400,7 +419,8 @@ import {
   getSearchAeraList,
   getSearchBDList,
   getContractReceiptList,
-  getSearchCompanyList
+  getSearchCompanyList,
+  getSearchCustomer
 } from "service";
 
 import {
@@ -618,6 +638,7 @@ export default {
       },
       contractList: [],
       companyList: [],
+      customerList: [],
       BDList: [],
       areaList: [],
       rules: {
@@ -761,6 +782,32 @@ export default {
     });
   },
   methods: {
+    customerHandle(val) {
+      this.customerList.map(r => {
+        if (val === this.siteForm.customer.name) {
+          this.siteForm.customer.phone = r.phone;
+          return;
+        }
+      });
+    },
+    getSearchCustomer(val) {
+      this.searchLoading = true;
+      let args = {
+        company_id: val
+      };
+      getSearchCustomer(this, args)
+        .then(res => {
+          this.customerList = res;
+          this.searchLoading = false;
+        })
+        .catch(err => {
+          this.searchLoading = false;
+          this.$message({
+            type: "warning",
+            message: err.response.date.message
+          });
+        });
+    },
     handleContract(val) {
       if (val === 1) {
         this.contractShow = true;
@@ -769,11 +816,15 @@ export default {
       }
     },
     getSearchCompanyList() {
+      this.searchLoading = true;
       getSearchCompanyList(this)
         .then(res => {
           this.companyList = res.data;
+          this.searchLoading = false;
         })
         .catch(err => {
+          this.searchLoading = false;
+
           this.$message({
             type: "warning",
             message: err.response.date.message
@@ -795,6 +846,7 @@ export default {
       let args = {
         company_id: val
       };
+      this.getSearchCustomer(val);
       getContractReceiptList(this, args)
         .then(res => {
           this.contractList = res;
