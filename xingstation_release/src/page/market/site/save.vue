@@ -661,10 +661,10 @@ export default {
           { validator: checkNumber, trigger: "submit" }
         ],
         "contract.enter_sdate": [
-          { required: true, message: "请选择合同开始时间", trigger: "submit" }
+          { message: "请选择合同开始时间", trigger: "submit" }
         ],
         "contract.enter_edate": [
-          { required: true, validator: checkEnterEndDate, trigger: "submit" }
+          { validator: checkEnterEndDate, trigger: "submit" }
         ],
         "contract.oper_sdate": [
           { required: true, message: "请选择入驻开始时间", trigger: "submit" }
