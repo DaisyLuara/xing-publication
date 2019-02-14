@@ -190,7 +190,7 @@ class CouponBatchController extends Controller
             //场地核销人员
             if ($request->filled('write_off_mid')) {
                 $market = MarketConfig::query()->findOrFail($request->write_off_mid);
-                abort_if(!$market->write_off_customer_id, 500, '该场地未指定核销人员');
+//                abort_if(!$market->write_off_customer_id, 500, '该场地未指定核销人员');
                 $customers[] = $market->write_off_customer_id;
             }
 
@@ -198,7 +198,7 @@ class CouponBatchController extends Controller
             if (!empty($request->write_off_sid)) {
                 foreach ($request->write_off_sid as $store_id) {
                     $store = Store::query()->findOrFail($store_id);
-                    abort_if(!$store->write_off_customer_id, 500, '商户[' . $store->name . ']未指定核销人员');
+//                    abort_if(!$store->write_off_customer_id, 500, '商户[' . $store->name . ']未指定核销人员');
                     $customers[] = $store->write_off_customer_id;
                 }
             }
