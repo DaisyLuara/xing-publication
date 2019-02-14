@@ -580,7 +580,7 @@ export default {
           ad_ads: 5,
           exchange_num: 0
         },
-        permission: ["场地主"],
+        permission: ["agent", "site", "ad", "vipad"],
         share: {
           offer: 2000,
           offer_off: 100,
