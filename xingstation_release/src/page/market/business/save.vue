@@ -515,26 +515,25 @@ export default {
           if (res.market) {
             this.getMarket(res.market.name);
           }
+          this.marketShow = res.market ? true : false;
           this.businessForm.phone = res.phone;
           this.businessForm.address = res.address;
           this.businessForm.description = res.description;
           this.businessForm.type = res.type;
-          this.businessForm.start_date = res.contract.start_date
+          this.businessForm.start_date = res.contract
             ? res.contract.start_date
             : "";
-          this.businessForm.end_date = res.contract.end_date
+          this.businessForm.end_date = res.contract
             ? res.contract.end_date
             : "";
           this.businessForm.contract_id = res.contract ? res.contract.id : null;
-          this.businessForm.user_id = res.user ? res.user.id : null;
           this.businessForm.contract = res.contract ? 1 : 0;
           this.contractShow = res.contract ? true : false;
-          this.marketShow = res.market ? true : false;
+          this.businessForm.user_id = res.user ? res.user.id : null;
           this.businessForm.media_id = res.media ? res.media.id : null;
           this.logoUrl = res.media ? res.media.url : "";
           if (res.customer) {
-            this.businessForm.customer.type = this.businessForm.customer.phone =
-              res.customer.phone;
+            this.businessForm.customer.phone = res.customer.phone;
             this.businessForm.customer.name = res.customer.name;
             this.businessForm.customer.password = null;
           }
