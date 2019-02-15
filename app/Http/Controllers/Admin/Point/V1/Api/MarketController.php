@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\Point\V1\Models\Market;
 use App\Http\Controllers\Admin\Point\V1\Request\MarketRequest;
 use App\Http\Controllers\Admin\Point\V1\Transformer\MarketTransformer;
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 
 class MarketController extends Controller
@@ -85,25 +86,9 @@ class MarketController extends Controller
             $market->marketConfig()->create($request->marketConfig);
         }
 
-        if ($request->has('customer')) {
-            if (count(array_filter($request->customer))) {
-                abort_if(count(array_filter($request->customer)) < 3, 500, '核销人员信息不完整');
-
-                $customer = $market->marketConfig->writeOffCustomer()->create([
-                    'name' => $request->customer['name'],
-                    'company_id' => $request->marketConfig['company_id'],
-                    'phone' => $request->customer['phone'],
-                    'password' => bcrypt($request->customer['password']),
-                    'position' => '场地核销人员',
-                ]);
-
-                if (!$customer->hasRole('ad_owner')) {
-                    $customer->assignRole('ad_owner');
-                }
-
-                $market->marketConfig->update(['write_off_customer_id' => $customer->id]);
-            }
-
+        //商户核销人员配置
+        if ($request->has('customer') && count(array_filter($request->customer))) {
+            $this->generateCustomer($request, $market);
         }
 
         return $this->response->item($market, new MarketTransformer());
@@ -138,30 +123,36 @@ class MarketController extends Controller
             $market->marketConfig()->updateOrCreate(['id' => $market->marketid], $marketConfig);
         }
 
-        if ($request->has('customer')) {
-
-            if (count(array_filter($request->customer))) {
-                abort_if(count(array_filter($request->customer)) < 3, 500, '核销人员信息不完整');
-
-                $customer = $market->marketConfig->writeOffCustomer()->updateOrCreate(
-                    ['phone' => $request->customer['phone']],
-                    [
-                        'company_id' => $request->marketConfig['company_id'],
-                        'name' => $request->customer['name'],
-                        'password' => bcrypt($request->customer['password']),
-                        'position' => '场地核销人员',
-                    ]
-                );
-
-                if (!$customer->hasRole('ad_owner')) {
-                    $customer->assignRole('ad_owner');
-                }
-
-                $market->marketConfig->update(['write_off_customer_id' => $customer->id]);
-            }
-
+        //商户核销人员配置
+        if ($request->has('customer') && count(array_filter($request->customer))) {
+            $this->generateCustomer($request, $market);
         }
 
         return $this->response->item($market, new MarketTransformer());
+    }
+
+    private function generateCustomer($request, $market)
+    {
+        if ($request->customer['type'] == "add") {
+            abort_if(!$request->customer['phone'] || !$request->customer['password'], 500, '核销人员信息不完整');
+
+            $customer = $market->marketConfig->writeOffCustomer()->create([
+                'name' => $request->customer['name'],
+                'company_id' => $request->marketConfig['company_id'],
+                'phone' => $request->customer['phone'],
+                'password' => bcrypt($request->customer['password']),
+                'position' => '场地核销人员',
+            ]);
+
+        } else {
+            $customer = Customer::query()->where('phone', $request->customer['phone'])->firstOrFail();
+            $customer->update(['name' => $request->customer['name']]);
+        }
+
+        if (!$customer->hasRole('market_owner')) {
+            $customer->assignRole('market_owner');
+        }
+
+        $market->marketConfig->update(['write_off_customer_id' => $customer->id]);
     }
 }
