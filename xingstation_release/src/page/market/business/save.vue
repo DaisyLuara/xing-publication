@@ -162,10 +162,11 @@
               <el-select
                 v-model="businessForm.user_id"
                 :loading="searchLoading"
+                filterable
                 placeholder="请选择所属人"
               >
                 <el-option
-                  v-for="item in BDList"
+                  v-for="item in userList"
                   :key="item.id"
                   :label="item.name"
                   :value="item.id"
@@ -210,7 +211,7 @@ import {
   getSearchAeraList,
   getSearchMarketList,
   getSearchCompanyList,
-  getSearchBDList,
+  getSearchUserList,
   getContractReceiptList,
   handleDateTimeTransform,
   getSearchCustomer
@@ -311,7 +312,7 @@ export default {
       },
       contractList: [],
       companyList: [],
-      BDList: [],
+      userList: [],
       businessID: "",
       passwordShow: false,
       businessForm: {
@@ -391,7 +392,7 @@ export default {
     this.setting.loading = true;
     this.businessID = this.$route.params.uid;
     this.getAreaList();
-    this.getSearchBDList();
+    this.getSearchUserList();
 
     if (this.businessID) {
       this.getBusinessDetail();
@@ -465,12 +466,12 @@ export default {
           });
         });
     },
-    getSearchBDList() {
+    getSearchUserList() {
       this.searchLoading = true;
-      getSearchBDList(this)
+      getSearchUserList(this)
         .then(res => {
           this.searchLoading = false;
-          this.BDList = res;
+          this.userList = res.data;
         })
         .catch(err => {
           this.searchLoading = false;

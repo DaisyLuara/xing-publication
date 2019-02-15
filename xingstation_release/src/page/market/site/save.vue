@@ -139,10 +139,11 @@
               <el-select
                 v-model="siteForm.marketConfig.bd_user_id"
                 :loading="searchLoading"
+                filterable
                 placeholder="请选择所属人"
               >
                 <el-option
-                  v-for="item in BDList"
+                  v-for="item in userList"
                   :key="item.id"
                   :label="item.name"
                   :value="item.id"
@@ -415,7 +416,7 @@ import {
   siteSaveMarket,
   siteModifyMarket,
   getSearchAeraList,
-  getSearchBDList,
+  getSearchUserList,
   getContractReceiptList,
   getSearchCompanyList,
   getSearchCustomer
@@ -639,7 +640,7 @@ export default {
       contractList: [],
       companyList: [],
       customerList: [],
-      BDList: [],
+      userList: [],
       areaList: [],
       rules: {
         name: [{ required: true, message: "请输入名称", trigger: "submit" }],
@@ -776,7 +777,7 @@ export default {
     }
     this.getAreaList();
     this.getSearchCompanyList();
-    this.getSearchBDList();
+    this.getSearchUserList();
     let roles = JSON.parse(this.$cookie.get("user_info")).roles.data;
     roles.map(r => {
       if (r.display_name === "管理员") {
@@ -870,12 +871,12 @@ export default {
           });
         });
     },
-    getSearchBDList() {
+    getSearchUserList() {
       this.searchLoading = true;
-      getSearchBDList(this)
+      getSearchUserList(this)
         .then(res => {
           this.searchLoading = false;
-          this.BDList = res;
+          this.userList = res.data;
         })
         .catch(err => {
           this.searchLoading = false;
