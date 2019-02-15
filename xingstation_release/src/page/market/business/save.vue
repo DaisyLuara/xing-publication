@@ -329,6 +329,7 @@ export default {
         start_date: "",
         end_date: "",
         customer: {
+          type: "select",
           phone: "",
           name: "",
           password: ""
@@ -394,16 +395,21 @@ export default {
   },
   methods: {
     customerHandle(val) {
+      this.businessForm.customer.phone = "";
       this.customerList.map(r => {
-        if (val === this.businessForm.customer.name) {
+        if (val === r.id) {
           this.businessForm.customer.phone = r.phone;
           return;
         }
       });
+      if (!this.businessForm.customer.phone) {
+        this.businessForm.customer.type = "add";
+      } else {
+        this.businessForm.customer.type = "select";
+      }
     },
     getSearchCustomer(val) {
       this.searchLoading = true;
-
       let args = {
         company_id: val
       };
@@ -525,7 +531,8 @@ export default {
           this.businessForm.media_id = res.media ? res.media.id : null;
           this.logoUrl = res.media ? res.media.url : "";
           if (res.customer) {
-            this.businessForm.customer.phone = res.customer.phone;
+            this.businessForm.customer.type = this.businessForm.customer.phone =
+              res.customer.phone;
             this.businessForm.customer.name = res.customer.name;
             this.businessForm.customer.password = null;
           }

@@ -631,6 +631,7 @@ export default {
           media_id: null
         },
         customer: {
+          type: "select",
           name: null,
           phone: null,
           password: null
@@ -783,12 +784,18 @@ export default {
   },
   methods: {
     customerHandle(val) {
+      this.siteForm.customer.phone = "";
       this.customerList.map(r => {
-        if (val === this.siteForm.customer.name) {
+        if (val === r.id) {
           this.siteForm.customer.phone = r.phone;
           return;
         }
       });
+      if (!this.siteForm.customer.phone) {
+        this.siteForm.customer.type = "add";
+      } else {
+        this.siteForm.customer.type = "select";
+      }
     },
     getSearchCustomer(val) {
       this.searchLoading = true;
