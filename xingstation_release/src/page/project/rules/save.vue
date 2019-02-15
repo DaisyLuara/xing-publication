@@ -1,4 +1,3 @@
-
 <template>
   <div class="add-coupon-wrap">
     <div v-loading="setting.loading" :element-loading-text="setting.loadingText">
@@ -14,9 +13,10 @@
               <el-select
                 v-model="couponForm.company_id"
                 :loading="searchLoading"
+                :disabled="couponID ? true : false"
+                filterable
                 placeholder="请选择公司"
                 class="coupon-form-select"
-                :disabled="couponID ? true : false"
                 @change="handleCompany"
               >
                 <el-option
@@ -37,14 +37,14 @@
             <el-form-item label="创建人" prop="user_name">
               <el-input v-model="user_name" :disabled="true" class="coupon-form-input"/>
             </el-form-item>
-            <el-form-item label="投放场地" prop="marketid">
+            <el-form-item label="投放场地（嗨蚪）" prop="marketid">
               <el-select
                 v-model="couponForm.marketid"
                 :remote-method="getMarket"
                 :loading="searchLoading"
                 :multiple-limit="1"
                 multiple
-                placeholder="请搜索投放场地"
+                placeholder="请搜索投放场地（嗨蚪）"
                 filterable
                 remote
                 clearable
@@ -59,12 +59,12 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="投放点位" prop="oid">
+            <el-form-item label="投放点位（嗨蚪）" prop="oid">
               <el-select
                 v-model="couponForm.oid"
                 :loading="searchLoading"
                 :multiple-limit="10"
-                placeholder="请选择投放点位"
+                placeholder="请选择投放点位（嗨蚪）"
                 multiple
                 filterable
                 clearable

@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\Point\V1\Request\StoreRequest;
 use App\Http\Controllers\Admin\Point\V1\Transformer\StoreTransformer;
 use App\Http\Controllers\Admin\Point\V1\Models\Store;
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 
 class StoreController extends Controller
@@ -62,26 +63,8 @@ class StoreController extends Controller
         }
 
         //商户核销人员配置
-        if ($request->has('customer')) {
-            if (count(array_filter($request->customer))) {
-                abort_if(count(array_filter($request->customer)) < 3, 500, '核销人员信息不完整');
-
-                $customer = $store->writeOffCustomer()->create([
-                    'name'     => $request->customer['name'],
-                    'company_id' => $request->company_id,
-                    'phone' => $request->customer['phone'],
-                    'password' => bcrypt($request->customer['password']),
-                    'position' => '商户核销人员',
-                ]);
-
-                if (!$customer->hasRole('ad_owner')) {
-                    $customer->assignRole('ad_owner');
-                }
-
-                $store->update(['write_off_customer_id' => $customer->id]);
-            }
-
-
+        if ($request->has('customer') && count(array_filter($request->customer))) {
+            $this->generateCustomer($request, $store);
         }
 
         return $this->response->item($store, new StoreTransformer());
@@ -95,19 +78,36 @@ class StoreController extends Controller
             $store->contract()->update($request->only(['start_date', 'end_date']));
         }
 
-        if ($request->has('customer')) {
-            if (count(array_filter($request->customer))) {
-                abort_if(count(array_filter($request->customer)) < 3, 500, '核销人员信息不完整');
-
-                $store->writeOffCustomer()->update([
-                    'name'     => $request->customer['name'],
-                    'phone' => $request->customer['phone'],
-                    'password' => bcrypt($request->customer['password']),
-                ]);
-            }
-
+        //商户核销人员配置
+        if ($request->has('customer') && count(array_filter($request->customer))) {
+            $this->generateCustomer($request, $store);
         }
 
         return $this->response->item($store, new StoreTransformer());
+    }
+
+    private function generateCustomer($request, $store)
+    {
+        if ($request->customer['type'] == "add") {
+            abort_if(!$request->customer['phone'] || !$request->customer['password'], 500, '核销人员信息不完整');
+
+            $customer = $store->writeOffCustomer()->create([
+                'name'     => $request->customer['name'],
+                'company_id' => $request->company_id,
+                'phone' => $request->customer['phone'],
+                'password' => bcrypt($request->customer['password']),
+                'position' => '商户核销人员',
+            ]);
+
+        } else {
+            $customer = Customer::query()->where('phone', $request->customer['phone'])->firstOrFail();
+            $customer->update(['name' => $request->customer['name']]);
+        }
+
+        if (!$customer->hasRole('market_owner')) {
+            $customer->assignRole('market_owner');
+        }
+
+        $store->update(['write_off_customer_id' => $customer->id]);
     }
 }
