@@ -100,8 +100,8 @@ class StoreController extends Controller
             ]);
 
         } else {
-            $customer = Customer::query()->where('phone', $request->customer['phone'])->firstOrFail();
-            $customer->update(['name' => $request->customer['name']]);
+            $customer = Customer::query()->where('phone', $request->customer['phone'])->first();
+            abort_if(!$customer, 500, '未找到联系人,请检查手机号');
         }
 
         if (!$customer->hasRole('market_owner')) {

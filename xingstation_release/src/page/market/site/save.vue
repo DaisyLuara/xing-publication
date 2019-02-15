@@ -83,15 +83,12 @@
               >
                 <el-option
                   v-for="item in customerList"
-                  :key="item.id"
+                  :key="item.name"
                   :label="item.name"
-                  :value="item.id"
+                  :value="item.name"
                 />
               </el-select>
             </el-form-item>
-            <!-- <el-form-item label="核销员姓名" prop="customer.name">
-              <el-input v-model="siteForm.customer.name" placeholder="请输入核销员姓名" class="item-input"/>
-            </el-form-item>-->
             <el-form-item label="核销员电话" prop="customer.phone">
               <el-input
                 v-model="siteForm.customer.phone"
@@ -103,6 +100,7 @@
             <el-form-item label="密码" prop="customer.password">
               <el-input
                 v-model="siteForm.customer.password"
+                :disabled="passwordShow"
                 placeholder="请输入密码"
                 class="item-input"
               />
@@ -137,11 +135,11 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="所属BD" prop="bd_user_id">
+            <el-form-item label="所属人" prop="bd_user_id">
               <el-select
                 v-model="siteForm.marketConfig.bd_user_id"
                 :loading="searchLoading"
-                placeholder="请选择所属BD"
+                placeholder="请选择所属人"
               >
                 <el-option
                   v-for="item in BDList"
@@ -580,6 +578,7 @@ export default {
         loadingText: "拼命加载中"
       },
       siteID: "",
+      passwordShow: false,
       siteForm: {
         areaid: "",
         name: "",
@@ -644,6 +643,9 @@ export default {
       areaList: [],
       rules: {
         name: [{ required: true, message: "请输入名称", trigger: "submit" }],
+        "customer.name": [
+          { required: true, message: "核销员姓名不能为空", trigger: "submit" }
+        ],
         "customer.password": [
           {
             validator: (rule, value, callback) => {
@@ -658,6 +660,7 @@ export default {
         ],
         "customer.phone": [
           {
+            required: true,
             validator: (rule, value, callback) => {
               if (!/^1[3456789]\d{9}$/.test(value) && value) {
                 callback("手机格式不正确,请重新输入");
@@ -792,8 +795,10 @@ export default {
         }
       });
       if (!this.siteForm.customer.phone) {
+        this.passwordShow = false;
         this.siteForm.customer.type = "add";
       } else {
+        this.passwordShow = true;
         this.siteForm.customer.type = "select";
       }
     },
