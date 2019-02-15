@@ -511,8 +511,10 @@ export default {
           this.businessForm.areaid = res.area.id;
           this.businessForm.company_id = res.company.id;
           this.businessForm.marketid = res.market ? res.market.id : null;
-          this.getMarket(res.market.name);
           this.businessForm.market = res.market ? 1 : 2;
+          if (res.market) {
+            this.getMarket(res.market.name);
+          }
           this.businessForm.phone = res.phone;
           this.businessForm.address = res.address;
           this.businessForm.description = res.description;
