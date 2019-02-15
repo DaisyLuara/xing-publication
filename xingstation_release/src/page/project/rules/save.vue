@@ -744,7 +744,7 @@ export default {
       };
       if (
         args.write_off_sid.length === 0 &&
-        (scene_type === 1 || scene_type === 3)
+        (this.scene_type === 1 || this.scene_type === 3)
       ) {
         this.writeOffSiteList.map(r => {
           args.write_off_sid.push(r.id);
