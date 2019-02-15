@@ -83,15 +83,12 @@
               >
                 <el-option
                   v-for="item in customerList"
-                  :key="item.id"
+                  :key="item.name"
                   :label="item.name"
-                  :value="item.id"
+                  :value="item.name"
                 />
               </el-select>
             </el-form-item>
-            <!-- <el-form-item label="核销员姓名" prop="customer.name">
-              <el-input v-model="siteForm.customer.name" placeholder="请输入核销员姓名" class="item-input"/>
-            </el-form-item>-->
             <el-form-item label="核销员电话" prop="customer.phone">
               <el-input
                 v-model="siteForm.customer.phone"
@@ -103,6 +100,7 @@
             <el-form-item label="密码" prop="customer.password">
               <el-input
                 v-model="siteForm.customer.password"
+                :disabled="passwordShow"
                 placeholder="请输入密码"
                 class="item-input"
               />
@@ -580,6 +578,7 @@ export default {
         loadingText: "拼命加载中"
       },
       siteID: "",
+      passwordShow: false,
       siteForm: {
         areaid: "",
         name: "",
@@ -792,8 +791,10 @@ export default {
         }
       });
       if (!this.siteForm.customer.phone) {
+        this.passwordShow = false
         this.siteForm.customer.type = "add";
       } else {
+        this.passwordShow = true
         this.siteForm.customer.type = "select";
       }
     },

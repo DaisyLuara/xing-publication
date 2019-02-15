@@ -118,9 +118,9 @@
               >
                 <el-option
                   v-for="item in customerList"
-                  :key="item.id"
+                  :key="item.name"
                   :label="item.name"
-                  :value="item.id"
+                  :value="item.name"
                 />
               </el-select>
             </el-form-item>
@@ -135,6 +135,7 @@
             <el-form-item label="密码" prop="customer.password">
               <el-input
                 v-model="businessForm.customer.password"
+                :disabled="passwordShow"
                 placeholder="请输入密码"
                 class="item-input"
               />
@@ -312,6 +313,7 @@ export default {
       companyList: [],
       BDList: [],
       businessID: "",
+      passwordShow: false,
       businessForm: {
         media_id: null,
         marketid: null,
@@ -397,15 +399,17 @@ export default {
     customerHandle(val) {
       this.businessForm.customer.phone = "";
       this.customerList.map(r => {
-        if (val === r.id) {
+        if (val === r.name) {
           this.businessForm.customer.phone = r.phone;
           return;
         }
       });
       if (!this.businessForm.customer.phone) {
         this.businessForm.customer.type = "add";
+        this.passwordShow = false;
       } else {
         this.businessForm.customer.type = "select";
+        this.passwordShow = true;
       }
     },
     getSearchCustomer(val) {
