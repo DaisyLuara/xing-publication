@@ -135,11 +135,11 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="所属BD" prop="bd_user_id">
+            <el-form-item label="所属人" prop="bd_user_id">
               <el-select
                 v-model="siteForm.marketConfig.bd_user_id"
                 :loading="searchLoading"
-                placeholder="请选择所属BD"
+                placeholder="请选择所属人"
               >
                 <el-option
                   v-for="item in BDList"
@@ -643,6 +643,9 @@ export default {
       areaList: [],
       rules: {
         name: [{ required: true, message: "请输入名称", trigger: "submit" }],
+        "customer.name": [
+          { required: true, message: "核销员姓名不能为空", trigger: "submit" }
+        ],
         "customer.password": [
           {
             validator: (rule, value, callback) => {
@@ -657,6 +660,7 @@ export default {
         ],
         "customer.phone": [
           {
+            required: true,
             validator: (rule, value, callback) => {
               if (!/^1[3456789]\d{9}$/.test(value) && value) {
                 callback("手机格式不正确,请重新输入");
@@ -791,10 +795,10 @@ export default {
         }
       });
       if (!this.siteForm.customer.phone) {
-        this.passwordShow = false
+        this.passwordShow = false;
         this.siteForm.customer.type = "add";
       } else {
-        this.passwordShow = true
+        this.passwordShow = true;
         this.siteForm.customer.type = "select";
       }
     },

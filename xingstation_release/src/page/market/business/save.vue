@@ -341,6 +341,9 @@ export default {
       areaList: [],
       customerList: [],
       rules: {
+        "customer.name": [
+          { required: true, message: "请输入名称", trigger: "submit" }
+        ],
         "customer.password": [
           {
             validator: (rule, value, callback) => {
@@ -355,6 +358,7 @@ export default {
         ],
         "customer.phone": [
           {
+            required: true,
             validator: (rule, value, callback) => {
               if (!/^1[3456789]\d{9}$/.test(value) && value) {
                 callback("手机格式不正确,请重新输入");
