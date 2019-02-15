@@ -594,7 +594,6 @@ export default {
       historyBack();
     },
     submit(formName) {
-      console.log(this[formName]);
       this.$refs[formName].validate(valid => {
         if (valid) {
           let args = this.businessForm;
