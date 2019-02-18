@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 class LocationProductController extends Controller
 {
 
-    public function list(Request $request, LocationProduct $locationProduct)
+    public function index(Request $request, LocationProduct $locationProduct)
     {
         $query = $locationProduct->query();
         //根据产品SKU查询,传入product_id

@@ -11,9 +11,8 @@ class AttributeTransformer extends TransformerAbstract
     {
         return [
             'id' => $attribute->id,
-            'name' => $attribute->name, //硬件型号
+            'name' => $attribute->name,
             'display_name' => $attribute->display_name,
-            'value' => $attribute->attributeValues,
         ];
     }
 }
