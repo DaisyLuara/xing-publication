@@ -882,7 +882,7 @@ export default {
       this.programForm.money = contractChoose.amount;
     },
     handleCustom(val) {
-      if (val === 1) {
+      if (val === 1 || val === 2 ) {
         this.contractDisable = false;
       } else {
         this.programForm.contract_id = "";

@@ -894,7 +894,7 @@ export default {
       this.programForm.money = contractChoose.amount;
     },
     handleCustom(val) {
-      if (val === 1) {
+      if (val === 1 || val === 2) {
         this.contractDisable = false;
       } else {
         this.programForm.contract_id = "";
@@ -1442,6 +1442,7 @@ export default {
                 type: "warning",
                 message: "为定制的时候合同编号，不能为空"
               });
+              this.setting.loading = false;
               return;
             } else {
               args.contract_id = this.programForm.contract_id;
