@@ -2084,7 +2084,7 @@ function PBIBonusClean()
                 ->join('team_project_members as tpm', 'tp.copyright_project_id', '=', 'tpm.team_project_id')
                 ->whereRaw("tp.contract_id = " . $contract_with_pbi_money->contract_id . " and tpm.type not in ('" . implode("','", TeamProjectMember::$team_quality) . "')")
                 ->selectRaw("tpm.user_id,tp.id as team_project_id,tp.project_name as project_name,tp.belong as belong,
-	            case tp.individual_attribute when 2 then " . $contract_with_pbi_money->special_JS . " when 3 then " . $contract_with_pbi_money->common_JS . " else null end as 'JS',
+	            case tp.individual_attribute when 1 then " . $contract_with_pbi_money->special_JS . " when 2 then " . $contract_with_pbi_money->common_JS . " else null end as 'JS',
 	            case 
 	            	when tpm.type in ('" . implode("','", TeamProjectMember::$team_zhizao) . "') then 0.25 
 	            	when tpm.type in ('" . implode("','", TeamProjectMember::$team_it) . "') then 0.125
@@ -2097,7 +2097,7 @@ function PBIBonusClean()
                 ->join('team_project_members as tpm', 'tp.id', '=', 'tpm.team_project_id')
                 ->whereRaw("tp.contract_id = " . $contract_with_pbi_money->contract_id . " and tpm.type not in ('" . implode("','", TeamProjectMember::$team_quality) . "')")
                 ->selectRaw("tpm.user_id,tp.id as team_project_id,tp.project_name as project_name,tp.belong as belong,
-	            case tp.individual_attribute when 2 then " . $contract_with_pbi_money->special_JS . " when 3 then " . $contract_with_pbi_money->common_JS . " else null end as 'JS',
+	            case tp.individual_attribute when 1 then " . $contract_with_pbi_money->special_JS . " when 2 then " . $contract_with_pbi_money->common_JS . " else null end as 'JS',
 	            case 
 	            	when tpm.type in ('" . implode("','", TeamProjectMember::$team_zhizao) . "') then 0.25 
 	            	when tpm.type in ('" . implode("','", TeamProjectMember::$team_it) . "') then 0.125
