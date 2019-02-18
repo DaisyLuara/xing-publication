@@ -45,6 +45,7 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
         $projectAttributeMapping = TeamProject::$projectAttributeMapping;
         $statusMapping = TeamProject::$statusMapping;
         $interactionAttributeMapping = TeamProject::$interactionAttributeMapping;
+        $individualAttributeMapping = TeamProject::$individualAttributeMapping;
 
         $sql = DB::table('team_projects as tp')
             ->leftJoin('team_project_members as tpm', 'tp.id', '=', 'tpm.team_project_id')
@@ -95,7 +96,7 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
             individual_attribute,contract_number,amount,
             art_innovate,dynamic_innovate,interact_innovate,remark,test_remark" . $case)
             ->groupBy("project_name")
-            ->get()->map(function ($item) use ($typeMapping, $statusMapping, $projectAttributeMapping, $interactionAttributeMapping) {
+            ->get()->map(function ($item) use ($typeMapping, $statusMapping, $projectAttributeMapping, $interactionAttributeMapping, $individualAttributeMapping) {
                 $interaction_attribute_text = Collect(explode(',', $item->interaction_attribute))
                     ->map(function ($v) use ($interactionAttributeMapping) {
                         return $interactionAttributeMapping[$v] ?? "--";
@@ -108,13 +109,13 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
                     'online_date' => $item->online_date,
                     'launch_date' => $item->launch_date,
                     'copyright_attribute' => $item->copyright_attribute == 1 ? '否' : '是',
-                    'copyright_project'=>$item->copyright_project,
-                    'project_attribute' => $projectAttributeMapping[$item->project_attribute],
+                    'copyright_project' => $item->copyright_project,
+                    'project_attribute' => $projectAttributeMapping[$item->project_attribute] ?? $item->project_attribute,
                     'link_attribute' => $item->link_attribute == 1 ? '是' : '否',
                     'h5_attribute' => $item->h5_attribute == 1 ? '基础' : '复杂',
                     'interaction_attribute' => implode(',', $interaction_attribute_text),
                     'hidol_attribute' => $item->hidol_attribute == 1 ? '是' : '否',
-                    'individual_attribute' => $item->individual_attribute == 1 ? '是' : '否',
+                    'individual_attribute' => $individualAttributeMapping[$item->individual_attribute] ?? $item->individual_attribute,
                     'contract_number' => "\t" . $item->contract_number . "\t",
                     'contract_amount' => $item->amount,
                     'art_innovate' => $item->art_innovate,
@@ -131,7 +132,7 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
             });
 
 
-        $header1 = ["申请人", "节目类型", "节目名称", "状态", "上线时间", "投放时间", "原创属性","原创节目名称","节目属性", "联动属性",
+        $header1 = ["申请人", "节目类型", "节目名称", "状态", "上线时间", "投放时间", "原创属性", "原创节目名称", "节目属性", "联动属性",
             "H5属性", "交互属性", "Hidol属性", "定制属性", "合同编号", "合同金额",
             "艺术风格创新点", "动效体验创新点", "交互技术创新点"];
         foreach ($typeMapping as $item) {

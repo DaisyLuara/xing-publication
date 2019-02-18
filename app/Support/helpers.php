@@ -47,6 +47,22 @@ if (!function_exists('check_arr')) {
     }
 }
 
+/**
+ * excel导出得到最大列名
+ */
+if (!function_exists('excelChange')) {
+    function excelChange($x)
+    {
+        $map = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+        $t = "";
+        while ($x >= 0) {
+            $t = $map[$x % 26] . $t;
+            $x = floor($x / 26) - 1;
+        }
+        return $t;
+    }
+}
+
 if (!function_exists('getArUserID')) {
     function getArUserID(User $user, Request $request)
     {

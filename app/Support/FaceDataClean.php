@@ -17,6 +17,8 @@ use App\Http\Controllers\Admin\Face\V1\Models\FacePlayCharacterRecord;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceVerifyRecord;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamBonusRecord;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
+use App\Http\Controllers\Admin\Team\V1\Models\TeamProjectMember;
+use App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward;
 use app\Support\Jenner\Zebra\ArrayGroupBy;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -1744,6 +1746,7 @@ function getDateFormatCharacter($date)
  */
 function teamBonusClean()
 {
+    $main_type = TeamPersonReward::MAIN_TYPE_CPE;
     $date = TeamBonusRecord::query()->max('date');
     $date = (new Carbon($date))->format('Y-m-d');
     $currentDate = Carbon::now()->toDateString();
@@ -1911,7 +1914,7 @@ function teamBonusClean()
                         'project_name' => $item->project_name,
                         'belong' => $item->belong,
                         'type' => $item->type,
-                        'experience_money' => round($item->money * $item->factor * $item->rate, 6),
+                        'main_type' => $main_type,
                         'total' => round($item->money * $item->factor * $item->rate, 6),
                         'date' => $date,
                         'get_date' => $date_future,
@@ -1925,7 +1928,7 @@ function teamBonusClean()
                         'project_name' => $item->project_name,
                         'belong' => $item->belong,
                         'type' => $item->type,
-                        'experience_money' => round($item->money * $item->factor * $item->rate, 6),
+                        'main_type' => $main_type,
                         'total' => round($item->money * $item->factor * $item->rate, 6),
                         'date' => $date,
                         'get_date' => $date,
@@ -1968,6 +1971,7 @@ function teamBonusClean()
                         ->where('date', '>=', $start_date)
                         ->where('date', '<', $end_date)
                         ->where('type', '=', $user_bug->duty)
+                        ->where('main_type', '=', $main_type)
                         ->where('status', '=', 0)
                         ->update(['status' => -1, 'updated_at' => $now]);
                 }
@@ -1975,10 +1979,11 @@ function teamBonusClean()
                 //发放当前需发放的rewards
                 $future_rewards = DB::table("team_person_future_rewards")
                     ->where('get_date', '=', $date)
+                    ->where('main_type', '=', $main_type)
                     ->where('status', '=', 0);
 
                 $future_rewards_array = $future_rewards
-                    ->selectRaw("user_id,project_name,belong,type,experience_money,total,date,get_date")
+                    ->selectRaw("user_id,project_name,belong,type,main_type,total,date,get_date")
                     ->get()->map(function ($value) {
                         return (array)$value;
                     })->toArray();
@@ -2006,4 +2011,133 @@ function teamBonusClean()
     }
 
     return true;
+}
+
+/**
+ * PBI 绩效奖金清洗
+ */
+function PBIBonusClean()
+{
+    $main_type = TeamPersonReward::MAIN_TYPE_PBI;
+
+    //查询符合条件的合同ID
+    //1 收款合同 type = 0 ;
+    //2 合同状态为 3|4 已审批|特批
+    //3 pbi_money 为null
+    $contract_ids = DB::table('contracts')
+        ->whereRaw("type = 0 and status in (3,4) and pbi_money is null and amount > 0")
+        ->pluck('id')->toArray();
+
+    if (!$contract_ids) {
+        echo "没有符合条件的合同\n";
+        exit;
+    }
+
+    //符合要求合同的收款金额
+    $contract_receipt = DB::table('contract_receive_dates as crd')
+        ->leftJoin('invoice_receipts as ir', 'ir.id', '=', 'crd.invoice_receipt_id')
+        ->leftJoin('contracts as ct', 'ct.id', '=', 'crd.contract_id')
+        ->whereRaw('crd.receive_status = 1 and ir.claim_status = 1 and contract_id in (' . implode(',', $contract_ids) . ')')
+        ->groupBy('crd.contract_id')
+        ->selectRaw(" crd.contract_id,sum(ir.receipt_money) as 'receipt_money',ct.contract_number,ct.name,ct.special_num,ct.common_num,ct.amount");
+
+    //符合要求合同的花费金额
+    $contract_cost = DB::table('contract_costs as cc ')
+        ->whereRaw("contract_id in (" . implode(',', $contract_ids) . ")")
+        ->groupBy('contract_id')
+        ->selectRaw("contract_id,sum(confirm_cost) as cost");
+
+
+    //得到（合同总金额 amount <= 收款金额总和）合同，以及 节目制造营收JS值
+    $contracts_with_pbi_money = DB::table(DB::raw("({$contract_receipt->toSql()}) V1"))
+        ->leftJoin(DB::raw("({$contract_cost->toSql()}) V2"), 'V1.contract_id', '=', 'V2.contract_id')
+        ->whereRaw(" V1.amount <= V1.receipt_money ")
+        ->selectRaw("V1.* , V2.* , (V1.receipt_money - IFNULL(V2.cost,0)) as 'pbi_money',
+        case when (common_num > 0 and special_num > 0)
+             then (V1.receipt_money - IfNull(V2.cost,0) ) * 0.8 / special_num
+             when (common_num = 0 and special_num > 0)
+             then (V1.receipt_money - IfNull(V2.cost,0) ) / special_num
+             else 0
+             end as 'special_JS',
+        case when common_num > 0
+             then (V1.receipt_money - IfNull(V2.cost,0) ) * 0.2 / common_num
+             else 0
+             end as 'common_JS'
+             ")
+        ->get();
+
+    foreach ($contracts_with_pbi_money->toArray() as $contract_with_pbi_money) {
+        DB::beginTransaction();
+        try {
+            // 查询出符合条件的某合同的 未完成节目数量。
+            $undone_project_num = DB::table('team_projects as tp ')
+                ->whereRaw("contract_id = " . $contract_with_pbi_money->contract_id . " and case type when 1 then status != 4 else status != 3 end")
+                ->selectRaw("count(*) as num")
+                ->value("num");
+            // 如果节目存在未完成的，则不进行发放
+            if ($undone_project_num > 0) {
+                continue;
+            }
+
+            //查询出该合同的所有相关节目（不同节目类型，不同的JS）,原创团队与现团队的PBI
+            $data_copyright = DB::table('team_projects as tp')
+                ->join('team_project_members as tpm', 'tp.copyright_project_id', '=', 'tpm.team_project_id')
+                ->whereRaw("tp.contract_id = " . $contract_with_pbi_money->contract_id . " and tpm.type not in ('" . implode("','", TeamProjectMember::$team_quality) . "')")
+                ->selectRaw("tpm.user_id,tp.id as team_project_id,tp.project_name as project_name,tp.belong as belong,
+	            case tp.individual_attribute when 2 then " . $contract_with_pbi_money->special_JS . " when 3 then " . $contract_with_pbi_money->common_JS . " else null end as 'JS',
+	            case 
+	            	when tpm.type in ('" . implode("','", TeamProjectMember::$team_zhizao) . "') then 0.25 
+	            	when tpm.type in ('" . implode("','", TeamProjectMember::$team_it) . "') then 0.125
+	            	else 0 
+ 	            end as 'js_rate',
+ 	            0.2 as 'copyright_rate',
+	            tpm.rate,concat(tpm.type,'|copyright') as type");
+
+            $data = DB::table('team_projects as tp')
+                ->join('team_project_members as tpm', 'tp.id', '=', 'tpm.team_project_id')
+                ->whereRaw("tp.contract_id = " . $contract_with_pbi_money->contract_id . " and tpm.type not in ('" . implode("','", TeamProjectMember::$team_quality) . "')")
+                ->selectRaw("tpm.user_id,tp.id as team_project_id,tp.project_name as project_name,tp.belong as belong,
+	            case tp.individual_attribute when 2 then " . $contract_with_pbi_money->special_JS . " when 3 then " . $contract_with_pbi_money->common_JS . " else null end as 'JS',
+	            case 
+	            	when tpm.type in ('" . implode("','", TeamProjectMember::$team_zhizao) . "') then 0.25 
+	            	when tpm.type in ('" . implode("','", TeamProjectMember::$team_it) . "') then 0.125
+	            	else 0 
+ 	            end as 'js_rate',
+ 	            case when (tp.copyright_project_id is not null) then 0.8 else 1 end as 'copyright_rate',
+	            tpm.rate,tpm.type as type")
+                ->unionAll($data_copyright)
+                ->get();
+
+            $now = Carbon::now('PRC')->toDateTimeString();
+            $rewards = [];
+            foreach ($data as $item) {
+                $total = round($item->JS * $item->js_rate * $item->copyright_rate * $item->rate, 6);
+                if ($total > 0) {
+                    $rewards[] = [
+                        'user_id' => $item->user_id,
+                        'project_name' => $item->project_name,
+                        'belong' => $item->belong,
+                        'type' => $item->type,
+                        'main_type' => $main_type,
+                        'total' => $total,
+                        'date' => $now,
+                        'get_date' => $now
+                    ];
+                }
+            }
+            DB::table('team_person_rewards')->insert($rewards);
+            //修改改合同的状态
+            DB::table('contracts')->where('id', '=', $contract_with_pbi_money->contract_id)
+                ->update(['pbi_money' => $contract_with_pbi_money->pbi_money, 'pbi_date' => $now]);
+
+            DB::commit();
+            echo "PBI 绩效执行完成！";
+            exit;
+        } catch (Exception $e) {
+            DB::rollBack();
+            echo $e->getMessage();
+            exit;
+        }
+    }
+
 }

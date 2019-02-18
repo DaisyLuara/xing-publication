@@ -38,23 +38,23 @@ $api->version('v1', [
             $api->patch('team_project_bug_records/{team_project_bug_record}', ['middleware' => ['permission:team.duty.update'], 'uses' => 'TeamProjectBugRecordController@update']);
 
 
-            //平台项目
-            $api->get('team_system_project/{team_system_project}', 'TeamSystemProjectController@show');
-            $api->get('team_system_project', 'TeamSystemProjectController@index');
-            $api->post('team_system_project', 'TeamSystemProjectController@store');
-            //申请驳回
-            $api->post('team_system_project/reject/{team_system_project}', 'TeamSystemProjectController@reject');
-            //奖金分配
-            $api->post('team_system_project/distribute/{team_system_project}', 'TeamSystemProjectController@distribute');
-            //平台总奖金
-            $api->get('system_bonus', 'TeamSystemProjectController@systemBonus');
-            //已分配的奖金
-            $api->get('distribution_bonus', 'TeamSystemProjectController@distributionBonus');
-            //平台明细
-            $api->get('system_detail/{team_person_reward}', 'TeamSystemProjectController@detailShow');
-            $api->get('system_detail', 'TeamSystemProjectController@detailIndex');
-            $api->post('system_detail', 'TeamSystemProjectController@detailStore');
-            $api->patch('system_detail/{team_person_reward}', 'TeamSystemProjectController@detailUpdate');
+//            //平台项目
+//            $api->get('team_system_project/{team_system_project}', 'TeamSystemProjectController@show');
+//            $api->get('team_system_project', 'TeamSystemProjectController@index');
+//            $api->post('team_system_project', 'TeamSystemProjectController@store');
+//            //申请驳回
+//            $api->post('team_system_project/reject/{team_system_project}', 'TeamSystemProjectController@reject');
+//            //奖金分配
+//            $api->post('team_system_project/distribute/{team_system_project}', 'TeamSystemProjectController@distribute');
+//            //平台总奖金
+//            $api->get('system_bonus', 'TeamSystemProjectController@systemBonus');
+//            //已分配的奖金
+//            $api->get('distribution_bonus', 'TeamSystemProjectController@distributionBonus');
+//            //平台明细
+//            $api->get('system_detail/{team_person_reward}', 'TeamSystemProjectController@detailShow');
+//            $api->get('system_detail', 'TeamSystemProjectController@detailIndex');
+//            $api->post('system_detail', 'TeamSystemProjectController@detailStore');
+//            $api->patch('system_detail/{team_person_reward}', 'TeamSystemProjectController@detailUpdate');
 
 
         });
