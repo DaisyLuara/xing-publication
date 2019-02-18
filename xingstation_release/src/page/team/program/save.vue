@@ -111,9 +111,21 @@
           <el-col :span="12">
             <el-form-item label="定制属性" prop="individual_attribute">
               <el-radio-group v-model="programForm.individual_attribute" @change="handleCustom">
-                <el-radio :label="0">非定制</el-radio>
-                <el-radio :label="1">定制特别节目</el-radio>
-                <el-radio :label="2">定制普通</el-radio>
+                <el-radio :label="0">非定制节目
+                  <el-tooltip class="item" effect="dark" content="无合同的节目" placement="bottom">
+                    <i class="el-icon-info"/>
+                  </el-tooltip>
+                </el-radio>
+                <el-radio :label="1">定制特别节目
+                  <el-tooltip class="item" effect="dark" content="有合同，且为对方特别定制的节目" placement="bottom">
+                    <i class="el-icon-info"/>
+                  </el-tooltip>
+                </el-radio>
+                <el-radio :label="2">定制通用节目
+                  <el-tooltip class="item" effect="dark" content="有合同，但并非为对方特别定制的节目" placement="bottom">
+                    <i class="el-icon-info"/>
+                  </el-tooltip>
+                </el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
