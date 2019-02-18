@@ -168,7 +168,7 @@ class TeamProjectController extends Controller
             if ($params['individual_attribute'] == 1 && ($team_projects_num[1] ?? 0) >= $contract->special_num) {
                 abort("422", "该合同的定制特别节目数量已达上线" . $contract->special_num . "个");
             } else if ($params['individual_attribute'] == 2 && ($team_projects_num[2] ?? 0) >= $contract->common_num) {
-                abort("422", "该合同的定制普通节目数量已达上线" . $contract->common_num . "个");
+                abort("422", "该合同的定制通用节目数量已达上线" . $contract->common_num . "个");
             }
         }
 

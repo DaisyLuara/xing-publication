@@ -64,9 +64,9 @@ class TeamProject extends Model
     ];
 
     public static  $individualAttributeMapping = [
-        0 => '非定制',
+        0 => '非定制节目',
         1 => '定制特别节目',
-        2 => '定制普通节目',
+        2 => '定制通用节目',
     ];
 
     public function contract()
