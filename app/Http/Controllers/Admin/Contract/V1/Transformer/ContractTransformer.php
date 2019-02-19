@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Contract\V1\Transformer;
 
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
 use App\Http\Controllers\Admin\Media\V1\Transformer\MediaTransformer;
+use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
 use League\Fractal\TransformerAbstract;
 
 class ContractTransformer extends TransformerAbstract
@@ -51,6 +52,12 @@ class ContractTransformer extends TransformerAbstract
 
     public function transform(Contract $contract)
     {
+        $team_projects_num = TeamProject::query()->where('contract_id', $contract->id)
+            ->whereIn('individual_attribute', [1, 2])
+            ->groupBy('individual_attribute')
+            ->selectRaw('individual_attribute,count(*) as num')
+            ->pluck('num', 'individual_attribute')->toArray();
+
         return [
             'id' => $contract->id,
             'contract_number' => $contract->contract_number,
@@ -67,7 +74,9 @@ class ContractTransformer extends TransformerAbstract
             'serve_target' => $contract->serve_target == null ? null : $this->targetMapping[$contract->serve_target],
             'recharge' => $contract->recharge == null ? null : $this->chargeMapping[$contract->recharge],
             'special_num' => $contract->special_num,
+            'true_special_num' => $team_projects_num[1] ?? 0,
             'common_num' => $contract->common_num,
+            'true_common_num' => $team_projects_num[2] ?? 0,
             'amount' => $contract->amount,
             'remark' => $contract->remark,
             'legal_message' => $contract->legal_message,

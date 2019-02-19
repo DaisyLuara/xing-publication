@@ -205,7 +205,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <h2 class="title">节目制造团队</h2>
+        <h2 class="title">节目智造团队</h2>
         <el-row>
           <el-col :span="12">
             <el-form-item label="节目创意" prop="creative">
