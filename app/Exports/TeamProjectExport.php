@@ -10,6 +10,7 @@ namespace App\Exports;
 
 use App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
+use Carbon\Carbon;
 use DB;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Events\AfterSheet;
@@ -22,6 +23,7 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
 {
     protected $header;
     protected $data;
+    protected $header_first_count;
 
     public function __construct($request)
     {
@@ -33,6 +35,9 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
 
         $this->start_date_launch = $request->start_date_launch;
         $this->end_date_launch = $request->end_date_launch;
+
+        $this->start_date_face = $request->start_date_face ?? Carbon::now('PRC')->subDays(8)->toDateString();
+        $this->end_date_face = $request->end_date_face ?? Carbon::now('PRC')->subDays(1)->toDateString();
 
         $this->alias = $request->alias;
         $this->status = $request->status;
@@ -47,6 +52,31 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
         $interactionAttributeMapping = TeamProject::$interactionAttributeMapping;
         $individualAttributeMapping = TeamProject::$individualAttributeMapping;
 
+        //market_top
+        $ar_query = DB::connection('ar')->table('xs_face_count_log as fcl');
+        $faceCount1 = $ar_query->join('ar_product_list as apl', 'belong', '=', 'versionname')
+            ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
+            ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
+            ->join('avr_official_scene as aos', 'ao.sid', '=', 'aos.sid')
+            ->join('admin_staff', 'ao.bd_uid', '=', 'admin_staff.uid')
+            ->whereRaw("date_format(fcl.date, '%Y-%m-%d') BETWEEN '{$this->start_date_face}' AND '{$this->end_date_face}' and fcl.oid not in ('16', '19', '30', '31', '177','182','327','328','329','334','335','540') and aom.marketid <> '15' and aos.name<>'EXE颜镜店' and aos.name<>'星视度研发' and admin_staff.realname<>'颜镜店'")
+            ->groupBy(DB::raw("date_format(fcl.date, '%Y-%m-%d'),fcl.oid,fcl.belong"))
+            ->orderBy('date')
+            ->orderBy('apl.id')
+            ->orderBy('looknum', 'desc')
+            ->selectRaw("date_format(fcl.date, '%Y-%m-%d') as date,apl.name as name,apl.versionname,count(*) as days,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(looknum) as looknum,sum(playernum7)as playernum7,sum(playernum15) as playernum15 ,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum,sum(omo_scannum) as omo_scannum,sum(phonenum) as phonenum,sum(oanum) as oanum,sum(phonetimes) as phonetimes,sum(oatimes) as oatimes,sum(coupontimes) as coupontimes,sum(verifytimes) as verifytimes");
+
+        $faceCount2 = DB::connection('ar')->table(DB::raw("({$faceCount1->toSql()}) a,(select @gn := 0)  b"))
+            ->selectRaw("  @gn := case when (@date=date and @name = name) then @gn + 1 else 1 end gn,@date:=date date,@name := name name,versionname,days,playtimes7,playtimes15,playtimes21,looknum,playernum7,playernum15,playernum21,phonenum,oanum,phonetimes,oatimes,omo_outnum,omo_scannum,coupontimes,verifytimes");
+
+        $faceCount = DB::connection('ar')->table(DB::raw("({$faceCount2->toSql()}) c"))
+            ->selectRaw("name,versionname,sum(days) as pushnum,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum15) as playernum15,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum,sum(omo_scannum) as omo_scannum,sum(phonenum) as phonenum,sum(oanum) as oanum,sum(phonetimes) as phonetimes,sum(oatimes) as oatimes,sum(coupontimes) as coupontimes,sum(verifytimes) as verifytimes")
+            ->whereRaw("gn<=100")
+            ->groupBy('name', 'versionname')
+            ->get();
+
+        $faceCountData = $faceCount->keyBy('versionname')->toArray();
+        //节目
         $sql = DB::table('team_projects as tp')
             ->leftJoin('team_project_members as tpm', 'tp.id', '=', 'tpm.team_project_id')
             ->leftJoin('contracts', 'tp.contract_id', '=', 'contracts.id')
@@ -72,7 +102,7 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
             ->selectRaw("
             users.name as applicant,
             tp.type as project_type,
-            tp.project_name,tp.status,tp.online_date,tp.launch_date,
+            tp.project_name,tp.belong,tp.status,tp.online_date,tp.launch_date,
             tp.copyright_attribute,IFNULL(tp2.project_name,'无') as copyright_project,
             tp.project_attribute,tp.link_attribute,tp.h5_attribute,
             tp.interaction_attribute,tp.hidol_attribute,
@@ -89,14 +119,14 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
 
         $project = DB::table(DB::raw("({$sql->toSql()}) as a"))
             ->selectRaw("applicant,
-            project_type,project_name,status,online_date,launch_date,
+            project_type,project_name,belong,status,online_date,launch_date,
             copyright_attribute,copyright_project,
             project_attribute,link_attribute,h5_attribute,
             interaction_attribute,hidol_attribute,
             individual_attribute,contract_number,amount,
             art_innovate,dynamic_innovate,interact_innovate,remark,test_remark" . $case)
-            ->groupBy("project_name")
-            ->get()->map(function ($item) use ($typeMapping, $statusMapping, $projectAttributeMapping, $interactionAttributeMapping, $individualAttributeMapping) {
+            ->groupBy("project_name", "belong")
+            ->get()->map(function ($item) use ($typeMapping, $statusMapping, $projectAttributeMapping, $interactionAttributeMapping, $individualAttributeMapping, $faceCountData) {
                 $interaction_attribute_text = Collect(explode(',', $item->interaction_attribute))
                     ->map(function ($v) use ($interactionAttributeMapping) {
                         return $interactionAttributeMapping[$v] ?? "--";
@@ -128,6 +158,76 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
                 }
                 $result['test_remark'] = $item->test_remark;
                 $result['remark'] = $item->remark;
+
+                //face数据
+                if (isset($faceCountData[$item->belong])) {
+                    $face_item = $faceCountData[$item->belong];
+                    $result = array_merge($result,
+                        [
+                            'playtimes7' => $face_item->playtimes7,
+                            'playtimes7_average' => round($face_item->playtimes7 / $face_item->pushnum, 0),
+                            'playtimes15' => $face_item->playtimes15,
+                            'playtimes15_average' => round($face_item->playtimes15 / $face_item->pushnum, 0),
+                            'playtimes21' => $face_item->playtimes21,
+                            'playtimes21_average' => round($face_item->playtimes21 / $face_item->pushnum, 0),
+                            'playernum7' => $face_item->playernum7 ? $face_item->playernum7 : 0,
+                            'playernum7_average' => round(($face_item->playernum7 / $face_item->pushnum), 0),
+                            'playernum15' => $face_item->playernum15 ? $face_item->playernum15 : 0,
+                            'playernum15_average' => round(($face_item->playernum15 / $face_item->pushnum), 0),
+                            'playernum21' => $face_item->playernum21 ? $face_item->playernum21 : 0,
+                            'playernum21_average' => round(($face_item->playernum21 / $face_item->pushnum), 0),
+                            'omo_outnum' => $face_item->omo_outnum,
+                            'coupontimes_1' => $face_item->coupontimes,
+                            'oanum' => $face_item->oanum,
+                            'phonenum' => $face_item->phonenum,
+                            'omo_scannum' => $face_item->omo_scannum,
+                            'coupontimes_2' => $face_item->coupontimes,
+                            'oatimes' => $face_item->oatimes,
+                            'phonetimes' => $face_item->phonetimes,
+                            'verifytimes' => $face_item->verifytimes,
+                        ]);
+                    $player7Money = round($result['playernum7'] * 0.01, 2);
+                    $player15Money = round($result['playernum15'] * 0.02, 2);
+                    $player21Money = round($result['playernum21'] * 0.05, 2);
+                    $uCPAMoney = round($result['omo_outnum'] * 0.2, 2);
+                    $totalMoney = $player7Money + $player15Money + $player21Money + $uCPAMoney;
+                    $result['playernum7_money'] = $player7Money;
+                    $result['playernum15_money'] = $player15Money;
+                    $result['playernum21_money'] = $player21Money;
+                    $result['uCPA_money'] = $uCPAMoney;
+                    $result['total_money'] = $totalMoney;
+                } else {
+                    $result = array_merge($result,
+                        [
+                            'playtimes7' => null,
+                            'playtimes7_average' => null,
+                            'playtimes15' => null,
+                            'playtimes15_average' => null,
+                            'playtimes21' => null,
+                            'playtimes21_average' => null,
+                            'playernum7' => null,
+                            'playernum7_average' => null,
+                            'playernum15' => null,
+                            'playernum15_average' => null,
+                            'playernum21' => null,
+                            'playernum21_average' => null,
+                            'omo_outnum' => null,
+                            'coupontimes_1' => null,
+                            'oanum' => null,
+                            'phonenum' => null,
+                            'omo_scannum' => null,
+                            'coupontimes_2' => null,
+                            'oatimes' => null,
+                            'phonetimes' => null,
+                            'verifytimes' => null,
+                            'playernum7_money' => null,
+                            'playernum15_money' => null,
+                            'playernum21_money' => null,
+                            'uCPA_money' => null,
+                            'total_money' => null,
+                        ]);
+                }
+
                 return $result;
             });
 
@@ -139,11 +239,14 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
             $header1[] = $item;
         }
         $header1 = array_merge($header1, ["测试备注", "节目备注"]);
-
         $header2 = [];
         foreach ($header1 as $header) {
             $header2[] = '';
         }
+
+        $this->header_first_count = count($header1);
+        $header1 = array_merge($header1, ['7″fCPE', '', '15″fCPE', '', '21″fCPE', '', '7″uCPE', '', '15″uCPE', '', '21″uCPE', '', 'uCPA(去重)', '', '', '', 'fCPA(不去重)', '', '', '', 'CPS', '1', '2', '5', '20', '合计']);
+        $header2 = array_merge($header2, ['总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', '总数', '平均数', 'omo', '领券', '公众号', '手机号', 'omo', '领券', '公众号', '手机号', '核销券', '7″uCPE', '15″uCPE', '21″uCPE', 'uCPA', '']);
 
         $data = collect(array_merge([$header1, $header2], $project->toArray()));
 
@@ -158,16 +261,28 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
 
             AfterSheet::class => function (AfterSheet $event) {
 
-                for ($i = 0; $i < count($this->header); $i++) {
-                    $cellArray[] = $this->change($i) . '1:' . $this->change($i) . '2';
+                for ($i = 0; $i < $this->header_first_count; $i++) {
+                    $cellArray[] = excelChange($i) . '1:' . excelChange($i) . '2';
                 }
+                $cellArray[] = excelChange($this->header_first_count) . '1:' . excelChange($this->header_first_count + 1) . '1';
+                $cellArray[] = excelChange($this->header_first_count + 2) . '1:' . excelChange($this->header_first_count + 3) . '1';
+                $cellArray[] = excelChange($this->header_first_count + 4) . '1:' . excelChange($this->header_first_count + 5) . '1';
+                $cellArray[] = excelChange($this->header_first_count + 6) . '1:' . excelChange($this->header_first_count + 7) . '1';
+                $cellArray[] = excelChange($this->header_first_count + 8) . '1:' . excelChange($this->header_first_count + 9) . '1';
+                $cellArray[] = excelChange($this->header_first_count + 10) . '1:' . excelChange($this->header_first_count + 11) . '1';
+                $cellArray[] = excelChange($this->header_first_count + 12) . '1:' . excelChange($this->header_first_count + 15) . '1';
+                $cellArray[] = excelChange($this->header_first_count + 16) . '1:' . excelChange($this->header_first_count + 19) . '1';
+                $cellArray[] = excelChange($this->header_first_count + 16) . '1:' . excelChange($this->header_first_count + 19) . '1';
+                $cellArray[] = excelChange(count($this->header) - 1) . '1:' . excelChange(count($this->header) - 1) . '2';
+
                 $event->sheet->getDelegate()->setMergeCells($cellArray);
 
+
                 //编码被科学计数问题
-                $event->sheet->getStyle('A1:A' . $this->data->count())->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
+                $event->sheet->getStyle('A1:' . excelChange(count($this->header) - 1) . $this->data->count())->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
 
                 //黑线框
-                $event->sheet->getDelegate()->getStyle('A1:' . $this->change(count($this->header) - 1) . $this->data->count())
+                $event->sheet->getDelegate()->getStyle('A1:' . excelChange(count($this->header) - 1) . $this->data->count())
                     ->applyFromArray([
                         'borders' => [
                             'allBorders' => [
@@ -177,14 +292,13 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
                     ]);
 
                 //水平居中 垂直居中
-                $event->sheet->getDelegate()
-                    ->getStyle('A1:' . $this->change(count($this->header) - 1) . $this->data->count())
+                $event->sheet->getDelegate()->getStyle('A1:' . excelChange(count($this->header) - 1) . $this->data->count())
                     ->getAlignment()
                     ->setVertical(Alignment::VERTICAL_CENTER)
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:' . $this->change(count($this->header) - 1) . '2')
+                    ->getStyle('A1:' . excelChange(count($this->header) - 1) . '2')
                     ->applyFromArray([
                         'font' => [
                             'bold' => 'true'
@@ -194,16 +308,5 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
                 $event->sheet->getDelegate()->freezePane('A3');
             }
         ];
-    }
-
-    public function change($x)
-    {
-        $map = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-        $t = "";
-        while ($x >= 0) {
-            $t = $map[$x % 26] . $t;
-            $x = floor($x / 26) - 1;
-        }
-        return $t;
     }
 }

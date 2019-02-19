@@ -37,19 +37,21 @@ class TeamPersonReward extends Model
 
 
     public static $typeMapping = [
-        'interaction' => '交互技术',
-        'originality' => '节目创意',
-        'h5' => 'H5开发',
-        'animation' => '设计动画',
         'plan' => '节目统筹',
+        'originality' => '节目创意',
+        'animation' => '设计动画',
+
+        'interaction' => '交互技术',
+        'h5' => 'H5开发',
+        'backend_docking' => "后端IT技术支持",
+
         'tester' => '节目测试',
         'operation' => '平台运营',
-        'system' => '平台奖',
-        'animation_hidol' => '设计动画·Hidol',
-        'hidol_patent' => 'Hidol专利',
-        'backend_docking' => "后端IT技术支持",
         'tester_quality' => "节目测试-责任",
         'operation_quality' => "平台运营-责任",
+
+        'animation_hidol' => '设计动画·Hidol',
+        'hidol_patent' => 'Hidol专利',
     ];
 
     public static $otherTypeMapping = [

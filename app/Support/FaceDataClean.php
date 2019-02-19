@@ -2053,17 +2053,18 @@ function PBIBonusClean()
         ->leftJoin(DB::raw("({$contract_cost->toSql()}) V2"), 'V1.contract_id', '=', 'V2.contract_id')
         ->whereRaw(" V1.amount <= V1.receipt_money ")
         ->selectRaw("V1.* , IfNull(V2.cost,0) as 'cost' , (V1.receipt_money - IFNULL(V2.cost,0)) as 'pbi_money',
-        case when (common_num > 0 and special_num > 0)
-             then (V1.receipt_money - IfNull(V2.cost,0) ) * 0.8 / special_num
-             when (common_num = 0 and special_num > 0)
-             then (V1.receipt_money - IfNull(V2.cost,0) ) / special_num
-             else 0
-             end as 'special_JS',
-        case when common_num > 0
-             then (V1.receipt_money - IfNull(V2.cost,0) ) * 0.2 / common_num
-             else 0
-             end as 'common_JS'
-             ")
+            (case when (common_num + special_num) > 0 
+	          	    then round((V1.receipt_money - IFNULL(V2.cost,0) ) / (special_num + common_num) * (case when common_num > 0 then 0.8 else 1 end),6)
+	            else 0
+	        end) 
+	        as 'special_JS',
+	        
+	        (case when common_num > 0 
+	          	    then round((V1.receipt_money - IFNULL(V2.cost,0) ) / (special_num + common_num) * 0.2 , 6)
+	            else 0
+	        end) 
+	        as 'common_JS'
+            ")
         ->get();
 
     foreach ($contracts_with_pbi_money->toArray() as $contract_with_pbi_money) {
