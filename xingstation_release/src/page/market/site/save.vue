@@ -14,7 +14,6 @@
                 :loading="searchLoading"
                 placeholder="请选择公司名称"
                 filterable
-                clearable
                 @change="companyHandle"
               >
                 <el-option

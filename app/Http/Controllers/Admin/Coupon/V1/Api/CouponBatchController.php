@@ -111,7 +111,7 @@ class CouponBatchController extends Controller
         }
 
         //绑定核销人员
-        if ($customers) {
+        if (array_sum($customers)) {
             $couponBatch->writeOffCustomers()->attach($customers);
         }
 
