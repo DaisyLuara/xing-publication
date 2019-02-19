@@ -30,7 +30,7 @@ class TeamPersonReward extends Model
     const MAIN_TYPE_SYSTEM = 'SYSTEM';
 
     public static $mainMapping = [
-        self::MAIN_TYPE_CPE => 'CPE·节目制造奖金',
+        self::MAIN_TYPE_CPE => 'CPE·节目智造奖金',
         self::MAIN_TYPE_PBI => 'P·B·I奖金',
         self::MAIN_TYPE_SYSTEM => '平台奖金',
     ];
