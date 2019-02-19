@@ -8,6 +8,7 @@
 
 namespace App\Exports;
 
+use App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -24,7 +25,7 @@ class PersonRewardExport extends AbstractExport implements ShouldAutoSize
     {
         $this->startDate = Carbon::parse($request->start_date)->timezone('PRC')->toDateString();
         $this->endDate = Carbon::parse($request->end_date)->timezone('PRC')->toDateString();
-        $this->fileName = '星视度个人绩效及智造团队奖励';
+        $this->fileName = '星视度个人绩效';
     }
 
     public function collection()
@@ -34,7 +35,7 @@ class PersonRewardExport extends AbstractExport implements ShouldAutoSize
             ->whereRaw("tpm.type in ('originality','plan','animation')")
             ->whereRaw("date_format(tp.launch_date, '%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
             ->whereRaw("(case tp.type when 0 then tp.status = 3 else tp.status = 4 end) ")
-            ->groupBy("tp.id","tp.belong","tp.project_attribute")
+            ->groupBy("tp.id", "tp.belong", "tp.project_attribute")
             ->selectRaw("tp.id,tp.belong,tp.project_attribute,sum(rate) as 'rate_total'");
 
         //member_program_num
@@ -62,19 +63,21 @@ class PersonRewardExport extends AbstractExport implements ShouldAutoSize
 
         //得到这段时间得到绩效投放月份数组
         $months = DB::table('team_person_rewards as tpr')
-            ->join("team_projects as tp","tp.belong","=","tpr.belong")
-            ->whereRaw("date_format(tpr.get_date, '%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
+            ->join("team_projects as tp", "tp.belong", "=", "tpr.belong")
+            ->whereRaw("tpr.main_type ='" . TeamPersonReward::MAIN_TYPE_CPE . "' and date_format(tpr.get_date, '%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
             ->selectRaw("distinct(date_format(tp.launch_date,'%Y-%m') ) as 'month' ")
             ->pluck('month')->toArray();
 
         $header1 = ["用户ID", "用户名", "条目数量", "节目数量", "项目数量", "累计节目数量"];
         $selectRaw = "tpr.user_id,users.name as 'user_name',";
-        foreach ($months as $month){
+        foreach ($months as $month) {
             $header1[] = "体验绩效_" . $month;
-            $selectRaw .= " round(sum(case date_format(tp.launch_date,'%Y-%m') when '" . $month . "' then tpr.experience_money else 0 end ),2) as '体验绩效_" . $month . "',";
+            $selectRaw .= " round(sum(case when (date_format(tp.launch_date,'%Y-%m') = '" . $month . "' and tpr.main_type = '" . TeamPersonReward::MAIN_TYPE_CPE . "') then tpr.total else 0 end ),2) as '体验绩效_" . $month . "',";
         }
-        $header1 = array_merge($header1, ["体验绩效总计", "平台奖"]);
-        $selectRaw .= " round(sum(experience_money),2) as 'experience_money',round(sum(system_money),2) as 'system_money'";
+        $header1 = array_merge($header1, ["体验绩效总计", "总计" . TeamPersonReward::MAIN_TYPE_PBI . "绩效", "总计" . TeamPersonReward::MAIN_TYPE_SYSTEM . "绩效"]);
+        $selectRaw .= " round(sum(case when tpr.main_type = '" . TeamPersonReward::MAIN_TYPE_CPE . "' then tpr.total else 0 end),2) as 'cpe_money',";
+        $selectRaw .= " round(sum(case when tpr.main_type = '" . TeamPersonReward::MAIN_TYPE_PBI . "' then tpr.total else 0 end),2) as 'pbi_money',";
+        $selectRaw .= " round(sum(case when tpr.main_type = '" . TeamPersonReward::MAIN_TYPE_SYSTEM . "' then tpr.total else 0 end),2) as 'system_money'";
 
         $member_money = DB::table("team_person_rewards as tpr")
             ->join('users', 'tpr.user_id', '=', 'users.id')
@@ -110,12 +113,12 @@ class PersonRewardExport extends AbstractExport implements ShouldAutoSize
 
                 $cellArray = [];
                 for ($i = 0; $i <= $this->header_num; $i++) {
-                    $cellArray[] = $this->change($i) . '1:' . $this->change($i) . '2';
+                    $cellArray[] = excelChange($i) . '1:' . excelChange($i) . '2';
                 }
                 $event->sheet->getDelegate()->setMergeCells($cellArray);
 
                 //黑线框
-                $event->sheet->getDelegate()->getStyle('A1:' . $this->change($this->header_num) . $this->data->count())
+                $event->sheet->getDelegate()->getStyle('A1:' . excelChange($this->header_num) . $this->data->count())
                     ->applyFromArray([
                         'borders' => [
                             'allBorders' => [
@@ -126,13 +129,13 @@ class PersonRewardExport extends AbstractExport implements ShouldAutoSize
 
                 //水平居中 垂直居中
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:' . $this->change($this->header_num) . $this->data->count())
+                    ->getStyle('A1:' . excelChange($this->header_num) . $this->data->count())
                     ->getAlignment()
                     ->setVertical(Alignment::VERTICAL_CENTER)
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
                 $event->sheet->getDelegate()
-                    ->getStyle('A1:' . $this->change($this->header_num) . '2')
+                    ->getStyle('A1:' . excelChange($this->header_num) . '2')
                     ->applyFromArray([
                         'font' => [
                             'bold' => 'true'
@@ -144,14 +147,4 @@ class PersonRewardExport extends AbstractExport implements ShouldAutoSize
         ];
     }
 
-    public function change($x)
-    {
-        $map = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-        $t = "";
-        while ($x >= 0) {
-            $t = $map[$x % 26] . $t;
-            $x = floor($x / 26) - 1;
-        }
-        return $t;
-    }
 }

@@ -111,8 +111,21 @@
           <el-col :span="12">
             <el-form-item label="定制属性" prop="individual_attribute">
               <el-radio-group v-model="programForm.individual_attribute" @change="handleCustom">
-                <el-radio :label="1">定制</el-radio>
-                <el-radio :label="0">不定制</el-radio>
+                <el-radio :label="0">非定制节目
+                  <el-tooltip class="item" effect="dark" content="无合同的节目" placement="bottom">
+                    <i class="el-icon-info"/>
+                  </el-tooltip>
+                </el-radio>
+                <el-radio :label="1">定制特别节目
+                  <el-tooltip class="item" effect="dark" content="有合同，且为对方特别定制的节目" placement="bottom">
+                    <i class="el-icon-info"/>
+                  </el-tooltip>
+                </el-radio>
+                <el-radio :label="2">定制通用节目
+                  <el-tooltip class="item" effect="dark" content="有合同，但并非为对方特别定制的节目" placement="bottom">
+                    <i class="el-icon-info"/>
+                  </el-tooltip>
+                </el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -192,7 +205,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <h2 class="title">节目制造团队</h2>
+        <h2 class="title">节目智造团队</h2>
         <el-row>
           <el-col :span="12">
             <el-form-item label="节目创意" prop="creative">
@@ -881,7 +894,7 @@ export default {
       this.programForm.money = contractChoose.amount;
     },
     handleCustom(val) {
-      if (val === 1) {
+      if (val === 1 || val === 2 ) {
         this.contractDisable = false;
       } else {
         this.programForm.contract_id = "";
@@ -1024,11 +1037,11 @@ export default {
           if (res.copyright_project_id) {
             this.getSearchCopyrightProject(res.copyright_project_name);
           }
-          if (res.individual_attribute === 1) {
+          if (res.individual_attribute === 1 || res.individual_attribute === 2) {
             this.programForm.contract_id = res.contract_id;
             this.programForm.money = res.contract.amount;
           }
-          this.contractDisable = res.individual_attribute === 1 ? false : true;
+          this.contractDisable = (res.individual_attribute === 1||res.individual_attribute === 2) ? false : true;
           this.h5Rate =
             res.h5_attribute === 2 ? this.rate.h5_2 : this.rate.h5_1;
           this.programForm.project_attribute = res.project_attribute;

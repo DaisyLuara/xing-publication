@@ -18,15 +18,23 @@ class TeamPersonReward extends Model
         'user_id',
         'project_name',
         'belong',
-        'experience_money',
-        'xo_money',
-        'link_money',
-        'system_money',
+        'main_type',
         'total',
         'date',
         'type',
         'get_date'
     ];
+
+    const MAIN_TYPE_CPE = 'CPE';
+    const MAIN_TYPE_PBI = 'PBI';
+    const MAIN_TYPE_SYSTEM = 'SYSTEM';
+
+    public static $mainMapping = [
+        self::MAIN_TYPE_CPE => 'CPE·节目智造奖金',
+        self::MAIN_TYPE_PBI => 'P·B·I奖金',
+        self::MAIN_TYPE_SYSTEM => '平台奖金',
+    ];
+
 
     public static $typeMapping = [
         'interaction' => '交互技术',
@@ -44,19 +52,10 @@ class TeamPersonReward extends Model
         'operation_quality' => "平台运营-责任",
     ];
 
-    public static $typeCopyrightMapping = [
-        'interaction|copyright' => '交互技术(原创)',
-        'originality|copyright' => '节目创意(原创)',
-        'h5|copyright' => 'H5开发(原创)',
-        'animation|copyright' => '设计动画(原创)',
-        'plan|copyright' => '节目统筹(原创)',
-        'tester|copyright' => '节目测试(原创)',
-        'operation|copyright' => '平台运营(原创)',
-        'system|copyright' => '平台奖(原创)',
-        'animation_hidol|copyright' => '设计动画(原创)',
-        'hidol_patent|copyright' => 'Hidol专利(原创)',
-        'backend_docking|copyright' => "后端IT技术支持(原创)",
+    public static $otherTypeMapping = [
+        'copyright' => '版权费',
     ];
+
 
     public $timestamps = false;
 
@@ -64,4 +63,25 @@ class TeamPersonReward extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    public function getTypeText()
+    {
+        $typeMapping = self::$typeMapping;
+        $otherTypeMapping = self::$otherTypeMapping;
+
+        $type_text_array = array_map(function ($item) use ($typeMapping, $otherTypeMapping) {
+            return array_merge($typeMapping, $otherTypeMapping)[$item] ?? '*';
+        }, explode('|', $this->type));
+
+        $type_text = implode(';', $type_text_array);
+        return $type_text;
+    }
+
+
+    public function getMainTypeText()
+    {
+        return (self::$mainMapping)[$this->main_type]??'';
+
+    }
+
 }

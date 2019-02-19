@@ -73,7 +73,7 @@ class AdminCompaniesController extends Controller
             'address' => $request->address,
             'category' => $request->category,
             'description' => $request->description,
-            'logo_media_id' => $request->logo_media_id ?: 0,
+            'logo_media_id' => $request->logo_media_id,
             'bd_user_id' => $request->bd_user_id,
         ];
         $company->fill(array_merge($companyData, ['user_id' => $this->user()->id]));
