@@ -922,8 +922,8 @@ export default {
       let common_num = contractChoose.common_num;
       if (this.programID) {
         if (
-          this.programForm.individual_attribute !== oldIndividualAttribute ||
-          this.programForm.contract_id !== oldContractId
+          this.programForm.individual_attribute !== this.oldIndividualAttribute ||
+          this.programForm.contract_id !== this.oldContractId
         ) {
           if (
             this.programForm.individual_attribute === 1 &&

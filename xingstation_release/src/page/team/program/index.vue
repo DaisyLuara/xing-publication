@@ -75,6 +75,17 @@
                 align="right"
               ></el-date-picker>
             </el-form-item>
+            <el-form-item v-if="legalAffairsManager || bonusManage" label prop="faceDate">
+              <el-date-picker
+                v-model="filters.faceDate"
+                :clearable="false"
+                :picker-options="pickerOptions"
+                type="daterange"
+                start-placeholder="数据查询开始时间"
+                end-placeholder="数据查询结束时间"
+                align="right"
+              ></el-date-picker>
+            </el-form-item>
             <el-form-item label prop>
               <el-button type="primary" size="small" @click="search()">搜索</el-button>
               <el-button size="small" @click="resetForm('filters')">重置</el-button>
@@ -186,11 +197,21 @@
           </el-table-column>
           <el-table-column label="操作" min-width="150">
             <template slot-scope="scope">
-              <el-button v-if="((projectManage && (scope.row.status === 1 || scope.row.status === 2)) || legalAffairsManager || bonusManage )" size="small" type="warning" @click="editHandle(scope.row)">
+              <el-button
+                v-if="((projectManage && (scope.row.status === 1 || scope.row.status === 2)) || legalAffairsManager || bonusManage )"
+                size="small"
+                type="warning"
+                @click="editHandle(scope.row)"
+              >
                 <!-- {{ ( ? '修改': '查看' }} -->
                 修改
               </el-button>
-              <el-button v-if="((!projectManage && (scope.row.status !== 1 || scope.row.status !== 2)) || !legalAffairsManager || !bonusManage )" size="small" type="primary" @click="detailHandle(scope.row)">
+              <el-button
+                v-if="((!projectManage && (scope.row.status !== 1 || scope.row.status !== 2)) || !legalAffairsManager || !bonusManage )"
+                size="small"
+                type="primary"
+                @click="detailHandle(scope.row)"
+              >
                 <!-- {{ ((projectManage && (scope.row.status === 1 || scope.row.status === 2)) || legalAffairsManager || bonusManage ) ? '修改': '详情' }} -->
                 详情
               </el-button>
@@ -326,7 +347,11 @@ export default {
         status: "",
         beginDate: [],
         onlineDate: [],
-        launchDate: []
+        launchDate: [],
+        faceDate: [
+          new Date().getTime() - 3600 * 1000 * 24 * 7,
+          new Date().getTime() - 3600 * 1000 * 24
+        ]
       },
       setting: {
         loading: false,
@@ -448,6 +473,10 @@ export default {
   methods: {
     downloadTable() {
       let args = this.setArgs();
+      args.start_date_face = handleDateTypeTransform(this.filters.faceDate[0]);
+      args.end_date_face = handleDateTypeTransform(
+        new Date(this.filters.faceDate[1]).getTime()
+      );
       delete args.own;
       delete args.page;
       args.type = "team_project";
