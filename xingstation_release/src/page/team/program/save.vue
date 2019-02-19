@@ -117,12 +117,22 @@
                   </el-tooltip>
                 </el-radio>
                 <el-radio :label="1">定制特别节目
-                  <el-tooltip class="item" effect="dark" content="有合同，且为对方特别定制的节目" placement="bottom">
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    content="有合同，且为对方特别定制的节目"
+                    placement="bottom"
+                  >
                     <i class="el-icon-info"/>
                   </el-tooltip>
                 </el-radio>
                 <el-radio :label="2">定制通用节目
-                  <el-tooltip class="item" effect="dark" content="有合同，但并非为对方特别定制的节目" placement="bottom">
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    content="有合同，但并非为对方特别定制的节目"
+                    placement="bottom"
+                  >
                     <i class="el-icon-info"/>
                   </el-tooltip>
                 </el-radio>
@@ -771,6 +781,8 @@ export default {
       copyrightFlag: false,
       type: "",
       userList: [],
+      oldIndividualAttribute: 0,
+      oldContractId: "",
       rate: {
         tester_quality: null,
         operation_quality: null,
@@ -904,6 +916,56 @@ export default {
         }
       });
       this.programForm.money = contractChoose.amount;
+      let true_special_num = contractChoose.true_special_num;
+      let special_num = contractChoose.special_num;
+      let true_common_num = contractChoose.true_common_num;
+      let common_num = contractChoose.common_num;
+      if (this.programID) {
+        if (
+          this.programForm.individual_attribute !== oldIndividualAttribute ||
+          this.programForm.contract_id !== oldContractId
+        ) {
+          if (
+            this.programForm.individual_attribute === 1 &&
+            true_special_num + 1 > special_num
+          ) {
+            this.$message({
+              type: 'warning',
+              message: `该合同的定制特别节目数量已经达到饱和上线${special_num}`
+            });
+          }
+
+          if (
+            this.programForm.individual_attribute === 2 &&
+            true_common_num + 1 > common_num
+          ) {
+            this.$message({
+              type: 'warning',
+              message: `该合同的定制普通节目数量已经达到饱和上线${common_num}`
+            });
+          }
+        }
+      } else {
+        if (
+          this.programForm.individual_attribute === 1 &&
+          true_special_num + 1 > special_num
+        ) {
+          this.$message({
+            type: 'warning',
+            message: `该合同的定制特别节目数量已经达到饱和上线${special_num}`
+          });
+        }
+
+        if (
+          this.programForm.individual_attribute === 2 &&
+          true_common_num + 1 > common_num
+        ) {
+          this.$message({
+            type: 'warning',
+            message: `该合同的定制普通节目数量已经达到饱和上线${common_num}`
+          });
+        }
+      }
     },
     handleCustom(val) {
       if (val === 1 || val === 2) {
@@ -1041,6 +1103,7 @@ export default {
           this.programForm.individual_attribute = res.individual_attribute;
           this.programForm.copyright_project_id = res.copyright_project_id;
           this.programForm.copyright_attribute = res.copyright_attribute;
+          this.oldIndividualAttribute = res.individual_attribute;
           if (res.copyright_attribute === 0) {
             this.copyrightFlag = false;
           } else {
@@ -1049,11 +1112,18 @@ export default {
           if (res.copyright_project_id) {
             this.getSearchCopyrightProject(res.copyright_project_name);
           }
-          if (res.individual_attribute === 1 || res.individual_attribute === 2) {
+          if (
+            res.individual_attribute === 1 ||
+            res.individual_attribute === 2
+          ) {
             this.programForm.contract_id = res.contract_id;
+            this.oldContractId = res.contract_id;
             this.programForm.money = res.contract.amount;
           }
-          this.contractDisable = (res.individual_attribute === 1||res.individual_attribute === 2) ? false : true;
+          this.contractDisable =
+            res.individual_attribute === 1 || res.individual_attribute === 2
+              ? false
+              : true;
           this.h5Rate =
             res.h5_attribute === 2 ? this.rate.h5_2 : this.rate.h5_1;
           this.programForm.project_attribute = res.project_attribute;
@@ -1448,7 +1518,10 @@ export default {
           if (this.programForm.animation_hidol.length > 0) {
             member.animation_hidol = this.programForm.animation_hidol;
           }
-          if (this.programForm.individual_attribute === 1 || this.programForm.individual_attribute === 2) {
+          if (
+            this.programForm.individual_attribute === 1 ||
+            this.programForm.individual_attribute === 2
+          ) {
             if (this.programForm.contract_id === "") {
               this.$message({
                 type: "warning",
