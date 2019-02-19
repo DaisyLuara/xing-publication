@@ -97,11 +97,11 @@
                 class="item-input"
               />
             </el-form-item>
-            <el-form-item label="密码" prop="customer.password">
+            <el-form-item label="核销密码" prop="customer.password">
               <el-input
                 v-model="siteForm.customer.password"
                 :disabled="passwordShow"
-                placeholder="请输入密码"
+                placeholder="请输入核销密码"
                 class="item-input"
               />
             </el-form-item>
@@ -391,8 +391,8 @@
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item label="卷系数" prop="share.coupon_off">
-              <el-input v-model="siteForm.share.coupon_off" placeholder="请输入卷系数" class="item-input">
+            <el-form-item label="券系数" prop="share.coupon_off">
+              <el-input v-model="siteForm.share.coupon_off" placeholder="请输入券系数" class="item-input">
                 <template slot="append">%</template>
               </el-input>
             </el-form-item>
@@ -649,9 +649,10 @@ export default {
         ],
         "customer.password": [
           {
+            required: true,
             validator: (rule, value, callback) => {
               if (value && value.length < 8) {
-                callback("密码长度不能小于8位");
+                callback("核销密码长度不能小于8位");
               } else {
                 callback();
               }
@@ -773,6 +774,18 @@ export default {
   created() {
     this.siteID = this.$route.params.uid;
     if (this.siteID) {
+      this.rules["customer.password"] = [
+        {
+          validator: (rule, value, callback) => {
+            if (value && value.length < 8) {
+              callback("核销密码长度不能小于8位");
+            } else {
+              callback();
+            }
+          },
+          trigger: "submit"
+        }
+      ];
       this.getMarketDetail();
     }
     this.getAreaList();
