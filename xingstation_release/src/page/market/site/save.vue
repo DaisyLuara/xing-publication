@@ -97,11 +97,11 @@
                 class="item-input"
               />
             </el-form-item>
-            <el-form-item label="密码" prop="customer.password">
+            <el-form-item label="核销密码" prop="customer.password">
               <el-input
                 v-model="siteForm.customer.password"
                 :disabled="passwordShow"
-                placeholder="请输入密码"
+                placeholder="请输入核销密码"
                 class="item-input"
               />
             </el-form-item>
@@ -139,10 +139,11 @@
               <el-select
                 v-model="siteForm.marketConfig.bd_user_id"
                 :loading="searchLoading"
+                filterable
                 placeholder="请选择所属人"
               >
                 <el-option
-                  v-for="item in BDList"
+                  v-for="item in userList"
                   :key="item.id"
                   :label="item.name"
                   :value="item.id"
@@ -390,8 +391,8 @@
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item label="卷系数" prop="share.coupon_off">
-              <el-input v-model="siteForm.share.coupon_off" placeholder="请输入卷系数" class="item-input">
+            <el-form-item label="券系数" prop="share.coupon_off">
+              <el-input v-model="siteForm.share.coupon_off" placeholder="请输入券系数" class="item-input">
                 <template slot="append">%</template>
               </el-input>
             </el-form-item>
@@ -415,7 +416,7 @@ import {
   siteSaveMarket,
   siteModifyMarket,
   getSearchAeraList,
-  getSearchBDList,
+  getSearchUserList,
   getContractReceiptList,
   getSearchCompanyList,
   getSearchCustomer
@@ -639,7 +640,7 @@ export default {
       contractList: [],
       companyList: [],
       customerList: [],
-      BDList: [],
+      userList: [],
       areaList: [],
       rules: {
         name: [{ required: true, message: "请输入名称", trigger: "submit" }],
@@ -648,9 +649,10 @@ export default {
         ],
         "customer.password": [
           {
+            required: true,
             validator: (rule, value, callback) => {
               if (value && value.length < 8) {
-                callback("密码长度不能小于8位");
+                callback("核销密码长度不能小于8位");
               } else {
                 callback();
               }
@@ -772,11 +774,23 @@ export default {
   created() {
     this.siteID = this.$route.params.uid;
     if (this.siteID) {
+      this.rules["customer.password"] = [
+        {
+          validator: (rule, value, callback) => {
+            if (value && value.length < 8) {
+              callback("核销密码长度不能小于8位");
+            } else {
+              callback();
+            }
+          },
+          trigger: "submit"
+        }
+      ];
       this.getMarketDetail();
     }
     this.getAreaList();
     this.getSearchCompanyList();
-    this.getSearchBDList();
+    this.getSearchUserList();
     let roles = JSON.parse(this.$cookie.get("user_info")).roles.data;
     roles.map(r => {
       if (r.display_name === "管理员") {
@@ -870,12 +884,12 @@ export default {
           });
         });
     },
-    getSearchBDList() {
+    getSearchUserList() {
       this.searchLoading = true;
-      getSearchBDList(this)
+      getSearchUserList(this)
         .then(res => {
           this.searchLoading = false;
-          this.BDList = res;
+          this.userList = res.data;
         })
         .catch(err => {
           this.searchLoading = false;

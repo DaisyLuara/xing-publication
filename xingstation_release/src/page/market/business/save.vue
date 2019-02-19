@@ -132,11 +132,11 @@
                 class="item-input"
               />
             </el-form-item>
-            <el-form-item label="密码" prop="customer.password">
+            <el-form-item label="核销密码" prop="customer.password">
               <el-input
                 v-model="businessForm.customer.password"
                 :disabled="passwordShow"
-                placeholder="请输入密码"
+                placeholder="请输入核销密码"
                 class="item-input"
               />
             </el-form-item>
@@ -162,10 +162,11 @@
               <el-select
                 v-model="businessForm.user_id"
                 :loading="searchLoading"
+                filterable
                 placeholder="请选择所属人"
               >
                 <el-option
-                  v-for="item in BDList"
+                  v-for="item in userList"
                   :key="item.id"
                   :label="item.name"
                   :value="item.id"
@@ -191,7 +192,7 @@
           </el-tab-pane>
         </el-tabs>
         <el-form-item>
-          <el-button type="primary" @click="submit('businessForm')">保存</el-button>
+          <el-button type="primary" @click="submit('businessForm')" :loading="btnLoading">保存</el-button>
           <el-button @click="historyBack">返回</el-button>
         </el-form-item>
       </el-form>
@@ -210,7 +211,7 @@ import {
   getSearchAeraList,
   getSearchMarketList,
   getSearchCompanyList,
-  getSearchBDList,
+  getSearchUserList,
   getContractReceiptList,
   handleDateTimeTransform,
   getSearchCustomer
@@ -280,20 +281,7 @@ export default {
       }
     };
     return {
-      options5: [
-        {
-          value: "HTML",
-          label: "HTML"
-        },
-        {
-          value: "CSS",
-          label: "CSS"
-        },
-        {
-          value: "JavaScript",
-          label: "JavaScript"
-        }
-      ],
+      btnLoading: false,
       SERVER_URL: SERVER_URL,
       formHeader: {
         Authorization: "Bearer " + auth.getToken()
@@ -311,7 +299,7 @@ export default {
       },
       contractList: [],
       companyList: [],
-      BDList: [],
+      userList: [],
       businessID: "",
       passwordShow: false,
       businessForm: {
@@ -346,9 +334,10 @@ export default {
         ],
         "customer.password": [
           {
+            required: true,
             validator: (rule, value, callback) => {
               if (value && value.length < 8) {
-                callback("密码长度不能小于8位");
+                callback("核销密码长度不能小于8位");
               } else {
                 callback();
               }
@@ -391,9 +380,21 @@ export default {
     this.setting.loading = true;
     this.businessID = this.$route.params.uid;
     this.getAreaList();
-    this.getSearchBDList();
+    this.getSearchUserList();
 
     if (this.businessID) {
+      this.rules["customer.password"] = [
+        {
+          validator: (rule, value, callback) => {
+            if (value && value.length < 8) {
+              callback("核销密码长度不能小于8位");
+            } else {
+              callback();
+            }
+          },
+          trigger: "submit"
+        }
+      ];
       this.getBusinessDetail();
     } else {
       this.setting.loading = false;
@@ -465,12 +466,12 @@ export default {
           });
         });
     },
-    getSearchBDList() {
+    getSearchUserList() {
       this.searchLoading = true;
-      getSearchBDList(this)
+      getSearchUserList(this)
         .then(res => {
           this.searchLoading = false;
-          this.BDList = res;
+          this.userList = res.data;
         })
         .catch(err => {
           this.searchLoading = false;
@@ -630,8 +631,10 @@ export default {
           delete args.contract;
           delete args.market;
           if (this.businessID) {
+            this.btnLoading = true;
             modifyBusiness(this, args, this.businessID)
               .then(res => {
+                this.btnLoading = false;
                 this.$message({
                   message: "商户修改成功",
                   type: "success"
@@ -641,14 +644,17 @@ export default {
                 });
               })
               .catch(err => {
+                this.btnLoading = false;
                 this.$message({
                   message: err.response.data.message,
                   type: "warning"
                 });
               });
           } else {
+            this.btnLoading = true;
             saveBusiness(this, args)
               .then(res => {
+                this.btnLoading = false;
                 this.$message({
                   message: "商户保存成功",
                   type: "success"
@@ -658,6 +664,7 @@ export default {
                 });
               })
               .catch(err => {
+                this.btnLoading = false;
                 this.$message({
                   message: err.response.data.message,
                   type: "warning"

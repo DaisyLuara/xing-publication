@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Admin\Coupon\V1\Models;
 
 
+use App\Http\Controllers\Admin\Point\V1\Models\Point;
 use App\Models\Model;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 
@@ -30,5 +31,10 @@ class Policy extends Model
     public function company()
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function points()
+    {
+        return $this->belongsToMany(Point::class, 'policy_launch_points', 'policy_id', 'oid');
     }
 }
