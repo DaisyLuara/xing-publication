@@ -20,7 +20,6 @@
                 :loading="searchLoading"
                 placeholder="请选择公司名称"
                 filterable
-                clearable
                 @change="companyHandle"
               >
                 <el-option
@@ -49,7 +48,6 @@
                 placeholder="请选择区域"
                 :loading="searchLoading"
                 filterable
-                clearable
                 @change="areaHandle"
               >
                 <el-option
