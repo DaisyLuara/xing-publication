@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\Point\V1\Transformer\MarketTransformer;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use DB;
 
 class MarketController extends Controller
 {
@@ -72,23 +73,34 @@ class MarketController extends Controller
 
     public function store(MarketRequest $request, Market $market)
     {
-        $market->fill($request->all())->saveOrFail();
+        DB::beginTransaction();
 
-        if ($request->has('contract')) {
-            $market->contract()->create($request->contract);
-        }
+        try {
 
-        if ($request->has('share')) {
-            $market->share()->create($request->share);
-        }
+            $market->fill($request->all())->saveOrFail();
 
-        if ($request->has('marketConfig')) {
-            $market->marketConfig()->create($request->marketConfig);
-        }
+            if ($request->has('contract')) {
+                $market->contract()->create($request->contract);
+            }
 
-        //商户核销人员配置
-        if ($request->has('customer') && count(array_filter($request->customer))) {
-            $this->generateCustomer($request, $market);
+            if ($request->has('share')) {
+                $market->share()->create($request->share);
+            }
+
+            if ($request->has('marketConfig')) {
+                $market->marketConfig()->create($request->marketConfig);
+            }
+
+            //商户核销人员配置
+            if ($request->has('customer') && count(array_filter($request->customer))) {
+                $this->generateCustomer($request, $market);
+            }
+
+            DB::commit();
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            abort(500, $e->getMessage());
         }
 
         return $this->response->item($market, new MarketTransformer());
