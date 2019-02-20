@@ -59,6 +59,10 @@ class ContractController extends Controller
             $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
         }
 
+        if ($request->has('product_status')) {
+            $query->where('product_status', $request->product_status);
+        }
+
         /** @var  $user \App\Models\User */
         $user = $this->user();
         if ($user->hasRole('user|bd-manager')) {
@@ -69,7 +73,7 @@ class ContractController extends Controller
             //角色为采购时，查询条件为：已审批完成(status=3),product_status为非0（1未出厂or2已出厂）
             $query->whereRaw("(status = 3 and product_status != 0)");
         } else {
-            $query->where('status', 3);
+            $query->where('status', ActionConfig::CONTRACT_STATUS_AGREE);
         }
         $contract = $query->orderBy('created_at', 'desc')->paginate(10);
         return $this->response()->paginator($contract, new ContractTransformer())->setStatusCode(200);
@@ -84,24 +88,24 @@ class ContractController extends Controller
             abort(500, '无所属主管，无法新增合同申请');
         }
 
-        $product_status = 0;
+        $product_status = ActionConfig::CONTRACT_PRODUCT_STATUS_NOHARDWARE;
         //收款合同且不是服务类型
-        if ($request->type == 0 && $request->kind != 4) {
-            $product_status = 1;
+        if ($request->type == ActionConfig::CONTRACT_TYPE_RECEIVE && $request->kind != ActionConfig::CONTRACT_KIND_SERVE) {
+            $product_status = ActionConfig::CONTRACT_PRODUCT_STATUS_NOTOUT;
         }
         $param = $request->all();
         //不是收款合同默认0
-        if ($request->type != 0) {
+        if ($request->type != ActionConfig::CONTRACT_TYPE_RECEIVE) {
             $param['kind'] = 0;
             $param['special_num'] = 0;
             $param['common_num'] = 0;
         }
         //法务和法务主管建的直接已审批
         if ($user->hasRole('legal-affairs|legal-affairs-manager')) {
-            $contract->fill(array_merge($param, ['status' => 3, 'handler' => null, 'product_status' => $product_status]))->save();
+            $contract->fill(array_merge($param, ['status' => ActionConfig::CONTRACT_STATUS_AGREE, 'handler' => null, 'product_status' => $product_status]))->save();
         } else {
             $legalId = getProcessStaffId('legal-affairs', 'contract');
-            $contract->fill(array_merge($param, ['status' => 1, 'handler' => $legalId, 'product_status' => $product_status]))->save();
+            $contract->fill(array_merge($param, ['status' => ActionConfig::CONTRACT_STATUS_WAIT, 'handler' => $legalId, 'product_status' => $product_status]))->save();
         }
         //文档存储
         $ids = explode(',', $request->ids);
@@ -110,7 +114,7 @@ class ContractController extends Controller
         }
 
         //收款日期存储
-        if ($request->type == 0 && $request->has('receive_date')) {
+        if ($request->type == ActionConfig::CONTRACT_TYPE_RECEIVE && $request->has('receive_date')) {
             $dates = explode(',', $request->receive_date);
             foreach ($dates as $date) {
                 ContractReceiveDate::create(['contract_id' => $contract->id, 'receive_date' => $date, 'receive_status' => 0]);
@@ -118,7 +122,7 @@ class ContractController extends Controller
         }
 
         //硬件存储
-        if ($request->kind != 4 && $request->has('product_content')) {
+        if ($request->kind != ActionConfig::CONTRACT_KIND_SERVE && $request->has('product_content')) {
             $param = $request->all();
             $content = $param['product_content'];
             foreach ($content as $item) {
@@ -129,10 +133,36 @@ class ContractController extends Controller
         return $this->response()->item($contract, new ContractTransformer())->setStatusCode(201);
     }
 
+    public function update(ContractRequest $request, Contract $contract)
+    {
+        if (!($contract->status == ActionConfig::CONTRACT_STATUS_AGREE && $contract->type == ActionConfig::CONTRACT_TYPE_RECEIVE)) {
+            abort(403, '不可更改');
+        }
+
+//        $param = $request->all();
+//        if ($param['kind'] == ActionConfig::CONTRACT_KIND_SERVE) {
+//            $contract->product()->delete();
+//        }
+//        if ($param['kind'] != ActionConfig::CONTRACT_KIND_SERVE) {
+//            $contract->product()->delete();
+//            $content = $request->product_content;
+//            foreach ($content as $item) {
+//                $item['contract_id'] = $contract->id;
+//                ContractProduct::create($item);
+//            }
+//            $param['serve_target'] = null;
+//            $param['recharge'] = null;
+//            $param['product_status'] = ActionConfig::CONTRACT_PRODUCT_STATUS_LEAVE;
+//        }
+        $contract->update($request->all());
+
+        return $this->response()->noContent();
+
+    }
 
     public function destroy(Contract $contract)
     {
-        if ($contract->status != 1) {
+        if ($contract->status != ActionConfig::CONTRACT_STATUS_WAIT) {
             abort(403, "合同审批状态已更改，不可删除");
         }
         $contract->delete();
@@ -151,7 +181,7 @@ class ContractController extends Controller
                 $contract->media()->attach($id);
             }
         }
-        $contract->update(array_merge($request->all(), ['status' => 5, 'handler' => $contract->applicant]));
+        $contract->update(array_merge($request->all(), ['status' => ActionConfig::CONTRACT_STATUS_REJECT, 'handler' => $contract->applicant]));
         ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
 
         return $this->response()->item($contract, new ContractTransformer())->setStatusCode(200);
@@ -169,7 +199,7 @@ class ContractController extends Controller
                 'contract_number'
             ];
             $this->checkParam($request, $params);
-            $contract->fill(array_merge($request->all(), ['status' => 2, 'handler' => $user->parent_id]));
+            $contract->fill(array_merge($request->all(), ['status' => ActionConfig::CONTRACT_STATUS_ONGOING, 'handler' => $user->parent_id]));
             $this->updateContractAndHistory($user, $contract);
         } else if ($user->hasRole('legal-affairs-manager')) {
             $params = [
@@ -179,17 +209,17 @@ class ContractController extends Controller
             ];
             $this->checkParam($request, $params);
             //特批合同需要带合同编号
-            if ($contract->status == 4) {
+            if ($contract->status == ActionConfig::CONTRACT_STATUS_SPECIAL) {
                 $this->checkParam($request, ['contract_number']);
             }
 
             $parentId = $contract->applicantUser->parent_id;
             // BD主管建的直接已审批,不经过自己
             if ($parentId == $contract->applicant) {
-                $contract->status = 3;
+                $contract->status = ActionConfig::CONTRACT_STATUS_AGREE;
                 $contract->handler = null;
             } else {
-                $contract->status = 2;
+                $contract->status = ActionConfig::CONTRACT_STATUS_ONGOING;
                 $contract->handler = $parentId;
             }
 
@@ -201,7 +231,7 @@ class ContractController extends Controller
             ];
             $this->checkParam($request, $params);
 
-            $contract->status = 3;
+            $contract->status = ActionConfig::CONTRACT_STATUS_AGREE;
             $contract->handler = null;
             $contract->bd_ma_message = $request->bd_ma_message;
             $this->updateContractAndHistory($user, $contract);
@@ -231,10 +261,10 @@ class ContractController extends Controller
         $role = Role::findByName('legal-affairs-manager');
         $legalManager = $role->users()->first();
 
-        if ($contract->status == 2) {
+        if ($contract->status == ActionConfig::CONTRACT_STATUS_ONGOING) {
             abort(403, "合同审核中无法申请特批");
         }
-        $contract->status = 4;
+        $contract->status = ActionConfig::CONTRACT_STATUS_SPECIAL;
         $contract->handler = $legalManager->id;
         $contract->update();
         return $this->response()->noContent();

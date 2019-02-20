@@ -28,9 +28,20 @@ class ContractRequest extends Request
                     'common_num' => 'required|integer|max:2'
                 ];
                 break;
+            case 'PATCH':
+                return [
+//                    'kind' => 'filled',
+//                    'serve_target' => 'required_if:kind,4|integer',
+//                    'recharge' => ['required_if:kind,4', Rule::in([0, 1])],
+//                    'product_content' => 'required_unless:kind,4',
+                    'special_num' => 'required|integer',
+                    'common_num' => 'required|integer'
+                ];
+                break;
             default:
                 return [];
         }
 
     }
 }
+
