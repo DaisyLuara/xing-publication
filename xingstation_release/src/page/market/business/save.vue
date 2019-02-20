@@ -381,8 +381,17 @@ export default {
     this.getSearchUserList();
 
     if (this.businessID) {
+      this.customerPasswordHandle(false);
+      this.getBusinessDetail();
+    } else {
+      this.setting.loading = false;
+    }
+  },
+  methods: {
+    customerPasswordHandle(required) {
       this.rules["customer.password"] = [
         {
+          required: required,
           validator: (rule, value, callback) => {
             if (value && value.length < 8) {
               callback("核销密码长度不能小于8位");
@@ -393,12 +402,7 @@ export default {
           trigger: "submit"
         }
       ];
-      this.getBusinessDetail();
-    } else {
-      this.setting.loading = false;
-    }
-  },
-  methods: {
+    },
     customerHandle(val) {
       this.businessForm.customer.phone = "";
       this.customerList.map(r => {
@@ -408,9 +412,11 @@ export default {
         }
       });
       if (!this.businessForm.customer.phone) {
+        this.customerPasswordHandle(true);
         this.businessForm.customer.type = "add";
         this.passwordShow = false;
       } else {
+        this.customerPasswordHandle(false);
         this.businessForm.customer.type = "select";
         this.passwordShow = true;
       }
@@ -452,6 +458,9 @@ export default {
       let args = {
         company_id: val
       };
+      this.businessForm.customer.name = null;
+      this.businessForm.customer.phone = null;
+      this.businessForm.customer.password = null;
       this.getSearchCustomer(val);
       getContractReceiptList(this, args)
         .then(res => {

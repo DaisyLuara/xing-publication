@@ -34,6 +34,11 @@ $api->version('v1', [
             $api->get('projects', ['middleware' => ['permission:project.list.read'], 'uses' => 'ProjectController@index']);
             $api->patch('projects', ['middleware' => ['permission:project.list.update'], 'uses' => 'ProjectController@update']);
 
+            //节目策略
+            $api->post('projects/{project}/policies', ['middleware' => ['permission:project.strategy.create'], 'uses' => 'ProjectPolicyController@store']);
+            $api->patch('projects/{project}/policies/{policy}', ['middleware' => ['permission:project.strategy.update'], 'uses' => 'ProjectPolicyController@update']);
+            $api->delete('projects/{project}/policies/{policy}', ['middleware' => ['permission:project.strategy.delete'], 'uses' => 'ProjectPolicyController@delete']);
+
             //节目模板
             $api->get('project_template', 'ProjectTemplateController@index');
 
