@@ -74,9 +74,9 @@
               <el-select
                 v-model="siteForm.customer.name"
                 :loading="searchLoading"
+                default-first-option
                 filterable
                 allow-create
-                default-first-option
                 placeholder="核销员姓名"
                 @change="customerHandle"
               >
@@ -773,18 +773,7 @@ export default {
   created() {
     this.siteID = this.$route.params.uid;
     if (this.siteID) {
-      this.rules["customer.password"] = [
-        {
-          validator: (rule, value, callback) => {
-            if (value && value.length < 8) {
-              callback("核销密码长度不能小于8位");
-            } else {
-              callback();
-            }
-          },
-          trigger: "submit"
-        }
-      ];
+      this.customerPasswordHandle(false);
       this.getMarketDetail();
     }
     this.getAreaList();
@@ -799,18 +788,35 @@ export default {
     });
   },
   methods: {
+    customerPasswordHandle(required) {
+      this.rules["customer.password"] = [
+        {
+          required: required,
+          validator: (rule, value, callback) => {
+            if (value && value.length < 8) {
+              callback("核销密码长度不能小于8位");
+            } else {
+              callback();
+            }
+          },
+          trigger: "submit"
+        }
+      ];
+    },
     customerHandle(val) {
       this.siteForm.customer.phone = "";
       this.customerList.map(r => {
-        if (val === r.id) {
+        if (val === r.name) {
           this.siteForm.customer.phone = r.phone;
           return;
         }
       });
       if (!this.siteForm.customer.phone) {
+        this.customerPasswordHandle(true);
         this.passwordShow = false;
         this.siteForm.customer.type = "add";
       } else {
+        this.customerPasswordHandle(false);
         this.passwordShow = true;
         this.siteForm.customer.type = "select";
       }
@@ -871,6 +877,9 @@ export default {
       let args = {
         company_id: val
       };
+      this.siteForm.customer.name = null
+      this.siteForm.customer.phone = null
+      this.siteForm.customer.password = null
       this.getSearchCustomer(val);
       getContractReceiptList(this, args)
         .then(res => {
