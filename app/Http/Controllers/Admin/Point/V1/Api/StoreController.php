@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\Point\V1\Models\Store;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use DB;
 
 class StoreController extends Controller
 {
@@ -54,17 +55,28 @@ class StoreController extends Controller
 
     public function store(StoreRequest $request, Store $store)
     {
-        $store->fill($request->all());
-        $store->save();
+        DB::beginTransaction();
 
-        // 合约配置
-        if ($request->filled('contract_id')) {
-            $store->contract()->update($request->only(['start_date', 'end_date']));
-        }
+        try {
 
-        //商户核销人员配置
-        if ($request->has('customer') && count(array_filter($request->customer))) {
-            $this->generateCustomer($request, $store);
+            $store->fill($request->all());
+            $store->save();
+
+            // 合约配置
+            if ($request->filled('contract_id')) {
+                $store->contract()->update($request->only(['start_date', 'end_date']));
+            }
+
+            //商户核销人员配置
+            if ($request->has('customer') && count(array_filter($request->customer))) {
+                $this->generateCustomer($request, $store);
+            }
+
+            DB::commit();
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            abort(500, $e->getMessage());
         }
 
         return $this->response->item($store, new StoreTransformer());
