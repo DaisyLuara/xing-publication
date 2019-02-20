@@ -131,25 +131,26 @@ class ContractController extends Controller
 
     public function update(ContractRequest $request, Contract $contract)
     {
-        if ($contract->status != ActionConfig::CONTRACT_STATUS_AGREE) {
+        if (!($contract->status == ActionConfig::CONTRACT_STATUS_AGREE && $contract->type == ActionConfig::CONTRACT_TYPE_RECEIVE)) {
             abort(403, '不可更改');
         }
 
-        $param = $request->all();
-        if ($param['kind'] == ActionConfig::CONTRACT_KIND_SERVE) {
-            $contract->product()->delete();
-        }
-        if ($param['kind'] != ActionConfig::CONTRACT_KIND_SERVE) {
-            $contract->product()->delete();
-            $content = $request->product_content;
-            foreach ($content as $item) {
-                $item['contract_id'] = $contract->id;
-                ContractProduct::create($item);
-            }
-            $param['serve_target'] = null;
-            $param['recharge'] = null;
-        }
-        $contract->update($param);
+//        $param = $request->all();
+//        if ($param['kind'] == ActionConfig::CONTRACT_KIND_SERVE) {
+//            $contract->product()->delete();
+//        }
+//        if ($param['kind'] != ActionConfig::CONTRACT_KIND_SERVE) {
+//            $contract->product()->delete();
+//            $content = $request->product_content;
+//            foreach ($content as $item) {
+//                $item['contract_id'] = $contract->id;
+//                ContractProduct::create($item);
+//            }
+//            $param['serve_target'] = null;
+//            $param['recharge'] = null;
+//            $param['product_status'] = ActionConfig::CONTRACT_PRODUCT_STATUS_LEAVE;
+//        }
+        $contract->update($request->all());
 
         return $this->response()->noContent();
 
