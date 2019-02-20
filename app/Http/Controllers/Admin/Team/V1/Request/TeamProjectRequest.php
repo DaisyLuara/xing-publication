@@ -92,13 +92,8 @@ class TeamProjectRequest extends \App\Http\Requests\Request
                     ],
                     'project_attribute' => Rule::in([0, 1, 2, 3, 4]),
                     'hidol_attribute' => Rule::in([0, 1]),
-<<<<<<< HEAD
                     'individual_attribute' => Rule::in([0, 1, 2]),
                     'contract_id' => ['nullable', 'required_unless:individual_attribute,0', 'integer',
-=======
-                    'individual_attribute' => Rule::in([0, 1]),
-                    'contract_id' => ['nullable', 'required_if:individual_attribute,1', 'integer',
->>>>>>> master
                         Rule::exists('contracts', 'id')->where(function ($query) {
                             $query->where('type', 0);
                         })],
