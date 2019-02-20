@@ -38,13 +38,13 @@ class PointController extends Controller
 
     public function index(Request $request, Point $point)
     {
+        /** @var  $user \App\Models\User */
         $user = $this->user();
         $arUserId = getArUserID($user, $request);
 
         $query = $point->query();
 
-        //根据
-        if ($arUserId) {
+        if ($user->hasRole('user|bd-manager')) {
             $query->where('bd_uid', '=', $arUserId);
         }
 
@@ -161,9 +161,9 @@ class PointController extends Controller
                 unset($contract['oid']);
             }
 
-            if($point_contract = $point->contract()->getResults()){
+            if ($point_contract = $point->contract()->getResults()) {
                 $point_contract->update($contract);
-            }else {
+            } else {
                 $point->contract()->create($contract);
             }
         }
@@ -174,9 +174,9 @@ class PointController extends Controller
                 unset($share['oid']);
             }
 
-            if($point_share = $point->share()->getResults()){
+            if ($point_share = $point->share()->getResults()) {
                 $point_share->update($share);
-            }else{
+            } else {
                 $point->share()->create($share);
             }
 

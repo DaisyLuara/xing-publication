@@ -168,7 +168,6 @@ class AuthorizationsController extends Controller
         setcookie('jwt_token', $request->token, time() + 7200, '/', env('COOKIE_DOMAIN'));
         setcookie('jwt_ttl', $request->jwt_ttl, time() + 7200, '/', env('COOKIE_DOMAIN'));
         setcookie('jwt_begin_time', $request->jwt_begin_time, time() + 7200, '/', env('COOKIE_DOMAIN'));
-        setcookie('permissions', $request->permissions, time() + 7200, '/', env('COOKIE_DOMAIN'));
         setcookie('user_info', $request->user_info, time() + 7200, '/', env('COOKIE_DOMAIN'));
         if ($request->type == 'ad') {
             return redirect()->away(env('PUBLICATION_URL'));
@@ -183,7 +182,6 @@ class AuthorizationsController extends Controller
         setcookie('jwt_token', '', time() - 7200, '/', env('COOKIE_DOMAIN'));
         setcookie('jwt_ttl', '', time() - 7200, '/', env('COOKIE_DOMAIN'));
         setcookie('jwt_begin_time', '', time() - 7200, '/', env('COOKIE_DOMAIN'));
-        setcookie('permissions', '', time() - 7200, '/', env('COOKIE_DOMAIN'));
         setcookie('user_info', '', time() - 7200, '/', env('COOKIE_DOMAIN'));
     }
 }

@@ -85,15 +85,23 @@ class ContractController extends Controller
         }
 
         $product_status = 0;
-        if ($request->kind != 4) {
+        //收款合同且不是服务类型
+        if ($request->type == 0 && $request->kind != 4) {
             $product_status = 1;
+        }
+        $param = $request->all();
+        //不是收款合同默认0
+        if ($request->type != 0) {
+            $param['kind'] = 0;
+            $param['special_num'] = 0;
+            $param['common_num'] = 0;
         }
         //法务和法务主管建的直接已审批
         if ($user->hasRole('legal-affairs|legal-affairs-manager')) {
-            $contract->fill(array_merge($request->all(), ['status' => 3, 'handler' => null, 'product_status' => $product_status]))->save();
+            $contract->fill(array_merge($param, ['status' => 3, 'handler' => null, 'product_status' => $product_status]))->save();
         } else {
             $legalId = getProcessStaffId('legal-affairs', 'contract');
-            $contract->fill(array_merge($request->all(), ['status' => 1, 'handler' => $legalId, 'product_status' => $product_status]))->save();
+            $contract->fill(array_merge($param, ['status' => 1, 'handler' => $legalId, 'product_status' => $product_status]))->save();
         }
         //文档存储
         $ids = explode(',', $request->ids);
@@ -171,7 +179,7 @@ class ContractController extends Controller
             ];
             $this->checkParam($request, $params);
             //特批合同需要带合同编号
-            if($contract->status==4){
+            if ($contract->status == 4) {
                 $this->checkParam($request, ['contract_number']);
             }
 
