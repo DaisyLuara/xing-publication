@@ -73,34 +73,27 @@ class MarketController extends Controller
 
     public function store(MarketRequest $request, Market $market)
     {
-        DB::beginTransaction();
+        //商户核销人员配置
+        if ($request->has('customer') && count(array_filter($request->customer))) {
+            $customer = $this->generateCustomer($request);
+        }
 
-        try {
+        $market->fill($request->all())->saveOrFail();
 
-            $market->fill($request->all())->saveOrFail();
+        if ($request->has('contract')) {
+            $market->contract()->create($request->contract);
+        }
 
-            if ($request->has('contract')) {
-                $market->contract()->create($request->contract);
-            }
+        if ($request->has('share')) {
+            $market->share()->create($request->share);
+        }
 
-            if ($request->has('share')) {
-                $market->share()->create($request->share);
-            }
+        if ($request->has('marketConfig')) {
+            $market->marketConfig()->create($request->marketConfig);
+        }
 
-            if ($request->has('marketConfig')) {
-                $market->marketConfig()->create($request->marketConfig);
-            }
-
-            //商户核销人员配置
-            if ($request->has('customer') && count(array_filter($request->customer))) {
-                $this->generateCustomer($request, $market);
-            }
-
-            DB::commit();
-
-        } catch (\Exception $e) {
-            DB::rollback();
-            abort(500, $e->getMessage());
+        if (isset($customer)) {
+            $market->marketConfig->update(['write_off_customer_id' => $customer->id]);
         }
 
         return $this->response->item($market, new MarketTransformer());
@@ -108,6 +101,11 @@ class MarketController extends Controller
 
     public function update(MarketRequest $request, Market $market)
     {
+        //商户核销人员配置
+        if ($request->has('customer') && count(array_filter($request->customer))) {
+            $customer = $this->generateCustomer($request);
+        }
+
         $market->update($request->all());
         if ($request->has('contract')) {
             $contract = $request->contract;
@@ -135,20 +133,19 @@ class MarketController extends Controller
             $market->marketConfig()->updateOrCreate(['id' => $market->marketid], $marketConfig);
         }
 
-        //商户核销人员配置
-        if ($request->has('customer') && count(array_filter($request->customer))) {
-            $this->generateCustomer($request, $market);
+        if (isset($customer)) {
+            $market->marketConfig->update(['write_off_customer_id' => $customer->id]);
         }
 
         return $this->response->item($market, new MarketTransformer());
     }
 
-    private function generateCustomer($request, $market)
+    private function generateCustomer($request)
     {
         if ($request->customer['type'] == "add") {
             abort_if(!$request->customer['phone'] || !$request->customer['password'], 500, '核销人员信息不完整');
 
-            $customer = $market->marketConfig->writeOffCustomer()->create([
+            $customer = Customer::query()->create([
                 'name' => $request->customer['name'],
                 'company_id' => $request->marketConfig['company_id'],
                 'phone' => $request->customer['phone'],
@@ -165,6 +162,6 @@ class MarketController extends Controller
             $customer->assignRole('market_owner');
         }
 
-        $market->marketConfig->update(['write_off_customer_id' => $customer->id]);
+        return $customer;
     }
 }
