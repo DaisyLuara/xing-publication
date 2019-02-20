@@ -59,6 +59,10 @@ class ContractController extends Controller
             $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
         }
 
+        if ($request->has('product_status')) {
+            $query->where('product_status', $request->product_status);
+        }
+
         /** @var  $user \App\Models\User */
         $user = $this->user();
         if ($user->hasRole('user|bd-manager')) {
