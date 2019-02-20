@@ -49,4 +49,9 @@ class Project extends Model
         return $this->belongsTo(CompanyProject::class, 'id', 'project_id');
     }
 
+    public function policies()
+    {
+        return $this->belongsToMany(Policy::class, 'xs_project_launch_policies', 'default_plid', 'policy_id');
+    }
+
 }
