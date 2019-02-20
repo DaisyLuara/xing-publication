@@ -454,13 +454,15 @@ export default {
         this.contractShow = false;
       }
     },
-    companyHandle(val) {
+    companyHandle(val, noClear) {
       let args = {
         company_id: val
       };
-      this.businessForm.customer.name = null;
-      this.businessForm.customer.phone = null;
-      this.businessForm.customer.password = null;
+      if (!noClear) {
+        this.businessForm.customer.name = null;
+        this.businessForm.customer.phone = null;
+        this.businessForm.customer.password = null;
+      }
       this.getSearchCustomer(val);
       getContractReceiptList(this, args)
         .then(res => {
@@ -553,7 +555,7 @@ export default {
             this.businessForm.customer.name = res.customer.name;
             this.businessForm.customer.password = null;
           }
-          this.companyHandle(this.businessForm.company_id);
+          this.companyHandle(this.businessForm.company_id, true);
           this.setting.loading = false;
         })
         .catch(err => {

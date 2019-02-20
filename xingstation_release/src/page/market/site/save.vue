@@ -873,13 +873,16 @@ export default {
       }
       return isLt2M;
     },
-    companyHandle(val) {
+    companyHandle(val, noClear) {
       let args = {
         company_id: val
       };
-      this.siteForm.customer.name = null
-      this.siteForm.customer.phone = null
-      this.siteForm.customer.password = null
+      if (!noClear) {
+        this.siteForm.customer.name = null;
+        this.siteForm.customer.phone = null;
+        this.siteForm.customer.password = null;
+      }
+
       this.getSearchCustomer(val);
       getContractReceiptList(this, args)
         .then(res => {
@@ -968,7 +971,7 @@ export default {
             if (res.marketConfig.company) {
               this.siteForm.marketConfig.company_id =
                 res.marketConfig.company.id;
-              this.companyHandle(this.siteForm.marketConfig.company_id);
+              this.companyHandle(this.siteForm.marketConfig.company_id, true);
             }
             if (res.marketConfig.bdUser) {
               this.siteForm.marketConfig.bd_user_id =
