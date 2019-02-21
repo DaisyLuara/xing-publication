@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Team\V1\Api;
 
+use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Http\Controllers\Admin\Project\V1\Models\Project;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
@@ -123,7 +124,7 @@ class TeamProjectController extends Controller
         $member = $request->member ?? [];
 
         $this->checkParams($request);
-        $params = $this->dealParams($params, 'update');
+        $params = $this->dealParams($params, 'update', $teamProject->id);
 
         $teamProject->update($params);
 
@@ -134,11 +135,13 @@ class TeamProjectController extends Controller
 
     /**
      * 处理参数
+     *
      * @param $params
      * @param null $type
+     * @param int $team_project_id
      * @return mixed
      */
-    public function dealParams($params, $type = null)
+    public function dealParams($params, $type = null, $team_project_id = 0)
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
@@ -150,6 +153,23 @@ class TeamProjectController extends Controller
 
         if ($params['individual_attribute'] == 0) {
             $params['contract_id'] = null;
+        } else {
+            //测试所选的合同的节目数量是否已达到上线
+            $contract = Contract::query()->find($params['contract_id']);
+
+            //查询合同关联的定制普通节目数与特别节目数是否达上线
+            $team_projects_num = TeamProject::query()->where('contract_id', $contract->id)
+                ->where('id','!=',$team_project_id)
+                ->whereIn('individual_attribute', [1, 2])
+                ->groupBy('individual_attribute')
+                ->selectRaw('individual_attribute,count(*) as num')
+                ->pluck('num', 'individual_attribute')->toArray();
+
+            if ($params['individual_attribute'] == 1 && ($team_projects_num[1] ?? 0) >= $contract->special_num) {
+                abort("422", "该合同的定制特别节目数量已达上线" . $contract->special_num . "个");
+            } else if ($params['individual_attribute'] == 2 && ($team_projects_num[2] ?? 0) >= $contract->common_num) {
+                abort("422", "该合同的定制通用节目数量已达上线" . $contract->common_num . "个");
+            }
         }
 
         if ($type == 'create') {

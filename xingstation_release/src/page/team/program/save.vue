@@ -111,8 +111,31 @@
           <el-col :span="12">
             <el-form-item label="定制属性" prop="individual_attribute">
               <el-radio-group v-model="programForm.individual_attribute" @change="handleCustom">
-                <el-radio :label="1">定制</el-radio>
-                <el-radio :label="0">不定制</el-radio>
+                <el-radio :label="0">非定制节目
+                  <el-tooltip class="item" effect="dark" content="无合同的节目" placement="bottom">
+                    <i class="el-icon-info"/>
+                  </el-tooltip>
+                </el-radio>
+                <el-radio :label="1">定制特别节目
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    content="有合同，且为对方特别定制的节目"
+                    placement="bottom"
+                  >
+                    <i class="el-icon-info"/>
+                  </el-tooltip>
+                </el-radio>
+                <el-radio :label="2">定制通用节目
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    content="有合同，但并非为对方特别定制的节目"
+                    placement="bottom"
+                  >
+                    <i class="el-icon-info"/>
+                  </el-tooltip>
+                </el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -192,7 +215,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <h2 class="title">节目制造团队</h2>
+        <h2 class="title">节目智造团队</h2>
         <el-row>
           <el-col :span="12">
             <el-form-item label="节目创意" prop="creative">
@@ -758,6 +781,8 @@ export default {
       copyrightFlag: false,
       type: "",
       userList: [],
+      oldIndividualAttribute: 0,
+      oldContractId: "",
       rate: {
         tester_quality: null,
         operation_quality: null,
@@ -891,9 +916,59 @@ export default {
         }
       });
       this.programForm.money = contractChoose.amount;
+      let true_special_num = contractChoose.true_special_num;
+      let special_num = contractChoose.special_num;
+      let true_common_num = contractChoose.true_common_num;
+      let common_num = contractChoose.common_num;
+      if (this.programID) {
+        if (
+          this.programForm.individual_attribute !== this.oldIndividualAttribute ||
+          this.programForm.contract_id !== this.oldContractId
+        ) {
+          if (
+            this.programForm.individual_attribute === 1 &&
+            true_special_num + 1 > special_num
+          ) {
+            this.$message({
+              type: 'warning',
+              message: `该合同的定制特别节目数量已经达到饱和上线${special_num}`
+            });
+          }
+
+          if (
+            this.programForm.individual_attribute === 2 &&
+            true_common_num + 1 > common_num
+          ) {
+            this.$message({
+              type: 'warning',
+              message: `该合同的定制普通节目数量已经达到饱和上线${common_num}`
+            });
+          }
+        }
+      } else {
+        if (
+          this.programForm.individual_attribute === 1 &&
+          true_special_num + 1 > special_num
+        ) {
+          this.$message({
+            type: 'warning',
+            message: `该合同的定制特别节目数量已经达到饱和上线${special_num}`
+          });
+        }
+
+        if (
+          this.programForm.individual_attribute === 2 &&
+          true_common_num + 1 > common_num
+        ) {
+          this.$message({
+            type: 'warning',
+            message: `该合同的定制普通节目数量已经达到饱和上线${common_num}`
+          });
+        }
+      }
     },
     handleCustom(val) {
-      if (val === 1) {
+      if (val === 1 || val === 2) {
         this.contractDisable = false;
       } else {
         this.programForm.contract_id = "";
@@ -1028,6 +1103,7 @@ export default {
           this.programForm.individual_attribute = res.individual_attribute;
           this.programForm.copyright_project_id = res.copyright_project_id;
           this.programForm.copyright_attribute = res.copyright_attribute;
+          this.oldIndividualAttribute = res.individual_attribute;
           if (res.copyright_attribute === 0) {
             this.copyrightFlag = false;
           } else {
@@ -1036,11 +1112,18 @@ export default {
           if (res.copyright_project_id) {
             this.getSearchCopyrightProject(res.copyright_project_name);
           }
-          if (res.individual_attribute === 1) {
+          if (
+            res.individual_attribute === 1 ||
+            res.individual_attribute === 2
+          ) {
             this.programForm.contract_id = res.contract_id;
+            this.oldContractId = res.contract_id;
             this.programForm.money = res.contract.amount;
           }
-          this.contractDisable = res.individual_attribute === 1 ? false : true;
+          this.contractDisable =
+            res.individual_attribute === 1 || res.individual_attribute === 2
+              ? false
+              : true;
           this.h5Rate =
             res.h5_attribute === 2 ? this.rate.h5_2 : this.rate.h5_1;
           this.programForm.project_attribute = res.project_attribute;
@@ -1435,12 +1518,16 @@ export default {
           if (this.programForm.animation_hidol.length > 0) {
             member.animation_hidol = this.programForm.animation_hidol;
           }
-          if (this.programForm.individual_attribute === 1) {
+          if (
+            this.programForm.individual_attribute === 1 ||
+            this.programForm.individual_attribute === 2
+          ) {
             if (this.programForm.contract_id === "") {
               this.$message({
                 type: "warning",
                 message: "为定制的时候合同编号，不能为空"
               });
+              this.setting.loading = false;
               return;
             } else {
               args.contract_id = this.programForm.contract_id;

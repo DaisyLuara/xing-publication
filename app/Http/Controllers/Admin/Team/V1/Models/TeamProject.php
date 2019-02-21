@@ -63,8 +63,11 @@ class TeamProject extends Model
         'interaction_linkage' => '联动引擎属性'
     ];
 
-
-
+    public static  $individualAttributeMapping = [
+        0 => '非定制节目',
+        1 => '定制特别节目',
+        2 => '定制通用节目',
+    ];
 
     public function contract()
     {
