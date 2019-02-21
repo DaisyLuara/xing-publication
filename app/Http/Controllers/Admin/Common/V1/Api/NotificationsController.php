@@ -36,7 +36,7 @@ class NotificationsController extends Controller
     {
         $ids = $request->ids;
         foreach ($ids as $id) {
-            DatabaseNotification::find($id)->delete();
+            DatabaseNotification::where('id', $id)->delete();
         }
     }
 }
