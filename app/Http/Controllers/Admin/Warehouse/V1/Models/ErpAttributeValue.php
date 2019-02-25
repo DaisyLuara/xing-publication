@@ -5,9 +5,8 @@ namespace App\Http\Controllers\Admin\Warehouse\V1\Models;
 use App\Models\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class AttributeValue extends Model
+class ErpAttributeValue extends Model
 {
-    protected $table = 'erp_attribute_values';
     use SoftDeletes;
 
     public $fillable = [
@@ -17,6 +16,6 @@ class AttributeValue extends Model
 
     public function attribute()
     {
-        return $this->belongsTo(Attribute::class, 'attribute_id', 'id');
+        return $this->belongsTo(ErpAttribute::class, 'attribute_id', 'id');
     }
 }

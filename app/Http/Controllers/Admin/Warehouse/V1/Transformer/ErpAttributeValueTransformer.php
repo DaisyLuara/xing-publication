@@ -9,12 +9,12 @@
 namespace App\Http\Controllers\Admin\Warehouse\V1\Transformer;
 
 
-use App\Http\Controllers\Admin\Warehouse\V1\Models\AttributeValue;
+use App\Http\Controllers\Admin\Warehouse\V1\Models\ErpAttributeValue;
 use League\Fractal\TransformerAbstract;
 
-class AttributeValueTransformer extends TransformerAbstract
+class ErpAttributeValueTransformer extends TransformerAbstract
 {
-    public function transform(AttributeValue $value)
+    public function transform(ErpAttributeValue $value)
     {
         return [
             'id' => $value->id,
