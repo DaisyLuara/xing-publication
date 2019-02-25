@@ -72,7 +72,7 @@ class ContractTransformer extends TransformerAbstract
             'type' => $this->typeMapping[$contract->type],
             'kind' => $this->kindMapping[$contract->kind],
             'serve_target' => $contract->serve_target == null ? null : $this->targetMapping[$contract->serve_target],
-            'recharge' => $contract->recharge == null ? null : $this->chargeMapping[$contract->recharge],
+            'recharge' => $contract->recharge === null ? null : $this->chargeMapping[$contract->recharge],
             'special_num' => $contract->special_num,
             'true_special_num' => $team_projects_num[1] ?? 0,
             'common_num' => $contract->common_num,
