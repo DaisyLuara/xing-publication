@@ -510,6 +510,7 @@ export default {
         this.writeOffSidRules = null;
         this.writeOffSiteShow = false;
         this.writeOffMarketShow = false;
+        this.couponForm.write_off_sid = [];
         this.multipleNum = 0;
       } else if (val === 2) {
         this.writeOffMarketShow = false;
