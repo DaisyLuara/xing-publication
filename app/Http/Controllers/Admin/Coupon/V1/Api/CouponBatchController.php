@@ -59,13 +59,21 @@ class CouponBatchController extends Controller
 
             switch ($request->get('status')) {
                 case 1:
-                    $query->where('is_fixed_date', 1)->where('end_date', '>', $now)->where('start_date', '<', $now);
+                    $query->where(function ($query) use($now) {
+                        $query->where('is_fixed_date', 1)->where('end_date', '>', $now)->where('start_date', '<', $now);
+                    })->orWhere(function ($query) {
+                        $query->where('is_fixed_date', 0)->where('is_active', 1);
+                    });
                     break;
                 case 2:
                     $query->where('is_fixed_date', 1)->where('start_date', '>', $now);
                     break;
                 case 3:
-                    $query->where('is_fixed_date', 1)->where('end_date', '<', $now);
+                    $query->where(function ($query) use ($now) {
+                        $query->where('is_fixed_date', 1)->where('end_date', '<', $now);
+                    })->orWhere(function ($query) {
+                        $query->where('is_fixed_date', 0)->where('is_active', 0);
+                    });
                     break;
                 default:
                     return null;
