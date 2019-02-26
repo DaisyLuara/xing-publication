@@ -461,6 +461,7 @@ export default {
       this.getStoresList(val);
     },
     writeOffMarketHandle() {
+      this.couponForm.write_off_mid = [];
       if (this.couponForm.scene_type === 1) {
         this.getStoresList(this.couponForm.write_off_mid, true);
       }
@@ -510,7 +511,6 @@ export default {
         this.writeOffSidRules = null;
         this.writeOffSiteShow = false;
         this.writeOffMarketShow = false;
-        this.couponForm.write_off_sid = [];
         this.multipleNum = 0;
       } else if (val === 2) {
         this.writeOffMarketShow = false;
