@@ -92,7 +92,7 @@
                   <span>{{ scope.row.name }}</span>
                 </el-form-item>
                 <el-form-item label="公司名称:">
-                  <span>{{ scope.row.company_name }}</span>
+                  <span>{{ scope.row.company.name }}</span>
                 </el-form-item>
                 <el-form-item label="所属场地:">
                   <span>{{ scope.row.market ? scope.row.market.name:'无' }}</span>

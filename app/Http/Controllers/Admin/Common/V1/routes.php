@@ -95,10 +95,7 @@ $api->version('v1', [
             $api->get('erp_sku/query','QueryController@erpSkuQuery');//sku下拉列表
             $api->get('erp_location/query','QueryController@erpLocationQuery');//库位下拉列表
             $api->get('stores/query', 'QueryController@storeQuery');//商户搜索
-            $api->get('company/markets/query', 'QueryController@marketConfigQuery');//商户搜索
-            $api->get('erp_supplier/query', 'QueryController@erpSupplierQuery');//供应商搜索
-            $api->get('erp_sku/query', 'QueryController@erpSkuQuery');//sku下拉列表
-            $api->get('erp_location/query', 'QueryController@erpLocationQuery');//库位下拉列表
+            $api->get('company/markets/query', 'QueryController@marketConfigQuery');//公司搜索
             $api->get('playing_types/query', 'QueryController@playingTypeQuery');//玩法配置列表
             $api->get('cost_kind/query', 'QueryController@costKindQuery');
             $api->get('customers/query', 'QueryController@adminCustomersQuery');//所有联系人查询
