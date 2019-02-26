@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin\Common\V2\Api;
 use App\Http\Controllers\Admin\Common\V1\Models\FileUpload;
 use App\Http\Controllers\Admin\Common\V1\Transformer\CouponTransformer;
 use App\Http\Controllers\Admin\Common\V2\Request\UserCouponRequest;
-use App\Http\Controllers\Admin\Common\V1\Request\CouponRequest;
+use App\Http\Controllers\Admin\Common\V2\Request\CouponRequest;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Coupon\V1\Models\UserCouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
@@ -15,9 +15,10 @@ use App\Http\Controllers\Admin\User\V1\Models\ArMemberSession;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
 use App\Http\Controllers\Controller;
+use Overtrue\EasySms\EasySms;
+use Illuminate\Http\Request;
 use App\Models\User;
 use function foo\func;
-use Overtrue\EasySms\EasySms;
 use Carbon\Carbon;
 use DB;
 use Log;
@@ -216,7 +217,7 @@ class CouponController extends Controller
      * @param CouponRequest $request
      * @return mixed
      */
-    public function generateCouponBatch(CouponRequest $request)
+    public function generateCouponBatch(Request $request)
     {
         $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
 
