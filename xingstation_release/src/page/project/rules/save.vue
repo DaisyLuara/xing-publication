@@ -461,7 +461,7 @@ export default {
       this.getStoresList(val);
     },
     writeOffMarketHandle() {
-      this.couponForm.write_off_mid = [];
+      this.couponForm.write_off_sid = [];
       if (this.couponForm.scene_type === 1) {
         this.getStoresList(this.couponForm.write_off_mid, true);
       }
