@@ -33,7 +33,7 @@ class CouponController extends Controller
      * @param EasySms $easySms
      * @return \Illuminate\Http\JsonResponse
      */
-    public function generateCoupon(CouponRequest $request, $multiProjects = false)
+    public function generateCoupon(CouponRequest $request, CouponBatch $couponBatch, $multiProjects = false)
     {
         $mobile = $request->has('mobile') ? $request->get('mobile') : '';
 
@@ -221,6 +221,8 @@ class CouponController extends Controller
     {
         $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
 
+        abort_if($member->userCouponBatches->isNotEmpty(), '500', '请勿重复抽奖');
+
         //用户成就校验
         foreach ([11,12,13] as $id) {
             $arMemberHonor = ArMemberHonor::query()->where('uid', $member->uid)->where('xid', $id)->first();
@@ -366,9 +368,9 @@ class CouponController extends Controller
      * @param CouponRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function generateMultiProjectsCoupon(CouponRequest $request)
+    public function generateMultiProjectsCoupon(CouponRequest $request, CouponBatch $couponBatch)
     {
-       return $this->generateCoupon($request, $multiProjects = true);
+        return $this->generateCoupon($request, $couponBatch, $multiProjects = true);
     }
 
 
