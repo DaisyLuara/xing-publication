@@ -205,6 +205,11 @@ class CouponBatchController extends Controller
             if (!empty($request->write_off_sid)) {
                 foreach ($request->write_off_sid as $store_id) {
                     $store = Store::query()->findOrFail($store_id);
+
+                    if ($store->market->marketid != $request->write_off_mid) {
+                        abort('500', '商户[' . $store->name . ']不属于该场地，请检查');
+                    }
+
                     abort_if(!$store->write_off_customer_id, 500, '商户[' . $store->name . ']未指定核销人员');
                     $customers[] = $store->write_off_customer_id;
                 }
