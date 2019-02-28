@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin\Warehouse\V1\Api;
 
-use App\Http\Controllers\Admin\Warehouse\V1\Models\WarehouseChange;
-use App\Http\Controllers\Admin\Warehouse\V1\Models\LocationProduct;
-use App\Http\Controllers\Admin\Warehouse\V1\Models\ProductChuchang;
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
+use App\Http\Controllers\Admin\Warehouse\V1\Models\LocationProduct;
+use App\Http\Controllers\Admin\Warehouse\V1\Models\ProductFactory;
+use App\Http\Controllers\Admin\Warehouse\V1\Models\WarehouseChange;
 use App\Http\Controllers\Admin\Warehouse\V1\Transformer\WarehouseChangeTransformer;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -20,9 +20,9 @@ class WarehouseChangeController extends Controller
     }
 
     //调拨记录列表,传参为product_id
-    public function list(Request $request, WarehouseChange $warehousechange)
+    public function index(Request $request, WarehouseChange $warehouseChange)
     {
-        $query = $warehousechange->query();
+        $query = $warehouseChange->query();
         //根据sku查询
         if ($request->id) {
             $query->where('product_id', $request->id);
@@ -38,12 +38,12 @@ class WarehouseChangeController extends Controller
             $query->where('in_location', $request->in_location);
         }
 
-        $warehousechange = $query->paginate(10);
-        return $this->response()->paginator($warehousechange, new WarehouseChangeTransformer());
+        $warehouseChange = $query->orderBy('created_at', 'desc')->paginate(10);
+        return $this->response()->paginator($warehouseChange, new WarehouseChangeTransformer());
     }
 
     //硬件出厂，批量增加调拨记录
-    public function chuchang(Request $request, WarehouseChange $warehousechange)
+    public function factory(Request $request, WarehouseChange $warehousechange)
     {
         $param = $request->all();
 
@@ -59,7 +59,7 @@ class WarehouseChangeController extends Controller
                 $this->checkRecord(2, $item['out_location'], $item['product_id']);
                 //出库
                 if ($item['out_location'] == 1) {
-                    $this->supplierLocationStock($item['product_id'],$item['num']);
+                    $this->supplierLocationStock($item['product_id'], $item['num']);
                 } else {
                     $this->checkoutLocationStock($item['out_location'], $item['product_id'], $item['num']);
                 }
@@ -70,7 +70,7 @@ class WarehouseChangeController extends Controller
             //合同状态改为已出厂
             Contract::find($contract_id)->update(['product_status' => 2]);
             //记录出厂详情
-            ProductChuchang::Create(['contract_id' => $contract_id, 'product_content' => \GuzzleHttp\json_encode($content)]);
+            ProductFactory::Create(['contract_id' => $contract_id, 'product_content' => \GuzzleHttp\json_encode($content)]);
         }
 
         $hardwarechange = $warehousechange->query()->paginate(10);
@@ -78,7 +78,7 @@ class WarehouseChangeController extends Controller
     }
 
     //新增调拨记录
-    public function create(Request $request, WarehouseChange $warehousechange)
+    public function store(Request $request, WarehouseChange $warehouseChange)
     {
 
         //$request->num 调整数量;$request->in_location 调入库位，增加;$request->out_location 调出库位，减少
@@ -99,8 +99,8 @@ class WarehouseChangeController extends Controller
         //入库
         $this->inLocation($inLocation, $productId, $num);
         //记录库存变化
-        $warehousechange->fill($request->all())->saveOrFail();
-        return $this->response->item($warehousechange, new WarehouseChangeTransformer());
+        $warehouseChange->fill($request->all())->saveOrFail();
+        return $this->response->item($warehouseChange, new WarehouseChangeTransformer());
     }
 
     //出库，库存不足报500
