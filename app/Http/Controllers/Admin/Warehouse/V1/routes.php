@@ -38,7 +38,7 @@ $api->version('v1', [
 
             //合同硬件出厂
             $api->get('contract_product', 'ProductFactoryController@index');
-            $api->post('erp_warehouse_change/factory', ['middleware' => ['permission:contract.list.leaveFactory_create'], 'uses' => 'WarehouseChangeController@factory']);
+            $api->post('erp_warehouse_change/factory', ['middleware' => ['permission:contract.list.factory'], 'uses' => 'WarehouseChangeController@factory']);
 
             //库存明细
             $api->get('location_product', ['middleware' => ['permission:storage.list.read'], 'uses' => 'LocationProductController@index']);
