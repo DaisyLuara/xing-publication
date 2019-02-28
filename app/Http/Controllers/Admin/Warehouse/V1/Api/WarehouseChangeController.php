@@ -20,9 +20,9 @@ class WarehouseChangeController extends Controller
     }
 
     //调拨记录列表,传参为product_id
-    public function index(Request $request, WarehouseChange $warehousechange)
+    public function index(Request $request, WarehouseChange $warehouseChange)
     {
-        $query = $warehousechange->query();
+        $query = $warehouseChange->query();
         //根据sku查询
         if ($request->id) {
             $query->where('product_id', $request->id);
@@ -38,8 +38,8 @@ class WarehouseChangeController extends Controller
             $query->where('in_location', $request->in_location);
         }
 
-        $warehousechange = $query->paginate(10);
-        return $this->response()->paginator($warehousechange, new WarehouseChangeTransformer());
+        $warehouseChange = $query->orderBy('created_at', 'desc')->paginate(10);
+        return $this->response()->paginator($warehouseChange, new WarehouseChangeTransformer());
     }
 
     //硬件出厂，批量增加调拨记录
