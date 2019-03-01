@@ -52,9 +52,23 @@ const getActivitiesList = (context, args) => {
       })
   })
 }
+
+const deleteNotifications = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .delete(HOST + NOTICE_API, {params:params})
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
 export {
   getNoticeList,
   readNotifications,
   notificationStats,
-  getActivitiesList
+  getActivitiesList,
+  deleteNotifications
 }
