@@ -47,7 +47,8 @@ import {
   Table,
   TableColumn,
   Pagination,
-  Button
+  Button,
+  MessageBox
 } from "element-ui";
 import {
   getNoticeList,
@@ -110,7 +111,11 @@ export default {
   },
   methods: {
     deleteNotifications(users) {
-      let ids = [users.id];
+      let ids = [];
+      ids.push(user.id);
+      let args = {
+        ids: ids
+      };
       MessageBox.confirm("确认删除选中信息?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -119,7 +124,7 @@ export default {
         .then(() => {
           this.setting.loadingText = "删除中";
           this.setting.loading = true;
-          deleteNotification(this, id)
+          deleteNotifications(this, args)
             .then(response => {
               this.setting.loading = false;
               this.$message({
