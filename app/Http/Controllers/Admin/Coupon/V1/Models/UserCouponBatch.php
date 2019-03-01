@@ -18,6 +18,7 @@ class UserCouponBatch extends Model
     protected $fillable = [
         'wx_user_id',
         'tao_user_id',
+        'member_uid',
         'coupon_batch_id',
     ];
 

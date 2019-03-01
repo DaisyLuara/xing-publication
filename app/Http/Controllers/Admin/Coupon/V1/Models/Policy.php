@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Admin\Coupon\V1\Models;
 
 
+use App\Http\Controllers\Admin\Project\V1\Models\Project;
 use App\Models\Model;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 

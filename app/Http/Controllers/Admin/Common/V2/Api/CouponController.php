@@ -5,13 +5,20 @@ namespace App\Http\Controllers\Admin\Common\V2\Api;
 use App\Http\Controllers\Admin\Common\V1\Models\FileUpload;
 use App\Http\Controllers\Admin\Common\V1\Transformer\CouponTransformer;
 use App\Http\Controllers\Admin\Common\V2\Request\UserCouponRequest;
-use App\Http\Controllers\Admin\Common\V1\Request\CouponRequest;
+use App\Http\Controllers\Admin\Common\V2\Request\CouponRequest;
+use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
+use App\Http\Controllers\Admin\Coupon\V1\Models\UserCouponBatch;
+use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
+use App\Http\Controllers\Admin\Project\V1\Models\Project;
+use App\Http\Controllers\Admin\User\V1\Models\ArMemberHonor;
 use App\Http\Controllers\Admin\User\V1\Models\ArMemberSession;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
 use App\Http\Controllers\Controller;
 use Overtrue\EasySms\EasySms;
-use App\Models\WeChatUser;
+use Illuminate\Http\Request;
+use App\Models\User;
+use function foo\func;
 use Carbon\Carbon;
 use DB;
 use Log;
@@ -26,7 +33,7 @@ class CouponController extends Controller
      * @param EasySms $easySms
      * @return \Illuminate\Http\JsonResponse
      */
-    public function generateCoupon(CouponRequest $request, EasySms $easySms)
+    public function generateCoupon(CouponRequest $request, CouponBatch $couponBatch, $multiProjects = false)
     {
         $mobile = $request->has('mobile') ? $request->get('mobile') : '';
 
@@ -34,11 +41,18 @@ class CouponController extends Controller
         $memberUID = $member->uid;
 
         //coupon_batch_id参数校验
-        $fileUpload = FileUpload::query()->findOrFail($request->qiniu_id);
-        parse_str($fileUpload->parms, $parms_arr);
-        abort_if(!isset($parms_arr['coupon_batch_id']), 404, 'coupon batch not found!');
+        if ($multiProjects) {
+            //多节目
+            $maxGetCheck = true;
+            $couponBatch = $member->userCouponBatches()->firstOrFail();
 
-        $couponBatch = CouponBatch::query()->where('is_active', 1)->findOrFail($parms_arr['coupon_batch_id']);
+        } else {
+            $fileUpload = FileUpload::query()->findOrFail($request->qiniu_id);
+            parse_str($fileUpload->parms, $parms_arr);
+            abort_if(!isset($parms_arr['coupon_batch_id']), 404, 'coupon batch not found!');
+            $couponBatch = CouponBatch::query()->where('is_active', 1)->findOrFail($parms_arr['coupon_batch_id']);
+        }
+
         $couponBatchId = $couponBatch->id;
 
         //动态库存校验
@@ -78,10 +92,13 @@ class CouponController extends Controller
 
             } else if ($request->has('qiniu_id')) {
                 //活动期间 每人每天领取次数
-                $coupons = Coupon::query()->where('member_uid', $memberUID)
-                    ->where('coupon_batch_id', $couponBatchId)
-                    ->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
-                    ->get();
+                $query = Coupon::query();
+
+                if (!isset($maxGetCheck)) {
+                    $query->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()]);
+                }
+
+                $coupons = $query->where('member_uid', $memberUID)->where('coupon_batch_id', $couponBatchId)->get();
             }
 
             if ($coupons->count() >= $couponBatch->people_max_get) {
@@ -132,14 +149,10 @@ class CouponController extends Controller
 
             DB::commit();
 
-            if ($mobile) {
-                $this->sendCouponMsg($mobile, $couponBatch, $easySms);
-            }
         } catch (\Exception $e) {
             DB::rollback();//事务回滚
             abort(500, $e->getMessage());
         }
-    
 
         return $this->response->item($coupon, new CouponTransformer());
     }
@@ -158,9 +171,15 @@ class CouponController extends Controller
             $query->whereBetween('created_at', [$request->get('start_date'), $request->get('end_date')]);
         }
 
-        $coupon = $query->where('member_uid', $member->uid)
-            ->where('coupon_batch_id', $request->get('coupon_batch_id'))
-            ->first();
+        if ($request->has('coupon_batch_id')) {
+            $query->where('coupon_batch_id', $request->get('coupon_batch_id'));
+        }
+
+        if ($request->has('belong')) {
+            $query->where('belong', $request->get('belong'));
+        }
+
+        $coupon = $query->where('member_uid', $member->uid)->first();
 
         abort_if(!$coupon, 204);
 
@@ -190,6 +209,107 @@ class CouponController extends Controller
         ];
 
         return $mall_coo->send($sUrl, $data);
+
+    }
+
+    /**
+     * 根据策略 生成优惠券规则
+     * @param CouponRequest $request
+     * @return mixed
+     */
+    public function generateCouponBatch(Request $request)
+    {
+        $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
+
+        abort_if($member->userCouponBatches->isNotEmpty(), '500', '请勿重复抽奖');
+
+        //用户成就校验
+        foreach ([11,12,13] as $id) {
+            $arMemberHonor = ArMemberHonor::query()->where('uid', $member->uid)->where('xid', $id)->first();
+            abort_if(!$arMemberHonor, 500, '请集齐勋章后再抽奖!');
+        }
+
+        $project = Project::query()->where('versionname', '=', $request->belong)->firstOrFail();
+        $policy = Policy::query()->findOrFail($project->policy_id);
+
+        $query = DB::table('coupon_batch_policy');
+        if ($request->has('age')) {
+            $query->where('max_age', '>=', $request->age)->where('min_age', '<=', $request->age);
+        }
+
+        if ($request->has('score')) {
+            $query->where('max_score', '>=', $request->score)->where('min_score', '<=', $request->score);
+        }
+
+        if ($request->has('gender')) {
+            $query->where('gender', '=', $request->gender);
+        }
+
+        $couponBatchPolicies = $query->join('coupon_batches', 'coupon_batch_id', '=', 'coupon_batches.id')
+            ->where('policy_id', '=', $policy->id)
+            ->where('coupon_batches.is_active', 1)
+            ->get();
+
+        if ($couponBatchPolicies->isEmpty()) {
+            abort(500, '无可用优惠券');
+        }
+
+        $couponBatchPolicies = $couponBatchPolicies->toArray();
+
+        /**
+         * @todo 优化查询逻辑
+         */
+        foreach ($couponBatchPolicies as $key => $couponBatchPolicy) {
+
+            //设置了库存上限的券
+            if (!$couponBatchPolicy->pmg_status && !$couponBatchPolicy->dmg_status) {
+
+                //剩余库存为0 不出券
+                Log::info('coupon_batch_id:' . $couponBatchPolicy->id . ':current_stock:' . $couponBatchPolicy->stock, []);
+                if ($couponBatchPolicy->stock <= 0) {
+                    unset($couponBatchPolicies[$key]);
+                    continue;
+                }
+
+                //动态库存=剩余库存-未使用
+                if ($couponBatchPolicy->dynamic_stock_status) {
+                    $count = Coupon::query()->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
+                        ->whereIn('status', [0, 3])
+                        ->where('coupon_batch_id', $couponBatchPolicy->id)->count('id');
+                    $dynamicStock = $couponBatchPolicy->stock - $count;
+                    Log::info('coupon_batch_id:' . $couponBatchPolicy->id . ':dynamic_stock:' . $dynamicStock, []);
+                    if ($dynamicStock <= 0) {
+                        unset($couponBatchPolicies[$key]);
+                        continue;
+                    }
+
+                }
+
+                //当天库存为0 不出券
+                $now = Carbon::now()->toDateString();
+                $coupon = Coupon::query()->where('coupon_batch_id', $couponBatchPolicy->id)
+                    ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
+                    ->selectRaw("count(coupon_batch_id) as day_receive")->first();
+
+                Log::info('coupon_batch_id:' . $couponBatchPolicy->id . ':daily_stock:' . $coupon->day_receive, []);
+                if ($coupon->day_receive >= $couponBatchPolicy->day_max_get) {
+                    unset($couponBatchPolicies[$key]);
+                }
+            }
+        }
+
+        if (collect($couponBatchPolicies)->sum('rate') == 0) {
+            abort(500, '无可用优惠券');
+        }
+
+        $targetCouponBatch = getRand($couponBatchPolicies);
+
+        $couponBatch = CouponBatch::findOrFail($targetCouponBatch->coupon_batch_id);
+        UserCouponBatch::updateOrCreate(
+            ['member_uid' => $member->uid], ['coupon_batch_id' => $couponBatch->id]
+        );
+
+        return $this->response->item($couponBatch, new CouponBatchTransformer());
 
     }
 
@@ -242,5 +362,16 @@ class CouponController extends Controller
         }
 
     }
+
+    /**
+     * 多节目联合发放
+     * @param CouponRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function generateMultiProjectsCoupon(CouponRequest $request, CouponBatch $couponBatch)
+    {
+        return $this->generateCoupon($request, $couponBatch, $multiProjects = true);
+    }
+
 
 }
