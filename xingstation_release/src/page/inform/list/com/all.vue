@@ -141,7 +141,6 @@ export default {
       let args = {
         ids: ids
       };
-      console.log(args)
       if (ids.length < 1) {
         this.$message.error("请先选择一个要删除的用户");
       } else {
@@ -161,6 +160,7 @@ export default {
                   message: "删除成功！"
                 });
                 this.pagination.currentPage = 1;
+                this.notificationStats()
                 this.getNoticeList();
               })
               .catch(error => {
@@ -229,7 +229,6 @@ export default {
 <style lang="less" scoped>
 .page-list-template {
   .actions-wrap {
-    text-align: right;
     margin: 10px auto;
   }
 }
