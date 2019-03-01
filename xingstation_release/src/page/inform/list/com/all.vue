@@ -5,10 +5,17 @@
     class="page-list-template tab"
   >
     <div class="actions-wrap">
+      <el-button size="small" type="danger" @click="deleteNotifications(selectedNotices)">删除</el-button>
       <el-button v-if="unreadCount !== 0" size="small" type="info" @click="readNotifications">全部读取</el-button>
     </div>
     <div class="table-area">
-      <el-table :data="noticeList">
+      <el-table
+        :data="noticeList"
+        highlight-current-row
+        @selection-change="handleSelect"
+        ref="notificationTable"
+      >
+        <el-table-column type="selection" width="55" v-if="setting.isOpenSelectAll"></el-table-column>
         <el-table-column prop="id" label="ID">
           <template slot-scope="scope">{{ scope.row.data.id }}</template>
         </el-table-column>
@@ -81,10 +88,12 @@ export default {
         currentPage: 1
       },
       setting: {
+        isOpenSelectAll: true,
         loading: true,
         loadingText: "拼命加载中"
       },
       noticeList: [],
+      selectedNotices: [],
       loading: false
     };
   },
@@ -110,42 +119,62 @@ export default {
     this.unreadCount = this.$store.state.notificationCount.noticeCount;
   },
   methods: {
-    deleteNotifications(users) {
+    openSelectAll() {
+      this.setting.isOpenSelectAll = !this.setting.isOpenSelectAll;
+      // 清除多选数组
+      if (!this.setting.isOpenSelectAll) {
+        this.$refs.notificationTable.clearSelection();
+      }
+    },
+    handleSelect(selection) {
+      this.selectedNotices = selection;
+    },
+    deleteNotifications(data) {
       let ids = [];
-      ids.push(user.id);
+      if (data.id) {
+        ids.push(data.id);
+      } else {
+        for (let i = 0, sL = data.length; i < sL; i++) {
+          ids.push(data[i].id);
+        }
+      }
       let args = {
         ids: ids
       };
       console.log(args)
-      MessageBox.confirm("确认删除选中信息?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          this.setting.loadingText = "删除中";
-          this.setting.loading = true;
-          deleteNotifications(this, args)
-            .then(response => {
-              this.setting.loading = false;
-              this.$message({
-                type: "success",
-                message: "删除成功！"
-              });
-              this.pagination.currentPage = 1;
-              this.getNoticeList();
-            })
-            .catch(error => {
-              this.$message({
-                type: "warning",
-                message: error.response.data.message
-              });
-              this.setting.loading = false;
-            });
+      if (ids.length < 1) {
+        this.$message.error("请先选择一个要删除的用户");
+      } else {
+        MessageBox.confirm("确认删除选中信息?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
         })
-        .catch(e => {
-          console.log(e);
-        });
+          .then(() => {
+            this.setting.loadingText = "删除中";
+            this.setting.loading = true;
+            deleteNotifications(this, args)
+              .then(response => {
+                this.setting.loading = false;
+                this.$message({
+                  type: "success",
+                  message: "删除成功！"
+                });
+                this.pagination.currentPage = 1;
+                this.getNoticeList();
+              })
+              .catch(error => {
+                this.$message({
+                  type: "warning",
+                  message: error.response.data.message
+                });
+                this.setting.loading = false;
+              });
+          })
+          .catch(e => {
+            console.log(e);
+          });
+      }
     },
     getNoticeList() {
       this.setting.loading = true;
