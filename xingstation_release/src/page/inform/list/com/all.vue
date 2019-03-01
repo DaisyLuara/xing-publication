@@ -153,14 +153,12 @@ export default {
             this.setting.loading = true;
             deleteNotifications(this, args)
               .then(response => {
-                this.setting.loading = false;
+                this.pagination.currentPage = 1;
+                this.notificationStats()
                 this.$message({
                   type: "success",
                   message: "删除成功！"
                 });
-                this.pagination.currentPage = 1;
-                this.notificationStats()
-                // this.getNoticeList();
               })
               .catch(error => {
                 this.$message({
