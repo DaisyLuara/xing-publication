@@ -116,7 +116,6 @@ export default {
   },
   created() {
     this.getNoticeList();
-    this.unreadCount = this.$store.state.notificationCount.noticeCount;
   },
   methods: {
     openSelectAll() {
@@ -161,7 +160,7 @@ export default {
                 });
                 this.pagination.currentPage = 1;
                 this.notificationStats()
-                this.getNoticeList();
+                // this.getNoticeList();
               })
               .catch(error => {
                 this.$message({
@@ -188,6 +187,7 @@ export default {
           this.noticeList = response.data;
           this.pagination.total = response.meta.pagination.total;
           this.setting.loading = false;
+          this.unreadCount = this.$store.state.notificationCount.noticeCount;
         })
         .catch(error => {
           this.setting.loading = false;
@@ -197,6 +197,7 @@ export default {
       notificationStats(this)
         .then(response => {
           this.$store.commit("saveNotificationState", response);
+          this.unreadCount = response.unread_count
           this.getNoticeList();
         })
         .catch(err => {
