@@ -116,6 +116,7 @@ export default {
       let args = {
         ids: ids
       };
+      console.log(args)
       MessageBox.confirm("确认删除选中信息?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
