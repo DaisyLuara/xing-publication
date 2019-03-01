@@ -171,22 +171,36 @@
           label="每人最大获取数"
           prop="people_max_get"
         >
-          <el-input v-model="couponForm.people_max_get" :maxlength="6" class="coupon-form-input"/>
+          <el-input
+            v-model="couponForm.people_max_get"
+            :disabled="peopleMaxStatus"
+            :maxlength="6"
+            class="coupon-form-input"
+          />
         </el-form-item>
         <el-form-item label="是否开启每人无限领取" prop="pmg_status">
-          <el-radio v-model="couponForm.pmg_status" :label="1">开启</el-radio>
-          <el-radio v-model="couponForm.pmg_status" :label="0">关闭</el-radio>
+          <el-radio-group v-model="couponForm.pmg_status" @change="pmgStatusHandle">
+            <el-radio :label="1">开启</el-radio>
+            <el-radio :label="0">关闭</el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item
           :rules="{required: true, message: '每天最大获取数不能为空', trigger: 'submit'}"
           label="每天最大获取数"
           prop="day_max_get"
         >
-          <el-input v-model="couponForm.day_max_get" :maxlength="6" class="coupon-form-input"/>
+          <el-input
+            v-model="couponForm.day_max_get"
+            :disabled="dayMaxStatus"
+            :maxlength="6"
+            class="coupon-form-input"
+          />
         </el-form-item>
         <el-form-item label="是否开启每天无限领取" prop="dmg_status">
-          <el-radio v-model="couponForm.dmg_status" :label="1">开启</el-radio>
-          <el-radio v-model="couponForm.dmg_status" :label="0">关闭</el-radio>
+          <el-radio-group v-model="couponForm.dmg_status" @change="dmgStatusHandle">
+            <el-radio :label="1">开启</el-radio>
+            <el-radio :label="0">关闭</el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="是否固定日期" prop="is_fixed_date">
           <el-radio-group v-model="couponForm.is_fixed_date" @change="fixedDateHandle">
@@ -304,6 +318,8 @@ export default {
       }
     };
     return {
+      peopleMaxStatus: false,
+      dayMaxStatus: false,
       dateShow: false,
       companyList: [],
       setting: {
@@ -428,6 +444,8 @@ export default {
             ) {
               this.disabledWriteStatus = true;
             }
+            this.pmgStatusHandle(this.couponForm.pmg_status);
+            this.dmgStatusHandle(this.couponForm.dmg_status);
             this.setting.loading = false;
           })
           .catch(error => {
@@ -441,6 +459,12 @@ export default {
     });
   },
   methods: {
+    pmgStatusHandle(val) {
+      this.peopleMaxStatus = val === 0 ? false : true;
+    },
+    dmgStatusHandle(val) {
+      this.dayMaxStatus = val === 0 ? false : true;
+    },
     marketChangeHandle() {
       this.couponForm.oid = [];
       this.getPoint();
