@@ -22,7 +22,7 @@
         <el-table-column prop="read_at" label="读取时间"/>
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
-            <el-button size="small" type="danger" @click="deleteInfo(scope.row)">删除</el-button>
+            <el-button size="small" type="danger" @click="deleteNotifications(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
