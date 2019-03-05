@@ -373,6 +373,11 @@ class CouponController extends Controller
     {
         $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
 
+        if ($request->has('qiniu_id')) {
+            $memberCoupons = Coupon::query()->where('qiniu_id', $request->qiniu_id)->where('member_uid', $member->uid)->get();
+            abort_if($memberCoupons->isNotEmpty(), '500', '当前抽奖人数过多,请稍候再试');
+        }
+
         //抽奖次数限制
         $now = Carbon::now()->toDateString();
 
