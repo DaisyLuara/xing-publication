@@ -36,6 +36,7 @@ class ArMemberSession extends Authenticatable implements JWTSubject
     {
         return $this->setConnection('mysql')->belongsToMany(CouponBatch::class, 'user_coupon_batches', 'member_uid', 'coupon_batch_id')
             ->withTimestamps()
+            ->withPivot('belong')
             ->orderByDesc('user_coupon_batches.created_at');
     }
 

@@ -15,8 +15,9 @@ $api->version('v2', [
             $api->post('open/coupons/{couponBatch}', 'CouponController@generateCoupon');//发送优惠券
             $api->post('open/user/coupon', 'CouponController@getUserCoupon');//获取用户优惠券
 
-            $api->post('open/projects/coupons', 'CouponController@generateMultiProjectsCoupon');//多节目发送优惠券
             $api->any('open/coupon/batches', 'CouponController@generateCouponBatch');//按策略获取优惠券规则详情
+            $api->any('open/coupon/batches/limit', 'CouponController@generateLimitCouponBatch');//h5获取有限制条件的优惠券规则详情
+            $api->post('open/projects/coupons', 'CouponController@generateMultiProjectsCoupon');//h5独立发送优惠券
         });
 
     });
