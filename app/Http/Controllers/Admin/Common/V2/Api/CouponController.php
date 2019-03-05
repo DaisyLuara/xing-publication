@@ -224,10 +224,10 @@ class CouponController extends Controller
         abort_if($member->userCouponBatches->isNotEmpty(), '500', '请勿重复抽奖');
 
         //用户成就校验
-//        foreach ([11,12,13] as $id) {
-//            $arMemberHonor = ArMemberHonor::query()->where('uid', $member->uid)->where('xid', $id)->first();
-//            abort_if(!$arMemberHonor, 500, '请集齐勋章后再抽奖!');
-//        }
+        foreach ([11,12,13] as $id) {
+            $arMemberHonor = ArMemberHonor::query()->where('uid', $member->uid)->where('xid', $id)->first();
+            abort_if(!$arMemberHonor, 500, '请集齐勋章后再抽奖!');
+        }
 
         $project = Project::query()->where('versionname', '=', $request->belong)->firstOrFail();
         $policy = Policy::query()->findOrFail($project->policy_id);
