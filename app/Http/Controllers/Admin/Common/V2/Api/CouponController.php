@@ -375,16 +375,20 @@ class CouponController extends Controller
 
         //抽奖次数限制
         $now = Carbon::now()->toDateString();
-        $timesQuery= $member->userCouponBatches()
-            ->wherePivot('belong', $request->belong)
-            ->whereRaw("date_format(user_coupon_batches.created_at,'%Y-%m-%d')='$now'");
+
+        $timesQuery = Coupon::query()->where('belong', $request->belong)
+            ->where('member_uid', $member->uid)
+            ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'");
 
         $prizeQuery = clone $timesQuery;
         $generateTimes = $timesQuery->count();
+        
         abort_if($generateTimes >= 3, '500', '每天限抽3次奖');
 
         //实物奖品数量
-        $prizeNums = $prizeQuery->where('type', 2)->count();
+        $prizeNums = $prizeQuery->whereHas('couponBatch', function ($q) {
+            $q->where('type', 2);
+        })->count();
 
         $project = Project::query()->where('versionname', '=', $request->belong)->firstOrFail();
         $policy = Policy::query()->findOrFail($project->policy_id);
