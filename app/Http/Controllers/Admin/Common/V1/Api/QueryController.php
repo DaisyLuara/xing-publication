@@ -58,6 +58,8 @@ use App\Http\Controllers\Admin\Team\V1\Transformer\TeamRateTransformer;
 use App\Http\Controllers\Admin\User\V1\Models\ArUser;
 use App\Http\Controllers\Admin\User\V1\Transformer\ArUserTransformer;
 use App\Http\Controllers\Admin\User\V1\Transformer\UserTransformer;
+use App\Http\Controllers\Admin\Warehouse\V1\Models\ErpAttribute;
+use App\Http\Controllers\Admin\Warehouse\V1\Transformer\ErpAttributeTransformer;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\User;
@@ -502,7 +504,8 @@ class QueryController extends Controller
 
     public function erpAttributeQuery(Request $request)
     {
-        return DB::table('erp_attributes')->get();
+        $attribute = ErpAttribute::query()->get();
+        return $this->response()->collection($attribute, new ErpAttributeTransformer());
     }
 
     public function erpSupplierQuery(Company $company, Request $request)

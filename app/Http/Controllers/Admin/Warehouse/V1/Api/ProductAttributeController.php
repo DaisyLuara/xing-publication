@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin\Warehouse\V1\Api;
 
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
-use App\Http\Controllers\Admin\Warehouse\V1\Models\Attribute;
+use App\Http\Controllers\Admin\Warehouse\V1\Models\ErpAttribute;
 use App\Http\Controllers\Admin\Warehouse\V1\Models\Product;
 use App\Http\Controllers\Admin\Warehouse\V1\Models\ProductAttribute;
 use App\Http\Controllers\Admin\Warehouse\V1\Request\ProductAttributeRequest;
@@ -43,7 +43,7 @@ class ProductAttributeController extends Controller
             $arr = [];
             foreach ($product as $value) {
                 $arr['supplier'] = $company;
-                $attribute = Attribute::query()->where('id', $value['attributes_id'])->select('name')->get()->toArray();
+                $attribute = ErpAttribute::query()->where('id', $value['attributes_id'])->select('name')->get()->toArray();
                 $arr[$attribute[0]['name']] = $value;
             }
             return $arr;
