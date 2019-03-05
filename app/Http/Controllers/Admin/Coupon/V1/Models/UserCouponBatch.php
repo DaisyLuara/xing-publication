@@ -20,6 +20,7 @@ class UserCouponBatch extends Model
         'tao_user_id',
         'member_uid',
         'coupon_batch_id',
+        'belong',
     ];
 
 }

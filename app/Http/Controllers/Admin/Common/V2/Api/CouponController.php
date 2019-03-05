@@ -363,8 +363,102 @@ class CouponController extends Controller
 
     }
 
+
     /**
-     * 多节目联合发放
+     * h5生成限制条件优惠券规则
+     * @param CouponRequest $request
+     * @return mixed
+     */
+    public function generateLimitCouponBatch(Request $request)
+    {
+        $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
+
+        //抽奖次数限制
+        $now = Carbon::now()->toDateString();
+        $timesQuery= $member->userCouponBatches()
+            ->wherePivot('belong', $request->belong)
+            ->whereRaw("date_format(user_coupon_batches.created_at,'%Y-%m-%d')='$now'");
+
+        $prizeQuery = clone $timesQuery;
+        $generateTimes = $timesQuery->count();
+        abort_if($generateTimes >= 3, '500', '每天限抽3次奖');
+
+        //实物奖品数量
+        $prizeNums = $prizeQuery->where('type', 2)->count();
+
+        $project = Project::query()->where('versionname', '=', $request->belong)->firstOrFail();
+        $policy = Policy::query()->findOrFail($project->policy_id);
+
+        $query = DB::table('coupon_batch_policy');
+        if ($request->has('age')) {
+            $query->where('max_age', '>=', $request->age)->where('min_age', '<=', $request->age);
+        }
+
+        if ($request->has('score')) {
+            $query->where('max_score', '>=', $request->score)->where('min_score', '<=', $request->score);
+        }
+
+        if ($request->has('gender')) {
+            $query->where('gender', '=', $request->gender);
+        }
+
+        $couponBatchPolicies = $query->join('coupon_batches', 'coupon_batch_id', '=', 'coupon_batches.id')
+            ->where('policy_id', '=', $policy->id)
+            ->where('coupon_batches.is_active', 1)
+            ->get();
+
+        if ($couponBatchPolicies->isEmpty()) {
+            abort(500, '无可用优惠券');
+        }
+
+        $couponBatchPolicies = $couponBatchPolicies->toArray();
+
+        foreach ($couponBatchPolicies as $key => $couponBatchPolicy) {
+            //实物奖品限制
+            if ($prizeNums && $couponBatchPolicy->type ==2) {
+                unset($couponBatchPolicies[$key]);
+                continue;
+            }
+
+            //设置了库存上限的券
+            if (!$couponBatchPolicy->pmg_status && !$couponBatchPolicy->dmg_status) {
+                //剩余库存为0 不出券
+                if ($couponBatchPolicy->stock <= 0) {
+                    unset($couponBatchPolicies[$key]);
+                    continue;
+                }
+
+                //当天库存为0 不出券
+                $coupon = Coupon::query()->where('coupon_batch_id', $couponBatchPolicy->id)
+                    ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
+                    ->selectRaw("count(coupon_batch_id) as day_receive")->first();
+
+                if ($coupon->day_receive >= $couponBatchPolicy->day_max_get) {
+                    unset($couponBatchPolicies[$key]);
+                }
+            }
+        }
+
+        if (collect($couponBatchPolicies)->sum('rate') == 0) {
+            abort(500, '无可用优惠券');
+        }
+
+        $targetCouponBatch = getRand($couponBatchPolicies);
+
+        $couponBatch = CouponBatch::findOrFail($targetCouponBatch->coupon_batch_id);
+
+        UserCouponBatch::create([
+            'member_uid' => $member->uid,
+            'coupon_batch_id' => $couponBatch->id,
+            'belong' => $request->belong,
+        ]);
+
+        return $this->response->item($couponBatch, new CouponBatchTransformer());
+
+    }
+
+    /**
+     * h5独立发放优惠券
      * @param CouponRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
