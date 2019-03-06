@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\User\V1\Models\ArMemberSession;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
 use App\Http\Controllers\Controller;
+use Milon\Barcode\DNS1D;
 use Overtrue\EasySms\EasySms;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -186,8 +187,8 @@ class CouponController extends Controller
         //优惠券二维码
         $wechatCouponBatch = CouponBatch::query()->findOrFail($coupon->coupon_batch_id)->wechat;
         $prefix = 'h5_code';
-        $qrcodeUrl = couponQrCode($coupon->code, 200, $prefix, $wechatCouponBatch);
-        $coupon->setAttribute('qrcode_url', $qrcodeUrl);
+
+        $coupon = $this->setCodeUrl($coupon, $prefix, $wechatCouponBatch,$request->code_type);
 
         return $this->response->item($coupon, new CouponTransformer());
     }
@@ -388,7 +389,7 @@ class CouponController extends Controller
         $prizeQuery = clone $timesQuery;
         $generateTimes = $timesQuery->count();
         
-        abort_if($generateTimes >= 3, '500', '每天限抽3次奖');
+        abort_if($generateTimes >= 3, '500', '抽奖机会已用满三次 感谢参与');
 
         //实物奖品数量
         $prizeNums = $prizeQuery->whereHas('couponBatch', function ($q) {
@@ -474,6 +475,25 @@ class CouponController extends Controller
     public function generateMultiProjectsCoupon(CouponRequest $request, CouponBatch $couponBatch)
     {
         return $this->generateCoupon($request, $couponBatch, $multiProjects = true);
+    }
+
+
+    /**
+     * 设置券码url
+     * @param $coupon
+     * @param string $code_type
+     * @return mixed
+     */
+    private function setCodeUrl($coupon, $prefix, $wechatCouponBatch = null, $code_type = 'qrcode') {
+        if ($code_type == 'barcode') {
+            $barcodeUrl = couponBarCode($coupon->code, 3, 20, $prefix);
+            $coupon->setAttribute('barcode_url', $barcodeUrl);
+        } else {
+            $qrcodeUrl = couponQrCode($coupon->code, 200, $prefix, $wechatCouponBatch);
+            $coupon->setAttribute('qrcode_url', $qrcodeUrl);
+        }
+
+        return $coupon;
     }
 
 
