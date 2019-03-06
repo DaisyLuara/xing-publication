@@ -464,6 +464,25 @@ class QueryController extends Controller
         return $this->response()->collection($user, new UserTransformer());
     }
 
+    /**
+     * 查询 拥有某个权限的用户
+     * @param Request $request
+     * @param User $user
+     * @return \Dingo\Api\Http\Response
+     */
+    public function userPermissionQuery(Request $request, User $user)
+    {
+        $permission_name = $request->get("permission") ?? '';
+
+        $query = $user->query()->permission($permission_name);
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+        $user = $query->get();
+
+        return $this->response()->collection($user, new \App\Http\Controllers\Admin\Common\V1\Transformer\UserTransformer());
+    }
+
     public function teamRateQuery(TeamRate $teamRate)
     {
         $query = $teamRate->query();
@@ -604,7 +623,6 @@ class QueryController extends Controller
 
         return $this->response->collection($customers, new CustomerTransformer());
     }
-
 
 
 }
