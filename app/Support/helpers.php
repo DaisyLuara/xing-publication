@@ -347,7 +347,7 @@ if (!function_exists('couponQrCode')) {
 }
 
 if (!function_exists('couponBarCode')) {
-    function couponBarCode($code, $width, $height, $prefix = 'h5_code_', $type = 'C39')
+    function couponBarCode($code, $width, $height, $prefix = 'h5_code_', $type = 'C128')
     {
         $cacheIndex = $prefix . $code;
         if (cache()->has($cacheIndex)) {
