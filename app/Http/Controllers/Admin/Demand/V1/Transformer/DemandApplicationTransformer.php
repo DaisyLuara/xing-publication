@@ -24,7 +24,8 @@ class DemandApplicationTransformer extends TransformerAbstract
             'applicant_name' => $demandApplication->applicant->name,
             'launch_point_remark' => $demandApplication->getLaunchPointRemark(),
             'has_contract' => $demandApplication->getHasContract(),
-            'contract_ids' => $demandApplication->contracts,
+            'contract_ids' => $demandApplication->contracts()->pluck('contracts.id')->toArray(),
+            'contract_no_string' => implode(',', $demandApplication->contracts()->pluck('contract_number')->toArray()),
             'project_num' => $demandApplication->getProjectNum(),
             'similar_project_name' => $demandApplication->getSimilarProjectName(),
             'expect_online_time' => (string)$demandApplication->getExpectOnlineTime(),
@@ -44,7 +45,7 @@ class DemandApplicationTransformer extends TransformerAbstract
             'receiver_time' => (string)$demandApplication->getReceiverTime(),
             'confirm_id' => $demandApplication->getConfirmId(),
             'confirm_name' => $demandApplication->getConfirmName(),
-            'confirm_time' =>(string)$demandApplication->getConfirmTime(),
+            'confirm_time' => (string)$demandApplication->getConfirmTime(),
             'created_at' => (string)$demandApplication->getCreatedAt(),
             'updated_at' => (string)$demandApplication->getUpdatedAt(),
         ];

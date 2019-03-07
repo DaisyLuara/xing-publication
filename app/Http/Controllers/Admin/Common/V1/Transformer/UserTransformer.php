@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin\Common\V1\Transformer;
 
-use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
 use App\Models\User;
 use League\Fractal\TransformerAbstract;
 

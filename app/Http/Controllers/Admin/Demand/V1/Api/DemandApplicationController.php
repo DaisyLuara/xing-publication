@@ -11,13 +11,18 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-
 class DemandApplicationController extends Controller
 {
+    /**
+     * @param Request $request
+     * @return \Dingo\Api\Http\Response
+     * @throws \Exception
+     */
     public function index(Request $request)
     {
         $query = DemandApplication::query();
-
+        /** @var User $user */
+        $user = Auth::user();
         if ($request->get("title")) {
             $query->where('title', 'like', "%" . $request->get("title") . "%");
         }
@@ -37,6 +42,17 @@ class DemandApplicationController extends Controller
         if ($request->get("create_start_date") && $request->get("create_end_date")) {
             $query->whereRaw("date_format(created_at, '%Y-%m-%d') between '$request->create_start_date' and '$request->create_end_date'");
         }
+
+        if ($user->hasRole("bd-manager")) {
+            //BD主管可查看自己及下属BD新建的申请列表
+            $user_ids = $user->subordinates()->pluck("id")->toArray();
+            $user_ids[] = $user->id;
+            $query->whereIn('applicant_id', $user_ids);
+        } else if ($user->hasRole("user") || $user->hasRole("business-operation")) {
+            //只能查询自己创建的 Application
+            $query->where('applicant_id', '=', $user->id);
+        }
+
 
         $demandApplications = $query->orderBy("id", "desc")->paginate(10);
 

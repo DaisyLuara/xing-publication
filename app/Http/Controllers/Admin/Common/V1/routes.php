@@ -87,7 +87,7 @@ $api->version('v1', [
             $api->get('user/query', 'QueryController@userQuery');
 
             $api->get('user/permission/query', 'QueryController@userPermissionQuery');
-
+            $api->get('demand_application/query', 'QueryController@demandApplicationQuery');
 
             $api->get('team_rate/query', 'QueryController@teamRateQuery');
             $api->get('attribute/query', 'QueryController@attributeQuery');

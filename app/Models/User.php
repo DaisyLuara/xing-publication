@@ -53,6 +53,14 @@ class User extends Authenticatable implements JWTSubject
         'password', 'remember_token',
     ];
 
+    /**
+     * 得到所有的下属
+     * @return mixed
+     */
+    public function subordinates(){
+       return $this->hasMany(User::class,'parent_id','id');
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
