@@ -346,6 +346,22 @@ if (!function_exists('couponQrCode')) {
     }
 }
 
+if (!function_exists('couponBarCode')) {
+    function couponBarCode($code, $width, $height, $prefix = 'h5_code_', $type = 'C128')
+    {
+        $cacheIndex = $prefix . $code;
+        if (cache()->has($cacheIndex)) {
+            return cache()->get($cacheIndex);
+        }
+
+        $path = public_path('/barcode/');
+        $barcodeUrl = DNS1D::setStorPath($path)->getBarcodePNGUri($code, $type, $width, $height);
+
+        cache()->forever($cacheIndex, $barcodeUrl);
+        return $barcodeUrl;
+    }
+}
+
 function componentVerify($app)
 {
     $component = ComponentVerifyTicket::orderBy('clientdate', 'desc')->first();
