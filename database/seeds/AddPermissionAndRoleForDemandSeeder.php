@@ -66,9 +66,13 @@ class AddPermissionAndRoleForDemandSeeder extends Seeder
             'demand.modify.feedback',
         ];
 
-        //指定接单与审核
-        $receiveSpecialAndReviewPermissionData = [
+        //指定接单
+        $receiveSpecialPermissionData = [
             'demand.application.receive_special',
+        ];
+
+        //审核
+        $reviewPermissionData = [
             'demand.modify.review',
         ];
 
@@ -90,10 +94,10 @@ class AddPermissionAndRoleForDemandSeeder extends Seeder
         $BD->givePermissionTo(array_merge($readPermissionData,$editPermissionData,$confirmPermissionData));
         $BDManager->givePermissionTo(array_merge($readPermissionData,$editPermissionData,$confirmPermissionData));
         $business_operation->givePermissionTo(array_merge($readPermissionData,$editPermissionData,$confirmPermissionData));
-        $operation->givePermissionTo(array_merge($readPermissionData,$editPermissionData,$confirmPermissionData));
+        $operation->givePermissionTo(array_merge($readPermissionData,$editPermissionData,$confirmPermissionData,$reviewPermissionData));
         $project_manager->givePermissionTo(array_merge($readPermissionData,$receiveAndFeedbackPermissionData));
         $designer->givePermissionTo(array_merge($readPermissionData,$receiveAndFeedbackPermissionData));
-        $bonus_manager->givePermissionTo(array_merge($readPermissionData));
-        $legal_affairs_manager->givePermissionTo(array_merge($readPermissionData,$receiveSpecialAndReviewPermissionData));
+        $bonus_manager->givePermissionTo(array_merge($readPermissionData,$reviewPermissionData));
+        $legal_affairs_manager->givePermissionTo(array_merge($readPermissionData,$receiveSpecialPermissionData,$reviewPermissionData));
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication;
 use App\Http\Controllers\Admin\Demand\V1\Request\DemandApplicationRequest;
 use App\Http\Controllers\Admin\Demand\V1\Transformer\DemandApplicationTransformer;
 use App\Http\Controllers\Controller;
+use App\Jobs\DemandApplicationNotificationJob;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -94,6 +95,11 @@ class DemandApplicationController extends Controller
         //更新与合同的关联
         $demandApplication->contracts()->sync($params['contract_ids']);
 
+        DemandApplicationNotificationJob::dispatch($demandApplication,'create');
+        DemandApplicationNotificationJob::dispatch($demandApplication,'un_receive')->delay(
+            now()->addHours(12)
+        );
+
         return $this->response->item($demandApplication, new DemandApplicationTransformer());
     }
 
@@ -145,6 +151,8 @@ class DemandApplicationController extends Controller
         //更新与合同的关联
         $demandApplication->contracts()->sync($params['contract_ids']);
 
+        DemandApplicationNotificationJob::dispatch($demandApplication,'update');
+
         return $this->response->item($demandApplication, new DemandApplicationTransformer());
     }
 
@@ -183,6 +191,8 @@ class DemandApplicationController extends Controller
         //保存需求申请
         $demandApplication->update($update_params);
 
+        DemandApplicationNotificationJob::dispatch($demandApplication,'received');
+
         return $this->response->item($demandApplication, new DemandApplicationTransformer());
     }
 
@@ -216,6 +226,8 @@ class DemandApplicationController extends Controller
 
         //保存需求申请
         $demandApplication->update($update_params);
+
+        DemandApplicationNotificationJob::dispatch($demandApplication,'confirm');
 
         return $this->response->item($demandApplication, new DemandApplicationTransformer());
 

@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\Demand\V1\Models\DemandModify;
 use App\Http\Controllers\Admin\Demand\V1\Request\DemandModifyRequest;
 use App\Http\Controllers\Admin\Demand\V1\Transformer\DemandModifyTransformer;
 use App\Http\Controllers\Controller;
+use App\Jobs\DemandModifyNotificationJob;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -103,6 +104,12 @@ class DemandModifyController extends Controller
         ];
 
         $demandModify->fill($insertParams)->save();
+        $demandApplication->update(["status"=>DemandApplication::STATUS_MODIFY]);
+
+        DemandModifyNotificationJob::dispatch($demandModify, 'create');
+        DemandModifyNotificationJob::dispatch($demandModify, 'un_review')->delay(
+            now()->addHours(12)
+        );
 
         return $this->response->item($demandModify, new DemandModifyTransformer());
     }
@@ -140,6 +147,8 @@ class DemandModifyController extends Controller
         ];
 
         $demandModify->update($updateParams);
+
+        DemandModifyNotificationJob::dispatch($demandModify, 'update');
 
         return $this->response->item($demandModify, new DemandModifyTransformer());
     }
@@ -181,6 +190,8 @@ class DemandModifyController extends Controller
 
         $demandModify->update($updateParams);
 
+        DemandModifyNotificationJob::dispatch($demandModify, 'reviewed');
+
         return $this->response->item($demandModify, new DemandModifyTransformer());
 
     }
@@ -217,6 +228,8 @@ class DemandModifyController extends Controller
         ];
 
         $demandModify->update($updateParams);
+
+        DemandModifyNotificationJob::dispatch($demandModify, 'feedback');
 
         return $this->response->item($demandModify, new DemandModifyTransformer());
     }

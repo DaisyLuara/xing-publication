@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin\Demand\V1\Models;
 
 use App\Models\Model;
 use App\Models\User;
+use Illuminate\Notifications\Notifiable;
 
 class DemandModify extends Model
 {
+    use Notifiable;
 
     protected $fillable = [
         'demand_application_id',

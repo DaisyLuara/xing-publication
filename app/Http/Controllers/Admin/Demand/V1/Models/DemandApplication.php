@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Admin\Demand\V1\Models;
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
 use App\Models\Model;
 use App\Models\User;
+use Illuminate\Notifications\Notifiable;
 
 class DemandApplication extends Model
 {
+
+    use Notifiable;
 
     protected $fillable = [
         'title',
