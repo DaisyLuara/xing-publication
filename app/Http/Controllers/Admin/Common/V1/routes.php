@@ -91,9 +91,9 @@ $api->version('v1', [
             $api->get('role/query', 'QueryController@roleQuery');
             $api->get('erp_warehouse/query', 'QueryController@warehouseQuery');//流程管理ERP仓库搜索
             $api->get('erp_attribute/query', 'QueryController@erpAttributeQuery');//流程管理ERP商品属性搜索
-            $api->get('erp_supplier/query','QueryController@erpSupplierQuery');//供应商搜索
-            $api->get('erp_sku/query','QueryController@erpSkuQuery');//sku下拉列表
-            $api->get('erp_location/query','QueryController@erpLocationQuery');//库位下拉列表
+            $api->get('erp_supplier/query', 'QueryController@erpSupplierQuery');//供应商搜索
+            $api->get('erp_sku/query', 'QueryController@erpSkuQuery');//sku下拉列表
+            $api->get('erp_location/query', 'QueryController@erpLocationQuery');//库位下拉列表
             $api->get('stores/query', 'QueryController@storeQuery');//商户搜索
             $api->get('company/markets/query', 'QueryController@marketConfigQuery');//公司搜索
             $api->get('playing_types/query', 'QueryController@playingTypeQuery');//玩法配置列表
@@ -104,6 +104,7 @@ $api->version('v1', [
             $api->get('user/notifications', 'NotificationsController@index');
             $api->get('user/notifications/stats', 'NotificationsController@stats');
             $api->patch('user/read/notifications', 'NotificationsController@read');
+            $api->delete('user/notifications', 'NotificationsController@destroy');
             $api->get('user/activities', 'ActivityLogController@index');
 
             $api->get('export', 'ExportController@store');//导出

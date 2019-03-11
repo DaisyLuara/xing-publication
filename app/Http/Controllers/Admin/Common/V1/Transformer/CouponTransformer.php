@@ -23,6 +23,7 @@ class CouponTransformer extends TransformerAbstract
             'name' => $coupon->couponBatch->name,
             'status' => (int)$coupon->status,
             'qrcode_url' => $coupon->qrcode_url,
+            'barcode_url' => $coupon->barcode_url,
             'created_at' => $coupon->created_at->toDatetimeString(),
             'use_date' => $coupon->use_date ? $coupon->use_date->toDatetimeString() : '',
             'start_date' => $coupon->start_date ? $coupon->start_date->toDatetimeString() : '',

@@ -118,6 +118,9 @@
                 <el-form-item label="手机号">
                   <span>{{ scope.row.mobile }}</span>
                 </el-form-item>
+                <el-form-item label="c端用户UID">
+                  <span>{{ scope.row.member_uid }}</span>
+                </el-form-item>
                 <el-form-item label="微信ID">
                   <span>{{ scope.row.wx_user_id }}</span>
                 </el-form-item>
