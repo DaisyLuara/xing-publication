@@ -49,7 +49,7 @@ class DemandModifyController extends Controller
 
         if (!$user->hasAnyPermission(['demand.modify.review'])) {
 
-            $query->whereHas('demand_applications', function ($demand_application) use ($user) {
+            $query->whereHas('demand_application', function ($demand_application) use ($user) {
                 //接单人看到自己接单的
                 if ($user->hasAnyPermission(['demand.modify.feedback'])) {
                     $demand_application->where("receiver_id", '=', $user->id);
