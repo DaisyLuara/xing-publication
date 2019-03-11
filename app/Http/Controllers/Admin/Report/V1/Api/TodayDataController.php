@@ -1,0 +1,255 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: yangqiang
+ * Date: 2019/3/6
+ * Time: 下午2:19
+ */
+
+namespace App\Http\Controllers\Admin\Report\V1\Api;
+
+
+use App\Http\Controllers\Admin\Report\V1\Models\XsFaceCountToday;
+use App\Http\Controllers\Admin\Report\V1\Models\XsLookTimesCharacterToday;
+use App\Http\Controllers\Admin\Report\V1\Models\XsLookTimesPermeabilityToday;
+use App\Http\Controllers\Admin\Report\V1\Request\TodayDataRequest;
+use App\Http\Controllers\Controller;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Cache;
+
+class TodayDataController extends Controller
+{
+
+    public function chart(TodayDataRequest $request)
+    {
+        $faceCountQuery = XsFaceCountToday::query();
+        $permeabilityQuery = XsLookTimesPermeabilityToday::query();
+        $characterQuery = XsLookTimesCharacterToday::query();
+        switch ($request->id) {
+            case 1:
+                $data = $this->getFaceCount($request, $faceCountQuery);
+                break;
+            case 2:
+                $data = $this->getPermeability($request, $permeabilityQuery);
+                break;
+            case 3:
+                $data = $this->getCharacter($request, $characterQuery);
+                break;
+            case 4:
+                $data = $this->getAreaDistribution($request, $faceCountQuery);
+                break;
+            default :
+                return null;
+        }
+        return response()->json($data);
+    }
+
+    public function getFaceCount($request, Builder $query)
+    {
+        if ($request->has('belong')) {
+            $query->where('belong', $request->belong);
+        }
+        $data = $query->selectRaw("sum(exposuretimes) as exposuretimes,sum(looktimes) as looktimes ,sum(playtimes7) as playtimes7,sum(scantimes) as scantimes")
+            ->first()->toArray();
+        $output = [
+            "data" => [
+                'exposuretimes' => $data['exposuretimes'] == null ? "0" : $data['exposuretimes'],
+                'looktimes' => $data['looktimes'] == null ? "0" : $data['looktimes'],
+                'playtimes7' => $data['playtimes7'] == null ? "0" : $data['playtimes7'],
+                'scantimes' => $data['scantimes'] == null ? "0" : $data['scantimes']
+            ],
+            'rate' => [
+                'CPM' => $data['exposuretimes'] == 0 ? "0" : strval(round($data['looktimes'] / $data['exposuretimes'], 3) * 100),
+                'fCPE' => $data['exposuretimes'] == 0 ? "0" : strval(round($data['playtimes7'] / $data['exposuretimes'], 3) * 100),
+                'fCPA' => $data['exposuretimes'] == 0 ? "0" : strval(round($data['scantimes'] / $data['exposuretimes'], 3) * 100),
+            ]
+        ];
+
+        $type = "total";
+        if ($request->has('belong')) {
+            $type = $request->belong;
+        }
+        $output = $this->checkCache($output, $type, 'api_1');
+        return $output;
+    }
+
+
+    public function getPermeability($request, Builder $query)
+    {
+        $query_all = XsLookTimesPermeabilityToday::query();
+        if ($request->has('belong')) {
+            $query->where('belong', $request->belong);
+            $query_all->where('belong', $request->belong);
+        }
+        $allData = $query_all->selectRaw("sum(bnum) as bnum,sum(gnum) as gnum,sum(bnum+gnum) as total")->first()->toArray();
+        $data = $query->selectRaw("sum(age10b) as age10_male,sum(age10g) as age10_female,
+                                              sum(age18b) as age18_male,sum(age18g) as age18_female,
+                                              sum(age30b) as age30_male,sum(age30g) as age30_female,
+                                              sum(age40b) as age40_male,sum(age40g) as age40_female,
+                                              sum(age60b) as age60_male,sum(age60g) as age60_female,
+                                              sum(age61b) as age61_male,sum(age61g) as age61_female")
+            ->first()->toArray();
+        $count = [];
+        foreach ($data as $key => $value) {
+            $keys = explode('_', $key);
+            $count[$keys[0]][$keys[1]] = $value;
+        }
+        $output = [];
+        $output['total'] = [
+            'count' => [
+                'male' => $allData['bnum'],
+                'female' => $allData['gnum'],
+
+            ],
+            'rate' => [
+                'male' => $allData['total'] == 0 ? "0" : strval(round($allData['bnum'] / $allData['total'], 3) * 100),
+                'female' => $allData['total'] == 0 ? "0" : strval(round($allData['gnum'] / $allData['total'], 3) * 100)
+            ]
+        ];
+        $ageMapping = [
+            'age10' => '0-10岁',
+            'age18' => '11-18岁',
+            'age30' => '19-30岁',
+            'age40' => '31-40岁',
+            'age60' => '41-60岁',
+            'age61' => '60岁以上',
+        ];
+        foreach ($count as $key => $value) {
+            $output['group'][] = [
+                'count' => $value,
+                'rate' => $allData['total'] == 0 ? "0" : strval(round(($value['female'] + $value['male']) / $allData['total'], 3) * 100),
+                'display_name' => $ageMapping[$key]
+            ];
+        }
+
+        $type = "total";
+        if ($request->has('belong')) {
+            $type = $request->belong;
+        }
+        $output = $this->checkCache($output, $type, 'api_2');
+        return $output;
+    }
+
+    public function getCharacter($request, Builder $query)
+    {
+        if (!$request->has("belong")) {
+            abort(422, "节目必填");
+        }
+        $data = $query->where("belong", $request->belong)->
+        selectRaw("sum(century10_gnum+century00_gnum+century90_gnum+century80_gnum+century70_gnum) as gnum,
+                              sum(century10_bnum+century00_bnum+century90_bnum+century80_bnum+century70_bnum) as bnum,time")
+            ->groupBy("time")
+            ->get()
+            ->toArray();
+        $displayTime = [
+            '00:00-10:00',
+            '10:00-12:00',
+            '12:00-14:00',
+            '14:00-16:00',
+            '16:00-18:00',
+            '18:00-20:00',
+            '20:00-22:00',
+            '22:00-24:00',
+        ];
+        $output = [];
+        foreach ($displayTime as $key => $value) {
+            $arr = array_filter($data, function ($aa) use ($value) {
+                return $aa['time'] == explode('-', $value)[1];
+            });
+            if (empty($arr)) {
+                $arr = [['bnum' => "0", 'gnum' => "0"]];
+            }
+            $item = array_values($arr)[0];
+            $total = $item['bnum'] + $item['gnum'];
+            $output[] = [
+                'display_name' => $value,
+                'count' => [
+                    'male' => $item['bnum'],
+                    'female' => $item['gnum']
+                ],
+                'rate' => [
+                    'male' => $total == 0 ? "0" : strval(round($item['bnum'] / $total, 3) * 100),
+                    'female' => $total == 0 ? "0" : strval(round($item['gnum'] / $total, 3) * 100)
+                ]
+            ];
+        }
+        $output = $this->checkCache($output, $request->belong, 'api_3');
+        return $output;
+    }
+
+    public function getAreaDistribution($request, Builder $query)
+    {
+        $total = XsFaceCountToday::query()->selectRaw("sum(looktimes) as num")->first()->toArray();
+        $case1 = "when oid=20 or oid=30 then 'A' ";
+        $case2 = "when oid=40 or oid=50 then 'B' ";
+        $case3 = "when oid=60 or oid=70 then 'C' ";
+        $case4 = "when oid=80 or oid=90 then 'D' ";
+        $sql = $case1 . $case2 . $case3 . $case4;
+        $data = $query->selectRaw("case " . $sql . "else 0 end as area,sum(looktimes) as num")
+            ->groupBy("area")
+            ->get();
+        $output = [];
+        $areaMapping = [
+            'A' => 'A区',
+            'B' => 'B区',
+            'C' => 'C区',
+            'D' => 'D区'
+        ];
+        foreach ($data as $item) {
+            $output[] = [
+                'display_name' => $areaMapping[$item['area']],
+                'count' => $item['num'],
+                'rate' => $total['num'] == 0 ? "0" : strval(round($item['num'] / $total['num'], 3) * 100)
+            ];
+        }
+        $output = $this->checkCache($output, 'total', 'api_4');
+        return $output;
+    }
+
+
+    private function checkCache($output, $type, $api)
+    {
+        if (Cache::has($type . '_' . $api)) {
+            $oldData = Cache::get($type . '_' . $api);
+            if ($this->compare($oldData, $output, $api)) {
+                return $oldData;
+            }
+        }
+        $minutes = Carbon::now()->endOfDay()->diffInMinutes(Carbon::now());
+        Cache::put($type . '_' . $api, $output, $minutes);
+        return $output;
+    }
+
+    private function compare($oldData, $output, $api)
+    {
+        $currentCount = 0;
+        $oldCount = 0;
+        if ($api == 'api_1') {
+            $oldCount = $oldData['data']['exposuretimes'];
+            $currentCount = $output['data']['exposuretimes'];
+        }
+
+        if ($api == 'api_2') {
+            $oldCount = $oldData['total']['count']['male'] + $oldData['total']['count']['female'];
+            $currentCount = $output['total']['count']['male'] + $output['total']['count']['female'];
+        }
+
+        if ($api == 'api_3') {
+            $oldCount = array_sum(array_column(array_column($oldData, 'count'), 'male'))
+                + array_sum(array_column(array_column($oldData, 'count'), 'female'));
+            $currentCount = array_sum(array_column(array_column($output, 'count'), 'male'))
+                + array_sum(array_column(array_column($output, 'count'), 'female'));
+        }
+
+        if ($api == 'api_4') {
+            $oldCount = array_sum(array_column($oldData, 'count'));
+            $currentCount = array_sum(array_column($output, 'count'));
+        }
+
+        if ($currentCount < $oldCount) {
+            return true;
+        }
+        return false;
+    }
+}

@@ -23,6 +23,7 @@ $api->version('v1', [
             //数据导出
             $api->get('chart_data/export', ['middleware' => ['permission:report.detail.download'], 'uses' => 'ChartDataController@export']);
         });
+        $api->get('today_data', 'TodayDataController@chart');
     });
 
 });
