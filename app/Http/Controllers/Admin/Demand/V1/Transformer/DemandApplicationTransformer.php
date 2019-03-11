@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Demand\V1\Transformer;
 
 use App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication;
 use App\Models\User;
+use Carbon\Carbon;
 use League\Fractal\TransformerAbstract;
 
 class DemandApplicationTransformer extends TransformerAbstract
@@ -28,11 +29,9 @@ class DemandApplicationTransformer extends TransformerAbstract
             'contract_no_string' => implode(',', $demandApplication->contracts()->pluck('contract_number')->toArray()),
             'project_num' => $demandApplication->getProjectNum(),
             'similar_project_name' => $demandApplication->getSimilarProjectName(),
-            'expect_online_time' => (string)$demandApplication->getExpectOnlineTime(),
-
+            'expect_online_time' => Carbon::parse($demandApplication->getExpectOnlineTime())->toDateString(),
             'expect_receiver_ids' => $expect_receiver_ids,
-            'expect_receiver_names' => $expect_receiver_names,
-
+            'expect_receiver_names' => implode(',',$expect_receiver_names),
             'big_screen_demand' => $demandApplication->getBigScreenDemand(),
             'h5_demand' => $demandApplication->getH5Demand(),
             'other_demand' => $demandApplication->getOtherDemand(),

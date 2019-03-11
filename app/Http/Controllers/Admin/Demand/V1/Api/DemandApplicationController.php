@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\Demand\V1\Transformer\DemandApplicationTransforme
 use App\Http\Controllers\Controller;
 use App\Jobs\DemandApplicationNotificationJob;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -138,7 +139,7 @@ class DemandApplicationController extends Controller
             'has_contract' => $params['has_contract'],
             'project_num' => $params['project_num'],
             'similar_project_name' => $params['similar_project_name'],
-            'expect_online_time' => $params['expect_online_time'],
+            'expect_online_time' => Carbon::parse($params['expect_online_time'])->timezone('PRC')->toDateString(),
             'expect_receiver_ids' => implode(",", $params['expect_receiver_ids']),
             'big_screen_demand' => $params['big_screen_demand'],
             'h5_demand' => $params['h5_demand'],
