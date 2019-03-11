@@ -29,7 +29,7 @@ class DemandApplicationRequest extends Request
                     'big_screen_demand' => 'required|string',
                     'h5_demand' => 'required|string',
                     'other_demand' => 'required|string',
-                    'applicant_remark' => 'required|string',
+                    'applicant_remark' => 'nullable|string',
                 ];
                 break;
 
@@ -48,7 +48,7 @@ class DemandApplicationRequest extends Request
                     'big_screen_demand' => 'required|string',
                     'h5_demand' => 'required|string',
                     'other_demand' => 'required|string',
-                    'applicant_remark' => 'required|string'
+                    'applicant_remark' => 'nullable|string'
                 ];
                 break;
 
