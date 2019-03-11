@@ -119,7 +119,7 @@
                 v-model="scope.row.date_start"
                 :picker-options="{
                   start: '10:00',
-                  step: '02:00',
+                  step: '00:01',
                   end: '22:00'
                 }"
                 placeholder="开始时间"
@@ -138,7 +138,7 @@
                 v-model="scope.row.date_end"
                 :picker-options="{
                   start: '10:00',
-                  step: '02:00',
+                  step: '00:01',
                   end: '22:00',
                   minTime: scope.row.date_start
                 }"
