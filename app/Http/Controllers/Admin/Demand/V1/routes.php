@@ -15,7 +15,7 @@ $api->version('v1', [
             $api->get('demand_applications/{demand_application}', ['middleware' => ['permission:demand.application.read'], 'uses' => 'DemandApplicationController@show'])->name('demand_application_show');
             $api->post('demand_applications', ['middleware' => ['permission:demand.application.create'], 'uses' => 'DemandApplicationController@store'])->name('demand_application_store');
             $api->patch('demand_applications/{demand_application}', ['middleware' => ['permission:demand.application.update'], 'uses' => 'DemandApplicationController@update'])->name('demand_application_update');
-            $api->put('demand_applications/{demand_application}/receive', ['middleware' => ['permission:demand.application.receive,demand.application.receive_special'], 'uses' => 'DemandApplicationController@receiveDemand'])->name('demand_application_receiveDemand');
+            $api->put('demand_applications/{demand_application}/receive', ['middleware' => ['permission:demand.application.receive|demand.application.receive_special'], 'uses' => 'DemandApplicationController@receiveDemand'])->name('demand_application_receiveDemand');
             $api->put('demand_applications/{demand_application}/confirm', ['middleware' => ['permission:demand.application.confirm'], 'uses' => 'DemandApplicationController@confirmDemand'])->name('demand_application_confirmDemand');
 
             //需求修改

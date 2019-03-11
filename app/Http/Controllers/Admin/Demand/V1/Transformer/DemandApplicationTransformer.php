@@ -10,7 +10,7 @@ class DemandApplicationTransformer extends TransformerAbstract
 {
     public function transform(DemandApplication $demandApplication)
     {
-        $expect_receiver_ids = explode(',', $demandApplication->getExpectReceiverIds());
+        $expect_receiver_ids = array_map('intval',  explode(',', $demandApplication->getExpectReceiverIds()));
         $expect_receiver_names = [];
         if (count($expect_receiver_ids) > 0) {
             $expect_receiver_names = User::query()->whereIn("id", $expect_receiver_ids)

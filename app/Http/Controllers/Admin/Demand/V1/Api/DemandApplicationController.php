@@ -81,6 +81,7 @@ class DemandApplicationController extends Controller
         $params['applicant_id'] = Auth::user()->id;
         $params['expect_receiver_ids'] = implode(",", $params['expect_receiver_ids']);
         $params['status'] = DemandApplication::STATUS_UN_RECEIVE;
+        $params['contract_ids'] = $params['contract_ids']??[];
 
         //查询所选合同是否为已审批合同
         $contracts = Contract::query()->whereIn('id', $params['contract_ids'])
@@ -113,6 +114,7 @@ class DemandApplicationController extends Controller
     {
 
         $params = $request->all();
+        $params['contract_ids'] = $params['contract_ids']??[];
 
         if ($demandApplication->getStatus() != DemandApplication::STATUS_UN_RECEIVE) {
             abort(422, "状态不是未接单，无法修改");
