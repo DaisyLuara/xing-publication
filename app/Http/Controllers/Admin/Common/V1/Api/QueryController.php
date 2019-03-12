@@ -509,14 +509,16 @@ class QueryController extends Controller
             $query->where('status', '!=', $request->get("no_status"));
         }
 
-        if ($user->hasRole("bd-manager")) {
-            //BD主管可查看自己及下属BD新建的申请列表
-            $user_ids = $user->subordinates()->pluck("id")->toArray();
-            $user_ids [] = $user->id;
-            $query->whereIn('applicant_id', $user_ids);
-        } else if ($user->hasRole("user") || $user->hasRole("business-operation")) {
-            //只能查询自己创建的 Application
-            $query->where('applicant_id', '=', $user->id);
+        if ($user->hasRole("bd-manager") || $user->hasRole("user") || $user->hasRole("business-operation")) {
+            if (!$request->get("create_select") && $user->hasRole("bd-manager")) {
+                //BD主管可查看自己及下属BD新建的申请列表
+                $user_ids = $user->subordinates()->pluck("id")->toArray();
+                $user_ids [] = $user->id;
+                $query->whereIn('applicant_id', $user_ids);
+            } else {
+                //只能查询自己创建的 Application
+                $query->where('applicant_id', '=', $user->id);
+            }
         }
 
         $demandApplication = $query->orderBy("id")->get();

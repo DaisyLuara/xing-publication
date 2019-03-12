@@ -92,8 +92,8 @@ class DemandModifyController extends Controller
         $user = Auth::user();
         /** @var DemandApplication $demandApplication */
         $demandApplication = DemandApplication::query()->findOrFail($request->get("demand_application_id"));
-        if ($demandApplication->getApplicantId() != $user->id && $demandApplication->applicant->parent_id != $user->id) {
-            abort(422, "选择的标的非您或您下属所创建");
+        if ($demandApplication->getApplicantId() != $user->id) {
+            abort(422, "选择的标的非您所创建");
         }
         $insertParams = [
             'demand_application_id' => $request->get("demand_application_id"),
@@ -127,16 +127,16 @@ class DemandModifyController extends Controller
 
         /** @var DemandApplication $demandApplication */
         $demandApplication = DemandApplication::query()->findOrFail($request->get("demand_application_id"));
-        if ($demandApplication->getApplicantId() != $user->id && $demandApplication->applicant->parent_id != $user->id) {
-            abort(422, "选择的标的非您或您下属所创建");
+        if ($demandApplication->getApplicantId() != $user->id) {
+            abort(422, "选择的标的非您所创建");
         }
 
         if ($demandModify->getStatus() != DemandModify::STATUS_UN_REVIEW && $demandModify->getHasFeedback() != false) {
             abort(422, "该状态无法修改");
         }
 
-        if ($demandModify->getApplicantId() != Auth::user()->id && $demandApplication->getApplicantId() != $user->id && $demandApplication->applicant->parent_id != $user->id) {
-            abort(422, "该需求申请非您与您的下属创建，无权修改");
+        if ($demandModify->getApplicantId() != Auth::user()->id && $demandApplication->getApplicantId() != $user->id) {
+            abort(422, "该需求申请非您创建，无权修改");
         }
 
         $updateParams = [
