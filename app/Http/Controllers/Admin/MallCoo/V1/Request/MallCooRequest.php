@@ -18,6 +18,7 @@ class MallCooRequest extends Request
                 return [
                     'redirect_url' => 'required|url',
                     'sign' => 'required',
+                    'oid' => 'required',
                 ];
                 break;
             default:

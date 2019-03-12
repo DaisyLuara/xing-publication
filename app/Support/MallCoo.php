@@ -8,6 +8,9 @@
 
 namespace App\Support;
 
+use App\Http\Controllers\Admin\MallCoo\V1\Models\MallcooConfig;
+use App\Http\Controllers\Admin\Point\V1\Models\Point;
+
 class MallCoo
 {
     protected $m_Mallid = '';
@@ -118,5 +121,20 @@ class MallCoo
         }
         curl_close($ch);
         return $result;
+    }
+
+    /**
+     * 猫酷参数配置
+     * @param integer $oid
+     * @return $this
+     */
+    public function setMallCooConfig($oid)
+    {
+        $point = Point::query()->findOrFail($oid);
+        $mallCooConfig = MallcooConfig::query()->where('marketid', $point->market->marketid)->firstOrFail();
+
+        [$this->m_Mallid , $this->m_AppID, $this->m_PublicKey, $this->m_PrivateKey] = [$mallCooConfig->mallcoo_mall_id, $mallCooConfig->mallcoo_appid, $mallCooConfig->mallcoo_public_key, $mallCooConfig->mallcoo_private_key];
+
+        return $this;
     }
 }

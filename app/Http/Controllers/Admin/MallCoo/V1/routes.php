@@ -11,7 +11,7 @@ $api->version('v1', [
 
         $api->group(['prefix' => 'mallcoo'], function ($api) {
 
-            $api->any('user/oauth', 'UserController@oauth');
+            $api->post('user/oauth', 'UserController@oauth');
             $api->any('user/callback', 'UserController@callback');
             $api->any('user/byToken', 'UserController@getUserByToken');
             $api->any('user/byOpenUserId', 'UserController@getUserByOpenUserID');

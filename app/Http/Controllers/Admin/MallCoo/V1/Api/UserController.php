@@ -14,16 +14,22 @@ use Log;
 
 class UserController extends Controller
 {
+    protected $mall_coo;
+
+    public function __construct(MallCooRequest $request)
+    {
+        $this->mall_coo = app('mall_coo')->setMallCooConfig($request->oid);
+    }
+
     public function oauth(MallCooRequest $request)
     {
         $userID = decrypt($request->sign);
         $redirect_url = urldecode($request->get('redirect_url'));
         $redirect_url = add_query_string($redirect_url, 'user_id', $userID);
 
-        $mall_coo = app('mall_coo');
-        $callback_url = 'http://' . $request->getHost() . '/api/mallcoo/user/callback?redirect_url=' . urlencode(($redirect_url));
+        $callback_url = 'http://' . $request->getHost() . '/api/mallcoo/user/callback?oid=' . $request->oid . '&redirect_url=' . urlencode(($redirect_url));
 
-        return $mall_coo->oauth($callback_url);
+        return $this->mall_coo->oauth($callback_url);
     }
 
     public function callback(Request $request)
@@ -31,12 +37,11 @@ class UserController extends Controller
         $ticket = $request->get('Ticket');
 
         //获取用户UserToken
-        $mall_coo = app('mall_coo');
-        $result = $mall_coo->getTokenByTicket($ticket);
+        $result = $this->mall_coo->getTokenByTicket($ticket);
         abort_if($result['Code'] !== 1, 500, $result['Message']);
 
         //获取会员信息
-        $result = $mall_coo->getUserInfoByOpenUserID($result['Data']['OpenUserId']);
+        $result = $this->mall_coo->getUserInfoByOpenUserID($result['Data']['OpenUserId']);
         abort_if($result['Code'] !== 1, 500, $result['Message']);
 
         $userInfo = $result['Data'];
@@ -88,7 +93,6 @@ class UserController extends Controller
             'OpenUserId' => 'required'
         ]);
 
-        $mall_coo = app('mall_coo');
         $sUrl = 'https://openapi10.mallcoo.cn/Shop/V1/GetList/';
 
         $data = [
@@ -98,7 +102,7 @@ class UserController extends Controller
             "CommercialTypeID" => null,
         ];
 
-        $result = $mall_coo->send($sUrl, $data);
+        $result = $this->mall_coo->send($sUrl, $data);
         abort_if($result['Code'] != 1, 500, $result['Message']);
 
         return response()->json($result['Data']);
