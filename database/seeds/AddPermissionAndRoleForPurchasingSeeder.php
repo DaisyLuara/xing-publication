@@ -14,8 +14,8 @@ class AddPermissionAndRoleForPurchasingSeeder extends Seeder
      */
     public function run()
     {
-        Permission::create(['name' => 'purchasing', 'display_name' => '采购库存']);
-        $purchasing = Role::create(['name' => 'purchasing', 'display_name' => '采购']);
-        $purchasing->givePermissionTo(['contract', 'purchasing','company']);
+        Permission::query()->updateOrCreate(['name' => 'purchasing'], ['name' => 'purchasing', 'display_name' => '采购库存']);
+        $purchasing = Role::query()->updateOrCreate(['name' => 'purchasing'], ['name' => 'purchasing', 'display_name' => '采购']);
+        $purchasing->givePermissionTo(['contract', 'purchasing', 'company']);
     }
 }

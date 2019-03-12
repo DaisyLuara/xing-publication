@@ -25,7 +25,7 @@ class AddWriteOffStatusToCouponBatch extends Migration
      */
     public function down()
     {
-        Schema::table('coupons', function (Blueprint $table) {
+        Schema::table('coupon_batches', function (Blueprint $table) {
             if (Schema::hasColumn('coupon_batches', 'write_off_status')) {
                 $table->dropColumn('write_off_status');
             }

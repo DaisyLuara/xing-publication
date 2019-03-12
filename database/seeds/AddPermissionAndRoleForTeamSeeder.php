@@ -13,8 +13,8 @@ class AddPermissionAndRoleForTeamSeeder extends Seeder
      */
     public function run()
     {
-        $tester = Role::create(['name' => 'tester', 'display_name' => '测试']);
-        $designer = Role::create(['name' => 'designer', 'display_name' => '设计']);
+        $tester = Role::query()->updateOrCreate(['name' => 'tester'], ['name' => 'tester', 'display_name' => '测试']);
+        $designer = Role::query()->updateOrCreate(['name' => 'designer'], ['name' => 'designer', 'display_name' => '设计']);
 
         $tester->givePermissionTo(['company', 'project', 'device', 'ad', 'point', 'team', 'report', 'home', 'contract', 'invoice', 'payments']);
         $designer->givePermissionTo(['home', 'team']);
@@ -25,7 +25,7 @@ class AddPermissionAndRoleForTeamSeeder extends Seeder
         $operation = Role::findByName('operation');
         $operation->givePermissionTo('team');
 
-        $bonusMa = Role::create(['name' => 'bonus-manager', 'display_name' => '绩效主管']);
+        $bonusMa = Role::query()->updateOrCreate(['name'=>'bonus-manager'],['name' => 'bonus-manager', 'display_name' => '绩效主管']);
         $bonusMa->givePermissionTo('team');
 
         $yq = User::query()->where('phone', '15671556667')->first();
