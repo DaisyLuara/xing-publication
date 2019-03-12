@@ -22,7 +22,7 @@ class DemandModifyRequest extends Request
                 return [
                     'demand_application_id' => ['required',
                         Rule::exists('demand_applications', 'id')->where(function ($query) {
-                            $query->whereIn('status', [DemandApplication::STATUS_RECEIVED, DemandApplication::STATUS_MODIFY]);
+                            $query->whereIn('status', [DemandApplication::STATUS_RECEIVED, DemandApplication::STATUS_MODIFY,DemandApplication::STATUS_CONFIRM]);
                         })
                     ],
                     'title' => ["required", "string"],
@@ -34,7 +34,7 @@ class DemandModifyRequest extends Request
                 return [
                     'demand_application_id' => ['required',
                         Rule::exists('demand_applications', 'id')->where(function ($query) {
-                            $query->whereIn('status', [DemandApplication::STATUS_RECEIVED, DemandApplication::STATUS_MODIFY]);
+                            $query->whereIn('status', [DemandApplication::STATUS_RECEIVED, DemandApplication::STATUS_MODIFY,DemandApplication::STATUS_CONFIRM]);
                         })
                     ],
                     'title' => ["required", "string"],
