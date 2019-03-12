@@ -211,8 +211,8 @@ class DemandModifyController extends Controller
             abort(422, "对应的项目标的非您的接单，您无法反馈");
         }
 
-        if ($demandModify->getStatus() != DemandModify::STATUS_UN_REVIEW || $demandModify->getHasFeedback()) {
-            abort(422, "该状态无法修改");
+        if ($demandModify->getHasFeedback()) {
+            abort(422, "该条记录已反馈");
         }
 
         if (!$request->get("feedback")) {
