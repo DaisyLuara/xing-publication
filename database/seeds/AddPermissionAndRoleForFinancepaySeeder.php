@@ -12,7 +12,7 @@ class AddPermissionAndRoleForFinancepaySeeder extends Seeder
      */
     public function run()
     {
-        $payFinance = Role::create(['name' => 'finance-pay' , 'display_name' => '付款财务']);
+        $payFinance = Role::query()->updateOrCreate(['name'=>'finance-pay'],['name' => 'finance-pay' , 'display_name' => '付款财务']);
         $payFinance->givePermissionTo(['finance_bill', 'finance_pay','invoice','payments']);
 
     }

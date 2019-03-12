@@ -25,7 +25,7 @@ class AddSortOrderToCouponBatch extends Migration
      */
     public function down()
     {
-        Schema::table('coupons', function (Blueprint $table) {
+        Schema::table('coupon_batches', function (Blueprint $table) {
             if (Schema::hasColumn('coupon_batches', 'sort_order')) {
                 $table->dropColumn('sort_order');
             }

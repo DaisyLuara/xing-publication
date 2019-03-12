@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class addRoleForShopSeeder extends Seeder
+class AddRoleForShopSeeder extends Seeder
 {
     /**
      * Run the database seeds.
