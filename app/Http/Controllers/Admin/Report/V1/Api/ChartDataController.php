@@ -435,14 +435,8 @@ class ChartDataController extends Controller
      */
     public function getCharacterByTime(ChartDataRequest $request, Builder $query)
     {
-        $startDate = $request->start_date;
-        $endDate = $request->end_date;
-        $startClientDate = strtotime($startDate) * 1000;
-        $endClientDate = strtotime($endDate) * 1000;
-
         $this->handleQuery($request, $query);
-        $data = $query->whereRaw("xs_face_character_count.clientdate between '$startClientDate' and '$endClientDate'")
-            ->groupBy('time')
+        $data = $query->groupBy('time')
             ->selectRaw("time,sum(century10_bnum+century10_gnum) as century10, sum(century00_bnum + century00_gnum) as century00,sum(century90_bnum + century90_gnum) as century90,sum(century80_bnum + century80_gnum) as century80,sum(century70_bnum + century70_gnum) as century70")
             ->selectRaw("sum(century10_gnum+century00_gnum+century90_gnum+century80_gnum+century70_gnum) as gnum,sum(century10_bnum+century10_gnum+century00_gnum+century00_bnum+century90_gnum+century90_bnum+century80_gnum+century80_bnum+century70_gnum+century70_bnum) as totalnum")
             ->get();
@@ -596,7 +590,7 @@ class ChartDataController extends Controller
 
         $output['oid_count'] = $count->oid_count;
         $output['market_count'] = $count->market_count;
-        $output['day'] = (new Carbon($endDate))->diffInDays((new Carbon($startDate))) + 1;
+        $output['day'] = (new Carbon($request->start_date))->diffInDays((new Carbon($request->end_date))) + 1;
 
         return $output;
     }
