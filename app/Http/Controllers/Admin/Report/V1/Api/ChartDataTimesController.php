@@ -78,8 +78,12 @@ class ChartDataTimesController extends Controller
         $table = $query->getModel()->getTable();
         $this->handleQuery($request, $query);
 
-        $faceCount = $query->selectRaw("max($table.clientdate) as max_date,min($table.clientdate) as min_date,$table.id as id,sum(looktimes) as looktimes,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(outnum) as outnum,sum(omo_scannum) as omo_scannum,sum(lovetimes) as lovetimes,sum(verifytimes) as verifytimes,avr_official.name as point_name,avr_official_market.name as market_name,avr_official_area.name as area_name,xs_face_count_log.date as created_at")
-            ->selectRaw("(SELECT GROUP_CONCAT(DISTINCT (ar_product_list.name)) FROM xs_face_count_log AS fcl2 INNER JOIN ar_product_list ON ar_product_list.versionname = fcl2.belong WHERE fcl2.oid = $table.oid AND date_format(fcl2.date, '%Y-%m-%d') BETWEEN '$request->start_date' AND '$request->end_date' GROUP BY fcl2.oid) as projects ")
+        $startClientdate = strtotime($request->start_date) * 1000;
+        $endClientdate = strtotime($request->end_date) * 1000;
+        $faceCount = $query->selectRaw("max($table.clientdate) as max_date,min($table.clientdate) as min_date,$table.id as id
+        ,sum(looktimes) as looktimes,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(outnum) as outnum,sum(omo_scannum) as omo_scannum,sum(lovetimes) as lovetimes,sum(verifytimes) as verifytimes
+        ,avr_official.name as point_name,avr_official_market.name as market_name,avr_official_area.name as area_name,xs_face_count_log.date as created_at")
+            ->selectRaw("(SELECT GROUP_CONCAT(DISTINCT (ar_product_list.name)) FROM xs_face_count_log AS fcl2 INNER JOIN ar_product_list ON ar_product_list.versionname = fcl2.belong WHERE fcl2.oid = $table.oid AND fcl2.clientdate BETWEEN '$startClientdate' AND '$endClientdate' GROUP BY fcl2.oid) as projects ")
             //->where("$table.fclid", '>', 0)
             ->groupBy("$table.oid")
             ->orderBy('avr_official_area.areaid', 'desc')
@@ -457,7 +461,8 @@ class ChartDataTimesController extends Controller
      */
     public function getFunnelChart(ChartDataRequest $request, Builder $query)
     {
-        $startDate = $request->start_date;
+        $startClientdate = strtotime($request->start_date) * 1000;
+        $endClientdate = strtotime($request->end_date) * 1000;
         $endDate = $request->end_date;
 
         $this->handleQuery($request, $query);
@@ -467,7 +472,7 @@ class ChartDataTimesController extends Controller
 
         $allData = XsFaceCountLog::query()
             ->selectRaw("sum(looktimes) as looktimes ,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15 ,sum(playtimes21) as playtimes21,sum(omo_scannum) as omo_scannum,sum(lovetimes) as lovetimes,sum(verifytimes) as verifytimes")
-            ->whereRaw("date_format(date,'%Y-%m-%d') between '$startDate' and '$endDate' and belong='all'")
+            ->whereRaw("clientdate between '$startClientdate' and '$endClientdate' and belong='all'")
             ->first();
 
         $query = XsFaceCountLog::query();
@@ -538,7 +543,7 @@ class ChartDataTimesController extends Controller
 
         $output['oid_count'] = $count->oid_count;
         $output['market_count'] = $count->market_count;
-        $output['day'] = (new Carbon($endDate))->diffInDays((new Carbon($startDate))) + 1;
+        $output['day'] = (new Carbon($endDate))->diffInDays((new Carbon($request->start_date))) + 1;
 
         return $output;
     }
