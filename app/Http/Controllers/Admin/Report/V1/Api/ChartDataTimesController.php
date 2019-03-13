@@ -462,7 +462,7 @@ class ChartDataTimesController extends Controller
     public function getFunnelChart(ChartDataRequest $request, Builder $query)
     {
         $startClientdate = strtotime($request->start_date) * 1000;
-        $endClientdatte = strtotime($request->end_date) * 1000;
+        $endClientdate = strtotime($request->end_date) * 1000;
         $endDate = $request->end_date;
 
         $this->handleQuery($request, $query);
@@ -472,7 +472,7 @@ class ChartDataTimesController extends Controller
 
         $allData = XsFaceCountLog::query()
             ->selectRaw("sum(looktimes) as looktimes ,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15 ,sum(playtimes21) as playtimes21,sum(omo_scannum) as omo_scannum,sum(lovetimes) as lovetimes,sum(verifytimes) as verifytimes")
-            ->whereRaw("clientdate between '$startClientdate' and '$endClientdatte' and belong='all'")
+            ->whereRaw("clientdate between '$startClientdate' and '$endClientdate' and belong='all'")
             ->first();
 
         $query = XsFaceCountLog::query();
