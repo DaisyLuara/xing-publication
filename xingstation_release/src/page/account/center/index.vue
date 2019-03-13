@@ -9,7 +9,7 @@
         <div class="search-wrap">
           <el-form ref="filters" :model="filters" :inline="true">
             <el-form-item label prop="name">
-              <el-input v-model="filters.name" placeholder="名称" clearable class="item-input"/>
+              <el-input v-model="filters.name" placeholder="节目名称" clearable class="item-input"/>
             </el-form-item>
             <el-form-item label prop="beginDate">
               <el-date-picker
@@ -72,10 +72,10 @@
                 <el-form-item label="类型">
                   <span>{{ scope.row.type }}</span>
                 </el-form-item>
-                <el-form-item label="节目智造">
-                  <span>{{ scope.row.experience_money }}</span>
+                <el-form-item label="类别">
+                  <span>{{ scope.row.main_type }}</span>
                 </el-form-item>
-                <el-form-item label="总计">
+                <el-form-item label="金额">
                   <span>{{ scope.row.total }}</span>
                 </el-form-item>
               </el-form>
@@ -98,11 +98,11 @@
           <el-table-column :show-overflow-tooltip="true" prop="type" label="类型" min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="experience_money"
-            label="节目智造"
+            prop="main_type"
+            label="类别"
             min-width="100"
           />
-          <el-table-column :show-overflow-tooltip="true" prop="total" label="总计" min-width="100"/>
+          <el-table-column :show-overflow-tooltip="true" prop="total" label="金额" min-width="100"/>
         </el-table>
         <div class="pagination-wrap">
           <el-pagination
