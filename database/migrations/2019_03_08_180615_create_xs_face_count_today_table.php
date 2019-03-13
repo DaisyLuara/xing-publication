@@ -22,8 +22,10 @@ class CreateXsFaceCountTodayTable extends Migration
             $table->integer('playtimes7');
             $table->integer('scantimes');
             $table->timestamp('date');
+            $table->bigInteger('clientdate');
             $table->index('oid');
             $table->index('belong');
+            $table->index('clientdate');
         });
     }
 

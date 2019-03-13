@@ -29,9 +29,10 @@ class CreateXsLooktimesCharacterTodayTable extends Migration
             $table->integer('century70_bnum');
             $table->integer('century70_gnum');
             $table->timestamp('date');
+            $table->bigInteger('clientdate');
             $table->index('oid');
             $table->index('belong');
-            $table->index('time');
+            $table->index('clientdate');
         });
     }
 

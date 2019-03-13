@@ -32,8 +32,10 @@ class CreateXsLooktimesPermeabilityTodayTable extends Migration
             $table->integer('age61b');
             $table->integer('age61g');
             $table->timestamp('date');
+            $table->bigInteger('clientdate');
             $table->index('oid');
             $table->index('belong');
+            $table->index('clientdate');
         });
     }
 

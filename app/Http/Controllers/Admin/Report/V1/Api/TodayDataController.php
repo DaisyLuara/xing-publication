@@ -50,7 +50,10 @@ class TodayDataController extends Controller
         if ($request->has('belong')) {
             $query->where('belong', $request->belong);
         }
-        $data = $query->selectRaw("sum(exposuretimes) as exposuretimes,sum(looktimes) as looktimes ,sum(playtimes7) as playtimes7,sum(scantimes) as scantimes")
+
+        $date = Carbon::now()->toDateString();
+        $data = $query->whereRaw("date_format(date,'%Y-%m-%d')= '$date' ")
+            ->selectRaw("sum(exposuretimes) as exposuretimes,sum(looktimes) as looktimes ,sum(playtimes7) as playtimes7,sum(scantimes) as scantimes")
             ->first()->toArray();
         $output = [
             "data" => [
@@ -82,7 +85,9 @@ class TodayDataController extends Controller
             $query->where('belong', $request->belong);
             $query_all->where('belong', $request->belong);
         }
-        $allData = $query_all->selectRaw("sum(bnum) as bnum,sum(gnum) as gnum,sum(bnum+gnum) as total")->first()->toArray();
+        $date = Carbon::now()->toDateString();
+        $allData = $query_all->whereRaw("date_format(date,'%Y-%m-%d')= '$date' ")
+            ->selectRaw("sum(bnum) as bnum,sum(gnum) as gnum,sum(bnum+gnum) as total")->first()->toArray();
         $data = $query->selectRaw("sum(age10b) as age10_male,sum(age10g) as age10_female,
                                               sum(age18b) as age18_male,sum(age18g) as age18_female,
                                               sum(age30b) as age30_male,sum(age30g) as age30_female,
@@ -136,26 +141,29 @@ class TodayDataController extends Controller
         if (!$request->has("belong")) {
             abort(422, "节目必填");
         }
-        $data = $query->where("belong", $request->belong)->
-        selectRaw("sum(century10_gnum+century00_gnum+century90_gnum+century80_gnum+century70_gnum) as gnum,
+//        $date = Carbon::now()->toDateString();
+        $date = '2019-03-12';
+        $data = $query->whereRaw("date_format(date,'%Y-%m-%d')= '$date' ")
+            ->where("belong", $request->belong)
+            ->selectRaw("sum(century10_gnum+century00_gnum+century90_gnum+century80_gnum+century70_gnum) as gnum,
                               sum(century10_bnum+century00_bnum+century90_bnum+century80_bnum+century70_bnum) as bnum,time")
             ->groupBy("time")
             ->get()
             ->toArray();
         $displayTime = [
-            '00:00-10:00',
-            '10:00-12:00',
-            '12:00-14:00',
-            '14:00-16:00',
-            '16:00-18:00',
-            '18:00-20:00',
-            '20:00-22:00',
-            '22:00-24:00',
+            '10:00',
+            '12:00',
+            '14:00',
+            '16:00',
+            '18:00',
+            '20:00',
+            '22:00',
+            '24:00',
         ];
         $output = [];
         foreach ($displayTime as $key => $value) {
             $arr = array_filter($data, function ($aa) use ($value) {
-                return $aa['time'] == explode('-', $value)[1];
+                return $aa['time'] == $value;
             });
             if (empty($arr)) {
                 $arr = [['bnum' => "0", 'gnum' => "0"]];
@@ -186,7 +194,10 @@ class TodayDataController extends Controller
         $case3 = "when oid=60 or oid=70 then 'C' ";
         $case4 = "when oid=80 or oid=90 then 'D' ";
         $sql = $case1 . $case2 . $case3 . $case4;
-        $data = $query->selectRaw("case " . $sql . "else 0 end as area,sum(looktimes) as num")
+
+        $date = Carbon::now()->toDateString();
+        $data = $query->whereRaw("date_format(date,'%Y-%m-%d')= '$date' ")
+            ->selectRaw("case " . $sql . "else 0 end as area,sum(looktimes) as num")
             ->groupBy("area")
             ->get();
         $output = [];
@@ -197,6 +208,9 @@ class TodayDataController extends Controller
             'D' => 'D区'
         ];
         foreach ($data as $item) {
+            if ($item['area'] === "0") {
+                continue;
+            }
             $output[] = [
                 'display_name' => $areaMapping[$item['area']],
                 'count' => $item['num'],
