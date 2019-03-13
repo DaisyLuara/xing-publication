@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Http\Controllers\Admin\ShortUrl\V1\Models\PeopleViewRecords;
 use App\Http\Controllers\Admin\ShortUrl\V1\Models\ShortUrlRecords;
 use App\Http\Controllers\Admin\ShortUrl\V1\Models\ShortUrl;
+use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use function GuzzleHttp\Psr7\parse_query;
@@ -50,7 +51,8 @@ class ShortUrlJob implements ShouldQueue
             PeopleViewRecords::where('id', '=', $id)->update(['share' => 1]);
         }
 
-        ShortUrlRecords::create(array_merge($insertData, $queryParams, $this->browserInfo));
+        $clientdate = strtotime(Carbon::now()->toDateTimeString()) * 1000;
+        ShortUrlRecords::create(array_merge($insertData, $queryParams, $this->browserInfo, ['clientdate' => $clientdate]));
 
 
     }
