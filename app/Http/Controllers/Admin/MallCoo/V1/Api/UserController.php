@@ -4,23 +4,15 @@ namespace App\Http\Controllers\Admin\MallCoo\V1\Api;
 
 use App\Http\Controllers\Admin\MallCoo\V1\Request\MallCooRequest;
 use App\Http\Controllers\Admin\WeChat\V1\Models\ThirdPartyUser;
-use App\Models\WeChatUser;
-use App\Http\Controllers\Controller;
 use function GuzzleHttp\Psr7\parse_query;
 use Illuminate\Http\Request;
+use App\Models\WeChatUser;
 use DB;
 use Log;
 
 
-class UserController extends Controller
+class UserController extends BaseController
 {
-    protected $mall_coo;
-
-    public function __construct(MallCooRequest $request)
-    {
-        $this->mall_coo = app('mall_coo')->setMallCooConfig($request->oid);
-    }
-
     public function oauth(MallCooRequest $request)
     {
         $userID = decrypt($request->sign);
