@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\Ad\V1\Transformer\AdvertisementTransformer;
 use App\Http\Controllers\Admin\Ad\V1\Transformer\AdvertiserTransformer;
 use App\Http\Controllers\Admin\Attribute\V1\Models\Attribute;
 use App\Http\Controllers\Admin\Attribute\V1\Transformer\AttributeTransformer;
+use App\Http\Controllers\Admin\Common\V1\Transformer\DemandApplicationTransformer;
 use App\Http\Controllers\Admin\Common\V1\Transformer\TeamProjectTransformer;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
@@ -26,6 +27,7 @@ use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\PolicyTransformer;
+use App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication;
 use App\Http\Controllers\Admin\Invoice\V1\Models\GoodsService;
 use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany;
 use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceKind;
@@ -65,6 +67,7 @@ use App\Models\Customer;
 use App\Models\User;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class QueryController extends Controller
 {
@@ -464,6 +467,66 @@ class QueryController extends Controller
         return $this->response()->collection($user, new UserTransformer());
     }
 
+    /**
+     * 查询 拥有某个权限的用户
+     * @param Request $request
+     * @param User $user
+     * @return \Dingo\Api\Http\Response
+     */
+    public function userPermissionQuery(Request $request, User $user)
+    {
+        $permission_name = $request->get("permission") ?? '';
+
+        $query = $user->query()->permission($permission_name);
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+        $user = $query->get();
+
+        return $this->response()->collection($user, new \App\Http\Controllers\Admin\Common\V1\Transformer\UserTransformer());
+    }
+
+    /**
+     * 查询需求申请列表
+     * @param Request $request
+     * @param DemandApplication $demandApplication
+     * @return \Dingo\Api\Http\Response
+     * @throws \Exception
+     */
+    public function demandApplicationQuery(Request $request, DemandApplication $demandApplication)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        $query = $demandApplication->query();
+
+        if ($request->has("status")) {
+            $status = explode(',', $request->get("status"));
+            $query->whereIn('status', $status);
+        }
+
+        if ($request->has("no_status")) {
+            $query->where('status', '!=', $request->get("no_status"));
+        }
+
+        if ($user->hasRole("bd-manager") || $user->hasRole("user") || $user->hasRole("business-operation")) {
+            if (!$request->get("create_select") && $user->hasRole("bd-manager")) {
+                //BD主管可查看自己及下属BD新建的申请列表
+                $user_ids = $user->subordinates()->pluck("id")->toArray();
+                $user_ids [] = $user->id;
+                $query->whereIn('applicant_id', $user_ids);
+            } else {
+                //只能查询自己创建的 Application
+                $query->where('applicant_id', '=', $user->id);
+            }
+        }
+
+        $demandApplication = $query->orderBy("id")->get();
+
+        return $this->response()->collection($demandApplication, new DemandApplicationTransformer());
+    }
+
+
     public function teamRateQuery(TeamRate $teamRate)
     {
         $query = $teamRate->query();
@@ -604,7 +667,6 @@ class QueryController extends Controller
 
         return $this->response->collection($customers, new CustomerTransformer());
     }
-
 
 
 }
