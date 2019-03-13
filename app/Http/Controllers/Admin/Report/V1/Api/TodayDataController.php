@@ -141,8 +141,7 @@ class TodayDataController extends Controller
         if (!$request->has("belong")) {
             abort(422, "节目必填");
         }
-//        $date = Carbon::now()->toDateString();
-        $date = '2019-03-12';
+        $date = Carbon::now()->toDateString();
         $data = $query->whereRaw("date_format(date,'%Y-%m-%d')= '$date' ")
             ->where("belong", $request->belong)
             ->selectRaw("sum(century10_gnum+century00_gnum+century90_gnum+century80_gnum+century70_gnum) as gnum,
