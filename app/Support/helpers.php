@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\Common\V1\Request\ExportRequest;
 use App\Http\Controllers\Admin\Coupon\V1\Models\WechatCouponBatch;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceCount;
 use App\Http\Controllers\Admin\WeChat\V1\Models\ComponentVerifyTicket;
@@ -8,7 +9,6 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Admin\Common\V1\Request\ExportRequest;
 
 /**
  *求两个已知经纬度之间的距离,单位为千米
@@ -117,9 +117,9 @@ if (!function_exists('handPointQuery')) {
         $table = $builder->getModel()->getTable();
         //查询时间范围
         if ($request->start_date && $request->end_date) {
-            $startDate = $request->start_date;
-            $endDate = $request->end_date;
-            $builder->whereRaw("date_format($table.date, '%Y-%m-%d') BETWEEN '$startDate' AND '$endDate' ");
+            $startClientdate = strtotime($request->start_date) * 1000;
+            $endClientdate = strtotime($request->end_date) * 1000;
+            $builder->whereRaw("$table.clientdate between '$startClientdate' and '$endClientdate' ");
             $workday = $request->workday;
             $weekend = $request->weekend;
             $holiday = $request->holiday;

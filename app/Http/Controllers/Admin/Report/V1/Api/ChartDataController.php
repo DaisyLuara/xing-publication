@@ -55,8 +55,12 @@ class ChartDataController extends Controller
         $table = $query->getModel()->getTable();
         $this->handleQuery($request, $query);
 
-        $faceCount = $query->selectRaw("max($table.clientdate) as max_date,min($table.clientdate) as min_date,$table.id as id,sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum) as playernum,sum(lovenum) as lovenum,sum(outnum) as outnum,sum(scannum) as scannum,avr_official.name as point_name,avr_official_market.name as market_name,avr_official_area.name as area_name,xs_face_count_log.date as created_at")
-            ->selectRaw("(SELECT GROUP_CONCAT(DISTINCT (ar_product_list.name)) FROM xs_face_count_log AS fcl2 INNER JOIN ar_product_list ON ar_product_list.versionname = fcl2.belong WHERE fcl2.oid = $table.oid AND date_format(fcl2.date, '%Y-%m-%d') BETWEEN '$request->start_date' AND '$request->end_date' GROUP BY fcl2.oid) as projects ")
+        $startClientdate = strtotime($request->start_date) * 1000;
+        $endClientdate = strtotime($request->end_date) * 1000;
+        $faceCount = $query->selectRaw("max($table.clientdate) as max_date,min($table.clientdate) as min_date,$table.id as id
+        ,sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum) as playernum,sum(lovenum) as lovenum,sum(outnum) as outnum,sum(scannum) as scannum
+        ,avr_official.name as point_name,avr_official_market.name as market_name,avr_official_area.name as area_name,xs_face_count_log.date as created_at")
+            ->selectRaw("(SELECT GROUP_CONCAT(DISTINCT (ar_product_list.name)) FROM xs_face_count_log AS fcl2 INNER JOIN ar_product_list ON ar_product_list.versionname = fcl2.belong WHERE fcl2.oid = $table.oid AND fcl2.clientdate  BETWEEN '$startClientdate' AND '$endClientdate' GROUP BY fcl2.oid) as projects ")
             //->where("$table.fclid", '>', 0)
             ->groupBy("$table.oid")
             ->orderBy('avr_official_area.areaid', 'desc')
@@ -527,8 +531,8 @@ class ChartDataController extends Controller
 
     public function getFunnelChart(ChartDataRequest $request, Builder $query)
     {
-        $startDate = $request->start_date;
-        $endDate = $request->end_date;
+        $startClientdate = strtotime($request->start_date) * 1000;
+        $endClientdate = strtotime($request->end_date) * 1000;
 
         $this->handleQuery($request, $query);
 
@@ -537,7 +541,7 @@ class ChartDataController extends Controller
 
         $allData = XsFaceCountLog::query()
             ->selectRaw("sum(looknum) as looknum ,sum(playernum7) as playernum7,sum(playernum) as playernum ,sum(omo_outnum) as omo_outnum,sum(lovenum) as lovenum")
-            ->whereRaw("date_format(date,'%Y-%m-%d') between '$startDate' and '$endDate' and belong='all'")
+            ->whereRaw("clientdate between '$startClientdate' and '$endClientdate' and belong='all'")
             ->first();
 
         $query = XsFaceCountLog::query();
