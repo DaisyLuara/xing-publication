@@ -97,10 +97,9 @@ class DemandApplicationController extends Controller
         //更新与合同的关联
         $demandApplication->contracts()->sync($params['contract_ids']);
 
-        DemandApplicationNotificationJob::dispatch($demandApplication,'create');
-        DemandApplicationNotificationJob::dispatch($demandApplication,'un_receive')->delay(
-            now()->addHours(12)
-        );
+        DemandApplicationNotificationJob::dispatch($demandApplication,'create')->onQueue('demand');
+        DemandApplicationNotificationJob::dispatch($demandApplication,'un_receive')->onQueue('demand')
+            ->delay(now()->addHours(12));
 
         return $this->response->item($demandApplication, new DemandApplicationTransformer());
     }
@@ -154,7 +153,7 @@ class DemandApplicationController extends Controller
         //更新与合同的关联
         $demandApplication->contracts()->sync($params['contract_ids']);
 
-        DemandApplicationNotificationJob::dispatch($demandApplication,'update');
+        DemandApplicationNotificationJob::dispatch($demandApplication,'update')->onQueue('demand');
 
         return $this->response->item($demandApplication, new DemandApplicationTransformer());
     }
@@ -194,7 +193,7 @@ class DemandApplicationController extends Controller
         //保存需求申请
         $demandApplication->update($update_params);
 
-        DemandApplicationNotificationJob::dispatch($demandApplication,'received');
+        DemandApplicationNotificationJob::dispatch($demandApplication,'received')->onQueue('demand');
 
         return $this->response->item($demandApplication, new DemandApplicationTransformer());
     }
@@ -230,7 +229,7 @@ class DemandApplicationController extends Controller
         //保存需求申请
         $demandApplication->update($update_params);
 
-        DemandApplicationNotificationJob::dispatch($demandApplication,'confirm');
+        DemandApplicationNotificationJob::dispatch($demandApplication,'confirm')->onQueue('demand');
 
         return $this->response->item($demandApplication, new DemandApplicationTransformer());
 
