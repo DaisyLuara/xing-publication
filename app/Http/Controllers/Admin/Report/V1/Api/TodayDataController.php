@@ -189,7 +189,7 @@ class TodayDataController extends Controller
 
     public function getAreaDistribution($request, Builder $query)
     {
-        $total = XsFaceCountToday::query()->selectRaw("sum(looktimes) as num")->first()->toArray();
+        $total = XsFaceCountToday::query()->selectRaw("sum(exposuretimes) as num")->first()->toArray();
         $case1 = "when oid=739 or oid=740 or oid=741 then 'A' ";
         $case2 = "when oid=742 or oid=743 or oid=744 then 'B' ";
         $case3 = "when oid=745 or oid=746 or oid=747 then 'C' ";
@@ -197,8 +197,9 @@ class TodayDataController extends Controller
         $sql = $case1 . $case2 . $case3 . $case4;
         $date = Carbon::now()->toDateString();
         $data = $query->whereRaw("date_format(date,'%Y-%m-%d')= '$date' ")
-            ->selectRaw("case " . $sql . "else 0 end as area,sum(looktimes) as num")
+            ->selectRaw("case " . $sql . "else 0 end as area,sum(exposuretimes) as num")
             ->groupBy("area")
+            ->orderBy('num', 'desc')
             ->get();
         $output = [];
         $areaMapping = [
