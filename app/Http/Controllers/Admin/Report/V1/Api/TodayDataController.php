@@ -87,13 +87,15 @@ class TodayDataController extends Controller
         }
         $date = Carbon::now()->toDateString();
         $allData = $query_all->whereRaw("date_format(date,'%Y-%m-%d')= '$date' ")
-            ->selectRaw("sum(bnum) as bnum,sum(gnum) as gnum,sum(bnum+gnum) as total")->first()->toArray();
-        $data = $query->selectRaw("sum(age10b) as age10_male,sum(age10g) as age10_female,
-                                              sum(age18b) as age18_male,sum(age18g) as age18_female,
-                                              sum(age30b) as age30_male,sum(age30g) as age30_female,
-                                              sum(age40b) as age40_male,sum(age40g) as age40_female,
-                                              sum(age60b) as age60_male,sum(age60g) as age60_female,
-                                              sum(age61b) as age61_male,sum(age61g) as age61_female")
+            ->selectRaw("sum(bnum) as bnum,sum(gnum) as gnum,sum(bnum+gnum) as total")
+            ->first()->toArray();
+        $data = $query->whereRaw("date_format(date,'%Y-%m-%d')= '$date' ")
+            ->selectRaw("sum(age10b) as age10_male,sum(age10g) as age10_female,
+                                    sum(age18b) as age18_male,sum(age18g) as age18_female,
+                                    sum(age30b) as age30_male,sum(age30g) as age30_female,
+                                    sum(age40b) as age40_male,sum(age40g) as age40_female,
+                                    sum(age60b) as age60_male,sum(age60g) as age60_female,
+                                    sum(age61b) as age61_male,sum(age61g) as age61_female")
             ->first()->toArray();
         $count = [];
         foreach ($data as $key => $value) {
@@ -103,8 +105,8 @@ class TodayDataController extends Controller
         $output = [];
         $output['total'] = [
             'count' => [
-                'male' => $allData['bnum'],
-                'female' => $allData['gnum'],
+                'male' => $allData['bnum'] == 0 ? "0" : $allData['bnum'],
+                'female' => $allData['gnum'] == 0 ? "0" : $allData['gnum'],
 
             ],
             'rate' => [
@@ -188,10 +190,10 @@ class TodayDataController extends Controller
     public function getAreaDistribution($request, Builder $query)
     {
         $total = XsFaceCountToday::query()->selectRaw("sum(looktimes) as num")->first()->toArray();
-        $case1 = "when oid=20 or oid=30 then 'A' ";
-        $case2 = "when oid=40 or oid=50 then 'B' ";
-        $case3 = "when oid=60 or oid=70 then 'C' ";
-        $case4 = "when oid=80 or oid=90 then 'D' ";
+        $case1 = "when oid=739 or oid=740 or oid=741 then 'A' ";
+        $case2 = "when oid=742 or oid=743 or oid=744 then 'B' ";
+        $case3 = "when oid=745 or oid=746 or oid=747 then 'C' ";
+        $case4 = "when oid=748 then 'D' ";
         $sql = $case1 . $case2 . $case3 . $case4;
 
         $date = Carbon::now()->toDateString();
