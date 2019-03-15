@@ -13,8 +13,18 @@ use Log;
 
 class UserController extends BaseController
 {
+    /**
+     * 获取授权页面链接
+     * @param MallCooRequest $request
+     * @return mixed
+     */
     public function oauth(MallCooRequest $request)
     {
+        $request->validate([
+            'redirect_url' => 'required|url',
+            'sign' => 'required',
+        ]);
+
         $userID = decrypt($request->sign);
         $redirect_url = urldecode($request->get('redirect_url'));
         $redirect_url = add_query_string($redirect_url, 'user_id', $userID);

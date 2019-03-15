@@ -30,7 +30,6 @@ class CouponController extends BaseController
             'pic_mid' => 'required',
         ]);
 
-        $mall_coo = app('mall_coo');
         $sUrl = 'https://openapi10.mallcoo.cn/Coupon/v1/Send/ByOpenUserID/';
 
         /**
@@ -47,7 +46,7 @@ class CouponController extends BaseController
             ]
         ];
 
-        $result = $mall_coo->send($sUrl, $data);
+        $result = $this->mall_coo->send($sUrl, $data);
         abort_if($result['Code'] != 1, 500, $result['Message']);
 
         /**
