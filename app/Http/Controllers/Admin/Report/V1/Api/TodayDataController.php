@@ -190,13 +190,11 @@ class TodayDataController extends Controller
     public function getAreaDistribution($request, Builder $query)
     {
         $total = XsFaceCountToday::query()->selectRaw("sum(exposuretimes) as num")->first()->toArray();
-//        $case1 = "when oid=739 or oid=740 or oid=741 then 'A' ";
-//        $case2 = "when oid=742 or oid=743 or oid=744 then 'B' ";
-//        $case3 = "when oid=745 or oid=746 or oid=747 then 'C' ";
-//        $case4 = "when oid=748 then 'D' ";
-//        $sql = $case1 . $case2 . $case3 . $case4;
-        #TODO 正式上线需要改过来
-        $sql = "when oid=420 then 'A' when oid=421 then 'B' when oid=422 then 'C' when oid=423 then 'D' ";
+        $case1 = "when oid=739 or oid=740 or oid=741 then 'A' ";
+        $case2 = "when oid=742 or oid=743 or oid=744 then 'B' ";
+        $case3 = "when oid=745 or oid=746 or oid=747 then 'C' ";
+        $case4 = "when oid=748 then 'D' ";
+        $sql = $case1 . $case2 . $case3 . $case4;
         $date = Carbon::now()->toDateString();
         $data = $query->whereRaw("date_format(date,'%Y-%m-%d')= '$date' ")
             ->selectRaw("case " . $sql . "else 0 end as area,sum(exposuretimes) as num")
