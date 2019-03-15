@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin\MallCoo\V1\Api;
 
 use App\Http\Controllers\Admin\MallCoo\V1\Request\MallCooRequest;
+use App\Http\Controllers\Admin\MallCoo\V1\Request\UserRequest;
 use App\Http\Controllers\Admin\WeChat\V1\Models\ThirdPartyUser;
 use function GuzzleHttp\Psr7\parse_query;
 use Illuminate\Http\Request;
 use App\Models\WeChatUser;
+use Cache;
 use DB;
 use Log;
 
@@ -110,5 +112,44 @@ class UserController extends BaseController
         return response()->json($result['Data']);
     }
 
+    /**
+     * 手机号开会员卡
+     * @param UserRequest $request
+     * @return mixed
+     */
+    public function store(UserRequest $request)
+    {
+        $verifyData = Cache::get($request->verification_key);
+
+        abort_if(!$verifyData, 422,'验证码已失效');
+        abort_if(!hash_equals($verifyData['code'], $request->verification_code), 401, '验证码错误');
+
+        //开卡接口
+        $sUrl = 'https://openapi10.mallcoo.cn/User/MallCard/v1/Open/ByMobile/';
+        $result = $this->mall_coo->send($sUrl, ['Mobile' => $verifyData['phone']]);
+        abort_if($result['Code'] != 1, 500, $result['Message']);
+
+        //获取会员信息
+        $result = $this->mall_coo->getUserInfoByOpenUserID($result['Data']['OpenUserID']);
+        abort_if($result['Code'] !== 1, 500, $result['Message']);
+
+        $userInfo = $result['data'];
+        $thirdPartyUser = ThirdPartyUser::updateOrCreate(
+            ['mallcoo_open_user_id' => $userInfo['OpenUserID']],
+            [
+                'mobile' => $userInfo['Mobile'],
+                'username' => $userInfo['UserName'],
+                'mallcoo_wx_open_id' => $userInfo['WXOpenID'],
+                'gender' => $userInfo['Gender'],
+                'birthday' => $userInfo['Birthday'],
+                'mall_card_apply_time' => $userInfo['MallCardApplyTime'],
+            ]
+        );
+
+        $userID = decrypt($request->sign);
+        WeChatUser::query()->where('id', $userID)->update(['mallcoo_open_user_id' => $thirdPartyUser->mallcoo_open_user_id]);
+
+        return $this->response->array($userInfo)->setStatusCode(201);
+    }
 
 }
