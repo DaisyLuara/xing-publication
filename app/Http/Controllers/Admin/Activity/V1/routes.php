@@ -9,8 +9,6 @@ $api->version('v1', [
         'expires' => config('api.rate_limits.access.expires'),
     ], function ($api) {
 
-        $api->get('point_configs/{point_config}', 'PointConfigController@show');//点位配置
-
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
             //活动参与者
