@@ -20,10 +20,13 @@ class PointExport extends AbstractExport
 
     public function collection()
     {
+        $startClientdate = strtotime($this->startDate) * 1000;
+        $endClientdate = strtotime($this->endDate) * 1000;
+
         $projectName = DB::connection('ar')
             ->table('xs_face_count_log as fcl')
             ->join('ar_product_list as apl', 'fcl.belong', '=', 'apl.versionname')
-            ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
+            ->whereRaw("fcl.clientdate between '$startClientdate' and '$endClientdate'")
             ->where('oid', '=', $this->pointId)
             ->selectRaw('apl.name')
             ->groupBy('belong')
@@ -42,7 +45,7 @@ class PointExport extends AbstractExport
         $faceCount = DB::connection('ar')
             ->table('xs_face_count_log as fcl')
             ->join('ar_product_list as apl', 'fcl.belong', '=', 'apl.versionname')
-            ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '$this->startDate' and '$this->endDate' and oid='$this->pointId'")
+            ->whereRaw("fcl.clientdate between '$startClientdate' and '$endClientdate' and oid='$this->pointId'")
             ->selectRaw("apl.name as name,date_format(fcl.date,'%Y-%m-%d') as date,sum(playernum7) as playernum7,sum(playernum15) as playernum15,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum,sum(omo_scannum) as omo_scannum,sum(lovenum) as lovenum")
             ->groupBy(DB::raw("belong,date_format(fcl.date,'%Y-%m-%d')"));
 
@@ -75,7 +78,7 @@ class PointExport extends AbstractExport
         }
         $totalByDay = DB::connection('ar')
             ->table('xs_face_count_log as fcl')
-            ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
+            ->whereRaw("fcl.clientdate between '$startClientdate' and '$endClientdate'")
             ->where('oid', '=', $this->pointId)
             ->where('belong', '<>', 'all')
             ->groupBy('belong')
@@ -83,7 +86,7 @@ class PointExport extends AbstractExport
             ->get();
         $total = DB::connection('ar')
             ->table('xs_face_count_log as fcl')
-            ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '$this->startDate' and '$this->endDate'")
+            ->whereRaw("fcl.clientdate between '$startClientdate' and '$endClientdate'")
             ->where('oid', '=', $this->pointId)
             ->where('belong', '<>', 'all')
             ->selectRaw("sum(playernum7) as playernum7,sum(playernum15) as playernum15,sum(playernum21) as playernum21,concat_ws('|',sum(omo_outnum) ,sum(omo_scannum) ) as omonum,sum(lovenum) as lovenum")
