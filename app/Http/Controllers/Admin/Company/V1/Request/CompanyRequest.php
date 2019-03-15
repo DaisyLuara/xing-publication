@@ -31,7 +31,6 @@ class CompanyRequest extends Request
                     'phone' => 'filled|regex:/^1[3456789]\d{9}$/',
                     'telephone' => 'filled',
                     'password' => 'filled|string|min:8',
-                    'role_id' => 'filled'
                 ];
                 break;
         }
