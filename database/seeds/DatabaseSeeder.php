@@ -15,7 +15,6 @@ class DatabaseSeeder extends Seeder
             //基础数据填充
             $this->call(UsersTableSeeder::class);
             $this->call(TradeTableSeeder::class);
-            $this->call(CalendarSeeder::class);
 
             //权限
             $this->call(AddPermissionAndRoleForDemandSeeder::class);
@@ -31,6 +30,7 @@ class DatabaseSeeder extends Seeder
             //召唤宝-权限
             $this->call(AddRoleForShopSeeder::class);
             $this->call(UpdatePermissionForShopSeeder::class);
+            $this->call(AddRolePermissionToShop::class);
 
 
             //商品库存管理

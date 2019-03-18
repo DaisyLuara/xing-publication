@@ -141,9 +141,9 @@ export default {
         ids: ids
       };
       if (ids.length < 1) {
-        this.$message.error("请先选择一个要删除的用户");
+        this.$message.error("请先选择一个要删除的消息");
       } else {
-        MessageBox.confirm("确认删除选中信息?", "提示", {
+        MessageBox.confirm("确认删除选中的消息?", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
@@ -154,7 +154,7 @@ export default {
             deleteNotifications(this, args)
               .then(response => {
                 this.pagination.currentPage = 1;
-                this.notificationStats()
+                this.notificationStats();
                 this.$message({
                   type: "success",
                   message: "删除成功！"
@@ -195,7 +195,7 @@ export default {
       notificationStats(this)
         .then(response => {
           this.$store.commit("saveNotificationState", response);
-          this.unreadCount = response.unread_count
+          this.unreadCount = response.unread_count;
           this.getNoticeList();
         })
         .catch(err => {

@@ -18,7 +18,7 @@ class UpdateCompanyBdUserId extends Migration
          * Run Raw SQL
          * @see https://stackoverflow.com/questions/28787293/run-raw-sql-in-migration/28787323
          */
-        DB::connection('mysql')->statement('ALTER TABLE companies alter column bd_user_id set default  0');
+        DB::connection('mysql')->statement('alter table companies modify bd_user_id int unsigned default 0 null ');
     }
 
     /**
