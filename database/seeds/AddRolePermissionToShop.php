@@ -69,7 +69,7 @@ class AddRolePermissionToShop extends Seeder
         }
 
         $marketer = Role::query()->updateOrCreate(['name' => 'market_owner'], ['name' => 'market_owner', 'display_name' => '场地主']);
-        $targetPermissions = ['shop_account', 'shop_point', 'shop_report', 'shop_wechat', 'shop_project', 'shop_prize', 'shop_launch'];
+        $targetPermissions = ['shop_account', 'shop_market', 'shop_report', 'shop_wechat', 'shop_project', 'shop_prize', 'shop_launch'];
         $targetPermissionIDs = [[]];
         foreach ($targetPermissions as $targetPermission) {
             $ids = DB::table('permissions')->whereRaw("name like '$targetPermission%'")->get(['id']);
