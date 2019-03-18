@@ -33,6 +33,11 @@ class AddRolePermissionToShop extends Seeder
                 ['name' => 'shop_launch.project_tpl', 'display_name' => '节目投放模板'],
                 ['name' => 'shop_launch.prize', 'display_name' => '奖品投放'],
             ]],
+            ['name' => 'shop_market', 'display_name' => '场地', 'children' => [
+                ['name' => 'shop_market.area', 'display_name' => '区域'],
+                ['name' => 'shop_market.market', 'display_name' => '场地'],
+                ['name' => 'shop_market.point', 'display_name' => '点位'],
+            ]],
         ];
 
         foreach ($parentNodes as $parentNode) {
@@ -44,10 +49,10 @@ class AddRolePermissionToShop extends Seeder
 
         foreach ($parentNodes as $parentNode) {
             $parentNodeDB = Permission::create(['name' => $parentNode['name'], 'display_name' => $parentNode['display_name'], 'guard_name' => 'shop']);
-            Log::info('parent_node->' . $parentNode['name']);
+            Log::info('|--' . $parentNode['name']);
 
             foreach ($parentNode['children'] as $childrenNode) {
-                Log::info('child_node-->' . $childrenNode['name']);
+                Log::info('   |--' . $childrenNode['name']);
                 $childrenNodeDB = Permission::create(['name' => $childrenNode['name'], 'display_name' => $childrenNode['display_name'], 'parent_id' => $parentNodeDB->id, 'guard_name' => 'shop']);
                 $grandSonNodes = [
                     ['name' => $childrenNode['name'] . '.read', 'display_name' => '查看'],
@@ -56,7 +61,7 @@ class AddRolePermissionToShop extends Seeder
                     ['name' => $childrenNode['name'] . '.delete', 'display_name' => '删除'],
                 ];
                 foreach ($grandSonNodes as $grandSonNode) {
-                    Log::info('grandson_node--->' . $grandSonNode['name']);
+                    Log::info('      |--' . $grandSonNode['name']);
                     Permission::create(array_merge($grandSonNode, ['parent_id' => $childrenNodeDB->id, 'guard_name' => 'shop']));
                 }
             }
