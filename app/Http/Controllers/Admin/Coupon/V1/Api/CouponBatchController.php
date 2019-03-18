@@ -91,8 +91,9 @@ class CouponBatchController extends Controller
 
     public function store(Company $company, CouponBatch $couponBatch, CouponBatchRequest $request)
     {
-        //检查核销配置
-        $customers = $this->checkWriteOffCustomer($request);
+        //核销账户列表
+        $customers = $this->getWriteOffCustomers($request);
+//        dd($customers);
 
         $couponBatch->fill(array_merge([
             'company_id' => $company->id,
@@ -123,7 +124,7 @@ class CouponBatchController extends Controller
         }
 
         //绑定核销人员
-        if (array_sum($customers)) {
+        if ($customers) {
             $couponBatch->writeOffCustomers()->attach($customers);
         }
 
@@ -136,7 +137,7 @@ class CouponBatchController extends Controller
     public function update(CouponBatch $couponBatch, Request $request)
     {
         //检查核销配置
-        $customers = $this->checkWriteOffCustomer($request);
+//        $customers = $this->checkWriteOffCustomer($request);
 
         $couponBatch->update($request->except(['marketid', 'oid']));
         if ($request->wechat && $couponBatch->wechat) {
@@ -195,32 +196,27 @@ class CouponBatchController extends Controller
 
     }
 
-    private function checkWriteOffCustomer($request)
+    private function getWriteOffCustomers($request)
     {
-        $customers = [];
-        if ($request->filled('scene_type')) {
-            //场地核销人员
-            if ($request->filled('write_off_mid')) {
-                $market = MarketConfig::query()->findOrFail($request->write_off_mid);
-                abort_if(!$market->write_off_customer_id, 500, '该场地未指定核销人员');
-                $customers[] = $market->write_off_customer_id;
-            }
+        $customers = collect();
 
-            //商户核销人员
-            if (!empty($request->write_off_sid)) {
-                foreach ($request->write_off_sid as $store_id) {
-                    $store = Store::query()->findOrFail($store_id);
+        if ($request->filled('write_off_mid')) {
+            $marketConfig = MarketConfig::query()->findOrFail($request->write_off_mid);
+            $marketCustomers = $marketConfig->company->customers;
+//            abort_if(!$market->write_off_customer_id, 500, '该场地未指定核销人员');
+//
+//            $customers[] = $market->write_off_customer_id;
+        }
 
-                    if ($store->market->marketid != $request->write_off_mid) {
-                        abort('500', '商户[' . $store->name . ']不属于场地[' . $market->market->name . ']，请检查');
-                    }
-
-                    abort_if(!$store->write_off_customer_id, 500, '商户[' . $store->name . ']未指定核销人员');
-                    $customers[] = $store->write_off_customer_id;
-                }
+        $storeCustomers = collect();
+        //商户核销人员列表
+        if (!empty($request->write_off_sid)) {
+            foreach ($request->write_off_sid as $store_id) {
+                $store = Store::query()->findOrFail($store_id);
+                $storeCustomers->merge($store->company->customers);
             }
         }
 
-        return array_unique($customers);
+        return $customers;
     }
 }

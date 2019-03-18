@@ -73,10 +73,6 @@ class MarketController extends Controller
 
     public function store(MarketRequest $request, Market $market)
     {
-        //商户核销人员配置
-        if ($request->has('customer') && count(array_filter($request->customer))) {
-            $customer = $this->generateCustomer($request);
-        }
 
         $market->fill($request->all())->saveOrFail();
 
@@ -92,19 +88,11 @@ class MarketController extends Controller
             $market->marketConfig()->create($request->marketConfig);
         }
 
-        if (isset($customer)) {
-            $market->marketConfig->update(['write_off_customer_id' => $customer->id]);
-        }
-
         return $this->response->item($market, new MarketTransformer());
     }
 
     public function update(MarketRequest $request, Market $market)
     {
-        //商户核销人员配置
-        if ($request->has('customer') && count(array_filter($request->customer))) {
-            $customer = $this->generateCustomer($request);
-        }
 
         $market->update($request->all());
         if ($request->has('contract')) {
@@ -131,10 +119,6 @@ class MarketController extends Controller
             }
 
             $market->marketConfig()->updateOrCreate(['id' => $market->marketid], $marketConfig);
-        }
-
-        if (isset($customer)) {
-            $market->marketConfig->update(['write_off_customer_id' => $customer->id]);
         }
 
         return $this->response->item($market, new MarketTransformer());

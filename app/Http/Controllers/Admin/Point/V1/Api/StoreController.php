@@ -55,28 +55,12 @@ class StoreController extends Controller
 
     public function store(StoreRequest $request, Store $store)
     {
-        DB::beginTransaction();
+        $store->fill($request->all());
+        $store->save();
 
-        try {
-
-            $store->fill($request->all());
-            $store->save();
-
-            // 合约配置
-            if ($request->filled('contract_id')) {
-                $store->contract()->update($request->only(['start_date', 'end_date']));
-            }
-
-            //商户核销人员配置
-            if ($request->has('customer') && count(array_filter($request->customer))) {
-                $this->generateCustomer($request, $store);
-            }
-
-            DB::commit();
-
-        } catch (\Exception $e) {
-            DB::rollback();
-            abort(500, $e->getMessage());
+        // 合约配置
+        if ($request->filled('contract_id')) {
+            $store->contract()->update($request->only(['start_date', 'end_date']));
         }
 
         return $this->response->item($store, new StoreTransformer());
@@ -88,11 +72,6 @@ class StoreController extends Controller
 
         if ($request->filled('contract_id')) {
             $store->contract()->update($request->only(['start_date', 'end_date']));
-        }
-
-        //商户核销人员配置
-        if ($request->has('customer') && count(array_filter($request->customer))) {
-            $this->generateCustomer($request, $store);
         }
 
         return $this->response->item($store, new StoreTransformer());
