@@ -123,29 +123,4 @@ class MarketController extends Controller
 
         return $this->response->item($market, new MarketTransformer());
     }
-
-    private function generateCustomer($request)
-    {
-        if ($request->customer['type'] == "add") {
-            abort_if(!$request->customer['phone'] || !$request->customer['password'], 500, '核销人员信息不完整');
-
-            $customer = Customer::query()->create([
-                'name' => $request->customer['name'],
-                'company_id' => $request->marketConfig['company_id'],
-                'phone' => $request->customer['phone'],
-                'password' => bcrypt($request->customer['password']),
-                'position' => '场地核销人员',
-            ]);
-
-        } else {
-            $customer = Customer::query()->where('phone', $request->customer['phone'])->first();
-            abort_if(!$customer, 500, '未找到联系人,请检查手机号');
-        }
-
-        if (!$customer->hasRole('market_owner')) {
-            $customer->assignRole('market_owner');
-        }
-
-        return $customer;
-    }
 }

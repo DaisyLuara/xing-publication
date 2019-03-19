@@ -91,24 +91,20 @@ class CouponBatchController extends Controller
 
     public function store(Company $company, CouponBatch $couponBatch, CouponBatchRequest $request)
     {
-        //核销账户列表
-        $customers = $this->getWriteOffCustomers($request);
-//        dd($customers);
-
         $couponBatch->fill(array_merge([
             'company_id' => $company->id,
             'create_user_id' => $this->user->id,
             'bd_user_id' => $company->user_id,
         ], $request->except(['marketid', 'oid'])))->save();
 
-        //绑定商场
+        //绑定投放商场(嗨抖)
         if ($request->filled('marketid') && empty($request->oid)) {
            $couponBatch->marketPointCouponBatches()->create([
                'marketid' => $request->marketid,
            ]);
         }
 
-        //绑定点位
+        //绑定投放点位(嗨抖)
         if ($request->oid) {
             foreach ($request->oid as $oid) {
                 $couponBatch->marketPointCouponBatches()->create([
@@ -118,14 +114,12 @@ class CouponBatchController extends Controller
             }
         }
 
+        //场地商户核销账户
+        $this->setWriteOffCustomers($request, $couponBatch);
+
         if ($request->has('wechat')) {
             $wechatCouponBatch = WechatCouponBatch::query()->create($request->get('wechat'));
             $couponBatch->update(['wechat_coupon_batch_id' => $wechatCouponBatch->id]);
-        }
-
-        //绑定核销人员
-        if ($customers) {
-            $couponBatch->writeOffCustomers()->attach($customers);
         }
 
         activity('coupon_batch')->on($couponBatch)->withProperties($request->all())->log('新增优惠券规则');
@@ -136,10 +130,8 @@ class CouponBatchController extends Controller
 
     public function update(CouponBatch $couponBatch, Request $request)
     {
-        //检查核销配置
-//        $customers = $this->checkWriteOffCustomer($request);
-
         $couponBatch->update($request->except(['marketid', 'oid']));
+
         if ($request->wechat && $couponBatch->wechat) {
             $couponBatch->wechat()->update($request['wechat']);
         }
@@ -161,11 +153,9 @@ class CouponBatchController extends Controller
             }
         }
 
-        //重新绑定核销人员
+        //场地商户核销账户
         $couponBatch->writeOffCustomers()->detach();
-        if ($customers) {
-           $couponBatch->writeOffCustomers()->attach($customers);
-        }
+        $this->setWriteOffCustomers($request, $couponBatch);
 
         activity('coupon_batch')->on($couponBatch)->withProperties($request->all())->log('修改优惠券规则');
 
@@ -196,27 +186,30 @@ class CouponBatchController extends Controller
 
     }
 
-    private function getWriteOffCustomers($request)
+    /**
+     * 商场商户核销人员表
+     * @param $request
+     * @param $couponBatch
+     */
+    private function setWriteOffCustomers($request, $couponBatch)
     {
-        $customers = collect();
-
+        //绑定商场核销人员
         if ($request->filled('write_off_mid')) {
             $marketConfig = MarketConfig::query()->findOrFail($request->write_off_mid);
-            $marketCustomers = $marketConfig->company->customers;
-//            abort_if(!$market->write_off_customer_id, 500, '该场地未指定核销人员');
-//
-//            $customers[] = $market->write_off_customer_id;
+            $marketConfig->company->customers->each(function ($item) use($couponBatch){
+                $couponBatch->writeOffCustomers()->attach($item);
+            });
         }
 
-        $storeCustomers = collect();
-        //商户核销人员列表
-        if (!empty($request->write_off_sid)) {
+        //绑定商户核销人员
+        if ($request->write_off_sid) {
             foreach ($request->write_off_sid as $store_id) {
                 $store = Store::query()->findOrFail($store_id);
-                $storeCustomers->merge($store->company->customers);
+                $store->company->customers->each(function ($item) use($couponBatch){
+                    $couponBatch->writeOffCustomers()->attach($item);
+                });
             }
         }
-
-        return $customers;
     }
+
 }
