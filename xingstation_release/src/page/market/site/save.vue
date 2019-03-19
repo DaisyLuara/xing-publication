@@ -70,40 +70,6 @@
                 class="item-input"
               />
             </el-form-item>
-            <el-form-item label="核销员姓名" prop="customer.name">
-              <el-select
-                v-model="siteForm.customer.name"
-                :loading="searchLoading"
-                default-first-option
-                filterable
-                allow-create
-                placeholder="核销员姓名"
-                @change="customerHandle"
-              >
-                <el-option
-                  v-for="item in customerList"
-                  :key="item.name"
-                  :label="item.name"
-                  :value="item.name"
-                />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="核销员电话" prop="customer.phone">
-              <el-input
-                v-model="siteForm.customer.phone"
-                :maxlength="11"
-                placeholder="请输入核销员电话"
-                class="item-input"
-              />
-            </el-form-item>
-            <el-form-item label="核销密码" prop="customer.password">
-              <el-input
-                v-model="siteForm.customer.password"
-                :disabled="passwordShow"
-                placeholder="请输入核销密码"
-                class="item-input"
-              />
-            </el-form-item>
           </el-tab-pane>
           <el-tab-pane label="合约配置" name="second">
             <el-form-item label="场地类型" prop="contract.type">
@@ -628,12 +594,6 @@ export default {
           company_id: null,
           contract_id: null,
           media_id: null
-        },
-        customer: {
-          type: "select",
-          name: null,
-          phone: null,
-          password: null
         }
       },
       contractList: [],
@@ -643,35 +603,6 @@ export default {
       areaList: [],
       rules: {
         name: [{ required: true, message: "请输入名称", trigger: "submit" }],
-        "customer.name": [
-          { required: true, message: "核销员姓名不能为空", trigger: "submit" }
-        ],
-        "customer.password": [
-          {
-            required: true,
-            validator: (rule, value, callback) => {
-              if (value && value.length < 8) {
-                callback("核销密码长度不能小于8位");
-              } else {
-                callback();
-              }
-            },
-            trigger: "submit"
-          }
-        ],
-        "customer.phone": [
-          {
-            required: true,
-            validator: (rule, value, callback) => {
-              if (!/^1[3456789]\d{9}$/.test(value) && value) {
-                callback("手机格式不正确,请重新输入");
-              } else {
-                callback();
-              }
-            },
-            trigger: "submit"
-          }
-        ],
         "marketConfig.company_id": [
           { required: true, message: "请选择公司", trigger: "submit" }
         ],
@@ -773,7 +704,6 @@ export default {
   created() {
     this.siteID = this.$route.params.uid;
     if (this.siteID) {
-      this.customerPasswordHandle(false);
       this.getMarketDetail();
     }
     this.getAreaList();
@@ -788,39 +718,6 @@ export default {
     });
   },
   methods: {
-    customerPasswordHandle(required) {
-      this.rules["customer.password"] = [
-        {
-          required: required,
-          validator: (rule, value, callback) => {
-            if (value && value.length < 8) {
-              callback("核销密码长度不能小于8位");
-            } else {
-              callback();
-            }
-          },
-          trigger: "submit"
-        }
-      ];
-    },
-    customerHandle(val) {
-      this.siteForm.customer.phone = "";
-      this.customerList.map(r => {
-        if (val === r.name) {
-          this.siteForm.customer.phone = r.phone;
-          return;
-        }
-      });
-      if (!this.siteForm.customer.phone) {
-        this.customerPasswordHandle(true);
-        this.passwordShow = false;
-        this.siteForm.customer.type = "add";
-      } else {
-        this.customerPasswordHandle(false);
-        this.passwordShow = true;
-        this.siteForm.customer.type = "select";
-      }
-    },
     getSearchCustomer(val) {
       this.searchLoading = true;
       let args = {
@@ -877,12 +774,6 @@ export default {
       let args = {
         company_id: val
       };
-      if (!noClear) {
-        this.siteForm.customer.name = null;
-        this.siteForm.customer.phone = null;
-        this.siteForm.customer.password = null;
-      }
-
       this.getSearchCustomer(val);
       getContractReceiptList(this, args)
         .then(res => {
@@ -985,11 +876,6 @@ export default {
             this.siteForm.marketConfig.address = res.marketConfig.address;
             this.siteForm.marketConfig.description =
               res.marketConfig.description;
-          }
-          if (res.marketConfig.customer) {
-            this.siteForm.customer.phone = res.marketConfig.customer.phone;
-            this.siteForm.customer.name = res.marketConfig.customer.name;
-            this.siteForm.customer.password = null;
           }
           this.setting.loading = false;
         })

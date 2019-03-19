@@ -310,7 +310,6 @@ export default {
     this.businessID = this.$route.params.uid;
     this.getAreaList();
     this.getSearchUserList();
-
     if (this.businessID) {
       this.getBusinessDetail();
     } else {
