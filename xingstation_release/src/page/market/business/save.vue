@@ -104,40 +104,6 @@
                 class="item-input"
               />
             </el-form-item>
-            <el-form-item label="核销员姓名" prop="customer.name">
-              <el-select
-                v-model="businessForm.customer.name"
-                :loading="searchLoading"
-                filterable
-                allow-create
-                default-first-option
-                placeholder="核销员姓名"
-                @change="customerHandle"
-              >
-                <el-option
-                  v-for="item in customerList"
-                  :key="item.name"
-                  :label="item.name"
-                  :value="item.name"
-                />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="核销员电话" prop="customer.phone">
-              <el-input
-                v-model="businessForm.customer.phone"
-                :maxlength="11"
-                placeholder="请输入核销员电话"
-                class="item-input"
-              />
-            </el-form-item>
-            <el-form-item label="核销密码" prop="customer.password">
-              <el-input
-                v-model="businessForm.customer.password"
-                :disabled="passwordShow"
-                placeholder="请输入核销密码"
-                class="item-input"
-              />
-            </el-form-item>
           </el-tab-pane>
           <el-tab-pane v-loading="contractFlag" label="合约配置" name="second">
             <el-form-item label="合同" prop="contract">
@@ -315,47 +281,12 @@ export default {
         contract_id: null,
         user_id: null,
         start_date: "",
-        end_date: "",
-        customer: {
-          type: "select",
-          phone: "",
-          name: "",
-          password: ""
-        }
+        end_date: ""
       },
       markteList: [],
       areaList: [],
       customerList: [],
       rules: {
-        "customer.name": [
-          { required: true, message: "请输入名称", trigger: "submit" }
-        ],
-        "customer.password": [
-          {
-            required: true,
-            validator: (rule, value, callback) => {
-              if (value && value.length < 8) {
-                callback("核销密码长度不能小于8位");
-              } else {
-                callback();
-              }
-            },
-            trigger: "submit"
-          }
-        ],
-        "customer.phone": [
-          {
-            required: true,
-            validator: (rule, value, callback) => {
-              if (!/^1[3456789]\d{9}$/.test(value) && value) {
-                callback("手机格式不正确,请重新输入");
-              } else {
-                callback();
-              }
-            },
-            trigger: "submit"
-          }
-        ],
         name: [{ required: true, message: "请输入名称", trigger: "submit" }],
         areaid: [{ required: true, message: "请选择区域", trigger: "submit" }],
         company_id: [
@@ -381,46 +312,12 @@ export default {
     this.getSearchUserList();
 
     if (this.businessID) {
-      this.customerPasswordHandle(false);
       this.getBusinessDetail();
     } else {
       this.setting.loading = false;
     }
   },
   methods: {
-    customerPasswordHandle(required) {
-      this.rules["customer.password"] = [
-        {
-          required: required,
-          validator: (rule, value, callback) => {
-            if (value && value.length < 8) {
-              callback("核销密码长度不能小于8位");
-            } else {
-              callback();
-            }
-          },
-          trigger: "submit"
-        }
-      ];
-    },
-    customerHandle(val) {
-      this.businessForm.customer.phone = "";
-      this.customerList.map(r => {
-        if (val === r.name) {
-          this.businessForm.customer.phone = r.phone;
-          return;
-        }
-      });
-      if (!this.businessForm.customer.phone) {
-        this.customerPasswordHandle(true);
-        this.businessForm.customer.type = "add";
-        this.passwordShow = false;
-      } else {
-        this.customerPasswordHandle(false);
-        this.businessForm.customer.type = "select";
-        this.passwordShow = true;
-      }
-    },
     getSearchCustomer(val) {
       this.searchLoading = true;
       let args = {
@@ -458,11 +355,6 @@ export default {
       let args = {
         company_id: val
       };
-      if (!noClear) {
-        this.businessForm.customer.name = null;
-        this.businessForm.customer.phone = null;
-        this.businessForm.customer.password = null;
-      }
       this.getSearchCustomer(val);
       getContractReceiptList(this, args)
         .then(res => {
@@ -550,11 +442,6 @@ export default {
           this.businessForm.user_id = res.user ? res.user.id : null;
           this.businessForm.media_id = res.media ? res.media.id : null;
           this.logoUrl = res.media ? res.media.url : "";
-          if (res.customer) {
-            this.businessForm.customer.phone = res.customer.phone;
-            this.businessForm.customer.name = res.customer.name;
-            this.businessForm.customer.password = null;
-          }
           this.companyHandle(this.businessForm.company_id, true);
           this.setting.loading = false;
         })
