@@ -605,8 +605,17 @@ class QueryController extends Controller
     {
         $query = $store->query();
 
+        //公司以及子公司名下商户列表
         if ($request->has('company_id')) {
-            $query->where('company_id', '=', $request->company_id);
+            $company_id = $request->company_id;
+
+            $query->where(function ($q) use($company_id) {
+                $q->where('company_id', $company_id);
+            })->orWhere(function ($q) use ($company_id) {
+                $q->whereHas('company', function ($q) use($company_id) {
+                    $q->where('parent_id', $company_id);
+                });
+            });
         }
 
         if ($request->has('market_id')) {

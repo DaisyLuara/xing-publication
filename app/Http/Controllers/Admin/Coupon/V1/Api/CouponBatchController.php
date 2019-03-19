@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\Point\V1\Models\Store;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Log;
 
 class CouponBatchController extends Controller
 {
@@ -60,19 +61,23 @@ class CouponBatchController extends Controller
             switch ($request->get('status')) {
                 case 1:
                     $query->where(function ($query) use($now) {
-                        $query->where('is_fixed_date', 1)->where('end_date', '>', $now)->where('start_date', '<', $now);
-                    })->orWhere(function ($query) {
-                        $query->where('is_fixed_date', 0)->where('is_active', 1);
+                        $query->where(function ($q) use($now) {
+                            $q->where('is_fixed_date', 1)->where('end_date', '>', $now)->where('start_date', '<', $now);
+                        })->orWhere(function ($q) {
+                            $q->where('is_fixed_date', 0)->where('is_active', 1);
+                        });
                     });
                     break;
                 case 2:
                     $query->where('is_fixed_date', 1)->where('start_date', '>', $now);
                     break;
                 case 3:
-                    $query->where(function ($query) use ($now) {
-                        $query->where('is_fixed_date', 1)->where('end_date', '<', $now);
-                    })->orWhere(function ($query) {
-                        $query->where('is_fixed_date', 0)->where('is_active', 0);
+                    $query->where(function ($query) use($now) {
+                        $query->where(function ($q) use ($now) {
+                            $q->where('is_fixed_date', 1)->where('end_date', '<', $now);
+                        })->orWhere(function ($q) {
+                            $q->where('is_fixed_date', 0)->where('is_active', 0);
+                        });
                     });
                     break;
                 default:
@@ -86,23 +91,20 @@ class CouponBatchController extends Controller
 
     public function store(Company $company, CouponBatch $couponBatch, CouponBatchRequest $request)
     {
-        //检查核销配置
-        $customers = $this->checkWriteOffCustomer($request);
-
         $couponBatch->fill(array_merge([
             'company_id' => $company->id,
             'create_user_id' => $this->user->id,
             'bd_user_id' => $company->user_id,
         ], $request->except(['marketid', 'oid'])))->save();
 
-        //绑定商场
+        //绑定投放商场(嗨抖)
         if ($request->filled('marketid') && empty($request->oid)) {
            $couponBatch->marketPointCouponBatches()->create([
                'marketid' => $request->marketid,
            ]);
         }
 
-        //绑定点位
+        //绑定投放点位(嗨抖)
         if ($request->oid) {
             foreach ($request->oid as $oid) {
                 $couponBatch->marketPointCouponBatches()->create([
@@ -112,14 +114,12 @@ class CouponBatchController extends Controller
             }
         }
 
+        //场地商户核销账户
+        $this->setWriteOffCustomers($request, $couponBatch);
+
         if ($request->has('wechat')) {
             $wechatCouponBatch = WechatCouponBatch::query()->create($request->get('wechat'));
             $couponBatch->update(['wechat_coupon_batch_id' => $wechatCouponBatch->id]);
-        }
-
-        //绑定核销人员
-        if (array_sum($customers)) {
-            $couponBatch->writeOffCustomers()->attach($customers);
         }
 
         activity('coupon_batch')->on($couponBatch)->withProperties($request->all())->log('新增优惠券规则');
@@ -130,10 +130,8 @@ class CouponBatchController extends Controller
 
     public function update(CouponBatch $couponBatch, Request $request)
     {
-        //检查核销配置
-        $customers = $this->checkWriteOffCustomer($request);
-
         $couponBatch->update($request->except(['marketid', 'oid']));
+
         if ($request->wechat && $couponBatch->wechat) {
             $couponBatch->wechat()->update($request['wechat']);
         }
@@ -155,11 +153,9 @@ class CouponBatchController extends Controller
             }
         }
 
-        //重新绑定核销人员
+        //场地商户核销账户
         $couponBatch->writeOffCustomers()->detach();
-        if ($customers) {
-           $couponBatch->writeOffCustomers()->attach($customers);
-        }
+        $this->setWriteOffCustomers($request, $couponBatch);
 
         activity('coupon_batch')->on($couponBatch)->withProperties($request->all())->log('修改优惠券规则');
 
@@ -190,32 +186,30 @@ class CouponBatchController extends Controller
 
     }
 
-    private function checkWriteOffCustomer($request)
+    /**
+     * 商场商户核销人员表
+     * @param $request
+     * @param $couponBatch
+     */
+    private function setWriteOffCustomers($request, $couponBatch)
     {
-        $customers = [];
-        if ($request->filled('scene_type')) {
-            //场地核销人员
-            if ($request->filled('write_off_mid')) {
-                $market = MarketConfig::query()->findOrFail($request->write_off_mid);
-                abort_if(!$market->write_off_customer_id, 500, '该场地未指定核销人员');
-                $customers[] = $market->write_off_customer_id;
-            }
-
-            //商户核销人员
-            if (!empty($request->write_off_sid)) {
-                foreach ($request->write_off_sid as $store_id) {
-                    $store = Store::query()->findOrFail($store_id);
-
-                    if ($store->market->marketid != $request->write_off_mid) {
-                        abort('500', '商户[' . $store->name . ']不属于该场地，请检查');
-                    }
-
-                    abort_if(!$store->write_off_customer_id, 500, '商户[' . $store->name . ']未指定核销人员');
-                    $customers[] = $store->write_off_customer_id;
-                }
-            }
+        //绑定商场核销人员
+        if ($request->filled('write_off_mid')) {
+            $marketConfig = MarketConfig::query()->findOrFail($request->write_off_mid);
+            $marketConfig->company->customers->each(function ($item) use($couponBatch){
+                $couponBatch->writeOffCustomers()->attach($item);
+            });
         }
 
-        return array_unique($customers);
+        //绑定商户核销人员
+        if ($request->write_off_sid) {
+            foreach ($request->write_off_sid as $store_id) {
+                $store = Store::query()->findOrFail($store_id);
+                $store->company->customers->each(function ($item) use($couponBatch){
+                    $couponBatch->writeOffCustomers()->attach($item);
+                });
+            }
+        }
     }
+
 }

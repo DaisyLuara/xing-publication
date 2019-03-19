@@ -9,8 +9,6 @@
 namespace App\Http\Controllers\Admin\Coupon\V1\Models;
 
 
-use App\Http\Controllers\Admin\Point\V1\Models\Point;
-use App\Http\Controllers\Admin\Project\V1\Models\Project;
 use App\Models\Model;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 
@@ -32,15 +30,5 @@ class Policy extends Model
     public function company()
     {
         return $this->belongsTo(Company::class);
-    }
-
-    public function projects()
-    {
-        return $this->belongsToMany(Project::class, 'xs_project_launch_policies', 'policy_id', 'default_plid')->withPivot('oid');
-    }
-
-    public function points()
-    {
-        return $this->belongsToMany(Point::class, 'xs_project_launch_policies', 'policy_id', 'oid')->withPivot('default_plid');
     }
 }

@@ -13,7 +13,7 @@ use App\Models\Customer;
 class Company extends Model
 {
 
-    protected $fillable = ['name', 'internal_name', 'address', 'category','status', 'user_id', 'trade_id', 'bd_user_id', 'description', 'logo', 'logo_media_id'];
+    protected $fillable = ['name', 'internal_name', 'address', 'category','status', 'user_id', 'trade_id', 'bd_user_id','parent_id', 'description', 'logo', 'logo_media_id'];
 
     public function user()
     {
@@ -38,6 +38,16 @@ class Company extends Model
     public function stores()
     {
         return $this->hasMany(Store::class, 'company_id', 'id');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Company::class, 'parent_id', 'id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Company::class, 'parent_id', 'id');
     }
 
     public function media()
