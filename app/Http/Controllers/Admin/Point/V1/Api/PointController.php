@@ -45,6 +45,9 @@ class PointController extends Controller
         $query = $point->query();
 
         if ($user->hasRole('user|bd-manager')) {
+            if (!$arUserZ) {
+                $arUserZ = '0';
+            }
             $query->where('bd_z', '=', $arUserZ);
         }
 

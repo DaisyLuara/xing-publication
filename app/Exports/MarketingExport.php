@@ -29,7 +29,7 @@ class MarketingExport extends AbstractExport
             ->join('avr_official as ao', 'xs_face_count_log.oid', '=', 'ao.oid')
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
             ->join('avr_official_scene as aos', 'ao.sid', '=', 'aos.sid')
-            ->join('admin_staff', 'ao.bd_uid', '=', 'admin_staff.uid')
+            ->join('admin_staff', 'ao.bd_z', '=', 'admin_staff.z')
             ->whereRaw("xs_face_count_log.clientdate between '$startClientdate' and '$endClientdate' and ao.marketid<>15 and aos.name<>'EXE颜镜店' and aos.name<>'星视度研发' and admin_staff.realname<>'颜镜店'")
             ->whereNotIn('xs_face_count_log.oid', [16, 19, 30, 31, 177, 182, 327, 328, 329, 334, 335, 540])
             ->groupby('xs_face_count_log.belong')
