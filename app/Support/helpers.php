@@ -152,7 +152,7 @@ if (!function_exists('handPointQuery')) {
 
         //BD
         if ($arUserZ) {
-            $builder->where('avr_official.bd_uid', '=', $arUserZ);
+            $builder->where('avr_official.bd_z', '=', $arUserZ);
         }
 
         //按场景查询
@@ -229,7 +229,7 @@ if (!function_exists('getFaceCountByScene')) {
             ->join('avr_official_area as aoa', 'ao.areaid', '=', 'aoa.areaid')
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
             ->join('avr_official_scene as aos', 'ao.sid', '=', 'aos.sid')
-            ->join('admin_staff as as', 'ao.bd_uid', '=', 'as.uid')
+            ->join('admin_staff as as', 'ao.bd_z', '=', 'as.z')
             ->whereRaw(" date_format($table.date,'%Y-%m-%d') between '$startDate' and '$endDate' and ao.marketid<>15 and as.realname<>'颜镜店'")
             ->where('belong', '<>', 'all')
             ->groupBy("$table.oid")
