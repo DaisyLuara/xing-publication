@@ -647,8 +647,8 @@ class ChartDataController extends Controller
     {
         $user = $this->user();
         $table = $query->getModel()->getTable();
-        $arUserID = $request->home_page ? 0 : getArUserID($user, $request);
-        handPointQuery($request, $query, $arUserID, $selectPoint);
+        $arUserZ = $request->home_page ? 0 : getArUserZ($user, $request);
+        handPointQuery($request, $query, $arUserZ, $selectPoint);
 
         //节目搜索-注意业务逻辑
         if ($selectByAlias) {

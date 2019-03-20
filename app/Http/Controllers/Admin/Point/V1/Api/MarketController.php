@@ -15,12 +15,12 @@ class MarketController extends Controller
     {
         $query = $market->query();
         $user = $this->user();
-        $arUserId = getArUserID($user, $request);
+        $arUserZ = getArUserZ($user, $request);
 
         //根据角色筛选
-        if ($arUserId) {
-            $query->whereHas('points', function ($query) use ($arUserId) {
-                $query->where('bd_uid', '=', $arUserId);
+        if ($arUserZ) {
+            $query->whereHas('points', function ($query) use ($arUserZ) {
+                $query->where('bd_z', '=', $arUserZ);
             });
         }
 
