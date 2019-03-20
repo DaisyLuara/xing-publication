@@ -20,10 +20,10 @@ class FaceLogController extends Controller
         $query = $faceLog->query();
 
         $user = $this->user();
-        $arUserId = getArUserID($user, $request);
-        if ($arUserId) {
-            $query->whereHas('pointArUser', function ($q) use ($arUserId) {
-                $q->where('uid', '=', $arUserId);
+        $arUserZ = getArUserZ($user, $request);
+        if ($arUserZ) {
+            $query->whereHas('pointArUser', function ($q) use ($arUserZ) {
+                $q->where('z', '=', $arUserZ);
             });
         }
         if ($request->has('point_id')) {

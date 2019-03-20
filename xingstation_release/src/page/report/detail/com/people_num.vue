@@ -1815,7 +1815,7 @@ export default {
           new Date(this.searchForm.dateTime[1]).getTime()
         ),
         alias: this.searchForm.projectAlias,
-        ar_user_id: this.searchForm.arUserId,
+        ar_user_z: this.searchForm.arUserId,
         market_id: this.searchForm.market_id[0],
         scene_id: this.searchForm.sceneSelect,
         area_id: this.searchForm.area_id,
@@ -1841,7 +1841,7 @@ export default {
         delete args.alias
       }
       if (!this.searchForm.arUserId) {
-        delete args.ar_user_id
+        delete args.ar_user_z
       }
       if (!this.searchForm.sceneSelect) {
         delete args.scene_id

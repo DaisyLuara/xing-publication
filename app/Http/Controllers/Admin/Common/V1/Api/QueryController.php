@@ -76,13 +76,13 @@ class QueryController extends Controller
         $query = $area->query();
 
         $user = $this->user();
-        $arUserId = getArUserID($user, $request);
+        $arUserZ = getArUserZ($user, $request);
 
         //根据角色筛选
-        if ($arUserId) {
-            $query->whereHas('markets', function ($query) use ($arUserId) {
-                $query->whereHas('points', function ($query) use ($arUserId) {
-                    $query->where('bd_uid', '=', $arUserId);
+        if ($arUserZ) {
+            $query->whereHas('markets', function ($query) use ($arUserZ) {
+                $query->whereHas('points', function ($query) use ($arUserZ) {
+                    $query->where('bd_z', '=', $arUserZ);
                 });
             });
         }
@@ -102,12 +102,12 @@ class QueryController extends Controller
         $markets = collect();
 
         $user = $this->user();
-        $arUserId = getArUserID($user, $request);
+        $arUserZ = getArUserZ($user, $request);
 
         //根据角色筛选
-        if ($arUserId) {
-            $query->whereHas('points', function ($query) use ($arUserId) {
-                $query->where('bd_uid', '=', $arUserId);
+        if ($arUserZ) {
+            $query->whereHas('points', function ($query) use ($arUserZ) {
+                $query->where('bd_z', '=', $arUserZ);
             });
         }
 
@@ -144,9 +144,9 @@ class QueryController extends Controller
         }
 
         $user = $this->user();
-        $arUserId = getArUserID($user, $request);
-        if ($arUserId) {
-            $query->where('bd_uid', '=', $arUserId);
+        $arUserZ = getArUserZ($user, $request);
+        if ($arUserZ) {
+            $query->where('bd_z', '=', $arUserZ);
         }
 
         $points = $query->get();
@@ -163,11 +163,11 @@ class QueryController extends Controller
     public function projectQuery(Request $request, Project $project)
     {
         $user = $this->user();
-        $arUserId = getArUserID($user, $request);
+        $arUserZ = getArUserZ($user, $request);
         $query = $project->query();
-        if ($arUserId) {
-            $query->whereHas('points', function ($q) use ($arUserId) {
-                $q->where('bd_uid', '=', $arUserId);
+        if ($arUserZ) {
+            $query->whereHas('points', function ($q) use ($arUserZ) {
+                $q->where('bd_z', '=', $arUserZ);
             });
         }
 
@@ -272,7 +272,7 @@ class QueryController extends Controller
     {
         if ($this->user()->isUser()) {
             $query = $arUser->query();
-            $arUser = $query->where('uid', '=', $this->user()->ar_user_id)->get();
+            $arUser = $query->where('z', '=', $this->user()->z)->get();
             return $this->response->collection($arUser, new ArUserTransformer());
         } else {
             $query = $arUser->query();

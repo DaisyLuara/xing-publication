@@ -14,12 +14,12 @@ class ProjectLaunchController extends Controller
     {
 
         $user = $this->user();
-        $ar_user_id = getArUserID($user, $request);
+        $ar_user_z = getArUserZ($user, $request);
         $query = $projectLaunch->query();
 
-        if ($ar_user_id) {
-            $query->whereHas('point', function ($query) use ($ar_user_id) {
-                $query->where('bd_uid', '=', $ar_user_id);
+        if ($ar_user_z) {
+            $query->whereHas('point', function ($query) use ($ar_user_z) {
+                $query->where('bd_z', '=', $ar_user_z);
             });
         }
 

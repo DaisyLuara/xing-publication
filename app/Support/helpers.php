@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\Common\V1\Request\ExportRequest;
 use App\Http\Controllers\Admin\Coupon\V1\Models\WechatCouponBatch;
 use App\Http\Controllers\Admin\Face\V1\Models\FaceCount;
 use App\Http\Controllers\Admin\WeChat\V1\Models\ComponentVerifyTicket;
@@ -8,7 +9,6 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Admin\Common\V1\Request\ExportRequest;
 
 /**
  *求两个已知经纬度之间的距离,单位为千米
@@ -63,16 +63,16 @@ if (!function_exists('excelChange')) {
     }
 }
 
-if (!function_exists('getArUserID')) {
-    function getArUserID(User $user, Request $request)
+if (!function_exists('getArUserZ')) {
+    function getArUserZ(User $user, Request $request)
     {
         //BD 返回自己的 ar_user_id
         if ($user->isUser()) {
-            return $user->ar_user_id;
+            return $user->z;
         }
 
-        if ($request->ar_user_id) {
-            return $request->ar_user_id;
+        if ($request->ar_user_z) {
+            return $request->ar_user_z;
         }
 
         return 0;
@@ -112,14 +112,14 @@ if (!function_exists('distance')) {
  * 处理点位查询
  */
 if (!function_exists('handPointQuery')) {
-    function handPointQuery(Request $request, Builder $builder, $arUserID, bool $selectPoint = false)
+    function handPointQuery(Request $request, Builder $builder, $arUserZ, bool $selectPoint = false)
     {
         $table = $builder->getModel()->getTable();
         //查询时间范围
         if ($request->start_date && $request->end_date) {
-            $startDate = $request->start_date;
-            $endDate = $request->end_date;
-            $builder->whereRaw("date_format($table.date, '%Y-%m-%d') BETWEEN '$startDate' AND '$endDate' ");
+            $startClientdate = strtotime($request->start_date) * 1000;
+            $endClientdate = strtotime($request->end_date) * 1000;
+            $builder->whereRaw("$table.clientdate between '$startClientdate' and '$endClientdate' ");
             $workday = $request->workday;
             $weekend = $request->weekend;
             $holiday = $request->holiday;
@@ -151,8 +151,8 @@ if (!function_exists('handPointQuery')) {
         }
 
         //BD
-        if ($arUserID) {
-            $builder->where('avr_official.bd_uid', '=', $arUserID);
+        if ($arUserZ) {
+            $builder->where('avr_official.bd_z', '=', $arUserZ);
         }
 
         //按场景查询
@@ -229,7 +229,7 @@ if (!function_exists('getFaceCountByScene')) {
             ->join('avr_official_area as aoa', 'ao.areaid', '=', 'aoa.areaid')
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
             ->join('avr_official_scene as aos', 'ao.sid', '=', 'aos.sid')
-            ->join('admin_staff as as', 'ao.bd_uid', '=', 'as.uid')
+            ->join('admin_staff as as', 'ao.bd_z', '=', 'as.z')
             ->whereRaw(" date_format($table.date,'%Y-%m-%d') between '$startDate' and '$endDate' and ao.marketid<>15 and as.realname<>'颜镜店'")
             ->where('belong', '<>', 'all')
             ->groupBy("$table.oid")
