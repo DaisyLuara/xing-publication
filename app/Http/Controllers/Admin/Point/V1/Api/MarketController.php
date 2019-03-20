@@ -21,6 +21,9 @@ class MarketController extends Controller
         //根据角色筛选
         if ($user->hasRole('user|bd-manager')) {
             $query->whereHas('points', function ($query) use ($arUserZ) {
+                if (!$arUserZ) {
+                    $arUserZ = '0';
+                }
                 $query->where('bd_z', '=', $arUserZ);
             });
         }
