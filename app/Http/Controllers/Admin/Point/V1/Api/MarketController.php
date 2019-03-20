@@ -16,11 +16,12 @@ class MarketController extends Controller
     public function index(Request $request, Market $market)
     {
         $query = $market->query();
+        /** @var  $user \App\Models\User */
         $user = $this->user();
         $arUserZ = getArUserZ($user, $request);
 
         //根据角色筛选
-        if ($arUserZ) {
+        if ($user->hasRole('bd|bd-manager')) {
             $query->whereHas('points', function ($query) use ($arUserZ) {
                 $query->where('bd_z', '=', $arUserZ);
             });
