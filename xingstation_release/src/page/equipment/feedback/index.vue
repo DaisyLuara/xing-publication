@@ -130,6 +130,8 @@ import {
   Button,
   FormItem,
   Form,
+  Table,
+  TableColumn,
   Pagination,
   DatePicker
 } from "element-ui";
@@ -139,6 +141,8 @@ export default {
     "el-button": Button,
     "el-form-item": FormItem,
     "el-form": Form,
+    "el-table": Table,
+    "el-table-column": TableColumn,
     "el-pagination": Pagination,
     "el-date-picker": DatePicker
   },
@@ -293,6 +297,19 @@ export default {
         margin-right: 5px;
       }
     }
+  }
+  .demo-table-expand {
+    font-size: 0;
+  }
+
+  .demo-table-expand label {
+    width: 90px;
+    color: #99a9bf;
+  }
+  .demo-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 50%;
   }
   .actions-wrap {
     margin-top: 5px;
