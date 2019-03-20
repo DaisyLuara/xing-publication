@@ -272,7 +272,7 @@ class QueryController extends Controller
     {
         if ($this->user()->isUser()) {
             $query = $arUser->query();
-            $arUser = $query->where('uid', '=', $this->user()->ar_user_id)->get();
+            $arUser = $query->where('z', '=', $this->user()->z)->get();
             return $this->response->collection($arUser, new ArUserTransformer());
         } else {
             $query = $arUser->query();

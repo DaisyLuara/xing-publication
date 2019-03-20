@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Admin\Point\V1\Transformer;
 
-use App\Http\Controllers\Admin\User\V1\Transformer\ArUserTransformer;
 use App\Http\Controllers\Admin\Point\V1\Models\Point;
 use League\Fractal\TransformerAbstract;
 
 class PointTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['projects', 'arUsers', 'market', 'scene', 'area', 'contract', 'share'];
+    protected $availableIncludes = ['market', 'scene', 'area', 'contract', 'share'];
 
     public function transform(Point $point)
     {
@@ -27,16 +26,6 @@ class PointTransformer extends TransformerAbstract
             'attribute_id' => $point->attribute->first() ? $point->attribute->first()->id : null,
             'visiable' => $point->visiable
         ];
-    }
-
-    public function includeProjects(Point $point)
-    {
-        return $this->collection($point->projects, new ProjectTransformer());
-    }
-
-    public function includeArUsers(Point $point)
-    {
-        return $this->collection($point->arUsers, new ArUserTransformer());
     }
 
     public function includeMarket(Point $point)

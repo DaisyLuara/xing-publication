@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddZToUsers extends Migration
 {
@@ -14,8 +14,7 @@ class AddZToUsers extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->char('z', 38)->nullable()->after('introduction')->comment('ar用户标识');
-            $table->dropColumn('ar_user_id');
+            $table->char('z', 38)->nullable()->after('ar_user_id')->comment('ar用户标识');
             $table->index('z');
         });
     }
@@ -29,7 +28,6 @@ class AddZToUsers extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('z');
-            $table->integer('ar_user_id');
         });
     }
 }
