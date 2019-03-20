@@ -270,18 +270,13 @@ class QueryController extends Controller
 
     public function arUserQueryIndex(Request $request, ArUser $arUser)
     {
-        if ($this->user()->isUser()) {
-            $query = $arUser->query();
-            $arUser = $query->where('z', '=', $this->user()->z)->get();
-            return $this->response->collection($arUser, new ArUserTransformer());
-        } else {
-            $query = $arUser->query();
-            $arUsers = collect();
-            if ($request->name) {
-                $arUsers = $query->where('realname', 'like', '%' . $request->name . '%')->get();
-            }
-            return $this->response->collection($arUsers, new ArUserTransformer());
+
+        $query = $arUser->query();
+        $arUsers = collect();
+        if ($request->name) {
+            $arUsers = $query->where('realname', 'like', '%' . $request->name . '%')->get();
         }
+        return $this->response->collection($arUsers, new ArUserTransformer());
     }
 
     public function couponBatchQuery(CouponBatch $couponBatch, Request $request)

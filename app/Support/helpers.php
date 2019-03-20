@@ -67,7 +67,7 @@ if (!function_exists('getArUserZ')) {
     function getArUserZ(User $user, Request $request)
     {
         //BD 返回自己的 ar_user_id
-        if ($user->isUser()) {
+        if ($user->isBD()) {
             return $user->z;
         }
 

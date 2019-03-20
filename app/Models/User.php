@@ -126,9 +126,9 @@ class User extends Authenticatable implements JWTSubject
     }
 
     //销售人员
-    public function isUser()
+    public function isBD()
     {
-        return $this->hasRole('user');
+        return $this->hasRole('user|bd-manager');
     }
 
     //系统配置 可选角色
