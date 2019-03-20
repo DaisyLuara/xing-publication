@@ -113,11 +113,6 @@ class User extends Authenticatable implements JWTSubject
         $this->unreadNotifications->markAsRead();
     }
 
-    public function ar_user()
-    {
-        return $this->hasOne(ArUser::class, 'ar_user_id', 'id');
-    }
-
     //超级管理员
     public function isSuperAdmin()
     {
