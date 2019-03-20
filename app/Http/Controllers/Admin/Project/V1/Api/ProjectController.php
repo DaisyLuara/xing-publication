@@ -56,7 +56,9 @@ class ProjectController extends Controller
 
     public function update(ProjectRequest $request, Project $project)
     {
-        $data = $request->all();
+        $data = $request->except(['policy_id']);
+        $data['policy_id'] = $request->policy_id ?? 0;
+
         $ids = $request->ids;
         unset($data['ids']);
 
