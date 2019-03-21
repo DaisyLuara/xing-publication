@@ -281,7 +281,7 @@ export default {
       tableData: [],
       pagination: {
         total: 0,
-        pageSize: 10,
+        pageSize: 5,
         currentPage: 1
       },
       searchForm: {
