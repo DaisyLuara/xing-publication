@@ -1,7 +1,7 @@
 <template>
   <div class="item-wrap-template">
     <div v-loading="setting.loading" :element-loading-text="setting.loadingText" class="pane">
-      <div class="pane-title">{{ pointID ? '修改场地' : '新建场地' }}</div>
+      <div class="pane-title">{{ pointID ? '修改点位' : '新建点位' }}</div>
       <el-form
         ref="pointForm"
         :model="pointForm"
