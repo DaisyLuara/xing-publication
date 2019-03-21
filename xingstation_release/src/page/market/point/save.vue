@@ -360,6 +360,7 @@ import {
   getSearchMarketList,
   getFormatsList
 } from "service";
+import { Cookies } from "utils/cookies";
 
 import {
   Form,
@@ -657,11 +658,14 @@ export default {
       indexRouter: {
         path: "/market/point"
       },
-      payFlag: false
+      payFlag: false,
+        ar_user_z:null
     };
   },
   created() {
     this.setting.loading = true;
+    let user = Cookies.get('user_info')
+      this.ar_user_z = user.ar_user_z
     this.pointID = this.$route.params.uid;
     this.getAreaList();
     this.getFormatsList();
@@ -865,6 +869,7 @@ export default {
 
           let args = this.pointForm;
           delete args.permission;
+          args.bd_z = this.ar_user_z
 
           if (this.pointID) {
             siteModifyPoint(this, args, this.pointID)

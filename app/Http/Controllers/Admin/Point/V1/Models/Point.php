@@ -16,7 +16,7 @@ class Point extends ArModel
         'areaid', 'marketid', 'sid', 'bd_uid', 'site_uid',
         'hours', 'shours', 'ehours', 'weekday', 'weekend',
         'visiable', 'name', 'info', 'icon', 'type', 'date',
-        'clientdate', 'lat', 'lng', 'geo_hash'
+        'clientdate', 'lat', 'lng', 'geo_hash', 'bd_z'
     ];
 
     public function projects()
