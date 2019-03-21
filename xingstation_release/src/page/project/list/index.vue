@@ -169,8 +169,7 @@
         :model="templateForm"
         label-width="150px" >
         <el-form-item 
-          :rules="[{ type: 'number', required: true, message: '请选择优惠券策略', trigger: 'submit' }]"
-          label="优惠券策略" 
+          label="优惠券策略"
           prop="policy_id" >
           <el-select 
             v-model="templateForm.policy_id" 
