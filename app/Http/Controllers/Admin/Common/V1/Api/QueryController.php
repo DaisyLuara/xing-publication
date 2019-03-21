@@ -75,18 +75,6 @@ class QueryController extends Controller
     {
         $query = $area->query();
 
-        $user = $this->user();
-        $arUserZ = getArUserZ($user, $request);
-
-        //根据角色筛选
-        if ($arUserZ) {
-            $query->whereHas('markets', function ($query) use ($arUserZ) {
-                $query->whereHas('points', function ($query) use ($arUserZ) {
-                    $query->where('bd_z', '=', $arUserZ);
-                });
-            });
-        }
-
         if ($request->name) {
             $query->where('name', 'like', '%' . $request->name . '%');
         }
@@ -100,16 +88,6 @@ class QueryController extends Controller
     {
         $query = $market->query();
         $markets = collect();
-
-        $user = $this->user();
-        $arUserZ = getArUserZ($user, $request);
-
-        //根据角色筛选
-        if ($arUserZ) {
-            $query->whereHas('points', function ($query) use ($arUserZ) {
-                $query->where('bd_z', '=', $arUserZ);
-            });
-        }
 
         if (!$request->name && !$request->area_id) {
             return $this->response->collection($markets, new AreaTransformer());
