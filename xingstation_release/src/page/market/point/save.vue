@@ -659,13 +659,12 @@ export default {
         path: "/market/point"
       },
       payFlag: false,
-        ar_user_z:null
+      ar_user_z: null
     };
   },
   created() {
     this.setting.loading = true;
-    let user = Cookies.get('user_info')
-      this.ar_user_z = user.ar_user_z
+    this.ar_user_z = this.$cookie.get("user_info").ar_user_z;
     this.pointID = this.$route.params.uid;
     this.getAreaList();
     this.getFormatsList();
@@ -869,8 +868,8 @@ export default {
 
           let args = this.pointForm;
           delete args.permission;
-          args.bd_z = this.ar_user_z
-
+          args.bd_z = this.ar_user_z;
+console.log(args)
           if (this.pointID) {
             siteModifyPoint(this, args, this.pointID)
               .then(res => {
