@@ -16,8 +16,8 @@ class ProjectLaunchTplController extends Controller
         $query = $projectLaunchTpl->query();
         $table = $query->getModel()->getTable();
 
-        $arUserID = getArUserID($this->user(), $request);
-        handPointQuery($request, $query, $arUserID, true);
+        $arUserZ = getArUserZ($this->user(), $request);
+        handPointQuery($request, $query, $arUserZ, true);
         if ($request->name) {
             $query->where("$table.name", 'like', "%" . $request->name . "%");
         }

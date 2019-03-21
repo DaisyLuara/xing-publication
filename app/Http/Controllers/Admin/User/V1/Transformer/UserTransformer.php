@@ -28,6 +28,7 @@ class UserTransformer extends TransformerAbstract
             'tower_access_token' => (string)$user->tower_access_token,
             'bind_weixin' => $user->weixin_openid || $user->weixin_unionid,
             'ar_user_id' => $user->ar_user_id,
+            'z' => $user->z,
             'created_at' => $user->created_at->toDateTimeString(),
             'updated_at' => $user->updated_at->toDateTimeString(),
             'pivot' => $user->pivot,

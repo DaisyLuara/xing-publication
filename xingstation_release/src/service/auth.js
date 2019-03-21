@@ -107,6 +107,7 @@ export default {
             name: result.name,
             created_at: result.created_at,
             ar_user_id: result.ar_user_id,
+            ar_user_z: result.ar_user_z,
             bind_weixin: result.bind_weixin,
             roles: result.roles,
             phone: result.phone

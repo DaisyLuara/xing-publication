@@ -63,16 +63,16 @@ if (!function_exists('excelChange')) {
     }
 }
 
-if (!function_exists('getArUserID')) {
-    function getArUserID(User $user, Request $request)
+if (!function_exists('getArUserZ')) {
+    function getArUserZ(User $user, Request $request)
     {
         //BD 返回自己的 ar_user_id
-        if ($user->isUser()) {
-            return $user->ar_user_id;
+        if ($user->isBD()) {
+            return $user->z;
         }
 
-        if ($request->ar_user_id) {
-            return $request->ar_user_id;
+        if ($request->ar_user_z) {
+            return $request->ar_user_z;
         }
 
         return 0;
@@ -112,7 +112,7 @@ if (!function_exists('distance')) {
  * 处理点位查询
  */
 if (!function_exists('handPointQuery')) {
-    function handPointQuery(Request $request, Builder $builder, $arUserID, bool $selectPoint = false)
+    function handPointQuery(Request $request, Builder $builder, $arUserZ, bool $selectPoint = false)
     {
         $table = $builder->getModel()->getTable();
         //查询时间范围
@@ -151,8 +151,8 @@ if (!function_exists('handPointQuery')) {
         }
 
         //BD
-        if ($arUserID) {
-            $builder->where('avr_official.bd_uid', '=', $arUserID);
+        if ($arUserZ) {
+            $builder->where('avr_official.bd_z', '=', $arUserZ);
         }
 
         //按场景查询
@@ -229,7 +229,7 @@ if (!function_exists('getFaceCountByScene')) {
             ->join('avr_official_area as aoa', 'ao.areaid', '=', 'aoa.areaid')
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
             ->join('avr_official_scene as aos', 'ao.sid', '=', 'aos.sid')
-            ->join('admin_staff as as', 'ao.bd_uid', '=', 'as.uid')
+            ->join('admin_staff as as', 'ao.bd_z', '=', 'as.z')
             ->whereRaw(" date_format($table.date,'%Y-%m-%d') between '$startDate' and '$endDate' and ao.marketid<>15 and as.realname<>'颜镜店'")
             ->where('belong', '<>', 'all')
             ->groupBy("$table.oid")
