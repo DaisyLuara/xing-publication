@@ -664,7 +664,8 @@ export default {
   },
   created() {
     this.setting.loading = true;
-    this.ar_user_z = this.$cookie.get("user_info").ar_user_z;
+    this.ar_user_z = JSON.parse(this.$cookie.get("user_info")).ar_user_z;
+    this.ar_user_z = this.ar_user_z ? this.ar_user_z : null;
     this.pointID = this.$route.params.uid;
     this.getAreaList();
     this.getFormatsList();
@@ -869,7 +870,6 @@ export default {
           let args = this.pointForm;
           delete args.permission;
           args.bd_z = this.ar_user_z;
-console.log(args)
           if (this.pointID) {
             siteModifyPoint(this, args, this.pointID)
               .then(res => {
