@@ -14,19 +14,19 @@ class MarketController extends Controller
     public function index(Request $request, Market $market)
     {
         $query = $market->query();
-        /** @var  $user \App\Models\User */
-        $user = $this->user();
-        $arUserZ = getArUserZ($user, $request);
-
-        //根据角色筛选
-        if ($user->hasRole('user|bd-manager')) {
-            $query->whereHas('points', function ($query) use ($arUserZ) {
-                if (!$arUserZ) {
-                    $arUserZ = '0';
-                }
-                $query->where('bd_z', '=', $arUserZ);
-            });
-        }
+//        /** @var  $user \App\Models\User */
+//        $user = $this->user();
+//        $arUserZ = getArUserZ($user, $request);
+//
+//        //根据角色筛选
+//        if ($user->hasRole('user|bd-manager')) {
+//            $query->whereHas('points', function ($query) use ($arUserZ) {
+//                if (!$arUserZ) {
+//                    $arUserZ = '0';
+//                }
+//                $query->where('bd_z', '=', $arUserZ);
+//            });
+//        }
 
         //场地名称
         if ($request->has('market_name')) {
