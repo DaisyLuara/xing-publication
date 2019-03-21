@@ -329,10 +329,10 @@
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item label="卷系数" prop="share.coupon_off">
+            <el-form-item label="券系数" prop="share.coupon_off">
               <el-input
                 v-model="pointForm.share.coupon_off"
-                placeholder="请输入卷系数"
+                placeholder="请输入券系数"
                 class="item-input"
               >
                 <template slot="append">%</template>
