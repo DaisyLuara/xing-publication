@@ -38,9 +38,11 @@ class ProjectByPointExport extends AbstractExport
         $data->push($header2);
         $data->push($header3);
 
+        $startClientdate = strtotime($this->startDate) * 1000;
+        $endClientdate = strtotime($this->endDate) * 1000;
         $totalNum = DB::connection('ar')->table('face_count_log as fcl')
             ->join('ar_product_list as apl', 'fcl.belong', '=', 'apl.versionname')
-            ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '{$this->startDate}' and '{$this->endDate}' ")
+            ->whereRaw("fcl.clientdate between '$startClientdate' and '$endClientdate' ")
             ->whereNotIn('fcl.oid', [16, 19, 30, 31, 177, 182, 327, 328, 329, 334, 335, 540])
             ->where('fcl.belong', '=', $this->alias)
             ->selectRaw("sum(looknum) as looknum,sum(playernum) as playernum,sum(outnum) as outnum,sum(scannum) as scannum,sum(lovenum) as lovenum")
@@ -63,7 +65,7 @@ class ProjectByPointExport extends AbstractExport
             ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
             ->join('avr_official_area as aoa', 'ao.areaid', '=', 'aoa.areaid')
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
-            ->whereRaw("date_format(fcl.date,'%Y-%m-%d') between '{$this->startDate}' and '{$this->endDate}'")
+            ->whereRaw("fcl.clientdate between '$startClientdate' and '$endClientdate'")
             ->whereNotIn('fcl.oid', [16, 19, 30, 31, 177, 182, 327, 328, 329, 334, 335, 540])
             ->where('fcl.belong', '=', $this->alias)
             ->groupBy('fcl.oid')

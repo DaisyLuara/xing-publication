@@ -26,8 +26,10 @@ class AddWxCouponBatchIdToCouponBatch extends Migration
      */
     public function down()
     {
-        Schema::table('coupon_batches', function (Blueprint $table) {
-            $table->dropColumn('wx_coupon_batch_id');
-        });
+        if (Schema::hasColumn("coupon_batches", "wx_coupon_batch_id")) {
+            Schema::table('coupon_batches', function (Blueprint $table) {
+                $table->dropColumn('wx_coupon_batch_id');
+            });
+        }
     }
 }

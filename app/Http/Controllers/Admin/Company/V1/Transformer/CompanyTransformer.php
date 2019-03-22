@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Admin\Company\V1\Transformer;
 
+use App\Http\Controllers\Admin\Media\V1\Transformer\MediaTransformer;
 use App\Http\Controllers\Admin\User\V1\Transformer\UserTransformer;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use League\Fractal\TransformerAbstract;
 
 class CompanyTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['user', 'customers'];
+    protected $availableIncludes = ['user', 'customers', 'bdUser', 'media', 'parent'];
 
     public function transform(Company $company)
     {
@@ -35,5 +36,28 @@ class CompanyTransformer extends TransformerAbstract
     {
         return $this->collection($company->customers, new CustomerTransformer());
     }
+
+    public function includeBdUser(Company $company)
+    {
+        if ($company->bdUser) {
+            return $this->item($company->bdUser, new UserTransformer());
+        }
+    }
+
+    public function includeMedia(Company $company)
+    {
+        $media = $company->media;
+        if ($media) {
+            return $this->item($company->media, new MediaTransformer());
+        }
+    }
+
+    public function includeParent(Company $company)
+    {
+        if ($company->parent) {
+            return $this->item($company->parent, new CompanyTransformer());
+        }
+    }
+
 
 }

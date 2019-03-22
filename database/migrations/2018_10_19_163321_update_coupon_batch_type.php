@@ -26,8 +26,7 @@ class UpdateCouponBatchType extends Migration
      */
     public function down()
     {
-        //
-        Schema::table('coupons', function (Blueprint $table) {
+        Schema::table('coupon_batches', function (Blueprint $table) {
             if (Schema::hasColumn('coupon_batches', 'redirect_url')) {
                 $table->dropColumn('redirect_url');
             }

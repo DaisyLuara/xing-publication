@@ -94,6 +94,7 @@ class TodayDataController extends Controller
                                     sum(age18b) as age18_male,sum(age18g) as age18_female,
                                     sum(age30b) as age30_male,sum(age30g) as age30_female,
                                     sum(age40b) as age40_male,sum(age40g) as age40_female,
+                                    sum(age50b) as age50_male,sum(age50g) as age50_female,
                                     sum(age60b) as age60_male,sum(age60g) as age60_female,
                                     sum(age61b) as age61_male,sum(age61g) as age61_female")
             ->first()->toArray();
@@ -119,7 +120,8 @@ class TodayDataController extends Controller
             'age18' => '11-18岁',
             'age30' => '19-30岁',
             'age40' => '31-40岁',
-            'age60' => '41-60岁',
+            'age50' => '41-50岁',
+            'age60' => '51-60岁',
             'age61' => '60岁以上',
         ];
         foreach ($count as $key => $value) {

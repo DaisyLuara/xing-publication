@@ -1,7 +1,7 @@
 <template>
   <div class="item-wrap-template">
     <div v-loading="setting.loading" :element-loading-text="setting.loadingText" class="pane">
-      <div class="pane-title">{{ pointID ? '修改场地' : '新建场地' }}</div>
+      <div class="pane-title">{{ pointID ? '修改点位' : '新建点位' }}</div>
       <el-form
         ref="pointForm"
         :model="pointForm"
@@ -55,7 +55,8 @@
                   v-for="item in formatsList"
                   :label="item.id"
                   :key="item.id"
-                  class="role-radio">{{ item.name }}</el-radio>
+                  class="role-radio"
+                >{{ item.name }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-tab-pane>
@@ -328,10 +329,10 @@
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item label="卷系数" prop="share.coupon_off">
+            <el-form-item label="券系数" prop="share.coupon_off">
               <el-input
                 v-model="pointForm.share.coupon_off"
-                placeholder="请输入卷系数"
+                placeholder="请输入券系数"
                 class="item-input"
               >
                 <template slot="append">%</template>
@@ -359,6 +360,7 @@ import {
   getSearchMarketList,
   getFormatsList
 } from "service";
+import { Cookies } from "utils/cookies";
 
 import {
   Form,
@@ -656,11 +658,14 @@ export default {
       indexRouter: {
         path: "/market/point"
       },
-      payFlag: false
+      payFlag: false,
+      ar_user_z: null
     };
   },
   created() {
     this.setting.loading = true;
+    this.ar_user_z = JSON.parse(this.$cookie.get("user_info")).ar_user_z;
+    this.ar_user_z = this.ar_user_z ? this.ar_user_z : null;
     this.pointID = this.$route.params.uid;
     this.getAreaList();
     this.getFormatsList();
@@ -684,7 +689,10 @@ export default {
           this.formatsList = res.data;
         })
         .catch(err => {
-          console.log(err);
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
         });
     },
     siteHandle() {
@@ -703,7 +711,10 @@ export default {
           this.contractFlag = false;
         })
         .catch(err => {
-          console.log(err);
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
           this.contractFlag = false;
         });
     },
@@ -723,7 +734,10 @@ export default {
           this.setting.loading = false;
         })
         .catch(err => {
-          console.log(err);
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
           this.setting.loading = false;
         });
     },
@@ -777,7 +791,10 @@ export default {
           this.setting.loading = false;
         })
         .catch(error => {
-          console.log(error);
+          this.$message({
+            type: "warning",
+            message: error.response.data.message
+          });
         });
     },
     areaHandle() {
@@ -802,7 +819,10 @@ export default {
           this.searchLoading = false;
         })
         .catch(err => {
-          console.log(err);
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
           this.setting.loading = false;
           this.searchLoading = false;
         });
@@ -849,7 +869,7 @@ export default {
 
           let args = this.pointForm;
           delete args.permission;
-
+          args.bd_z = this.ar_user_z;
           if (this.pointID) {
             siteModifyPoint(this, args, this.pointID)
               .then(res => {
@@ -862,7 +882,10 @@ export default {
                 });
               })
               .catch(err => {
-                console.log(err);
+                this.$message({
+                  type: "warning",
+                  message: err.response.data.message
+                });
               });
           } else {
             siteSavePoint(this, args)
@@ -876,7 +899,10 @@ export default {
                 });
               })
               .catch(err => {
-                console.log(err);
+                this.$message({
+                  type: "warning",
+                  message: err.response.data.message
+                });
               });
           }
         } else {

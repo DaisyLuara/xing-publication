@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin\Point\V1\Models;
 
 use App\Http\Controllers\Admin\Attribute\V1\Models\Attribute;
 use App\Http\Controllers\Admin\Project\V1\Models\Project;
-use App\Http\Controllers\Admin\User\V1\Models\ArUser;
 use App\Models\ArModel;
 
 class Point extends ArModel
@@ -17,13 +16,8 @@ class Point extends ArModel
         'areaid', 'marketid', 'sid', 'bd_uid', 'site_uid',
         'hours', 'shours', 'ehours', 'weekday', 'weekend',
         'visiable', 'name', 'info', 'icon', 'type', 'date',
-        'clientdate', 'lat', 'lng', 'geo_hash'
+        'clientdate', 'lat', 'lng', 'geo_hash', 'bd_z'
     ];
-
-    public function arUsers()
-    {
-        return $this->belongsTo(ArUser::class, 'oid', 'bd_uid');
-    }
 
     public function projects()
     {

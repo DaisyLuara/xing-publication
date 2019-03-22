@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class updateCustomerUidSeeder extends Seeder
+class UpdateCustomerUidSeeder extends Seeder
 {
     /**
      * Run the database seeds.
