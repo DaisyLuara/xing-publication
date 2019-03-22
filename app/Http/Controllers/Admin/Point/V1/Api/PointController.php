@@ -116,6 +116,7 @@ class PointController extends Controller
 
     public function store(PointRequest $request, Point $point)
     {
+        abort_if(!$request->bd_z, '500', '缺少用户标识');
 
         $market = Market::find($request->marketid);
         $area = $market->area;
