@@ -194,10 +194,10 @@ class TodayDataController extends Controller
         $total = XsFaceCountToday::query()->selectRaw("sum(exposuretimes) as num")->first()->toArray();
 //        $case1 = "when oid=739 or oid=740 or oid=741 then 'A' ";
 //        $case2 = "when oid=742 or oid=743 or oid=744 then 'B' ";
-//        $case3 = "when oid=745 or oid=746 or oid=747 then 'C' ";
+//        $case3 = "when oid=746 or oid=747 then 'C' ";
 //        $case4 = "when oid=748 then 'D' ";
 //        $sql = $case1 . $case2 . $case3 . $case4;
-        #TODO 正式上线需要改过来
+        #TODO 美陈展点位过滤和更改区域划分
         $sql = "when oid=420 then 'A' when oid=421 then 'B' when oid=422 then 'C' when oid=423 then 'D' ";
         $date = Carbon::now()->toDateString();
         $data = $query->whereRaw("date_format(date,'%Y-%m-%d')= '$date' ")
@@ -207,10 +207,10 @@ class TodayDataController extends Controller
             ->get();
         $output = [];
         $areaMapping = [
-            'A' => 'A区',
-            'B' => 'B区',
-            'C' => 'C区',
-            'D' => 'D区'
+            'A' => '夺宝阵地区',
+            'B' => '幸运地标区',
+            'C' => '街拍围挡区',
+            'D' => '红包大屏区'
         ];
         foreach ($data as $item) {
             if ($item['area'] === "0") {
