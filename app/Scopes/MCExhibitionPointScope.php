@@ -26,6 +26,6 @@ class MCExhibitionPointScope implements Scope
     public function apply(Builder $builder, Model $model)
     {
         $table = $model->getTable();
-        $builder->whereIn("$table.oid", [739, 740, 741, 742, 743, 744, 745, 746, 747, 748]);
+        $builder->whereIn("$table.oid", [739, 740, 741, 742, 743, 744, 746, 747, 748]);
     }
 }
