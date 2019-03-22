@@ -16,9 +16,9 @@ class XsLookTimesCharacterToday extends Model
 {
     protected $table = "xs_looktimes_character_today";
 
-    protected static function boot()
-    {
-        parent::boot();
-        static::addGlobalScope(new MCExhibitionPointScope());
-    }
+//    protected static function boot()
+//    {
+//        parent::boot();
+//        static::addGlobalScope(new MCExhibitionPointScope());
+//    }
 }
