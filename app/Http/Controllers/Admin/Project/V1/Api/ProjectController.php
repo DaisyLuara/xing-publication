@@ -25,10 +25,10 @@ class ProjectController extends Controller
                 $query->where('user_id', '=', $user->id);
             });
         } else {
-            $arUserId = getArUserID($user, $request);
-            if ($arUserId) {
-                $query->whereHas('points', function ($q) use ($arUserId) {
-                    $q->where('bd_uid', '=', $arUserId);
+            $arUserZ = getArUserZ($user, $request);
+            if ($arUserZ) {
+                $query->whereHas('points', function ($q) use ($arUserZ) {
+                    $q->where('bd_z', '=', $arUserZ);
                 });
             }
         }

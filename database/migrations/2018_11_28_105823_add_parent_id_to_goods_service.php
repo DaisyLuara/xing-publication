@@ -83,8 +83,10 @@ class AddParentIdToGoodsService extends Migration
      */
     public function down()
     {
-        Schema::table('goods_services', function (Blueprint $table) {
-            $table->dropColumn('parent_id');
-        });
+        if (Schema::hasColumn("goods_services", "parent_id")) {
+            Schema::table('goods_services', function (Blueprint $table) {
+                $table->dropColumn('parent_id');
+            });
+        }
     }
 }

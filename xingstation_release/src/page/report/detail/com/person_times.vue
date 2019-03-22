@@ -2,21 +2,19 @@
   <div
     v-loading="setting.loading"
     :element-loading-text="setting.loadingText"
-    class="person-times-wrap" >
+    class="person-times-wrap"
+  >
     <!-- 主要图表部分 -->
-    <div 
-      v-loading="poepleCountFlag"
-      class="content-wrapper">
+    <div v-loading="poepleCountFlag" class="content-wrapper">
       <ul class="btns-wrapper">
-        <li 
-          v-for="(item, key) in peopleCount"
-          :key="item.number.index">
+        <li v-for="(item, key) in peopleCount" :key="item.number.index">
           <div class="person-btn-wrap">
             <div :class="'person-btn-top-'+ key"></div>
-            <div 
+            <div
               :class="{'person-btn-left':key === 0,'person-btn-bg': active === key}"
               class="person-btn"
-              @click="typeHandle(key)">
+              @click="typeHandle(key)"
+            >
               <div class="person-btn-title">{{ item.number.display_name }}</div>
               <div class="person-btn-count">{{ item.number.count ? item.number.count : 0 }}</div>
             </div>
@@ -24,183 +22,106 @@
         </li>
       </ul>
       <ul class="btns-rate-wrapper">
-        <li
-          v-for="(item, key) in peopleCount"
-          v-if="key !== 0"
-          :key="item.number.index">
+        <li v-for="(item, key) in peopleCount" v-if="key !== 0" :key="item.number.index">
           <div class="person-rate-btn-wrap">
             <div class="person-btn">
               <div class="person-rate-item">
-                <div class="person-btn-name">
-                  {{ key === 0 ? '' : item.rate.display_name }}
-                </div>
-                <div class="person-btn-title"> {{ key === 0 ? '' : '转化率' }}</div>
+                <div class="person-btn-name">{{ key === 0 ? '' : item.rate.display_name }}</div>
+                <div class="person-btn-title">{{ key === 0 ? '' : '转化率' }}</div>
                 <div class="person-btn-count">{{ key === 0 ? '' : item.rate.value }}</div>
               </div>
-              <div 
-                v-if="key !==0 "
-                :class="'person-rate-color-' + key">
+              <div v-if="key !==0 " :class="'person-rate-color-' + key">
                 <div class="person-rate-content"></div>
               </div>
             </div>
           </div>
         </li>
       </ul>
-      <div 
-        class="chart-person-times-wrapper">
-        <chart 
-          ref="mainPersonTimesChart"
-          :options="mainPersonTimesChart" 
-          auto-resize />
+      <div class="chart-person-times-wrapper">
+        <chart ref="mainPersonTimesChart" :options="mainPersonTimesChart" auto-resize/>
       </div>
     </div>
     <!-- 其他图表 -->
-    <el-collapse 
-      v-model="activeNames" 
-      @change="handleChange">
+    <el-collapse v-model="activeNames" @change="handleChange">
       <!-- 年龄分布图 -->
-      <el-collapse-item 
-        title="年龄分布图" 
-        name="1" 
-        class="echart-person-times-data">
-        <div 
-          v-loading="ageFlag"
-          class="age-person-sex-wrapper" > 
-          <div 
-            class="sex-person-part">
-            <chart 
-              ref="pieSexChart"
-              :options="pieSexChart" 
-              @click="onClick"
-            />
+      <el-collapse-item title="年龄分布图" name="1" class="echart-person-times-data">
+        <div v-loading="ageFlag" class="age-person-sex-wrapper">
+          <div class="sex-person-part">
+            <chart ref="pieSexChart" :options="pieSexChart" @click="onClick"/>
           </div>
-          <div 
-            class="age-person-part">
-            <chart
-              ref="agePersonChart"
-              :options="agePersonChart"/>
+          <div class="age-person-part">
+            <chart ref="agePersonChart" :options="agePersonChart"/>
           </div>
         </div>
       </el-collapse-item>
       <!-- 时间段与人群特征 -->
-      <el-collapse-item 
-        title="时间段与人群特征" 
-        name="2"  
-        class="echart-person-times-data">
-        <div  
-          v-loading="crowdFlag"
-          class="time-crowd-person-wrapper" > 
-          <div 
-            class="crowd-person-part">
-            <chart
-              ref="crowdPersonChart"
-              :options="timeAndCrowdPersonChart"/>
+      <el-collapse-item title="时间段与人群特征" name="2" class="echart-person-times-data">
+        <div v-loading="crowdFlag" class="time-crowd-person-wrapper">
+          <div class="crowd-person-part">
+            <chart ref="crowdPersonChart" :options="timeAndCrowdPersonChart"/>
           </div>
         </div>
       </el-collapse-item>
       <!-- 节目日化人气 -->
-      <el-collapse-item 
-        title="节目日化人气" 
-        name="3"  
-        class="echart-person-times-data">
-        <div 
-          class="ranking-person-wrap">
-          <div
-            v-loading="projectPersonFlag"
-            class="project-person-part">
-            <chart 
-              ref="projectPersonChar"
-              :options="projectPersonOptions"
-              @click="clickProject"/>
+      <el-collapse-item title="节目日化人气" name="3" class="echart-person-times-data">
+        <div class="ranking-person-wrap">
+          <div v-loading="projectPersonFlag" class="project-person-part">
+            <chart ref="projectPersonChar" :options="projectPersonOptions" @click="clickProject"/>
           </div>
-          <div
-            v-loading="userFlag"
-            class="project-age-person-part">
+          <div v-loading="userFlag" class="project-age-person-part">
             <div style="font-size: 16px;">{{ projectAgeTitle }}</div>
-            <chart
-              ref="PersonprojectAgeChart"
-              :options="PersonprojectAgeChart"/>
+            <chart ref="PersonprojectAgeChart" :options="PersonprojectAgeChart"/>
           </div>
         </div>
       </el-collapse-item>
       <!-- 报表部分 -->
-      <el-collapse-item 
-        title="点位列表" 
-        name="4" 
-        class="echart-person-times-data">
-        <div 
-          v-loading="tableSetting.loading"
-          class="table-wrap">
-          <div 
-            class="actions-wrap">
-            <span 
-              class="label">
-              <span 
-                class="point-title">点位列表 
-              </span> 数量: {{ pagination.total }}
+      <el-collapse-item title="点位列表" name="4" class="echart-person-times-data">
+        <div v-loading="tableSetting.loading" class="table-wrap">
+          <div class="actions-wrap">
+            <span class="label">
+              <span class="point-title">点位列表</span>
+              数量: {{ pagination.total }}
             </span>
           </div>
-          <el-table
-            :data="tableData"
-            style="width: 100%">
-            <el-table-column 
-              type="expand">
-              <template 
-                slot-scope="scope">
-                <el-form 
-                  label-position="left" 
-                  inline 
-                  class="demo-table-expand">
-                  <el-form-item 
-                    label="ID">
+          <el-table :data="tableData" style="width: 100%">
+            <el-table-column type="expand">
+              <template slot-scope="scope">
+                <el-form label-position="left" inline class="demo-table-expand">
+                  <el-form-item label="ID">
                     <span>{{ scope.row.id }}</span>
                   </el-form-item>
-                  <el-form-item 
-                    label="点位">
-                    {{ scope.row.area_name }} {{ scope.row.market_name }} {{ scope.row.point_name }}
-                  </el-form-item>
-                  <el-form-item 
-                    label="节目">
-                    {{ scope.row.projects }}
-                  </el-form-item>
-                  <el-form-item 
-                    label="围观">
+                  <el-form-item
+                    label="点位"
+                  >{{ scope.row.area_name }} {{ scope.row.market_name }} {{ scope.row.point_name }}</el-form-item>
+                  <el-form-item label="节目">{{ scope.row.projects }}</el-form-item>
+                  <el-form-item label="围观">
                     <span>{{ scope.row.looktimes }}</span>
                   </el-form-item>
-                  <el-form-item 
-                    label="7″fCPE">
+                  <el-form-item label="7″fCPE">
                     <span>{{ scope.row.playtimes7 }}</span>
                   </el-form-item>
-                  <el-form-item 
-                    label="7″fCPE">
+                  <el-form-item label="7″fCPE">
                     <span>{{ scope.row.playtimes7 }}</span>
                   </el-form-item>
-                  <el-form-item 
-                    label="15″fCPE">
+                  <el-form-item label="15″fCPE">
                     <span>{{ scope.row.playtimes15 }}</span>
                   </el-form-item>
-                  <el-form-item 
-                    label="21″fCPE">
+                  <el-form-item label="21″fCPE">
                     <span>{{ scope.row.playtimes21 }}</span>
                   </el-form-item>
-                  <el-form-item 
-                    label="fCPR(二维码生成数)">
+                  <el-form-item label="fCPR(二维码生成数)">
                     <span>{{ scope.row.outnum }}</span>
                   </el-form-item>
-                  <el-form-item 
-                    label="fCPA(扫码跳转次数)">
+                  <el-form-item label="fCPA(扫码跳转次数)">
                     <span>{{ scope.row.omo_scannum }}</span>
                   </el-form-item>
-                  <el-form-item 
-                    label="fCPL(拉新会员数)">
+                  <el-form-item label="fCPL(拉新会员数)">
                     <span>{{ scope.row.lovetimes }}</span>
                   </el-form-item>
-                  <el-form-item 
-                    label="时间">
+                  <el-form-item label="时间">
                     <span>{{ scope.row.min_date }} - {{ scope.row.max_date }}</span>
                   </el-form-item>
-                  <el-form-item 
-                    label="输出">
+                  <el-form-item label="输出">
                     <div>
                       <span>7″fCPE: {{ scope.row.rate.fCPE7 }} &nbsp;&nbsp;&nbsp;&nbsp;</span>
                       <span>15″fCPE:{{ scope.row.rate.fCPE15 }} &nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -216,19 +137,11 @@
                 </el-form>
               </template>
             </el-table-column>
-            <el-table-column
-              label="ID"
-              prop="id"
-              width="100"/>
-            <el-table-column
-              :show-overflow-tooltip="true"
-              label="点位"
-              prop="point"
-              min-width="130">
-              <template 
-                slot-scope="props">
-                {{ props.row.area_name }} {{ props.row.market_name }} {{ props.row.point_name }}
-              </template>
+            <el-table-column label="ID" prop="id" width="100"/>
+            <el-table-column :show-overflow-tooltip="true" label="点位" prop="point" min-width="130">
+              <template
+                slot-scope="props"
+              >{{ props.row.area_name }} {{ props.row.market_name }} {{ props.row.point_name }}</template>
             </el-table-column>
             <el-table-column
               :show-overflow-tooltip="true"
@@ -236,10 +149,7 @@
               prop="projects"
               min-width="130"
             />
-            <el-table-column
-              label="围观"
-              prop="looktimes"
-              min-width="90"/>
+            <el-table-column label="围观" prop="looktimes" min-width="90"/>
             <el-table-column
               :show-overflow-tooltip="true"
               label="7″fCPE"
@@ -256,15 +166,15 @@
               :show-overflow-tooltip="true"
               label="21″fCPE"
               prop="playtimes21"
-              min-width="90"/>
+              min-width="90"
+            />
             <el-table-column
               :show-overflow-tooltip="true"
               label="输出"
               prop="scannum"
               min-width="120"
             >
-              <template 
-                slot-scope="props">
+              <template slot-scope="props">
                 <span>
                   <span>7″fCPE: {{ props.row.rate.fCPE7 }}</span>
                   <span>15″fCPE: {{ props.row.rate.fCPE15 }}</span>
@@ -273,7 +183,7 @@
                   <span>fCPA: {{ props.row.rate.fCPA }}</span>
                   <span>fCPL: {{ props.row.rate.fCPL }}</span>
                   <span>fCPS: {{ props.row.rate.fCPS }}</span>
-                </span>  
+                </span>
               </template>
             </el-table-column>
             <el-table-column
@@ -282,14 +192,12 @@
               min-width="120"
               prop="created_at"
             >
-              <template 
-                slot-scope="props">
+              <template slot-scope="props">
                 <span>{{ props.row.min_date }} - {{ props.row.max_date }}</span>
               </template>
             </el-table-column>
           </el-table>
-          <div 
-            class="pagination-wrap">
+          <div class="pagination-wrap">
             <el-pagination
               :total="pagination.total"
               :page-size="pagination.pageSize"
@@ -303,60 +211,44 @@
     </el-collapse>
 
     <!-- 弹窗for 性别细节 -->
-    <div  
-      v-loading="dialogLoading"
-      v-show="shouldDialogShow"
-      class="chart-dialog">
-      <div 
-        class="dialog-close"
-        @click="handleDialogClose">
-        关闭
-      </div>
-      <chart 
-        ref="pieSexChart2"
-        :options="sexAndAgeChart"
-        auto-resize />
+    <div v-loading="dialogLoading" v-show="shouldDialogShow" class="chart-dialog">
+      <div class="dialog-close" @click="handleDialogClose">关闭</div>
+      <chart ref="pieSexChart2" :options="sexAndAgeChart" auto-resize/>
     </div>
 
     <!-- dialog for 漏斗 -->
-    <div
-      v-loading="rateDialog"
-      v-show="shouldPicDialogShow"
-      class="pic-times-dialog">
-      <div 
-        class="dialog-close"
-        @click="handlePicShow">
-        关闭
-      </div>
+    <div v-loading="rateDialog" v-show="shouldPicDialogShow" class="pic-times-dialog">
+      <div class="dialog-close" @click="handlePicShow">关闭</div>
       <div class="pic-times-content">
-        <div 
-          class="actions-wrap-pic">
-          <div 
-            class="label">
-            <div class="item-text">时间：{{ handleDateTransform(searchForm.dateTime[0]) }}  -  {{ handleDateTransform(searchForm.dateTime[1]) }}</div>
+        <div class="actions-wrap-pic">
+          <div class="label">
             <div
-              v-if="sceneInfo" 
-              class="item-text">场景：{{ sceneInfo }}</div>
-            <div 
-              v-if="projectInfo"
-              class="item-text" >节目：{{ projectInfo }}</div>
-            <div 
-              v-if="addressInfo"
-              class="item-text" >地址：{{ addressInfo }}</div>
+              class="item-text"
+            >时间：{{ handleDateTransform(searchForm.dateTime[0]) }} - {{ handleDateTransform(searchForm.dateTime[1]) }}</div>
+            <div v-if="sceneInfo" class="item-text">场景：{{ sceneInfo }}</div>
+            <div v-if="projectInfo" class="item-text">节目：{{ projectInfo }}</div>
+            <div v-if="addressInfo" class="item-text">地址：{{ addressInfo }}</div>
           </div>
-          <div
-            style="text-align: right;" 
-            class="label">
+          <div style="text-align: right;" class="label">
             <span class="icon-wrap">
-              <span class="icon-num">{{ rateDay }}<sub>天</sub></span>
+              <span class="icon-num">
+                {{ rateDay }}
+                <sub>天</sub>
+              </span>
               <img src="~assets/images/icons/date_icon.png">
             </span>
             <span class="icon-wrap">
-              <span class="icon-num">{{ marketCount }}<sub>个场地</sub></span>
+              <span class="icon-num">
+                {{ marketCount }}
+                <sub>个场地</sub>
+              </span>
               <img src="~assets/images/icons/tower_icon.png">
             </span>
             <span class="icon-wrap">
-              <span class="icon-num">{{ screenCount }}<sub>座大屏</sub></span>
+              <span class="icon-num">
+                {{ screenCount }}
+                <sub>座大屏</sub>
+              </span>
               <img src="~assets/images/icons/machine_icon.png">
             </span>
           </div>
@@ -365,61 +257,38 @@
           <el-col :span="12">
             <div class="funnel">
               <div class="legend">
-                <span 
-                  class="legend-text" 
-                  @click="legendHandle('0')">
-                  <span 
-                    :class="{'label-gray': !dataOptions[0]}"
-                    class="legend-text-one"/>围观</span>
-                <span 
-                  class="legend-text" 
-                  @click="legendHandle('1')">
-                  <span
-                    :class="{'label-gray': !dataOptions[1]}" 
-                    class="legend-text-two"/>7秒</span>
-                <span 
-                  class="legend-text" 
-                  @click="legendHandle('2')">
-                  <span 
-                    :class="{'label-gray': !dataOptions[2]}"
-                    class="legend-text-three" />15秒</span>
-                <span 
-                  class="legend-text" 
-                  @click="legendHandle('3')">
-                  <span 
-                    :class="{'label-gray': !dataOptions[3]}"
-                    class="legend-text-four" />21秒</span>
-                <span 
-                  class="legend-text" 
-                  @click="legendHandle('4')">
-                  <span 
-                    :class="{'label-gray': !dataOptions[4]}"
-                    class="legend-text-five" />跳转</span>
-                <span 
-                  class="legend-text" 
-                  @click="legendHandle('5')">
-                  <span 
-                    :class="{'label-gray': !dataOptions[5]}"
-                    class="legend-text-six" />拉新</span>
-                <span 
-                  class="legend-text" 
-                  @click="legendHandle('6')">
-                  <span 
-                    :class="{'label-gray': !dataOptions[6]}"
-                    class="legend-text-seven " />核销</span>
+                <span class="legend-text" @click="legendHandle('0')">
+                  <span :class="{'label-gray': !dataOptions[0]}" class="legend-text-one"/>围观
+                </span>
+                <span class="legend-text" @click="legendHandle('1')">
+                  <span :class="{'label-gray': !dataOptions[1]}" class="legend-text-two"/>7秒
+                </span>
+                <span class="legend-text" @click="legendHandle('2')">
+                  <span :class="{'label-gray': !dataOptions[2]}" class="legend-text-three"/>15秒
+                </span>
+                <span class="legend-text" @click="legendHandle('3')">
+                  <span :class="{'label-gray': !dataOptions[3]}" class="legend-text-four"/>21秒
+                </span>
+                <span class="legend-text" @click="legendHandle('4')">
+                  <span :class="{'label-gray': !dataOptions[4]}" class="legend-text-five"/>跳转
+                </span>
+                <span class="legend-text" @click="legendHandle('5')">
+                  <span :class="{'label-gray': !dataOptions[5]}" class="legend-text-six"/>拉新
+                </span>
+                <span class="legend-text" @click="legendHandle('6')">
+                  <span :class="{'label-gray': !dataOptions[6]}" class="legend-text-seven"/>核销
+                </span>
               </div>
-              <PicChart 
-                :chartdata="chartdata" 
-                :data-options="dataOptions" 
-                :width="width"/>
+              <PicChart :chartdata="chartdata" :data-options="dataOptions" :width="width"/>
             </div>
           </el-col>
           <el-col :span="12">
-            <chart 
+            <chart
               ref="personRateChart"
               :options="personRateOption"
-              auto-resize 
-              class="rate-chart"/>
+              auto-resize
+              class="rate-chart"
+            />
           </el-col>
         </el-row>
       </div>
@@ -431,9 +300,9 @@ import {
   getTimesStaus,
   getTimesChartData,
   handleDateTypeTransform
-} from 'service'
-import Vue from 'vue'
-import PicChart from './timesChart'
+} from "service";
+import Vue from "vue";
+import PicChart from "./timesChart";
 import {
   Row,
   Col,
@@ -449,31 +318,31 @@ import {
   MessageBox,
   Collapse,
   CollapseItem
-} from 'element-ui'
-import ECharts from 'vue-echarts/components/ECharts'
-import 'echarts/lib/chart/line'
-import 'echarts/lib/component/markLine'
-import 'echarts/lib/chart/pie'
-import 'echarts/lib/chart/bar'
-import 'echarts/lib/component/title'
-import 'echarts/lib/component/tooltip'
-import 'echarts/lib/component/legend'
+} from "element-ui";
+import ECharts from "vue-echarts/components/ECharts";
+import "echarts/lib/chart/line";
+import "echarts/lib/component/markLine";
+import "echarts/lib/chart/pie";
+import "echarts/lib/chart/bar";
+import "echarts/lib/component/title";
+import "echarts/lib/component/tooltip";
+import "echarts/lib/component/legend";
 
 export default {
   components: {
-    'el-row': Row,
-    'el-col': Col,
-    'el-date-picker': DatePicker,
-    'el-select': Select,
-    'el-button': Button,
-    'el-option': Option,
-    'el-form-item': FormItem,
-    'el-form': Form,
-    'el-table': Table,
-    'el-table-column': TableColumn,
-    'el-pagination': Pagination,
-    'el-collapse': Collapse,
-    'el-collapse-item': CollapseItem,
+    "el-row": Row,
+    "el-col": Col,
+    "el-date-picker": DatePicker,
+    "el-select": Select,
+    "el-button": Button,
+    "el-option": Option,
+    "el-form-item": FormItem,
+    "el-form": Form,
+    "el-table": Table,
+    "el-table-column": TableColumn,
+    "el-pagination": Pagination,
+    "el-collapse": Collapse,
+    "el-collapse-item": CollapseItem,
     chart: ECharts,
     PicChart
   },
@@ -481,63 +350,63 @@ export default {
     searchForm: {
       type: Object,
       default: function() {
-        return {}
+        return {};
       }
     }
   },
   data() {
     return {
-      projectAgeTitle: '',
+      projectAgeTitle: "",
       active: null,
       PersonprojectAgeChart: {
         tooltip: {
-          trigger: 'item',
-          formatter: '{a} <br/>{b}: {c}'
+          trigger: "item",
+          formatter: "{a} <br/>{b}: {c}"
         },
-        color: ['#3b9aca', '#8CC63F', '#FBB03B', '#F15A24', '#662D91'],
+        color: ["#3b9aca", "#8CC63F", "#FBB03B", "#F15A24", "#662D91"],
         legend: {
-          x: 'left',
-          data: ['10后', '00后', '90后', '80后', '70前/后']
+          x: "left",
+          data: ["10后", "00后", "90后", "80后", "70前/后"]
         },
         series: [
           {
-            name: '年龄分布',
-            type: 'pie',
-            radius: ['10%', '50%'],
+            name: "年龄分布",
+            type: "pie",
+            radius: ["10%", "50%"],
             data: null
           }
         ]
       },
       projectPersonOptions: {
         tooltip: {
-          trigger: 'axis',
+          trigger: "axis",
           axisPointer: {
-            type: 'shadow'
+            type: "shadow"
           }
         },
-        color: ['#006eff'],
+        color: ["#006eff"],
         grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
+          left: "3%",
+          right: "4%",
+          bottom: "3%",
           containLabel: true
         },
         xAxis: {
-          type: 'value'
+          type: "value"
         },
         yAxis: {
-          type: 'category',
+          type: "category",
           data: null
         },
         series: [
           {
             // name: '围观参与玩家人次',
-            type: 'bar',
-            stack: '总量',
+            type: "bar",
+            stack: "总量",
             label: {
               normal: {
                 show: true,
-                position: 'insideRight'
+                position: "insideRight"
               }
             },
             data: null
@@ -546,44 +415,44 @@ export default {
       },
       projectPersonFlag: false,
       userFlag: false,
-      activeNames: ['1', '2', '3', '4'],
+      activeNames: ["1", "2", "3", "4"],
       rateDay: 0,
       marketCount: 0,
       screenCount: 0,
       chartdata: [],
       dataOptions: [true, true, true, true, true, true, false],
       width: ((window.innerWidth - 60 + 20) * 0.5 - 20) * 0.6,
-      sceneInfo: '',
-      projectInfo: '',
-      addressInfo: '',
+      sceneInfo: "",
+      projectInfo: "",
+      addressInfo: "",
       style: {
         chartFont: {
-          fontSize: window.innerWidth / 80 + 'px'
+          fontSize: window.innerWidth / 80 + "px"
         }
       },
       tableSetting: {
         loading: false,
-        loadingText: '拼命加载中'
+        loadingText: "拼命加载中"
       },
       shouldDialogShow: false,
       setting: {
         isOpenSelectAll: true,
         loading: false,
-        loadingText: '拼命加载中'
+        loadingText: "拼命加载中"
       },
       personRateOption: {
         title: {
-          text: ''
+          text: ""
         },
         tooltip: {
-          trigger: 'axis',
+          trigger: "axis",
           axisPointer: {
-            type: 'shadow'
+            type: "shadow"
           }
         },
 
         legend: {
-          data: ['当前范围各级转化率', '总体各级平均转化率'],
+          data: ["当前范围各级转化率", "总体各级平均转化率"],
           top: 10,
           left: 20
         },
@@ -591,26 +460,26 @@ export default {
           show: true
         },
         calculable: true,
-        color: ['#5687f8', '#74bd66'],
+        color: ["#5687f8", "#74bd66"],
         xAxis: [
           {
-            type: 'category',
+            type: "category",
             axisTick: { show: false },
             data: [
-              '7″fCPE\n转化率',
-              '15″fCPE\n转化率',
-              '21″fCPE\n转化率',
-              'fCPA\n转化率',
-              'fCPL\n转化率',
-              'fCPS\n转化率'
+              "7″fCPE\n转化率",
+              "15″fCPE\n转化率",
+              "21″fCPE\n转化率",
+              "fCPA\n转化率",
+              "fCPL\n转化率",
+              "fCPS\n转化率"
             ]
           }
         ],
         yAxis: [
           {
-            type: 'value',
+            type: "value",
             axisLabel: {
-              formatter: '{value} %'
+              formatter: "{value} %"
             },
             max: 100,
             min: 0
@@ -618,15 +487,15 @@ export default {
         ],
         series: [
           {
-            name: '当前范围各级转化率',
-            type: 'bar',
+            name: "当前范围各级转化率",
+            type: "bar",
             barGap: 0,
             // barWidth: 40,
             data: null
           },
           {
-            name: '总体各级平均转化率',
-            type: 'bar',
+            name: "总体各级平均转化率",
+            type: "bar",
             // barWidth: 40,
             data: null
           }
@@ -640,10 +509,10 @@ export default {
       tableData: [],
       tempAgeData: null,
       peopleCount: [],
-      type: '',
+      type: "",
       ageType: false,
       sexType: false,
-      pointName: '',
+      pointName: "",
       poepleCountFlag: false,
       shouldPicDialogShow: false,
       ageFlag: false,
@@ -651,69 +520,69 @@ export default {
       crowdFlag: false,
       mainPersonTimesChart: {
         color: [
-          '#006eff',
-          '#05a253',
-          '#ffdd00',
-          '#8e007d',
-          '#ffa200',
-          '#ff008a',
-          '#e9200f',
-          '#946f32',
-          '#03662e',
-          '#f0bf00',
-          '#700068',
-          '#9b7800',
-          '#d00084',
-          '#af0004',
-          '#7e3b10'
+          "#006eff",
+          "#05a253",
+          "#ffdd00",
+          "#8e007d",
+          "#ffa200",
+          "#ff008a",
+          "#e9200f",
+          "#946f32",
+          "#03662e",
+          "#f0bf00",
+          "#700068",
+          "#9b7800",
+          "#d00084",
+          "#af0004",
+          "#7e3b10"
         ],
         title: {
-          text: ''
+          text: ""
         },
         tooltip: {
-          trigger: 'axis',
+          trigger: "axis",
           axisPointer: {
-            type: 'cross',
+            type: "cross",
             label: {
-              backgroundColor: '#6a7985'
+              backgroundColor: "#6a7985"
             }
           }
         },
         legend: {
           data: [
-            '围观人次',
-            '7″fCPE',
-            '15″fCPE',
-            '21″fCPE',
-            'fCPR(二维码生成数)',
-            'fCPA(扫码跳转次数)',
-            'fCPL(拉新会员数)',
-            'fCPS玩家人次',
-            '7″fCPE转化率',
-            '15″fCPE转化率',
-            '21″fCPE转化率',
-            'fCPR转化率',
-            'fCPA转化率',
-            'fCPL转化率',
-            'fCPS转化率'
+            "围观人次",
+            "7″fCPE",
+            "15″fCPE",
+            "21″fCPE",
+            "fCPR(二维码生成数)",
+            "fCPA(扫码跳转次数)",
+            "fCPL(拉新会员数)",
+            "fCPS玩家人次",
+            "7″fCPE转化率",
+            "15″fCPE转化率",
+            "21″fCPE转化率",
+            "fCPR转化率",
+            "fCPA转化率",
+            "fCPL转化率",
+            "fCPS转化率"
           ]
         },
         grid: [
           {
             left: 50,
             right: 50,
-            height: '50%'
+            height: "50%"
           },
           {
             left: 50,
             right: 50,
-            top: '61%',
-            height: '33%'
+            top: "61%",
+            height: "33%"
           }
         ],
         xAxis: [
           {
-            type: 'category',
+            type: "category",
             boundaryGap: false,
             axisLine: { onZero: true },
             data: null
@@ -721,71 +590,71 @@ export default {
           {
             // show: false,
             gridIndex: 1,
-            type: 'category',
+            type: "category",
             boundaryGap: false,
             axisLine: { onZero: true },
             data: null,
-            position: 'top'
+            position: "top"
           }
         ],
         yAxis: [
           {
             gridIndex: 0,
-            type: 'value'
+            type: "value"
           },
           {
             inverse: true,
             gridIndex: 1,
-            type: 'value'
+            type: "value"
           }
         ],
         series: []
       },
       pieSexChart: {
-        color: ['#0071BC', '#ED1E79'],
+        color: ["#0071BC", "#ED1E79"],
         title: {
-          text: '用户渗透率',
-          left: 'left'
+          text: "用户渗透率",
+          left: "left"
         },
         tooltip: {
-          trigger: 'item'
+          trigger: "item"
         },
         legend: {
           top: 30,
-          left: '0',
-          data: ['女', '男']
+          left: "0",
+          data: ["女", "男"]
         },
         series: [
           {
             label: {
               normal: {
                 // show: true,
-                formatter: '{d}%',
+                formatter: "{d}%",
                 fontSize: 18,
-                position: 'inner'
+                position: "inner"
               }
             },
-            type: 'pie',
-            radius: '65%',
-            center: ['50%', '50%'],
-            selectedMode: 'single',
+            type: "pie",
+            radius: "65%",
+            center: ["50%", "50%"],
+            selectedMode: "single",
             data: null,
             itemStyle: {
               emphasis: {
                 shadowBlur: 10,
                 shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                shadowColor: "rgba(0, 0, 0, 0.5)"
               }
             }
           }
         ]
       },
       agePersonChart: {
-        color: ['#0071BC', '#ED1E79'],
+        color: ["#0071BC", "#ED1E79"],
         tooltip: {
-          trigger: 'axis',
+          trigger: "axis",
           axisPointer: {
-            type: 'shadow'
+            type: "shadow"
           },
           textStyle: {
             fontSize: 16
@@ -795,62 +664,62 @@ export default {
               (parseInt(data[0].value) /
                 (parseInt(data[0].value) + parseInt(data[1].value))) *
               100
-            ).toFixed(2)
+            ).toFixed(2);
             let female = (
               (parseInt(data[1].value) /
                 (parseInt(data[0].value) + parseInt(data[1].value))) *
               100
-            ).toFixed(2)
+            ).toFixed(2);
             return (
               data[0].axisValue +
-              ': <br/>' +
+              ": <br/>" +
               data[0].marker +
               data[0].seriesName +
-              ':' +
+              ":" +
               data[0].value +
-              ' ' +
+              " " +
               male +
-              '%<br/>' +
+              "%<br/>" +
               data[1].marker +
               data[1].seriesName +
-              ':' +
+              ":" +
               data[1].value +
-              ' ' +
+              " " +
               female +
-              '%'
-            )
+              "%"
+            );
           }
         },
         grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
+          left: "3%",
+          right: "4%",
+          bottom: "3%",
           containLabel: true
         },
         xAxis: {
-          type: 'category',
-          data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+          type: "category",
+          data: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
         },
         yAxis: {
-          type: 'value'
+          type: "value"
         },
         series: [
           {
-            name: '男',
-            type: 'bar',
-            barGap: '30%',
-            barWidth: '60%',
-            stack: '总量',
+            name: "男",
+            type: "bar",
+            barGap: "30%",
+            barWidth: "60%",
+            stack: "总量",
             data: null
           },
           {
-            name: '女',
-            type: 'bar',
-            stack: '总量',
+            name: "女",
+            type: "bar",
+            stack: "总量",
             label: {
               normal: {
                 show: true,
-                position: 'top'
+                position: "top"
               }
             },
             data: null
@@ -859,23 +728,23 @@ export default {
       },
       timeAndCrowdPersonChart: {
         title: {
-          text: '时间段与人群特征',
-          align: 'left'
+          text: "时间段与人群特征",
+          align: "left"
         },
         color: [
-          '#3b9aca',
-          '#8CC63F',
-          '#FBB03B',
-          '#F15A24',
-          '#662D91',
-          '#ED1E79'
+          "#3b9aca",
+          "#8CC63F",
+          "#FBB03B",
+          "#F15A24",
+          "#662D91",
+          "#ED1E79"
         ],
         tooltip: {
-          trigger: 'axis',
+          trigger: "axis",
           axisPointer: {
-            type: 'cross',
+            type: "cross",
             crossStyle: {
-              color: '#999'
+              color: "#999"
             }
           },
           formatter: function(data) {
@@ -887,7 +756,7 @@ export default {
                   parseInt(data[3].value) +
                   parseInt(data[4].value))) *
               100
-            ).toFixed(2)
+            ).toFixed(2);
             let century00 = (
               (parseInt(data[1].value) /
                 (parseInt(data[0].value) +
@@ -896,7 +765,7 @@ export default {
                   parseInt(data[3].value) +
                   parseInt(data[4].value))) *
               100
-            ).toFixed(2)
+            ).toFixed(2);
             let century90 = (
               (parseInt(data[2].value) /
                 (parseInt(data[0].value) +
@@ -905,7 +774,7 @@ export default {
                   parseInt(data[3].value) +
                   parseInt(data[4].value))) *
               100
-            ).toFixed(2)
+            ).toFixed(2);
             let century80 = (
               (parseInt(data[3].value) /
                 (parseInt(data[0].value) +
@@ -914,7 +783,7 @@ export default {
                   parseInt(data[3].value) +
                   parseInt(data[4].value))) *
               100
-            ).toFixed(2)
+            ).toFixed(2);
             let century70 = (
               (parseInt(data[4].value) /
                 (parseInt(data[0].value) +
@@ -923,126 +792,126 @@ export default {
                   parseInt(data[3].value) +
                   parseInt(data[4].value))) *
               100
-            ).toFixed(2)
+            ).toFixed(2);
             return (
               data[0].axisValue +
-              ': <br/>' +
+              ": <br/>" +
               data[0].marker +
               data[0].seriesName +
-              ':' +
+              ":" +
               data[0].value +
-              ' ' +
+              " " +
               century10 +
-              '%<br/>' +
+              "%<br/>" +
               data[1].marker +
               data[1].seriesName +
-              ':' +
+              ":" +
               data[1].value +
-              ' ' +
+              " " +
               century00 +
-              '%<br/>' +
+              "%<br/>" +
               data[2].marker +
               data[2].seriesName +
-              ':' +
+              ":" +
               data[2].value +
-              ' ' +
+              " " +
               century90 +
-              '%<br/>' +
+              "%<br/>" +
               data[3].marker +
               data[3].seriesName +
-              ':' +
+              ":" +
               data[3].value +
-              ' ' +
+              " " +
               century80 +
-              '%<br/>' +
+              "%<br/>" +
               data[4].marker +
               data[4].seriesName +
-              ':' +
+              ":" +
               data[4].value +
-              ' ' +
+              " " +
               century70 +
-              '%'
-            )
+              "%"
+            );
           }
         },
         legend: {
-          data: ['10后', '00后', '90后', '80后', '70前/后', '女'],
-          align: 'left',
+          data: ["10后", "00后", "90后", "80后", "70前/后", "女"],
+          align: "left",
           left: 10,
           top: 30
         },
         grid: {
-          left: '5%',
-          right: '5%',
-          bottom: '4%'
+          left: "5%",
+          right: "5%",
+          bottom: "4%"
         },
         xAxis: [
           {
-            type: 'category',
+            type: "category",
             // data: [],
             axisPointer: {
-              type: 'shadow'
+              type: "shadow"
             }
           }
         ],
         yAxis: [
           {
-            type: 'value',
+            type: "value",
             // name: '年龄数量',
             min: 0,
             axisLabel: {
-              formatter: '{value}'
+              formatter: "{value}"
             }
           },
           {
-            type: 'value',
+            type: "value",
             // name: '女性百分比',
             max: 100,
             min: 0,
             axisLabel: {
-              formatter: '{value} %'
+              formatter: "{value} %"
             }
           }
         ],
         series: [
           {
-            name: '10后',
-            type: 'bar',
-            stack: '总量',
+            name: "10后",
+            type: "bar",
+            stack: "总量",
             data: null
           },
           {
-            name: '00后',
-            type: 'bar',
-            stack: '总量',
+            name: "00后",
+            type: "bar",
+            stack: "总量",
             data: null
           },
           {
-            name: '90后',
-            type: 'bar',
-            stack: '总量',
+            name: "90后",
+            type: "bar",
+            stack: "总量",
             data: null
           },
           {
-            name: '80后',
-            type: 'bar',
-            stack: '总量',
+            name: "80后",
+            type: "bar",
+            stack: "总量",
             data: null
           },
           {
-            name: '70前/后',
-            type: 'bar',
-            stack: '总量',
+            name: "70前/后",
+            type: "bar",
+            stack: "总量",
             data: null
           },
           {
-            name: '女',
-            type: 'line',
+            name: "女",
+            type: "line",
             yAxisIndex: 1,
             markLine: {
               data: [
                 {
-                  name: 'Y 轴值为 50 的水平线',
+                  name: "Y 轴值为 50 的水平线",
                   yAxis: 50
                 }
               ]
@@ -1053,481 +922,482 @@ export default {
       },
       sexAndAgeChart: {
         title: {
-          text: '性别年龄分布'
+          text: "性别年龄分布"
         },
         tooltip: {
-          trigger: 'item'
+          trigger: "item"
         },
         legend: {
-          orient: 'horizontal',
+          orient: "horizontal",
           right: 10,
-          top: 'bottom',
+          top: "bottom",
           bottom: 10,
           data: null
         },
         series: [
           {
-            type: 'pie',
-            radius: '65%',
-            center: ['50%', '50%'],
-            selectedMode: 'single',
+            type: "pie",
+            radius: "65%",
+            center: ["50%", "50%"],
+            selectedMode: "single",
             data: null,
             itemStyle: {
               emphasis: {
                 shadowBlur: 10,
                 shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                shadowColor: "rgba(0, 0, 0, 0.5)"
               }
             }
           }
         ]
       },
       projectTop: [],
-      times: '',
+      times: "",
       dialogLoading: false
-    }
+    };
   },
   computed: {},
   mounted() {
-    let that = this
+    let that = this;
     window.onresize = function() {
-      that.handleChange()
-    }
+      that.handleChange();
+    };
   },
   created() {},
   methods: {
     typeHandle(type) {
       switch (type) {
         case 0:
-          this.times = ''
-          this.active = ''
-          this.allChartData()
-          break
+          this.times = "";
+          this.active = "";
+          this.allChartData();
+          break;
         case 1:
-          this.times = 'playtimes7'
-          this.getAge()
-          this.getCrowdTime()
-          this.getGender()
-          this.getProjectTop()
-          this.active = type
-          break
+          this.times = "playtimes7";
+          this.getAge();
+          this.getCrowdTime();
+          this.getGender();
+          this.getProjectTop();
+          this.active = type;
+          break;
         case 2:
-          this.times = 'playtimes15'
-          this.getAge()
-          this.getCrowdTime()
-          this.getGender()
-          this.getProjectTop()
-          this.active = type
-          break
+          this.times = "playtimes15";
+          this.getAge();
+          this.getCrowdTime();
+          this.getGender();
+          this.getProjectTop();
+          this.active = type;
+          break;
         case 3:
-          this.times = 'playtimes21'
-          this.getAge()
-          this.getCrowdTime()
-          this.getGender()
-          this.getProjectTop()
-          this.active = type
-          break
+          this.times = "playtimes21";
+          this.getAge();
+          this.getCrowdTime();
+          this.getGender();
+          this.getProjectTop();
+          this.active = type;
+          break;
         default:
-          break
+          break;
       }
     },
     handleChange(val) {
       this.$nextTick(function() {
-        this.$refs.crowdPersonChart.resize()
-        this.$refs.agePersonChart.resize()
-        this.$refs.pieSexChart.resize()
-        this.$refs.projectPersonChar.resize()
-        this.$refs.PersonprojectAgeChart.resize()
+        this.$refs.crowdPersonChart.resize();
+        this.$refs.agePersonChart.resize();
+        this.$refs.pieSexChart.resize();
+        this.$refs.projectPersonChar.resize();
+        this.$refs.PersonprojectAgeChart.resize();
         if (window.innerWidth > 1300) {
-          this.width = ((window.innerWidth - 60 + 20) * 0.5 - 20) * 0.6
+          this.width = ((window.innerWidth - 60 + 20) * 0.5 - 20) * 0.6;
         }
-      })
+      });
     },
     legendHandle(index) {
       switch (index) {
-        case '0':
-          this.dataOptions[0] = !this.dataOptions[0]
-          Vue.set(this.dataOptions, 0, this.dataOptions[0])
-          break
-        case '1':
-          this.dataOptions[1] = !this.dataOptions[1]
-          Vue.set(this.dataOptions, 1, this.dataOptions[1])
-          break
-        case '2':
-          this.dataOptions[2] = !this.dataOptions[2]
-          Vue.set(this.dataOptions, 2, this.dataOptions[2])
-          break
-        case '3':
-          this.dataOptions[3] = !this.dataOptions[3]
-          Vue.set(this.dataOptions, 3, this.dataOptions[3])
-          break
-        case '4':
-          this.dataOptions[4] = !this.dataOptions[4]
-          Vue.set(this.dataOptions, 4, this.dataOptions[4])
-          break
-        case '5':
-          this.dataOptions[5] = !this.dataOptions[5]
-          Vue.set(this.dataOptions, 5, this.dataOptions[5])
-          break
-        case '6':
-          this.dataOptions[6] = !this.dataOptions[6]
-          Vue.set(this.dataOptions, 6, this.dataOptions[6])
-          break
+        case "0":
+          this.dataOptions[0] = !this.dataOptions[0];
+          Vue.set(this.dataOptions, 0, this.dataOptions[0]);
+          break;
+        case "1":
+          this.dataOptions[1] = !this.dataOptions[1];
+          Vue.set(this.dataOptions, 1, this.dataOptions[1]);
+          break;
+        case "2":
+          this.dataOptions[2] = !this.dataOptions[2];
+          Vue.set(this.dataOptions, 2, this.dataOptions[2]);
+          break;
+        case "3":
+          this.dataOptions[3] = !this.dataOptions[3];
+          Vue.set(this.dataOptions, 3, this.dataOptions[3]);
+          break;
+        case "4":
+          this.dataOptions[4] = !this.dataOptions[4];
+          Vue.set(this.dataOptions, 4, this.dataOptions[4]);
+          break;
+        case "5":
+          this.dataOptions[5] = !this.dataOptions[5];
+          Vue.set(this.dataOptions, 5, this.dataOptions[5]);
+          break;
+        case "6":
+          this.dataOptions[6] = !this.dataOptions[6];
+          Vue.set(this.dataOptions, 6, this.dataOptions[6]);
+          break;
       }
     },
     getProjectAge(belong) {
-      this.userFlag = true
-      let args = this.setArgs('7')
-      args.belong = belong
+      this.userFlag = true;
+      let args = this.setArgs("7");
+      args.belong = belong;
       return getTimesChartData(this, args)
         .then(response => {
-          let chart = this.$refs.PersonprojectAgeChart
+          let chart = this.$refs.PersonprojectAgeChart;
           chart.mergeOptions({
             series: [
               {
                 data: [
                   {
-                    name: '10后',
+                    name: "10后",
                     value: response.century10 === null ? 0 : response.century10
                   },
                   {
-                    name: '00后',
+                    name: "00后",
                     value: response.century00 === null ? 0 : response.century00
                   },
                   {
-                    name: '90后',
+                    name: "90后",
                     value: response.century90 === null ? 0 : response.century90
                   },
                   {
-                    name: '80后',
+                    name: "80后",
                     value: response.century80 === null ? 0 : response.century80
                   },
                   {
-                    name: '70前/后',
+                    name: "70前/后",
                     value: response.century70 === null ? 0 : response.century70
                   }
                 ]
               }
             ]
-          })
-          this.userFlag = false
+          });
+          this.userFlag = false;
         })
         .catch(err => {
-          this.userFlag = false
-          console.log(err)
-        })
+          this.userFlag = false;
+          console.log(err);
+        });
     },
     clickProject(event, instance, echarts) {
-      let project = this.projectTop[event.dataIndex]
-      let belong = project.index
-      this.projectAgeTitle = project.display_name
-      this.getProjectAge(belong)
+      let project = this.projectTop[event.dataIndex];
+      let belong = project.index;
+      this.projectAgeTitle = project.display_name;
+      this.getProjectAge(belong);
     },
     getProjectTop() {
-      this.projectPersonFlag = true
-      let args = this.setArgs('6')
-      let type = this.times
-      let name = '围观参与玩家人次'
-      let color = ['#006eff']
+      this.projectPersonFlag = true;
+      let args = this.setArgs("6");
+      let type = this.times;
+      let name = "围观参与玩家人次";
+      let color = ["#006eff"];
       switch (type) {
-        case 'playtimes7':
-          name = '7秒玩家人次'
-          color = ['#05a253']
-          break
-        case 'playtimes15':
-          name = '15秒玩家人次'
-          color = ['#ffdd00']
-          break
-        case 'playtimes21':
-          name = '21秒玩家人次'
-          color = ['#8e007d']
-          break
+        case "playtimes7":
+          name = "7秒玩家人次";
+          color = ["#05a253"];
+          break;
+        case "playtimes15":
+          name = "15秒玩家人次";
+          color = ["#ffdd00"];
+          break;
+        case "playtimes21":
+          name = "21秒玩家人次";
+          color = ["#8e007d"];
+          break;
         default:
-          name = '围观参与玩家人次'
-          color = ['#006eff']
-          break
+          name = "围观参与玩家人次";
+          color = ["#006eff"];
+          break;
       }
       return getTimesChartData(this, args)
         .then(response => {
-          this.projectTop = response
-          let chart = this.$refs.projectPersonChar
+          this.projectTop = response;
+          let chart = this.$refs.projectPersonChar;
           chart.mergeOptions({
             yAxis: {
-              type: 'category',
+              type: "category",
               data: response.map(r => {
-                return r.display_name
+                return r.display_name;
               })
             },
             color: color,
             series: [
               {
                 name: name,
-                type: 'bar',
-                stack: '总量',
+                type: "bar",
+                stack: "总量",
                 label: {
                   normal: {
                     show: true,
-                    position: 'insideRight'
+                    position: "insideRight"
                   }
                 },
                 data: response.map(r => {
-                  return r.count
+                  return r.count;
                 })
               }
             ]
-          })
+          });
           if (response.length > 0) {
-            this.projectAgeTitle = response[response.length - 1].display_name
-            this.getProjectAge(response[response.length - 1].index)
+            this.projectAgeTitle = response[response.length - 1].display_name;
+            this.getProjectAge(response[response.length - 1].index);
           } else {
-            this.getProjectAge()
+            this.getProjectAge();
           }
-          this.projectPersonFlag = false
+          this.projectPersonFlag = false;
         })
         .catch(err => {
-          this.projectPersonFlag = false
-          console.log(err)
-        })
+          this.projectPersonFlag = false;
+          console.log(err);
+        });
     },
     handleDialogClose() {
-      this.shouldDialogShow = false
+      this.shouldDialogShow = false;
     },
     getPointList() {
-      this.tableSetting.loading = true
-      let args = this.setArgs()
-      args.page = this.pagination.currentPage
-      delete args.id
+      this.tableSetting.loading = true;
+      let args = this.setArgs();
+      args.page = this.pagination.currentPage;
+      delete args.id;
       return getTimesStaus(this, args)
         .then(response => {
-          this.tableData = response.data
-          this.pagination.total = response.meta.pagination.total
-          this.setting.loading = false
-          this.tableSetting.loading = false
+          this.tableData = response.data;
+          this.pagination.total = response.meta.pagination.total;
+          this.setting.loading = false;
+          this.tableSetting.loading = false;
         })
         .catch(err => {
-          console.log(err)
-          this.tableSetting.loading = false
-          this.setting.loading = false
-        })
+          console.log(err);
+          this.tableSetting.loading = false;
+          this.setting.loading = false;
+        });
     },
     searchHandle() {
-      this.active = ''
-      this.times = ''
-      this.pagination.currentPage = 1
-      this.setting.loading = true
-      this.allChartData()
+      this.active = "";
+      this.times = "";
+      this.pagination.currentPage = 1;
+      this.setting.loading = true;
+      this.allChartData();
     },
     resetSearch() {
-      this.active = ''
-      this.times = ''
-      this.setting.loading = true
-      this.allChartData()
+      this.active = "";
+      this.times = "";
+      this.setting.loading = true;
+      this.allChartData();
     },
     allChartData() {
-      this.setting.loading = true
-      this.getPointList()
-      this.getPeopleCount()
-      this.getAge()
-      this.getCrowdTime()
-      this.getGender()
-      this.getProjectTop()
-      this.setting.loading = false
+      this.setting.loading = true;
+      this.getPointList();
+      this.getPeopleCount();
+      this.getAge();
+      this.getCrowdTime();
+      this.getGender();
+      this.getProjectTop();
+      this.setting.loading = false;
     },
     getCrowdTime() {
-      this.crowdFlag = true
-      let args = this.setArgs('5')
+      this.crowdFlag = true;
+      let args = this.setArgs("5");
       return getTimesChartData(this, args)
         .then(response => {
-          let chart = this.$refs.crowdPersonChart
+          let chart = this.$refs.crowdPersonChart;
           chart.mergeOptions({
             xAxis: {
-              type: 'category',
+              type: "category",
               data: response.map(r => {
-                return r.display_name
+                return r.display_name;
               })
             },
             series: [
               {
-                name: '10后',
-                type: 'bar',
-                stack: '总量',
+                name: "10后",
+                type: "bar",
+                stack: "总量",
                 data: response.map(r => {
-                  return r.count.century10
+                  return r.count.century10;
                 })
               },
               {
-                name: '00后',
-                type: 'bar',
-                stack: '总量',
+                name: "00后",
+                type: "bar",
+                stack: "总量",
                 data: response.map(r => {
-                  return r.count.century00
+                  return r.count.century00;
                 })
               },
               {
-                name: '90后',
-                type: 'bar',
-                stack: '总量',
+                name: "90后",
+                type: "bar",
+                stack: "总量",
                 data: response.map(r => {
-                  return r.count.century90
+                  return r.count.century90;
                 })
               },
               {
-                name: '80后',
-                type: 'bar',
-                stack: '总量',
+                name: "80后",
+                type: "bar",
+                stack: "总量",
                 data: response.map(r => {
-                  return r.count.century80
+                  return r.count.century80;
                 })
               },
               {
-                name: '70前/后',
-                type: 'bar',
-                stack: '总量',
+                name: "70前/后",
+                type: "bar",
+                stack: "总量",
                 label: {
                   normal: {
                     show: true,
-                    position: 'top',
-                    color: '#000',
+                    position: "top",
+                    color: "#000",
                     fontSize: 16,
                     formatter: function(data) {
-                      let content = ''
-                      let index = data.dataIndex
+                      let content = "";
+                      let index = data.dataIndex;
                       let singleSum = parseInt(
                         parseInt(response[index].count.century10) +
                           parseInt(response[index].count.century00) +
                           parseInt(response[index].count.century90) +
                           parseInt(response[index].count.century80) +
                           parseInt(response[index].count.century70)
-                      )
-                      let sum = 0
+                      );
+                      let sum = 0;
                       response.map(r => {
                         sum +=
                           parseInt(r.count.century10) +
                           parseInt(r.count.century00) +
                           parseInt(r.count.century90) +
                           parseInt(r.count.century80) +
-                          parseInt(r.count.century70)
-                      })
-                      let percent = ((singleSum / sum) * 100).toFixed(1) + '%'
-                      return percent + '\n' + singleSum
+                          parseInt(r.count.century70);
+                      });
+                      let percent = ((singleSum / sum) * 100).toFixed(1) + "%";
+                      return percent + "\n" + singleSum;
                     }
                   }
                 },
                 data: response.map(r => {
-                  return r.count.century70
+                  return r.count.century70;
                 })
               },
               {
-                name: '女',
-                type: 'line',
+                name: "女",
+                type: "line",
                 yAxisIndex: 1,
                 data: response.map(r => {
-                  return r.rate
+                  return r.rate;
                 }),
                 markLine: {
                   data: [
                     {
-                      name: 'Y 轴值为 50 的水平线',
+                      name: "Y 轴值为 50 的水平线",
                       yAxis: 50
                     }
                   ]
                 }
               }
             ]
-          })
-          this.crowdFlag = false
+          });
+          this.crowdFlag = false;
         })
         .catch(err => {
-          this.crowdFlag = false
-          console.log(err)
-        })
+          this.crowdFlag = false;
+          console.log(err);
+        });
     },
     getPeopleCount() {
-      this.poepleCountFlag = true
-      let args = this.setArgs('1')
+      this.poepleCountFlag = true;
+      let args = this.setArgs("1");
       return getTimesChartData(this, args)
         .then(response => {
-          this.peopleCount = response
+          this.peopleCount = response;
           this.type =
-            'looktimes,playtimes7,playtimes15,playtimes21,outnum,omo_scannum,lovetimes,verifytimes'
-          this.getLineData()
+            "looktimes,playtimes7,playtimes15,playtimes21,outnum,omo_scannum,lovetimes,verifytimes";
+          this.getLineData();
         })
         .catch(err => {
-          this.poepleCountFlag = false
-          console.log(err)
-        })
+          this.poepleCountFlag = false;
+          console.log(err);
+        });
     },
     getAge() {
-      this.ageFlag = true
-      let args = this.setArgs('4')
+      this.ageFlag = true;
+      let args = this.setArgs("4");
       return getTimesChartData(this, args)
         .then(response => {
-          this.tempAgeData = response
-          let chart = this.$refs.agePersonChart
+          this.tempAgeData = response;
+          let chart = this.$refs.agePersonChart;
           chart.mergeOptions({
             xAxis: {
-              type: 'category',
+              type: "category",
               data: response.map(r => {
-                return r.display_name
+                return r.display_name;
               })
             },
             series: [
               {
-                name: '男',
-                type: 'bar',
-                stack: '总量',
+                name: "男",
+                type: "bar",
+                stack: "总量",
                 data: response.map(r => {
-                  return r.count.male
+                  return r.count.male;
                 })
               },
               {
-                name: '女',
-                type: 'bar',
-                stack: '总量',
+                name: "女",
+                type: "bar",
+                stack: "总量",
                 label: {
                   normal: {
                     show: true,
-                    position: 'top',
-                    color: '#000',
+                    position: "top",
+                    color: "#000",
                     fontSize: 18,
                     formatter: function(data) {
-                      let content = ''
-                      let index = data.dataIndex
+                      let content = "";
+                      let index = data.dataIndex;
                       let singleSum = parseInt(
                         parseInt(response[index].count.female) +
                           parseInt(response[index].count.male)
-                      )
-                      let sum = 0
+                      );
+                      let sum = 0;
                       response.map(r => {
-                        sum += parseInt(r.count.male) + parseInt(r.count.female)
-                      })
-                      let percent = ((singleSum / sum) * 100).toFixed(1) + '%'
-                      return percent + '\n' + singleSum
+                        sum +=
+                          parseInt(r.count.male) + parseInt(r.count.female);
+                      });
+                      let percent = ((singleSum / sum) * 100).toFixed(1) + "%";
+                      return percent + "\n" + singleSum;
                     }
                   }
                 },
                 data: response.map(r => {
-                  return r.count.female
+                  return r.count.female;
                 })
               }
             ]
-          })
-          this.ageFlag = false
+          });
+          this.ageFlag = false;
         })
         .catch(err => {
-          this.ageFlag = false
-          console.log(err)
-        })
+          this.ageFlag = false;
+          console.log(err);
+        });
     },
     changePage(currentPage) {
-      this.pagination.currentPage = currentPage
-      this.getPointList()
+      this.pagination.currentPage = currentPage;
+      this.getPointList();
     },
     getGender() {
-      let args = this.setArgs('3')
+      let args = this.setArgs("3");
       return getTimesChartData(this, args)
         .then(response => {
-          let chart = this.$refs.pieSexChart
+          let chart = this.$refs.pieSexChart;
           chart.mergeOptions({
             series: [
               {
@@ -1544,72 +1414,72 @@ export default {
                 ]
               }
             ]
-          })
+          });
         })
         .catch(err => {
-          console.log(err)
-        })
+          console.log(err);
+        });
     },
     onClick(event, instance, echarts) {
-      this.dialogLoading = true
-      this.shouldDialogShow = true
-      let args = this.setArgs('3')
-      if (event.name === '男') {
-        args.gender = 'male'
-      } else if (event.name === '女') {
-        args.gender = 'female'
+      this.dialogLoading = true;
+      this.shouldDialogShow = true;
+      let args = this.setArgs("3");
+      if (event.name === "男") {
+        args.gender = "male";
+      } else if (event.name === "女") {
+        args.gender = "female";
       }
       getTimesChartData(this, args).then(response => {
-        let that = this
-        let mergeChart = this.$refs.pieSexChart2
+        let that = this;
+        let mergeChart = this.$refs.pieSexChart2;
         mergeChart.mergeOptions({
           color:
-            event.name === '男'
+            event.name === "男"
               ? [
-                  '#B6CEF9',
-                  '#92B5F9',
-                  '#649DFA',
-                  '#4188F1',
-                  '#397AD8',
-                  '#3269B8'
+                  "#B6CEF9",
+                  "#92B5F9",
+                  "#649DFA",
+                  "#4188F1",
+                  "#397AD8",
+                  "#3269B8"
                 ].reverse()
               : [
-                  '#F38DD0',
-                  '#F19AB9',
-                  '#EF70A0',
-                  '#E3508B',
-                  '#CA477B',
-                  '#AE3E6C'
+                  "#F38DD0",
+                  "#F19AB9",
+                  "#EF70A0",
+                  "#E3508B",
+                  "#CA477B",
+                  "#AE3E6C"
                 ].reverse(),
           legend: {
             data: response.map(r => {
-              return r.display_name
+              return r.display_name;
             })
           },
           series: [
             {
-              type: 'pie',
-              radius: '65%',
-              center: ['50%', '50%'],
-              selectedMode: 'single',
+              type: "pie",
+              radius: "65%",
+              center: ["50%", "50%"],
+              selectedMode: "single",
               data: response.map(r => {
                 return {
                   name: r.display_name,
                   value: r.count
-                }
+                };
               }),
               itemStyle: {
                 emphasis: {
                   shadowBlur: 10,
                   shadowOffsetX: 0,
-                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                  shadowColor: "rgba(0, 0, 0, 0.5)"
                 }
               }
             }
           ]
-        })
-        this.dialogLoading = false
-      })
+        });
+        this.dialogLoading = false;
+      });
     },
     setArgs(id) {
       let args = {
@@ -1619,7 +1489,7 @@ export default {
           new Date(this.searchForm.dateTime[1]).getTime()
         ),
         alias: this.searchForm.projectAlias,
-        ar_user_id: this.searchForm.arUserId,
+        ar_user_z: this.searchForm.arUserId,
         market_id: this.searchForm.market_id[0],
         scene_id: this.searchForm.sceneSelect,
         area_id: this.searchForm.area_id,
@@ -1628,403 +1498,403 @@ export default {
         weekend: 0,
         holiday: 0,
         times: this.times
-      }
-      if (this.times === '') {
-        delete args.times
+      };
+      if (this.times === "") {
+        delete args.times;
       }
       if (this.searchForm.timeFrame.length > 0) {
         for (let i = 0; i < this.searchForm.timeFrame.length; i++) {
-          if (this.searchForm.timeFrame[i] === '工作日') {
-            args.workday = 1
+          if (this.searchForm.timeFrame[i] === "工作日") {
+            args.workday = 1;
           }
-          if (this.searchForm.timeFrame[i] === '周末') {
-            args.weekend = 1
+          if (this.searchForm.timeFrame[i] === "周末") {
+            args.weekend = 1;
           }
-          if (this.searchForm.timeFrame[i] === '假日') {
-            args.holiday = 1
+          if (this.searchForm.timeFrame[i] === "假日") {
+            args.holiday = 1;
           }
         }
       }
       if (!this.searchForm.projectAlias) {
-        delete args.alias
+        delete args.alias;
       }
       if (!this.searchForm.arUserId) {
-        delete args.ar_user_id
+        delete args.ar_user_z;
       }
       if (!this.searchForm.sceneSelect) {
-        delete args.scene_id
+        delete args.scene_id;
       }
       if (!this.searchForm.area_id) {
-        delete args.area_id
+        delete args.area_id;
       }
       if (!this.searchForm.point_id) {
-        delete args.point_id
+        delete args.point_id;
       }
       if (this.searchForm.market_id.length === 0) {
-        delete args.market_id
+        delete args.market_id;
       }
-      return args
+      return args;
     },
     getLineData() {
-      this.poepleCountFlag = true
-      let args = this.setArgs('2')
-      args.index = this.type
+      this.poepleCountFlag = true;
+      let args = this.setArgs("2");
+      args.index = this.type;
       return getTimesChartData(this, args)
         .then(response => {
-          let dataLine = []
-          let chart = this.$refs.mainPersonTimesChart
-          chart.mergeOptions(this.processChartData(response))
-          this.poepleCountFlag = false
+          let dataLine = [];
+          let chart = this.$refs.mainPersonTimesChart;
+          chart.mergeOptions(this.processChartData(response));
+          this.poepleCountFlag = false;
         })
         .catch(err => {
-          this.poepleCountFlag = false
-          console.log(err)
-        })
+          this.poepleCountFlag = false;
+          console.log(err);
+        });
     },
     processChartData(res) {
       let newOption = {
         legend: {
           data: [
-            '围观人次',
-            '7″fCPE',
-            '15″fCPE',
-            '21″fCPE',
-            'fCPR(二维码生成数)',
-            'fCPA(扫码跳转次数)',
-            'fCPL(拉新会员数)',
-            'fCPS玩家人次',
-            '7″fCPE转化率',
-            '15″fCPE转化率',
-            '21″fCPE转化率',
-            'fCPR转化率',
-            'fCPA转化率',
-            'fCPL转化率',
-            'fCPS转化率'
+            "围观人次",
+            "7″fCPE",
+            "15″fCPE",
+            "21″fCPE",
+            "fCPR(二维码生成数)",
+            "fCPA(扫码跳转次数)",
+            "fCPL(拉新会员数)",
+            "fCPS玩家人次",
+            "7″fCPE转化率",
+            "15″fCPE转化率",
+            "21″fCPE转化率",
+            "fCPR转化率",
+            "fCPA转化率",
+            "fCPL转化率",
+            "fCPS转化率"
           ]
         },
         xAxis: [
           {
-            type: 'category',
+            type: "category",
             boundaryGap: false,
             data: res.map(r => {
-              return r.display_name
+              return r.display_name;
             })
           },
           {
             show: false,
             gridIndex: 1,
-            type: 'category',
+            type: "category",
             boundaryGap: false,
             data: res.map(r => {
-              return r.display_name
+              return r.display_name;
             }),
-            position: 'top'
+            position: "top"
           }
         ],
         series: [
           {
-            symbol: 'circle',
-            name: '围观人次',
-            type: 'line',
+            symbol: "circle",
+            name: "围观人次",
+            type: "line",
             areaStyle: { normal: {} },
             data: res.map(r => {
-              return r.looktimes
+              return r.looktimes;
             })
           },
           {
-            symbol: 'circle',
-            name: '7″fCPE',
-            type: 'line',
+            symbol: "circle",
+            name: "7″fCPE",
+            type: "line",
             areaStyle: { normal: {} },
             data: res.map(r => {
-              return r.playtimes7
+              return r.playtimes7;
             })
           },
           {
-            symbol: 'circle',
-            name: '15″fCPE',
-            type: 'line',
+            symbol: "circle",
+            name: "15″fCPE",
+            type: "line",
             areaStyle: { normal: {} },
             data: res.map(r => {
-              return r.playtimes15
+              return r.playtimes15;
             })
           },
           {
-            symbol: 'circle',
-            name: '21″fCPE',
-            type: 'line',
+            symbol: "circle",
+            name: "21″fCPE",
+            type: "line",
             areaStyle: { normal: {} },
             data: res.map(r => {
-              return r.playtimes21
+              return r.playtimes21;
             })
           },
           {
-            symbol: 'circle',
-            name: 'fCPR(二维码生成数)',
-            type: 'line',
+            symbol: "circle",
+            name: "fCPR(二维码生成数)",
+            type: "line",
             areaStyle: { normal: {} },
             data: res.map(r => {
-              return r.outnum
+              return r.outnum;
             })
           },
           {
-            symbol: 'circle',
-            name: 'fCPA(扫码跳转次数)',
-            type: 'line',
+            symbol: "circle",
+            name: "fCPA(扫码跳转次数)",
+            type: "line",
             areaStyle: { normal: {} },
             data: res.map(r => {
-              return r.omo_scannum
+              return r.omo_scannum;
             })
           },
           {
-            symbol: 'circle',
-            name: 'fCPL(拉新会员数)',
-            type: 'line',
+            symbol: "circle",
+            name: "fCPL(拉新会员数)",
+            type: "line",
             areaStyle: { normal: {} },
             data: res.map(r => {
-              return r.lovetimes
+              return r.lovetimes;
             })
           },
           {
-            symbol: 'circle',
-            name: 'fCPS玩家人次',
-            type: 'line',
+            symbol: "circle",
+            name: "fCPS玩家人次",
+            type: "line",
             areaStyle: { normal: {} },
             data: res.map(r => {
-              return r.verifytimes
+              return r.verifytimes;
             })
           },
           {
             xAxisIndex: 1,
             yAxisIndex: 1,
-            name: '7″fCPE转化率',
-            type: 'line',
+            name: "7″fCPE转化率",
+            type: "line",
             lineStyle: {
-              color: '#03662e'
+              color: "#03662e"
             },
             data: res.map(r => {
-              return r.playtimes7_rate
+              return r.playtimes7_rate;
             })
           },
           {
             xAxisIndex: 1,
             yAxisIndex: 1,
-            name: '15″fCPE转化率',
-            type: 'line',
+            name: "15″fCPE转化率",
+            type: "line",
             lineStyle: {
-              color: '#f0bf00'
+              color: "#f0bf00"
             },
             data: res.map(r => {
-              return r.playtimes15_rate
+              return r.playtimes15_rate;
             })
           },
           {
             xAxisIndex: 1,
             yAxisIndex: 1,
-            name: '21″fCPE转化率',
-            type: 'line',
+            name: "21″fCPE转化率",
+            type: "line",
             lineStyle: {
-              color: '#700068'
+              color: "#700068"
             },
             data: res.map(r => {
-              return r.playtimes21_rate
+              return r.playtimes21_rate;
             })
           },
           {
             xAxisIndex: 1,
             yAxisIndex: 1,
-            name: 'fCPR转化率',
-            type: 'line',
-            type: 'line',
+            name: "fCPR转化率",
+            type: "line",
+            type: "line",
             lineStyle: {
-              color: '#9b7800'
+              color: "#9b7800"
             },
             data: res.map(r => {
-              return r.outnum_rate
+              return r.outnum_rate;
             })
           },
           {
             xAxisIndex: 1,
             yAxisIndex: 1,
-            name: 'fCPA转化率',
-            type: 'line',
+            name: "fCPA转化率",
+            type: "line",
             lineStyle: {
-              color: '#d00084'
+              color: "#d00084"
             },
             data: res.map(r => {
-              return r.omo_scannum_rate
+              return r.omo_scannum_rate;
             })
           },
           {
             xAxisIndex: 1,
             yAxisIndex: 1,
-            name: 'fCPL转化率',
-            type: 'line',
+            name: "fCPL转化率",
+            type: "line",
             lineStyle: {
-              color: '#af0004'
+              color: "#af0004"
             },
             data: res.map(r => {
-              return r.lovetimes_rate
+              return r.lovetimes_rate;
             })
           },
           {
             xAxisIndex: 1,
             yAxisIndex: 1,
-            name: 'fCPS转化率',
-            type: 'line',
+            name: "fCPS转化率",
+            type: "line",
             lineStyle: {
-              color: '#7e3b10'
+              color: "#7e3b10"
             },
             data: res.map(r => {
-              return r.verifytimes_rate
+              return r.verifytimes_rate;
             })
           }
         ]
-      }
-      return newOption
+      };
+      return newOption;
     },
     handleDateTransform(valueDate) {
-      return handleDateTypeTransform(valueDate)
+      return handleDateTypeTransform(valueDate);
     },
     getConversionRate() {
-      this.rateDialog = true
-      let args = this.setArgs('8')
+      this.rateDialog = true;
+      let args = this.setArgs("8");
       return getTimesChartData(this, args)
         .then(response => {
-          this.chartdata = []
-          let chart = this.$refs.personRateChart
+          this.chartdata = [];
+          let chart = this.$refs.personRateChart;
           response.data.map(r => {
-            let value = r.count === null ? 0 : r.count
-            this.chartdata.push(value)
-          })
-          this.rateDay = response.day
-          this.marketCount = response.market_count
-          this.screenCount = response.oid_count
+            let value = r.count === null ? 0 : r.count;
+            this.chartdata.push(value);
+          });
+          this.rateDay = response.day;
+          this.marketCount = response.market_count;
+          this.screenCount = response.oid_count;
           chart.mergeOptions({
             series: [
               {
-                name: '当前范围各级转化率',
-                type: 'bar',
+                name: "当前范围各级转化率",
+                type: "bar",
                 barGap: 0,
                 // barWidth: 40,
                 data: response.rate.rate.map(r => {
-                  return r.count
+                  return r.count;
                 }),
                 label: {
                   normal: {
                     show: true,
-                    position: 'top',
-                    color: '#cb0017',
+                    position: "top",
+                    color: "#cb0017",
                     rich: {
                       a: {
-                        color: 'red',
+                        color: "red",
                         fontSize: 16,
                         fontWeight: 600
                       },
                       b: {
-                        color: 'green',
+                        color: "green",
                         fontSize: 16,
                         fontWeight: 600
                       }
                     },
                     formatter: function(data) {
-                      let index = data.dataIndex
+                      let index = data.dataIndex;
                       if (
                         parseFloat(data.value) -
                           parseFloat(response.rate.total_rate[index].count) >
                         0
                       ) {
                         return (
-                          '{a|' +
+                          "{a|" +
                           (
                             parseFloat(data.value) -
                             parseFloat(response.rate.total_rate[index].count)
                           ).toFixed(1) +
-                          '%}'
-                        )
+                          "%}"
+                        );
                       } else {
                         return (
-                          '{b|' +
+                          "{b|" +
                           -(
                             parseFloat(data.value) -
                             parseFloat(response.rate.total_rate[index].count)
                           ).toFixed(1) +
-                          '%}'
-                        )
+                          "%}"
+                        );
                       }
                     }
                   }
                 }
               },
               {
-                name: '总体各级平均转化率',
-                type: 'bar',
+                name: "总体各级平均转化率",
+                type: "bar",
                 // barWidth: 40,
                 data: response.rate.total_rate.map(r => {
-                  return r.count
+                  return r.count;
                 })
               }
             ]
-          })
-          this.rateDialog = false
+          });
+          this.rateDialog = false;
         })
         .catch(err => {
-          this.rateDialog = false
-          console.log(err)
-        })
+          this.rateDialog = false;
+          console.log(err);
+        });
     },
     handlePicShow(sceneList, projectList, areaList, marketList, pointList) {
-      this.shouldPicDialogShow = !this.shouldPicDialogShow
-      let that = this
+      this.shouldPicDialogShow = !this.shouldPicDialogShow;
+      let that = this;
       if (this.shouldPicDialogShow) {
-        this.getConversionRate()
+        this.getConversionRate();
         if (that.searchForm.sceneSelect) {
           let scene = sceneList.find(function(r) {
             if (r.id === that.searchForm.sceneSelect) {
-              return r.name
+              return r.name;
             }
-          })
-          this.sceneInfo = scene.name
+          });
+          this.sceneInfo = scene.name;
         }
         if (that.searchForm.projectSelect.length !== 0) {
           let project = projectList.find(function(r) {
             if (r.alias === that.searchForm.projectSelect[0]) {
-              return r.name
+              return r.name;
             }
-          })
-          that.projectInfo = project.name
+          });
+          that.projectInfo = project.name;
         }
         if (that.searchForm.area_id) {
           let area = areaList.find(function(r) {
             if (r.id === that.searchForm.area_id) {
-              return r.name
+              return r.name;
             }
-          })
-          this.addressInfo = area.name
+          });
+          this.addressInfo = area.name;
         }
         if (that.searchForm.market_id.length !== 0) {
           let market = marketList.find(function(r) {
             if (r.id === that.searchForm.market_id[0]) {
-              return r.name
+              return r.name;
             }
-          })
-          this.addressInfo = this.addressInfo + market.name
+          });
+          this.addressInfo = this.addressInfo + market.name;
         }
         if (that.searchForm.point_id) {
           let point = pointList.find(function(r) {
             if (r.id === that.searchForm.point_id) {
-              return r.name
+              return r.name;
             }
-          })
-          this.addressInfo = this.addressInfo + point.name
+          });
+          this.addressInfo = this.addressInfo + point.name;
         }
       }
       if (window.innerWidth > 1300) {
-        this.width = ((window.innerWidth - 60 + 20) * 0.5 - 20) * 0.6
+        this.width = ((window.innerWidth - 60 + 20) * 0.5 - 20) * 0.6;
       }
     }
   }
-}
+};
 </script>
 <style lang="less" scoped>
 .person-times-wrap {

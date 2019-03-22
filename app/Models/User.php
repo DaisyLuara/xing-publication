@@ -41,7 +41,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'parent_id', 'name', 'email', 'password', 'phone', 'avatar', 'introduction', 'ar_user_id', 'tower_access_token', 'tower_refresh_token','z'
+        'parent_id', 'name', 'email', 'password', 'phone', 'avatar', 'introduction', 'ar_user_id', 'tower_access_token', 'tower_refresh_token', 'z'
     ];
 
     /**
@@ -57,8 +57,9 @@ class User extends Authenticatable implements JWTSubject
      * 得到所有的下属
      * @return mixed
      */
-    public function subordinates(){
-       return $this->hasMany(User::class,'parent_id','id');
+    public function subordinates()
+    {
+        return $this->hasMany(User::class, 'parent_id', 'id');
     }
 
     public function getJWTIdentifier()
@@ -112,11 +113,6 @@ class User extends Authenticatable implements JWTSubject
         $this->unreadNotifications->markAsRead();
     }
 
-    public function ar_user()
-    {
-        return $this->hasOne(ArUser::class, 'ar_user_id', 'id');
-    }
-
     //超级管理员
     public function isSuperAdmin()
     {
@@ -130,9 +126,9 @@ class User extends Authenticatable implements JWTSubject
     }
 
     //销售人员
-    public function isUser()
+    public function isBD()
     {
-        return $this->hasRole('user');
+        return $this->hasRole('user|bd-manager');
     }
 
     //系统配置 可选角色

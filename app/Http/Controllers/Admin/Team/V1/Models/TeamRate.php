@@ -28,5 +28,6 @@ class TeamRate extends Model
         'tester_quality',
         'operation',
         'operation_quality',
+        'interaction',
     ];
 }

@@ -75,18 +75,6 @@ class QueryController extends Controller
     {
         $query = $area->query();
 
-        $user = $this->user();
-        $arUserId = getArUserID($user, $request);
-
-        //根据角色筛选
-        if ($arUserId) {
-            $query->whereHas('markets', function ($query) use ($arUserId) {
-                $query->whereHas('points', function ($query) use ($arUserId) {
-                    $query->where('bd_uid', '=', $arUserId);
-                });
-            });
-        }
-
         if ($request->name) {
             $query->where('name', 'like', '%' . $request->name . '%');
         }
@@ -100,16 +88,6 @@ class QueryController extends Controller
     {
         $query = $market->query();
         $markets = collect();
-
-        $user = $this->user();
-        $arUserId = getArUserID($user, $request);
-
-        //根据角色筛选
-        if ($arUserId) {
-            $query->whereHas('points', function ($query) use ($arUserId) {
-                $query->where('bd_uid', '=', $arUserId);
-            });
-        }
 
         if (!$request->name && !$request->area_id) {
             return $this->response->collection($markets, new AreaTransformer());
@@ -144,9 +122,9 @@ class QueryController extends Controller
         }
 
         $user = $this->user();
-        $arUserId = getArUserID($user, $request);
-        if ($arUserId) {
-            $query->where('bd_uid', '=', $arUserId);
+        $arUserZ = getArUserZ($user, $request);
+        if ($arUserZ) {
+            $query->where('bd_z', '=', $arUserZ);
         }
 
         $points = $query->get();
@@ -163,11 +141,11 @@ class QueryController extends Controller
     public function projectQuery(Request $request, Project $project)
     {
         $user = $this->user();
-        $arUserId = getArUserID($user, $request);
+        $arUserZ = getArUserZ($user, $request);
         $query = $project->query();
-        if ($arUserId) {
-            $query->whereHas('points', function ($q) use ($arUserId) {
-                $q->where('bd_uid', '=', $arUserId);
+        if ($arUserZ) {
+            $query->whereHas('points', function ($q) use ($arUserZ) {
+                $q->where('bd_z', '=', $arUserZ);
             });
         }
 
@@ -270,18 +248,13 @@ class QueryController extends Controller
 
     public function arUserQueryIndex(Request $request, ArUser $arUser)
     {
-        if ($this->user()->isUser()) {
-            $query = $arUser->query();
-            $arUser = $query->where('uid', '=', $this->user()->ar_user_id)->get();
-            return $this->response->collection($arUser, new ArUserTransformer());
-        } else {
-            $query = $arUser->query();
-            $arUsers = collect();
-            if ($request->name) {
-                $arUsers = $query->where('realname', 'like', '%' . $request->name . '%')->get();
-            }
-            return $this->response->collection($arUsers, new ArUserTransformer());
+
+        $query = $arUser->query();
+        $arUsers = collect();
+        if ($request->name) {
+            $arUsers = $query->where('realname', 'like', '%' . $request->name . '%')->get();
         }
+        return $this->response->collection($arUsers, new ArUserTransformer());
     }
 
     public function couponBatchQuery(CouponBatch $couponBatch, Request $request)
@@ -605,8 +578,17 @@ class QueryController extends Controller
     {
         $query = $store->query();
 
+        //公司以及子公司名下商户列表
         if ($request->has('company_id')) {
-            $query->where('company_id', '=', $request->company_id);
+            $company_id = $request->company_id;
+
+            $query->where(function ($q) use($company_id) {
+                $q->where('company_id', $company_id);
+            })->orWhere(function ($q) use ($company_id) {
+                $q->whereHas('company', function ($q) use($company_id) {
+                    $q->where('parent_id', $company_id);
+                });
+            });
         }
 
         if ($request->has('market_id')) {
@@ -655,5 +637,18 @@ class QueryController extends Controller
         $contractCostKind = $query->get();
         return $this->response()->collection($contractCostKind, new ContractCostKindTransformer());
     }
+
+    public function adminCustomersQuery(Request $request, Customer $customer)
+    {
+        $query = $customer->query();
+        $company = Company::query()->findOrFail($request->company_id);
+
+        $customers = $query->whereHas('company', function ($q) use ($company) {
+            $q->where('id', $company->id);
+        })->orderByDesc('id')->get();
+
+        return $this->response->collection($customers, new CustomerTransformer());
+    }
+
 
 }

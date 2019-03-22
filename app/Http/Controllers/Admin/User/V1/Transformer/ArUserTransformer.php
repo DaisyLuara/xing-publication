@@ -14,6 +14,7 @@ class ArUserTransformer extends TransformerAbstract
     {
         return [
             'id' => (int)$arUser->uid,
+            'z' => $arUser->z,
             'name' => $arUser->realname,
         ];
     }

@@ -100,8 +100,15 @@
                 <el-form-item label="场地名称:">
                   <span>{{ scope.row.name }}</span>
                 </el-form-item>
+                <el-form-item label="公司名称:">
+                  <span>{{ (scope.row.marketConfig && scope.row.marketConfig.company) ? scope.row.marketConfig.company.name : '无' }}</span>
+                </el-form-item>
+
                 <el-form-item label="区域:">
                   <span>{{ scope.row.area.name }}</span>
+                </el-form-item>
+                <el-form-item label="所属人:">
+                  <span>{{ (scope.row.marketConfig && scope.row.marketConfig.bdUser) ? scope.row.marketConfig.bdUser.name : '无' }}</span>
                 </el-form-item>
                 <el-form-item label="场地类型:">
                   <span>
@@ -155,44 +162,47 @@
                 <el-form-item label="运营时间:">
                   <span>{{ scope.row.contract ? (scope.row.contract.oper_sdate + '~' + scope.row.contract.oper_edate) : '' }}</span>
                 </el-form-item>
+                <el-form-item label="场地LOGO:">
+                  <img
+                    v-if="scope.row.marketConfig && scope.row.marketConfig.media"
+                    :src="scope.row.marketConfig.media.url"
+                    alt="logo"
+                    style="width:150px;height:150px;"
+                  >
+                </el-form-item>
+                <el-form-item label="修改时间:">
+                  <span>{{ scope.row.updated_at }}</span>
+                </el-form-item>
               </el-form>
             </template>
           </el-table-column>
           <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" width="80"/>
           <el-table-column :show-overflow-tooltip="true" prop="name" label="场地名称" min-width="100"/>
+          <el-table-column :show-overflow-tooltip="true" prop label="公司名称" min-width="100">
+            <template
+              slot-scope="scope"
+            >{{ (scope.row.marketConfig && scope.row.marketConfig.company) ? scope.row.marketConfig.company.name : '无' }}</template>
+          </el-table-column>
           <el-table-column :show-overflow-tooltip="true" prop="area" label="区域" min-width="80">
             <template slot-scope="scope">{{ scope.row.area.name }}</template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop label="场地类型" min-width="100">
+          <el-table-column :show-overflow-tooltip="true" prop label="所属人" min-width="100">
+            <template
+              slot-scope="scope"
+            >{{ (scope.row.marketConfig && scope.row.marketConfig.bdUser) ? scope.row.marketConfig.bdUser.name : '无' }}</template>
+          </el-table-column>
+          <el-table-column label="LOGO" min-width="100">
             <template slot-scope="scope">
-              {{ scope.row.contract ? (scope.row.contract.type === 'free' ? '免费入驻'
-              : scope.row.contract.type === 'pay'? '付费入驻'
-              : scope.row.contract.type === 'sell'? '出售'
-              : scope.row.contract.type === 'lease'? '租借'
-              : scope.row.contract.type === 'activity'? '活动'
-              : scope.row.contract.type === 'agent'? '代理'
-              : scope.row.contract.type === 'tmp'? '过桥'
-              :''):'' }}
+              <img
+                v-if="scope.row.marketConfig && scope.row.marketConfig.media"
+                :src="scope.row.marketConfig.media.url"
+                alt="logo"
+                style="width:100px;height:100px;"
+              >
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop label="场地权限" min-width="100">
-            <template slot-scope="scope">
-              {{ scope.row.share ? ((scope.row.share.site === 0
-              && scope.row.share.vipad === 0
-              && scope.row.share.ad === 0
-              && scope.row.share.agent === 0) ? '无' : permissionHandle(scope.row)) : '' }}
-            </template>
-          </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop label="合作模式" min-width="100">
-            <template slot-scope="scope">
-              {{ scope.row.contract ? (scope.row.contract.mode === 'none' ? '无要求'
-              : scope.row.contract.mode === 'part'? '分成'
-              : scope.row.contract.mode === 'exchange'? '置换'
-              :''):'' }}
-            </template>
-          </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="date" label="时间" min-width="100">
-            <template slot-scope="scope">{{ scope.row.contract ? scope.row.contract.date:'' }}</template>
+          <el-table-column :show-overflow-tooltip="true" prop="date" label="修改时间" min-width="100">
+            <template slot-scope="scope">{{ scope.row.updated_at }}</template>
           </el-table-column>
           <el-table-column label="操作" min-width="180">
             <template slot-scope="scope">
@@ -359,7 +369,8 @@ export default {
       this.setting.loading = true;
       let args = {
         page: this.pagination.currentPage,
-        include: "share,contract,area",
+        include:
+          "share,contract,area,marketConfig.company,marketConfig.media,marketConfig.bdUser,marketConfig.adContract",
         market_name: this.searchForm.name,
         areaid: this.searchForm.area_id,
         contract_type: this.searchForm.type,
@@ -389,6 +400,10 @@ export default {
         })
         .catch(err => {
           this.setting.loading = false;
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
         });
     },
     permissionHandle(data) {
@@ -417,7 +432,10 @@ export default {
           this.areaList = result.data;
         })
         .catch(err => {
-          console.log(err);
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
         });
     },
     changePage(currentPage) {

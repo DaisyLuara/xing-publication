@@ -40,12 +40,15 @@ class PointController extends Controller
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        $arUserId = getArUserID($user, $request);
+        $arUserZ = getArUserZ($user, $request);
 
         $query = $point->query();
 
         if ($user->hasRole('user|bd-manager')) {
-            $query->where('bd_uid', '=', $arUserId);
+            if (!$arUserZ) {
+                $arUserZ = '0';
+            }
+            $query->where('bd_z', '=', $arUserZ);
         }
 
         //点位名称
@@ -97,10 +100,10 @@ class PointController extends Controller
         $query = Point::query();
 
         $user = $this->user();
-        $arUserId = getArUserID($user, $request);
+        $arUserZ = getArUserZ($user, $request);
 
-        if ($arUserId) {
-            $query->where('bd_uid', '=', $arUserId);
+        if ($arUserZ) {
+            $query->where('bd_z', '=', $arUserZ);
         }
 
         $point = $query->where('oid', $id)->first();
@@ -113,6 +116,7 @@ class PointController extends Controller
 
     public function store(PointRequest $request, Point $point)
     {
+        abort_if(!$request->bd_z, '500', '缺少用户标识');
 
         $market = Market::find($request->marketid);
         $area = $market->area;

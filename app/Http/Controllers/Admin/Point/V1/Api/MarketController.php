@@ -6,7 +6,9 @@ use App\Http\Controllers\Admin\Point\V1\Models\Market;
 use App\Http\Controllers\Admin\Point\V1\Request\MarketRequest;
 use App\Http\Controllers\Admin\Point\V1\Transformer\MarketTransformer;
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use Illuminate\Http\Request;
+use DB;
 
 class MarketController extends Controller
 {
@@ -14,15 +16,19 @@ class MarketController extends Controller
     public function index(Request $request, Market $market)
     {
         $query = $market->query();
-        $user = $this->user();
-        $arUserId = getArUserID($user, $request);
-
-        //根据角色筛选
-        if ($arUserId) {
-            $query->whereHas('points', function ($query) use ($arUserId) {
-                $query->where('bd_uid', '=', $arUserId);
-            });
-        }
+//        /** @var  $user \App\Models\User */
+//        $user = $this->user();
+//        $arUserZ = getArUserZ($user, $request);
+//
+//        //根据角色筛选
+//        if ($user->hasRole('user|bd-manager')) {
+//            $query->whereHas('points', function ($query) use ($arUserZ) {
+//                if (!$arUserZ) {
+//                    $arUserZ = '0';
+//                }
+//                $query->where('bd_z', '=', $arUserZ);
+//            });
+//        }
 
         //场地名称
         if ($request->has('market_name')) {
@@ -71,6 +77,7 @@ class MarketController extends Controller
 
     public function store(MarketRequest $request, Market $market)
     {
+
         $market->fill($request->all())->saveOrFail();
 
         if ($request->has('contract')) {
@@ -81,11 +88,16 @@ class MarketController extends Controller
             $market->share()->create($request->share);
         }
 
+        if ($request->has('marketConfig')) {
+            $market->marketConfig()->create($request->marketConfig);
+        }
+
         return $this->response->item($market, new MarketTransformer());
     }
 
     public function update(MarketRequest $request, Market $market)
     {
+
         $market->update($request->all());
         if ($request->has('contract')) {
             $contract = $request->contract;
@@ -102,6 +114,15 @@ class MarketController extends Controller
                 unset($share['marketid']);
             }
             $market->share()->getResults()->update($share);
+        }
+
+        if ($request->has('marketConfig')) {
+            $marketConfig = $request->marketConfig;
+            if (isset($marketConfig['marketid'])) {
+                unset($marketConfig['marketid']);
+            }
+
+            $market->marketConfig()->updateOrCreate(['id' => $market->marketid], $marketConfig);
         }
 
         return $this->response->item($market, new MarketTransformer());

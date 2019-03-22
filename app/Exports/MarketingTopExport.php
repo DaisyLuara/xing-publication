@@ -37,7 +37,7 @@ class MarketingTopExport extends AbstractExport
             ->join('avr_official as ao', 'fcl.oid', '=', 'ao.oid')
             ->join('avr_official_market as aom', 'ao.marketid', '=', 'aom.marketid')
             ->join('avr_official_scene as aos', 'ao.sid', '=', 'aos.sid')
-            ->join('admin_staff', 'ao.bd_uid', '=', 'admin_staff.uid')
+            ->join('admin_staff', 'ao.bd_z', '=', 'admin_staff.z')
             ->whereRaw("fcl.clientdate between '$startClientdate' and '$endClientdate' and fcl.oid not in ('16', '19', '30', '31', '177','182','327','328','329','334','335','540') and aom.marketid <> '15' and aos.name<>'EXE颜镜店' and aos.name<>'星视度研发' and admin_staff.realname<>'颜镜店'")
             ->groupBy(DB::raw("date_format(fcl.date, '%Y-%m-%d'),fcl.oid,fcl.belong"))
             ->orderBy('date')
