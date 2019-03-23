@@ -1,7 +1,7 @@
 <template>
   <div class="item-wrap-template">
     <div v-loading="setting.loading" :element-loading-text="setting.loadingText" class="pane">
-      <div class="pane-title">{{ pointID ? '修改场地' : '新建场地' }}</div>
+      <div class="pane-title">{{ pointID ? '修改点位' : '新建点位' }}</div>
       <el-form
         ref="pointForm"
         :model="pointForm"
@@ -329,10 +329,10 @@
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item label="卷系数" prop="share.coupon_off">
+            <el-form-item label="券系数" prop="share.coupon_off">
               <el-input
                 v-model="pointForm.share.coupon_off"
-                placeholder="请输入卷系数"
+                placeholder="请输入券系数"
                 class="item-input"
               >
                 <template slot="append">%</template>
@@ -659,13 +659,13 @@ export default {
         path: "/market/point"
       },
       payFlag: false,
-        ar_user_z:null
+      ar_user_z: null
     };
   },
   created() {
     this.setting.loading = true;
-    let user = Cookies.get('user_info')
-      this.ar_user_z = user.ar_user_z
+    this.ar_user_z = JSON.parse(this.$cookie.get("user_info")).ar_user_z;
+    this.ar_user_z = this.ar_user_z ? this.ar_user_z : null;
     this.pointID = this.$route.params.uid;
     this.getAreaList();
     this.getFormatsList();
@@ -869,8 +869,7 @@ export default {
 
           let args = this.pointForm;
           delete args.permission;
-          args.bd_z = this.ar_user_z
-
+          args.bd_z = this.ar_user_z;
           if (this.pointID) {
             siteModifyPoint(this, args, this.pointID)
               .then(res => {

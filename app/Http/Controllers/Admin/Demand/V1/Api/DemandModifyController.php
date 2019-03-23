@@ -69,7 +69,7 @@ class DemandModifyController extends Controller
 
         }
 
-        $demandModify = $query->orderBy("id")->paginate(10);
+        $demandModify = $query->orderByDesc("id")->paginate(10);
         return $this->response->paginator($demandModify, new DemandModifyTransformer());
     }
 
