@@ -58,20 +58,7 @@
             <el-button size="small" type="success" @click="addCoupon">新增</el-button>
           </div>
         </div>
-        <el-tabs v-model="activeName" @tab-click="handleTab">
-          <el-tab-pane label="全部" name="first">
-            <rulesTable :tableData="tableData" @getCouponList="getCouponList"/>
-          </el-tab-pane>
-          <el-tab-pane label="投放中" name="second">
-            <rulesTable :tableData="tableData" @getCouponList="getCouponList"/>
-          </el-tab-pane>
-          <el-tab-pane label="待投放" name="third">
-            <rulesTable :tableData="tableData" @getCouponList="getCouponList"/>
-          </el-tab-pane>
-          <el-tab-pane label="已结束" name="fourth">
-            <rulesTable :tableData="tableData" @getCouponList="getCouponList"/>
-          </el-tab-pane>
-        </el-tabs>
+        <rulesTable :tableData="tableData" @getCouponList="getCouponList"/>
         <div class="pagination-wrap">
           <el-pagination
             :total="pagination.total"
@@ -133,9 +120,7 @@ import {
   Form,
   Dialog,
   FormItem,
-  MessageBox,
-  Tabs,
-  TabPane
+  MessageBox
 } from "element-ui";
 import rulesTable from "./com/rulesTable";
 export default {
@@ -150,13 +135,10 @@ export default {
     "el-option": Option,
     "el-form-item": FormItem,
     "el-dialog": Dialog,
-    "el-tabs": Tabs,
-    "el-tab-pane": TabPane,
     rulesTable
   },
   data() {
     return {
-      activeName: "second",
       loading: true,
       companyList: [],
       templateForm: {
@@ -173,7 +155,7 @@ export default {
         loading: false,
         loadingText: "拼命加载中"
       },
-      status: 1,
+      status: null,
       sceneTypeList: [
         {
           id: 1,
@@ -205,18 +187,6 @@ export default {
     this.getCompanyList();
   },
   methods: {
-    handleTab() {
-      if (this.activeName === "first") {
-        this.status = null;
-      } else if (this.activeName === "second") {
-        this.status = 1;
-      } else if (this.activeName === "third") {
-        this.status = 2;
-      } else {
-        this.status = 3;
-      }
-        this.getCouponList();
-    },
     thirdSubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
