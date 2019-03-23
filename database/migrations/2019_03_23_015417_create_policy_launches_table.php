@@ -18,6 +18,7 @@ class CreatePolicyLaunchesTable extends Migration
             $table->unsignedInteger('company_id')->index()->comment('公司ID');
             $table->unsignedInteger('policy_id')->comment('策略ID');
             $table->unsignedInteger('project_id')->comment('节目ID');
+            $table->string('belong')->default('')->comment('节目版本名称');
             $table->unsignedInteger('oid')->comment('点位ID');
             $table->timestamps();
         });
