@@ -37,6 +37,15 @@ let router = {
           meta: {
             permission: 'resource_auth.project_auth.create'
           }
+        },
+        {
+          path: 'edit/:uid',
+          component: () =>
+            import(/* webpackChunkName: "page/resource_auth/project_auth/Save" */ 'page/resource_auth/project_auth/Save'),
+          name: '编辑节目授权',
+          meta: {
+            permission: 'resource_auth.project_auth.update'
+          }
         }
       ]
     }

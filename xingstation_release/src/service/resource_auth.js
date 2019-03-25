@@ -16,7 +16,7 @@ const getProjectAuthListData = (context, args) => {
 }
 
 //节目投放授权详情
-const getProjectAuthDetailData = (context) => {
+const getProjectAuthDetailData = (context,id) => {
   return new Promise(function (resolve, reject) {
     context.$http
       .get(HOST + PROJECT_AUTH_API + '/' + id)
@@ -43,7 +43,7 @@ const saveProjectAuth = (context, params) => {
   })
 }
 // 修改节目授权
-const modifyProjectAuth = (context, params, id) => {
+const modifyProjectAuth = (context, id, params) => {
   return new Promise(function (resolve, reject) {
     context.$http
       .patch(HOST + PROJECT_AUTH_API + '/' + id, params)

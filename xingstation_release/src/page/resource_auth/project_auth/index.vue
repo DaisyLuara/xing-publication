@@ -179,7 +179,6 @@
         getSearchMarketOwnerCustomer(this)
           .then(result => {
             this.marketOwnerList = result;
-            console.log(result);
           })
           .catch(err => {
             this.$message({
@@ -262,6 +261,7 @@
         this.setting.loading = true;
         this.setting.loadingText = "拼命加载中";
         let args = {
+          page: this.pagination.currentPage,
           customer_id: this.searchForm.customer_id,
           project_id: this.searchForm.project_id,
         };
