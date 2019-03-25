@@ -34,7 +34,7 @@
           <el-select
                   v-model="projectAuthForm.customer_id"
                   :loading="searchLoading"
-                  placeholder="请输入节目名称"
+                  placeholder="请选择场地主"
                   filterable
                   clearable
           >
