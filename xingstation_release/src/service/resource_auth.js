@@ -1,11 +1,25 @@
 const PROJECT_AUTH_API = '/api/project_auth'
 const HOST = process.env.SERVER_URL
 
-//节目投放授权
+//节目投放授权列表
 const getProjectAuthListData = (context, args) => {
   return new Promise(function (resolve, reject) {
     context.$http
       .get(HOST + PROJECT_AUTH_API, {params: args})
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+//节目投放授权详情
+const getProjectAuthDetailData = (context) => {
+  return new Promise(function (resolve, reject) {
+    context.$http
+      .get(HOST + PROJECT_AUTH_API + '/' + id)
       .then(response => {
         resolve(response.data)
       })
@@ -58,6 +72,7 @@ const destroyProjectAuth = (context, id) => {
 
 export {
   getProjectAuthListData,
+  getProjectAuthDetailData,
   saveProjectAuth,
   modifyProjectAuth,
   destroyProjectAuth

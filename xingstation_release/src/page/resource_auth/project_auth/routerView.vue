@@ -1,16 +1,16 @@
 <template>
-  <div class="point-root">
+  <div class="project-auth-root">
     <router-view/>
   </div>
 </template>
 <script>
   export default {
-    name: 'PointView'
+    name: 'ProjectAuthView'
   }
 </script>
 
 <style lang="less" scoped>
-  .point-root {
+  .project-auth-root {
     height: 100%;
     background-color: #eff2f7;
   }
