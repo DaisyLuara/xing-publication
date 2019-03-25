@@ -57,7 +57,10 @@ class AddPermissionAndRoleForResourceAuthSeeder extends Seeder
 
         $admin = Role::query()->where('name', '=', 'admin')->first()
             ?? Role::create(['name' => 'admin', 'display_name' => '管理员']); //管理员
+        $operation = Role::query()->where('name', '=', 'operation')->first()
+            ?? Role::create(['name' => 'operation', 'display_name' => '平台运营']); //平台运营
 
         $admin->givePermissionTo(array_merge($readPermissionData, $editPermissionData, $deletePermissionData));
+        $operation->givePermissionTo(array_merge($readPermissionData, $editPermissionData, $deletePermissionData));
     }
 }
