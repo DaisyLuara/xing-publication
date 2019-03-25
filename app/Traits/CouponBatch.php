@@ -10,6 +10,7 @@ namespace App\Traits;
 
 use App\Http\Controllers\Admin\Launch\V1\Models\PolicyLaunch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch as CouponBatchModel;
+use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
 use Carbon\Carbon;
 use DB;
 
@@ -20,6 +21,7 @@ trait CouponBatch
     {
         $policyID = $this->getPolicy($oid, $belong);
         $couponBatchPolicies = $this->getCouponBatchPolicies($policyID);
+
 
         /**
          * 移除不符合条件的优惠券规则

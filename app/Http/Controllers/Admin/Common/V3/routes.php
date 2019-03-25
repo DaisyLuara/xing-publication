@@ -10,7 +10,7 @@ $api->version('v3', [
     ], function ($api) {
 
         $api->group(['middleware' => 'api_sign'], function ($api) {
-            $api->any('device/coupon/batches', 'CouponBatchController@show');
+            $api->get('device/coupon/batches', 'CouponBatchController@show');
         });
 
     });
