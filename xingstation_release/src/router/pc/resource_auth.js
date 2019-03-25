@@ -32,7 +32,7 @@ let router = {
         {
           path: 'add',
           component: () =>
-            import(/* webpackChunkName: "page/resource_auth/project_auth/Save" */ 'page/resource_auth/project_auth/Save'),
+            import(/* webpackChunkName: "page/resource_auth/project_auth/save" */ 'page/resource_auth/project_auth/save'),
           name: '新增节目授权',
           meta: {
             permission: 'resource_auth.project_auth.create'
@@ -41,7 +41,7 @@ let router = {
         {
           path: 'edit/:uid',
           component: () =>
-            import(/* webpackChunkName: "page/resource_auth/project_auth/Save" */ 'page/resource_auth/project_auth/Save'),
+            import(/* webpackChunkName: "page/resource_auth/project_auth/save" */ 'page/resource_auth/project_auth/save'),
           name: '编辑节目授权',
           meta: {
             permission: 'resource_auth.project_auth.update'
