@@ -72,15 +72,16 @@ class CouponExport extends AbstractExport implements ShouldAutoSize
                   coupons.oid as 'point',
                   customers.name as '核销人'");
 
+        $points = DB::connection('ar')->table('avr_official')
+            ->leftJoin('avr_official_market', 'avr_official.marketid', '=', 'avr_official_market.marketid')
+            ->leftJoin('avr_official_area', 'avr_official_market.areaid', 'avr_official_area.areaid')
+            ->selectRaw("concat(avr_official_area.name,'-',avr_official_market.name,'-',avr_official.name) as 'point_name',avr_official.oid as 'oid' ")
+            ->pluck('point_name', 'oid')->toArray();
+
         $points = $query->orderBy('coupons.id', 'desc')->get()
-            ->map(function ($value) {
+            ->map(function ($value) use ($points) {
                 if ($value->point > 0) {
-                    $point_name = DB::connection('ar')->table('avr_official')
-                        ->leftJoin('avr_official_market', 'avr_official.marketid', '=', 'avr_official_market.marketid')
-                        ->leftJoin('avr_official_area', 'avr_official_market.areaid', 'avr_official_area.areaid')
-                        ->where('avr_official.oid', '=', $value->point)
-                        ->selectRaw("concat(avr_official_area.name,'-',avr_official_market.name,'-',avr_official.name) as 'point_name'")->value('point_name');
-                    $value->point = $point_name;
+                    $value->point = $points[$value->point]??'';
                 } else {
                     $value->point = '';
                 }
