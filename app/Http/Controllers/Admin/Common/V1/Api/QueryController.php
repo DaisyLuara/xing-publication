@@ -651,4 +651,24 @@ class QueryController extends Controller
     }
 
 
+    /**
+     * 查询 拥有某个角色的customers
+     * @param string $role_name
+     * @param Request $request
+     * @param Customer $customer
+     * @return \Dingo\Api\Http\Response
+     */
+    public function adminCustomersQueryByRole($role_name = '',Request $request, Customer $customer)
+    {
+        $query = $customer->query()->role($role_name);
+
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        $customer = $query->get();
+
+        return $this->response()->collection($customer, new CustomerTransformer());
+    }
+
 }

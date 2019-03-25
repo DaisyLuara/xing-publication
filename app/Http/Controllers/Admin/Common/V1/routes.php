@@ -103,6 +103,7 @@ $api->version('v1', [
             $api->get('playing_types/query', 'QueryController@playingTypeQuery');//玩法配置列表
             $api->get('cost_kind/query', 'QueryController@costKindQuery');
             $api->get('customers/query', 'QueryController@adminCustomersQuery');//所有联系人查询
+            $api->get('customers/role/{role_name}/query', 'QueryController@adminCustomersQueryByRole'); //某个角色的customer
 
             //消息通知
             $api->get('user/notifications', 'NotificationsController@index');
