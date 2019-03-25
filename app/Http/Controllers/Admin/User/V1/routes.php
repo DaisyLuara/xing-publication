@@ -23,7 +23,6 @@ $api->version('v1', [
             $api->delete('system/users/{user}', ['middleware' => ['permission:system.user.delete'], 'uses' => 'AdminUsersController@destroy']);
             $api->patch('system/users/z/{user}', ['middleware' => ['permission:system.user.update'], 'uses' => 'AdminUsersController@syncZValue']);
 
-            $api->get('system/roles', 'RolesController@index');
         });
     });
 
