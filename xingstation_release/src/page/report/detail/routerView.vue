@@ -1,17 +1,17 @@
 <template>
-  <div 
-    class="project-auth-root">
+  <div
+    class="detail-root">
     <router-view/>
   </div>
 </template>
 <script>
 export default {
-  name: 'projectAuthView'
+  name: 'DetailView'
 }
 </script>
 
 <style lang="less" scoped>
-.project-auth-root {
+.detail-root {
   height: 100%;
   background-color: #eff2f7;
 }
