@@ -70,7 +70,36 @@ let router = {
           },
           component: () =>
             import(/* webpackChunkName: "page/prize/strategy/index" */ 'page/prize/strategy/index')
+        },
+        {
+          path: 'policy',
+          name: '优惠券策略子条目列表',
+          meta: {
+            title: '优惠券策略子条目详情'
+            // permission: 'prize.strategy.read'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/prize/strategy/policise" */ 'page/prize/strategy/policise')
+        },
+        {
+          path: 'add',
+          meta: {
+            title: '子条目增加'
+            // permission: 'prize.rules.create'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/prize/strategy/save" */ 'page/prize/strategy/save')
         }
+        // {
+        //   path: 'edit/:uid',
+        //   component: () =>
+        //     import(/* webpackChunkName: "page/prize/rules/save" */ 'page/prize/rules/save'),
+        //   name: '优惠券修改',
+        //   meta: {
+        //     title: '优惠券增加'
+        //     // permission: 'prize.rules.update'
+        //   }
+        // }
       ]
     },
     {
