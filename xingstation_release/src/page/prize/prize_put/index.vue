@@ -194,8 +194,8 @@ export default {
     getLaunchPirzeList() {
       this.setting.loadingText = "拼命加载中";
       this.setting.loading = true;
-      let searchArgs = {
-        include: "policy",
+      let args = {
+        include: "policy,company,project,point",
         page: this.pagination.currentPage,
         name: this.filters.name,
         company_id: this.filters.company_id
@@ -206,7 +206,7 @@ export default {
       if (!this.filters.company_id) {
         delete args.company_id;
       }
-      getLaunchPirzeList(this, searchArgs)
+      getLaunchPirzeList(this, args)
         .then(response => {
           let data = response.data;
           this.tableData = data;
