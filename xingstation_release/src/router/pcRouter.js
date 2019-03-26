@@ -11,6 +11,8 @@ import home from 'router/pc/home'
 import report from 'router/pc/report'
 import market from 'router/pc/market'
 import activity from 'router/pc/activity'
+import prize from 'router/pc/prize'
+
 
 export default {
   path: '/',
@@ -23,6 +25,7 @@ export default {
     home,
     system,
     project,
+    prize,
     market,
     inform,
     account,

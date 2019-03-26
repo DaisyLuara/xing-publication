@@ -27,6 +27,10 @@ const COMPANY_MARKET_API = '/api/company/markets/query'
 const PLATYING_TYPES_API = '/api/playing_types/query'
 const CUSTOMERS_API = '/api/customers/query'
 const CUSTOMERS_MARKET_OWNER_API = '/api/customers/role/market_owner/query'
+const AUTH_POINT_API = '/api/authorized_points/query'
+const AUTH_POLICY_API = '/api/authorized_policies/query'
+const AUTH_PROJECT_API = '/api/authorized_projects/query'
+
 const HOST = process.env.SERVER_URL
 
 // 区域
@@ -159,7 +163,7 @@ const getSearchSceneList = context => {
   })
 }
 // 公司
-const getSearchCompanyList = context => {
+const getSearchCompany = context => {
   return new Promise(function(resolve, reject) {
     context.$http
       .get(HOST + COMPANY_API)
@@ -406,10 +410,54 @@ const getSearchMarketOwnerCustomer = (context, params) => {
     context.$http
       .get(HOST + CUSTOMERS_MARKET_OWNER_API, { params: params })
       .then(response => {
-          resolve(response.data.data)
+        resolve(response.data.data)
       })
       .catch(error => {
-          reject(error)
+        reject(error)
+      })
+  })
+}
+// 已授权点位
+
+const getSearchAuthPoint = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + AUTH_POINT_API, { params: params })
+      .then(response => {
+        resolve(response.data.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+// 已授权节目
+
+const getSearchAuthProject = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + AUTH_PROJECT_API, { params: params })
+      .then(response => {
+        resolve(response.data.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+// 已授权策略
+
+const getSearchAuthPolicies = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + AUTH_POLICY_API, { params: params })
+      .then(response => {
+        resolve(response.data.data)
+      })
+      .catch(error => {
+        reject(error)
       })
   })
 }
@@ -431,7 +479,7 @@ export {
   getSearchBDManagerList,
   getSearchLegalManagerList,
   getSearchPolicyList,
-  getSearchCompanyList,
+  getSearchCompany,
   getSearchSceneList,
   getFormatsList,
   getPermission,
@@ -443,5 +491,8 @@ export {
   getCompanyMarketList,
   getSearchPlayingTypes,
   getSearchCustomer,
-  getSearchMarketOwnerCustomer
+  getSearchMarketOwnerCustomer,
+  getSearchAuthPolicies,
+  getSearchAuthPoint,
+  getSearchAuthProject
 }

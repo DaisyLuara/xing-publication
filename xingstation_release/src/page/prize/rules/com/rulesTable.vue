@@ -108,12 +108,12 @@ export default {
   methods: {
     linkToEdit(currentCoupon) {
       this.$router.push({
-        path: "/project/rules/edit/" + currentCoupon.id
+        path: "/prize/rules/edit/" + currentCoupon.id
       });
     },
     addCoupon() {
       this.$router.push({
-        path: "/project/rules/add"
+        path: "/prize/rules/add"
       });
     },
     copyRules(data) {

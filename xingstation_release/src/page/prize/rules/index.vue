@@ -106,7 +106,7 @@ import {
   getCouponList,
   getSyncCoupon,
   saveCoupon,
-  getSearchCompanyList
+  getSearchCompany
 } from "service";
 
 import {
@@ -206,7 +206,7 @@ export default {
       });
     },
     getCompanyList() {
-      getSearchCompanyList(this)
+      getSearchCompany(this)
         .then(result => {
           this.companyList = result.data;
         })
@@ -226,7 +226,7 @@ export default {
     },
     linkToEdit(currentCoupon) {
       this.$router.push({
-        path: "/project/rules/edit/" + currentCoupon.id
+        path: "/prize/rules/edit/" + currentCoupon.id
       });
     },
     getCouponList() {
@@ -269,7 +269,7 @@ export default {
     },
     addCoupon() {
       this.$router.push({
-        path: "/project/rules/add"
+        path: "/prize/rules/add"
       });
     },
     copyRules(data) {
