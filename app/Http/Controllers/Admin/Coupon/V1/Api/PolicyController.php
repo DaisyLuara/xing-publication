@@ -63,6 +63,12 @@ class PolicyController extends Controller
             ->setStatusCode(201);
     }
 
+    public function showBatchPolicy(Policy $policy, $batch_policy_id)
+    {
+        $batchPolicy = $policy->batches()->find($batch_policy_id);
+        return $this->response->item($batchPolicy, new CouponBatchTransformer());
+    }
+
     public function batchPolicyIndex(Policy $policy)
     {
         $batchPolicies = $policy->batches()->paginate(10);
