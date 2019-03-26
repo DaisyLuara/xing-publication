@@ -2,11 +2,11 @@ import auth from 'service/auth'
 
 let router = {
   path: 'prize',
-  redirect: 'pirze/rules',
+  redirect: 'prize/rules',
   name: '奖品',
   meta: {
     title: '奖品',
-    permission: 'pirze'
+    permission: 'prize'
   },
   component: () =>
     import(/* webpackChunkName: "page/prize/prizeView" */ 'page/prize/prizeView'),
