@@ -15,6 +15,7 @@ $api->version('v1', [
             $api->get('coupon/policies', ['middleware' => ['permission:prize.strategy.read'], 'uses' => 'PolicyController@index']);
             $api->post('company/{company}/coupon/policy', ['middleware' => ['permission:prize.strategy.create'], 'uses' => 'PolicyController@store']);
             $api->patch('coupon/policy/{policy}', ['middleware' => ['permission:prize.strategy.update'], 'uses' => 'PolicyController@update']);
+
             //子条目
             $api->get('policy/{policy}/batch_policies', ['middleware' => ['permission:prize.strategy.childRead'], 'uses' => 'PolicyController@batchPolicyIndex']);
             $api->get('policy/{policy}/batch_policy/{batch_policy_id}', 'PolicyController@showBatchPolicy');
