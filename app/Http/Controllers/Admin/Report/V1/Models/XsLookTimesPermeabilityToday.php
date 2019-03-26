@@ -16,9 +16,9 @@ class XsLookTimesPermeabilityToday extends Model
 {
     protected $table = 'xs_looktimes_permeability_today';
 
-//    protected static function boot()
-//    {
-//        parent::boot();
-//        static::addGlobalScope(new MCExhibitionPointScope());
-//    }
+    protected static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope(new MCExhibitionPointScope());
+    }
 }
