@@ -8,7 +8,7 @@
 
 namespace App\Http\Controllers\Admin\Coupon\V1\Api;
 
-
+use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
@@ -61,6 +61,13 @@ class PolicyController extends Controller
         $policy->update($request->all());
         return $this->response->item($policy, new PolicyTransformer())
             ->setStatusCode(201);
+    }
+
+    public function batchPolicyIndex(Policy $policy)
+    {
+        $batchPolicies = $policy->batches()->paginate(10);
+
+        return $this->response->paginator($batchPolicies, new CouponBatchTransformer());
     }
 
     public function storeBatchPolicy(Policy $policy, CouponBatch $couponBatch, PolicyBatchesRequest $request)
