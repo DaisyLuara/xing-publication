@@ -159,7 +159,7 @@ const getSearchSceneList = context => {
   })
 }
 // 公司
-const getSearchCompanyList = context => {
+const getSearchCompany = context => {
   return new Promise(function(resolve, reject) {
     context.$http
       .get(HOST + COMPANY_API)
@@ -406,10 +406,10 @@ const getSearchMarketOwnerCustomer = (context, params) => {
     context.$http
       .get(HOST + CUSTOMERS_MARKET_OWNER_API, { params: params })
       .then(response => {
-          resolve(response.data.data)
+        resolve(response.data.data)
       })
       .catch(error => {
-          reject(error)
+        reject(error)
       })
   })
 }
@@ -431,7 +431,7 @@ export {
   getSearchBDManagerList,
   getSearchLegalManagerList,
   getSearchPolicyList,
-  getSearchCompanyList,
+  getSearchCompany,
   getSearchSceneList,
   getFormatsList,
   getPermission,

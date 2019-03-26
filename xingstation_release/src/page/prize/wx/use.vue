@@ -318,10 +318,6 @@ export default {
   created() {
   },
   mounted() {
-    console.log('..................')
-    console.log(this.$route.params.card)
-    console.log(this.$route.params.card_id)
-    console.log('..................>')
     if (this.$route.params.card !== undefined) {
       this.data = this.$route.params.card
       //更新新增判断过滤
@@ -337,10 +333,9 @@ export default {
     addSingleCard(args, args1) {
       addSingleCard(this, args, args1)
         .then(res => {
-          console.log(res)
           if (res.errcode === 0) {
             this.$router.push({
-              path: '/project/wx_cardpackage/'
+              path: '/prize/wx_cardpackage/'
             })
           }
         })
@@ -352,10 +347,9 @@ export default {
     modifySingleCard(args, args1) {
       modifySingleCard(this, args, args1)
         .then(res => {
-          console.log(res)
           if (res.errcode === 0) {
             this.$router.push({
-              path: '/project/wx_cardpackage/'
+              path: '/prize/wx_cardpackage/'
             })
           }
         })
@@ -364,17 +358,14 @@ export default {
         });
     },
     goBack() {
-      console.log("提交券类型")
       this.$router.push({
-        path: "/project/wx_cardpackage/add/"
+        path: "/prize/wx_cardpackage/add/"
       });
     },
     submit() {
       if (!this.validate()) {
         return
       }
-      console.log("---------------")
-      console.log(this.data)
       if (null === this.data) {
         this.$router.go(-1);
         return
@@ -399,8 +390,6 @@ export default {
       else {
         this.dataHandle('general_coupon')
       }
-      console.log('..............')
-      console.log(this.data)
       if (this.card_id !== undefined) {
         this.update()
       } else {
@@ -417,8 +406,6 @@ export default {
     update() {
       let card = this.updateData
       let params = '?authorizer_id=6&card_id=' + this.card_id
-      console.log('更新')
-      console.log(card)
       this.modifySingleCard(params, card)
     },
     dataHandle(type) {
