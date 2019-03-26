@@ -383,7 +383,7 @@ import {
   getSearchAeraList,
   getSearchUserList,
   getContractReceiptList,
-  getSearchCompanyList,
+  getSearchCompany,
   getSearchCustomer
 } from "service";
 
@@ -707,7 +707,7 @@ export default {
       this.getMarketDetail();
     }
     this.getAreaList();
-    this.getSearchCompanyList();
+    this.getSearchCompany();
     this.getSearchUserList();
     let roles = JSON.parse(this.$cookie.get("user_info")).roles.data;
     roles.map(r => {
@@ -743,9 +743,9 @@ export default {
         this.contractShow = false;
       }
     },
-    getSearchCompanyList() {
+    getSearchCompany() {
       this.searchLoading = true;
-      getSearchCompanyList(this)
+      getSearchCompany(this)
         .then(res => {
           this.companyList = res.data;
           this.searchLoading = false;

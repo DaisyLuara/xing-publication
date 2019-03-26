@@ -310,7 +310,7 @@ import {
   handleDateTransform,
   historyBack,
   getCouponDetial,
-  getSearchCompanyList,
+  getSearchCompany,
   saveCoupon,
   getSearchMarketList,
   getSearchPointList,
@@ -448,7 +448,7 @@ export default {
     this.user_name = user.name;
     this.couponID = this.$route.params.uid;
     this.setting.loadingText = "拼命加载中";
-    this.getSearchCompanyList();
+    this.getSearchCompany();
     if (this.couponID) {
       this.getCouponDetial();
     } else {
@@ -544,9 +544,9 @@ export default {
         this.multipleNum = 1;
       }
     },
-    getSearchCompanyList() {
+    getSearchCompany() {
       this.searchLoading = true;
-      getSearchCompanyList(this)
+      getSearchCompany(this)
         .then(result => {
           this.searchLoading = false;
           this.companyList = result.data;
@@ -805,7 +805,7 @@ export default {
                 type: "success"
               });
               this.$router.push({
-                path: "/project/rules/"
+                path: "/prize/rules/"
               });
             })
             .catch(error => {

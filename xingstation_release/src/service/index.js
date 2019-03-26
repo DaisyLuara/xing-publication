@@ -55,3 +55,6 @@ export * from './activity'
 
 //节目授权
 export * from './resource_auth'
+
+//奖品
+export * from './prize'

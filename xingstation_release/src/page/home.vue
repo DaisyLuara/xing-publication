@@ -127,7 +127,7 @@ export default {
                 m.src = require("../assets/images/icons/device-icon.png");
                 break;
               case "resource_auth":
-                m.src = require("../assets/images/icons/resource_auth-icon.png");
+                m.src = require("../assets/images/icons/auth_icon.png?v=1");
                 break;
               case "team":
                 m.src = require("../assets/images/icons/team-icon.png");

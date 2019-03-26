@@ -174,7 +174,7 @@ import {
   modifyBusiness,
   getSearchAeraList,
   getSearchMarketList,
-  getSearchCompanyList,
+  getSearchCompany,
   getSearchUserList,
   getContractReceiptList,
   handleDateTimeTransform,
@@ -305,7 +305,7 @@ export default {
     };
   },
   created() {
-    this.getSearchCompanyList();
+    this.getSearchCompany();
     this.setting.loading = true;
     this.businessID = this.$route.params.uid;
     this.getAreaList();
@@ -392,9 +392,9 @@ export default {
       }
       return isLt2M;
     },
-    getSearchCompanyList() {
+    getSearchCompany() {
       this.searchLoading = true;
-      getSearchCompanyList(this)
+      getSearchCompany(this)
         .then(res => {
           this.companyList = res.data;
           this.searchLoading = false;

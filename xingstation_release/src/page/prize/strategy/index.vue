@@ -294,7 +294,7 @@ import {
   saveBatchPolicy,
   modifyPolicy,
   savePolicy,
-  getSearchCompanyList,
+  getSearchCompany,
   getSearchCouponList,
   getPoliciesList
 } from 'service'
@@ -382,7 +382,7 @@ export default {
         })
     },
     getCompanyList() {
-      getSearchCompanyList(this)
+      getSearchCompany(this)
         .then(result => {
           this.companyList = result.data
         })
