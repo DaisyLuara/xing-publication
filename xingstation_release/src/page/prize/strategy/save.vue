@@ -92,6 +92,8 @@
 import {
   historyBack,
   getSearchCouponList,
+  saveBatchPolicy,
+  modifyBatchPolicy,
   getCouponPolicieseDetail
 } from "service";
 import {
@@ -115,6 +117,10 @@ export default {
   },
   data() {
     return {
+      setting: {
+        loading: false,
+        loadingText: "拼命加载中"
+      },
       genderList: [
         {
           id: 1,
@@ -153,7 +159,7 @@ export default {
   methods: {
     getCouponPolicieseDetail() {
       this.setting.loading = true;
-      getCouponPolicieseDetail(this, this.cid, this.pid)
+      getCouponPolicieseDetail(this, this.pid, this.policyId)
         .then(res => {
           this.policyForm.min_age = res.pivot.min_age;
           this.policyForm.max_age = res.pivot.max_age;
@@ -191,8 +197,12 @@ export default {
                   message: "修改成功",
                   type: "success"
                 });
-                this.$$router.push({
-                  path: "/prize/strategy/policy"
+                this.$router.push({
+                  path: "/prize/strategy/policy",
+                  query: {
+                    pid: this.pid,
+                    cid: this.cid
+                  }
                 });
                 this.setting.loading = false;
               })
@@ -210,8 +220,12 @@ export default {
                   message: "添加成功",
                   type: "success"
                 });
-                this.$$router.push({
-                  path: "/prize/strategy/policy"
+                this.$router.push({
+                  path: "/prize/strategy/policy",
+                  query: {
+                    pid: this.pid,
+                    cid: this.cid
+                  }
                 });
                 this.setting.loading = false;
               })

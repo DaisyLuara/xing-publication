@@ -117,9 +117,16 @@ import {
   TableColumn,
   Dialog,
   MessageBox,
-  Input
+  Input,
+  Select,
+  Option
 } from "element-ui";
-import { modifyPolicy, savePolicy, getPoliciesList } from "service";
+import {
+  modifyPolicy,
+  savePolicy,
+  getPoliciesList,
+  getSearchCompany
+} from "service";
 
 export default {
   components: {
@@ -130,10 +137,13 @@ export default {
     ElFormItem: FormItem,
     ElButton: Button,
     ElTable: Table,
+    ElSelect: Select,
+    ElOption: Option,
     ElTableColumn: TableColumn
   },
   data() {
     return {
+      searchLoading: false,
       templateVisible: false,
       loading: false,
       title: "",
@@ -169,9 +179,19 @@ export default {
     };
   },
   created() {
+    this.getCompanyList();
     this.getPoliciesList();
   },
   methods: {
+    getCompanyList() {
+      getSearchCompany(this)
+        .then(result => {
+          this.companyList = result.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
     policy(row) {
       this.$router.push({
         path: "/prize/strategy/policy",

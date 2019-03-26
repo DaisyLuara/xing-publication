@@ -20,10 +20,9 @@ class PolicyLaunchController extends Controller
     {
         $query = $policyLaunch->query();
 
-        if ($request->has('policy_name')) {
-            $query->whereHas('policy', function ($query) use ($request) {
-                $query->where('name', 'like', '%' . $request->policy_name . '%');
-            });
+        if ($request->has('company_id')) {
+            $query->where('company_id', $request->company_id);
+
         }
 
         if ($request->has('project_id')) {

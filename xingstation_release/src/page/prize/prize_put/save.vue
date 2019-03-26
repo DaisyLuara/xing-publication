@@ -1,6 +1,10 @@
 <template>
   <div class="root">
-    <div class="account-wrap">
+    <div
+      class="account-wrap"
+      v-loading="setting.loading"
+      :element-loading-text="setting.loadingText"
+    >
       <div class="item-info">
         <div class="prize-title">{{ prizeId ? '奖品投放修改' : '奖品投放新增'}}</div>
         <el-form ref="prizeForm" :model="prizeForm" label-width="180px">
@@ -85,7 +89,7 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="onSubmit('prizeForm')">保存</el-button>
+            <el-button type="primary" @click="submit('prizeForm')">保存</el-button>
             <el-button @click="back">返回</el-button>
           </el-form-item>
         </el-form>
@@ -124,6 +128,10 @@ export default {
   },
   data() {
     return {
+      setting: {
+        loading: false,
+        loadingText: "拼命加载中"
+      },
       prizeId: null,
       searchLoading: false,
       prizeForm: {
@@ -151,7 +159,7 @@ export default {
   methods: {
     getSearchAuthPolicies() {
       this.searchLoading = true;
-      getSearchAuthPolicies()
+      getSearchAuthPolicies(this)
         .then(res => {
           this.searchLoading = false;
           this.policyList = res;
@@ -166,7 +174,7 @@ export default {
     },
     getSearchAuthPoint() {
       this.searchLoading = true;
-      getSearchAuthPoint()
+      getSearchAuthPoint(this)
         .then(res => {
           this.searchLoading = false;
           this.pointList = res;
@@ -181,7 +189,7 @@ export default {
     },
     getSearchAuthProject() {
       this.searchLoading = true;
-      getSearchAuthProject()
+      getSearchAuthProject(this)
         .then(res => {
           this.searchLoading = false;
           this.projectList = res;
@@ -196,7 +204,7 @@ export default {
     },
     getSearchCompany() {
       this.searchLoading = true;
-      getSearchCompany()
+      getSearchCompany(this)
         .then(res => {
           this.searchLoading = false;
           this.companyList = res.data;
