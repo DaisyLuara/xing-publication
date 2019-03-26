@@ -38,12 +38,12 @@ class Kernel extends ConsoleKernel
         if (env('APP_ENV') !== 'local') {
 
             //点位排名通知
-            $schedule->call(function () {
-                $data = $this->getRankingData();
-                for ($i = 0; $i < count($data); $i++) {
-                    WeekRankingJob::dispatch($data[$i])->onQueue('weekRanking');
-                }
-            })->weekly()->fridays()->at('10:25');
+//            $schedule->call(function () {
+//                $data = $this->getRankingData();
+//                for ($i = 0; $i < count($data); $i++) {
+//                    WeekRankingJob::dispatch($data[$i])->onQueue('weekRanking');
+//                }
+//            })->weekly()->fridays()->at('10:25');
 
             //count数据清洗
             $schedule->call(function () {

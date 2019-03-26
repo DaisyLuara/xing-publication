@@ -18,12 +18,14 @@ use App\Models\User;
 use App\Observers\MarketContractObserver;
 use App\Observers\MarketObserver;
 use App\Observers\MarketShareObserver;
+use App\Observers\NotificationObserver;
 use App\Observers\ProjectLaunchObserver;
 use App\Observers\AdminProjectObserver;
 use App\Observers\ProjectLaunchTplObserver;
 use App\Observers\ProjectLaunchTplScheduleObserver;
 use App\Observers\ShortUrlRecordObserver;
 use App\Observers\ThirdPartyUserObserver;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use App\Observers\AdLaunchObserver;
@@ -52,6 +54,7 @@ class AppServiceProvider extends ServiceProvider
         ProjectLaunchTpl::observe(ProjectLaunchTplObserver::class);
         ProjectLaunchTplSchedule::observe(ProjectLaunchTplScheduleObserver::class);
         ThirdPartyUser::observe(ThirdPartyUserObserver::class);
+        DatabaseNotification::observe(NotificationObserver::class);
 
         \Carbon\Carbon::setLocale('zh');
         $this->bootTowerSocialite();
