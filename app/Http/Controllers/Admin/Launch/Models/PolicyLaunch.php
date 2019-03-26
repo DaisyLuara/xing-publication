@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Launch\V1\Models;
 
+use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Project\V1\Models\Project;
 use App\Http\Controllers\Admin\Point\V1\Models\Point;
@@ -29,5 +30,10 @@ class PolicyLaunch extends Model
     public function policy()
     {
         return $this->belongsTo(Policy::class, 'policy_id', 'id');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id', 'id');
     }
 }
