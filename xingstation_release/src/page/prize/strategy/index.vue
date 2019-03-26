@@ -165,7 +165,7 @@ export default {
       setting: {
         loading: false,
         loadingText: "拼命加载中"
-      },
+      }
     };
   },
   created() {
@@ -176,7 +176,8 @@ export default {
       this.$router.push({
         path: "/prize/strategy/policy",
         query: {
-          pid: row.id
+          pid: row.id,
+          cid: row.company.id
         }
       });
     },

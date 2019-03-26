@@ -52,7 +52,8 @@
       />
       <el-table-column label="操作" min-width="100">
         <template slot-scope="scope">
-          <el-button size="small" type="warning" @click="modifyTemplateName(scope.row)">编辑</el-button>
+          <el-button size="small" type="warning" @click="editPolicy(scope.row)">编辑</el-button>
+          <el-button size="small" @click="deleteBatch(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -81,7 +82,7 @@ import {
   MessageBox,
   Input
 } from "element-ui";
-import { getCouponPoliciesList } from "service";
+import { getCouponPoliciesList, deleteBatchPolicy } from "service";
 
 export default {
   components: {
@@ -173,18 +174,67 @@ export default {
         loading: false,
         loadingText: "拼命加载中"
       },
-      pid: null
+      pid: null,
+      cid: null
     };
   },
   created() {
     this.pid = this.$route.query.pid;
-    // this.getCompanyList();
-    // this.getCouponPoliciesList();
+    this.cid = this.$route.query.cid;
+    this.getCouponPoliciesList();
   },
   methods: {
+    deleteBatch(row) {
+      let id = row.id;
+      MessageBox.confirm("确认删除选中策略条目?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.setting.loadingText = "拼命加载中";
+          this.setting.loading = true;
+          deleteBatchPolicy(this, this.cid, id)
+            .then(response => {
+              this.setting.loading = false;
+              this.$message({
+                type: "success",
+                message: "删除成功！"
+              });
+              this.pagination.currentPage = 1;
+              this.getCouponPoliciesList();
+            })
+            .catch(error => {
+              this.setting.loading = false;
+              this.$message({
+                type: "success",
+                message: err.response.data.message
+              });
+            });
+        })
+        .catch(e => {
+          this.$message({
+            type: "info",
+            message: "取消删除！"
+          });
+        });
+    },
+    editPolicy(row) {
+      this.$router.push({
+        path: "/prize/strategy/edit/" + row.id,
+        query: {
+          cid: this.cid,
+          pid: this.pid
+        }
+      });
+    },
     addPolicy() {
       this.$router.push({
-        path: "/prize/strategy/add"
+        path: "/prize/strategy/add",
+        query: {
+          cid: this.cid,
+          pid: this.pid
+        }
       });
     },
     getCouponList(company_id) {
@@ -360,10 +410,6 @@ export default {
       if (max_score === "") {
         delete args.max_score;
       }
-      if (min_score === "") {
-        delete args.min_score;
-      }
-
       saveBatchPolicy(this, policy_id, args)
         .then(response => {
           this.$message({
@@ -378,6 +424,9 @@ export default {
           this.getCouponPoliciesList();
           this.setting.loading = false;
         });
+      if (min_score === "") {
+        delete args.min_score;
+      }
     },
     getCouponPoliciesList() {
       this.setting.loading = true;

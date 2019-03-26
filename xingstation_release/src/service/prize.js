@@ -77,7 +77,7 @@ const getCouponPoliciesList = (context, id, params) => {
 const saveCouponPoliciese = (context, id, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .post(HOST + COUPON_POLICY_API + '/' + id + '/batch_policies', params)
+      .post(HOST + COUPON_POLICY_API + '/' + id, params)
       .then(response => {
         resolve(response.data)
       })
@@ -87,10 +87,13 @@ const saveCouponPoliciese = (context, id, params) => {
   })
 }
 // 修改优惠券子条目
-const modifyCouponPoliciese = (context, id, params) => {
+const modifyCouponPoliciese = (context, pid, params, id) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .patch(HOST + COUPON_POLICY_API + '/' + id, params)
+      .patch(
+        HOST + COUPON_POLICY_API + '/' + pid + '/batch_policy/' + id,
+        params
+      )
       .then(response => {
         resolve(response.data)
       })
@@ -101,10 +104,10 @@ const modifyCouponPoliciese = (context, id, params) => {
 }
 
 // 优惠券子条目详情
-const getCouponPolicieseDetail = (context, id, params) => {
+const getCouponPolicieseDetail = (context, pid, id) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .get(HOST + COUPON_POLICY_API + '/' + id, { params: params })
+      .get(HOST + COUPON_POLICY_API + '/' + pid + '/batch_policy/' + id)
       .then(response => {
         resolve(response.data)
       })

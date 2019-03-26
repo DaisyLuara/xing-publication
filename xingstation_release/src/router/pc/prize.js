@@ -89,17 +89,17 @@ let router = {
           },
           component: () =>
             import(/* webpackChunkName: "page/prize/strategy/save" */ 'page/prize/strategy/save')
+        },
+        {
+          path: 'edit/:uid',
+          component: () =>
+            import(/* webpackChunkName: "page/prize/strategy/save" */ 'page/prize/strategy/save'),
+          name: '优惠券修改',
+          meta: {
+            title: '优惠券增加'
+            // permission: 'prize.rules.update'
+          }
         }
-        // {
-        //   path: 'edit/:uid',
-        //   component: () =>
-        //     import(/* webpackChunkName: "page/prize/rules/save" */ 'page/prize/rules/save'),
-        //   name: '优惠券修改',
-        //   meta: {
-        //     title: '优惠券增加'
-        //     // permission: 'prize.rules.update'
-        //   }
-        // }
       ]
     },
     {
