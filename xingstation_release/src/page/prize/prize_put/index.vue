@@ -166,7 +166,7 @@ export default {
   },
   created() {
     this.getSearchCompany();
-    // this.getLaunchPirzeList();
+    this.getLaunchPirzeList();
   },
   methods: {
     getSearchCompany() {
@@ -197,8 +197,15 @@ export default {
       let searchArgs = {
         include: "policy",
         page: this.pagination.currentPage,
-        name: this.filters.name
+        name: this.filters.name,
+        company_id: this.filters.company_id
       };
+      if (this.filters.name === "") {
+        delete args.name;
+      }
+      if (!this.filters.company_id) {
+        delete args.company_id;
+      }
       getLaunchPirzeList(this, searchArgs)
         .then(response => {
           let data = response.data;

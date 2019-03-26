@@ -94,7 +94,17 @@
   </div>
 </template>
 <script>
-import { historyBack } from "service";
+import {
+  historyBack,
+  getSearchAuthPolicies,
+  getSearchAuthPoint,
+  getSearchAuthProject,
+  getSearchCompany,
+  getLaunchPirzeList,
+  saveLaunchPirze,
+  modifyLaunchPirze,
+  getLaunchPirzeDetail
+} from "service";
 import {
   Form,
   Select,
@@ -118,7 +128,6 @@ export default {
       searchLoading: false,
       prizeForm: {
         company_id: null,
-        company_id: null,
         policy_id: null,
         oid: null,
         project_id: null
@@ -129,7 +138,152 @@ export default {
       policyList: []
     };
   },
+  created() {
+    this.prizeId = this.$route.params.uid;
+    this.getSearchAuthPolicies();
+    this.getSearchAuthPoint();
+    this.getSearchAuthProject();
+    this.getSearchCompany();
+    if (this.prizeId) {
+      this.getLaunchPirzeDetail();
+    }
+  },
   methods: {
+    getSearchAuthPolicies() {
+      this.searchLoading = true;
+      getSearchAuthPolicies()
+        .then(res => {
+          this.searchLoading = false;
+          this.policyList = res;
+        })
+        .catch(err => {
+          this.searchLoading = false;
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
+        });
+    },
+    getSearchAuthPoint() {
+      this.searchLoading = true;
+      getSearchAuthPoint()
+        .then(res => {
+          this.searchLoading = false;
+          this.pointList = res;
+        })
+        .catch(err => {
+          this.searchLoading = false;
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
+        });
+    },
+    getSearchAuthProject() {
+      this.searchLoading = true;
+      getSearchAuthProject()
+        .then(res => {
+          this.searchLoading = false;
+          this.projectList = res;
+        })
+        .catch(err => {
+          this.searchLoading = false;
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
+        });
+    },
+    getSearchCompany() {
+      this.searchLoading = true;
+      getSearchCompany()
+        .then(res => {
+          this.searchLoading = false;
+          this.companyList = res.data;
+        })
+        .catch(err => {
+          this.searchLoading = false;
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
+        });
+    },
+    getLaunchPirzeDetail() {
+      this.setting.loading = true;
+      let args = {
+        include: "point.market,project,policy,company"
+      };
+      getLaunchPirzeDetail(this, this.prizeId, args)
+        .then(res => {
+          this.prizeForm.project_id =
+            res.project.id + "," + res.project.versionname;
+          this.prizeForm.oid = res.point.id;
+          this.prizeForm.company_id = res.company.id;
+          this.prizeForm.policy_id = res.policy.id;
+          this.setting.loading = false;
+        })
+        .catch(err => {
+          this.setting.loading = false;
+          this.$message({
+            message: err.response.data.message,
+            type: "success"
+          });
+        });
+    },
+    submit(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.setting.loading = true;
+          let args = {
+            company_id: this.prizeForm.company_id,
+            project_id: this.prizeForm.project_id.split(",")[0],
+            versionname: this.prizeForm.project_id.split(",")[1],
+            oid: this.prizeForm.oid,
+            policy_id: this.prizeForm.policy_id
+          };
+          if (this.prizeId) {
+            modifyLaunchPirze(this, this.prizeId, args)
+              .then(response => {
+                this.setting.loading = false;
+                this.$message({
+                  message: "修改成功",
+                  type: "success"
+                });
+                this.$router.push({
+                  path: "/prize/launch"
+                });
+              })
+              .catch(err => {
+                this.setting.loading = false;
+                this.$message({
+                  message: err.response.data.message,
+                  type: "success"
+                });
+              });
+          } else {
+            saveLaunchPirze(this, args)
+              .then(response => {
+                this.setting.loading = false;
+                this.$message({
+                  message: "添加成功",
+                  type: "success"
+                });
+                this.$router.push({
+                  path: "/prize/launch"
+                });
+              })
+              .catch(err => {
+                this.setting.loading = false;
+                this.$message({
+                  message: err.response.data.message,
+                  type: "success"
+                });
+              });
+          }
+        }
+      });
+    },
     back() {
       historyBack();
     }

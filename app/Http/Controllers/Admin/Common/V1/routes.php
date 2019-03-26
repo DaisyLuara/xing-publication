@@ -104,6 +104,11 @@ $api->version('v1', [
             $api->get('cost_kind/query', 'QueryController@costKindQuery');
             $api->get('customers/query', 'QueryController@adminCustomersQuery');//所有联系人查询
             $api->get('customers/role/{role_name}/query', 'QueryController@adminCustomersQueryByRole'); //某个角色的customer
+            $api->get('authorized_projects/query', 'QueryController@authorizedProjectQuery');//已授权节目列表
+            $api->get('authorized_points/query', 'QueryController@authorizedPointQuery');//已授权点位列表
+            $api->get('authorized_policies/query', 'QueryController@authorizedPolicyQuery');//已授权策略列表
+            $api->get('authorized_customers/query', 'QueryController@authorizedCustomerQuery');//已授权策略列表
+
 
             //消息通知
             $api->get('user/notifications', 'NotificationsController@index');
