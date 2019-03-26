@@ -208,7 +208,7 @@ import {
   handleDateTimeTransform,
   putInCouponList,
   getSearchShopCustomerList,
-  getSearchCompanyList,
+  getSearchCompany,
   getSearchCouponList,
   getExcelCouponsData
 } from "service";
@@ -380,7 +380,7 @@ export default {
         });
     },
     getCompanyList() {
-      return getSearchCompanyList(this)
+      return getSearchCompany(this)
         .then(result => {
           this.companyList = result.data;
         })

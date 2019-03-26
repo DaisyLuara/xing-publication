@@ -969,8 +969,6 @@ export default {
         //查询卡劵详情
         getSingleCard(this, params)
           .then(res => {
-            console.log("查询卡劵详情?????????")
-            console.log(res)
             this.cardDetailsHandle(res.card)
           })
           .catch(err => {
@@ -1167,8 +1165,6 @@ export default {
 
       }
       return card
-      console.log('============>')
-      console.log(card)
     },
 
     //有效期
@@ -1224,8 +1220,6 @@ export default {
       if (array.length > 0) {
         advancedInfo.time_limit = array
       }
-      console.log('-------------s>')
-      console.log(advancedInfo)
       return advancedInfo
     },
     //可用时段改变
@@ -1276,7 +1270,6 @@ export default {
     addTime(dateTime, count) {
       dateTime = dateTime.setDate(dateTime.getDate() + count);
       dateTime = new Date(dateTime);
-      console.log(dateTime)
       return dateTime
     },
     //改变标题
@@ -1345,14 +1338,12 @@ export default {
       let key = response.key;
       let name = file.raw.name;
       let size = file.size;
-      console.log('k:=====', key)
       this.getMediaUpload(null, key, name, size);
     },
     handleSuccessBottom(response, file, fileList) {
       let key = response.key;
       let name = file.raw.name;
       let size = file.size;
-      console.log('k:=====', key)
       let type = 2;
       this.getMediaUpload(type, key, name, size);
     },
@@ -1373,7 +1364,6 @@ export default {
             this.handleCoverImage(res.url)
           }
           this.fileList.push(res);
-          console.log(this.fileList)
         })
         .catch(err => {
           this.$message({
@@ -1383,8 +1373,6 @@ export default {
         });
     },
     handleTextImage(url) {
-      console.log(url)
-      console.log(this.index)
       this.text_image_list[this.index].image_url = url
       this.text_image_list[this.index].isUpload = false
     },
@@ -1430,7 +1418,6 @@ export default {
         this.flag--
       }
       this.changeTimeSegment()
-      console.log(this.saveTimeLimit)
     },
     //添加文本图片
     addTextImageList() {
@@ -1476,7 +1463,6 @@ export default {
       this.colorListShow = false;
     },
     next() {
-      console.log("提交券类型")
       if (!this.validate()) {
         //alert("校验不通过")
         return
@@ -1499,7 +1485,6 @@ export default {
       }
     },
     upload() {
-      console.log("上传")
     },
     confirme(index) {
       this.text_image_list[index].flag = false
