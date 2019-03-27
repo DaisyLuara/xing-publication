@@ -144,6 +144,9 @@ export default {
               case "activity":
                 m.src = require("../assets/images/icons/activity-icon.png");
                 break;
+              case "prize":
+                m.src = require("../assets/images/icons/prize-icon.png");
+                break;
               default:
                 m.src = "";
                 break;
