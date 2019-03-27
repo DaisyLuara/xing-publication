@@ -28,7 +28,7 @@
             <el-form-item label="ID:">
               <span>{{ scope.row.id }}</span>
             </el-form-item>
-            <el-form-item label="策略名称:">
+            <el-form-item label="模板名称:">
               <span>{{ scope.row.name }}</span>
             </el-form-item>
             <el-form-item label="公司名称:">
@@ -41,7 +41,7 @@
         </template>
       </el-table-column>
       <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="100"/>
-      <el-table-column :show-overflow-tooltip="true" prop="name" label="策略名称" min-width="130">
+      <el-table-column :show-overflow-tooltip="true" prop="name" label="模板名称" min-width="130">
         <template slot-scope="scope">{{scope.row.name}}</template>
       </el-table-column>
       <el-table-column :show-overflow-tooltip="true" prop="company" label="公司名称" min-width="130">
