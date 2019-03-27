@@ -66,8 +66,8 @@ class TodayDataController extends Controller
             ],
             'rate' => [
                 'CPM' => $data['exposuretimes'] == 0 ? 0 : round($data['looktimes'] / $data['exposuretimes'], 3) * 100,
-                '7fCPE' => $data['looktimes'] == 0 ? 0 : round($data['playtimes7'] / $data['looktimes'], 3) * 100,
-                '15fCPE' => $data['looktimes'] == 0 ? 0 : round($data['playtimes15'] / $data['looktimes'], 3) * 100,
+                'fCPE7' => $data['looktimes'] == 0 ? 0 : round($data['playtimes7'] / $data['looktimes'], 3) * 100,
+                'fCPE15' => $data['looktimes'] == 0 ? 0 : round($data['playtimes15'] / $data['looktimes'], 3) * 100,
                 'fCPA' => $data['looktimes'] == 0 ? 0 : round($data['scantimes'] / $data['looktimes'], 3) * 100,
             ]
         ];
