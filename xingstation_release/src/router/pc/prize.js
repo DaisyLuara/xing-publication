@@ -105,7 +105,7 @@ let router = {
     {
       path: 'coupon',
       meta: {
-        title: '奖品',
+        title: '奖品核销',
         permission: 'prize.coupon'
       },
       component: () =>
@@ -114,7 +114,7 @@ let router = {
         {
           path: '/',
           meta: {
-            title: '奖品投放列表',
+            title: '奖品核销列表',
             permission: 'prize.coupon.read'
           },
           component: () =>
