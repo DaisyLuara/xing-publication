@@ -76,7 +76,7 @@ trait CouponBatch
         $policy = PolicyLaunch::query()->where('oid', $oid)
             ->where('belong', $belong)
             ->firstOrFail();
-        return $policy->id;
+        return $policy->policy_id;
     }
 
     public function checkStock($couponBatchPolicy): bool
