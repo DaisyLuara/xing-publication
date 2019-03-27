@@ -7,7 +7,7 @@
             <el-form-item label="ID">
               <span>{{ scope.row.id }}</span>
             </el-form-item>
-            <el-form-item label="优惠券类型">
+            <el-form-item label="适用场景">
               <span>{{ scope.row.scene_type === 1 ? '场地通用' : scope.row.scene_type === 2 ? '场地自营' : scope.row.scene_type === 3 ? '商户通用' : scope.row.scene_type === 4 ? '商户自营' : '无'}}</span>
             </el-form-item>
             <el-form-item label="优惠券名称">

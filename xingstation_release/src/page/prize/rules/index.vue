@@ -30,7 +30,7 @@
             <el-form-item label prop="scene_type">
               <el-select
                 v-model="filters.scene_type"
-                placeholder="请选择优惠券类型"
+                placeholder="请选择适用场景"
                 filterable
                 clearable
                 class="item-select"
