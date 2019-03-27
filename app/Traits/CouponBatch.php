@@ -27,6 +27,11 @@ trait CouponBatch
          * 移除不符合条件的优惠券规则
          */
         foreach ($couponBatchPolicies as $key => $couponBatchPolicy) {
+
+            if (!$this->isLimitStock($couponBatchPolicy)) {
+                continue;
+            }
+
             if ($this->checkStock($couponBatchPolicy)) {
                 unset($couponBatchPolicies[$key]);
                 continue;
@@ -55,6 +60,11 @@ trait CouponBatch
 
         return CouponBatchModel::findOrFail($targetCouponBatch->coupon_batch_id);
 
+    }
+
+    public function isLimitStock($couponBatchPolicy): bool
+    {
+        return !$couponBatchPolicy->pmg_status && !$couponBatchPolicy->dmg_status;
     }
 
     public function getCouponBatchPolicies($policyID): array
