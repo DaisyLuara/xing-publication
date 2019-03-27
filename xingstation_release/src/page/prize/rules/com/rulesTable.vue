@@ -35,7 +35,7 @@
       <el-table-column
         :show-overflow-tooltip="true"
         prop="scene_type"
-        label="优惠券类型"
+        label="适用场景"
         min-width="100"
       >
         <template
