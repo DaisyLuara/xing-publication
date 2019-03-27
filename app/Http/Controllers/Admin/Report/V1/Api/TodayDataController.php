@@ -65,8 +65,8 @@ class TodayDataController extends Controller
             ],
             'rate' => [
                 'CPM' => $data['exposuretimes'] == 0 ? 0 : round($data['looktimes'] / $data['exposuretimes'], 3) * 100,
-                'fCPE' => $data['exposuretimes'] == 0 ? 0 : round($data['playtimes7'] / $data['exposuretimes'], 3) * 100,
-                'fCPA' => $data['exposuretimes'] == 0 ? 0 : round($data['scantimes'] / $data['exposuretimes'], 3) * 100,
+                'fCPE' => $data['exposuretimes'] == 0 ? 0 : round($data['playtimes7'] / $data['looktimes'], 3) * 100,
+                'fCPA' => $data['exposuretimes'] == 0 ? 0 : round($data['scantimes'] / $data['looktimes'], 3) * 100,
             ]
         ];
 
@@ -248,8 +248,8 @@ class TodayDataController extends Controller
         $currentCount = 0;
         $oldCount = 0;
         if ($api == 'api_1') {
-            $oldCount = $oldData['data']['exposuretimes'];
-            $currentCount = $output['data']['exposuretimes'];
+            $oldCount = $oldData['data']['looktimes'];
+            $currentCount = $output['data']['looktimes'];
         }
 
         if ($api == 'api_2') {
