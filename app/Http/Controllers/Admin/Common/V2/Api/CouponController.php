@@ -373,30 +373,21 @@ class CouponController extends Controller
     {
         $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
 
-//        if ($request->has('qiniu_id')) {
-//            $memberCoupons = Coupon::query()->where('qiniu_id', $request->qiniu_id)->where('member_uid', $member->uid)->get();
-//            abort_if($memberCoupons->isNotEmpty(), '500', '当前抽奖人数过多,请稍候再试');
-//        }
+        //用户成就校验
+        $arMemberHonorNums = ArMemberHonor::query()->where('uid', $member->uid)
+            ->whereIn('xid', [14, 15, 16])->groupBy('xid')->get();
 
-        //抽奖次数限制
-        $now = Carbon::now()->toDateString();
-
-        $timesQuery = Coupon::query()->where('belong', $request->belong)
-            ->where('member_uid', $member->uid)
-            ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'");
-
-        $prizeQuery = clone $timesQuery;
-        $generateTimes = $timesQuery->count();
-        
-        abort_if($generateTimes >= 3, '500', '抽奖机会已用满三次 感谢参与');
-
-        //实物奖品数量
-        $prizeNums = $prizeQuery->whereHas('couponBatch', function ($q) {
-            $q->where('type', 2);
-        })->count();
-
-        $project = Project::query()->where('versionname', '=', $request->belong)->firstOrFail();
-        $policy = Policy::query()->findOrFail($project->policy_id);
+        switch ($arMemberHonorNums->count()) {
+            case 0:
+                abort('500', '请先收集勋章');
+                break;
+            case 3:
+                $policy_id = 76;
+                break;
+            default:
+                $policy_id = 75;
+                break;
+        }
 
         $query = DB::table('coupon_batch_policy');
         if ($request->has('age')) {
@@ -412,7 +403,7 @@ class CouponController extends Controller
         }
 
         $couponBatchPolicies = $query->join('coupon_batches', 'coupon_batch_id', '=', 'coupon_batches.id')
-            ->where('policy_id', '=', $policy->id)
+            ->where('policy_id', '=', $policy_id)
             ->where('coupon_batches.is_active', 1)
             ->get();
 
@@ -423,12 +414,6 @@ class CouponController extends Controller
         $couponBatchPolicies = $couponBatchPolicies->toArray();
 
         foreach ($couponBatchPolicies as $key => $couponBatchPolicy) {
-            //实物奖品限制
-            if ($prizeNums && $couponBatchPolicy->type ==2) {
-                unset($couponBatchPolicies[$key]);
-                continue;
-            }
-
             //设置了库存上限的券
             if (!$couponBatchPolicy->pmg_status && !$couponBatchPolicy->dmg_status) {
                 //剩余库存为0 不出券
@@ -438,6 +423,7 @@ class CouponController extends Controller
                 }
 
                 //当天库存为0 不出券
+                $now = Carbon::now()->toDateString();
                 $coupon = Coupon::query()->where('coupon_batch_id', $couponBatchPolicy->id)
                     ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
                     ->selectRaw("count(coupon_batch_id) as day_receive")->first();
