@@ -54,19 +54,21 @@ class TodayDataController extends Controller
 
         $date = Carbon::now()->toDateString();
         $data = $query->whereRaw("date_format(date,'%Y-%m-%d')= '$date' ")
-            ->selectRaw("sum(exposuretimes) as exposuretimes,sum(looktimes) as looktimes ,sum(playtimes7) as playtimes7,sum(scantimes) as scantimes")
+            ->selectRaw("sum(exposuretimes) as exposuretimes,sum(looktimes) as looktimes ,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(scantimes) as scantimes")
             ->first()->toArray();
         $output = [
             "data" => [
                 'exposuretimes' => $data['exposuretimes'] == 0 ? 0 : intval($data['exposuretimes']),
                 'looktimes' => $data['looktimes'] == 0 ? 0 : intval($data['looktimes']),
                 'playtimes7' => $data['playtimes7'] == 0 ? 0 : intval($data['playtimes7']),
+                'playtimes15' => $data['playtimes15'] == 0 ? 0 : intval($data['playtimes15']),
                 'scantimes' => $data['scantimes'] == 0 ? 0 : intval($data['scantimes'])
             ],
             'rate' => [
                 'CPM' => $data['exposuretimes'] == 0 ? 0 : round($data['looktimes'] / $data['exposuretimes'], 3) * 100,
-                'fCPE' => $data['exposuretimes'] == 0 ? 0 : round($data['playtimes7'] / $data['looktimes'], 3) * 100,
-                'fCPA' => $data['exposuretimes'] == 0 ? 0 : round($data['scantimes'] / $data['looktimes'], 3) * 100,
+                '7fCPE' => $data['looktimes'] == 0 ? 0 : round($data['playtimes7'] / $data['looktimes'], 3) * 100,
+                '15fCPE' => $data['looktimes'] == 0 ? 0 : round($data['playtimes15'] / $data['looktimes'], 3) * 100,
+                'fCPA' => $data['looktimes'] == 0 ? 0 : round($data['scantimes'] / $data['looktimes'], 3) * 100,
             ]
         ];
 
