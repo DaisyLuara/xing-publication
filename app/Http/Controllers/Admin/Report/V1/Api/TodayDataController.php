@@ -48,7 +48,8 @@ class TodayDataController extends Controller
     public function getFaceCount($request, Builder $query)
     {
         if ($request->has('belong')) {
-            $query->where('belong', $request->belong);
+            $belong = explode(',', $request->belong);
+            $query->whereIn('belong', $belong);
         }
 
         $date = Carbon::now()->toDateString();
@@ -82,8 +83,9 @@ class TodayDataController extends Controller
     {
         $query_all = XsLookTimesPermeabilityToday::query();
         if ($request->has('belong')) {
-            $query->where('belong', $request->belong);
-            $query_all->where('belong', $request->belong);
+            $belong = explode(',', $request->belong);
+            $query->whereIn('belong', $belong);
+            $query_all->whereIn('belong', $belong);
         }
         $date = Carbon::now()->toDateString();
         $allData = $query_all->whereRaw("date_format(date,'%Y-%m-%d')= '$date' ")
@@ -145,9 +147,10 @@ class TodayDataController extends Controller
         if (!$request->has("belong")) {
             abort(422, "节目必填");
         }
+        $belong = explode(',', $request->belong);
         $date = Carbon::now()->toDateString();
         $data = $query->whereRaw("date_format(date,'%Y-%m-%d')= '$date' ")
-            ->where("belong", $request->belong)
+            ->whereIn("belong", $belong)
             ->selectRaw("sum(century10_gnum+century00_gnum+century90_gnum+century80_gnum+century70_gnum) as gnum,
                               sum(century10_bnum+century00_bnum+century90_bnum+century80_bnum+century70_bnum) as bnum,time")
             ->groupBy("time")

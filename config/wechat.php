@@ -80,6 +80,10 @@ return [
         ],
     ],
 
+    'official_account_template_id' => [
+        'notification' => env('WECHAT_OFFICIAL_ACCOUNT_NOTIFICATION_TEMPLATE_ID', '4zqnxN591IYa_0xGxKl19ETKuE4XN776PSdq6piqNn4')
+    ],
+
     /*
      * 开放平台第三方平台
      */
