@@ -15,7 +15,7 @@ class NotificationObserver
      *
      * @param DatabaseNotification $databaseNotification
      */
-    public function saving(DatabaseNotification $databaseNotification)
+    public function created(DatabaseNotification $databaseNotification)
     {
         try {
             if ($databaseNotification->notifiable_type == 'App\Models\User') {
