@@ -14,7 +14,7 @@ let router = {
     {
       path: 'rules',
       meta: {
-        title: '优惠券规则',
+        title: '奖品列表',
         permission: 'prize.rules'
       },
       component: () =>
@@ -22,9 +22,9 @@ let router = {
       children: [
         {
           path: '/',
-          name: '优惠券规则详情',
+          name: '奖品详情',
           meta: {
-            title: '优惠券规则详情',
+            title: '奖品详情',
             permission: 'prize.rules.read'
           },
           component: () =>
@@ -32,9 +32,9 @@ let router = {
         },
         {
           path: 'add',
-          name: '优惠券增加',
+          name: '奖品增加',
           meta: {
-            title: '优惠券增加',
+            title: '奖品增加',
             permission: 'prize.rules.create'
           },
           component: () =>
@@ -44,9 +44,9 @@ let router = {
           path: 'edit/:uid',
           component: () =>
             import(/* webpackChunkName: "page/prize/rules/save" */ 'page/prize/rules/save'),
-          name: '优惠券修改',
+          name: '奖品修改',
           meta: {
-            title: '优惠券增加',
+            title: '奖品增加',
             permission: 'prize.rules.update'
           }
         }
@@ -55,7 +55,7 @@ let router = {
     {
       path: 'strategy',
       meta: {
-        title: '优惠券策略',
+        title: '奖品模板',
         permission: 'prize.strategy'
       },
       component: () =>
@@ -63,9 +63,9 @@ let router = {
       children: [
         {
           path: '/',
-          name: '优惠券策略列表',
+          name: '奖品模板列表',
           meta: {
-            title: '优惠券策略列表',
+            title: '奖品模板列表',
             permission: 'prize.strategy.read'
           },
           component: () =>
@@ -73,9 +73,9 @@ let router = {
         },
         {
           path: 'policy',
-          name: '优惠券策略子条目列表',
+          name: '奖品模板子条目列表',
           meta: {
-            title: '优惠券策略子条目详情',
+            title: '奖品模板子条目详情',
             permission: 'prize.strategy.childRead'
           },
           component: () =>
@@ -94,9 +94,9 @@ let router = {
           path: 'edit/:uid',
           component: () =>
             import(/* webpackChunkName: "page/prize/strategy/save" */ 'page/prize/strategy/save'),
-          name: '优惠券修改',
+          name: '奖品修改',
           meta: {
-            title: '优惠券增加',
+            title: '奖品增加',
             permission: 'prize.strategy.childUpdate'
           }
         }
@@ -105,7 +105,7 @@ let router = {
     {
       path: 'coupon',
       meta: {
-        title: '优惠券',
+        title: '奖品',
         permission: 'prize.coupon'
       },
       component: () =>
@@ -114,7 +114,7 @@ let router = {
         {
           path: '/',
           meta: {
-            title: '优惠券投放列表',
+            title: '奖品投放列表',
             permission: 'prize.coupon.read'
           },
           component: () =>
