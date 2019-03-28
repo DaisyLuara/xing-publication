@@ -1,13 +1,26 @@
 <template>
   <div class="point-data-wrapper">
-    <el-tabs v-model="activeName" type="card" class="report-data-card" @tab-click="handleTab">
+    <el-tabs 
+      v-model="activeName" 
+      type="card" 
+      class="report-data-card" 
+      @tab-click="handleTab">
       <!-- 搜索 -->
       <div class="search-wrap">
-        <el-button class="more-pic" @click="handlePicShow">漏斗图</el-button>
-        <el-form ref="searchForm" :model="searchForm" class="search-form">
+        <el-button 
+          class="more-pic" 
+          @click="handlePicShow">漏斗图</el-button>
+        <el-form 
+          ref="searchForm" 
+          :model="searchForm" 
+          class="search-form">
           <el-row :gutter="20">
-            <el-col v-if="showUser" :span="6">
-              <el-form-item label prop="user">
+            <el-col 
+              v-if="showUser" 
+              :span="6">
+              <el-form-item 
+                label 
+                prop="user">
                 <el-select
                   v-model="searchForm.userSelect"
                   :remote-method="getUser"
@@ -30,7 +43,9 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item label prop="project">
+              <el-form-item 
+                label 
+                prop="project">
                 <el-select
                   v-model="searchForm.projectSelect"
                   :remote-method="getProject"
@@ -53,7 +68,9 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item label prop="scene">
+              <el-form-item 
+                label 
+                prop="scene">
                 <el-select
                   v-model="searchForm.sceneSelect"
                   placeholder="请选择场景"
@@ -72,7 +89,9 @@
           </el-row>
           <el-row :gutter="20">
             <el-col :span="6">
-              <el-form-item label prop="area_id">
+              <el-form-item 
+                label 
+                prop="area_id">
                 <el-select
                   v-model="searchForm.area_id"
                   placeholder="请选择区域"
@@ -90,7 +109,9 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item label prop="market_id">
+              <el-form-item 
+                label 
+                prop="market_id">
                 <el-select
                   v-model="searchForm.market_id"
                   :multiple-limit="1"
@@ -113,7 +134,9 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item label prop="point_id">
+              <el-form-item 
+                label 
+                prop="point_id">
                 <el-select
                   v-model="searchForm.point_id"
                   :loading="searchLoading"
@@ -133,7 +156,9 @@
           </el-row>
           <el-row :gutter="20">
             <el-col :span="10">
-              <el-form-item label prop="date">
+              <el-form-item 
+                label 
+                prop="date">
                 <el-date-picker
                   v-model="searchForm.dateTime"
                   :default-value="searchForm.dateTime"
@@ -148,7 +173,9 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label prop="timeFrame">
+              <el-form-item 
+                label 
+                prop="timeFrame">
                 <el-select
                   v-model="searchForm.timeFrame"
                   :loading="searchLoading"
@@ -169,18 +196,31 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-button type="primary" size="small" @click="searchHandle">搜索</el-button>
-                <el-button size="small" @click="resetSearch">重置</el-button>
+                <el-button 
+                  type="primary" 
+                  size="small" 
+                  @click="searchHandle">搜索</el-button>
+                <el-button 
+                  size="small" 
+                  @click="resetSearch">重置</el-button>
               </el-form-item>
             </el-col>
           </el-row>
         </el-form>
       </div>
-      <el-tab-pane label="按人次计" name="first">
-        <PersonTimes ref="personTimes" :searchForm="searchForm"/>
+      <el-tab-pane 
+        label="按人次计" 
+        name="first">
+        <PersonTimes 
+          ref="personTimes" 
+          :search-form="searchForm"/>
       </el-tab-pane>
-      <el-tab-pane label="按人数计" name="second">
-        <PeopleNum ref="peopleCount" :searchForm="searchForm"/>
+      <el-tab-pane 
+        label="按人数计" 
+        name="second">
+        <PeopleNum 
+          ref="peopleCount" 
+          :search-form="searchForm"/>
       </el-tab-pane>
     </el-tabs>
   </div>

@@ -1,6 +1,8 @@
 <template>
   <div class="second-sidebar">
-    <el-menu :default-active="currPath" router>
+    <el-menu 
+      :default-active="currPath" 
+      router>
       <el-menu-item
         v-for="item in items"
         :key="item.path"

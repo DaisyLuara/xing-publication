@@ -6,7 +6,7 @@
 </template>
 <script>
   export default {
-    name: 'resourceAuthView'
+    name: 'ResourceAuthView'
   }
 </script>
 

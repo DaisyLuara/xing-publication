@@ -7,11 +7,21 @@
     >
       <div class="item-content-wrap">
         <div class="search-wrap">
-          <el-form ref="searchForm" :model="filters" :inline="true">
-            <el-form-item label prop="name">
-              <el-input v-model="filters.name" placeholder="请输入优惠券名称" clearable/>
+          <el-form 
+            ref="searchForm" 
+            :model="filters" 
+            :inline="true">
+            <el-form-item 
+              label 
+              prop="name">
+              <el-input 
+                v-model="filters.name" 
+                placeholder="请输入优惠券名称" 
+                clearable/>
             </el-form-item>
-            <el-form-item label prop="company_id">
+            <el-form-item 
+              label 
+              prop="company_id">
               <el-select
                 v-model="filters.company_id"
                 placeholder="请选择公司"
@@ -27,7 +37,9 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label prop="scene_type">
+            <el-form-item 
+              label 
+              prop="scene_type">
               <el-select
                 v-model="filters.scene_type"
                 placeholder="请选择适用场景"
@@ -43,22 +55,38 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label prop="create_user_name">
-              <el-input v-model="filters.create_user_name" placeholder="请输入创建人" clearable/>
+            <el-form-item 
+              label 
+              prop="create_user_name">
+              <el-input 
+                v-model="filters.create_user_name" 
+                placeholder="请输入创建人" 
+                clearable/>
             </el-form-item>
-            <el-button type="primary" size="small" @click="search()">搜索</el-button>
+            <el-button 
+              type="primary" 
+              size="small" 
+              @click="search()">搜索</el-button>
           </el-form>
           <div>
-            <el-button type="default" size="small" @click="thirdParty">导入第三方优惠券</el-button>
+            <el-button 
+              type="default" 
+              size="small" 
+              @click="thirdParty">导入第三方优惠券</el-button>
           </div>
         </div>
         <div class="total-wrap">
           <span class="label">总数:{{ pagination.total }}</span>
           <div>
-            <el-button size="small" type="success" @click="addCoupon">新增</el-button>
+            <el-button 
+              size="small" 
+              type="success" 
+              @click="addCoupon">新增</el-button>
           </div>
         </div>
-        <rulesTable :tableData="tableData" @getCouponList="getCouponList"/>
+        <rulesTable 
+          :table-data="tableData" 
+          @getCouponList="getCouponList"/>
         <div class="pagination-wrap">
           <el-pagination
             :total="pagination.total"
@@ -71,8 +99,15 @@
       </div>
     </div>
     <!-- 导入第三方优惠券 -->
-    <el-dialog :visible.sync="templateVisible" title="导入第三方优惠券" @close="dialogClose">
-      <el-form v-loading="loading" ref="templateForm" :model="templateForm" label-width="150px">
+    <el-dialog 
+      :visible.sync="templateVisible" 
+      title="导入第三方优惠券" 
+      @close="dialogClose">
+      <el-form 
+        v-loading="loading" 
+        ref="templateForm" 
+        :model="templateForm" 
+        label-width="150px">
         <el-form-item
           :rules="[{ type: 'number', required: true, message: '请选择公司', trigger: 'submit' }]"
           label="公司"
@@ -94,7 +129,10 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" size="small" @click="thirdSubmit('templateForm')">完成</el-button>
+          <el-button 
+            type="primary" 
+            size="small" 
+            @click="thirdSubmit('templateForm')">完成</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>

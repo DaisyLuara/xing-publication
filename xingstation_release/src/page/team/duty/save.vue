@@ -1,18 +1,25 @@
 <template>
   <div class="item-wrap-template">
-    <div v-loading="setting.loading" :element-loading-text="setting.loadingText" class="pane">
-      <div class="pane-title">{{ dutyId ? '修改事件' : '新增事件'}}</div>
-      <el-form ref="dutyForm" :model="dutyForm" label-width="150px" class="duty-form">
+    <div 
+      v-loading="setting.loading" 
+      :element-loading-text="setting.loadingText" 
+      class="pane">
+      <div class="pane-title">{{ dutyId ? '修改事件' : '新增事件' }}</div>
+      <el-form 
+        ref="dutyForm" 
+        :model="dutyForm" 
+        label-width="150px" 
+        class="duty-form">
         <el-form-item
+          :rules="{required: true, message: '节目名称不能为空', trigger: 'submit'}"
           prop="belong"
           label="节目名称"
-          :rules="{required: true, message: '节目名称不能为空', trigger: 'submit'}"
         >
           <el-select
             v-model="dutyForm.belong"
             :loading="searchLoading"
-            remote
             :remote-method="getProject"
+            remote
             placeholder="请输入节目名称"
             filterable
             clearable
@@ -26,11 +33,21 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item prop="test" label="测试">
-          <el-input v-model="dutyForm.test" :disabled="true" class="item-input"/>
+        <el-form-item 
+          prop="test" 
+          label="测试">
+          <el-input 
+            v-model="dutyForm.test" 
+            :disabled="true" 
+            class="item-input"/>
         </el-form-item>
-        <el-form-item prop="operation" label="运营">
-          <el-input v-model="dutyForm.operation" :disabled="true" class="item-input"/>
+        <el-form-item 
+          prop="operation" 
+          label="运营">
+          <el-input 
+            v-model="dutyForm.operation" 
+            :disabled="true" 
+            class="item-input"/>
         </el-form-item>
         <el-form-item
           :rules="{required: true, message: '发生日期不能为空', trigger: 'submit'}"
@@ -60,8 +77,13 @@
           />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" size="small" @click="submit('dutyForm')">保存</el-button>
-          <el-button size="small" @click="historyBack">返回</el-button>
+          <el-button 
+            type="primary" 
+            size="small" 
+            @click="submit('dutyForm')">保存</el-button>
+          <el-button 
+            size="small" 
+            @click="historyBack">返回</el-button>
         </el-form-item>
       </el-form>
     </div>

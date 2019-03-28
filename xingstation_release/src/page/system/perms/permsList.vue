@@ -5,28 +5,64 @@
     class="user-list-wrap"
   >
     <div class="user-list-content">
-      <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-        <el-tab-pane label="父权限" name="first">
+      <el-tabs 
+        v-model="activeName" 
+        type="card" 
+        @tab-click="handleClick">
+        <el-tab-pane 
+          label="父权限" 
+          name="first">
           <div class="search-wrap">
-            <el-form :model="filters" :inline="true">
+            <el-form 
+              :model="filters" 
+              :inline="true">
               <el-form-item label>
-                <el-input v-model="filters.name" style="width:200px" placeholder="请输入名称" clearable/>
+                <el-input 
+                  v-model="filters.name" 
+                  style="width:200px" 
+                  placeholder="请输入名称" 
+                  clearable/>
               </el-form-item>
-              <el-button type="primary" size="small" @click="search">搜索</el-button>
-              <el-button type="default" size="small" @click="resetSearch">重置</el-button>
+              <el-button 
+                type="primary" 
+                size="small" 
+                @click="search">搜索</el-button>
+              <el-button 
+                type="default" 
+                size="small" 
+                @click="resetSearch">重置</el-button>
             </el-form>
           </div>
           <div class="actions-wrap">
             <span class="label">数量: {{ pagination.total }}</span>
-            <el-button size="small" type="success" @click="addFirstPerms">新增权限</el-button>
+            <el-button 
+              size="small" 
+              type="success" 
+              @click="addFirstPerms">新增权限</el-button>
           </div>
-          <el-table ref="userTable" :data="firstTableData" style="width: 100%">
-            <el-table-column prop="id" label="ID" min-width="100"/>
-            <el-table-column prop="display_name" label="名称" min-width="150"/>
-            <el-table-column label="操作" min-width="200">
+          <el-table 
+            ref="userTable" 
+            :data="firstTableData" 
+            style="width: 100%">
+            <el-table-column 
+              prop="id" 
+              label="ID" 
+              min-width="100"/>
+            <el-table-column 
+              prop="display_name" 
+              label="名称" 
+              min-width="150"/>
+            <el-table-column 
+              label="操作" 
+              min-width="200">
               <template slot-scope="scope">
-                <el-button size="small" @click="showSencodMenu(scope.row,scope.$index)">查看子权限</el-button>
-                <el-button size="small" type="warning" @click="modifyFirstPerms(scope.row)">修改</el-button>
+                <el-button 
+                  size="small" 
+                  @click="showSencodMenu(scope.row,scope.$index)">查看子权限</el-button>
+                <el-button 
+                  size="small" 
+                  type="warning" 
+                  @click="modifyFirstPerms(scope.row)">修改</el-button>
                 <el-button
                   v-if="scope.row.name !== 'system'"
                   size="small"
@@ -46,16 +82,27 @@
             />
           </div>
         </el-tab-pane>
-        <el-tab-pane label="子权限" name="second" :disabled="secondTabDisable">
+        <el-tab-pane 
+          :disabled="secondTabDisable" 
+          label="子权限" 
+          name="second">
           <div class="actions-wrap">
             <span class="label">数量: {{ secondTableData.length }}</span>
             <!-- 模板增加 -->
             <div>
-              <el-button size="small" type="success" @click="addSecondPerms">新增二级权限</el-button>
+              <el-button 
+                size="small" 
+                type="success" 
+                @click="addSecondPerms">新增二级权限</el-button>
             </div>
           </div>
-          <el-collapse v-model="activeNames" accordion>
-            <el-collapse-item v-for="(item, index) in secondTableData" :name="index" :key="item.id">
+          <el-collapse 
+            v-model="activeNames" 
+            accordion>
+            <el-collapse-item 
+              v-for="(item, index) in secondTableData" 
+              :name="index" 
+              :key="item.id">
               <template slot="title">
                 {{ item.display_name }} ({{ item.name }})
                 <el-button
@@ -69,22 +116,43 @@
               <div class="actions-wrap">
                 <span class="label">数目: {{ item.children.length }}</span>
                 <div>
-                  <el-button size="small" @click="addThirdPerms(item,index)">增加</el-button>
-                  <el-button size="small" type="danger" @click="deletePerms(item)">删除</el-button>
+                  <el-button 
+                    size="small" 
+                    @click="addThirdPerms(item,index)">增加</el-button>
+                  <el-button 
+                    size="small" 
+                    type="danger" 
+                    @click="deletePerms(item)">删除</el-button>
                 </div>
               </div>
-              <el-table :data="item.children" style="width: 100%">
-                <el-table-column prop label="中文名称" min-width="150">
+              <el-table 
+                :data="item.children" 
+                style="width: 100%">
+                <el-table-column 
+                  prop 
+                  label="中文名称" 
+                  min-width="150">
                   <template slot-scope="scope">
-                    <el-input v-model="scope.row.display_name" placeholder="中文名称" :maxlength="50"/>
+                    <el-input 
+                      v-model="scope.row.display_name" 
+                      :maxlength="50" 
+                      placeholder="中文名称"/>
                   </template>
                 </el-table-column>
-                <el-table-column prop label="英文名称" min-width="150">
+                <el-table-column 
+                  prop 
+                  label="英文名称" 
+                  min-width="150">
                   <template slot-scope="scope">
-                    <el-input v-model="scope.row.name" placeholder="英文名称" :maxlength="50"/>
+                    <el-input 
+                      v-model="scope.row.name" 
+                      :maxlength="50" 
+                      placeholder="英文名称"/>
                   </template>
                 </el-table-column>
-                <el-table-column label="操作" min-width="100">
+                <el-table-column 
+                  label="操作" 
+                  min-width="100">
                   <template slot-scope="scope">
                     <el-button
                       v-if="scope.row.created_at"
@@ -119,24 +187,40 @@
         </el-tab-pane>
       </el-tabs>
     </div>
-    <el-dialog :title="title" :visible.sync="permsVisible" @close="dialogClose">
-      <el-form v-loading="loading" ref="permsForm" :model="permsForm" label-width="80px">
+    <el-dialog 
+      :title="title" 
+      :visible.sync="permsVisible" 
+      @close="dialogClose">
+      <el-form 
+        v-loading="loading" 
+        ref="permsForm" 
+        :model="permsForm" 
+        label-width="80px">
         <el-form-item
           :rules="[{ type: 'string', required: true, message: '请输入中文名称', trigger: 'submit' }]"
           label="中文名称"
           prop="name"
         >
-          <el-input v-model="permsForm.display_name" placeholder="请输入中文名称" class="item-input"/>
+          <el-input 
+            v-model="permsForm.display_name" 
+            placeholder="请输入中文名称" 
+            class="item-input"/>
         </el-form-item>
         <el-form-item
           :rules="[{ type: 'string', required: true, message: '请输入英文名称', trigger: 'submit' }]"
           label="英文名称"
           prop="name"
         >
-          <el-input v-model="permsForm.name" placeholder="请输入英文名称" class="item-input"/>
+          <el-input 
+            v-model="permsForm.name" 
+            placeholder="请输入英文名称" 
+            class="item-input"/>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" size="small" @click="submit('permsForm')">完成</el-button>
+          <el-button 
+            type="primary" 
+            size="small" 
+            @click="submit('permsForm')">完成</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>

@@ -7,11 +7,22 @@
     >
       <div class="program-content-wrap">
         <div class="search-wrap">
-          <el-form ref="filters" :model="filters" :inline="true">
-            <el-form-item label prop="name">
-              <el-input v-model="filters.name" placeholder="节目名称" clearable class="item-input"/>
+          <el-form 
+            ref="filters" 
+            :model="filters" 
+            :inline="true">
+            <el-form-item 
+              label 
+              prop="name">
+              <el-input 
+                v-model="filters.name" 
+                placeholder="节目名称" 
+                clearable 
+                class="item-input"/>
             </el-form-item>
-            <el-form-item label prop="beginDate">
+            <el-form-item 
+              label 
+              prop="beginDate">
               <el-date-picker
                 v-model="filters.beginDate"
                 :clearable="true"
@@ -20,9 +31,11 @@
                 start-placeholder="开始时间"
                 end-placeholder="结束时间"
                 align="right"
-              ></el-date-picker>
+              />
             </el-form-item>
-            <el-form-item label prop="getDate">
+            <el-form-item 
+              label 
+              prop="getDate">
               <el-date-picker
                 v-model="filters.getDate"
                 :clearable="true"
@@ -31,11 +44,18 @@
                 start-placeholder="发放开始时间"
                 end-placeholder="发放结束时间"
                 align="right"
-              ></el-date-picker>
+              />
             </el-form-item>
-            <el-form-item label prop>
-              <el-button type="primary" size="small" @click="search()">搜索</el-button>
-              <el-button size="small" @click="resetForm('filters')">重置</el-button>
+            <el-form-item 
+              label 
+              prop>
+              <el-button 
+                type="primary" 
+                size="small" 
+                @click="search()">搜索</el-button>
+              <el-button 
+                size="small" 
+                @click="resetForm('filters')">重置</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -45,7 +65,10 @@
               累计奖金(¥):
               <span class="count">{{ moneyTotal }}</span>
             </span>
-            <span v-if="operation || tester" class="label" style="margin-left:20px;">
+            <span 
+              v-if="operation || tester" 
+              class="label" 
+              style="margin-left:20px;">
               冻结奖金:
               <span class="count">{{ freezeTotal }}</span>
               <span
@@ -56,10 +79,15 @@
             </span>
           </div>
         </div>
-        <el-table :data="tableData" style="width: 100%">
+        <el-table 
+          :data="tableData" 
+          style="width: 100%">
           <el-table-column type="expand">
             <template slot-scope="scope">
-              <el-form label-position="left" inline class="demo-table-expand">
+              <el-form 
+                label-position="left" 
+                inline 
+                class="demo-table-expand">
                 <el-form-item label="ID">
                   <span>{{ scope.row.id }}</span>
                 </el-form-item>
@@ -81,28 +109,44 @@
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="100"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="id" 
+            label="ID" 
+            min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="project_name"
             label="名称"
             min-width="100"
           />
-          <el-table-column :show-overflow-tooltip="true" prop="date" label="获取日期" min-width="100"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="date" 
+            label="获取日期" 
+            min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="get_date"
             label="发放日期"
             min-width="100"
           />
-          <el-table-column :show-overflow-tooltip="true" prop="type" label="类型" min-width="100"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="type" 
+            label="类型" 
+            min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="main_type"
             label="类别"
             min-width="100"
           />
-          <el-table-column :show-overflow-tooltip="true" prop="total" label="金额" min-width="100"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="total" 
+            label="金额" 
+            min-width="100"/>
         </el-table>
         <div class="pagination-wrap">
           <el-pagination

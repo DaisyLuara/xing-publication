@@ -8,13 +8,18 @@
       <div class="program-content-wrap">
         <!-- 搜索 -->
         <div class="search-wrap">
-          <el-form ref="filters" :model="filters" :inline="true">
-            <el-form-item label prop="alias">
+          <el-form 
+            ref="filters" 
+            :model="filters" 
+            :inline="true">
+            <el-form-item 
+              label 
+              prop="alias">
               <el-select
                 v-model="filters.alias"
                 :loading="searchLoading"
-                remote
                 :remote-method="getProject"
+                remote
                 placeholder="请输入节目名称"
                 filterable
                 clearable
@@ -27,7 +32,9 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label prop="status">
+            <el-form-item 
+              label 
+              prop="status">
               <el-select
                 v-model="filters.status"
                 placeholder="请选择状态"
@@ -42,7 +49,9 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label prop="beginDate">
+            <el-form-item 
+              label 
+              prop="beginDate">
               <el-date-picker
                 v-model="filters.beginDate"
                 :clearable="false"
@@ -51,9 +60,11 @@
                 start-placeholder="开始时间"
                 end-placeholder="结束时间"
                 align="right"
-              ></el-date-picker>
+              />
             </el-form-item>
-            <el-form-item label prop="onlineDate">
+            <el-form-item 
+              label 
+              prop="onlineDate">
               <el-date-picker
                 v-model="filters.onlineDate"
                 :clearable="false"
@@ -62,9 +73,11 @@
                 start-placeholder="上线开始时间"
                 end-placeholder="上线结束时间"
                 align="right"
-              ></el-date-picker>
+              />
             </el-form-item>
-            <el-form-item label prop="launchDate">
+            <el-form-item 
+              label 
+              prop="launchDate">
               <el-date-picker
                 v-model="filters.launchDate"
                 :clearable="false"
@@ -73,9 +86,12 @@
                 start-placeholder="投放开始时间"
                 end-placeholder="投放结束时间"
                 align="right"
-              ></el-date-picker>
+              />
             </el-form-item>
-            <el-form-item v-if="legalAffairsManager || bonusManage" label prop="faceDate">
+            <el-form-item 
+              v-if="legalAffairsManager || bonusManage" 
+              label 
+              prop="faceDate">
               <el-date-picker
                 v-model="filters.faceDate"
                 :clearable="false"
@@ -84,11 +100,18 @@
                 start-placeholder="数据查询开始时间"
                 end-placeholder="数据查询结束时间"
                 align="right"
-              ></el-date-picker>
+              />
             </el-form-item>
-            <el-form-item label prop>
-              <el-button type="primary" size="small" @click="search()">搜索</el-button>
-              <el-button size="small" @click="resetForm('filters')">重置</el-button>
+            <el-form-item 
+              label 
+              prop>
+              <el-button 
+                type="primary" 
+                size="small" 
+                @click="search()">搜索</el-button>
+              <el-button 
+                size="small" 
+                @click="resetForm('filters')">重置</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -109,13 +132,22 @@
               size="small"
               @click="downloadTable()"
             >下载</el-button>
-            <el-button v-if="projectManage" type="success" size="small" @click="addProgram()">新增节目</el-button>
+            <el-button 
+              v-if="projectManage" 
+              type="success" 
+              size="small" 
+              @click="addProgram()">新增节目</el-button>
           </div>
         </div>
-        <el-table :data="tableData" style="width: 100%">
+        <el-table 
+          :data="tableData" 
+          style="width: 100%">
           <el-table-column type="expand">
             <template slot-scope="scope">
-              <el-form label-position="left" inline class="demo-table-expand">
+              <el-form 
+                label-position="left" 
+                inline 
+                class="demo-table-expand">
                 <el-form-item label="ID">
                   <span>{{ scope.row.id }}</span>
                 </el-form-item>
@@ -158,7 +190,11 @@
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="100"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="id" 
+            label="ID" 
+            min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="project_name"
@@ -171,7 +207,11 @@
             label="申请人"
             min-width="100"
           />
-          <el-table-column :show-overflow-tooltip="true" prop="type" label="节目类型" min-width="100"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="type" 
+            label="节目类型" 
+            min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="begin_date"
@@ -190,12 +230,18 @@
             label="投放时间"
             min-width="100"
           />
-          <el-table-column :show-overflow-tooltip="true" prop="status" label="状态" min-width="100">
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="status" 
+            label="状态" 
+            min-width="100">
             <template
               slot-scope="scope"
             >{{ scope.row.status === 1 ? '进行中' : scope.row.status === 2 ? '测试已确认' : scope.row.status === 3 ? '运营已确认' : '主管已确认' }}</template>
           </el-table-column>
-          <el-table-column label="操作" min-width="150">
+          <el-table-column 
+            label="操作" 
+            min-width="150">
             <template slot-scope="scope">
               <el-button
                 v-if="((projectManage && (scope.row.status === 1 || scope.row.status === 2)) || legalAffairsManager || bonusManage )"
@@ -234,8 +280,15 @@
         </div>
       </div>
     </div>
-    <el-dialog :visible.sync="dialogFormVisible" :close-on-click-modal="false" :show-close="false">
-      <el-form :model="testForm" ref="testForm" label-position="left" label-width="80px">
+    <el-dialog 
+      :visible.sync="dialogFormVisible" 
+      :close-on-click-modal="false" 
+      :show-close="false">
+      <el-form 
+        ref="testForm" 
+        :model="testForm" 
+        label-position="left" 
+        label-width="80px">
         <el-form-item
           :rules="[{ required: true, message: '请上传测试文档', trigger: 'submit' }]"
           label="测试文档"
@@ -254,7 +307,9 @@
             :on-exceed="handleExceed"
             class="upload-demo"
           >
-            <el-button size="small" type="primary">点击上传</el-button>
+            <el-button 
+              size="small" 
+              type="primary">点击上传</el-button>
             <div
               slot="tip"
               style="display:inline-block"
@@ -262,7 +317,9 @@
             >支持文件类型：doc(.docx)、.pdf、.xlsx、.xls</div>
           </el-upload>
         </el-form-item>
-        <el-form-item label="测试备注" prop="test_remark">
+        <el-form-item 
+          label="测试备注" 
+          prop="test_remark">
           <el-input
             v-model="testForm.test_remark"
             :maxlength="1000"
@@ -271,8 +328,13 @@
           />
         </el-form-item>
         <el-form-item label-position="right">
-          <el-button size="small" @click="cancel">取 消</el-button>
-          <el-button size="small" type="primary" @click="submit('testForm')">确 定</el-button>
+          <el-button 
+            size="small" 
+            @click="cancel">取 消</el-button>
+          <el-button 
+            size="small" 
+            type="primary" 
+            @click="submit('testForm')">确 定</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>

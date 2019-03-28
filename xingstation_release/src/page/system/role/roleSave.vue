@@ -1,38 +1,60 @@
 <template>
   <div class="add-role-wrap">
-    <div v-loading="setting.loading" :element-loading-text="setting.loadingText">
+    <div 
+      v-loading="setting.loading" 
+      :element-loading-text="setting.loadingText">
       <div class="role-title">{{ $route.name }}</div>
-      <el-form ref="roleForm" :model="roleForm" label-width="100px" class="roleForm">
+      <el-form 
+        ref="roleForm" 
+        :model="roleForm" 
+        label-width="100px" 
+        class="roleForm">
         <el-form-item
           :rules="[{ required: true, message: '角色名称不能为空',trigger:'submit'}]"
           label="角色名称"
           prop="name"
         >
-          <el-input v-model="roleForm.name" placeholder="输入角色名称" class="role-form-input"/>
+          <el-input 
+            v-model="roleForm.name" 
+            placeholder="输入角色名称" 
+            class="role-form-input"/>
         </el-form-item>
         <el-form-item
           :rules="[{ required: true, message: '显示名称不能为空',trigger:'submit'}]"
           label="显示名称"
           prop="display_name"
         >
-          <el-input v-model="roleForm.display_name" placeholder="输入显示名称" class="role-form-input"/>
+          <el-input 
+            v-model="roleForm.display_name" 
+            placeholder="输入显示名称" 
+            class="role-form-input"/>
         </el-form-item>
         <el-form-item label="权限">
-          <el-table :data="allPerms" border ref="permsTable" class="role-table">
+          <el-table 
+            ref="permsTable" 
+            :data="allPerms" 
+            border 
+            class="role-table">
             <el-table-column label="一级">
               <template slot-scope="scope">
-                <el-checkbox-group @change="handleChange(scope.row)" v-model="roleForm.ids">
-                  <el-checkbox :label="scope.row.id">{{scope.row.display_name}}</el-checkbox>
+                <el-checkbox-group 
+                  v-model="roleForm.ids" 
+                  @change="handleChange(scope.row)">
+                  <el-checkbox :label="scope.row.id">{{ scope.row.display_name }}</el-checkbox>
                 </el-checkbox-group>
               </template>
             </el-table-column>
             <el-table-column label="二级">
               <template slot-scope="scope">
-                <el-table :data="scope.row.children" :show-header="false">
+                <el-table 
+                  :data="scope.row.children" 
+                  :show-header="false">
                   <el-table-column>
                     <template slot-scope="scope">
-                      <el-checkbox-group @change="handleChange(scope.row)" v-model="roleForm.ids">
-                        <el-checkbox :label="scope.row.id">{{scope.row.display_name}}</el-checkbox>
+                      <el-checkbox-group 
+                        v-model="roleForm.ids" 
+                        @change="handleChange(scope.row)">
+                        <el-checkbox :label="scope.row.id">{{ scope.row.display_name }}</el-checkbox>
                       </el-checkbox-group>
                     </template>
                   </el-table-column>
@@ -41,17 +63,19 @@
             </el-table-column>
             <el-table-column label="权限配置细则">
               <template slot-scope="scope">
-                <el-table :data="scope.row.children" :show-header="false">
+                <el-table 
+                  :data="scope.row.children" 
+                  :show-header="false">
                   <el-table-column>
                     <template slot-scope="scope">
                       <el-checkbox
-                        v-model="roleForm.ids"
-                        @change="handleChange(thirdChild)"
                         v-for="thirdChild in scope.row.children"
-                        v-bind:data="thirdChild"
-                        v-bind:key="thirdChild.id"
+                        v-model="roleForm.ids"
+                        :data="thirdChild"
+                        :key="thirdChild.id"
                         :label="thirdChild.id"
-                      >{{thirdChild.display_name}}</el-checkbox>
+                        @change="handleChange(thirdChild)"
+                      >{{ thirdChild.display_name }}</el-checkbox>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -60,7 +84,9 @@
           </el-table>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit('roleForm')">保存</el-button>
+          <el-button 
+            type="primary" 
+            @click="onSubmit('roleForm')">保存</el-button>
           <el-button @click="historyBack()">取消</el-button>
         </el-form-item>
       </el-form>

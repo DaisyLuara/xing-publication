@@ -7,11 +7,21 @@
     >
       <div class="program-content-wrap">
         <div class="search-wrap">
-          <el-form ref="filters" :model="filters" :inline="true">
-            <el-form-item label prop="name">
-              <el-input v-model="filters.name" clearable placeholder="请输入文档名称"/>
+          <el-form 
+            ref="filters" 
+            :model="filters" 
+            :inline="true">
+            <el-form-item 
+              label 
+              prop="name">
+              <el-input 
+                v-model="filters.name" 
+                clearable 
+                placeholder="请输入文档名称"/>
             </el-form-item>
-            <el-form-item label prop="beginDate">
+            <el-form-item 
+              label 
+              prop="beginDate">
               <el-date-picker
                 v-model="filters.beginDate"
                 :clearable="false"
@@ -20,28 +30,51 @@
                 start-placeholder="开始时间"
                 end-placeholder="结束时间"
                 align="right"
-              ></el-date-picker>
+              />
             </el-form-item>
-            <el-form-item label prop>
-              <el-button type="primary" size="small" @click="search()">搜索</el-button>
-              <el-button size="small" @click="resetForm('filters')">重置</el-button>
+            <el-form-item 
+              label 
+              prop>
+              <el-button 
+                type="primary" 
+                size="small" 
+                @click="search()">搜索</el-button>
+              <el-button 
+                size="small" 
+                @click="resetForm('filters')">重置</el-button>
             </el-form-item>
           </el-form>
         </div>
         <div class="total-wrap">
           <span class="label">总数：{{ pagination.total }}</span>
-          <el-button v-if="operation" type="success" size="small" @click="addOperation">新增文档</el-button>
+          <el-button 
+            v-if="operation" 
+            type="success" 
+            size="small" 
+            @click="addOperation">新增文档</el-button>
         </div>
-        <el-table :data="tableData" style="width: 100%">
-          <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="100"/>
-          <el-table-column :show-overflow-tooltip="true" prop="name" label="文档名称" min-width="100"/>
+        <el-table 
+          :data="tableData" 
+          style="width: 100%">
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="id" 
+            label="ID" 
+            min-width="100"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="name" 
+            label="文档名称" 
+            min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="created_at"
             label="上传日期"
             min-width="100"
           />
-          <el-table-column label="操作" min-width="150">
+          <el-table-column 
+            label="操作" 
+            min-width="150">
             <template slot-scope="scope">
               <el-button
                 v-if="operation"
@@ -73,7 +106,10 @@
         </div>
       </div>
     </div>
-    <el-dialog :visible.sync="dialogFormVisible" :close-on-click-modal="false" :show-close="false">
+    <el-dialog 
+      :visible.sync="dialogFormVisible" 
+      :close-on-click-modal="false" 
+      :show-close="false">
       <el-form
         v-loading="loading"
         ref="documentForm"
@@ -93,7 +129,9 @@
             class="text-input"
           />
         </el-form-item>
-        <el-form-item label="运营文档" prop="ids">
+        <el-form-item 
+          label="运营文档" 
+          prop="ids">
           <el-upload
             ref="upload"
             :action="Domain"
@@ -107,7 +145,9 @@
             :on-exceed="handleExceed"
             class="upload-demo"
           >
-            <el-button size="small" type="primary">点击上传</el-button>
+            <el-button 
+              size="small" 
+              type="primary">点击上传</el-button>
             <div
               slot="tip"
               style="display:inline-block"
@@ -116,8 +156,13 @@
           </el-upload>
         </el-form-item>
         <el-form-item label-position="right">
-          <el-button size="small" @click="cancel">取 消</el-button>
-          <el-button size="small" type="primary" @click="submit('documentForm')">确 定</el-button>
+          <el-button 
+            size="small" 
+            @click="cancel">取 消</el-button>
+          <el-button 
+            size="small" 
+            type="primary" 
+            @click="submit('documentForm')">确 定</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>

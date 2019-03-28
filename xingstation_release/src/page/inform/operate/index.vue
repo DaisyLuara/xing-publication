@@ -7,11 +7,22 @@
     >
       <div class="item-content-wrap">
         <div class="search-wrap">
-          <el-form ref="searchForm" :model="filters" :inline="true">
-            <el-form-item label prop="log_name">
-              <el-input v-model="filters.log_name" placeholder="请输入名称" clearable style="width: 250px;"/>
+          <el-form 
+            ref="searchForm" 
+            :model="filters" 
+            :inline="true">
+            <el-form-item 
+              label 
+              prop="log_name">
+              <el-input 
+                v-model="filters.log_name" 
+                placeholder="请输入名称" 
+                clearable 
+                style="width: 250px;"/>
             </el-form-item>
-            <el-form-item label prop="causer_id">
+            <el-form-item 
+              label 
+              prop="causer_id">
               <el-select
                 v-model="filters.causer_id"
                 placeholder="请选择用户"
@@ -27,17 +38,30 @@
                 />
               </el-select>
             </el-form-item>
-            <el-button type="primary" size="small" @click="search()">搜索</el-button>
-            <el-button type="default" size="small" @click="resetSearch">重置</el-button>
+            <el-button 
+              type="primary" 
+              size="small" 
+              @click="search()">搜索</el-button>
+            <el-button 
+              type="default" 
+              size="small" 
+              @click="resetSearch">重置</el-button>
           </el-form>
         </div>
         <div class="actions-wrap">
           <span class="label">通知数量: {{ pagination.total }}</span>
         </div>
-        <el-table ref="multipleTable" :data="tableData" style="width: 100%" type="expand">
+        <el-table 
+          ref="multipleTable" 
+          :data="tableData" 
+          style="width: 100%" 
+          type="expand">
           <el-table-column type="expand">
             <template slot-scope="scope">
-              <el-form label-position="left" inline class="demo-table-expand">
+              <el-form 
+                label-position="left" 
+                inline 
+                class="demo-table-expand">
                 <el-form-item label="操作名称">
                   <span>{{ scope.row.log_name }}</span>
                 </el-form-item>
@@ -62,10 +86,17 @@
             label="操作名称"
             min-width="130"
           />
-          <el-table-column :show-overflow-tooltip="true" prop="name" label="操作人" min-width="100">
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="name" 
+            label="操作人" 
+            min-width="100">
             <template slot-scope="scope">{{ scope.row.causer.name }}</template>
           </el-table-column>
-          <el-table-column prop="description" label="描述" min-width="150"/>
+          <el-table-column 
+            prop="description" 
+            label="描述" 
+            min-width="150"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="created_at"

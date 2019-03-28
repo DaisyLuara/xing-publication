@@ -6,10 +6,17 @@
       class="item-list-wrap"
     >
       <div class="search-wrap">
-        <el-form ref="searchForm" :model="searchForm" class="search-form">
+        <el-form 
+          ref="searchForm" 
+          :model="searchForm" 
+          class="search-form">
           <el-row :gutter="20">
-            <el-col v-if="showUser" :span="8">
-              <el-form-item label prop="user_id">
+            <el-col 
+              v-if="showUser" 
+              :span="8">
+              <el-form-item 
+                label 
+                prop="user_id">
                 <el-select
                   v-model="searchForm.user_id"
                   :loading="searchLoading"
@@ -30,7 +37,9 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label prop="project_id">
+              <el-form-item 
+                label 
+                prop="project_id">
                 <el-select
                   v-model="searchForm.project_id"
                   :remote-method="getProject"
@@ -50,7 +59,9 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label prop="machine_status">
+              <el-form-item 
+                label 
+                prop="machine_status">
                 <el-select
                   v-model="searchForm.machine_status"
                   placeholder="请选择分类"
@@ -69,7 +80,9 @@
           </el-row>
           <el-row :gutter="20">
             <el-col :span="8">
-              <el-form-item label prop="area_id">
+              <el-form-item 
+                label 
+                prop="area_id">
                 <el-select
                   v-model="searchForm.area_id"
                   placeholder="请选择区域"
@@ -87,7 +100,9 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label prop="market_id">
+              <el-form-item 
+                label 
+                prop="market_id">
                 <el-select
                   v-model="searchForm.market_id"
                   :remote-method="getMarket"
@@ -108,7 +123,9 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label prop="point_id">
+              <el-form-item 
+                label 
+                prop="point_id">
                 <el-select
                   v-model="searchForm.point_id"
                   :loading="searchLoading"
@@ -129,8 +146,13 @@
           <el-row :gutter="20">
             <el-col :span="10">
               <el-form-item>
-                <el-button type="primary" size="small" @click="search('searchForm')">搜索</el-button>
-                <el-button size="small" @click="resetSearch('searchForm')">重置</el-button>
+                <el-button 
+                  type="primary" 
+                  size="small" 
+                  @click="search('searchForm')">搜索</el-button>
+                <el-button 
+                  size="small" 
+                  @click="resetSearch('searchForm')">重置</el-button>
               </el-form-item>
             </el-col>
           </el-row>
@@ -140,12 +162,20 @@
         <div class="total-wrap">
           <span class="label">总数:{{ pagination.total }}</span>
         </div>
-        <el-table :data="tableData" style="width: 100%">
+        <el-table 
+          :data="tableData" 
+          style="width: 100%">
           <el-table-column type="expand">
             <template slot-scope="scope">
-              <el-form label-position="left" inline class="demo-table-expand">
+              <el-form 
+                label-position="left" 
+                inline 
+                class="demo-table-expand">
                 <el-form-item label="产品">
-                  <a :href="scope.row.img" target="_blank" style="color: blue">查看</a>
+                  <a 
+                    :href="scope.row.img" 
+                    target="_blank" 
+                    style="color: blue">查看</a>
                 </el-form-item>
                 <el-form-item label="区域">
                   <span>{{ scope.row.area }}</span>
@@ -163,8 +193,12 @@
                   <span style="color: rgb(93, 217, 49)">{{ scope.row.networkDate }}</span>
                 </el-form-item>
                 <el-form-item label="屏幕状态">
-                  <span v-if="scope.row.screenStatus === 1" style="color: rgb(93, 217, 49)">开启</span>
-                  <span v-if="scope.row.screenStatus === 0" style="color: rgb(126, 8, 0);">关闭</span>
+                  <span 
+                    v-if="scope.row.screenStatus === 1" 
+                    style="color: rgb(93, 217, 49)">开启</span>
+                  <span 
+                    v-if="scope.row.screenStatus === 0" 
+                    style="color: rgb(126, 8, 0);">关闭</span>
                 </el-form-item>
                 <el-form-item label="登录时间">
                   <span>{{ scope.row.loginDate }}</span>
@@ -184,28 +218,59 @@
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column prop="id" label="ID" min-width="80"/>
-          <el-table-column :show-overflow-tooltip="true" prop="img" label="产品" min-width="150">
+          <el-table-column 
+            prop="id" 
+            label="ID" 
+            min-width="80"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="img" 
+            label="产品" 
+            min-width="150">
             <template slot-scope="scope">
-              <img :src="scope.row.img" alt class="icon-item">
+              <img 
+                :src="scope.row.img" 
+                alt 
+                class="icon-item">
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="market" label="商场" min-width="130"/>
-          <el-table-column :show-overflow-tooltip="true" prop="point" label="点位" min-width="100"/>
-          <el-table-column prop="faceDate" label="上次互动" min-width="100">
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="market" 
+            label="商场" 
+            min-width="130"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="point" 
+            label="点位" 
+            min-width="100"/>
+          <el-table-column 
+            prop="faceDate" 
+            label="上次互动" 
+            min-width="100">
             <template slot-scope="scope">
               <span style="color: rgb(93, 217, 49)">{{ scope.row.faceDate }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="networkDate" label="联网时间" min-width="100">
+          <el-table-column 
+            prop="networkDate" 
+            label="联网时间" 
+            min-width="100">
             <template slot-scope="scope">
               <span style="color: rgb(93, 217, 49)">{{ scope.row.networkDate }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="screenStatus" label="屏幕状态" min-width="80">
+          <el-table-column 
+            prop="screenStatus" 
+            label="屏幕状态" 
+            min-width="80">
             <template slot-scope="scope">
-              <span v-if="scope.row.screenStatus === 1" style="color: rgb(93, 217, 49)">开启</span>
-              <span v-if="scope.row.screenStatus === 0" style="color: rgb(126, 8, 0);">关闭</span>
+              <span 
+                v-if="scope.row.screenStatus === 1" 
+                style="color: rgb(93, 217, 49)">开启</span>
+              <span 
+                v-if="scope.row.screenStatus === 0" 
+                style="color: rgb(126, 8, 0);">关闭</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -214,7 +279,10 @@
             label="登录时间"
             min-width="100"
           />
-          <el-table-column prop="on_off" label="开/关机" width="90"/>
+          <el-table-column 
+            prop="on_off" 
+            label="开/关机" 
+            width="90"/>
         </el-table>
         <div class="pagination-wrap">
           <el-pagination

@@ -8,8 +8,13 @@
       <div class="item-content-wrap">
         <!-- 搜索 -->
         <div class="search-wrap">
-          <el-form ref="searchForm" :model="searchForm" :inline="true">
-            <el-form-item label prop="store_name">
+          <el-form 
+            ref="searchForm" 
+            :model="searchForm" 
+            :inline="true">
+            <el-form-item 
+              label 
+              prop="store_name">
               <el-input
                 v-model="searchForm.store_name"
                 clearable
@@ -17,7 +22,9 @@
                 class="item-input"
               />
             </el-form-item>
-            <el-form-item label prop="company_name">
+            <el-form-item 
+              label 
+              prop="company_name">
               <el-input
                 v-model="searchForm.company_name"
                 clearable
@@ -25,7 +32,9 @@
                 class="item-input"
               />
             </el-form-item>
-            <el-form-item label prop="areaid">
+            <el-form-item 
+              label 
+              prop="areaid">
               <el-select
                 v-model="searchForm.areaid"
                 placeholder="区域"
@@ -41,7 +50,9 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label prop="marketid">
+            <el-form-item 
+              label 
+              prop="marketid">
               <el-select
                 v-model="searchForm.marketid"
                 :remote-method="getMarket"
@@ -59,8 +70,14 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label prop="type">
-              <el-select v-model="searchForm.type" placeholder="商户属性" filterable clearable>
+            <el-form-item 
+              label 
+              prop="type">
+              <el-select 
+                v-model="searchForm.type" 
+                placeholder="商户属性" 
+                filterable 
+                clearable>
                 <el-option
                   v-for="item in typeList"
                   :key="item.id"
@@ -70,21 +87,35 @@
               </el-select>
             </el-form-item>
 
-            <el-button type="primary" size="small" @click="search('searchForm')">搜索</el-button>
-            <el-button type="default" size="small" @click="resetSearch('searchForm')">重置</el-button>
+            <el-button 
+              type="primary" 
+              size="small" 
+              @click="search('searchForm')">搜索</el-button>
+            <el-button 
+              type="default" 
+              size="small" 
+              @click="resetSearch('searchForm')">重置</el-button>
           </el-form>
         </div>
         <!-- 点位列表 -->
         <div class="total-wrap">
           <span class="label">总数:{{ pagination.total }}</span>
           <div>
-            <el-button size="small" type="success" @click="addBusiness">新增商户</el-button>
+            <el-button 
+              size="small" 
+              type="success" 
+              @click="addBusiness">新增商户</el-button>
           </div>
         </div>
-        <el-table :data="tableData" style="width: 100%">
+        <el-table 
+          :data="tableData" 
+          style="width: 100%">
           <el-table-column type="expand">
             <template slot-scope="scope">
-              <el-form label-position="left" inline class="demo-table-expand">
+              <el-form 
+                label-position="left" 
+                inline 
+                class="demo-table-expand">
                 <el-form-item label="ID:">
                   <span>{{ scope.row.id }}</span>
                 </el-form-item>
@@ -101,15 +132,15 @@
                   <span>{{ scope.row.type===1 ?'自营':'连锁' }}</span>
                 </el-form-item>
                 <el-form-item label="区域:">
-                  <span>{{ scope.row.area.name}}</span>
+                  <span>{{ scope.row.area.name }}</span>
                 </el-form-item>
                 <el-form-item label="所属人:">
                   <span>{{ scope.row.user ? scope.row.user.name : '无' }}</span>
                 </el-form-item>
                 <el-form-item label="商户LOGO:">
                   <img
-                    :src="scope.row.media.url"
                     v-if="scope.row.media"
+                    :src="scope.row.media.url"
                     style="width:180px;height:180px;"
                   >
                   <!-- <span>{{ scope.row.media ? scope.row.media.url : ''}}</span> -->
@@ -120,8 +151,16 @@
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" width="80"/>
-          <el-table-column :show-overflow-tooltip="true" prop="name" label="商户名称" min-width="100"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="id" 
+            label="ID" 
+            width="80"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="name" 
+            label="商户名称" 
+            min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="company_name"
@@ -138,7 +177,11 @@
           >
             <template slot-scope="scope">{{ scope.row.market ? scope.row.market.name:'无' }}</template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="type" label="商户属性" min-width="100">
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="type" 
+            label="商户属性" 
+            min-width="100">
             <template slot-scope="scope">{{ scope.row.type===1 ?'自营':'连锁' }}</template>
           </el-table-column>
           <el-table-column
@@ -147,9 +190,13 @@
             label="区域"
             min-width="100"
           >
-            <template slot-scope="scope">{{ scope.row.area.name}}</template>
+            <template slot-scope="scope">{{ scope.row.area.name }}</template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="db" label="所属人" min-width="100">
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="db" 
+            label="所属人" 
+            min-width="100">
             <template slot-scope="scope">{{ scope.row.user ? scope.row.user.name : '无' }}</template>
           </el-table-column>
           <el-table-column
@@ -158,9 +205,14 @@
             label="修改时间"
             min-width="80"
           />
-          <el-table-column label="操作" min-width="100">
+          <el-table-column 
+            label="操作" 
+            min-width="100">
             <template slot-scope="scope">
-              <el-button size="mini" type="warning" @click="editBusiness(scope.row)">编辑</el-button>
+              <el-button 
+                size="mini" 
+                type="warning" 
+                @click="editBusiness(scope.row)">编辑</el-button>
             </template>
           </el-table-column>
         </el-table>
