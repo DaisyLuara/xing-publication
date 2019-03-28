@@ -52,58 +52,10 @@ class RollbackCountData extends Command
             return $this->error('时间输入有误！');
         }
 
-        //rollback records
-        if ($date >= '2018-06-13') {
-            FaceActivePlayerRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
-            FaceActivePlayerRecord::create(['date' => $date]);
-        } else {
-            FaceActivePlayerRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-06-13'")->delete();
-        }
-
-        if ($date >= '2018-07-24') {
-            FaceActivePlaytimesRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
-            FaceActivePlaytimesRecord::create(['date' => $date]);
-        } else {
-            FaceActivePlaytimesRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-07-24'")->delete();
-        }
-
-        if ($date >= '2018-07-19') {
-            FaceOmoRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
-            FaceOmoRecord::create(['date' => $date]);
-        } else {
-            FaceOmoRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-07-19'")->delete();
-        }
-
-        if ($date >= '2018-11-15') {
-            FaceVerifyRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
-            FaceVerifyRecord::create(['date' => $date]);
-
-            FaceCouponRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
-            FaceCouponRecord::create(['date' => $date]);
-        } else {
-            FaceVerifyRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-11-15'")->delete();
-
-            FaceCouponRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-11-15'")->delete();
-        }
-
-        FacePhoneRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
-        FacePhoneRecord::create(['date' => $date]);
-
         FaceCountRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
         FaceCountRecord::create(['date' => $date]);
 
-        FaceLookTimesRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
-        FaceLookTimesRecord::create(['date' => $date]);
-
         //rollback data
-        DB::connection('ar')->table('xs_face_active_player')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
-        DB::connection('ar')->table('xs_face_active_playtimes')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
-        DB::connection('ar')->table('xs_face_omo')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
-        DB::connection('ar')->table('xs_face_phone')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
-        DB::connection('ar')->table('xs_face_phone_times')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
         DB::connection('ar')->table('xs_face_count_log')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
-        DB::connection('ar')->table('xs_face_look_times')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
-        DB::connection('ar')->table('xs_face_verify_times')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
-        DB::connection('ar')->table('xs_face_coupon_times')->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
     }
 }

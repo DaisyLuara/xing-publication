@@ -1,9 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use App\Http\Controllers\Admin\Face\V1\Models\FaceLogTimesRecord;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateFaceLogTimesRecordTable extends Migration
 {
@@ -19,7 +18,6 @@ class CreateFaceLogTimesRecordTable extends Migration
             $table->timestamp('date')->nullable();
             $table->timestamps();
         });
-        FaceLogTimesRecord::create(['date' => '2017-04-21']);
     }
 
     /**

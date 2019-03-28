@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\Admin\Face\V1\Models\FaceLogTimesRecord;
+use App\Http\Controllers\Admin\Face\V1\Models\FaceLooktimesPermeabilityRecord;
 use Illuminate\Console\Command;
 use DB;
 use Carbon\Carbon;
@@ -14,14 +14,14 @@ class RollBackLookTimesPermeabilityData extends Command
      *
      * @var string
      */
-    protected $signature = 'command:name';
+    protected $signature = 'yqDataClean:rollback_looktimes_permeability';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = '数据回滚围观人次渗透率';
 
     /**
      * Create a new command instance.
@@ -46,10 +46,10 @@ class RollBackLookTimesPermeabilityData extends Command
         }
 
         if ($date >= '2018-07-24') {
-            FaceLogTimesRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
-            FaceLogTimesRecord::create(['date' => $date]);
+            FaceLooktimesPermeabilityRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
+            FaceLooktimesPermeabilityRecord::create(['date' => $date]);
         } else {
-            FaceLogTimesRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-07-24'")->delete();
+            FaceLooktimesPermeabilityRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-07-24'")->delete();
         }
 
         DB::connection('ar')->table('xs_face_character_count_times')->whereRaw("date_format(date,'%Y-%m-%d') >='$date'")->delete();

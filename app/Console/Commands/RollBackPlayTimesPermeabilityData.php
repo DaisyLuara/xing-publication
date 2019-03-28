@@ -2,12 +2,12 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\Admin\Face\V1\Models\FacePermeabilityRecord;
+use App\Http\Controllers\Admin\Face\V1\Models\FacePlaytimesPermeabilityRecord;
 use Illuminate\Console\Command;
 use DB;
 use Carbon\Carbon;
 
-class RollBackPlaytimesPermeabilityData extends Command
+class RollBackPlayTimesPermeabilityData extends Command
 {
     /**
      * The name and signature of the console command.
@@ -45,10 +45,10 @@ class RollBackPlaytimesPermeabilityData extends Command
             return $this->error('时间输入有误！');
         }
         if ($date >= '2018-07-24') {
-            FacePermeabilityRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
-            FacePermeabilityRecord::create(['date' => $date]);
+            FacePlaytimesPermeabilityRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
+            FacePlaytimesPermeabilityRecord::create(['date' => $date]);
         } else {
-            FacePermeabilityRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-07-24'")->delete();
+            FacePlaytimesPermeabilityRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-07-24'")->delete();
         }
 
         DB::connection('ar')->table('xs_face_playtimes7_permeability')->whereRaw("date_format(date,'%Y-%m-%d') >='$date'")->delete();

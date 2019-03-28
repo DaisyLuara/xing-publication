@@ -11,7 +11,7 @@ namespace App\Http\Controllers\Admin\Face\V1\Models;
 
 use App\Models\Model;
 
-class FaceLogTimesRecord extends Model
+class FaceLooktimesPermeabilityRecord extends Model
 {
     protected $fillable = ['date'];
 }

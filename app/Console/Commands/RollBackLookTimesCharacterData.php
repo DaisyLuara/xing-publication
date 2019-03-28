@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Http\Controllers\Admin\Face\V1\Models\FaceLooktimesCharacterRecord;
 use Illuminate\Console\Command;
 use DB;
 use Carbon\Carbon;
@@ -20,7 +21,7 @@ class RollBackLookTimesCharacterData extends Command
      *
      * @var string
      */
-    protected $description = '数据回滚围观人次渗透率';
+    protected $description = '数据回滚围观人次人群特征';
 
     /**
      * Create a new command instance.
@@ -45,10 +46,10 @@ class RollBackLookTimesCharacterData extends Command
         }
 
         if ($date >= '2018-07-24') {
-            FaceCharacterTimes::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
-            FaceCharacterTimes::create(['date' => $date]);
+            FaceLooktimesCharacterRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
+            FaceLooktimesCharacterRecord::create(['date' => $date]);
         } else {
-            FaceCharacterTimes::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-07-24'")->delete();
+            FaceLooktimesCharacterRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-07-24'")->delete();
         }
 
         DB::connection('ar')->table('xs_face_character_count_times')->whereRaw("date_format(date,'%Y-%m-%d') >='$date'")->delete();
