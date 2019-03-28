@@ -6,7 +6,9 @@
   >
     <div class="user-list-content">
       <div class="search-wrap">
-        <el-form :model="filters" :inline="true">
+        <el-form 
+          :model="filters" 
+          :inline="true">
           <el-form-item label>
             <el-input
               v-model="filters.display_name"
@@ -15,22 +17,53 @@
               clearable
             />
           </el-form-item>
-          <el-button type="primary" size="small" @click="search">搜索</el-button>
-          <el-button type="default" size="small" @click="resetSearch">重置</el-button>
+          <el-button 
+            type="primary" 
+            size="small" 
+            @click="search">搜索</el-button>
+          <el-button 
+            type="default" 
+            size="small" 
+            @click="resetSearch">重置</el-button>
         </el-form>
       </div>
       <div class="actions-wrap">
         <span class="label">数量: {{ pagination.total }}</span>
-        <el-button size="small" type="success" @click="linkToAddRole">新增角色</el-button>
+        <el-button 
+          size="small" 
+          type="success" 
+          @click="linkToAddRole">新增角色</el-button>
       </div>
-      <el-table ref="userTable" :data="tableData" highlight-current-row style="width: 100%">
-        <el-table-column prop="id" label="ID" min-width="100"/>
-        <el-table-column prop="display_name" label="角色名" min-width="150"/>
-        <el-table-column prop="created_at" label="创建时间" min-width="150"/>
-        <el-table-column label="操作" min-width="100">
+      <el-table 
+        ref="userTable" 
+        :data="tableData" 
+        highlight-current-row 
+        style="width: 100%">
+        <el-table-column 
+          prop="id" 
+          label="ID" 
+          min-width="100"/>
+        <el-table-column 
+          prop="display_name" 
+          label="角色名" 
+          min-width="150"/>
+        <el-table-column 
+          prop="created_at" 
+          label="创建时间" 
+          min-width="150"/>
+        <el-table-column 
+          label="操作" 
+          min-width="100">
           <template slot-scope="scope">
-            <el-button v-if="scope.row.name!=='admin' && scope.row.name!=='super-admin'" size="small" type="danger" @click="deleteRole(scope.row)" >删除</el-button>
-            <el-button size="small" type="warning" @click="linkToEdit(scope.row)">修改</el-button>
+            <el-button 
+              v-if="scope.row.name!=='admin' && scope.row.name!=='super-admin'" 
+              size="small" 
+              type="danger" 
+              @click="deleteRole(scope.row)" >删除</el-button>
+            <el-button 
+              size="small" 
+              type="warning" 
+              @click="linkToEdit(scope.row)">修改</el-button>
           </template>
         </el-table-column>
       </el-table>

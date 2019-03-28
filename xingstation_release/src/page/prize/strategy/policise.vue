@@ -8,14 +8,22 @@
       <span class="label">数量: {{ pagination.total }}</span>
       <!-- 新增子策略 -->
       <div>
-        <el-button size="small" type="success" @click="addPolicy">新增子策略</el-button>
+        <el-button 
+          size="small" 
+          type="success" 
+          @click="addPolicy">新增子策略</el-button>
       </div>
     </div>
     <!-- 子条目列表 -->
-    <el-table :data="tableData" style="width: 100%">
+    <el-table 
+      :data="tableData" 
+      style="width: 100%">
       <el-table-column type="expand">
         <template slot-scope="scope">
-          <el-form label-position="left" inline class="demo-table-expand">
+          <el-form 
+            label-position="left" 
+            inline 
+            class="demo-table-expand">
             <el-form-item label="ID:">
               <span>{{ scope.row.id }}</span>
             </el-form-item>
@@ -34,15 +42,31 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="100"/>
-      <el-table-column :show-overflow-tooltip="true" prop="name" label="优惠券名称" min-width="130">
-        <template slot-scope="scope">{{scope.row.name}}</template>
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        prop="id" 
+        label="ID" 
+        min-width="100"/>
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        prop="name" 
+        label="优惠券名称" 
+        min-width="130">
+        <template slot-scope="scope">{{ scope.row.name }}</template>
       </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" prop="company" label="公司名称" min-width="130">
-        <template slot-scope="scope">{{scope.row.company.name}}</template>
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        prop="company" 
+        label="公司名称" 
+        min-width="130">
+        <template slot-scope="scope">{{ scope.row.company.name }}</template>
       </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" prop="rate" label="概率" min-width="130">
-        <template slot-scope="scope">{{scope.row.pivot.rate}} %</template>
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        prop="rate" 
+        label="概率" 
+        min-width="130">
+        <template slot-scope="scope">{{ scope.row.pivot.rate }} %</template>
       </el-table-column>
       <el-table-column
         :show-overflow-tooltip="true"
@@ -50,10 +74,17 @@
         label="更新时间"
         min-width="100"
       />
-      <el-table-column label="操作" min-width="100">
+      <el-table-column 
+        label="操作" 
+        min-width="100">
         <template slot-scope="scope">
-          <el-button size="small" type="warning" @click="editPolicy(scope.row)">编辑</el-button>
-          <el-button size="small" @click="deleteBatch(scope.row)">删除</el-button>
+          <el-button 
+            size="small" 
+            type="warning" 
+            @click="editPolicy(scope.row)">编辑</el-button>
+          <el-button 
+            size="small" 
+            @click="deleteBatch(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -200,36 +231,6 @@ export default {
         })
         .catch(error => {
           console.log(error);
-        });
-    },
-    deleteBatch(row) {
-      let id = row.id;
-      let company_id = row.pivot.policy_id;
-      MessageBox.confirm("确认删除选中策略条目?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          this.setting.loadingText = "拼命加载中";
-          this.setting.loading = true;
-          deleteBatchPolicy(this, company_id, id)
-            .then(response => {
-              this.setting.loading = false;
-              this.$message({
-                type: "success",
-                message: "删除成功！"
-              });
-              this.pagination.currentPage = 1;
-              this.getCouponPoliciesList();
-            })
-            .catch(error => {
-              this.setting.loading = false;
-              console.log(error);
-            });
-        })
-        .catch(e => {
-          console.log(e);
         });
     },
     editBatch(row) {

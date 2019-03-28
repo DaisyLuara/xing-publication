@@ -1,13 +1,16 @@
 <template>
   <div class="root">
     <div
-      class="account-wrap"
       v-loading="setting.loading"
       :element-loading-text="setting.loadingText"
+      class="account-wrap"
     >
       <div class="item-info">
-        <div class="prize-title">{{ prizeId ? '奖品投放修改' : '奖品投放新增'}}</div>
-        <el-form ref="prizeForm" :model="prizeForm" label-width="180px">
+        <div class="prize-title">{{ prizeId ? '奖品投放修改' : '奖品投放新增' }}</div>
+        <el-form 
+          ref="prizeForm" 
+          :model="prizeForm" 
+          label-width="180px">
           <el-form-item
             :rules="[{ required: true, message: '请选择公司', trigger: 'submit'}]"
             label="公司名称"
@@ -89,7 +92,9 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="submit('prizeForm')">保存</el-button>
+            <el-button 
+              type="primary" 
+              @click="submit('prizeForm')">保存</el-button>
             <el-button @click="back">返回</el-button>
           </el-form-item>
         </el-form>

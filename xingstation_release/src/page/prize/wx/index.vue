@@ -9,63 +9,110 @@
         <div class="total-wrap">
           <span class="label">总数:{{ pagination.total }}</span>
           <div>
-            <el-button size="small" type="success" @click="addCoupon">新增</el-button>
+            <el-button 
+              size="small" 
+              type="success" 
+              @click="addCoupon">新增</el-button>
           </div>
         </div>
         <!-- 创建优惠券 -->
-        <el-dialog :title="title" :visible.sync="templateVisible" @close="dialogClose">
-          <el-form ref="templateForm" :model="templateForm" label-width="150px">
-            <el-radio v-model="card_type" :label="DISCOUNT.card_type">折扣券</el-radio>
+        <el-dialog 
+          :title="title" 
+          :visible.sync="templateVisible" 
+          @close="dialogClose">
+          <el-form 
+            ref="templateForm" 
+            :model="templateForm" 
+            label-width="150px">
+            <el-radio 
+              v-model="card_type" 
+              :label="DISCOUNT.card_type">折扣券</el-radio>
             <el-form-item>
               <template slot-scope="scope">可为用户提供消费折扣</template>
             </el-form-item>
-            <el-radio v-model="card_type" :label="CASH.card_type">代金券</el-radio>
+            <el-radio 
+              v-model="card_type" 
+              :label="CASH.card_type">代金券</el-radio>
             <el-form-item>
               <template slot-scope="scope">可为用户提供抵扣现金服务。可设置成为"满*元，减*元"</template>
             </el-form-item>
-            <el-radio v-model="card_type" :label="GIFT.card_type">兑换券</el-radio>
+            <el-radio 
+              v-model="card_type" 
+              :label="GIFT.card_type">兑换券</el-radio>
             <el-form-item>
               <template slot-scope="scope">可为用户提供消费送赠品服务</template>
             </el-form-item>
-            <el-radio v-model="card_type" :label="GROUPON.card_type">团购券</el-radio>
+            <el-radio 
+              v-model="card_type" 
+              :label="GROUPON.card_type">团购券</el-radio>
             <el-form-item>
               <template slot-scope="scope">可为用户提供团购套餐服务</template>
             </el-form-item>
-            <el-radio v-model="card_type" :label="GENERAL_COUPON.card_type">优惠券</el-radio>
+            <el-radio 
+              v-model="card_type" 
+              :label="GENERAL_COUPON.card_type">优惠券</el-radio>
             <el-form-item>
               <template slot-scope="scope">即“通用券”，建议当以上四种无法满足需求时采用</template>
             </el-form-item>
             <el-form-item>
-              <el-button type="success" size="medium" class="confirm" @click="submit()">确定</el-button>
+              <el-button 
+                type="success" 
+                size="medium" 
+                class="confirm" 
+                @click="submit()">确定</el-button>
             </el-form-item>
           </el-form>
         </el-dialog>
-        <el-table :data="dataList" style="width: 100%">
+        <el-table 
+          :data="dataList" 
+          style="width: 100%">
           <el-table-column
             :show-overflow-tooltip="true"
             prop="typeName"
             label="卡券类型"
             min-width="100"
           />
-          <el-table-column :show-overflow-tooltip="true" prop="title" label="全部卡券" min-width="100"></el-table-column>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="title" 
+            label="全部卡券" 
+            min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="dateDetail"
             label="卡券有效期"
             min-width="100"
-          ></el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="status" label="全部状态" min-width="100"></el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="quantity" label="库存" min-width="100"></el-table-column>
-          <el-table-column :show-overflow-tooltip="true" label="库存修改" min-width="100">
+          />
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="status" 
+            label="全部状态" 
+            min-width="100"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="quantity" 
+            label="库存" 
+            min-width="100"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            label="库存修改" 
+            min-width="100">
             <template slot-scope="scope">
-              <el-popover placement="bottom" width="250" v-model="scope.row.visible">
-                <el-radio v-model="modifyChange" :label="0">增加</el-radio>
-                <el-radio v-model="modifyChange" :label="1">减少</el-radio>
+              <el-popover 
+                v-model="scope.row.visible" 
+                placement="bottom" 
+                width="250">
+                <el-radio 
+                  v-model="modifyChange" 
+                  :label="0">增加</el-radio>
+                <el-radio 
+                  v-model="modifyChange" 
+                  :label="1">减少</el-radio>
 
                 <div style="margin:10px 0">
                   <input
-                    type="text"
                     v-model="modifyQuantity"
+                    type="text"
                     style="width: 200px;
                            font-size: 14px;
                             border: 1px solid #ebeef5;
@@ -77,30 +124,43 @@
                   <span>份</span>
                 </div>
                 <div
+                  v-show="submitCheck.quantityCheck1"
                   class="errMessage"
                   style="font-size:12px;margin:10px 0;color:#e15f63;"
-                  v-show="submitCheck.quantityCheck1"
                 >库存不能小于1</div>
                 <div
+                  v-show="submitCheck.quantityCheck2"
                   class="errMessage"
                   style="font-size:12px;margin:10px 0;color:#e15f63;"
-                  v-show="submitCheck.quantityCheck2"
                 >减少库存量不能大于已有库存量</div>
-                <div class="message" style="font-size:12px;margin:10px 0">每个用户领券上限，如不填，则默认为1</div>
+                <div 
+                  class="message" 
+                  style="font-size:12px;margin:10px 0">每个用户领券上限，如不填，则默认为1</div>
                 <div style="text-align: left; margin: 0">
-                  <el-button type="success" size="mini" @click="confirmModify(scope.row)">确定</el-button>
-                  <el-button size="mini" @click="cancleModify(scope.row)">取消</el-button>
+                  <el-button 
+                    type="success" 
+                    size="mini" 
+                    @click="confirmModify(scope.row)">确定</el-button>
+                  <el-button 
+                    size="mini" 
+                    @click="cancleModify(scope.row)">取消</el-button>
                 </div>
                 <el-button slot="reference">
-                  <i class="el-icon-edit"></i>
+                  <i class="el-icon-edit"/>
                 </el-button>
               </el-popover>
             </template>
           </el-table-column>
-          <el-table-column label="操作" min-width="150">
+          <el-table-column 
+            label="操作" 
+            min-width="150">
             <template slot-scope="scope">
-              <el-button size="small" @click="linkToEdit(scope.row)">修改</el-button>
-              <el-button size="small" @click="linkToDelete(scope.row)">删除</el-button>
+              <el-button 
+                size="small" 
+                @click="linkToEdit(scope.row)">修改</el-button>
+              <el-button 
+                size="small" 
+                @click="linkToDelete(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>

@@ -2,8 +2,11 @@
   <div class="root">
     <div class="account-wrap">
       <div class="item-info">
-        <div class="prize-title">{{ policyId ? '子条目修改' : '子条目新增'}}</div>
-        <el-form ref="policyForm" :model="policyForm" label-width="180px">
+        <div class="prize-title">{{ policyId ? '子条目修改' : '子条目新增' }}</div>
+        <el-form 
+          ref="policyForm" 
+          :model="policyForm" 
+          label-width="180px">
           <el-form-item
             :rules="[{ required: true, message: '请选择优惠券', trigger: 'submit'}]"
             label="优惠券名称"
@@ -49,38 +52,55 @@
             label="最大年龄"
             prop="max_age"
           >
-            <el-input v-model="policyForm.max_age" placeholder="请填写最大年龄" clearable/>
+            <el-input 
+              v-model="policyForm.max_age" 
+              placeholder="请填写最大年龄" 
+              clearable/>
           </el-form-item>
           <el-form-item
             :rules="[{ required: true, message: '请填写最小年龄', trigger: 'submit'}]"
             label="最小年龄"
             prop="min_age"
           >
-            <el-input v-model="policyForm.min_age" placeholder="请填写最小年龄" clearable/>
+            <el-input 
+              v-model="policyForm.min_age" 
+              placeholder="请填写最小年龄" 
+              clearable/>
           </el-form-item>
           <el-form-item
             :rules="[{ required: true, message: '请填写最大分数', trigger: 'submit'}]"
             label="最大分数"
             prop="max_score"
           >
-            <el-input v-model="policyForm.max_score" placeholder="请填写最大分数" clearable/>
+            <el-input 
+              v-model="policyForm.max_score" 
+              placeholder="请填写最大分数" 
+              clearable/>
           </el-form-item>
           <el-form-item
             :rules="[{ required: true, message: '请填写最小分数', trigger: 'submit'}]"
             label="最小分数"
             prop="min_score"
           >
-            <el-input v-model="policyForm.min_score" placeholder="请填写最小分数" clearable/>
+            <el-input 
+              v-model="policyForm.min_score" 
+              placeholder="请填写最小分数" 
+              clearable/>
           </el-form-item>
           <el-form-item
             :rules="[{ required: true, message: '请填写概率', trigger: 'submit'}]"
             label="概率"
             prop="rate"
           >
-            <el-input v-model="policyForm.rate" placeholder="请填写概率" clearable/>
+            <el-input 
+              v-model="policyForm.rate" 
+              placeholder="请填写概率" 
+              clearable/>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="submit('policyForm')">保存</el-button>
+            <el-button 
+              type="primary" 
+              @click="submit('policyForm')">保存</el-button>
             <el-button @click="back">返回</el-button>
           </el-form-item>
         </el-form>

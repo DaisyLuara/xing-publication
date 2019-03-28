@@ -1,48 +1,55 @@
 <template>
   <div class="item-wrap-template">
-    <div v-loading="setting.loading" :element-loading-text="setting.loadingText" class="pane">
-      <div class="pane-title">{{ projectAuthId ? '修改节目授权' : '新增节目授权'}}</div>
-      <el-form ref="projectAuthForm" :model="projectAuthForm" label-width="150px" class="duty-form">
+    <div 
+      v-loading="setting.loading" 
+      :element-loading-text="setting.loadingText" 
+      class="pane">
+      <div class="pane-title">{{ projectAuthId ? '修改节目授权' : '新增节目授权' }}</div>
+      <el-form 
+        ref="projectAuthForm" 
+        :model="projectAuthForm" 
+        label-width="150px" 
+        class="duty-form">
         <el-form-item
-                prop="project_id"
-                label="节目"
-                :rules="{required: true, message: '节目不能为空', trigger: 'submit'}"
+          :rules="{required: true, message: '节目不能为空', trigger: 'submit'}"
+          prop="project_id"
+          label="节目"
         >
           <el-select
-                  v-model="projectAuthForm.project_id"
-                  :loading="searchLoading"
-                  remote
-                  :remote-method="getProject"
-                  placeholder="请输入节目名称"
-                  filterable
-                  clearable
-                  @change="getProject"
+            v-model="projectAuthForm.project_id"
+            :loading="searchLoading"
+            :remote-method="getProject"
+            remote
+            placeholder="请输入节目名称"
+            filterable
+            clearable
+            @change="getProject"
           >
             <el-option
-                    v-for="item in projectList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id"
+              v-for="item in projectList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>
         <el-form-item
-                prop="customer_id"
-                label="场地主"
-                :rules="{required: true, message: '场地主不能为空', trigger: 'submit'}"
+          :rules="{required: true, message: '场地主不能为空', trigger: 'submit'}"
+          prop="customer_id"
+          label="场地主"
         >
           <el-select
-                  v-model="projectAuthForm.customer_id"
-                  :loading="searchLoading"
-                  placeholder="请选择场地主"
-                  filterable
-                  clearable
+            v-model="projectAuthForm.customer_id"
+            :loading="searchLoading"
+            placeholder="请选择场地主"
+            filterable
+            clearable
           >
             <el-option
-                    v-for="item in marketOwnerList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id"
+              v-for="item in marketOwnerList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>
@@ -50,8 +57,13 @@
 
 
         <el-form-item>
-          <el-button type="primary" size="small" @click="submit('projectAuthForm')">保存</el-button>
-          <el-button size="small" @click="historyBack">返回</el-button>
+          <el-button 
+            type="primary" 
+            size="small" 
+            @click="submit('projectAuthForm')">保存</el-button>
+          <el-button 
+            size="small" 
+            @click="historyBack">返回</el-button>
         </el-form-item>
       </el-form>
     </div>

@@ -7,8 +7,13 @@
     >
       <div class="item-content-wrap">
         <div class="search-wrap">
-          <el-form ref="filters" :model="filters" :inline="true">
-            <el-form-item label prop="name">
+          <el-form 
+            ref="filters" 
+            :model="filters" 
+            :inline="true">
+            <el-form-item 
+              label 
+              prop="name">
               <el-input
                 v-model="filters.name"
                 placeholder="请输入节目名称"
@@ -16,7 +21,9 @@
                 style="width: 250px;"
               />
             </el-form-item>
-            <el-form-item label prop="company_id">
+            <el-form-item 
+              label 
+              prop="company_id">
               <el-select
                 v-model="filters.company_id"
                 :loading="searchLoading"
@@ -32,20 +39,34 @@
                 />
               </el-select>
             </el-form-item>
-            <el-button type="primary" size="small" @click="search()">搜索</el-button>
-            <el-button type="default" size="small" @click="resetSearch('filters')">重置</el-button>
+            <el-button 
+              type="primary" 
+              size="small" 
+              @click="search()">搜索</el-button>
+            <el-button 
+              type="default" 
+              size="small" 
+              @click="resetSearch('filters')">重置</el-button>
           </el-form>
         </div>
         <div class="total-wrap">
           <span class="label">总数:{{ pagination.total }}</span>
           <div>
-            <el-button type="success" size="small" @click="addPrizeLaunch">新增奖品投放</el-button>
+            <el-button 
+              type="success" 
+              size="small" 
+              @click="addPrizeLaunch">新增奖品投放</el-button>
           </div>
         </div>
-        <el-table :data="tableData" style="width: 100%">
+        <el-table 
+          :data="tableData" 
+          style="width: 100%">
           <el-table-column type="expand">
             <template slot-scope="scope">
-              <el-form label-position="left" inline class="demo-table-expand">
+              <el-form 
+                label-position="left" 
+                inline 
+                class="demo-table-expand">
                 <el-form-item label="ID">
                   <span>{{ scope.row.id }}</span>
                 </el-form-item>
@@ -67,9 +88,17 @@
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="100"/>
-          <el-table-column :show-overflow-tooltip="true" prop="policy" label="奖品模版" min-width="130">
-            <template slot-scope="scope">{{scope.row.policy.name}}</template>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="id" 
+            label="ID" 
+            min-width="100"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="policy" 
+            label="奖品模版" 
+            min-width="130">
+            <template slot-scope="scope">{{ scope.row.policy.name }}</template>
           </el-table-column>
           <el-table-column
             :show-overflow-tooltip="true"
@@ -77,10 +106,14 @@
             label="公司名称"
             min-width="130"
           >
-            <template slot-scope="scope">{{scope.row.company.name}}</template>
+            <template slot-scope="scope">{{ scope.row.company.name }}</template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="point" label="点位名称" min-width="130">
-            <template slot-scope="scope">{{scope.row.point.name}}</template>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="point" 
+            label="点位名称" 
+            min-width="130">
+            <template slot-scope="scope">{{ scope.row.point.name }}</template>
           </el-table-column>
           <el-table-column
             :show-overflow-tooltip="true"
@@ -88,7 +121,7 @@
             label="节目名称"
             min-width="130"
           >
-            <template slot-scope="scope">{{scope.row.project.name}}</template>
+            <template slot-scope="scope">{{ scope.row.project.name }}</template>
           </el-table-column>
           <el-table-column
             :show-overflow-tooltip="true"
@@ -96,9 +129,14 @@
             label="更新时间"
             min-width="100"
           />
-          <el-table-column label="操作" min-width="100">
+          <el-table-column 
+            label="操作" 
+            min-width="100">
             <template slot-scope="scope">
-              <el-button size="small" type="warning" @click="linkToEdit(scope.row)">编辑</el-button>
+              <el-button 
+                size="small" 
+                type="warning" 
+                @click="linkToEdit(scope.row)">编辑</el-button>
             </template>
           </el-table-column>
         </el-table>

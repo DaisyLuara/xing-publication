@@ -5,31 +5,56 @@
     class="page-list-template tab"
   >
     <div class="actions-wrap">
-      <el-button size="small" type="danger" @click="deleteNotifications(selectedNotices)">删除</el-button>
-      <el-button v-if="unreadCount !== 0" size="small" type="info" @click="readNotifications">全部读取</el-button>
+      <el-button 
+        size="small" 
+        type="danger" 
+        @click="deleteNotifications(selectedNotices)">删除</el-button>
+      <el-button 
+        v-if="unreadCount !== 0" 
+        size="small" 
+        type="info" 
+        @click="readNotifications">全部读取</el-button>
     </div>
     <div class="table-area">
       <el-table
+        ref="notificationTable"
         :data="noticeList"
         highlight-current-row
         @selection-change="handleSelect"
-        ref="notificationTable"
       >
-        <el-table-column type="selection" width="55" v-if="setting.isOpenSelectAll"></el-table-column>
-        <el-table-column prop="id" label="ID">
+        <el-table-column 
+          v-if="setting.isOpenSelectAll" 
+          type="selection" 
+          width="55"/>
+        <el-table-column 
+          prop="id" 
+          label="ID">
           <template slot-scope="scope">{{ scope.row.data.id }}</template>
         </el-table-column>
-        <el-table-column prop="reply_content" label="内容">
+        <el-table-column 
+          prop="reply_content" 
+          label="内容">
           <template slot-scope="scope">{{ scope.row.data.reply_content }}</template>
         </el-table-column>
-        <el-table-column prop="user_name" label="创建人">
+        <el-table-column 
+          prop="user_name" 
+          label="创建人">
           <template slot-scope="scope">{{ scope.row.data.user_name }}</template>
         </el-table-column>
-        <el-table-column prop="created_at" label="创建时间"/>
-        <el-table-column prop="read_at" label="读取时间"/>
-        <el-table-column label="操作" width="150">
+        <el-table-column 
+          prop="created_at" 
+          label="创建时间"/>
+        <el-table-column 
+          prop="read_at" 
+          label="读取时间"/>
+        <el-table-column 
+          label="操作" 
+          width="150">
           <template slot-scope="scope">
-            <el-button size="small" type="danger" @click="deleteNotifications(scope.row)">删除</el-button>
+            <el-button 
+              size="small" 
+              type="danger" 
+              @click="deleteNotifications(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>

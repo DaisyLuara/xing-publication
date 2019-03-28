@@ -8,10 +8,15 @@
       <div class="item-content-wrap">
         <!-- 搜素条件 -->
         <div class="search-wrap">
-          <el-form ref="searchForm" :model="searchForm" :inline="true">
+          <el-form 
+            ref="searchForm" 
+            :model="searchForm" 
+            :inline="true">
             <el-row :gutter="20">
               <el-col :span="8">
-                <el-form-item label prop="name">
+                <el-form-item 
+                  label 
+                  prop="name">
                   <el-input
                     v-model="searchForm.name"
                     clearable
@@ -21,8 +26,14 @@
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item label prop="area_id">
-                  <el-select v-model="searchForm.area_id" placeholder="区域" filterable clearable>
+                <el-form-item 
+                  label 
+                  prop="area_id">
+                  <el-select 
+                    v-model="searchForm.area_id" 
+                    placeholder="区域" 
+                    filterable 
+                    clearable>
                     <el-option
                       v-for="item in areaList"
                       :key="item.id"
@@ -33,8 +44,14 @@
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item label prop="type">
-                  <el-select v-model="searchForm.type" placeholder="场地类型" filterable clearable>
+                <el-form-item 
+                  label 
+                  prop="type">
+                  <el-select 
+                    v-model="searchForm.type" 
+                    placeholder="场地类型" 
+                    filterable 
+                    clearable>
                     <el-option
                       v-for="item in typeList"
                       :key="item.id"
@@ -47,7 +64,9 @@
             </el-row>
             <el-row :gutter="20">
               <el-col :span="8">
-                <el-form-item label prop="permission">
+                <el-form-item 
+                  label 
+                  prop="permission">
                   <el-select
                     v-model="searchForm.permission"
                     placeholder="场地权限"
@@ -65,8 +84,14 @@
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item label prop="mode">
-                  <el-select v-model="searchForm.mode" placeholder="合作模式" filterable clearable>
+                <el-form-item 
+                  label 
+                  prop="mode">
+                  <el-select 
+                    v-model="searchForm.mode" 
+                    placeholder="合作模式" 
+                    filterable 
+                    clearable>
                     <el-option
                       v-for="item in modeList"
                       :key="item.id"
@@ -77,8 +102,14 @@
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-button type="primary" size="small" @click="search('searchForm')">搜索</el-button>
-                <el-button type="default" size="small" @click="resetSearch('searchForm')">重置</el-button>
+                <el-button 
+                  type="primary" 
+                  size="small" 
+                  @click="search('searchForm')">搜索</el-button>
+                <el-button 
+                  type="default" 
+                  size="small" 
+                  @click="resetSearch('searchForm')">重置</el-button>
               </el-col>
             </el-row>
           </el-form>
@@ -87,13 +118,21 @@
         <div class="total-wrap">
           <span class="label">总数:{{ pagination.total }}</span>
           <div>
-            <el-button size="small" type="success" @click="addSite">新建场地</el-button>
+            <el-button 
+              size="small" 
+              type="success" 
+              @click="addSite">新建场地</el-button>
           </div>
         </div>
-        <el-table :data="tableData" style="width: 100%">
+        <el-table 
+          :data="tableData" 
+          style="width: 100%">
           <el-table-column type="expand">
             <template slot-scope="scope">
-              <el-form label-position="left" inline class="demo-table-expand">
+              <el-form 
+                label-position="left" 
+                inline 
+                class="demo-table-expand">
                 <el-form-item label="ID:">
                   <span>{{ scope.row.id }}</span>
                 </el-form-item>
@@ -125,8 +164,8 @@
                 <el-form-item label="场地权限:">
                   <span>
                     {{ scope.row.share ? ((scope.row.share.site === 0
-                    && scope.row.share.vipad === 0
-                    && scope.row.share.ad === 0
+                      && scope.row.share.vipad === 0
+                      && scope.row.share.ad === 0
                     && scope.row.share.agent === 0) ? '无' : permissionHandle(scope.row)) : '' }}
                   </span>
                 </el-form-item>
@@ -176,22 +215,44 @@
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" width="80"/>
-          <el-table-column :show-overflow-tooltip="true" prop="name" label="场地名称" min-width="100"/>
-          <el-table-column :show-overflow-tooltip="true" prop label="公司名称" min-width="100">
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="id" 
+            label="ID" 
+            width="80"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="name" 
+            label="场地名称" 
+            min-width="100"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop 
+            label="公司名称" 
+            min-width="100">
             <template
               slot-scope="scope"
             >{{ (scope.row.marketConfig && scope.row.marketConfig.company) ? scope.row.marketConfig.company.name : '无' }}</template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="area" label="区域" min-width="80">
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="area" 
+            label="区域" 
+            min-width="80">
             <template slot-scope="scope">{{ scope.row.area.name }}</template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop label="所属人" min-width="100">
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop 
+            label="所属人" 
+            min-width="100">
             <template
               slot-scope="scope"
             >{{ (scope.row.marketConfig && scope.row.marketConfig.bdUser) ? scope.row.marketConfig.bdUser.name : '无' }}</template>
           </el-table-column>
-          <el-table-column label="LOGO" min-width="100">
+          <el-table-column 
+            label="LOGO" 
+            min-width="100">
             <template slot-scope="scope">
               <img
                 v-if="scope.row.marketConfig && scope.row.marketConfig.media"
@@ -201,13 +262,25 @@
               >
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="date" label="修改时间" min-width="100">
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="date" 
+            label="修改时间" 
+            min-width="100">
             <template slot-scope="scope">{{ scope.row.updated_at }}</template>
           </el-table-column>
-          <el-table-column label="操作" min-width="180">
+          <el-table-column 
+            label="操作" 
+            min-width="180">
             <template slot-scope="scope">
-              <el-button size="mini" type="warning" @click="editSite(scope.row)">编辑</el-button>
-              <el-button size="small" type="primary" @click="pointLink(scope.row)">点位</el-button>
+              <el-button 
+                size="mini" 
+                type="warning" 
+                @click="editSite(scope.row)">编辑</el-button>
+              <el-button 
+                size="small" 
+                type="primary" 
+                @click="pointLink(scope.row)">点位</el-button>
             </template>
           </el-table-column>
         </el-table>

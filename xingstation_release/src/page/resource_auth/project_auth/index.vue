@@ -1,49 +1,62 @@
 <template>
   <div class="root">
     <div
-            v-loading="setting.loading"
-            :element-loading-text="setting.loadingText"
-            class="item-list-wrap">
+      v-loading="setting.loading"
+      :element-loading-text="setting.loadingText"
+      class="item-list-wrap">
       <div class="item-content-wrap">
         <!-- 搜索 -->
         <div class="search-wrap">
-          <el-form ref="searchForm" :model="searchForm" :inline="true">
+          <el-form 
+            ref="searchForm" 
+            :model="searchForm" 
+            :inline="true">
             <el-row :gutter="20">
-              <el-form-item label prop="customer_id">
+              <el-form-item 
+                label 
+                prop="customer_id">
                 <el-select
-                        v-model="searchForm.customer_id"
-                        placeholder="场地主"
-                        filterable
-                        clearable>
+                  v-model="searchForm.customer_id"
+                  placeholder="场地主"
+                  filterable
+                  clearable>
                   <el-option
-                          v-for="item in marketOwnerList"
-                          :key="item.id"
-                          :label="item.name"
-                          :value="item.id"
+                    v-for="item in marketOwnerList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
                   />
                 </el-select>
               </el-form-item>
 
-              <el-form-item label prop="project_id">
+              <el-form-item 
+                label 
+                prop="project_id">
                 <el-select
-                        v-model="searchForm.project_id"
-                        :loading="searchLoading"
-                        remote
-                        :remote-method="getProject"
-                        placeholder="请输入节目名称"
-                        filterable
-                        clearable
+                  v-model="searchForm.project_id"
+                  :loading="searchLoading"
+                  :remote-method="getProject"
+                  remote
+                  placeholder="请输入节目名称"
+                  filterable
+                  clearable
                 >
                   <el-option
-                          v-for="item in projectList"
-                          :key="item.id"
-                          :label="item.name"
-                          :value="item.id"
+                    v-for="item in projectList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
                   />
                 </el-select>
               </el-form-item>
-              <el-button type="primary" size="small" @click="search('searchForm')">搜索</el-button>
-              <el-button type="default" size="small" @click="resetSearch('searchForm')">重置</el-button>
+              <el-button 
+                type="primary" 
+                size="small" 
+                @click="search('searchForm')">搜索</el-button>
+              <el-button 
+                type="default" 
+                size="small" 
+                @click="resetSearch('searchForm')">重置</el-button>
             </el-row>
           </el-form>
         </div>
@@ -51,13 +64,21 @@
         <div class="total-wrap">
           <span class="label">总数:{{ pagination.total }}</span>
           <div>
-            <el-button size="small" type="success" @click="addProjectAuth">新建节目授权</el-button>
+            <el-button 
+              size="small" 
+              type="success" 
+              @click="addProjectAuth">新建节目授权</el-button>
           </div>
         </div>
-        <el-table :data="tableData" style="width: 100%">
+        <el-table 
+          :data="tableData" 
+          style="width: 100%">
           <el-table-column type="expand">
             <template slot-scope="scope">
-              <el-form label-position="left" inline class="demo-table-expand">
+              <el-form 
+                label-position="left" 
+                inline 
+                class="demo-table-expand">
                 <el-form-item label="ID:">
                   <span>{{ scope.row.id }}</span>
                 </el-form-item>
@@ -80,16 +101,40 @@
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" width="80"/>
-          <el-table-column :show-overflow-tooltip="true" prop="customer_name" label="授权场地主" min-width="100"/>
-          <el-table-column :show-overflow-tooltip="true" prop="project_name" label="节目名称" min-width="100"/>
-          <el-table-column :show-overflow-tooltip="true" prop="date" label="时间" min-width="100"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="id" 
+            label="ID" 
+            width="80"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="customer_name" 
+            label="授权场地主" 
+            min-width="100"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="project_name" 
+            label="节目名称" 
+            min-width="100"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="date" 
+            label="时间" 
+            min-width="100"/>
 
-          <el-table-column label="操作" min-width="100">
+          <el-table-column 
+            label="操作" 
+            min-width="100">
             <template slot-scope="scope">
-              <el-button size="mini" type="warning" @click="editProjectAuth(scope.row)">编辑
+              <el-button 
+                size="mini" 
+                type="warning" 
+                @click="editProjectAuth(scope.row)">编辑
               </el-button>
-              <el-button size="mini" type="danger" @click="deleteProjectAuth(scope.row)">删除
+              <el-button 
+                size="mini" 
+                type="danger" 
+                @click="deleteProjectAuth(scope.row)">删除
               </el-button>
 
             </template>
@@ -97,11 +142,11 @@
         </el-table>
         <div class="pagination-wrap">
           <el-pagination
-                  :total="pagination.total"
-                  :page-size="pagination.pageSize"
-                  :current-page="pagination.currentPage"
-                  layout="prev, pager, next, jumper, total"
-                  @current-change="changePage"
+            :total="pagination.total"
+            :page-size="pagination.pageSize"
+            :current-page="pagination.currentPage"
+            layout="prev, pager, next, jumper, total"
+            @current-change="changePage"
           />
         </div>
       </div>

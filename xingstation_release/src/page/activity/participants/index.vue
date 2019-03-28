@@ -7,12 +7,17 @@
     >
       <div class="item-content-wrap">
         <div class="search-wrap">
-          <el-form ref="filters" :model="filters" :inline="true">
-            <el-form-item label prop="aid">
+          <el-form 
+            ref="filters" 
+            :model="filters" 
+            :inline="true">
+            <el-form-item 
+              label 
+              prop="aid">
               <el-select
                 v-model="filters.aid"
-                filterable
                 :loading="searchLoading"
+                filterable
                 clearable
                 placeholder="请选择玩法配置"
               >
@@ -24,8 +29,13 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label prop="pass">
-              <el-select v-model="filters.pass" clearable placeholder="请选择状态">
+            <el-form-item 
+              label 
+              prop="pass">
+              <el-select 
+                v-model="filters.pass" 
+                clearable 
+                placeholder="请选择状态">
                 <el-option
                   v-for="item in statusList"
                   :key="item.id"
@@ -34,17 +44,28 @@
                 />
               </el-select>
             </el-form-item>
-            <el-button type="primary" size="small" @click="search()">搜索</el-button>
-            <el-button type="default" size="small" @click="resetSearch('filters')">重置</el-button>
+            <el-button 
+              type="primary" 
+              size="small" 
+              @click="search()">搜索</el-button>
+            <el-button 
+              type="default" 
+              size="small" 
+              @click="resetSearch('filters')">重置</el-button>
           </el-form>
         </div>
         <div class="total-wrap">
           <span class="label">总数:{{ pagination.total }}</span>
         </div>
-        <el-table :data="tableData" style="width: 100%">
+        <el-table 
+          :data="tableData" 
+          style="width: 100%">
           <el-table-column type="expand">
             <template slot-scope="scope">
-              <el-form label-position="left" inline class="demo-table-expand">
+              <el-form 
+                label-position="left" 
+                inline 
+                class="demo-table-expand">
                 <el-form-item label="ID">
                   <span>{{ scope.row.auid }}</span>
                 </el-form-item>
@@ -55,7 +76,7 @@
                   <span>{{ scope.row.username }}</span>
                 </el-form-item>
                 <el-form-item label="状态">
-                  <span>{{ scope.row.pass === 0 ? '未提交' : scope.row.pass === 1 ? '已参与': scope.row.pass === 2 ?'失效' :''}}</span>
+                  <span>{{ scope.row.pass === 0 ? '未提交' : scope.row.pass === 1 ? '已参与': scope.row.pass === 2 ?'失效' :'' }}</span>
                 </el-form-item>
                 <el-form-item label="数值">
                   <span>{{ scope.row.value }}</span>
@@ -82,14 +103,28 @@
                   >查看</a>
                 </el-form-item>
                 <el-form-item label="凭证">
-                  <a :href="scope.row.link" target="_blank" style="color: blue">查看</a>
+                  <a 
+                    :href="scope.row.link" 
+                    target="_blank" 
+                    style="color: blue">查看</a>
                 </el-form-item>
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="auid" label="ID" min-width="100"/>
-          <el-table-column :show-overflow-tooltip="true" prop="uid" label="账号" min-width="100"/>
-          <el-table-column prop="icon" label="昵称" min-width="130">
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="auid" 
+            label="ID" 
+            min-width="100"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="uid" 
+            label="账号" 
+            min-width="100"/>
+          <el-table-column 
+            prop="icon" 
+            label="昵称" 
+            min-width="130">
             <template slot-scope="scope">
               <div>{{ scope.row.username }}</div>
               <img
@@ -99,7 +134,11 @@
               >
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="deploy" label="玩法配置" min-width="100">
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="deploy" 
+            label="玩法配置" 
+            min-width="100">
             <template slot-scope="scope">
               <div>{{ scope.row.playingType.name }}</div>
               <img
@@ -109,17 +148,36 @@
               >
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="value" label="数值" min-width="100"/>
-          <el-table-column :show-overflow-tooltip="true" prop="kid" label="标识" min-width="100"/>
-          <el-table-column :show-overflow-tooltip="true" prop="link" label="凭证" min-width="100">
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="value" 
+            label="数值" 
+            min-width="100"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="kid" 
+            label="标识" 
+            min-width="100"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="link" 
+            label="凭证" 
+            min-width="100">
             <template slot-scope="scope">
-              <img :src="scope.row.link" alt class="icon-item">
+              <img 
+                :src="scope.row.link" 
+                alt 
+                class="icon-item">
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="pass" label="状态" min-width="100">
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="pass" 
+            label="状态" 
+            min-width="100">
             <template
               slot-scope="scope"
-            >{{ scope.row.pass === 0 ? '未提交' : scope.row.pass === 1 ? '已参与': scope.row.pass === 2 ?'失效' :''}}</template>
+            >{{ scope.row.pass === 0 ? '未提交' : scope.row.pass === 1 ? '已参与': scope.row.pass === 2 ?'失效' :'' }}</template>
           </el-table-column>
           <el-table-column
             :show-overflow-tooltip="true"
@@ -127,7 +185,9 @@
             label="获得时间"
             min-width="150"
           />
-          <el-table-column label="操作" min-width="100">
+          <el-table-column 
+            label="操作" 
+            min-width="100">
             <template slot-scope="scope">
               <el-button
                 v-if="scope.row.playingType.aid === 32"
