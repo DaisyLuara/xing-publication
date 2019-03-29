@@ -159,19 +159,19 @@ class TodayDataController extends Controller
             ->get()
             ->toArray();
         $displayTime = [
-            '10:00',
-            '12:00',
-            '14:00',
-            '16:00',
-            '18:00',
-            '20:00',
-            '22:00',
-            '24:00',
+            '10:00' => '00:00-10:00',
+            '12:00' => '10:00-12:00',
+            '14:00' => '12:00-14:00',
+            '16:00' => '14:00-16:00',
+            '18:00' => '16:00-18:00',
+            '20:00' => '18:00-20:00',
+            '22:00' => '20:00-22:00',
+            '24:00' => '22:00-24:00',
         ];
         $output = [];
         foreach ($displayTime as $key => $value) {
-            $arr = array_filter($data, function ($aa) use ($value) {
-                return $aa['time'] == $value;
+            $arr = array_filter($data, function ($aa) use ($key) {
+                return $aa['time'] == $key;
             });
             if (empty($arr)) {
                 $arr = [['bnum' => 0, 'gnum' => 0]];
