@@ -3,10 +3,8 @@
 namespace App\Console;
 
 use App\Http\Controllers\Admin\WeChat\V1\Models\WeekRanking;
-use App\Jobs\MauJob;
-use App\Jobs\TeamBonusJob;
-use App\Jobs\WeekRankingJob;
 use App\Jobs\ContractReceiveDatesJob;
+use App\Jobs\TeamBonusJob;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -37,12 +35,6 @@ class Kernel extends ConsoleKernel
 //                    WeekRankingJob::dispatch($data[$i])->onQueue('weekRanking');
 //                }
 //            })->weekly()->fridays()->at('10:25');
-
-
-            //月活玩家清洗(按人和商场去重)
-            $schedule->call(function () {
-                MauJob::dispatch()->onQueue('data-clean');
-            })->monthlyOn(1, '6:00');
 
             //绩效清洗
             $schedule->call(function () {

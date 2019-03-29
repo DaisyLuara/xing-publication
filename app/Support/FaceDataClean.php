@@ -1,81 +1,11 @@
 <?php
 
-use App\Http\Controllers\Admin\Face\V1\Models\FaceMauRecord;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamBonusRecord;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamProjectMember;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-
-/**
- * 月活清洗
- */
-function mauClean()
-{
-    $date = FaceMauRecord::query()->max('date');
-    $currentDate = Carbon::now()->toDateString();
-    while ((new Carbon($date))->format('Y-m') < (new Carbon($currentDate))->format('Y-m')) {
-        $startDate = $date;
-        $endDate = (new Carbon($date))->endOfMonth()->toDateString();
-        $startClientDate = strtotime($startDate . ' 00:00:00') * 1000;
-        $endClientDate = strtotime($endDate . ' 23:59:59') * 1000;
-
-        $sql = DB::connection('ar')->table('face_people_time as fpt')
-            ->join('avr_official as ao', 'fpt.oid', '=', 'ao.oid')
-            ->whereRaw("fpt.clientdate between '$startClientDate' and '$endClientDate' and playtime >= 7000 and fpt.oid not in(16, 19, 30, 31, 177, 182, 327, 328, 329, 334, 335)")
-            ->groupBy(DB::raw('fpid * 10000 + fpt.oid'))
-            ->selectRaw(" fpid ");
-        $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
-            ->selectRaw("count(*) as playernum")
-            ->first();
-        $count = [
-            'active_player' => $data->playernum,
-            'date' => $date
-        ];
-        DB::connection('ar')->table('xs_face_mau')
-            ->insert($count);
-        $date = (new Carbon($date))->addMonth(1)->toDateString();
-    }
-}
-
-/**
- * 月活按商场清洗
- */
-function mauCleanByMarket()
-{
-    $date = FaceMauRecord::query()->max('date');
-    $currentDate = Carbon::now()->toDateString();
-    while ((new Carbon($date))->format('Y-m') < (new Carbon($currentDate))->format('Y-m')) {
-        $startDate = $date;
-        $endDate = (new Carbon($date))->endOfMonth()->toDateString();
-        $startClientDate = strtotime($startDate . ' 00:00:00') * 1000;
-        $endClientDate = strtotime($endDate . ' 23:59:59') * 1000;
-
-        $sql = DB::connection('ar')->table('face_people_time as fpt')
-            ->join('avr_official as ao', 'fpt.oid', '=', 'ao.oid')
-            ->whereRaw("fpt . clientdate between '$startClientDate' and '$endClientDate' and playtime >= 7000 and fpt . oid not in(16, 19, 30, 31, 177, 182, 327, 328, 329, 334, 335)")
-            ->groupBy(DB::raw('ao.marketid,fpid * 10000 + fpt.oid'))
-            ->selectRaw("marketid,fpid");
-        $data = DB::connection('ar')->table(DB::raw("({$sql->toSql()}) as a"))
-            ->selectRaw("marketid,count(*) as playernum")
-            ->groupBy('marketid')
-            ->get();
-        $count = [];
-        foreach ($data as $item) {
-            $count[] = [
-                'active_player' => $item->playernum,
-                'marketid' => $item->marketid,
-                'date' => $date
-            ];
-        }
-        DB::connection('ar')->table('xs_face_mau_market')
-            ->insert($count);
-        $date = (new Carbon($date))->addMonth(1)->toDateString();
-    }
-    FaceMauRecord::create(['date' => $date]);
-}
-
 
 /**
  * 绩效清洗
