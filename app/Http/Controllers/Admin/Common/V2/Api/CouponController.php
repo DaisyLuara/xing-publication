@@ -44,7 +44,6 @@ class CouponController extends Controller
         //coupon_batch_id参数校验
         if ($multiProjects) {
             //多节目
-            $maxGetCheck = true;
             $couponBatch = $member->userCouponBatches()->firstOrFail();
 
         } else {
@@ -95,11 +94,8 @@ class CouponController extends Controller
                 //活动期间 每人每天领取次数
                 $query = Coupon::query();
 
-                if (!isset($maxGetCheck)) {
-                    $query->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()]);
-                }
-
-                $coupons = $query->where('member_uid', $memberUID)->where('coupon_batch_id', $couponBatchId)->get();
+                $coupons = $query->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
+                    ->where('member_uid', $memberUID)->where('coupon_batch_id', $couponBatchId)->get();
             }
 
             if ($coupons->count() >= $couponBatch->people_max_get) {
@@ -388,6 +384,18 @@ class CouponController extends Controller
                 $policy_id = 75;
                 break;
         }
+
+        $now = Carbon::now()->toDateString();
+
+        //实物奖品数量
+        $prizeCoupons = Coupon::query()->where('belong', $request->belong)
+            ->where('member_uid', $member->uid)
+            ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
+            ->whereHas('couponBatch', function ($q) {
+                $q->where('type', 2);
+             })->get();
+
+        abort_if($prizeCoupons->isNotEmpty(), 500, '每天仅限中一次奖,请明天再来');
 
         $query = DB::table('coupon_batch_policy');
         if ($request->has('age')) {
