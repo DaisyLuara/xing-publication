@@ -16,7 +16,7 @@
       >
         <div class="item-content-left-card">
           <div class="logo">
-            <!-- <img src="https://cdn.exe666.com/fe/marketing/img/tiger/icon.png"> -->
+            <!-- <img src="https://cdn.xingstation.cn/fe/marketing/img/tiger/icon.png"> -->
             <img :src="this.base_info.logo_url">
           </div>
           <div class="tickMsg">
@@ -570,7 +570,7 @@
               >
                 <img
                   class="uploadIcon"
-                  src="https://cdn.exe666.com/fe/marketing/img/jia.png"
+                  src="https://cdn.xingstation.cn/fe/marketing/img/jia.png"
                 >
               </div>
               <div
@@ -1726,7 +1726,7 @@ export default {
       width: 350px;
       height: 672px;
       background: #f6f6f8;
-      background-image: url("https://cdn.exe666.com/fe/marketing/img/bg.png");
+      background-image: url("https://cdn.xingstation.cn/fe/marketing/img/bg.png");
       background-size: 100% auto;
       background-repeat: no-repeat;
       margin-right: 15px;
