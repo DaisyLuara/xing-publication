@@ -1,0 +1,222 @@
+.account-form {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  overflow-y: scroll;
+  background-image: url('http://cdn.xingstation.cn/ad/img/bg.jpg');
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.account-form .account-form__container {
+  border-radius: 2px;
+  background-color: white;
+  width: 468px;
+  min-height: 424px;
+}
+.account-form .account-form__header {
+  padding: 5px 0 8px;
+  border-bottom: 1px solid #e4e4e4;
+}
+.account-form .account-form__header .header-logo-wrap {
+  float: left;
+}
+.account-form .account-form__header .header-logo-wrap .icon-header {
+  padding-right: 10px;
+  border-right: 1px solid #e4e4e4;
+  margin-bottom: 4px;
+}
+.account-form .account-form__header .header-logo-wrap .title-header {
+  color: #444444;
+  font-size: 16px;
+  line-height: 47px;
+  padding-left: 22px;
+}
+.account-form .account-form__header .header-link {
+  float: right;
+  cursor: pointer;
+  padding-right: 15px;
+}
+.account-form .account-form__header .header-link .register-label {
+  line-height: 50px;
+  font-size: 14px;
+  color: #20a0ff;
+}
+.account-form .account-form__body {
+  width: 300px;
+  max-width: 320px;
+  font-size: 14px;
+  margin: 56px auto 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.account-form .account-form__body .account-form-item {
+  position: relative;
+  height: 43px;
+  margin-bottom: 34px;
+  border-bottom: 1px solid #e4e4e4;
+}
+.account-form .account-form__body .account-form-item .btn-code-wrap {
+  text-align: right;
+  font-size: 10px;
+  color: #20a0ff;
+}
+.account-form .account-form__body .account-form-item .btn-code-label__countdown {
+  cursor: pointer;
+  color: #20a0ff;
+}
+.account-form .account-form__body .account-form-item.active {
+  border-bottom: 2px solid #20a0ff;
+}
+.account-form .account-form__body .account-form-item.error {
+  border-bottom: 2px solid #ff4949;
+}
+.account-form .account-form__body .account-form-item .error-tip {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  bottom: -46px;
+  color: #ff4949;
+  font-size: 12px;
+  text-align: left;
+}
+.account-form .account-form__body .account-form-item .voice-tip {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  bottom: -46px;
+  text-align: left;
+  color: #474747;
+  font-size: 12px;
+}
+.account-form .account-form__body .account-form-item .btn-voice-captcha {
+  font-size: 12px;
+  color: #20a0ff;
+  cursor: pointer;
+}
+.account-form .account-form__body .account-form-item .voice-wait-tip__top {
+  line-height: 12px;
+  font-size: 12px;
+  color: #474747;
+}
+.account-form .account-form__body .account-form-item .voice-wait-tip__bottom {
+  line-height: 12px;
+  font-size: 12px;
+  margin-top: 2px;
+  color: #cdcdcd;
+}
+.account-form .account-form__body .account-form-item input {
+  width: 100%;
+  height: 36px;
+  border: none;
+  font-size: 14px;
+  padding-left: 20px;
+  background-color: #fff;
+}
+.account-form .account-form__body .account-form-item input::-webkit-input-placeholder {
+  color: #cecece;
+}
+.account-form .account-form__body .account-form-item input:-webkit-autofill {
+  background-color: #fff;
+}
+.account-form .account-form__body .account-form-item .account-form-item-label {
+  font-size: 14px;
+  color: #444444;
+  border-right: none;
+}
+.account-form .account-form__body .account-form-item.mobile .account-form-item-label {
+  padding-right: 8px;
+  border-right: 1px solid #e4e4e4;
+}
+.account-form .account-form__body .account-form-item.mobile .account-form-item-label .lable-prefix {
+  float: right;
+}
+.account-form .account-form__body .account-form-item.password .account-form-item-label {
+  border-right: none;
+}
+.account-form .account-form__body .account-form-item.image-code img {
+  float: right;
+  width: 100%;
+}
+.account-form .account-form__body .account-form-item.image-code .image-code-wrap {
+  text-align: right;
+}
+.account-form .account-form__body .account-form-item.image-code .image-code-wrap .check-image-code {
+  width: 20px;
+  height: 20px;
+  margin: 9px 5px 9px 0;
+}
+.account-form .account-form__body .account-form-item.sms-code .sms-code-wrap {
+  text-align: right;
+  font-size: 14px;
+  color: #20a0ff;
+}
+.account-form .account-form__body .account-form-item.sms-code .sms-code-label {
+  cursor: pointer;
+}
+.account-form .account-form__body .account-form-item.sms-code .sms-code-label__countdown {
+  color: #9b9b9b;
+}
+.account-form .account-form__body .account-form-submit {
+  margin-top: 40px;
+}
+.account-form .account-form__body .account-form-submit .btn-login {
+  color: #fff;
+  width: 100%;
+  height: 38px;
+  font-size: 16px;
+  text-align: center;
+  background-color: #20a0ff;
+}
+.account-form .account-form__footer {
+  width: 300px;
+  max-width: 417px;
+  margin: 0 auto;
+  padding-bottom: 20px;
+}
+.account-form .account-form__footer .auto-login {
+  color: #8a8a8a;
+  font-weight: 300;
+  font-size: 16px;
+  float: left;
+}
+.account-form .account-form__footer .find-password {
+  float: right;
+  color: #4a4a4a;
+  font-size: 16px;
+  cursor: pointer;
+}
+@media (max-width: 768px) {
+  .account-form .account-form__body {
+    width: 96%;
+    margin: 10px auto 0;
+  }
+  .account-form .account-form__body .account-form-item input {
+    font-size: 1em;
+  }
+  .account-form .m-label {
+    display: none;
+  }
+  .account-form .account-form__footer {
+    width: 96%;
+  }
+}
+.account-form .icp {
+  position: absolute;
+  color: white;
+  bottom: 21px;
+  font-size: 14px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+.switch-show-off-password {
+  width: 25px;
+}
+.switch-show-off-password img {
+  width: 100%;
+}

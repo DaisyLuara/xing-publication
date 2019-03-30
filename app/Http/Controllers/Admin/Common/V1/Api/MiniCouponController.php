@@ -264,7 +264,7 @@ class MiniCouponController extends Controller
             //积分兑换
             if ($couponBatch->credit) {
                 //积分扣除接口
-                $response = $client->request('GET', 'https://exelook.com/client//open/userhd/', [
+                $response = $client->request('GET', 'https://xingstation.cn/client//open/userhd/', [
                     'query' => [
                         'z' => $request->z,
                         'api' => 'json',
