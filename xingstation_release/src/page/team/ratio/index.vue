@@ -11,10 +11,15 @@
             <span class="label">智造比例列表</span>
           </div>
         </div>
-        <el-table :data="tableData" style="width: 100%">
+        <el-table 
+          :data="tableData" 
+          style="width: 100%">
           <el-table-column type="expand">
             <template slot-scope="scope">
-              <el-form label-position="left" inline class="demo-table-expand">
+              <el-form 
+                label-position="left" 
+                inline 
+                class="demo-table-expand">
                 <el-form-item label="交互技术-中间件">
                   <span>{{ scope.row.interaction_api }}</span>
                 </el-form-item>
@@ -99,14 +104,21 @@
             label="设计动画"
             min-width="70"
           />
-          <el-table-column :show-overflow-tooltip="true" prop="tester" label="测试基本" min-width="70"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="tester" 
+            label="测试基本" 
+            min-width="70"/>
           <el-table-column
             v-if="legalAffairsManager || bonusManage"
             label="操作"
             min-width="90"
           >
             <template slot-scope="scope">
-              <el-button size="small" type="warning" @click="editHandle(scope.row)">修改</el-button>
+              <el-button 
+                size="small" 
+                type="warning" 
+                @click="editHandle(scope.row)">修改</el-button>
             </template>
           </el-table-column>
         </el-table>

@@ -7,13 +7,18 @@
     >
       <div class="program-content-wrap">
         <div class="search-wrap">
-          <el-form ref="filters" :model="filters" :inline="true">
-            <el-form-item label prop="alias">
+          <el-form 
+            ref="filters" 
+            :model="filters" 
+            :inline="true">
+            <el-form-item 
+              label 
+              prop="alias">
               <el-select
                 v-model="filters.alias"
                 :loading="searchLoading"
-                remote
                 :remote-method="getProject"
+                remote
                 placeholder="请输入节目名称"
                 filterable
                 clearable
@@ -26,19 +31,31 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label prop>
-              <el-button type="primary" size="small" @click="search">搜索</el-button>
-              <el-button size="small" @click="resetForm('filters')">重置</el-button>
+            <el-form-item 
+              label 
+              prop>
+              <el-button 
+                type="primary" 
+                size="small" 
+                @click="search">搜索</el-button>
+              <el-button 
+                size="small" 
+                @click="resetForm('filters')">重置</el-button>
             </el-form-item>
           </el-form>
         </div>
         <div class="total-wrap">
           <span class="label">冻结明细列表</span>
         </div>
-        <el-table :data="tableData" style="width: 100%">
+        <el-table 
+          :data="tableData" 
+          style="width: 100%">
           <el-table-column type="expand">
             <template slot-scope="scope">
-              <el-form label-position="left" inline class="demo-table-expand">
+              <el-form 
+                label-position="left" 
+                inline 
+                class="demo-table-expand">
                 <el-form-item label="ID">
                   <span>{{ scope.row.id }}</span>
                 </el-form-item>
@@ -60,7 +77,11 @@
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="100"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="id" 
+            label="ID" 
+            min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="project_name"

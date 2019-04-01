@@ -1,22 +1,29 @@
 <template>
   <div class="item-wrap-template">
-    <div v-loading="setting.loading" :element-loading-text="setting.loadingText" class="pane">
+    <div 
+      v-loading="setting.loading" 
+      :element-loading-text="setting.loadingText" 
+      class="pane">
       <div
         class="pane-title"
-      >{{ programID ? (((projectManage && status===1) || legalAffairsManager || bonusManage) ? '修改节目' : '查看节目') : '新增节目'}}</div>
-      <el-form ref="programForm" :model="programForm" label-position="left" label-width="80px">
+      >{{ programID ? (((projectManage && status===1) || legalAffairsManager || bonusManage) ? '修改节目' : '查看节目') : '新增节目' }}</div>
+      <el-form 
+        ref="programForm" 
+        :model="programForm" 
+        label-position="left" 
+        label-width="80px">
         <el-row>
           <el-col :span="12">
             <el-form-item
+              :rules="[{ required: true, message: '请输入节目名称', trigger: 'submit' }]"
               label="节目名称"
               prop="belong"
-              :rules="[{ required: true, message: '请输入节目名称', trigger: 'submit' }]"
             >
               <el-select
                 v-model="programForm.belong"
                 :loading="searchLoading"
-                remote
                 :remote-method="getProject"
+                remote
                 placeholder="请输入节目名称"
                 filterable
                 clearable
@@ -31,7 +38,9 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="申请人" prop="applicant_name">
+            <el-form-item 
+              label="申请人" 
+              prop="applicant_name">
               <el-input
                 v-model="programForm.applicant_name"
                 :disabled="true"
@@ -41,21 +50,35 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="节目属性" prop="project_attribute">
+        <el-form-item 
+          label="节目属性" 
+          prop="project_attribute">
           <el-radio-group v-model="programForm.project_attribute">
             <el-radio :label="0">不计入</el-radio>
             <el-radio :label="2">简单条目
-              <el-tooltip class="item" effect="dark" content="0.1个条目（如简单换Logo等）" placement="bottom">
+              <el-tooltip 
+                class="item" 
+                effect="dark" 
+                content="0.1个条目（如简单换Logo等）" 
+                placement="bottom">
                 <i class="el-icon-info"/>
               </el-tooltip>
             </el-radio>
             <el-radio :label="1">基础条目
-              <el-tooltip class="item" effect="dark" content="1个条目（如镜视界类节目）" placement="bottom">
+              <el-tooltip 
+                class="item" 
+                effect="dark" 
+                content="1个条目（如镜视界类节目）" 
+                placement="bottom">
                 <i class="el-icon-info"/>
               </el-tooltip>
             </el-radio>
             <el-radio :label="3">节目
-              <el-tooltip class="item" effect="dark" content="1个节目（如创新玩法类节目）" placement="bottom">
+              <el-tooltip 
+                class="item" 
+                effect="dark" 
+                content="1个节目（如创新玩法类节目）" 
+                placement="bottom">
                 <i class="el-icon-info"/>
               </el-tooltip>
             </el-radio>
@@ -64,7 +87,9 @@
         </el-form-item>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="原创属性" prop="copyright_attribute">
+            <el-form-item 
+              label="原创属性" 
+              prop="copyright_attribute">
               <el-radio-group
                 v-model="programForm.copyright_attribute"
                 @change="copyrightAttributeHandle"
@@ -74,7 +99,9 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="copyrightFlag">
+          <el-col 
+            v-if="copyrightFlag" 
+            :span="12">
             <el-form-item
               :rules="[{ required: true, message: '请输入原创节目', trigger: 'submit' }]"
               label="原创节目"
@@ -83,8 +110,8 @@
               <el-select
                 v-model="programForm.copyright_project_id"
                 :loading="searchLoading"
-                remote
                 :remote-method="getSearchCopyrightProject"
+                remote
                 placeholder="无原创节目"
                 filterable
                 clearable
@@ -101,7 +128,9 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="节目类型" prop="type">
+            <el-form-item 
+              label="节目类型" 
+              prop="type">
               <el-radio-group v-model="programForm.type">
                 <el-radio :label="1">提前节目</el-radio>
                 <el-radio :label="0">正常节目</el-radio>
@@ -109,10 +138,18 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="定制属性" prop="individual_attribute">
-              <el-radio-group v-model="programForm.individual_attribute" @change="handleCustom">
+            <el-form-item 
+              label="定制属性" 
+              prop="individual_attribute">
+              <el-radio-group 
+                v-model="programForm.individual_attribute" 
+                @change="handleCustom">
                 <el-radio :label="0">非定制节目
-                  <el-tooltip class="item" effect="dark" content="无合同的节目" placement="bottom">
+                  <el-tooltip 
+                    class="item" 
+                    effect="dark" 
+                    content="无合同的节目" 
+                    placement="bottom">
                     <i class="el-icon-info"/>
                   </el-tooltip>
                 </el-radio>
@@ -142,7 +179,9 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="合同编号" prop="type">
+            <el-form-item 
+              label="合同编号" 
+              prop="type">
               <el-select
                 v-model="programForm.contract_id"
                 :disabled="contractDisable"
@@ -156,12 +195,14 @@
                   :key="item.id"
                   :label="item.contract_number"
                   :value="item.id"
-                ></el-option>
+                />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="合同金额" prop="money">
+            <el-form-item 
+              label="合同金额" 
+              prop="money">
               <el-input
                 v-model="programForm.money"
                 :disabled="true"
@@ -173,7 +214,9 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="联动属性" prop="link_attribute">
+            <el-form-item 
+              label="联动属性" 
+              prop="link_attribute">
               <el-radio-group v-model="programForm.link_attribute">
                 <el-radio :label="0">否</el-radio>
                 <el-radio :label="1">是</el-radio>
@@ -181,7 +224,9 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Hidol属性" prop="hidol_attribute">
+            <el-form-item 
+              label="Hidol属性" 
+              prop="hidol_attribute">
               <el-radio-group v-model="programForm.hidol_attribute">
                 <el-radio :label="0">否</el-radio>
                 <el-radio :label="1">是</el-radio>
@@ -191,8 +236,12 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="H5属性" prop="h5_attribute">
-              <el-radio-group v-model="programForm.h5_attribute" @change="h5Handle">
+            <el-form-item 
+              label="H5属性" 
+              prop="h5_attribute">
+              <el-radio-group 
+                v-model="programForm.h5_attribute" 
+                @change="h5Handle">
                 <el-radio :label="1">基础模版</el-radio>
                 <el-radio :label="2">复杂模版</el-radio>
               </el-radio-group>
@@ -218,7 +267,9 @@
         <h2 class="title">节目智造团队</h2>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="节目创意" prop="creative">
+            <el-form-item 
+              label="节目创意" 
+              prop="creative">
               <span
                 style="color: #999;font-size:14px;margin-right: 15px;"
               >{{ rate.originality }} * 系数</span>
@@ -243,11 +294,13 @@
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.originality,rate.originality,'creative')"
-              >{{(projectManage || legalAffairsManager || bonusManage) ? '修改':'详情' }}</el-button>
+              >{{ (projectManage || legalAffairsManager || bonusManage) ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="节目统筹" prop="whole">
+            <el-form-item 
+              label="节目统筹" 
+              prop="whole">
               <span style="color: #999;font-size:14px;">{{ rate.plan }} * 系数</span>
               <el-select
                 v-model="programForm.whole"
@@ -270,7 +323,7 @@
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.plan,rate.plan,'whole')"
-              >{{(projectManage || legalAffairsManager || bonusManage) ? '修改':'详情' }}</el-button>
+              >{{ (projectManage || legalAffairsManager || bonusManage) ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -319,7 +372,10 @@
             class="text-input"
           />
         </el-form-item>
-        <el-form-item label-width="120px" label="备注" prop="remark">
+        <el-form-item 
+          label-width="120px" 
+          label="备注" 
+          prop="remark">
           <el-input
             v-model="programForm.remark"
             :autosize="{ minRows: 2}"
@@ -331,7 +387,9 @@
         </el-form-item>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="设计动画" prop="animat">
+            <el-form-item 
+              label="设计动画" 
+              prop="animat">
               <span style="color: #999;font-size:14px;margin-right: 8px;">{{ rate.animation }} * 系数</span>
               <el-select
                 v-model="programForm.animat"
@@ -354,11 +412,14 @@
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.animation,rate.animation,'animat')"
-              >{{(projectManage || legalAffairsManager || bonusManage) ? '修改':'详情' }}</el-button>
+              >{{ (projectManage || legalAffairsManager || bonusManage) ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="设计动画.Hidol" prop="animatHidol" label-width="105px">
+            <el-form-item 
+              label="设计动画.Hidol" 
+              prop="animatHidol" 
+              label-width="105px">
               <span style="color: #999;font-size:14px;">{{ rate.animation_hidol }} * 系数</span>
               <el-select
                 v-model="programForm.animatHidol"
@@ -381,13 +442,15 @@
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.animation_hidol,rate.animation_hidol,'animatHidol')"
-              >{{(projectManage || legalAffairsManager || bonusManage) ? '修改':'详情' }}</el-button>
+              >{{ (projectManage || legalAffairsManager || bonusManage) ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="Hidol专利" prop="hidol">
+            <el-form-item 
+              label="Hidol专利" 
+              prop="hidol">
               <span
                 style="color: #999;font-size:14px;margin-right: 8px;"
               >{{ rate.hidol_patent }} * 系数</span>
@@ -412,7 +475,7 @@
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.hidol_patent,rate.hidol_patent,'hidol')"
-              >{{(projectManage || legalAffairsManager || bonusManage) ? '修改':'详情' }}</el-button>
+              >{{ (projectManage || legalAffairsManager || bonusManage) ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -435,7 +498,9 @@
                 :on-exceed="handleExceed"
                 class="upload-demo"
               >
-                <el-button size="mini" type="success">点击上传</el-button>
+                <el-button 
+                  size="mini" 
+                  type="success">点击上传</el-button>
                 <div
                   slot="tip"
                   style="display:inline-block;margin-left: 10px;"
@@ -453,7 +518,9 @@
         <h2 class="title">中后台团队</h2>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="交互技术" prop="interactionVal">
+            <el-form-item 
+              label="交互技术" 
+              prop="interactionVal">
               <span
                 style="color: #999;font-size:14px;margin-right: 15px;"
               >{{ interactionRate }} * 系数</span>
@@ -478,11 +545,14 @@
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.interaction,interactionRate,'interaction')"
-              >{{(projectManage || legalAffairsManager || bonusManage) ? '修改':'详情' }}</el-button>
+              >{{ (projectManage || legalAffairsManager || bonusManage) ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="后端IT技术" prop="backend" label-width="100px">
+            <el-form-item 
+              label="后端IT技术" 
+              prop="backend" 
+              label-width="100px">
               <span
                 style="color: #999;font-size:14px;margin-right: 8px;"
               >{{ rate.backend_docking }} * 系数</span>
@@ -507,13 +577,15 @@
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.backend_docking,rate.backend_docking,'backend')"
-              >{{(projectManage || legalAffairsManager || bonusManage) ? '修改':'详情' }}</el-button>
+              >{{ (projectManage || legalAffairsManager || bonusManage) ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="节目测试" prop="test">
+            <el-form-item 
+              label="节目测试" 
+              prop="test">
               <span style="color: #999;font-size:14px;margin-right: 8px;">{{ rate.tester }} * 系数</span>
               <el-select
                 v-model="programForm.test"
@@ -536,7 +608,7 @@
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.tester,rate.tester,'test')"
-              >{{(projectManage || legalAffairsManager|| bonusManage) ? '修改':'详情' }}</el-button>
+              >{{ (projectManage || legalAffairsManager|| bonusManage) ? '修改':'详情' }}</el-button>
               <el-tooltip
                 class="item"
                 effect="dark"
@@ -548,7 +620,10 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="H5开发" prop="H5Val" label-width="100px">
+            <el-form-item 
+              label="H5开发" 
+              prop="H5Val" 
+              label-width="100px">
               <span
                 :style="h5Rate === '0.1' ? 'margin-right: 15px;' : 'margin-right: 0;'"
                 style="color: #999;font-size:14px;"
@@ -574,13 +649,15 @@
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.h5,h5Rate,'H5')"
-              >{{(projectManage || legalAffairsManager || bonusManage) ? '修改':'详情' }}</el-button>
+              >{{ (projectManage || legalAffairsManager || bonusManage) ? '修改':'详情' }}</el-button>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="平台运营" prop="platform">
+            <el-form-item 
+              label="平台运营" 
+              prop="platform">
               <span style="color: #999;font-size:14px;margin-right: 8px;">{{ rate.operation }} * 系数</span>
               <el-select
                 v-model="programForm.platform"
@@ -603,7 +680,7 @@
                 type="text"
                 size="mini"
                 @click="modifyHandle(programForm.operation,rate.operation,'platform')"
-              >{{(projectManage || legalAffairsManager|| bonusManage) ? '修改':'详情' }}</el-button>
+              >{{ (projectManage || legalAffairsManager|| bonusManage) ? '修改':'详情' }}</el-button>
               <el-tooltip
                 class="item"
                 effect="dark"
@@ -614,9 +691,13 @@
               </el-tooltip>
             </el-form-item>
           </el-col>
-          <el-col v-if="testFile" :span="12">
+          <el-col 
+            v-if="testFile" 
+            :span="12">
             <el-form-item label="测试文档">
-              <div @click="handlePreview(testFile)" style="cursor:pointer;">{{testFile.name}}</div>
+              <div 
+                style="cursor:pointer;" 
+                @click="handlePreview(testFile)">{{ testFile.name }}</div>
             </el-form-item>
           </el-col>
         </el-row>
@@ -633,16 +714,28 @@
       </el-form>
     </div>
     <!-- 修改比列 -->
-    <el-dialog :visible.sync="dialogFormVisible" :show-close="false" title="绩效更改">
-      <el-form :model="form" label-width="90px">
+    <el-dialog 
+      :visible.sync="dialogFormVisible" 
+      :show-close="false" 
+      title="绩效更改">
+      <el-form 
+        :model="form" 
+        label-width="90px">
         <el-form-item label="总点数">
-          <el-input v-model="form.total" :disabled="disabledChange"/>
+          <el-input 
+            v-model="form.total" 
+            :disabled="disabledChange"/>
         </el-form-item>
-        <el-form-item v-for="item in peopleList" :key="item.id" :label="item.user_name">
+        <el-form-item 
+          v-for="item in peopleList" 
+          :key="item.id" 
+          :label="item.user_name">
           <el-input v-model="item.rate"/>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div 
+        slot="footer" 
+        class="dialog-footer">
         <el-button @click="dialogFormVisible = false,disabledChange = true">取 消</el-button>
         <el-button
           v-if="(projectManage && (status === 1 || status === 2)) || legalAffairsManager|| bonusManage"

@@ -87,29 +87,25 @@
             prop="title"
             label="全部卡券"
             min-width="100"
-          >
-          </el-table-column>
+          />
           <el-table-column
             :show-overflow-tooltip="true"
             prop="dateDetail"
             label="卡券有效期"
             min-width="100"
-          >
-          </el-table-column>
+          />
           <el-table-column
             :show-overflow-tooltip="true"
             prop="status"
             label="全部状态"
             min-width="100"
-          >
-          </el-table-column>
+          />
           <el-table-column
             :show-overflow-tooltip="true"
             prop="quantity"
             label="库存"
             min-width="100"
-          >
-          </el-table-column>
+          />
           <el-table-column
             :show-overflow-tooltip="true"
             label="库存修改"
@@ -117,9 +113,9 @@
           >
             <template slot-scope="scope">
               <el-popover
+                v-model="scope.row.visible"
                 placement="bottom"
                 width="250"
-                v-model="scope.row.visible"
               >
                 <el-radio
                   v-model="modifyChange"
@@ -131,27 +127,27 @@
                 >减少</el-radio>
 
                 <div style="margin:10px 0"><input
-                    type="text"
-                    v-model="modifyQuantity"
-                    style="width: 200px;
+                  v-model="modifyQuantity"
+                  type="text"
+                  style="width: 200px;
                            font-size: 14px;
                             border: 1px solid #ebeef5;
                             border-radius:5px;
                             height:30px;
                             padding:0 10px;
                             "
-                  />
+                >
                   <span>份</span>
                 </div>
                 <div
+                  v-show="submitCheck.quantityCheck1"
                   class="errMessage"
                   style="font-size:12px;margin:10px 0;color:#e15f63;"
-                  v-show="submitCheck.quantityCheck1"
                 >库存不能小于1</div>
                 <div
+                  v-show="submitCheck.quantityCheck2"
                   class="errMessage"
                   style="font-size:12px;margin:10px 0;color:#e15f63;"
-                  v-show="submitCheck.quantityCheck2"
                 >减少库存量不能大于已有库存量</div>
                 <div
                   class="message"
@@ -168,7 +164,7 @@
                     @click="cancleModify(scope.row)"
                   >取消</el-button>
                 </div>
-                <el-button slot="reference"><i class="el-icon-edit"></i></el-button>
+                <el-button slot="reference"><i class="el-icon-edit"/></el-button>
               </el-popover>
             </template>
           </el-table-column>

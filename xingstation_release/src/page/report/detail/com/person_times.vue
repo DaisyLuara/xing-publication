@@ -5,11 +5,15 @@
     class="person-times-wrap"
   >
     <!-- 主要图表部分 -->
-    <div v-loading="poepleCountFlag" class="content-wrapper">
+    <div 
+      v-loading="poepleCountFlag" 
+      class="content-wrapper">
       <ul class="btns-wrapper">
-        <li v-for="(item, key) in peopleCount" :key="item.number.index">
+        <li 
+          v-for="(item, key) in peopleCount" 
+          :key="item.number.index">
           <div class="person-btn-wrap">
-            <div :class="'person-btn-top-'+ key"></div>
+            <div :class="'person-btn-top-'+ key"/>
             <div
               :class="{'person-btn-left':key === 0,'person-btn-bg': active === key}"
               class="person-btn"
@@ -22,7 +26,10 @@
         </li>
       </ul>
       <ul class="btns-rate-wrapper">
-        <li v-for="(item, key) in peopleCount" v-if="key !== 0" :key="item.number.index">
+        <li 
+          v-for="(item, key) in peopleCount" 
+          v-if="key !== 0" 
+          :key="item.number.index">
           <div class="person-rate-btn-wrap">
             <div class="person-btn">
               <div class="person-rate-item">
@@ -30,63 +37,109 @@
                 <div class="person-btn-title">{{ key === 0 ? '' : '转化率' }}</div>
                 <div class="person-btn-count">{{ key === 0 ? '' : item.rate.value }}</div>
               </div>
-              <div v-if="key !==0 " :class="'person-rate-color-' + key">
-                <div class="person-rate-content"></div>
+              <div 
+                v-if="key !==0 " 
+                :class="'person-rate-color-' + key">
+                <div class="person-rate-content"/>
               </div>
             </div>
           </div>
         </li>
       </ul>
       <div class="chart-person-times-wrapper">
-        <chart ref="mainPersonTimesChart" :options="mainPersonTimesChart" auto-resize/>
+        <chart 
+          ref="mainPersonTimesChart" 
+          :options="mainPersonTimesChart" 
+          auto-resize/>
       </div>
     </div>
     <!-- 其他图表 -->
-    <el-collapse v-model="activeNames" @change="handleChange">
+    <el-collapse 
+      v-model="activeNames" 
+      @change="handleChange">
       <!-- 年龄分布图 -->
-      <el-collapse-item title="年龄分布图" name="1" class="echart-person-times-data">
-        <div v-loading="ageFlag" class="age-person-sex-wrapper">
+      <el-collapse-item 
+        title="年龄分布图" 
+        name="1" 
+        class="echart-person-times-data">
+        <div 
+          v-loading="ageFlag" 
+          class="age-person-sex-wrapper">
           <div class="sex-person-part">
-            <chart ref="pieSexChart" :options="pieSexChart" @click="onClick"/>
+            <chart 
+              ref="pieSexChart" 
+              :options="pieSexChart" 
+              @click="onClick"/>
           </div>
           <div class="age-person-part">
-            <chart ref="agePersonChart" :options="agePersonChart"/>
+            <chart 
+              ref="agePersonChart" 
+              :options="agePersonChart"/>
           </div>
         </div>
       </el-collapse-item>
       <!-- 时间段与人群特征 -->
-      <el-collapse-item title="时间段与人群特征" name="2" class="echart-person-times-data">
-        <div v-loading="crowdFlag" class="time-crowd-person-wrapper">
+      <el-collapse-item 
+        title="时间段与人群特征" 
+        name="2" 
+        class="echart-person-times-data">
+        <div 
+          v-loading="crowdFlag" 
+          class="time-crowd-person-wrapper">
           <div class="crowd-person-part">
-            <chart ref="crowdPersonChart" :options="timeAndCrowdPersonChart"/>
+            <chart 
+              ref="crowdPersonChart" 
+              :options="timeAndCrowdPersonChart"/>
           </div>
         </div>
       </el-collapse-item>
       <!-- 节目日化人气 -->
-      <el-collapse-item title="节目日化人气" name="3" class="echart-person-times-data">
+      <el-collapse-item 
+        title="节目日化人气" 
+        name="3" 
+        class="echart-person-times-data">
         <div class="ranking-person-wrap">
-          <div v-loading="projectPersonFlag" class="project-person-part">
-            <chart ref="projectPersonChar" :options="projectPersonOptions" @click="clickProject"/>
+          <div 
+            v-loading="projectPersonFlag" 
+            class="project-person-part">
+            <chart 
+              ref="projectPersonChar" 
+              :options="projectPersonOptions" 
+              @click="clickProject"/>
           </div>
-          <div v-loading="userFlag" class="project-age-person-part">
+          <div 
+            v-loading="userFlag" 
+            class="project-age-person-part">
             <div style="font-size: 16px;">{{ projectAgeTitle }}</div>
-            <chart ref="PersonprojectAgeChart" :options="PersonprojectAgeChart"/>
+            <chart 
+              ref="PersonprojectAgeChart" 
+              :options="PersonprojectAgeChart"/>
           </div>
         </div>
       </el-collapse-item>
       <!-- 报表部分 -->
-      <el-collapse-item title="点位列表" name="4" class="echart-person-times-data">
-        <div v-loading="tableSetting.loading" class="table-wrap">
+      <el-collapse-item 
+        title="点位列表" 
+        name="4" 
+        class="echart-person-times-data">
+        <div 
+          v-loading="tableSetting.loading" 
+          class="table-wrap">
           <div class="actions-wrap">
             <span class="label">
               <span class="point-title">点位列表</span>
               数量: {{ pagination.total }}
             </span>
           </div>
-          <el-table :data="tableData" style="width: 100%">
+          <el-table 
+            :data="tableData" 
+            style="width: 100%">
             <el-table-column type="expand">
               <template slot-scope="scope">
-                <el-form label-position="left" inline class="demo-table-expand">
+                <el-form 
+                  label-position="left" 
+                  inline 
+                  class="demo-table-expand">
                   <el-form-item label="ID">
                     <span>{{ scope.row.id }}</span>
                   </el-form-item>
@@ -137,8 +190,15 @@
                 </el-form>
               </template>
             </el-table-column>
-            <el-table-column label="ID" prop="id" width="100"/>
-            <el-table-column :show-overflow-tooltip="true" label="点位" prop="point" min-width="130">
+            <el-table-column 
+              label="ID" 
+              prop="id" 
+              width="100"/>
+            <el-table-column 
+              :show-overflow-tooltip="true" 
+              label="点位" 
+              prop="point" 
+              min-width="130">
               <template
                 slot-scope="props"
               >{{ props.row.area_name }} {{ props.row.market_name }} {{ props.row.point_name }}</template>
@@ -149,7 +209,10 @@
               prop="projects"
               min-width="130"
             />
-            <el-table-column label="围观" prop="looktimes" min-width="90"/>
+            <el-table-column 
+              label="围观" 
+              prop="looktimes" 
+              min-width="90"/>
             <el-table-column
               :show-overflow-tooltip="true"
               label="7″fCPE"
@@ -211,25 +274,46 @@
     </el-collapse>
 
     <!-- 弹窗for 性别细节 -->
-    <div v-loading="dialogLoading" v-show="shouldDialogShow" class="chart-dialog">
-      <div class="dialog-close" @click="handleDialogClose">关闭</div>
-      <chart ref="pieSexChart2" :options="sexAndAgeChart" auto-resize/>
+    <div 
+      v-loading="dialogLoading" 
+      v-show="shouldDialogShow" 
+      class="chart-dialog">
+      <div 
+        class="dialog-close" 
+        @click="handleDialogClose">关闭</div>
+      <chart 
+        ref="pieSexChart2" 
+        :options="sexAndAgeChart" 
+        auto-resize/>
     </div>
 
     <!-- dialog for 漏斗 -->
-    <div v-loading="rateDialog" v-show="shouldPicDialogShow" class="pic-times-dialog">
-      <div class="dialog-close" @click="handlePicShow">关闭</div>
+    <div 
+      v-loading="rateDialog" 
+      v-show="shouldPicDialogShow" 
+      class="pic-times-dialog">
+      <div 
+        class="dialog-close" 
+        @click="handlePicShow">关闭</div>
       <div class="pic-times-content">
         <div class="actions-wrap-pic">
           <div class="label">
             <div
               class="item-text"
             >时间：{{ handleDateTransform(searchForm.dateTime[0]) }} - {{ handleDateTransform(searchForm.dateTime[1]) }}</div>
-            <div v-if="sceneInfo" class="item-text">场景：{{ sceneInfo }}</div>
-            <div v-if="projectInfo" class="item-text">节目：{{ projectInfo }}</div>
-            <div v-if="addressInfo" class="item-text">地址：{{ addressInfo }}</div>
+            <div 
+              v-if="sceneInfo" 
+              class="item-text">场景：{{ sceneInfo }}</div>
+            <div 
+              v-if="projectInfo" 
+              class="item-text">节目：{{ projectInfo }}</div>
+            <div 
+              v-if="addressInfo" 
+              class="item-text">地址：{{ addressInfo }}</div>
           </div>
-          <div style="text-align: right;" class="label">
+          <div 
+            style="text-align: right;" 
+            class="label">
             <span class="icon-wrap">
               <span class="icon-num">
                 {{ rateDay }}
@@ -257,29 +341,60 @@
           <el-col :span="12">
             <div class="funnel">
               <div class="legend">
-                <span class="legend-text" @click="legendHandle('0')">
-                  <span :class="{'label-gray': !dataOptions[0]}" class="legend-text-one"/>围观
+                <span 
+                  class="legend-text" 
+                  @click="legendHandle('0')">
+                  <span 
+                    :class="{'label-gray': !dataOptions[0]}" 
+                    class="legend-text-one"/>围观
                 </span>
-                <span class="legend-text" @click="legendHandle('1')">
-                  <span :class="{'label-gray': !dataOptions[1]}" class="legend-text-two"/>7秒
+                <span 
+                  class="legend-text" 
+                  @click="legendHandle('1')">
+                  <span 
+                    :class="{'label-gray': !dataOptions[1]}" 
+                    class="legend-text-two"/>7秒
                 </span>
-                <span class="legend-text" @click="legendHandle('2')">
-                  <span :class="{'label-gray': !dataOptions[2]}" class="legend-text-three"/>15秒
+                <span 
+                  class="legend-text" 
+                  @click="legendHandle('2')">
+                  <span 
+                    :class="{'label-gray': !dataOptions[2]}" 
+                    class="legend-text-three"/>15秒
                 </span>
-                <span class="legend-text" @click="legendHandle('3')">
-                  <span :class="{'label-gray': !dataOptions[3]}" class="legend-text-four"/>21秒
+                <span 
+                  class="legend-text" 
+                  @click="legendHandle('3')">
+                  <span 
+                    :class="{'label-gray': !dataOptions[3]}" 
+                    class="legend-text-four"/>21秒
                 </span>
-                <span class="legend-text" @click="legendHandle('4')">
-                  <span :class="{'label-gray': !dataOptions[4]}" class="legend-text-five"/>跳转
+                <span 
+                  class="legend-text" 
+                  @click="legendHandle('4')">
+                  <span 
+                    :class="{'label-gray': !dataOptions[4]}" 
+                    class="legend-text-five"/>跳转
                 </span>
-                <span class="legend-text" @click="legendHandle('5')">
-                  <span :class="{'label-gray': !dataOptions[5]}" class="legend-text-six"/>拉新
+                <span 
+                  class="legend-text" 
+                  @click="legendHandle('5')">
+                  <span 
+                    :class="{'label-gray': !dataOptions[5]}" 
+                    class="legend-text-six"/>拉新
                 </span>
-                <span class="legend-text" @click="legendHandle('6')">
-                  <span :class="{'label-gray': !dataOptions[6]}" class="legend-text-seven"/>核销
+                <span 
+                  class="legend-text" 
+                  @click="legendHandle('6')">
+                  <span 
+                    :class="{'label-gray': !dataOptions[6]}" 
+                    class="legend-text-seven"/>核销
                 </span>
               </div>
-              <PicChart :chartdata="chartdata" :data-options="dataOptions" :width="width"/>
+              <PicChart 
+                :chartdata="chartdata" 
+                :data-options="dataOptions" 
+                :width="width"/>
             </div>
           </el-col>
           <el-col :span="12">

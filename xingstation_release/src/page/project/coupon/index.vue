@@ -7,8 +7,13 @@
     >
       <div class="item-content-wrap">
         <div class="search-wrap">
-          <el-form ref="filters" :model="filters" :inline="true">
-            <el-form-item label prop="coupon_batch_id">
+          <el-form 
+            ref="filters" 
+            :model="filters" 
+            :inline="true">
+            <el-form-item 
+              label 
+              prop="coupon_batch_id">
               <el-select
                 v-model="filters.coupon_batch_id"
                 :loading="searchLoading"
@@ -28,7 +33,9 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label prop="status">
+            <el-form-item 
+              label 
+              prop="status">
               <el-select
                 v-model="filters.status"
                 placeholder="请选择优惠券状态"
@@ -43,7 +50,9 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label prop="company_id">
+            <el-form-item 
+              label 
+              prop="company_id">
               <el-select
                 v-model="filters.company_id"
                 placeholder="请选择公司"
@@ -60,7 +69,9 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label prop="shop_customer_id">
+            <el-form-item 
+              label 
+              prop="shop_customer_id">
               <el-select
                 v-model="filters.shop_customer_id"
                 placeholder="请选择核销人"
@@ -76,7 +87,9 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label prop="dataValue">
+            <el-form-item 
+              label 
+              prop="dataValue">
               <el-date-picker
                 v-model="filters.dataValue"
                 :clearable="false"
@@ -85,24 +98,40 @@
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
                 align="right"
-              ></el-date-picker>
+              />
             </el-form-item>
-            <el-form-item label prop>
-              <el-button type="primary" size="small" @click="search()">搜索</el-button>
-              <el-button type="default" size="small" @click="resetSearch('filters')">重置</el-button>
+            <el-form-item 
+              label 
+              prop>
+              <el-button 
+                type="primary" 
+                size="small" 
+                @click="search()">搜索</el-button>
+              <el-button 
+                type="default" 
+                size="small" 
+                @click="resetSearch('filters')">重置</el-button>
             </el-form-item>
           </el-form>
         </div>
         <div class="total-wrap">
           <span class="label">总数:{{ pagination.total }}</span>
           <div>
-            <el-button type="success" size="small" @click="exportList">导出</el-button>
+            <el-button 
+              type="success" 
+              size="small" 
+              @click="exportList">导出</el-button>
           </div>
         </div>
-        <el-table :data="tableData" style="width: 100%">
+        <el-table 
+          :data="tableData" 
+          style="width: 100%">
           <el-table-column type="expand">
             <template slot-scope="scope">
-              <el-form label-position="left" inline class="demo-table-expand">
+              <el-form 
+                label-position="left" 
+                inline 
+                class="demo-table-expand">
                 <el-form-item label="优惠券编码">
                   <span>{{ scope.row.code }}</span>
                 </el-form-item>
@@ -148,8 +177,16 @@
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="code" label="优惠券编码" min-width="100"/>
-          <el-table-column :show-overflow-tooltip="true" prop="name" label="优惠券名称" min-width="100"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="code" 
+            label="优惠券编码" 
+            min-width="100"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="name" 
+            label="优惠券名称" 
+            min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="status"
@@ -175,15 +212,27 @@
             label="核销时间"
             min-width="100"
           />
-          <el-table-column :show-overflow-tooltip="true" prop label="公司" min-width="100">
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop 
+            label="公司" 
+            min-width="100">
             <template slot-scope="scope">{{ scope.row.couponBatch.company.name }}</template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop label="核销人" min-width="100">
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop 
+            label="核销人" 
+            min-width="100">
             <template
               slot-scope="scope"
             >{{ scope.row.customer !==undefined ? scope.row.customer.name : '' }}</template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop label="点位" min-width="100">
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop 
+            label="点位" 
+            min-width="100">
             <template
               slot-scope="scope"
             >{{ scope.row.point.id !== 0 ? scope.row.point.market.area.name + '-' + scope.row.point.market.name + '-' + scope.row.point.name : '' }}</template>
