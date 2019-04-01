@@ -122,7 +122,6 @@ export default {
     tableData: {
       type: Array,
       required: true
-      // default: []
     }
   },
   data() {

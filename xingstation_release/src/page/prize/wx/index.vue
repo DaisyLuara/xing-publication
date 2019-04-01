@@ -79,6 +79,12 @@
             min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
+            prop="title"
+            label="全部卡券"
+            min-width="100"
+          />
+          <el-table-column
+            :show-overflow-tooltip="true"
             prop="dateDetail"
             label="卡券有效期"
             min-width="100"
