@@ -554,7 +554,7 @@
             v-if="modifyOptionFlag.defineTemplate" 
             label="自定义模版" 
             prop="define">
-            <el-select
+            <el-select 
               v-model="projectForm.define" 
               placeholder="请选择" 
               filterable 

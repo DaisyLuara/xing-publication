@@ -82,7 +82,7 @@ return [
         'qiniu_bw' => [
             'driver' => 'qiniu',
             'domains' => [
-                'default' => 'cdn.exe666.com', //你的七牛域名
+                'default' => 'cdn.xingstation.cn', //你的七牛域名
                 'https' => '',         //你的HTTPS域名
                 'custom' => '',                //你的自定义域名
             ],
@@ -90,7 +90,7 @@ return [
             'secret_key' => 'XDAkO7Gj-JORvuKelsbEF9IZXzYgCTbdWbuBtcah',  //SecretKey
             'bucket' => 'exe666',  //Bucket名字
             'notify_url' => '',  //持久化处理回调地址
-            'url' => 'http://cdn.exe666.com',  // 填写文件访问根url
+            'url' => 'http://cdn.xingstation.cn',  // 填写文件访问根url
         ],
     ],
 
