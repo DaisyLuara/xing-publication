@@ -9,7 +9,7 @@ use League\Fractal\TransformerAbstract;
 
 class CompanyTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['user', 'customers', 'bdUser', 'media'];
+    protected $availableIncludes = ['user', 'customers', 'bdUser', 'media', 'parent'];
 
     public function transform(Company $company)
     {
@@ -51,5 +51,13 @@ class CompanyTransformer extends TransformerAbstract
             return $this->item($company->media, new MediaTransformer());
         }
     }
+
+    public function includeParent(Company $company)
+    {
+        if ($company->parent) {
+            return $this->item($company->parent, new CompanyTransformer());
+        }
+    }
+
 
 }

@@ -13,7 +13,7 @@
       class="avatar-wrap">
       <div class="avatar-block">
         <span>
-        {{ name }}
+          {{ name }}
         </span>
         <img 
           src="~assets/images/user-default-icon.png" 
@@ -30,15 +30,15 @@
         </el-dropdown-item>
         <el-dropdown-item divided>
           <span 
-            @click="intoCenter"
-            class="item-info">
+            class="item-info"
+            @click="intoCenter">
             个人中心
           </span>
         </el-dropdown-item>
         <el-dropdown-item divided>
           <span 
-            @click="logout"
-            class="item-info">
+            class="item-info"
+            @click="logout">
             退出
           </span>
         </el-dropdown-item>

@@ -55,8 +55,12 @@ class ChartDataController extends Controller
         $table = $query->getModel()->getTable();
         $this->handleQuery($request, $query);
 
-        $faceCount = $query->selectRaw("max($table.clientdate) as max_date,min($table.clientdate) as min_date,$table.id as id,sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum) as playernum,sum(lovenum) as lovenum,sum(outnum) as outnum,sum(scannum) as scannum,avr_official.name as point_name,avr_official_market.name as market_name,avr_official_area.name as area_name,xs_face_count_log.date as created_at")
-            ->selectRaw("(SELECT GROUP_CONCAT(DISTINCT (ar_product_list.name)) FROM xs_face_count_log AS fcl2 INNER JOIN ar_product_list ON ar_product_list.versionname = fcl2.belong WHERE fcl2.oid = $table.oid AND date_format(fcl2.date, '%Y-%m-%d') BETWEEN '$request->start_date' AND '$request->end_date' GROUP BY fcl2.oid) as projects ")
+        $startClientdate = strtotime($request->start_date) * 1000;
+        $endClientdate = strtotime($request->end_date) * 1000;
+        $faceCount = $query->selectRaw("max($table.clientdate) as max_date,min($table.clientdate) as min_date,$table.id as id
+        ,sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum) as playernum,sum(lovenum) as lovenum,sum(outnum) as outnum,sum(scannum) as scannum
+        ,avr_official.name as point_name,avr_official_market.name as market_name,avr_official_area.name as area_name,xs_face_count_log.date as created_at")
+            ->selectRaw("(SELECT GROUP_CONCAT(DISTINCT (ar_product_list.name)) FROM xs_face_count_log AS fcl2 INNER JOIN ar_product_list ON ar_product_list.versionname = fcl2.belong WHERE fcl2.oid = $table.oid AND fcl2.clientdate  BETWEEN '$startClientdate' AND '$endClientdate' GROUP BY fcl2.oid) as projects ")
             //->where("$table.fclid", '>', 0)
             ->groupBy("$table.oid")
             ->orderBy('avr_official_area.areaid', 'desc')
@@ -431,14 +435,8 @@ class ChartDataController extends Controller
      */
     public function getCharacterByTime(ChartDataRequest $request, Builder $query)
     {
-        $startDate = $request->start_date;
-        $endDate = $request->end_date;
-        $startClientDate = strtotime($startDate) * 1000;
-        $endClientDate = strtotime($endDate) * 1000;
-
         $this->handleQuery($request, $query);
-        $data = $query->whereRaw("xs_face_character_count.clientdate between '$startClientDate' and '$endClientDate'")
-            ->groupBy('time')
+        $data = $query->groupBy('time')
             ->selectRaw("time,sum(century10_bnum+century10_gnum) as century10, sum(century00_bnum + century00_gnum) as century00,sum(century90_bnum + century90_gnum) as century90,sum(century80_bnum + century80_gnum) as century80,sum(century70_bnum + century70_gnum) as century70")
             ->selectRaw("sum(century10_gnum+century00_gnum+century90_gnum+century80_gnum+century70_gnum) as gnum,sum(century10_bnum+century10_gnum+century00_gnum+century00_bnum+century90_gnum+century90_bnum+century80_gnum+century80_bnum+century70_gnum+century70_bnum) as totalnum")
             ->get();
@@ -527,8 +525,8 @@ class ChartDataController extends Controller
 
     public function getFunnelChart(ChartDataRequest $request, Builder $query)
     {
-        $startDate = $request->start_date;
-        $endDate = $request->end_date;
+        $startClientdate = strtotime($request->start_date) * 1000;
+        $endClientdate = strtotime($request->end_date) * 1000;
 
         $this->handleQuery($request, $query);
 
@@ -537,7 +535,7 @@ class ChartDataController extends Controller
 
         $allData = XsFaceCountLog::query()
             ->selectRaw("sum(looknum) as looknum ,sum(playernum7) as playernum7,sum(playernum) as playernum ,sum(omo_outnum) as omo_outnum,sum(lovenum) as lovenum")
-            ->whereRaw("date_format(date,'%Y-%m-%d') between '$startDate' and '$endDate' and belong='all'")
+            ->whereRaw("clientdate between '$startClientdate' and '$endClientdate' and belong='all'")
             ->first();
 
         $query = XsFaceCountLog::query();
@@ -592,7 +590,7 @@ class ChartDataController extends Controller
 
         $output['oid_count'] = $count->oid_count;
         $output['market_count'] = $count->market_count;
-        $output['day'] = (new Carbon($endDate))->diffInDays((new Carbon($startDate))) + 1;
+        $output['day'] = (new Carbon($request->start_date))->diffInDays((new Carbon($request->end_date))) + 1;
 
         return $output;
     }
@@ -649,8 +647,8 @@ class ChartDataController extends Controller
     {
         $user = $this->user();
         $table = $query->getModel()->getTable();
-        $arUserID = $request->home_page ? 0 : getArUserID($user, $request);
-        handPointQuery($request, $query, $arUserID, $selectPoint);
+        $arUserZ = $request->home_page ? 0 : getArUserZ($user, $request);
+        handPointQuery($request, $query, $arUserZ, $selectPoint);
 
         //节目搜索-注意业务逻辑
         if ($selectByAlias) {

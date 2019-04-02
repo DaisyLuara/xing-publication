@@ -17,9 +17,6 @@ $api->version('v1', [
             $api->any('user/byOpenUserId', 'UserController@getUserByOpenUserID');
             $api->post('users', 'UserController@store'); //手机号开通会员卡
 
-            $api->get('promotion/categories', 'PromotionController@getCategoryList');
-            $api->get('promotion', 'PromotionAPIController@getList');
-
             $api->get('coupon', 'CouponController@index');
             $api->post('coupon', 'CouponController@store');
         });

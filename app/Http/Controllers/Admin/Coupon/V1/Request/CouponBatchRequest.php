@@ -44,7 +44,7 @@ class CouponBatchRequest extends Request
                     'credit' => 'alpha_num|nullable',
                     'marketid' => 'integer|nullable',
                     'oid' => 'array|max:10',
-                    'scene_type' => 'integer|nullable'
+                    'scene_type' => 'required|integer'
                 ];
                 break;
             case 'PATCH':
@@ -68,7 +68,7 @@ class CouponBatchRequest extends Request
                     'credit' => 'alpha_num|nullable',
                     'marketid' => 'integer|nullable',
                     'oid' => 'array|max:10',
-                    'scene_type' => 'integer|nullable'
+                    'scene_type' => 'required|integer'
                 ];
 
                 break;

@@ -6,7 +6,9 @@
   >
     <div class="user-list-content">
       <div class="search-wrap">
-        <el-form :model="filters" :inline="true">
+        <el-form 
+          :model="filters" 
+          :inline="true">
           <el-form-item label>
             <el-input
               v-model="filters.phone"
@@ -16,10 +18,18 @@
             />
           </el-form-item>
           <el-form-item label>
-            <el-input v-model="filters.name" style="width:200px" placeholder="请输入搜索的名字" clearable/>
+            <el-input 
+              v-model="filters.name" 
+              style="width:200px" 
+              placeholder="请输入搜索的名字" 
+              clearable/>
           </el-form-item>
           <el-form-item label>
-            <el-select v-model="filters.role_id" placeholder="请选择角色" filterable clearable>
+            <el-select 
+              v-model="filters.role_id" 
+              placeholder="请选择角色" 
+              filterable 
+              clearable>
               <el-option
                 v-for="item in roleList"
                 :key="item.id"
@@ -28,29 +38,62 @@
               />
             </el-select>
           </el-form-item>
-          <el-button type="primary" size="small" @click="search">搜索</el-button>
-          <el-button type="default" size="small" @click="resetSearch">重置</el-button>
+          <el-button 
+            type="primary" 
+            size="small" 
+            @click="search">搜索</el-button>
+          <el-button 
+            type="default" 
+            size="small" 
+            @click="resetSearch">重置</el-button>
         </el-form>
       </div>
       <div class="actions-wrap">
         <span class="label">用户数量: {{ pagination.total }}</span>
-        <el-button size="small" type="success" @click="linkToAddUser">新增用户</el-button>
+        <el-button 
+          size="small" 
+          type="success" 
+          @click="linkToAddUser">新增用户</el-button>
       </div>
-      <el-table ref="userTable" :data="userList" highlight-current-row style="width: 100%">
-        <el-table-column prop="name" label="姓名"/>
-        <el-table-column prop="phone" label="手机号码"/>
-        <el-table-column prop="role" label="角色"/>
-        <el-table-column prop="bind_weixin" label="是否绑定微信">
+      <el-table 
+        ref="userTable" 
+        :data="userList" 
+        highlight-current-row 
+        style="width: 100%">
+        <el-table-column 
+          prop="name" 
+          label="姓名"/>
+        <el-table-column 
+          prop="phone" 
+          label="手机号码"/>
+        <el-table-column 
+          prop="role" 
+          label="角色"/>
+        <el-table-column 
+          prop="bind_weixin" 
+          label="是否绑定微信">
           <template slot-scope="scope">
             <span>{{ scope.row.bind_weixin === true ? '是' : '否' }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="created_at" label="创建时间"/>
-        <el-table-column prop="updated_at" label="修改时间"/>
-        <el-table-column label="操作" width="150">
+        <el-table-column 
+          prop="created_at" 
+          label="创建时间"/>
+        <el-table-column 
+          prop="updated_at" 
+          label="修改时间"/>
+        <el-table-column 
+          label="操作" 
+          width="150">
           <template slot-scope="scope">
-            <el-button size="small" type="warning" @click="linkToEdit(scope.row)">修改</el-button>
-            <el-button size="small" type="danger" @click="deleteUsers(scope.row)">删除</el-button>
+            <el-button 
+              size="small" 
+              type="warning" 
+              @click="linkToEdit(scope.row)">修改</el-button>
+            <el-button 
+              size="small" 
+              type="danger" 
+              @click="deleteUsers(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>

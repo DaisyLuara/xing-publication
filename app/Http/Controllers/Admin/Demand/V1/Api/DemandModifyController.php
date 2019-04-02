@@ -69,7 +69,7 @@ class DemandModifyController extends Controller
 
         }
 
-        $demandModify = $query->orderBy("id")->paginate(10);
+        $demandModify = $query->orderByDesc("id")->paginate(10);
         return $this->response->paginator($demandModify, new DemandModifyTransformer());
     }
 
@@ -106,10 +106,9 @@ class DemandModifyController extends Controller
         $demandModify->fill($insertParams)->save();
         $demandApplication->update(["status"=>DemandApplication::STATUS_MODIFY]);
 
-        DemandModifyNotificationJob::dispatch($demandModify, 'create');
-        DemandModifyNotificationJob::dispatch($demandModify, 'un_review')->delay(
-            now()->addHours(12)
-        );
+        DemandModifyNotificationJob::dispatch($demandModify, 'create')->onQueue('demand');
+        DemandModifyNotificationJob::dispatch($demandModify, 'un_review')->onQueue('demand')
+            ->delay(now()->addHours(12));
 
         return $this->response->item($demandModify, new DemandModifyTransformer());
     }
@@ -148,7 +147,7 @@ class DemandModifyController extends Controller
 
         $demandModify->update($updateParams);
 
-        DemandModifyNotificationJob::dispatch($demandModify, 'update');
+        DemandModifyNotificationJob::dispatch($demandModify, 'update')->onQueue('demand');
 
         return $this->response->item($demandModify, new DemandModifyTransformer());
     }
@@ -190,7 +189,7 @@ class DemandModifyController extends Controller
 
         $demandModify->update($updateParams);
 
-        DemandModifyNotificationJob::dispatch($demandModify, 'reviewed');
+        DemandModifyNotificationJob::dispatch($demandModify, 'reviewed')->onQueue('demand');
 
         return $this->response->item($demandModify, new DemandModifyTransformer());
 
@@ -229,7 +228,7 @@ class DemandModifyController extends Controller
 
         $demandModify->update($updateParams);
 
-        DemandModifyNotificationJob::dispatch($demandModify, 'feedback');
+        DemandModifyNotificationJob::dispatch($demandModify, 'feedback')->onQueue('demand');
 
         return $this->response->item($demandModify, new DemandModifyTransformer());
     }

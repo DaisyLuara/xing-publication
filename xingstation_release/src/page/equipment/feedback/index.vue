@@ -5,8 +5,14 @@
     class="page-list-template"
   >
     <div class="search-wrap">
-      <el-form ref="searchForm" :inline="true" :model="searchForm" class="search-form">
-        <el-form-item label prop="device_code">
+      <el-form 
+        ref="searchForm" 
+        :inline="true" 
+        :model="searchForm" 
+        class="search-form">
+        <el-form-item 
+          label 
+          prop="device_code">
           <el-input
             v-model="searchForm.device_code"
             clearable
@@ -14,13 +20,27 @@
             class="item-input"
           />
         </el-form-item>
-        <el-form-item label prop="action">
-          <el-input v-model="searchForm.action" clearable placeholder="action" class="item-input"/>
+        <el-form-item 
+          label 
+          prop="action">
+          <el-input 
+            v-model="searchForm.action" 
+            clearable 
+            placeholder="action" 
+            class="item-input"/>
         </el-form-item>
-        <el-form-item label prop="code">
-          <el-input v-model="searchForm.code" clearable placeholder="code" class="item-input"/>
+        <el-form-item 
+          label 
+          prop="code">
+          <el-input 
+            v-model="searchForm.code" 
+            clearable 
+            placeholder="code" 
+            class="item-input"/>
         </el-form-item>
-        <el-form-item label prop="dataValue">
+        <el-form-item 
+          label 
+          prop="dataValue">
           <el-date-picker
             v-model="searchForm.dataValue"
             :clearable="false"
@@ -29,11 +49,17 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             align="right"
-          ></el-date-picker>
+          />
         </el-form-item>
         <el-form-item label>
-          <el-button type="primary" size="small" @click="search('searchForm')">搜索</el-button>
-          <el-button type="default" size="small" @click="resetSearch('searchForm')">重置</el-button>
+          <el-button 
+            type="primary" 
+            size="small" 
+            @click="search('searchForm')">搜索</el-button>
+          <el-button 
+            type="default" 
+            size="small" 
+            @click="resetSearch('searchForm')">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -41,10 +67,15 @@
       <span class="label">数量: {{ total }}</span>
     </div>
     <div class="table-area">
-      <el-table :data="tableData" style="width: 100%">
+      <el-table 
+        :data="tableData" 
+        style="width: 100%">
         <el-table-column type="expand">
           <template slot-scope="scope">
-            <el-form label-position="left" inline class="demo-table-expand">
+            <el-form 
+              label-position="left" 
+              inline 
+              class="demo-table-expand">
               <el-form-item label="ID">
                 <span>{{ scope.row.id }}</span>
               </el-form-item>
@@ -72,7 +103,10 @@
             </el-form>
           </template>
         </el-table-column>
-        <el-table-column prop="id" label="ID" min-width="200"></el-table-column>
+        <el-table-column 
+          prop="id" 
+          label="ID" 
+          min-width="200"/>
         <el-table-column
           :show-overflow-tooltip="true"
           prop="created_at"
@@ -97,7 +131,11 @@
           label="couponID"
           min-width="120"
         />
-        <el-table-column :show-overflow-tooltip="true" prop="code" label="code" min-width="120"/>
+        <el-table-column 
+          :show-overflow-tooltip="true" 
+          prop="code" 
+          label="code" 
+          min-width="120"/>
         <el-table-column
           :show-overflow-tooltip="true"
           prop="game_name"
@@ -130,6 +168,8 @@ import {
   Button,
   FormItem,
   Form,
+  Table,
+  TableColumn,
   Pagination,
   DatePicker
 } from "element-ui";
@@ -139,6 +179,8 @@ export default {
     "el-button": Button,
     "el-form-item": FormItem,
     "el-form": Form,
+    "el-table": Table,
+    "el-table-column": TableColumn,
     "el-pagination": Pagination,
     "el-date-picker": DatePicker
   },
@@ -293,6 +335,19 @@ export default {
         margin-right: 5px;
       }
     }
+  }
+  .demo-table-expand {
+    font-size: 0;
+  }
+
+  .demo-table-expand label {
+    width: 90px;
+    color: #99a9bf;
+  }
+  .demo-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 50%;
   }
   .actions-wrap {
     margin-top: 5px;

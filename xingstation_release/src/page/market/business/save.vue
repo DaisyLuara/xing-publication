@@ -1,6 +1,9 @@
 <template>
   <div class="item-wrap-template">
-    <div v-loading="setting.loading" :element-loading-text="setting.loadingText" class="pane">
+    <div 
+      v-loading="setting.loading" 
+      :element-loading-text="setting.loadingText" 
+      class="pane">
       <div class="pane-title">{{ businessID ? '修改商户' : '新增商户' }}</div>
       <el-form
         ref="businessForm"
@@ -9,12 +12,23 @@
         label-width="150px"
         class="business-form"
       >
-        <el-tabs v-model="activeName" type="card">
-          <el-tab-pane label="商户配置" name="first">
-            <el-form-item label="商户名称" prop="name">
-              <el-input v-model="businessForm.name" placeholder="请输入商户名称" class="item-input"/>
+        <el-tabs 
+          v-model="activeName" 
+          type="card">
+          <el-tab-pane 
+            label="商户配置" 
+            name="first">
+            <el-form-item 
+              label="商户名称" 
+              prop="name">
+              <el-input 
+                v-model="businessForm.name" 
+                placeholder="请输入商户名称" 
+                class="item-input"/>
             </el-form-item>
-            <el-form-item label="公司名称" prop="company_id">
+            <el-form-item 
+              label="公司名称" 
+              prop="company_id">
               <el-select
                 v-model="businessForm.company_id"
                 :loading="searchLoading"
@@ -30,23 +44,31 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="商户属性" prop="type">
+            <el-form-item 
+              label="商户属性" 
+              prop="type">
               <el-radio-group v-model="businessForm.type">
                 <el-radio :label="1">自营</el-radio>
                 <el-radio :label="2">连锁</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="关联场地" prop="market">
-              <el-radio-group v-model="businessForm.market" @change="handleRelatedField">
+            <el-form-item 
+              label="关联场地" 
+              prop="market">
+              <el-radio-group 
+                v-model="businessForm.market" 
+                @change="handleRelatedField">
                 <el-radio :label="1">是</el-radio>
                 <el-radio :label="2">否</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="区域" prop="areaid">
+            <el-form-item 
+              label="区域" 
+              prop="areaid">
               <el-select
                 v-model="businessForm.areaid"
-                placeholder="请选择区域"
                 :loading="searchLoading"
+                placeholder="请选择区域"
                 filterable
                 @change="areaHandle"
               >
@@ -58,7 +80,10 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="场地名称" prop="marketid" v-if="marketShow">
+            <el-form-item 
+              v-if="marketShow" 
+              label="场地名称" 
+              prop="marketid">
               <el-select
                 v-model="businessForm.marketid"
                 :remote-method="getMarket"
@@ -76,27 +101,46 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="商户logo" prop="media_id">
+            <el-form-item 
+              label="商户logo" 
+              prop="media_id">
               <el-upload
-                class="avatar-uploader"
                 :action="SERVER_URL + '/api/media'"
                 :data="{type: 'image'}"
                 :headers="formHeader"
                 :show-file-list="false"
                 :on-success="handleAvatarSuccess"
                 :before-upload="beforeAvatarUpload"
+                class="avatar-uploader"
               >
-                <img v-if="logoUrl" :src="logoUrl" class="avatar">
-                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                <img 
+                  v-if="logoUrl" 
+                  :src="logoUrl" 
+                  class="avatar">
+                <i 
+                  v-else 
+                  class="el-icon-plus avatar-uploader-icon"/>
               </el-upload>
             </el-form-item>
-            <el-form-item label="商户电话" prop="phone">
-              <el-input v-model="businessForm.phone" placeholder="请输入商户电话" class="item-input"/>
+            <el-form-item 
+              label="商户电话" 
+              prop="phone">
+              <el-input 
+                v-model="businessForm.phone" 
+                placeholder="请输入商户电话" 
+                class="item-input"/>
             </el-form-item>
-            <el-form-item label="商户地址" prop="address">
-              <el-input v-model="businessForm.address" placeholder="请输入商户地址" class="item-input"/>
+            <el-form-item 
+              label="商户地址" 
+              prop="address">
+              <el-input 
+                v-model="businessForm.address" 
+                placeholder="请输入商户地址" 
+                class="item-input"/>
             </el-form-item>
-            <el-form-item label="商户详情" prop="description">
+            <el-form-item 
+              label="商户详情" 
+              prop="description">
               <el-input
                 v-model="businessForm.description"
                 type="textarea"
@@ -104,50 +148,28 @@
                 class="item-input"
               />
             </el-form-item>
-            <el-form-item label="核销员姓名" prop="customer.name">
-              <el-select
-                v-model="businessForm.customer.name"
-                :loading="searchLoading"
-                filterable
-                allow-create
-                default-first-option
-                placeholder="核销员姓名"
-                @change="customerHandle"
-              >
-                <el-option
-                  v-for="item in customerList"
-                  :key="item.name"
-                  :label="item.name"
-                  :value="item.name"
-                />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="核销员电话" prop="customer.phone">
-              <el-input
-                v-model="businessForm.customer.phone"
-                :maxlength="11"
-                placeholder="请输入核销员电话"
-                class="item-input"
-              />
-            </el-form-item>
-            <el-form-item label="核销密码" prop="customer.password">
-              <el-input
-                v-model="businessForm.customer.password"
-                :disabled="passwordShow"
-                placeholder="请输入核销密码"
-                class="item-input"
-              />
-            </el-form-item>
           </el-tab-pane>
-          <el-tab-pane v-loading="contractFlag" label="合约配置" name="second">
-            <el-form-item label="合同" prop="contract">
-              <el-radio-group v-model="businessForm.contract" @change="handleContract">
+          <el-tab-pane 
+            v-loading="contractFlag" 
+            label="合约配置" 
+            name="second">
+            <el-form-item 
+              label="合同" 
+              prop="contract">
+              <el-radio-group 
+                v-model="businessForm.contract" 
+                @change="handleContract">
                 <el-radio :label="0">无</el-radio>
                 <el-radio :label="1">有</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="合同编号" prop="contract_id" v-if="contractShow">
-              <el-select v-model="businessForm.contract_id" placeholder="请选择合同编号">
+            <el-form-item 
+              v-if="contractShow" 
+              label="合同编号" 
+              prop="contract_id">
+              <el-select 
+                v-model="businessForm.contract_id" 
+                placeholder="请选择合同编号">
                 <el-option
                   v-for="item in contractList"
                   :key="item.id"
@@ -156,7 +178,9 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="所属人" prop="user_id">
+            <el-form-item 
+              label="所属人" 
+              prop="user_id">
               <el-select
                 v-model="businessForm.user_id"
                 :loading="searchLoading"
@@ -171,7 +195,9 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="合同开始时间" prop="start_date">
+            <el-form-item 
+              label="合同开始时间" 
+              prop="start_date">
               <el-date-picker
                 v-model="businessForm.start_date"
                 type="date"
@@ -179,7 +205,9 @@
                 class="coupon-form-date"
               />
             </el-form-item>
-            <el-form-item label="合同结束时间" prop="end_date">
+            <el-form-item 
+              label="合同结束时间" 
+              prop="end_date">
               <el-date-picker
                 v-model="businessForm.end_date"
                 type="date"
@@ -190,7 +218,10 @@
           </el-tab-pane>
         </el-tabs>
         <el-form-item>
-          <el-button type="primary" @click="submit('businessForm')" :loading="btnLoading">保存</el-button>
+          <el-button 
+            :loading="btnLoading" 
+            type="primary" 
+            @click="submit('businessForm')">保存</el-button>
           <el-button @click="historyBack">返回</el-button>
         </el-form-item>
       </el-form>
@@ -208,7 +239,7 @@ import {
   modifyBusiness,
   getSearchAeraList,
   getSearchMarketList,
-  getSearchCompanyList,
+  getSearchCompany,
   getSearchUserList,
   getContractReceiptList,
   handleDateTimeTransform,
@@ -315,47 +346,12 @@ export default {
         contract_id: null,
         user_id: null,
         start_date: "",
-        end_date: "",
-        customer: {
-          type: "select",
-          phone: "",
-          name: "",
-          password: ""
-        }
+        end_date: ""
       },
       markteList: [],
       areaList: [],
       customerList: [],
       rules: {
-        "customer.name": [
-          { required: true, message: "请输入名称", trigger: "submit" }
-        ],
-        "customer.password": [
-          {
-            required: true,
-            validator: (rule, value, callback) => {
-              if (value && value.length < 8) {
-                callback("核销密码长度不能小于8位");
-              } else {
-                callback();
-              }
-            },
-            trigger: "submit"
-          }
-        ],
-        "customer.phone": [
-          {
-            required: true,
-            validator: (rule, value, callback) => {
-              if (!/^1[3456789]\d{9}$/.test(value) && value) {
-                callback("手机格式不正确,请重新输入");
-              } else {
-                callback();
-              }
-            },
-            trigger: "submit"
-          }
-        ],
         name: [{ required: true, message: "请输入名称", trigger: "submit" }],
         areaid: [{ required: true, message: "请选择区域", trigger: "submit" }],
         company_id: [
@@ -374,53 +370,18 @@ export default {
     };
   },
   created() {
-    this.getSearchCompanyList();
+    this.getSearchCompany();
     this.setting.loading = true;
     this.businessID = this.$route.params.uid;
     this.getAreaList();
     this.getSearchUserList();
-
     if (this.businessID) {
-      this.customerPasswordHandle(false);
       this.getBusinessDetail();
     } else {
       this.setting.loading = false;
     }
   },
   methods: {
-    customerPasswordHandle(required) {
-      this.rules["customer.password"] = [
-        {
-          required: required,
-          validator: (rule, value, callback) => {
-            if (value && value.length < 8) {
-              callback("核销密码长度不能小于8位");
-            } else {
-              callback();
-            }
-          },
-          trigger: "submit"
-        }
-      ];
-    },
-    customerHandle(val) {
-      this.businessForm.customer.phone = "";
-      this.customerList.map(r => {
-        if (val === r.name) {
-          this.businessForm.customer.phone = r.phone;
-          return;
-        }
-      });
-      if (!this.businessForm.customer.phone) {
-        this.customerPasswordHandle(true);
-        this.businessForm.customer.type = "add";
-        this.passwordShow = false;
-      } else {
-        this.customerPasswordHandle(false);
-        this.businessForm.customer.type = "select";
-        this.passwordShow = true;
-      }
-    },
     getSearchCustomer(val) {
       this.searchLoading = true;
       let args = {
@@ -458,11 +419,6 @@ export default {
       let args = {
         company_id: val
       };
-      if (!noClear) {
-        this.businessForm.customer.name = null;
-        this.businessForm.customer.phone = null;
-        this.businessForm.customer.password = null;
-      }
       this.getSearchCustomer(val);
       getContractReceiptList(this, args)
         .then(res => {
@@ -501,9 +457,9 @@ export default {
       }
       return isLt2M;
     },
-    getSearchCompanyList() {
+    getSearchCompany() {
       this.searchLoading = true;
-      getSearchCompanyList(this)
+      getSearchCompany(this)
         .then(res => {
           this.companyList = res.data;
           this.searchLoading = false;
@@ -550,11 +506,6 @@ export default {
           this.businessForm.user_id = res.user ? res.user.id : null;
           this.businessForm.media_id = res.media ? res.media.id : null;
           this.logoUrl = res.media ? res.media.url : "";
-          if (res.customer) {
-            this.businessForm.customer.phone = res.customer.phone;
-            this.businessForm.customer.name = res.customer.name;
-            this.businessForm.customer.password = null;
-          }
           this.companyHandle(this.businessForm.company_id, true);
           this.setting.loading = false;
         })

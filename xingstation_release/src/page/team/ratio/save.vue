@@ -1,12 +1,18 @@
 <template>
   <div class="item-wrap-template">
-    <div v-loading="setting.loading" :element-loading-text="setting.loadingText" class="pane">
+    <div 
+      v-loading="setting.loading" 
+      :element-loading-text="setting.loadingText" 
+      class="pane">
       <div class="pane-title">修改比例</div>
-      <el-form ref="rateForm" :model="rateForm" label-width="150px">
+      <el-form 
+        ref="rateForm" 
+        :model="rateForm" 
+        label-width="150px">
         <el-form-item
+          :rules="{required: true, message: '交互技术-中间件不能为空', trigger: 'submit'}"
           prop="interaction_api"
           label="交互技术-中间件"
-          :rules="{required: true, message: '交互技术-中间件不能为空', trigger: 'submit'}"
         >
           <el-input
             v-model="rateForm.interaction_api"
@@ -15,9 +21,9 @@
           />
         </el-form-item>
         <el-form-item
+          :rules="{required: true, message: '交互技术-交互引擎不能为空', trigger: 'submit'}"
           prop="interaction_linkage"
           label="交互技术-交互引擎"
-          :rules="{required: true, message: '交互技术-交互引擎不能为空', trigger: 'submit'}"
         >
           <el-input
             v-model="rateForm.interaction_linkage"
@@ -26,9 +32,9 @@
           />
         </el-form-item>
         <el-form-item
+          :rules="{required: true, message: 'H5基础不能为空', trigger: 'submit'}"
           prop="h5_1"
           label="H5基础"
-          :rules="{required: true, message: 'H5基础不能为空', trigger: 'submit'}"
         >
           <el-input 
             v-model="rateForm.h5_1" 
@@ -36,9 +42,9 @@
             class="item-input"/>
         </el-form-item>
         <el-form-item
+          :rules="{required: true, message: 'H5复杂不能为空', trigger: 'submit'}"
           prop="h5_2"
           label="H5复杂"
-          :rules="{required: true, message: 'H5复杂不能为空', trigger: 'submit'}"
         >
           <el-input 
             v-model="rateForm.h5_2" 
@@ -46,9 +52,9 @@
             class="item-input"/>
         </el-form-item>
         <el-form-item
+          :rules="{required: true, message: '节目统筹不能为空', trigger: 'submit'}"
           prop="plan"
           label="节目统筹"
-          :rules="{required: true, message: '节目统筹不能为空', trigger: 'submit'}"
         >
           <el-input 
             v-model="rateForm.plan" 
@@ -56,9 +62,9 @@
             class="item-input"/>
         </el-form-item>
         <el-form-item
+          :rules="{required: true, message: '运营基本不能为空', trigger: 'submit'}"
           prop="operation"
           label="运营基本"
-          :rules="{required: true, message: '运营基本不能为空', trigger: 'submit'}"
         >
           <el-input 
             v-model="rateForm.operation" 
@@ -66,9 +72,9 @@
             class="item-input"/>
         </el-form-item>
         <el-form-item
+          :rules="{required: true, message: '运营验收不能为空', trigger: 'submit'}"
           prop="operation_quality"
           label="运营验收"
-          :rules="{required: true, message: '运营验收不能为空', trigger: 'submit'}"
         >
           <el-input 
             v-model="rateForm.operation_quality" 
@@ -76,9 +82,9 @@
             class="item-input"/>
         </el-form-item>
         <el-form-item
+          :rules="{required: true, message: '节目创意不能为空', trigger: 'submit'}"
           prop="originality"
           label="节目创意"
-          :rules="{required: true, message: '节目创意不能为空', trigger: 'submit'}"
         >
           <el-input 
             v-model="rateForm.originality" 
@@ -86,9 +92,9 @@
             class="item-input"/>
         </el-form-item>
         <el-form-item
+          :rules="{required: true, message: '设计动画不能为空', trigger: 'submit'}"
           prop="animation"
           label="设计动画"
-          :rules="{required: true, message: '设计动画不能为空', trigger: 'submit'}"
         >
           <el-input 
             v-model="rateForm.animation" 
@@ -96,9 +102,9 @@
             class="item-input"/>
         </el-form-item>
         <el-form-item
+          :rules="{required: true, message: '设计动画-Hidol对接不能为空', trigger: 'submit'}"
           prop="animation_hidol"
           label="设计动画-Hidol对接"
-          :rules="{required: true, message: '设计动画-Hidol对接不能为空', trigger: 'submit'}"
         >
           <el-input
             v-model="rateForm.animation_hidol"
@@ -107,9 +113,9 @@
           />
         </el-form-item>
         <el-form-item
+          :rules="{required: true, message: 'Hidol专利不能为空', trigger: 'submit'}"
           prop="hidol_patent"
           label="Hidol专利"
-          :rules="{required: true, message: 'Hidol专利不能为空', trigger: 'submit'}"
         >
           <el-input 
             v-model="rateForm.hidol_patent" 
@@ -117,9 +123,9 @@
             class="item-input"/>
         </el-form-item>
         <el-form-item
+          :rules="{required: true, message: '测试基本不能为空', trigger: 'submit'}"
           prop="tester"
           label="测试基本"
-          :rules="{required: true, message: '测试基本不能为空', trigger: 'submit'}"
         >
           <el-input 
             v-model="rateForm.tester" 
@@ -127,9 +133,9 @@
             class="item-input"/>
         </el-form-item>
         <el-form-item
+          :rules="{required: true, message: '测试总责不能为空', trigger: 'submit'}"
           prop="tester_quality"
           label="测试总责"
-          :rules="{required: true, message: '测试总责不能为空', trigger: 'submit'}"
         >
           <el-input 
             v-model="rateForm.tester_quality" 
@@ -137,9 +143,9 @@
             class="item-input"/>
         </el-form-item>
         <el-form-item
+          :rules="{required: true, message: '后端IT技术对接不能为空', trigger: 'submit'}"
           prop="backend_docking"
           label="后端IT技术对接"
-          :rules="{required: true, message: '后端IT技术对接不能为空', trigger: 'submit'}"
         >
           <el-input
             v-model="rateForm.backend_docking"
@@ -148,8 +154,13 @@
           />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" size="small" @click="submit('rateForm')">保存</el-button>
-          <el-button size="small" @click="historyBack">返回</el-button>
+          <el-button 
+            type="primary" 
+            size="small" 
+            @click="submit('rateForm')">保存</el-button>
+          <el-button 
+            size="small" 
+            @click="historyBack">返回</el-button>
         </el-form-item>
       </el-form>
     </div>

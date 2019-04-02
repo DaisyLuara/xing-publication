@@ -75,6 +75,7 @@ class AdminCompaniesController extends Controller
             'description' => $request->description,
             'logo_media_id' => $request->logo_media_id,
             'bd_user_id' => $request->bd_user_id,
+            'parent_id' => $request->parent_id,
         ];
         $company->fill(array_merge($companyData, ['user_id' => $this->user()->id]));
         $company->save();

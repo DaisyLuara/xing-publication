@@ -85,10 +85,14 @@ class DemandApplicationController extends Controller
         $params['contract_ids'] = $params['contract_ids']??[];
 
         //查询所选合同是否为已审批合同
-        $contracts = Contract::query()->whereIn('id', $params['contract_ids'])
-            ->where("status", 3)->get();
-        if (count($contracts) != count($params['contract_ids'])) {
-            abort(422, "列表中存在不合法的合同");
+        if ($params['has_contract']) {
+            $contracts = Contract::query()->whereIn('id', $params['contract_ids'])
+                ->where("status", 3)->get();
+            if (count($contracts) != count($params['contract_ids'])) {
+                abort(422, "列表中存在不合法的合同");
+            }
+        } else {
+            $params['contract_ids'] = [];
         }
 
         //保存需求申请
@@ -97,10 +101,9 @@ class DemandApplicationController extends Controller
         //更新与合同的关联
         $demandApplication->contracts()->sync($params['contract_ids']);
 
-        DemandApplicationNotificationJob::dispatch($demandApplication,'create');
-        DemandApplicationNotificationJob::dispatch($demandApplication,'un_receive')->delay(
-            now()->addHours(12)
-        );
+        DemandApplicationNotificationJob::dispatch($demandApplication,'create')->onQueue('demand');
+        DemandApplicationNotificationJob::dispatch($demandApplication,'un_receive')->onQueue('demand')
+            ->delay(now()->addHours(12));
 
         return $this->response->item($demandApplication, new DemandApplicationTransformer());
     }
@@ -126,10 +129,14 @@ class DemandApplicationController extends Controller
         }
 
         //查询所选合同是否为已审批合同
-        $contracts = Contract::query()->whereIn('id', $params['contract_ids'])
-            ->where("status", 3)->get();
-        if (count($contracts) != count($params['contract_ids'])) {
-            abort(422, "列表中存在不合法的合同");
+        if ($params['has_contract']) {
+            $contracts = Contract::query()->whereIn('id', $params['contract_ids'])
+                ->where("status", 3)->get();
+            if (count($contracts) != count($params['contract_ids'])) {
+                abort(422, "列表中存在不合法的合同");
+            }
+        } else {
+            $params['contract_ids'] = [];
         }
 
 
@@ -154,7 +161,7 @@ class DemandApplicationController extends Controller
         //更新与合同的关联
         $demandApplication->contracts()->sync($params['contract_ids']);
 
-        DemandApplicationNotificationJob::dispatch($demandApplication,'update');
+        DemandApplicationNotificationJob::dispatch($demandApplication,'update')->onQueue('demand');
 
         return $this->response->item($demandApplication, new DemandApplicationTransformer());
     }
@@ -194,7 +201,7 @@ class DemandApplicationController extends Controller
         //保存需求申请
         $demandApplication->update($update_params);
 
-        DemandApplicationNotificationJob::dispatch($demandApplication,'received');
+        DemandApplicationNotificationJob::dispatch($demandApplication,'received')->onQueue('demand');
 
         return $this->response->item($demandApplication, new DemandApplicationTransformer());
     }
@@ -230,7 +237,7 @@ class DemandApplicationController extends Controller
         //保存需求申请
         $demandApplication->update($update_params);
 
-        DemandApplicationNotificationJob::dispatch($demandApplication,'confirm');
+        DemandApplicationNotificationJob::dispatch($demandApplication,'confirm')->onQueue('demand');
 
         return $this->response->item($demandApplication, new DemandApplicationTransformer());
 

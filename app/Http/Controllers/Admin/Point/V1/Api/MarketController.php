@@ -16,15 +16,19 @@ class MarketController extends Controller
     public function index(Request $request, Market $market)
     {
         $query = $market->query();
-        $user = $this->user();
-        $arUserId = getArUserID($user, $request);
-
-        //根据角色筛选
-        if ($arUserId) {
-            $query->whereHas('points', function ($query) use ($arUserId) {
-                $query->where('bd_uid', '=', $arUserId);
-            });
-        }
+//        /** @var  $user \App\Models\User */
+//        $user = $this->user();
+//        $arUserZ = getArUserZ($user, $request);
+//
+//        //根据角色筛选
+//        if ($user->hasRole('user|bd-manager')) {
+//            $query->whereHas('points', function ($query) use ($arUserZ) {
+//                if (!$arUserZ) {
+//                    $arUserZ = '0';
+//                }
+//                $query->where('bd_z', '=', $arUserZ);
+//            });
+//        }
 
         //场地名称
         if ($request->has('market_name')) {
@@ -73,10 +77,6 @@ class MarketController extends Controller
 
     public function store(MarketRequest $request, Market $market)
     {
-        //商户核销人员配置
-        if ($request->has('customer') && count(array_filter($request->customer))) {
-            $customer = $this->generateCustomer($request);
-        }
 
         $market->fill($request->all())->saveOrFail();
 
@@ -92,19 +92,11 @@ class MarketController extends Controller
             $market->marketConfig()->create($request->marketConfig);
         }
 
-        if (isset($customer)) {
-            $market->marketConfig->update(['write_off_customer_id' => $customer->id]);
-        }
-
         return $this->response->item($market, new MarketTransformer());
     }
 
     public function update(MarketRequest $request, Market $market)
     {
-        //商户核销人员配置
-        if ($request->has('customer') && count(array_filter($request->customer))) {
-            $customer = $this->generateCustomer($request);
-        }
 
         $market->update($request->all());
         if ($request->has('contract')) {
@@ -133,35 +125,6 @@ class MarketController extends Controller
             $market->marketConfig()->updateOrCreate(['id' => $market->marketid], $marketConfig);
         }
 
-        if (isset($customer)) {
-            $market->marketConfig->update(['write_off_customer_id' => $customer->id]);
-        }
-
         return $this->response->item($market, new MarketTransformer());
-    }
-
-    private function generateCustomer($request)
-    {
-        if ($request->customer['type'] == "add") {
-            abort_if(!$request->customer['phone'] || !$request->customer['password'], 500, '核销人员信息不完整');
-
-            $customer = Customer::query()->create([
-                'name' => $request->customer['name'],
-                'company_id' => $request->marketConfig['company_id'],
-                'phone' => $request->customer['phone'],
-                'password' => bcrypt($request->customer['password']),
-                'position' => '场地核销人员',
-            ]);
-
-        } else {
-            $customer = Customer::query()->where('phone', $request->customer['phone'])->first();
-            abort_if(!$customer, 500, '未找到联系人,请检查手机号');
-        }
-
-        if (!$customer->hasRole('market_owner')) {
-            $customer->assignRole('market_owner');
-        }
-
-        return $customer;
     }
 }

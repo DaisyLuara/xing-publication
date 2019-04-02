@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\User\V1\Api;
 
+use App\Http\Controllers\Admin\User\V1\Models\ArMemberPermission;
 use App\Http\Controllers\Admin\User\V1\Transformer\UserTransformer;
 use App\Http\Controllers\Admin\User\V1\Request\UserRequest;
 use App\Models\User;
@@ -141,5 +142,19 @@ class AdminUsersController extends Controller
 
         $user->delete();
         return $this->response->noContent();
+    }
+
+    public function syncZValue($user_id)
+    {
+        $user = $this->getUserByID($user_id);
+        abort_if(!$user, 404, '用户不存在！');
+
+        $zValue = ArMemberPermission::query()->where('mobile', $user->phone)->first(['z']);
+        abort_if(!$zValue, 404, '请联系星动力系统管理员分配Z值!');
+
+        $user->update($zValue->toArray());
+
+        return $this->response->noContent();
+
     }
 }

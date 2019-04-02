@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin\Project\V1\Api;
 
-use App\Http\Controllers\Admin\Project\V1\Request\ProjectPolicyRequest;
 use App\Http\Controllers\Admin\Project\V1\Transformer\ProjectTransformer;
 use App\Http\Controllers\Admin\Project\V1\Request\ProjectRequest;
 use App\Http\Controllers\Admin\Project\V1\Models\Project;
@@ -26,10 +25,10 @@ class ProjectController extends Controller
                 $query->where('user_id', '=', $user->id);
             });
         } else {
-            $arUserId = getArUserID($user, $request);
-            if ($arUserId) {
-                $query->whereHas('points', function ($q) use ($arUserId) {
-                    $q->where('bd_uid', '=', $arUserId);
+            $arUserZ = getArUserZ($user, $request);
+            if ($arUserZ) {
+                $query->whereHas('points', function ($q) use ($arUserZ) {
+                    $q->where('bd_z', '=', $arUserZ);
                 });
             }
         }
@@ -57,7 +56,9 @@ class ProjectController extends Controller
 
     public function update(ProjectRequest $request, Project $project)
     {
-        $data = $request->all();
+        $data = $request->except(['policy_id']);
+        $data['policy_id'] = $request->policy_id ?? 0;
+
         $ids = $request->ids;
         unset($data['ids']);
 

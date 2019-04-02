@@ -7,13 +7,18 @@
     >
       <div class="program-content-wrap">
         <div class="search-wrap">
-          <el-form ref="filters" :model="filters" :inline="true">
-            <el-form-item label prop="alias">
+          <el-form 
+            ref="filters" 
+            :model="filters" 
+            :inline="true">
+            <el-form-item 
+              label 
+              prop="alias">
               <el-select
                 v-model="filters.alias"
                 :loading="searchLoading"
-                remote
                 :remote-method="getProject"
+                remote
                 placeholder="请输入节目名称"
                 filterable
                 clearable
@@ -26,7 +31,9 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label prop="beginDate">
+            <el-form-item 
+              label 
+              prop="beginDate">
               <el-date-picker
                 v-model="filters.beginDate"
                 :clearable="false"
@@ -35,11 +42,18 @@
                 start-placeholder="开始时间"
                 end-placeholder="结束时间"
                 align="right"
-              ></el-date-picker>
+              />
             </el-form-item>
-            <el-form-item label prop>
-              <el-button type="primary" size="small" @click="search()">搜索</el-button>
-              <el-button size="small" @click="resetForm('filters')">重置</el-button>
+            <el-form-item 
+              label 
+              prop>
+              <el-button 
+                type="primary" 
+                size="small" 
+                @click="search()">搜索</el-button>
+              <el-button 
+                size="small" 
+                @click="resetForm('filters')">重置</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -52,10 +66,15 @@
             @click="addDuty"
           >新增责任</el-button>
         </div>
-        <el-table :data="tableData" style="width: 100%">
+        <el-table 
+          :data="tableData" 
+          style="width: 100%">
           <el-table-column type="expand">
             <template slot-scope="scope">
-              <el-form label-position="left" inline class="demo-table-expand">
+              <el-form 
+                label-position="left" 
+                inline 
+                class="demo-table-expand">
                 <el-form-item label="ID">
                   <span>{{ scope.row.id }}</span>
                 </el-form-item>
@@ -106,9 +125,15 @@
             label="运营"
             min-width="100"
           />
-          <el-table-column v-if="legalAffairsManager || bonusManage" label="操作" min-width="150">
+          <el-table-column 
+            v-if="legalAffairsManager || bonusManage" 
+            label="操作" 
+            min-width="150">
             <template slot-scope="scope">
-              <el-button type="primary" size="small" @click="editHandle(scope.row)">编辑</el-button>
+              <el-button 
+                type="primary" 
+                size="small" 
+                @click="editHandle(scope.row)">编辑</el-button>
             </template>
           </el-table-column>
         </el-table>

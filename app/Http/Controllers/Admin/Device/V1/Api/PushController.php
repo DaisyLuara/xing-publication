@@ -14,8 +14,8 @@ class PushController extends Controller
         $query = $push->query();
 
         $user = $this->user();
-        $arUserID = $request->home_page ? 0 : getArUserID($user, $request);
-        handPointQuery($request, $query, $arUserID, true);
+        $arUserZ = $request->home_page ? 0 : getArUserZ($user, $request);
+        handPointQuery($request, $query, $arUserZ, true);
 
         if ($request->machine_status) {
             $machine_status = $request->machine_status;

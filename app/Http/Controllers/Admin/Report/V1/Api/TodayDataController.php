@@ -48,24 +48,27 @@ class TodayDataController extends Controller
     public function getFaceCount($request, Builder $query)
     {
         if ($request->has('belong')) {
-            $query->where('belong', $request->belong);
+            $belong = explode(',', $request->belong);
+            $query->whereIn('belong', $belong);
         }
 
         $date = Carbon::now()->toDateString();
         $data = $query->whereRaw("date_format(date,'%Y-%m-%d')= '$date' ")
-            ->selectRaw("sum(exposuretimes) as exposuretimes,sum(looktimes) as looktimes ,sum(playtimes7) as playtimes7,sum(scantimes) as scantimes")
+            ->selectRaw("sum(exposuretimes) as exposuretimes,sum(looktimes) as looktimes ,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(scantimes) as scantimes")
             ->first()->toArray();
         $output = [
             "data" => [
-                'exposuretimes' => $data['exposuretimes'] == null ? "0" : $data['exposuretimes'],
-                'looktimes' => $data['looktimes'] == null ? "0" : $data['looktimes'],
-                'playtimes7' => $data['playtimes7'] == null ? "0" : $data['playtimes7'],
-                'scantimes' => $data['scantimes'] == null ? "0" : $data['scantimes']
+                'exposuretimes' => $data['exposuretimes'] == 0 ? 0 : intval($data['exposuretimes']),
+                'looktimes' => $data['looktimes'] == 0 ? 0 : intval($data['looktimes']),
+                'playtimes7' => $data['playtimes7'] == 0 ? 0 : intval($data['playtimes7']),
+                'playtimes15' => $data['playtimes15'] == 0 ? 0 : intval($data['playtimes15']),
+                'scantimes' => $data['scantimes'] == 0 ? 0 : intval($data['scantimes'])
             ],
             'rate' => [
-                'CPM' => $data['exposuretimes'] == 0 ? "0" : strval(round($data['looktimes'] / $data['exposuretimes'], 3) * 100),
-                'fCPE' => $data['exposuretimes'] == 0 ? "0" : strval(round($data['playtimes7'] / $data['exposuretimes'], 3) * 100),
-                'fCPA' => $data['exposuretimes'] == 0 ? "0" : strval(round($data['scantimes'] / $data['exposuretimes'], 3) * 100),
+                'CPM' => $data['exposuretimes'] == 0 ? 0 : round($data['looktimes'] / $data['exposuretimes'], 3) * 100,
+                'fCPE7' => $data['looktimes'] == 0 ? 0 : round($data['playtimes7'] / $data['looktimes'], 3) * 100,
+                'fCPE15' => $data['looktimes'] == 0 ? 0 : round($data['playtimes15'] / $data['looktimes'], 3) * 100,
+                'fCPA' => $data['looktimes'] == 0 ? 0 : round($data['scantimes'] / $data['looktimes'], 3) * 100,
             ]
         ];
 
@@ -82,34 +85,38 @@ class TodayDataController extends Controller
     {
         $query_all = XsLookTimesPermeabilityToday::query();
         if ($request->has('belong')) {
-            $query->where('belong', $request->belong);
-            $query_all->where('belong', $request->belong);
+            $belong = explode(',', $request->belong);
+            $query->whereIn('belong', $belong);
+            $query_all->whereIn('belong', $belong);
         }
         $date = Carbon::now()->toDateString();
         $allData = $query_all->whereRaw("date_format(date,'%Y-%m-%d')= '$date' ")
-            ->selectRaw("sum(bnum) as bnum,sum(gnum) as gnum,sum(bnum+gnum) as total")->first()->toArray();
-        $data = $query->selectRaw("sum(age10b) as age10_male,sum(age10g) as age10_female,
-                                              sum(age18b) as age18_male,sum(age18g) as age18_female,
-                                              sum(age30b) as age30_male,sum(age30g) as age30_female,
-                                              sum(age40b) as age40_male,sum(age40g) as age40_female,
-                                              sum(age60b) as age60_male,sum(age60g) as age60_female,
-                                              sum(age61b) as age61_male,sum(age61g) as age61_female")
+            ->selectRaw("sum(bnum) as bnum,sum(gnum) as gnum,sum(bnum+gnum) as total")
+            ->first()->toArray();
+        $data = $query->whereRaw("date_format(date,'%Y-%m-%d')= '$date' ")
+            ->selectRaw("sum(age10b) as age10_male,sum(age10g) as age10_female,
+                                    sum(age18b) as age18_male,sum(age18g) as age18_female,
+                                    sum(age30b) as age30_male,sum(age30g) as age30_female,
+                                    sum(age40b) as age40_male,sum(age40g) as age40_female,
+                                    sum(age50b) as age50_male,sum(age50g) as age50_female,
+                                    sum(age60b) as age60_male,sum(age60g) as age60_female,
+                                    sum(age61b) as age61_male,sum(age61g) as age61_female")
             ->first()->toArray();
         $count = [];
         foreach ($data as $key => $value) {
             $keys = explode('_', $key);
-            $count[$keys[0]][$keys[1]] = $value;
+            $count[$keys[0]][$keys[1]] = $value == 0 ? 0 : intval($value);
         }
         $output = [];
         $output['total'] = [
             'count' => [
-                'male' => $allData['bnum'],
-                'female' => $allData['gnum'],
+                'male' => $allData['bnum'] == 0 ? 0 : intval($allData['bnum']),
+                'female' => $allData['gnum'] == 0 ? 0 : intval($allData['gnum']),
 
             ],
             'rate' => [
-                'male' => $allData['total'] == 0 ? "0" : strval(round($allData['bnum'] / $allData['total'], 3) * 100),
-                'female' => $allData['total'] == 0 ? "0" : strval(round($allData['gnum'] / $allData['total'], 3) * 100)
+                'male' => $allData['total'] == 0 ? 0 : round($allData['bnum'] / $allData['total'], 3) * 100,
+                'female' => $allData['total'] == 0 ? 0 : round($allData['gnum'] / $allData['total'], 3) * 100
             ]
         ];
         $ageMapping = [
@@ -117,13 +124,14 @@ class TodayDataController extends Controller
             'age18' => '11-18岁',
             'age30' => '19-30岁',
             'age40' => '31-40岁',
-            'age60' => '41-60岁',
+            'age50' => '41-50岁',
+            'age60' => '51-60岁',
             'age61' => '60岁以上',
         ];
         foreach ($count as $key => $value) {
             $output['group'][] = [
                 'count' => $value,
-                'rate' => $allData['total'] == 0 ? "0" : strval(round(($value['female'] + $value['male']) / $allData['total'], 3) * 100),
+                'rate' => $allData['total'] == 0 ? 0 : round(($value['female'] + $value['male']) / $allData['total'], 3) * 100,
                 'display_name' => $ageMapping[$key]
             ];
         }
@@ -141,44 +149,44 @@ class TodayDataController extends Controller
         if (!$request->has("belong")) {
             abort(422, "节目必填");
         }
-//        $date = Carbon::now()->toDateString();
-        $date = '2019-03-12';
+        $belong = explode(',', $request->belong);
+        $date = Carbon::now()->toDateString();
         $data = $query->whereRaw("date_format(date,'%Y-%m-%d')= '$date' ")
-            ->where("belong", $request->belong)
+            ->whereIn("belong", $belong)
             ->selectRaw("sum(century10_gnum+century00_gnum+century90_gnum+century80_gnum+century70_gnum) as gnum,
                               sum(century10_bnum+century00_bnum+century90_bnum+century80_bnum+century70_bnum) as bnum,time")
             ->groupBy("time")
             ->get()
             ->toArray();
         $displayTime = [
-            '10:00',
-            '12:00',
-            '14:00',
-            '16:00',
-            '18:00',
-            '20:00',
-            '22:00',
-            '24:00',
+            '10:00' => '00:00-10:00',
+            '12:00' => '10:00-12:00',
+            '14:00' => '12:00-14:00',
+            '16:00' => '14:00-16:00',
+            '18:00' => '16:00-18:00',
+            '20:00' => '18:00-20:00',
+            '22:00' => '20:00-22:00',
+            '24:00' => '22:00-24:00',
         ];
         $output = [];
         foreach ($displayTime as $key => $value) {
-            $arr = array_filter($data, function ($aa) use ($value) {
-                return $aa['time'] == $value;
+            $arr = array_filter($data, function ($aa) use ($key) {
+                return $aa['time'] == $key;
             });
             if (empty($arr)) {
-                $arr = [['bnum' => "0", 'gnum' => "0"]];
+                $arr = [['bnum' => 0, 'gnum' => 0]];
             }
             $item = array_values($arr)[0];
             $total = $item['bnum'] + $item['gnum'];
             $output[] = [
                 'display_name' => $value,
                 'count' => [
-                    'male' => $item['bnum'],
-                    'female' => $item['gnum']
+                    'male' => $item['bnum'] == 0 ? 0 : intval($item['bnum']),
+                    'female' => $item['gnum'] == 0 ? 0 : intval($item['gnum'])
                 ],
                 'rate' => [
-                    'male' => $total == 0 ? "0" : strval(round($item['bnum'] / $total, 3) * 100),
-                    'female' => $total == 0 ? "0" : strval(round($item['gnum'] / $total, 3) * 100)
+                    'male' => $total == 0 ? 0 : round($item['bnum'] / $total, 3) * 100,
+                    'female' => $total == 0 ? 0 : round($item['gnum'] / $total, 3) * 100
                 ]
             ];
         }
@@ -189,23 +197,23 @@ class TodayDataController extends Controller
     public function getAreaDistribution($request, Builder $query)
     {
         $total = XsFaceCountToday::query()->selectRaw("sum(looktimes) as num")->first()->toArray();
-        $case1 = "when oid=20 or oid=30 then 'A' ";
-        $case2 = "when oid=40 or oid=50 then 'B' ";
-        $case3 = "when oid=60 or oid=70 then 'C' ";
-        $case4 = "when oid=80 or oid=90 then 'D' ";
+        $case1 = "when oid=739 or oid=740 or oid=741 then 'A' ";
+        $case2 = "when oid=742 or oid=743 or oid=744 then 'B' ";
+        $case3 = "when oid=746 or oid=747 then 'C' ";
+        $case4 = "when oid=748 then 'D' ";
         $sql = $case1 . $case2 . $case3 . $case4;
-
         $date = Carbon::now()->toDateString();
         $data = $query->whereRaw("date_format(date,'%Y-%m-%d')= '$date' ")
             ->selectRaw("case " . $sql . "else 0 end as area,sum(looktimes) as num")
             ->groupBy("area")
+            ->orderBy('num', 'desc')
             ->get();
         $output = [];
         $areaMapping = [
-            'A' => 'A区',
-            'B' => 'B区',
-            'C' => 'C区',
-            'D' => 'D区'
+            'A' => '夺宝阵地区',
+            'B' => '幸运地标区',
+            'C' => '街拍围挡区',
+            'D' => '红包大屏区'
         ];
         foreach ($data as $item) {
             if ($item['area'] === "0") {
@@ -213,8 +221,8 @@ class TodayDataController extends Controller
             }
             $output[] = [
                 'display_name' => $areaMapping[$item['area']],
-                'count' => $item['num'],
-                'rate' => $total['num'] == 0 ? "0" : strval(round($item['num'] / $total['num'], 3) * 100)
+                'count' => intval($item['num']),
+                'rate' => $total['num'] == 0 ? 0 : round($item['num'] / $total['num'], 3) * 100
             ];
         }
         $output = $this->checkCache($output, 'total', 'api_4');
@@ -240,8 +248,8 @@ class TodayDataController extends Controller
         $currentCount = 0;
         $oldCount = 0;
         if ($api == 'api_1') {
-            $oldCount = $oldData['data']['exposuretimes'];
-            $currentCount = $output['data']['exposuretimes'];
+            $oldCount = $oldData['data']['looktimes'];
+            $currentCount = $output['data']['looktimes'];
         }
 
         if ($api == 'api_2') {

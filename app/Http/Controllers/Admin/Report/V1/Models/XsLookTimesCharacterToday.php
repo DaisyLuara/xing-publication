@@ -10,8 +10,15 @@ namespace App\Http\Controllers\Admin\Report\V1\Models;
 
 
 use App\Models\Model;
+use App\Scopes\MCExhibitionPointScope;
 
 class XsLookTimesCharacterToday extends Model
 {
     protected $table = "xs_looktimes_character_today";
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope(new MCExhibitionPointScope());
+    }
 }
