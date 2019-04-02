@@ -12,7 +12,7 @@ class ProjectTemplateTransformer extends TransformerAbstract
         return [
             'id' => $projectTemplate->tid,
             'name' => $projectTemplate->name,
-            'icon' => $projectTemplate->icon,
+            'icon' => replaceDomain($projectTemplate->icon),
             'type' => $projectTemplate->type,
             'date' => $projectTemplate->date,
         ];

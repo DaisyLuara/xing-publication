@@ -438,3 +438,11 @@ function getProcessStaffId($role, $line)
     }
     return $staff->user_id;
 }
+
+if (!function_exists('replaceDomain')) {
+    function replaceDomain($url)
+    {
+        $newUrl = preg_replace('/exe666.com/','xingstation.cn', $url);
+        return $newUrl;
+    }
+}
