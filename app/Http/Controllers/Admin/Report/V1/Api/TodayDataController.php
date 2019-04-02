@@ -89,8 +89,7 @@ class TodayDataController extends Controller
         }
         $allData = $query_all->selectRaw("sum(bnum) as bnum,sum(gnum) as gnum,sum(bnum+gnum) as total")
             ->first()->toArray();
-        $data = $query->whereRaw("date_format(date,'%Y-%m-%d')= '$date' ")
-            ->selectRaw("sum(age10b) as age10_male,sum(age10g) as age10_female,
+        $data = $query->selectRaw("sum(age10b) as age10_male,sum(age10g) as age10_female,
                                     sum(age18b) as age18_male,sum(age18g) as age18_female,
                                     sum(age30b) as age30_male,sum(age30g) as age30_female,
                                     sum(age40b) as age40_male,sum(age40g) as age40_female,
