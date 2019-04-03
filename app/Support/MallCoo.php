@@ -133,7 +133,7 @@ class MallCoo
         $point = Point::query()->findOrFail($oid);
         $mallCooConfig = MallcooConfig::query()->where('marketid', $point->market->marketid)->firstOrFail();
 
-        $this->marketid     = $mallCooConfig->marketid,
+        $this->marketid     = $mallCooConfig->marketid;
         $this->m_Mallid     = $mallCooConfig->mallcoo_mall_id;
         $this->m_AppID      = $mallCooConfig->mallcoo_appid;
         $this->m_PublicKey  = $mallCooConfig->mallcoo_public_key;
