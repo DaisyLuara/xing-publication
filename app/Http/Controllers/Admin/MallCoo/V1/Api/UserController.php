@@ -133,7 +133,7 @@ class UserController extends BaseController
         $result = $this->mall_coo->getUserInfoByOpenUserID($result['Data']['OpenUserID']);
         abort_if($result['Code'] !== 1, 500, $result['Message']);
 
-        $userInfo = $result['data'];
+        $userInfo = $result['Data'];
         $thirdPartyUser = ThirdPartyUser::updateOrCreate(
             ['mallcoo_open_user_id' => $userInfo['OpenUserID']],
             [
@@ -141,7 +141,8 @@ class UserController extends BaseController
                 'username' => $userInfo['UserName'],
                 'mallcoo_wx_open_id' => $userInfo['WXOpenID'],
                 'gender' => $userInfo['Gender'],
-                'birthday' => $userInfo['Birthday'],
+                'birthday' => $userInfo['Birthday'] ?: null,
+                'marketid' => $this->mall_coo->marketid,
                 'mall_card_apply_time' => $userInfo['MallCardApplyTime'],
             ]
         );
