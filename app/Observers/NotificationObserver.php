@@ -5,7 +5,6 @@ namespace App\Observers;
 
 use App\Models\User;
 use EasyWeChat\Factory;
-use EasyWeChat\Kernel\Messages\Text;
 use Illuminate\Notifications\DatabaseNotification;
 
 class NotificationObserver
@@ -33,11 +32,11 @@ class NotificationObserver
                             'template_id' => config('wechat.official_account_template_id.notification'),
                             'url' => null,
                             'data' => [
-                                'first' => $user->name,
+                                'first' => $user->name . " 您有一条新的通知消息",
                                 'keyword1' => $content['reply_content'],
-                                'keyword2' => '无',
-                                'keyword3' => '无',
-                                'keyword4' => '无',
+                                'keyword2' => ' -- ',
+                                'keyword3' => ' -- ',
+                                'keyword4' => ' --',
                                 'keyword5' => '数据中台',
                                 'remark' =>'',
                             ]

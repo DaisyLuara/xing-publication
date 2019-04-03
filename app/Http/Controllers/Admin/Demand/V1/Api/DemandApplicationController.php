@@ -177,16 +177,21 @@ class DemandApplicationController extends Controller
     {
         $user = Auth::user();
 
-        if ($demandApplication->getStatus() != DemandApplication::STATUS_UN_RECEIVE) {
-            abort(422, "状态不是未接单，无法接单");
-        }
-
         if ($user->can("demand.application.receive_special")) {
+            if ($demandApplication->getStatus() == DemandApplication::STATUS_CONFIRM ) {
+                abort(422, "状态已完成，法务主管无法指派接单人接单");
+            }
+
             $receiver = User::query()->findOrFail($request->get("receiver_id"));
             if (!$receiver->can("demand.application.receive")) {
                 abort(422, "选择的接单人无权接单！");
             }
+
         } else {
+            if ($demandApplication->getStatus() != DemandApplication::STATUS_UN_RECEIVE) {
+                abort(422, "状态不是未接单，无法接单");
+            }
+
             $receiver = $user;
         }
 
