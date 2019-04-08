@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\MallCoo\V1\Api;
 
 use App\Http\Controllers\Admin\MallCoo\V1\Request\MallCooRequest;
 use App\Http\Controllers\Admin\MallCoo\V1\Request\UserRequest;
+use App\Http\Controllers\Admin\MallCoo\V1\Transformer\ThirdPartyUserTransformer;
 use App\Http\Controllers\Admin\WeChat\V1\Models\ThirdPartyUser;
 use function GuzzleHttp\Psr7\parse_query;
 use Illuminate\Http\Request;
@@ -73,6 +74,7 @@ class UserController extends BaseController
                     'mallcoo_wx_open_id' => $mallCooWxOpenId,
                     'gender' => $gender,
                     'birthday' => $birthday,
+                    'marketid' => $this->mall_coo->marketid,
                     'mall_card_apply_time' => $mallCardApplyTime,
                 ]
             );
@@ -120,21 +122,28 @@ class UserController extends BaseController
     public function store(UserRequest $request)
     {
         $verifyData = Cache::get($request->verification_key);
-
         abort_if(!$verifyData, 422,'验证码已失效');
         abort_if(!hash_equals($verifyData['code'], $request->verification_code), 401, '验证码错误');
+
+        //查询会员
+        $user = ThirdPartyUser::query()->where('mobile', $verifyData['phone'])
+            ->where('marketid', $this->mall_coo->marketid)->first();
+
+        if ($user) {
+            return $this->response->item($user, new ThirdPartyUserTransformer());
+        }
 
         //开卡接口
         $sUrl = 'https://openapi10.mallcoo.cn/User/MallCard/v1/Open/ByMobile/';
         $result = $this->mall_coo->send($sUrl, ['Mobile' => $verifyData['phone']]);
-        abort_if($result['Code'] != 1, 500, $result['Message']);
+        abort_if(($result['Code'] != 1) && ($result['Code'] != 307), 500, $result['Message']);
 
         //获取会员信息
         $result = $this->mall_coo->getUserInfoByOpenUserID($result['Data']['OpenUserID']);
         abort_if($result['Code'] !== 1, 500, $result['Message']);
 
         $userInfo = $result['Data'];
-        $thirdPartyUser = ThirdPartyUser::updateOrCreate(
+        $user = ThirdPartyUser::updateOrCreate(
             ['mallcoo_open_user_id' => $userInfo['OpenUserID']],
             [
                 'mobile' => $userInfo['Mobile'],
@@ -150,7 +159,7 @@ class UserController extends BaseController
         $userID = decrypt($request->sign);
         WeChatUser::query()->where('id', $userID)->update(['mallcoo_open_user_id' => $thirdPartyUser->mallcoo_open_user_id]);
 
-        return $this->response->array($userInfo)->setStatusCode(201);
+        return $this->response->item($user, new ThirdPartyUserTransformer());
     }
 
 }
