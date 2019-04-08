@@ -16,6 +16,7 @@ class AddMarketidToThirdPartyUsersTable extends Migration
         Schema::table('third_party_users', function (Blueprint $table) {
             $table->unsignedInteger('marketid')->after('mobile')->default(0)->comment('商场ID');
             $table->dropUnique('third_party_users_mobile_unique');
+            $table->unique(['mobile', 'marketid']);
         });
     }
 
@@ -28,6 +29,7 @@ class AddMarketidToThirdPartyUsersTable extends Migration
     {
         Schema::table('third_party_users', function (Blueprint $table) {
             $table->dropColumn('marketid');
+            $table->dropUnique('third_party_users_mobile_marketid_unique');
             $table->unique('mobile');
         });
     }
