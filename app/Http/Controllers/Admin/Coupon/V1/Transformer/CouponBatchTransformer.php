@@ -52,7 +52,7 @@ class CouponBatchTransformer extends TransformerAbstract
             'dynamic_stock_status' => $couponBatch->dynamic_stock_status,
             'write_off_status' => $couponBatch->write_off_status,
             'credit' => $couponBatch->credit,
-            'scene_type' => (int)$couponBatch->scene_type,
+            'scene_type' => $couponBatch->scene_type,
             'updated_at' => $couponBatch->updated_at->toDateTimeString(),
         ];
     }
