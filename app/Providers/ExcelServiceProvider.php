@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Exports\ContractExport;
 use App\Exports\CouponExport;
 use App\Exports\MarketingExport;
 use App\Exports\MarketingTopExport;
@@ -67,6 +68,9 @@ class ExcelServiceProvider extends ServiceProvider
         });
         $this->app->bind('team_project', function ($app) {
             return new TeamProjectExport($app->request);
+        });
+        $this->app->bind('contract', function ($app) {
+            return new ContractExport($app->request);
         });
     }
 }

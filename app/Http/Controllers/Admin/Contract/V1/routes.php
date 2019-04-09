@@ -11,6 +11,7 @@ $api->version('v1', [
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
             //合同管理
+            $api->get('contract/export', ['middleware' => ['permission:team.program.download'], 'uses' => 'ContractController@export']); //下载
             $api->get('contract/{contract}', 'ContractController@show');
             $api->get('contract', ['middleware' => ['permission:contract.list.read'], 'uses' => 'ContractController@index']);
             $api->post('contract', ['middleware' => ['permission:contract.list.create'], 'uses' => 'ContractController@store']);
