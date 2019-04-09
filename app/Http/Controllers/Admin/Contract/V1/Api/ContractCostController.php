@@ -67,4 +67,10 @@ class ContractCostController extends Controller
 
         return $this->response()->noContent()->setStatusCode(201);
     }
+
+    public function export(Request $request)
+    {
+        return excelExportByType($request,'contract_cost');
+    }
+
 }

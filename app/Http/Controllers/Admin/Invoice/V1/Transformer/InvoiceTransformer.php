@@ -10,14 +10,7 @@ use League\Fractal\TransformerAbstract;
 
 class InvoiceTransformer extends TransformerAbstract
 {
-    protected $statusMapping = [
-        '1' => '待审批',
-        '2' => '审批中',
-        '3' => '已审批',
-        '4' => '已开票',
-        '5' => '已认领',
-        '6' => '驳回',
-    ];
+
     protected $availableIncludes = ['invoice_content', 'contract', 'invoice_company', 'media'];
 
     public function transform(Invoice $invoice)
@@ -33,7 +26,7 @@ class InvoiceTransformer extends TransformerAbstract
             'handler_name' => $invoice->handler ? $invoice->handlerUser->name : null,
             'type' => $invoice->type == 0 ? '专票' : '普票',
             'invoice_company_name' => $invoice->invoiceCompany ? $invoice->invoiceCompany->name : null,
-            'status' => $this->statusMapping[$invoice->status],
+            'status' => Invoice::$statusMapping[$invoice->status],
             'kind' => $invoice->kind,
             'total' => $invoice->total,
             '$total_text' => $invoice->total_text,

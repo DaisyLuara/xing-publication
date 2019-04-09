@@ -10,6 +10,7 @@ $api->version('v1', [
     ], function ($api) {
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
+            $api->get('invoice/export', ['middleware' => ['permission:invoice.list.read'], 'uses' => 'InvoiceController@export']);
             $api->get('invoice/{invoice}', 'InvoiceController@show');
             $api->get('invoice', ['middleware' => ['permission:invoice.list.read'], 'uses' => 'InvoiceController@index']);
             $api->post('invoice', ['middleware' => ['permission:invoice.list.create'], 'uses' => 'InvoiceController@store']);

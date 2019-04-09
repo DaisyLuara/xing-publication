@@ -430,7 +430,7 @@ function excelExport(ExportRequest $request)
 function excelExportByType(Request $request,string $type)
 {
     if(!in_array($type,['marketing', 'point', 'project', 'daily_average', 'project_point', 'marketing_top', 'old_marketing','person_reward','coupon','team_project',
-        'contract'])){
+        'contract','contract_cost','contract_history','invoice'])){
         abort(422,'此下载类型不存在');
     }
 

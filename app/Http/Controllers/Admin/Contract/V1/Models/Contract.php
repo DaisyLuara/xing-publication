@@ -105,7 +105,7 @@ class Contract extends Model
     ];
 
     public static  $kindMapping = [
-        '0' => null,
+        '0' => '',
         '1' => '铺屏',
         '2' => '销售',
         '3' => '租赁',

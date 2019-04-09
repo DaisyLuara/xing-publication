@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use App\Exports\ContractCostExport;
 use App\Exports\ContractExport;
+use App\Exports\ContractHistoryExport;
 use App\Exports\CouponExport;
+use App\Exports\InvoiceExport;
 use App\Exports\MarketingExport;
 use App\Exports\MarketingTopExport;
 use App\Exports\OldMarketingExport;
@@ -72,5 +75,15 @@ class ExcelServiceProvider extends ServiceProvider
         $this->app->bind('contract', function ($app) {
             return new ContractExport($app->request);
         });
+        $this->app->bind('contract_cost', function ($app) {
+            return new ContractCostExport($app->request);
+        });
+        $this->app->bind('contract_history', function ($app) {
+            return new ContractHistoryExport($app->request);
+        });
+        $this->app->bind('invoice', function ($app) {
+            return new InvoiceExport($app->request);
+        });
+
     }
 }

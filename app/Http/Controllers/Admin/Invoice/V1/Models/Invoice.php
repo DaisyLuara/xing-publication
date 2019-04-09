@@ -62,4 +62,13 @@ class Invoice extends Model
     {
         return $this->belongsToMany(Media::class, 'invoice_media', 'invoice_id', 'media_id');
     }
+
+    public static $statusMapping = [
+        '1' => '待审批',
+        '2' => '审批中',
+        '3' => '已审批',
+        '4' => '已开票',
+        '5' => '已认领',
+        '6' => '驳回',
+    ];
 }
