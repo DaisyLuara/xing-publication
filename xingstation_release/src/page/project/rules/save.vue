@@ -121,7 +121,7 @@
             </el-form-item>
           </el-tab-pane>
           <el-tab-pane label="场景设置" name="second">
-            <el-form-item label="适用场景" prop="scene_type">
+            <el-form-item label="适用场景" prop="scene_type" :rules="{required: true, message: '适用场景不能为空', trigger: 'submit'}">
               <el-radio-group v-model="couponForm.scene_type" @change="handleSceneType">
                 <el-tooltip class="item" effect="dark" content="可在同一场地下的多家商户核销" placement="top">
                   <el-radio :label="1">场地通用</el-radio>
