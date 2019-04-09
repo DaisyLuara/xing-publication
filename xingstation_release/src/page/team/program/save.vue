@@ -195,6 +195,16 @@
               <el-radio-group v-model="programForm.h5_attribute" @change="h5Handle">
                 <el-radio :label="1">基础模版</el-radio>
                 <el-radio :label="2">复杂模版</el-radio>
+                <el-radio :label="0">不计入
+                  <el-tooltip
+                          class="item"
+                          effect="dark"
+                          content="与其他节目共用"
+                          placement="bottom"
+                  >
+                    <i class="el-icon-info"/>
+                  </el-tooltip>
+                </el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -874,7 +884,14 @@ export default {
     },
     h5Handle(val) {
       let idArr = [];
-      this.h5Rate = val === 1 ? this.rate.h5_1 : this.rate.h5_2;
+      if(val === 1){
+        this.h5Rate = this.rate.h5_1
+      }else if(val === 2){
+        this.h5Rate = this.rate.h5_2
+      }else{
+        this.h5Rate = 0
+      }
+
       if (JSON.stringify(this.programForm.h5) !== "[]") {
         this.programForm.h5.map(r => {
           idArr.push(r.user_id);
@@ -1065,7 +1082,7 @@ export default {
           let data = res.data[0];
           this.rate = data;
           this.interactionRate = this.rate.interaction_linkage;
-          this.h5Rate = this.rate.h5_1;
+          this.h5Rate = this.h5Rate ? this.h5Rate : this.rate.h5_1;
           this.setting.loading = false;
         })
         .catch(err => {
@@ -1124,8 +1141,15 @@ export default {
             res.individual_attribute === 1 || res.individual_attribute === 2
               ? false
               : true;
-          this.h5Rate =
-            res.h5_attribute === 2 ? this.rate.h5_2 : this.rate.h5_1;
+
+          if (res.h5_attribute === 2) {
+            this.h5Rate = this.rate.h5_2;
+          } else if (res.h5_attribute === 1){
+            this.h5Rate = this.rate.h5_1;
+          } else {
+            this.h5Rate = 0;
+          }
+
           this.programForm.project_attribute = res.project_attribute;
           (this.programForm.hidol_attribute = res.hidol_attribute),
             (this.programForm.remark = res.remark);
