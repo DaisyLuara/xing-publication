@@ -175,6 +175,9 @@ function teamBonusClean()
 
             $now = Carbon::now('PRC')->toDateTimeString();
             foreach ($data as $item) {
+                if($item->rate <= 0){
+                    continue;
+                }
                 if (in_array($item->type, ['tester_quality', 'operation_quality'])) {
                     $rewards_future[] = [
                         'user_id' => $item->user_id,

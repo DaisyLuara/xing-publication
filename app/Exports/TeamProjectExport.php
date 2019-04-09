@@ -11,7 +11,7 @@ namespace App\Exports;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
 use Carbon\Carbon;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -24,6 +24,18 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
     protected $header;
     protected $data;
     protected $header_first_count;
+
+    private $start_date_begin;
+    private $end_date_begin;
+    private $start_date_online;
+    private $end_date_online;
+    private $start_date_launch;
+    private $end_date_launch;
+    private $start_date_face;
+    private $end_date_face;
+    private $alias;
+    private $status;
+    private $fileName;
 
     public function __construct($request)
     {
@@ -51,6 +63,7 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
         $statusMapping = TeamProject::$statusMapping;
         $interactionAttributeMapping = TeamProject::$interactionAttributeMapping;
         $individualAttributeMapping = TeamProject::$individualAttributeMapping;
+        $h5AttributeMapping = TeamProject::$h5AttributeMapping;
 
         //market_top
         $ar_query = DB::connection('ar')->table('xs_face_count_log as fcl');
@@ -126,7 +139,7 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
             individual_attribute,contract_number,amount,
             art_innovate,dynamic_innovate,interact_innovate,remark,test_remark" . $case)
             ->groupBy("project_name", "belong")
-            ->get()->map(function ($item) use ($typeMapping, $statusMapping, $projectAttributeMapping, $interactionAttributeMapping, $individualAttributeMapping, $faceCountData) {
+            ->get()->map(function ($item) use ($typeMapping, $statusMapping, $projectAttributeMapping, $interactionAttributeMapping, $individualAttributeMapping, $faceCountData,$h5AttributeMapping) {
                 $interaction_attribute_text = Collect(explode(',', $item->interaction_attribute))
                     ->map(function ($v) use ($interactionAttributeMapping) {
                         return $interactionAttributeMapping[$v] ?? "--";
@@ -142,7 +155,7 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
                     'copyright_project' => $item->copyright_project,
                     'project_attribute' => $projectAttributeMapping[$item->project_attribute] ?? $item->project_attribute,
                     'link_attribute' => $item->link_attribute == 1 ? '是' : '否',
-                    'h5_attribute' => $item->h5_attribute == 1 ? '基础' : '复杂',
+                    'h5_attribute' => $h5AttributeMapping[$item->h5_attribute] ?? $item->h5_attribute,
                     'interaction_attribute' => implode(',', $interaction_attribute_text),
                     'hidol_attribute' => $item->hidol_attribute == 1 ? '是' : '否',
                     'individual_attribute' => $individualAttributeMapping[$item->individual_attribute] ?? $item->individual_attribute,
