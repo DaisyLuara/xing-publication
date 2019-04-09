@@ -32,7 +32,7 @@ class LocationProductController extends Controller
             $query->whereIn('location_id', $ids);
         }
 
-        $locationProduct = $query->paginate(10);
+        $locationProduct = $query->orderByDesc('id')->paginate(10);
         return $this->response()->paginator($locationProduct, new LocationProductTransformer());
     }
 }
