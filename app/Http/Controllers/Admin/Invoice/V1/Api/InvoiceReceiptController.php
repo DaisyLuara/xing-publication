@@ -60,7 +60,7 @@ class InvoiceReceiptController extends Controller
             });
         }
         
-        $invoiceReceipt = $query->paginate(10);;
+        $invoiceReceipt = $query->orderByDesc('id')->paginate(10);;
 
         return $this->response()->paginator($invoiceReceipt, new InvoiceReceiptTransformer());
     }
