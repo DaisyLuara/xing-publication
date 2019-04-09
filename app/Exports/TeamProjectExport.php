@@ -35,7 +35,7 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
     private $end_date_face;
     private $alias;
     private $status;
-    private $fileName;
+    public $fileName;
 
     public function __construct($request)
     {
