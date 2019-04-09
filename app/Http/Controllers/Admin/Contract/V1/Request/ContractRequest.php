@@ -23,7 +23,7 @@ class ContractRequest extends Request
                     'ids' => 'string',
                     'product_status' => Rule::in([0, 1, 2]),
                     'remark' => 'string|nullable|max:1000',
-                    'amount' => 'string',
+                    'amount' => 'numeric',
                     'special_num' => 'required|integer',
                     'common_num' => 'required|integer|max:2'
                 ];
