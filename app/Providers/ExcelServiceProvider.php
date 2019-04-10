@@ -6,7 +6,9 @@ use App\Exports\ContractCostExport;
 use App\Exports\ContractExport;
 use App\Exports\ContractHistoryExport;
 use App\Exports\CouponExport;
+use App\Exports\InvoiceCompanyExport;
 use App\Exports\InvoiceExport;
+use App\Exports\InvoiceReceiptExport;
 use App\Exports\MarketingExport;
 use App\Exports\MarketingTopExport;
 use App\Exports\OldMarketingExport;
@@ -84,6 +86,11 @@ class ExcelServiceProvider extends ServiceProvider
         $this->app->bind('invoice', function ($app) {
             return new InvoiceExport($app->request);
         });
-
+        $this->app->bind('invoice_company', function ($app) {
+            return new InvoiceCompanyExport($app->request);
+        });
+        $this->app->bind('invoice_receipt', function ($app) {
+            return new InvoiceReceiptExport($app->request);
+        });
     }
 }

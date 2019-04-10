@@ -61,4 +61,10 @@ class InvoiceCompanyController extends Controller
         $invoiceCompany->update($request->all());
         return $this->response()->noContent();
     }
+
+
+    public function export(Request $request)
+    {
+        return excelExportByType($request,'invoice_company');
+    }
 }
