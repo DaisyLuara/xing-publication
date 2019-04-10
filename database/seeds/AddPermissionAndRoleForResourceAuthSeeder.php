@@ -16,7 +16,7 @@ class AddPermissionAndRoleForResourceAuthSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         //资源授权
-        $resource_auth = Permision::query()->where('name', '=', 'resource_auth')->first()
+        $resource_auth = Permission::query()->where('name', '=', 'resource_auth')->first()
             ?? Permission::create(['name' => 'resource_auth', 'display_name' => '资源授权']);
         $project_auth = Permission::query()->where('name', '=', 'resource_auth.project_auth')->first()
             ?? Permission::create(['name' => "resource_auth.project_auth", 'display_name' => "节目授权", 'parent_id' => $resource_auth->id]);
