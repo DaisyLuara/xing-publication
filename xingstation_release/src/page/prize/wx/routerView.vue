@@ -12,7 +12,7 @@
 </template>
 <script>
 export default {
-  name: 'wxView'
+  name: 'WxView'
 }
 </script>
 

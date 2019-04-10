@@ -651,4 +651,80 @@ class QueryController extends Controller
     }
 
 
+    /**
+     * 查询 拥有某个角色的customers
+     * @param string $role_name
+     * @param Request $request
+     * @param Customer $customer
+     * @return \Dingo\Api\Http\Response
+     */
+    public function adminCustomersQueryByRole($role_name = '',Request $request, Customer $customer)
+    {
+        $query = $customer->query()->role($role_name);
+
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        $customer = $query->get();
+
+        return $this->response()->collection($customer, new CustomerTransformer());
+    }
+
+    /**
+     * 授权节目下拉列表
+     * @param Request $request
+     * @param Project $project
+     * @return mixed
+     */
+    public function authorizedProjectQuery(Request $request, Project $project)
+    {
+        $query = $project->query();
+
+        if ($request->name) {
+            $query->where('name', 'like', '%' . $request->name . '%')->get();
+        }
+
+        $projects = $query->get();
+        return $this->response->collection($projects, new ProjectTransformer());
+    }
+
+    /**
+     * 授权点位下拉列表
+     * @param Request $request
+     * @param Point $point
+     * @return mixed
+     */
+    public function authorizedPointQuery(Request $request, Point $point)
+    {
+        $query = $point->query();
+
+        if ($request->name) {
+            $query->where('name', 'like', '%' . $request->name . '%')->get();
+        }
+
+        $points = $query->get();
+        return $this->response->collection($points, new PointTransformer());
+    }
+
+
+    /**
+     * 授权投放策略查询
+     * @param Policy $policy
+     * @param Request $request
+     * @return \Dingo\Api\Http\Response
+     */
+    public function authorizedPolicyQuery(Policy $policy, Request $request)
+    {
+        $query = $policy->query();
+
+        if ($request->name) {
+            $query->where('name', 'like', '%' . $request->name . '%')->get();
+        }
+
+        $policies = $query->get();
+        return $this->response->collection($policies, new PolicyTransformer());
+    }
+
+
 }

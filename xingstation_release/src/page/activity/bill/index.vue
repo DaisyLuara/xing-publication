@@ -7,11 +7,21 @@
     >
       <div class="item-content-wrap">
         <div class="search-wrap">
-          <el-form ref="filters" :model="filters" :inline="true">
-            <el-form-item label prop="coupon_code">
-              <el-input v-model="filters.coupon_code" placeholder="请输入优惠券code" clearable/>
+          <el-form 
+            ref="filters" 
+            :model="filters" 
+            :inline="true">
+            <el-form-item 
+              label 
+              prop="coupon_code">
+              <el-input 
+                v-model="filters.coupon_code" 
+                placeholder="请输入优惠券code" 
+                clearable/>
             </el-form-item>
-            <el-form-item label prop="coupon_batch_id">
+            <el-form-item 
+              label 
+              prop="coupon_batch_id">
               <el-select
                 v-model="filters.coupon_batch_id"
                 filterable
@@ -26,8 +36,13 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label prop="result_code">
-              <el-select v-model="filters.result_code" clearable placeholder="请选择业务结果">
+            <el-form-item 
+              label 
+              prop="result_code">
+              <el-select 
+                v-model="filters.result_code" 
+                clearable 
+                placeholder="请选择业务结果">
                 <el-option
                   v-for="item in resultCodeList"
                   :key="item.id"
@@ -36,14 +51,29 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label prop="mch_billno">
-              <el-input v-model="filters.mch_billno" placeholder="请输入流水账号" clearable/>
+            <el-form-item 
+              label 
+              prop="mch_billno">
+              <el-input 
+                v-model="filters.mch_billno" 
+                placeholder="请输入流水账号" 
+                clearable/>
             </el-form-item>
-            <el-form-item label prop="re_openid">
-              <el-input v-model="filters.re_openid" placeholder="请输入openID" clearable/>
+            <el-form-item 
+              label 
+              prop="re_openid">
+              <el-input 
+                v-model="filters.re_openid" 
+                placeholder="请输入openID" 
+                clearable/>
             </el-form-item>
-            <el-form-item label prop="scene_id">
-              <el-select v-model="filters.scene_id" clearable placeholder="请选择场景">
+            <el-form-item 
+              label 
+              prop="scene_id">
+              <el-select 
+                v-model="filters.scene_id" 
+                clearable 
+                placeholder="请选择场景">
                 <el-option
                   v-for="item in sceneList"
                   :key="item.id"
@@ -53,17 +83,28 @@
               </el-select>
             </el-form-item>
 
-            <el-button type="primary" size="small" @click="search()">搜索</el-button>
-            <el-button type="default" size="small" @click="resetSearch('filters')">重置</el-button>
+            <el-button 
+              type="primary" 
+              size="small" 
+              @click="search()">搜索</el-button>
+            <el-button 
+              type="default" 
+              size="small" 
+              @click="resetSearch('filters')">重置</el-button>
           </el-form>
         </div>
         <div class="total-wrap">
           <span class="label">总数:{{ pagination.total }}</span>
         </div>
-        <el-table :data="tableData" style="width: 100%">
+        <el-table 
+          :data="tableData" 
+          style="width: 100%">
           <el-table-column type="expand">
             <template slot-scope="scope">
-              <el-form label-position="left" inline class="demo-table-expand">
+              <el-form 
+                label-position="left" 
+                inline 
+                class="demo-table-expand">
                 <el-form-item label="ID">
                   <span>{{ scope.row.id }}</span>
                 </el-form-item>
@@ -93,14 +134,21 @@
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="60"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="id" 
+            label="ID" 
+            min-width="60"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="coupon_code"
             label="优惠券code"
             min-width="100"
           />
-          <el-table-column prop="coupon_batch_id" label="优惠券" min-width="130">
+          <el-table-column 
+            prop="coupon_batch_id" 
+            label="优惠券" 
+            min-width="130">
             <template slot-scope="scope">{{ scope.row.couponBatch ? scope.row.couponBatch.name:'' }}</template>
           </el-table-column>
           <el-table-column
@@ -109,7 +157,11 @@
             label="流水账号"
             min-width="100"
           />
-          <el-table-column :show-overflow-tooltip="true" prop="remark" label="备注" min-width="80"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="remark" 
+            label="备注" 
+            min-width="80"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="total_amount"
@@ -118,10 +170,18 @@
           >
             <template slot-scope="scope">{{ scope.row.total_amount/100 }}</template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="pass" label="业务结果" min-width="80">
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="pass" 
+            label="业务结果" 
+            min-width="80">
             <template slot-scope="scope">{{ scope.row.result_code === 'SUCCESS'? '成功': '失败' }}</template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="scene_id" label="场景" min-width="80">
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="scene_id" 
+            label="场景" 
+            min-width="80">
             <template slot-scope="scope">{{ scope.row.scene_id ==='PRODUCT_2' ? '抽奖' :'企业内部福利' }}</template>
           </el-table-column>
           <el-table-column
@@ -130,7 +190,9 @@
             label="类型"
             min-width="80"
           />
-          <el-table-column label="操作" min-width="100">
+          <el-table-column 
+            label="操作" 
+            min-width="100">
             <template slot-scope="scope">
               <el-button
                 v-if="scope.row.result_code === 'FAIL'"

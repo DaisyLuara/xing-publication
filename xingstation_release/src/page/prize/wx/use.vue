@@ -18,7 +18,7 @@
               <span class="label">使用设置</span>
             </div>
           </div>
-          <hr />
+          <hr >
           <el-form
             ref="couponForm"
             :model="couponForm"
@@ -30,24 +30,24 @@
             >
               <el-input
                 v-model="sku.quantity"
-                class="coupon-form-input"
                 :disabled="disabled"
+                class="coupon-form-input"
               />
               <span>份</span>
               <div
-                class="errMessage"
                 v-show="submitCheck.inventory"
+                class="errMessage"
               >库存只能是大于0的数字</div>
             </el-form-item>
             <el-form-item>
               <el-checkbox
                 v-model="can_share"
                 label="用户可以分享领券链接"
-              ></el-checkbox>
+              />
               <el-checkbox
                 v-model="can_give_friend"
                 label="用户领券后可转赠其他好友"
-              ></el-checkbox>
+              />
             </el-form-item>
             <el-form-item
               label="核销方式"
@@ -57,12 +57,12 @@
                 <el-checkbox
                   v-model="couponForm.verification"
                   label="扫码核销"
-                ></el-checkbox>
+                />
               </div>
 
               <div
-                class="box-segmentation-b"
                 v-show="verificationList"
+                class="box-segmentation-b"
               >
                 <el-radio-group v-model="code_type">
                   <el-radio :label="code_types.QRCODE">二维码</el-radio>
@@ -79,7 +79,7 @@
               <span class="label">门店信息</span>
             </div>
           </div>
-          <hr />
+          <hr >
           <el-form
             ref="couponForm"
             :model="couponForm"
@@ -93,7 +93,7 @@
                 <el-checkbox
                   v-model="use_all_locations"
                   label="全部门店通用"
-                ></el-checkbox>
+                />
               </div>
             </el-form-item>
             <el-form-item
@@ -106,8 +106,8 @@
                 class="coupon-form-input"
               />
               <div
-                class="errMessage"
                 v-show="submitCheck.operatingHints"
+                class="errMessage"
               >操作提示不能为空且长度不超过16个汉字或32个英文字母</div>
               <div class="message">建议引导用户到店出示卡券，由店员完成核销操作</div>
             </el-form-item>
@@ -301,6 +301,11 @@ export default {
       },
     };
   },
+  computed: {
+    verification() {
+      return this.couponForm.verification;
+    },
+  },
   watch: {
     verification(val, oldVal) {
       this.verificationList = val
@@ -310,18 +315,9 @@ export default {
     },
 
   },
-  computed: {
-    verification() {
-      return this.couponForm.verification;
-    },
-  },
   created() {
   },
   mounted() {
-    console.log('..................')
-    console.log(this.$route.params.card)
-    console.log(this.$route.params.card_id)
-    console.log('..................>')
     if (this.$route.params.card !== undefined) {
       this.data = this.$route.params.card
       //更新新增判断过滤
@@ -337,10 +333,9 @@ export default {
     addSingleCard(args, args1) {
       addSingleCard(this, args, args1)
         .then(res => {
-          console.log(res)
           if (res.errcode === 0) {
             this.$router.push({
-              path: '/project/wx_cardpackage/'
+              path: '/prize/wx_cardpackage/'
             })
           }
         })
@@ -352,10 +347,9 @@ export default {
     modifySingleCard(args, args1) {
       modifySingleCard(this, args, args1)
         .then(res => {
-          console.log(res)
           if (res.errcode === 0) {
             this.$router.push({
-              path: '/project/wx_cardpackage/'
+              path: '/prize/wx_cardpackage/'
             })
           }
         })
@@ -364,17 +358,14 @@ export default {
         });
     },
     goBack() {
-      console.log("提交券类型")
       this.$router.push({
-        path: "/project/wx_cardpackage/add/"
+        path: "/prize/wx_cardpackage/add/"
       });
     },
     submit() {
       if (!this.validate()) {
         return
       }
-      console.log("---------------")
-      console.log(this.data)
       if (null === this.data) {
         this.$router.go(-1);
         return
@@ -399,8 +390,6 @@ export default {
       else {
         this.dataHandle('general_coupon')
       }
-      console.log('..............')
-      console.log(this.data)
       if (this.card_id !== undefined) {
         this.update()
       } else {
@@ -417,8 +406,6 @@ export default {
     update() {
       let card = this.updateData
       let params = '?authorizer_id=6&card_id=' + this.card_id
-      console.log('更新')
-      console.log(card)
       this.modifySingleCard(params, card)
     },
     dataHandle(type) {

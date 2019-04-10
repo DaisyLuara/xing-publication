@@ -11,31 +11,30 @@
       class="item-list-wrap"
     >
       <div
-        class="item-content-left"
         :style="leftDetail.color"
+        class="item-content-left"
       >
         <div class="item-content-left-card">
           <div class="logo">
-            <!-- <img src="https://cdn.xingstation.cn/fe/marketing/img/tiger/icon.png"> -->
-            <img :src="this.base_info.logo_url">
+            <img :src="base_info.logo_url">
           </div>
           <div class="tickMsg">
             <p
-              class="title"
               v-if="card_type!=='CASH'"
-            >{{leftDetail.title}}</p>
-            <p
               class="title"
+            >{{ leftDetail.title }}</p>
+            <p
               v-if="card_type==='CASH'"
-            >{{null===reduce_cost||''===reduce_cost?'代金券标题':reduce_cost+'元代金券'}}</p>
+              class="title"
+            >{{ null===reduce_cost||''===reduce_cost?'代金券标题':reduce_cost+'元代金券' }}</p>
             <div class="use-button"><span :style="leftDetail.color">使用</span></div>
             <p v-if="(card_type==='CASH'||card_type==='DISCOUNT')&&leftDetail.cashOrDiscountchecked">
-              <span class="title-span">使用条件：</span><span v-if="leftDetail.accept_category!==''">适用于</span><span>{{leftDetail.accept_category}}</span><span v-if="leftDetail.accept_category!==''&&leftDetail.reject_category!==''">;</span><span v-if="leftDetail.reject_category!==''">不适用于</span><span>{{leftDetail.reject_category}}</span></p>
-            <p><span class="title-span">可用时间：</span><span v-if="null!==leftDetail.formatStartDate">{{leftDetail.formatStartDate}}-{{leftDetail.formatEndDate}}</span><span>{{leftDetail.timeSegment}}</span></p>
+            <span class="title-span">使用条件：</span><span v-if="leftDetail.accept_category!==''">适用于</span><span>{{ leftDetail.accept_category }}</span><span v-if="leftDetail.accept_category!==''&&leftDetail.reject_category!==''">;</span><span v-if="leftDetail.reject_category!==''">不适用于</span><span>{{ leftDetail.reject_category }}</span></p>
+            <p><span class="title-span">可用时间：</span><span v-if="null!==leftDetail.formatStartDate">{{ leftDetail.formatStartDate }}-{{ leftDetail.formatEndDate }}</span><span>{{ leftDetail.timeSegment }}</span></p>
           </div>
           <div class="cardUsage">
             <img :src="leftDetail.icon_url">
-            <p class="title">{{leftDetail.abstract}}</p>
+            <p class="title">{{ leftDetail.abstract }}</p>
           </div>
           <div class="shop">
             <p class="title">适用门店</p>
@@ -56,7 +55,7 @@
               <span class="label">基本信息</span>
             </div>
           </div>
-          <hr />
+          <hr >
           <el-form
             ref="couponForm"
             :model="couponForm"
@@ -64,8 +63,8 @@
           >
             <el-form-item label="商户">
               <img
+                :src="base_info.logo_url"
                 class="icon"
-                :src="this.base_info.logo_url"
               >
             </el-form-item>
             <el-form-item label="卡券颜色">
@@ -73,15 +72,15 @@
                 class="colorList-input"
                 @click="()=>{colorListShow=true}"
               >
-                <a :style="leftDetail.color"></a>
+                <a :style="leftDetail.color"/>
                 <input
                   v-show="inputShow"
                   type="text"
                 >
               </div>
               <div
-                class="colorList"
                 v-show="colorListShow"
+                class="colorList"
               >
                 <ul>
                   <a
@@ -91,14 +90,14 @@
                     :style="item.style"
                     @click="changeColor(item)"
                   >
-                    <li></li>
+                    <li/>
                   </a>
 
                 </ul>
               </div>
               <div
-                class="errMessage"
                 v-show="submitCheck.color"
+                class="errMessage"
               >请选择颜色</div>
             </el-form-item>
             <el-form-item
@@ -107,13 +106,13 @@
             >
               <el-input
                 v-model="discount"
-                class="coupon-form-input"
                 :disabled="disabled"
+                class="coupon-form-input"
               />
               <span>折</span>
               <div
-                class="errMessage"
                 v-show="submitCheck.discountAmount"
+                class="errMessage"
               >折扣额度只能是大于1且小于10的数字</div>
               <div class="message"> 请填写1-9.9之间的数字，精确到小数点后1位</div>
             </el-form-item>
@@ -124,13 +123,13 @@
             >
               <el-input
                 v-model="base_info.title"
+                :maxlength="9"
                 class="coupon-form-input"
                 style="width:250px"
-                :maxlength="9"
               />
               <div
-                class="errMessage"
                 v-show="submitCheck.titleCheck"
+                class="errMessage"
               >卡券名称不能为空且长度不超过9个汉字或18个英文字母</div>
               <div class="message"> 建议填写折扣券“折扣额度”及自定义内容，描述卡券提供的具体优惠</div>
             </el-form-item>
@@ -146,8 +145,8 @@
                 style="width:250px"
               />
               <div
-                class="errMessage"
                 v-show="submitCheck.titleCheck"
+                class="errMessage"
               >卡券名称不能为空且长度不超过9个汉字或18个英文字母</div>
               <div class="message"> 建议填写兑换券提供的服务或礼品名称，描述卡券提供的具体优惠</div>
             </el-form-item>
@@ -184,13 +183,13 @@
             >
               <el-input
                 v-model="reduce_cost"
-                class="coupon-form-input"
                 :disabled="disabled"
+                class="coupon-form-input"
               />
               <span>元</span>
               <div
-                class="errMessage"
                 v-show="submitCheck.creditAmount"
+                class="errMessage"
               >减免金额只能是大于0.01的数字</div>
             </el-form-item>
             <el-form-item label="有效期">
@@ -202,14 +201,13 @@
                   <el-radio :label="dateType.RANGE">固定时间
                     <el-date-picker
                       v-model="startToEndDate"
+                      :default-time="['00:00:00', '23:59:59']"
                       type="daterange"
                       start-placeholder="开始日期"
                       end-placeholder="结束日期"
-                      :default-time="['00:00:00', '23:59:59']"
                       class="picker"
                       @change="logTimeChange"
-                    >
-                    </el-date-picker>
+                    />
                   </el-radio>
                 </div>
                 <div class="box-segmentation">
@@ -246,8 +244,8 @@
 
               </el-radio-group>
               <div
-                class="errMessage"
                 v-show="submitCheck.dateCheck"
+                class="errMessage"
               >请选择日期</div>
             </el-form-item>
             <el-form-item label="可用时段">
@@ -271,19 +269,19 @@
                       :key="timeLimit.id"
                       v-model="timeLimit.isClick"
                       @change="addTimeLimit(index,timeLimit)"
-                    ></el-checkbox>
+                    />
                   </div>
                   <div class="addDateTime "><span
-                      class="time"
-                      @click="addHourOrMinute()"
-                    >添加时间段</span><span
-                      class="time"
-                      @click="deleteHourOrMinute()"
-                    >删除时间段</span></div>
+                    class="time"
+                    @click="addHourOrMinute()"
+                  >添加时间段</span><span
+                    class="time"
+                    @click="deleteHourOrMinute()"
+                  >删除时间段</span></div>
                   <div
-                    class="addInput box-segmentation"
                     v-for="hourMinute in beginToEndHourMinute"
                     :key="hourMinute.id"
+                    class="addInput box-segmentation"
                   >
                     <span>时间：</span>
                     <a class="dataRange">
@@ -314,7 +312,7 @@
               <span class="label">优惠详情</span>
             </div>
           </div>
-          <hr />
+          <hr >
 
           <el-form
             ref="couponForm"
@@ -339,13 +337,13 @@
                   <span>满
                     <el-input
                       v-model="least_cost"
-                      class="coupon-form-input"
                       :disabled="disabled"
-                    />元可用</span>
+                      class="coupon-form-input"
+                  />元可用</span>
                 </el-checkbox>
                 <div
-                  class="errMessage"
                   v-show="submitCheck.consumptionAmount"
+                  class="errMessage"
                 >消费金额大于0且只能到百分位</div>
               </div>
 
@@ -358,9 +356,9 @@
                   <span v-show="giftChecked">
                     <el-select
                       v-model="couponForm.is_money"
+                      :disabled="disabled"
                       placeholder="金额"
                       class="coupon-form-select"
-                      :disabled="disabled"
                     >
                       <el-option
                         v-for="item in moneyList"
@@ -372,14 +370,14 @@
                     <b>满
                       <el-input
                         v-model="gift"
-                        class="coupon-form-input"
                         :disabled="disabled"
-                      />元可用</b>
+                        class="coupon-form-input"
+                    />元可用</b>
                   </span>
                 </el-checkbox>
                 <div
-                  class="errMessage"
                   v-show="submitCheck.ConsumptionAmount"
+                  class="errMessage"
                 >消费金额大于0且只能到百分位</div>
               </div>
 
@@ -387,31 +385,31 @@
               <div v-if="card_type==='CASH'||card_type==='DISCOUNT'">
                 <el-checkbox v-model="cashOrDiscountchecked">适用范围　(至少填写一项)</el-checkbox>
                 <div
-                  class="goods"
                   v-show="cashOrDiscountchecked"
+                  class="goods"
                 >
                   <span>适用商品</span>
                   <el-input
                     v-model="use_condition.accept_category"
-                    class="coupon-form-input"
                     :disabled="disabled"
+                    class="coupon-form-input"
                   />
                   <div
-                    class="errMessage"
-                    :maxlength="15"
                     v-show="submitCheck.commodity"
+                    :maxlength="15"
+                    class="errMessage"
                   >适用商品不能为空且长度不能超过15个汉字或30个英文字母</div>
                   <div class="message-box">填写本券适用的商品、类目或服务</div>
                   <span>不适用商品</span>
                   <el-input
                     v-model="use_condition.reject_category"
-                    class="coupon-form-input"
                     :disabled="disabled"
+                    class="coupon-form-input"
                   />
                   <div
-                    class="errMessage"
-                    :maxlength="15"
                     v-show="submitCheck.noCommodity"
+                    :maxlength="15"
+                    class="errMessage"
                   >不适用商品不能为空且长度不能超过15个汉字或30个英文字母</div>
                   <div class="message-box">填写本券不适用的商品、类目或服务</div>
                 </div>
@@ -432,8 +430,8 @@
                 </el-select>
               </div>
               <div
-                class="errMessage"
                 v-show="submitCheck.discountsShare"
+                class="errMessage"
               >请选择优惠共享</div>
               <div class="message">使用条件的设置会在券上展示，请务必仔细确认。</div>
             </el-form-item>
@@ -451,7 +449,7 @@
                   :on-preview="handlePreview"
                   :before-remove="beforeRemove"
                   :file-list="fileList"
-                  :show-file-list='false'
+                  :show-file-list="false"
                   :on-exceed="handleExceed"
                   class="upload-demo"
                 >
@@ -465,59 +463,59 @@
                 <img :src="abstract.icon_url_list[0]">
               </div>
               <div
-                class="errMessage"
                 v-show="submitCheck.uploadCheck"
+                class="errMessage"
               >请上传封面图片</div>
             </el-form-item>
             <el-form-item label="封面简介">
               <el-input
                 v-model="abstract.abstract"
-                placeholder="请输入封面图片的简介内容"
                 :maxlength="12"
+                placeholder="请输入封面图片的简介内容"
                 class="coupon-form-input"
               />
               <div
-                class="errMessage"
                 v-show="submitCheck.introductionCheck"
+                class="errMessage"
               >简介不能为空且长度不超过12个汉字</div>
             </el-form-item>
             <el-form-item label="优惠说明">
               <div class="message">（本行是非自定义内容，无需填写）</div>
               <el-input
                 v-if="card_type==='GROUPON'||card_type==='GENERAL_COUPON'"
-                type="textarea"
                 :maxlength="500"
-                placeholder="请输入自定义优惠说明内容"
                 v-model="detail"
+                type="textarea"
+                placeholder="请输入自定义优惠说明内容"
                 class="coupon-form-input"
               />
               <div
-                class="errMessage"
                 v-show="submitCheck.privilegeCheck"
+                class="errMessage"
               >自定义优惠说明不能为空且长度不超过300个汉字</div>
             </el-form-item>
             <el-form-item label="使用须知">
               <el-input
-                type="textarea"
                 :maxlength="500"
-                placeholder="请填写使用本优惠券的注意事项"
                 v-model="base_info.description"
+                type="textarea"
+                placeholder="请填写使用本优惠券的注意事项"
                 class="coupon-form-input"
               />
             </el-form-item>
             <el-form-item label="图文介绍">
               <div class="message">图片建议尺寸：900像素 * 500像素，大小不超过2M。
-                至少上传1组图文，最多输入5000字</div>
+              至少上传1组图文，最多输入5000字</div>
               <div
-                class="article-item"
                 v-for="(textImage,index) in text_image_list"
                 :key="textImage.id"
+                class="article-item"
               >
                 <div class="article-item-t">
                   <img :src="textImage.image_url">
                   <div
-                    class="upload-button"
                     v-if="textImage.isUpload"
+                    class="upload-button"
                   >
                     <el-upload
                       ref="upload"
@@ -529,28 +527,28 @@
                       :on-preview="handlePreview"
                       :before-remove="beforeRemove"
                       :file-list="fileList"
-                      :show-file-list='false'
+                      :show-file-list="false"
                       :on-exceed="handleExceed"
                       class="upload-demo"
                     >
                       <el-button
-                        @click="changeIndex(index)"
                         size="mini"
                         type="success"
+                        @click="changeIndex(index)"
                       >点击上传</el-button>
                     </el-upload>
                   </div>
                   <el-input
-                    type="textarea"
                     :maxlength="500"
-                    placeholder="图文内容建议上传商品、服务、环境等优质图片，并辅之以简单描述"
                     v-model="textImage.text"
+                    type="textarea"
+                    placeholder="图文内容建议上传商品、服务、环境等优质图片，并辅之以简单描述"
                     class="coupon-form"
                   />
                 </div>
                 <div
-                  class="article-item-b"
                   v-if="textImage.flag"
+                  class="article-item-b"
                 >
                   <el-button
                     type="success"
@@ -574,8 +572,8 @@
                 >
               </div>
               <div
-                class="errMessage"
                 v-show="submitCheck.graphicIntroduction"
+                class="errMessage"
               >图片和描述都不能为空</div>
             </el-form-item>
           </el-form>
@@ -903,6 +901,23 @@ export default {
       testData: {}
     };
   },
+  computed: {
+    newValue() {
+      return this.couponForm.is_fixed_date;
+    },
+    changeTitles() {
+      return this.base_info.title;
+    },
+    acceptCategory() {
+      return this.use_condition.accept_category
+    },
+    rejectcCategory() {
+      return this.use_condition.reject_category
+    },
+    abstracts() {
+      return this.abstract.abstract
+    }
+  },
   watch: {
     newValue(val, oldVal) {
       if (val === 1) {
@@ -933,23 +948,6 @@ export default {
       this.leftDetail.abstract = val
     }
   },
-  computed: {
-    newValue() {
-      return this.couponForm.is_fixed_date;
-    },
-    changeTitles() {
-      return this.base_info.title;
-    },
-    acceptCategory() {
-      return this.use_condition.accept_category
-    },
-    rejectcCategory() {
-      return this.use_condition.reject_category
-    },
-    abstracts() {
-      return this.abstract.abstract
-    }
-  },
   created() {
     this.getQiniuToken();
   },
@@ -969,8 +967,6 @@ export default {
         //查询卡劵详情
         getSingleCard(this, params)
           .then(res => {
-            console.log("查询卡劵详情?????????")
-            console.log(res)
             this.cardDetailsHandle(res.card)
           })
           .catch(err => {
@@ -1167,8 +1163,6 @@ export default {
 
       }
       return card
-      console.log('============>')
-      console.log(card)
     },
 
     //有效期
@@ -1224,8 +1218,6 @@ export default {
       if (array.length > 0) {
         advancedInfo.time_limit = array
       }
-      console.log('-------------s>')
-      console.log(advancedInfo)
       return advancedInfo
     },
     //可用时段改变
@@ -1276,7 +1268,6 @@ export default {
     addTime(dateTime, count) {
       dateTime = dateTime.setDate(dateTime.getDate() + count);
       dateTime = new Date(dateTime);
-      console.log(dateTime)
       return dateTime
     },
     //改变标题
@@ -1345,14 +1336,12 @@ export default {
       let key = response.key;
       let name = file.raw.name;
       let size = file.size;
-      console.log('k:=====', key)
       this.getMediaUpload(null, key, name, size);
     },
     handleSuccessBottom(response, file, fileList) {
       let key = response.key;
       let name = file.raw.name;
       let size = file.size;
-      console.log('k:=====', key)
       let type = 2;
       this.getMediaUpload(type, key, name, size);
     },
@@ -1373,7 +1362,6 @@ export default {
             this.handleCoverImage(res.url)
           }
           this.fileList.push(res);
-          console.log(this.fileList)
         })
         .catch(err => {
           this.$message({
@@ -1383,8 +1371,6 @@ export default {
         });
     },
     handleTextImage(url) {
-      console.log(url)
-      console.log(this.index)
       this.text_image_list[this.index].image_url = url
       this.text_image_list[this.index].isUpload = false
     },
@@ -1430,7 +1416,6 @@ export default {
         this.flag--
       }
       this.changeTimeSegment()
-      console.log(this.saveTimeLimit)
     },
     //添加文本图片
     addTextImageList() {
@@ -1476,7 +1461,6 @@ export default {
       this.colorListShow = false;
     },
     next() {
-      console.log("提交券类型")
       if (!this.validate()) {
         //alert("校验不通过")
         return
@@ -1499,7 +1483,6 @@ export default {
       }
     },
     upload() {
-      console.log("上传")
     },
     confirme(index) {
       this.text_image_list[index].flag = false

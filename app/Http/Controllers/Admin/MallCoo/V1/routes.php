@@ -16,9 +16,6 @@ $api->version('v1', [
             $api->any('user/byToken', 'UserController@getUserByToken');
             $api->any('user/byOpenUserId', 'UserController@getUserByOpenUserID');
 
-            $api->get('promotion/categories', 'PromotionController@getCategoryList');
-            $api->get('promotion', 'PromotionAPIController@getList');
-
             $api->get('coupon', 'CouponController@index');
             $api->post('coupon', 'CouponController@store');
         });

@@ -23,8 +23,8 @@ class AddRolePermissionToShop extends Seeder
                 ['name' => 'shop_project.project', 'display_name' => '标准节目'],
             ]],
             ['name' => 'shop_prize', 'display_name' => '奖品', 'children' => [
-                ['name' => 'shop_prize.coupon_batch', 'display_name' => '奖品列表'],
-                ['name' => 'shop_prize.coupon_batch_policy', 'display_name' => '奖品模板'],
+                ['name' => 'shop_prize.batch', 'display_name' => '奖品列表'],
+                ['name' => 'shop_prize.policy', 'display_name' => '奖品模板'],
                 ['name' => 'shop_prize.coupon', 'display_name' => '奖品核销'],
             ]],
             ['name' => 'shop_launch', 'display_name' => '投放', 'children' => [
@@ -37,6 +37,9 @@ class AddRolePermissionToShop extends Seeder
                 ['name' => 'shop_market.area', 'display_name' => '区域'],
                 ['name' => 'shop_market.market', 'display_name' => '场地'],
                 ['name' => 'shop_market.point', 'display_name' => '点位'],
+            ]],
+            ['name' => 'shop_device', 'display_name' => '设备管理', 'children' => [
+                ['name' => 'shop_device.device', 'display_name' => '设备'],
             ]],
         ];
 
@@ -69,7 +72,7 @@ class AddRolePermissionToShop extends Seeder
         }
 
         $marketer = Role::query()->updateOrCreate(['name' => 'market_owner'], ['name' => 'market_owner', 'display_name' => '场地主']);
-        $targetPermissions = ['shop_account', 'shop_market', 'shop_report', 'shop_wechat', 'shop_project', 'shop_prize', 'shop_launch'];
+        $targetPermissions = ['shop_account', 'shop_market', 'shop_report', 'shop_wechat', 'shop_project', 'shop_prize', 'shop_launch','shop_device'];
         $targetPermissionIDs = [[]];
         foreach ($targetPermissions as $targetPermission) {
             $ids = DB::table('permissions')->whereRaw("name like '$targetPermission%'")->get(['id']);

@@ -49,4 +49,9 @@ class Project extends Model
         return $this->belongsTo(CompanyProject::class, 'id', 'project_id');
     }
 
+    public function permissions()
+    {
+        return $this->hasMany(ProjectPermission::class, 'pid', 'id');
+    }
+
 }

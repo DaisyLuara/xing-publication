@@ -2,21 +2,48 @@
   <div class="root">
     <div class="account-wrap">
       <div class="item-info">
-        <el-form ref="userForm" :model="userForm" :rules="rules" label-width="80px">
-          <el-form-item label="姓名" prop="user.name">
-            <el-input v-model="userForm.user.name" :maxlength="10" class="user-form-input"/>
+        <el-form 
+          ref="userForm" 
+          :model="userForm" 
+          :rules="rules" 
+          label-width="80px">
+          <el-form-item 
+            label="姓名" 
+            prop="user.name">
+            <el-input 
+              v-model="userForm.user.name" 
+              :maxlength="10" 
+              class="user-form-input"/>
           </el-form-item>
-          <el-form-item label="手机号码" prop="user.phone">
-            <el-input v-model="userForm.user.phone" :maxlength="11" class="user-form-input"/>
+          <el-form-item 
+            label="手机号码" 
+            prop="user.phone">
+            <el-input 
+              v-model="userForm.user.phone" 
+              :maxlength="11" 
+              class="user-form-input"/>
           </el-form-item>
-          <el-form-item label="密码" prop="user.password">
-            <el-input v-model="userForm.user.password" type="password" class="user-form-input"/>
+          <el-form-item 
+            label="密码" 
+            prop="user.password">
+            <el-input 
+              v-model="userForm.user.password" 
+              type="password" 
+              class="user-form-input"/>
           </el-form-item>
-          <el-form-item label="确认密码" prop="user.repassword">
-            <el-input v-model="userForm.user.repassword" type="password" class="user-form-input"/>
+          <el-form-item 
+            label="确认密码" 
+            prop="user.repassword">
+            <el-input 
+              v-model="userForm.user.repassword" 
+              type="password" 
+              class="user-form-input"/>
           </el-form-item>
           <el-form-item>
-            <el-button :loading="loading" type="primary" @click="onSubmit('userForm')">保存</el-button>
+            <el-button 
+              :loading="loading" 
+              type="primary" 
+              @click="onSubmit('userForm')">保存</el-button>
           </el-form-item>
         </el-form>
       </div>
