@@ -8,10 +8,14 @@ use App\Exports\ContractHistoryExport;
 use App\Exports\CouponExport;
 use App\Exports\InvoiceCompanyExport;
 use App\Exports\InvoiceExport;
+use App\Exports\InvoiceHistoryExport;
 use App\Exports\InvoiceReceiptExport;
 use App\Exports\MarketingExport;
 use App\Exports\MarketingTopExport;
 use App\Exports\OldMarketingExport;
+use App\Exports\PaymentExport;
+use App\Exports\PaymentHistoryExport;
+use App\Exports\PaymentPayeeExport;
 use App\Exports\PersonRewardExport;
 use App\Exports\PointDailyAverageExport;
 use App\Exports\PointExport;
@@ -92,5 +96,19 @@ class ExcelServiceProvider extends ServiceProvider
         $this->app->bind('invoice_receipt', function ($app) {
             return new InvoiceReceiptExport($app->request);
         });
+        $this->app->bind('invoice_history', function ($app) {
+            return new InvoiceHistoryExport($app->request);
+        });
+
+        $this->app->bind('payment', function ($app) {
+            return new PaymentExport($app->request);
+        });
+        $this->app->bind('payment_payee', function ($app) {
+            return new PaymentPayeeExport($app->request);
+        });
+        $this->app->bind('payment_history', function ($app) {
+            return new PaymentHistoryExport($app->request);
+        });
+
     }
 }

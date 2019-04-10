@@ -27,6 +27,7 @@ $api->version('v1', [
             $api->post('invoice_company', ['middleware' => ['permission:invoice.invoiceCompany.create'], 'uses' => 'InvoiceCompanyController@store']);
             $api->patch('invoice_company/{invoice_company}', ['middleware' => ['permission:invoice.invoiceCompany.update'], 'uses' => 'InvoiceCompanyController@update']);
 
+            $api->get('invoice_history/export', ['middleware' => ['permission:invoice.history.read'], 'uses' => 'InvoiceHistoryController@export']);
             $api->get('invoice_history', ['middleware' => ['permission:invoice.history.read'], 'uses' => 'InvoiceHistoryController@index']);
 
             //财务收款

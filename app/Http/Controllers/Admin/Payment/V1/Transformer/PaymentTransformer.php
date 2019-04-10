@@ -9,19 +9,7 @@ use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 
 class PaymentTransformer extends TransformerAbstract
 {
-    protected $statusMapping = [
-        '1' => '待审批',
-        '2' => '审批中',
-        '3' => '已审批',
-        '4' => '已付款',
-        '5' => '驳回'
-    ];
 
-    protected $typeMapping = [
-        '1' => '支票',
-        '2' => '电汇单',
-        '3' => '贷记凭证'
-    ];
     protected $availableIncludes = ['contract', 'payment_payee', 'media'];
 
     public function transform(Payment $payment)
@@ -34,7 +22,7 @@ class PaymentTransformer extends TransformerAbstract
             'applicant' => $payment->applicant,
             'applicant_name' => $payment->applicantUser->name,
             'amount' => $payment->amount,
-            'type' => $this->typeMapping[$payment->type],
+            'type' => Payment::$typeMapping[$payment->type],
             'reason' => $payment->reason,
             'remark' => $payment->remark,
             'bd_ma_message' => $payment->bd_ma_message,
@@ -43,7 +31,7 @@ class PaymentTransformer extends TransformerAbstract
             'auditor_message' => $payment->auditor_message,
             'payer' => $payment->payer,
             'receive_status' => $payment->receive_status == 0 ? '未收票' : '已收票',
-            'status' => $this->statusMapping[$payment->status],
+            'status' => Payment::$statusMapping[$payment->status],
             'handler' => $payment->handler,
             'handler_name' => $payment->handler ? $payment->handlerUser->name : null,
             'created_at' => $payment->created_at->toDateTimeString(),
