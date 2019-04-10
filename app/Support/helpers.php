@@ -434,6 +434,7 @@ function excelExportByType(Request $request, string $type)
         'invoice', 'invoice_company', 'invoice_receipt', 'invoice_history',
         'payment', 'payment_payee', 'payment_history',
         'demand_application', 'demand_modify',
+        'location_product','erp_warehouse_change','erp_warehouse','erp_location','erp_product',
     ])) {
         abort(422, '此下载类型不存在');
     }

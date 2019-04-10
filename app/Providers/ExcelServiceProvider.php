@@ -8,6 +8,11 @@ use App\Exports\ContractHistoryExport;
 use App\Exports\CouponExport;
 use App\Exports\DemandApplicationExport;
 use App\Exports\DemandModifyExport;
+use App\Exports\ErpLocationExport;
+use App\Exports\ErpLocationProductExport;
+use App\Exports\ErpProductExport;
+use App\Exports\ErpWarehouseChangeExport;
+use App\Exports\ErpWarehouseExport;
 use App\Exports\InvoiceCompanyExport;
 use App\Exports\InvoiceExport;
 use App\Exports\InvoiceHistoryExport;
@@ -116,6 +121,21 @@ class ExcelServiceProvider extends ServiceProvider
         });
         $this->app->bind('demand_modify', function ($app) {
             return new DemandModifyExport($app->request);
+        });
+        $this->app->bind('location_product', function ($app) {
+            return new ErpLocationProductExport($app->request);
+        });
+        $this->app->bind('erp_warehouse_change', function ($app) {
+            return new ErpWarehouseChangeExport($app->request);
+        });
+        $this->app->bind('erp_warehouse', function ($app) {
+            return new ErpWarehouseExport($app->request);
+        });
+        $this->app->bind('erp_location', function ($app) {
+            return new ErpLocationExport($app->request);
+        });
+        $this->app->bind('erp_product', function ($app) {
+            return new ErpProductExport($app->request);
         });
     }
 }

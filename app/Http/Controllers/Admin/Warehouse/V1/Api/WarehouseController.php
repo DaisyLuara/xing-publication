@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Admin\Warehouse\V1\Models\Warehouse;
 use App\Http\Controllers\Admin\Warehouse\V1\Request\WarehouseRequest;
 use App\Http\Controllers\Admin\Warehouse\V1\Transformer\WarehouseTransformer;
+use Illuminate\Http\Request;
 
 class WarehouseController extends Controller
 {
@@ -41,6 +42,12 @@ class WarehouseController extends Controller
     {
         $warehouse->update($request->all());
         return $this->response()->item($warehouse, new WarehouseTransformer())->setStatusCode(200);
+    }
+
+
+    public function export(Request $request)
+    {
+        return excelExportByType($request, 'erp_warehouse');
     }
 
 }
