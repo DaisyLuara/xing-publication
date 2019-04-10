@@ -35,7 +35,7 @@ class InvoiceCompanyController extends Controller
         if ($user->hasRole('user') || $user->hasRole('bd-manager')) {
             $query->where('user_id', $user->id);
         }
-        $invoiceCompany = $query->paginate(10);
+        $invoiceCompany = $query->orderByDesc('created_at')->paginate(10);
 
         return $this->response()->paginator($invoiceCompany, new InvoiceCompanyTransformer());
     }

@@ -52,9 +52,7 @@ class TodayDataController extends Controller
             $query->whereIn('belong', $belong);
         }
 
-        $date = Carbon::now()->toDateString();
-        $data = $query->whereRaw("date_format(date,'%Y-%m-%d')= '$date' ")
-            ->selectRaw("sum(exposuretimes) as exposuretimes,sum(looktimes) as looktimes ,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(scantimes) as scantimes")
+        $data = $query->selectRaw("sum(exposuretimes) as exposuretimes,sum(looktimes) as looktimes ,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(scantimes) as scantimes")
             ->first()->toArray();
         $output = [
             "data" => [
@@ -89,12 +87,9 @@ class TodayDataController extends Controller
             $query->whereIn('belong', $belong);
             $query_all->whereIn('belong', $belong);
         }
-        $date = Carbon::now()->toDateString();
-        $allData = $query_all->whereRaw("date_format(date,'%Y-%m-%d')= '$date' ")
-            ->selectRaw("sum(bnum) as bnum,sum(gnum) as gnum,sum(bnum+gnum) as total")
+        $allData = $query_all->selectRaw("sum(bnum) as bnum,sum(gnum) as gnum,sum(bnum+gnum) as total")
             ->first()->toArray();
-        $data = $query->whereRaw("date_format(date,'%Y-%m-%d')= '$date' ")
-            ->selectRaw("sum(age10b) as age10_male,sum(age10g) as age10_female,
+        $data = $query->selectRaw("sum(age10b) as age10_male,sum(age10g) as age10_female,
                                     sum(age18b) as age18_male,sum(age18g) as age18_female,
                                     sum(age30b) as age30_male,sum(age30g) as age30_female,
                                     sum(age40b) as age40_male,sum(age40g) as age40_female,
@@ -150,9 +145,7 @@ class TodayDataController extends Controller
             abort(422, "节目必填");
         }
         $belong = explode(',', $request->belong);
-        $date = Carbon::now()->toDateString();
-        $data = $query->whereRaw("date_format(date,'%Y-%m-%d')= '$date' ")
-            ->whereIn("belong", $belong)
+        $data = $query->whereIn("belong", $belong)
             ->selectRaw("sum(century10_gnum+century00_gnum+century90_gnum+century80_gnum+century70_gnum) as gnum,
                               sum(century10_bnum+century00_bnum+century90_bnum+century80_bnum+century70_bnum) as bnum,time")
             ->groupBy("time")
@@ -202,9 +195,7 @@ class TodayDataController extends Controller
         $case3 = "when oid=746 or oid=747 then 'C' ";
         $case4 = "when oid=748 then 'D' ";
         $sql = $case1 . $case2 . $case3 . $case4;
-        $date = Carbon::now()->toDateString();
-        $data = $query->whereRaw("date_format(date,'%Y-%m-%d')= '$date' ")
-            ->selectRaw("case " . $sql . "else 0 end as area,sum(looktimes) as num")
+        $data = $query->selectRaw("case " . $sql . "else 0 end as area,sum(looktimes) as num")
             ->groupBy("area")
             ->orderBy('num', 'desc')
             ->get();

@@ -2,12 +2,12 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\Admin\Face\V1\Models\FacePlayCharacterRecord;
+use App\Http\Controllers\Admin\Face\V1\Models\FacePlaytimesCharacterRecord;
 use Illuminate\Console\Command;
 use Carbon\Carbon;
 use DB;
 
-class RollBackPlaytimesCharacterData extends Command
+class RollBackPlayTimesCharacterData extends Command
 {
     /**
      * The name and signature of the console command.
@@ -46,10 +46,10 @@ class RollBackPlaytimesCharacterData extends Command
         }
 
         if ($date >= '2018-07-24') {
-            FacePlayCharacterRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
-            FacePlayCharacterRecord::create(['date' => $date]);
+            FacePlaytimesCharacterRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>='$date'")->delete();
+            FacePlaytimesCharacterRecord::create(['date' => $date]);
         } else {
-            FacePlayCharacterRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-07-24'")->delete();
+            FacePlaytimesCharacterRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-07-24'")->delete();
         }
 
         DB::connection('ar')->table('xs_face_playtimes7_character_count')->whereRaw("date_format(date,'%Y-%m-%d') >='$date'")->delete();

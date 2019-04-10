@@ -1,9 +1,9 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: yangqiang
- * Date: 2018/11/22
- * Time: 上午11:15
+ * User: zhangjingjing
+ * Date: 2018/11/16
+ * Time: 下午1:41
  */
 
 namespace App\Http\Controllers\Admin\Face\V1\Models;
@@ -11,8 +11,7 @@ namespace App\Http\Controllers\Admin\Face\V1\Models;
 
 use App\Models\Model;
 
-class FacePermeabilityRecord extends Model
+class FaceLooktimesCharacterRecord extends Model
 {
-    //7s,15s,21s用户渗透率清洗记录表
     protected $fillable = ['date'];
 }

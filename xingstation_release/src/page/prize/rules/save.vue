@@ -1,17 +1,17 @@
 <template>
   <div class="add-coupon-wrap">
-    <div 
-      v-loading="setting.loading" 
+    <div
+      v-loading="setting.loading"
       :element-loading-text="setting.loadingText">
       <div class="coupon-title">{{ $route.name }}</div>
-      <el-form 
-        ref="couponForm" 
-        :model="couponForm" 
-        :rules="rules" 
+      <el-form
+        ref="couponForm"
+        :model="couponForm"
+        :rules="rules"
         label-width="180px">
         <el-tabs v-model="activeName">
-          <el-tab-pane 
-            label="优惠券设置" 
+          <el-tab-pane
+            label="优惠券设置"
             name="first">
             <el-form-item
               :rules="{required: true, message: '公司不能为空', trigger: 'submit'}"
@@ -40,20 +40,20 @@
               label="优惠券名称"
               prop="name"
             >
-              <el-input 
-                v-model="couponForm.name" 
+              <el-input
+                v-model="couponForm.name"
                 class="coupon-form-input"/>
             </el-form-item>
-            <el-form-item 
-              label="创建人" 
+            <el-form-item
+              label="创建人"
               prop="user_name">
-              <el-input 
-                v-model="user_name" 
-                :disabled="true" 
+              <el-input
+                v-model="user_name"
+                :disabled="true"
                 class="coupon-form-input"/>
             </el-form-item>
-            <el-form-item 
-              label="投放场地（嗨蚪）" 
+            <el-form-item
+              label="投放场地（嗨蚪）"
               prop="marketid">
               <el-select
                 v-model="couponForm.marketid"
@@ -76,8 +76,8 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item 
-              label="投放点位（嗨蚪）" 
+            <el-form-item
+              label="投放点位（嗨蚪）"
               prop="oid">
               <el-select
                 v-model="couponForm.oid"
@@ -97,8 +97,8 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item 
-              label="使用说明" 
+            <el-form-item
+              label="使用说明"
               prop="description">
               <el-input
                 v-model="couponForm.description"
@@ -112,14 +112,14 @@
               label="金额"
               prop="amount"
             >
-              <el-input 
-                v-model="couponForm.amount" 
-                :maxlength="6" 
+              <el-input
+                v-model="couponForm.amount"
+                :maxlength="6"
                 class="coupon-form-input"/>
-              <el-tooltip 
-                class="item" 
-                effect="dark" 
-                content="金额必须为整数" 
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="金额必须为整数"
                 placement="right">
                 <i class="el-icon-info"/>
               </el-tooltip>
@@ -129,92 +129,82 @@
               label="兑换价格（嗨蚪）"
               prop="credit"
             >
-              <el-input 
-                v-model="couponForm.credit" 
+              <el-input
+                v-model="couponForm.credit"
                 class="coupon-form-input"/>
             </el-form-item>
-            <el-form-item 
-              label="h5图片链接" 
+            <el-form-item
+              label="h5图片链接"
               prop="image_url">
-              <el-input 
-                v-model="couponForm.image_url" 
+              <el-input
+                v-model="couponForm.image_url"
                 class="coupon-form-input"/>
             </el-form-item>
-            <el-form-item 
-              label="大屏图片链接" 
+            <el-form-item
+              label="大屏图片链接"
               prop="bs_image_url">
-              <el-input 
-                v-model="couponForm.bs_image_url" 
+              <el-input
+                v-model="couponForm.bs_image_url"
                 class="coupon-form-input"/>
             </el-form-item>
-            <el-form-item 
-              label="跳转链接" 
+            <el-form-item
+              label="跳转链接"
               prop="redirect_url">
-              <el-input 
-                v-model="couponForm.redirect_url" 
+              <el-input
+                v-model="couponForm.redirect_url"
                 class="coupon-form-input"/>
             </el-form-item>
-            <el-form-item 
-              label="优先级" 
+            <el-form-item
+              label="优先级"
               prop="sort_order">
-              <el-input 
-                v-model="couponForm.sort_order" 
-                :maxlength="3" 
+              <el-input
+                v-model="couponForm.sort_order"
+                :maxlength="3"
                 class="coupon-form-input"/>
             </el-form-item>
-            <el-form-item 
-              label="状态" 
+            <el-form-item
+              label="状态"
               prop="is_active">
-              <el-radio 
-                v-model="couponForm.is_active" 
+              <el-radio
+                v-model="couponForm.is_active"
                 :label="1">启用</el-radio>
-              <el-radio 
-                v-model="couponForm.is_active" 
+              <el-radio
+                v-model="couponForm.is_active"
                 :label="0">停用</el-radio>
             </el-form-item>
           </el-tab-pane>
-          <el-tab-pane 
-            label="场景设置" 
-            name="second">
-            <el-form-item 
-              label="适用场景" 
-              prop="scene_type">
-              <el-radio-group 
-                v-model="couponForm.scene_type" 
-                @change="handleSceneType">
-                <el-tooltip 
-                  class="item" 
-                  effect="dark" 
-                  content="可在同一场地下的多家商户核销" 
-                  placement="top">
+          <el-tab-pane label="场景设置" name="second">
+            <el-form-item label="适用场景" prop="scene_type" :rules="{required: true, message: '适用场景不能为空', trigger: 'submit'}">
+              <el-radio-group v-model="couponForm.scene_type" @change="handleSceneType">
+                <el-tooltip class="item" effect="dark" content="可在同一场地下的多家商户核销" placement="top">
                   <el-radio :label="1">场地通用</el-radio>
                 </el-tooltip>
-                <el-tooltip 
-                  class="item" 
-                  effect="dark" 
-                  content="仅供某一特定场地核销" 
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  content="仅供某一特定场地核销"
                   placement="top">
                   <el-radio :label="2">场地自营</el-radio>
                 </el-tooltip>
-                <el-tooltip 
-                  class="item" 
-                  effect="dark" 
-                  content="可在同一主体下，多家连锁商户核销" 
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  content="可在同一主体下，多家连锁商户核销"
                   placement="top">
                   <el-radio :label="3">商户通用</el-radio>
                 </el-tooltip>
-                <el-tooltip 
-                  class="item" 
-                  effect="dark" 
-                  content="仅供某一特定商户核销" 
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  content="仅供某一特定商户核销"
                   placement="top">
                   <el-radio :label="4">商户自营</el-radio>
                 </el-tooltip>
               </el-radio-group>
             </el-form-item>
-            <el-form-item 
-              :rules="writeOffMidRules" 
-              label="适用场地" 
+            <el-form-item
+              :rules="writeOffMidRules"
+              label="适用场地"
               prop="write_off_mid">
               <el-select
                 v-model="couponForm.write_off_mid"
@@ -234,9 +224,9 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item 
-              :rules="writeOffSidRules" 
-              label="适用商户" 
+            <el-form-item
+              :rules="writeOffSidRules"
+              label="适用商户"
               prop="write_off_sid">
               <el-select
                 v-model="couponForm.write_off_sid"
@@ -258,11 +248,11 @@
               </el-select>
             </el-form-item>
           </el-tab-pane>
-          <el-tab-pane 
-            label="使用设置" 
+          <el-tab-pane
+            label="使用设置"
             name="third">
-            <el-form-item 
-              label="动态库存" 
+            <el-form-item
+              label="动态库存"
               prop="dynamic_stock_status">
               <el-radio-group
                 v-model="couponForm.dynamic_stock_status"
@@ -279,13 +269,13 @@
                 </el-tooltip>
               </el-radio-group>
             </el-form-item>
-            <el-form-item 
-              label="核销减库存" 
+            <el-form-item
+              label="核销减库存"
               prop="write_off_status">
-              <el-tooltip 
-                class="item" 
-                effect="dark" 
-                content="领券后，库存自动减少" 
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="领券后，库存自动减少"
                 placement="left">
                 <el-radio
                   v-model="couponForm.write_off_status"
@@ -293,10 +283,10 @@
                   :disabled="disabledWriteStatus"
                 >关闭</el-radio>
               </el-tooltip>
-              <el-tooltip 
-                class="item" 
-                effect="dark" 
-                content="核销后，库存自动减少" 
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="核销后，库存自动减少"
                 placement="right">
                 <el-radio
                   v-model="couponForm.write_off_status"
@@ -310,9 +300,9 @@
               label="库存总数"
               prop="count"
             >
-              <el-input 
-                v-model="couponForm.count" 
-                :maxlength="6" 
+              <el-input
+                v-model="couponForm.count"
+                :maxlength="6"
                 class="coupon-form-input"/>
             </el-form-item>
             <el-form-item
@@ -320,16 +310,16 @@
               label="剩余库存"
               prop="stock"
             >
-              <el-input 
-                v-model="couponForm.stock" 
-                :maxlength="6" 
+              <el-input
+                v-model="couponForm.stock"
+                :maxlength="6"
                 class="coupon-form-input"/>
             </el-form-item>
-            <el-form-item 
-              label="每人无限领取" 
+            <el-form-item
+              label="每人无限领取"
               prop="pmg_status">
-              <el-radio-group 
-                v-model="couponForm.pmg_status" 
+              <el-radio-group
+                v-model="couponForm.pmg_status"
                 @change="unlimitedPeopleHandle">
                 <el-radio :label="1">开启</el-radio>
                 <el-radio :label="0">关闭</el-radio>
@@ -347,11 +337,11 @@
                 class="coupon-form-input"
               />
             </el-form-item>
-            <el-form-item 
-              label="每天无限领取" 
+            <el-form-item
+              label="每天无限领取"
               prop="dmg_status">
-              <el-radio-group 
-                v-model="couponForm.dmg_status" 
+              <el-radio-group
+                v-model="couponForm.dmg_status"
                 @change="unlimitedDayHandle">
                 <el-radio :label="1">开启</el-radio>
                 <el-radio :label="0">关闭</el-radio>
@@ -363,24 +353,24 @@
               label="每天最大获取数"
               prop="day_max_get"
             >
-              <el-input 
-                v-model="couponForm.day_max_get" 
-                :maxlength="6" 
+              <el-input
+                v-model="couponForm.day_max_get"
+                :maxlength="6"
                 class="coupon-form-input"/>
             </el-form-item>
-            <el-form-item 
-              label="是否固定日期" 
+            <el-form-item
+              label="是否固定日期"
               prop="is_fixed_date">
-              <el-radio-group 
-                v-model="couponForm.is_fixed_date" 
+              <el-radio-group
+                v-model="couponForm.is_fixed_date"
                 @change="fixedDateHandle">
                 <el-radio :label="1">固定</el-radio>
                 <el-radio :label="0">不固定</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item 
-              v-if="!dateShow" 
-              label="延后生效日期" 
+            <el-form-item
+              v-if="!dateShow"
+              label="延后生效日期"
               prop="delay_effective_day">
               <el-input
                 v-model="couponForm.delay_effective_day"
@@ -388,9 +378,9 @@
                 class="coupon-form-input"
               />
             </el-form-item>
-            <el-form-item 
-              v-if="!dateShow" 
-              label="有效天数" 
+            <el-form-item
+              v-if="!dateShow"
+              label="有效天数"
               prop="effective_day">
               <el-input
                 v-model="couponForm.effective_day"
@@ -398,9 +388,9 @@
                 class="coupon-form-input"
               />
             </el-form-item>
-            <el-form-item 
-              v-if="dateShow" 
-              label="开始日期" 
+            <el-form-item
+              v-if="dateShow"
+              label="开始日期"
               prop="start_date">
               <el-date-picker
                 v-model="couponForm.start_date"
@@ -410,9 +400,9 @@
                 value-format="yyyy-MM-dd HH:mm:ss"
               />
             </el-form-item>
-            <el-form-item 
-              v-if="dateShow" 
-              label="结束日期" 
+            <el-form-item
+              v-if="dateShow"
+              label="结束日期"
               prop="end_date">
               <el-date-picker
                 v-model="couponForm.end_date"
@@ -425,8 +415,8 @@
           </el-tab-pane>
         </el-tabs>
         <el-form-item>
-          <el-button 
-            type="primary" 
+          <el-button
+            type="primary"
             @click="onSubmit('couponForm')">保存</el-button>
           <el-button @click="historyBack">取消</el-button>
         </el-form-item>

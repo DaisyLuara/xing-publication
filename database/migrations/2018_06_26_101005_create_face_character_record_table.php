@@ -1,9 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use App\Http\Controllers\Admin\Face\V1\Models\FaceCharacterRecord;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateFaceCharacterRecordTable extends Migration
 {
@@ -19,7 +18,6 @@ class CreateFaceCharacterRecordTable extends Migration
             $table->timestamp('date')->nullable();
             $table->timestamps();
         });
-        FaceCharacterRecord::create(['date' => "2017-04-21"]);
     }
 
     /**
