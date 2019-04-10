@@ -244,4 +244,9 @@ class DemandApplicationController extends Controller
 
     }
 
+    public function export(Request $request)
+    {
+        return excelExportByType($request,'demand_application');
+    }
+
 }

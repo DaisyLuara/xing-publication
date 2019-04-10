@@ -24,7 +24,7 @@ class PaymentHistoryExport extends BaseExport
         $this->payee = $request->payee;
         $this->contract_number = $request->contract_number;
 
-        $this->fileName = '付款-付款管理列表';
+        $this->fileName = '付款-我已审核列表';
     }
 
     public function collection()

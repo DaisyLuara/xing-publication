@@ -6,6 +6,8 @@ use App\Exports\ContractCostExport;
 use App\Exports\ContractExport;
 use App\Exports\ContractHistoryExport;
 use App\Exports\CouponExport;
+use App\Exports\DemandApplicationExport;
+use App\Exports\DemandModifyExport;
 use App\Exports\InvoiceCompanyExport;
 use App\Exports\InvoiceExport;
 use App\Exports\InvoiceHistoryExport;
@@ -109,6 +111,11 @@ class ExcelServiceProvider extends ServiceProvider
         $this->app->bind('payment_history', function ($app) {
             return new PaymentHistoryExport($app->request);
         });
-
+        $this->app->bind('demand_application', function ($app) {
+            return new DemandApplicationExport($app->request);
+        });
+        $this->app->bind('demand_modify', function ($app) {
+            return new DemandModifyExport($app->request);
+        });
     }
 }
