@@ -37,11 +37,11 @@ class TeamPersonRewardController extends Controller
             $query->where('project_name', 'like', '%' . $request->name . '%');
         }
 
-        if ($request->has('main_type')) {
+        if ($request->has('main_type') && $request->main_type ) {
             $query->where('main_type', '=',  $request->main_type );
         }
 
-        if ($request->has('type')) {
+        if ($request->has('type') && $request->main_type ) {
             $query->where('type', '=',  $request->type );
         }
 
