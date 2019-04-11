@@ -11,6 +11,8 @@ $api->version('v1', [
 
         $api->group(['prefix' => 'mallcoo'], function ($api) {
 
+            $api->post('verificationCodes', 'VerificationCodesController@store'); // 短信验证码
+
             $api->post('user/oauth', 'UserController@oauth');//获取授权页面url
             $api->any('user/callback', 'UserController@callback');//授权回调
             $api->any('user/byToken', 'UserController@getUserByToken');
