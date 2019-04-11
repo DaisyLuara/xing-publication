@@ -11,10 +11,10 @@ $api->version('v1', [
 
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
-            $api->get('product/{product}', 'ProductController@show');
+            $api->get('products/{product}', 'ProductController@show');
             $api->get('products', 'ProductController@index');
-            $api->post('products/{product}', 'ProductController@store');
-            $api->patch('product/{product}', 'ProductController@update');
+            $api->post('product', 'ProductController@store');
+            $api->patch('products/{product}', 'ProductController@update');
         });
     });
 
