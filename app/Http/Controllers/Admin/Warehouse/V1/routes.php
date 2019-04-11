@@ -10,7 +10,7 @@ $api->version('v1', [
     ], function ($api) {
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
             //产品
-            $api->get('erp_product/export', ['middleware' => ['permission:storage.product.read'], 'uses' => 'ProductController@export']);
+            $api->get('erp_product/export', ['middleware' => ['permission:storage.product.export'], 'uses' => 'ProductController@export']);
             $api->get('erp_product/{product}', 'ProductController@show');
             $api->get('erp_product', ['middleware' => ['permission:storage.product.read'], 'uses' => 'ProductController@index']);
             $api->post('erp_product', ['middleware' => ['permission:storage.product.create'], 'uses' => 'ProductController@store']);
@@ -20,21 +20,21 @@ $api->version('v1', [
             $api->get('product_attribute', 'ProductAttributeController@list');
 
             //仓库
-            $api->get('erp_warehouse/export', ['middleware' => ['permission:storage.store.read'], 'uses' => 'WarehouseController@export']);
+            $api->get('erp_warehouse/export', ['middleware' => ['permission:storage.store.export'], 'uses' => 'WarehouseController@export']);
             $api->get('erp_warehouse/{warehouse}', 'WarehouseController@show');
             $api->get('erp_warehouse', ['middleware' => ['permission:storage.store.read'], 'uses' => 'WarehouseController@index']);
             $api->post('erp_warehouse', ['middleware' => ['permission:storage.store.create'], 'uses' => 'WarehouseController@store']);
             $api->patch('erp_warehouse/{warehouse}', ['middleware' => ['permission:storage.store.update'], 'uses' => 'WarehouseController@update']);
 
             //库位
-            $api->get('erp_location/export', ['middleware' => ['permission:storage.location.read'], 'uses' => 'LocationController@export']);
+            $api->get('erp_location/export', ['middleware' => ['permission:storage.location.export'], 'uses' => 'LocationController@export']);
             $api->get('erp_location/{location}', 'LocationController@show');
             $api->get('erp_location', ['middleware' => ['permission:storage.location.read'], 'uses' => 'LocationController@index']);
             $api->post('erp_location', ['middleware' => ['permission:storage.location.create'], 'uses' => 'LocationController@store']);
             $api->patch('erp_location/{location}', ['middleware' => ['permission:storage.location.update'], 'uses' => 'LocationController@update']);
 
             //调拨记录
-            $api->get('erp_warehouse_change/export', ['middleware' => ['permission:storage.records.read'], 'uses' => 'WarehouseChangeController@export']);
+            $api->get('erp_warehouse_change/export', ['middleware' => ['permission:storage.records.export'], 'uses' => 'WarehouseChangeController@export']);
             $api->get('erp_warehouse_change/{warehouseChange}', 'WarehouseChangeController@show');
             $api->get('erp_warehouse_change', ['middleware' => ['permission:storage.records.read'], 'uses' => 'WarehouseChangeController@index']);
             $api->post('erp_warehouse_change', ['middleware' => ['permission:storage.records.create'], 'uses' => 'WarehouseChangeController@store']);
@@ -45,7 +45,7 @@ $api->version('v1', [
             $api->post('erp_warehouse_change/factory', ['middleware' => ['permission:contract.list.factory'], 'uses' => 'WarehouseChangeController@factory']);
 
             //库存明细
-            $api->get('location_product/export', ['middleware' => ['permission:storage.list.read'], 'uses' => 'LocationProductController@export']);
+            $api->get('location_product/export', ['middleware' => ['permission:storage.list.export'], 'uses' => 'LocationProductController@export']);
             $api->get('location_product', ['middleware' => ['permission:storage.list.read'], 'uses' => 'LocationProductController@index']);
 
 
