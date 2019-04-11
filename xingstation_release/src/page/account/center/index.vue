@@ -20,6 +20,42 @@
                 clearable 
                 class="item-input"/>
             </el-form-item>
+            <el-form-item
+                    label
+                    prop="main_type">
+              <el-select
+                      v-model="filters.main_type"
+                      placeholder="请选择类别"
+                      filterable
+                      clearable
+              >
+                <el-option
+                        v-for="item in mainTypeList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item
+                    label
+                    prop="main_type">
+              <el-select
+                      v-model="filters.type"
+                      placeholder="请选择类型"
+                      filterable
+                      clearable
+              >
+                <el-option
+                        v-for="item in typeList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+
+
             <el-form-item 
               label 
               prop="beginDate">
@@ -171,6 +207,8 @@ import {
 } from "service";
 import { Cookies } from "utils/cookies";
 import {
+  Select,
+  Option,
   Button,
   Input,
   Table,
@@ -184,6 +222,8 @@ import {
 
 export default {
   components: {
+    "el-select": Select,
+    "el-option": Option,
     "el-table": Table,
     "el-table-column": TableColumn,
     "el-button": Button,
@@ -198,12 +238,79 @@ export default {
       freezeTotal: 0,
       filters: {
         name: "",
+        type: '',
+        main_type: "",
         beginDate: [
           new Date().getTime() - 3600 * 1000 * 24 * 6,
           new Date().getTime()
         ],
         getDate: []
       },
+      mainTypeList: [
+        {
+          value: "CPE",
+          label: "CPE·节目智造奖金"
+        },
+        {
+          value: "PBI",
+          label: "P·B·I奖金"
+        },
+        {
+          value: "SYSTEM",
+          label: "平台奖金"
+        }
+      ],
+
+      typeList: [
+        {
+          value: "plan",
+          label: "节目统筹"
+        },
+        {
+          value: "originality",
+          label: "节目创意"
+        },
+        {
+          value: "animation",
+          label: "设计动画"
+        },
+        {
+          value: "interaction",
+          label: "交互技术"
+        },
+        {
+          value: "h5",
+          label: "H5开发"
+        },
+        {
+          value: "backend_docking",
+          label: "后端IT技术支持"
+        },
+        {
+          value: "tester",
+          label: "节目测试"
+        },
+        {
+          value: "operation",
+          label: "平台运营"
+        },
+        {
+          value: "tester_quality",
+          label: "节目测试-责任"
+        },
+        {
+          value: "operation_quality",
+          label: "平台运营-责任"
+        },
+        {
+          value: "animation_hidol",
+          label: "设计动画·Hido"
+        },
+        {
+          value: "hidol_patent",
+          label: "Hidol专利"
+        },
+      ],
       setting: {
         loading: false,
         loadingText: "拼命加载中"
@@ -355,7 +462,9 @@ export default {
       this.setting.loading = true;
       let args = {
         page: this.pagination.currentPage,
-        name: this.filters.name
+        name: this.filters.name,
+        type: this.filters.type,
+        main_type: this.filters.main_type,
       };
       if (this.filters.name === "") {
         delete args.name;
