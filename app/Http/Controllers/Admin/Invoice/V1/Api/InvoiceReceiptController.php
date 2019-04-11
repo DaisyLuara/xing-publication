@@ -110,4 +110,10 @@ class InvoiceReceiptController extends Controller
 
         return $this->response()->noContent()->setStatusCode(200);
     }
+
+
+    public function export(Request $request)
+    {
+        return excelExportByType($request,'invoice_receipt');
+    }
 }

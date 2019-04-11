@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\Warehouse\V1\Models\ProductAttribute;
 use App\Http\Controllers\Admin\Warehouse\V1\Request\ProductRequest;
 use App\Http\Controllers\Admin\Warehouse\V1\Transformer\ProductTransformer;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 
 class ProductController extends Controller
@@ -69,6 +70,12 @@ class ProductController extends Controller
                 ->where('attributes_id', $item['attributes_id'])->update($item);
         }
         return $this->response()->item($product, new ProductTransformer())->setStatusCode(200);
+    }
+
+
+    public function export(Request $request)
+    {
+        return excelExportByType($request, 'erp_product');
     }
 
 }

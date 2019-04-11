@@ -29,7 +29,7 @@ class DemandModifyTransformer extends TransformerAbstract
             'status_text' => $demandModify->getStatusText(),
             'reviewer_id' => $demandModify->getReviewerId(),
             'reviewer_name' => $demandModify->getReviewerName(),
-            'review_time' => $demandModify->getReviewTime(),
+            'review_time' => (string)$demandModify->getReviewTime(),
             'reject_remark' => $demandModify->getRejectRemark(),
             'created_at' => (string)$demandModify->getCreatedAt(),
             'updated_at' => (string)$demandModify->getUpdatedAt(),

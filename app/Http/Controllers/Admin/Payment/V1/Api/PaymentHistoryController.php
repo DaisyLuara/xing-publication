@@ -49,4 +49,10 @@ class PaymentHistoryController extends Controller
         $payment = $query->orderBy('created_at', 'desc')->paginate(10);
         return $this->response->paginator($payment, new PaymentTransformer());
     }
+
+
+    public function export(Request $request)
+    {
+        return excelExportByType($request,'payment_history');
+    }
 }

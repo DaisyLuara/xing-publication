@@ -284,4 +284,9 @@ class ContractController extends Controller
         return response()->json($data);
     }
 
+
+    public function export(Request $request)
+    {
+        return excelExportByType($request,'contract');
+    }
 }

@@ -58,4 +58,18 @@ class Payment extends Model
     public function media(){
         return $this->belongsToMany(Media::class, 'payment_media', 'payment_id', 'media_id');
     }
+
+    public static $statusMapping = [
+        '1' => '待审批',
+        '2' => '审批中',
+        '3' => '已审批',
+        '4' => '已付款',
+        '5' => '驳回'
+    ];
+
+    public static $typeMapping = [
+        '1' => '支票',
+        '2' => '电汇单',
+        '3' => '贷记凭证'
+    ];
 }

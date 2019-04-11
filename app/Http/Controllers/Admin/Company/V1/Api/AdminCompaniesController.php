@@ -109,4 +109,9 @@ class AdminCompaniesController extends Controller
         activity('company')->on($company)->withProperties($request->all())->log('修改公司信息');
         return $this->response->item($company, new CompanyTransformer());
     }
+
+    public function export(Request $request)
+    {
+        return excelExportByType($request, 'company');
+    }
 }
