@@ -15,8 +15,7 @@ $api->version('v1', [
 
             $api->post('user/oauth', 'UserController@oauth');//获取授权页面url
             $api->any('user/callback', 'UserController@callback');//授权回调
-            $api->any('user/byToken', 'UserController@getUserByToken');
-            $api->any('user/byOpenUserId', 'UserController@getUserByOpenUserID');
+
             $api->post('users', 'UserController@store'); //手机号开通会员卡
             $api->get('user', 'UserController@show');//获取商场会员信息
 

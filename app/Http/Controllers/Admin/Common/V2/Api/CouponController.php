@@ -9,11 +9,13 @@ use App\Http\Controllers\Admin\Common\V2\Request\CouponRequest;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Coupon\V1\Models\UserCouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
+use App\Http\Controllers\Admin\Point\V1\Models\Point;
 use App\Http\Controllers\Admin\Project\V1\Models\Project;
 use App\Http\Controllers\Admin\User\V1\Models\ArMemberHonor;
 use App\Http\Controllers\Admin\User\V1\Models\ArMemberSession;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
+use App\Http\Controllers\Admin\WeChat\V1\Models\ThirdPartyUser;
 use App\Http\Controllers\Controller;
 use Milon\Barcode\DNS1D;
 use Overtrue\EasySms\EasySms;
@@ -103,6 +105,10 @@ class CouponController extends Controller
             }
         }
 
+        if ($couponBatch->third_code) {
+            $this->generateMallCooCoupon($request, $couponBatch->third_code);
+        }
+
         $code = uniqid();
         //微信卡券二维码
         $wechatCouponBatch = $couponBatch->wechat;
@@ -188,25 +194,6 @@ class CouponController extends Controller
         return $this->response->item($coupon, new CouponTransformer());
     }
 
-    private function sendMallCooCoupon($open_user_id, $picmID)
-    {
-        $mall_coo = app('mall_coo');
-        $sUrl = 'https://openapi10.mallcoo.cn/Coupon/v1/Send/ByOpenUserID/';
-
-        $data = [
-            'UserList' => [
-                [
-                    'BussinessID' => null,
-                    'TraceID' => uniqid() . config('mall_coo.app_id'),
-                    'PICMID' => $picmID,
-                    'OpenUserID' => $open_user_id,
-                ]
-            ]
-        ];
-
-        return $mall_coo->send($sUrl, $data);
-
-    }
 
     /**
      * 根据策略 生成优惠券规则
@@ -489,5 +476,49 @@ class CouponController extends Controller
         return $coupon;
     }
 
+    private function generateMallCooCoupon($request, $picmID)
+    {
+        $point = Point::query()->findOrFail($request->oid);
+        $thirdPartyUser = ThirdPartyUser::query()->where('z', $request->z)
+            ->where('marketid', $point->market->marketid)->get();
+//        $user = WeChatUser::query()->findOrFail($userID, ['mallcoo_open_user_id']);
+//        $result = $this->sendMallCooCoupon($user->mallcoo_open_user_id, ->third_code$couponBatch);
+
+
+
+        if ($result['Code'] != 1) {
+            abort(500, $result['Message']);
+        }
+
+        if (!$result['Data'][0]['IsSuccess']) {
+            abort(500, $result['Data'][0]['FailReason']);
+        }
+
+        $data = $result['Data'];
+        DB::beginTransaction();
+        try {
+
+            $coupon = Coupon::create([
+                'code' => $data[0]['VCode'],
+                'mobile' => $mobile,
+                'coupon_batch_id' => $couponBatch->id,
+                'picm_id' => $data[0]['PICMID'],
+                'trace_id' => $data[0]['TraceID'],
+                'status' => 3,
+                'wx_user_id' => $userID,
+                'qiniu_id' => $gameAttributePayload && isset($gameAttributePayload['id']) ? $gameAttributePayload['id'] : 0,
+                'oid' => $gameAttributePayload && isset($gameAttributePayload['utm_source']) ? $gameAttributePayload['utm_source'] : 0,
+                'belong' => $gameAttributePayload && isset($gameAttributePayload['utm_campaign']) ? $gameAttributePayload['utm_campaign'] : '',
+            ]);
+            $couponBatch->decrement('stock');
+            DB::commit();
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            abort(500, $e->getMessage());
+        }
+
+        return $this->response->item($coupon, new CouponTransformer());
+    }
 
 }

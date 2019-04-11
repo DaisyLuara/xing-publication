@@ -72,6 +72,30 @@ class MallCoo
     }
 
     /**
+     * 通过用户ID发券接口
+     * @param string $open_user_id
+     * @param string $picmID
+     * @return array
+     */
+    public function sendCouponByOpenUserID($open_user_id, $picmID)
+    {
+        $sUrl = 'https://openapi10.mallcoo.cn/Coupon/v1/Send/ByOpenUserID/';
+
+        $data = [
+            'UserList' => [
+                [
+                    'BussinessID' => null,
+                    'TraceID' => uniqid() . $this->m_AppID,
+                    'PICMID' => $picmID,
+                    'OpenUserID' => $open_user_id,
+                ]
+            ]
+        ];
+
+        return $this->send($sUrl, $data);
+    }
+
+    /**
      * mallcoo post 请求
      *
      * @param string $sUrl 请求url
