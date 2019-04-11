@@ -37,6 +37,11 @@ class UserController extends BaseController
         return $this->mall_coo->oauth($callback_url);
     }
 
+    /**
+     * 授权页面回调
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function callback(Request $request)
     {
         $ticket = $request->get('Ticket');
@@ -90,31 +95,6 @@ class UserController extends BaseController
     }
 
     /**
-     *  根据UserToken获取用户信息
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getUserByToken(Request $request)
-    {
-        $this->validate($request, [
-            'OpenUserId' => 'required'
-        ]);
-
-        $sUrl = 'https://openapi10.mallcoo.cn/Shop/V1/GetList/';
-
-        $data = [
-            "PageIndex" => 1,
-            "PageSize" => null,
-            "FloorID" => null,
-            "CommercialTypeID" => null,
-        ];
-
-        $result = $this->mall_coo->send($sUrl, $data);
-        abort_if($result['Code'] != 1, 500, $result['Message']);
-
-        return response()->json($result['Data']);
-    }
-
-    /**
      * 手机号开会员卡
      * @param UserRequest $request
      * @return mixed
@@ -124,14 +104,6 @@ class UserController extends BaseController
         $verifyData = Cache::get($request->verification_key);
         abort_if(!$verifyData, 422,'验证码已失效');
         abort_if(!hash_equals($verifyData['code'], $request->verification_code), 401, '验证码错误');
-
-        //查询会员
-        $user = ThirdPartyUser::query()->where('mobile', $verifyData['phone'])
-            ->where('marketid', $this->mall_coo->marketid)->first();
-
-        if ($user) {
-            return $this->response->item($user, new ThirdPartyUserTransformer());
-        }
 
         //开卡接口
         $sUrl = 'https://openapi10.mallcoo.cn/User/MallCard/v1/Open/ByMobile/';
@@ -152,9 +124,23 @@ class UserController extends BaseController
                 'gender' => $userInfo['Gender'],
                 'birthday' => $userInfo['Birthday'] ?: null,
                 'marketid' => $this->mall_coo->marketid,
+                "z" => $request->z,
                 'mall_card_apply_time' => $userInfo['MallCardApplyTime'],
             ]
         );
+
+        return $this->response->item($user, new ThirdPartyUserTransformer());
+    }
+
+    /**
+     * 商场会员信息
+     * @param UserRequest $request
+     * @return \Dingo\Api\Http\Response
+     */
+    public function show(UserRequest $request)
+    {
+        $user = ThirdPartyUser::query()->where('z', $request->z)
+            ->where('marketid', $this->mall_coo->marketid)->first();
 
         return $this->response->item($user, new ThirdPartyUserTransformer());
     }

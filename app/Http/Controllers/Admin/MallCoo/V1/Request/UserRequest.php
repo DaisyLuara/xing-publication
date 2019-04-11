@@ -14,6 +14,11 @@ class UserRequest extends Request
     public function rules()
     {
         switch ($this->method()) {
+            case 'GET':
+                return [
+                    'z' => 'required|string',
+                ];
+                break;
             case 'POST':
                 return [
                     'verification_key' => 'required|string',
