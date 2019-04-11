@@ -13,14 +13,14 @@ class CreateOrderItemTable extends Migration
      */
     public function up()
     {
-        Schema::create('order_items', function (Blueprint $table) {
+        Schema::create('shop_order_items', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('order_id');
-            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
+            $table->foreign('order_id')->references('id')->on('shop_orders')->onDelete('cascade');
             $table->unsignedInteger('product_id');
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->foreign('product_id')->references('id')->on('shop_products')->onDelete('cascade');
             $table->unsignedInteger('product_sku_id');
-            $table->foreign('product_sku_id')->references('id')->on('product_skus')->onDelete('cascade');
+            $table->foreign('product_sku_id')->references('id')->on('shop_product_skus')->onDelete('cascade');
             $table->unsignedInteger('amount');
             $table->decimal('price', 10, 2);
             $table->unsignedInteger('rating')->nullable();
@@ -36,6 +36,6 @@ class CreateOrderItemTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('order_items');
+        Schema::dropIfExists('shop_order_items');
     }
 }

@@ -13,14 +13,14 @@ class CreateProductSkusTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_skus', function (Blueprint $table) {
+        Schema::create('shop_product_skus', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
             $table->string('description');
             $table->decimal('price', 10, 2);
             $table->unsignedInteger('stock');
             $table->unsignedInteger('product_id');
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->foreign('product_id')->references('id')->on('shop_products')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -32,6 +32,6 @@ class CreateProductSkusTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('product_skus');
+        Schema::dropIfExists('shop_product_skus');
     }
 }

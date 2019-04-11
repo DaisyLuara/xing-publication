@@ -13,11 +13,11 @@ class CreateOrderTable extends Migration
      */
     public function up()
     {
-        Schema::create('orders', function (Blueprint $table) {
+        Schema::create('shop_orders', function (Blueprint $table) {
             $table->increments('id');
             $table->string('no')->unique();
-            $table->unsignedInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedInteger('customer_id');
+            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
             $table->text('address');
             $table->decimal('total_amount', 10, 2);
             $table->text('remark')->nullable();
@@ -42,6 +42,6 @@ class CreateOrderTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('shop_orders');
     }
 }

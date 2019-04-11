@@ -13,12 +13,12 @@ class CreateCartItems extends Migration
      */
     public function up()
     {
-        Schema::create('cart_items', function (Blueprint $table) {
+        Schema::create('shop_cart_items', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedInteger('customer_id')->nullable();
+            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
             $table->unsignedInteger('product_sku_id');
-            $table->foreign('product_sku_id')->references('id')->on('product_skus')->onDelete('cascade');
+            $table->foreign('product_sku_id')->references('id')->on('shop_product_skus')->onDelete('cascade');
             $table->unsignedInteger('amount');
         });
     }
@@ -30,6 +30,6 @@ class CreateCartItems extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cart_items');
+        Schema::dropIfExists('shop_cart_items');
     }
 }
