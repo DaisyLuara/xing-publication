@@ -80,6 +80,8 @@ class PolicyController extends Controller
     {
         $couponBatch = $couponBatch->query()->findOrFail($request->coupon_batch_id);
 
+        abort_if($policy->batches()->find($couponBatch->id), 500, '已存在该奖品,请勿重复添加');
+
         $policy->batches()->save($couponBatch, $this->convert($request));
         return $this->response->item($policy, new PolicyTransformer())
             ->setStatusCode(201);
