@@ -86,19 +86,20 @@ class ContractExport extends BaseExport
                     'special_num' => $contract->special_num,
                     'common_num' => $contract->common_num,
                     'legal_message' => $contract->legal_message,
-                    'status' => Contract::$statusMapping[$contract->status]??$contract->status,
+                    'status' => Contract::$statusMapping[$contract->status] ?? $contract->status,
                     'handler_name' => $contract->handler ? $contract->handlerUser->name : null,
-                    'product_status' => Contract::$productStatusMapping[$contract->product_status]??$contract->product_status,
+                    'product_status' => Contract::$productStatusMapping[$contract->product_status] ?? $contract->product_status,
                     'created_at' => $contract->created_at->toDateTimeString(),
                     'updated_at' => $contract->updated_at->toDateTimeString(),
                     'receive_date' => join(',', array_column($contract->receiveDate->toArray(), 'receive_date')),
+                    'media' => implode(';   ', $contract->media ? $contract->media->pluck('url')->toArray() : []),
                 ];
             })->toArray();
 
         $header = ['合同ID', '合同编号', '公司名称', '申请人', '合同名称', '合同总额', '合同类型', '合同种类',
             '备注', '服务对象', '预充值', '定制节目数量', '通用节目数量', '法务意见',
             '审批状态', '待处理人', '硬件状态',
-            '申请时间', '最后操作时间', '预估收款日期'];
+            '申请时间', '最后操作时间', '预估收款日期', '合同内容',];
         $this->header_num = count($header);
         array_unshift($contracts, $header, $header);
         $this->data = $data = collect($contracts);

@@ -2,9 +2,8 @@
 
 namespace App\Exports;
 
-use App\Http\Controllers\Admin\Contract\V1\Models\ContractCost;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ContractCostExport extends BaseExport
 {
@@ -26,40 +25,46 @@ class ContractCostExport extends BaseExport
     public function collection()
     {
 
-        $query = ContractCost::query();
+        /** @var  $currentUser \App\Models\User */
+        $currentUser = Auth::user();
+
+        $query = DB::table('contract_costs as cc')
+            ->leftJoin('contracts', 'contracts.id', '=', 'cc.contract_id')
+            ->leftJoin('contract_cost_contents as cct', 'cct.cost_id', '=', 'cc.id')
+            ->leftJoin('contract_cost_kinds as cck', 'cck.id', '=', 'cct.kind_id');
 
         if ($this->start_date && $this->end_date) {
-            $query->whereRaw("date_format(updated_at,'%Y-%m-%d') between '$this->start_date' and '$this->end_date' ");
-        }
-        $query->whereHas('contract', function ($q) {
-            if ($this->contract_number) {
-                $q->where('contract_number', 'like', '%' . $this->contract_number . '%');
-            }
-
-            if ($this->contract_name) {
-                $q->where('name', 'like', '%' . $this->contract_name . '%');
-            }
-        });
-        /** @var User $user */
-        $user = Auth::user();
-        if ($user->hasRole('user|bd-manager')) {
-            $query->where('applicant_id', $user->id);
+            $query->whereRaw("date_format(cc.updated_at,'%Y-%m-%d') between '$this->start_date' and '$this->end_date' ");
         }
 
-        $contractCosts = $query->orderBy('updated_at', 'desc')->get()
-            ->map(function ($contractCost) {
-                return [
-                    'contract_number' => "\t".$contractCost->contract->contract_number."\t",
-                    'contract_name' => $contractCost->contract->name,
-                    'applicant_name' => $contractCost->applicant_name,
-                    'total_cost' => $contractCost->total_cost,
-                    'confirm_cost' => $contractCost->confirm_cost,
-                    'created_at' => $contractCost->created_at->toDateTimeString(),
-                    'updated_at' => $contractCost->updated_at->toDateTimeString()
-                ];
-            })->toArray();
+        if ($this->contract_number) {
+            $query->where('contracts.contract_number', 'like', '%' . $this->contract_number . '%');
+        }
 
-        $header = ['合同编号', '合同名称', '所属人', '成本总额', '已确认成本', '创建时间', '修改时间'];
+        if ($this->contract_name) {
+            $query->where('contracts.name', 'like', '%' . $this->contract_name . '%');
+        }
+
+        if ($currentUser->hasRole('user|bd-manager')) {
+            $query->where('cc.applicant_id', $currentUser->id);
+        }
+
+        $contractCosts = $query->orderByDesc('cc.updated_at')
+            ->selectRaw("cc.id,concat('\t',contracts.contract_number,'\t') as 'contract_number',contracts.name as 'contract_name',
+            cc.applicant_name,cc.total_cost, cc.confirm_cost,cc.created_at,cc.updated_at,
+            cct.creator,cck.name as 'cck_name',cct.money,cct.remark,
+            case cct.status when 1 then '已确认' when 0 then '未确认' end as 'ccr_status',
+            cct.created_at as 'cct_created_at'")
+            ->get()->toArray();
+
+        $this->merge = collect($contractCosts)->groupBy('id')->map(function ($value) {
+            return $value->count();
+        })->values()->toArray();
+        $this->merge_start = 1;
+        $this->merge_end = 8;
+
+        $header = ['成本管理ID', '合同编号', '合同名称', '所属人', '成本总额', '已确认成本', '创建时间', '修改时间',
+            '成本创建人', '成本类型', '成本金额', '备注', '状态', '操作时间'];
         $this->header_num = count($header);
         array_unshift($contractCosts, $header, $header);
         $this->data = $data = collect($contractCosts);

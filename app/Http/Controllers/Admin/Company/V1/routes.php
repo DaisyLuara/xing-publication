@@ -11,6 +11,7 @@ $api->version('v1', [
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
             //公司管理
+            $api->get('companies/export', ['middleware' => ['permission:company.customers.read'], 'uses' => 'AdminCompaniesController@export']);
             $api->get('companies', ['middleware' => ['permission:company.customers.read'], 'uses' => 'AdminCompaniesController@index']);
             $api->get('companies/{company}', 'AdminCompaniesController@show');
             $api->post('companies', ['middleware' => ['permission:company.customers.create'], 'uses' => 'AdminCompaniesController@store']);

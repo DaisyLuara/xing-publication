@@ -23,6 +23,7 @@ $api->version('v1', [
             $api->post('contract/special_auditing/{contract}', ['middleware' => ['permission:contract.list.special_auditing'], 'uses' => 'ContractController@specialAuditing']);
 
             //收款提示
+            $api->get('remind_contract/export', ['middleware' => ['permission:contract.collection.read'], 'uses' => 'ContractReceiveDateController@export']);
             $api->get('remind_contract', ['middleware' => ['permission:contract.collection.read'], 'uses' => 'ContractReceiveDateController@index']);
 
             // 审批历史

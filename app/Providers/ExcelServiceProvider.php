@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Exports\CompanyExport;
 use App\Exports\ContractCostExport;
 use App\Exports\ContractExport;
 use App\Exports\ContractHistoryExport;
+use App\Exports\ContractRemindExport;
 use App\Exports\CouponExport;
 use App\Exports\DemandApplicationExport;
 use App\Exports\DemandModifyExport;
@@ -88,6 +90,9 @@ class ExcelServiceProvider extends ServiceProvider
         $this->app->bind('contract', function ($app) {
             return new ContractExport($app->request);
         });
+        $this->app->bind('remind_contract', function ($app) {
+            return new ContractRemindExport($app->request);
+        });
         $this->app->bind('contract_cost', function ($app) {
             return new ContractCostExport($app->request);
         });
@@ -137,5 +142,9 @@ class ExcelServiceProvider extends ServiceProvider
         $this->app->bind('erp_product', function ($app) {
             return new ErpProductExport($app->request);
         });
+        $this->app->bind('company', function ($app) {
+            return new CompanyExport($app->request);
+        });
+
     }
 }
