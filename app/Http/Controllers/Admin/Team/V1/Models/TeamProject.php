@@ -48,6 +48,7 @@ class TeamProject extends Model
         '4' => '更多',
     ];
     public static  $h5AttributeMapping = [
+        '0' => '不计入',
         '1' => '基础模版',
         '2' => '复杂模版',
     ];

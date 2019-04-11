@@ -1,9 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use App\Http\Controllers\Admin\Face\V1\Models\FacePlayCharacterRecord;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateFacePlayCharacterRecordTable extends Migration
 {
@@ -19,7 +18,6 @@ class CreateFacePlayCharacterRecordTable extends Migration
             $table->timestamp('date')->nullable();
             $table->timestamps();
         });
-        FacePlayCharacterRecord::create(['date' => '2018-07-24']);
     }
 
     /**

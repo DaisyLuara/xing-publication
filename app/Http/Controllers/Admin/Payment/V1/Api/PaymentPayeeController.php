@@ -33,7 +33,7 @@ class PaymentPayeeController extends Controller
         if ($user->hasRole('user') || $user->hasRole('bd-manager')) {
             $query->where('user_id', $user->id);
         }
-        $paymentPayee = $query->paginate(10);
+        $paymentPayee = $query->orderByDesc('created_at')->paginate(10);
 
         return $this->response()->paginator($paymentPayee, new PaymentPayeeTransformer());
     }

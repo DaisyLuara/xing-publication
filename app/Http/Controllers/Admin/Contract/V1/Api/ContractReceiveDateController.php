@@ -46,7 +46,8 @@ class ContractReceiveDateController extends Controller
             });
         }
 
-        $contractReceiveDate = $query->where('status', 3)->paginate(10);
+        $contractReceiveDate = $query->where('status', 3)
+            ->orderByDesc('created_at')->paginate(10);
         return $this->response()->paginator($contractReceiveDate, new ContractTransformer());
     }
 }
