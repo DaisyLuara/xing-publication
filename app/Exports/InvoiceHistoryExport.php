@@ -2,7 +2,6 @@
 
 namespace App\Exports;
 
-use App\Http\Controllers\Admin\Invoice\V1\Models\Invoice;
 use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceHistory;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;

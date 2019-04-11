@@ -2,9 +2,7 @@
 
 namespace App\Exports;
 
-use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
 use App\Http\Controllers\Admin\Contract\V1\Models\ContractHistory;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
