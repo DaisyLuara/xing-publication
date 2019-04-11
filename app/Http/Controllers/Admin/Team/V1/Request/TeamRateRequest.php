@@ -50,7 +50,8 @@ class TeamRateRequest extends Request
                     "tester" => "required|numeric",
                     "tester_quality" => "required|numeric",
                     "operation" => "required|numeric",
-                    "operation_quality" => "required|numeric"
+                    "operation_quality" => "required|numeric",
+                    "tester_media_id" => "nullable|integer",
                 ];
                 break;
             default:
