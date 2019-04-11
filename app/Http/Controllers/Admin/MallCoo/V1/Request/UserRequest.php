@@ -23,7 +23,7 @@ class UserRequest extends Request
                 return [
                     'verification_key' => 'required|string',
                     'verification_code' => 'required|string',
-                    'sign' => 'required|string'
+                    'z' => 'required|string',
                 ];
                 break;
         }

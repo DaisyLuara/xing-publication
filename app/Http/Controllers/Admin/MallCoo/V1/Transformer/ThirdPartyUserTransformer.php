@@ -15,6 +15,7 @@ class ThirdPartyUserTransformer extends TransformerAbstract
             'username' => $thirdPartyUser->username,
             'mallcoo_wx_open_id' => $thirdPartyUser->mallcoo_wx_open_id,
             'mobile' => $thirdPartyUser->mobile,
+            'z' => $thirdPartyUser->z,
             'marketid' => $thirdPartyUser->marketid,
             'mallcoo_open_user_id' => $thirdPartyUser->mallcoo_open_user_id,
             'birthday' => $thirdPartyUser->birthday,
