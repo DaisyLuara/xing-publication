@@ -41,7 +41,7 @@ class TeamPersonRewardController extends Controller
             $query->where('main_type', '=',  $request->main_type );
         }
 
-        if ($request->has('type') && $request->main_type ) {
+        if ($request->has('type') && $request->type ) {
             $query->where('type', '=',  $request->type );
         }
 
