@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin\MallCoo\V1\Request;
 
 use App\Http\Requests\Request;
 
-class MallCooRequest extends Request
+class VerificationCodeRequest extends Request
 {
     /**
      * Get the validation rules that apply to the request.
@@ -14,7 +14,15 @@ class MallCooRequest extends Request
     public function rules()
     {
         return [
-            'oid' => 'required',
+            'phone' => 'required|regex:/^1[3456789]\d{9}$/',
         ];
     }
+
+    public function attributes()
+    {
+        return [
+            'phone' => '手机号码',
+        ];
+    }
+
 }
