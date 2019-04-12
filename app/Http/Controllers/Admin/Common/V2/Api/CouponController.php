@@ -363,7 +363,7 @@ class CouponController extends Controller
             ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
             ->get();
 
-        abort_if($prizeCoupons->count() >= 5, 500, '每天限领5次,请明天再来');
+        abort_if($prizeCoupons->count() >= 25, 500, '抽奖机会已用完,请明天再来');
 
         $query = DB::table('coupon_batch_policy');
         if ($request->has('age')) {
