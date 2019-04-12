@@ -71,7 +71,7 @@ class CompanyExport extends BaseExport
         $companies = $query->orderByDesc('c.id')
             ->selectRaw("c.id,c.name,c.address,c.internal_name, 
             case c.category when 1 then '供应商' else '客户' end as 'category' ,
-            case c.status when 1 then '待审核' when 2 then '待合作' when 3 then '合作中' else '已结束' end as 'status',
+            case c.status when 1 then '待合作' when 2 then '合作中' else '已结束' end as 'status',
             c.description,db_user.name as 'db_name',c.created_at,c.updated_at,
             customers.id as '联系人ID',customers.name as 'customers_name',customers.position,concat('\t',customers.phone,'\t'),customers.telephone ")
             ->get()->toArray();
