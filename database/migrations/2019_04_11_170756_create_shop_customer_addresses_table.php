@@ -13,7 +13,7 @@ class CreateShopCustomerAddressesTable extends Migration
      */
     public function up()
     {
-        Schema::create('shop_user_addresses', function (Blueprint $table) {
+        Schema::create('shop_customer_addresses', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('customer_id');
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
@@ -36,6 +36,6 @@ class CreateShopCustomerAddressesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('shop_user_addresses');
+        Schema::dropIfExists('shop_customer_addresses');
     }
 }
