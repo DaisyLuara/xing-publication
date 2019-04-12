@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceReceipt;
 use App\Http\Controllers\Admin\Invoice\V1\Request\InvoiceReceiptRequest;
 use App\Http\Controllers\Admin\Invoice\V1\Transformer\InvoiceReceiptTransformer;
 use App\Http\Controllers\Controller;
+use App\Jobs\InvoiceReceiptNotificationJob;
 use Illuminate\Http\Request;
 
 class InvoiceReceiptController extends Controller
@@ -59,7 +60,7 @@ class InvoiceReceiptController extends Controller
                 });
             });
         }
-        
+
         $invoiceReceipt = $query->orderByDesc('id')->paginate(10);;
 
         return $this->response()->paginator($invoiceReceipt, new InvoiceReceiptTransformer());
@@ -73,7 +74,10 @@ class InvoiceReceiptController extends Controller
             abort(403, '无操作权限');
         }
 
-        $invoiceReceipt->fill(array_merge($request->all(), ['claim_status' => 0,'creator'=>$user->name]))->save();
+        $invoiceReceipt->fill(array_merge($request->all(), ['claim_status' => 0, 'creator' => $user->name]))->save();
+        if (env('APP_ENV') === 'production') {
+            InvoiceReceiptNotificationJob::dispatch('legal-affair', null)->onQueue('data-clean');
+        }
 
         return $this->response()->item($invoiceReceipt, new InvoiceReceiptTransformer())->setStatusCode(201);
     }
@@ -99,11 +103,14 @@ class InvoiceReceiptController extends Controller
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if (!$user->hasRole('legal-affairs') && !$user->hasRole('legal-affairs-manager') && !$user->hasRole('operation')) {
+        if (!$user->hasRole('legal-affairs|legal-affairs-manager|operation')) {
             abort(403, '无操作权限');
         }
         $contractReceiveDate = ContractReceiveDate::find($request->receive_date_id);
         $contractReceiveDate->update(['receive_status' => 1, 'invoice_receipt_id' => $invoiceReceipt->id]);
+        if (env('APP_ENV') === 'production') {
+            InvoiceReceiptNotificationJob::dispatch('bd', $contractReceiveDate->contract_id)->onQueue('data-clean');
+        }
 
         $invoiceReceipt->claim_status = 1;
         $invoiceReceipt->update();
@@ -114,6 +121,6 @@ class InvoiceReceiptController extends Controller
 
     public function export(Request $request)
     {
-        return excelExportByType($request,'invoice_receipt');
+        return excelExportByType($request, 'invoice_receipt');
     }
 }
