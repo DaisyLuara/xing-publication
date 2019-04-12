@@ -135,4 +135,10 @@ class WarehouseChangeController extends Controller
         LocationProduct::updateOrCreate(['location_id' => $inLocation, 'product_id' => $productId]);
         LocationProduct::updateOrCreate(['location_id' => $outLocation, 'product_id' => $productId]);
     }
+
+    public function export(Request $request)
+    {
+        return excelExportByType($request, 'erp_warehouse_change');
+    }
+
 }

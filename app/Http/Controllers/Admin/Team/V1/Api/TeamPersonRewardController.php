@@ -36,6 +36,15 @@ class TeamPersonRewardController extends Controller
         if ($request->has('name')) {
             $query->where('project_name', 'like', '%' . $request->name . '%');
         }
+
+        if ($request->has('main_type') && $request->main_type ) {
+            $query->where('main_type', '=',  $request->main_type );
+        }
+
+        if ($request->has('type') && $request->type ) {
+            $query->where('type', '=',  $request->type );
+        }
+
         $user = $this->user();
         $teamPersonReward = $query->where('user_id', $user->id)->paginate(10);
         return $this->response()->paginator($teamPersonReward, new TeamPersonRewardTransformer());

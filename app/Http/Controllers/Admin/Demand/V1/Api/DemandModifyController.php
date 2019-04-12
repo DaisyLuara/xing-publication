@@ -171,7 +171,7 @@ class DemandModifyController extends Controller
         $updateParams = [
             'reviewer_id' => $user->id,
             'reviewer_name' => $user->name,
-            'review_time' => $user->id
+            'review_time' => date("Y-m-d H:i:s"),
         ];
 
         if ($request->get("review")) {
@@ -231,6 +231,12 @@ class DemandModifyController extends Controller
         DemandModifyNotificationJob::dispatch($demandModify, 'feedback')->onQueue('demand');
 
         return $this->response->item($demandModify, new DemandModifyTransformer());
+    }
+
+
+    public function export(Request $request)
+    {
+        return excelExportByType($request,'demand_modify');
     }
 
 }

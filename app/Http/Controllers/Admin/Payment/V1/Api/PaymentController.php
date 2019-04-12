@@ -178,4 +178,10 @@ class PaymentController extends Controller
         $payment->update();
         return $this->response->noContent();
     }
+
+
+    public function export(Request $request)
+    {
+        return excelExportByType($request,'payment');
+    }
 }

@@ -105,6 +105,10 @@ class CouponController extends Controller
             }
         }
 
+        if ($couponBatch->third_code) {
+            return $this->generateMallCooCoupon($request, $couponBatch, $memberUID);
+        }
+
         $code = uniqid();
         //微信卡券二维码
         $wechatCouponBatch = $couponBatch->wechat;
@@ -444,5 +448,43 @@ class CouponController extends Controller
         return $coupon;
     }
 
+    /**
+     * 发送猫酷商场券
+     * @param $request
+     * @param $couponBatch
+     * @return \Dingo\Api\Http\Response
+     */
+    private function generateMallCooCoupon($request, $couponBatch, $member_uid)
+    {
+        //获取会员信息
+        $point = Point::query()->findOrFail($request->oid);
+        $thirdPartyUser = ThirdPartyUser::query()->where('z', $request->z)
+            ->where('marketid', $point->market->marketid)->firstOrFail();
+
+        //调用猫酷券接口
+        $result = app('mall_coo')->setMallCooConfig($request->oid)->sendCouponByOpenUserID($thirdPartyUser->mallcoo_open_user_id, $couponBatch->third_code);
+        abort_if($result['Code'] != 1, 500, $result['Message']);
+        abort_if(!$result['Data'][0]['IsSuccess'], 500, $result['Data'][0]['FailReason']);
+
+        $data = $result['Data'];
+        $coupon = Coupon::create([
+            'code' => $data[0]['VCode'],
+            'coupon_batch_id' => $couponBatch->id,
+            'picm_id' => $data[0]['PICMID'],
+            'trace_id' => $data[0]['TraceID'],
+            'status' => 3,
+            'member_uid' => $member_uid,
+            'qiniu_id' => $request->qiniu_id ?? 0,
+            'oid' => $request->oid,
+            'belong' => $request->belong ?? '',
+            'utm_source' => 1,
+            'start_date' => Carbon::createFromTimeString($couponBatch->start_date),
+            'end_date' => Carbon::createFromTimeString($couponBatch->end_date),
+        ]);
+
+        $couponBatch->decrement('stock');
+
+        return $this->response->item($coupon, new CouponTransformer());
+    }
 
 }

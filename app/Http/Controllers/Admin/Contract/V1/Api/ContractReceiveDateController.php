@@ -50,4 +50,9 @@ class ContractReceiveDateController extends Controller
             ->orderByDesc('created_at')->paginate(10);
         return $this->response()->paginator($contractReceiveDate, new ContractTransformer());
     }
+
+    public function export(Request $request)
+    {
+        return excelExportByType($request,'remind_contract');
+    }
 }

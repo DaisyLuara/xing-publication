@@ -27,7 +27,7 @@ class TeamPersonRewardTransformer extends TransformerAbstract
             'main_type' => $teamPersonReward->getMainTypeText(),
             'total' => $teamPersonReward->total ? round($teamPersonReward->total, 6) : 0,
             'date' => (new Carbon($teamPersonReward->date))->toDateString(),
-            'get_date' => (new Carbon($teamPersonReward->date))->toDateString()
+            'get_date' => (new Carbon($teamPersonReward->get_date))->toDateString()
         ];
     }
 }

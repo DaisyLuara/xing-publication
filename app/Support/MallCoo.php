@@ -8,6 +8,10 @@
 
 namespace App\Support;
 
+use App\Http\Controllers\Admin\MallCoo\V1\Models\MallcooConfig;
+use App\Http\Controllers\Admin\Point\V1\Models\Point;
+use Cache;
+
 class MallCoo
 {
     protected $m_Mallid = '';
@@ -68,6 +72,30 @@ class MallCoo
     }
 
     /**
+     * 通过用户ID发券接口
+     * @param string $open_user_id
+     * @param string $picmID
+     * @return array
+     */
+    public function sendCouponByOpenUserID($open_user_id, $picmID)
+    {
+        $sUrl = 'https://openapi10.mallcoo.cn/Coupon/v1/Send/ByOpenUserID/';
+
+        $data = [
+            'UserList' => [
+                [
+                    'BussinessID' => null,
+                    'TraceID' => uniqid() . $this->m_AppID,
+                    'PICMID' => $picmID,
+                    'OpenUserID' => $open_user_id,
+                ]
+            ]
+        ];
+
+        return $this->send($sUrl, $data);
+    }
+
+    /**
      * mallcoo post 请求
      *
      * @param string $sUrl 请求url
@@ -118,5 +146,30 @@ class MallCoo
         }
         curl_close($ch);
         return $result;
+    }
+
+    /**
+     * 猫酷参数配置
+     * @param integer $oid
+     * @return $this
+     */
+    public function setMallCooConfig($oid, $prefix = 'mallcoo_config_')
+    {
+        $cacheIndex = $prefix . $oid;
+
+        $mallCooConfig = Cache::rememberForever($cacheIndex, function () use ($oid) {
+            $point = Point::query()->findOrFail($oid);
+            $mallCooConfig = MallcooConfig::query()->where('marketid', $point->market->marketid)->firstOrFail();
+
+            return $mallCooConfig;
+        });
+
+        $this->marketid = $mallCooConfig->marketid;
+        $this->m_Mallid = $mallCooConfig->mallcoo_mall_id;
+        $this->m_AppID = $mallCooConfig->mallcoo_appid;
+        $this->m_PublicKey = $mallCooConfig->mallcoo_public_key;
+        $this->m_PrivateKey = $mallCooConfig->mallcoo_private_key;
+
+        return $this;
     }
 }
