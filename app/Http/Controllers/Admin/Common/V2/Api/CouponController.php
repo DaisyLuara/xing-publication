@@ -356,6 +356,15 @@ class CouponController extends Controller
         $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
         $project = Project::query()->where('versionname', '=', $request->belong)->firstOrFail();
 
+        //每天限领数量
+        $now = Carbon::now()->toDateString();
+        $prizeCoupons = Coupon::query()->where('belong', $request->belong)
+            ->where('member_uid', $member->uid)
+            ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
+            ->get();
+
+        abort_if($prizeCoupons->count() >= 5, 500, '每天限领5次,请明天再来');
+
         $query = DB::table('coupon_batch_policy');
         if ($request->has('age')) {
             $query->where('max_age', '>=', $request->age)->where('min_age', '<=', $request->age);
