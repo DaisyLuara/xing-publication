@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Admin\MallCoo\V1\Api;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
-
-class CouponController extends Controller
+class CouponController extends BaseController
 {
 
     /**
@@ -14,11 +12,10 @@ class CouponController extends Controller
      */
     public function index()
     {
-        $mall_coo = app('mall_coo');
         $sUrl = 'https://openapi10.mallcoo.cn/Coupon/PutIn/v1/GetAll/';
-        $result = $mall_coo->send($sUrl);
+        $result = $this->mall_coo->send($sUrl);
         abort_if($result['Code'] != 1, 500, $result['Message']);
-        return response()->json($result['Data'], 'Get Coupons Success!');
+        return response()->json($result['Data']);
 
     }
 
@@ -33,7 +30,6 @@ class CouponController extends Controller
             'pic_mid' => 'required',
         ]);
 
-        $mall_coo = app('mall_coo');
         $sUrl = 'https://openapi10.mallcoo.cn/Coupon/v1/Send/ByOpenUserID/';
 
         /**
@@ -50,7 +46,7 @@ class CouponController extends Controller
             ]
         ];
 
-        $result = $mall_coo->send($sUrl, $data);
+        $result = $this->mall_coo->send($sUrl, $data);
         abort_if($result['Code'] != 1, 500, $result['Message']);
 
         /**

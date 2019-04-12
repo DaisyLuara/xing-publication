@@ -26,13 +26,18 @@ class LocationProductController extends Controller
 
         //根据仓库查询
         if ($request->warehouse) {
-            $warehouse = Location::query()->where('warehouse_id', $request->warehouse)->get()->toArray();
-            $ids = array_column($warehouse, 'id');
-            Location::query()->where('warehouse_id', $request->warehouse)->get();
-            $query->whereIn('location_id', $ids);
+            $query->whereHas('location', function ($q) use ($request) {
+                $q->where('warehouse_id', $request->warehouse);
+            });
         }
 
         $locationProduct = $query->orderByDesc('id')->paginate(10);
         return $this->response()->paginator($locationProduct, new LocationProductTransformer());
     }
+
+    public function export(Request $request)
+    {
+        return excelExportByType($request, 'location_product');
+    }
+
 }

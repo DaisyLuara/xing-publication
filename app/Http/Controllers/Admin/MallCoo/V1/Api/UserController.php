@@ -3,40 +3,55 @@
 namespace App\Http\Controllers\Admin\MallCoo\V1\Api;
 
 use App\Http\Controllers\Admin\MallCoo\V1\Request\MallCooRequest;
+use App\Http\Controllers\Admin\MallCoo\V1\Request\UserRequest;
+use App\Http\Controllers\Admin\MallCoo\V1\Transformer\ThirdPartyUserTransformer;
 use App\Http\Controllers\Admin\WeChat\V1\Models\ThirdPartyUser;
-use App\Models\WeChatUser;
-use App\Http\Controllers\Controller;
 use function GuzzleHttp\Psr7\parse_query;
 use Illuminate\Http\Request;
+use App\Models\WeChatUser;
+use Cache;
 use DB;
 use Log;
 
 
-class UserController extends Controller
+class UserController extends BaseController
 {
+    /**
+     * 获取授权页面链接
+     * @param MallCooRequest $request
+     * @return mixed
+     */
     public function oauth(MallCooRequest $request)
     {
+        $request->validate([
+            'redirect_url' => 'required|url',
+            'sign' => 'required',
+        ]);
+
         $userID = decrypt($request->sign);
         $redirect_url = urldecode($request->get('redirect_url'));
         $redirect_url = add_query_string($redirect_url, 'user_id', $userID);
 
-        $mall_coo = app('mall_coo');
-        $callback_url = 'http://' . $request->getHost() . '/api/mallcoo/user/callback?redirect_url=' . urlencode(($redirect_url));
+        $callback_url = 'http://' . $request->getHost() . '/api/mallcoo/user/callback?oid=' . $request->oid . '&redirect_url=' . urlencode(($redirect_url));
 
-        return $mall_coo->oauth($callback_url);
+        return $this->mall_coo->oauth($callback_url);
     }
 
+    /**
+     * 授权页面回调
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function callback(Request $request)
     {
         $ticket = $request->get('Ticket');
 
         //获取用户UserToken
-        $mall_coo = app('mall_coo');
-        $result = $mall_coo->getTokenByTicket($ticket);
+        $result = $this->mall_coo->getTokenByTicket($ticket);
         abort_if($result['Code'] !== 1, 500, $result['Message']);
 
         //获取会员信息
-        $result = $mall_coo->getUserInfoByOpenUserID($result['Data']['OpenUserId']);
+        $result = $this->mall_coo->getUserInfoByOpenUserID($result['Data']['OpenUserId']);
         abort_if($result['Code'] !== 1, 500, $result['Message']);
 
         $userInfo = $result['Data'];
@@ -64,6 +79,7 @@ class UserController extends Controller
                     'mallcoo_wx_open_id' => $mallCooWxOpenId,
                     'gender' => $gender,
                     'birthday' => $birthday,
+                    'marketid' => $this->mall_coo->marketid,
                     'mall_card_apply_time' => $mallCardApplyTime,
                 ]
             );
@@ -79,30 +95,54 @@ class UserController extends Controller
     }
 
     /**
-     *  根据UserToken获取用户信息
-     * @return \Illuminate\Http\JsonResponse
+     * 手机号开会员卡
+     * @param UserRequest $request
+     * @return mixed
      */
-    public function getUserByToken(Request $request)
+    public function store(UserRequest $request)
     {
-        $this->validate($request, [
-            'OpenUserId' => 'required'
-        ]);
+        $verifyData = Cache::get($request->verification_key);
+        abort_if(!$verifyData, 422,'验证码已失效');
+        abort_if(!hash_equals($verifyData['code'], $request->verification_code), 401, '验证码错误');
 
-        $mall_coo = app('mall_coo');
-        $sUrl = 'https://openapi10.mallcoo.cn/Shop/V1/GetList/';
+        //开卡接口
+        $sUrl = 'https://openapi10.mallcoo.cn/User/MallCard/v1/Open/ByMobile/';
+        $cardResult = $this->mall_coo->send($sUrl, ['Mobile' => $verifyData['phone']]);
+        abort_if(($cardResult['Code'] != 1) && ($cardResult['Code'] != 307), 500, $cardResult['Message']);
 
-        $data = [
-            "PageIndex" => 1,
-            "PageSize" => null,
-            "FloorID" => null,
-            "CommercialTypeID" => null,
-        ];
+        //获取会员信息
+        $userResult = $this->mall_coo->getUserInfoByOpenUserID($cardResult['Data']['OpenUserID']);
+        abort_if($userResult['Code'] !== 1, 500, $userResult['Message']);
 
-        $result = $mall_coo->send($sUrl, $data);
-        abort_if($result['Code'] != 1, 500, $result['Message']);
+        $userInfo = $userResult['Data'];
+        $user = ThirdPartyUser::updateOrCreate(
+            ['mallcoo_open_user_id' => $userInfo['OpenUserID']],
+            [
+                'mobile' => $userInfo['Mobile'],
+                'username' => $userInfo['UserName'],
+                'mallcoo_wx_open_id' => $userInfo['WXOpenID'],
+                'gender' => $userInfo['Gender'],
+                'birthday' => $userInfo['Birthday'] ?: null,
+                'marketid' => $this->mall_coo->marketid,
+                "z" => $request->z,
+                'mall_card_apply_time' => $userInfo['MallCardApplyTime'],
+            ]
+        );
 
-        return response()->json($result['Data']);
+        return $this->response->item($user, new ThirdPartyUserTransformer());
     }
 
+    /**
+     * 商场会员信息
+     * @param UserRequest $request
+     * @return \Dingo\Api\Http\Response
+     */
+    public function show(UserRequest $request)
+    {
+        $user = ThirdPartyUser::query()->where('z', $request->z)
+            ->where('marketid', $this->mall_coo->marketid)->first();
+
+        return $this->response->item($user, new ThirdPartyUserTransformer());
+    }
 
 }

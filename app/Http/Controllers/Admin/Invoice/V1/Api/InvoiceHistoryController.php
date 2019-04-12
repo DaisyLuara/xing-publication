@@ -57,4 +57,10 @@ class InvoiceHistoryController extends Controller
         $invoice = $query->orderBy('created_at', 'desc')->paginate(10);
         return $this->response()->paginator($invoice, new InvoiceTransformer())->setStatusCode(200);
     }
+
+
+    public function export(Request $request)
+    {
+        return excelExportByType($request,'invoice_history');
+    }
 }

@@ -13,15 +13,8 @@ class MallCooRequest extends Request
      */
     public function rules()
     {
-        switch ($this->method()) {
-            case 'POST':
-                return [
-                    'redirect_url' => 'required|url',
-                    'sign' => 'required',
-                ];
-                break;
-            default:
-                return [];
-        }
+        return [
+            'oid' => 'required',
+        ];
     }
 }

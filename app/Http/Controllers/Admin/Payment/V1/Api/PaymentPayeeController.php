@@ -26,7 +26,7 @@ class PaymentPayeeController extends Controller
     {
         $query = $paymentPayee->query();
         if ($request->has('name')) {
-            $query->where('name', 'like', '5' . $request->name . '%');
+            $query->where('name', 'like', '%' . $request->name . '%');
         }
         /** @var  $user \App\Models\User */
         $user = $this->user();
@@ -49,5 +49,11 @@ class PaymentPayeeController extends Controller
     {
         $paymentPayee->update($request->all());
         return $this->response()->noContent();
+    }
+
+
+    public function export(Request $request)
+    {
+        return excelExportByType($request, 'payment_payee');
     }
 }

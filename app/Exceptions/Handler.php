@@ -47,10 +47,14 @@ class Handler extends ExceptionHandler
     public function report(Exception $exception)
     {
         if ($this->shouldReport($exception) && env('APP_ENV') == 'production') {
-            $route = request()->route();
-            ding()->with('other')->text($exception->getMessage() . PHP_EOL . $exception->getFile() . PHP_EOL . $exception->getLine()
-                . "\n" . "完整URL: " . URL::current()
-                . "\n" . "请求方式: " . ($route->methods ? implode(',', $route->methods ?? []) : ""));
+            $str = $exception->getMessage() . PHP_EOL . $exception->getFile() . PHP_EOL . $exception->getLine();
+            if (request() && request()->route()) {
+                $route = request()->route();
+                $str .= "\n" . "完整URL: " . URL::current()
+                    . "\n" . "请求方式: " . ($route->methods ? implode(',', $route->methods ?? []) : "");
+
+            }
+            ding()->with('other')->text($str);
         }
 
         return parent::report($exception);

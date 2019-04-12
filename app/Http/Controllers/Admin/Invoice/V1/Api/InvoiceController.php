@@ -181,4 +181,10 @@ class InvoiceController extends Controller
         return $this->response()->noContent();
     }
 
+
+    public function export(Request $request)
+    {
+        return excelExportByType($request,'invoice');
+    }
+
 }

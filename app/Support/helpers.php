@@ -426,6 +426,28 @@ function excelExport(ExportRequest $request)
     return $path . urlencode($fileName);
 }
 
+
+function excelExportByType(Request $request, string $type)
+{
+    if (!in_array($type, ['marketing', 'point', 'project', 'daily_average', 'project_point', 'marketing_top', 'old_marketing', 'person_reward', 'coupon', 'team_project',
+        'contract', 'remind_contract','contract_cost', 'contract_history',
+        'invoice', 'invoice_company', 'invoice_receipt', 'invoice_history',
+        'payment', 'payment_payee', 'payment_history',
+        'demand_application', 'demand_modify',
+        'location_product','erp_warehouse_change','erp_warehouse','erp_location','erp_product',
+        'company'
+    ])) {
+        abort(422, '此下载类型不存在');
+    }
+
+    $path = config('filesystems')['disks']['qiniu']['url'];
+    $export = app($type);
+
+    $fileName = $export->fileName . '_' . time() . '_' . '.' . 'xlsx';
+    \Maatwebsite\Excel\Facades\Excel::store($export, $fileName, 'qiniu');
+    return $path . urlencode($fileName);
+}
+
 function getProcessStaffId($role, $line)
 {
     $staff = DB::table('process_staffs')

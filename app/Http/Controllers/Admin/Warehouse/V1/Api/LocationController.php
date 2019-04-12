@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\Warehouse\V1\Models\Location;
 use App\Http\Controllers\Admin\Warehouse\V1\Request\LocationRequest;
 use App\Http\Controllers\Admin\Warehouse\V1\Transformer\LocationTransformer;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 
 class LocationController extends Controller
@@ -43,6 +44,12 @@ class LocationController extends Controller
     {
         $location->update($request->all());
         return $this->response()->item($location, new LocationTransformer())->setStatusCode(200);
+    }
+
+
+    public function export(Request $request)
+    {
+        return excelExportByType($request, 'erp_location');
     }
 
 }
