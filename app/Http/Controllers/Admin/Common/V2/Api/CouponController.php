@@ -9,11 +9,13 @@ use App\Http\Controllers\Admin\Common\V2\Request\CouponRequest;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Coupon\V1\Models\UserCouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
+use App\Http\Controllers\Admin\Point\V1\Models\Point;
 use App\Http\Controllers\Admin\Project\V1\Models\Project;
 use App\Http\Controllers\Admin\User\V1\Models\ArMemberHonor;
 use App\Http\Controllers\Admin\User\V1\Models\ArMemberSession;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
+use App\Http\Controllers\Admin\WeChat\V1\Models\ThirdPartyUser;
 use App\Http\Controllers\Controller;
 use Milon\Barcode\DNS1D;
 use Overtrue\EasySms\EasySms;
@@ -103,6 +105,10 @@ class CouponController extends Controller
             }
         }
 
+        if ($couponBatch->third_code) {
+            return $this->generateMallCooCoupon($request, $couponBatch, $memberUID);
+        }
+
         $code = uniqid();
         //微信卡券二维码
         $wechatCouponBatch = $couponBatch->wechat;
@@ -110,7 +116,7 @@ class CouponController extends Controller
 
         //券的有效期
         if ($couponBatch->is_fixed_date) {
-            $startDate = Carbon::createFromTimeString($couponBatch->start_date);;
+            $startDate = Carbon::createFromTimeString($couponBatch->start_date);
             $endDate = Carbon::createFromTimeString($couponBatch->end_date);
         } else {
             $startDate = Carbon::now()->addDays($couponBatch->delay_effective_day);
@@ -133,7 +139,6 @@ class CouponController extends Controller
                 'start_date' => $startDate,
                 'end_date' => $endDate,
             ]);
-
 
             $coupon = $this->setCodeImageUrl($coupon, $prefix, $wechatCouponBatch,$request->code_type);
 
@@ -188,25 +193,6 @@ class CouponController extends Controller
         return $this->response->item($coupon, new CouponTransformer());
     }
 
-    private function sendMallCooCoupon($open_user_id, $picmID)
-    {
-        $mall_coo = app('mall_coo');
-        $sUrl = 'https://openapi10.mallcoo.cn/Coupon/v1/Send/ByOpenUserID/';
-
-        $data = [
-            'UserList' => [
-                [
-                    'BussinessID' => null,
-                    'TraceID' => uniqid() . config('mall_coo.app_id'),
-                    'PICMID' => $picmID,
-                    'OpenUserID' => $open_user_id,
-                ]
-            ]
-        ];
-
-        return $mall_coo->send($sUrl, $data);
-
-    }
 
     /**
      * 根据策略 生成优惠券规则
@@ -368,34 +354,7 @@ class CouponController extends Controller
     public function generateLimitCouponBatch(Request $request)
     {
         $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
-
-        //用户成就校验
-        $arMemberHonorNums = ArMemberHonor::query()->where('uid', $member->uid)
-            ->whereIn('xid', [14, 15, 16])->groupBy('xid')->get();
-
-        switch ($arMemberHonorNums->count()) {
-            case 0:
-                abort('500', '请先收集勋章');
-                break;
-            case 3:
-                $policy_id = 76;
-                break;
-            default:
-                $policy_id = 75;
-                break;
-        }
-
-        $now = Carbon::now()->toDateString();
-
-        //实物奖品数量
-        $prizeCoupons = Coupon::query()->where('belong', $request->belong)
-            ->where('member_uid', $member->uid)
-            ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
-            ->whereHas('couponBatch', function ($q) {
-                $q->where('type', 2);
-             })->get();
-
-        abort_if($prizeCoupons->isNotEmpty(), 500, '每天仅限中一次奖,请明天再来');
+        $project = Project::query()->where('versionname', '=', $request->belong)->firstOrFail();
 
         $query = DB::table('coupon_batch_policy');
         if ($request->has('age')) {
@@ -411,7 +370,7 @@ class CouponController extends Controller
         }
 
         $couponBatchPolicies = $query->join('coupon_batches', 'coupon_batch_id', '=', 'coupon_batches.id')
-            ->where('policy_id', '=', $policy_id)
+            ->where('policy_id', '=', $project->policy_id)
             ->where('coupon_batches.is_active', 1)
             ->get();
 
@@ -489,5 +448,43 @@ class CouponController extends Controller
         return $coupon;
     }
 
+    /**
+     * 发送猫酷商场券
+     * @param $request
+     * @param $couponBatch
+     * @return \Dingo\Api\Http\Response
+     */
+    private function generateMallCooCoupon($request, $couponBatch, $member_uid)
+    {
+        //获取会员信息
+        $point = Point::query()->findOrFail($request->oid);
+        $thirdPartyUser = ThirdPartyUser::query()->where('z', $request->z)
+            ->where('marketid', $point->market->marketid)->firstOrFail();
+
+        //调用猫酷券接口
+        $result = app('mall_coo')->setMallCooConfig($request->oid)->sendCouponByOpenUserID($thirdPartyUser->mallcoo_open_user_id, $couponBatch->third_code);
+        abort_if($result['Code'] != 1, 500, $result['Message']);
+        abort_if(!$result['Data'][0]['IsSuccess'], 500, $result['Data'][0]['FailReason']);
+
+        $data = $result['Data'];
+        $coupon = Coupon::create([
+            'code' => $data[0]['VCode'],
+            'coupon_batch_id' => $couponBatch->id,
+            'picm_id' => $data[0]['PICMID'],
+            'trace_id' => $data[0]['TraceID'],
+            'status' => 3,
+            'member_uid' => $member_uid,
+            'qiniu_id' => $request->qiniu_id ?? 0,
+            'oid' => $request->oid,
+            'belong' => $request->belong ?? '',
+            'utm_source' => 1,
+            'start_date' => Carbon::createFromTimeString($couponBatch->start_date),
+            'end_date' => Carbon::createFromTimeString($couponBatch->end_date),
+        ]);
+
+        $couponBatch->decrement('stock');
+
+        return $this->response->item($coupon, new CouponTransformer());
+    }
 
 }
