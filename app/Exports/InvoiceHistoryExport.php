@@ -23,7 +23,7 @@ class InvoiceHistoryExport extends BaseExport
         $this->name = $request->name;
         $this->contract_number = $request->contract_number;
 
-        $this->fileName = '票据-开票管理列表';
+        $this->fileName = '票据-我已审批列表';
     }
 
     public function collection()
@@ -60,14 +60,6 @@ class InvoiceHistoryExport extends BaseExport
 
         if (!is_null($this->contract_number)) {
             $query->where('contracts.contract_number', 'like', '%' . $this->contract_number . '%');
-        }
-
-        if ($user->id == getProcessStaffId('finance', 'invoice')) {
-            $query->whereRaw("(i.handler=$user->id or i.status=4 or i.status=5)");
-        } else if ($user->hasRole('operation')) {
-            $query->whereRaw('(i.status=3 or i.status=4 or i.status=5)');
-        } else {
-            $query->whereRaw("(i.applicant=$user->id or i.handler=$user->id)");
         }
 
         $invoices = $query->orderByDesc('i.created_at')
