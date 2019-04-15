@@ -53,3 +53,4 @@ include app_path('Http/Controllers/Admin/Common/V3/routes.php');
 include app_path('Http/Controllers/Admin/Demand/V1/routes.php');
 include app_path('Http/Controllers/Admin/ResourceAuth/V1/routes.php');
 include app_path('Http/Controllers/Admin/Product/V1/routes.php');
+include app_path('Http/Controllers/Admin/Order/V1/routes.php');
