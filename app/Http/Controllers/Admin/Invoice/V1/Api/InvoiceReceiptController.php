@@ -119,7 +119,14 @@ class InvoiceReceiptController extends Controller
             //通知合同的bd
             $contract = Contract::find($contractReceiveDate->contract_id);
             $bd = User::find($contract->applicant);
-            InvoiceReceiptNotificationJob::dispatch($bd, '合同' . $contract->contract_number . '有一笔收款已认领')->onQueue('data-clean');
+            if ($bd->weixin_openid) {
+                InvoiceReceiptNotificationJob::dispatch($bd, '合同' . $contract->contract_number . '有一笔收款已认领')->onQueue('data-clean');
+            } else {
+                //通知法务主管
+                $legalMa = User::query()->where('phone', 13916320677)->first();
+                InvoiceReceiptNotificationJob::dispatch($legalMa, 'bd' . $bd->name . '的中台账号未关联公众号，请提醒')->onQueue('data-clean');
+            }
+
             //通知运营
             $operation = User::query()->where('phone', 13661874698)->first();
             InvoiceReceiptNotificationJob::dispatch($operation, '合同' . $contract->contract_number . '有一笔收款已认领')->onQueue('data-clean');
