@@ -9,12 +9,14 @@
 namespace App\Http\Controllers\Admin\Invoice\V1\Api;
 
 
+use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
 use App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate;
 use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceReceipt;
 use App\Http\Controllers\Admin\Invoice\V1\Request\InvoiceReceiptRequest;
 use App\Http\Controllers\Admin\Invoice\V1\Transformer\InvoiceReceiptTransformer;
 use App\Http\Controllers\Controller;
 use App\Jobs\InvoiceReceiptNotificationJob;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class InvoiceReceiptController extends Controller
@@ -76,7 +78,12 @@ class InvoiceReceiptController extends Controller
 
         $invoiceReceipt->fill(array_merge($request->all(), ['claim_status' => 0, 'creator' => $user->name]))->save();
         if (env('APP_ENV') === 'production') {
-            InvoiceReceiptNotificationJob::dispatch('legal-affair', null)->onQueue('data-clean');
+            //微信通知法务
+            $legalPhone = [13916320677, 18301766780];
+            $legals = User::query()->whereIn('phone', $legalPhone)->get();
+            foreach ($legals as $legal) {
+                InvoiceReceiptNotificationJob::dispatch($legal, '有一笔新的收款待认领')->onQueue('data-clean');
+            }
         }
 
         return $this->response()->item($invoiceReceipt, new InvoiceReceiptTransformer())->setStatusCode(201);
@@ -109,7 +116,13 @@ class InvoiceReceiptController extends Controller
         $contractReceiveDate = ContractReceiveDate::find($request->receive_date_id);
         $contractReceiveDate->update(['receive_status' => 1, 'invoice_receipt_id' => $invoiceReceipt->id]);
         if (env('APP_ENV') === 'production') {
-            InvoiceReceiptNotificationJob::dispatch('bd', $contractReceiveDate->contract_id)->onQueue('data-clean');
+            //通知合同的bd
+            $contract = Contract::find($contractReceiveDate->contract_id);
+            $bd = User::find($contract->applicant);
+            InvoiceReceiptNotificationJob::dispatch($bd, '合同' . $contract->contract_number . '有一笔收款已认领')->onQueue('data-clean');
+            //通知运营
+            $operation = User::query()->where('phone', 13661874698)->first();
+            InvoiceReceiptNotificationJob::dispatch($operation, '合同' . $contract->contract_number . '有一笔收款已认领')->onQueue('data-clean');
         }
 
         $invoiceReceipt->claim_status = 1;
