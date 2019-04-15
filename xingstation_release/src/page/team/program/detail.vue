@@ -726,41 +726,7 @@
             v-if="testFile"
             :span="12"
           >
-            <el-form-item
-              v-if="bonusManage"
-              :rules="[{ required: true, message: '请上传测试文档', trigger: 'submit' }]"
-              label="测试文档"
-              prop="ids"
-            >
-              <el-upload
-                ref="upload2"
-                :action="Domain"
-                :data="uploadForm"
-                :on-success="handleSuccess"
-                :before-upload="beforeUpload"
-                :on-preview="handlePreview"
-                :on-remove="handleRemove"
-                :before-remove="beforeRemove"
-                :file-list="testFileList"
-                :limit="1"
-                :on-exceed="handleExceed"
-                class="upload-demo"
-              >
-                <el-button
-                  size="mini"
-                  type="success"
-                >点击上传</el-button>
-                <div
-                  slot="tip"
-                  style="display:inline-block;margin-left:10px;"
-                  class="el-upload__tip"
-                >支持文件类型：doc(.docx)、.pdf、.xlsx、.xls</div>
-              </el-upload>
-            </el-form-item>
-            <el-form-item
-              v-else
-              label="测试文档"
-            >
+            <el-form-item label="测试文档">
               <div
                 style="cursor:pointer;"
                 @click="handlePreview(testFile)"
@@ -870,7 +836,6 @@ export default {
         token: "",
         key: ""
       },
-      testChange: false,
       testForm: {
         test_remark: ""
       },
@@ -963,17 +928,6 @@ export default {
       contractDisable: true
     };
   },
-  watch: {
-    testFile() {
-      console.log(this.testFile)
-    },
-    fileList() {
-      console.log(this.fileList)
-    },
-    testFileList() {
-      console.log(this.testFileList)
-    }
-  },
   computed: {
     projectManage: function () {
       return this.role.find(r => {
@@ -1061,9 +1015,7 @@ export default {
     },
 
     handleRemove(file, fileList) {
-      // this.fileList = fileList;
-      console.log(file)
-      console.log(fileList)
+      this.fileList = fileList;
     },
     interactionHandle(val) {
       let idArr = [];
@@ -1139,7 +1091,7 @@ export default {
     beforeRemove(file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`);
     },
-    beforeUpload(file, listname) {
+    beforeUpload(file) {
       let name = file.name;
       let type = name.substring(name.lastIndexOf("."));
       let isLt100M = file.size / 1024 / 1024 < 100;
@@ -1147,29 +1099,10 @@ export default {
       let random = parseInt(Math.random() * 10 + 1, 10);
       let suffix = time + "_" + random + "_" + name;
       let key = encodeURI(`${suffix}`);
-      if (listname === 'word') {
-        if (
-          !(
-            type === ".docx" ||
-            type === ".doc" ||
-            type === ".pdf" ||
-            type === ".xlsx" ||
-            type === ".xls"
-          )
-        ) {
-          this.uploadForm.token = "";
-          return this.$message.error(
-            "文件类型只支持(docx、doc、pdf、.xlsx、.xls)"
-          );
-        }
+      if (!(type === ".zip" || type === ".rar")) {
+        this.uploadForm.token = "";
+        return this.$message.error("类型只支持zip、rar");
       }
-      if (listname === 'zip') {
-        if (!(type === ".zip" || type === ".rar")) {
-          this.uploadForm.token = "";
-          return this.$message.error("类型只支持zip、rar");
-        }
-      }
-
       if (!isLt100M) {
         this.uploadForm.token = "";
         return this.$message.error("上传大小不能超过 100MB!");
@@ -1179,16 +1112,15 @@ export default {
       this.uploadForm.key = key;
       return this.uploadForm;
     },
-
     // 上传成功后的处理
-    handleSuccess(response, file, fileList) {
+    handleSuccess(response, file) {
       let key = response.key;
       let name = file.name;
       let size = file.size;
       let type = name.substring(name.lastIndexOf("."));
       this.getMediaUpload(key, name, size, type);
     },
-    getMediaUpload(key, name, size, type, fileList) {//add fileList
+    getMediaUpload(key, name, size, type) {//add fileList
       let params = {
         key: key,
         name: name,
@@ -1197,8 +1129,7 @@ export default {
       getMediaUpload(this, params)
         .then(res => {
           if (type === ".zip" || type === ".rar") {
-            // this.fileList.push(res);
-            fileList.push(res);
+            this.fileList.push(res);
           }
         })
         .catch(err => {
@@ -1614,10 +1545,6 @@ export default {
       to.meta.keepAlive = false;
       next();
     }
-  },
-  // 测试文档
-  changeTestFile() {
-    this.testChange = true
   },
   submit() {
     let testerMediaIds = [];

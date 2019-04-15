@@ -1,17 +1,17 @@
 <template>
   <div class="item-wrap-template">
-    <div 
-      v-loading="setting.loading" 
-      :element-loading-text="setting.loadingText" 
-      class="pane">
-      <div
-        class="pane-title"
-      >{{ programID ? (((projectManage && status===1) || legalAffairsManager || bonusManage) ? '修改节目' : '查看节目') : '新增节目' }}</div>
-      <el-form 
-        ref="programForm" 
-        :model="programForm" 
-        label-position="left" 
-        label-width="80px">
+    <div
+      v-loading="setting.loading"
+      :element-loading-text="setting.loadingText"
+      class="pane"
+    >
+      <div class="pane-title">{{ programID ? (((projectManage && status===1) || legalAffairsManager || bonusManage) ? '修改节目' : '查看节目') : '新增节目' }}</div>
+      <el-form
+        ref="programForm"
+        :model="programForm"
+        label-position="left"
+        label-width="80px"
+      >
         <el-row>
           <el-col :span="12">
             <el-form-item
@@ -38,9 +38,10 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item 
-              label="申请人" 
-              prop="applicant_name">
+            <el-form-item
+              label="申请人"
+              prop="applicant_name"
+            >
               <el-input
                 v-model="programForm.applicant_name"
                 :disabled="true"
@@ -50,36 +51,40 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item 
-          label="节目属性" 
-          prop="project_attribute">
+        <el-form-item
+          label="节目属性"
+          prop="project_attribute"
+        >
           <el-radio-group v-model="programForm.project_attribute">
             <el-radio :label="0">不计入</el-radio>
             <el-radio :label="2">简单条目
-              <el-tooltip 
-                class="item" 
-                effect="dark" 
-                content="0.1个条目（如简单换Logo等）" 
-                placement="bottom">
-                <i class="el-icon-info"/>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="0.1个条目（如简单换Logo等）"
+                placement="bottom"
+              >
+                <i class="el-icon-info" />
               </el-tooltip>
             </el-radio>
             <el-radio :label="1">基础条目
-              <el-tooltip 
-                class="item" 
-                effect="dark" 
-                content="1个条目（如镜视界类节目）" 
-                placement="bottom">
-                <i class="el-icon-info"/>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="1个条目（如镜视界类节目）"
+                placement="bottom"
+              >
+                <i class="el-icon-info" />
               </el-tooltip>
             </el-radio>
             <el-radio :label="3">节目
-              <el-tooltip 
-                class="item" 
-                effect="dark" 
-                content="1个节目（如创新玩法类节目）" 
-                placement="bottom">
-                <i class="el-icon-info"/>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="1个节目（如创新玩法类节目）"
+                placement="bottom"
+              >
+                <i class="el-icon-info" />
               </el-tooltip>
             </el-radio>
             <el-radio :label="4">更多</el-radio>
@@ -87,9 +92,10 @@
         </el-form-item>
         <el-row>
           <el-col :span="12">
-            <el-form-item 
-              label="原创属性" 
-              prop="copyright_attribute">
+            <el-form-item
+              label="原创属性"
+              prop="copyright_attribute"
+            >
               <el-radio-group
                 v-model="programForm.copyright_attribute"
                 @change="copyrightAttributeHandle"
@@ -99,9 +105,10 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col 
-            v-if="copyrightFlag" 
-            :span="12">
+          <el-col
+            v-if="copyrightFlag"
+            :span="12"
+          >
             <el-form-item
               :rules="[{ required: true, message: '请输入原创节目', trigger: 'submit' }]"
               label="原创节目"
@@ -128,9 +135,10 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item 
-              label="节目类型" 
-              prop="type">
+            <el-form-item
+              label="节目类型"
+              prop="type"
+            >
               <el-radio-group v-model="programForm.type">
                 <el-radio :label="1">提前节目</el-radio>
                 <el-radio :label="0">正常节目</el-radio>
@@ -138,19 +146,22 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item 
-              label="定制属性" 
-              prop="individual_attribute">
-              <el-radio-group 
-                v-model="programForm.individual_attribute" 
-                @change="handleCustom">
+            <el-form-item
+              label="定制属性"
+              prop="individual_attribute"
+            >
+              <el-radio-group
+                v-model="programForm.individual_attribute"
+                @change="handleCustom"
+              >
                 <el-radio :label="0">非定制节目
-                  <el-tooltip 
-                    class="item" 
-                    effect="dark" 
-                    content="无合同的节目" 
-                    placement="bottom">
-                    <i class="el-icon-info"/>
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    content="无合同的节目"
+                    placement="bottom"
+                  >
+                    <i class="el-icon-info" />
                   </el-tooltip>
                 </el-radio>
                 <el-radio :label="1">定制特别节目
@@ -160,7 +171,7 @@
                     content="有合同，且为对方特别定制的节目"
                     placement="bottom"
                   >
-                    <i class="el-icon-info"/>
+                    <i class="el-icon-info" />
                   </el-tooltip>
                 </el-radio>
                 <el-radio :label="2">定制通用节目
@@ -170,7 +181,7 @@
                     content="有合同，但并非为对方特别定制的节目"
                     placement="bottom"
                   >
-                    <i class="el-icon-info"/>
+                    <i class="el-icon-info" />
                   </el-tooltip>
                 </el-radio>
               </el-radio-group>
@@ -179,9 +190,10 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item 
-              label="合同编号" 
-              prop="type">
+            <el-form-item
+              label="合同编号"
+              prop="type"
+            >
               <el-select
                 v-model="programForm.contract_id"
                 :disabled="contractDisable"
@@ -200,9 +212,10 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item 
-              label="合同金额" 
-              prop="money">
+            <el-form-item
+              label="合同金额"
+              prop="money"
+            >
               <el-input
                 v-model="programForm.money"
                 :disabled="true"
@@ -214,9 +227,10 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item 
-              label="联动属性" 
-              prop="link_attribute">
+            <el-form-item
+              label="联动属性"
+              prop="link_attribute"
+            >
               <el-radio-group v-model="programForm.link_attribute">
                 <el-radio :label="0">否</el-radio>
                 <el-radio :label="1">是</el-radio>
@@ -224,9 +238,10 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item 
-              label="Hidol属性" 
-              prop="hidol_attribute">
+            <el-form-item
+              label="Hidol属性"
+              prop="hidol_attribute"
+            >
               <el-radio-group v-model="programForm.hidol_attribute">
                 <el-radio :label="0">否</el-radio>
                 <el-radio :label="1">是</el-radio>
@@ -236,22 +251,24 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item 
-              label="H5属性" 
-              prop="h5_attribute">
-              <el-radio-group 
-                v-model="programForm.h5_attribute" 
-                @change="h5Handle">
+            <el-form-item
+              label="H5属性"
+              prop="h5_attribute"
+            >
+              <el-radio-group
+                v-model="programForm.h5_attribute"
+                @change="h5Handle"
+              >
                 <el-radio :label="1">基础模版</el-radio>
                 <el-radio :label="2">复杂模版</el-radio>
                 <el-radio :label="0">不计入
                   <el-tooltip
-                          class="item"
-                          effect="dark"
-                          content="与其他节目共用"
-                          placement="bottom"
+                    class="item"
+                    effect="dark"
+                    content="与其他节目共用"
+                    placement="bottom"
                   >
-                    <i class="el-icon-info"/>
+                    <i class="el-icon-info" />
                   </el-tooltip>
                 </el-radio>
               </el-radio-group>
@@ -277,12 +294,11 @@
         <h2 class="title">节目智造团队</h2>
         <el-row>
           <el-col :span="12">
-            <el-form-item 
-              label="节目创意" 
-              prop="creative">
-              <span
-                style="color: #999;font-size:14px;margin-right: 15px;"
-              >{{ rate.originality }} * 系数</span>
+            <el-form-item
+              label="节目创意"
+              prop="creative"
+            >
+              <span style="color: #999;font-size:14px;margin-right: 15px;">{{ rate.originality }} * 系数</span>
               <el-select
                 v-model="programForm.creative"
                 :loading="searchLoading"
@@ -308,9 +324,10 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item 
-              label="节目统筹" 
-              prop="whole">
+            <el-form-item
+              label="节目统筹"
+              prop="whole"
+            >
               <span style="color: #999;font-size:14px;">{{ rate.plan }} * 系数</span>
               <el-select
                 v-model="programForm.whole"
@@ -382,10 +399,11 @@
             class="text-input"
           />
         </el-form-item>
-        <el-form-item 
-          label-width="120px" 
-          label="备注" 
-          prop="remark">
+        <el-form-item
+          label-width="120px"
+          label="备注"
+          prop="remark"
+        >
           <el-input
             v-model="programForm.remark"
             :autosize="{ minRows: 2}"
@@ -397,9 +415,10 @@
         </el-form-item>
         <el-row>
           <el-col :span="12">
-            <el-form-item 
-              label="设计动画" 
-              prop="animat">
+            <el-form-item
+              label="设计动画"
+              prop="animat"
+            >
               <span style="color: #999;font-size:14px;margin-right: 8px;">{{ rate.animation }} * 系数</span>
               <el-select
                 v-model="programForm.animat"
@@ -426,10 +445,11 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item 
-              label="设计动画.Hidol" 
-              prop="animatHidol" 
-              label-width="105px">
+            <el-form-item
+              label="设计动画.Hidol"
+              prop="animatHidol"
+              label-width="105px"
+            >
               <span style="color: #999;font-size:14px;">{{ rate.animation_hidol }} * 系数</span>
               <el-select
                 v-model="programForm.animatHidol"
@@ -458,12 +478,11 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item 
-              label="Hidol专利" 
-              prop="hidol">
-              <span
-                style="color: #999;font-size:14px;margin-right: 8px;"
-              >{{ rate.hidol_patent }} * 系数</span>
+            <el-form-item
+              label="Hidol专利"
+              prop="hidol"
+            >
+              <span style="color: #999;font-size:14px;margin-right: 8px;">{{ rate.hidol_patent }} * 系数</span>
               <el-select
                 v-model="programForm.hidol"
                 :loading="searchLoading"
@@ -508,9 +527,10 @@
                 :on-exceed="handleExceed"
                 class="upload-demo"
               >
-                <el-button 
-                  size="mini" 
-                  type="success">点击上传</el-button>
+                <el-button
+                  size="mini"
+                  type="success"
+                >点击上传</el-button>
                 <div
                   slot="tip"
                   style="display:inline-block;margin-left: 10px;"
@@ -528,12 +548,11 @@
         <h2 class="title">中后台团队</h2>
         <el-row>
           <el-col :span="12">
-            <el-form-item 
-              label="交互技术" 
-              prop="interactionVal">
-              <span
-                style="color: #999;font-size:14px;margin-right: 15px;"
-              >{{ interactionRate }} * 系数</span>
+            <el-form-item
+              label="交互技术"
+              prop="interactionVal"
+            >
+              <span style="color: #999;font-size:14px;margin-right: 15px;">{{ interactionRate }} * 系数</span>
               <el-select
                 v-model="programForm.interactionVal"
                 :loading="searchLoading"
@@ -559,13 +578,12 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item 
-              label="后端IT技术" 
-              prop="backend" 
-              label-width="100px">
-              <span
-                style="color: #999;font-size:14px;margin-right: 8px;"
-              >{{ rate.backend_docking }} * 系数</span>
+            <el-form-item
+              label="后端IT技术"
+              prop="backend"
+              label-width="100px"
+            >
+              <span style="color: #999;font-size:14px;margin-right: 8px;">{{ rate.backend_docking }} * 系数</span>
               <el-select
                 v-model="programForm.backend"
                 :loading="searchLoading"
@@ -593,9 +611,10 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item 
-              label="节目测试" 
-              prop="test">
+            <el-form-item
+              label="节目测试"
+              prop="test"
+            >
               <span style="color: #999;font-size:14px;margin-right: 8px;">{{ rate.tester }} * 系数</span>
               <el-select
                 v-model="programForm.test"
@@ -625,15 +644,16 @@
                 content="节目测试责任总责奖金0.06部分,系统将自动计算。"
                 placement="right"
               >
-                <i class="el-icon-info"/>
+                <i class="el-icon-info" />
               </el-tooltip>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item 
-              label="H5开发" 
-              prop="H5Val" 
-              label-width="100px">
+            <el-form-item
+              label="H5开发"
+              prop="H5Val"
+              label-width="100px"
+            >
               <span
                 :style="h5Rate === '0.1' ? 'margin-right: 15px;' : 'margin-right: 0;'"
                 style="color: #999;font-size:14px;"
@@ -665,9 +685,10 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item 
-              label="平台运营" 
-              prop="platform">
+            <el-form-item
+              label="平台运营"
+              prop="platform"
+            >
               <span style="color: #999;font-size:14px;margin-right: 8px;">{{ rate.operation }} * 系数</span>
               <el-select
                 v-model="programForm.platform"
@@ -697,17 +718,53 @@
                 content="平台运营验收奖金0.02部分,系统将自动计算。"
                 placement="right"
               >
-                <i class="el-icon-info"/>
+                <i class="el-icon-info" />
               </el-tooltip>
             </el-form-item>
           </el-col>
-          <el-col 
-            v-if="testFile" 
-            :span="12">
-            <el-form-item label="测试文档">
-              <div 
-                style="cursor:pointer;" 
-                @click="handlePreview(testFile)">{{ testFile.name }}</div>
+          <el-col
+            v-if="testFile"
+            :span="12"
+          >
+            <el-form-item
+              v-if="bonusManage"
+              :rules="[{ required: true, message: '请上传测试文档', trigger: 'submit' }]"
+              label="测试文档"
+              prop="ids"
+            >
+              <el-upload
+                ref="upload2"
+                :action="Domain"
+                :data="uploadForm"
+                :on-success="handleSuccess2"
+                :before-upload="beforeUpload2"
+                :on-preview="handlePreview"
+                :on-remove="handleRemove2"
+                :before-remove="beforeRemove"
+                :file-list="testFileList"
+                :limit="1"
+                :on-exceed="handleExceed"
+                class="upload-demo"
+              >
+                <el-button
+                  size="mini"
+                  type="success"
+                >点击上传</el-button>
+                <div
+                  slot="tip"
+                  style="display:inline-block;margin-left:10px;"
+                  class="el-upload__tip"
+                >支持文件类型：doc(.docx)、.pdf、.xlsx、.xls</div>
+              </el-upload>
+            </el-form-item>
+            <el-form-item
+              v-else
+              label="测试文档"
+            >
+              <div
+                style="cursor:pointer;"
+                @click="handlePreview(testFile)"
+              >{{ testFile.name }}</div>
             </el-form-item>
           </el-col>
         </el-row>
@@ -724,28 +781,33 @@
       </el-form>
     </div>
     <!-- 修改比列 -->
-    <el-dialog 
-      :visible.sync="dialogFormVisible" 
-      :show-close="false" 
-      title="绩效更改">
-      <el-form 
-        :model="form" 
-        label-width="90px">
+    <el-dialog
+      :visible.sync="dialogFormVisible"
+      :show-close="false"
+      title="绩效更改"
+    >
+      <el-form
+        :model="form"
+        label-width="90px"
+      >
         <el-form-item label="总点数">
-          <el-input 
-            v-model="form.total" 
-            :disabled="disabledChange"/>
+          <el-input
+            v-model="form.total"
+            :disabled="disabledChange"
+          />
         </el-form-item>
-        <el-form-item 
-          v-for="item in peopleList" 
-          :key="item.id" 
-          :label="item.user_name">
-          <el-input v-model="item.rate"/>
+        <el-form-item
+          v-for="item in peopleList"
+          :key="item.id"
+          :label="item.user_name"
+        >
+          <el-input v-model="item.rate" />
         </el-form-item>
       </el-form>
-      <div 
-        slot="footer" 
-        class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogFormVisible = false,disabledChange = true">取 消</el-button>
         <el-button
           v-if="(projectManage && (status === 1 || status === 2)) || legalAffairsManager|| bonusManage"
@@ -818,6 +880,7 @@ export default {
         token: "",
         key: ""
       },
+      testFileList: [],
       testFile: null,
       contractList: [],
       copyrightProjectList: [],
@@ -909,17 +972,17 @@ export default {
     };
   },
   computed: {
-    projectManage: function() {
+    projectManage: function () {
       return this.role.find(r => {
         return r.name === "project-manager";
       });
     },
-    bonusManage: function() {
+    bonusManage: function () {
       return this.role.find(r => {
         return r.name === "bonus-manager";
       });
     },
-    legalAffairsManager: function() {
+    legalAffairsManager: function () {
       return this.role.find(r => {
         return r.name === "legal-affairs-manager";
       });
@@ -977,11 +1040,11 @@ export default {
     },
     h5Handle(val) {
       let idArr = [];
-      if(val === 1){
+      if (val === 1) {
         this.h5Rate = this.rate.h5_1
-      }else if(val === 2){
+      } else if (val === 2) {
         this.h5Rate = this.rate.h5_2
-      }else{
+      } else {
         this.h5Rate = 0
       }
 
@@ -992,9 +1055,11 @@ export default {
         this.peopleHandle(idArr, this.h5Rate, "H5");
       }
     },
-
     handleRemove(file, fileList) {
       this.fileList = fileList;
+    },
+    handleRemove2(file, fileList) {
+      this.testFileList = fileList;
     },
     interactionHandle(val) {
       let idArr = [];
@@ -1113,7 +1178,7 @@ export default {
     handleExceed(files, fileList) {
       this.$message.warning(
         `当前限制选择 1 个文件，本次选择了 ${
-          files.length
+        files.length
         } 个文件，共选择了 ${files.length + fileList.length} 个文件`
       );
     },
@@ -1141,15 +1206,41 @@ export default {
       this.uploadForm.key = key;
       return this.uploadForm;
     },
-    // 上传成功后的处理
-    handleSuccess(response, file, fileList) {
-      let key = response.key;
+    beforeUpload2(file) {
       let name = file.name;
-      let size = file.size;
       let type = name.substring(name.lastIndexOf("."));
-      this.getMediaUpload(key, name, size, type);
+      let isLt100M = file.size / 1024 / 1024 < 100;
+      let time = new Date().getTime();
+      let random = parseInt(Math.random() * 10 + 1, 10);
+      let suffix = time + "_" + random + "_" + name;
+      let key = encodeURI(`${suffix}`);
+      if (
+        !(
+          type === ".docx" ||
+          type === ".doc" ||
+          type === ".pdf" ||
+          type === ".xlsx" ||
+          type === ".xls"
+        )
+      ) {
+        this.uploadForm.token = "";
+        return this.$message.error(
+          "文件类型只支持(docx、doc、pdf、.xlsx、.xls)"
+        );
+      }
+      if (!isLt100M) {
+        this.uploadForm.token = "";
+        return this.$message.error("上传大小不能超过 100MB!");
+      } else {
+        this.uploadForm.token = this.uploadToken;
+      }
+      this.uploadForm.key = key;
+      return this.uploadForm;
     },
-    getMediaUpload(key, name, size, type) {
+    // 上传成功后的处理
+    handleSuccess(response, file) {
+      let [key, name, size] = [response.key, file.name, file.size]
+      let type = name.substring(name.lastIndexOf("."));
       let params = {
         key: key,
         name: name,
@@ -1160,6 +1251,32 @@ export default {
           if (type === ".zip" || type === ".rar") {
             this.fileList.push(res);
           }
+        })
+        .catch(err => {
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
+        });
+    },
+    handleSuccess2(response, file) {
+      let [key, name, size] = [response.key, file.name, file.size]
+      let type = name.substring(name.lastIndexOf("."));
+      let params = {
+        key: key,
+        name: name,
+        size: size
+      };
+      getMediaUpload(this, params)
+        .then(res => {
+          if (type === ".docx" ||
+            type === ".doc" ||
+            type === ".pdf" ||
+            type === ".xlsx" ||
+            type === ".xls") {
+            this.testFileList.push(res);
+          }
+          console.log(type)
         })
         .catch(err => {
           this.$message({
@@ -1196,7 +1313,9 @@ export default {
           let planMediaData = [];
           if (res.tester_media) {
             this.testFile = res.tester_media;
+            planMediaData.push(res.tester_media)
           }
+          this.testFileList = planMediaData
           let animationMediaData = [];
           if (res.animation_media) {
             animationMediaData.push(res.animation_media);
@@ -1237,7 +1356,7 @@ export default {
 
           if (res.h5_attribute === 2) {
             this.h5Rate = this.rate.h5_2;
-          } else if (res.h5_attribute === 1){
+          } else if (res.h5_attribute === 1) {
             this.h5Rate = this.rate.h5_1;
           } else {
             this.h5Rate = 0;
@@ -1252,10 +1371,10 @@ export default {
           this.interactionRate =
             res.interaction_attribute.length === 2
               ? parseFloat(this.rate.interaction_linkage) +
-                parseFloat(this.rate.interaction_api)
+              parseFloat(this.rate.interaction_api)
               : res.interaction_attribute[0] === "interaction_api"
-              ? this.rate.interaction_api
-              : this.rate.interaction_linkage;
+                ? this.rate.interaction_api
+                : this.rate.interaction_linkage;
 
           this.status = res.status;
           if (JSON.stringify(res.member) !== "[]") {
