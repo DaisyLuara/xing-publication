@@ -22,7 +22,6 @@ class OrderController extends Controller
 
     public function ship(Order $order, Request $request)
     {
-
         // 判断当前订单是否已支付
         if (!$order->paid_at) {
             abort(500, '该订单未付款');
