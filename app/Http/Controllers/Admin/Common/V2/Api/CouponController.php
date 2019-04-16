@@ -140,7 +140,6 @@ class CouponController extends Controller
                 'end_date' => $endDate,
             ]);
 
-
             $coupon = $this->setCodeImageUrl($coupon, $prefix, $wechatCouponBatch,$request->code_type);
 
             //不使用系统核销 领取优惠券后 ，自动减去库存
@@ -355,34 +354,16 @@ class CouponController extends Controller
     public function generateLimitCouponBatch(Request $request)
     {
         $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
+        $project = Project::query()->where('versionname', '=', $request->belong)->firstOrFail();
 
-        //用户成就校验
-        $arMemberHonorNums = ArMemberHonor::query()->where('uid', $member->uid)
-            ->whereIn('xid', [14, 15, 16])->groupBy('xid')->get();
-
-        switch ($arMemberHonorNums->count()) {
-            case 0:
-                abort('500', '请先收集勋章');
-                break;
-            case 3:
-                $policy_id = 76;
-                break;
-            default:
-                $policy_id = 75;
-                break;
-        }
-
+        //每天限领数量
         $now = Carbon::now()->toDateString();
-
-        //实物奖品数量
         $prizeCoupons = Coupon::query()->where('belong', $request->belong)
             ->where('member_uid', $member->uid)
             ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
-            ->whereHas('couponBatch', function ($q) {
-                $q->where('type', 2);
-             })->get();
+            ->get();
 
-        abort_if($prizeCoupons->isNotEmpty(), 500, '每天仅限中一次奖,请明天再来');
+        abort_if($prizeCoupons->count() >= 25, 500, '抽奖机会已用完,请明天再来');
 
         $query = DB::table('coupon_batch_policy');
         if ($request->has('age')) {
@@ -398,7 +379,7 @@ class CouponController extends Controller
         }
 
         $couponBatchPolicies = $query->join('coupon_batches', 'coupon_batch_id', '=', 'coupon_batches.id')
-            ->where('policy_id', '=', $policy_id)
+            ->where('policy_id', '=', $project->policy_id)
             ->where('coupon_batches.is_active', 1)
             ->get();
 
