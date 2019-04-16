@@ -5,7 +5,7 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
-class DemandNotification extends Notification
+class BaseNotification extends Notification
 {
     use Queueable;
 

@@ -4,6 +4,7 @@ namespace App\Console;
 
 use App\Http\Controllers\Admin\WeChat\V1\Models\WeekRanking;
 use App\Jobs\ContractReceiveDatesJob;
+use App\Jobs\CouponBatchEndDateNotificationJob;
 use App\Jobs\TeamBonusJob;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
@@ -45,6 +46,12 @@ class Kernel extends ConsoleKernel
             $schedule->call(function () {
                 ContractReceiveDatesJob::dispatch()->onQueue('data-clean');
             })->daily()->at('8:00');
+
+            //奖品到期通知
+            $schedule->call(function () {
+                CouponBatchEndDateNotificationJob::dispatch()->onQueue('demand');
+            })->daily()->at('9:00');
+
         }
     }
 

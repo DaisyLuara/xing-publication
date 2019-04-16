@@ -28,25 +28,31 @@
           width="55"/>
         <el-table-column 
           prop="id" 
-          label="ID">
+          label="ID"
+          width="120">
           <template slot-scope="scope">{{ scope.row.data.id }}</template>
         </el-table-column>
         <el-table-column 
           prop="reply_content" 
           label="内容">
-          <template slot-scope="scope">{{ scope.row.data.reply_content }}</template>
+          <template slot-scope="scope" >
+            <p v-html="scope.row.data.reply_content"></p>
+          </template>
         </el-table-column>
         <el-table-column 
           prop="user_name" 
-          label="创建人">
+          label="创建人"
+          width="120">
           <template slot-scope="scope">{{ scope.row.data.user_name }}</template>
         </el-table-column>
         <el-table-column 
           prop="created_at" 
-          label="创建时间"/>
+          label="创建时间"
+          width="180"/>
         <el-table-column 
           prop="read_at" 
-          label="读取时间"/>
+          label="读取时间"
+          width="180"/>
         <el-table-column 
           label="操作" 
           width="150">
