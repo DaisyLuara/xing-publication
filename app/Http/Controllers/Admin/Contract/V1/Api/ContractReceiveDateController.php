@@ -10,6 +10,8 @@ namespace App\Http\Controllers\Admin\Contract\V1\Api;
 
 
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
+use App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate;
+use App\Http\Controllers\Admin\Contract\V1\Request\ContractReceiveDateRequest;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
@@ -51,8 +53,15 @@ class ContractReceiveDateController extends Controller
         return $this->response()->paginator($contractReceiveDate, new ContractTransformer());
     }
 
+    public function store(ContractReceiveDateRequest $request, Contract $contract, ContractReceiveDate $contractReceiveDate)
+    {
+        $contractReceiveDate->fill(array_merge($request->all(), ['contract_id' => $contract->id, 'receive_status' => 0]))->save();
+        return $this->response()->noContent()->setStatusCode(201);
+    }
+
     public function export(Request $request)
     {
-        return excelExportByType($request,'remind_contract');
+        return excelExportByType($request, 'remind_contract');
     }
+
 }
