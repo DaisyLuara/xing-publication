@@ -25,6 +25,7 @@ $api->version('v1', [
             //收款提示
             $api->get('remind_contract/export', ['middleware' => ['permission:contract.collection.export'], 'uses' => 'ContractReceiveDateController@export']);
             $api->get('remind_contract', ['middleware' => ['permission:contract.collection.read'], 'uses' => 'ContractReceiveDateController@index']);
+            $api->post('remind_contract/{contract}/receive_date', ['middleware' => ['permission:contract.collection.create'], 'uses' => 'ContractReceiveDateController@store']);
 
             // 审批历史
             $api->get('contract_history/export', ['middleware' => ['permission:contract.history.export'], 'uses' => 'ContractHistoryController@export']);
