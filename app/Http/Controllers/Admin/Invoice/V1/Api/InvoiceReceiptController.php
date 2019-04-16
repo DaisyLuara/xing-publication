@@ -79,11 +79,10 @@ class InvoiceReceiptController extends Controller
         $invoiceReceipt->fill(array_merge($request->all(), ['claim_status' => 0, 'creator' => $user->name]))->save();
         if (env('APP_ENV') === 'production') {
             //微信通知法务
-            $legalPhone = [13916320677, 18301766780];
-            $legals = User::query()->whereIn('phone', $legalPhone)->get();
-            foreach ($legals as $legal) {
-                InvoiceReceiptNotificationJob::dispatch($legal, '有一笔新的收款待认领')->onQueue('data-clean');
-            }
+            $legal = User::find(getProcessStaffId('legal-affairs', 'invoice'));
+            $legalMa = User::find(getProcessStaffId('legal-affairs-manager', 'invoice'));
+            InvoiceReceiptNotificationJob::dispatch($legal, '有一笔新的收款待认领')->onQueue('data-clean');
+            InvoiceReceiptNotificationJob::dispatch($legalMa, '有一笔新的收款待认领')->onQueue('data-clean');
         }
 
         return $this->response()->item($invoiceReceipt, new InvoiceReceiptTransformer())->setStatusCode(201);
@@ -122,12 +121,12 @@ class InvoiceReceiptController extends Controller
             if ($bd->weixin_openid) {
                 InvoiceReceiptNotificationJob::dispatch($bd, '合同' . $contract->contract_number . '有一笔收款已认领')->onQueue('data-clean');
             } else {
-                //通知法务主管
-                $legalMa = User::query()->where('phone', 13916320677)->first();
+                //通知法务主管提醒bd关联公众号
+                $legalMa = User::find(getProcessStaffId('legal-affairs-manager', 'invoice'));
                 InvoiceReceiptNotificationJob::dispatch($legalMa, 'bd' . $bd->name . '的中台账号未关联公众号，请提醒')->onQueue('data-clean');
             }
 
-            //通知运营
+            //通知运营 运营不在流程线中 暂不做配置
             $operation = User::query()->where('phone', 13661874698)->first();
             InvoiceReceiptNotificationJob::dispatch($operation, '合同' . $contract->contract_number . '有一笔收款已认领')->onQueue('data-clean');
         }
