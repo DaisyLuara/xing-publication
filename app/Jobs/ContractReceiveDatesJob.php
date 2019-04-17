@@ -44,6 +44,8 @@ class ContractReceiveDatesJob implements ShouldQueue
         $legalMa = User::find(getProcessStaffId('legal-affairs-manager', 'contract'));
         foreach ($data as $item) {
             $contract = Contract::find($item->contract_id);
+            if (!$contract)
+                continue;
             $contract->applicantUser->notify(new CheckReceipt($contract));
             if ($contract->applicantUser->parent_id) {
                 User::find($contract->applicantUser->parent_id)->notify(new CheckReceipt($contract));
