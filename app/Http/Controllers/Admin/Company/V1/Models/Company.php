@@ -10,6 +10,11 @@ use App\Models\Model;
 use App\Models\Customer;
 
 
+/**
+ * Class Company
+ * @package App\Http\Controllers\Admin\Company\V1\Models
+ * @property int id
+ */
 class Company extends Model
 {
 
