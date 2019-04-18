@@ -17,7 +17,6 @@ class FeedbackRequest extends Request
         switch ($this->method()) {
             case 'POST':
                 return [
-                    'title' => 'required|string',
                     'content' => 'required|string',
                     'photo_media_ids' => "nullable|array",
                     'video_media_id' => ['nullable', 'integer', Rule::exists('media', 'id')],
