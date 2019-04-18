@@ -13,6 +13,7 @@ class CompanyRequest extends Request
             case 'POST':
                 return [
                     'name' => 'required|string',
+                    'logo_media_id' => 'required|integer',
                     'address' => 'required|string',
                     'customer_name' => 'filled',
                     'position' => 'filled',
@@ -25,6 +26,7 @@ class CompanyRequest extends Request
             case 'PATCH':
                 return [
                     'name' => 'string',
+                    'logo_media_id' => 'integer',
                     'address' => 'string',
                     'customer_name' => 'filled',
                     'position' => 'filled',
@@ -41,7 +43,8 @@ class CompanyRequest extends Request
         return [
             'name' => '公司全称',
             'address' => '公司地址',
-            "internal_name" => '公司简称',
+            'internal_name' => '公司简称',
+            'logo_media_id' => '公司logo'
         ];
     }
 }
