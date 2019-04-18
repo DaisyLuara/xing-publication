@@ -19,6 +19,11 @@ use Spatie\Permission\Guard;
 use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\RefreshesPermissionCache;
 
+/**
+ * Class Role
+ * @package App\Http\Controllers\Admin\Privilege\V1\Models
+ * @property string name
+ */
 class Role extends Model implements RoleContract
 {
     protected $fillable = [
