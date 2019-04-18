@@ -29,7 +29,7 @@ class AdminCustomersController extends Controller
         return $this->response->paginator($customers, new CustomerTransformer());
     }
 
-    public function show(Customer $customer)
+    public function show(Company $company, Customer $customer)
     {
         return $this->response->item($customer, new CustomerTransformer());
     }
