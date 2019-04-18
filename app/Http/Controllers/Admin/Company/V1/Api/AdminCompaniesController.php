@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\Privilege\V1\Models\Role;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use App\Jobs\CreateAdminStaffJob;
 
 class AdminCompaniesController extends Controller
 {
