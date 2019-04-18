@@ -50,7 +50,6 @@ class AdminCustomersController extends Controller
 
         activity('customer')->on($customer)->withProperties($request->all())->log('新增公司联系人');
 
-        CreateAdminStaffJob::dispatch($customer, $role)->onQueue('create_admin_staff');
 
         return $this->response->item($customer, new CustomerTransformer())
             ->setStatusCode(201);

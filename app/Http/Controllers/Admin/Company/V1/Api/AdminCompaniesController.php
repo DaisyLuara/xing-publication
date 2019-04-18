@@ -93,8 +93,10 @@ class AdminCompaniesController extends Controller
             $customer = Customer::create($customerData);
             $role = Role::findById($request->role_id, 'shop');
             $customer->assignRole($role);
+            CreateAdminStaffJob::dispatch($customer, $role)->onQueue('create_admin_staff');
         }
         activity('customer')->on($customer)->withProperties($companyData)->log('新增公司联系人');
+
 
         return $this->response->item($company, new CompanyTransformer())
             ->setStatusCode(201);
