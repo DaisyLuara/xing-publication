@@ -59,6 +59,16 @@ class FeedbackController extends Controller
     }
 
 
+    public function show(Feedback $feedback)
+    {
+        if ($feedback->parent_id != 0) {
+            abort(422, "该条反馈非问题");
+        }
+
+        return $this->response()->item($feedback, new FeedbackTransformer());
+    }
+
+
     public function store(FeedbackRequest $request, Feedback $feedback)
     {
 
@@ -90,7 +100,7 @@ class FeedbackController extends Controller
         }
 
         $feedback = $feedback->query()->create([
-            'title' => $request->get('title'),
+            'title' => $request->get('title') ?? "无标题",
             'content' => $request->get('content'),
             'createable_id' => $user->id,
             'createable_type' => User::class,

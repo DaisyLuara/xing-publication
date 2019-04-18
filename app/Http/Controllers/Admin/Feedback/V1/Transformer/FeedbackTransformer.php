@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Admin\Feedback\V1\Transformer;
 
 use App\Http\Controllers\Admin\Feedback\V1\Models\Feedback;
+use App\Http\Controllers\Admin\Media\V1\Transformer\MediaTransformer;
 use App\Models\Customer;
 use League\Fractal\TransformerAbstract;
 
 class FeedbackTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['childrenFeedback'];
+    protected $availableIncludes = ['childrenFeedback', 'photos', 'video'];
 
     public function transform(Feedback $feedback)
     {
@@ -17,7 +18,7 @@ class FeedbackTransformer extends TransformerAbstract
             'id' => $feedback->id,
             'title' => $feedback->title,
             'content' => $feedback->content,
-            'createable' => $feedback->createable,
+            'createable_name' => $feedback->createable ? $feedback->createable->name : '',
             'createable_type' => $feedback->createable_type,
             'createable_id' => $feedback->createable_id,
             'company_name' => $feedback->createable_type === Customer::class && $feedback->createable && $feedback->createable->company
@@ -26,9 +27,6 @@ class FeedbackTransformer extends TransformerAbstract
             'top_parent_id' => $feedback->top_parent_id,
             'status' => $feedback->status,
             'status_text' => Feedback::$statusAttributeMapping[$feedback->status] ?? $feedback->status,
-            'video_media_id' => $feedback->video_media_id,
-            'photo_media' => $feedback->photos,
-            'video_media' => $feedback->video,
             'created_at' => (string)$feedback->created_at,
             'updated_at' => (string)$feedback->updated_at,
 
@@ -39,5 +37,17 @@ class FeedbackTransformer extends TransformerAbstract
     {
         $children = $feedback->childrenFeedback()->orderBy('created_at')->get();
         return $this->collection($children, new FeedbackTransformer());
+    }
+
+    public function includePhotos(Feedback $feedback)
+    {
+        $photos = $feedback->photos;
+        return $this->collection($photos, new MediaTransformer());
+    }
+
+    public function includeVideo(Feedback $feedback)
+    {
+        $video = $feedback->video;
+        return $this->item($video, new MediaTransformer());
     }
 }
