@@ -699,8 +699,12 @@ class QueryController extends Controller
     {
         $query = $point->query();
 
-        if ($request->name) {
-            $query->where('name', 'like', '%' . $request->name . '%')->get();
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->get('name') . '%')->get();
+        }
+
+        if ($request->has('marketid')) {
+            $query->where('marketid', $request->get('marketid'));
         }
 
         $points = $query->get();
