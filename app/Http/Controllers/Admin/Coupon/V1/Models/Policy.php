@@ -12,6 +12,12 @@ namespace App\Http\Controllers\Admin\Coupon\V1\Models;
 use App\Models\Model;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 
+/**
+ * Class Policy
+ * @package App\Http\Controllers\Admin\Coupon\V1\Models
+ * @property int $company_id
+ * @property int $id
+ */
 class Policy extends Model
 {
     protected $fillable = [

@@ -12,6 +12,11 @@ use Spatie\Activitylog\Traits\CausesActivity;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
+/**
+ * Class User
+ * @package App\Models
+ * @property int $id
+ */
 class User extends Authenticatable implements JWTSubject
 {
 

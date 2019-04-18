@@ -9,7 +9,13 @@ use App\Models\User;
 use App\Models\Model;
 use App\Models\Customer;
 
-
+/**
+ * Class Company
+ * @package App\Http\Controllers\Admin\Company\V1\Models
+ * @property int $id
+ * @property int $bd_user_id
+ *
+ */
 class Company extends Model
 {
 
