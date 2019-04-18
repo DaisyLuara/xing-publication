@@ -12,6 +12,7 @@ import report from 'router/pc/report'
 import market from 'router/pc/market'
 import activity from 'router/pc/activity'
 import prize from 'router/pc/prize'
+import feedback from 'router/pc/feedback'
 
 
 export default {
@@ -30,6 +31,7 @@ export default {
     inform,
     account,
     ad,
+    feedback,
     equipment,
     resource_auth,
     team,
