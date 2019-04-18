@@ -12,6 +12,11 @@ namespace App\Http\Controllers\Admin\Contract\V1\Models;
 use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceReceipt;
 use App\Models\Model;
 
+/**
+ * Class ContractReceiveDate
+ * @package App\Http\Controllers\Admin\Contract\V1\Models
+ * @property int contract_id
+ */
 class ContractReceiveDate extends Model
 {
     protected $fillable = [
