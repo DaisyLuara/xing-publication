@@ -6,8 +6,8 @@
   >
     <div class="search-wrap">
       <el-form ref="searchForm" :inline="true" :model="searchForm" class="search-form">
-        <el-form-item label prop="description">
-          <el-input v-model="searchForm.description" placeholder="请输入备注" clearable/>
+        <el-form-item label prop="title">
+          <el-input v-model="searchForm.title" placeholder="请输入问题名称" clearable/>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" size="small" @click="search">搜索</el-button>
@@ -66,7 +66,7 @@ export default {
   data() {
     return {
       searchForm: {
-        description: ""
+        title: ""
       },
       currentPage: 1,
       pageSize: 10,
@@ -94,8 +94,12 @@ export default {
       this.setting.loading = true;
       let args = {
         page: this.currentPage,
-        include: "childrenFeedback"
+        include: "childrenFeedback",
+        title:this.searchForm.title
       };
+      if(this.searchForm.title===''){
+        delete args.title
+      }
       getFeedbackList(this, args)
         .then(response => {
           this.tableData = response.data;
