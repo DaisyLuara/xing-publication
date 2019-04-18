@@ -105,6 +105,11 @@ class InvoiceReceiptController extends Controller
         return $this->response()->noContent()->setStatusCode(200);
     }
 
+    /**
+     * @param Request $request
+     * @param InvoiceReceipt $invoiceReceipt
+     * @return \Dingo\Api\Http\Response
+     */
     public function confirm(Request $request, InvoiceReceipt $invoiceReceipt)
     {
         /** @var  $user \App\Models\User */
@@ -112,27 +117,30 @@ class InvoiceReceiptController extends Controller
         if (!$user->hasRole('legal-affairs|legal-affairs-manager|operation')) {
             abort(403, '无操作权限');
         }
-        $contractReceiveDate = ContractReceiveDate::find($request->receive_date_id);
+        /** @var  ContractReceiveDate $contractReceiveDate */
+        $contractReceiveDate = ContractReceiveDate::find($request->get('receive_date_id'));
         $contractReceiveDate->update(['receive_status' => 1, 'invoice_receipt_id' => $invoiceReceipt->id]);
+
+        $invoiceReceipt->claim_status = 1;
+        $invoiceReceipt->update();
+
         if (env('APP_ENV') === 'production') {
             //通知合同的bd
             $contract = Contract::find($contractReceiveDate->contract_id);
             $bd = User::find($contract->applicant);
+            $content = "合同有一笔收款已认领" . "\r\n" . "合同编号：" . $contract->contract_number . "\r\n" . "合同公司：" . $contract->company->name . "\r\n" . "收款金额：" . $invoiceReceipt->receipt_money;
             if ($bd->weixin_openid) {
-                InvoiceReceiptNotificationJob::dispatch($bd, '合同' . $contract->contract_number . '有一笔收款已认领')->onQueue('data-clean');
+                InvoiceReceiptNotificationJob::dispatch($bd, $content)->onQueue('data-clean');
             } else {
                 //通知法务主管提醒bd关联公众号
                 $legalMa = User::find(getProcessStaffId('legal-affairs-manager', 'invoice'));
-                InvoiceReceiptNotificationJob::dispatch($legalMa, 'bd' . $bd->name . '的中台账号未关联公众号，请提醒')->onQueue('data-clean');
+                InvoiceReceiptNotificationJob::dispatch($legalMa, $bd->name . '的中台账号未关联公众号，请提醒')->onQueue('data-clean');
             }
 
             //通知运营 运营不在流程线中 暂不做配置
             $operation = User::query()->where('phone', 13661874698)->first();
-            InvoiceReceiptNotificationJob::dispatch($operation, '合同' . $contract->contract_number . '有一笔收款已认领')->onQueue('data-clean');
+            InvoiceReceiptNotificationJob::dispatch($operation, $content)->onQueue('data-clean');
         }
-
-        $invoiceReceipt->claim_status = 1;
-        $invoiceReceipt->update();
 
         return $this->response()->noContent()->setStatusCode(200);
     }
