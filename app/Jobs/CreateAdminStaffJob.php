@@ -50,8 +50,10 @@ class CreateAdminStaffJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $zValue = $this->getAdminStaffZValue();
-        $this->adminStaff->update(['z' => $zValue]);
+        if (env('APP_ENV') === 'production') {
+            $zValue = $this->getAdminStaffZValue();
+            $this->adminStaff->update(['z' => $zValue]);
+        }
 
     }
 
