@@ -681,8 +681,8 @@ class QueryController extends Controller
     {
         $query = $project->query();
 
-        if ($request->name) {
-            $query->where('name', 'like', '%' . $request->name . '%')->get();
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->get('name') . '%')->get();
         }
 
         $projects = $query->get();
@@ -703,8 +703,8 @@ class QueryController extends Controller
             $query->where('name', 'like', '%' . $request->get('name') . '%')->get();
         }
 
-        if ($request->has('marketid')) {
-            $query->where('marketid', $request->get('marketid'));
+        if ($request->has('market_id')) {
+            $query->where('marketid', $request->get('market_id'));
         }
 
         $points = $query->get();
@@ -722,8 +722,8 @@ class QueryController extends Controller
     {
         $query = $policy->query();
 
-        if ($request->name) {
-            $query->where('name', 'like', '%' . $request->name . '%')->get();
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->get('name') . '%')->get();
         }
 
         $policies = $query->get();
