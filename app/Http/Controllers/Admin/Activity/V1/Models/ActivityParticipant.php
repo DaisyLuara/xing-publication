@@ -5,6 +5,12 @@ namespace App\Http\Controllers\Admin\Activity\V1\Models;
 use App\Http\Controllers\Admin\User\V1\Models\ArMemberInfo;
 use App\Models\Model;
 
+/**
+ * Class ActivityParticipant
+ * @package App\Http\Controllers\Admin\Activity\V1\Models
+ * @property int uid
+ * @property string username
+ */
 class ActivityParticipant extends Model
 {
     protected $connection = 'ar';

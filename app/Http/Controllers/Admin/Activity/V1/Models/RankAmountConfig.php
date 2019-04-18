@@ -10,6 +10,11 @@ namespace App\Http\Controllers\Admin\Activity\V1\Models;
 
 use App\Models\Model;
 
+/**
+ * Class RankAmountConfig
+ * @package App\Http\Controllers\Admin\Activity\V1\Models
+ * @property float amount
+ */
 class RankAmountConfig extends Model
 {
     protected $table = 'rank_amount_config';
