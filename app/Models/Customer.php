@@ -7,13 +7,19 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
+/**
+ * Class Customer
+ * @package App\Models
+ * @property string name
+ * @property string phone
+ */
 class Customer extends Authenticatable implements JWTSubject
 {
     use HasRoles;
 
     protected $guard_name = 'shop';
 
-    protected $fillable = ['name', 'position', 'phone', 'telephone', 'company_id', 'password'];
+    protected $fillable = ['name', 'position', 'phone', 'telephone', 'company_id', 'password','z'];
 
     public function company()
     {
@@ -25,7 +31,7 @@ class Customer extends Authenticatable implements JWTSubject
         return $this->getKey();
     }
 
-    public function getJWTCustomClaims()
+    public function getJWTCustomClaims(): array
     {
         return [];
     }

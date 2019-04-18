@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Contract\V1\Transformer;
 
+use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
 use App\Http\Controllers\Admin\Media\V1\Transformer\MediaTransformer;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
@@ -10,7 +11,7 @@ use League\Fractal\TransformerAbstract;
 class ContractTransformer extends TransformerAbstract
 {
 
-    protected $availableIncludes = ['media', 'receiveDate'];
+    protected $availableIncludes = ['media', 'receiveDate', 'company'];
 
 
 
@@ -65,5 +66,11 @@ class ContractTransformer extends TransformerAbstract
     {
         return $this->collection($contract->receiveDate, new ContractReceiveDateTransformer());
     }
+
+    public function includeCompany(Contract $contract)
+    {
+        return $this->item($contract->company, new CompanyTransformer());
+    }
+
 
 }
