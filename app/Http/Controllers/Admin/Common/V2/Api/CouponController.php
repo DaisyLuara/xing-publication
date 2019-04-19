@@ -140,7 +140,7 @@ class CouponController extends Controller
                 'end_date' => $endDate,
             ]);
 
-            $coupon = $this->setCodeImageUrl($coupon, $prefix, $wechatCouponBatch,$request->code_type);
+            $coupon = $this->setCodeImageUrl($coupon, $prefix, $wechatCouponBatch, $request->code_type);
 
             //不使用系统核销 领取优惠券后 ，自动减去库存
             if (!$couponBatch->write_off_status && !$couponBatch->pmg_status && !$couponBatch->pmg_status) {
@@ -188,7 +188,7 @@ class CouponController extends Controller
         $wechatCouponBatch = CouponBatch::query()->findOrFail($coupon->coupon_batch_id)->wechat;
         $prefix = 'h5_code_';
 
-        $coupon = $this->setCodeImageUrl($coupon, $prefix, $wechatCouponBatch,$request->code_type);
+        $coupon = $this->setCodeImageUrl($coupon, $prefix, $wechatCouponBatch, $request->code_type);
 
         return $this->response->item($coupon, new CouponTransformer());
     }
@@ -206,7 +206,7 @@ class CouponController extends Controller
         abort_if($member->userCouponBatches->isNotEmpty(), '500', '请勿重复抽奖');
 
         //用户成就校验
-        foreach ([11,12,13] as $id) {
+        foreach ([11, 12, 13] as $id) {
             $arMemberHonor = ArMemberHonor::query()->where('uid', $member->uid)->where('xid', $id)->first();
             abort_if(!$arMemberHonor, 500, '请集齐勋章后再抽奖!');
         }
@@ -387,30 +387,36 @@ class CouponController extends Controller
             abort(500, '无可用优惠券');
         }
 
-        $couponBatchPolicies = $couponBatchPolicies->toArray();
+
+        //过滤不符合条件的优惠券
+        foreach ($couponBatchPolicies as $key => $couponBatchPolicy) {
+            if (!$couponBatchPolicy->pmg_status && !$couponBatchPolicy->dmg_status && $couponBatchPolicy->stock <= 0) {
+                unset($couponBatchPolicies[$key]);
+                continue;
+            }
+        }
+
+        $couponBatchIDs = [];
+        $couponBatchPolicies = $couponBatchPolicies->each(static function ($item) use (&$couponBatchIDs) {
+            $couponBatchIDs[] = $item->coupon_batch_id;
+        });
+
+        //当天库存校验
+        //当天库存为0 不出券
+        $now = Carbon::now()->toDateString();
+        $coupons = Coupon::query()->whereIn('coupon_batch_id', $couponBatchIDs)
+            ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
+            ->selectRaw('count(coupon_batch_id) as day_receive')->get();
 
         foreach ($couponBatchPolicies as $key => $couponBatchPolicy) {
-            //设置了库存上限的券
-            if (!$couponBatchPolicy->pmg_status && !$couponBatchPolicy->dmg_status) {
-                //剩余库存为0 不出券
-                if ($couponBatchPolicy->stock <= 0) {
-                    unset($couponBatchPolicies[$key]);
-                    continue;
-                }
-
-                //当天库存为0 不出券
-                $now = Carbon::now()->toDateString();
-                $coupon = Coupon::query()->where('coupon_batch_id', $couponBatchPolicy->id)
-                    ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
-                    ->selectRaw("count(coupon_batch_id) as day_receive")->first();
-
+            foreach ($coupons as $coupon) {
                 if ($coupon->day_receive >= $couponBatchPolicy->day_max_get) {
                     unset($couponBatchPolicies[$key]);
                 }
             }
         }
 
-        if (collect($couponBatchPolicies)->sum('rate') == 0) {
+        if (collect($couponBatchPolicies)->sum('rate') === 0) {
             abort(500, '无可用优惠券');
         }
 
@@ -445,7 +451,8 @@ class CouponController extends Controller
      * @param string $code_type
      * @return mixed
      */
-    private function setCodeImageUrl($coupon, $prefix, $wechatCouponBatch = null, $code_type = 'qrcode') {
+    private function setCodeImageUrl($coupon, $prefix, $wechatCouponBatch = null, $code_type = 'qrcode')
+    {
         if ($code_type == 'barcode') {
             $barcodeUrl = couponBarCode($coupon->code, 2, 180, $prefix);
             $coupon->setAttribute('barcode_url', $barcodeUrl);
