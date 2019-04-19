@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Demand\V1\Request;
 
 use App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication;
 use App\Http\Requests\Request;
+use App\Models\Model;
 use Illuminate\Validation\Rule;
 
 
@@ -15,30 +16,30 @@ class DemandModifyRequest extends Request
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         switch ($this->getMethod()) {
             case 'POST':
                 return [
                     'demand_application_id' => ['required',
-                        Rule::exists('demand_applications', 'id')->where(function ($query) {
-                            $query->whereIn('status', [DemandApplication::STATUS_RECEIVED, DemandApplication::STATUS_MODIFY,DemandApplication::STATUS_CONFIRM]);
+                        Rule::exists('demand_applications', 'id')->where(static function ($query) {
+                            $query->whereIn('status', [DemandApplication::STATUS_RECEIVED, DemandApplication::STATUS_MODIFY, DemandApplication::STATUS_CONFIRM]);
                         })
                     ],
-                    'title' => ["required", "string"],
-                    'content' => ["required", "string"],
+                    'title' => ['required', 'string'],
+                    'content' => ['required', 'string'],
                 ];
                 break;
 
             case 'PATCH':
                 return [
                     'demand_application_id' => ['required',
-                        Rule::exists('demand_applications', 'id')->where(function ($query) {
-                            $query->whereIn('status', [DemandApplication::STATUS_RECEIVED, DemandApplication::STATUS_MODIFY,DemandApplication::STATUS_CONFIRM]);
+                        Rule::exists('demand_applications', 'id')->where(static function ($query) {
+                            $query->whereIn('status', [DemandApplication::STATUS_RECEIVED, DemandApplication::STATUS_MODIFY, DemandApplication::STATUS_CONFIRM]);
                         })
                     ],
-                    'title' => ["required", "string"],
-                    'content' => ["required", "string"],
+                    'title' => ['required', 'string'],
+                    'content' => ['required', 'string'],
                 ];
                 break;
 
@@ -47,7 +48,7 @@ class DemandModifyRequest extends Request
         }
     }
 
-    public function attributes()
+    public function attributes(): array
     {
         return [
             'demand_application_id' => '项目标的',

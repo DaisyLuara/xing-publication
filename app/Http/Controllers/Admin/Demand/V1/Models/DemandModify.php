@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Demand\V1\Models;
 
 use App\Models\Model;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Notifications\Notifiable;
 
 /**
@@ -31,29 +32,29 @@ use Illuminate\Notifications\Notifiable;
  * @property-read \App\Models\User|null $feedback_person
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read \App\Models\User|null $reviewer
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandModify newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandModify newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|DemandModify newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|DemandModify newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model ordered()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandModify query()
+ * @method static \Illuminate\Database\Eloquent\Builder|DemandModify query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model recent()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandModify whereApplicantId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandModify whereContent($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandModify whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandModify whereDemandApplicationId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandModify whereFeedback($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandModify whereFeedbackPersonId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandModify whereFeedbackPersonName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandModify whereFeedbackTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandModify whereHasFeedback($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandModify whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandModify whereRejectRemark($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandModify whereReviewTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandModify whereReviewerId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandModify whereReviewerName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandModify whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandModify whereTitle($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandModify whereUpdatedAt($value)
- * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|DemandModify whereApplicantId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DemandModify whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DemandModify whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DemandModify whereDemandApplicationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DemandModify whereFeedback($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DemandModify whereFeedbackPersonId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DemandModify whereFeedbackPersonName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DemandModify whereFeedbackTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DemandModify whereHasFeedback($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DemandModify whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DemandModify whereRejectRemark($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DemandModify whereReviewTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DemandModify whereReviewerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DemandModify whereReviewerName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DemandModify whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DemandModify whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|DemandModify whereUpdatedAt($value)
+ * @mixin \Illuminate\Database\Eloquent\
  */
 class DemandModify extends Model
 {
@@ -76,14 +77,14 @@ class DemandModify extends Model
         'reject_remark',
     ];
 
-    const STATUS_UN_REVIEW = 0;
-    const STATUS_PASS = 1;
-    const STATUS_REJECT = 2;
+    public const STATUS_UN_REVIEW = 0;
+    public const STATUS_PASS = 1;
+    public const STATUS_REJECT = 2;
 
     public static $statusAttributeMapping = [
-        self::STATUS_UN_REVIEW => "待处理",
-        self::STATUS_PASS => "已审核",
-        self::STATUS_REJECT => "已驳回",
+        self::STATUS_UN_REVIEW => '待处理',
+        self::STATUS_PASS => '已审核',
+        self::STATUS_REJECT => '已驳回',
     ];
 
     public function getStatusText()
@@ -91,22 +92,22 @@ class DemandModify extends Model
         return self::$statusAttributeMapping[$this->getStatus()] ?? '未知';
     }
 
-    public function demand_application()
+    public function demand_application(): BelongsTo
     {
         return $this->belongsTo(DemandApplication::class, 'demand_application_id', 'id');
     }
 
-    public function applicant()
+    public function applicant(): BelongsTo
     {
         return $this->belongsTo(User::class, 'applicant_id', 'id');
     }
 
-    public function feedback_person()
+    public function feedback_person(): BelongsTo
     {
         return $this->belongsTo(User::class, 'feedback_person_id', 'id');
     }
 
-    public function reviewer()
+    public function reviewer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reviewer_id', 'id');
     }

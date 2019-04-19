@@ -10,7 +10,7 @@ class DemandModifyTransformer extends TransformerAbstract
 
     protected $defaultIncludes = ['demand_application'];
 
-    public function transform(DemandModify $demandModify)
+    public function transform(DemandModify $demandModify): array
     {
 
         return [
