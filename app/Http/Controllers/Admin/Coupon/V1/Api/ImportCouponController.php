@@ -56,7 +56,7 @@ class ImportCouponController extends Controller
         }
         $default_param = [
             'company_id' => $company->id,
-            'bd_user_id' => $company->bd_user_id,//关联BD
+            'bd_user_id' => $company->user_id,//关联BD
             'scene_type' => $request->get("scene_type"),//场景类型 - 1:商场通用,2:商场自营,3:商户通用,4:商户自营
             'write_off_mid' => $request->get("write_off_mid"),//核销商场
             'write_off_sid' => $request->get("write_off_sid"),//核销商户
