@@ -1,32 +1,63 @@
 <template>
-  <div class="add-wrap" v-loading="loading">
+  <div 
+    v-loading="loading" 
+    class="add-wrap">
     <div class="feedback-title">回答问题反馈</div>
-    <el-form ref="feedbackAskFrom" :model="feedbackAskFrom" :rules="rules">
-      <el-form-item prop="company" label="公司:">{{feedbackAskFrom.company_name}}</el-form-item>
-      <el-form-item prop="account" label="账号:">{{feedbackAskFrom.createable_name}}</el-form-item>
-      <el-form-item prop="title" label="问题:">{{feedbackAskFrom.title}}</el-form-item>
-      <el-form-item prop="conent" label="内容:">{{feedbackAskFrom.content}}</el-form-item>
-      <el-form-item prop="photos" label="图片:">
-        <div class="photos-list" v-if="feedbackAskFrom.photos.length>0">
-          <div class="photos-list-item" v-for="(item,index) in feedbackAskFrom.photos" :key="index">
+    <el-form 
+      ref="feedbackAskFrom" 
+      :model="feedbackAskFrom" 
+      :rules="rules">
+      <el-form-item 
+        prop="company" 
+        label="公司:">{{ feedbackAskFrom.company_name }}</el-form-item>
+      <el-form-item 
+        prop="account" 
+        label="账号:">{{ feedbackAskFrom.createable_name }}</el-form-item>
+      <el-form-item 
+        prop="title" 
+        label="问题:">{{ feedbackAskFrom.title }}</el-form-item>
+      <el-form-item 
+        prop="conent" 
+        label="内容:">{{ feedbackAskFrom.content }}</el-form-item>
+      <el-form-item 
+        prop="photos" 
+        label="图片:">
+        <div 
+          v-if="feedbackAskFrom.photos.length>0" 
+          class="photos-list">
+          <div 
+            v-for="(item,index) in feedbackAskFrom.photos" 
+            :key="index" 
+            class="photos-list-item">
             <img :src="item.url">
           </div>
         </div>
       </el-form-item>
       <el-form-item
+        v-if="feedbackAskFrom.replyConent"
         prop="replyConent"
         label="回复内容:"
-        v-if="feedbackAskFrom.replyConent"
-      >{{feedbackAskFrom.replyConent}}</el-form-item>
+      >{{ feedbackAskFrom.replyConent }}</el-form-item>
       <el-form-item>
         <div class="btn-wrap">
-          <el-button type="default" @click="back">取消</el-button>
-          <el-button type="primary" @click="replay" v-if="feedbackAskFrom.status===1">回复</el-button>
+          <el-button 
+            type="default" 
+            @click="back">取消</el-button>
+          <el-button 
+            v-if="feedbackAskFrom.status===1" 
+            type="primary" 
+            @click="replay">回复</el-button>
         </div>
       </el-form-item>
     </el-form>
-    <el-dialog title="回复" :visible.sync="dialogFormVisible" :rules="rules" :close="false">
-      <el-form :model="replyForm" ref="replyForm">
+    <el-dialog 
+      :visible.sync="dialogFormVisible" 
+      :rules="rules" 
+      :close="false" 
+      title="回复">
+      <el-form 
+        ref="replyForm" 
+        :model="replyForm">
         <el-form-item prop="content">
           <el-input
             v-model="replyForm.content"
@@ -36,9 +67,13 @@
           />
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div 
+        slot="footer" 
+        class="dialog-footer">
         <el-button @click="dialogFormVisible = false,replyForm.content=''">取 消</el-button>
-        <el-button type="primary" @click="submit('replyForm')">确 定</el-button>
+        <el-button 
+          type="primary" 
+          @click="submit('replyForm')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
