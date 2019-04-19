@@ -3,7 +3,7 @@
     <headModule/>
     <!-- v-show="!iconMenuShow"  -->
     <div class="first-sidebar" @mouseleave="leaveIcon">
-      <el-menu :default-active="'/' + currModule" router>
+      <el-menu :default-active="'/' + currModule" router :style="{'height':style.height}">
         <el-menu-item
           v-for="m in modules"
           v-if="m.path != 'inform'"
@@ -93,6 +93,9 @@ export default {
       iconMenuShow: true,
       visible: false,
       setIntervalValue: "",
+      style: {
+        height: 0
+      },
       systemMenuList: [
         {
           id: "zhongtai",
@@ -175,7 +178,11 @@ export default {
       return this.$store.state.notificationCount.noticeCount;
     }
   },
-  mounted() {},
+  mounted() {
+    let height = document.getElementsByClassName("first-sidebar")[0]
+      .offsetHeight;
+    this.style.height = height - 138 + "px";
+  },
   created() {
     let userInfo = JSON.parse(this.$cookie.get("user_info"));
     this.$store.commit("setCurUserInfo", userInfo);
