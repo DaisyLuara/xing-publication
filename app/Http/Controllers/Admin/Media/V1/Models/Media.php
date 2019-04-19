@@ -5,6 +5,11 @@ namespace App\Http\Controllers\Admin\Media\V1\Models;
 use App\Models\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Class Media
+ * @package App\Http\Controllers\Admin\Media\V1\Models
+ * @property String $url
+ */
 class Media extends Model
 {
     use SoftDeletes;

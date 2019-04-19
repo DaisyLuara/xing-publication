@@ -7,7 +7,6 @@ use App\Http\Controllers\Admin\Company\V1\Request\CustomerRequest;
 use App\Http\Controllers\Admin\Company\V1\Transformer\CustomerTransformer;
 use App\Http\Controllers\Admin\Privilege\V1\Models\Role;
 use App\Http\Controllers\Controller;
-use App\Jobs\CreateAdminStaffJob;
 use App\Models\Customer;
 use DB;
 
