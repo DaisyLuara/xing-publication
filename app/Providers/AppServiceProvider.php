@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\ShortUrl\V1\Models\ShortUrlRecords;
 use App\Http\Controllers\Admin\WeChat\V1\Models\ThirdPartyUser;
 use App\Models\Model;
 use App\Models\User;
+use App\Observers\AdminCustomerObserver;
 use App\Observers\MarketContractObserver;
 use App\Observers\MarketObserver;
 use App\Observers\MarketShareObserver;
@@ -34,6 +35,7 @@ use App\Observers\UserObserver;
 use Laravel\Horizon\Horizon;
 use Studio\Totem\Totem;
 use App\Support\MallCoo;
+use App\Models\Customer;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -54,6 +56,7 @@ class AppServiceProvider extends ServiceProvider
         ProjectLaunchTpl::observe(ProjectLaunchTplObserver::class);
         ProjectLaunchTplSchedule::observe(ProjectLaunchTplScheduleObserver::class);
         DatabaseNotification::observe(NotificationObserver::class);
+        Customer::observe(AdminCustomerObserver::class);
 
         \Carbon\Carbon::setLocale('zh');
         $this->bootTowerSocialite();
