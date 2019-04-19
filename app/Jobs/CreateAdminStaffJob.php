@@ -25,7 +25,7 @@ class CreateAdminStaffJob implements ShouldQueue
             'market_owner' => 11,
         ],
         'User' => [
-            'bd' => 8,
+            'user' => 8,
             'bd-manager' => 8,
         ]
     ];
