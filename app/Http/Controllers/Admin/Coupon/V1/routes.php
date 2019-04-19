@@ -29,6 +29,8 @@ $api->version('v1', [
             $api->post('company/{company}/coupon/batch', ['middleware' => ['permission:prize.rules.create'], 'uses' => 'CouponBatchController@store']);
             $api->patch('coupon/batches/{couponBatch}', ['middleware' => ['permission:prize.rules.update'], 'uses' => 'CouponBatchController@update']);
 
+            $api->put('company/batches/{company}/import', ['middleware' => ['permission:prize.rules.create'], 'uses' => 'ImportCouponController@importCouponBatchAndPolicy']);
+
             //优惠券投放
             $api->get('coupons', ['middleware' => ['permission:prize.coupon.read'], 'uses' => 'CouponController@index']);
             $api->get('coupons/export', ['middleware' => ['permission:prize.coupon.download'], 'uses' => 'CouponController@export']);

@@ -19,6 +19,33 @@ use Spatie\Permission\Guard;
 use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\RefreshesPermissionCache;
 
+/**
+ * Class Role
+ *
+ * @package App\Http\Controllers\Admin\Privilege\V1\Models
+ * @property string name
+ * @property int $id
+ * @property string $name
+ * @property string $guard_name
+ * @property string $display_name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Baum\Extensions\Eloquent\Collection|\App\Http\Controllers\Admin\Privilege\V1\Models\Permission[] $permissions
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Role newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Role newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model ordered()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Role permission($permissions)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Role query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model recent()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Role whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Role whereDisplayName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Role whereGuardName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Role whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Role whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Role whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class Role extends Model implements RoleContract
 {
     protected $fillable = [

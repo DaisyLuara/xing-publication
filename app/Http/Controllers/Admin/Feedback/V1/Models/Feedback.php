@@ -5,6 +5,22 @@ namespace App\Http\Controllers\Admin\Feedback\V1\Models;
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Models\Model;
 
+/**
+ * App\Http\Controllers\Admin\Feedback\V1\Models\Feedback
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Http\Controllers\Admin\Feedback\V1\Models\Feedback[] $childrenFeedback
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $createable
+ * @property-read \App\Http\Controllers\Admin\Feedback\V1\Models\Feedback $parent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Http\Controllers\Admin\Media\V1\Models\Media[] $photos
+ * @property-read \App\Http\Controllers\Admin\Feedback\V1\Models\Feedback $top_parent
+ * @property-read \App\Http\Controllers\Admin\Media\V1\Models\Media $video
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Feedback\V1\Models\Feedback newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Feedback\V1\Models\Feedback newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model ordered()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Feedback\V1\Models\Feedback query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model recent()
+ * @mixin \Eloquent
+ */
 class Feedback extends Model
 {
     protected $fillable = [

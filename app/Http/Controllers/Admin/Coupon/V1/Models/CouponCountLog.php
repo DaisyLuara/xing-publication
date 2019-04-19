@@ -10,6 +10,17 @@ namespace App\Http\Controllers\Admin\Coupon\V1\Models;
 
 use App\Models\Model;
 
+/**
+ * App\Http\Controllers\Admin\Coupon\V1\Models\CouponCountLog
+ *
+ * @property-read \App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch $couponBatch
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Coupon\V1\Models\CouponCountLog newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Coupon\V1\Models\CouponCountLog newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model ordered()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Coupon\V1\Models\CouponCountLog query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model recent()
+ * @mixin \Eloquent
+ */
 class CouponCountLog extends Model
 {
     protected $fillable = [

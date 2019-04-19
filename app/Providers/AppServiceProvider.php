@@ -53,7 +53,6 @@ class AppServiceProvider extends ServiceProvider
         AdLaunch::observe(AdLaunchObserver::class);
         ProjectLaunchTpl::observe(ProjectLaunchTplObserver::class);
         ProjectLaunchTplSchedule::observe(ProjectLaunchTplScheduleObserver::class);
-        ThirdPartyUser::observe(ThirdPartyUserObserver::class);
         DatabaseNotification::observe(NotificationObserver::class);
 
         \Carbon\Carbon::setLocale('zh');
