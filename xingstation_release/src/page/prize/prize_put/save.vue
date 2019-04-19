@@ -60,8 +60,8 @@
             <el-select
               v-model="prizeForm.market_id"
               :loading="searchLoading"
-              placeholder="请选择场地"
               :remote-method="getSearchAuthMarket"
+              placeholder="请选择场地"
               filterable
               remote
               clearable

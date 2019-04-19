@@ -5,12 +5,24 @@
     class="page-list-template"
   >
     <div class="search-wrap">
-      <el-form ref="searchForm" :inline="true" :model="searchForm" class="search-form">
-        <el-form-item label prop="title">
-          <el-input v-model="searchForm.title" placeholder="请输入问题名称" clearable/>
+      <el-form 
+        ref="searchForm" 
+        :inline="true" 
+        :model="searchForm" 
+        class="search-form">
+        <el-form-item 
+          label 
+          prop="title">
+          <el-input 
+            v-model="searchForm.title" 
+            placeholder="请输入问题名称" 
+            clearable/>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" size="small" @click="search">搜索</el-button>
+          <el-button 
+            type="primary" 
+            size="small" 
+            @click="search">搜索</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -18,15 +30,37 @@
       <span class="label">反馈数量: {{ total }}</span>
     </div>
     <div class="table-area">
-      <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="id" label="ID" min-width="200"/>
-        <el-table-column prop="title" label="问题" min-width="200"/>
-        <el-table-column prop="company_name" label="公司" min-width="180"/>
-        <el-table-column prop="createable_name" label="账号" min-width="180"/>
-        <el-table-column prop="created_at" label="时间" min-width="180"/>
-        <el-table-column label="操作" min-width="100">
+      <el-table 
+        :data="tableData" 
+        style="width: 100%">
+        <el-table-column 
+          prop="id" 
+          label="ID" 
+          min-width="200"/>
+        <el-table-column 
+          prop="title" 
+          label="问题" 
+          min-width="200"/>
+        <el-table-column 
+          prop="company_name" 
+          label="公司" 
+          min-width="180"/>
+        <el-table-column 
+          prop="createable_name" 
+          label="账号" 
+          min-width="180"/>
+        <el-table-column 
+          prop="created_at" 
+          label="时间" 
+          min-width="180"/>
+        <el-table-column 
+          label="操作" 
+          min-width="100">
           <template slot-scope="scope">
-            <el-button type="success" size="small" @click="saveFeedback(scope.row)">详情</el-button>
+            <el-button 
+              type="success" 
+              size="small" 
+              @click="saveFeedback(scope.row)">详情</el-button>
           </template>
         </el-table-column>
       </el-table>

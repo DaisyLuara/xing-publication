@@ -2,8 +2,13 @@
   <div class="main">
     <headModule/>
     <!-- v-show="!iconMenuShow"  -->
-    <div class="first-sidebar" @mouseleave="leaveIcon">
-      <el-menu :default-active="'/' + currModule" router :style="{'height':style.height}">
+    <div 
+      class="first-sidebar" 
+      @mouseleave="leaveIcon">
+      <el-menu 
+        :default-active="'/' + currModule" 
+        :style="{'height':style.height}" 
+        router>
         <el-menu-item
           v-for="m in modules"
           v-if="m.path != 'inform'"
@@ -12,11 +17,19 @@
           class="menu-item"
           @click="handleMenuHide"
         >
-          <img :src="m.src" class="first-sidebar-icon">
+          <img 
+            :src="m.src" 
+            class="first-sidebar-icon">
           {{ m.meta.title }}
         </el-menu-item>
-        <el-menu-item class="menu-no-icon-item" index="/inform" @click="handleMenuHide">
-          <el-badge :value="noticeCount" :max="99" class="item">
+        <el-menu-item 
+          class="menu-no-icon-item" 
+          index="/inform" 
+          @click="handleMenuHide">
+          <el-badge 
+            :value="noticeCount" 
+            :max="99" 
+            class="item">
             <img
               src="../assets/images/icons/notification-icon.png"
               class="first-sidebar-icon"
@@ -26,13 +39,22 @@
           </el-badge>
         </el-menu-item>
       </el-menu>
-      <div v-show="false" class="menu-show">
-        <i class="el-icon-d-arrow-left left-icon-menu" @click="handleMenuHide"/>
+      <div 
+        v-show="false" 
+        class="menu-show">
+        <i 
+          class="el-icon-d-arrow-left left-icon-menu" 
+          @click="handleMenuHide"/>
       </div>
     </div>
     <!-- v-show="iconMenuShow" -->
-    <div v-show="false" class="first-icon-sidebar" @mouseenter="iconEnter">
-      <el-menu :default-active="'/' + currModule" router>
+    <div 
+      v-show="false" 
+      class="first-icon-sidebar" 
+      @mouseenter="iconEnter">
+      <el-menu 
+        :default-active="'/' + currModule" 
+        router>
         <el-menu-item
           v-for="m in modules"
           v-if="m.path != 'inform'"
@@ -40,10 +62,17 @@
           :index="'/' + m.path"
           class="menu-item"
         >
-          <img :src="m.src" class="first-sidebar-icon">
+          <img 
+            :src="m.src" 
+            class="first-sidebar-icon">
         </el-menu-item>
-        <el-menu-item class="menu-item menu-icon-item" index="/inform">
-          <el-badge :value="noticeCount" :max="99" class="item">
+        <el-menu-item 
+          class="menu-item menu-icon-item" 
+          index="/inform">
+          <el-badge 
+            :value="noticeCount" 
+            :max="99" 
+            class="item">
             <img
               src="../assets/images/icons/notification-icon.png"
               class="first-sidebar-icon"
@@ -53,7 +82,9 @@
         </el-menu-item>
       </el-menu>
       <div class="menu-icon-show">
-        <i class="el-icon-d-arrow-right right-icon-menu" @click="handleMenuShow"/>
+        <i 
+          class="el-icon-d-arrow-right right-icon-menu" 
+          @click="handleMenuShow"/>
       </div>
     </div>
 
