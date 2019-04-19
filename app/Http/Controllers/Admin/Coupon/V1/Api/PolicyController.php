@@ -40,7 +40,7 @@ class PolicyController extends Controller
         if ($request->name) {
             $query->where('name', 'like', '%' . $request->name . '%');
         }
-        $policy = $query->orderByDesc('id')->paginate(5);
+        $policy = $query->orderByDesc('id')->paginate(10);
 
         return $this->response->paginator($policy, new PolicyTransformer());
     }
