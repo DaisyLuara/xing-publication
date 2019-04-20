@@ -347,7 +347,7 @@ class CouponController extends Controller
 
 
     /**
-     * h5生成限制条件优惠券规则
+     * h5生成限制条件优惠券规则(扫码h5抽奖)
      * @param CouponRequest $request
      * @return mixed
      */
@@ -387,32 +387,44 @@ class CouponController extends Controller
             abort(500, '无可用优惠券');
         }
 
-
-        //过滤不符合条件的优惠券
-        foreach ($couponBatchPolicies as $key => $couponBatchPolicy) {
-            if (!$couponBatchPolicy->pmg_status && !$couponBatchPolicy->dmg_status && $couponBatchPolicy->stock <= 0) {
-                unset($couponBatchPolicies[$key]);
-                continue;
-            }
-        }
-
         $couponBatchIDs = [];
         $couponBatchPolicies = $couponBatchPolicies->each(static function ($item) use (&$couponBatchIDs) {
             $couponBatchIDs[] = $item->coupon_batch_id;
         });
 
-        //当天库存校验
-        //当天库存为0 不出券
+        //库存校验
         $now = Carbon::now()->toDateString();
-        $coupons = Coupon::query()->whereIn('coupon_batch_id', $couponBatchIDs)
+        $couponsDayGetQuery = Coupon::query()->whereIn('coupon_batch_id', $couponBatchIDs)
             ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
-            ->selectRaw('count(coupon_batch_id) as day_receive')->get();
+            ->selectRaw('coupon_batch_id, count(*) as day_receive')
+            ->groupBy('coupon_batch_id');
+
+        $couponsPersonGetQuery = clone $couponsDayGetQuery;
+        $couponsPersonGetQuery->where('member_uid', $member->uid);
+
+        //当天领取数量
+        $couponsDayGetArray = array_column($couponsDayGetQuery->get()->toArray(), 'day_receive', 'coupon_batch_id');
+        //每人每天领取数量
+        $couponsPersonGetArray = array_column($couponsPersonGetQuery->get()->toArray(), 'day_receive', 'coupon_batch_id');
 
         foreach ($couponBatchPolicies as $key => $couponBatchPolicy) {
-            foreach ($coupons as $coupon) {
-                if ($coupon->day_receive >= $couponBatchPolicy->day_max_get) {
-                    unset($couponBatchPolicies[$key]);
-                }
+            $couponBatchID = $couponBatchPolicy->coupon_batch_id;
+            //不符合条件的优惠券
+            if (!$couponBatchPolicy->pmg_status && !$couponBatchPolicy->dmg_status && $couponBatchPolicy->stock <= 0) {
+                unset($couponBatchPolicies[$key]);
+                continue;
+            }
+
+            //当天库存校验
+            if (array_key_exists($couponBatchID, $couponsDayGetArray) && $couponBatchPolicy->day_max_get <= $couponsDayGetArray[$couponBatchID]) {
+                unset($couponBatchPolicies[$key]);
+                continue;
+            }
+
+            //每人每天库存校验
+            if (array_key_exists($couponBatchID, $couponsPersonGetArray) && $couponBatchPolicy->people_max_get <= $couponsPersonGetArray[$couponBatchID]) {
+                unset($couponBatchPolicies[$key]);
+                continue;
             }
         }
 
