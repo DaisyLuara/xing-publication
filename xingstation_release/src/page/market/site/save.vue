@@ -32,7 +32,6 @@
                 :loading="searchLoading"
                 placeholder="请选择公司名称"
                 filterable
-                @change="companyHandle"
               >
                 <el-option
                   v-for="item in companyList"
@@ -132,6 +131,24 @@
               </el-radio-group>
             </el-form-item>
             <el-form-item 
+              v-if="contractShow" 
+              label="合同编号" 
+              prop="contract_num">
+              <el-select
+                v-model="siteForm.contract.contract_num"
+                :loading="searchLoading"
+                placeholder="请选择合同编号"
+                @change="changeContract"
+              >
+                <el-option
+                  v-for="item in contractList"
+                  :key="item.contract_number"
+                  :label="item.contract_number"
+                  :value="item.contract_number"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item 
               label="合同公司" 
               prop="contract_company">
               <el-input
@@ -139,21 +156,6 @@
                 placeholder="请输入合同公司"
                 class="item-input"
               />
-            </el-form-item>
-            <el-form-item 
-              v-if="contractShow" 
-              label="合同编号" 
-              prop="contract_id">
-              <el-select 
-                v-model="siteForm.marketConfig.contract_id" 
-                placeholder="请选择合同编号">
-                <el-option
-                  v-for="item in contractList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                />
-              </el-select>
             </el-form-item>
             <el-form-item 
               label="所属人" 
@@ -175,11 +177,20 @@
             <el-form-item 
               label="合同联系人" 
               prop="contract_user">
-              <el-input
+              <el-select
                 v-model="siteForm.contract.contract_user"
-                placeholder="请输入合同联系人"
-                class="item-input"
-              />
+                :loading="searchLoading"
+                filterable
+                placeholder="请选择所属人"
+                @change="contractUser"
+              >
+                <el-option
+                  v-for="item in customerList"
+                  :key="item.name"
+                  :label="item.name"
+                  :value="item.name"
+                />
+              </el-select>
             </el-form-item>
             <el-form-item 
               label="联系方式" 
@@ -613,6 +624,7 @@ import {
   Checkbox,
   Upload
 } from "element-ui";
+import { setTimeout } from "timers";
 
 const SERVER_URL = process.env.SERVER_URL;
 export default {
@@ -906,17 +918,14 @@ export default {
         ],
         "share.coupon_off": [{ validator: checkNumber, trigger: "submit" }]
       },
-      payFlag: false
+      payFlag: false,
+      contractInfo: null
     };
   },
   created() {
     this.siteID = this.$route.params.uid;
-    if (this.siteID) {
-      this.getMarketDetail();
-    }
-    this.getAreaList();
-    this.getSearchCompany();
-    this.getSearchUserList();
+    this.init();
+
     let roles = JSON.parse(this.$cookie.get("user_info")).roles.data;
     roles.map(r => {
       if (r.display_name === "管理员") {
@@ -926,6 +935,55 @@ export default {
     });
   },
   methods: {
+    async init() {
+      try {
+        await this.getContractReceiptList();
+        await this.getSearchUserList();
+        await this.getAreaList();
+        if (this.siteID) {
+          await this.getMarketDetail();
+        }
+      } catch (e) {}
+    },
+    contractUser(val) {
+      this.customerList.find(item => {
+        if (item.name === val) {
+          this.siteForm.contract.contract_phone = item.phone;
+          return;
+        }
+      });
+    },
+    changeContract(val) {
+      this.contractList.find(item => {
+        if (item.contract_number === val) {
+          this.contractInfo = null;
+          this.customerList = [];
+          this.siteForm.contract.contract_company = "";
+          this.contractInfo = item;
+          this.siteForm.contract.contract_company = this.contractInfo.company.name;
+          this.customerList = this.contractInfo.company.customers.data;
+          return;
+        }
+      });
+    },
+    getContractReceiptList() {
+      let searchLoading = true;
+      let args = {
+        include: "company.customers"
+      };
+      getContractReceiptList(this, args)
+        .then(res => {
+          this.contractList = res;
+          this.searchLoading = false;
+        })
+        .catch(err => {
+          this.searchLoading = false;
+          this.$message({
+            type: "warning",
+            message: err.response.date.message
+          });
+        });
+    },
     getSearchCustomer(val) {
       this.searchLoading = true;
       let args = {
@@ -978,22 +1036,6 @@ export default {
       }
       return isLt2M;
     },
-    companyHandle(val, noClear) {
-      let args = {
-        company_id: val
-      };
-      this.getSearchCustomer(val);
-      getContractReceiptList(this, args)
-        .then(res => {
-          this.contractList = res;
-        })
-        .catch(err => {
-          this.$message({
-            type: "warning",
-            message: err.response.date.message
-          });
-        });
-    },
     getSearchUserList() {
       this.searchLoading = true;
       getSearchUserList(this)
@@ -1022,6 +1064,10 @@ export default {
           this.siteForm.areaid = res.area.id;
           if (res.contract) {
             this.siteForm.contract = res.contract;
+            setTimeout(() => {
+              this.changeContract(res.contract.contract_num);
+              this.contractUser(res.contract.contract_user);
+            }, 100);
             if (this.siteForm.contract.contract === 1) {
               this.contractShow = true;
             } else {
@@ -1062,6 +1108,7 @@ export default {
               }
             }
           }
+
           if (res.marketConfig) {
             if (res.marketConfig.media) {
               this.siteForm.marketConfig.media_id = res.marketConfig.media.id;
@@ -1070,7 +1117,6 @@ export default {
             if (res.marketConfig.company) {
               this.siteForm.marketConfig.company_id =
                 res.marketConfig.company.id;
-              this.companyHandle(this.siteForm.marketConfig.company_id, true);
             }
             if (res.marketConfig.bdUser) {
               this.siteForm.marketConfig.bd_user_id =
