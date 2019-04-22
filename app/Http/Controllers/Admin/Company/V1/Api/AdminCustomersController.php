@@ -8,7 +8,7 @@ use App\Http\Controllers\Admin\Company\V1\Transformer\CustomerTransformer;
 use App\Http\Controllers\Admin\Privilege\V1\Models\Role;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
-use DB;
+use App\Jobs\CreateAdminStaffJob;
 
 class AdminCustomersController extends Controller
 {
@@ -49,6 +49,7 @@ class AdminCustomersController extends Controller
 
         activity('customer')->on($customer)->withProperties($request->all())->log('新增公司联系人');
 
+        CreateAdminStaffJob::dispatch($customer, $role)->onQueue('create_admin_staff');
 
         return $this->response->item($customer, new CustomerTransformer())
             ->setStatusCode(201);

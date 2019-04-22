@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\User\V1\Request\UserRequest;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Jobs\CreateAdminStaffJob;
 
 class AdminUsersController extends Controller
 {
@@ -54,12 +55,12 @@ class AdminUsersController extends Controller
     {
         //保证传入的角色不会超过本身的权限
         $role = $this->user()->getSystemRoles()->firstWhere('id', $request->role_id);
-        if (is_null($role)) {
+        if ($role === null) {
             return $this->response->errorNotFound('角色不存在');
         }
 
-        if (($role->name == 'legal-affairs' || $role->name == 'user') && !$request->parent_id) {
-            abort(500, "请选择所属主管");
+        if (($role->name === 'legal-affairs' || $role->name === 'user') && !$request->parent_id) {
+            abort(500, '请选择所属主管');
         }
 
         /** @var User $user */
@@ -72,7 +73,7 @@ class AdminUsersController extends Controller
 
         $user->assignRole($role);
 
-        if ($role->name == 'bd-manager' || $role->name == 'legal-affairs-manager') {
+        if ($role->name === 'bd-manager' || $role->name === 'legal-affairs-manager') {
             $user->parent_id = $user->id;
             $user->update();
         }
@@ -81,6 +82,8 @@ class AdminUsersController extends Controller
             ->on($user)
             ->withProperties($request->except(['password']))
             ->log('新增用户');
+
+        CreateAdminStaffJob::dispatch($user, $role)->onQueue('create_admin_staff');
 
         //@todo 关联创建EXE LOOK 用户
         return $this->response->item($user, new UserTransformer())->setStatusCode(201);
