@@ -53,6 +53,11 @@ class Policy extends Model
         'bd_user_id',
     ];
 
+    protected $casts = [
+        'per_person_unlimit' => 'boolean',
+        'per_person_per_day_unlimit' => 'boolean',
+    ];
+
     public function batches()
     {
         return $this->belongsToMany(CouponBatch::class)->withPivot(['rate', 'min_age', 'max_age', 'max_score', 'min_score', 'gender', 'type', 'id']);

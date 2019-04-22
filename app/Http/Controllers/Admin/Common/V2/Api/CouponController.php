@@ -43,9 +43,25 @@ class CouponController extends Controller
         $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
         $memberUID = $member->uid;
 
+        $project = Project::query()->where('versionname', '=', $request->get('belong'))->firstOrFail();
+        $policy = Policy::query()->findOrFail($project->policy_id);
+        //策略每人抽奖次数校验
+        if (!$policy->per_person_unlimit) {
+            $couponPerPersonGet = Coupon::query()->where('member_uid', $memberUID)
+                ->where('belong', $request->get('belong'))->count();
+            abort_if($couponPerPersonGet >= $policy->per_person_times, 500, '优惠券领取数量已达上限!');
+        }
+        //策略每人每天抽奖次数校验
+        if (!$policy->per_person_per_day_unlimit) {
+            $couponPerPersonPerDayGet = Coupon::query()->where('member_uid', $memberUID)
+                ->whereDate('created_at', Carbon::now()->toDateString())
+                ->where('belong', $request->get('belong'))->count();
+            abort_if($couponPerPersonPerDayGet >= $policy->per_person_per_day_times, 500, '今日领券数量已达上限,请明天再来!');
+        }
+
         //coupon_batch_id参数校验
         if ($multiProjects) {
-            //多节目
+            //多节目集齐勋章或者h5抽奖
             $couponBatch = $member->userCouponBatches()->firstOrFail();
 
         } else {
