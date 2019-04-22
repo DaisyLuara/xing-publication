@@ -394,7 +394,7 @@
               prop="start_date">
               <el-date-picker
                 v-model="couponForm.start_date"
-                type="date"
+                type="datetime"
                 placeholder="选择日期"
                 class="coupon-form-date"
                 value-format="yyyy-MM-dd HH:mm:ss"
@@ -406,7 +406,7 @@
               prop="end_date">
               <el-date-picker
                 v-model="couponForm.end_date"
-                type="date"
+                type="datetime"
                 placeholder="选择日期"
                 class="coupon-form-date"
                 value-format="yyyy-MM-dd HH:mm:ss"
