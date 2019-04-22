@@ -30,6 +30,7 @@ class AddPerPersonTimesAndPerPersonPerDayTimesToPoliciesTable extends Migration
     public function down()
     {
         Schema::table('policies', function (Blueprint $table) {
+            $table->dropColumn('type');
             $table->dropColumn('per_person_unlimit');
             $table->dropColumn('per_person_times');
             $table->dropColumn('per_person_per_day_unlimit');
