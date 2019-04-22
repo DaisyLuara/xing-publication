@@ -62,6 +62,7 @@ class ThirdPartyUser extends Model
         'openid',
         'mobile',
         'marketid',
+        'wx_user_id',
         'z',
         'mallcoo_open_user_id',
         'birthday',
