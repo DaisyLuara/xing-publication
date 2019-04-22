@@ -116,7 +116,7 @@ class UserController extends BaseController
         abort_if($userResult['Code'] !== 1, 500, $userResult['Message']);
 
         $userInfo = $userResult['Data'];
-        $user = ThirdPartyUser::updateOrCreate(
+        $user = ThirdPartyUser::query()->updateOrCreate(
             ['mallcoo_open_user_id' => $userInfo['OpenUserID']],
             [
                 'mobile' => $userInfo['Mobile'],
@@ -125,7 +125,7 @@ class UserController extends BaseController
                 'gender' => $userInfo['Gender'],
                 'birthday' => $userInfo['Birthday'] ?: null,
                 'marketid' => $this->mall_coo->marketid,
-                "z" => $request->z,
+                'wx_user_id' => decrypt($request->sign),
                 'mall_card_apply_time' => $userInfo['MallCardApplyTime'],
             ]
         );
@@ -140,7 +140,10 @@ class UserController extends BaseController
      */
     public function show(UserRequest $request)
     {
-        $user = ThirdPartyUser::query()->where('z', $request->z)
+        $wxUserId = decrypt($request->sign);
+
+        /** @var ThirdPartyUser $user */
+        $user = ThirdPartyUser::query()->where('wx_user_id', $wxUserId)
             ->where('marketid', $this->mall_coo->marketid)->first();
 
         return $this->response->item($user, new ThirdPartyUserTransformer());

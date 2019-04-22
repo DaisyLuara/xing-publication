@@ -50,6 +50,11 @@ class Policy extends Model
         'desc',
         'company_id',
         'create_user_id',
+        'type',
+        'per_person_unlimit',
+        'per_person_times',
+        'per_person_per_day_unlimit',
+        'per_person_per_day_times',
         'bd_user_id',
     ];
 
