@@ -12,20 +12,18 @@ class ImportCouponRequest extends Request
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
-        switch ($this->method()) {
-            case 'PUT':
-                return [
-                    'marketid' => 'integer|nullable',
-                    'oid' => 'array|max:10',
-                    'scene_type' => Rule::in([1, 2, 3, 4]),
-                    'media_id' => 'required|integer|exists:media,id',
-                    'policy_id' => 'required|integer|exists:policies,id',
-                ];
-                break;
-            default :
-                return [];
+        if ($this->method() === 'PUT') {
+            return [
+                'marketid' => 'integer|nullable',
+                'oid' => 'array|max:10',
+                'scene_type' => Rule::in([1, 2, 3, 4]),
+                'media_id' => 'required|integer|exists:media,id',
+                'policy_id' => 'required|integer|exists:policies,id',
+            ];
         }
+        return [];
+
     }
 }
