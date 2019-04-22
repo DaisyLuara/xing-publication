@@ -28,6 +28,7 @@ class AddWxUserIdToThirdPartyUsersTable extends Migration
     {
         Schema::table('third_party_users', function (Blueprint $table) {
             $table->dropColumn('wx_user_id');
+            $table->string('z')->nullable()->change();
         });
     }
 }
