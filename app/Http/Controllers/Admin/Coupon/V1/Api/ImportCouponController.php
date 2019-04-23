@@ -13,43 +13,52 @@ use App\Http\Controllers\Controller;
 use App\Imports\CouponBatchImport;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Excel;
 
 class ImportCouponController extends Controller
 {
-    public function importCouponBatchAndPolicy(Company $company, ImportCouponRequest $request, Excel $excel)
+    public function importCouponBatchAndPolicy(Company $company, ImportCouponRequest $request): Response
     {
+
         /** @var User $user */
         $user = Auth::user();
         /** @var Policy $policy */
         $policy = Policy::query()->findOrFail($request->get('policy_id'));
-        if ($policy->company_id != $company->id) {
-            abort(500, "策略的公司与当前所选公司不一致");
+        if ($policy->company_id !== $company->id) {
+            abort(500, '策略的公司与当前所选公司不一致');
         }
         /** @var Media $media */
-        $media = Media::query()->findOrFail($request->get("media_id"));
+        $media = Media::query()->findOrFail($request->get('media_id'));
         $filename = urldecode(array_last(explode('/', $media->url)));
         $array = \Maatwebsite\Excel\Facades\Excel::toArray(new CouponBatchImport, $filename, 'qiniu');
         $excel_params = [];
         if ($array && $array[0]) {
             foreach ($array[0] as $key => $item) {
-                if ($key == 0) {
+                if ($key === 0) {
                     continue;
                 }
+
+                if ($item[8] <= 25569 || $item[9] <= 25569) {
+                    abort(500, '请输入正确的开始日期与结束日期，优惠券：' . $item[0] ?? '');
+                }
+
+                $start_date = Carbon::createFromTimestamp(($item[8] - 25569) * 86400, 'UTC')->toDateTimeString();
+                $end_date = Carbon::createFromTimestamp(($item[9] - 25569) * 86400, 'UTC')->toDateTimeString();
+
                 $excel_params[] = [
                     'name' => $item[0] ?? '',
                     'description' => $item[1] ?? '',
-                    'count' => (int)$item[2],//库存总数
-                    'stock' => (int)$item[3],//剩余库存
-                    'pmg_status' => $item[4] == '开启' ? 1 : 0,//是否开启每天无限领取 1:开启,0:关闭
+                    'count' => is_numeric($item[2]) ? (int)$item[2] : 0,//库存总数
+                    'stock' => is_numeric($item[3]) ? (int)$item[3] : 0,//剩余库存
+                    'pmg_status' => $item[4] === '开启' ? 1 : 0,//是否开启每天无限领取 1:开启,0:关闭
                     'people_max_get' => is_numeric($item[5]) ? (int)$item[5] : 0,//每人最大获取数
-                    'dmg_status' => $item[6] == '开启' ? 1 : 0,//是否开启每天无限领取 1:开启,0:关闭
+                    'dmg_status' => $item[6] === '开启' ? 1 : 0,//是否开启每天无限领取 1:开启,0:关闭
                     'day_max_get' => is_numeric($item[7]) ? (int)$item[7] : 0,//每天最大获取数
-                    'start_date' => Carbon::createFromTimestamp(($item[8] - 25569) * 24 * 60 * 60)->toDateString(),//开始日期
-                    'end_date' => Carbon::createFromTimestamp(($item[9] - 25569) * 24 * 60 * 60)->toDateString(),//开始日期
-                    'rate' => $item[10] ?? 0, // 概率
+                    'start_date' => $start_date,//开始日期
+                    'end_date' => $end_date,//结束日期
+                    'rate' => is_numeric($item[10]) ? (double)$item[10] : 0, // 概率
                     'image_url' => $item[11] ?? null,//h5图片链接
                 ];
             }
@@ -57,9 +66,9 @@ class ImportCouponController extends Controller
         $default_param = [
             'company_id' => $company->id,
             'bd_user_id' => $company->user_id,//关联BD
-            'scene_type' => $request->get("scene_type"),//场景类型 - 1:商场通用,2:商场自营,3:商户通用,4:商户自营
-            'write_off_mid' => $request->get("write_off_mid"),//核销商场
-            'write_off_sid' => $request->get("write_off_sid"),//核销商户
+            'scene_type' => $request->get('scene_type'),//场景类型 - 1:商场通用,2:商场自营,3:商户通用,4:商户自营
+            'write_off_mid' => $request->get('write_off_mid'),//核销商场
+            'write_off_sid' => $request->get('write_off_sid'),//核销商户
             'create_user_id' => $user->id,
             'bs_image_url' => null,//大屏图片链接
             'third_code' => null,//第三方优惠券特征码
@@ -86,7 +95,7 @@ class ImportCouponController extends Controller
                 /** @var CouponBatch $couponBatch */
                 $couponBatch = CouponBatch::query()->create(array_merge($excel_param, $default_param));
                 //绑定投放商场(嗨抖)
-                if ($request->filled('marketid') && empty($request->oid)) {
+                if ($request->filled('marketid') && !$request->get('oid')) {
                     $couponBatch->marketPointCouponBatches()->create([
                         'marketid' => $request->get('marketid'),
                     ]);
@@ -104,21 +113,21 @@ class ImportCouponController extends Controller
                 if ($request->filled('write_off_mid')) {
                     /** @var MarketConfig $marketConfig */
                     $marketConfig = MarketConfig::query()->findOrFail($request->get('write_off_mid'));
-                    $marketConfig->company->customers->each(function ($item) use ($couponBatch) {
+                    $marketConfig->company->customers->each(static function ($item) use ($couponBatch) {
                         $couponBatch->writeOffCustomers()->attach($item);
                     });
                 }
                 //绑定商户核销人员
-                if ($request->get("write_off_sid")) {
-                    foreach ($request->get("write_off_sid") as $store_id) {
+                if ($request->get('write_off_sid')) {
+                    foreach ($request->get('write_off_sid') as $store_id) {
                         /** @var Store $store */
                         $store = Store::query()->findOrFail($store_id);
-                        $store->company->customers->each(function ($item) use ($couponBatch) {
+                        $store->company->customers->each(static function ($item) use ($couponBatch) {
                             $couponBatch->writeOffCustomers()->attach($item);
                         });
                     }
                 }
-                abort_if(!!$policy->batches()->find($couponBatch->id), 500, '已存在该奖品,请勿重复添加');
+                abort_if((bool)$policy->batches()->find($couponBatch->id), 500, '已存在该奖品,请勿重复添加');
                 $policy_params = [
                     'min_age' => 0,
                     'max_age' => 0,
@@ -141,7 +150,7 @@ class ImportCouponController extends Controller
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-            abort(500, $e->getMessage() . "??????");
+            abort(500, $e->getMessage() . '?');
         }
         return $this->response()->noContent();
     }
