@@ -10,8 +10,11 @@ class CouponPackTransformer extends TransformerAbstract
     public function transform(CouponBatch $couponBatch)
     {
         return [
+            'id' => $couponBatch->id,
             'name' => $couponBatch->name,
             'description' => $couponBatch->description,
+            'image_url' => $couponBatch->image_url,
+            'bs_image_url' => $couponBatch->bs_image_url,
         ];
     }
 }
