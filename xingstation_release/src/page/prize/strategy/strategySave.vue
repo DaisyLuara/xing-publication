@@ -89,6 +89,7 @@
             />
           </el-form-item>
           <el-form-item
+            :rules="{required:true}"
             label="每人每天无限领取"
             prop="per_person_per_day_unlimit"
           >
@@ -165,8 +166,8 @@ export default {
       },
       templateId: null,
       searchLoading: false,
-      peopleReceiveShow: true,
-      peopleDayShow: true,
+      peopleReceiveShow: false,
+      peopleDayShow: false,
       templateForm: {
         type: 1,
         name: "",
