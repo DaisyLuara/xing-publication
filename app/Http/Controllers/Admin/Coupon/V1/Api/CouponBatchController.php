@@ -170,6 +170,7 @@ class CouponBatchController extends Controller
         $mall_coo = app('mall_coo');
         $sUrl = 'https://openapi10.mallcoo.cn/Coupon/PutIn/v1/GetAll/';
         $result = $mall_coo->send($sUrl);
+
         if ($result['Code'] == 1) {
             foreach ($result['Data'] as $data) {
                 CouponBatch::query()->updateOrCreate(['third_code' => $data['PICMID']], [
@@ -180,6 +181,9 @@ class CouponBatchController extends Controller
                     'bd_user_id' => $company->user_id,
                     'count' => $data['StoreCount'],
                     'stock' => $data['StoreOverGount'],
+                    'is_fixed_date' => 1,
+                    'start_date' =>$data['FixedDateBegin'],
+                    'end_date' => $data['FixedDateEnd'],
                 ]);
             }
         }
