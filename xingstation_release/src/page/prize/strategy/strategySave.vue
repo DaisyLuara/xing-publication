@@ -3,7 +3,11 @@
     <div class="account-wrap">
       <div class="item-info">
         <div class="prize-title">{{ templateId ? '奖品模版修改' : '奖品模版新增' }}</div>
-        <el-form ref="templateForm" :model="templateForm" label-width="180px">
+        <el-form
+          ref="templateForm"
+          :model="templateForm"
+          label-width="180px"
+        >
           <el-form-item
             :rules="[{ type: 'number', required: true, message: '请选择公司', trigger: 'submit' }]"
             label="公司"
@@ -27,19 +31,36 @@
           </el-form-item>
           <el-form-item
             :rules="[{ type: 'string', required: true, message: '请输入名称', trigger: 'submit' }]"
-            label="策略名"
+            label="模板名"
             prop="name"
           >
-            <el-input v-model="templateForm.name" placeholder="请输入名称" class="item-input"/>
+            <el-input
+              v-model="templateForm.name"
+              placeholder="请输入名称"
+              class="item-input"
+            />
           </el-form-item>
           <el-form-item
-            :rules="{required: true, message: '策略类型不能为空', trigger: 'submit'}"
-            label="策略类型"
+            :rules="{required: true, message: '模板类型不能为空', trigger: 'submit'}"
+            label="模板类型"
             prop="type"
           >
             <el-radio-group v-model="templateForm.type">
-              <el-radio :label="1">抽奖</el-radio>
-              <el-radio :label="2">券包</el-radio>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="发放模板中全部奖品券"
+                placement="top"
+              >><el-radio :label="1">抽奖</el-radio>
+              </el-tooltip>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="随机发放模板中某一张奖品券"
+                placement="top"
+              >
+                <el-radio :label="2">券包</el-radio>
+              </el-tooltip>
             </el-radio-group>
           </el-form-item>
           <el-form-item
@@ -47,7 +68,10 @@
             label="每天无限领取"
             prop="per_person_unlimit"
           >
-            <el-radio-group v-model="templateForm.per_person_unlimit" @change="unlimitedDayHandle">
+            <el-radio-group
+              v-model="templateForm.per_person_unlimit"
+              @change="unlimitedDayHandle"
+            >
               <el-radio :label="1">开启</el-radio>
               <el-radio :label="0">关闭</el-radio>
             </el-radio-group>
@@ -64,7 +88,10 @@
               class="coupon-form-input"
             />
           </el-form-item>
-          <el-form-item label="每人每天无限领取" prop="per_person_per_day_unlimit">
+          <el-form-item
+            label="每人每天无限领取"
+            prop="per_person_per_day_unlimit"
+          >
             <el-radio-group
               v-model="templateForm.per_person_per_day_unlimit"
               @change="unlimitedPeopleHandle"
@@ -86,7 +113,10 @@
             />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="submit('templateForm')">保存</el-button>
+            <el-button
+              type="primary"
+              @click="submit('templateForm')"
+            >保存</el-button>
             <el-button @click="back">返回</el-button>
           </el-form-item>
         </el-form>
@@ -111,7 +141,8 @@ import {
   Input,
   MessageBox,
   Radio,
-  RadioGroup
+  RadioGroup,
+  Tooltip
 } from "element-ui";
 import { truncate } from "fs";
 export default {
@@ -123,7 +154,8 @@ export default {
     ElButton: Button,
     ElInput: Input,
     ElRadio: Radio,
-    ElRadioGroup: RadioGroup
+    ElRadioGroup: RadioGroup,
+    "el-tooltip": Tooltip,
   },
   data() {
     return {
@@ -136,11 +168,11 @@ export default {
       peopleReceiveShow: true,
       peopleDayShow: true,
       templateForm: {
-        type: 2,
+        type: 1,
         name: "",
-        per_person_unlimit: 0,
+        per_person_unlimit: 1,
         per_person_times: 0,
-        per_person_per_day_unlimit: 0,
+        per_person_per_day_unlimit: 1,
         per_person_per_day_times: 0,
         company_id: null
       },
