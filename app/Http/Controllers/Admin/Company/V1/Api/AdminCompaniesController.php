@@ -20,97 +20,92 @@ class AdminCompaniesController extends Controller
         $currentUser = $this->user();
 
         if ($request->has('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+            $query->where('name', 'like', '%' . $request->get('name') . '%');
         }
 
         if ($request->has('internal_name')) {
-            $query->where('internal_name', 'like', '%' . $request->internal_name . '%');
+            $query->where('internal_name', 'like', '%' . $request->get('internal_name') . '%');
         }
 
         if ($request->has('category')) {
-            $query->where('category', '=', $request->category);
+            $query->where('category', '=', $request->get('category'));
         }
 
         if ($request->has('status')) {
-            $query->where('status', '=', $request->status);
+            $query->where('status', '=', $request->get('status'));
         }
 
-        if ($request->has('bd_user_id')) {
-            $query->where('bd_user_id', '=', $request->bd_user_id);
+        if ($request->has('bd_name')) {
+            $query->whereHas('bdUser', static function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->get('bd_name') . ' %');
+            });
         }
 
         //角色为管理员，法务，法务主管时，查看所有公司数据
         if ($currentUser->isAdmin() || $currentUser->hasRole('legal-affairs|legal-affairs-manager|operation')) {
             $companies = $query->orderByDesc('id')->paginate(10);
-            return $this->response->paginator($companies, new CompanyTransformer());
+            return $this->response()->paginator($companies, new CompanyTransformer());
 
         }
 
         //角色为主管时，查看下属及自己
-        if ($currentUser->parent_id == $currentUser->id) {
-            $companies = $query->whereHas('user', function ($q) use ($currentUser) {
+        if ($currentUser->parent_id === $currentUser->id) {
+            $companies = $query->whereHas('user', static function ($q) use ($currentUser) {
                 $q->where('parent_id', $currentUser->id);
             })->orderByDesc('id')->paginate(10);
-            return $this->response->paginator($companies, new CompanyTransformer());
+            return $this->response()->paginator($companies, new CompanyTransformer());
         }
 
         //查看自己数据
         $companies = $query->where('user_id', $currentUser->id)->orderByDesc('id')->paginate(10);
-        return $this->response->paginator($companies, new CompanyTransformer());
+        return $this->response()->paginator($companies, new CompanyTransformer())->setStatusCode(200);
     }
 
     public function show(Company $company)
     {
-//        $this->authorize('show', $company);
-
-        return $this->response->item($company, new CompanyTransformer());
+        return $this->response()->item($company, new CompanyTransformer())->setStatusCode(200);
     }
 
     public function store(CompanyRequest $request, Company $company, Customer $customer)
     {
         $companyData = [
-            'name' => $request->name,
-            'internal_name' => $request->internal_name,
-            'address' => $request->address,
-            'category' => $request->category,
-            'description' => $request->description,
-            'logo_media_id' => $request->logo_media_id,
-            'bd_user_id' => $request->bd_user_id,
-            'parent_id' => $request->parent_id,
+            'name' => $request->get('name'),
+            'internal_name' => $request->get('internal_name'),
+            'address' => $request->get('address'),
+            'category' => $request->get('category'),
+            'description' => $request->get('description'),
+            'logo_media_id' => $request->get('logo_media_id'),
+            'bd_user_id' => $request->get('bd_user_id'),
+            'parent_id' => $request->get('parent_id'),
         ];
         $company->fill(array_merge($companyData, ['user_id' => $this->user()->id]));
         $company->save();
         activity('company')->on($company)->withProperties($request->all())->log('新增公司信息');
 
-        if ($request->category == 0) {
+        if ($request->get('category') === 0) {
             $customerData = [
-                'name' => $request->customer_name,
-                'position' => $request->position,
-                'phone' => $request->phone,
-                'telephone' => $request->telephone,
-                'password' => bcrypt($request->password),
+                'name' => $request->get('customer_name'),
+                'position' => $request->get('position'),
+                'phone' => $request->get('phone'),
+                'telephone' => $request->get('telephone'),
+                'password' => bcrypt($request->get('password')),
                 'company_id' => $company->id,
             ];
-            $customer = Customer::create($customerData);
-            $role = Role::findById($request->role_id, 'shop');
+            $customer = Customer::query()->create($customerData);
+            $role = Role::findById($request->get('role_id'), 'shop');
             $customer->assignRole($role);
             CreateAdminStaffJob::dispatch($customer, $role)->onQueue('create_admin_staff');
         }
         activity('customer')->on($customer)->withProperties($companyData)->log('新增公司联系人');
 
-
-        return $this->response->item($company, new CompanyTransformer())
-            ->setStatusCode(201);
-
+        return $this->response()->item($company, new CompanyTransformer())->setStatusCode(201);
     }
 
     public function update(CompanyRequest $request, Company $company)
     {
-//        $this->authorize('update', $company);
-
         $company->update($request->all());
         activity('company')->on($company)->withProperties($request->all())->log('修改公司信息');
-        return $this->response->item($company, new CompanyTransformer());
+        return $this->response()->item($company, new CompanyTransformer())->setStatusCode(200);
     }
 
     public function export(Request $request)
