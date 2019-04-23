@@ -118,9 +118,9 @@
               <el-time-select
                 v-model="scope.row.date_start"
                 :picker-options="{
-                  start: '10:00',
+                  start: '00:00',
                   step: '00:01',
-                  end: '22:00'
+                  end: '23:59'
                 }"
                 placeholder="开始时间"
                 format="HH:mm"
@@ -137,9 +137,9 @@
               <el-time-select
                 v-model="scope.row.date_end"
                 :picker-options="{
-                  start: '10:00',
+                  start: '00:00',
                   step: '00:01',
-                  end: '22:00',
+                  end: '23:59',
                   minTime: scope.row.date_start
                 }"
                 placeholder="结束时间"
