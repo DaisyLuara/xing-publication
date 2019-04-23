@@ -728,7 +728,6 @@
           >
             <el-form-item
               v-if="bonusManage"
-              :rules="[{ required: true, message: '请上传测试文档', trigger: 'submit' }]"
               label="测试文档"
               prop="ids"
             >
@@ -886,6 +885,7 @@ export default {
       copyrightProjectList: [],
       fileList: [],
       ids: [],
+      media_id: [],
       disabledChange: true,
       form: {
         total: 0
@@ -994,7 +994,6 @@ export default {
     let user_info = JSON.parse(Cookies.get("user_info"));
     this.role = user_info.roles.data;
     this.getUserList();
-
     this.getQiniuToken();
     if (this.programID) {
       this.detailInit();
@@ -1311,9 +1310,9 @@ export default {
       getProgramDetails(this, this.programID, params)
         .then(res => {
           let planMediaData = [];
-          if (res.tester_media) {
-            this.testFile = res.tester_media;
-            planMediaData.push(res.tester_media)
+          if (res.media) {
+            this.testFile = res.media;
+            planMediaData.push(res.media)
           }
           this.testFileList = planMediaData
           let animationMediaData = [];
@@ -1653,9 +1652,9 @@ export default {
       }
     },
     submit(formName) {
-      console.log(this.ids);
       this.getQiniuToken();
       let animationMediaIds = [];
+      let testerMediaIds = [];
       if (this.fileList.length > 0) {
         this.fileList.map(r => {
           animationMediaIds.push(r.id);
@@ -1665,6 +1664,18 @@ export default {
         this.$message({
           type: "warning",
           message: "设计动画素材必须上传"
+        });
+        return;
+      }
+      if (this.testFileList.length > 0) {
+        this.testFileList.map(r => {
+          testerMediaIds.push(r.id);
+        });
+        this.media_id = testerMediaIds.join(",");
+      } else {
+        this.$message({
+          type: "warning",
+          message: "测试文档必须上传"
         });
         return;
       }
@@ -1687,6 +1698,7 @@ export default {
             interact_innovate: this.programForm.interact_innovate,
             type: this.programForm.type,
             animation_media_id: this.ids,
+            media_id: this.media_id,
             copyright_attribute: this.programForm.copyright_attribute,
             copyright_project_id: this.programForm.copyright_project_id,
             interaction_attribute: this.programForm.interaction_attribute
