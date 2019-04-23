@@ -14,6 +14,7 @@
             prop="company_id"
           >
             <el-select
+              :disabled="disableEdit"
               v-model="templateForm.company_id"
               :loading="searchLoading"
               placeholder="请选择公司"
@@ -160,6 +161,7 @@ export default {
   },
   data() {
     return {
+      disableEdit: false,
       setting: {
         loading: false,
         loadingText: "拼命加载中"
@@ -185,6 +187,9 @@ export default {
     this.getSearchCompany();
     if (this.templateId) {
       this.getPolicyDetail();
+      this.disableEdit = true
+    }else{
+      this.disableEdit = false
     }
   },
 
