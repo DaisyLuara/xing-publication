@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin\MallCoo\V1\Api;
 
-use App\Http\Controllers\Admin\Coupon\V1\Transformer\CouponBatchTransformer;
+use App\Http\Controllers\Admin\MallCoo\V1\Transformer\CouponPackTransformer;
 use App\Http\Controllers\Admin\MallCoo\V1\Request\CouponRequest;
 use App\Http\Controllers\Admin\WeChat\V1\Models\ThirdPartyUser;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
@@ -104,7 +104,7 @@ class CouponController extends BaseController
             abort(500, $e->getMessage());
         }
 
-        return $this->response->collection($couponBatches, new CouponBatchTransformer());
+        return $this->response->collection($couponBatches, new CouponPackTransformer());
     }
 
 
@@ -125,7 +125,7 @@ class CouponController extends BaseController
         abort_if(!$userPolicy, 204);
         $couponBatches = $userPolicy->policy->batches;
 
-        return $this->response->collection($couponBatches, new CouponBatchTransformer());
+        return $this->response->collection($couponBatches, new CouponPackTransformer());
     }
 
 

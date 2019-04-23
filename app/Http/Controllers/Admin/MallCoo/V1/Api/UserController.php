@@ -32,7 +32,7 @@ class UserController extends BaseController
         $redirect_url = urldecode($request->get('redirect_url'));
         $redirect_url = add_query_string($redirect_url, 'user_id', $userID);
 
-        $callback_url = 'http://' . $request->getHost() . '/api/mallcoo/user/callback?oid=' . $request->get('oid') . '&redirect_url=' . urlencode(($redirect_url));
+        $callback_url = 'http://' . $request->getHost() . '/api/mallcoo/user/callback?oid=' . $request->get('oid') . '&redirect_url=' . urlencode($redirect_url);
 
         return $this->mall_coo->oauth($callback_url);
     }
