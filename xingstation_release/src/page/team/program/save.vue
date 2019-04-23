@@ -885,7 +885,7 @@ export default {
       copyrightProjectList: [],
       fileList: [],
       ids: [],
-      media_id: [],
+      tester_media_id: [],
       disabledChange: true,
       form: {
         total: 0
@@ -1310,9 +1310,9 @@ export default {
       getProgramDetails(this, this.programID, params)
         .then(res => {
           let planMediaData = [];
-          if (res.media) {
-            this.testFile = res.media;
-            planMediaData.push(res.media)
+          if (res.tester_media) {
+            this.testFile = res.tester_media;
+            planMediaData.push(res.tester_media)
           }
           this.testFileList = planMediaData
           let animationMediaData = [];
@@ -1671,7 +1671,7 @@ export default {
         this.testFileList.map(r => {
           testerMediaIds.push(r.id);
         });
-        this.media_id = testerMediaIds.join(",");
+        this.tester_media_id = testerMediaIds.join(",");
       } else {
         this.$message({
           type: "warning",
@@ -1698,7 +1698,7 @@ export default {
             interact_innovate: this.programForm.interact_innovate,
             type: this.programForm.type,
             animation_media_id: this.ids,
-            media_id: this.media_id,
+            tester_media_id: this.tester_media_id,
             copyright_attribute: this.programForm.copyright_attribute,
             copyright_project_id: this.programForm.copyright_project_id,
             interaction_attribute: this.programForm.interaction_attribute

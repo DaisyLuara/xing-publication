@@ -1554,7 +1554,7 @@ export default {
         testerMediaIds.push(r.id);
       });
       this.ids = testerMediaIds.join(",");
-      args.media_id = this.ids;
+      args.tester_media_id = this.ids;
       args.test_remark = this.testForm.test_remark;
       if (!this.testForm.test_remark) {
         delete args.test_remark;
