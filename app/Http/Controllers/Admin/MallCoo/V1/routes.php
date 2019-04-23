@@ -19,8 +19,8 @@ $api->version('v1', [
             $api->post('users', 'UserController@store'); //手机号开通会员卡
             $api->get('user', 'UserController@show');//获取商场会员信息
 
-            $api->get('coupon', 'CouponController@index');
-            $api->post('coupon', 'CouponController@store');
+            $api->get('couponPacks', 'CouponController@getUserCouponPacks');//查看优惠券包
+            $api->post('couponPacks', 'CouponController@generateCouponPacks');//发送优惠券包
         });
     });
 

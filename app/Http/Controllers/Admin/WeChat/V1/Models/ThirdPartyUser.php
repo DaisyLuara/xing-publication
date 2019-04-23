@@ -70,17 +70,6 @@ class ThirdPartyUser extends Model
         'mall_card_apply_time',
     ];
 
-
-    /**
-     * The attributes that should be casted to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'subscribe' => 'boolean',
-        'gendor' => 'boolean',
-    ];
-
     public function mallcoo_score_histories()
     {
         return $this->hasMany(MallcooScoreHistory::class, 'mallcoo_open_user_id', 'mallcoo_open_user_id');
