@@ -43,9 +43,25 @@ class CouponController extends Controller
         $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
         $memberUID = $member->uid;
 
+        $project = Project::query()->where('versionname', '=', $request->get('belong'))->firstOrFail();
+        $policy = Policy::query()->findOrFail($project->policy_id);
+        //策略每人抽奖次数校验
+        if (!$policy->per_person_unlimit) {
+            $couponPerPersonGet = Coupon::query()->where('member_uid', $memberUID)
+                ->where('belong', $request->get('belong'))->count();
+            abort_if($couponPerPersonGet >= $policy->per_person_times, 500, '优惠券领取数量已达上限!');
+        }
+        //策略每人每天抽奖次数校验
+        if (!$policy->per_person_per_day_unlimit) {
+            $couponPerPersonPerDayGet = Coupon::query()->where('member_uid', $memberUID)
+                ->whereDate('created_at', Carbon::now()->toDateString())
+                ->where('belong', $request->get('belong'))->count();
+            abort_if($couponPerPersonPerDayGet >= $policy->per_person_per_day_times, 500, '今日领券数量已达上限,请明天再来!');
+        }
+
         //coupon_batch_id参数校验
         if ($multiProjects) {
-            //多节目
+            //多节目集齐勋章或者h5抽奖
             $couponBatch = $member->userCouponBatches()->firstOrFail();
 
         } else {
@@ -140,8 +156,7 @@ class CouponController extends Controller
                 'end_date' => $endDate,
             ]);
 
-
-            $coupon = $this->setCodeImageUrl($coupon, $prefix, $wechatCouponBatch,$request->code_type);
+            $coupon = $this->setCodeImageUrl($coupon, $prefix, $wechatCouponBatch, $request->code_type);
 
             //不使用系统核销 领取优惠券后 ，自动减去库存
             if (!$couponBatch->write_off_status && !$couponBatch->pmg_status && !$couponBatch->pmg_status) {
@@ -189,7 +204,7 @@ class CouponController extends Controller
         $wechatCouponBatch = CouponBatch::query()->findOrFail($coupon->coupon_batch_id)->wechat;
         $prefix = 'h5_code_';
 
-        $coupon = $this->setCodeImageUrl($coupon, $prefix, $wechatCouponBatch,$request->code_type);
+        $coupon = $this->setCodeImageUrl($coupon, $prefix, $wechatCouponBatch, $request->code_type);
 
         return $this->response->item($coupon, new CouponTransformer());
     }
@@ -207,7 +222,7 @@ class CouponController extends Controller
         abort_if($member->userCouponBatches->isNotEmpty(), '500', '请勿重复抽奖');
 
         //用户成就校验
-        foreach ([11,12,13] as $id) {
+        foreach ([11, 12, 13] as $id) {
             $arMemberHonor = ArMemberHonor::query()->where('uid', $member->uid)->where('xid', $id)->first();
             abort_if(!$arMemberHonor, 500, '请集齐勋章后再抽奖!');
         }
@@ -348,41 +363,23 @@ class CouponController extends Controller
 
 
     /**
-     * h5生成限制条件优惠券规则
+     * h5生成限制条件优惠券规则(扫码h5抽奖)
      * @param CouponRequest $request
      * @return mixed
      */
     public function generateLimitCouponBatch(Request $request)
     {
         $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
+        $project = Project::query()->where('versionname', '=', $request->belong)->firstOrFail();
 
-        //用户成就校验
-        $arMemberHonorNums = ArMemberHonor::query()->where('uid', $member->uid)
-            ->whereIn('xid', [14, 15, 16])->groupBy('xid')->get();
-
-        switch ($arMemberHonorNums->count()) {
-            case 0:
-                abort('500', '请先收集勋章');
-                break;
-            case 3:
-                $policy_id = 76;
-                break;
-            default:
-                $policy_id = 75;
-                break;
-        }
-
+        //每天限领数量
         $now = Carbon::now()->toDateString();
-
-        //实物奖品数量
         $prizeCoupons = Coupon::query()->where('belong', $request->belong)
             ->where('member_uid', $member->uid)
             ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
-            ->whereHas('couponBatch', function ($q) {
-                $q->where('type', 2);
-             })->get();
+            ->get();
 
-        abort_if($prizeCoupons->isNotEmpty(), 500, '每天仅限中一次奖,请明天再来');
+        abort_if($prizeCoupons->count() >= 25, 500, '抽奖机会已用完,请明天再来');
 
         $query = DB::table('coupon_batch_policy');
         if ($request->has('age')) {
@@ -398,7 +395,7 @@ class CouponController extends Controller
         }
 
         $couponBatchPolicies = $query->join('coupon_batches', 'coupon_batch_id', '=', 'coupon_batches.id')
-            ->where('policy_id', '=', $policy_id)
+            ->where('policy_id', '=', $project->policy_id)
             ->where('coupon_batches.is_active', 1)
             ->get();
 
@@ -406,30 +403,48 @@ class CouponController extends Controller
             abort(500, '无可用优惠券');
         }
 
-        $couponBatchPolicies = $couponBatchPolicies->toArray();
+        $couponBatchIDs = [];
+        $couponBatchPolicies = $couponBatchPolicies->each(static function ($item) use (&$couponBatchIDs) {
+            $couponBatchIDs[] = $item->coupon_batch_id;
+        });
+
+        //库存校验
+        $now = Carbon::now()->toDateString();
+        $couponsDayGetQuery = Coupon::query()->whereIn('coupon_batch_id', $couponBatchIDs)
+            ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
+            ->selectRaw('coupon_batch_id, count(*) as day_receive')
+            ->groupBy('coupon_batch_id');
+
+        $couponsPersonGetQuery = clone $couponsDayGetQuery;
+        $couponsPersonGetQuery->where('member_uid', $member->uid);
+
+        //当天领取数量
+        $couponsDayGetArray = array_column($couponsDayGetQuery->get()->toArray(), 'day_receive', 'coupon_batch_id');
+        //每人每天领取数量
+        $couponsPersonGetArray = array_column($couponsPersonGetQuery->get()->toArray(), 'day_receive', 'coupon_batch_id');
 
         foreach ($couponBatchPolicies as $key => $couponBatchPolicy) {
-            //设置了库存上限的券
-            if (!$couponBatchPolicy->pmg_status && !$couponBatchPolicy->dmg_status) {
-                //剩余库存为0 不出券
-                if ($couponBatchPolicy->stock <= 0) {
-                    unset($couponBatchPolicies[$key]);
-                    continue;
-                }
+            $couponBatchID = $couponBatchPolicy->coupon_batch_id;
+            //不符合条件的优惠券
+            if (!$couponBatchPolicy->pmg_status && !$couponBatchPolicy->dmg_status && $couponBatchPolicy->stock <= 0) {
+                unset($couponBatchPolicies[$key]);
+                continue;
+            }
 
-                //当天库存为0 不出券
-                $now = Carbon::now()->toDateString();
-                $coupon = Coupon::query()->where('coupon_batch_id', $couponBatchPolicy->id)
-                    ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
-                    ->selectRaw("count(coupon_batch_id) as day_receive")->first();
+            //当天库存校验
+            if (array_key_exists($couponBatchID, $couponsDayGetArray) && $couponBatchPolicy->day_max_get <= $couponsDayGetArray[$couponBatchID]) {
+                unset($couponBatchPolicies[$key]);
+                continue;
+            }
 
-                if ($coupon->day_receive >= $couponBatchPolicy->day_max_get) {
-                    unset($couponBatchPolicies[$key]);
-                }
+            //每人每天库存校验
+            if (array_key_exists($couponBatchID, $couponsPersonGetArray) && $couponBatchPolicy->people_max_get <= $couponsPersonGetArray[$couponBatchID]) {
+                unset($couponBatchPolicies[$key]);
+                continue;
             }
         }
 
-        if (collect($couponBatchPolicies)->sum('rate') == 0) {
+        if (collect($couponBatchPolicies)->sum('rate') === 0) {
             abort(500, '无可用优惠券');
         }
 
@@ -464,7 +479,8 @@ class CouponController extends Controller
      * @param string $code_type
      * @return mixed
      */
-    private function setCodeImageUrl($coupon, $prefix, $wechatCouponBatch = null, $code_type = 'qrcode') {
+    private function setCodeImageUrl($coupon, $prefix, $wechatCouponBatch = null, $code_type = 'qrcode')
+    {
         if ($code_type == 'barcode') {
             $barcodeUrl = couponBarCode($coupon->code, 2, 180, $prefix);
             $coupon->setAttribute('barcode_url', $barcodeUrl);

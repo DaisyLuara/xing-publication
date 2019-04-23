@@ -20,6 +20,45 @@ use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\Permission\Traits\RefreshesPermissionCache;
 
+/**
+ * App\Http\Controllers\Admin\Privilege\V1\Models\Permission
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $guard_name
+ * @property string $display_name
+ * @property int|null $parent_id
+ * @property int|null $lft
+ * @property int|null $rgt
+ * @property int|null $depth
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Baum\Extensions\Eloquent\Collection|\App\Http\Controllers\Admin\Privilege\V1\Models\Permission[] $children
+ * @property-read \App\Http\Controllers\Admin\Privilege\V1\Models\Permission|null $parent
+ * @property-read \Baum\Extensions\Eloquent\Collection|\App\Http\Controllers\Admin\Privilege\V1\Models\Permission[] $permissions
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Http\Controllers\Admin\Privilege\V1\Models\Role[] $roles
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
+ * @method static \Illuminate\Database\Eloquent\Builder|\Baum\Node limitDepth($limit)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Permission newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Permission newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Permission permission($permissions)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Permission query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Permission role($roles, $guard = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Permission whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Permission whereDepth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Permission whereDisplayName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Permission whereGuardName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Permission whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Permission whereLft($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Permission whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Permission whereParentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Permission whereRgt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Privilege\V1\Models\Permission whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Baum\Node withoutNode($node)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Baum\Node withoutRoot()
+ * @method static \Illuminate\Database\Eloquent\Builder|\Baum\Node withoutSelf()
+ * @mixin \Eloquent
+ */
 class Permission extends Node implements PermissionContract
 {
     use HasRoles;

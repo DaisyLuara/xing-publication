@@ -12,24 +12,26 @@ use Illuminate\Http\Request;
 class MediaInfoController extends Controller
 {
 
-    public function index(Request $request, MediaInfo $mediaInfo)
+    public function index(Request $request, MediaInfo $mediaInfo): \Dingo\Api\Http\Response
     {
-        $query = $mediaInfo->query();
-        if ($request->has("name") && $request->name) {
-            $query = $query->where("name", "like", "%" . $request->name . "%");
+        $query = $mediaInfo->query()->where('type', $request->type ?? 'project_operation');
+
+        if ($request->has('name') && $request->get('name')) {
+            $query = $query->where('name', 'like', '%' . $request->get('name') . '%');
         }
-        if ($request->start_date && $request->end_date) {
-            $query = $query->whereBetween("date", [
-                Carbon::parse($request->start_date)->toDateString(),
-                Carbon::parse($request->end_date)->toDateString()
+        if ($request->get('start_date') && $request->get('end_date')) {
+            $query = $query->whereBetween('date', [
+                Carbon::parse($request->get('start_date'))->toDateString(),
+                Carbon::parse($request->get('end_date'))->toDateString()
             ]);
         }
-        $mediaInfo = $query->orderby("id", "desc")->paginate(10);
-        return $this->response()->paginator($mediaInfo, new MediaInfoTransformer());
+
+        $mediaInfoPagination = $query->orderByDesc('id')->paginate(10);
+        return $this->response()->paginator($mediaInfoPagination, new MediaInfoTransformer());
 
     }
 
-    public function show(MediaInfo $mediaInfo)
+    public function show(MediaInfo $mediaInfo): \Dingo\Api\Http\Response
     {
         return $this->response()->item($mediaInfo, new MediaInfoTransformer());
     }
@@ -63,7 +65,7 @@ class MediaInfoController extends Controller
 
     public function destroy(MediaInfoRequest $request, MediaInfo $mediaInfo)
     {
-        $ids = $request->get("ids");
+        $ids = $request->get('ids');
         $mediaInfo->query()->whereIn('id', $ids)->delete();
         return $this->response()->noContent()->setStatusCode(200);
 

@@ -40,6 +40,20 @@ const modifyPolicy = (context, companyId, args) => {
       })
   })
 }
+
+const getPolicyDetail=(context,id, args)=>{
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + POLICIES_API+'/'+ id, { params: args })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
 const modifyBatchPolicy = (context, policyId, args, id) => {
   return new Promise(function(resolve, reject) {
     context.$http
@@ -82,5 +96,6 @@ export {
   modifyBatchPolicy,
   modifyPolicy,
   savePolicy,
-  getPoliciesList
+  getPoliciesList,
+  getPolicyDetail
 }

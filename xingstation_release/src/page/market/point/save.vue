@@ -103,6 +103,23 @@
                 :label="1">有</el-radio>
             </el-form-item>
             <el-form-item 
+              label="合同编号" 
+              prop="contract.contract_num">
+              <el-select
+                v-model="pointForm.contract.contract_num"
+                :loading="searchLoading"
+                placeholder="请选择合同编号"
+                @change="changeContract"
+              >
+                <el-option
+                  v-for="item in contractList"
+                  :key="item.contract_number"
+                  :label="item.contract_number"
+                  :value="item.contract_number"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item 
               label="合同公司" 
               prop="contract.contract_company">
               <el-input
@@ -112,22 +129,22 @@
               />
             </el-form-item>
             <el-form-item 
-              label="合同编号" 
-              prop="contract.contract_num">
-              <el-input
-                v-model="pointForm.contract.contract_num"
-                placeholder="请输入合同编号"
-                class="item-input"
-              />
-            </el-form-item>
-            <el-form-item 
               label="合同联系人" 
               prop="contract.contract_user">
-              <el-input
+              <el-select
                 v-model="pointForm.contract.contract_user"
-                placeholder="请输入合同联系人"
-                class="item-input"
-              />
+                :loading="searchLoading"
+                filterable
+                placeholder="请选择所属人"
+                @change="contractUser"
+              >
+                <el-option
+                  v-for="item in customerList"
+                  :key="item.name"
+                  :label="item.name"
+                  :value="item.name"
+                />
+              </el-select>
             </el-form-item>
             <el-form-item 
               label="联系方式" 
@@ -540,7 +557,8 @@ import {
   siteModifyPoint,
   getSearchAeraList,
   getSearchMarketList,
-  getFormatsList
+  getFormatsList,
+  getContractReceiptList
 } from "service";
 import { Cookies } from "utils/cookies";
 
@@ -837,11 +855,13 @@ export default {
         ],
         "share.coupon_off": [{ validator: checkNumber, trigger: "submit" }]
       },
+      contractList: [],
       indexRouter: {
         path: "/market/point"
       },
       payFlag: false,
-      ar_user_z: null
+      ar_user_z: null,
+      customerList: []
     };
   },
   created() {
@@ -849,8 +869,7 @@ export default {
     this.ar_user_z = JSON.parse(this.$cookie.get("user_info")).ar_user_z;
     this.ar_user_z = this.ar_user_z ? this.ar_user_z : null;
     this.pointID = this.$route.params.uid;
-    this.getAreaList();
-    this.getFormatsList();
+    this.init();
     let roles = JSON.parse(this.$cookie.get("user_info")).roles.data;
     roles.map(r => {
       if (r.display_name === "管理员") {
@@ -858,13 +877,59 @@ export default {
         return;
       }
     });
-    if (this.pointID) {
-      this.getPointDetail();
-    } else {
-      this.setting.loading = false;
-    }
   },
   methods: {
+    async init() {
+      try {
+        await this.getContractReceiptList();
+        await this.getFormatsList();
+        await this.getAreaList();
+        if (this.pointID) {
+          await this.getPointDetail();
+        } else {
+          this.setting.loading = false;
+        }
+      } catch (e) {}
+    },
+    contractUser(val) {
+      this.customerList.find(item => {
+        if (item.name === val) {
+          this.pointForm.contract.contract_phone = item.phone;
+          return;
+        }
+      });
+    },
+    changeContract(val) {
+      this.contractList.find(item => {
+        if (item.contract_number === val) {
+          this.contractInfo = null;
+          this.customerList = [];
+          this.pointForm.contract.contract_company = "";
+          this.contractInfo = item;
+          this.pointForm.contract.contract_company = this.contractInfo.company.name;
+          this.customerList = this.contractInfo.company.customers.data;
+          return;
+        }
+      });
+    },
+    getContractReceiptList() {
+      let searchLoading = true;
+      let args = {
+        include: "company.customers"
+      };
+      getContractReceiptList(this, args)
+        .then(res => {
+          this.contractList = res;
+          this.searchLoading = false;
+        })
+        .catch(err => {
+          this.searchLoading = false;
+          this.$message({
+            type: "warning",
+            message: err.response.date.message
+          });
+        });
+    },
     getFormatsList() {
       getFormatsList(this)
         .then(res => {
@@ -937,6 +1002,10 @@ export default {
         } else {
           this.modeNone = false;
         }
+        setTimeout(() => {
+          this.changeContract(data.contract.contract_num);
+          this.contractUser(data.contract.contract_user);
+        }, 100);
       }
       if (data.share) {
         this.pointForm.permission = [];

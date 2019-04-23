@@ -40,7 +40,7 @@ class PolicyController extends Controller
         if ($request->name) {
             $query->where('name', 'like', '%' . $request->name . '%');
         }
-        $policy = $query->orderByDesc('id')->paginate(5);
+        $policy = $query->orderByDesc('id')->paginate(10);
 
         return $this->response->paginator($policy, new PolicyTransformer());
     }
@@ -79,6 +79,8 @@ class PolicyController extends Controller
     public function storeBatchPolicy(Policy $policy, CouponBatch $couponBatch, PolicyBatchesRequest $request)
     {
         $couponBatch = $couponBatch->query()->findOrFail($request->coupon_batch_id);
+
+        abort_if($policy->batches()->find($couponBatch->id), 500, '已存在该奖品,请勿重复添加');
 
         $policy->batches()->save($couponBatch, $this->convert($request));
         return $this->response->item($policy, new PolicyTransformer())

@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Admin\User\V1\Transformer;
 
-use App\Http\Controllers\Admin\Privilege\V1\Models\Permission;
 use App\Models\User;
 use League\Fractal\TransformerAbstract;
 use App\Http\Controllers\Admin\Privilege\V1\Transformer\RoleTransformer;
 
 class UserTransformer extends TransformerAbstract
 {
+
     protected $availableIncludes = ['roles'];
 
     /**
@@ -32,7 +32,6 @@ class UserTransformer extends TransformerAbstract
             'created_at' => $user->created_at->toDateTimeString(),
             'updated_at' => $user->updated_at->toDateTimeString(),
             'pivot' => $user->pivot,
-            'permissions' => $this->getUserPermission($user)
         ];
     }
 
@@ -40,20 +39,4 @@ class UserTransformer extends TransformerAbstract
     {
         return $this->collection($user->roles, new RoleTransformer());
     }
-
-    /**
-     * @param User $user
-     * @return mixed
-     * @throws \Exception
-     */
-    private function getUserPermission(User $user)
-    {
-        $permissions = $user->getAllPermissions();
-        $permId = [];
-        foreach ($permissions as $permission) {
-            $permId[] = $permission->id;
-        }
-        return Permission::query()->whereIn('id', $permId)->selectRaw('id,name,parent_id')->get()->toHierarchy();
-    }
-
 }

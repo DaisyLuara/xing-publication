@@ -21,6 +21,11 @@ class PolicyTransformer extends TransformerAbstract
         return [
             'id' => $policy->id,
             'name' => $policy->name,
+            'type' => $policy->type,
+            'per_person_unlimit' => $policy->per_person_unlimit,
+            'per_person_times' => $policy->per_person_times,
+            'per_person_per_day_unlimit' => $policy->per_person_per_day_unlimit,
+            'per_person_per_day_times' => $policy->per_person_per_day_times,
             'created_at' => $policy->created_at->toDateTimeString(),
             'updated_at' => $policy->updated_at->toDateTimeString(),
         ];

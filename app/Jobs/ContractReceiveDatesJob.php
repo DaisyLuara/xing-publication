@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
 use App\Notifications\CheckReceipt;
 
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -34,19 +35,23 @@ class ContractReceiveDatesJob implements ShouldQueue
      */
     public function handle()
     {
+        $now = Carbon::now()->toDateString();
         $data = DB::table('contract_receive_dates')
-            ->join('contract_histories','contract_receive_dates.contract_id','=','contract_histories.contract_id')
-            ->select ('user_id', 'contract_receive_dates.contract_id', 'receive_date')
-            ->whereRaw("receive_date >= date( now( ) )AND receive_date < DATE_ADD( date( now( ) ), INTERVAL 1 DAY )AND receive_status = 0")
+            ->whereRaw(" '$now' between date_add(receive_date,interval -3 day) and date_add(receive_date,interval 5 day) and receive_status = 0")
+            ->selectRaw("distinct contract_id")
             ->get();
-
-
+        $legal = User::find(getProcessStaffId('legal-affairs', 'contract'));
+        $legalMa = User::find(getProcessStaffId('legal-affairs-manager', 'contract'));
         foreach ($data as $item) {
-
-            $user = User::find($item->user_id);
             $contract = Contract::find($item->contract_id);
-            $user->notify(new CheckReceipt($contract));
-
+            if (!$contract)
+                continue;
+            $contract->applicantUser->notify(new CheckReceipt($contract));
+            if ($contract->applicantUser->parent_id) {
+                User::find($contract->applicantUser->parent_id)->notify(new CheckReceipt($contract));
+            }
+            $legal->notify(new CheckReceipt($contract));
+            $legalMa->notify(new CheckReceipt($contract));
         }
     }
 }

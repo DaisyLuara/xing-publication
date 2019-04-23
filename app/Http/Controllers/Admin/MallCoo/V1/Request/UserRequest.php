@@ -16,14 +16,14 @@ class UserRequest extends Request
         switch ($this->method()) {
             case 'GET':
                 return [
-                    'z' => 'required|string',
+                'sign' => 'required|string',
                 ];
                 break;
             case 'POST':
                 return [
                     'verification_key' => 'required|string',
                     'verification_code' => 'required|string',
-                    'z' => 'required|string',
+                    'sign' => 'required|string',
                 ];
                 break;
         }

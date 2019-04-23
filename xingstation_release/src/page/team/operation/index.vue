@@ -419,7 +419,7 @@ export default {
       let time = new Date().getTime();
       let random = parseInt(Math.random() * 10 + 1, 10);
       let suffix = time + "_" + random + "_" + name;
-      let key = encodeURI(`${suffix}`);
+      let key = (`${suffix}`);
       if (
         !(
           type === ".docx" ||

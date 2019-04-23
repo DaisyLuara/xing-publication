@@ -12,6 +12,70 @@ use Spatie\Activitylog\Traits\CausesActivity;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
+/**
+ * Class User
+ *
+ * @package App\Models
+ * @property string name
+ * @property string phone
+ * @property int id
+ * @property int $id
+ * @property int|null $parent_id
+ * @property string $name
+ * @property string|null $phone
+ * @property string|null $email
+ * @property string|null $password
+ * @property string|null $weixin_openid
+ * @property string|null $weixin_unionid
+ * @property string|null $remember_token
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $avatar
+ * @property string|null $introduction
+ * @property int|null $ar_user_id 星视度用户ID
+ * @property string|null $z ar用户标识
+ * @property int $notification_count
+ * @property string|null $tower_access_token
+ * @property string|null $tower_refresh_token
+ * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Activitylog\Models\Activity[] $activity
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Http\Controllers\Admin\Company\V1\Models\Company[] $company
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Activitylog\Models\Activity[] $loggedActivity
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ * @property-read \Baum\Extensions\Eloquent\Collection|\App\Http\Controllers\Admin\Privilege\V1\Models\Permission[] $permissions
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Http\Controllers\Admin\Privilege\V1\Models\Role[] $roles
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $subordinates
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newQuery()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\User onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User permission($permissions)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User query()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User role($roles, $guard = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereArUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereAvatar($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereIntroduction($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereNotificationCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereParentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User wherePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereTowerAccessToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereTowerRefreshToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereWeixinOpenid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereWeixinUnionid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereZ($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\User withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\User withoutTrashed()
+ * @mixin \Eloquent
+ */
 class User extends Authenticatable implements JWTSubject
 {
 

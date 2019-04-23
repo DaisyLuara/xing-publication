@@ -16,7 +16,7 @@ body {
   position: fixed;
   top: 120px;
   left: 0;
-  width: 160px;
+  width: 100px;
   height: 100%;
   background-color: #22282f;
   z-index: 150;
@@ -25,6 +25,8 @@ body {
 .first-sidebar .el-menu {
   background-color: rgba(0, 0, 0, 0);
   border-radius: 0px;
+  height: 450px;
+  overflow-y: scroll;
 }
 .first-sidebar .el-menu .el-menu-item {
   color: #6484ad;
@@ -81,8 +83,8 @@ body {
 .second-sidebar {
   position: fixed;
   top: 120px;
-  left: 50px;
-  width: 110px;
+  left: 100px;
+  width: 80px;
   height: 100%;
   background-color: #fff;
   border-right: 1px solid #d3dce6;
@@ -107,6 +109,7 @@ body {
   font-size: 14px;
   background-color: rgba(0, 0, 0, 0);
   margin: 5px 0;
+  padding-left: 10px !important;
 }
 .second-sidebar .el-menu .el-menu-item:hover {
   color: #20a0ff;
@@ -137,7 +140,7 @@ body {
 .modules {
   position: relative;
   width: 100%;
-  padding-left: 160px;
+  padding-left: 180px;
   padding-top: 120px;
 }
 .modules .content {
