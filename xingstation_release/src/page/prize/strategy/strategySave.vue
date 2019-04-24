@@ -50,14 +50,14 @@
               <el-tooltip
                 class="item"
                 effect="dark"
-                content="发放模板中全部奖品券"
+                content="随机发放模板中某一张奖品券"
                 placement="top"
               >><el-radio :label="1">抽奖</el-radio>
               </el-tooltip>
               <el-tooltip
                 class="item"
                 effect="dark"
-                content="随机发放模板中某一张奖品券"
+                content="发放模板中全部奖品券"
                 placement="top"
               >
                 <el-radio :label="2">券包</el-radio>
@@ -71,14 +71,14 @@
           >
             <el-radio-group
               v-model="templateForm.per_person_unlimit"
-              @change="unlimitedDayHandle"
+              @change="unlimitedPeopleHandle"
             >
               <el-radio :label="1">开启</el-radio>
               <el-radio :label="0">关闭</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item
-            v-if="peopleDayShow"
+            v-if="peopleReceiveShow"
             :rules="{required: true, message: '每天最大获取数不能为空', trigger: 'submit'}"
             label="每天最大获取数"
             prop="per_person_times"
@@ -96,14 +96,14 @@
           >
             <el-radio-group
               v-model="templateForm.per_person_per_day_unlimit"
-              @change="unlimitedPeopleHandle"
+              @change="unlimitedDayHandle"
             >
               <el-radio :label="1">开启</el-radio>
               <el-radio :label="0">关闭</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item
-            v-if="peopleReceiveShow"
+            v-if=" peopleDayShow"
             :rules="{required: true, message: '每人每天最大获取数不能为空', trigger: 'submit'}"
             label="每人每天最大获取数"
             prop="per_person_per_day_times"
@@ -188,24 +188,24 @@ export default {
     if (this.templateId) {
       this.getPolicyDetail();
       this.disableEdit = true
-    }else{
+    } else {
       this.disableEdit = false
     }
   },
 
   methods: {
     unlimitedDayHandle(val) {
-      if (val === 1) {
-        this.peopleDayShow = false;
-      } else {
+      if (val === 0) {
         this.peopleDayShow = true;
+      } else {
+        this.peopleDayShow = false;
       }
     },
     unlimitedPeopleHandle(val) {
-      if (val === 1) {
-        this.peopleReceiveShow = false;
-      } else {
+      if (val === 0) {
         this.peopleReceiveShow = true;
+      } else {
+        this.peopleReceiveShow = false;
       }
     },
     getSearchCompany() {
