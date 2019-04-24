@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Media\V1\Models;
 
+use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Models\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -22,28 +23,29 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static bool|null forceDelete()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Media\V1\Models\Media newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Media\V1\Models\Media newQuery()
- * @method static \Illuminate\Database\Query\Builder|\App\Http\Controllers\Admin\Media\V1\Models\Media onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model ordered()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Media\V1\Models\Media query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model recent()
+ * @method static \Illuminate\Database\Eloquent\Builder|Media newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Media newQuery()
+ * @method static \Illuminate\Database\Query\Builder|Media onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Model ordered()
+ * @method static \Illuminate\Database\Eloquent\Builder|Media query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Model recent()
  * @method static bool|null restore()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Media\V1\Models\Media whereCompanyId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Media\V1\Models\Media whereContractId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Media\V1\Models\Media whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Media\V1\Models\Media whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Media\V1\Models\Media whereHeight($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Media\V1\Models\Media whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Media\V1\Models\Media whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Media\V1\Models\Media whereSize($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Media\V1\Models\Media whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Media\V1\Models\Media whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Media\V1\Models\Media whereUrl($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Media\V1\Models\Media whereWidth($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Http\Controllers\Admin\Media\V1\Models\Media withTrashed()
- * @method static \Illuminate\Database\Query\Builder|\App\Http\Controllers\Admin\Media\V1\Models\Media withoutTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereContractId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereHeight($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereSize($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Media whereWidth($value)
+ * @method static \Illuminate\Database\Query\Builder|Media withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Media withoutTrashed()
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Http\Controllers\Admin\Company\V1\Models\Company[] $company
  */
 class Media extends Model
 {
@@ -62,4 +64,9 @@ class Media extends Model
         'height',
         'width',
     ];
+
+    public function company(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Company::class, 'company_media', 'media_id', 'company_id')->withPivot(['status', 'audit_user_id']);
+    }
 }
