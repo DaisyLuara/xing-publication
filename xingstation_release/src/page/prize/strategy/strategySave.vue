@@ -79,6 +79,7 @@
           </el-form-item>
           <el-form-item
             v-if="peopleReceiveShow"
+            :rules="{required: true, message: '每天最大获取数不能为空', trigger: 'submit'}"
             label="每天最大获取数"
             prop="per_person_times"
           >
@@ -103,6 +104,7 @@
           </el-form-item>
           <el-form-item
             v-if=" peopleDayShow"
+            :rules="{required: true, message: '每人每天最大获取数不能为空', trigger: 'submit'}"
             label="每人每天最大获取数"
             prop="per_person_per_day_times"
           >
