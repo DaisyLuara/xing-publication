@@ -50,14 +50,14 @@
               <el-tooltip
                 class="item"
                 effect="dark"
-                content="发放模板中全部奖品券"
+                content="随机发放模板中某一张奖品券"
                 placement="top"
               >><el-radio :label="1">抽奖</el-radio>
               </el-tooltip>
               <el-tooltip
                 class="item"
                 effect="dark"
-                content="随机发放模板中某一张奖品券"
+                content="发放模板中全部奖品券"
                 placement="top"
               >
                 <el-radio :label="2">券包</el-radio>
@@ -188,7 +188,7 @@ export default {
     if (this.templateId) {
       this.getPolicyDetail();
       this.disableEdit = true
-    }else{
+    } else {
       this.disableEdit = false
     }
   },
