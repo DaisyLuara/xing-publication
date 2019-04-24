@@ -118,7 +118,6 @@ class CouponController extends BaseController
         $wxUserId = decrypt($request->get('sign'));
 
         $userPolicy = UserPolicy::query()->where('wx_user_id', $wxUserId)
-            ->where('qiniu_id', $request->get('qiniu_id'))
             ->where('belong', $request->get('belong'))
             ->first();
 
