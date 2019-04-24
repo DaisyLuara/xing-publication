@@ -200,7 +200,6 @@ export default {
       }
     },
     unlimitedPeopleHandle(val) {
-      console.log(val)
       if (val === 0) {
         this.peopleReceiveShow = true;
       } else {
