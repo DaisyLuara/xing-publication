@@ -7,10 +7,11 @@
     >
       <div class="item-info">
         <div class="prize-title">{{ prizeId ? '奖品投放修改' : '奖品投放新增' }}</div>
-        <el-form 
-          ref="prizeForm" 
-          :model="prizeForm" 
-          label-width="180px">
+        <el-form
+          ref="prizeForm"
+          :model="prizeForm"
+          label-width="180px"
+        >
           <el-form-item
             :rules="[{ required: true, message: '请选择公司', trigger: 'submit'}]"
             label="公司名称"
@@ -45,6 +46,29 @@
             >
               <el-option
                 v-for="item in policyList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item
+            :rules="[{ required: true, message: '请选择场地', trigger: 'submit'}]"
+            label="场地名称"
+            prop="market_id"
+          >
+            <el-select
+              v-model="prizeForm.market_id"
+              :loading="searchLoading"
+              :remote-method="getSearchAuthMarket"
+              placeholder="请选择场地"
+              filterable
+              remote
+              clearable
+              @change="marketChangeHandle"
+            >
+              <el-option
+                v-for="item in marketList"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id"
@@ -92,9 +116,10 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button 
-              type="primary" 
-              @click="submit('prizeForm')">保存</el-button>
+            <el-button
+              type="primary"
+              @click="submit('prizeForm')"
+            >保存</el-button>
             <el-button @click="back">返回</el-button>
           </el-form-item>
         </el-form>
@@ -106,6 +131,7 @@
 import {
   historyBack,
   getSearchAuthPolicies,
+  getSearchMarketList,
   getSearchAuthPoint,
   getSearchAuthProject,
   getSearchCompany,
@@ -142,11 +168,13 @@ export default {
       prizeForm: {
         company_id: null,
         policy_id: null,
+        market_id: null,
         oid: null,
         project_id: null
       },
       projectList: [],
       companyList: [],
+      marketList: [],
       pointList: [],
       policyList: []
     };
@@ -154,7 +182,6 @@ export default {
   created() {
     this.prizeId = this.$route.params.uid;
     this.getSearchAuthPolicies();
-    this.getSearchAuthPoint();
     this.getSearchAuthProject();
     this.getSearchCompany();
     if (this.prizeId) {
@@ -177,12 +204,46 @@ export default {
           });
         });
     },
-    getSearchAuthPoint() {
-      this.searchLoading = true;
-      getSearchAuthPoint(this)
+    marketChangeHandle() {
+      this.getSearchAuthPoint(this.prizeForm.market_id)
+    },
+    getSearchAuthMarket(query) {
+      let args = {
+        include: "area"
+      }
+      if (query !== "") {
+        this.searchLoading = true;
+        args.name = query
+      }
+      getSearchMarketList(this, args)
         .then(res => {
+          this.marketList = res.data;
+          if (this.marketList.length == 0) {
+            this.prizeForm.market_id = [];
+            this.marketList = [];
+          }
           this.searchLoading = false;
+        })
+        .catch(err => {
+          this.searchLoading = false;
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
+        });
+    },
+    getSearchAuthPoint(market_id) {
+      this.searchLoading = true;
+      let args = {
+        include: 'market'
+      }
+      if (market_id) {
+        args.market_id = market_id
+      }
+      getSearchAuthPoint(this, args)
+        .then(res => {
           this.pointList = res;
+          this.searchLoading = false;
         })
         .catch(err => {
           this.searchLoading = false;
@@ -252,6 +313,7 @@ export default {
             company_id: this.prizeForm.company_id,
             project_id: this.prizeForm.project_id.split(",")[0],
             versionname: this.prizeForm.project_id.split(",")[1],
+            market_id: this.prizeForm.market_id,
             oid: this.prizeForm.oid,
             policy_id: this.prizeForm.policy_id
           };

@@ -14,8 +14,27 @@ use App\Models\Model;
 
 /**
  * Class ContractReceiveDate
+ *
  * @package App\Http\Controllers\Admin\Contract\V1\Models
  * @property int contract_id
+ * @property int $id
+ * @property int $contract_id
+ * @property string $receive_date 收款日期
+ * @property int $receive_status 0：未收款，1：已收款
+ * @property int|null $invoice_receipt_id
+ * @property-read \App\Http\Controllers\Admin\Contract\V1\Models\Contract $contract
+ * @property-read \App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceReceipt|null $invoiceReceipt
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model ordered()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model recent()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate whereContractId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate whereInvoiceReceiptId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate whereReceiveDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate whereReceiveStatus($value)
+ * @mixin \Eloquent
  */
 class ContractReceiveDate extends Model
 {

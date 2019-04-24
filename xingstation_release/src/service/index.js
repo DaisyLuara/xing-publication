@@ -58,3 +58,6 @@ export * from './resource_auth'
 
 //奖品
 export * from './prize'
+
+//反馈
+export * from './feedback'

@@ -3,6 +3,16 @@
 namespace App\Models;
 
 
+/**
+ * App\Models\ArModel
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ArModel newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ArModel newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model ordered()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ArModel query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model recent()
+ * @mixin \Eloquent
+ */
 class ArModel extends Model
 {
     protected $connection = 'ar';

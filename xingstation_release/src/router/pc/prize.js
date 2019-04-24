@@ -82,6 +82,25 @@ let router = {
             import(/* webpackChunkName: "page/prize/strategy/policise" */ 'page/prize/strategy/policise')
         },
         {
+          path: 'p_save',
+          meta: {
+            title: '奖品模版增加',
+            permission: 'prize.strategy.create'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/prize/strategy/strategySave" */ 'page/prize/strategy/strategySave')
+        },
+        {
+          path: 'p_edit/:uid',
+          component: () =>
+            import(/* webpackChunkName: "page/prize/strategy/strategySave" */ 'page/prize/strategy/strategySave'),
+          name: '奖品模板修改',
+          meta: {
+            title: '奖品模板修改',
+            permission: 'prize.strategy.update'
+          }
+        },
+        {
           path: 'add',
           meta: {
             title: '子条目增加',
@@ -94,9 +113,9 @@ let router = {
           path: 'edit/:uid',
           component: () =>
             import(/* webpackChunkName: "page/prize/strategy/save" */ 'page/prize/strategy/save'),
-          name: '奖品修改',
+          name: '奖品子条目修改',
           meta: {
-            title: '奖品增加',
+            title: '奖品子条目修改',
             permission: 'prize.strategy.childUpdate'
           }
         }

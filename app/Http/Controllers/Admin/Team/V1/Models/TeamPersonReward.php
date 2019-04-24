@@ -12,6 +12,35 @@ namespace App\Http\Controllers\Admin\Team\V1\Models;
 use App\Models\Model;
 use App\Models\User;
 
+/**
+ * App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property string $project_name
+ * @property string $belong
+ * @property string $type interaction:交互技术,originality:节目创意,h5:H5开发,animation:设计动画,plan:节目统筹,tester:节目测试,operation:平台运营,system:平台奖
+ * @property string $main_type 绩效类别
+ * @property string|null $total
+ * @property string|null $date
+ * @property string|null $get_date 发放日期
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model ordered()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model recent()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward whereBelong($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward whereDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward whereGetDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward whereMainType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward whereProjectName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward whereTotal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Team\V1\Models\TeamPersonReward whereUserId($value)
+ * @mixin \Eloquent
+ */
 class TeamPersonReward extends Model
 {
     protected $fillable = [

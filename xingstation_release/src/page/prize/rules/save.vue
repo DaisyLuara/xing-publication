@@ -173,10 +173,21 @@
                 :label="0">停用</el-radio>
             </el-form-item>
           </el-tab-pane>
-          <el-tab-pane label="场景设置" name="second">
-            <el-form-item label="适用场景" prop="scene_type" :rules="{required: true, message: '适用场景不能为空', trigger: 'submit'}">
-              <el-radio-group v-model="couponForm.scene_type" @change="handleSceneType">
-                <el-tooltip class="item" effect="dark" content="可在同一场地下的多家商户核销" placement="top">
+          <el-tab-pane 
+            label="场景设置" 
+            name="second">
+            <el-form-item 
+              :rules="{required: true, message: '适用场景不能为空', trigger: 'submit'}" 
+              label="适用场景" 
+              prop="scene_type">
+              <el-radio-group 
+                v-model="couponForm.scene_type" 
+                @change="handleSceneType">
+                <el-tooltip 
+                  class="item" 
+                  effect="dark" 
+                  content="可在同一场地下的多家商户核销" 
+                  placement="top">
                   <el-radio :label="1">场地通用</el-radio>
                 </el-tooltip>
                 <el-tooltip
@@ -394,7 +405,7 @@
               prop="start_date">
               <el-date-picker
                 v-model="couponForm.start_date"
-                type="date"
+                type="datetime"
                 placeholder="选择日期"
                 class="coupon-form-date"
                 value-format="yyyy-MM-dd HH:mm:ss"
@@ -406,7 +417,7 @@
               prop="end_date">
               <el-date-picker
                 v-model="couponForm.end_date"
-                type="date"
+                type="datetime"
                 placeholder="选择日期"
                 class="coupon-form-date"
                 value-format="yyyy-MM-dd HH:mm:ss"

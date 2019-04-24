@@ -14,9 +14,34 @@ use App\Http\Controllers\Admin\Company\V1\Models\Company;
 
 /**
  * Class Policy
+ *
  * @package App\Http\Controllers\Admin\Coupon\V1\Models
  * @property int $company_id
  * @property int $id
+ * @property int|null $create_user_id
+ * @property int $create_customer_id 创建客户id
+ * @property int $bd_user_id 关联BD
+ * @property string $name 投放策略
+ * @property string $desc 描述
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch[] $batches
+ * @property-read \App\Http\Controllers\Admin\Company\V1\Models\Company $company
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Coupon\V1\Models\Policy newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Coupon\V1\Models\Policy newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model ordered()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Coupon\V1\Models\Policy query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model recent()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Coupon\V1\Models\Policy whereBdUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Coupon\V1\Models\Policy whereCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Coupon\V1\Models\Policy whereCreateCustomerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Coupon\V1\Models\Policy whereCreateUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Coupon\V1\Models\Policy whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Coupon\V1\Models\Policy whereDesc($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Coupon\V1\Models\Policy whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Coupon\V1\Models\Policy whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Coupon\V1\Models\Policy whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class Policy extends Model
 {
@@ -25,6 +50,11 @@ class Policy extends Model
         'desc',
         'company_id',
         'create_user_id',
+        'type',
+        'per_person_unlimit',
+        'per_person_times',
+        'per_person_per_day_unlimit',
+        'per_person_per_day_times',
         'bd_user_id',
     ];
 

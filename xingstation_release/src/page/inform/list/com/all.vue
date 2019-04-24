@@ -36,7 +36,7 @@
           prop="reply_content" 
           label="内容">
           <template slot-scope="scope" >
-            <p v-html="scope.row.data.reply_content"></p>
+            <p v-html="scope.row.data.reply_content"/>
           </template>
         </el-table-column>
         <el-table-column 

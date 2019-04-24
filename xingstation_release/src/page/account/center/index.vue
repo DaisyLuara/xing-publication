@@ -21,36 +21,36 @@
                 class="item-input"/>
             </el-form-item>
             <el-form-item
-                    label
-                    prop="main_type">
+              label
+              prop="main_type">
               <el-select
-                      v-model="filters.main_type"
-                      placeholder="请选择类别"
-                      filterable
-                      clearable
+                v-model="filters.main_type"
+                placeholder="请选择类别"
+                filterable
+                clearable
               >
                 <el-option
-                        v-for="item in mainTypeList"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
+                  v-for="item in mainTypeList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
                 />
               </el-select>
             </el-form-item>
             <el-form-item
-                    label
-                    prop="main_type">
+              label
+              prop="main_type">
               <el-select
-                      v-model="filters.type"
-                      placeholder="请选择类型"
-                      filterable
-                      clearable
+                v-model="filters.type"
+                placeholder="请选择类型"
+                filterable
+                clearable
               >
                 <el-option
-                        v-for="item in typeList"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
+                  v-for="item in typeList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
                 />
               </el-select>
             </el-form-item>
