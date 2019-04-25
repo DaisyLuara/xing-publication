@@ -1672,13 +1672,10 @@ export default {
           testerMediaIds.push(r.id);
         });
         this.tester_media_id = testerMediaIds.join(",");
-      } else {
-        this.$message({
-          type: "warning",
-          message: "测试文档必须上传"
-        });
-        return;
+      } else{
+        this.tester_media_id = null
       }
+     
 
       this.$refs[formName].validate(valid => {
         if (valid) {
