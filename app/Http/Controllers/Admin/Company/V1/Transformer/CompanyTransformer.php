@@ -32,7 +32,6 @@ class CompanyTransformer extends TransformerAbstract
         if ($company->user) {
             return $this->item($company->user, new UserTransformer());
         }
-        return null;
     }
 
     public function includeCustomers(Company $company)
@@ -40,7 +39,6 @@ class CompanyTransformer extends TransformerAbstract
         if ($company->customers->isNotEmpty()) {
             return $this->collection($company->customers, new CustomerTransformer());
         }
-        return null;
     }
 
     public function includeBdUser(Company $company)
@@ -48,7 +46,6 @@ class CompanyTransformer extends TransformerAbstract
         if ($company->bdUser) {
             return $this->item($company->bdUser, new UserTransformer());
         }
-        return null;
     }
 
     public function includeMedia(Company $company)
@@ -57,7 +54,6 @@ class CompanyTransformer extends TransformerAbstract
         if ($media) {
             return $this->item($company->media, new MediaTransformer());
         }
-        return null;
     }
 
     public function includeParent(Company $company)
@@ -65,7 +61,6 @@ class CompanyTransformer extends TransformerAbstract
         if ($company->parent) {
             return $this->item($company->parent, new CompanyTransformer());
         }
-        return null;
     }
 
 
