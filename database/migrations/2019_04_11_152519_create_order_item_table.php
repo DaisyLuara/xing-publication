@@ -25,6 +25,7 @@ class CreateOrderItemTable extends Migration
             $table->decimal('price', 10, 2);
             $table->unsignedInteger('rating')->nullable();
             $table->text('review')->nullable();
+            $table->integer('credit_price')->default(0);
             $table->timestamp('reviewed_at')->nullable();
         });
     }

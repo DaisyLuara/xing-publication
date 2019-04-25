@@ -20,6 +20,7 @@ class CreateOrderTable extends Migration
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
             $table->text('address');
             $table->decimal('total_amount', 10, 2);
+            $table->integer('total_credit_amount');
             $table->text('remark')->nullable();
             $table->dateTime('paid_at')->nullable();
             $table->string('payment_method')->nullable();
