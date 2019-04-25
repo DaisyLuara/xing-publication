@@ -92,6 +92,20 @@ return [
             'notify_url' => '',  //持久化处理回调地址
             'url' => 'http://cdn.xingstation.cn',  // 填写文件访问根url
         ],
+
+        'qiniu_yq' => [
+            'driver' => 'qiniu',
+            'domains' => [
+                'default' => 'image.xingstation.com', //你的七牛域名
+                'https' => '',         //你的HTTPS域名
+                'custom' => '',                //你的自定义域名
+            ],
+            'access_key' => '6kYGyUxCsoZV7aY2j57ynx1vCaBO5-KcKQ0JAuR0',  //AccessKey
+            'secret_key' => '8gcw54_KPGfxwXMLrXOcHTUrQhKEL6NPDFp5Pbug',  //SecretKey
+            'bucket' => 'publication',  //Bucket名字
+            'notify_url' => '',  //持久化处理回调地址
+            'url' => 'http://image.xingstation.com/',  // 填写文件访问根url
+        ],
     ],
 
 ];

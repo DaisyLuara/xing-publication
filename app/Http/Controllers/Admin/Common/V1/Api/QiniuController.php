@@ -15,7 +15,7 @@ class QiniuController extends Controller
 {
     public function oauth()
     {
-        $disk = \Storage::disk('qiniu');
+        $disk = \Storage::disk('qiniu_yq');
         $token = $disk->getDriver()->uploadToken();
         return $token;
     }
