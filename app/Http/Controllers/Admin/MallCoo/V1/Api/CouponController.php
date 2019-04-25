@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\MallCoo\V1\Api;
 
+use App\Http\Controllers\Admin\Common\V1\Models\FileUpload;
 use App\Http\Controllers\Admin\MallCoo\V1\Transformer\CouponPackTransformer;
 use App\Http\Controllers\Admin\MallCoo\V1\Request\CouponRequest;
 use App\Http\Controllers\Admin\WeChat\V1\Models\ThirdPartyUser;
@@ -117,7 +118,16 @@ class CouponController extends BaseController
     {
         $wxUserId = decrypt($request->get('sign'));
 
-        $userPolicy = UserPolicy::query()->where('wx_user_id', $wxUserId)
+        $query = UserPolicy::query();
+
+        if ($request->has('type') && $request->get('type') === 'share') {
+            $fileUpload = FileUpload::query()->findOrFail($request->qiniu_id);
+            $query->whereDate('created_at', Carbon::parse($fileUpload->date)->toDateString());
+        } else {
+            $query->where('qiniu_id', $request->get('qiniu_id'));
+        }
+
+        $userPolicy = $query->where('wx_user_id', $wxUserId)
             ->where('belong', $request->get('belong'))
             ->first();
 
