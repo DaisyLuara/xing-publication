@@ -940,6 +940,7 @@ export default {
         await this.getContractReceiptList();
         await this.getSearchUserList();
         await this.getAreaList();
+        await this.getSearchCompany()
         if (this.siteID) {
           await this.getMarketDetail();
         }
