@@ -45,7 +45,7 @@ class CouponController extends BaseController
         if (!$policy->per_person_unlimit) {
             $couponPackPerPersonGet = UserPolicy::query()->where('wx_user_id', $wxUserId)
                 ->where('belong', $request->get('belong'))->count();
-            abort_if($couponPackPerPersonGet >= $policy->per_person_times, 500, '领取礼包数量已达上限!');
+            abort_if($couponPackPerPersonGet >= $policy->per_person_times, 429, '领取礼包数量已达上限!');
         }
 
         //策略券礼包每人每天领取次数校验
@@ -53,7 +53,7 @@ class CouponController extends BaseController
             $couponPackPerPersonPerDayGet = UserPolicy::query()->where('wx_user_id', $wxUserId)
                 ->whereDate('created_at', Carbon::now()->toDateString())
                 ->where('belong', $request->get('belong'))->count();
-            abort_if($couponPackPerPersonPerDayGet >= $policy->per_person_per_day_times, 500, '今日领取礼包已达上限,请明天再来!');
+            abort_if($couponPackPerPersonPerDayGet >= $policy->per_person_per_day_times, 429, '今日领取礼包已达上限,请明天再来!');
         }
 
         //获取会员信息
