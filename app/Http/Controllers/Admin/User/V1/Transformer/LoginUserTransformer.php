@@ -1,21 +1,23 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: yangqiang
+ * Date: 2019/4/19
+ * Time: 下午5:04
+ */
 
 namespace App\Http\Controllers\Admin\User\V1\Transformer;
 
+
 use App\Models\User;
 use League\Fractal\TransformerAbstract;
+use App\Http\Controllers\Admin\Privilege\V1\Models\Permission;
 use App\Http\Controllers\Admin\Privilege\V1\Transformer\RoleTransformer;
 
-class UserTransformer extends TransformerAbstract
+class LoginUserTransformer extends TransformerAbstract
 {
-
     protected $availableIncludes = ['roles'];
 
-    /**
-     * @param User $user
-     * @return array
-     * @throws \Exception
-     */
     public function transform(User $user)
     {
         return [
@@ -32,11 +34,24 @@ class UserTransformer extends TransformerAbstract
             'created_at' => $user->created_at->toDateTimeString(),
             'updated_at' => $user->updated_at->toDateTimeString(),
             'pivot' => $user->pivot,
+            'permissions' => $this->getUserPermission($user)
         ];
     }
+
 
     public function includeRoles(User $user)
     {
         return $this->collection($user->roles, new RoleTransformer());
+    }
+
+
+    private function getUserPermission(User $user)
+    {
+        $permissions = $user->getAllPermissions();
+        $permId = [];
+        foreach ($permissions as $permission) {
+            $permId[] = $permission->id;
+        }
+        return Permission::query()->whereIn('id', $permId)->selectRaw('id,name,parent_id')->get()->toHierarchy();
     }
 }

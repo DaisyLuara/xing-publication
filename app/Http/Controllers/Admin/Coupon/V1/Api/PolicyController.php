@@ -58,7 +58,7 @@ class PolicyController extends Controller
 
     public function update(Policy $policy, PolicyRequest $request)
     {
-        $policy->update($request->all());
+        $policy->update($request->except(['company_id']));
         return $this->response->item($policy, new PolicyTransformer())
             ->setStatusCode(201);
     }
