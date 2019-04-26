@@ -17,7 +17,7 @@ class ImageUploadHandler
         }
         $extension = strtolower($format);
         $file_prefix = str_plural($request->type);
-        $disk = \Storage::disk('qiniu_yq');
+        $disk = \Storage::disk('qiniu');
 
         $filename = $file_prefix . '_' . time() . '_' . str_random(10) . '.' . $extension;
         $result = $disk->put($filename, fopen($file, 'r'));
