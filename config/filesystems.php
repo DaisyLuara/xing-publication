@@ -96,7 +96,7 @@ return [
         'qiniu_yq' => [
             'driver' => 'qiniu',
             'domains' => [
-                'default' => 'image.xingstation.com', //你的七牛域名
+                'default' => 'imagecdn.xingstation.com', //你的七牛域名
                 'https' => '',         //你的HTTPS域名
                 'custom' => '',                //你的自定义域名
             ],
@@ -104,7 +104,7 @@ return [
             'secret_key' => '8gcw54_KPGfxwXMLrXOcHTUrQhKEL6NPDFp5Pbug',  //SecretKey
             'bucket' => 'publication',  //Bucket名字
             'notify_url' => '',  //持久化处理回调地址
-            'url' => 'http://image.xingstation.com/',  // 填写文件访问根url
+            'url' => 'http://imagecdn.xingstation.com/',  // 填写文件访问根url
         ],
     ],
 
