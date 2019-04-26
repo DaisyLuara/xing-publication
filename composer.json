@@ -41,7 +41,8 @@
     "tymon/jwt-auth": "1.0.*",
     "wangju/ding-notice": "^1.0",
     "yansongda/laravel-pay": "^2.0",
-    "zgldh/qiniu-laravel-storage": "^0.9.2"
+    "zgldh/qiniu-laravel-storage": "^0.9.2",
+    "xingstation/exelook-api":"dev-master"
   },
   "require-dev": {
     "filp/whoops": "^2.0",
@@ -96,14 +97,16 @@
     "sort-packages": true,
     "optimize-autoloader": true
   },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/CaesarChan/telescope.git"
-    },
-    {
+  "repositories": {
+    "packagist": {
       "type": "composer",
       "url": "https://packagist.laravel-china.org"
+    },
+    "exelook-api": {
+      "type": "git",
+      "url": "https://git.dev.tencent.com/jingfree/exelook-api.git"
+    }
+  },
     },
     {"packagist.org": false}
 
