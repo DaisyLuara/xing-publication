@@ -1,0 +1,30 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: yangqiang
+ * Date: 2018/12/18
+ * Time: 下午5:19
+ */
+
+namespace App\Http\Controllers\Admin\Media\V1\Api;
+
+use App\Http\Controllers\Controller;
+use Qiniu\Auth;
+
+class QiniuController extends Controller
+{
+
+    public function oauth()
+    {
+        $disk = \Storage::disk('qiniu');
+        $token = $disk->getDriver()->uploadToken();
+        return $token;
+    }
+
+    public function getToken(){
+        $disk = \Storage::disk('qiniu_yq');
+        $token = $disk->getDriver()->uploadToken();
+        return $token;
+    }
+
+}

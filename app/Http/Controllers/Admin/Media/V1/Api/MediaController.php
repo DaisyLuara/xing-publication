@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Admin\Media\V1\Api;
 
+use App\Http\Controllers\Admin\Media\V1\Models\ActivityMedia;
 use App\Http\Controllers\Controller;
+use App\Jobs\MediaCheckJob;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Admin\Media\V1\Request\MediaRequest;
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
@@ -13,15 +15,15 @@ use App\Http\Controllers\Admin\Media\V1\Transformer\MediaTransformer;
 class MediaController extends Controller
 {
 
-    public function store(MediaRequest $request, Media $media, ImageUploadHandler $uploader)
+    public function store(MediaRequest $request, Media $media, ImageUploadHandler $uploader): \Dingo\Api\Http\Response
     {
         /** @var  $file \Illuminate\Http\UploadedFile */
-        $file = $request->file;
+        $file = $request->get('file');
 
         $width = 0;
         $height = 0;
 
-        if ($request->type == 'image') {
+        if ($request->type === 'image') {
             $image = Image::make($file);
             $height = $image->height();
             $width = $image->width();
@@ -40,21 +42,42 @@ class MediaController extends Controller
 
         $media->fill($data)->save();
 
-        return $this->response->item($media, new MediaTransformer());
+        return $this->response()->item($media, new MediaTransformer())->setStatusCode(201);
     }
 
-    public function create(Request $request, Media $media)
+    public function create(Request $request, Media $media): \Dingo\Api\Http\Response
     {
         $disk = \Storage::disk('qiniu');
         $domain = $disk->getDriver()->downloadUrl();
         $data = [
-            'name' => $request->name,
-            'url' => $domain . urlencode($request->key),
-            'size' => $request->size,
+            'name' => $request->get('name'),
+            'url' => $domain . urlencode($request->get('key')),
+            'size' => $request->get('size'),
             'height' => 0,
             'width' => 0,
         ];
         $media->fill($data)->save();
-        return $this->response->item($media, new MediaTransformer());
+        return $this->response()->item($media, new MediaTransformer())->setStatusCode(201);
     }
+
+    /**
+     * 活动media存储
+     * @param Request $request
+     * @param ActivityMedia $media
+     * @return \Dingo\Api\Http\Response
+     */
+    public function activityMediaCreate(Request $request, ActivityMedia $media): \Dingo\Api\Http\Response
+    {
+        $disk = \Storage::disk('qiniu_yq');
+        $domain = $disk->getDriver()->downloadUrl();
+        $data = [
+            'name' => $request->get('name'),
+            'url' => $domain . urlencode($request->get('key')),
+            'size' => $request->get('size'),
+        ];
+        $media->fill($data)->save();
+        MediaCheckJob::dispatch($media)->onQueue('data-clean');
+        return $this->response()->item($media, new MediaTransformer())->setStatusCode(201);
+    }
+
 }
