@@ -120,9 +120,10 @@ $api->version('v1', [
             $api->get('export', 'ExportController@store');//导出
 
             $api->get('qiniu_oauth', 'QiniuController@oauth');
+            $api->get('qiniu_sign', 'QiniuController@sign');
         });
 
-        $api->get('qiniu_callback','QiniuController@callback');
+        $api->get('qiniu_callback', 'QiniuController@callback');
         $api->get('website/fcpe', 'WebsiteController@getFCpe');
         $api->post('website/visitor', 'WebsiteController@storeVisitor');
 

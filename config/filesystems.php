@@ -103,7 +103,7 @@ return [
             'access_key' => '6kYGyUxCsoZV7aY2j57ynx1vCaBO5-KcKQ0JAuR0',  //AccessKey
             'secret_key' => '8gcw54_KPGfxwXMLrXOcHTUrQhKEL6NPDFp5Pbug',  //SecretKey
             'bucket' => 'publication',  //Bucket名字
-            'notify_url' => '',  //持久化处理回调地址
+            'notify_url' => 'http://yq.xingstation.net/api/qiniu_callback',  //持久化处理回调地址
             'url' => 'http://imagecdn.xingstation.com/',  // 填写文件访问根url
         ],
     ],
