@@ -3,16 +3,15 @@
 namespace App\Jobs;
 
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
+use App\Models\User;
 use App\Notifications\CheckReceipt;
-
 use Carbon\Carbon;
+use DB;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use DB;
-use App\Models\User;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class ContractReceiveDatesJob implements ShouldQueue
 {
@@ -33,17 +32,17 @@ class ContractReceiveDatesJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $now = Carbon::now()->toDateString();
         $data = DB::table('contract_receive_dates')
             ->whereRaw(" '$now' between date_add(receive_date,interval -3 day) and date_add(receive_date,interval 5 day) and receive_status = 0")
-            ->selectRaw("distinct contract_id")
+            ->selectRaw('distinct contract_id')
             ->get();
         $legal = User::find(getProcessStaffId('legal-affairs', 'contract'));
         $legalMa = User::find(getProcessStaffId('legal-affairs-manager', 'contract'));
         foreach ($data as $item) {
-            $contract = Contract::find($item->contract_id);
+            $contract = Contract::query()->where('status', 3)->where('id', $item->contract_id)->first();
             if (!$contract)
                 continue;
             $contract->applicantUser->notify(new CheckReceipt($contract));
