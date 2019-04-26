@@ -122,6 +122,7 @@ $api->version('v1', [
             $api->get('qiniu_oauth', 'QiniuController@oauth');
         });
 
+        $api->get('qiniu_callback','QiniuController@callback');
         $api->get('website/fcpe', 'WebsiteController@getFCpe');
         $api->post('website/visitor', 'WebsiteController@storeVisitor');
 

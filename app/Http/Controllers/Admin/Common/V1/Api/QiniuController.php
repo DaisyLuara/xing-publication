@@ -9,6 +9,8 @@
 namespace App\Http\Controllers\Admin\Common\V1\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Log;
 
 class QiniuController extends Controller
 {
@@ -17,5 +19,10 @@ class QiniuController extends Controller
         $disk = \Storage::disk('qiniu');
         $token = $disk->getDriver()->uploadToken();
         return $token;
+    }
+
+    public function callback(Request $request)
+    {
+        Log::info($request->all());
     }
 }
