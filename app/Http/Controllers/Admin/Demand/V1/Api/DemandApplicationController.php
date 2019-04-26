@@ -157,6 +157,7 @@ class DemandApplicationController extends Controller
             'expect_online_time' => Carbon::parse($params['expect_online_time'])->timezone('PRC')->toDateString(),
             'expect_receiver_ids' => implode(',', $params['expect_receiver_ids']),
             'big_screen_demand' => $params['big_screen_demand'],
+            'small_screen_demand' => $params['small_screen_demand'],
             'h5_demand' => $params['h5_demand'],
             'other_demand' => $params['other_demand'],
             'applicant_remark' => $params['applicant_remark']
