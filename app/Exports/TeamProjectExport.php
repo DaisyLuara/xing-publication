@@ -80,11 +80,11 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
             ->selectRaw("date_format(fcl.date, '%Y-%m-%d') as date,apl.name as name,apl.versionname,count(*) as days,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(looknum) as looknum,sum(playernum7)as playernum7,sum(playernum15) as playernum15 ,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum,sum(omo_scannum) as omo_scannum,sum(phonenum) as phonenum,sum(oanum) as oanum,sum(phonetimes) as phonetimes,sum(oatimes) as oatimes,sum(coupontimes) as coupontimes,sum(verifytimes) as verifytimes");
 
         $faceCount2 = DB::connection('ar')->table(DB::raw("({$faceCount1->toSql()}) a,(select @gn := 0)  b"))
-            ->selectRaw("  @gn := case when (@date=date and @name = name) then @gn + 1 else 1 end gn,@date:=date date,@name := name name,versionname,days,playtimes7,playtimes15,playtimes21,looknum,playernum7,playernum15,playernum21,phonenum,oanum,phonetimes,oatimes,omo_outnum,omo_scannum,coupontimes,verifytimes");
+            ->selectRaw('  @gn := case when (@date=date and @name = name) then @gn + 1 else 1 end gn,@date:=date date,@name := name name,versionname,days,playtimes7,playtimes15,playtimes21,looknum,playernum7,playernum15,playernum21,phonenum,oanum,phonetimes,oatimes,omo_outnum,omo_scannum,coupontimes,verifytimes');
 
         $faceCount = DB::connection('ar')->table(DB::raw("({$faceCount2->toSql()}) c"))
-            ->selectRaw("name,versionname,sum(days) as pushnum,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum15) as playernum15,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum,sum(omo_scannum) as omo_scannum,sum(phonenum) as phonenum,sum(oanum) as oanum,sum(phonetimes) as phonetimes,sum(oatimes) as oatimes,sum(coupontimes) as coupontimes,sum(verifytimes) as verifytimes")
-            ->whereRaw("gn<=100")
+            ->selectRaw('name,versionname,sum(days) as pushnum,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21,sum(looknum) as looknum,sum(playernum7) as playernum7,sum(playernum15) as playernum15,sum(playernum21) as playernum21,sum(omo_outnum) as omo_outnum,sum(omo_scannum) as omo_scannum,sum(phonenum) as phonenum,sum(oanum) as oanum,sum(phonetimes) as phonetimes,sum(oatimes) as oatimes,sum(coupontimes) as coupontimes,sum(verifytimes) as verifytimes')
+            ->whereRaw('gn<=100')
             ->groupBy('name', 'versionname')
             ->get();
 
@@ -127,37 +127,37 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
 
         $case = "";
         foreach ($typeMapping as $key => $value) {
-            $case = $case . ",max(case type when '$key' then username else null end) '$key'";
+            $case .= ",max(case type when '$key' then username else null end) '$key'";
         }
 
         $project = DB::table(DB::raw("({$sql->toSql()}) as a"))
-            ->selectRaw("applicant,
+            ->selectRaw('applicant,
             project_type,project_name,belong,status,online_date,launch_date,
             copyright_attribute,copyright_project,
             project_attribute,link_attribute,h5_attribute,
             interaction_attribute,hidol_attribute,
             individual_attribute,contract_number,amount,
-            art_innovate,dynamic_innovate,interact_innovate,remark,test_remark" . $case)
-            ->groupBy("project_name", "belong")
+            art_innovate,dynamic_innovate,interact_innovate,remark,test_remark' . $case)
+            ->groupBy('project_name', 'belong')
             ->get()->map(function ($item) use ($typeMapping, $statusMapping, $projectAttributeMapping, $interactionAttributeMapping, $individualAttributeMapping, $faceCountData,$h5AttributeMapping) {
                 $interaction_attribute_text = Collect(explode(',', $item->interaction_attribute))
                     ->map(function ($v) use ($interactionAttributeMapping) {
-                        return $interactionAttributeMapping[$v] ?? "--";
+                        return $interactionAttributeMapping[$v] ?? '--';
                     })->toArray();
                 $result = [
                     'applicant' => $item->applicant,
-                    'project_type' => $item->project_type == 1 ? '提前' : '正常',
+                    'project_type' => $item->project_type === 1 ? '提前' : '正常',
                     'project_name' => $item->project_name,
                     'status' => $statusMapping[$item->status],
                     'online_date' => $item->online_date,
                     'launch_date' => $item->launch_date,
-                    'copyright_attribute' => $item->copyright_attribute == 1 ? '否' : '是',
+                    'copyright_attribute' => $item->copyright_attribute === 1 ? '否' : '是',
                     'copyright_project' => $item->copyright_project,
                     'project_attribute' => $projectAttributeMapping[$item->project_attribute] ?? $item->project_attribute,
-                    'link_attribute' => $item->link_attribute == 1 ? '是' : '否',
+                    'link_attribute' => $item->link_attribute === 1 ? '是' : '否',
                     'h5_attribute' => $h5AttributeMapping[$item->h5_attribute] ?? $item->h5_attribute,
                     'interaction_attribute' => implode(',', $interaction_attribute_text),
-                    'hidol_attribute' => $item->hidol_attribute == 1 ? '是' : '否',
+                    'hidol_attribute' => $item->hidol_attribute === 1 ? '是' : '否',
                     'individual_attribute' => $individualAttributeMapping[$item->individual_attribute] ?? $item->individual_attribute,
                     'contract_number' => "\t" . $item->contract_number . "\t",
                     'contract_amount' => $item->amount,
@@ -178,17 +178,17 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
                     $result = array_merge($result,
                         [
                             'playtimes7' => $face_item->playtimes7,
-                            'playtimes7_average' => round($face_item->playtimes7 / $face_item->pushnum, 0),
+                            'playtimes7_average' => round($face_item->playtimes7 / $face_item->pushnum),
                             'playtimes15' => $face_item->playtimes15,
-                            'playtimes15_average' => round($face_item->playtimes15 / $face_item->pushnum, 0),
+                            'playtimes15_average' => round($face_item->playtimes15 / $face_item->pushnum),
                             'playtimes21' => $face_item->playtimes21,
-                            'playtimes21_average' => round($face_item->playtimes21 / $face_item->pushnum, 0),
-                            'playernum7' => $face_item->playernum7 ? $face_item->playernum7 : 0,
-                            'playernum7_average' => round(($face_item->playernum7 / $face_item->pushnum), 0),
-                            'playernum15' => $face_item->playernum15 ? $face_item->playernum15 : 0,
-                            'playernum15_average' => round(($face_item->playernum15 / $face_item->pushnum), 0),
-                            'playernum21' => $face_item->playernum21 ? $face_item->playernum21 : 0,
-                            'playernum21_average' => round(($face_item->playernum21 / $face_item->pushnum), 0),
+                            'playtimes21_average' => round($face_item->playtimes21 / $face_item->pushnum),
+                            'playernum7' => $face_item->playernum7 ?: 0,
+                            'playernum7_average' => round($face_item->playernum7 / $face_item->pushnum),
+                            'playernum15' => $face_item->playernum15 ?: 0,
+                            'playernum15_average' => round($face_item->playernum15 / $face_item->pushnum),
+                            'playernum21' => $face_item->playernum21 ?: 0,
+                            'playernum21_average' => round($face_item->playernum21 / $face_item->pushnum),
                             'omo_outnum' => $face_item->omo_outnum,
                             'coupontimes_1' => $face_item->coupontimes,
                             'oanum' => $face_item->oanum,
@@ -245,13 +245,13 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
             });
 
 
-        $header1 = ["申请人", "节目类型", "节目名称", "状态", "上线时间", "投放时间", "原创属性", "原创节目名称", "节目属性", "联动属性",
-            "H5属性", "交互属性", "Hidol属性", "定制属性", "合同编号", "合同金额",
-            "艺术风格创新点", "动效体验创新点", "交互技术创新点"];
+        $header1 = ['申请人', '节目类型', '节目名称', '状态', '上线时间', '投放时间', '原创属性', '原创节目名称', '节目属性', '联动属性',
+            'H5属性', '交互属性', 'Hidol属性', '定制属性', '合同编号', '合同金额',
+            '艺术风格创新点', '动效体验创新点', '交互技术创新点'];
         foreach ($typeMapping as $item) {
             $header1[] = $item;
         }
-        $header1 = array_merge($header1, ["测试备注", "节目备注"]);
+        $header1 = array_merge($header1, ['测试备注', '节目备注']);
         $header2 = [];
         foreach ($header1 as $header) {
             $header2[] = '';
@@ -284,7 +284,6 @@ class TeamProjectExport extends AbstractExport implements ShouldAutoSize
                 $cellArray[] = excelChange($this->header_first_count + 8) . '1:' . excelChange($this->header_first_count + 9) . '1';
                 $cellArray[] = excelChange($this->header_first_count + 10) . '1:' . excelChange($this->header_first_count + 11) . '1';
                 $cellArray[] = excelChange($this->header_first_count + 12) . '1:' . excelChange($this->header_first_count + 15) . '1';
-                $cellArray[] = excelChange($this->header_first_count + 16) . '1:' . excelChange($this->header_first_count + 19) . '1';
                 $cellArray[] = excelChange($this->header_first_count + 16) . '1:' . excelChange($this->header_first_count + 19) . '1';
                 $cellArray[] = excelChange(count($this->header) - 1) . '1:' . excelChange(count($this->header) - 1) . '2';
 
