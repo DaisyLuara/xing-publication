@@ -432,13 +432,15 @@ class CouponController extends Controller
             }
 
             //当天库存校验
-            if (array_key_exists($couponBatchID, $couponsDayGetArray) && $couponBatchPolicy->day_max_get <= $couponsDayGetArray[$couponBatchID]) {
+            if (!$couponBatchPolicy->dmg_status && array_key_exists($couponBatchID, $couponsDayGetArray)
+                && $couponBatchPolicy->day_max_get <= $couponsDayGetArray[$couponBatchID]) {
                 unset($couponBatchPolicies[$key]);
                 continue;
             }
 
             //每人每天库存校验
-            if (array_key_exists($couponBatchID, $couponsPersonGetArray) && $couponBatchPolicy->people_max_get <= $couponsPersonGetArray[$couponBatchID]) {
+            if (!$couponBatchPolicy->pmg_status && array_key_exists($couponBatchID, $couponsPersonGetArray)
+                && $couponBatchPolicy->people_max_get <= $couponsPersonGetArray[$couponBatchID]) {
                 unset($couponBatchPolicies[$key]);
                 continue;
             }
