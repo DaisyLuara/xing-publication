@@ -12,6 +12,7 @@ $api->version('v1', [
             //publication 普通文件上传
             $api->post('media', 'MediaController@store');
             //publication 大文件上传
+            $api->get('qiniu_oauth', 'QiniuController@oauth');
             $api->post('media_upload', 'MediaController@create');
 
             $api->get('media_infos', ['middleware' => ['permission:team.operation.read'], 'uses' => 'MediaInfoController@index']);
@@ -20,8 +21,6 @@ $api->version('v1', [
             $api->patch('media_infos/{media_info}', ['middleware' => ['permission:team.operation.update'], 'uses' => 'MediaInfoController@update']);
             $api->delete('media_infos', ['middleware' => ['permission:team.operation.delete'], 'uses' => 'MediaInfoController@destroy']);
 
-            //publication 获取七牛上传token
-            $api->get('qiniu_oauth', 'QiniuController@oauth');
         });
 
         $api->group(['middleware' => 'api_sign'], static function ($api) {

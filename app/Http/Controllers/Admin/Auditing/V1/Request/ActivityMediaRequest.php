@@ -15,7 +15,7 @@ class ActivityMediaRequest extends Request
     public function rules(): ?array
     {
         $method = $this->method();
-        if ($method) {
+        if ($method === 'POST') {
             return [
                 'status' => 'required|in:0,1'
             ];

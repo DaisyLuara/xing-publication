@@ -19,7 +19,7 @@ use App\Models\Model;
  * @property string $name
  * @property int $size
  * @property string $url
- * @property int $status 0:违禁，1：正常，2：疑似
+ * @property int $status 0:未通过，1：通过，2：待审核
  * @property int|null $audit_user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
