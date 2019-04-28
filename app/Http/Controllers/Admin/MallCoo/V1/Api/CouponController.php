@@ -124,7 +124,9 @@ class CouponController extends BaseController
             $fileUpload = FileUpload::query()->findOrFail($request->qiniu_id);
             $query->whereDate('created_at', Carbon::parse($fileUpload->date)->toDateString());
         } else {
-            $query->where('qiniu_id', $request->get('qiniu_id'));
+//            $query->whereDate('created_at', Carbon::parse($fileUpload->date)->toDateString());
+//            $query->where('qiniu_id', $request->get('qiniu_id'));
+            $query->whereDate('created_at', Carbon::now()->toDateString());
         }
 
         $userPolicy = $query->where('wx_user_id', $wxUserId)
