@@ -12,7 +12,7 @@ class DemandApplicationRequest extends Request
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
 
         switch ($this->getMethod()) {
@@ -20,13 +20,14 @@ class DemandApplicationRequest extends Request
                 return [
                     'title' => 'required|string|unique:demand_applications',
                     'launch_point_remark' => 'required|string',
-                    'has_contract' => 'required|boolean',
+                    'has_contract' => ['required', 'integer', Rule::in([0, 1, 2])],
                     'contract_ids' => 'required_if:has_contract,1|nullable|array',
                     'project_num' => 'required|integer',
                     'similar_project_name' => 'nullable|string',
                     'expect_online_time' => 'required|date',
                     'expect_receiver_ids' => 'nullable|array',
                     'big_screen_demand' => 'required|string',
+                    'small_screen_demand' => 'required|string',
                     'h5_demand' => 'required|string',
                     'other_demand' => 'required|string',
                     'applicant_remark' => 'nullable|string',
@@ -35,17 +36,18 @@ class DemandApplicationRequest extends Request
 
             case 'PATCH':
                 return [
-                    'title' => ["required", "string",
-                        Rule::unique('demand_applications')->ignore($this->route("demand_application")->id),
+                    'title' => ['required', 'string',
+                        Rule::unique('demand_applications')->ignore($this->route('demand_application')->id),
                     ],
                     'launch_point_remark' => 'required|string',
-                    'has_contract' => 'required|boolean',
+                    'has_contract' => ['required', 'integer', Rule::in([0, 1, 2])],
                     'contract_ids' => 'required_if:has_contract,1|nullable|array',
                     'project_num' => 'required|integer',
                     'similar_project_name' => 'nullable|string',
                     'expect_online_time' => 'required|date',
                     'expect_receiver_ids' => 'nullable|array',
                     'big_screen_demand' => 'required|string',
+                    'small_screen_demand' => 'required|string',
                     'h5_demand' => 'required|string',
                     'other_demand' => 'required|string',
                     'applicant_remark' => 'nullable|string'
@@ -57,7 +59,7 @@ class DemandApplicationRequest extends Request
         }
     }
 
-    public function attributes()
+    public function attributes(): array
     {
         return [
             'title' => '项目标的',
@@ -70,6 +72,7 @@ class DemandApplicationRequest extends Request
             'expect_online_time' => '期望上线时间',
             'expect_receiver_ids' => '期望接单人',
             'big_screen_demand' => '大屏节目需求',
+            'small_screen_demand' => '小屏定制内容',
             'h5_demand' => 'H5节目需求',
             'other_demand' => '其他定制内容',
             'applicant_remark' => '申请备注',

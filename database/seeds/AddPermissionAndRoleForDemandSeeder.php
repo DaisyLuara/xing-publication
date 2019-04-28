@@ -11,16 +11,16 @@ class AddPermissionAndRoleForDemandSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
         //需求
         $demand = Permission::query()->where('name','=','demand')->first()
             ?? Permission::create(['name' => 'demand', 'display_name' => '需求']);
         $application =Permission::query()->where('name','=','demand.application')->first()
-            ?? Permission::create(['name' => "demand.application", 'display_name' => "需求申请", 'parent_id' => $demand->id]);
+            ?? Permission::create(['name' => 'demand.application', 'display_name' => '需求申请', 'parent_id' => $demand->id]);
         $modify = Permission::query()->where('name','=','demand.modify')->first()
-            ?? Permission::create(['name' => "demand.modify", 'display_name' => "需求修改", 'parent_id' => $demand->id]);
+            ?? Permission::create(['name' => 'demand.modify', 'display_name' => '需求修改', 'parent_id' => $demand->id]);
 
         $data = [
             ['name' => 'demand.application.read', 'display_name' => '查看', 'parent_id' => $application->id],
@@ -47,9 +47,9 @@ class AddPermissionAndRoleForDemandSeeder extends Seeder
 
         //查看权限
         $readPermissionData = [
-            "demand",
-            "demand.application",
-            "demand.modify",
+            'demand',
+            'demand.application',
+            'demand.modify',
             'demand.application.read',
             'demand.modify.read',
         ];
