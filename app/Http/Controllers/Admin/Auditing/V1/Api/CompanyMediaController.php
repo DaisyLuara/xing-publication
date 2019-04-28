@@ -6,11 +6,11 @@
  * Time: 上午11:06
  */
 
-namespace App\Http\Controllers\Admin\Company\V1\Api;
+namespace App\Http\Controllers\Admin\Auditing\V1\Api;
 
 
+use App\Http\Controllers\Admin\Auditing\V1\Transformer\CompanyMediaTransformer;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
-use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyMediaTransformer;
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -37,10 +37,8 @@ class CompanyMediaController extends Controller
     {
         /** @var User $user */
         $user = $this->user();
-
         /** @var Company $company */
         $company = $media->company()->first();
-
         $media->company()->updateExistingPivot($company->id, ['status' => $request->get('status'), 'audit_user_id' => $user->id]);
         return $this->response()->noContent()->setStatusCode(200);
     }

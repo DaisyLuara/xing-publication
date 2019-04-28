@@ -36,10 +36,6 @@ $api->version('v1', [
             $api->post('company_role', ['middleware' => ['permission:company.role.create'], 'uses' => 'CompanyRoleController@store']);
             $api->patch('company_role/{role}', ['middleware' => ['permission:company.role.update'], 'uses' => 'CompanyRoleController@update']);
             $api->delete('company_role/{role}', ['middleware' => ['permission:company.role.delete'], 'uses' => 'CompanyRoleController@destroy']);
-
-            //公司资源审核
-            $api->get('company_media', ['middleware' => [], 'uses' => 'CompanyMediaController@index']);
-            $api->patch('company_media/audit/{media}',['middleware'=>[],'uses'=>'CompanyMediaController@audit']);
         });
     });
 

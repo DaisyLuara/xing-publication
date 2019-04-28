@@ -14,7 +14,7 @@ class UpdateCompanyMediaTable extends Migration
     public function up(): void
     {
         Schema::table('company_media', static function (Blueprint $table) {
-            $table->smallInteger('status')->default(0)->comment('审核状态:0:待审核,1:通过,2:未通过');
+            $table->smallInteger('status')->default(2)->comment('0:未通过,1:通过,2:待审核');
             $table->integer('audit_user_id')->nullable()->comment('审核人');
         });
     }

@@ -25,9 +25,9 @@ $api->version('v1', [
         });
 
         $api->group(['middleware' => 'api_sign'], static function ($api) {
+            //活动文件上传
             $api->get('qiniu_token','QiniuController@getToken');
-            //活动文件上传 需要鉴定
-            $api->post('activity_media', 'MediaController@MediaTransformer');
+            $api->post('activity_media', 'MediaController@activityMediaCreate');
         });
 
     });

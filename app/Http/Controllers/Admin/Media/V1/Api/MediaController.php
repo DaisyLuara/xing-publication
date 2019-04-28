@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Media\V1\Api;
 
 use App\Http\Controllers\Admin\Media\V1\Models\ActivityMedia;
+use App\Http\Controllers\Admin\Media\V1\Transformer\ActivityMediaTransformer;
 use App\Http\Controllers\Controller;
 use App\Jobs\MediaCheckJob;
 use Illuminate\Http\Request;
@@ -76,8 +77,9 @@ class MediaController extends Controller
             'size' => $request->get('size'),
         ];
         $media->fill($data)->save();
-        MediaCheckJob::dispatch($media)->onQueue('data-clean');
-        return $this->response()->item($media, new MediaTransformer())->setStatusCode(201);
+        //七牛鉴定
+//        MediaCheckJob::dispatch($media)->onQueue('data-clean');
+        return $this->response()->noContent()->setStatusCode(201);
     }
 
 }

@@ -6,7 +6,7 @@
  * Time: 上午11:25
  */
 
-namespace App\Http\Controllers\Admin\Company\V1\Transformer;
+namespace App\Http\Controllers\Admin\Auditing\V1\Transformer;
 
 
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
