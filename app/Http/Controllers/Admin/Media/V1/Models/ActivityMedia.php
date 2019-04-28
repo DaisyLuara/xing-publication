@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Admin\Media\V1\Models;
 
 
 use App\Models\Model;
+use App\Models\User;
 
 
 /**
@@ -46,4 +47,9 @@ class ActivityMedia extends Model
         'url',
         'status',
     ];
+
+    public function auditUser(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'audit_user_id', 'id');
+    }
 }

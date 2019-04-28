@@ -21,7 +21,10 @@ class ActivityMediaTransformer extends TransformerAbstract
             'name' => $media->name,
             'size' => $media->size,
             'url' => $media->url,
-            'status' => $media->status
+            'status' => $media->status,
+            'audit_user' => $media->audit_user_id ? $media->auditUser->name : null,
+            'created_at' => $media->created_at->toDateTimeString(),
+            'updated_at' => $media->updated_at->toDateTimeString(),
         ];
     }
 }

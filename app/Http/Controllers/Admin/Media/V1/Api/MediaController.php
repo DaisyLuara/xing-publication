@@ -61,12 +61,12 @@ class MediaController extends Controller
     }
 
     /**
-     * 活动media存储
+     * 活动文件存储
      * @param Request $request
      * @param ActivityMedia $media
-     * @return \Dingo\Api\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function activityMediaCreate(Request $request, ActivityMedia $media): \Dingo\Api\Http\Response
+    public function activityMediaCreate(Request $request, ActivityMedia $media): \Illuminate\Http\JsonResponse
     {
         $disk = \Storage::disk('qiniu_yq');
         $domain = $disk->getDriver()->downloadUrl();
@@ -78,7 +78,7 @@ class MediaController extends Controller
         $media->fill($data)->save();
         //七牛鉴定
 //        MediaCheckJob::dispatch($media)->onQueue('data-clean');
-        return $this->response()->item($media,new ActivityMediaTransformer())->setStatusCode(201);
+        return response()->json(['url' => $media->url])->setStatusCode(201);
     }
 
 }
