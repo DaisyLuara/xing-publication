@@ -45,6 +45,7 @@ class CouponController extends Controller
 
         $project = Project::query()->where('versionname', '=', $request->get('belong'))->firstOrFail();
         $policy = Policy::query()->findOrFail($project->policy_id);
+
         //策略每人抽奖次数校验
         if (!$policy->per_person_unlimit) {
             $couponPerPersonGet = Coupon::query()->where('member_uid', $memberUID)
@@ -371,15 +372,6 @@ class CouponController extends Controller
     {
         $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
         $project = Project::query()->where('versionname', '=', $request->belong)->firstOrFail();
-
-        //每天限领数量
-        $now = Carbon::now()->toDateString();
-        $prizeCoupons = Coupon::query()->where('belong', $request->belong)
-            ->where('member_uid', $member->uid)
-            ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
-            ->get();
-
-        abort_if($prizeCoupons->count() >= 25, 500, '抽奖机会已用完,请明天再来');
 
         $query = DB::table('coupon_batch_policy');
         if ($request->has('age')) {
