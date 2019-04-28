@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Admin\Auditing\V1\Api;
 
 
+use App\Http\Controllers\Admin\Auditing\V1\Request\ActivityMediaRequest;
 use App\Http\Controllers\Admin\Media\V1\Models\ActivityMedia;
 use App\Http\Controllers\Admin\Media\V1\Transformer\ActivityMediaTransformer;
 use App\Http\Controllers\Controller;
@@ -27,7 +28,7 @@ class ActivityMediaController extends Controller
         return $this->response()->paginator($media, new ActivityMediaTransformer())->setStatusCode(200);
     }
 
-    public function audit(Request $request, ActivityMedia $media)
+    public function audit(ActivityMediaRequest $request, ActivityMedia $media)
     {
         /** @var User $user */
         $user = $this->user();

@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Admin\Auditing\V1\Api;
 
 
+use App\Http\Controllers\Admin\Auditing\V1\Request\CompanyMediaRequest;
 use App\Http\Controllers\Admin\Auditing\V1\Transformer\CompanyMediaTransformer;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
@@ -33,7 +34,7 @@ class CompanyMediaController extends Controller
         return $this->response()->paginator($media, new CompanyMediaTransformer())->setStatusCode(200);
     }
 
-    public function audit(Request $request, Media $media)
+    public function audit(CompanyMediaRequest $request, Media $media)
     {
         /** @var User $user */
         $user = $this->user();
