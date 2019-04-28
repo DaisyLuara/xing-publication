@@ -78,7 +78,7 @@ class MediaController extends Controller
         $media->fill($data)->save();
         //七牛鉴定
 //        MediaCheckJob::dispatch($media)->onQueue('data-clean');
-        return response()->json(['url' => $media->url])->setStatusCode(201);
+        return response()->json(['id' => $media->id, 'url' => $media->url])->setStatusCode(201);
     }
 
 }
