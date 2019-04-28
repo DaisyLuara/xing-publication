@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers\Admin\Media\V1\Api;
 
-use App\Http\Controllers\Admin\Media\V1\Models\ActivityMedia;
-use App\Http\Controllers\Admin\Media\V1\Transformer\ActivityMediaTransformer;
-use App\Http\Controllers\Controller;
-use App\Jobs\MediaCheckJob;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Admin\Media\V1\Request\MediaRequest;
-use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Handlers\ImageUploadHandler;
-use Image;
+use App\Http\Controllers\Admin\Media\V1\Models\ActivityMedia;
+use App\Http\Controllers\Admin\Media\V1\Models\Media;
+use App\Http\Controllers\Admin\Media\V1\Request\MediaRequest;
 use App\Http\Controllers\Admin\Media\V1\Transformer\MediaTransformer;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Image;
 
 class MediaController extends Controller
 {
