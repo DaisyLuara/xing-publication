@@ -6,6 +6,7 @@ use App\Handlers\ImageUploadHandler;
 use App\Http\Controllers\Admin\Media\V1\Models\ActivityMedia;
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Http\Controllers\Admin\Media\V1\Request\MediaRequest;
+use App\Http\Controllers\Admin\Media\V1\Transformer\ActivityMediaTransformer;
 use App\Http\Controllers\Admin\Media\V1\Transformer\MediaTransformer;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -77,7 +78,7 @@ class MediaController extends Controller
         $media->fill($data)->save();
         //七牛鉴定
 //        MediaCheckJob::dispatch($media)->onQueue('data-clean');
-        return $this->response()->noContent()->setStatusCode(201);
+        return $this->response()->item($media,new ActivityMediaTransformer())->setStatusCode(201);
     }
 
 }
