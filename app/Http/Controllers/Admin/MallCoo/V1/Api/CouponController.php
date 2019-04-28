@@ -119,17 +119,11 @@ class CouponController extends BaseController
         $wxUserId = decrypt($request->get('sign'));
 
         $query = UserPolicy::query();
-
-        if ($request->has('type') && $request->get('type') === 'share') {
-            $fileUpload = FileUpload::query()->findOrFail($request->qiniu_id);
-            $query->whereDate('created_at', Carbon::parse($fileUpload->date)->toDateString());
-        } else {
-//            $query->whereDate('created_at', Carbon::parse($fileUpload->date)->toDateString());
-//            $query->where('qiniu_id', $request->get('qiniu_id'));
-            $query->whereDate('created_at', Carbon::now()->toDateString());
-        }
+        /** @var FileUpload $fileUpload */
+        $fileUpload = FileUpload::query()->findOrFail($request->qiniu_id);
 
         $userPolicy = $query->where('wx_user_id', $wxUserId)
+            ->whereDate('created_at', Carbon::parse($fileUpload->date)->toDateString())
             ->where('belong', $request->get('belong'))
             ->first();
 
