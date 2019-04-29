@@ -3,9 +3,9 @@
 use Monolog\Handler\StreamHandler;
 
 if (get_current_user() === 'root') {
-    $path = storage_path('logs/root/') . \Carbon\Carbon::now()->toDateString() . '.log';
+    $path = storage_path('logs/schedule/schedule.log');
 } else {
-    $path = storage_path('logs/laravel/') . \Carbon\Carbon::now()->toDateString() . '.log';
+    $path = storage_path('logs/laravel/laravel.log');
 }
 
 return [
@@ -41,7 +41,7 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single'],
+            'channels' => ['daily'],
         ],
 
         'single' => [
@@ -52,9 +52,9 @@ return [
 
         'daily' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/laravel.log'),
+            'path' => $path,
             'level' => 'debug',
-            'days' => 7,
+            'days' => 1,
         ],
 
         'slack' => [
