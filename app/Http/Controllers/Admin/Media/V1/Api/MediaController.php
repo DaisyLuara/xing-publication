@@ -6,7 +6,6 @@ use App\Handlers\ImageUploadHandler;
 use App\Http\Controllers\Admin\Media\V1\Models\ActivityMedia;
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Http\Controllers\Admin\Media\V1\Request\MediaRequest;
-use App\Http\Controllers\Admin\Media\V1\Transformer\ActivityMediaTransformer;
 use App\Http\Controllers\Admin\Media\V1\Transformer\MediaTransformer;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -74,6 +73,7 @@ class MediaController extends Controller
             'name' => $request->get('name'),
             'url' => $domain . urlencode($request->get('key')),
             'size' => $request->get('size'),
+            'status' => 2
         ];
         $media->fill($data)->save();
         //七牛鉴定
