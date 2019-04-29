@@ -45,6 +45,7 @@ class CouponController extends Controller
 
         $project = Project::query()->where('versionname', '=', $request->get('belong'))->firstOrFail();
         $policy = Policy::query()->findOrFail($project->policy_id);
+
         //策略每人抽奖次数校验
         if (!$policy->per_person_unlimit) {
             $couponPerPersonGet = Coupon::query()->where('member_uid', $memberUID)
@@ -372,15 +373,6 @@ class CouponController extends Controller
         $member = ArMemberSession::query()->where('z', $request->z)->firstOrFail();
         $project = Project::query()->where('versionname', '=', $request->belong)->firstOrFail();
 
-        //每天限领数量
-        $now = Carbon::now()->toDateString();
-        $prizeCoupons = Coupon::query()->where('belong', $request->belong)
-            ->where('member_uid', $member->uid)
-            ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
-            ->get();
-
-        abort_if($prizeCoupons->count() >= 25, 500, '抽奖机会已用完,请明天再来');
-
         $query = DB::table('coupon_batch_policy');
         if ($request->has('age')) {
             $query->where('max_age', '>=', $request->age)->where('min_age', '<=', $request->age);
@@ -432,13 +424,15 @@ class CouponController extends Controller
             }
 
             //当天库存校验
-            if (array_key_exists($couponBatchID, $couponsDayGetArray) && $couponBatchPolicy->day_max_get <= $couponsDayGetArray[$couponBatchID]) {
+            if (!$couponBatchPolicy->dmg_status && array_key_exists($couponBatchID, $couponsDayGetArray)
+                && $couponBatchPolicy->day_max_get <= $couponsDayGetArray[$couponBatchID]) {
                 unset($couponBatchPolicies[$key]);
                 continue;
             }
 
             //每人每天库存校验
-            if (array_key_exists($couponBatchID, $couponsPersonGetArray) && $couponBatchPolicy->people_max_get <= $couponsPersonGetArray[$couponBatchID]) {
+            if (!$couponBatchPolicy->pmg_status && array_key_exists($couponBatchID, $couponsPersonGetArray)
+                && $couponBatchPolicy->people_max_get <= $couponsPersonGetArray[$couponBatchID]) {
                 unset($couponBatchPolicies[$key]);
                 continue;
             }

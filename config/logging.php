@@ -40,7 +40,7 @@ return [
 
         'single' => [
             'driver' => 'single',
-            'path' => storage_path('logs/laravel.log'),
+            'path' => storage_path('logs/' . get_current_user() . '/laravel') . '-' . get_current_user() . '-' . \Carbon\Carbon::now()->toDateString() . '.log',
             'level' => 'debug',
         ],
 
