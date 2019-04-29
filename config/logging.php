@@ -2,6 +2,12 @@
 
 use Monolog\Handler\StreamHandler;
 
+if (get_current_user() === 'root') {
+    $path = storage_path('logs/' . get_current_user() . '/laravel') . '-' . get_current_user() . '-' . \Carbon\Carbon::now()->toDateString() . '.log';
+} else {
+    $path = storage_path('logs/laravel/') . \Carbon\Carbon::now()->toDateString() . '.log';
+}
+
 return [
 
     /*
@@ -40,7 +46,7 @@ return [
 
         'single' => [
             'driver' => 'single',
-            'path' => storage_path('logs/' . get_current_user() . '/laravel') . '-' . get_current_user() . '-' . \Carbon\Carbon::now()->toDateString() . '.log',
+            'path' => $path,
             'level' => 'debug',
         ],
 
