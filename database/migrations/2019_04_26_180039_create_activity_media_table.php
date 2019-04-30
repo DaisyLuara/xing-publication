@@ -19,6 +19,7 @@ class CreateActivityMediaTable extends Migration
             $table->integer('size');
             $table->string('url');
             $table->smallInteger('status')->default(2)->comment('0:未通过,1:通过,2:待审核');
+            $table->integer('activity_id');
             $table->integer('audit_user_id')->nullable();
             $table->timestamps();
         });

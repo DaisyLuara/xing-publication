@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Media\V1\Api;
 use App\Handlers\ImageUploadHandler;
 use App\Http\Controllers\Admin\Media\V1\Models\ActivityMedia;
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
+use App\Http\Controllers\Admin\Media\V1\Request\ActivityMediaRequest;
 use App\Http\Controllers\Admin\Media\V1\Request\MediaRequest;
 use App\Http\Controllers\Admin\Media\V1\Transformer\MediaTransformer;
 use App\Http\Controllers\Controller;
@@ -61,11 +62,11 @@ class MediaController extends Controller
 
     /**
      * 活动文件存储
-     * @param Request $request
+     * @param ActivityMediaRequest $request
      * @param ActivityMedia $media
      * @return \Illuminate\Http\JsonResponse
      */
-    public function activityMediaCreate(Request $request, ActivityMedia $media): \Illuminate\Http\JsonResponse
+    public function activityMediaCreate(ActivityMediaRequest $request, ActivityMedia $media): \Illuminate\Http\JsonResponse
     {
         $disk = \Storage::disk('qiniu_yq');
         $domain = $disk->getDriver()->downloadUrl();
@@ -73,7 +74,8 @@ class MediaController extends Controller
             'name' => $request->get('name'),
             'url' => $domain . urlencode($request->get('key')),
             'size' => $request->get('size'),
-            'status' => 2
+            'status' => 2,
+            'activity_id'=>$request->get('activity_id')
         ];
         $media->fill($data)->save();
         //七牛鉴定
