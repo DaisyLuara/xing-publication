@@ -81,7 +81,7 @@ class DemandApplicationExport extends BaseExport
                     'title' => $demandApplication->getTitle(),
                     'applicant_name' => $demandApplication->applicant->name,
                     'created_at' => (string)$demandApplication->getCreatedAt(),
-                    'has_contract' => $demandApplication->getHasContract() ? '有合同' : '无合同',
+                    'has_contract' => $demandApplication->getHasContractText(),
                     'contract_no_string' => "\t" . implode(',', $demandApplication->contracts()->pluck('contract_number')->toArray()) . "\t",
                     'project_num' => $demandApplication->getProjectNum(),
                     'similar_project_name' => $demandApplication->getSimilarProjectName(),
@@ -89,6 +89,7 @@ class DemandApplicationExport extends BaseExport
                     'expect_receiver_names' => implode(',', $expect_receiver_names),
                     'launch_point_remark' => $demandApplication->getLaunchPointRemark(),
                     'big_screen_demand' => $demandApplication->getBigScreenDemand(),
+                    'small_screen_demand' => $demandApplication->getSmallScreenDemand(),
                     'h5_demand' => $demandApplication->getH5Demand(),
                     'other_demand' => $demandApplication->getOtherDemand(),
                     'receiver_name' => $demandApplication->getReceiverName(),
@@ -104,7 +105,7 @@ class DemandApplicationExport extends BaseExport
 
 
         $header = ['ID', '项目标的', '申请人', '申请时间', '有无合同', '合同编号', '节目数量', '节目列表',
-            '期望上线日期', '期望接单人', '投放地点备注', '大屏节目需求', 'H5节目需求', '其他定制内容',
+            '期望上线日期', '期望接单人', '投放地点备注', '大屏节目需求','小屏定制内容', 'H5节目需求', '其他定制内容',
             '接单人', '接单人备注', '接单时间', '确定完成人', '确定完成时间', '申请备注', '申请状态'];
 
 
