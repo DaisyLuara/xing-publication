@@ -14,7 +14,7 @@ $api->version('v3', [
 
             $api->post('open/coupons', 'CouponController@store');//发送优惠券
             $api->post('open/user/coupon', 'CouponController@getUserCoupon');//获取用户优惠券
-            $api->get('open/coupon/batches', 'CouponBatchController@generateCouponBatch');//h5抽奖
+            $api->get('open/coupon/batches', 'CouponBatchController@store');//h5策略抽奖
 
             $api->post('verificationCodes', 'ArMemberController@sendVerificationCodes'); // 短信验证码
             $api->patch('user', 'ArMemberController@update');//绑定手机号

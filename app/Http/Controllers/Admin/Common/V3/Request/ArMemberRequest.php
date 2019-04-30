@@ -17,12 +17,14 @@ class ArMemberRequest extends Request
         switch ($this->method()) {
             case 'POST':
                 return [
-                    'phone' => 'required|regex:/^1[3456789]\d{9}$/',
+                    'phone' => 'required|regex:/^1[3456789]\d{9}$/|unique:ar.news_members,mobile',
                 ];
                 break;
             case 'PATCH':
                 return [
                     'z' => 'required|string',
+                    'verification_key' => 'required|string',
+                    'verification_code' => 'required|string',
                 ];
                 break;
             default:

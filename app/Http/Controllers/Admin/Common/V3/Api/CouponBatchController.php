@@ -27,11 +27,11 @@ class CouponBatchController extends Controller
     }
 
     /**
-     * h5抽奖
-     * @param CouponRequest $request
+     * H5策略抽奖
+     * @param CouponBatchRequest $request
      * @return mixed
      */
-    public function generateCouponBatch(CouponBatchRequest $request)
+    public function store(CouponBatchRequest $request)
     {
         /** @var ArMemberSession $member */
         $member = ArMemberSession::query()->where('z', $request->get('z'))->firstOrFail();
@@ -68,9 +68,8 @@ class CouponBatchController extends Controller
         });
 
         //库存校验
-        $now = Carbon::now()->toDateString();
         $couponsDayGetQuery = Coupon::query()->whereIn('coupon_batch_id', $couponBatchIDs)
-            ->whereRaw("date_format(created_at,'%Y-%m-%d')='$now'")
+            ->whereDate('created_at', Carbon::now()->toDateString())
             ->selectRaw('coupon_batch_id, count(*) as day_receive')
             ->groupBy('coupon_batch_id');
 
