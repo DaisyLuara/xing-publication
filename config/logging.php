@@ -54,7 +54,7 @@ return [
             'driver' => 'daily',
             'path' => $path,
             'level' => 'debug',
-            'days' => 1,
+            'days' => 7,
         ],
 
         'slack' => [
