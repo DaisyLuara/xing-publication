@@ -122,4 +122,24 @@ trait CouponBatch
         return collect($couponBatchPolicies)->sum('rate') === 0;
     }
 
+    /**
+     * 设置券码url
+     * @param Coupon $coupon
+     * @param string $prefix
+     * @param null $wechatCouponBatch
+     * @param string $code_type
+     * @return mixed
+     */
+    public function setCodeImageUrl($coupon, $prefix, $wechatCouponBatch = null, $code_type = 'qrcode')
+    {
+        if ($code_type === 'barcode') {
+            $barcodeUrl = couponBarCode($coupon->code, 2, 180, $prefix);
+            $coupon->setAttribute('barcode_url', $barcodeUrl);
+        } else {
+            $qrcodeUrl = couponQrCode($coupon->code, 200, $prefix, $wechatCouponBatch);
+            $coupon->setAttribute('qrcode_url', $qrcodeUrl);
+        }
+
+        return $coupon;
+    }
 }
