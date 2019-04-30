@@ -13,7 +13,7 @@ import market from 'router/pc/market'
 import activity from 'router/pc/activity'
 import prize from 'router/pc/prize'
 import feedback from 'router/pc/feedback'
-
+import credit from 'router/pc/credit'
 
 export default {
   path: '/',
@@ -32,6 +32,7 @@ export default {
     account,
     ad,
     feedback,
+    credit,
     equipment,
     resource_auth,
     team,
