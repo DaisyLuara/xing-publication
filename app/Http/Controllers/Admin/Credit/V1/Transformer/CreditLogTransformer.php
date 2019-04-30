@@ -7,7 +7,7 @@ use League\Fractal\TransformerAbstract;
 
 class CreditLogTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['credit_config', 'ar_member'];
+    protected $availableIncludes = ['credit_config'];
 
     public function transform(CreditLog $creditLog): array
     {
