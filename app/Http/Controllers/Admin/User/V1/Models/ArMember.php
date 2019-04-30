@@ -64,4 +64,8 @@ class ArMember extends Model
     protected $fillable = [
         'mobile',
     ];
+
+    public function ar_user(){
+        return $this->hasOne(ArUser::class,'mobile','mobile');
+    }
 }
