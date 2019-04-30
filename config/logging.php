@@ -3,7 +3,7 @@
 use Monolog\Handler\StreamHandler;
 
 if (get_current_user() === 'root') {
-    $path = storage_path('logs/schedule/schedule.log');
+    $path = storage_path('logs/root/laravel.log');
 } else {
     $path = storage_path('logs/laravel/laravel.log');
 }
