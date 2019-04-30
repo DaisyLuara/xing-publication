@@ -23,12 +23,6 @@ $api->version('v1', [
 
         });
 
-        $api->group(['middleware' => 'api_sign'], static function ($api) {
-            //活动文件上传
-            $api->get('qiniu_token','QiniuController@getToken');
-            $api->post('activity_media', 'MediaController@activityMediaCreate');
-        });
-
     });
 
 });

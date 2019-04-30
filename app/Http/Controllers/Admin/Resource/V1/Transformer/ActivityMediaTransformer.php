@@ -6,10 +6,10 @@
  * Time: 下午6:32
  */
 
-namespace App\Http\Controllers\Admin\Media\V1\Transformer;
+namespace App\Http\Controllers\Admin\Resource\V1\Transformer;
 
 
-use App\Http\Controllers\Admin\Media\V1\Models\ActivityMedia;
+use App\Http\Controllers\Admin\Resource\V1\Models\ActivityMedia;
 use League\Fractal\TransformerAbstract;
 
 class ActivityMediaTransformer extends TransformerAbstract

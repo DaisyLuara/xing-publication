@@ -21,10 +21,4 @@ class QiniuController extends Controller
         return $token;
     }
 
-    public function getToken(){
-        $disk = \Storage::disk('qiniu_yq');
-        $token = $disk->getDriver()->uploadToken();
-        return $token;
-    }
-
 }

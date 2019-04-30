@@ -1,6 +1,6 @@
 <?php
 $api->version('v1', [
-    'namespace' => 'App\Http\Controllers\Admin\Auditing\V1\Api',//修改test
+    'namespace' => 'App\Http\Controllers\Admin\Resource\V1\Api',//修改test
     'middleware' => ['serializer:array', 'bindings'] //api返回数据切换. Fractal 组件默认提供  DataArraySerializer ArraySerializer
 ], static function ($api) {
     $api->group([
@@ -17,6 +17,11 @@ $api->version('v1', [
             //活动资源审核
             $api->get('activity_media',['middleware'=>[],'uses'=>'ActivityMediaController@index']);
             $api->patch('activity_media/audit/{media}',['middleware'=>[],'uses'=>'ActivityMediaController@audit']);
+        });
+        $api->group(['middleware' => 'api_sign'], static function ($api) {
+            //活动文件上传
+            $api->get('qiniu_token','ActivityMediaController@getToken');
+            $api->post('activity_media', 'ActivityMediaController@create');
         });
     });
 

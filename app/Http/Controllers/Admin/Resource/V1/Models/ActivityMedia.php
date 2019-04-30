@@ -6,10 +6,9 @@
  * Time: 下午6:00
  */
 
-namespace App\Http\Controllers\Admin\Media\V1\Models;
+namespace App\Http\Controllers\Admin\Resource\V1\Models;
 
 
-use App\Http\Controllers\Admin\Auditing\V1\Models\Activity;
 use App\Models\Model;
 use App\Models\User;
 

@@ -6,7 +6,7 @@
  * Time: 下午3:20
  */
 
-namespace App\Http\Controllers\Admin\Auditing\V1\Models;
+namespace App\Http\Controllers\Admin\Resource\V1\Models;
 
 use App\Models\Model;
 

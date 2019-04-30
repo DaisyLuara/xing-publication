@@ -6,7 +6,7 @@
  * Time: 上午11:18
  */
 
-namespace App\Http\Controllers\Admin\Auditing\V1\Request;
+namespace App\Http\Controllers\Admin\Resource\V1\Request;
 
 
 use App\Http\Requests\Request;
