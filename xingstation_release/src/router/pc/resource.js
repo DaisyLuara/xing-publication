@@ -2,11 +2,10 @@ import auth from 'service/auth'
 
 let router = {
   path: 'resource',
-  redirect: 'resource/picture',
   name: '资源',
   meta: {
     title: '资源',
-    permission: ''
+    permission: 'resource'
   },
   component: () =>
     import(
@@ -38,7 +37,7 @@ let router = {
       path: 'activity',
       meta: {
         title: '活动审核',
-        permission: ''
+        permission: 'resource.activity'
       },
       component: () =>
         import(
@@ -50,7 +49,7 @@ let router = {
           name: '活动审核列表',
           meta: {
             title: '活动审核列表',
-            permission: ''
+            permission: 'resource.activity.read'
           },
           component: () =>
             import(
@@ -63,7 +62,7 @@ let router = {
       path: 'tenant',
       meta: {
         title: '商户审核',
-        permission: ''
+        permission: 'resource.company'
       },
       component: () =>
         import(
@@ -75,7 +74,7 @@ let router = {
           name: '商户审核列表',
           meta: {
             title: '商户审核列表',
-            permission: ''
+            permission: 'resource.company.read'
           },
           component: () =>
             import(
@@ -90,8 +89,9 @@ let router = {
 router.redirect = () => {
   let routes = router.children
   for (let route of routes) {
-    return '/resource/' + route.path
+    if (auth.checkPathPermission(route)) {
+      return '/resource/' + route.path
+    }
   }
 }
-
 export default router

@@ -6,5 +6,5 @@ module.exports = merge(prodEnv, {
   DOMAIN: '"xingstation.test"',
   SERVER_URL: '"http://api.ad.xingstation.test"',
   HTTPS_SERVER_URL: '"http://api.ad.xingstation.test"',
-  TOWER_URL: '"/tower/"'
+  CDN_URL: "'http://cdn.xingstation.cn/'"
 })

@@ -7,5 +7,5 @@ module.exports = merge(devEnv, {
   DOMAIN: '"xingstation.net"',
   SERVER_URL: '"http://papi.xingstation.net"',
   HTTPS_SERVER_URL: '"https://papi.xingstation.net"',
-  TOWER_URL: '"http://tower.im/"'
+  CDN_URL: "'http://cdn.xingstation.cn/'"
 })
