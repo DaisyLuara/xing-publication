@@ -1,6 +1,8 @@
 <?php
 
-use Illuminate\Http\Request;
+use Dingo\Api\Routing\Router;
+use Dingo\Api\Exception\Handler;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,12 +16,12 @@ use Illuminate\Http\Request;
 */
 
 
-$api = app('Dingo\Api\Routing\Router');
+$api = app(Router::class);
 
-app('Dingo\Api\Exception\Handler')->register(function (Exception $exception) {
+app(Handler::class)->register(static function (Exception $exception) {
     if ($exception instanceof TokenExpiredException) {
         return response()->json('未登录', 401);
-    };
+    }
 });
 
 include app_path('Http/Controllers/Admin/Ad/V1/routes.php');
@@ -54,3 +56,5 @@ include app_path('Http/Controllers/Admin/Demand/V1/routes.php');
 include app_path('Http/Controllers/Admin/ResourceAuth/V1/routes.php');
 include app_path('Http/Controllers/Admin/Feedback/V1/routes.php');
 include app_path('Http/Controllers/Admin/Guest/V1/routes.php');
+include app_path('Http/Controllers/Admin/Resource/V1/routes.php');
+include app_path('Http/Controllers/Admin/Credit/V1/routes.php');
