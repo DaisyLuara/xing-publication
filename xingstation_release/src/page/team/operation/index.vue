@@ -391,7 +391,7 @@ export default {
     },
     getQiniuToken() {
       getQiniuToken(this)
-        .then(res => {getQiniuToken
+        .then(res => {
           this.uploadToken = res;
           this.uploadForm.token = this.uploadToken;
         })
