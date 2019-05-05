@@ -12,7 +12,7 @@
           class="menu-item"
           @click="handleMenuHide"
         >
-          <img :src="m.src" class="first-sidebar-icon">
+          <img :src="m.meta.url" class="first-sidebar-icon">
           {{ m.meta.title }}
         </el-menu-item>
         <el-menu-item class="menu-no-icon-item" index="/inform" @click="handleMenuHide">
@@ -117,53 +117,6 @@ export default {
           for (let m of route["children"]) {
             if (!auth.checkPathPermission(m) || !m.meta || !m.meta.title) {
               continue;
-            }
-            switch (m.path) {
-              case "project":
-                m.src = this.img_url + "project-icon.png";
-                break;
-              case "system":
-                m.src = this.img_url + "permission-icon.png";
-                break;
-              case "ad":
-                m.src = this.img_url + "advertisement-icon.png";
-                break;
-              case "equipment":
-                m.src = this.img_url + "device-icon.png";
-                break;
-              case "auth":
-                m.src = this.img_url + "auth_icon.png";
-                break;
-              case "team":
-                m.src = this.img_url + "team-icon.png";
-                break;
-              case "market":
-                m.src = this.img_url + "market-icon.png";
-                break;
-              case "home":
-                m.src = this.img_url + "home-icon.png";
-                break;
-              case "report":
-                m.src = this.img_url + "report-icon.png";
-                break;
-              case "activity":
-                m.src = this.img_url + "activity-icon.png";
-                break;
-              case "prize":
-                m.src = this.img_url + "prize-icon.png";
-                break;
-              case "feedback":
-                m.src = this.img_url + "feedback_icon.png";
-                break;
-              case "credit":
-                m.src = this.img_url + "credit_icon.png";
-                break;
-              case "resource":
-                m.src = this.img_url + "resource_icon.png";
-                break;
-              default:
-                m.src = "";
-                break;
             }
             items.push(m);
           }

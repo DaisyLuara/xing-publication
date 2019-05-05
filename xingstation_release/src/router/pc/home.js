@@ -1,11 +1,12 @@
 import auth from 'service/auth'
-
+import { URL } from '../../constant/Url'
 let router = {
   path: 'home',
   name: '首页',
   meta: {
     title: '首页',
-    permission: 'home'
+    permission: 'home',
+    url: URL.CDN_URL + 'middle_ground/img/home-icon.png'
   },
   component: () =>
     import(/* webpackChunkName: "page/home/homeView" */ 'page/home/homeView'),
@@ -17,7 +18,9 @@ let router = {
         permission: 'home.item'
       },
       component: () =>
-        import(/* webpackChunkName: "page/home/item/routerView" */ 'page/home/item/routerView'),
+        import(
+          /* webpackChunkName: "page/home/item/routerView" */ 'page/home/item/routerView'
+        ),
       children: [
         {
           path: '/',
@@ -27,7 +30,9 @@ let router = {
             permission: 'home.item.read'
           },
           component: () =>
-            import(/* webpackChunkName: "page/home/item/index" */ 'page/home/item/index')
+            import(
+              /* webpackChunkName: "page/home/item/index" */ 'page/home/item/index'
+            )
         }
       ]
     }

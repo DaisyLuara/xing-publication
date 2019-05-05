@@ -1,11 +1,13 @@
 import auth from 'service/auth'
+import { URL } from '../../constant/Url'
 
 let router = {
   path: 'resource',
   name: '资源',
   meta: {
     title: '资源',
-    permission: 'resource'
+    permission: 'resource',
+    url: URL.CDN_URL + 'middle_ground/img/resource_icon.png'
   },
   component: () =>
     import(

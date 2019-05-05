@@ -1,4 +1,5 @@
 import auth from 'service/auth'
+import { URL } from '../../constant/Url'
 
 let router = {
   path: 'prize',
@@ -6,7 +7,9 @@ let router = {
   name: '奖品',
   meta: {
     title: '奖品',
-    permission: 'prize'
+    permission: 'prize',
+    url: URL.CDN_URL + 'middle_ground/img/prize-icon.png'
+
   },
   component: () =>
     import(/* webpackChunkName: "page/prize/prizeView" */ 'page/prize/prizeView'),

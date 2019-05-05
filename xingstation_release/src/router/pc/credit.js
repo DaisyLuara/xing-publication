@@ -1,11 +1,14 @@
 import auth from 'service/auth'
+import { URL } from '../../constant/Url'
 
 let router = {
   path: 'credit',
   name: '分值',
   meta: {
     title: '分值',
-    permission: ''
+    permission: '',
+    url: URL.CDN_URL + 'middle_ground/img/credit_icon.png'
+
   },
   component: () =>
     import(/* webpackChunkName: "page/credit/creditView" */ 'page/credit/creditView'),
