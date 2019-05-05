@@ -11,12 +11,12 @@ $api->version('v1', [
         $api->group(['middleware' => 'api.auth', 'model' => 'App\Models\User'], function ($api) {
 
             //公司资源审核
-            $api->get('company_media', ['middleware' => ['resource.company.read'], 'uses' => 'CompanyMediaController@index']);
-            $api->patch('company_media/audit/{media}',['middleware'=>['resource.company.audit'],'uses'=>'CompanyMediaController@audit']);
+            $api->get('company_media', ['middleware' => ['permission:resource.company.read'], 'uses' => 'CompanyMediaController@index']);
+            $api->patch('company_media/audit/{media}',['middleware'=>['permission:resource.company.audit'],'uses'=>'CompanyMediaController@audit']);
 
             //活动资源审核
-            $api->get('activity_media',['middleware'=>['resource.activity.read'],'uses'=>'ActivityMediaController@index']);
-            $api->patch('activity_media/audit/{media}',['middleware'=>['resource.activity.audit'],'uses'=>'ActivityMediaController@audit']);
+            $api->get('activity_media',['middleware'=>['permission:resource.activity.read'],'uses'=>'ActivityMediaController@index']);
+            $api->patch('activity_media/audit/{media}',['middleware'=>['permission:resource.activity.audit'],'uses'=>'ActivityMediaController@audit']);
         });
         $api->group(['middleware' => 'api_sign'], static function ($api) {
             //活动文件上传
