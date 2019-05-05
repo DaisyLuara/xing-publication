@@ -1,11 +1,14 @@
 import auth from 'service/auth'
+import { URL } from '../../constant/Url'
+
 let router = {
   path: 'team',
   redirect: 'team/program',
   name: '团队',
   meta: {
     title: '团队',
-    permission: 'team'
+    permission: 'team',
+    url: URL.CDN_URL + 'middle_ground/img/team-icon.png'
   },
   component: () =>
     import(/* webpackChunkName: "page/team/teamView" */ 'page/team/teamView'),

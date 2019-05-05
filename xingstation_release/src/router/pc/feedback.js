@@ -1,14 +1,18 @@
 import auth from 'service/auth'
+import { URL } from '../../constant/Url'
 
 let router = {
   path: 'feedback',
   name: '反馈',
   meta: {
     title: '反馈',
-    permission: ''
+    permission: '',
+    url: URL.CDN_URL + 'middle_ground/img/feedback_icon.png'
   },
   component: () =>
-    import(/* webpackChunkName: "page/feedback/feedbackView" */ 'page/feedback/feedbackView'),
+    import(
+      /* webpackChunkName: "page/feedback/feedbackView" */ 'page/feedback/feedbackView'
+    ),
   children: [
     {
       path: 'list',
@@ -17,7 +21,9 @@ let router = {
         // permission: 'feedback.item'
       },
       component: () =>
-        import(/* webpackChunkName: "page/feedback/list/routerView" */ 'page/feedback/list/routerView'),
+        import(
+          /* webpackChunkName: "page/feedback/list/routerView" */ 'page/feedback/list/routerView'
+        ),
       children: [
         {
           path: '/',
@@ -27,12 +33,16 @@ let router = {
             // permission: 'feedback.item.refeedback'
           },
           component: () =>
-            import(/* webpackChunkName: "page/feedback/list/index" */ 'page/feedback/list/index')
+            import(
+              /* webpackChunkName: "page/feedback/list/index" */ 'page/feedback/list/index'
+            )
         },
         {
           path: 'save/:uid',
           component: () =>
-            import(/* webpackChunkName: "page/feedback/list/save" */ 'page/feedback/list/save'),
+            import(
+              /* webpackChunkName: "page/feedback/list/save" */ 'page/feedback/list/save'
+            ),
           name: '回答反馈',
           meta: {
             // permission: 'ad.item.create'
