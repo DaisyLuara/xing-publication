@@ -18,6 +18,9 @@ $api->version('v3', [
 
             $api->post('verificationCodes', 'ArMemberController@sendVerificationCodes'); // 短信验证码
             $api->patch('user', 'ArMemberController@update');//绑定手机号
+
+            $api->post('confessions', 'ConfessionsController@store');//上传全城告白
+            $api->get('user/confession', 'ConfessionsController@show');//查询全城告白
         });
 
     });
