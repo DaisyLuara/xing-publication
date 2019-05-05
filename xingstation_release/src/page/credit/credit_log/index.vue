@@ -53,7 +53,7 @@
           label="分值"
           min-width="100">
           <template slot-scope="scope">
-            <span>{{ scope.row.credit_config ? scope.row.credit_config.type_text : '未知' }}</span><br/>
+            <span>{{ scope.row.credit_config ? scope.row.credit_config.type_text : '未知' }}</span><br>
             <span>{{ scope.row.credits }}</span>
           </template>
         </el-table-column>
@@ -61,9 +61,9 @@
           label="动作"
           min-width="150">
           <template slot-scope="scope">
-            <span>{{ scope.row.credit_config ? scope.row.credit_config.title:'未知' }}</span><br/>
-            <span>{{ scope.row.credit_config ? scope.row.credit_config.sec:'未知' }}</span><br/>
-            <span>{{(scope.row.credit_config && scope.row.credit_config.pair === 'vague') ? '模糊匹配' : '精确匹配' }}</span>
+            <span>{{ scope.row.credit_config ? scope.row.credit_config.title:'未知' }}</span><br>
+            <span>{{ scope.row.credit_config ? scope.row.credit_config.sec:'未知' }}</span><br>
+            <span>{{ (scope.row.credit_config && scope.row.credit_config.pair === 'vague') ? '模糊匹配' : '精确匹配' }}</span>
           </template>
         </el-table-column>
         <el-table-column

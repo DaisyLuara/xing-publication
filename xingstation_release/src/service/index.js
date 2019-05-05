@@ -64,3 +64,6 @@ export * from './feedback'
 
 //分值
 export * from './credit'
+
+//资源
+export * from './resource'
