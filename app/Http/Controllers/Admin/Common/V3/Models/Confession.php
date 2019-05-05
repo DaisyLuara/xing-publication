@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Common\V3\Models;
 
-use App\Http\Controllers\Admin\Media\V1\Models\Media;
+use App\Http\Controllers\Admin\Resource\V1\Models\ActivityMedia;
 use App\Models\Model;
 
 /**
@@ -46,7 +46,7 @@ class Confession extends Model
 
     public function media()
     {
-        return $this->belongsTo(Media::class, 'media_id', 'id');
+        return $this->belongsTo(ActivityMedia::class, 'media_id', 'id');
     }
 
 }
