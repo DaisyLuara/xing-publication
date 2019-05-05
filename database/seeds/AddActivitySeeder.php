@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\Http\Controllers\Admin\Auditing\V1\Models\Activity;
+use App\Http\Controllers\Admin\Resource\V1\Models\Activity;
 
 class AddActivitySeeder extends Seeder
 {
