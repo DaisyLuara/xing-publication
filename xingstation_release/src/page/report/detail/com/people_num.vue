@@ -225,7 +225,7 @@
                   <el-form-item 
                     label="活跃">
                     <span>{{ scope.row.playernum7 }}</span>
-                    </el-form-item>
+                  </el-form-item>
                   <el-form-item 
                     label="铁杆">
                     <span>{{ scope.row.playernum }}</span>
