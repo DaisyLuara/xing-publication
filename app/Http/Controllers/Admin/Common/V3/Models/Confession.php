@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin\Common\V3\Models;
 
-use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Http\Controllers\Admin\Resource\V1\Models\ActivityMedia;
 use App\Models\Model;
 
