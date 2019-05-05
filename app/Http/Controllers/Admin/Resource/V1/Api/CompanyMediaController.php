@@ -25,7 +25,7 @@ class CompanyMediaController extends Controller
 
         $media = $query->whereHas('company', static function ($q) use ($request) {
             if ($request->has('status')) {
-                $q->where('status', $request->get('status'));
+                $q->where('company_media.status', $request->get('status'));
             }
             if ($request->has('company_name')) {
                 $q->where('name', 'like', '%' . $request->get('company_name') . '%');
