@@ -30,6 +30,26 @@
           </el-select>
         </el-form-item>
         <el-form-item
+          :rules="{required: true, message: '奖品模版不能为空', trigger: 'submit'}"
+          label="奖品模版"
+          prop="policy_id"
+        >
+          <el-select
+            v-model="couponForm.policy_id"
+            :loading="searchLoading"
+            filterable
+            placeholder="请选择奖品模版"
+            class="coupon-form-select"
+          >
+            <el-option
+              v-for="item in policiesList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
           label="创建人"
           prop="user_name">
           <el-input
@@ -82,7 +102,6 @@
             />
           </el-select>
         </el-form-item>
-
         <el-form-item
           :rules="{required: true, message: '适用场景不能为空', trigger: 'submit'}"
           label="适用场景"
@@ -165,6 +184,33 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item
+                label="导入数据EXCEL文档"
+                prop="ids">
+          <el-upload
+            ref="upload"
+            :action="Domain"
+            :data="uploadForm"
+            :on-success="handleSuccess"
+            :before-upload="beforeUpload"
+            :on-remove="handleRemove"
+            :before-remove="beforeRemove"
+            :file-list="fileList"
+            :limit="1"
+            :on-exceed="handleExceed"
+            class="upload-demo"
+          >
+            <el-button
+              size="small"
+              type="primary">点击上传</el-button>
+            <div
+              slot="tip"
+              style="display:inline-block"
+              class="el-upload__tip"
+            >文件类型只支持=xlsx、xls</div>
+          </el-upload>
+        </el-form-item>
+
 
         <el-form-item>
           <el-button
@@ -186,11 +232,15 @@ import {
   getSearchMarketList,
   getSearchPointList,
   getStoresList,
+  getPoliciesListByCompany,
+  getMediaUpload,
+  getQiniuToken,
   getCompanyMarketList
 } from "service";
 
 import {
   Button,
+  Upload,
   Input,
   Form,
   FormItem,
@@ -207,6 +257,7 @@ import {
 export default {
   name: "AddCouponImport",
   components: {
+    "el-upload": Upload,
     "el-button": Button,
     "el-input": Input,
     "el-form": Form,
@@ -222,6 +273,15 @@ export default {
   },
   data() {
     return {
+      Domain: "http://upload.qiniu.com",
+      uploadToken: "",
+      uploadKey: "",
+      uploadForm: {
+        token: "",
+        key: ""
+      },
+      fileList: [],
+
       multipleNum: 0,
       writeOffMarketShow: true,
       writeOffSiteShow: true,
@@ -230,6 +290,7 @@ export default {
       activeName: "first",
       dateShow: false,
       companyList: [],
+      policiesList:[],
       setting: {
         isOpenSelectAll: true,
         loading: false,
@@ -257,7 +318,6 @@ export default {
         scene_type: null,
         write_off_mid: null,
         write_off_sid: [],
-        media_id:null,
         policy_id:null,
       },
     };
@@ -266,14 +326,96 @@ export default {
     let user = JSON.parse(this.$cookie.get("user_info"));
     this.user_name = user.name;
     this.setting.loadingText = "拼命加载中";
+    this.getQiniuToken();
     this.getSearchCompany();
     this.user_name = user.name;
 
   },
   methods: {
+    getQiniuToken() {
+      getQiniuToken(this)
+        .then(res => {
+          this.uploadToken = res;
+          this.uploadForm.token = this.uploadToken;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+
+    handleExceed(files, fileList) {
+      this.$message.warning(
+        `当前限制选择 1 个文件，本次选择了 ${
+          files.length
+          } 个文件，共选择了 ${files.length + fileList.length} 个文件`
+      );
+    },
+    handleRemove(file, fileList) {
+      this.fileList = fileList;
+    },
+    beforeRemove(file, fileList) {
+      return this.$confirm(`确定移除 ${file.name}？`);
+    },
+    beforeUpload(file) {
+      let name = file.name;
+      let type = name.substring(name.lastIndexOf("."));
+      let isLt100M = file.size / 1024 / 1024 < 100;
+      let time = new Date().getTime();
+      let random = parseInt(Math.random() * 10 + 1, 10);
+      let suffix = time + "_" + random + "_" + name;
+      let key = (`${suffix}`);
+      if (
+        !(
+          type === ".xlsx" ||
+          type === ".xls"
+        )
+      ) {
+        this.uploadForm.token = "";
+        return this.$message.error(
+          "文件类型只支持xlsx、xls"
+        );
+      }
+      if (!isLt100M) {
+        this.uploadForm.token = "";
+        return this.$message.error("上传大小不能超过 100MB!");
+      } else {
+        this.uploadForm.token = this.uploadToken;
+      }
+      this.uploadForm.key = key;
+      return this.uploadForm;
+    },
+    // 上传成功后的处理
+    handleSuccess(response, file, fileList) {
+      let key = response.key;
+      let name = file.name;
+      let size = file.size;
+      let type = name.substring(name.lastIndexOf("."));
+      this.getMediaUpload(key, name, size);
+    },
+
+    getMediaUpload(key, name, size) {
+      let params = {
+        key: key,
+        name: name,
+        size: size
+      };
+      getMediaUpload(this, params)
+        .then(res => {
+          this.fileList.push(res);
+        })
+        .catch(err => {
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
+        });
+    },
+
+
     handleCompany(val) {
       this.getCompanyMarketList(val);
       this.getStoresList(val);
+      this.getPoliciesList(val);
     },
     writeOffMarketHandle() {
       this.couponForm.write_off_sid = [];
@@ -281,6 +423,20 @@ export default {
         this.getStoresList(this.couponForm.write_off_mid, true);
       }
     },
+
+    getPoliciesList(val) {
+      getPoliciesListByCompany(this, val)
+        .then(res => {
+          this.policiesList = res;
+        })
+        .catch(err => {
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
+        });
+    },
+
     getStoresList(val, type) {
       let args = {
         company_id: val
@@ -419,13 +575,30 @@ export default {
 
     onSubmit(formName) {
       let company_id = this.couponForm.company_id;
+
+      let operationMediaIds = [];
+      if (this.fileList.length > 0) {
+        this.fileList.map(r => {
+          operationMediaIds.push(r.id);
+        });
+        this.ids = operationMediaIds.join(",");
+      } else {
+        this.$message({
+          type: "warning",
+          message: "导入execel必须上传"
+        });
+        return;
+      }
+
       let args = {
         marketid: this.couponForm.marketid.join(","),
         oid: this.couponForm.oid,
         scene_type: this.couponForm.scene_type,
         write_off_mid: this.couponForm.write_off_mid,
-        write_off_sid: this.couponForm.write_off_sid
+        write_off_sid: this.couponForm.write_off_sid,
+        media_id: this.ids
       };
+
       if (
         args.write_off_sid.length === 0 &&
         (this.scene_type === 1 || this.scene_type === 3)

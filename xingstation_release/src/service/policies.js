@@ -5,9 +5,9 @@ const BATCH_API = '/api/policy/'
 const HOST = process.env.SERVER_URL
 
 const getPoliciesList = (context, args) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + POLICIES_API, { params: args })
+      .get(HOST + POLICIES_API, {params: args})
       .then(response => {
         resolve(response.data)
       })
@@ -16,8 +16,22 @@ const getPoliciesList = (context, args) => {
       })
   })
 }
+
+const getPoliciesListByCompany = (context, company_id) => {
+  return new Promise(function (resolve, reject) {
+    context.$http
+      .get(HOST + POLICIES_API + '/' + company_id + '/company')
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
 const savePolicy = (context, companyId, args) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
       .post(HOST + COMPANY_API + companyId + '/coupon/policy', args)
       .then(response => {
@@ -29,7 +43,7 @@ const savePolicy = (context, companyId, args) => {
   })
 }
 const modifyPolicy = (context, companyId, args) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
       .patch(HOST + COUPON_POLICY_API + companyId, args)
       .then(response => {
@@ -41,10 +55,10 @@ const modifyPolicy = (context, companyId, args) => {
   })
 }
 
-const getPolicyDetail=(context,id, args)=>{
-  return new Promise(function(resolve, reject) {
+const getPolicyDetail = (context, id, args) => {
+  return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + POLICIES_API+'/'+ id, { params: args })
+      .get(HOST + POLICIES_API + '/' + id, {params: args})
       .then(response => {
         resolve(response.data)
       })
@@ -55,7 +69,7 @@ const getPolicyDetail=(context,id, args)=>{
 }
 
 const modifyBatchPolicy = (context, policyId, args, id) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
       .patch(HOST + BATCH_API + policyId + '/batch_policy/' + id, args)
       .then(response => {
@@ -67,7 +81,7 @@ const modifyBatchPolicy = (context, policyId, args, id) => {
   })
 }
 const saveBatchPolicy = (context, policyId, args) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
       .post(HOST + BATCH_API + policyId, args)
       .then(response => {
@@ -79,7 +93,7 @@ const saveBatchPolicy = (context, policyId, args) => {
   })
 }
 const deleteBatchPolicy = (context, policyId, id) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
       .delete(HOST + BATCH_API + policyId + '/batch_policy/' + id)
       .then(response => {
@@ -97,5 +111,6 @@ export {
   modifyPolicy,
   savePolicy,
   getPoliciesList,
+  getPoliciesListByCompany,
   getPolicyDetail
 }
