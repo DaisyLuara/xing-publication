@@ -72,4 +72,9 @@ class ArMemberSession extends Authenticatable implements JWTSubject
         return $this->belongsToMany(ArMemberHonor::class, 'news_user_honour', 'uid', 'xid');
     }
 
+    public function arMember()
+    {
+        return $this->belongsTo(ArMember::class, 'uid', 'uid');
+    }
+
 }

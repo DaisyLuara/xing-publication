@@ -113,7 +113,7 @@
             prop="point" 
             label="点位名称" 
             min-width="130">
-            <template slot-scope="scope">{{ scope.row.point.name }}</template>
+            <template slot-scope="scope">{{ scope.row.point.id !== 0 ? scope.row.point.market.area.name + '-' + scope.row.point.market.name + '-' + scope.row.point.name : '' }}</template>
           </el-table-column>
           <el-table-column
             :show-overflow-tooltip="true"
@@ -233,7 +233,7 @@ export default {
       this.setting.loadingText = "拼命加载中";
       this.setting.loading = true;
       let args = {
-        include: "policy,company,project,point",
+        include: "policy,company,project,point.market.area",
         page: this.pagination.currentPage,
         name: this.filters.name,
         company_id: this.filters.company_id

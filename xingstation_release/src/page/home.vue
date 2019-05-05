@@ -186,6 +186,9 @@ export default {
               case "feedback":
                 m.src = require("../assets/images/icons/feedback_icon.png");
                 break;
+              case "credit":
+                m.src = require("../assets/images/icons/feedback_icon.png");
+                break;
               default:
                 m.src = "";
                 break;

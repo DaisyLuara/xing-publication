@@ -62,4 +62,8 @@ class ArUser extends Model
     {
         return $this->belongsToMany(Point::class, 'admin_per_oid', 'uid', 'oid');
     }
+
+    public function ar_member(){
+        return $this->hasOne(ArMember::class,'mobile','mobile');
+    }
 }

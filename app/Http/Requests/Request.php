@@ -14,6 +14,11 @@ class Request extends FormRequest
         return true;
     }
 
+    public function rules()
+    {
+        return [];
+    }
+
     protected function failedValidation(Validator $validator)
     {
         if ($this->container['request'] instanceof \Illuminate\Http\Request) {

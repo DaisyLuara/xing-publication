@@ -27,6 +27,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->call(function (){
+            \Log::info('111111');
+            \Log::info('222222');
+            \Log::info('333333');
+        })->everyMinute();
         if (env('APP_ENV') !== 'local') {
 
             //点位排名通知

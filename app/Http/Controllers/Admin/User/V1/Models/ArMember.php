@@ -59,4 +59,13 @@ class ArMember extends Model
     protected $connection = 'ar';
     public $table = 'news_members';
     protected $primaryKey = 'uid';
+    public $timestamps = false;
+
+    protected $fillable = [
+        'mobile',
+    ];
+
+    public function ar_user(){
+        return $this->hasOne(ArUser::class,'mobile','mobile');
+    }
 }

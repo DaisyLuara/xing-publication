@@ -11,6 +11,7 @@ $api->version('v1', [
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
             //优惠券策略
+            $api->get('coupon/policies/{company}/company', ['middleware' => ['permission:prize.strategy.read'], 'uses' => 'PolicyController@allByCompanyId']);
             $api->get('coupon/policies/{policy}', 'PolicyController@show');
             $api->get('coupon/policies', ['middleware' => ['permission:prize.strategy.read'], 'uses' => 'PolicyController@index']);
             $api->post('company/{company}/coupon/policy', ['middleware' => ['permission:prize.strategy.create'], 'uses' => 'PolicyController@store']);
