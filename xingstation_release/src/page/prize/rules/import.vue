@@ -185,8 +185,8 @@
           </el-select>
         </el-form-item>
         <el-form-item
-                label="导入数据EXCEL文档"
-                prop="ids">
+          label="导入数据EXCEL文档"
+          prop="ids">
           <el-upload
             ref="upload"
             :action="Domain"
@@ -222,11 +222,13 @@
 
       <h3>导入的Excel格式要求如下：</h3>
       <p>
-        <span>1、第一行为列名，请注意数据先后</span><br/>
-        <span>2、当无限领取【开启】时，最大获取数请填写 0</span><br/>
-        <span>3、时间格式为【yyyy-mm-ss hh:mm:ss】(右击单元格，可设置自定义)</span><br/>
+        <span>1、第一行为列名，请注意数据先后</span><br>
+        <span>2、当无限领取【开启】时，最大获取数请填写 0</span><br>
+        <span>3、时间格式为【yyyy-mm-ss hh:mm:ss】(右击单元格，可设置自定义)</span><br>
       </p>
-      <img :src="getImportFormatImg()" width="100%"/>
+      <img 
+        :src="getImportFormatImg()" 
+        width="100%">
     </div>
   </div>
 </template>
