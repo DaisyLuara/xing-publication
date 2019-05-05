@@ -219,6 +219,14 @@
           <el-button @click="historyBack">取消</el-button>
         </el-form-item>
       </el-form>
+
+      <h3>导入的Excel格式要求如下：</h3>
+      <p>
+        <span>1、第一行为列名，请注意数据先后</span><br/>
+        <span>2、当无限领取【开启】时，最大获取数请填写 0</span><br/>
+        <span>3、时间格式为【yyyy-mm-ss hh:mm:ss】(右击单元格，可设置自定义)</span><br/>
+      </p>
+      <img :src="getImportFormatImg()" width="100%"/>
     </div>
   </div>
 </template>
@@ -332,6 +340,9 @@ export default {
 
   },
   methods: {
+    getImportFormatImg(){
+      return require("../../../assets/images/import_coupons_format.png");
+    },
     getQiniuToken() {
       getQiniuToken(this)
         .then(res => {
@@ -427,6 +438,7 @@ export default {
     getPoliciesList(val) {
       getPoliciesListByCompany(this, val)
         .then(res => {
+          console.log(res);
           this.policiesList = res;
         })
         .catch(err => {
@@ -596,6 +608,7 @@ export default {
         scene_type: this.couponForm.scene_type,
         write_off_mid: this.couponForm.write_off_mid,
         write_off_sid: this.couponForm.write_off_sid,
+        policy_id: this.couponForm.policy_id,
         media_id: this.ids
       };
 
@@ -616,6 +629,10 @@ export default {
           saveCouponByImport(this,company_id, args)
             .then(result => {
               this.loading = false;
+              this.$message({
+                type: "success",
+                message: "导入成功"
+              });
               this.$router.push({
                 path: "/prize/rules/"
               });
