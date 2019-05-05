@@ -9,7 +9,9 @@ let router = {
     permission: ''
   },
   component: () =>
-    import(/* webpackChunkName: "page/resource/resourceView" */ 'page/resource/resourceView'),
+    import(
+      /* webpackChunkName: "page/resource/resourceView" */ 'page/resource/resourceView'
+    ),
   children: [
     // {
     //   path: 'picture',
@@ -39,7 +41,9 @@ let router = {
         permission: ''
       },
       component: () =>
-        import(/* webpackChunkName: "page/resource/activity/routerView" */ 'page/resource/activity/routerView'),
+        import(
+          /* webpackChunkName: "page/resource/activity/routerView" */ 'page/resource/activity/routerView'
+        ),
       children: [
         {
           path: '/',
@@ -49,7 +53,34 @@ let router = {
             permission: ''
           },
           component: () =>
-            import(/* webpackChunkName: "page/resource/activity/index" */ 'page/resource/activity/index')
+            import(
+              /* webpackChunkName: "page/resource/activity/index" */ 'page/resource/activity/index'
+            )
+        }
+      ]
+    },
+    {
+      path: 'tenant',
+      meta: {
+        title: '商户审核',
+        permission: ''
+      },
+      component: () =>
+        import(
+          /* webpackChunkName: "page/resource/tenant/routerView" */ 'page/resource/tenant/routerView'
+        ),
+      children: [
+        {
+          path: '/',
+          name: '商户审核列表',
+          meta: {
+            title: '商户审核列表',
+            permission: ''
+          },
+          component: () =>
+            import(
+              /* webpackChunkName: "page/resource/tenant/index" */ 'page/resource/tenant/index'
+            )
         }
       ]
     }

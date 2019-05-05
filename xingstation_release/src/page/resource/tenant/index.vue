@@ -54,6 +54,9 @@
                 <el-form-item label="ID">
                   <span>{{ scope.row.id }}</span>
                 </el-form-item>
+                <el-form-item label="商户">
+                  <span>{{ scope.row.company_name }}</span>
+                </el-form-item>
                 <el-form-item label="名称">
                   <span>{{ scope.row.name }}</span>
                 </el-form-item>
@@ -70,7 +73,7 @@
                   <span>{{ scope.row.status === 0 ? '未通过' : scope.row.status === 1 ? '通过' : '待审核' }}</span>
                 </el-form-item>
                 <el-form-item label="审核人">
-                  <span>{{ scope.row.audit_user }}</span>
+                  <span>{{ scope.row.audit_user_name }}</span>
                 </el-form-item>
               </el-form>
             </template>
@@ -80,6 +83,11 @@
             prop="id" 
             label="ID" 
             min-width="80"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="company_name" 
+            label="商户" 
+            min-width="100"/>
           <el-table-column 
             :show-overflow-tooltip="true" 
             prop="name" 
@@ -113,7 +121,7 @@
           </el-table-column>
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="audit_user"
+            prop="audit_user_name"
             label="审核人"
             min-width="150"
           />
@@ -147,7 +155,7 @@
 </template>
 
 <script>
-import { getActivityMediaList, activityMediaAudit } from "service";
+import { getTenantMediaList, TenantMediaAudit } from "service";
 
 import {
   Button,
@@ -201,12 +209,11 @@ export default {
         pageSize: 10,
         currentPage: 1
       },
-
       tableData: []
     };
   },
   created() {
-    this.getActivityMediaList();
+    this.getTenantMediaList();
   },
   methods: {
     pass(data) {
@@ -215,7 +222,7 @@ export default {
         status: 1
       };
       let message = "审核通过!";
-      this.activityMediaAudit(id, args, message);
+      this.TenantMediaAudit(id, args, message);
     },
     reject(data) {
       let id = data.id;
@@ -223,18 +230,18 @@ export default {
         status: 0
       };
       let message = "驳回成功!";
-      this.activityMediaAudit(id, args, message);
+      this.TenantMediaAudit(id, args, message);
     },
-    activityMediaAudit(id, args, message) {
+    TenantMediaAudit(id, args, message) {
       this.$confirm("审核, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
       })
         .then(() => {
-          activityMediaAudit(this, id, args)
+          TenantMediaAudit(this, id, args)
             .then(res => {
-              this.getActivityMediaList();
+              this.getTenantMediaList();
               this.$message({
                 type: "success",
                 message: message
@@ -246,14 +253,14 @@ export default {
         })
         .catch(() => {});
     },
-    getActivityMediaList() {
+    getTenantMediaList() {
       this.setting.loading = true;
       let args = {
         page: this.pagination.currentPage,
         status: this.searchForm.status
       };
       this.searchForm.status === "" ? delete args.status : "";
-      getActivityMediaList(this, args)
+      getTenantMediaList(this, args)
         .then(response => {
           let data = response.data;
           this.tableData = data;
@@ -270,16 +277,16 @@ export default {
     },
     changePage(currentPage) {
       this.pagination.currentPage = currentPage;
-      this.getActivityMediaList();
+      this.getTenantMediaList();
     },
     search() {
       this.pagination.currentPage = 1;
-      this.getActivityMediaList();
+      this.getTenantMediaList();
     },
     resetSearch(formName) {
       this.$refs[formName].resetFields();
       this.pagination.currentPage = 1;
-      this.getActivityMediaList();
+      this.getTenantMediaList();
     }
   }
 };
