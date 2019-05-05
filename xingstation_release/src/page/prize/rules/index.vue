@@ -82,6 +82,10 @@
               size="small" 
               type="success" 
               @click="addCoupon">新增</el-button>
+            <el-button
+              size="small"
+              type="danger"
+              @click="addCouponImport">批量导入</el-button>
           </div>
         </div>
         <rulesTable 
@@ -308,6 +312,11 @@ export default {
     addCoupon() {
       this.$router.push({
         path: "/prize/rules/add"
+      });
+    },
+    addCouponImport() {
+      this.$router.push({
+        path: "/prize/rules/import"
       });
     },
     copyRules(data) {

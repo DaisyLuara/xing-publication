@@ -50,7 +50,9 @@
           label="等级图标"
           min-width="150">
           <template slot-scope="scope">
-            <img :src="scope.row.group_icon" width="60px;">
+            <img 
+              :src="scope.row.group_icon" 
+              width="60px;">
           </template>
         </el-table-column>
         <el-table-column 
