@@ -6,7 +6,7 @@ let router = {
   name: '资源',
   meta: {
     title: '资源',
-    permission: 'resource',
+    permission: '',
     url: URL.CDN_URL + 'middle_ground/img/resource_icon.png'
   },
   component: () =>
@@ -18,7 +18,7 @@ let router = {
       path: 'picture',
       meta: {
         title: '图片管理',
-        permission: 'resource.picture'
+        permission: 'resource.publication'
       },
       component: () =>
         import(
@@ -30,7 +30,7 @@ let router = {
           name: '图片管理列表',
           meta: {
             title: '图片管理列表',
-            permission: 'resource.picture.read'
+            permission: 'resource.publication.read'
           },
           component: () =>
             import(
