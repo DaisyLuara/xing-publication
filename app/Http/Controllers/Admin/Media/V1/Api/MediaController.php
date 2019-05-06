@@ -16,7 +16,7 @@ class MediaController extends Controller
     public function store(MediaRequest $request, Media $media, ImageUploadHandler $uploader): \Dingo\Api\Http\Response
     {
         /** @var  $file \Illuminate\Http\UploadedFile */
-        $file = $request->get('file');
+        $file = $request->file;
 
         $width = 0;
         $height = 0;
