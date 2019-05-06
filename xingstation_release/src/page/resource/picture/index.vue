@@ -105,7 +105,6 @@ import {
   imgMediaUpload
 } from "service";
 
-import Vue from "vue";
 import {
   Popover,
   Button,
@@ -115,7 +114,6 @@ import {
   Dialog,
   Message
 } from "element-ui";
-import auth from "service/auth";
 
 export default {
   components: {
@@ -156,7 +154,7 @@ export default {
       }
     };
   },
-  created: function() {
+  created() {
     this.init();
     this.getImgMediaList();
   },
@@ -257,7 +255,6 @@ export default {
       let random = parseInt(Math.random() * 10 + 1, 10);
       let suffix = time + "_" + random + "_" + name;
       let key = encodeURI(`${suffix}`);
-
       const isJPG =
         file.type === "image/jpg" ||
         file.type === "image/png" ||

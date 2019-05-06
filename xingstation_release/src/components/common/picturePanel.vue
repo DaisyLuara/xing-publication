@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import { getImgMediaList } from "service";
+import { getImgMediaList, getQiniuToken, imgMediaUpload } from "service";
 
 import {
   Button,
@@ -126,9 +126,18 @@ export default {
     };
   },
   created() {
+    this.init();
     this.getImgMediaList();
   },
   methods: {
+    async init() {
+      try {
+        let res = await getQiniuToken(this);
+        this.uploadForm.token = res;
+      } catch (e) {
+        console.log(e);
+      }
+    },
     handleError() {
       this.loading = false;
     },
@@ -194,28 +203,50 @@ export default {
     },
 
     handleSuccess(response, file, fileList) {
-      this.getImgMediaList();
+      let [key, name, size] = [response.key, file.name, file.size];
+      let type = name.substring(name.lastIndexOf("."));
+      let params = {
+        key: key,
+        name: name,
+        size: size
+      };
+      this.imgMediaUpload(params);
     },
-
+    imgMediaUpload(args) {
+      imgMediaUpload(this, args)
+        .then(res => {
+          this.getImgMediaList();
+        })
+        .catch(err => {});
+    },
     beforeUpload(file) {
       this.loading = true;
 
+      let name = file.name;
+      let type = name.substring(name.lastIndexOf("."));
+      let isLt100M = file.size / 1024 / 1024 < 100;
+      let time = new Date().getTime();
+      let random = parseInt(Math.random() * 10 + 1, 10);
+      let suffix = time + "_" + random + "_" + name;
+      let key = encodeURI(`${suffix}`);
       const isJPG =
-        file.type === "image/jpeg" ||
+        file.type === "image/jpg" ||
         file.type === "image/png" ||
         file.type === "image/gif" ||
         file.type === "image/jpeg";
-      const isLt2M = file.size / 1024 / 1024 < 10;
+      const isLt10M = file.size / 1024 / 1024 < 10;
       if (!isJPG) {
-        this.loading = false;
-        this.$message.error("上传图片仅支持jpg、jpeg 、gif 、png四种格式!");
+        this.$message.error("上传图片仅支持jpg、jpeg 、gif、png四种格式!");
+        this.setting.loading = false;
         return isJPG;
       }
-      if (!isLt2M) {
-        this.loading = false;
+      if (!isLt10M) {
         this.$message.error("上传图片大小不能超过 10MB!");
-        return isLt2M;
+        this.setting.loading = false;
+        return isLt10M;
       }
+      this.uploadForm.key = key;
+      return this.uploadForm;
     }
   }
 };
