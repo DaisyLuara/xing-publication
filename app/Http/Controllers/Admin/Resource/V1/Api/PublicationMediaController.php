@@ -43,7 +43,7 @@ class PublicationMediaController extends Controller
             'width' => 0,
         ];
         $media = Media::create($data);
-        $publicationMedia->fill(['media_id' => $media->id])->save();
+        $publicationMedia->fill(['media_id' => $media->id,'creator'=>$this->user()->id])->save();
         return $this->response()->item($publicationMedia, new PublicationMediaTransformer())->setStatusCode(201);
     }
 

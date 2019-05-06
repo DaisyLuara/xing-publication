@@ -11,15 +11,22 @@ namespace App\Http\Controllers\Admin\Resource\V1\Models;
 
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Models\Model;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PublicationMedia extends Model
 {
-    protected $fillable = ['media_id'];
+    protected $fillable = ['media_id', 'creator'];
 
     public $timestamps = false;
 
-    public function media(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function media(): BelongsTo
     {
         return $this->belongsTo(Media::class, 'media_id', 'id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'creator', 'id');
     }
 }
