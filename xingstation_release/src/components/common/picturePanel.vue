@@ -183,9 +183,9 @@ export default {
     getImgMediaList() {
       let params = {
         page: this.pagination.page_num,
-        type: "image",
         name: this.serch.name
       };
+      this.serch.name === "" ? delete params.name : "";
       getImgMediaList(this, params)
         .then(res => {
           this.dataImg = res.data;
