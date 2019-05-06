@@ -34,16 +34,17 @@ class PublicationMediaController extends Controller
     public function store(PublicationMediaRequest $request, PublicationMedia $publicationMedia): Response
     {
         $disk = \Storage::disk('qiniu');
+        $info = $disk->getDriver()->imageInfo(urlencode($request->get('key')));
         $domain = $disk->getDriver()->downloadUrl();
         $data = [
             'name' => $request->get('name'),
             'url' => $domain . urlencode($request->get('key')),
             'size' => $request->get('size'),
-            'height' => 0,
-            'width' => 0,
+            'height' => $info['height'],
+            'width' => $info['width'],
         ];
         $media = Media::create($data);
-        $publicationMedia->fill(['media_id' => $media->id,'creator'=>$this->user()->id])->save();
+        $publicationMedia->fill(['media_id' => $media->id, 'creator' => $this->user()->id])->save();
         return $this->response()->item($publicationMedia, new PublicationMediaTransformer())->setStatusCode(201);
     }
 

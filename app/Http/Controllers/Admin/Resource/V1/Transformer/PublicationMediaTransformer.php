@@ -23,6 +23,8 @@ class PublicationMediaTransformer extends TransformerAbstract
             'media_id' => $media->id,
             'name' => $media->name,
             'url' => $media->url,
+            'width' => $media->width,
+            'height' => $media->height
         ];
     }
 }
