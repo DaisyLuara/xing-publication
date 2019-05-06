@@ -106,6 +106,7 @@ class Coupon extends Model
         'channel',
         'oid',
         'belong',
+        'ser_timestamp',
         'utm_source',
         'start_date',
         'end_date',

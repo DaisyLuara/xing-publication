@@ -65,8 +65,8 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item
-            :rules="{required: true, message: '每天无限领取不能为空', trigger: 'submit'}"
-            label="每天无限领取"
+            :rules="{required: true, message: '每人无限领取不能为空', trigger: 'submit'}"
+            label="每人无限领取"
             prop="per_person_unlimit"
           >
             <el-radio-group
@@ -79,8 +79,8 @@
           </el-form-item>
           <el-form-item
             v-if="peopleReceiveShow"
-            :rules="{required: true, message: '每天最大获取数不能为空', trigger: 'submit'}"
-            label="每天最大获取数"
+            :rules="{required: true, message: '每人最大获取数不能为空', trigger: 'submit'}"
+            label="每人最大获取数"
             prop="per_person_times"
           >
             <el-input
