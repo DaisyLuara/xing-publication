@@ -6,7 +6,7 @@ let router = {
   name: '资源',
   meta: {
     title: '资源',
-    permission: 'resource',
+    permission: '',
     url: URL.CDN_URL + 'middle_ground/img/resource_icon.png'
   },
   component: () =>
@@ -14,27 +14,31 @@ let router = {
       /* webpackChunkName: "page/resource/resourceView" */ 'page/resource/resourceView'
     ),
   children: [
-    // {
-    //   path: 'picture',
-    //   meta: {
-    //     title: '图片管理',
-    //     permission: ''
-    //   },
-    //   component: () =>
-    //     import(/* webpackChunkName: "page/resource/picture/routerView" */ 'page/resource/picture/routerView'),
-    //   children: [
-    //     {
-    //       path: '/',
-    //       name: '图片管理列表',
-    //       meta: {
-    //         title: '图片管理列表',
-    //         permission: ''
-    //       },
-    //       component: () =>
-    //         import(/* webpackChunkName: "page/resource/picture/index" */ 'page/resource/picture/index')
-    //     }
-    //   ]
-    // }
+    {
+      path: 'picture',
+      meta: {
+        title: '图片管理',
+        permission: ''
+      },
+      component: () =>
+        import(
+          /* webpackChunkName: "page/resource/picture/routerView" */ 'page/resource/picture/routerView'
+        ),
+      children: [
+        {
+          path: '/',
+          name: '图片管理列表',
+          meta: {
+            title: '图片管理列表',
+            permission: ''
+          },
+          component: () =>
+            import(
+              /* webpackChunkName: "page/resource/picture/index" */ 'page/resource/picture/index'
+            )
+        }
+      ]
+    },
     {
       path: 'activity',
       meta: {
