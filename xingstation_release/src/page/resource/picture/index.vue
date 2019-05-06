@@ -99,10 +99,10 @@
 
 <script>
 import {
-  // getPictureMediaList,
-  // modifyPictureMedia,
+  getImgMediaList,
+  modifyImgMedia,
   getQiniuToken,
-  getMediaUpload
+  imgMediaUpload
 } from "service";
 
 import Vue from "vue";
@@ -158,7 +158,7 @@ export default {
   },
   created: function() {
     this.init();
-    // this.getPictureMediaList();
+    this.getImgMediaList();
   },
   methods: {
     async init() {
@@ -177,16 +177,15 @@ export default {
     },
     changeCurrent(currentPage) {
       this.pagination.page_num = currentPage;
-      this.getPictureMediaList();
+      this.getImgMediaList();
     },
     // 获取图片列表
-    getPictureMediaList() {
+    getImgMediaList() {
       let _this = this;
       let args = {
         page: this.pagination.page_num
-        // type: "image"
       };
-      getPictureMediaList(this, args)
+      getImgMediaList(this, args)
         .then(res => {
           this.mediaImage.mediaList = res.data;
           this.pagination.count = res.meta.pagination.total;
@@ -240,9 +239,9 @@ export default {
       let args = {
         name: name
       };
-      modifyPictureMedia(this, id, args)
+      modifyImgMedia(this, id, args)
         .then(res => {
-          this.getPictureMediaList();
+          this.getImgMediaList();
         })
         .catch(err => {
           this.setting.loading = false;
@@ -274,8 +273,6 @@ export default {
         this.$message.error("上传图片大小不能超过 10MB!");
         this.setting.loading = false;
         return isLt10M;
-      } else {
-        // this.uploadForm.token = this.uploadToken;
       }
       this.uploadForm.key = key;
       return this.uploadForm;
@@ -289,12 +286,12 @@ export default {
         name: name,
         size: size
       };
-      this.getMediaUpload(params);
+      this.imgMediaUpload(params);
     },
-    getMediaUpload(args) {
-      getMediaUpload(this, args)
+    imgMediaUpload(args) {
+      imgMediaUpload(this, args)
         .then(res => {
-          this.getPictureMediaList();
+          this.getImgMediaList();
         })
         .catch(err => {});
     }

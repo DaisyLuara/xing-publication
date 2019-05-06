@@ -4,6 +4,7 @@ const ACTIVITY_MEDIA_AUDIT_API = '/api/activity_media/audit'
 const TENANT_MEDIA_AUDIT_API = '/api/company_media/audit'
 const QINNIU_API = '/api/qiniu_oauth'
 const MEDIA_UPLOAD_AP = '/api/media_upload'
+const IMG_MEDIA_UPLOAD_AP = '/api/pub_media'
 const HOST = process.env.SERVER_URL
 // 活动审核列表
 const getActivityMediaList = (context, params) => {
@@ -75,11 +76,52 @@ const getQiniuToken = context => {
   })
 }
 
-// 传给后台七牛的key和文件name
+// 传给后台七牛的key和文件name，主要用在不是图片上传的
 const getMediaUpload = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
       .post(HOST + MEDIA_UPLOAD_AP, params)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+// 传给后台七牛的key和文件name，主要用在图片资源上传的
+const imgMediaUpload = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .post(HOST + IMG_MEDIA_UPLOAD_AP, params)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+// 图片资源列表
+const getImgMediaList = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + IMG_MEDIA_UPLOAD_AP, { params: params })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+// 图片资源修改
+const modifyImgMedia = (context, id, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .patch(HOST + IMG_MEDIA_UPLOAD_AP + '/' + id, params)
       .then(response => {
         resolve(response.data)
       })
@@ -95,5 +137,8 @@ export {
   getTenantMediaList,
   TenantMediaAudit,
   getQiniuToken,
-  getMediaUpload
+  getMediaUpload,
+  imgMediaUpload,
+  getImgMediaList,
+  modifyImgMedia
 }

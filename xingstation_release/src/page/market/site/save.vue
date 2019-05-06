@@ -1,32 +1,14 @@
 <template>
   <div class="item-wrap-template">
-    <div 
-      v-loading="setting.loading" 
-      :element-loading-text="setting.loadingText" 
-      class="pane">
+    <div v-loading="setting.loading" :element-loading-text="setting.loadingText" class="pane">
       <div class="pane-title">{{ siteID ? '修改场地' : '新建场地' }}</div>
-      <el-form 
-        ref="siteForm" 
-        :model="siteForm" 
-        :rules="rules" 
-        label-width="150px">
-        <el-tabs 
-          v-model="activeName" 
-          type="card">
-          <el-tab-pane 
-            label="场地配置" 
-            name="first">
-            <el-form-item 
-              label="场地名称" 
-              prop="name">
-              <el-input 
-                v-model="siteForm.name" 
-                placeholder="请输入场地名称" 
-                class="item-input"/>
+      <el-form ref="siteForm" :model="siteForm" :rules="rules" label-width="150px">
+        <el-tabs v-model="activeName" type="card">
+          <el-tab-pane label="场地配置" name="first">
+            <el-form-item label="场地名称" prop="name">
+              <el-input v-model="siteForm.name" placeholder="请输入场地名称" class="item-input"/>
             </el-form-item>
-            <el-form-item 
-              label="公司名称" 
-              prop="marketConfig.company_id">
+            <el-form-item label="公司名称" prop="marketConfig.company_id">
               <el-select
                 v-model="siteForm.marketConfig.company_id"
                 :loading="searchLoading"
@@ -41,14 +23,8 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item 
-              label="区域" 
-              prop="areaid">
-              <el-select 
-                v-model="siteForm.areaid" 
-                placeholder="请选择" 
-                filterable 
-                clearable>
+            <el-form-item label="区域" prop="areaid">
+              <el-select v-model="siteForm.areaid" placeholder="请选择" filterable clearable>
                 <el-option
                   v-for="item in areaList"
                   :key="item.id"
@@ -57,10 +33,8 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item 
-              label="场地logo" 
-              prop="media_id">
-              <el-upload
+            <el-form-item label="场地logo" prop="media_id">
+              <!-- <el-upload
                 :action="SERVER_URL + '/api/media'"
                 :data="{type: 'image'}"
                 :headers="formHeader"
@@ -68,37 +42,28 @@
                 :on-success="handleAvatarSuccess"
                 :before-upload="beforeAvatarUpload"
                 class="avatar-uploader"
-              >
-                <img 
-                  v-if="logoUrl" 
-                  :src="logoUrl" 
-                  class="avatar">
-                <i 
-                  v-else 
-                  class="el-icon-plus avatar-uploader-icon"/>
-              </el-upload>
+              >-->
+              <div class="avatar-uploader" @click="panelVisible=true">
+                <img v-if="logoUrl" :src="logoUrl" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"/>
+              </div>
+              <!-- </el-upload> -->
             </el-form-item>
-            <el-form-item 
-              label="场地电话" 
-              prop="marketConfig.phone">
+            <el-form-item label="场地电话" prop="marketConfig.phone">
               <el-input
                 v-model="siteForm.marketConfig.phone"
                 placeholder="请输入场地电话"
                 class="item-input"
               />
             </el-form-item>
-            <el-form-item 
-              label="场地地址" 
-              prop="marketConfig.address">
+            <el-form-item label="场地地址" prop="marketConfig.address">
               <el-input
                 v-model="siteForm.marketConfig.address"
                 placeholder="请输入场地地址"
                 class="item-input"
               />
             </el-form-item>
-            <el-form-item 
-              label="场地详情" 
-              prop="marketConfig.description">
+            <el-form-item label="场地详情" prop="marketConfig.description">
               <el-input
                 v-model="siteForm.marketConfig.description"
                 type="textarea"
@@ -107,33 +72,19 @@
               />
             </el-form-item>
           </el-tab-pane>
-          <el-tab-pane 
-            label="合约配置" 
-            name="second">
-            <el-form-item 
-              label="场地类型" 
-              prop="contract.type">
+          <el-tab-pane label="合约配置" name="second">
+            <el-form-item label="场地类型" prop="contract.type">
               <el-radio-group v-model="siteForm.contract.type">
-                <el-radio 
-                  v-for="item in typeList" 
-                  :label="item.id" 
-                  :key="item.id">{{ item.name }}</el-radio>
+                <el-radio v-for="item in typeList" :label="item.id" :key="item.id">{{ item.name }}</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item 
-              label="合同" 
-              prop="contract.contract">
-              <el-radio-group 
-                v-model="siteForm.contract.contract" 
-                @change="handleContract">
+            <el-form-item label="合同" prop="contract.contract">
+              <el-radio-group v-model="siteForm.contract.contract" @change="handleContract">
                 <el-radio :label="0">无</el-radio>
                 <el-radio :label="1">有</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item 
-              v-if="contractShow" 
-              label="合同编号" 
-              prop="contract_num">
+            <el-form-item v-if="contractShow" label="合同编号" prop="contract_num">
               <el-select
                 v-model="siteForm.contract.contract_num"
                 :loading="searchLoading"
@@ -148,18 +99,14 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item 
-              label="合同公司" 
-              prop="contract_company">
+            <el-form-item label="合同公司" prop="contract_company">
               <el-input
                 v-model="siteForm.contract.contract_company"
                 placeholder="请输入合同公司"
                 class="item-input"
               />
             </el-form-item>
-            <el-form-item 
-              label="所属人" 
-              prop="bd_user_id">
+            <el-form-item label="所属人" prop="bd_user_id">
               <el-select
                 v-model="siteForm.marketConfig.bd_user_id"
                 :loading="searchLoading"
@@ -174,9 +121,7 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item 
-              label="合同联系人" 
-              prop="contract_user">
+            <el-form-item label="合同联系人" prop="contract_user">
               <el-select
                 v-model="siteForm.contract.contract_user"
                 :loading="searchLoading"
@@ -192,29 +137,19 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item 
-              label="联系方式" 
-              prop="contract_phone">
+            <el-form-item label="联系方式" prop="contract_phone">
               <el-input
                 v-model="siteForm.contract.contract_phone"
                 placeholder="请输入联系方式"
                 class="item-input"
               />
             </el-form-item>
-            <el-form-item 
-              v-if="payFlag" 
-              label="租金" 
-              prop="contract.pay">
-              <el-input 
-                v-model="siteForm.contract.pay" 
-                placeholder="请输入租金" 
-                class="item-input">
+            <el-form-item v-if="payFlag" label="租金" prop="contract.pay">
+              <el-input v-model="siteForm.contract.pay" placeholder="请输入租金" class="item-input">
                 <template slot="append">元／年</template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="合同开始时间" 
-              prop="contract.enter_sdate">
+            <el-form-item label="合同开始时间" prop="contract.enter_sdate">
               <el-date-picker
                 v-model="siteForm.contract.enter_sdate"
                 type="date"
@@ -223,9 +158,7 @@
                 value-format="yyyy-MM-dd HH:mm:ss"
               />
             </el-form-item>
-            <el-form-item 
-              label="合同结束时间" 
-              prop="contract.enter_edate">
+            <el-form-item label="合同结束时间" prop="contract.enter_edate">
               <el-date-picker
                 v-model="siteForm.contract.enter_edate"
                 type="date"
@@ -234,9 +167,7 @@
                 value-format="yyyy-MM-dd HH:mm:ss"
               />
             </el-form-item>
-            <el-form-item 
-              label="实际入驻开始时间" 
-              prop="contract.oper_sdate">
+            <el-form-item label="实际入驻开始时间" prop="contract.oper_sdate">
               <el-date-picker
                 v-model="siteForm.contract.oper_sdate"
                 type="date"
@@ -245,9 +176,7 @@
                 value-format="yyyy-MM-dd HH:mm:ss"
               />
             </el-form-item>
-            <el-form-item 
-              label="实际入驻结束时间" 
-              prop="contract.oper_edate">
+            <el-form-item label="实际入驻结束时间" prop="contract.oper_edate">
               <el-date-picker
                 v-model="siteForm.contract.oper_edate"
                 type="date"
@@ -256,23 +185,13 @@
                 value-format="yyyy-MM-dd HH:mm:ss"
               />
             </el-form-item>
-            <el-form-item 
-              label="合约模式" 
-              prop="contract.mode">
-              <el-radio-group 
-                v-model="siteForm.contract.mode" 
-                @change="modeHandle">
-                <el-radio 
-                  v-for="item in modeList" 
-                  :label="item.id" 
-                  :key="item.id">{{ item.name }}</el-radio>
+            <el-form-item label="合约模式" prop="contract.mode">
+              <el-radio-group v-model="siteForm.contract.mode" @change="modeHandle">
+                <el-radio v-for="item in modeList" :label="item.id" :key="item.id">{{ item.name }}</el-radio>
               </el-radio-group>
             </el-form-item>
             <div v-show="modeNone">
-              <el-form-item 
-                v-show="modeFlag" 
-                label="A类广告分成" 
-                prop="contract.ad_istar">
+              <el-form-item v-show="modeFlag" label="A类广告分成" prop="contract.ad_istar">
                 <el-input
                   v-model="siteForm.contract.ad_istar"
                   placeholder="请输入A类广告分成"
@@ -281,10 +200,7 @@
                   <template slot="append">%(星视度引入)</template>
                 </el-input>
               </el-form-item>
-              <el-form-item 
-                v-show="modeFlag" 
-                label="B类广告分成" 
-                prop="contract.ad_ads">
+              <el-form-item v-show="modeFlag" label="B类广告分成" prop="contract.ad_ads">
                 <el-input
                   v-model="siteForm.contract.ad_ads"
                   placeholder="请输入B类广告分成"
@@ -293,10 +209,7 @@
                   <template slot="append">%(非星视度引入)</template>
                 </el-input>
               </el-form-item>
-              <el-form-item 
-                v-show="!modeFlag" 
-                label="置换节目数量" 
-                prop="contract.exchange_num">
+              <el-form-item v-show="!modeFlag" label="置换节目数量" prop="contract.exchange_num">
                 <el-input
                   v-model="siteForm.contract.exchange_num"
                   placeholder="请输入置换节目数量"
@@ -307,12 +220,8 @@
               </el-form-item>
             </div>
           </el-tab-pane>
-          <el-tab-pane 
-            label="共享配置" 
-            name="third">
-            <el-form-item 
-              label="场地权限" 
-              prop="permission">
+          <el-tab-pane label="共享配置" name="third">
+            <el-form-item label="场地权限" prop="permission">
               <el-checkbox-group v-model="siteForm.permission">
                 <el-checkbox
                   v-for="item in permissionList"
@@ -321,27 +230,16 @@
                 >{{ item.name }}</el-checkbox>
               </el-checkbox-group>
             </el-form-item>
-            <el-form-item 
-              label="报刊价" 
-              prop="share.offer">
-              <el-input 
-                v-model="siteForm.share.offer" 
-                placeholder="请输入报刊价" 
-                class="item-input">
+            <el-form-item label="报刊价" prop="share.offer">
+              <el-input v-model="siteForm.share.offer" placeholder="请输入报刊价" class="item-input">
                 <template slot="append">
-                  <el-tooltip 
-                    effect="dark" 
-                    content="每个屏幕每次的价钱" 
-                    placement="right" 
-                    class="item">
+                  <el-tooltip effect="dark" content="每个屏幕每次的价钱" placement="right" class="item">
                     <div>¥／分</div>
                   </el-tooltip>
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="报刊价系数" 
-              prop="share.offer_off">
+            <el-form-item label="报刊价系数" prop="share.offer_off">
               <el-input
                 v-model="siteForm.share.offer_off"
                 placeholder="请输入报刊价系数"
@@ -350,83 +248,44 @@
                 <template slot="append">%</template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="曝光价" 
-              prop="share.mad">
-              <el-input 
-                v-model="siteForm.share.mad" 
-                placeholder="请输入曝光价" 
-                class="item-input">
+            <el-form-item label="曝光价" prop="share.mad">
+              <el-input v-model="siteForm.share.mad" placeholder="请输入曝光价" class="item-input">
                 <template slot="append">
-                  <el-tooltip 
-                    effect="dark" 
-                    content="每个屏幕每次的价钱" 
-                    placement="right" 
-                    class="item">
+                  <el-tooltip effect="dark" content="每个屏幕每次的价钱" placement="right" class="item">
                     <div>¥／分</div>
                   </el-tooltip>
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="曝光价系数" 
-              prop="share.mad_off">
-              <el-input 
-                v-model="siteForm.share.mad_off" 
-                placeholder="请输入曝光价系数" 
-                class="item-input">
+            <el-form-item label="曝光价系数" prop="share.mad_off">
+              <el-input v-model="siteForm.share.mad_off" placeholder="请输入曝光价系数" class="item-input">
                 <template slot="append">%</template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="冠名价" 
-              prop="share.play">
-              <el-input 
-                v-model="siteForm.share.play" 
-                placeholder="请输入冠名价" 
-                class="item-input">
+            <el-form-item label="冠名价" prop="share.play">
+              <el-input v-model="siteForm.share.play" placeholder="请输入冠名价" class="item-input">
                 <template slot="append">
-                  <el-tooltip 
-                    effect="dark" 
-                    content="每个屏幕每次的价钱" 
-                    placement="right" 
-                    class="item">
+                  <el-tooltip effect="dark" content="每个屏幕每次的价钱" placement="right" class="item">
                     <div>¥／分</div>
                   </el-tooltip>
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="冠名价系数" 
-              prop="share.play_off">
-              <el-input 
-                v-model="siteForm.share.play_off" 
-                placeholder="请输入冠名价系数" 
-                class="item-input">
+            <el-form-item label="冠名价系数" prop="share.play_off">
+              <el-input v-model="siteForm.share.play_off" placeholder="请输入冠名价系数" class="item-input">
                 <template slot="append">%</template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="链接跳转" 
-              prop="share.qrcode">
-              <el-input 
-                v-model="siteForm.share.qrcode" 
-                placeholder="请输入" 
-                class="item-input">
+            <el-form-item label="链接跳转" prop="share.qrcode">
+              <el-input v-model="siteForm.share.qrcode" placeholder="请输入" class="item-input">
                 <template slot="append">
-                  <el-tooltip 
-                    effect="dark" 
-                    content="每个场地每天的价钱" 
-                    placement="right" 
-                    class="item">
+                  <el-tooltip effect="dark" content="每个场地每天的价钱" placement="right" class="item">
                     <div>¥／分</div>
                   </el-tooltip>
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="链接跳转系数" 
-              prop="share.qrcode_off">
+            <el-form-item label="链接跳转系数" prop="share.qrcode_off">
               <el-input
                 v-model="siteForm.share.qrcode_off"
                 placeholder="请输入链接跳转系数"
@@ -435,27 +294,16 @@
                 <template slot="append">%</template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="订阅/公众号" 
-              prop="share.wx_pa">
-              <el-input 
-                v-model="siteForm.share.wx_pa" 
-                placeholder="请输入" 
-                class="item-input">
+            <el-form-item label="订阅/公众号" prop="share.wx_pa">
+              <el-input v-model="siteForm.share.wx_pa" placeholder="请输入" class="item-input">
                 <template slot="append">
-                  <el-tooltip 
-                    effect="dark" 
-                    content="每个场地每天的价钱" 
-                    placement="right" 
-                    class="item">
+                  <el-tooltip effect="dark" content="每个场地每天的价钱" placement="right" class="item">
                     <div>¥／分</div>
                   </el-tooltip>
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="订阅/公众号系数" 
-              prop="share.wx_pa_off">
+            <el-form-item label="订阅/公众号系数" prop="share.wx_pa_off">
               <el-input
                 v-model="siteForm.share.wx_pa_off"
                 placeholder="请输入订阅/公众号系数"
@@ -464,27 +312,16 @@
                 <template slot="append">%</template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="小程序" 
-              prop="share.wx_mp">
-              <el-input 
-                v-model="siteForm.share.wx_mp" 
-                placeholder="请输入" 
-                class="item-input">
+            <el-form-item label="小程序" prop="share.wx_mp">
+              <el-input v-model="siteForm.share.wx_mp" placeholder="请输入" class="item-input">
                 <template slot="append">
-                  <el-tooltip 
-                    effect="dark" 
-                    content="每个场地每天的价钱" 
-                    placement="right" 
-                    class="item">
+                  <el-tooltip effect="dark" content="每个场地每天的价钱" placement="right" class="item">
                     <div>¥／分</div>
                   </el-tooltip>
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="小程序系数" 
-              prop="share.wx_mp_off">
+            <el-form-item label="小程序系数" prop="share.wx_mp_off">
               <el-input
                 v-model="siteForm.share.wx_mp_off"
                 placeholder="请输入小程序系数"
@@ -493,55 +330,30 @@
                 <template slot="append">%</template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="APP下载" 
-              prop="share.app">
-              <el-input 
-                v-model="siteForm.share.app" 
-                placeholder="请输入" 
-                class="item-input">
+            <el-form-item label="APP下载" prop="share.app">
+              <el-input v-model="siteForm.share.app" placeholder="请输入" class="item-input">
                 <template slot="append">
-                  <el-tooltip 
-                    effect="dark" 
-                    content="每个场地每天的价钱" 
-                    placement="right" 
-                    class="item">
+                  <el-tooltip effect="dark" content="每个场地每天的价钱" placement="right" class="item">
                     <div>¥／分</div>
                   </el-tooltip>
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="APP系数" 
-              prop="share.app_off">
-              <el-input 
-                v-model="siteForm.share.app_off" 
-                placeholder="请输入APP系数" 
-                class="item-input">
+            <el-form-item label="APP系数" prop="share.app_off">
+              <el-input v-model="siteForm.share.app_off" placeholder="请输入APP系数" class="item-input">
                 <template slot="append">%</template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="手机号提取" 
-              prop="share.phone">
-              <el-input 
-                v-model="siteForm.share.phone" 
-                placeholder="请输入" 
-                class="item-input">
+            <el-form-item label="手机号提取" prop="share.phone">
+              <el-input v-model="siteForm.share.phone" placeholder="请输入" class="item-input">
                 <template slot="append">
-                  <el-tooltip 
-                    effect="dark" 
-                    content="每个场地每天的价钱" 
-                    placement="right" 
-                    class="item">
+                  <el-tooltip effect="dark" content="每个场地每天的价钱" placement="right" class="item">
                     <div>¥／分</div>
                   </el-tooltip>
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="手机号系数" 
-              prop="share.phone_off">
+            <el-form-item label="手机号系数" prop="share.phone_off">
               <el-input
                 v-model="siteForm.share.phone_off"
                 placeholder="请输入手机号系数"
@@ -550,50 +362,35 @@
                 <template slot="append">%</template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="优惠券" 
-              prop="share.coupon">
-              <el-input 
-                v-model="siteForm.share.coupon" 
-                placeholder="请输入" 
-                class="item-input">
+            <el-form-item label="优惠券" prop="share.coupon">
+              <el-input v-model="siteForm.share.coupon" placeholder="请输入" class="item-input">
                 <template slot="append">
-                  <el-tooltip 
-                    effect="dark" 
-                    content="每个场地每天的价钱" 
-                    placement="right" 
-                    class="item">
+                  <el-tooltip effect="dark" content="每个场地每天的价钱" placement="right" class="item">
                     <div>¥／分</div>
                   </el-tooltip>
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              label="券系数" 
-              prop="share.coupon_off">
-              <el-input 
-                v-model="siteForm.share.coupon_off" 
-                placeholder="请输入券系数" 
-                class="item-input">
+            <el-form-item label="券系数" prop="share.coupon_off">
+              <el-input v-model="siteForm.share.coupon_off" placeholder="请输入券系数" class="item-input">
                 <template slot="append">%</template>
               </el-input>
             </el-form-item>
           </el-tab-pane>
         </el-tabs>
         <el-form-item>
-          <el-button 
-            type="primary" 
-            @click="submit('siteForm')">保存</el-button>
+          <el-button type="primary" @click="submit('siteForm')">保存</el-button>
           <el-button @click="historyBack">返回</el-button>
         </el-form-item>
       </el-form>
     </div>
+    <PicturePanel :panelVisible.sync="panelVisible" :singleFlag="singleFlag" @close="handleClose"/>
   </div>
 </template>
 
 <script>
 import auth from "service/auth";
-
+import PicturePanel from "components/common/picturePanel";
 import {
   getSiteMarketDetail,
   historyBack,
@@ -643,7 +440,8 @@ export default {
     ElTooltip: Tooltip,
     ElCheckboxGroup: CheckboxGroup,
     ElCheckbox: Checkbox,
-    ElUpload: Upload
+    ElUpload: Upload,
+    PicturePanel
   },
   data() {
     let checkEnterEndDate = (rule, value, callback) => {
@@ -686,6 +484,8 @@ export default {
       }
     };
     return {
+      panelVisible: false,
+      singleFlag: true,
       SERVER_URL: SERVER_URL,
       formHeader: {
         Authorization: "Bearer " + auth.getToken()
@@ -935,12 +735,24 @@ export default {
     });
   },
   methods: {
+    handleClose(data) {
+      if (data && data.length > 0) {
+        let { id, url } = data[0];
+        this.siteForm.marketConfig.media_id = id;
+        this.logoUrl = url;
+      } else {
+        this.$message({
+          type: "warning",
+          message: "图片上传失败"
+        });
+      }
+    },
     async init() {
       try {
         await this.getContractReceiptList();
         await this.getSearchUserList();
         await this.getAreaList();
-        await this.getSearchCompany()
+        await this.getSearchCompany();
         if (this.siteID) {
           await this.getMarketDetail();
         }
