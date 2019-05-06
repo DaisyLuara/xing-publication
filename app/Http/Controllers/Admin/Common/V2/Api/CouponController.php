@@ -153,6 +153,7 @@ class CouponController extends Controller
                 'oid' => $request->oid,
                 'utm_source' => 1,
                 'belong' => $request->belong ?? '',
+                'ser_timestamp' => $request->get('ser_timestamp'),
                 'start_date' => $startDate,
                 'end_date' => $endDate,
             ]);
@@ -195,6 +196,10 @@ class CouponController extends Controller
 
         if ($request->has('belong')) {
             $query->where('belong', $request->get('belong'));
+        }
+
+        if ($request->has('ser_timestamp')) {
+            $query->where('ser_timestamp', $request->get('ser_timestamp'));
         }
 
         $coupon = $query->where('member_uid', $member->uid)->first();
