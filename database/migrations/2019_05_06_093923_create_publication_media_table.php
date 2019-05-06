@@ -17,7 +17,6 @@ class CreatePublicationMediaTable extends Migration
             $table->increments('id');
             $table->integer('media_id');
             $table->integer('creator');
-            $table->string('remark')->nullable();
         });
     }
 
