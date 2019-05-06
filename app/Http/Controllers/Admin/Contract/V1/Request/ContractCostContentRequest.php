@@ -26,7 +26,8 @@ class ContractCostContentRequest extends Request
                 break;
             case 'PATCH':
                 return [
-                    'money'=>'filled|numeric'
+                    'money'=>'filled|numeric',
+                    'total_cost'=>'filled|numeric'
                 ];
                 break;
             default:
