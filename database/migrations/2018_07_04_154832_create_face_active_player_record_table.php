@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use App\Http\Controllers\Admin\Face\V1\Models\FaceActivePlayerRecord;
 
 class CreateFaceActivePlayerRecordTable extends Migration
 {
@@ -19,7 +18,6 @@ class CreateFaceActivePlayerRecordTable extends Migration
             $table->timestamp('date')->nullable();
             $table->timestamps();
         });
-        FaceActivePlayerRecord::create(['date' => '2018-06-13']);
     }
 
     /**
