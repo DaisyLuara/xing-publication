@@ -16,6 +16,8 @@ class PublicationMedia extends Model
 {
     protected $fillable = ['media_id'];
 
+    public $timestamps = false;
+
     public function media(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Media::class, 'media_id', 'id');

@@ -43,6 +43,17 @@ class MediaController extends Controller
         return $this->response()->item($media, new MediaTransformer())->setStatusCode(201);
     }
 
+    /**
+     * 获取中台七牛token
+     * @return mixed
+     */
+    public function token()
+    {
+        $disk = \Storage::disk('qiniu');
+        $token = $disk->getDriver()->uploadToken();
+        return $token;
+    }
+
     public function create(Request $request, Media $media): \Dingo\Api\Http\Response
     {
         $disk = \Storage::disk('qiniu');
