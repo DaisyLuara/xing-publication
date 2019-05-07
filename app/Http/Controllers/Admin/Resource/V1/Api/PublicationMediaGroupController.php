@@ -11,7 +11,6 @@ namespace App\Http\Controllers\Admin\Resource\V1\Api;
 
 use App\Http\Controllers\Admin\Resource\V1\Models\PublicationMediaGroup;
 use App\Http\Controllers\Admin\Resource\V1\Request\PublicationMediaGroupRequest;
-use App\Http\Controllers\Admin\Resource\V1\Request\PublicationMediaRequest;
 use App\Http\Controllers\Admin\Resource\V1\Transformer\PublicationMediaGroupTransformer;
 use App\Http\Controllers\Controller;
 

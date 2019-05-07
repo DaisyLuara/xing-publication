@@ -29,4 +29,9 @@ class PublicationMediaGroup extends Model
 {
     public $timestamps = false;
     protected $fillable = ['name'];
+
+    public function pubMedia()
+    {
+        return $this->hasMany(PublicationMedia::class, 'group_id', 'id');
+    }
 }

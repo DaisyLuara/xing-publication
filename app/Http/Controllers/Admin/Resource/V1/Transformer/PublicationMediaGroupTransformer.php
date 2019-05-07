@@ -18,7 +18,8 @@ class PublicationMediaGroupTransformer extends TransformerAbstract
     {
         return [
             'id' => $group->id,
-            'name' => $group->name
+            'name' => $group->name,
+            'count' => $group->pubMedia()->count()
         ];
     }
 }
