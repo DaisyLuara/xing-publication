@@ -26,11 +26,19 @@ class ContractCostContentRequest extends Request
                 break;
             case 'PATCH':
                 return [
+                    'money'=>'filled|numeric',
+                    'total_cost'=>'filled|numeric'
                 ];
                 break;
             default:
                 return [];
         }
 
+    }
+
+    public function attributes(){
+        return [
+            'money'=>'金额'
+        ];
     }
 }

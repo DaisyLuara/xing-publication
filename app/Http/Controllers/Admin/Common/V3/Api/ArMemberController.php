@@ -34,7 +34,7 @@ class ArMemberController extends Controller
 
             try {
                 $easySms->send($phone, [
-                    'content' => "【星视度】您正在使用星视度广告系统，短信验证码：$code ， 有效期为600秒，感谢您的使用！",
+                    'content' => "【星视度】感谢参与星视度“全城告白，钻石屏证”活动，短信验证码：$code ， 有效期为10分钟，感谢您的参与！",
                 ]);
             } catch (\GuzzleHttp\Exception\ClientException $exception) {
                 $response = $exception->getResponse();

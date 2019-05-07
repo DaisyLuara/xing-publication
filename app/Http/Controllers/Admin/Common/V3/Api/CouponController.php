@@ -74,7 +74,7 @@ class CouponController extends Controller
             abort_if($coupons->count() >= $couponBatch->people_max_get, 500, '优惠券每人最多领取' . $couponBatch->people_max_get . '张');
         }
 
-        $code = uniqid('', true);
+        $code = uniqid();
         //微信卡券二维码
         $wechatCouponBatch = $couponBatch->wechat;
         $prefix = 'h5_code_';
