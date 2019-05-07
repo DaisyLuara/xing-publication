@@ -20,6 +20,7 @@ class PublicationMediaTransformer extends TransformerAbstract
         $media = $publicationMedia->media;
         return [
             'id' => $publicationMedia->id,
+            'group_id' => $publicationMedia->group_id,
             'media_id' => $media->id,
             'name' => $media->name,
             'url' => $media->url,

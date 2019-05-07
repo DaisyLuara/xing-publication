@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Admin\Resource\V1\Api;
 
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Http\Controllers\Admin\Resource\V1\Models\PublicationMedia;
+use App\Http\Controllers\Admin\Resource\V1\Models\PublicationMediaGroup;
 use App\Http\Controllers\Admin\Resource\V1\Request\PublicationMediaRequest;
 use App\Http\Controllers\Admin\Resource\V1\Transformer\PublicationMediaTransformer;
 use App\Http\Controllers\Controller;
@@ -18,20 +19,21 @@ use Dingo\Api\Http\Response;
 
 class PublicationMediaController extends Controller
 {
-    public function index(PublicationMedia $publicationMedia)
+    public function index(PublicationMediaGroup $group, PublicationMedia $publicationMedia)
     {
         $query = $publicationMedia->query();
-        $publicationMedia = $query->paginate(10);
+        $publicationMedia = $query->where('group_id', $group->id)->paginate(10);
         return $this->response()->paginator($publicationMedia, new PublicationMediaTransformer())->setStatusCode(200);
     }
 
     /**
      * 存储publication资源
      * @param PublicationMediaRequest $request
+     * @param PublicationMediaGroup $group
      * @param PublicationMedia $publicationMedia
      * @return \Dingo\Api\Http\Response
      */
-    public function store(PublicationMediaRequest $request, PublicationMedia $publicationMedia): Response
+    public function store(PublicationMediaRequest $request, PublicationMediaGroup $group, PublicationMedia $publicationMedia): Response
     {
         $disk = \Storage::disk('qiniu');
         $info = $disk->getDriver()->imageInfo(urlencode($request->get('key')));
@@ -44,11 +46,11 @@ class PublicationMediaController extends Controller
             'width' => $info['width'],
         ];
         $media = Media::create($data);
-        $publicationMedia->fill(['media_id' => $media->id, 'creator' => $this->user()->id])->save();
+        $publicationMedia->fill(['group_id' => $group->id, 'media_id' => $media->id, 'creator' => $this->user()->id])->save();
         return $this->response()->item($publicationMedia, new PublicationMediaTransformer())->setStatusCode(201);
     }
 
-    public function update(PublicationMediaRequest $request, PublicationMedia $publicationMedia)
+    public function update(PublicationMediaRequest $request, PublicationMediaGroup $group, PublicationMedia $publicationMedia)
     {
         $publicationMedia->media()->update($request->all());
         return $this->response()->noContent()->setStatusCode(200);

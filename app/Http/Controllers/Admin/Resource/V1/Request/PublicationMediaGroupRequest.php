@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: yangqiang
- * Date: 2019/5/6
- * Time: 上午9:45
+ * Date: 2019/5/7
+ * Time: 下午3:50
  */
 
 namespace App\Http\Controllers\Admin\Resource\V1\Request;
@@ -11,16 +11,14 @@ namespace App\Http\Controllers\Admin\Resource\V1\Request;
 
 use App\Http\Requests\Request;
 
-class PublicationMediaRequest extends Request
+class PublicationMediaGroupRequest extends Request
 {
     public function rules(): array
     {
         $method = $this->method();
         if ($method === 'POST') {
             return [
-                'name' => 'required|string',
-                'key' => 'required|string',
-                'size' => 'required|integer'
+                'name' => 'required|string'
             ];
         }
         if ($method === 'PATCH') {

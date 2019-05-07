@@ -15,6 +15,7 @@ class CreatePublicationMediaTable extends Migration
     {
         Schema::create('publication_media', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('group_id');
             $table->integer('media_id');
             $table->integer('creator');
         });
