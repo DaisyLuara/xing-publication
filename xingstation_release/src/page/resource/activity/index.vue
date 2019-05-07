@@ -54,7 +54,10 @@
                 <el-form-item label="ID">
                   <span>{{ scope.row.id }}</span>
                 </el-form-item>
-                <el-form-item label="名称">
+                <el-form-item label="活动名称">
+                  <span>{{ scope.row.activity_name }}</span>
+                </el-form-item>
+                <el-form-item label="图片名称">
                   <span>{{ scope.row.name }}</span>
                 </el-form-item>
                 <el-form-item label="资源">
@@ -82,8 +85,8 @@
             min-width="80"/>
           <el-table-column 
             :show-overflow-tooltip="true" 
-            prop="name" 
-            label="名称" 
+            prop="activity_name" 
+            label="活动名称" 
             min-width="100"/>
           <el-table-column 
             prop="url" 
