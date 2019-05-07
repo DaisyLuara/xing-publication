@@ -52,6 +52,6 @@ class RollBackLookTimesPermeabilityData extends Command
             FaceLooktimesPermeabilityRecord::query()->whereRaw("date_format(date,'%Y-%m-%d')>'2018-07-24'")->delete();
         }
 
-        DB::connection('ar')->table('xs_face_character_count_times')->whereRaw("date_format(date,'%Y-%m-%d') >='$date'")->delete();
+        DB::connection('ar')->table('xs_face_log_times')->whereRaw("date_format(date,'%Y-%m-%d') >='$date'")->delete();
     }
 }
