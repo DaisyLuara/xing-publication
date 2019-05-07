@@ -86,7 +86,12 @@
           />
           <el-table-column label="操作" min-width="150">
             <template slot-scope="scope">
-              <el-button size="small" type="success" @click="pass(scope.row)">通过</el-button>
+              <el-button
+                v-if="scope.row.status !== 1"
+                size="small"
+                type="success"
+                @click="pass(scope.row)"
+              >通过</el-button>
               <el-button
                 v-if="scope.row.status !== 0"
                 size="small"
@@ -344,6 +349,15 @@ export default {
       }
     }
   }
+
+  .widget-image {
+    position: fixed;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    left: 0px;
+    z-index: 3000;
+  }
   .widget-close {
     background: #fff;
     border-radius: 50%;
@@ -372,14 +386,18 @@ export default {
     z-index: 2000;
   }
   .widget-content {
-    -ms-transform: translateX(-50%);
-    left: 50%;
-    transform: translateX(-50%);
-    top: 20%;
+    top: 0;
     position: absolute;
     z-index: 2001;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    bottom: 0;
+    right: 0;
+    left: 0;
     img {
-      width: 100%;
+      width: 20%;
     }
   }
 }
