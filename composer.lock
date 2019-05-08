@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "aac4081c410490570100c05482701713",
+    "content-hash": "c3995d24c71735918efe1bd423bf954b",
     "packages": [
         {
             "name": "anahkiasen/underscore-php",
@@ -242,11 +242,23 @@
         },
         {
             "name": "baum/baum",
-            "version": "dev-master",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
-                "url": "https://git.coding.net/jingfree/baum.git",
-                "reference": "dede6661890b94b25e47b1f23164b386889f83bd"
+                "url": "https://github.com/etrepat/baum.git",
+                "reference": "9290bed862d329aaaef666a71e0a2734afc28286"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/etrepat/baum/zipball/9290bed862d329aaaef666a71e0a2734afc28286",
+                "reference": "9290bed862d329aaaef666a71e0a2734afc28286",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
             },
             "require": {
                 "illuminate/console": "5.*",
@@ -267,6 +279,7 @@
                     "Baum": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -279,14 +292,14 @@
             ],
             "description": "Baum is an implementation of the Nested Set pattern for Eloquent models.",
             "keywords": [
+                "Laravel 4",
                 "database",
                 "eloquent",
                 "laravel",
-                "laravel 4",
                 "laravel 5",
                 "nested set"
             ],
-            "time": "2019-05-08 03:43:53"
+            "time": "2015-03-04T12:07:54+00:00"
         },
         {
             "name": "cakephp/chronos",
@@ -10599,7 +10612,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "baum/baum": 20,
         "xingstation/exelook-api": 20
     },
     "prefer-stable": true,
