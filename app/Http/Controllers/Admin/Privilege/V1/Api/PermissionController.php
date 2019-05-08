@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\Privilege\V1\Transformer\PermissionTransformer;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Admin\Privilege\V1\Models\Permission;
 use Illuminate\Http\Request;
+use Spatie\Permission\PermissionRegistrar;
 
 class PermissionController extends Controller
 {
@@ -50,6 +51,7 @@ class PermissionController extends Controller
         $this->checkPermission($permission);
 
         $permission->descendantsAndSelf()->delete();
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
         return $this->response()->noContent()->setStatusCode(204);
     }
 
