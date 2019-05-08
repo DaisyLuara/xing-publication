@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "fae44f833bd3eebbfdd71c8f037de664",
+    "content-hash": "aac4081c410490570100c05482701713",
     "packages": [
         {
             "name": "anahkiasen/underscore-php",
@@ -242,10 +242,10 @@
         },
         {
             "name": "baum/baum",
-            "version": "2.0.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://git.coding.net/yangyn/baum.git",
+                "url": "https://git.coding.net/jingfree/baum.git",
                 "reference": "dede6661890b94b25e47b1f23164b386889f83bd"
             },
             "require": {
@@ -286,7 +286,7 @@
                 "laravel 5",
                 "nested set"
             ],
-            "time": "2019-05-08T03:43:53+00:00"
+            "time": "2019-05-08 03:43:53"
         },
         {
             "name": "cakephp/chronos",
@@ -10599,6 +10599,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "baum/baum": 20,
         "xingstation/exelook-api": 20
     },
     "prefer-stable": true,
