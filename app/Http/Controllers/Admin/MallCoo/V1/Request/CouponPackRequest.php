@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin\MallCoo\V1\Request;
 
 use App\Http\Requests\Request;
 
-class CouponRequest extends Request
+class CouponPackRequest extends Request
 {
     /**
      * Get the validation rules that apply to the request.
@@ -16,6 +16,7 @@ class CouponRequest extends Request
         return [
             'sign' => 'required|string',
             'belong' => 'required|string',
+            'qiniu_id' => 'required|integer',
         ];
     }
 }
