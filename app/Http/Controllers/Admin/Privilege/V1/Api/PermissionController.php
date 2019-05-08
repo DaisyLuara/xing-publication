@@ -19,13 +19,13 @@ class PermissionController extends Controller
 {
     public function show(Permission $permission)
     {
-        return $this->response()->item($permission, new PermissionTransformer());
+        return $this->response()->item($permission, new PermissionTransformer())->setStatusCode(200);
     }
 
-    public function index(Request $request)
+    public function index()
     {
-        $permission = Permission::query()->where('parent_id', 0)->where('guard_name','web')->paginate(10);
-        return $this->response()->paginator($permission, new PermissionTransformer());
+        $permission = Permission::query()->where('parent_id', 0)->where('guard_name', 'web')->paginate(10);
+        return $this->response()->paginator($permission, new PermissionTransformer())->setStatusCode(200);
     }
 
     public function store(PermissionRequest $request)
@@ -38,6 +38,9 @@ class PermissionController extends Controller
     {
         $this->checkPermission($permission);
 
+        if ($request->has('parent_id')) {
+            abort(403, '不可移动节点');
+        }
         $permission->update($request->all());
         return $this->response()->noContent()->setStatusCode(200);
     }
@@ -51,11 +54,11 @@ class PermissionController extends Controller
     }
 
 
-    private function checkPermission(Permission $permission)
+    private function checkPermission(Permission $permission): void
     {
         $perms = explode('.', $permission->name);
-        if ($perms[0] == "system") {
-            abort(403, "系统基本权限不可更改");
+        if ($perms[0] === 'system') {
+            abort(403, '系统基本权限不可更改');
         }
     }
 
