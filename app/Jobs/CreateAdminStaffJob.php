@@ -9,9 +9,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use App\Models\User;
 use App\Models\Customer;
-use GuzzleHttp\Client;
 use App\Http\Controllers\Admin\Privilege\V1\Models\Role;
 use ReflectionClass;
+use Xingstation\ExelookApi\Exelook;
 
 class CreateAdminStaffJob implements ShouldQueue
 {
@@ -60,28 +60,22 @@ class CreateAdminStaffJob implements ShouldQueue
     /**
      * @return string
      * @throws \ReflectionException
+     * @throws \Exception
      */
     private function getAdminStaffZValue(): string
     {
-        $client = new Client();
-        $response = $client->get('http://exelook.com/client/gm/userinfo/', [
-            'query' => [
-                'token' => 'cz',
-                'api' => 'json',
-                'username' => app('pinyin')->permalink($this->adminStaff->name, ''),
-                'mobile' => $this->adminStaff->phone,
-                'id' => $this->getRoleID(),
-            ]
+
+        $exelook = new Exelook(config('exelook'));
+
+        $result = $exelook->user_info->gmUserInfoHttp([
+            'token' => 'cz',
+            'username' => app('pinyin')->permalink($this->adminStaff->name, ''),
+            'mobile' => $this->adminStaff->phone,
+            'id' => $this->getRoleID(),
+            'face' => null,
         ]);
 
-        $body = $response->getBody();
-        $content = json_decode($body);
-
-        if (!$content->state && $content->state !== 1) {
-            abort(500, '星动力系统接口获取失败!');
-        }
-
-        return $content->results->z;
+        return $result['z'] ?? null;
     }
 
     /**

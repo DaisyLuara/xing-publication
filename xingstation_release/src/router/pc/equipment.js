@@ -1,11 +1,14 @@
 import auth from 'service/auth'
+import { URL } from '../../constant/Url'
 
 let router = {
   path: 'equipment',
   name: '设备',
   meta: {
     title: '设备',
-    permission: 'device'
+    permission: 'device',
+    url: URL.CDN_URL + 'middle_ground/img/device-icon.png'
+
   },
   component: () =>
     import(/* webpackChunkName: "page/equipment/equipmentView" */ 'page/equipment/equipmentView'),

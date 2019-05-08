@@ -1,11 +1,14 @@
 import auth from 'service/auth'
+import { URL } from '../../constant/Url'
 
 let router = {
   path: 'ad',
   name: '广告',
   meta: {
     title: '广告',
-    permission: 'ad'
+    permission: 'ad',
+    url: URL.CDN_URL + 'middle_ground/img/advertisement-icon.png'
+
   },
   component: () =>
     import(/* webpackChunkName: "page/ad/adView" */ 'page/ad/adView'),

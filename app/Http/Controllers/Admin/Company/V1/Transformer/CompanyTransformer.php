@@ -29,12 +29,16 @@ class CompanyTransformer extends TransformerAbstract
 
     public function includeUser(Company $company)
     {
-        return $this->item($company->user, new UserTransformer());
+        if ($company->user) {
+            return $this->item($company->user, new UserTransformer());
+        }
     }
 
     public function includeCustomers(Company $company)
     {
-        return $this->collection($company->customers, new CustomerTransformer());
+        if ($company->customers->isNotEmpty()) {
+            return $this->collection($company->customers, new CustomerTransformer());
+        }
     }
 
     public function includeBdUser(Company $company)

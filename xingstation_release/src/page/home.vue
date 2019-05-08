@@ -2,13 +2,8 @@
   <div class="main">
     <headModule/>
     <!-- v-show="!iconMenuShow"  -->
-    <div 
-      class="first-sidebar" 
-      @mouseleave="leaveIcon">
-      <el-menu 
-        :default-active="'/' + currModule" 
-        :style="{'height':style.height}" 
-        router>
+    <div class="first-sidebar" @mouseleave="leaveIcon">
+      <el-menu :default-active="'/' + currModule" :style="{'height':style.height}" router>
         <el-menu-item
           v-for="m in modules"
           v-if="m.path != 'inform'"
@@ -17,21 +12,13 @@
           class="menu-item"
           @click="handleMenuHide"
         >
-          <img 
-            :src="m.src" 
-            class="first-sidebar-icon">
+          <img :src="m.meta.url" class="first-sidebar-icon">
           {{ m.meta.title }}
         </el-menu-item>
-        <el-menu-item 
-          class="menu-no-icon-item" 
-          index="/inform" 
-          @click="handleMenuHide">
-          <el-badge 
-            :value="noticeCount" 
-            :max="99" 
-            class="item">
+        <el-menu-item class="menu-no-icon-item" index="/inform" @click="handleMenuHide">
+          <el-badge :value="noticeCount" :max="99" class="item">
             <img
-              src="../assets/images/icons/notification-icon.png"
+              :src="this.img_url + 'notification-icon.png'"
               class="first-sidebar-icon"
               style="padding-right: 3px;"
             >
@@ -39,22 +26,13 @@
           </el-badge>
         </el-menu-item>
       </el-menu>
-      <div 
-        v-show="false" 
-        class="menu-show">
-        <i 
-          class="el-icon-d-arrow-left left-icon-menu" 
-          @click="handleMenuHide"/>
+      <div v-show="false" class="menu-show">
+        <i class="el-icon-d-arrow-left left-icon-menu" @click="handleMenuHide"/>
       </div>
     </div>
     <!-- v-show="iconMenuShow" -->
-    <div 
-      v-show="false" 
-      class="first-icon-sidebar" 
-      @mouseenter="iconEnter">
-      <el-menu 
-        :default-active="'/' + currModule" 
-        router>
+    <div v-show="false" class="first-icon-sidebar" @mouseenter="iconEnter">
+      <el-menu :default-active="'/' + currModule" router>
         <el-menu-item
           v-for="m in modules"
           v-if="m.path != 'inform'"
@@ -62,19 +40,12 @@
           :index="'/' + m.path"
           class="menu-item"
         >
-          <img 
-            :src="m.src" 
-            class="first-sidebar-icon">
+          <img :src="m.src" class="first-sidebar-icon">
         </el-menu-item>
-        <el-menu-item 
-          class="menu-item menu-icon-item" 
-          index="/inform">
-          <el-badge 
-            :value="noticeCount" 
-            :max="99" 
-            class="item">
+        <el-menu-item class="menu-item menu-icon-item" index="/inform">
+          <el-badge :value="noticeCount" :max="99" class="item">
             <img
-              src="../assets/images/icons/notification-icon.png"
+              :src="this.img_url + 'notification-icon.png'"
               class="first-sidebar-icon"
               style="padding-right: 3px;"
             >
@@ -82,9 +53,7 @@
         </el-menu-item>
       </el-menu>
       <div class="menu-icon-show">
-        <i 
-          class="el-icon-d-arrow-right right-icon-menu" 
-          @click="handleMenuShow"/>
+        <i class="el-icon-d-arrow-right right-icon-menu" @click="handleMenuShow"/>
       </div>
     </div>
 
@@ -109,8 +78,7 @@ import auth from "service/auth";
 import { Cookies } from "utils/cookies";
 import { notificationStats } from "service";
 
-const NODE_ENV = process.env.NODE_ENV;
-
+const CDN_URL = process.env.CDN_URL;
 export default {
   name: "Home",
   components: {
@@ -127,6 +95,7 @@ export default {
       style: {
         height: 0
       },
+      img_url: CDN_URL + "middle_ground/img/",
       systemMenuList: [
         {
           id: "zhongtai",
@@ -148,47 +117,6 @@ export default {
           for (let m of route["children"]) {
             if (!auth.checkPathPermission(m) || !m.meta || !m.meta.title) {
               continue;
-            }
-            switch (m.path) {
-              case "project":
-                m.src = require("../assets/images/icons/project-icon.png");
-                break;
-              case "system":
-                m.src = require("../assets/images/icons/permission-icon.png");
-                break;
-              case "ad":
-                m.src = require("../assets/images/icons/advertisement-icon.png");
-                break;
-              case "equipment":
-                m.src = require("../assets/images/icons/device-icon.png");
-                break;
-              case "resource_auth":
-                m.src = require("../assets/images/icons/auth_icon.png?v=1");
-                break;
-              case "team":
-                m.src = require("../assets/images/icons/team-icon.png");
-                break;
-              case "market":
-                m.src = require("../assets/images/icons/market-icon.png");
-                break;
-              case "home":
-                m.src = require("../assets/images/icons/home-icon.png");
-                break;
-              case "report":
-                m.src = require("../assets/images/icons/report-icon.png");
-                break;
-              case "activity":
-                m.src = require("../assets/images/icons/activity-icon.png");
-                break;
-              case "prize":
-                m.src = require("../assets/images/icons/prize-icon.png");
-                break;
-              case "feedback":
-                m.src = require("../assets/images/icons/feedback_icon.png");
-                break;
-              default:
-                m.src = "";
-                break;
             }
             items.push(m);
           }

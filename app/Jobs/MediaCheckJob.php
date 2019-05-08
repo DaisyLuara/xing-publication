@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Http\Controllers\Admin\Media\V1\Models\ActivityMedia;
+use App\Http\Controllers\Admin\Resource\V1\Models\ActivityMedia;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;

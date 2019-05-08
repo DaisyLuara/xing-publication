@@ -1,6 +1,32 @@
 <?php
 
+use App\Exceptions\AggregateFileHandler;
+use Carbon\Carbon;
+use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
+
+if (get_current_user() === 'root') {
+    $path = storage_path('logs/root/laravel-' . Carbon::now()->toDateString() . '.log');
+    $single = [
+        'driver' => 'single',
+        'path' => $path,
+        'level' => 'debug',
+    ];
+} else {
+    $path = storage_path('logs/laravel/laravel-' . Carbon::now()->toDateString() . '.log');
+    $handler = new AggregateFileHandler($path);
+    $handler->setFormatter(new LineFormatter("[%datetime%]%level_name% %message% %context% %extra%\n", 'i:s', true, true));
+    $single = [
+        'driver' => 'monolog',
+        'handler' => \Monolog\Handler\BufferHandler::class,
+        'handler_with' => [
+            'handler' => $handler,
+        ],
+        'path' => $path,
+        'level' => 'debug',
+    ];
+
+}
 
 return [
 
@@ -38,11 +64,7 @@ return [
             'channels' => ['single'],
         ],
 
-        'single' => [
-            'driver' => 'single',
-            'path' => storage_path('logs/laravel.log'),
-            'level' => 'debug',
-        ],
+        'single' => $single,
 
         'daily' => [
             'driver' => 'daily',

@@ -1,6 +1,6 @@
 <template>
-  <div class="resource-auth-root">
-    <second-sidebar module="resource_auth"/>
+  <div class="auth-root">
+    <second-sidebar module="auth"/>
     <router-view/>
   </div>
 </template>
