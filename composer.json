@@ -10,7 +10,7 @@
   "require": {
     "php": "^7.1.3",
     "barryvdh/laravel-cors": "^0.11.0",
-    "baum/baum": "^1.1",
+    "baum/baum": "dev-master",
     "dingo/api": "2.0.1",
     "doctrine/dbal": "^2.9",
     "fideloper/proxy": "^4.0",
@@ -105,6 +105,10 @@
     "exelook-api": {
       "type": "git",
       "url": "https://git.dev.tencent.com/jingfree/exelook-api.git"
+    },
+    "baum": {
+      "type": "git",
+      "url": "https://git.coding.net/jingfree/baum.git"
     }
   },
   "minimum-stability": "dev",
