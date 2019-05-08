@@ -22,7 +22,8 @@ class AggregateFileHandler extends StreamHandler
         // 这一行是我们这个处理器自己加上的日志，记录请求时间、响应时间、访客IP，请求方法、请求Url
         $log = sprintf(
             "[%s][%s]%s %s %s\n",
-            Carbon::createFromFormat('U.u', sprintf('%.6F', LARAVEL_START), config('app.timezone'))->format($format),
+            Carbon::now()->format($format),
+//            Carbon::createFromFormat('U.u', sprintf('%.6F', LARAVEL_START), config('app.timezone'))->format($format),
             $dur,
             $request->getClientIp(),
             $request->getMethod(),
