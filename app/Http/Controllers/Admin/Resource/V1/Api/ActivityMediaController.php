@@ -24,7 +24,7 @@ class ActivityMediaController extends Controller
         if ($request->has('status')) {
             $query->where('status', $request->get('status'));
         }
-        $media = $query->orderBy('created_at')->paginate(10);
+        $media = $query->orderByDesc('status')->orderBy('created_at')->paginate(10);
         return $this->response()->paginator($media, new ActivityMediaTransformer())->setStatusCode(200);
     }
 
