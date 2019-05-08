@@ -39,6 +39,11 @@ class ContractController extends Controller
                 $q->where('name', 'like', '%' . $name . '%');
             });
         }
+
+        if ($request->get('applicant')) {
+            $query->where('applicant', '=', $request->get('applicant'));
+        }
+
 //        if ($request->name) {
 //            $name = $request->name;
 //            $query->where(function ($query) use ($name) {
