@@ -118,7 +118,7 @@ class ImportCouponController extends Controller
             'redirect_url' => '',//跳转链接
             'title' => '',//标题
             'campaign_id' => 0,//活动ID
-            'credit' => null,//兑换积分
+            'credit' => 0,//兑换积分
             'sort_order' => 1,//优先级
             'dynamic_stock_status' => 0,//是否计算 动态库存 0:否 1: 是
             'write_off_status' => 0,//是否是系统核销  0:否 1: 是
