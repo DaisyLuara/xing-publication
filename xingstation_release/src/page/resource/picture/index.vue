@@ -5,7 +5,68 @@
       :element-loading-text="setting.loadingText"
       class="picture-manage"
     >
+      <div class="picture-group-title">
+        <span>分组名称：</span>
+        <span>{{mediaGroup.renameGroupValue}}</span>
+        <el-popover
+          ref="rename"
+          placement="bottom"
+          width="260"
+          v-model="mediaGroup.mediaGroupRenameFlag"
+        >
+          <p>编辑名称</p>
+          <el-input
+            v-model="mediaGroup.renameGroupValue"
+            placeholder="不超过6个"
+            class="rename-input"
+            :maxlength="6"
+          ></el-input>
+          <div class="btn-wrap">
+            <el-button type="primary" size="small" @click="modifyGroupName">确定</el-button>
+            <el-button
+              size="small"
+              @click="mediaGroup.mediaGroupRenameFlag = false, renameGroup"
+            >取消</el-button>
+          </div>
+        </el-popover>
+        <a v-popover:rename v-show="mediaGroup.renameGroupValue !== '未分组'">重命名</a>
+      </div>
       <div class="grouping-image-wrap">
+        <div class="grouping-wrap">
+          <ul class="grouping-list clearfix">
+            <li
+              v-for="(item,index) in mediaGroup.mediaGroupList"
+              :key="index"
+              @click="getImgMediaList(item.id,item.name)"
+              :class="{'grouping-active': mediaGroup.groupId == item.id}"
+            >
+              <span>{{item.name}}</span>
+              <span class="number">{{item.count}}</span>
+            </li>
+          </ul>
+          <el-popover
+            ref="add-title"
+            placement="bottom"
+            width="260"
+            v-model="mediaGroup.mediaGroupAddFlag"
+          >
+            <p>添加分组</p>
+            <el-input
+              v-model="mediaGroup.addGroupNameValue"
+              placeholder="不超过6个字"
+              class="group-input"
+              :maxlength="6"
+            ></el-input>
+            <div class="btn-wrap">
+              <el-button type="primary" size="small" @click="addMediaGroup">确定</el-button>
+              <el-button
+                size="small"
+                @click="mediaGroup.mediaGroupAddFlag = false,mediaGroup.addGroupNameValue = ''"
+              >取消</el-button>
+            </div>
+          </el-popover>
+          <el-button v-popover:add-title>添加分组</el-button>
+        </div>
         <div class="image-warp">
           <div class="image-title-group"></div>
           <!-- 图片列表 -->
@@ -102,7 +163,10 @@ import {
   getImgMediaList,
   modifyImgMedia,
   getQiniuToken,
-  imgMediaUpload
+  imgMediaUpload,
+  getMediaGroup,
+  saveMediaGroup,
+  modifyMediaGroupName
 } from "service";
 
 import {
@@ -126,6 +190,14 @@ export default {
   },
   data() {
     return {
+      mediaGroup: {
+        mediaGroupRenameFlag: false,
+        mediaGroupAddFlag: false,
+        mediaGroupList: [],
+        addGroupNameValue: "",
+        renameGroupValue: "",
+        groupId: null
+      },
       Domain: "http://upload.qiniu.com",
       uploadForm: {
         token: "",
@@ -144,9 +216,9 @@ export default {
         renamePopoverArray: [],
         renameValueArray: []
       },
+      groupId: null,
       mediaImage: {
         type: "image",
-        disabledFlag: true,
         imageVisible: false,
         mediaRename: false,
         mediaImageUrl: "",
@@ -154,17 +226,69 @@ export default {
       }
     };
   },
+  computed: {
+    renameGroup (){
+      this.mediaGroup.mediaGroupList.find(item => {
+        if (item.id === this.mediaGroup.groupId) {
+          this.mediaGroup.renameGroupValue = item.name;
+          return;
+        }
+      });
+    }
+  },
   created() {
     this.init();
-    this.getImgMediaList();
   },
   methods: {
     async init() {
       try {
+        this.setting.loading = true;
         let res = await getQiniuToken(this);
+        let mediaGroupsData = await getMediaGroup(this);
+        this.mediaGroup.mediaGroupList = mediaGroupsData.data;
+        this.mediaGroup.groupId = this.mediaGroup.mediaGroupList[0].id;
+        this.mediaGroup.addGroupNameValue = this.mediaGroup.mediaGroupList[0].name;
+        this.mediaGroup.renameGroupValue = this.mediaGroup.mediaGroupList[0].name;
+        await this.getImgMediaList(this.mediaGroup.mediaGroupList[0].id);
         this.uploadForm.token = res;
+        this.setting.loading = false;
       } catch (e) {
         console.log(e);
+        this.setting.loading = false;
+      }
+    },
+    // 增加分组
+    async addMediaGroup() {
+      try {
+        if (this.mediaGroup.addGroupNameValue.trim()) {
+          let args = {
+            name: this.mediaGroup.addGroupNameValue
+          };
+          let res = await saveMediaGroup(this, args);
+          let mediaGroupsData = await getMediaGroup(this);
+          this.mediaGroup.mediaGroupAddFlag = false;
+          this.mediaGroup.mediaGroupList = mediaGroupsData.data;
+          this.mediaGroup.addGroupNameValue = "";
+        } else {
+          this.mediaGroup.mediaGroupAddFlag = false;
+          this.mediaGroup.addGroupNameValue = "";
+          MessageBox.alert("增加的分组名称不能为空");
+        }
+      } catch (e) {}
+    },
+    // 修改分组名称
+    async modifyGroupName() {
+      let params = {
+        name: this.mediaGroup.renameGroupValue
+      };
+      try {
+        await modifyMediaGroupName(this, this.mediaGroup.groupId, params);
+        let mediaGroupsData = await getMediaGroup(this);
+        this.mediaGroup.mediaGroupList = mediaGroupsData.data;
+        this.mediaGroup.mediaGroupRenameFlag = false;
+      } catch (e) {
+        this.mediaGroup.mediaGroupRenameFlag = false;
+        s;
       }
     },
     handleError() {
@@ -175,18 +299,20 @@ export default {
     },
     changeCurrent(currentPage) {
       this.pagination.page_num = currentPage;
-      this.getImgMediaList();
+      this.getImgMediaList(this.mediaGroup.groupId);
     },
     // 获取图片列表
-    getImgMediaList() {
+    getImgMediaList(groupId, groupName) {
+      this.mediaGroup.groupId = groupId;
       let _this = this;
       let args = {
         page: this.pagination.page_num
       };
-      getImgMediaList(this, args)
+      getImgMediaList(this, groupId, args)
         .then(res => {
           this.mediaImage.mediaList = res.data;
           this.pagination.count = res.meta.pagination.total;
+          groupName ? (this.mediaGroup.renameGroupValue = groupName) : "";
           this.setModelFlag(this.mediaImage.mediaList);
           this.setting.loading = false;
         })
@@ -203,7 +329,6 @@ export default {
         this.operate.renamePopoverArray.push({ flag: false });
         this.operate.renameValueArray.push({ name: v.name });
       });
-      this.mediaImage.disabledFlag = true;
     },
     // 处理图片列表中按钮的确定和取消操作的标记
     handleOperationButtonClick(index, modelName, imageId) {
@@ -232,18 +357,17 @@ export default {
         });
       }
     },
-    // 修改名称
+    // 修改图片名称
     modifyMedia(id, name) {
       let args = {
         name: name
       };
-      modifyImgMedia(this, id, args)
+      modifyImgMedia(this, id, args, this.mediaGroup.groupId)
         .then(res => {
-          this.getImgMediaList();
+          this.getImgMediaList(this.mediaGroup.groupId);
         })
         .catch(err => {
           this.setting.loading = false;
-          console.log(err);
         });
     },
     beforeUpload(file) {
@@ -275,7 +399,7 @@ export default {
       return this.uploadForm;
     },
     // 上传成功后的处理
-    handleSuccess(response, file) {
+    async handleSuccess(response, file) {
       let [key, name, size] = [response.key, file.name, file.size];
       let type = name.substring(name.lastIndexOf("."));
       let params = {
@@ -283,14 +407,14 @@ export default {
         name: name,
         size: size
       };
-      this.imgMediaUpload(params);
-    },
-    imgMediaUpload(args) {
-      imgMediaUpload(this, args)
-        .then(res => {
-          this.getImgMediaList();
-        })
-        .catch(err => {});
+      try {
+        await imgMediaUpload(this, this.mediaGroup.groupId, params);
+        await this.getImgMediaList(this.mediaGroup.groupId);
+        let mediaGroupsData = await getMediaGroup(this);
+        this.mediaGroup.mediaGroupList = mediaGroupsData.data;
+      } catch (e) {
+        console.log(e);
+      }
     }
   }
 };
@@ -301,11 +425,64 @@ export default {
   background-color: #fff;
   min-height: 500px;
   padding-bottom: 100px;
+  .picture-group-title {
+    padding: 27px 0 13px 27px;
+    span {
+      color: #5e6d82;
+      font-size: 18px;
+      line-height: 25px;
+    }
+    a {
+      color: #20a0ff;
+      cursor: pointer;
+      font-size: 13px;
+      line-height: 18px;
+      padding-left: 18px;
+    }
+  }
   .grouping-image-wrap {
     padding-top: 30px;
     display: -webkit-flex;
     display: -moz-flex;
     display: flex;
+    .grouping-wrap {
+      background-color: #eff2f7;
+      margin-left: 27px;
+      max-height: 768px;
+      min-width: 180px;
+      min-height: 400px;
+      overflow: auto;
+      li {
+        cursor: pointer;
+        color: #5e6d82;
+        font-size: 14px;
+        line-height: 42px;
+        padding: 0 18px;
+        transition: all 0.5s;
+        &:hover {
+          color: #000;
+        }
+      }
+      .grouping-active {
+        background-color: #fff;
+      }
+      .number {
+        float: right;
+      }
+      .el-button {
+        background-color: #eff2f7;
+        color: #56636d;
+        font-size: 14px;
+        margin: 10px 18px 10px;
+        outline: none;
+        width: 144px;
+        border-radius: initial;
+      }
+      .el-button:hover {
+        border: 1px solid #bfcbd9;
+      }
+    }
+
     .image-warp {
       margin-left: 40px;
       position: relative;
@@ -385,6 +562,7 @@ export default {
 }
 .btn-wrap {
   text-align: right;
+  margin-top: 10px;
 }
 
 .submit-warp {

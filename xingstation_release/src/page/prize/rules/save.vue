@@ -483,10 +483,10 @@ export default {
           this.couponForm.bs_image_url = url;
         }
       } else {
-        this.$message({
-          type: "warning",
-          message: "图片上传失败"
-        });
+        // this.$message({
+        //   type: "warning",
+        //   message: "图片上传失败"
+        // });
       }
     },
     handleCompany(val) {

@@ -722,10 +722,10 @@ export default {
         this.siteForm.marketConfig.media_id = media_id;
         this.logoUrl = url;
       } else {
-        this.$message({
-          type: "warning",
-          message: "图片上传失败"
-        });
+        // this.$message({
+        //   type: "warning",
+        //   message: "图片上传失败"
+        // });
       }
     },
     async init() {

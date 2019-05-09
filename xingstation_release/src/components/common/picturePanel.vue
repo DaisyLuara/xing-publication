@@ -12,24 +12,42 @@
         >
       </div>
       <div>
-        <div v-loading="loading" class="picture-panel__body">
-          <li
-            v-for="obj in dataImg"
-            :key="obj.id"
-            class="picture-panel__img-item"
-            @click="selectImg(obj)"
+        <el-tabs
+          type="card"
+          v-model="activeTabName"
+          @tab-click="handleTabsClick"
+          v-loading="loading"
+        >
+          <el-tab-pane
+            v-for="item in mediaGroup.mediaGroupList"
+            :name="item.name"
+            :mediaGroupId="item.id"
+            :key="item.id"
           >
-            <img :src="obj.url" class="picture-panel__img">
-            <div class="picture-panel__img-size">{{ obj.width }} * {{ obj.height }}</div>
-            <div class="picture-panel__img-name">{{ obj.name }}</div>
-            <div v-for="selectedObj in selectedImgs" :key="selectedObj.id">
-              <div v-if="obj.id == selectedObj.id">
-                <div class="picture-panel__arrow-wrap"/>
-                <i class="picture-panel__arrow"/>
-              </div>
+            <span slot="label" :mediaGroupId="item.id">
+              {{item.name}}
+              <span class="number">{{item.count}}</span>
+            </span>
+            <div class="picture-panel__body">
+              <li
+                v-for="obj in dataImg"
+                :key="obj.id"
+                class="picture-panel__img-item"
+                @click="selectImg(obj)"
+              >
+                <img :src="obj.url" class="picture-panel__img">
+                <div class="picture-panel__img-size">{{ obj.width }} * {{ obj.height }}</div>
+                <div class="picture-panel__img-name">{{ obj.name }}</div>
+                <div v-for="selectedObj in selectedImgs" :key="selectedObj.id">
+                  <div v-if="obj.id == selectedObj.id">
+                    <div class="picture-panel__arrow-wrap"/>
+                    <i class="picture-panel__arrow"/>
+                  </div>
+                </div>
+              </li>
             </div>
-          </li>
-        </div>
+          </el-tab-pane>
+        </el-tabs>
         <div class="picture-panel__footer">
           <el-upload
             :action="Domain"
@@ -70,7 +88,12 @@
 </template>
 
 <script>
-import { getImgMediaList, getQiniuToken, imgMediaUpload } from "service";
+import {
+  getImgMediaList,
+  getQiniuToken,
+  imgMediaUpload,
+  getMediaGroup
+} from "service";
 
 import {
   Button,
@@ -104,6 +127,7 @@ export default {
   },
   data() {
     return {
+      activeTabName: "",
       Domain: "http://upload.qiniu.com",
       uploadForm: {
         token: "",
@@ -114,6 +138,10 @@ export default {
       dataImg: [],
       serch: {
         name: ""
+      },
+      mediaGroup: {
+        mediaGroupList: [],
+        groupId: null
       },
       pagination: {
         limit: 10,
@@ -126,27 +154,37 @@ export default {
     };
   },
   created() {
-    this.init();
-    this.getImgMediaList();
+    // this.init();
   },
   methods: {
-    async init() {
+    async handleOpen() {
       try {
         let res = await getQiniuToken(this);
+        let mediaGroupsData = await getMediaGroup(this);
+        this.mediaGroup.mediaGroupList = mediaGroupsData.data;
+        this.mediaGroup.groupId = this.mediaGroup.mediaGroupList[0].id;
+        this.activeTabName = this.mediaGroup.mediaGroupList[0].name;
+        await this.getImgMediaList(this.mediaGroup.mediaGroupList[0].id);
         this.uploadForm.token = res;
       } catch (e) {
         console.log(e);
       }
     },
+    handleTabsClick(tab, event) {
+      var selId = tab.$vnode.data.attrs.mediaGroupId;
+      if (selId == this.mediaGroup.groupId) {
+        return;
+      }
+      this.mediaGroup.groupId = selId;
+      this.loading = true;
+      this.getImgMediaList(this.mediaGroup.groupId);
+    },
     handleError() {
       this.loading = false;
     },
-    handleOpen() {
-      this.getImgMediaList();
-    },
     changeCurrent(currentPage) {
       this.pagination.page_num = currentPage;
-      this.getImgMediaList();
+      this.getImgMediaList(this.mediaGroup.groupId);
     },
     handleClose(selectedImgs) {
       this.serch.name = "";
@@ -180,13 +218,13 @@ export default {
         }
       }
     },
-    getImgMediaList() {
+    getImgMediaList(groupId) {
       let params = {
         page: this.pagination.page_num,
         name: this.serch.name
       };
       this.serch.name === "" ? delete params.name : "";
-      getImgMediaList(this, params)
+      getImgMediaList(this, groupId, params)
         .then(res => {
           this.dataImg = res.data;
           this.pagination.count = res.meta.pagination.total;
@@ -199,10 +237,10 @@ export default {
     },
     searchMedia() {
       this.loading = true;
-      this.getImgMediaList();
+      this.getImgMediaList(this.mediaGroup.groupId);
     },
 
-    handleSuccess(response, file, fileList) {
+    async handleSuccess(response, file, fileList) {
       let [key, name, size] = [response.key, file.name, file.size];
       let type = name.substring(name.lastIndexOf("."));
       let params = {
@@ -210,18 +248,15 @@ export default {
         name: name,
         size: size
       };
-      this.imgMediaUpload(params);
-    },
-    imgMediaUpload(args) {
-      imgMediaUpload(this, args)
-        .then(res => {
-          this.getImgMediaList();
-        })
-        .catch(err => {});
+      try {
+        await imgMediaUpload(this, this.mediaGroup.groupId, params);
+        await this.getImgMediaList(this.mediaGroup.groupId);
+        let mediaGroupsData = await getMediaGroup(this);
+        this.mediaGroup.mediaGroupList = mediaGroupsData.data;
+      } catch (e) {}
     },
     beforeUpload(file) {
       this.loading = true;
-
       let name = file.name;
       let type = name.substring(name.lastIndexOf("."));
       let isLt100M = file.size / 1024 / 1024 < 100;
@@ -281,6 +316,46 @@ export default {
     border-top: 1px solid #d3dce6;
     border-bottom: 1px solid #d3dce6;
     border-right: 1px solid #d3dce6;
+    .el-tabs {
+      height: 450px;
+      .el-tabs__header {
+        float: left;
+      }
+    }
+    .el-tabs__header {
+      z-index: 3;
+      background-color: white;
+      height: 100%;
+      width: 170px;
+      border-right: 1px solid rgb(209, 219, 229);
+      border-bottom: none;
+      padding: 0;
+      position: relative;
+      margin: 0 0 15px;
+      float: left;
+      .el-tabs__nav {
+        width: 100%;
+        .el-tabs__item {
+          display: block;
+          background-color: #eff2f7;
+          .number {
+            float: right;
+          }
+          &.is-active {
+            border: none;
+            background-color: white;
+          }
+        }
+      }
+    }
+    .el-tabs__content {
+      height: 100%;
+      overflow: scroll;
+      .el-tab-pane {
+        padding-bottom: 100px;
+        height: 100%;
+      }
+    }
   }
   .el-dialog__footer {
     .footer {
@@ -322,7 +397,7 @@ export default {
   width: 163px;
   height: 33px;
   background-color: #eff2f7;
-  background-image: url("../../assets/images/icons/search-icon.png");
+  background-image: url("~assets/images/icons/search-icon.png");
   background-repeat: no-repeat;
   background-position: 5% 50%;
 }
@@ -365,7 +440,7 @@ export default {
   overflow: hidden;
 }
 .picture-panel__arrow {
-  background-image: url("../../assets/images/icons/selected.png");
+  background-image: url("~assets/images/icons/selected.png");
   background-repeat: no-repeat;
   height: 15px;
   position: absolute;
@@ -383,11 +458,17 @@ export default {
   right: -25px;
 }
 
+.picture-panel__searched-body {
+  overflow: scroll;
+  padding-bottom: 100px;
+}
+
 .picture-panel__footer {
   height: 57px;
   background-color: #eff2f7;
   position: absolute;
   bottom: 0px;
+  padding-left: 170px;
   width: 100%;
 }
 .picture-panel__upload {
@@ -396,6 +477,13 @@ export default {
     line-height: 57px;
     margin-left: 30px;
   }
+}
+
+.picture-panep__upload-btn {
+  width: 86px;
+  height: 36px;
+  background-color: #13ce66;
+  border: none;
 }
 
 .picture-panel__page {

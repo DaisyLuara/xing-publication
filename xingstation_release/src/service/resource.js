@@ -3,8 +3,9 @@ const TENANT_MEDIA_API = '/api/company_media'
 const ACTIVITY_MEDIA_AUDIT_API = '/api/activity_media/audit'
 const TENANT_MEDIA_AUDIT_API = '/api/company_media/audit'
 const QINNIU_API = '/api/qiniu_oauth'
-const MEDIA_UPLOAD_AP = '/api/media_upload'
-const IMG_MEDIA_UPLOAD_AP = '/api/pub_media'
+const MEDIA_UPLOAD_API = '/api/media_upload'
+const PUB_MEDIA = '/pub_media'
+const MEDIA_GROUP_API = '/api/pub_group'
 const HOST = process.env.SERVER_URL
 // 活动审核列表
 const getActivityMediaList = (context, params) => {
@@ -80,7 +81,7 @@ const getQiniuToken = context => {
 const getMediaUpload = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .post(HOST + MEDIA_UPLOAD_AP, params)
+      .post(HOST + MEDIA_UPLOAD_API, params)
       .then(response => {
         resolve(response.data)
       })
@@ -91,10 +92,10 @@ const getMediaUpload = (context, params) => {
 }
 
 // 传给后台七牛的key和文件name，主要用在图片资源上传的
-const imgMediaUpload = (context, params) => {
+const imgMediaUpload = (context, groupId, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .post(HOST + IMG_MEDIA_UPLOAD_AP, params)
+      .post(HOST + MEDIA_GROUP_API + '/' + groupId + PUB_MEDIA, params)
       .then(response => {
         resolve(response.data)
       })
@@ -104,10 +105,12 @@ const imgMediaUpload = (context, params) => {
   })
 }
 // 图片资源列表
-const getImgMediaList = (context, params) => {
+const getImgMediaList = (context, groupId, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .get(HOST + IMG_MEDIA_UPLOAD_AP, { params: params })
+      .get(HOST + MEDIA_GROUP_API + '/' + groupId + PUB_MEDIA, {
+        params: params
+      })
       .then(response => {
         resolve(response.data)
       })
@@ -118,10 +121,54 @@ const getImgMediaList = (context, params) => {
 }
 
 // 图片资源修改
-const modifyImgMedia = (context, id, params) => {
+const modifyImgMedia = (context, id, params, groupId) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .patch(HOST + IMG_MEDIA_UPLOAD_AP + '/' + id, params)
+      .patch(
+        HOST + MEDIA_GROUP_API + '/' + groupId + PUB_MEDIA + '/' + id,
+        params
+      )
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+// 组列表
+const getMediaGroup = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + MEDIA_GROUP_API, { params: params })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+// 增加分组
+const saveMediaGroup = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .post(HOST + MEDIA_GROUP_API, params)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+// 修改分组名称
+const modifyMediaGroupName = (context, groupId, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .patch(HOST + MEDIA_GROUP_API + '/' + groupId, params)
       .then(response => {
         resolve(response.data)
       })
@@ -140,5 +187,8 @@ export {
   getMediaUpload,
   imgMediaUpload,
   getImgMediaList,
-  modifyImgMedia
+  modifyImgMedia,
+  getMediaGroup,
+  saveMediaGroup,
+  modifyMediaGroupName
 }
