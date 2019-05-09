@@ -2,6 +2,7 @@
   <div class="picture-panel">
     <el-dialog 
       :visible.sync="panelVisible" 
+      width="70%"
       :before-close="cancel" 
       @open="handleOpen()">
       <div slot="title">
@@ -24,7 +25,7 @@
           <el-tab-pane
             v-for="item in mediaGroup.mediaGroupList"
             :name="item.name"
-            :media-group-id="item.id"
+            :groupId="item.id"
             :key="item.id"
           >
             <span 
@@ -186,7 +187,7 @@ export default {
       }
     },
     handleTabsClick(tab, event) {
-      var selId = tab.$vnode.data.attrs.mediaGroupId;
+      var selId = tab.$vnode.data.attrs.groupId;
       if (selId == this.mediaGroup.groupId) {
         return;
       }
