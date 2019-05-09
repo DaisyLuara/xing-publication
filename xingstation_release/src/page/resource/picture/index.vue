@@ -7,29 +7,34 @@
     >
       <div class="picture-group-title">
         <span>分组名称：</span>
-        <span>{{mediaGroup.renameGroupValue}}</span>
+        <span>{{ mediaGroup.renameGroupValue }}</span>
         <el-popover
           ref="rename"
+          v-model="mediaGroup.mediaGroupRenameFlag"
           placement="bottom"
           width="260"
-          v-model="mediaGroup.mediaGroupRenameFlag"
         >
           <p>编辑名称</p>
           <el-input
             v-model="mediaGroup.renameGroupValue"
+            :maxlength="6"
             placeholder="不超过6个"
             class="rename-input"
-            :maxlength="6"
-          ></el-input>
+          />
           <div class="btn-wrap">
-            <el-button type="primary" size="small" @click="modifyGroupName">确定</el-button>
+            <el-button 
+              type="primary" 
+              size="small" 
+              @click="modifyGroupName">确定</el-button>
             <el-button
               size="small"
-              @click="mediaGroup.mediaGroupRenameFlag = false, renameGroup"
+              @click="mediaGroup.mediaGroupRenameFlag = false, mediaGroup.renameGroupValue = renameGroup"
             >取消</el-button>
           </div>
         </el-popover>
-        <a v-popover:rename v-show="mediaGroup.renameGroupValue !== '未分组'">重命名</a>
+        <a 
+          v-popover:rename 
+          v-show="mediaGroup.renameGroupValue !== '未分组'">重命名</a>
       </div>
       <div class="grouping-image-wrap">
         <div class="grouping-wrap">
@@ -37,28 +42,31 @@
             <li
               v-for="(item,index) in mediaGroup.mediaGroupList"
               :key="index"
-              @click="getImgMediaList(item.id,item.name)"
               :class="{'grouping-active': mediaGroup.groupId == item.id}"
+              @click="getImgMediaList(item.id,item.name)"
             >
-              <span>{{item.name}}</span>
-              <span class="number">{{item.count}}</span>
+              <span>{{ item.name }}</span>
+              <span class="number">{{ item.count }}</span>
             </li>
           </ul>
           <el-popover
             ref="add-title"
+            v-model="mediaGroup.mediaGroupAddFlag"
             placement="bottom"
             width="260"
-            v-model="mediaGroup.mediaGroupAddFlag"
           >
             <p>添加分组</p>
             <el-input
               v-model="mediaGroup.addGroupNameValue"
+              :maxlength="6"
               placeholder="不超过6个字"
               class="group-input"
-              :maxlength="6"
-            ></el-input>
+            />
             <div class="btn-wrap">
-              <el-button type="primary" size="small" @click="addMediaGroup">确定</el-button>
+              <el-button 
+                type="primary" 
+                size="small" 
+                @click="addMediaGroup">确定</el-button>
               <el-button
                 size="small"
                 @click="mediaGroup.mediaGroupAddFlag = false,mediaGroup.addGroupNameValue = ''"
@@ -68,14 +76,16 @@
           <el-button v-popover:add-title>添加分组</el-button>
         </div>
         <div class="image-warp">
-          <div class="image-title-group"></div>
+          <div class="image-title-group"/>
           <!-- 图片列表 -->
           <ul class="image-list">
             <div
               v-show="mediaImage.mediaList.length == 0"
               class="hint-message"
             >暂无数据，可点击左下角“上传图片”按钮添加</div>
-            <li v-for="(imageItem, index) in mediaImage.mediaList" :key="imageItem.id">
+            <li 
+              v-for="(imageItem, index) in mediaImage.mediaList" 
+              :key="imageItem.id">
               <img
                 :src="imageItem.url"
                 class="image-file"
@@ -129,7 +139,9 @@
               list-type="picture"
               class="upload"
             >
-              <el-button size="small" type="success">上传图片</el-button>
+              <el-button 
+                size="small" 
+                type="success">上传图片</el-button>
             </el-upload>
             <span class="image-type">仅支持jpg、jpeg、gif 、png四种格式, 大小为10M以内</span>
             <div class="pagination">
@@ -146,12 +158,16 @@
       </div>
     </div>
     <!-- 图片弹窗 -->
-    <div v-show="mediaImage.imageVisible" class="widget-image">
+    <div 
+      v-show="mediaImage.imageVisible" 
+      class="widget-image">
       <div class="shade-image"/>
       <div class="widget-content">
         <img :src="mediaImage.mediaImageUrl">
       </div>
-      <div class="widget-close" @click="handleImageClose">
+      <div 
+        class="widget-close" 
+        @click="handleImageClose">
         <i class="widget-icon">X</i>
       </div>
     </div>
@@ -228,12 +244,14 @@ export default {
   },
   computed: {
     renameGroup (){
-      this.mediaGroup.mediaGroupList.find(item => {
+      let rename = ''
+       this.mediaGroup.mediaGroupList.find(item => {
         if (item.id === this.mediaGroup.groupId) {
-          this.mediaGroup.renameGroupValue = item.name;
-          return;
+          rename = item.name
+          return 
         }
       });
+      return rename
     }
   },
   created() {

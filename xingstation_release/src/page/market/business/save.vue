@@ -1,6 +1,9 @@
 <template>
   <div class="item-wrap-template">
-    <div v-loading="setting.loading" :element-loading-text="setting.loadingText" class="pane">
+    <div 
+      v-loading="setting.loading" 
+      :element-loading-text="setting.loadingText" 
+      class="pane">
       <div class="pane-title">{{ businessID ? '修改商户' : '新增商户' }}</div>
       <el-form
         ref="businessForm"
@@ -9,12 +12,23 @@
         label-width="150px"
         class="business-form"
       >
-        <el-tabs v-model="activeName" type="card">
-          <el-tab-pane label="商户配置" name="first">
-            <el-form-item label="商户名称" prop="name">
-              <el-input v-model="businessForm.name" placeholder="请输入商户名称" class="item-input"/>
+        <el-tabs 
+          v-model="activeName" 
+          type="card">
+          <el-tab-pane 
+            label="商户配置" 
+            name="first">
+            <el-form-item 
+              label="商户名称" 
+              prop="name">
+              <el-input 
+                v-model="businessForm.name" 
+                placeholder="请输入商户名称" 
+                class="item-input"/>
             </el-form-item>
-            <el-form-item label="公司名称" prop="company_id">
+            <el-form-item 
+              label="公司名称" 
+              prop="company_id">
               <el-select
                 v-model="businessForm.company_id"
                 :loading="searchLoading"
@@ -30,19 +44,27 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="商户属性" prop="type">
+            <el-form-item 
+              label="商户属性" 
+              prop="type">
               <el-radio-group v-model="businessForm.type">
                 <el-radio :label="1">自营</el-radio>
                 <el-radio :label="2">连锁</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="关联场地" prop="market">
-              <el-radio-group v-model="businessForm.market" @change="handleRelatedField">
+            <el-form-item 
+              label="关联场地" 
+              prop="market">
+              <el-radio-group 
+                v-model="businessForm.market" 
+                @change="handleRelatedField">
                 <el-radio :label="1">是</el-radio>
                 <el-radio :label="2">否</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="区域" prop="areaid">
+            <el-form-item 
+              label="区域" 
+              prop="areaid">
               <el-select
                 v-model="businessForm.areaid"
                 :loading="searchLoading"
@@ -58,7 +80,10 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item v-if="marketShow" label="场地名称" prop="marketid">
+            <el-form-item 
+              v-if="marketShow" 
+              label="场地名称" 
+              prop="marketid">
               <el-select
                 v-model="businessForm.marketid"
                 :remote-method="getMarket"
@@ -76,19 +101,40 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="商户logo" prop="media_id">
-              <div class="avatar-uploader" @click="panelVisible=true">
-                <img v-if="logoUrl" :src="logoUrl" class="avatar">
-                <i v-else class="el-icon-plus avatar-uploader-icon"/>
+            <el-form-item 
+              label="商户logo" 
+              prop="media_id">
+              <div 
+                class="avatar-uploader" 
+                @click="panelVisible=true">
+                <img 
+                  v-if="logoUrl" 
+                  :src="logoUrl" 
+                  class="avatar">
+                <i 
+                  v-else 
+                  class="el-icon-plus avatar-uploader-icon"/>
               </div>
             </el-form-item>
-            <el-form-item label="商户电话" prop="phone">
-              <el-input v-model="businessForm.phone" placeholder="请输入商户电话" class="item-input"/>
+            <el-form-item 
+              label="商户电话" 
+              prop="phone">
+              <el-input 
+                v-model="businessForm.phone" 
+                placeholder="请输入商户电话" 
+                class="item-input"/>
             </el-form-item>
-            <el-form-item label="商户地址" prop="address">
-              <el-input v-model="businessForm.address" placeholder="请输入商户地址" class="item-input"/>
+            <el-form-item 
+              label="商户地址" 
+              prop="address">
+              <el-input 
+                v-model="businessForm.address" 
+                placeholder="请输入商户地址" 
+                class="item-input"/>
             </el-form-item>
-            <el-form-item label="商户详情" prop="description">
+            <el-form-item 
+              label="商户详情" 
+              prop="description">
               <el-input
                 v-model="businessForm.description"
                 type="textarea"
@@ -97,15 +143,27 @@
               />
             </el-form-item>
           </el-tab-pane>
-          <el-tab-pane v-loading="contractFlag" label="合约配置" name="second">
-            <el-form-item label="合同" prop="contract">
-              <el-radio-group v-model="businessForm.contract" @change="handleContract">
+          <el-tab-pane 
+            v-loading="contractFlag" 
+            label="合约配置" 
+            name="second">
+            <el-form-item 
+              label="合同" 
+              prop="contract">
+              <el-radio-group 
+                v-model="businessForm.contract" 
+                @change="handleContract">
                 <el-radio :label="0">无</el-radio>
                 <el-radio :label="1">有</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item v-if="contractShow" label="合同编号" prop="contract_id">
-              <el-select v-model="businessForm.contract_id" placeholder="请选择合同编号">
+            <el-form-item 
+              v-if="contractShow" 
+              label="合同编号" 
+              prop="contract_id">
+              <el-select 
+                v-model="businessForm.contract_id" 
+                placeholder="请选择合同编号">
                 <el-option
                   v-for="item in contractList"
                   :key="item.id"
@@ -114,7 +172,9 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="所属人" prop="user_id">
+            <el-form-item 
+              label="所属人" 
+              prop="user_id">
               <el-select
                 v-model="businessForm.user_id"
                 :loading="searchLoading"
@@ -129,7 +189,9 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="合同开始时间" prop="start_date">
+            <el-form-item 
+              label="合同开始时间" 
+              prop="start_date">
               <el-date-picker
                 v-model="businessForm.start_date"
                 type="date"
@@ -137,7 +199,9 @@
                 class="coupon-form-date"
               />
             </el-form-item>
-            <el-form-item label="合同结束时间" prop="end_date">
+            <el-form-item 
+              label="合同结束时间" 
+              prop="end_date">
               <el-date-picker
                 v-model="businessForm.end_date"
                 type="date"
@@ -148,12 +212,18 @@
           </el-tab-pane>
         </el-tabs>
         <el-form-item>
-          <el-button :loading="btnLoading" type="primary" @click="submit('businessForm')">保存</el-button>
+          <el-button 
+            :loading="btnLoading" 
+            type="primary" 
+            @click="submit('businessForm')">保存</el-button>
           <el-button @click="historyBack">返回</el-button>
         </el-form-item>
       </el-form>
     </div>
-    <PicturePanel :panelVisible.sync="panelVisible" :singleFlag="singleFlag" @close="handleClose"/>
+    <PicturePanel 
+      :panel-visible.sync="panelVisible" 
+      :single-flag="singleFlag" 
+      @close="handleClose"/>
   </div>
 </template>
 
