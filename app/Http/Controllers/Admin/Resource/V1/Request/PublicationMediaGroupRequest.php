@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Admin\Resource\V1\Request;
 
 
 use App\Http\Requests\Request;
+use Illuminate\Validation\Rule;
 
 class PublicationMediaGroupRequest extends Request
 {
@@ -18,12 +19,12 @@ class PublicationMediaGroupRequest extends Request
         $method = $this->method();
         if ($method === 'POST') {
             return [
-                'name' => 'required|string'
+                'name' => 'required|unique:publication_media_groups'
             ];
         }
         if ($method === 'PATCH') {
             return [
-                'name' => 'filled'
+                'name' => ['filled', Rule::unique('publication_media_groups')->ignore($this->route('group')->id)]
             ];
         }
         return [];
