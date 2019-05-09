@@ -265,7 +265,6 @@ export default {
         let mediaGroupsData = await getMediaGroup(this);
         this.mediaGroup.mediaGroupList = mediaGroupsData.data;
         this.mediaGroup.groupId = this.mediaGroup.mediaGroupList[0].id;
-        this.mediaGroup.addGroupNameValue = this.mediaGroup.mediaGroupList[0].name;
         this.mediaGroup.renameGroupValue = this.mediaGroup.mediaGroupList[0].name;
         await this.getImgMediaList(this.mediaGroup.mediaGroupList[0].id);
         this.uploadForm.token = res;
