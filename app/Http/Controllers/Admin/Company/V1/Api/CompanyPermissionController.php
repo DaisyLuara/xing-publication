@@ -13,12 +13,13 @@ use App\Http\Controllers\Admin\Privilege\V1\Models\Permission;
 use App\Http\Controllers\Admin\Privilege\V1\Request\PermissionRequest;
 use App\Http\Controllers\Admin\Privilege\V1\Transformer\PermissionTransformer;
 use App\Http\Controllers\Controller;
+use Spatie\Permission\PermissionRegistrar;
 
 class CompanyPermissionController extends Controller
 {
     public function show(Permission $permission)
     {
-        return $this->response()->item($permission, new PermissionTransformer());
+        return $this->response()->item($permission, new PermissionTransformer())->setStatusCode(200);
     }
 
     public function index()
@@ -26,7 +27,7 @@ class CompanyPermissionController extends Controller
         $permission = Permission::query()->where('parent_id', 0)
             ->where('guard_name', 'shop')
             ->paginate(10);
-        return $this->response()->paginator($permission, new PermissionTransformer());
+        return $this->response()->paginator($permission, new PermissionTransformer())->setStatusCode(200);
     }
 
     public function store(PermissionRequest $request)
@@ -37,6 +38,9 @@ class CompanyPermissionController extends Controller
 
     public function update(PermissionRequest $request, Permission $permission)
     {
+        if ($request->has('parent_id')) {
+            abort(403, '不可移动节点');
+        }
         $permission->update($request->all());
         return $this->response()->noContent()->setStatusCode(200);
     }
@@ -44,6 +48,7 @@ class CompanyPermissionController extends Controller
     public function destroy(Permission $permission)
     {
         $permission->descendantsAndSelf()->delete();
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
         return $this->response()->noContent()->setStatusCode(204);
     }
 }
