@@ -28,7 +28,7 @@ class PublicationMediaController extends Controller
                 $q->where('name', 'like', '%' . $request->get('name') . '%');
             });
         }
-        $publicationMedia = $query->where('group_id', $group->id)->paginate(10);
+        $publicationMedia = $query->where('group_id', $group->id)->orderByDesc('id')->paginate(20);
         return $this->response()->paginator($publicationMedia, new PublicationMediaTransformer())->setStatusCode(200);
     }
 
