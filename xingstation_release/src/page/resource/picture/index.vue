@@ -224,7 +224,7 @@ export default {
         loadingText: "拼命加载中"
       },
       pagination: {
-        limit: 10,
+        limit: 20,
         page_num: 1,
         count: 0
       },
