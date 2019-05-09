@@ -16,12 +16,18 @@ use App\Http\Controllers\Admin\Resource\V1\Request\PublicationMediaRequest;
 use App\Http\Controllers\Admin\Resource\V1\Transformer\PublicationMediaTransformer;
 use App\Http\Controllers\Controller;
 use Dingo\Api\Http\Response;
+use Illuminate\Http\Request;
 
 class PublicationMediaController extends Controller
 {
-    public function index(PublicationMediaGroup $group, PublicationMedia $publicationMedia)
+    public function index(Request $request, PublicationMediaGroup $group, PublicationMedia $publicationMedia)
     {
         $query = $publicationMedia->query();
+        if ($request->has('name')) {
+            $query->whereHas('media', static function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->get('name') . '%');
+            });
+        }
         $publicationMedia = $query->where('group_id', $group->id)->paginate(10);
         return $this->response()->paginator($publicationMedia, new PublicationMediaTransformer())->setStatusCode(200);
     }
