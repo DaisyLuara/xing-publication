@@ -6,7 +6,7 @@ let router = {
   name: '资源',
   meta: {
     title: '资源',
-    permission: '',
+    permission: 'resource',
     url: URL.CDN_URL + 'middle_ground/img/resource_icon.png'
   },
   component: () =>
