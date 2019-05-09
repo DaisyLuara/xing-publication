@@ -235,7 +235,8 @@ class QueryController extends Controller
         }
 
         if ($request->advertiser_id) {
-            $query->where('atiid', '=', $request->advertiser_id);
+            $advertiser = Advertiser::findOrFail($request->advertiser_id);
+            $query->where('z', '=', $advertiser->z);
         }
         $advertisement = $query->get();
         return $this->response->collection($advertisement, new AdvertisementTransformer());
@@ -582,10 +583,10 @@ class QueryController extends Controller
         if ($request->has('company_id')) {
             $company_id = $request->company_id;
 
-            $query->where(function ($q) use($company_id) {
+            $query->where(function ($q) use ($company_id) {
                 $q->where('company_id', $company_id);
             })->orWhere(function ($q) use ($company_id) {
-                $q->whereHas('company', function ($q) use($company_id) {
+                $q->whereHas('company', function ($q) use ($company_id) {
                     $q->where('parent_id', $company_id);
                 });
             });
@@ -658,7 +659,7 @@ class QueryController extends Controller
      * @param Customer $customer
      * @return \Dingo\Api\Http\Response
      */
-    public function adminCustomersQueryByRole($role_name = '',Request $request, Customer $customer)
+    public function adminCustomersQueryByRole($role_name = '', Request $request, Customer $customer)
     {
         $query = $customer->query()->role($role_name);
 
