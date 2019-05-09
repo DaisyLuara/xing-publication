@@ -14,7 +14,7 @@ class ConfessionTransformer extends TransformerAbstract
             'name' => $confession->name,
             'phone' => $confession->phone,
             'message' => $confession->message,
-            'url' => $confession->media->url,
+            'url' => $confession->url,
             'created_at' => $confession->created_at->toDateTimeString(),
             'updated_at' => $confession->updated_at->toDateTimeString(),
         ];

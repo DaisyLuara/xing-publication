@@ -21,6 +21,7 @@ $api->version('v3', [
 
             $api->post('confessions', 'ConfessionsController@store');//上传全城告白
             $api->get('user/confession', 'ConfessionsController@show');//查询全城告白
+            $api->get('user/upload/confession', 'ConfessionsController@extract');//提取全城告白
         });
 
     });
