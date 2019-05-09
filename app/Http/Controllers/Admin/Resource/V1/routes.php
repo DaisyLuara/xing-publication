@@ -12,15 +12,24 @@ $api->version('v1', [
 
             //公司资源审核
             $api->get('company_media', ['middleware' => ['permission:resource.company.read'], 'uses' => 'CompanyMediaController@index']);
-            $api->patch('company_media/audit/{media}',['middleware'=>['permission:resource.company.audit'],'uses'=>'CompanyMediaController@audit']);
+            $api->patch('company_media/audit/{media}', ['middleware' => ['permission:resource.company.audit'], 'uses' => 'CompanyMediaController@audit']);
 
             //活动资源审核
-            $api->get('activity_media',['middleware'=>['permission:resource.activity.read'],'uses'=>'ActivityMediaController@index']);
-            $api->patch('activity_media/audit/{media}',['middleware'=>['permission:resource.activity.audit'],'uses'=>'ActivityMediaController@audit']);
+            $api->get('activity_media', ['middleware' => ['permission:resource.activity.read'], 'uses' => 'ActivityMediaController@index']);
+            $api->patch('activity_media/audit/{media}', ['middleware' => ['permission:resource.activity.audit'], 'uses' => 'ActivityMediaController@audit']);
+
+            //中台资源分组
+            $api->get('pub_group', ['middleware' => ['permission:resource.publication.read'], 'uses' => 'PublicationMediaGroupController@index']);
+            $api->post('pub_group', ['middleware' => ['permission:resource.publication.create'], 'uses' => 'PublicationMediaGroupController@store']);
+            $api->patch('pub_group/{group}', ['middleware' => ['permission:resource.publication.update'], 'uses' => 'PublicationMediaGroupController@update']);
+
+            $api->get('pub_group/{group}/pub_media', ['middleware' => ['permission:resource.publication.read'], 'uses' => 'PublicationMediaController@index']);
+            $api->post('pub_group/{group}/pub_media', ['middleware' => ['permission:resource.publication.create'], 'uses' => 'PublicationMediaController@store']);
+            $api->patch('pub_group/{group}/pub_media/{publicationMedia}', ['middleware' => ['permission:resource.publication.update'], 'uses' => 'PublicationMediaController@update']);
         });
         $api->group(['middleware' => 'api_sign'], static function ($api) {
             //活动文件上传
-            $api->get('qiniu_token','ActivityMediaController@getToken');
+            $api->get('qiniu_token', 'ActivityMediaController@getToken');
             $api->post('activity_media', 'ActivityMediaController@create');
         });
     });
