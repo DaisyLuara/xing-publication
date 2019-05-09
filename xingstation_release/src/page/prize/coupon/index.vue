@@ -168,7 +168,9 @@
                 <el-form-item label="公司">
                   <span>{{ scope.row.couponBatch.company.name }}</span>
                 </el-form-item>
-                <el-form-item label="点位">
+                <el-form-item 
+                  :show-overflow-tooltip="true" 
+                  label="点位">
                   <span>{{ scope.row.point.id !== 0 ? scope.row.point.market.area.name + '-' + scope.row.point.market.name + '-' + scope.row.point.name : '' }}</span>
                 </el-form-item>
                 <el-form-item label="核销人">

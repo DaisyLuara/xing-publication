@@ -34,6 +34,16 @@ let router = {
             import(/* webpackChunkName: "page/prize/rules/index" */ 'page/prize/rules/index')
         },
         {
+          path: 'import',
+          name: '奖品批量导入',
+          meta: {
+            title: '奖品增加',
+            permission: 'prize.rules.create'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/prize/rules/import" */ 'page/prize/rules/import')
+        },
+        {
           path: 'add',
           name: '奖品增加',
           meta: {

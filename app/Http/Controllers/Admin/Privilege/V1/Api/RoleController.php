@@ -19,7 +19,7 @@ class RoleController extends Controller
 {
     public function show(Role $role)
     {
-        return $this->response()->item($role, new RoleDetailTransformer());
+        return $this->response()->item($role, new RoleDetailTransformer())->setStatusCode(200);
     }
 
     public function index(Role $role)
@@ -28,16 +28,16 @@ class RoleController extends Controller
         /** @var  $user \App\Models\User */
         $user = $this->user();
         if (!$user->isSuperAdmin()) {
-            $query->where("name", '<>', 'super-admin');
+            $query->where('name', '<>', 'super-admin');
         }
         $roles = $query->where('guard_name', 'web')->paginate(10);
-        return $this->response()->paginator($roles, new RoleTransformer());
+        return $this->response()->paginator($roles, new RoleTransformer())->setStatusCode(200);
     }
 
     public function store(RoleRequest $request, Role $role)
     {
         $role->fill($request->all())->save();
-        $ids = $request->ids;
+        $ids = $request->get('ids');
         $role->givePermissionTo($ids);
 
         return $this->response()->noContent()->setStatusCode(201);
@@ -46,13 +46,13 @@ class RoleController extends Controller
     public function update(RoleRequest $request, Role $role)
     {
         $role->update($request->all());
-        $role->syncPermissions($request->ids);
-        return $this->response()->noContent();
+        $role->syncPermissions($request->get('ids'));
+        return $this->response()->noContent()->setStatusCode(200);
     }
 
     public function destroy(Role $role)
     {
-        if ($role->users()->count() != 0) {
+        if ($role->users()->count() !== 0) {
             abort(403, '该角色已关联用户，暂不可删除');
         }
         $this->checkRole($role);
@@ -60,9 +60,9 @@ class RoleController extends Controller
         return $this->response()->noContent()->setStatusCode(204);
     }
 
-    private function checkRole(Role $role)
+    private function checkRole(Role $role): void
     {
-        if ($role->name == 'admin' || $role->name == 'super-admin') {
+        if ($role->name ==='admin' || $role->name === 'super-admin') {
             abort(403, '管理员角色不可变更');
         }
     }

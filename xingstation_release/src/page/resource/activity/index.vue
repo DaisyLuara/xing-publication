@@ -7,18 +7,9 @@
     >
       <div class="item-content-wrap">
         <div class="search-wrap">
-          <el-form 
-            ref="searchForm" 
-            :model="searchForm" 
-            :inline="true">
-            <el-form-item 
-              label 
-              prop="status">
-              <el-select 
-                v-model="searchForm.status" 
-                placeholder="请选择状态" 
-                filterable 
-                clearable>
+          <el-form ref="searchForm" :model="searchForm" :inline="true">
+            <el-form-item label prop="status">
+              <el-select v-model="searchForm.status" placeholder="请选择状态" filterable clearable>
                 <el-option
                   v-for="item in statusList"
                   :key="item.id"
@@ -28,40 +19,29 @@
               </el-select>
             </el-form-item>
             <el-form-item label>
-              <el-button 
-                type="primary" 
-                size="small" 
-                @click="search">搜索</el-button>
-              <el-button 
-                type="default" 
-                size="small" 
-                @click="resetSearch('searchForm')">重置</el-button>
+              <el-button type="primary" size="small" @click="search">搜索</el-button>
+              <el-button type="default" size="small" @click="resetSearch('searchForm')">重置</el-button>
             </el-form-item>
           </el-form>
         </div>
         <div class="total-wrap">
           <span class="label">总数:{{ pagination.total }}</span>
         </div>
-        <el-table 
-          :data="tableData" 
-          style="width: 100%">
+        <el-table :data="tableData" style="width: 100%">
           <el-table-column type="expand">
             <template slot-scope="scope">
-              <el-form 
-                label-position="left" 
-                inline 
-                class="demo-table-expand">
+              <el-form label-position="left" inline class="demo-table-expand">
                 <el-form-item label="ID">
                   <span>{{ scope.row.id }}</span>
                 </el-form-item>
-                <el-form-item label="名称">
+                <el-form-item label="活动名称">
+                  <span>{{ scope.row.activity_name }}</span>
+                </el-form-item>
+                <el-form-item label="图片名称">
                   <span>{{ scope.row.name }}</span>
                 </el-form-item>
                 <el-form-item label="资源">
-                  <a 
-                    :href="scope.row.url" 
-                    target="_blank" 
-                    style="color: blue">查看</a>
+                  <a :href="scope.row.url" target="_blank" style="color: blue">查看</a>
                 </el-form-item>
                 <el-form-item label="创建时间">
                   <span>{{ scope.row.created_at }}</span>
@@ -75,25 +55,16 @@
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column 
-            :show-overflow-tooltip="true" 
-            prop="id" 
-            label="ID" 
-            min-width="80"/>
-          <el-table-column 
-            :show-overflow-tooltip="true" 
-            prop="name" 
-            label="名称" 
-            min-width="100"/>
-          <el-table-column 
-            prop="url" 
-            label="资源" 
-            min-width="130">
+          <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="80"/>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="activity_name"
+            label="活动名称"
+            min-width="100"
+          />
+          <el-table-column prop="url" label="资源" min-width="130">
             <template slot-scope="scope">
-              <img 
-                :src="scope.row.url" 
-                alt 
-                class="icon-item">
+              <img :src="scope.row.url" alt class="icon-item" @click="imgShow(scope.row)">
             </template>
           </el-table-column>
           <el-table-column
@@ -102,11 +73,7 @@
             label="创建时间"
             min-width="100"
           />
-          <el-table-column 
-            :show-overflow-tooltip="true" 
-            prop="status" 
-            label="状态" 
-            min-width="100">
+          <el-table-column :show-overflow-tooltip="true" prop="status" label="状态" min-width="100">
             <template
               slot-scope="scope"
             >{{ scope.row.status === 0 ? '未通过' : scope.row.status === 1 ? '通过' : '待审核' }}</template>
@@ -117,18 +84,20 @@
             label="审核人"
             min-width="150"
           />
-          <el-table-column 
-            label="操作" 
-            min-width="100">
+          <el-table-column label="操作" min-width="150">
             <template slot-scope="scope">
-              <el-button 
-                size="small" 
-                type="success" 
-                @click="pass(scope.row)">通过</el-button>
-              <el-button 
-                size="small" 
-                type="warning" 
-                @click="reject(scope.row)">驳回</el-button>
+              <el-button
+                v-if="scope.row.status !== 1"
+                size="small"
+                type="success"
+                @click="pass(scope.row)"
+              >通过</el-button>
+              <el-button
+                v-if="scope.row.status !== 0"
+                size="small"
+                type="warning"
+                @click="reject(scope.row)"
+              >驳回</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -141,6 +110,16 @@
             @current-change="changePage"
           />
         </div>
+      </div>
+    </div>
+    <!-- 图片弹窗 -->
+    <div v-show="imageVisible" class="widget-image">
+      <div class="shade-image"/>
+      <div class="widget-content">
+        <img :src="imgUrl">
+      </div>
+      <div class="widget-close" @click="handleImageClose">
+        <i class="widget-icon">X</i>
       </div>
     </div>
   </div>
@@ -174,9 +153,11 @@ export default {
   },
   data() {
     return {
+      imageVisible: false,
       searchForm: {
         status: ""
       },
+      imgUrl: "",
       statusList: [
         {
           id: 0,
@@ -209,6 +190,13 @@ export default {
     this.getActivityMediaList();
   },
   methods: {
+    imgShow(data) {
+      this.imageVisible = true;
+      this.imgUrl = data.url;
+    },
+    handleImageClose() {
+      this.imageVisible = false;
+    },
     pass(data) {
       let id = data.id;
       let args = {
@@ -359,6 +347,57 @@ export default {
         margin: 10px auto;
         text-align: right;
       }
+    }
+  }
+
+  .widget-image {
+    position: fixed;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    left: 0px;
+    z-index: 3000;
+  }
+  .widget-close {
+    background: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    position: absolute;
+    right: 5%;
+    top: 5%;
+    z-index: 3444;
+  }
+  .widget-icon {
+    display: block;
+    font-style: normal;
+    text-align: center;
+    height: 40px;
+    line-height: 40px;
+    width: 40px;
+  }
+  .shade-image {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #000;
+    opacity: 0.6;
+    z-index: 2000;
+  }
+  .widget-content {
+    top: 0;
+    position: absolute;
+    z-index: 2001;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    img {
+      width: 20%;
     }
   }
 }

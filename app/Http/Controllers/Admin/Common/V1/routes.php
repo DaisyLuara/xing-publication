@@ -119,7 +119,6 @@ $api->version('v1', [
 
             $api->get('export', 'ExportController@store');//导出
 
-            $api->get('qiniu_oauth', 'QiniuController@oauth');
         });
 
         $api->get('website/fcpe', 'WebsiteController@getFCpe');

@@ -29,6 +29,21 @@ const saveCoupon = (context, args, uid, companyId) => {
     })
   }
 }
+
+const saveCouponByImport = (context,companyId, args) => {
+  console.log(args);
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .put(HOST + ADD_COUPON_API + 'batches/' + companyId + '/import', args)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
 const getCouponDetial = (context, uid, args) => {
   if (!uid) {
     return false
@@ -98,5 +113,6 @@ export {
   getCouponList,
   deleteCoupon,
   getSyncCoupon,
-  putInCouponList
+  putInCouponList,
+  saveCouponByImport
 }

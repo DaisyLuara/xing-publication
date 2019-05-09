@@ -69,7 +69,7 @@ class CreateAdminStaffJob implements ShouldQueue
 
         $result = $exelook->user_info->gmUserInfoHttp([
             'token' => 'cz',
-            'username' => app('pinyin')->permalink($this->adminStaff->name, ''),
+            'username' => $this->adminStaff->name,
             'mobile' => $this->adminStaff->phone,
             'id' => $this->getRoleID(),
             'face' => null,
