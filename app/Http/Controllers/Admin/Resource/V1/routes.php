@@ -18,10 +18,10 @@ $api->version('v1', [
             $api->get('activity_media', ['middleware' => ['permission:resource.activity.read'], 'uses' => 'ActivityMediaController@index']);
             $api->patch('activity_media/audit/{media}', ['middleware' => ['permission:resource.activity.audit'], 'uses' => 'ActivityMediaController@audit']);
 
-            //资源分组
-            $api->get('pub_group', ['middleware' => [], 'uses' => 'PublicationMediaGroupController@index']);
-            $api->post('pub_group', ['middleware' => [], 'uses' => 'PublicationMediaGroupController@store']);
-            $api->patch('pub_group/{group}', ['middleware' => [], 'uses' => 'PublicationMediaGroupController@update']);
+            //中台资源分组
+            $api->get('pub_group', ['middleware' => ['permission:resource.publication.read'], 'uses' => 'PublicationMediaGroupController@index']);
+            $api->post('pub_group', ['middleware' => ['permission:resource.publication.create'], 'uses' => 'PublicationMediaGroupController@store']);
+            $api->patch('pub_group/{group}', ['middleware' => ['permission:resource.publication.update'], 'uses' => 'PublicationMediaGroupController@update']);
 
             $api->get('pub_group/{group}/pub_media', ['middleware' => ['permission:resource.publication.read'], 'uses' => 'PublicationMediaController@index']);
             $api->post('pub_group/{group}/pub_media', ['middleware' => ['permission:resource.publication.create'], 'uses' => 'PublicationMediaController@store']);
