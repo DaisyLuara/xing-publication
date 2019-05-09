@@ -19,20 +19,20 @@ class CompanyRoleController extends Controller
 {
     public function show(Role $role)
     {
-        return $this->response()->item($role, new RoleDetailTransformer());
+        return $this->response()->item($role, new RoleDetailTransformer())->setStatusCode(200);
     }
 
     public function index(Role $role)
     {
         $query = $role->query();
         $roles = $query->where('guard_name', 'shop')->paginate(10);
-        return $this->response()->paginator($roles, new RoleTransformer());
+        return $this->response()->paginator($roles, new RoleTransformer())->setStatusCode(200);
     }
 
     public function store(RoleRequest $request, Role $role)
     {
         $role->fill(array_merge($request->all(), ['guard_name' => 'shop']))->save();
-        $ids = $request->ids;
+        $ids = $request->get('ids');
         $role->givePermissionTo($ids);
 
         return $this->response()->noContent()->setStatusCode(201);
@@ -41,14 +41,13 @@ class CompanyRoleController extends Controller
     public function update(RoleRequest $request, Role $role)
     {
         $role->update($request->all());
-        $role->syncPermissions($request->ids);
-        \Cache::getRedis()->connection()->del('publication_cache:spatie.permission.cache');
-        return $this->response()->noContent();
+        $role->syncPermissions($request->get('ids'));
+        return $this->response()->noContent()->setStatusCode(200);
     }
 
     public function destroy(Role $role)
     {
-        if ($role->users()->count() != 0) {
+        if ($role->users()->count() !== 0) {
             abort(403, '该角色已关联用户，暂不可删除');
         }
         $role->delete();
