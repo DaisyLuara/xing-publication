@@ -31,8 +31,8 @@
             <el-button type="warning" size="small" @click="batchReject">批量驳回</el-button>
           </div>
         </div>
-        <el-table :data="tableData" style="width: 100%" @selection-change="handleSelectionChange">
-          <el-table-column type="selection" width="45"/>
+        <el-table :data="tableData" style="width: 100%" @selection-change="handleSelectionChange" disabled='true'>
+          <el-table-column type="selection" width="45" :selectable="checkboxT"/>
           <el-table-column type="expand">
             <template slot-scope="scope">
               <el-form label-position="left" inline class="demo-table-expand">
@@ -97,13 +97,13 @@
           <el-table-column label="操作" min-width="150">
             <template slot-scope="scope">
               <el-button
-                v-if="scope.row.status !== 1"
+                v-if="scope.row.status === 2"
                 size="small"
                 type="success"
                 @click="pass(scope.row)"
               >通过</el-button>
               <el-button
-                v-if="scope.row.status !== 0"
+                v-if="scope.row.status === 2"
                 size="small"
                 type="warning"
                 @click="reject(scope.row)"
@@ -200,6 +200,13 @@ export default {
     this.getActivityMediaList();
   },
   methods: {
+    checkboxT(row, index) {
+      if(row.status === 2){
+        return 1
+      }else{
+        return 0
+      }
+    },
     batchPass() {
       if (this.selectAll.length !== 0) {
         let ids = [];
