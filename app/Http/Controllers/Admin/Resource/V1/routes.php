@@ -16,7 +16,7 @@ $api->version('v1', [
 
             //活动资源审核
             $api->get('activity_media', ['middleware' => ['permission:resource.activity.read'], 'uses' => 'ActivityMediaController@index']);
-            $api->patch('activity_media/audit/{media}', ['middleware' => ['permission:resource.activity.audit'], 'uses' => 'ActivityMediaController@audit']);
+            $api->patch('activity_media/audit', ['middleware' => ['permission:resource.activity.audit'], 'uses' => 'ActivityMediaController@massAudit']);
 
             //中台资源分组
             $api->get('pub_group', ['middleware' => ['permission:resource.publication.read'], 'uses' => 'PublicationMediaGroupController@index']);

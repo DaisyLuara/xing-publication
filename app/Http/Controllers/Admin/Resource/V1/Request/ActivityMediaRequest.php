@@ -32,6 +32,7 @@ class ActivityMediaRequest extends Request
         }
         if ($method === 'PATCH') {
             return [
+                'ids' => 'required|array',
                 'status' => 'required|in:0,1'
             ];
         }

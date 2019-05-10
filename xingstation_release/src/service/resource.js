@@ -22,10 +22,10 @@ const getActivityMediaList = (context, params) => {
 }
 
 // 活动审核
-const activityMediaAudit = (context, id, params) => {
+const activityMediaAudit = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .patch(HOST + ACTIVITY_MEDIA_AUDIT_API + '/' + id, params)
+      .patch(HOST + ACTIVITY_MEDIA_AUDIT_API, params)
       .then(response => {
         resolve(response.data)
       })
