@@ -11,10 +11,14 @@ class ConfessionTransformer extends TransformerAbstract
     public function transform(Confession $confession)
     {
         return [
+            'id' => $confession->id,
             'name' => $confession->name,
             'phone' => $confession->phone,
             'message' => $confession->message,
-            'url' => $confession->media->url,
+            'qiniu_id' => $confession->qiniu_id,
+            'record_id' => $confession->record_id,
+            'utm_campaign' => $confession->utm_campaign,
+            'url' => $confession->url,
             'created_at' => $confession->created_at->toDateTimeString(),
             'updated_at' => $confession->updated_at->toDateTimeString(),
         ];
