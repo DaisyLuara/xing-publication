@@ -26,8 +26,13 @@
         </div>
         <div class="total-wrap">
           <span class="label">总数:{{ pagination.total }}</span>
+          <div>
+            <el-button type="success" size="small" @click="batchPass">批量通过</el-button>
+            <el-button type="warning" size="small" @click="batchReject">批量驳回</el-button>
+          </div>
         </div>
-        <el-table :data="tableData" style="width: 100%">
+        <el-table :data="tableData" style="width: 100%" @selection-change="handleSelectionChange">
+          <el-table-column type="selection" width="45"/>
           <el-table-column type="expand">
             <template slot-scope="scope">
               <el-form label-position="left" inline class="demo-table-expand">
@@ -64,7 +69,12 @@
           />
           <el-table-column prop="url" label="资源" min-width="130">
             <template slot-scope="scope">
-              <img :src="scope.row.url+'?imageslim'" alt class="icon-item" @click="imgShow(scope.row)">
+              <img
+                :src="scope.row.url+'?imageslim'"
+                alt
+                class="icon-item"
+                @click="imgShow(scope.row)"
+              >
             </template>
           </el-table-column>
           <el-table-column
@@ -182,7 +192,7 @@ export default {
         pageSize: 10,
         currentPage: 1
       },
-
+      selectAll: [],
       tableData: []
     };
   },
@@ -190,6 +200,47 @@ export default {
     this.getActivityMediaList();
   },
   methods: {
+    batchPass() {
+      if (this.selectAll.length !== 0) {
+        let ids = [];
+        this.selectAll.map(r => {
+          ids.push(r.id);
+        });
+        let args = {
+          status: 1,
+          ids: ids
+        };
+        let message = "审核通过!";
+        this.activityMediaAudit(args, message);
+        return;
+      }
+      this.$message({
+        type: "warning",
+        message: "请先选择要通过的"
+      });
+    },
+    batchReject() {
+      if (this.selectAll.length !== 0) {
+        let ids = [];
+        this.selectAll.map(r => {
+          ids.push(r.id);
+        });
+        let args = {
+          status: 0,
+          ids: ids
+        };
+        let message = "驳回成功!";
+        this.activityMediaAudit(args, message);
+        return;
+      }
+      this.$message({
+        type: "warning",
+        message: "请先选择要驳回的"
+      });
+    },
+    handleSelectionChange(val) {
+      this.selectAll = val;
+    },
     imgShow(data) {
       this.imageVisible = true;
       this.imgUrl = data.url;
@@ -200,27 +251,29 @@ export default {
     pass(data) {
       let id = data.id;
       let args = {
-        status: 1
+        status: 1,
+        ids: Array.of(id)
       };
       let message = "审核通过!";
-      this.activityMediaAudit(id, args, message);
+      this.activityMediaAudit(args, message);
     },
     reject(data) {
       let id = data.id;
       let args = {
-        status: 0
+        status: 0,
+        ids: Array.of(id)
       };
       let message = "驳回成功!";
-      this.activityMediaAudit(id, args, message);
+      this.activityMediaAudit(args, message);
     },
-    activityMediaAudit(id, args, message) {
+    activityMediaAudit(args, message) {
       this.$confirm("审核, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
       })
         .then(() => {
-          activityMediaAudit(this, id, args)
+          activityMediaAudit(this, args)
             .then(res => {
               this.getActivityMediaList();
               this.$message({
