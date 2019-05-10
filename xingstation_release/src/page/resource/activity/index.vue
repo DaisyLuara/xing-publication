@@ -64,7 +64,7 @@
           />
           <el-table-column prop="url" label="资源" min-width="130">
             <template slot-scope="scope">
-              <img :src="scope.row.url" alt class="icon-item" @click="imgShow(scope.row)">
+              <img :src="scope.row.url+'?imageslim'" alt class="icon-item" @click="imgShow(scope.row)">
             </template>
           </el-table-column>
           <el-table-column

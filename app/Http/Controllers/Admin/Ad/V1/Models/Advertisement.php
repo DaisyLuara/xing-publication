@@ -65,7 +65,7 @@ class Advertisement extends Model
 
     public function advertiser()
     {
-        return $this->belongsTo(Advertiser::class, 'atiid', 'atiid');
+        return $this->belongsTo(Advertiser::class, 'z', 'z');
     }
 
     public function adTrade()
