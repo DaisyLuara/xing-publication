@@ -42,12 +42,25 @@
         <div class="total-wrap">
           <span class="label">总数:{{ pagination.total }}</span>
           <div>
-            <el-button type="success" size="small" @click="batchPass">批量通过</el-button>
-            <el-button type="warning" size="small" @click="batchReject">批量驳回</el-button>
+            <el-button 
+              type="success" 
+              size="small" 
+              @click="batchPass">批量通过</el-button>
+            <el-button 
+              type="warning" 
+              size="small" 
+              @click="batchReject">批量驳回</el-button>
           </div>
         </div>
-        <el-table :data="tableData" style="width: 100%" @selection-change="handleSelectionChange" disabled='true'>
-          <el-table-column type="selection" width="45" :selectable="checkboxT"/>
+        <el-table 
+          :data="tableData" 
+          style="width: 100%" 
+          disabled="true" 
+          @selection-change="handleSelectionChange">
+          <el-table-column 
+            :selectable="checkboxT" 
+            type="selection" 
+            width="45"/>
           <el-table-column type="expand">
             <template slot-scope="scope">
               <el-form 
