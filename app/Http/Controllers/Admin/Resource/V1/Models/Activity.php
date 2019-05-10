@@ -12,5 +12,5 @@ use App\Models\Model;
 
 class Activity extends Model
 {
-    protected $filleable = ['name'];
+    protected $filleable = ['utm_campaign', 'name'];
 }
