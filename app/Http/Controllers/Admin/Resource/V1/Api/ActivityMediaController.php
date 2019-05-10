@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Admin\Resource\V1\Api;
 
 
+use App\Http\Controllers\Admin\Resource\V1\Models\Activity;
 use App\Http\Controllers\Admin\Resource\V1\Models\ActivityMedia;
 use App\Http\Controllers\Admin\Resource\V1\Request\ActivityMediaRequest;
 use App\Http\Controllers\Admin\Resource\V1\Transformer\ActivityMediaTransformer;
@@ -50,12 +51,13 @@ class ActivityMediaController extends Controller
     {
         $disk = \Storage::disk('qiniu_yq');
         $domain = $disk->getDriver()->downloadUrl();
+        $activity = Activity::query()->where('utm_campaign', $request->get('utm_campaign'))->first();
         $data = [
             'name' => $request->get('name'),
             'url' => $domain . urlencode($request->get('key')),
             'size' => $request->get('size'),
             'status' => 2,
-            'activity_id' => $request->get('activity_id')
+            'activity_id' => $activity->id
         ];
         $media->fill($data)->save();
         //七牛鉴定
@@ -76,6 +78,16 @@ class ActivityMediaController extends Controller
         $media->status = $request->get('status');
         $media->audit_user_id = $user->id;
         $media->update();
+        return $this->response()->noContent()->setStatusCode(200);
+    }
+
+    public function massAudit(ActivityMediaRequest $request)
+    {
+        $user = $this->user();
+        $ids = $request->get('ids');
+        foreach ($ids as $id) {
+            ActivityMedia::query()->where('id', $id)->update(['status' => $request->get('status'), 'audit_user_id' => $user->id]);
+        }
         return $this->response()->noContent()->setStatusCode(200);
     }
 }
