@@ -13,5 +13,6 @@ class AddActivitySeeder extends Seeder
     public function run(): void
     {
         Activity::create(['utm_campaign' => 'Love520Action', 'name' => '520全城告白']);
+        Activity::create(['utm_campaign' => 'wuyue_invitation', 'name' => '吾悦邀请函']);
     }
 }
