@@ -2,8 +2,8 @@
   <div class="picture-panel">
     <el-dialog 
       :visible.sync="panelVisible" 
-      width="70%"
-      :before-close="cancel" 
+      :before-close="cancel"
+      width="70%" 
       @open="handleOpen()">
       <div slot="title">
         <span class="picture-panel__title">图片管理</span>
@@ -25,7 +25,7 @@
           <el-tab-pane
             v-for="item in mediaGroup.mediaGroupList"
             :name="item.name"
-            :groupId="item.id"
+            :group-id="item.id"
             :key="item.id"
           >
             <span 
@@ -160,7 +160,7 @@ export default {
         groupId: null
       },
       pagination: {
-        limit: 10,
+        limit: 20,
         page_num: 1,
         count: 0
       },
