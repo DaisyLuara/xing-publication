@@ -78,4 +78,14 @@ class ActivityMediaController extends Controller
         $media->update();
         return $this->response()->noContent()->setStatusCode(200);
     }
+
+    public function massAudit(ActivityMediaRequest $request)
+    {
+        $user = $this->user();
+        $ids = $request->get('ids');
+        foreach ($ids as $id) {
+            ActivityMedia::query()->where('id', $id)->update(['status' => $request->get('status'), 'audit_user_id' => $user->id]);
+        }
+        return $this->response()->noContent()->setStatusCode(200);
+    }
 }
