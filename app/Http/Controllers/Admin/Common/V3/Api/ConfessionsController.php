@@ -44,7 +44,7 @@ class ConfessionsController extends Controller
 
         if ($request->has('sign')) {
             if ($request->has('utm_source_id')) {
-                $query->where('id');
+                $query->where('id', $request->get('utm_source_id'));
             } else {
                 $query->where('wx_user_id', decrypt($request->get('sign')));
             }
