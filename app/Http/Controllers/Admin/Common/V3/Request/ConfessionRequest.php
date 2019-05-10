@@ -27,11 +27,22 @@ class ConfessionRequest extends Request
                 return [
                     'sign' => 'required_without:z|string',
                     'z' => 'required_without:sign|string',
-                    'name' => 'required|string',
-                    'phone' => 'required_with:sign|string|regex:/^1[3456789]\d{9}$/',
+                    'name' => 'string|nullable',
+                    'phone' => 'string|regex:/^1[3456789]\d{9}$/',
                     'qiniu_id' => 'required_with:z|integer',
                     'message' => 'required|string',
                     'media_id' => 'required_with:sign|integer',
+                    'utm_campaign' => 'string|nullable',
+                    'record_id' => 'string|nullable',
+                ];
+                break;
+            case 'PATCH':
+                return [
+                    'sign' => 'required|string',
+                    'message' => 'required|string',
+                    'media_id' => 'required|integer',
+                    'utm_campaign' => 'string|nullable',
+                    'record_id' => 'string|nullable',
                 ];
                 break;
             default:

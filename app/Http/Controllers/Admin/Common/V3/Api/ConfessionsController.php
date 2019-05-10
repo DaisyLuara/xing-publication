@@ -43,10 +43,17 @@ class ConfessionsController extends Controller
         $query = Confession::query();
 
         if ($request->has('sign')) {
-            $wxUserId = decrypt($request->get('sign'));
-            $query->where('wx_user_id', $wxUserId);
+            if ($request->has('utm_source_id')) {
+                $query->where('id');
+            } else {
+                $query->where('wx_user_id', decrypt($request->get('sign')));
+            }
         } else {
             $query->where('z', $request->get('z'));
+        }
+
+        if ($request->has('utm_campaign')) {
+            $query->where('utm_campaign', $request->get('utm_campaign'));
         }
 
         $confession = $query->orderByDesc('id')->first();
@@ -79,6 +86,30 @@ class ConfessionsController extends Controller
 
         return $this->response()->item($confession, new ConfessionTransformer());
 
+    }
+
+    /**
+     * 更新告白页
+     * @param ConfessionRequest $request
+     * @return \Dingo\Api\Http\Response
+     */
+    public function update(ConfessionRequest $request)
+    {
+        $wxUserId = decrypt($request->get('sign'));
+
+        $confession = Confession::query()->where('wx_user_id', $wxUserId)
+            ->where('utm_campaign', $request->get('utm_campaign'))
+            ->first();
+
+        if ($request->has('utm_source_id') && !$confession) {
+            $confession = Confession::query()->create(array_merge(['wx_user_id' =>$wxUserId], $request->all()));
+        } else {
+            $confession->update($request->only(['media_id', 'record_id', 'message']));
+        }
+
+        $confession = $this->setImageUrl($request, $confession);
+
+        return $this->response()->item($confession, new ConfessionTransformer());
     }
 
     /**

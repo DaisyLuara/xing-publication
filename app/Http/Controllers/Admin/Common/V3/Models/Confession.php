@@ -32,6 +32,15 @@ use App\Models\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Confession whereWxUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Confession whereZ($value)
  * @mixin \Eloquent
+ * @property int|null $qiniu_id 七牛ID
+ * @property string|null $record_id 录音ID
+ * @property string $belong 游戏名称
+ * @property-read \App\Http\Controllers\Admin\Resource\V1\Models\ActivityMedia|null $media
+ * @method static \Illuminate\Database\Eloquent\Builder|Confession whereBelong($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Confession whereQiniuId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Confession whereRecordId($value)
+ * @property string $utm_campaign 游戏名称
+ * @method static \Illuminate\Database\Eloquent\Builder|Confession whereUtmCampaign($value)
  */
 class Confession extends Model
 {
@@ -42,6 +51,9 @@ class Confession extends Model
         'phone',
         'media_id',
         'message',
+        'qiniu_id',
+        'record_id',
+        'utm_campaign',
     ];
 
     public function media()
