@@ -21,8 +21,8 @@ class ActivityMediaRequest extends Request
                 'name' => 'required|string',
                 'key' => 'required|string',
                 'size' => 'required|integer',
-                'activity_id' => ['required', static function ($key, $value, $fail) {
-                    $activity = Activity::find($value);
+                'utm_campaign' => ['required', static function ($key, $value, $fail) {
+                    $activity = Activity::query()->where('utm_campaign', $value)->first();
                     if (!$activity) {
                         $fail('活动不存在');
                         return;
