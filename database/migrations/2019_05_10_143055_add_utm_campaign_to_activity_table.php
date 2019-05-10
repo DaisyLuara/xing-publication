@@ -14,7 +14,7 @@ class AddUtmCampaignToActivityTable extends Migration
     public function up()
     {
         Schema::table('activities', function (Blueprint $table) {
-            $table->string('utm_campaign')->after('id')->nullable();
+            $table->string('utm_campaign')->after('id');
         });
     }
 
