@@ -20,7 +20,6 @@ class ConfessionRequest extends Request
                     'sign' => 'required_without:z|string',
                     'z' => 'required_without:sign|string',
                     'phone' => 'string|regex:/^1[3456789]\d{9}$/',
-                    'qiniu_id'=>'required_with:z|integer'
                 ];
                 break;
             case 'POST':
