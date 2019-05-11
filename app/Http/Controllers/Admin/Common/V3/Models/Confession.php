@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Common\V3\Models;
 
+use App\Http\Controllers\Admin\Common\V1\Models\FileUpload;
 use App\Http\Controllers\Admin\Resource\V1\Models\ActivityMedia;
 use App\Models\Model;
 
@@ -41,6 +42,7 @@ use App\Models\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Confession whereRecordId($value)
  * @property string $utm_campaign 游戏名称
  * @method static \Illuminate\Database\Eloquent\Builder|Confession whereUtmCampaign($value)
+ * @property-read \App\Http\Controllers\Admin\Common\V1\Models\FileUpload|null $fileUpload
  */
 class Confession extends Model
 {
@@ -59,6 +61,11 @@ class Confession extends Model
     public function media()
     {
         return $this->belongsTo(ActivityMedia::class, 'media_id', 'id');
+    }
+
+    public function fileUpload()
+    {
+        return $this->belongsTo(FileUpload::class, 'qiniu_id', 'id');
     }
 
 }

@@ -27,7 +27,6 @@ class ConfessionsController extends Controller
         }
 
         $confession->save();
-        $confession = $this->setImageUrl($request, $confession);
 
         return $this->response()->item($confession, new ConfessionTransformer())
             ->setStatusCode(201);
@@ -59,8 +58,6 @@ class ConfessionsController extends Controller
         $confession = $query->orderByDesc('id')->first();
         abort_if(!$confession, 204);
 
-        $confession = $this->setImageUrl($request, $confession);
-
         return $this->response()->item($confession, new ConfessionTransformer());
 
     }
@@ -81,8 +78,6 @@ class ConfessionsController extends Controller
         /** @var Confession $confession */
         $confession = Confession::query()->where('phone', $phone)->orderByDesc('id')->first();
         abort_if(!$confession, 204);
-
-        $confession = $this->setImageUrl($request, $confession);
 
         return $this->response()->item($confession, new ConfessionTransformer());
 
@@ -107,27 +102,7 @@ class ConfessionsController extends Controller
             $confession->update($request->only(['media_id', 'record_id', 'message']));
         }
 
-        $confession = $this->setImageUrl($request, $confession);
-
         return $this->response()->item($confession, new ConfessionTransformer());
-    }
-
-    /**
-     * 照片url
-     * @param Request $request
-     * @param Confession $confession
-     * @return mixed
-     */
-    private function setImageUrl($request, $confession)
-    {
-        if ($request->has('qiniu_id')) {
-            /** @var FileUpload $fileUpload */
-            $fileUpload = FileUpload::query()->find($request->get('qiniu_id'));
-        }
-
-        $confession->url = isset($fileUpload) ? $fileUpload->image : $confession->media->url;
-
-        return $confession;
     }
 
 }
