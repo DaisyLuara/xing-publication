@@ -46,10 +46,10 @@ class ContractCostContentController extends Controller
 
         $status = 0;
         $confirm_cost = $contractCost->confirm_cost;
-        if ($user->hasRole('legal-affairs-manager')) {
-            $status = 1;
-            $confirm_cost += $request->get('money');
-        }
+//        if ($user->hasRole('legal-affairs-manager')) {
+//            $status = 1;
+//            $confirm_cost += $request->get('money');
+//        }
         $content->update(array_merge($request->all(), ['status' => $status]));
         $contractCost->update(['total_cost' => $request->get('total_cost'), 'confirm_cost' => $confirm_cost]);
         return $this->response()->noContent();
