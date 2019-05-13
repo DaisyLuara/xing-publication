@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\Resource\V1\Models\ActivityMedia;
 use App\Http\Controllers\Admin\Resource\V1\Request\ActivityMediaRequest;
 use App\Http\Controllers\Admin\Resource\V1\Transformer\ActivityMediaTransformer;
 use App\Http\Controllers\Controller;
+use App\Jobs\MediaCheckJob;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -72,7 +73,7 @@ class ActivityMediaController extends Controller
         ];
         $media->fill($data)->save();
         //七牛鉴定
-//        MediaCheckJob::dispatch($media)->onQueue('data-clean');
+        MediaCheckJob::dispatch($media)->onQueue('media-check');
         return response()->json(['id' => $media->id, 'url' => $media->url])->setStatusCode(201);
     }
 
