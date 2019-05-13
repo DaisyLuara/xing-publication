@@ -25,12 +25,12 @@
           <el-tab-pane
             v-for="item in mediaGroup.mediaGroupList"
             :name="item.name"
-            :group-id="item.id"
+            :groupId="item.id"
             :key="item.id"
           >
             <span 
               slot="label" 
-              :mediaGroupId="item.id">
+              :groupId="item.id">
               {{ item.name }}
               <span class="number">{{ item.count }}</span>
             </span>
