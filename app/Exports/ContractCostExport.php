@@ -10,7 +10,7 @@ class ContractCostExport extends BaseExport
     private $contract_name;//合同名称
     private $contract_number;//合同编号
     private $start_date, $end_date; //修改开始日期,修改结束日期
-
+    private $applicant;
 
     public function __construct($request)
     {
@@ -18,7 +18,7 @@ class ContractCostExport extends BaseExport
         $this->end_date = $request->end_date;
         $this->contract_name = $request->contract_name;
         $this->contract_number = $request->contract_number;
-
+        $this->applicant = $request->applicant;
         $this->fileName = '合同-成本管理列表';
     }
 
@@ -32,6 +32,10 @@ class ContractCostExport extends BaseExport
             ->leftJoin('contracts', 'contracts.id', '=', 'cc.contract_id')
             ->leftJoin('contract_cost_contents as cct', 'cct.cost_id', '=', 'cc.id')
             ->leftJoin('contract_cost_kinds as cck', 'cck.id', '=', 'cct.kind_id');
+
+        if ($this->applicant) {
+            $query->where('contracts.applicant', '=', $this->applicant);
+        }
 
         if ($this->start_date && $this->end_date) {
             $query->whereRaw("date_format(cc.updated_at,'%Y-%m-%d') between '$this->start_date' and '$this->end_date' ");

@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\Contract\V1\Models\ContractCostContent;
 use App\Http\Controllers\Admin\Contract\V1\Request\ContractCostRequest;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractCostTransformer;
 use App\Http\Controllers\Controller;
+use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
 
 class ContractCostController extends Controller
@@ -23,20 +24,24 @@ class ContractCostController extends Controller
         return $this->response()->item($contractCost, new ContractCostTransformer());
     }
 
-    public function index(Request $request, ContractCost $contractCost)
+    public function index(Request $request, ContractCost $contractCost): Response
     {
         $query = $contractCost->query();
-        if ($request->start_date && $request->end_date) {
-            $query->whereRaw("date_format(updated_at,'%Y-%m-%d') between '$request->start_date' and '$request->end_date' ");
+        if ($request->get('start_date') && $request->get('end_date')) {
+            $query->whereRaw("date_format(updated_at,'%Y-%m-%d') between '{$request->get('start_date')}' and '{$request->get('end_date')}' ");
         }
 
-        $query->whereHas('contract', function ($q) use ($request) {
-            if ($request->contract_number) {
-                $q->where('contract_number', 'like', '%' . $request->contract_number . '%');
+        if ($request->get('applicant')) {
+            $query->where('applicant', '=', $request->get('applicant'));
+        }
+
+        $query->whereHas('contract', static function ($q) use ($request) {
+            if ($request->has('contract_number')) {
+                $q->where('contract_number', 'like', '%' . $request->get('contract_number') . '%');
             }
 
-            if ($request->contract_name) {
-                $q->where('name', 'like', '%' . $request->contract_name . '%');
+            if ($request->get('contract_name')) {
+                $q->where('name', 'like', '%' . $request->get('contract_name') . '%');
             }
         });
         /** @var  $user \App\Models\User */
@@ -44,9 +49,9 @@ class ContractCostController extends Controller
         if ($user->hasRole('user|bd-manager')) {
             $query->where('applicant_id', $user->id);
         }
-        $contractCost = $query->orderBy('updated_at', 'desc')->paginate(10);
+        $contractCosts = $query->orderBy('updated_at', 'desc')->paginate(10);
 
-        return $this->response()->paginator($contractCost, new ContractCostTransformer());
+        return $this->response()->paginator($contractCosts, new ContractCostTransformer());
     }
 
     public function store(ContractCostRequest $request, ContractCost $contractCost)
@@ -70,7 +75,7 @@ class ContractCostController extends Controller
 
     public function export(Request $request)
     {
-        return excelExportByType($request,'contract_cost');
+        return excelExportByType($request, 'contract_cost');
     }
 
 }
