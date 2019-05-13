@@ -25,8 +25,19 @@ class ActivityMediaController extends Controller
         if ($request->has('status')) {
             $query->where('status', $request->get('status'));
         }
-        $media = $query->orderByDesc('status')->orderByDesc('created_at')->paginate(10);
-        return $this->response()->paginator($media, new ActivityMediaTransformer())->setStatusCode(200);
+
+        if ($request->get('activity_name')) {
+            $query->whereHas('activity', static function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->get('activity_name') . '%');
+            });
+        }
+
+        if ($request->get('start_date') && $request->get('end_date')) {
+            $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '{$request->get('start_date')}' and '{$request->get('end_date')}' ");
+        }
+
+        $medias = $query->orderByDesc('status')->orderByDesc('created_at')->paginate(10);
+        return $this->response()->paginator($medias, new ActivityMediaTransformer())->setStatusCode(200);
     }
 
 
