@@ -19,6 +19,7 @@ class ConfessionTransformer extends TransformerAbstract
             'record_id' => $confession->record_id,
             'utm_campaign' => $confession->utm_campaign,
             'url' => $confession->qiniu_id ? $confession->fileUpload->image : $confession->media->url,
+            'status' => $confession->media_id ? $confession->media->status : null,
             'created_at' => $confession->created_at->toDateTimeString(),
             'updated_at' => $confession->updated_at->toDateTimeString(),
         ];
