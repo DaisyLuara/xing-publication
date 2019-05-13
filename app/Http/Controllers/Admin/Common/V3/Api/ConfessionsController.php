@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin\Common\V3\Api;
 use App\Http\Controllers\Admin\Common\V3\Transformer\ConfessionTransformer;
 use App\Http\Controllers\Admin\Common\V3\Request\ConfessionRequest;
 use App\Http\Controllers\Admin\Common\V3\Models\Confession;
-use App\Http\Controllers\Admin\Common\V1\Models\FileUpload;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -96,7 +95,7 @@ class ConfessionsController extends Controller
             ->where('utm_campaign', $request->get('utm_campaign'))
             ->first();
 
-        if ($request->has('utm_source_id') && !$confession) {
+        if (!$confession && $request->has('utm_source_id')) {
             $confession = Confession::query()->create(array_merge(['wx_user_id' =>$wxUserId], $request->all()));
         } else {
             $confession->update($request->only(['media_id', 'record_id', 'message']));
