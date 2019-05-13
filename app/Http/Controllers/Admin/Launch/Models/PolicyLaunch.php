@@ -45,6 +45,7 @@ class PolicyLaunch extends Model
         'policy_id',
         'project_id',
         'oid',
+        'belong',
     ];
 
     public function project()

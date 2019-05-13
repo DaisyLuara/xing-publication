@@ -48,13 +48,8 @@ class MediaCheckJob implements ShouldQueue
         $response = \Qiniu\Http\Client::post($url, $body, $headers)->json();
 
         $status = 2;
-        if ($response['code'] === 200) {
-            if ($response['result']['suggestion'] === 'pass') {
-                $status = 1;
-            }
-            if ($response['result']['suggestion'] === 'block') {
-                $status = 0;
-            }
+        if ($response['code'] === 200 && $response['result']['suggestion'] === 'block') {
+            $status = 0;
         }
         $media->update(['status' => $status]);
     }
