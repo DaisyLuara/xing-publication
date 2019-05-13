@@ -26,8 +26,10 @@ class ActivityMediaController extends Controller
             $query->where('status', $request->get('status'));
         }
 
-        if ($request->get('name')) {
-            $query->where('name', $request->get('name'));
+        if ($request->get('activity_name')) {
+            $query->whereHas('activity', static function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->get('activity_name') . '%');
+            });
         }
 
         if ($request->get('start_date') && $request->get('end_date')) {

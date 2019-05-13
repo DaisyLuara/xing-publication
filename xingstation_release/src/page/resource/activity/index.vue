@@ -18,6 +18,27 @@
                 />
               </el-select>
             </el-form-item>
+            <el-form-item
+              label
+              prop="activity_name">
+              <el-input
+                v-model="searchForm.activity_name"
+                clearable
+                placeholder="请输入活动名称"/>
+            </el-form-item>
+            <el-form-item
+              label
+              prop="beginDate">
+              <el-date-picker
+                v-model="searchForm.beginDate"
+                :clearable="false"
+                :picker-options="pickerOptions"
+                type="daterange"
+                start-placeholder="创建开始时间"
+                end-placeholder="创建结束时间"
+                align="right"
+              />
+            </el-form-item>
             <el-form-item label>
               <el-button type="primary" size="small" @click="search">搜索</el-button>
               <el-button type="default" size="small" @click="resetSearch('searchForm')">重置</el-button>
@@ -136,9 +157,11 @@
 </template>
 
 <script>
-import { getActivityMediaList, activityMediaAudit } from "service";
+import { getActivityMediaList, activityMediaAudit, handleDateTypeTransform } from "service";
 
 import {
+  Input,
+  DatePicker,
   Button,
   Table,
   TableColumn,
@@ -152,6 +175,8 @@ import {
 
 export default {
   components: {
+    "el-input": Input,
+    "el-date-picker": DatePicker,
     "el-table": Table,
     "el-table-column": TableColumn,
     "el-button": Button,
@@ -165,7 +190,9 @@ export default {
     return {
       imageVisible: false,
       searchForm: {
-        status: ""
+        activity_name: "",
+        status: "",
+        beginDate: [],
       },
       imgUrl: "",
       statusList: [
@@ -193,7 +220,56 @@ export default {
         currentPage: 1
       },
       selectAll: [],
-      tableData: []
+      tableData: [],
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: "今天",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "昨天",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24);
+              end.setTime(end.getTime() - 3600 * 1000 * 24);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近一周",
+            onClick(picker) {
+              const end = new Date().getTime() - 3600 * 1000 * 24;
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近一个月",
+            onClick(picker) {
+              const end = new Date() - 3600 * 1000 * 24;
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近三个月",
+            onClick(picker) {
+              const end = new Date() - 3600 * 1000 * 24;
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit("pick", [start, end]);
+            }
+          }
+        ]
+      },
     };
   },
   created() {
@@ -298,8 +374,17 @@ export default {
       this.setting.loading = true;
       let args = {
         page: this.pagination.currentPage,
-        status: this.searchForm.status
+        status: this.searchForm.status,
+        start_date: handleDateTypeTransform(this.searchForm.beginDate[0]),
+        end_date: handleDateTypeTransform(this.searchForm.beginDate[1]),
+        activity_name: this.searchForm.activity_name,
       };
+
+      if (JSON.stringify(this.searchForm.beginDate) === "[]") {
+        delete args.start_date;
+        delete args.end_date;
+      }
+
       this.searchForm.status === "" ? delete args.status : "";
       getActivityMediaList(this, args)
         .then(response => {
