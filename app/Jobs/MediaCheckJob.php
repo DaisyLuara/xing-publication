@@ -39,7 +39,7 @@ class MediaCheckJob implements ShouldQueue
         $url = 'http://ai.qiniuapi.com/v3/image/censor';
         $host = 'ai.qiniuapi.com';
         $contentType = 'application/json';
-        $body = '{ "data": { "uri": ' . $media->url . '} ,"params":{"scenes":["pulp","terror","politician"]} }';
+        $body = '{ "data": { "uri": "' . $media->url . '" } ,"params":{"scenes":["pulp","terror","politician"]} }';
 
         $auth = new Auth(config('filesystems.disks.qiniu_yq.access_key'), config('filesystems.disks.qiniu_yq.secret_key'));
         $headers = $auth->authorizationV2($url, $method, $body, $contentType);
