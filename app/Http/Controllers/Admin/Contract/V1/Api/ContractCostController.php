@@ -31,10 +31,6 @@ class ContractCostController extends Controller
             $query->whereRaw("date_format(updated_at,'%Y-%m-%d') between '{$request->get('start_date')}' and '{$request->get('end_date')}' ");
         }
 
-        if ($request->get('applicant')) {
-            $query->where('applicant', '=', $request->get('applicant'));
-        }
-
         $query->whereHas('contract', static function ($q) use ($request) {
             if ($request->has('contract_number')) {
                 $q->where('contract_number', 'like', '%' . $request->get('contract_number') . '%');

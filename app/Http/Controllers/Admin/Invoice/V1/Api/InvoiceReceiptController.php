@@ -38,14 +38,6 @@ class InvoiceReceiptController extends Controller
             $query->where('receipt_company', 'like', '%' . $request->get('name') . '%');
         }
 
-        if ($request->get('applicant')) {
-            $query->whereHas('receiveDate', static function ($q) use ($request) {
-                $q->whereHas('contract', static function ($q) use ($request) {
-                    $q->where('applicant', '=', $request->get('applicant'));
-                });
-            });
-        }
-
         if ($request->has('claim_status')) {
             $query->where('claim_status', $request->get('claim_status'));
         }

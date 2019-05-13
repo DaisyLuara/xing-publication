@@ -12,7 +12,6 @@ class InvoiceReceiptExport extends BaseExport
     private $claim_status;//认领状态
     private $name;//付款公司
     private $start_date, $end_date; //开始日期,结束日期
-    private $applicant;
 
     public function __construct($request)
     {
@@ -20,7 +19,6 @@ class InvoiceReceiptExport extends BaseExport
         $this->end_date = $request->end_date;
         $this->claim_status = $request->claim_status;
         $this->name = $request->name;
-        $this->applicant = $request->applicant;
         $this->fileName = '票据-收款管理列表';
     }
 
@@ -39,14 +37,6 @@ class InvoiceReceiptExport extends BaseExport
 
         if ($this->claim_status) {
             $query->where('claim_status', $this->claim_status);
-        }
-
-        if ($this->applicant) {
-            $query->whereHas('receiveDate', function ($q) {
-                $q->whereHas('contract', function ($q) {
-                    $q->where('applicant', $this->applicant);
-                });
-            });
         }
 
         /** @var User $user */
