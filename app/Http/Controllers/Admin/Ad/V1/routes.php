@@ -21,7 +21,7 @@ $api->version('v1', [
             //广告
             $api->get('advertisement', 'AdvertisementController@index');
             $api->post('advertisement', 'AdvertisementController@store');
-            $api->patch('advertisement', 'AdvertisementController@update');
+            $api->patch('advertisement/{advertisement}', 'AdvertisementController@update');
 
             //广告方案
             $api->get('advertiser', 'AdvertiserController@index');

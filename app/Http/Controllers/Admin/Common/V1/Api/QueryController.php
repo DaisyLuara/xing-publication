@@ -66,6 +66,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\User;
 use DB;
+use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -193,15 +194,47 @@ class QueryController extends Controller
     }
 
 
+    /**
+     * 广告行业
+     * @param Request $request
+     * @param AdTrade $adTrade
+     * @return \Dingo\Api\Http\Response
+     */
     public function adTradeQuery(Request $request, AdTrade $adTrade)
     {
         $query = $adTrade->query();
-        if ($request->name) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+        if ($request->get('name')) {
+            $query->where('name', 'like', '%' . $request->get('name') . '%');
         }
-        $adTrade = $query->get();
-        return $this->response->collection($adTrade, new AdTradeTransformer());
+        $adTrades = $query->get();
+        return $this->response->collection($adTrades, new AdTradeTransformer());
     }
+
+    /**
+     * 广告方案
+     * @param Request $request
+     * @param AdPlan $adPlan
+     * @return \Dingo\Api\Http\Response
+     */
+    public function adPlanQuery(Request $request, AdPlan $adPlan): Response
+    {
+        $query = $adPlan->query();
+
+        if (!$request->get('name') && !$request->get('ad_trade_id')) {
+            return $this->response->collection(collect(), new AdPlanTransformer());
+        }
+
+        if ($request->get('name')) {
+            $query->where('name', 'like', '%' . $request->get('name') . '%');
+        }
+
+        if ($request->get('ad_trade_id')) {
+            $query->where('atid', '=', $request->get('ad_trade_id'));
+        }
+        $adPlans = $query->get();
+        return $this->response->collection($adPlans, new AdPlanTransformer());
+    }
+
 
     public function advertiserQuery(Request $request, AdPlan $advertiser)
     {

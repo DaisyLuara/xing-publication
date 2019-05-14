@@ -64,7 +64,10 @@ $api->version('v1', [
             $api->get('markets/query', 'QueryController@marketQuery');//商场搜索
             $api->get('points/query', 'QueryController@pointQuery');//点位查询
             $api->get('launches/tpl/query', 'QueryController@launchTplQuery');//点位模板查询
+
             $api->get('ad_trade/query', 'QueryController@adTradeQuery');//广告行业搜索
+            $api->get('ad_plan/query', 'QueryController@adPlanQuery');//广告方案搜索
+
             $api->get('advertiser/query', 'QueryController@advertiserQuery');//广告主搜索
             $api->get('advertisement/query', 'QueryController@advertisementQuery');//广告搜索
             $api->get('projects/query', 'QueryController@projectQuery');//节目搜索

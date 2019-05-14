@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Ad\V1\Models;
 
+use App\Models\Customer;
 use App\Models\Model;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,7 +10,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * 广告素材
- * App\Http\Controllers\Admin\Ad\V1\Models\Advertisement
  *
  * @property int $aid
  * @property int $atid 分类ID
@@ -24,8 +24,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $pass 8:准备中
  * @property string $date
  * @property int $clientdate 时间
- * @property-read \App\Http\Controllers\Admin\Ad\V1\Models\AdTrade $adTrade
- * @property-read \App\Http\Controllers\Admin\Ad\V1\Models\AdPlan|null $advertiser
+ * @property-read \App\Http\Controllers\Admin\Ad\V1\Models\AdTrade $ad_trade
+ * @property-read \App\Models\User|null $create_user
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\Advertisement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\Advertisement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model ordered()
@@ -71,7 +71,7 @@ class Advertisement extends Model
     //创建人
     public function create_user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'z', 'z');
+        return $this->setConnection('mysql')->belongsTo(User::class, 'z', 'z');
     }
 
     //广告行业
@@ -79,4 +79,18 @@ class Advertisement extends Model
     {
         return $this->belongsTo(AdTrade::class, 'atid', 'atid');
     }
+
+//static：静态图 gif：gif fps：帧序列 video：视频
+
+    public const TYPE_STATIC = 'static';
+    public const TYPE_GIF = 'gif';
+    public const TYPE_FPS = 'fps';
+    public const TYPE_VIDEO = 'video';
+
+    public static $typeMapping = [
+        self::TYPE_STATIC => '静态图',
+        self::TYPE_GIF => 'gif',
+        self::TYPE_FPS => '帧序列',
+        self::TYPE_VIDEO => '视频',
+    ];
 }
