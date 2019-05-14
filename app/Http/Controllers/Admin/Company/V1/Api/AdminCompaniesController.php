@@ -20,43 +20,45 @@ class AdminCompaniesController extends Controller
         $currentUser = $this->user();
 
         if ($request->has('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+            $query->where('name', 'like', '%' . $request->get('name') . '%');
         }
 
         if ($request->has('internal_name')) {
-            $query->where('internal_name', 'like', '%' . $request->internal_name . '%');
+            $query->where('internal_name', 'like', '%' . $request->get('internal_name') . '%');
         }
 
         if ($request->has('category')) {
-            $query->where('category', '=', $request->category);
+            $query->where('category', '=', $request->get('category'));
         }
 
         if ($request->has('status')) {
-            $query->where('status', '=', $request->status);
+            $query->where('status', '=', $request->get('status'));
         }
 
-        if ($request->has('bd_user_id')) {
-            $query->where('bd_user_id', '=', $request->bd_user_id);
+        if ($request->has('bd_name')) {
+            $query->whereHas('bdUser', static function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->get('bd_name') . '%');
+            });
         }
 
         //角色为管理员，法务，法务主管时，查看所有公司数据
         if ($currentUser->isAdmin() || $currentUser->hasRole('legal-affairs|legal-affairs-manager|operation')) {
             $companies = $query->orderByDesc('id')->paginate(10);
-            return $this->response->paginator($companies, new CompanyTransformer());
+            return $this->response()->paginator($companies, new CompanyTransformer());
 
         }
 
         //角色为主管时，查看下属及自己
-        if ($currentUser->parent_id == $currentUser->id) {
+        if ($currentUser->parent_id === $currentUser->id) {
             $companies = $query->whereHas('user', function ($q) use ($currentUser) {
                 $q->where('parent_id', $currentUser->id);
             })->orderByDesc('id')->paginate(10);
-            return $this->response->paginator($companies, new CompanyTransformer());
+            return $this->response()->paginator($companies, new CompanyTransformer());
         }
 
         //查看自己数据
         $companies = $query->where('user_id', $currentUser->id)->orderByDesc('id')->paginate(10);
-        return $this->response->paginator($companies, new CompanyTransformer());
+        return $this->response()->paginator($companies, new CompanyTransformer());
     }
 
     public function show(Company $company)

@@ -15,7 +15,7 @@ class AdminCustomersController extends Controller
     /**
      * @param Company $company
      * @param Customer $customer
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return \Dingo\Api\Http\Response
      */
     public function index(Company $company, Customer $customer)
     {
@@ -25,12 +25,12 @@ class AdminCustomersController extends Controller
             $q->where('id', $company->id);
         })->orderByDesc('id')->paginate(10);
 
-        return $this->response->paginator($customers, new CustomerTransformer());
+        return $this->response()->paginator($customers, new CustomerTransformer());
     }
 
     public function show(Company $company, Customer $customer)
     {
-        return $this->response->item($customer, new CustomerTransformer());
+        return $this->response()->item($customer, new CustomerTransformer())->setStatusCode(200);
     }
 
     public function store(CustomerRequest $request, Company $company)
@@ -51,7 +51,7 @@ class AdminCustomersController extends Controller
 
         CreateAdminStaffJob::dispatch($customer, $role)->onQueue('create_admin_staff');
 
-        return $this->response->item($customer, new CustomerTransformer())
+        return $this->response()->item($customer, new CustomerTransformer())
             ->setStatusCode(201);
 
     }
@@ -64,11 +64,11 @@ class AdminCustomersController extends Controller
         }
 
         $customer->update($input);
-        $role = Role::findById($request->role_id, 'shop');
-        $customer->assignRole($role);
+        $role = Role::findById($request->get('role_id'), 'shop');
+        $customer->syncRoles($role);
 
         activity('customer')->on($customer)->withProperties($request->all())->log('修改公司联系人');
-        return $this->response->item($customer, new CustomerTransformer());
+        return $this->response()->item($customer, new CustomerTransformer())->setStatusCode(200);
     }
 
 }

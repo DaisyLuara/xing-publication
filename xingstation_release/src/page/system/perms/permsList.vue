@@ -412,6 +412,7 @@ export default {
       });
     },
     addFirstPerms() {
+      this.permsId = null;
       this.parent_id = 0;
       this.tap = "first";
       this.loading = false;
@@ -420,6 +421,7 @@ export default {
       this.permsVisible = true;
     },
     addSecondPerms() {
+      this.permsId = null;
       this.tap = "second";
       this.loading = false;
       this.permsForm.name = this.parentData.name + ".";

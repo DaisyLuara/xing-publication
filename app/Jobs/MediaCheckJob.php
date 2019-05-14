@@ -39,7 +39,7 @@ class MediaCheckJob implements ShouldQueue
         $url = 'http://ai.qiniuapi.com/v3/image/censor';
         $host = 'ai.qiniuapi.com';
         $contentType = 'application/json';
-        $body = '{ "data": { "uri": ' . $media->url . '} ,"params":{"scenes":["pulp","terror","politician"]} }';
+        $body = '{ "data": { "uri": "' . $media->url . '" } ,"params":{"scenes":["pulp","terror","politician"]} }';
 
         $auth = new Auth(config('filesystems.disks.qiniu_yq.access_key'), config('filesystems.disks.qiniu_yq.secret_key'));
         $headers = $auth->authorizationV2($url, $method, $body, $contentType);
@@ -48,13 +48,8 @@ class MediaCheckJob implements ShouldQueue
         $response = \Qiniu\Http\Client::post($url, $body, $headers)->json();
 
         $status = 2;
-        if ($response['code'] === 200) {
-            if ($response['result']['suggestion'] === 'pass') {
-                $status = 1;
-            }
-            if ($response['result']['suggestion'] === 'block') {
-                $status = 0;
-            }
+        if (array_key_exists('code', $response) && $response['code'] === 200 && $response['result']['suggestion'] === 'block') {
+            $status = 0;
         }
         $media->update(['status' => $status]);
     }
