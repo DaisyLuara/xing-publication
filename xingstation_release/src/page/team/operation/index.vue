@@ -48,7 +48,7 @@
         <div class="total-wrap">
           <span class="label">总数：{{ pagination.total }}</span>
           <el-button 
-            v-if="operation" 
+            v-if="operation||operationAssistant"
             type="success" 
             size="small" 
             @click="addOperation">新增文档</el-button>
@@ -304,6 +304,11 @@ export default {
       });
     },
     operation: function() {
+      return this.role.find(r => {
+        return r.name === "operation";
+      });
+    },
+    operationAssistant: function() {
       return this.role.find(r => {
         return r.name === "operation";
       });

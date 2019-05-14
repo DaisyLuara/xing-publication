@@ -55,7 +55,7 @@ class TeamProjectController extends Controller
 
         if (($request->has('own') && $request->own)
             ||
-            !$user->hasRole('tester|operation|legal-affairs-manager|bonus-manager')
+            !$user->hasRole('tester|operation|operation-assistant|legal-affairs-manager|bonus-manager')
         ) {
             $query->where(function ($query) use ($user) {
                 $query->where('applicant', $user->id)
@@ -246,7 +246,7 @@ class TeamProjectController extends Controller
             return $this->response()->noContent()->setStatusCode(200);
         }
 
-        if ($user->hasRole('operation') && $teamProject->status == 2) {
+        if ($user->hasRole('operation|operation-assistant') && $teamProject->status == 2) {
             $teamProject->status = 3;
             $teamProject->update();
             return $this->response()->noContent()->setStatusCode(200);
