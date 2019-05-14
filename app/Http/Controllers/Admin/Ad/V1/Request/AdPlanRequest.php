@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin\Ad\V1\Request;
 
 use App\Http\Requests\Request;
 
-class AdvertiserRequest extends Request
+class AdPlanRequest extends Request
 {
 
     public function rules()

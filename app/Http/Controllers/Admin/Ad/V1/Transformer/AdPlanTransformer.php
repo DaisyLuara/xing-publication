@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Admin\Ad\V1\Transformer;
 
-use App\Http\Controllers\Admin\Ad\V1\Models\Advertiser;
+use App\Http\Controllers\Admin\Ad\V1\Models\AdPlan;
 use League\Fractal\TransformerAbstract;
 
-class AdvertiserTransformer extends TransformerAbstract
+class AdPlanTransformer extends TransformerAbstract
 {
-    public function transform(Advertiser $advertiser)
+    public function transform(AdPlan $advertiser)
     {
         return [
             'id' => $advertiser->atiid,

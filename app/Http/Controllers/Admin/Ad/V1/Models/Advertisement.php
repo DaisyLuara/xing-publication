@@ -3,25 +3,29 @@
 namespace App\Http\Controllers\Admin\Ad\V1\Models;
 
 use App\Models\Model;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 
 /**
+ * 广告素材
  * App\Http\Controllers\Admin\Ad\V1\Models\Advertisement
  *
  * @property int $aid
- * @property int $atid 行业ID
- * @property int $atiid 广告主ID
+ * @property int $atid 分类ID
  * @property string $name 名称
- * @property int $uid 归属用户
+ * @property string|null $z 密钥
  * @property string $img 介绍图
  * @property string $type static：静态图 gif：gif fps：帧序列 video：视频
  * @property string $link 附件
  * @property int $size 附件大小
  * @property int $fps 帧率
  * @property int $isad 0: 不是 1：是
+ * @property int $pass 8:准备中
  * @property string $date
  * @property int $clientdate 时间
  * @property-read \App\Http\Controllers\Admin\Ad\V1\Models\AdTrade $adTrade
- * @property-read \App\Http\Controllers\Admin\Ad\V1\Models\Advertiser $advertiser
+ * @property-read \App\Http\Controllers\Admin\Ad\V1\Models\AdPlan|null $advertiser
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\Advertisement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\Advertisement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model ordered()
@@ -29,7 +33,6 @@ use App\Models\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model recent()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\Advertisement whereAid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\Advertisement whereAtid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\Advertisement whereAtiid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\Advertisement whereClientdate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\Advertisement whereDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\Advertisement whereFps($value)
@@ -37,9 +40,10 @@ use App\Models\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\Advertisement whereIsad($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\Advertisement whereLink($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\Advertisement whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\Advertisement wherePass($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\Advertisement whereSize($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\Advertisement whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\Advertisement whereUid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\Advertisement whereZ($value)
  * @mixin \Eloquent
  */
 class Advertisement extends Model
@@ -51,24 +55,27 @@ class Advertisement extends Model
 
     public $fillable = [
         'atid',
-        'atiid',
         'name',
+//        'z',
         'img',
         'type',
         'link',
         'size',
         'fps',
         'isad',
+        'pass',
         'date',
         'clientdate'
     ];
 
-    public function advertiser()
+    //创建人
+    public function create_user(): BelongsTo
     {
-        return $this->belongsTo(Advertiser::class, 'z', 'z');
+        return $this->belongsTo(User::class, 'z', 'z');
     }
 
-    public function adTrade()
+    //广告行业
+    public function ad_trade(): BelongsTo
     {
         return $this->belongsTo(AdTrade::class, 'atid', 'atid');
     }

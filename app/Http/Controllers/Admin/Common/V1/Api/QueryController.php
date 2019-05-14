@@ -6,10 +6,10 @@ use App\Http\Controllers\Admin\Activity\V1\Models\PlayingType;
 use App\Http\Controllers\Admin\Activity\V1\Transformer\PlayingTypeTransformer;
 use App\Http\Controllers\Admin\Ad\V1\Models\AdTrade;
 use App\Http\Controllers\Admin\Ad\V1\Models\Advertisement;
-use App\Http\Controllers\Admin\Ad\V1\Models\Advertiser;
+use App\Http\Controllers\Admin\Ad\V1\Models\AdPlan;
 use App\Http\Controllers\Admin\Ad\V1\Transformer\AdTradeTransformer;
 use App\Http\Controllers\Admin\Ad\V1\Transformer\AdvertisementTransformer;
-use App\Http\Controllers\Admin\Ad\V1\Transformer\AdvertiserTransformer;
+use App\Http\Controllers\Admin\Ad\V1\Transformer\AdPlanTransformer;
 use App\Http\Controllers\Admin\Attribute\V1\Models\Attribute;
 use App\Http\Controllers\Admin\Attribute\V1\Transformer\AttributeTransformer;
 use App\Http\Controllers\Admin\Common\V1\Transformer\DemandApplicationTransformer;
@@ -203,12 +203,12 @@ class QueryController extends Controller
         return $this->response->collection($adTrade, new AdTradeTransformer());
     }
 
-    public function advertiserQuery(Request $request, Advertiser $advertiser)
+    public function advertiserQuery(Request $request, AdPlan $advertiser)
     {
         $query = $advertiser->query();
         $advertiser = collect();
         if (!$request->name && !$request->ad_trade_id) {
-            return $this->response->collection($advertiser, new AdvertiserTransformer());
+            return $this->response->collection($advertiser, new AdPlanTransformer());
         }
 
         if ($request->name) {
@@ -219,7 +219,7 @@ class QueryController extends Controller
             $query->where('atid', '=', $request->ad_trade_id);
         }
         $advertiser = $query->get();
-        return $this->response->collection($advertiser, new AdvertiserTransformer());
+        return $this->response->collection($advertiser, new AdPlanTransformer());
     }
 
     public function advertisementQuery(Request $request, Advertisement $advertisement)
@@ -235,7 +235,7 @@ class QueryController extends Controller
         }
 
         if ($request->advertiser_id) {
-            $advertiser = Advertiser::findOrFail($request->advertiser_id);
+            $advertiser = AdPlan::findOrFail($request->advertiser_id);
             $query->where('z', '=', $advertiser->z);
         }
         $advertisement = $query->get();

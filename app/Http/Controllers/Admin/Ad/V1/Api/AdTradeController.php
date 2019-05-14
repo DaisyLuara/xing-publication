@@ -6,15 +6,22 @@ use App\Http\Controllers\Admin\Ad\V1\Transformer\AdTradeTransformer;
 use App\Http\Controllers\Admin\Ad\V1\Request\AdTradeRequest;
 use App\Http\Controllers\Admin\Ad\V1\Models\AdTrade;
 use App\Http\Controllers\Controller;
+use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
 
 class AdTradeController extends Controller
 {
-    public function index(Request $request, AdTrade $adTrade)
+    public function index(Request $request, AdTrade $adTrade): Response
     {
         $query = $adTrade->query();
-        $adTrade = $query->orderBy('atid', 'desc')->paginate(10);
-        return $this->response->paginator($adTrade, new AdTradeTransformer());
+
+        if($request->get('name')){
+            $query->where('name','like','%'.$request->get('name').'%');
+        }
+
+        $adTrades = $query->orderBy('atid', 'desc')->paginate(10);
+
+        return $this->response->paginator($adTrades, new AdTradeTransformer());
     }
 
     public function store(AdTradeRequest $request, AdTrade $adTrade)
