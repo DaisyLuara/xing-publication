@@ -319,7 +319,8 @@
                     min-width="50">
                     <template slot-scope="ad_scope">
                       <span v-if="ad_scope.row.pivot">
-                        {{ad_scope.row.pivot.shm}}
+                        {{ ( (Array(4).join('0') + ad_scope.row.pivot.shm).slice(-4)).substring(0,1) + ":"
+                        + ( (Array(4).join('0') + ad_scope.row.pivot.shm).slice(-4)).substring(2,3)}}
                       </span>
                     </template>
                   </el-table-column>
@@ -329,7 +330,8 @@
                     min-width="50">
                     <template slot-scope="ad_scope">
                       <span v-if="ad_scope.row.pivot">
-                        {{ad_scope.row.pivot.ehm}}
+                         {{ ( (Array(4).join('0') + ad_scope.row.pivot.ehm).slice(-4)).substring(0,1) + ":"
+                        + ( (Array(4).join('0') + ad_scope.row.pivot.ehm).slice(-4)).substring(2,3)}}
                       </span>
                     </template>
                   </el-table-column>

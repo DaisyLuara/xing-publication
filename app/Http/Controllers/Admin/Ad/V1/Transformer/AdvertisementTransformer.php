@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin\Ad\V1\Transformer;
 
 use App\Http\Controllers\Admin\Ad\V1\Models\Advertisement;
-use Carbon\Carbon;
 use League\Fractal\TransformerAbstract;
 
 class AdvertisementTransformer extends TransformerAbstract
@@ -30,13 +29,6 @@ class AdvertisementTransformer extends TransformerAbstract
 
         if ($advertisement->pivot) {
             $array['pivot'] = $advertisement->pivot->toArray();
-            if (isset($array['pivot']['shm'])) {
-                $array['pivot']['shm'] = Carbon::parse($array['pivot']['shm'])->toTimeString();
-            }
-
-            if (isset($array['pivot']['ehm'])) {
-                $array['pivot']['ehm'] = Carbon::parse($array['pivot']['ehm'])->toTimeString();
-            }
         }
 
         return $array;
