@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Ad\V1\Transformer;
 
 use App\Http\Controllers\Admin\Ad\V1\Models\Advertisement;
+use Carbon\Carbon;
 use League\Fractal\TransformerAbstract;
 
 class AdvertisementTransformer extends TransformerAbstract
@@ -18,10 +19,10 @@ class AdvertisementTransformer extends TransformerAbstract
             'type_text' => Advertisement::$typeMapping[$advertisement->type] ?? '未知',
             'img' => $advertisement->img,
             'link' => $advertisement->link,
-            'size' => ((int)$advertisement->size) / 1024 / 1024,
+            'size' => round(((int)$advertisement->size) / 1024 / 1024, 2),
             'fps' => $advertisement->fps,
             'isad' => $advertisement->isad,
-            'isad_text' => $advertisement->isad === 1 ? '是' : '否',
+            'isad_text' => $advertisement->isad === 1 ? '开启' : '关闭',
             'pass' => $advertisement->pass,
             'created_at' => $advertisement->date,
             'updated_at' => formatClientDate($advertisement->clientdate),
@@ -29,6 +30,13 @@ class AdvertisementTransformer extends TransformerAbstract
 
         if ($advertisement->pivot) {
             $array['pivot'] = $advertisement->pivot->toArray();
+            if (isset($array['pivot']['shm'])) {
+                $array['pivot']['shm'] = Carbon::parse($array['pivot']['shm'])->toTimeString();
+            }
+
+            if (isset($array['pivot']['ehm'])) {
+                $array['pivot']['ehm'] = Carbon::parse($array['pivot']['ehm'])->toTimeString();
+            }
         }
 
         return $array;

@@ -14,70 +14,9 @@
             :model="adSearchForm" 
             class="search-form">
             <el-row 
-              :gutter="20">
+              :gutter="24">
               <el-col 
-                :span="6">
-                <el-form-item 
-                  label="" 
-                  prop="adTrade">
-                  <el-select 
-                    v-model="adSearchForm.ad_trade_id" 
-                    filterable 
-                    placeholder="请搜索广告行业"
-                    clearable
-                    @change="adTradeChangeHandle('search')" >
-                    <el-option
-                      v-for="item in adTradeList"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id"/>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col 
-                :span="6">
-                <el-form-item 
-                  label="" 
-                  prop="advertiser_id">
-                  <el-select 
-                    v-model="adSearchForm.advertiser_id" 
-                    :loading="searchLoading"
-                    filterable 
-                    placeholder="请搜索广告主"
-                    clearable
-                    @change="advertiserChangeHandle('search')">
-                    <el-option
-                      v-for="item in advertiserList"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id"/>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col 
-                :span="6">
-                <el-form-item 
-                  label=""
-                  prop="advertisement_id">
-                  <el-select 
-                    v-model="adSearchForm.advertisement_id" 
-                    :loading="searchLoading" 
-                    filterable 
-                    placeholder="请搜索广告"
-                    clearable>
-                    <el-option
-                      v-for="item in advertisementList"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id"/>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row 
-              :gutter="20">
-              <el-col 
-                :span="6">
+                :span="8">
                 <el-form-item 
                   label="" 
                   prop="area_id">
@@ -96,7 +35,7 @@
                 </el-form-item>
               </el-col>
               <el-col 
-                :span="6">
+                :span="8">
                 <el-form-item 
                   label="" 
                   prop="market_id">
@@ -120,7 +59,7 @@
                 </el-form-item>
               </el-col>
               <el-col 
-                :span="6">
+                :span="8">
                 <el-form-item 
                   label="" 
                   prop="point_id">
@@ -138,13 +77,54 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col 
-                :span="6">
+            </el-row>
+            <el-row
+              :gutter="24">
+              <el-col
+                :span="8">
+                <el-form-item
+                  label=""
+                  prop="adTrade">
+                  <el-select
+                    v-model="adSearchForm.ad_trade_id"
+                    filterable
+                    placeholder="请搜索广告行业"
+                    clearable
+                    @change="adTradeChangeHandle('search')" >
+                    <el-option
+                      v-for="item in adTradeList"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id"/>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col
+                :span="8">
+                <el-form-item
+                  label=""
+                  prop="ad_plan_id">
+                  <el-select
+                    v-model="adSearchForm.ad_plan_id"
+                    :loading="searchLoading"
+                    filterable
+                    placeholder="请搜索广告方案"
+                    clearable>
+                    <el-option
+                      v-for="item in adPlanList"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id"/>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col
+                :span="8">
                 <el-form-item>
-                  <el-button 
+                  <el-button
                     type="primary"
                     @click="search('adSearchForm')">搜索</el-button>
-                  <el-button 
+                  <el-button
                     @click="resetSearch('adSearchForm')">重置</el-button>
                 </el-form-item>
               </el-col>
@@ -180,12 +160,12 @@
           class="actions-wrap">
           <span 
             class="label">
-            广告数量: {{ pagination.total }}
+            方案投放数量: {{ pagination.total }}
           </span>
           <el-button 
             size="small" 
             type="success"
-            @click="linkToAddItem">投放广告</el-button>
+            @click="linkToAddItem">投放广告方案</el-button>
         </div>
         <el-table 
           ref="multipleTable"
@@ -201,58 +181,160 @@
             type="expand">
             <template 
               slot-scope="scope">
-              <el-form 
-                label-position="left" 
-                inline 
+              <el-form
+                label-position="left"
+                inline
                 class="demo-table-expand">
-                <el-form-item 
+                <el-form-item
                   label="点位">
                   <span>{{ scope.row.point }}</span>
                 </el-form-item>
-                <el-form-item 
-                  label="广告主">
-                  <span>{{ scope.row.advertiser }}</span>
+                <el-form-item
+                  label="节目">
+                  <span>{{ scope.row.project }}</span>
                 </el-form-item>
-                <el-form-item 
-                  label="广告">
-                  <span>{{ scope.row.advertisement }}</span>
+                <el-form-item
+                  label="广告行业">
+                  <span>{{ scope.row.ad_trade }}</span>
                 </el-form-item>
-                <el-form-item 
+                <el-form-item
+                  label="广告方案">
+                  <span>{{ scope.row.ad_plan_name}}</span>
+                </el-form-item>
+                <el-form-item
                   label="类型">
-                  <span>{{ scope.row.adType }}</span>
+                  <span>{{ scope.row.ad_plan.type_text}}</span>
                 </el-form-item>
-                <el-form-item 
-                  label="链接">
-                  <a 
-                    :href="scope.row.link" 
-                    target="_blank" 
-                    style="color: blue">查看</a>
+                <el-form-item
+                  label="状态">
+                  <span>{{ scope.row.visiable}}</span>
                 </el-form-item>
-                <el-form-item 
-                  label="大小">
-                  <span>{{ scope.row.size }}</span>
-                </el-form-item>
-                <el-form-item 
-                  label="周期">
-                  <span>{{ scope.row.kTime }} s</span>
-                </el-form-item>
-                <el-form-item 
-                  label="创建时间">
+                <el-form-item
+                        label="创建时间">
                   <span>{{ scope.row.created_at }}</span>
                 </el-form-item>
-                <el-form-item 
-                  label="修改时间">
+                <el-form-item
+                        label="修改时间">
                   <span>{{ scope.row.updated_at }}</span>
                 </el-form-item>
-                <el-form-item 
-                  label="开始时间">
-                  <span>{{ scope.row.startDate }}</span>
+                <el-form-item
+                        label="开始时间">
+                  <span>{{ scope.row.sdate }}</span>
                 </el-form-item>
-                <el-form-item 
-                  label="结束时间">
-                  <span>{{ scope.row.endDate }}</span>
+                <el-form-item
+                        label="结束时间">
+                  <span>{{ scope.row.edate }}</span>
                 </el-form-item>
               </el-form>
+              <template>
+                <el-table
+                  :data="scope.row.ad_plan.advertisements.data"
+                  style="width: 100%"
+                >
+                  <el-table-column
+                    label="广告行业"
+                    min-width="50">
+                    <template slot-scope="ad_scope">
+                      <span>{{ ad_scope.row.ad_trade_name }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="创建人"
+                    min-width="80">
+                    <template slot-scope="ad_scope">
+                      <span>{{ ad_scope.row.create_user_name }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="图片"
+                    min-width="50">
+                    <template slot-scope="ad_scope">
+                      <span>
+                        <img :src="ad_scope.row.img" width="40px"/>
+                      </span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="广告名"
+                    min-width="50">
+                    <template slot-scope="ad_scope">
+                      <span>{{ ad_scope.row.name }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="类型"
+                    min-width="50">
+                    <template slot-scope="ad_scope">
+                      <span>{{ ad_scope.row.type_text }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="附件"
+                    min-width="50">
+                    <template slot-scope="ad_scope">
+                      <a
+                        :href="ad_scope.row.link"
+                        target="_blank"
+                        style="color: blue">{{ad_scope.row.size}}K</a>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="广告标记"
+                    min-width="50">
+                    <template slot-scope="ad_scope">
+                      <span>{{ ad_scope.row.isad_text }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="显示"
+                    min-width="50">
+                    <template slot-scope="ad_scope">
+                      <span v-if="ad_scope.row.pivot">
+                        {{ad_scope.row.pivot.mode}}
+                      </span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="屏幕"
+                    min-width="50">
+                    <template slot-scope="ad_scope">
+                      <span v-if="ad_scope.row.pivot">
+                        {{ad_scope.row.pivot.ori}} <br/>
+                        {{ad_scope.row.pivot.screen}}%
+                      </span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="倒计时"
+                    min-width="50">
+                    <template slot-scope="ad_scope">
+                      <span v-if="ad_scope.row.pivot">
+                        {{ad_scope.row.pivot.cdshow ?'开启':'关闭'}}<br/>
+                        {{ad_scope.row.pivot.ktime}}s
+                      </span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="开始时间"
+                    min-width="50">
+                    <template slot-scope="ad_scope">
+                      <span v-if="ad_scope.row.pivot">
+                        {{ad_scope.row.pivot.shm}}
+                      </span>
+                    </template>
+                  </el-table-column>
+
+                  <el-table-column
+                    label="结束时间"
+                    min-width="50">
+                    <template slot-scope="ad_scope">
+                      <span v-if="ad_scope.row.pivot">
+                        {{ad_scope.row.pivot.ehm}}
+                      </span>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </template>
             </template>
           </el-table-column>
           <el-table-column
@@ -268,20 +350,38 @@
           />
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="advertiser"
-            label="广告主"
+            prop="project"
+            label="节目"
             min-width="80"
           />
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="advertisement"
-            label="广告"
+            prop="ad_trade"
+            label="广告行业"
+            min-width="150"
+          />
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="ad_plan_name"
+            label="广告方案"
+            min-width="150"
+          />
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="ad_plan.type_text"
+            label="类型"
             min-width="80"
           />
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="kTime"
-            label="周期"
+            prop="visiable_text"
+            label="状态"
+            min-width="80"
+          />
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="only_text"
+            label="唯一性"
             min-width="80"
           />
           <el-table-column
@@ -331,38 +431,20 @@
             </el-select>
           </el-form-item>
           <el-form-item 
-            v-if="modifyOptionFlag.advertiser_id" 
-            :rules="[{ type: 'number', required: true, message: '请选择广告主', trigger: 'submit' }]"
-            label="广告主"
-            prop="advertiser_id" >
+            v-if="modifyOptionFlag.ad_plan_id"
+            :rules="[{ type: 'number', required: true, message: '请选择广告方案', trigger: 'submit' }]"
+            label="广告方案"
+            prop="ad_plan_id" >
             <el-select 
-              v-model="adForm.advertiser_id"
+              v-model="adForm.ad_plan_id"
               :loading="searchLoading" 
               placeholder="请选择" 
               filterable 
               clearable
-              @change="advertiserChangeHandle('edit')" 
+              @change="adPlanChangeHandle('edit')"
             >
               <el-option
                 v-for="item in advertiserFormList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"/>
-            </el-select>
-          </el-form-item>
-          <el-form-item 
-            v-if="modifyOptionFlag.advertisement_id" 
-            :rules="[{ type: 'number', required: true, message: '请选择广告', trigger: 'submit' }]"
-            label="广告" 
-            prop="advertisement_id">
-            <el-select 
-              v-model="adForm.advertisement_id" 
-              :loading="searchLoading" 
-              placeholder="请选择"
-              filterable
-              clearable>
-              <el-option
-                v-for="item in advertisementFormList"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id"/>
@@ -421,7 +503,7 @@ import {
   getSearchPointList,
   getSearchAdvertisementList,
   getSearchAeraList,
-  getSearchAdvertiserList
+  getSearchAdPlanList
 } from 'service'
 
 import {
@@ -472,8 +554,7 @@ export default {
       },
       conditionContent: [
         '广告行业',
-        '广告主',
-        '广告',
+        '广告方案',
         '周期',
         '开始时间',
         '结束时间'
@@ -489,14 +570,13 @@ export default {
       pointList: [],
       adTradeList: [],
       searchLoading: false,
-      advertiserList: [],
+      adPlanList: [],
       advertiserFormList: [],
       advertisementList: [],
       advertisementFormList: [],
       adSearchForm: {
         ad_trade_id: '',
-        advertiser_id: '',
-        advertisement_id: '',
+        ad_plan_id: '',
         area_id: '',
         market_id: [],
         point_id: ''
@@ -512,16 +592,14 @@ export default {
       },
       modifyOptionFlag: {
         ad_trade_id: false,
-        advertiser_id: false,
-        advertisement_id: false,
+        ad_plan_id: false,
         cycle: false,
         sdate: false,
         edate: false
       },
       adForm: {
         ad_trade_id: '',
-        advertiser_id: '',
-        advertisement_id: '',
+        ad_plan_id: '',
         cycle: 0,
         sdate: '',
         edate: ''
@@ -570,51 +648,13 @@ export default {
     },
     adTradeChangeHandle(type) {
       if (type === 'edit') {
-        this.adForm.advertiser_id = ''
-        this.adForm.advertisement_id = ''
+        this.adForm.ad_plan_id = ''
       } else {
-        this.adSearchForm.advertiser_id = ''
-        this.adSearchForm.advertisement_id = ''
+        this.adSearchForm.ad_plan_id = ''
       }
-      this.getAdvertiserList(type)
+      this.getAdPlanList(type)
     },
-
-    advertiserChangeHandle(type) {
-      if (type === 'edit') {
-        this.adForm.advertisement_id = ''
-      } else {
-        this.adSearchForm.advertisement_id = ''
-      }
-      this.getAdvertisementList(type)
-    },
-    getAdvertisementList(type) {
-      let args = {}
-      if (type === 'edit') {
-        args = {
-          advertiser_id: this.adForm.advertiser_id
-        }
-      } else {
-        args = {
-          advertiser_id: this.adSearchForm.advertiser_id
-        }
-      }
-      this.searchLoading = true
-      return getSearchAdvertisementList(this, args)
-        .then(response => {
-          let data = response.data
-          if (type === 'edit') {
-            this.advertisementFormList = data
-          } else {
-            this.advertisementList = data
-          }
-          this.searchLoading = false
-        })
-        .catch(error => {
-          console.log(error)
-          this.searchLoading = false
-        })
-    },
-    getAdvertiserList(type) {
+    getAdPlanList(type) {
       let args = {}
       if (type === 'edit') {
         args = {
@@ -626,13 +666,13 @@ export default {
         }
       }
       this.searchLoading = true
-      return getSearchAdvertiserList(this, args)
+      return getSearchAdPlanList(this, args)
         .then(response => {
           let data = response.data
           if (type === 'edit') {
             this.advertiserFormList = data
           } else {
-            this.advertiserList = data
+            this.adPlanList = data
           }
           this.searchLoading = false
         })
@@ -707,21 +747,17 @@ export default {
       let searchArgs = {
         page: this.pagination.currentPage,
         ad_trade_id: this.adSearchForm.ad_trade_id,
-        advertiser_id: this.adSearchForm.advertiser_id,
-        advertisement_id: this.adSearchForm.advertisement_id,
-        area_id: this.adSearchForm.area_id,
+        ad_plan_id: this.adSearchForm.ad_plan_id,
         market_id: this.adSearchForm.market_id[0],
-        point_id: this.adSearchForm.point_id
+        point_id: this.adSearchForm.point_id,
+        include: 'ad_plan.advertisements'
       }
       this.adSearchForm.ad_trade_id !== ''
         ? searchArgs
         : delete searchArgs.ad_trade_id
-      this.adSearchForm.advertiser_id !== ''
+      this.adSearchForm.ad_plan_id !== ''
         ? searchArgs
-        : delete searchArgs.advertiser_id
-      this.adSearchForm.advertisement_id !== ''
-        ? searchArgs
-        : delete searchArgs.advertisement_id
+        : delete searchArgs.ad_plan_id
       this.adSearchForm.area_id !== '' ? searchArgs : delete searchArgs.area_id
       this.adSearchForm.market_id.length !== 0
         ? searchArgs
@@ -748,8 +784,7 @@ export default {
     },
     resetSearch(formName) {
       this.adSearchForm.ad_trade_id = ''
-      this.adSearchForm.advertiser_id = ''
-      this.adSearchForm.advertisement_id = ''
+      this.adSearchForm.ad_plan_id = ''
       this.adSearchForm.area_id = ''
       this.adSearchForm.market_id = []
       this.adSearchForm.point_id = ''
@@ -778,8 +813,7 @@ export default {
           this.getAdTradeList()
           this.adForm = {
             ad_trade_id: '',
-            advertiser_id: '',
-            advertisement_id: '',
+            ad_plan_id: '',
             cycle: '',
             sdate: '',
             edate: ''
@@ -791,8 +825,7 @@ export default {
             this.aoids.push(id)
           }
           this.modifyOptionFlag.ad_trade_id = false
-          this.modifyOptionFlag.advertiser_id = false
-          this.modifyOptionFlag.advertisement_id = false
+          this.modifyOptionFlag.ad_plan_id = false
           this.modifyOptionFlag.cycle = false
           this.modifyOptionFlag.sdate = false
           this.modifyOptionFlag.edate = false
@@ -801,18 +834,11 @@ export default {
             switch (type) {
               case '广告行业':
                 this.modifyOptionFlag.ad_trade_id = true
-                this.modifyOptionFlag.advertiser_id = true
-                this.modifyOptionFlag.advertisement_id = true
+                this.modifyOptionFlag.ad_plan_id = true
                 break
-              case '广告主':
+              case '广告方案':
                 this.modifyOptionFlag.ad_trade_id = true
-                this.modifyOptionFlag.advertiser_id = true
-                this.modifyOptionFlag.advertisement_id = true
-                break
-              case '广告':
-                this.modifyOptionFlag.ad_trade_id = true
-                this.modifyOptionFlag.advertiser_id = true
-                this.modifyOptionFlag.advertisement_id = true
+                this.modifyOptionFlag.ad_plan_id = true
                 break
               case '周期':
                 this.modifyOptionFlag.cycle = true
@@ -841,14 +867,12 @@ export default {
             sdate: new Date(this.adForm.sdate).getTime() / 1000,
             edate: edate,
             atid: this.adForm.ad_trade_id,
-            atiid: this.adForm.advertiser_id,
-            aid: this.adForm.advertisement_id,
+            atiid: this.adForm.ad_plan_id,
             ktime: parseInt(this.adForm.cycle),
             aoids: this.aoids
           }
           this.modifyOptionFlag.ad_trade_id ? args : delete args.atid
-          this.modifyOptionFlag.advertiser_id ? args : delete args.atiid
-          this.modifyOptionFlag.advertisement_id ? args : delete args.aid
+          this.modifyOptionFlag.ad_plan_id ? args : delete args.atiid
           this.modifyOptionFlag.cycle ? args : delete args.ktime
           this.modifyOptionFlag.sdate ? args : delete args.sdate
           this.modifyOptionFlag.edate ? args : delete args.edate

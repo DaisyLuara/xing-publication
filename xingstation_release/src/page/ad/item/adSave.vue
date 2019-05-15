@@ -168,7 +168,7 @@ import {
   saveAdLaunch,
   getSearchAdTradeList,
   getSearchAdvertisementList,
-  getSearchAdvertiserList,
+  getSearchAdPlanList,
   getSearchPointList,
   getSearchAeraList,
   getSearchMarketList
@@ -282,7 +282,7 @@ export default {
         ad_trade_id: this.adForm.adTrade
       }
       this.searchLoading = true
-      return getSearchAdvertiserList(this, args)
+      return getSearchAdPlanList(this, args)
         .then(response => {
           let data = response.data
           this.advertiserList = data
