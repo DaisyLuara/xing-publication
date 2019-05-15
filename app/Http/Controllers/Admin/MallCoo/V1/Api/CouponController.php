@@ -13,13 +13,13 @@ use App\Http\Controllers\Admin\Coupon\V1\Models\UserPolicy;
 use App\Http\Controllers\Admin\Project\V1\Models\Project;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
-use App\Traits\UmsSms;
+use App\Traits\CouponBatch as CouponBatchTrait;
 use Carbon\Carbon;
 use DB;
 
 class CouponController extends BaseController
 {
-    use UmsSms;
+    use CouponBatchTrait;
 
     /**
      * 发送优惠券礼包
