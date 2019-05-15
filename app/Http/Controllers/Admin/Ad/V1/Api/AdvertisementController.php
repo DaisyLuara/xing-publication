@@ -49,18 +49,24 @@ class AdvertisementController extends Controller
         //需要获取link的size
         $content = file_get_contents($data['link']);
 
-        $advertisement->query()->create(array_merge($data, [
+        $advertisement->fill(array_merge($data, [
             'size' => strlen($content),
-            'date' => date('Y-m-d H:i:s'),
-            'clientdate' => time() * 1000
-        ]));
+        ]))->save();
 
         return $this->response->noContent();
     }
 
     public function update(AdvertisementRequest $request, Advertisement $advertisement): Response
     {
-        $advertisement->fill($request->all())->save();
+        $data = $request->all();
+
+        //需要获取link的size
+        $content = file_get_contents($data['link']);
+
+        $advertisement->fill(array_merge($data, [
+            'size' => strlen($content),
+        ]))->save();
+
         return $this->response->noContent();
     }
 
