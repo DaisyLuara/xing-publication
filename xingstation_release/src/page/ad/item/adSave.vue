@@ -16,9 +16,9 @@
         <el-form-item 
           :rules="[{ required: true, message: '请输入广告行业名称', trigger: 'submit',type: 'number'}]"
           label="广告行业"
-          prop="adTrade" >
+          prop="ad_trade_id" >
           <el-select 
-            v-model="adForm.adTrade" 
+            v-model="adForm.ad_trade_id"
             filterable 
             placeholder="请搜索" 
             clearable
@@ -31,38 +31,19 @@
           </el-select>
         </el-form-item>
         <el-form-item 
-          :rules="[{ required: true, message: '请输入广告主名称', trigger: 'submit',type: 'number'}]"
-          label="广告主"
-          prop="advertiser">
+          :rules="[{ required: true, message: '请输入广告方案名称', trigger: 'submit',type: 'number'}]"
+          label="广告方案"
+          prop="ad_plan_id">
           <el-select 
-            v-model="adForm.advertiser" 
+            v-model="adForm.ad_plan_id"
             :loading="searchLoading" 
             filterable 
             placeholder="请搜索" 
-            clearable
-            @change="advertiserChangeHandle" >
+            clearable>
             <el-option
-              v-for="item in advertiserList"
+              v-for="item in adPlanList"
               :key="item.id"
-              :label="item.name"
-              :value="item.id"/>
-          </el-select>
-        </el-form-item>
-        <el-form-item 
-          :rules="[{ required: true, message: '请输入广告名称', trigger: 'submit',type: 'number'}]"
-          label="广告" 
-          prop="advertisement" >
-          <el-select 
-            v-model="adForm.advertisement" 
-            :loading="searchLoading"
-            filterable  
-            placeholder="请搜索" 
-            clearable
-            @change="advertisementChangeHandle" >
-            <el-option
-              v-for="item in advertisementList"
-              :key="item.id"
-              :label="item.name"
+              :label="item.name+'('+item.type_text+')'"
               :value="item.id"/>
           </el-select>
         </el-form-item>
@@ -125,20 +106,13 @@
           </el-select>
         </el-form-item>
         <el-form-item 
-          label="周期(s)">
-          <el-input 
-            v-model="adForm.cycle" 
-            placeholder="请输入周期" 
-            style="width:380px;"/>
-        </el-form-item>
-        <el-form-item 
           label="开始时间" 
           prop="sdate">
           <el-date-picker
             v-model="adForm.sdate"
             :editable="false"  
             :clearable="false"
-            type="date"
+            type="datetime"
             placeholder="选择开始时间" 
           />
         </el-form-item>
@@ -149,9 +123,23 @@
             v-model="adForm.edate"
             :editable="false"
             :clearable="false"
-            type="date"
+            type="datetime"
             placeholder="选择结束时间"
           />
+        </el-form-item>
+        <el-form-item
+          :rules="[{ required: true, message: '请选择状态', trigger: 'submit'}]"
+          label="状态"
+          prop="visiable">
+          <el-radio v-model="adForm.visiable" :label="1">运营中</el-radio>
+          <el-radio v-model="adForm.visiable" :label="0">下架</el-radio>
+        </el-form-item>
+        <el-form-item
+          :rules="[{ required: true, message: '请选择唯一性', trigger: 'submit'}]"
+          label="唯一"
+          prop="only">
+          <el-radio v-model="adForm.only" :label="1">是</el-radio>
+          <el-radio v-model="adForm.only" :label="0">否</el-radio>
         </el-form-item>
         <el-form-item>
           <el-button 
@@ -167,7 +155,6 @@
 import {
   saveAdLaunch,
   getSearchAdTradeList,
-  getSearchAdvertisementList,
   getSearchAdPlanList,
   getSearchPointList,
   getSearchAeraList,
@@ -175,6 +162,7 @@ import {
 } from 'service'
 
 import {
+  Radio,
   Form,
   Select,
   Option,
@@ -193,7 +181,8 @@ export default {
     ElFormItem: FormItem,
     ElButton: Button,
     ElInput: Input,
-    ElDatePicker: DatePicker
+    ElDatePicker: DatePicker,
+    ElRadio:Radio
   },
   data() {
     return {
@@ -209,18 +198,17 @@ export default {
       pointList: [],
       adTradeList: [],
       searchLoading: false,
-      advertiserList: [],
-      advertisementList: [],
+      adPlanList: [],
       adForm: {
-        adTrade: '',
-        advertiser: '',
-        advertisement: '',
-        cycle: 0,
+        ad_trade_id: '',
+        ad_plan_id: '',
         area: '',
         market: [],
         point: [],
         sdate: '',
-        edate: ''
+        edate: '',
+        visiable : 1,
+        only : 1,
       },
       areaList: []
     }
@@ -252,40 +240,18 @@ export default {
         })
     },
     adTradeChangeHandle() {
-      this.adForm.advertiser = ''
-      this.adForm.advertisement = ''
-      this.getAdvertiserList()
+      this.adForm.ad_plan_id = ''
+      this.getAdPlanList()
     },
-    advertisementChangeHandle() {},
-    advertiserChangeHandle() {
-      this.adForm.advertisement = ''
-      this.getAdvertisementList()
-    },
-    getAdvertisementList() {
+    getAdPlanList() {
       let args = {
-        advertiser_id: this.adForm.advertiser
-      }
-      this.searchLoading = true
-      return getSearchAdvertisementList(this, args)
-        .then(response => {
-          let data = response.data
-          this.advertisementList = data
-          this.searchLoading = false
-        })
-        .catch(error => {
-          console.log(error)
-          this.searchLoading = false
-        })
-    },
-    getAdvertiserList() {
-      let args = {
-        ad_trade_id: this.adForm.adTrade
+        ad_trade_id: this.adForm.ad_trade_id
       }
       this.searchLoading = true
       return getSearchAdPlanList(this, args)
         .then(response => {
           let data = response.data
-          this.advertiserList = data
+          this.adPlanList = data
           this.searchLoading = false
         })
         .catch(error => {
@@ -365,15 +331,13 @@ export default {
             1000
           this.setting.loading = true
           let args = {
-            sdate: new Date(this.adForm.sdate).getTime() / 1000,
-            edate: edate,
-            atid: this.adForm.adTrade,
-            atiid: this.adForm.advertiser,
-            aid: this.adForm.advertisement,
+            sdate: this.adForm.sdate,
+            edate: this.adForm.edate,
+            atiid: this.adForm.ad_plan_id,
             marketid: this.adForm.market[0],
-            areaid: this.adForm.area,
             oids: this.adForm.point,
-            ktime: parseInt(this.adForm.cycle)
+            visiable:this.adForm.visiable,
+            only:this.adForm.only,
           }
           return saveAdLaunch(this, args)
             .then(response => {

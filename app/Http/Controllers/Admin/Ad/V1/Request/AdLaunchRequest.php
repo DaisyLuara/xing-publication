@@ -34,18 +34,6 @@ class AdLaunchRequest extends Request
                     'only' => [Rule::in([0, 1])],
                 ];
                 break;
-            case 'PUT':
-                return [
-                    'marketid' => 'required|integer|exists:ar.avr_official_market,marketid',
-                    'oids' => 'required|array|max:10',
-                    'piid' => 'integer|exists:ar.ar_product_list,id',
-                    'atiid' => 'required|integer|exists:ar.avr_ad_trade_info,atiid',
-                    'sdate' => 'date',
-                    'edate' => 'date',
-                    'visiable' => ['required', Rule::in([0, 1])],
-                    'only' => ['required', Rule::in([0, 1])],
-                ];
-                break;
             default:
                 return [];
         }

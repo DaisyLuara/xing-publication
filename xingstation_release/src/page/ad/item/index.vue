@@ -16,7 +16,7 @@
             <el-row 
               :gutter="24">
               <el-col 
-                :span="8">
+                :span="6">
                 <el-form-item 
                   label="" 
                   prop="area_id">
@@ -35,7 +35,7 @@
                 </el-form-item>
               </el-col>
               <el-col 
-                :span="8">
+                :span="6">
                 <el-form-item 
                   label="" 
                   prop="market_id">
@@ -59,7 +59,7 @@
                 </el-form-item>
               </el-col>
               <el-col 
-                :span="8">
+                :span="6">
                 <el-form-item 
                   label="" 
                   prop="point_id">
@@ -81,7 +81,7 @@
             <el-row
               :gutter="24">
               <el-col
-                :span="8">
+                :span="6">
                 <el-form-item
                   label=""
                   prop="adTrade">
@@ -100,7 +100,7 @@
                 </el-form-item>
               </el-col>
               <el-col
-                :span="8">
+                :span="6">
                 <el-form-item
                   label=""
                   prop="ad_plan_id">
@@ -113,13 +113,27 @@
                     <el-option
                       v-for="item in adPlanList"
                       :key="item.id"
-                      :label="item.name"
+                      :label="item.name+'('+item.type_text+')'"
                       :value="item.id"/>
                   </el-select>
                 </el-form-item>
               </el-col>
               <el-col
-                :span="8">
+                :span="6">
+                <el-form-item
+                  prop="type" >
+                  <el-select
+                    v-model="adSearchForm.type"
+                    :loading="searchLoading"
+                    placeholder="请选择类型"
+                    clearable>
+                    <el-option key="program" label="大屏" value="program"/>
+                    <el-option key="ads" label="小屏" value="ads"/>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col
+                :span="6">
                 <el-form-item>
                   <el-button
                     type="primary"
@@ -207,7 +221,7 @@
                 </el-form-item>
                 <el-form-item
                   label="状态">
-                  <span>{{ scope.row.visiable}}</span>
+                  <span>{{ scope.row.visiable_text}}</span>
                 </el-form-item>
                 <el-form-item
                         label="创建时间">
@@ -319,8 +333,8 @@
                     min-width="50">
                     <template slot-scope="ad_scope">
                       <span v-if="ad_scope.row.pivot">
-                        {{ ( (Array(4).join('0') + ad_scope.row.pivot.shm).slice(-4)).substring(0,1) + ":"
-                        + ( (Array(4).join('0') + ad_scope.row.pivot.shm).slice(-4)).substring(2,3)}}
+                        {{ ( (Array(4).join('0') + ad_scope.row.pivot.shm).slice(-4)).substring(0,2) + ":"
+                        + ( (Array(4).join('0') + ad_scope.row.pivot.shm).slice(-4)).substring(2)}}
                       </span>
                     </template>
                   </el-table-column>
@@ -330,8 +344,8 @@
                     min-width="50">
                     <template slot-scope="ad_scope">
                       <span v-if="ad_scope.row.pivot">
-                         {{ ( (Array(4).join('0') + ad_scope.row.pivot.ehm).slice(-4)).substring(0,1) + ":"
-                        + ( (Array(4).join('0') + ad_scope.row.pivot.ehm).slice(-4)).substring(2,3)}}
+                         {{ ( (Array(4).join('0') + ad_scope.row.pivot.ehm).slice(-4)).substring(0,2) + ":"
+                        + ( (Array(4).join('0') + ad_scope.row.pivot.ehm).slice(-4)).substring(2)}}
                       </span>
                     </template>
                   </el-table-column>
@@ -360,7 +374,7 @@
             :show-overflow-tooltip="true"
             prop="ad_trade"
             label="广告行业"
-            min-width="150"
+            min-width="50"
           />
           <el-table-column
             :show-overflow-tooltip="true"
@@ -443,23 +457,13 @@
               placeholder="请选择" 
               filterable 
               clearable
-              @change="adPlanChangeHandle('edit')"
             >
               <el-option
                 v-for="item in advertiserFormList"
                 :key="item.id"
-                :label="item.name"
+                :label="item.name+'('+item.type_text+')'"
                 :value="item.id"/>
             </el-select>
-          </el-form-item>
-          <el-form-item 
-            v-if="modifyOptionFlag.cycle" 
-            :rules="[{ required: true, message: '请输入周期', trigger: 'submit'}]"
-            label="周期(s)" 
-            prop="cycle">
-            <el-input 
-              v-model="adForm.cycle" 
-              placeholder="请输入周期" />
           </el-form-item>
           <el-form-item 
             v-if="modifyOptionFlag.sdate" 
@@ -469,7 +473,7 @@
             <el-date-picker
               v-model="adForm.sdate"
               :editable="false"
-              type="date"
+              type="datetime"
               placeholder="选择开始时间" 
             />
           </el-form-item>
@@ -481,9 +485,25 @@
             <el-date-picker
               v-model="adForm.edate"
               :editable="false"
-              type="date"
+              type="datetime"
               placeholder="选择结束时间"
             />
+          </el-form-item>
+          <el-form-item
+            v-if="modifyOptionFlag.visiable"
+            :rules="[{ required: true, message: '请选择状态', trigger: 'submit'}]"
+            label="状态"
+            prop="visiable">
+            <el-radio v-model="adForm.visiable" :label="1">运营中</el-radio>
+            <el-radio v-model="adForm.visiable" :label="0">下架</el-radio>
+          </el-form-item>
+          <el-form-item
+            v-if="modifyOptionFlag.only"
+            :rules="[{ required: true, message: '请选择唯一性', trigger: 'submit'}]"
+            label="唯一"
+            prop="only">
+            <el-radio v-model="adForm.only" :label="1">是</el-radio>
+            <el-radio v-model="adForm.only" :label="0">否</el-radio>
           </el-form-item>
           <el-form-item>
             <el-button 
@@ -524,7 +544,8 @@ import {
   Checkbox,
   CheckboxGroup,
   Dialog,
-  Row
+  Row,
+  Radio
 } from 'element-ui'
 
 export default {
@@ -543,7 +564,8 @@ export default {
     'el-checkbox': Checkbox,
     'el-dialog': Dialog,
     'el-col': Col,
-    'el-row': Row
+    'el-row': Row,
+    'el-radio':Radio
   },
   data() {
     return {
@@ -555,11 +577,11 @@ export default {
         loadingText: '拼命加载中'
       },
       conditionContent: [
-        '广告行业',
         '广告方案',
-        '周期',
         '开始时间',
-        '结束时间'
+        '结束时间',
+        '状态',
+        '唯一性'
       ],
       editCondition: {
         conditionList: []
@@ -581,7 +603,8 @@ export default {
         ad_plan_id: '',
         area_id: '',
         market_id: [],
-        point_id: ''
+        point_id: '',
+        type:'',
       },
       areaList: [],
       dataValue: '',
@@ -593,18 +616,20 @@ export default {
         currentPage: 1
       },
       modifyOptionFlag: {
-        ad_trade_id: false,
-        ad_plan_id: false,
-        cycle: false,
-        sdate: false,
-        edate: false
+        ad_trade_id:false,
+        ad_plan_id:false,
+        sdate:false,
+        edate:false,
+        visiable:false,
+        only:false,
       },
       adForm: {
-        ad_trade_id: '',
+        ad_trade_id:'',
         ad_plan_id: '',
-        cycle: 0,
         sdate: '',
-        edate: ''
+        edate: '',
+        visiable: 1,
+        only: 1
       },
       aoids: [],
       adList: [],
@@ -752,6 +777,7 @@ export default {
         ad_plan_id: this.adSearchForm.ad_plan_id,
         market_id: this.adSearchForm.market_id[0],
         point_id: this.adSearchForm.point_id,
+        type: this.adSearchForm.type,
         include: 'ad_plan.advertisements'
       }
       this.adSearchForm.ad_trade_id !== ''
@@ -800,13 +826,13 @@ export default {
       this.getAdList()
     },
     modifyEdit() {
-      if (this.selectAll.length == 0) {
+      if (this.selectAll.length === 0) {
         this.$message({
-          message: '请选择广告',
+          message: '请选择广告方案投放',
           type: 'warning'
         })
       } else {
-        if (this.editCondition.conditionList.length == 0) {
+        if (this.editCondition.conditionList.length === 0) {
           this.$message({
             message: '请选择修改项目',
             type: 'warning'
@@ -814,11 +840,12 @@ export default {
         } else {
           this.getAdTradeList()
           this.adForm = {
-            ad_trade_id: '',
+            ad_trade_id:'',
             ad_plan_id: '',
-            cycle: '',
             sdate: '',
-            edate: ''
+            edate: '',
+            visiable: '',
+            only: ''
           }
           this.aoids = []
           let optionModify = this.editCondition.conditionList
@@ -826,30 +853,32 @@ export default {
             let id = this.selectAll[i].id
             this.aoids.push(id)
           }
+
           this.modifyOptionFlag.ad_trade_id = false
           this.modifyOptionFlag.ad_plan_id = false
-          this.modifyOptionFlag.cycle = false
           this.modifyOptionFlag.sdate = false
           this.modifyOptionFlag.edate = false
+          this.modifyOptionFlag.visiable = false
+          this.modifyOptionFlag.only = false
+
           for (let k = 0; k < optionModify.length; k++) {
             let type = optionModify[k]
             switch (type) {
-              case '广告行业':
-                this.modifyOptionFlag.ad_trade_id = true
-                this.modifyOptionFlag.ad_plan_id = true
-                break
               case '广告方案':
                 this.modifyOptionFlag.ad_trade_id = true
                 this.modifyOptionFlag.ad_plan_id = true
-                break
-              case '周期':
-                this.modifyOptionFlag.cycle = true
                 break
               case '开始时间':
                 this.modifyOptionFlag.sdate = true
                 break
               case '结束时间':
                 this.modifyOptionFlag.edate = true
+                break
+              case '状态':
+                this.modifyOptionFlag.visiable = true
+                break
+              case '唯一性':
+                this.modifyOptionFlag.only = true
                 break
             }
           }
@@ -861,23 +890,33 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.loading = true
-          let edate =
-            (new Date(this.adForm.edate).getTime() +
-              ((23 * 60 + 59) * 60 + 59) * 1000) /
-            1000
+
           let args = {
-            sdate: new Date(this.adForm.sdate).getTime() / 1000,
-            edate: edate,
-            atid: this.adForm.ad_trade_id,
-            atiid: this.adForm.ad_plan_id,
-            ktime: parseInt(this.adForm.cycle),
-            aoids: this.aoids
+            aoids: this.aoids,
+            keys:[]
           }
-          this.modifyOptionFlag.ad_trade_id ? args : delete args.atid
-          this.modifyOptionFlag.ad_plan_id ? args : delete args.atiid
-          this.modifyOptionFlag.cycle ? args : delete args.ktime
-          this.modifyOptionFlag.sdate ? args : delete args.sdate
-          this.modifyOptionFlag.edate ? args : delete args.edate
+
+          if(this.modifyOptionFlag.ad_plan_id){
+            args.keys.push('atiid');
+            args.atiid = this.adForm.ad_plan_id;
+          }
+          if(this.modifyOptionFlag.sdate){
+            args.keys.push('sdate');
+            args.sdate = this.adForm.sdate;
+          }
+          if(this.modifyOptionFlag.edate){
+            args.keys.push('edate');
+            args.edate = new Date(this.adForm.edate);
+          }
+          if(this.modifyOptionFlag.visiable){
+            args.keys.push('visiable');
+            args.visiable = this.adForm.visiable;
+          }
+          if(this.modifyOptionFlag.only){
+            args.keys.push('only');
+            args.only = this.adForm.only;
+          }
+
           return modifyAdLaunch(this, args)
             .then(response => {
               this.loading = false
@@ -890,10 +929,12 @@ export default {
               this.editCondition.conditionList = []
             })
             .catch(err => {
-              this.editVisible = false
-              this.editCondition.conditionList = []
               this.loading = false
               console.log(err)
+              this.$message({
+                message: err.response.data.message,
+                type: 'error'
+              })
             })
         } else {
           this.loading = false
