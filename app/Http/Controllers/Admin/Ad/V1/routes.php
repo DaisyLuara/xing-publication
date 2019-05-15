@@ -24,9 +24,13 @@ $api->version('v1', [
             $api->patch('advertisement/{advertisement}', 'AdvertisementController@update');
 
             //广告方案
-            $api->get('advertiser', 'AdvertiserController@index');
-            $api->post('advertiser', 'AdvertiserController@store');
-            $api->patch('advertiser', 'AdvertiserController@update');
+            $api->get('ad_plan', 'AdPlanController@index');
+            $api->post('ad_plan', 'AdPlanController@store');
+            $api->patch('ad_plan/{ad_plan}', 'AdPlanController@updateBatch');
+            $api->put('ad_plan/{ad_plan}', 'AdPlanController@update');
+
+            //编辑单条广告方案排期
+            $api->patch('ad_plan_time/{ad_plan_time}', 'AdPlanTimeController@update');
 
             //广告行业
             $api->get('ad_trade', 'AdTradeController@index');

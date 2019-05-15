@@ -49,7 +49,7 @@ class AdPlan extends Model
         'icon',
         'info',
         'type',
-//        'z',
+        'z',
         'date',
         'clientdate'
     ];
