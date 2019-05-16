@@ -39,10 +39,11 @@ class PlayTimesExport extends AbstractExport
             ->join('avr_official_area as aoa', 'aoa.areaid', '=', 'ao.areaid')
             ->whereRaw("fcl.clientdate between '$startClientdate' and '$endClientdate' and fcl.belong='all'")
             ->whereNotIn('fcl.oid', [16, 19, 30, 31, 177, 182, 327, 328, 329, 334, 335, 540])
+            ->groupBy('fcl.oid')
             ->orderBy('aoa.areaid', 'desc')
             ->orderBy('aom.marketid', 'desc')
             ->orderBy('ao.oid', 'desc')
-            ->selectRaw('ao.oid,aoa.name as areaname,aom.name as marketname,ao.name as pointname,playtimes7,playtimes15,playtimes21')
+            ->selectRaw('ao.oid,aoa.name as areaname,aom.name as marketname,ao.name as pointname,sum(playtimes7) as playtimes7,sum(playtimes15) as playtimes15,sum(playtimes21) as playtimes21')
             ->get();
         foreach ($count as $item) {
             $arr = [
