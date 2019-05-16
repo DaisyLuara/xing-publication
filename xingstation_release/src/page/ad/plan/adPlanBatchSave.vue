@@ -30,7 +30,7 @@
         <el-form-item
           :rules="[{ required: true, message: '请选择广告行业', trigger: 'submit',type: 'number'}]"
           label="广告行业"
-          prop="ad_trade_id" >
+          prop="atid" >
           <el-select
             v-model="adPlanForm.atid"
             filterable
@@ -48,7 +48,7 @@
         <el-form-item
           :rules="[{ required: true, message: '请选择广告素材', trigger: 'submit',type: 'number'}]"
           label="广告素材"
-          prop="ad_trade_id" >
+          prop="aids" >
           <el-select
             multiple
             v-model="adPlanForm.aids"
