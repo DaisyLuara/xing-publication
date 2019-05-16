@@ -86,7 +86,10 @@ class AdPlanController extends Controller
         }
 
         /** @var AdPlan $adPlan */
-        $adPlan->fill($params)->save();
+        $adPlan->fill(array_merge([
+            'date' => date('Y-m-d H:i:s'),
+            'clientdate' => time() * 1000],
+            $params))->save();
         $this->syncAdvertisement($request, $adPlan, $aids);
 
         return $this->response->noContent();
@@ -123,7 +126,10 @@ class AdPlanController extends Controller
         }
 
         /** @var AdPlan $adPlan */
-        $adPlan->fill($params)->save();
+        $adPlan->fill(array_merge([
+            'date' => date('Y-m-d H:i:s'),
+            'clientdate' => time() * 1000],
+            $params))->save();
         $this->syncAdvertisement($request, $adPlan, $aids);
 
         return $this->response->noContent();
@@ -138,7 +144,7 @@ class AdPlanController extends Controller
             'cdshow' => $request->get('cdshow'),
             'ktime' => $request->get('ktime'),
             'shm' => $request->get('shm') ? (int)Carbon::parse($request->get('shm'), 'UTC')->format('Hi') : 0,
-            'ehm' => $request->get('ehm') ? (int)Carbon::parse($request->get('shm'), 'UTC')->format('Hi') : 0,
+            'ehm' => $request->get('ehm') ? (int)Carbon::parse($request->get('ehm'), 'UTC')->format('Hi') : 0,
             'date' => date('Y-m-d H:i:s'),
             'clientdate' => time() * 1000,
         ];
@@ -172,6 +178,8 @@ class AdPlanController extends Controller
             'icon' => $request->get('icon') ?? 'http://image.xingstation.cn/1007/image/393_511_941_578_ic_launcher.png',
             'info' => $request->get('info'),
             'atid' => $request->get('atid'),
+            'date' => date('Y-m-d H:i:s'),
+            'clientdate' => time() * 1000,
         ])->save();
 
         return $this->response->noContent();

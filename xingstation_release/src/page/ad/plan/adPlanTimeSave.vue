@@ -1,150 +1,156 @@
 <template>
-  <div 
-    class="item-wrap-template" >
-    <div 
+  <div
+    class="item-wrap-template">
+    <div
       v-loading="setting.loading"
       :element-loading-text="setting.loadingText"
-      class="pane" >
-      <div 
+      class="pane">
+      <div
         class="pane-title">
-        新增广告投放
+        {{ planTimeId ? '编辑素材' : '新增素材' }}
       </div>
       <el-form
-        ref="adForm"
-        :model="adForm" 
+        ref="adPlanTimeForm"
+        :model="adPlanTimeForm"
         label-width="150px">
-        <el-form-item 
-          :rules="[{ required: true, message: '请输入广告行业名称', trigger: 'submit',type: 'number'}]"
-          label="广告行业"
-          prop="ad_trade_id" >
-          <el-select 
-            v-model="adForm.ad_trade_id"
-            filterable 
-            placeholder="请搜索" 
-            clearable
-            @change="adTradeChangeHandle">
-            <el-option
-              v-for="item in adTradeList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"/>
-          </el-select>
+
+        <el-form-item
+          label="类型">
+          <el-input :value="adPlan.type_text" disabled="disabled"/>
         </el-form-item>
-        <el-form-item 
-          :rules="[{ required: true, message: '请输入广告方案名称', trigger: 'submit',type: 'number'}]"
-          label="广告方案"
-          prop="ad_plan_id">
-          <el-select 
-            v-model="adForm.ad_plan_id"
-            :loading="searchLoading" 
-            filterable 
-            placeholder="请搜索" 
-            clearable>
-            <el-option
-              v-for="item in adPlanList"
-              :key="item.id"
-              :label="item.name+'('+item.type_text+')'"
-              :value="item.id"/>
-          </el-select>
+        <el-form-item
+          label="广告行业">
+          <el-input :value="adPlan.ad_trade" disabled="disabled"/>
         </el-form-item>
-        <el-form-item 
-          :rules="[{ required: true, message: '请输入区域', trigger: 'submit' ,type: 'number'}]"
-          label="区域" 
-          prop="area">
-          <el-select 
-            v-model="adForm.area" 
-            placeholder="请选择" 
-            filterable 
-            clearable
-            @change="areaChangeHandle" >
-            <el-option
-              v-for="item in areaList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"/>
-          </el-select>
+        <el-form-item
+          label="广告方案名称">
+          <el-input :value="adPlan.name" disabled="disabled"/>
         </el-form-item>
-        <el-form-item 
-          :rules="[{ required: true, message: '请输入商场', trigger: 'submit'}]" 
-          label="商场" 
-          prop="market">
+
+        <!--单选广告素材-->
+        <el-form-item
+          :rules="[{ required: true, message: '请选择广告素材', trigger: 'submit',type: 'number'}]"
+          label="广告素材"
+          prop="aid">
           <el-select
-            v-model="adForm.market"  
-            :remote-method="getMarket" 
-            :loading="searchLoading" 
-            :multiple-limit="1"
-            multiple
-            placeholder="请搜索" 
+            :disabled="planTimeId"
+            v-model="adPlanTimeForm.aid"
             filterable
-            remote
-            clearable
-            @change="marketChangeHandle" >
-            <el-option
-              v-for="item in marketList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"/>
-          </el-select>
-        </el-form-item>
-        <el-form-item 
-          :rules="[{ required: true, message: '请输入点位', trigger: 'submit',type: 'array'}]"
-          label="点位" 
-          prop="point">
-          <el-select 
-            v-model="adForm.point"  
-            :loading="searchLoading" 
-            :multiple-limit="10" 
-            placeholder="请选择"  
-            multiple 
-            filterable
+            placeholder="请搜索"
             clearable>
             <el-option
-              v-for="item in pointList"
+              v-for="item in searchAdList"
               :key="item.id"
-              :label="item.name"
+              :label="item.id + '. ' + item.name"
               :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item 
-          label="开始时间" 
-          prop="sdate">
-          <el-date-picker
-            v-model="adForm.sdate"
-            :editable="false"  
-            :clearable="false"
-            type="datetime"
-            placeholder="选择开始时间" 
-          />
-        </el-form-item>
-        <el-form-item 
-          label="结束时间" 
-          prop="edate">
-          <el-date-picker
-            v-model="adForm.edate"
-            :editable="false"
-            :clearable="false"
-            type="datetime"
-            placeholder="选择结束时间"
-          />
+
+
+        <template v-if="adPlan.type === 'program'">
+          <el-form-item
+            :rules="[{ required: true, message: '请选择模式', trigger: 'submit',type: 'string'}]"
+            label="模式"
+            prop="mode">
+            <el-select v-model="adPlanTimeForm.mode" placeholder="请选择模式">
+              <el-option
+                v-for="item in modeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item
+            :rules="[{ required: true, message: '请选择位置', trigger: 'submit',type: 'string'}]"
+            label="位置"
+            prop="ori">
+            <el-select v-model="adPlanTimeForm.ori" placeholder="请选择位置">
+              <el-option
+                v-for="item in oriOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item
+            :rules="[{ required: true, message: '请填入尺寸', trigger: 'submit',type: 'number'}]"
+            label="尺寸"
+            prop="screen">
+            <el-input-number
+              v-model="adPlanTimeForm.screen"
+              controls-position="right"
+              :min="1"
+              :max="100">
+            </el-input-number>
+            %
+          </el-form-item>
+        </template>
+
+        <el-form-item
+          :rules="[{ required: true, message: '请选择倒计时', trigger: 'submit',type: 'number'}]"
+          label="倒计时"
+          prop="cdshow">
+          <el-radio
+            v-model="adPlanTimeForm.cdshow"
+            :label="0">关闭
+          </el-radio>
+          <el-radio
+            v-model="adPlanTimeForm.cdshow"
+            :label="1">开启
+          </el-radio>
         </el-form-item>
         <el-form-item
-          :rules="[{ required: true, message: '请选择状态', trigger: 'submit'}]"
-          label="状态"
-          prop="visiable">
-          <el-radio v-model="adForm.visiable" :label="1">运营中</el-radio>
-          <el-radio v-model="adForm.visiable" :label="0">下架</el-radio>
+          :rules="[{ required: true, message: '请填入显示', trigger: 'submit',type: 'number'}]"
+          label="显示"
+          prop="ktime">
+          <el-input-number
+            v-model="adPlanTimeForm.ktime"
+            controls-position="right"
+            :min="1"/>
+          秒
         </el-form-item>
         <el-form-item
-          :rules="[{ required: true, message: '请选择唯一性', trigger: 'submit'}]"
-          label="唯一"
-          prop="only">
-          <el-radio v-model="adForm.only" :label="1">是</el-radio>
-          <el-radio v-model="adForm.only" :label="0">否</el-radio>
+          label="开始时间"
+          prop="shm">
+          <el-time-picker
+            format='HH:mm'
+            value-format="HH:mm"
+            v-model="adPlanTimeForm.shm"
+            placeholder="选择开始时间">
+          </el-time-picker>
         </el-form-item>
+        <el-form-item
+          label="结束时间"
+          prop="ehm">
+          <el-time-picker
+            format='HH:mm'
+            value-format="HH:mm"
+            v-model="adPlanTimeForm.ehm"
+            placeholder="选择结束时间">
+          </el-time-picker>
+        </el-form-item>
+        <!--<el-form-item-->
+        <!--:rules="[{ required: true, message: '请选择状态', trigger: 'submit'}]"-->
+        <!--label="状态"-->
+        <!--prop="visiable">-->
+        <!--<el-radio v-model="adPlanForm.visiable" :label="1">运营中</el-radio>-->
+        <!--<el-radio v-model="adPlanForm.visiable" :label="0">下架</el-radio>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item-->
+        <!--:rules="[{ required: true, message: '请选择唯一性', trigger: 'submit'}]"-->
+        <!--label="唯一"-->
+        <!--prop="only">-->
+        <!--<el-radio v-model="adPlanForm.only" :label="1">是</el-radio>-->
+        <!--<el-radio v-model="adPlanForm.only" :label="0">否</el-radio>-->
+        <!--</el-form-item>-->
+
         <el-form-item>
-          <el-button 
-            type="primary" 
-            @click="submit('adForm')">完成</el-button>
+          <el-button
+            type="primary"
+            @click="submit('adPlanTimeForm')">完成
+          </el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -152,242 +158,277 @@
 </template>
 
 <script>
-import {
-  saveAdLaunch,
-  getSearchAdTradeList,
-  getSearchAdPlanList,
-  getSearchPointList,
-  getSearchAeraList,
-  getSearchMarketList
-} from 'service'
+  import {
+    modifyAdPlanTime,
+    addAdPlanTime,
+    getAdPlanDetail,
+    getSearchAdvertisementList,
+    getAdPlanTime,
+  } from 'service'
 
-import {
-  Radio,
-  Form,
-  Select,
-  Option,
-  FormItem,
-  Button,
-  Input,
-  DatePicker,
-  MessageBox
-} from 'element-ui'
+  import {
+    Radio,
+    Form,
+    Select,
+    Option,
+    FormItem,
+    Button,
+    Input,
+    DatePicker,
+    MessageBox,
+    InputNumber,
+    TimePicker
+  } from 'element-ui'
 
-export default {
-  components: {
-    ElForm: Form,
-    ElSelect: Select,
-    ElOption: Option,
-    ElFormItem: FormItem,
-    ElButton: Button,
-    ElInput: Input,
-    ElDatePicker: DatePicker,
-    ElRadio:Radio
-  },
-  data() {
-    return {
-      setting: {
-        isOpenSelectAll: true,
-        loading: false,
-        loadingText: '拼命加载中'
-      },
-      marketList: [],
-      weekdayList: [],
-      weekendList: [],
-      defineList: [],
-      pointList: [],
-      adTradeList: [],
-      searchLoading: false,
-      adPlanList: [],
-      adForm: {
-        ad_trade_id: '',
-        ad_plan_id: '',
-        area: '',
-        market: [],
-        point: [],
-        sdate: '',
-        edate: '',
-        visiable : 1,
-        only : 1,
-      },
-      areaList: []
-    }
-  },
-  mounted() {},
-  created() {
-    this.setting.loading = true
-    let areaList = this.getAreaList()
-    let adTradeList = this.getAdTradeList()
-    Promise.all([areaList, adTradeList])
-      .then(() => {
-        this.setting.loading = false
-      })
-      .catch(err => {
-        console.log(err)
-        this.setting.loading = false
-      })
-  },
-  methods: {
-    getAdTradeList() {
-      return getSearchAdTradeList(this)
+  export default {
+    components: {
+      ElForm: Form,
+      ElSelect: Select,
+      ElOption: Option,
+      ElFormItem: FormItem,
+      ElButton: Button,
+      ElInput: Input,
+      ElDatePicker: DatePicker,
+      ElRadio: Radio,
+      ElInputNumber: InputNumber,
+      elTimePicker: TimePicker
+    },
+    data() {
+      return {
+        planTimeId: null,
+        planId: null,
+        adPlan: [],
+
+        setting: {
+          isOpenSelectAll: true,
+          loading: false,
+          loadingText: '拼命加载中'
+        },
+        searchAdTradeList: [],
+        searchLoading: false,
+        searchAdList: [],
+        adPlanTimeForm: {
+          aid: null,
+          mode: 'fullscreen',
+          ori: 'center',
+          screen: 100,
+          cdshow: 1,
+          ktime: 15,
+          shm: "00:01",
+          ehm: "00:59",
+        },
+        modeOptions: [
+          {
+            'label': '全屏显示',
+            'value': 'fullscreen'
+          },
+          {
+            'label': '无人互动',
+            'value': 'unmanned'
+          },
+          {
+            'label': '二维码页面',
+            'value': 'qrcode'
+          },
+          {
+            'label': '浮窗显示',
+            'value': 'floating'
+          },
+        ],
+
+        oriOptions: [
+          {
+            'label': '居中',
+            'value': 'center'
+          },
+          {
+            'label': '顶部居中',
+            'value': 'top'
+          },
+          {
+            'label': '底部居中',
+            'value': 'bottom'
+          },
+          {
+            'label': '左上角',
+            'value': 'left_top'
+          },
+          {
+            'label': '左侧居中',
+            'value': 'left'
+          },
+          {
+            'label': '左下角',
+            'value': 'left_bottom'
+          },
+          {
+            'label': '右上角',
+            'value': 'right_top'
+          },
+          {
+            'label': '右侧居中',
+            'value': 'right'
+          },
+          {
+            'label': '右下角',
+            'value': 'right_bottom'
+          }
+        ]
+      }
+    },
+    mounted() {
+    },
+    created() {
+      this.planTimeId = this.$route.params.plan_time_id;
+      this.planId = this.$route.params.plan_id;
+
+      this.setting.loading = true;
+
+      if (this.planTimeId){
+        this.getAdPlanTimeDetail();
+      }else{
+        this.getAdPlanDetail();
+      }
+
+    },
+    methods: {
+      getAdPlanTimeDetail() {
+        //获取AdPlan 详情
+        return getAdPlanTime(this, {
+          include:'ad_plan'
+        }, this.planTimeId)
         .then(response => {
-          let data = response.data
-          this.adTradeList = data
+          this.adPlanTimeForm =  response;
+          this.adPlan = response.ad_plan.data;
+          this.getSearchAdList();
         })
         .catch(error => {
           console.log(error)
           this.setting.loading = false
         })
-    },
-    adTradeChangeHandle() {
-      this.adForm.ad_plan_id = ''
-      this.getAdPlanList()
-    },
-    getAdPlanList() {
-      let args = {
-        ad_trade_id: this.adForm.ad_trade_id
-      }
-      this.searchLoading = true
-      return getSearchAdPlanList(this, args)
+      },
+      getAdPlanDetail() {
+        //获取AdPlan 详情
+        return getAdPlanDetail(this, {}, this.planId)
         .then(response => {
-          let data = response.data
-          this.adPlanList = data
-          this.searchLoading = false
+          this.adPlan = response;
+          this.getSearchAdList();
         })
         .catch(error => {
           console.log(error)
-          this.searchLoading = false
+          this.setting.loading = false
         })
-    },
-    areaChangeHandle() {
-      this.adForm.market = []
-      this.adForm.point = []
-      this.getMarket(this.adForm.market[0])
-    },
-    getAreaList() {
-      this.searchLoading = true
-      return getSearchAeraList(this)
-        .then(response => {
-          let data = response.data
-          this.areaList = data
-          this.searchLoading = false
-        })
-        .catch(error => {
-          console.log(error)
-          this.searchLoading = false
-        })
-    },
-    marketChangeHandle() {
-      this.adForm.point = []
-      this.getPoint()
-    },
-    getPoint() {
-      let args = {
-        include: 'market',
-        market_id: this.adForm.market[0]
-      }
-      this.searchLoading = true
-      return getSearchPointList(this, args)
-        .then(response => {
-          this.pointList = response.data
-          this.searchLoading = false
-        })
-        .catch(err => {
-          this.searchLoading = false
-          console.log(err)
-        })
-    },
-    getMarket(query) {
-      if (query !== '') {
-        this.searchLoading = true
+      },
+
+      getSearchAdList() {
         let args = {
-          name: query,
-          include: 'area',
-          area_id: this.adForm.area
+          atid: this.adPlan.id,
         }
-        return getSearchMarketList(this, args)
-          .then(response => {
-            this.marketList = response.data
-            if (this.marketList.length == 0) {
-              this.adForm.market = []
-              this.adForm.marketList = []
+        this.searchLoading = true
+        return getSearchAdvertisementList(this, args)
+        .then(response => {
+          this.searchAdList = response.data
+          this.searchLoading = false
+        })
+        .catch(error => {
+          console.log(error)
+          this.searchLoading = false
+        })
+      },
+      submit(formName) {
+        this.$refs[formName].validate(valid => {
+          if (valid) {
+            this.setting.loading = true
+            let args = {
+              atiid: this.adPlan.id,
+              aid: this.adPlanTimeForm.aid,
+              type: this.adPlan.type,
+              mode: this.adPlanTimeForm.mode,
+              ori: this.adPlanTimeForm.ori,
+              screen: this.adPlanTimeForm.screen,
+              cdshow: this.adPlanTimeForm.cdshow,
+              ktime: this.adPlanTimeForm.ktime,
+              shm: this.adPlanTimeForm.shm,
+              ehm: this.adPlanTimeForm.ehm,
             }
-            this.searchLoading = false
-          })
-          .catch(err => {
-            console.log(err)
-            this.searchLoading = false
-          })
-      } else {
-        this.marketList = []
-      }
-    },
-    submit(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          let edate =
-            (new Date(this.adForm.edate).getTime() +
-              ((23 * 60 + 59) * 60 + 59) * 1000) /
-            1000
-          this.setting.loading = true
-          let args = {
-            sdate: this.adForm.sdate,
-            edate: this.adForm.edate,
-            atiid: this.adForm.ad_plan_id,
-            marketid: this.adForm.market[0],
-            oids: this.adForm.point,
-            visiable:this.adForm.visiable,
-            only:this.adForm.only,
+
+            if (this.planTimeId) {
+                return modifyAdPlanTime(this, args, this.planTimeId)
+                .then(response => {
+                  this.setting.loading = false
+                  this.$message({
+                    message: '编辑成功',
+                    type: 'success'
+                  })
+                  this.$router.push({
+                    path: '/ad/plan'
+                  })
+                })
+                .catch(err => {
+                  this.setting.loading = false
+                  this.$message({
+                    message: err.response.data.message,
+                    type: 'error'
+                  })
+                  console.log(err)
+                })
+            } else {
+              return addAdPlanTime(this, args,this.adPlan.id)
+              .then(response => {
+                this.setting.loading = false
+                this.$message({
+                  message: '添加成功',
+                  type: 'success'
+                })
+                this.$router.push({
+                  path: '/ad/plan'
+                })
+              })
+              .catch(err => {
+                this.setting.loading = false
+                this.$message({
+                  message: err.response.data.message,
+                  type: 'error'
+                })
+                console.log(err)
+              })
+            }
+          } else {
+            return
           }
-          return saveAdLaunch(this, args)
-            .then(response => {
-              this.setting.loading = false
-              this.$message({
-                message: '添加成功',
-                type: 'success'
-              })
-              this.$router.push({
-                path: '/ad/item'
-              })
-            })
-            .catch(err => {
-              this.setting.loading = false
-              console.log(err)
-            })
-        } else {
-          return
-        }
-      })
+        })
+      }
     }
   }
-}
 </script>
 
 <style lang="less" scoped>
-.item-wrap-template {
-  .pane {
-    border-radius: 5px;
-    background-color: white;
-    padding: 20px 40px 80px;
+  .item-wrap-template {
+    .pane {
+      border-radius: 5px;
+      background-color: white;
+      padding: 20px 40px 80px;
 
-    .el-select,
-    .item-input,
-    .el-date-editor.el-input {
-      width: 380px;
-    }
-    .item-list {
-      .program-title {
-        color: #555;
-        font-size: 14px;
+      .el-select,
+      .item-input,
+      .el-input,
+      .el-date-editor {
+        width: 380px;
+      }
+
+      .item-list {
+        .program-title {
+          color: #555;
+          font-size: 14px;
+        }
+      }
+      .pane-title {
+        padding-bottom: 20px;
+        font-size: 18px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
       }
     }
-    .pane-title {
-      padding-bottom: 20px;
-      font-size: 18px;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-    }
   }
-}
 </style>

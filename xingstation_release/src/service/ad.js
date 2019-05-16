@@ -5,9 +5,9 @@ const AD_PLAN_TIME_API = '/api/ad_plan_time'
 const HOST = process.env.SERVER_URL
 
 const getAdLaunchList = (context, args) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + AD_LAUNCH_API, { params: args })
+      .get(HOST + AD_LAUNCH_API, {params: args})
       .then(response => {
         resolve(response.data)
       })
@@ -17,7 +17,7 @@ const getAdLaunchList = (context, args) => {
   })
 }
 const saveAdLaunch = (context, args) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
       .post(HOST + AD_LAUNCH_API, args)
       .then(response => {
@@ -29,7 +29,7 @@ const saveAdLaunch = (context, args) => {
   })
 }
 const modifyAdLaunch = (context, args) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
       .patch(HOST + AD_LAUNCH_API, args)
       .then(response => {
@@ -43,9 +43,9 @@ const modifyAdLaunch = (context, args) => {
 
 //广告方案
 const getAdPlanList = (context, args) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + AD_PLAN_API, { params: args })
+      .get(HOST + AD_PLAN_API, {params: args})
       .then(response => {
         resolve(response.data)
       })
@@ -57,7 +57,7 @@ const getAdPlanList = (context, args) => {
 
 //广告方案详情
 const getAdPlanDetail = (context, args, id) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
       .get(HOST + AD_PLAN_API + '/' + id, args)
       .then(response => {
@@ -72,7 +72,7 @@ const getAdPlanDetail = (context, args, id) => {
 
 //新增广告方案
 const saveAdPlan = (context, args) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
       .post(HOST + AD_PLAN_API, args)
       .then(response => {
@@ -86,7 +86,7 @@ const saveAdPlan = (context, args) => {
 
 //批量更新广告方案以及其下排期
 const modifyBatchAdPlan = (context, args, id) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
       .patch(HOST + AD_PLAN_API + '/' + id, args)
       .then(response => {
@@ -100,7 +100,7 @@ const modifyBatchAdPlan = (context, args, id) => {
 
 //更新广告方案
 const modifyAdPlan = (context, args, id) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
       .put(HOST + AD_PLAN_API + '/' + id, args)
       .then(response => {
@@ -112,26 +112,42 @@ const modifyAdPlan = (context, args, id) => {
   })
 }
 
-//新增排期
-const addAdPlanTime = (context, args) => {
-  return new Promise(function(resolve, reject) {
+//排期详情
+const getAdPlanTime = (context, args, plan_time_id) => {
+  return new Promise(function (resolve, reject) {
     context.$http
-      .patch(HOST + AD_PLAN_TIME_API, args)
+      .get(HOST + AD_PLAN_TIME_API + '/' + plan_time_id, args)
       .then(response => {
         resolve(response.data)
       })
       .catch(error => {
         reject(error)
       })
+
+  })
+}
+
+//新增排期
+const addAdPlanTime = (context, args, plan_id) => {
+  return new Promise(function (resolve, reject) {
+    context.$http
+      .patch(HOST + AD_PLAN_TIME_API + '/' + plan_id + '/ad_plan', args)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+
   })
 }
 
 
 //更新排期
-const modifyAdPlanTime = (context, args , plan_id) => {
-  return new Promise(function(resolve, reject) {
+const modifyAdPlanTime = (context, args, plan_time_id) => {
+  return new Promise(function (resolve, reject) {
     context.$http
-      .patch(HOST + AD_PLAN_TIME_API + '/' + plan_id + '/plan_id', args)
+      .patch(HOST + AD_PLAN_TIME_API + '/' + plan_time_id, args)
       .then(response => {
         resolve(response.data)
       })
@@ -150,6 +166,8 @@ export {
   modifyBatchAdPlan,
   modifyAdPlan,
   modifyAdPlanTime,
-  getAdPlanDetail
+  getAdPlanDetail,
+  addAdPlanTime,
+  getAdPlanTime
 
 }

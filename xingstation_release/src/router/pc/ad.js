@@ -65,7 +65,7 @@ let router = {
         {
           path: 'add',
           component: () =>
-            import(/* webpackChunkName: "page/ad/plan/adPlanBatchSave" */ 'page/ad/plan/adPlanBatchSave'),
+            import(/* webpackChunkName: "page/ad/plan/adPlanSave" */ 'page/ad/plan/adPlanSave'),
           name: '新增广告方案',
           meta: {
             // permission: 'ad.plan.create'
@@ -74,14 +74,14 @@ let router = {
         {
           path: 'edit/:ad_plan_id/batch',
           component: () =>
-            import(/* webpackChunkName: "page/ad/plan/adPlanBatchSave" */ 'page/ad/plan/adPlanBatchSave'),
+            import(/* webpackChunkName: "page/ad/plan/adPlanSave" */ 'page/ad/plan/adPlanSave'),
           name: '编辑广告方案及批量排期',
           meta: {
             // permission: 'ad.plan.update'
           }
         },
         {
-          path: 'edit/:ad_plan_id',
+          path: 'edit/:ad_plan_id/item/:is_item',
           component: () =>
             import(/* webpackChunkName: "page/ad/plan/adPlanSave" */ 'page/ad/plan/adPlanSave'),
           name: '编辑广告方案',

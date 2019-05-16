@@ -18,6 +18,7 @@ class AdPlanTransformer extends TransformerAbstract
             'ad_trade' => $adPlan->ad_trade->name,
             'atid' => $adPlan->atid,
             'name' => $adPlan->name,
+            'info' => $adPlan->info,
             'icon' => $adPlan->icon,
             'type' => $adPlan->type,
             'type_text' => AdPlan::$typeMapping[$adPlan->type] ?? '未知',

@@ -511,7 +511,7 @@ export default {
     },
     linkToEditPlan(plan_id) {
       this.$router.push({
-        path: '/ad/plan/edit/' + plan_id
+        path: '/ad/plan/edit/' + plan_id + '/item/true'
       })
     },
     linkToEditPlanBatch(plan_id) {

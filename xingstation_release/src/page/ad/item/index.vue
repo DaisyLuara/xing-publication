@@ -127,8 +127,10 @@
                     :loading="searchLoading"
                     placeholder="请选择类型"
                     clearable>
-                    <el-option key="program" label="节目广告" value="program"/>
-                    <el-option key="ads" label="小屏广告" value="ads"/>
+                    <el-option key="program"
+                               label="节目广告" value="program"/>
+                    <el-option key="ads"
+                               label="小屏广告" value="ads"/>
                   </el-select>
                 </el-form-item>
               </el-col>

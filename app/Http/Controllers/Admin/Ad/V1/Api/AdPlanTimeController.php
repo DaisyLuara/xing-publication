@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\Ad\V1\Models\AdPlan;
 use App\Http\Controllers\Admin\Ad\V1\Models\AdPlanTime;
 use App\Http\Controllers\Admin\Ad\V1\Models\Advertisement;
 use App\Http\Controllers\Admin\Ad\V1\Request\AdPlanTimeRequest;
+use App\Http\Controllers\Admin\Ad\V1\Transformer\AdPlanTimeTransformer;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Dingo\Api\Http\Response;
@@ -13,18 +14,23 @@ use Dingo\Api\Http\Response;
 class AdPlanTimeController extends Controller
 {
 
+    public function show(AdPlanTime $adPlanTime)
+    {
+        return $this->response->item($adPlanTime, new AdPlanTimeTransformer());
+    }
+
     public function store(AdPlanTimeRequest $request, AdPlanTime $adPlanTime, AdPlan $adPlan): Response
     {
         $ad = Advertisement::query()->findOrFail($request->get('aid'));
 
         //广告行业
-        if($ad->atid !== $adPlan->atid){
-            abort(4122,'广告素材与广告方案的行业不同');
+        if ($ad->atid !== $adPlan->atid) {
+            abort(4122, '广告素材与广告方案的行业不同');
         }
 
         $updateParams = [
             'aid' => $request->get('aid'),
-            'atiid'=>$request->get('atiid'),
+            'atiid' => $request->get('atiid'),
             'cdshow' => $request->get('cdshow'),
             'ktime' => $request->get('ktime'),
             'shm' => $request->get('shm') ? (int)Carbon::parse($request->get('shm'), 'UTC')->format('Hi') : 0,

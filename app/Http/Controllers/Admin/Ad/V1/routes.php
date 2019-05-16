@@ -31,6 +31,7 @@ $api->version('v1', [
             $api->put('ad_plan/{ad_plan}', 'AdPlanController@update')->where('ad_plan','[0-9]+');
 
             //编辑单条广告方案排期
+            $api->get('ad_plan_time/{ad_plan_time}', 'AdPlanTimeController@show')->where('ad_plan_time','[0-9]+');
             $api->post('ad_plan_time/{ad_plan}/ad_plan', 'AdPlanTimeController@store')->where('ad_plan','[0-9]+');
             $api->patch('ad_plan_time/{ad_plan_time}', 'AdPlanTimeController@update')->where('ad_plan_time','[0-9]+');
 
