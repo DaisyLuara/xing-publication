@@ -228,9 +228,4 @@ class CouponController extends BaseController
         return $this->response->item($coupon, new CouponTransformer());
     }
 
-    private function getUserCouponBatch()
-    {
-        return CouponBatch::query()->find(82);
-    }
-
 }
