@@ -13,7 +13,7 @@ class ProjectLaunchTplScheduleController extends Controller
     {
         $fillData = $this->convert($request->all());
         $schedule->fill($fillData)->save();
-        return $this->response->item($schedule, new ProjectLaunchTplScheduleTransformer())
+        return $this->response()->item($schedule, new ProjectLaunchTplScheduleTransformer())
             ->setStatusCode(201);
     }
 
@@ -24,7 +24,7 @@ class ProjectLaunchTplScheduleController extends Controller
             ->where($schedule->getKeyName(), $id)
             ->update($updateData);
         $schedule = $schedule->find($id);
-        return $this->response->item($schedule, new ProjectLaunchTplScheduleTransformer())
+        return $this->response()->item($schedule, new ProjectLaunchTplScheduleTransformer())
             ->setStatusCode(201);
     }
 
@@ -45,6 +45,8 @@ class ProjectLaunchTplScheduleController extends Controller
         if (isset($input['date_end'])) {
             $data['ehm'] = str_replace(':', '', $input['date_end']);
         }
+
+        $data['bid'] = $input['bid'];
 
         return $data;
     }
