@@ -11,6 +11,9 @@ namespace App\Traits;
 use App\Http\Controllers\Admin\Launch\V1\Models\PolicyLaunch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch as CouponBatchModel;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
+use App\Http\Controllers\Admin\MallCoo\V1\Models\GameResult;
+use App\Http\Controllers\Admin\WeChat\V1\Models\ThirdPartyUser;
+use Overtrue\EasySms\EasySms;
 use Carbon\Carbon;
 use DB;
 
@@ -142,4 +145,37 @@ trait CouponBatch
 
         return $coupon;
     }
+
+    /**
+     * 发券券码短信(猫酷)
+     * @param Coupon $coupon
+     * @param int $wxUserId
+     * @param int $marketid
+     */
+    private function sendCouponMsg($coupon, $wxUserId, $marketid)
+    {
+        /** @var ThirdPartyUser $user */
+        $user = ThirdPartyUser::query()->where('wx_user_id', $wxUserId)
+            ->where('marketid', $marketid)->firstOrFail();
+
+        $easySms = new EasySms($config = []);
+        try {
+            $result = $easySms->send($user->mobile, [
+                'content' => '【星视度】尊敬的吾悦广场用户，恭喜您获得常州武进吾悦周年庆福利一份，优惠券：' . $coupon->code . ' 。请在2019年5月18号10点-5月20号22点期间前往武进吾悦2F客服台凭此短信领取。感谢您对吾悦广场的参与与支持！回T退订',
+            ]);
+            Log::info('send_coupon_msg', $result);
+
+        } catch (\Exception $exception) {
+            Log::info('send_msg_exceptions', ['msg' => $exception->getMessage()]);
+        }
+    }
+
+    public function getUserCouponBatch($wxUserId, $belong)
+    {
+        $gameResult = GameResult::query()->where('user_id', $wxUserId)->where('belong', $belong)->firstOrFail();
+
+        $sql = 'SELECT t.id, t.score, t.rank FROM (SELECT u.id, u.score, @rank := @rank + 1, @last_rank := CASE WHEN @last_score = u.score THEN @last_rank WHEN @last_score := u.score THEN @rank END AS rank FROM (SELECT * FROM jingsaas.oc_game_attribute ORDER BY score DESC) u, (SELECT @rank := 0, @last_score := NULL, @last_rank := 0) r) t;';
+        $result = DB::select($sql);
+    }
+
 }
