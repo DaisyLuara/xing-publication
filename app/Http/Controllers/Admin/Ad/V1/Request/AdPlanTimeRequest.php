@@ -12,6 +12,18 @@ class AdPlanTimeRequest extends Request
     public function rules()
     {
         switch ($this->method()) {
+            case 'POST':
+                return [
+                    'aid' =>  'required|integer|exists:ar.avr_ad_info,aid',
+                    'mode' => ['required_if:type,' . AdPlan::TYPE_BID_SCREEN],
+                    'ori' => ['required_if:type,' . AdPlan::TYPE_BID_SCREEN],
+                    'screen' => ['integer','required_if:type,' . AdPlan::TYPE_BID_SCREEN],
+                    'cdshow' => ['required', Rule::in([0, 1])],
+                    'ktime' => 'required|integer|min:1',
+                    'shm' => 'required|string',
+                    'ehm' => 'required|string',
+                ];
+                break;
             case 'PATCH':
                 return [
                     'mode' => ['required_if:type,' . AdPlan::TYPE_BID_SCREEN],

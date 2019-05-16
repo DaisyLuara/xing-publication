@@ -127,8 +127,8 @@
                     :loading="searchLoading"
                     placeholder="请选择类型"
                     clearable>
-                    <el-option key="program" label="大屏" value="program"/>
-                    <el-option key="ads" label="小屏" value="ads"/>
+                    <el-option key="program" label="节目广告" value="program"/>
+                    <el-option key="ads" label="小屏广告" value="ads"/>
                   </el-select>
                 </el-form-item>
               </el-col>
@@ -183,7 +183,7 @@
         </div>
         <el-table 
           ref="multipleTable"
-          :data="adList" 
+          :data="adLaunchList"
           style="width: 100%"
           highlight-current-row 
           @selection-change="handleSelectionChange" 
@@ -519,7 +519,7 @@
 <script>
 import {
   modifyAdLaunch,
-  getAdList,
+  getAdLaunchList,
   getSearchAdTradeList,
   getSearchMarketList,
   getSearchPointList,
@@ -632,7 +632,7 @@ export default {
         only: 1
       },
       aoids: [],
-      adList: [],
+      adLaunchList: [],
       selectAll: [],
       editVisible: false,
       slectedLength: 0
@@ -642,8 +642,8 @@ export default {
     this.setting.loading = true
     let areaList = this.getAreaList()
     let adTradeList = this.getAdTradeList()
-    let adList = this.getAdList()
-    Promise.all([areaList, adTradeList, adList])
+    let adLaunchList = this.getAdLaunchList()
+    Promise.all([areaList, adTradeList, adLaunchList])
       .then(() => {
         this.setting.loading = false
       })
@@ -768,7 +768,7 @@ export default {
         this.marketList = []
       }
     },
-    getAdList() {
+    getAdLaunchList() {
       this.setting.loadingText = '拼命加载中'
       this.setting.loading = true
       let searchArgs = {
@@ -793,10 +793,10 @@ export default {
       this.adSearchForm.point_id !== ''
         ? searchArgs
         : delete searchArgs.point_id
-      return getAdList(this, searchArgs)
+      return getAdLaunchList(this, searchArgs)
         .then(response => {
           let data = response.data
-          this.adList = data
+          this.adLaunchList = data
           this.pagination.total = response.meta.pagination.total
           this.setting.loading = false
         })
@@ -808,7 +808,7 @@ export default {
     search(formName) {
       this.pagination.currentPage = 1
       this.editCondition.conditionList = []
-      this.getAdList()
+      this.getAdLaunchList()
     },
     resetSearch(formName) {
       this.adSearchForm.ad_trade_id = ''
@@ -818,12 +818,12 @@ export default {
       this.adSearchForm.point_id = ''
       this.pagination.currentPage = 1
       this.editCondition.conditionList = []
-      this.getAdList()
+      this.getAdLaunchList()
     },
     changePage(currentPage) {
       this.pagination.currentPage = currentPage
       this.editCondition.conditionList = []
-      this.getAdList()
+      this.getAdLaunchList()
     },
     modifyEdit() {
       if (this.selectAll.length === 0) {
@@ -924,7 +924,7 @@ export default {
                 message: '修改成功',
                 type: 'success'
               })
-              this.getAdList()
+              this.getAdLaunchList()
               this.editVisible = false
               this.editCondition.conditionList = []
             })

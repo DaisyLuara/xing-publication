@@ -14,6 +14,7 @@ class AdPlanTransformer extends TransformerAbstract
     {
         return [
             'id' => $adPlan->atiid,
+            'aids' => $adPlan->advertisements->pluck('aid')->toArray(),
             'ad_trade' => $adPlan->ad_trade->name,
             'name' => $adPlan->name,
             'icon' => $adPlan->icon,

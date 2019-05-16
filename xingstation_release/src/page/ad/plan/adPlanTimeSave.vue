@@ -158,7 +158,7 @@ import {
   getSearchAdPlanList,
   getSearchPointList,
   getSearchAeraList,
-  getSearchMarketList,
+  getSearchMarketList
 } from 'service'
 
 import {
@@ -352,10 +352,6 @@ export default {
             })
             .catch(err => {
               this.setting.loading = false
-              this.$message({
-                message: err.response.data.message,
-                type: 'error'
-              })
               console.log(err)
             })
         } else {

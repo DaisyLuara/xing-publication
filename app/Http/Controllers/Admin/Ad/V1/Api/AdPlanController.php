@@ -56,6 +56,11 @@ class AdPlanController extends Controller
         return $this->response->paginator($adPlans, new AdPlanTransformer());
     }
 
+    public function show(AdPlan $adPlan): Response
+    {
+        return $this->response->item($adPlan, new AdPlanTransformer());
+    }
+
     /**
      * @param AdPlanRequest $request
      * @param AdPlan $adPlan

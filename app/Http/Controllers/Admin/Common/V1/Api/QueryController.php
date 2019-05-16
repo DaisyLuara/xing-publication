@@ -220,7 +220,7 @@ class QueryController extends Controller
     {
         $query = $adPlan->query();
 
-        if (!$request->get('name') && !$request->get('ad_trade_id')) {
+        if (!$request->get('name') && !$request->get('ad_trade_id') && !$request->get('type')) {
             return $this->response->collection(collect(), new AdPlanTransformer());
         }
 
@@ -231,48 +231,43 @@ class QueryController extends Controller
         if ($request->get('ad_trade_id')) {
             $query->where('atid', '=', $request->get('ad_trade_id'));
         }
+
+        if ($request->get('type')) {
+            $query->where('type', '=', $request->get('type'));
+        }
+
         $adPlans = $query->get();
         return $this->response->collection($adPlans, new AdPlanTransformer());
     }
 
-
-    public function advertiserQuery(Request $request, AdPlan $advertiser)
-    {
-        $query = $advertiser->query();
-        $advertiser = collect();
-        if (!$request->name && !$request->ad_trade_id) {
-            return $this->response->collection($advertiser, new AdPlanTransformer());
-        }
-
-        if ($request->name) {
-            $query->where('name', 'like', '%' . $request->name . '%');
-        }
-
-        if ($request->ad_trade_id) {
-            $query->where('atid', '=', $request->ad_trade_id);
-        }
-        $advertiser = $query->get();
-        return $this->response->collection($advertiser, new AdPlanTransformer());
-    }
-
-    public function advertisementQuery(Request $request, Advertisement $advertisement)
+    /**
+     * 搜索广告素材
+     * @param Request $request
+     * @param Advertisement $advertisement
+     * @return Response
+     */
+    public function advertisementQuery(Request $request, Advertisement $advertisement): Response
     {
         $query = $advertisement->query();
-        $advertisement = collect();
-        if (!$request->advertiser_id && !$request->name) {
-            return $this->response->collection($advertisement, new AdvertisementTransformer());
+
+        if (!$request->get('name') || !$request->get('type') || !$request->get('atid')) {
+            return $this->response->collection(collect(), new AdvertisementTransformer());
         }
 
-        if ($request->name) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+        if ($request->get('name')) {
+            $query->where('name', 'like', '%' . $request->get('name') . '%');
         }
 
-        if ($request->advertiser_id) {
-            $advertiser = AdPlan::findOrFail($request->advertiser_id);
-            $query->where('z', '=', $advertiser->z);
+        if ($request->get('type')) {
+            $query->where('type', '=', $request->get('type'));
         }
-        $advertisement = $query->get();
-        return $this->response->collection($advertisement, new AdvertisementTransformer());
+
+        if ($request->get('atid')) {
+            $query->where('atid', '=', $request->get('atid'));
+        }
+
+        $advertisements = $query->get();
+        return $this->response->collection($advertisements, new AdvertisementTransformer());
     }
 
     public function sceneQueryIndex(Scene $scene)

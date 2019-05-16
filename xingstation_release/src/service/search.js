@@ -98,7 +98,7 @@ const getSearchProjectList = (context, args) => {
       })
   })
 }
-// 广告主
+// 广告行业
 const getSearchAdTradeList = context => {
   return new Promise(function(resolve, reject) {
     context.$http
@@ -111,7 +111,7 @@ const getSearchAdTradeList = context => {
       })
   })
 }
-// 广告
+// 广告方案
 const getSearchAdPlanList = (context, args) => {
   return new Promise(function(resolve, reject) {
     context.$http
@@ -124,6 +124,7 @@ const getSearchAdPlanList = (context, args) => {
       })
   })
 }
+//广告
 const getSearchAdvertisementList = (context, args) => {
   return new Promise(function(resolve, reject) {
     context.$http

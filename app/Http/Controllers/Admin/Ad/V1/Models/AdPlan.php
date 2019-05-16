@@ -56,11 +56,43 @@ class AdPlan extends Model
 
     public const TYPE_BID_SCREEN = 'program';
     public const TYPE_SMALL_SCREEN = 'ads';
-
     public static $typeMapping = [
-        self::TYPE_BID_SCREEN => '大屏',
-        self::TYPE_SMALL_SCREEN => '小屏',
+        self::TYPE_BID_SCREEN => '节目广告',
+        self::TYPE_SMALL_SCREEN => '小屏广告',
     ];
+
+    public const MODE_FULLSCREEN = 'fullscreen';
+    public const MODE_UNMANNED = 'unmanned';
+    public const MODE_QRCODE = 'qrcode';
+    public const MODE_FLOATING = 'floating';
+    public static $modeMapping = [
+        self::MODE_FULLSCREEN => '全屏显示',
+        self::MODE_UNMANNED => '无人互动',
+        self::MODE_QRCODE => '二维码页面',
+        self::MODE_FLOATING => '浮窗显示',
+    ];
+
+    public const ORI_CENTER = 'center';
+    public const ORI_TOP = 'top';
+    public const ORI_BOTTOM = 'bottom';
+    public const ORI_LEFT_TOP = 'left_top';
+    public const ORI_LEFT = 'left';
+    public const ORI_LEFT_BOTTOM = 'left_bottom';
+    public const ORI_RIGHT_TOP = 'right_top';
+    public const ORI_RIGHT = 'right';
+    public const ORI_RIGHT_BOTTOM = 'right_bottom';
+    public static $OriMapping = [
+        self::ORI_CENTER => '居中',
+        self::ORI_TOP => '顶部居中',
+        self::ORI_BOTTOM => '底部居中',
+        self::ORI_LEFT_TOP => '左上角',
+        self::ORI_LEFT => '左侧居中',
+        self::ORI_LEFT_BOTTOM => '左下角',
+        self::ORI_RIGHT_TOP => '右上角',
+        self::ORI_RIGHT => '右侧居中',
+        self::ORI_RIGHT_BOTTOM => '右下角',
+    ];
+
 
     //广告类型
     public function ad_trade(): BelongsTo
