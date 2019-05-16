@@ -3,14 +3,17 @@
 namespace App\Http\Controllers\Admin\Project\V1\Transformer;
 
 use App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTplSchedule;
+use App\Http\Controllers\Admin\Skin\V1\Models\Skin;
+use App\Http\Controllers\Admin\Skin\V1\Transformer\SkinTransformer;
+use League\Fractal\Resource\Item;
 use League\Fractal\TransformerAbstract;
 
 class ProjectLaunchTplScheduleTransformer extends TransformerAbstract
 {
 
-    protected $availableIncludes = ['project'];
+    protected $availableIncludes = ['project', 'skin'];
 
-    public function transform(ProjectLaunchTplSchedule $projectLaunchTplSchedule)
+    public function transform(ProjectLaunchTplSchedule $projectLaunchTplSchedule): array
     {
         return [
             'id' => $projectLaunchTplSchedule->tviid,
@@ -20,12 +23,17 @@ class ProjectLaunchTplScheduleTransformer extends TransformerAbstract
         ];
     }
 
-    public function includeProject(ProjectLaunchTplSchedule $projectLaunchTplSchedule)
+    public function includeProject(ProjectLaunchTplSchedule $projectLaunchTplSchedule): ?Item
     {
         $project = $projectLaunchTplSchedule->project;
         if ($project) {
             return $this->item($projectLaunchTplSchedule->project, new ProjectTransformer());
         }
+    }
+
+    public function includeSkin(ProjectLaunchTplSchedule $projectLaunchTplSchedule): Item
+    {
+        return $this->item($projectLaunchTplSchedule->skin, new SkinTransformer());
     }
 
     private function formatTime($time)

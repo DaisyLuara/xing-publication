@@ -11,6 +11,7 @@ class ProjectLaunchTplScheduleRequest extends Request
         switch ($this->method()) {
             case 'POST':
                 return [
+                    'bid' => 'required',
                     'tpl_id' => 'required',
                     'project_id' => 'required',
                     'date_start' => 'required|date_format:H:i',
