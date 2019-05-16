@@ -59,7 +59,7 @@ const getAdPlanList = (context, args) => {
 const getAdPlanDetail = (context, args, id) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .get(HOST + AD_PLAN_API + '/id', args)
+      .get(HOST + AD_PLAN_API + '/' + id, args)
       .then(response => {
         resolve(response.data)
       })

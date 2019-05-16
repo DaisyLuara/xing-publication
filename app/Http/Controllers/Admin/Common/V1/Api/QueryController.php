@@ -250,7 +250,7 @@ class QueryController extends Controller
     {
         $query = $advertisement->query();
 
-        if (!$request->get('name') || !$request->get('type') || !$request->get('atid')) {
+        if (!$request->get('name') && !$request->get('type') && !$request->get('atid')) {
             return $this->response->collection(collect(), new AdvertisementTransformer());
         }
 

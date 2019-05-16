@@ -19,10 +19,9 @@
           label="类型"
           prop="type" >
           <el-select
-            :disable="adPlanId"
+            :disabled="adPlanId"
             v-model="adPlanForm.type"
             :loading="searchLoading"
-            @change="typeChangeHandle"
             placeholder="请选择类型">
             <el-option key="program" label="节目广告" value="program"/>
             <el-option key="ads" label="小屏广告" value="ads"/>
@@ -71,7 +70,7 @@
         </el-form-item>
 
         <!--使用默认ICON-->
-        <!--"icon":"http://o9xrbl1oc.bkt.clouddn.com/1007/image/175_789_958_6_scene.png",-->
+        <!--"icon":"http://image.xingstation.cn/1007/image/393_511_941_578_ic_launcher.png",-->
 
         <el-form-item
           label="广告方案介绍"
@@ -219,7 +218,7 @@ export default {
         aids: [],
         atid: '',
         name: '',
-        icon: 'http://o9xrbl1oc.bkt.clouddn.com/1007/image/175_789_958_6_scene.png',
+        icon: 'http://image.xingstation.cn/1007/image/393_511_941_578_ic_launcher.png',
         info: '',
         mode: 'fullscreen',
         ori: 'center',
@@ -311,10 +310,6 @@ export default {
 
   },
   methods: {
-    typeChangeHandle(){
-      this.adPlanForm.aids = [];
-      this.getSearchAdList();
-    },
     AdTradeChangeHandle(){
       this.adPlanForm.aids = [];
       this.getSearchAdList();
@@ -323,10 +318,12 @@ export default {
       //获取AdPlan 详情
       return getAdPlanDetail(this,{},this.adPlanId)
         .then(response => {
-          this.adPlanForm.aids = response.data.aids,
-          this.adPlanForm.type = response.data.type,
-          this.adPlanForm.icon = response.data.icon,
-          this.adPlanForm.name = response.data.name
+          this.adPlanForm.aids = response.aids,
+          this.adPlanForm.atid = response.atid,
+          this.adPlanForm.type = response.type,
+          this.adPlanForm.icon = response.icon,
+          this.adPlanForm.name = response.name,
+          this.getSearchAdList();
         })
         .catch(error => {
           console.log(error)
@@ -345,18 +342,9 @@ export default {
         })
     },
     getSearchAdList() {
-      if(!this.adPlanForm.type){
-        this.$message({
-          message: "请先选择类型",
-          type: 'error'
-        })
-      }
-
       let args = {
         atid: this.adPlanForm.atid,
-        type: this.adPlanForm.type,
       }
-
       this.searchLoading = true
       return getSearchAdvertisementList(this, args)
         .then(response => {

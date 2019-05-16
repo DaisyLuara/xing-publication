@@ -257,14 +257,12 @@
                     label="操作"
                     min-width="150"
                   >
-                    <el-button
-                      size="small"
-                      type="danger"
-                      @click="linkToEditPlanBatch">编辑方案及排期</el-button>
-                    <el-button
-                      size="small"
-                      type="success"
-                      @click="linkToEditPlan">编辑方案</el-button>
+                    <template slot-scope="ad_scope">
+                      <el-button
+                        size="small"
+                        type="default"
+                        @click="linkToEditPlanTime(ad_scope.row.pivot.id)">编辑素材</el-button>
+                    </template>
                   </el-table-column>
 
                 </el-table>
@@ -311,22 +309,23 @@
           />
 
           <el-table-column
-            :show-overflow-tooltip="true"
             label="操作"
             min-width="150"
           >
-            <el-button
-              size="small"
-              type="danger"
-              @click="linkToEditPlanBatch">编辑方案及排期</el-button>
-            <el-button
-              size="small"
-              type="success"
-              @click="linkToEditPlan">编辑方案</el-button>
-            <el-button
-              size="small"
-              type="success"
-              @click="linkToAddPlanTime">新增素材</el-button>
+            <template slot-scope="scope">
+              <el-button
+                size="small"
+                type="danger"
+                @click="linkToEditPlanBatch(scope.row.id)">编辑方案排期</el-button>
+              <el-button
+                size="small"
+                type="success"
+                @click="linkToEditPlan(scope.row.id)">编辑方案</el-button>
+              <el-button
+                size="small"
+                type="default"
+                @click="linkToAddPlanTime(scope.row.id)">新增素材</el-button>
+            </template>
           </el-table-column>
         </el-table>
         <div
@@ -510,24 +509,24 @@ export default {
         path: '/ad/plan/add'
       })
     },
-    linkToEditPlan(id) {
+    linkToEditPlan(plan_id) {
       this.$router.push({
-        path: '/ad/plan/edit/' + id
+        path: '/ad/plan/edit/' + plan_id
       })
     },
-    linkToEditPlanBatch() {
+    linkToEditPlanBatch(plan_id) {
       this.$router.push({
-        path: '/ad/plan/edit/' + id + '/batch'
+        path: '/ad/plan/edit/' + plan_id + '/batch'
       })
     },
-    linkToEditPlanTime() {
+    linkToEditPlanTime(plan_time_id) {
       this.$router.push({
-        path: '/ad/plan_time/edit/' + id
+        path: '/ad/plan/edit/plan_time/' + plan_time_id
       })
     },
-    linkToAddPlanTime(){
+    linkToAddPlanTime(plan_id){
       this.$router.push({
-        path: '/ad/plan_time/add/'
+        path: '/ad/plan/' + plan_id + '/add/plan_time/'
       })
     }
 

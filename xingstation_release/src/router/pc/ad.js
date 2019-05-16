@@ -90,7 +90,7 @@ let router = {
           }
         },
         {
-          path: 'edit/plan_time/:plan_id/ad_plan',
+          path: ':plan_id/add/plan_time',
           component: () =>
             import(/* webpackChunkName: "page/ad/plan/adPlanTimeSave" */ 'page/ad/plan/adPlanTimeSave'),
           name: '新增排期',
