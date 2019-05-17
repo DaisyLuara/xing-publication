@@ -15,6 +15,7 @@ class UpdateBoardsAddMessageTable extends Migration
     {
         Schema::table('boards', static function (Blueprint $table) {
             $table->string('message')->after('id')->default('');
+            $table->string('headimageurl')->after('id')->default('');
             $table->integer('activity_media_id')->after('id')->default('0');
         });
     }
@@ -26,9 +27,10 @@ class UpdateBoardsAddMessageTable extends Migration
      */
     public function down()
     {
-        Schema::table('activities', static function (Blueprint $table) {
+        Schema::table('boards', static function (Blueprint $table) {
             $table->dropColumn('message');
             $table->dropColumn('activity_media_id');
+            $table->dropColumn('headimageurl');
         });
     }
 }
