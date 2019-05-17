@@ -99,7 +99,7 @@ class CouponController extends Controller
                     'oid' => $request->get('oid'),
                     'utm_source' => 1,
                     'belong' => $request->get('belong') ?? '',
-                    'ser_timestamp' => $request->get('ser_timestamp') ?? 0,
+                    'ser_timestamp' => $request->get('ser_timestamp') ?? null,
                     'start_date' => $startDate,
                     'end_date' => $endDate,
                 ]);
@@ -113,7 +113,7 @@ class CouponController extends Controller
                     'oid' => $request->get('oid'),
                     'utm_source' => 1,
                     'belong' => $request->get('belong') ?? '',
-                    'ser_timestamp' => $request->get('ser_timestamp') ?? 0,
+                    'ser_timestamp' => $request->get('ser_timestamp') ?? null,
                     'start_date' => $startDate,
                     'end_date' => $endDate,
                 ]);
@@ -165,7 +165,7 @@ class CouponController extends Controller
             $query->where('belong', $request->get('belong'));
         }
 
-        if ($request->has('ser_timestamp')) {
+        if ($request->has('ser_timestamp') && $request->get('ser_timestamp') > 0) {
             $query->where('ser_timestamp', $request->get('ser_timestamp'));
         }
 
