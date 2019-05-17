@@ -1,14 +1,17 @@
 <?php
+
+use App\Models\User;
+
 $api->version('v1', [
     'namespace' => 'App\Http\Controllers\Admin\Ad\V1\Api',
     'middleware' => ['serializer:array', 'bindings'] //api返回数据切换. Fractal 组件默认提供  DataArraySerializer ArraySerializer
-], function ($api) {
+], static function ($api) {
     $api->group([
         'middleware' => 'api.throttle',//频率限制中间件
         'limit' => config('api.rate_limits.access.limit'),
         'expires' => config('api.rate_limits.access.expires'),
-    ], function ($api) {
-        $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
+    ], static function ($api) {
+        $api->group(['middleware' => 'api.auth', 'model' => User::class], static function ($api) {
 
             //广告投放
             $api->get('ad_launch', ['middleware' => ['permission:ad.item.read'], 'uses' => 'AdLaunchController@index']);
@@ -18,12 +21,19 @@ $api->version('v1', [
             //广告
             $api->get('advertisement', 'AdvertisementController@index');
             $api->post('advertisement', 'AdvertisementController@store');
-            $api->patch('advertisement', 'AdvertisementController@update');
+            $api->patch('advertisement/{advertisement}', 'AdvertisementController@update');
 
-            //广告主
-            $api->get('advertiser', 'AdvertiserController@index');
-            $api->post('advertiser', 'AdvertiserController@store');
-            $api->patch('advertiser', 'AdvertiserController@update');
+            //广告方案
+            $api->get('ad_plan', 'AdPlanController@index');
+            $api->get('ad_plan/{ad_plan}', 'AdPlanController@show')->where('ad_plan','[0-9]+');
+            $api->post('ad_plan', 'AdPlanController@store');
+            $api->patch('ad_plan/{ad_plan}', 'AdPlanController@updateBatch')->where('ad_plan','[0-9]+');
+            $api->put('ad_plan/{ad_plan}', 'AdPlanController@update')->where('ad_plan','[0-9]+');
+
+            //编辑单条广告方案排期
+            $api->get('ad_plan_time/{ad_plan_time}', 'AdPlanTimeController@show')->where('ad_plan_time','[0-9]+');
+            $api->post('ad_plan_time/{ad_plan}/ad_plan', 'AdPlanTimeController@store')->where('ad_plan','[0-9]+');
+            $api->patch('ad_plan_time/{ad_plan_time}', 'AdPlanTimeController@update')->where('ad_plan_time','[0-9]+');
 
             //广告行业
             $api->get('ad_trade', 'AdTradeController@index');

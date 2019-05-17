@@ -44,6 +44,72 @@ let router = {
       ]
     },
     {
+      path: 'plan',
+      meta: {
+        title: '广告方案',
+        // permission: 'ad.plan'
+      },
+      component: () =>
+        import(/* webpackChunkName: "page/ad/plan/routerView" */ 'page/ad/plan/routerView'),
+      children: [
+        {
+          path: '/',
+          name: '广告方案详情列表',
+          meta: {
+            title: '广告方案详情列表',
+            // permission: 'ad.plan.read'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/ad/plan/index" */ 'page/ad/plan/index')
+        },
+        {
+          path: 'add',
+          component: () =>
+            import(/* webpackChunkName: "page/ad/plan/adPlanSave" */ 'page/ad/plan/adPlanSave'),
+          name: '新增广告方案',
+          meta: {
+            // permission: 'ad.plan.create'
+          }
+        },
+        {
+          path: 'edit/:ad_plan_id/batch',
+          component: () =>
+            import(/* webpackChunkName: "page/ad/plan/adPlanSave" */ 'page/ad/plan/adPlanSave'),
+          name: '编辑广告方案及批量排期',
+          meta: {
+            // permission: 'ad.plan.update'
+          }
+        },
+        {
+          path: 'edit/:ad_plan_id/item/:is_item',
+          component: () =>
+            import(/* webpackChunkName: "page/ad/plan/adPlanSave" */ 'page/ad/plan/adPlanSave'),
+          name: '编辑广告方案',
+          meta: {
+            // permission: 'ad.plan.update'
+          }
+        },
+        {
+          path: ':plan_id/add/plan_time',
+          component: () =>
+            import(/* webpackChunkName: "page/ad/plan/adPlanTimeSave" */ 'page/ad/plan/adPlanTimeSave'),
+          name: '新增排期',
+          meta: {
+            // permission: 'ad.plan.create'
+          }
+        },
+        {
+          path: 'edit/plan_time/:plan_time_id',
+          component: () =>
+            import(/* webpackChunkName: "page/ad/plan/adPlanTimeSave" */ 'page/ad/plan/adPlanTimeSave'),
+          name: '更新排期',
+          meta: {
+            // permission: 'ad.plan.create'
+          }
+        }
+      ]
+    },
+    {
       path: 'url',
       meta: {
         title: '短链接',
