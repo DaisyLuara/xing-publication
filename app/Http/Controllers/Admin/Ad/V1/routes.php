@@ -19,26 +19,26 @@ $api->version('v1', [
             $api->patch('ad_launch', ['middleware' => ['permission:ad.item.update'], 'uses' => 'AdLaunchController@update']);
 
             //广告
-            $api->get('advertisement', 'AdvertisementController@index');
-            $api->post('advertisement', 'AdvertisementController@store');
-            $api->patch('advertisement/{advertisement}', 'AdvertisementController@update');
+            $api->get('advertisement', ['middleware' => ['permission:ad.advertisement.read'], 'uses' =>'AdvertisementController@index']);
+            $api->post('advertisement', ['middleware' => ['permission:ad.advertisement.create'], 'uses' =>'AdvertisementController@store']);
+            $api->patch('advertisement/{advertisement}', ['middleware' => ['permission:ad.advertisement.update'], 'uses' =>'AdvertisementController@update']);
 
             //广告方案
-            $api->get('ad_plan', 'AdPlanController@index');
-            $api->get('ad_plan/{ad_plan}', 'AdPlanController@show')->where('ad_plan','[0-9]+');
-            $api->post('ad_plan', 'AdPlanController@store');
-            $api->patch('ad_plan/{ad_plan}', 'AdPlanController@updateBatch')->where('ad_plan','[0-9]+');
-            $api->put('ad_plan/{ad_plan}', 'AdPlanController@update')->where('ad_plan','[0-9]+');
+            $api->get('ad_plan', ['middleware' => ['permission:ad.plan.read'], 'uses' =>'AdPlanController@index']);
+            $api->get('ad_plan/{ad_plan}', ['middleware' => ['permission:ad.plan.read'], 'uses' =>'AdPlanController@show'])->where('ad_plan','[0-9]+');
+            $api->post('ad_plan', ['middleware' => ['permission:ad.plan.create'], 'uses' =>'AdPlanController@store']);
+            $api->patch('ad_plan/{ad_plan}', ['middleware' => ['permission:ad.plan.update'], 'uses' =>'AdPlanController@updateBatch'])->where('ad_plan','[0-9]+');
+            $api->put('ad_plan/{ad_plan}', ['middleware' => ['permission:ad.plan.update'], 'uses' =>'AdPlanController@update'])->where('ad_plan','[0-9]+');
 
             //编辑单条广告方案排期
-            $api->get('ad_plan_time/{ad_plan_time}', 'AdPlanTimeController@show')->where('ad_plan_time','[0-9]+');
-            $api->post('ad_plan_time/{ad_plan}/ad_plan', 'AdPlanTimeController@store')->where('ad_plan','[0-9]+');
-            $api->patch('ad_plan_time/{ad_plan_time}', 'AdPlanTimeController@update')->where('ad_plan_time','[0-9]+');
+            $api->get('ad_plan_time/{ad_plan_time}', ['middleware' => ['permission:ad.plan.read'], 'uses' =>'AdPlanTimeController@show'])->where('ad_plan_time','[0-9]+');
+            $api->post('ad_plan_time/{ad_plan}/ad_plan', ['middleware' => ['permission:ad.plan.create'], 'uses' =>'AdPlanTimeController@store'])->where('ad_plan','[0-9]+');
+            $api->patch('ad_plan_time/{ad_plan_time}', ['middleware' => ['permission:ad.plan.update'], 'uses' =>'AdPlanTimeController@update'])->where('ad_plan_time','[0-9]+');
 
             //广告行业
-            $api->get('ad_trade', 'AdTradeController@index');
-            $api->post('ad_trade', 'AdTradeController@store');
-            $api->patch('ad_trade', 'AdTradeController@update');
+            $api->get('ad_trade', ['middleware' => ['permission:ad.trade.read'], 'uses' =>'AdTradeController@index']);
+            $api->post('ad_trade', ['middleware' => ['permission:ad.trade.create'], 'uses' =>'AdTradeController@store']);
+            $api->patch('ad_trade', ['middleware' => ['permission:ad.trade.update'], 'uses' =>'AdTradeController@update']);
         });
     });
 

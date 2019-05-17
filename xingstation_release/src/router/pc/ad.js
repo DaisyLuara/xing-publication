@@ -47,7 +47,7 @@ let router = {
       path: 'plan',
       meta: {
         title: '广告方案',
-        // permission: 'ad.plan'
+        permission: 'ad.plan'
       },
       component: () =>
         import(/* webpackChunkName: "page/ad/plan/routerView" */ 'page/ad/plan/routerView'),
@@ -57,7 +57,7 @@ let router = {
           name: '广告方案详情列表',
           meta: {
             title: '广告方案详情列表',
-            // permission: 'ad.plan.read'
+            permission: 'ad.plan.read'
           },
           component: () =>
             import(/* webpackChunkName: "page/ad/plan/index" */ 'page/ad/plan/index')
@@ -68,7 +68,7 @@ let router = {
             import(/* webpackChunkName: "page/ad/plan/adPlanSave" */ 'page/ad/plan/adPlanSave'),
           name: '新增广告方案',
           meta: {
-            // permission: 'ad.plan.create'
+            permission: 'ad.plan.create'
           }
         },
         {
@@ -77,7 +77,7 @@ let router = {
             import(/* webpackChunkName: "page/ad/plan/adPlanSave" */ 'page/ad/plan/adPlanSave'),
           name: '编辑广告方案及批量排期',
           meta: {
-            // permission: 'ad.plan.update'
+            permission: 'ad.plan.update'
           }
         },
         {
@@ -86,7 +86,7 @@ let router = {
             import(/* webpackChunkName: "page/ad/plan/adPlanSave" */ 'page/ad/plan/adPlanSave'),
           name: '编辑广告方案',
           meta: {
-            // permission: 'ad.plan.update'
+            permission: 'ad.plan.update'
           }
         },
         {
@@ -95,7 +95,7 @@ let router = {
             import(/* webpackChunkName: "page/ad/plan/adPlanTimeSave" */ 'page/ad/plan/adPlanTimeSave'),
           name: '新增排期',
           meta: {
-            // permission: 'ad.plan.create'
+            permission: 'ad.plan.create'
           }
         },
         {
@@ -104,7 +104,7 @@ let router = {
             import(/* webpackChunkName: "page/ad/plan/adPlanTimeSave" */ 'page/ad/plan/adPlanTimeSave'),
           name: '更新排期',
           meta: {
-            // permission: 'ad.plan.create'
+            permission: 'ad.plan.update'
           }
         }
       ]
