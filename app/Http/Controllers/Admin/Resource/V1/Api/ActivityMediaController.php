@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Admin\Resource\V1\Api;
 
 
+use App\Http\Controllers\Admin\Board\V1\Models\Board;
 use App\Http\Controllers\Admin\Resource\V1\Models\Activity;
 use App\Http\Controllers\Admin\Resource\V1\Models\ActivityMedia;
 use App\Http\Controllers\Admin\Resource\V1\Request\ActivityMediaRequest;
