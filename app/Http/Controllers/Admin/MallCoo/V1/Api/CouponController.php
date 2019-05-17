@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\MallCoo\V1\Api;
 
+use App\Http\Controllers\Admin\Common\V1\Models\FileUpload;
 use App\Http\Controllers\Admin\Coupon\V1\Models\UserCouponBatch;
 use App\Http\Controllers\Admin\MallCoo\V1\Transformer\CouponPackTransformer;
 
