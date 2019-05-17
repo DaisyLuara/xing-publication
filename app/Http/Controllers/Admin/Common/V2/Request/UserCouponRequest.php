@@ -10,7 +10,8 @@ class UserCouponRequest extends Request
     public function rules()
     {
         return [
-            'z' => 'required',
+            'z' => 'required_without:sign|string',
+            'sign' => 'required_without:z|string',
             'start_date' => 'filled|date_format:Y-m-d H:i:s',
             'end_date' => 'filled|date_format:Y-m-d H:i:s',
             'belong' => 'string',

@@ -8,10 +8,15 @@
 
 namespace App\Traits;
 
-use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch as CouponBatchModel;
+use App\Http\Controllers\Admin\Coupon\V1\Models\UserCouponBatch;
 use App\Http\Controllers\Admin\Launch\V1\Models\PolicyLaunch;
+use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch as CouponBatchModel;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
+use App\Http\Controllers\Admin\MallCoo\V1\Models\GameResult;
+use App\Http\Controllers\Admin\User\V1\Models\ArMemberSession;
 use App\Http\Controllers\Admin\WeChat\V1\Models\ThirdPartyUser;
+use App\Models\WeChatUser;
+use Illuminate\Http\Request;
 use Overtrue\EasySms\EasySms;
 use Carbon\Carbon;
 use DB;
@@ -151,7 +156,6 @@ trait CouponBatch
      * @param Coupon $coupon
      * @param int $wxUserId
      * @param int $marketid
-     * @param EasySms $easySms
      */
     private function sendCouponMsg($coupon, $wxUserId, $marketid)
     {
@@ -172,4 +176,55 @@ trait CouponBatch
         }
     }
 
+    /**
+     * 获取用户信息
+     * @param Request $request
+     * @return ArMemberSession|WeChatUser|WeChatUser[]|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null
+     */
+    public function getUser($request)
+    {
+        if ($request->has('z')) {
+            $member = ArMemberSession::query()->where('z', $request->get('z'))->firstOrFail();
+            return $member;
+        }
+
+        return WeChatUser::query()->findOrFail(decrypt($request->get('sign')));
+
+    }
+
+    /**
+     *用户查询sql
+     * @param Request $request
+     * @param $user
+     * @return string
+     */
+    public function getUserQuerySql($request, $user)
+    {
+        return $request->get('z') ? 'member_uid = ' . $user->uid : 'wx_user_id = ' . $user->id;
+    }
+
+    /**
+     * 生成用户券规则
+     * @param Request $request
+     * @param \App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch $couponBatch
+     * @param $user
+     */
+    public function generateUserCouponBatch($request, $couponBatch, $user)
+    {
+        if ($request->has('z')) {
+            UserCouponBatch::query()->create([
+                'member_uid' => $user->uid,
+                'coupon_batch_id' => $couponBatch->id,
+                'belong' => $request->get('belong'),
+            ]);
+            return;
+        }
+
+        UserCouponBatch::query()->create([
+            'wx_user_id' => $user->id,
+            'coupon_batch_id' => $couponBatch->id,
+            'belong' => $request->get('belong'),
+        ]);
+
+    }
 }

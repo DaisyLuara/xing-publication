@@ -104,4 +104,23 @@ class ConfessionsController extends Controller
         return $this->response()->item($confession, new ConfessionTransformer());
     }
 
+    /**
+     * 告白墙
+     * @param Request $request
+     * @return \Dingo\Api\Http\Response
+     */
+    public function index(Request $request)
+    {
+        $request->validate([
+            'utm_campaign' => 'required|string',
+        ]);
+
+        $confessions = Confession::query()->where('utm_campaign', $request->get('utm_campaign'))
+            ->orderByDesc('created_at')->take(15)->get();
+
+        return $this->response()->collection($confessions, new ConfessionTransformer());
+    }
+
+
+
 }

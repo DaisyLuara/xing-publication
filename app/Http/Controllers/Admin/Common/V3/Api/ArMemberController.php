@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\User\V1\Transformer\ArMemberTransformer;
 use App\Http\Controllers\Admin\Common\V3\Request\ArMemberRequest;
 use App\Http\Controllers\Admin\User\V1\Models\ArMemberSession;
 use App\Http\Controllers\Controller;
+use App\Models\WeChatUser;
 use Overtrue\EasySms\EasySms;
 use Cache;
 use Log;
@@ -65,11 +66,18 @@ class ArMemberController extends Controller
         abort_if(!$verifyData, 422,'验证码已失效');
         abort_if(!hash_equals($verifyData['code'], $request->get('verification_code')), 401, '验证码错误');
 
-        /** @var ArMemberSession $session */
-        $session = ArMemberSession::query()->where('z', $request->get('z'))->firstOrFail();
-        $session->arMember->update(['mobile' => $verifyData['phone']]);
+        if ($request->has('z')) {
+            /** @var ArMemberSession $session */
+            $session = ArMemberSession::query()->where('z', $request->get('z'))->firstOrFail();
+            $session->arMember->update(['mobile' => $verifyData['phone']]);
+            return $this->response->item($session->arMember, new ArMemberTransformer());
+        }
 
-        return $this->response->item($session->arMember, new ArMemberTransformer());
+        $wxUserId = decrypt($request->get('sign'));
+        WeChatUser::query()->where('id', $wxUserId)->update(['mobile' => $verifyData['phone']]);
+
+        return $this->response->noContent()->setStatusCode(201);
+
     }
 
 }

@@ -22,7 +22,8 @@ class ArMemberRequest extends Request
                 break;
             case 'PATCH':
                 return [
-                    'z' => 'required|string',
+                    'z' => 'required_without:sign|string',
+                    'sign' => 'required_without:z|string',
                     'verification_key' => 'required|string',
                     'verification_code' => 'required|string',
                 ];
