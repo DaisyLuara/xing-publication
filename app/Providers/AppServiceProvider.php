@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\ShortUrl\V1\Models\ShortUrlRecords;
 use App\Http\Controllers\Admin\WeChat\V1\Models\ThirdPartyUser;
 use App\Models\Model;
 use App\Models\User;
+use App\Observers\ActivityMediaObserver;
 use App\Observers\AdminCustomerObserver;
 use App\Observers\MarketContractObserver;
 use App\Observers\MarketObserver;
