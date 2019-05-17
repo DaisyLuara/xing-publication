@@ -304,7 +304,7 @@
         return getAdPlanTime(this, args, this.planTimeId)
           .then(response => {
             this.adPlanTimeForm = response;
-            this.adPlan = response.ad_plan.data;
+            this.adPlan = response.ad_plan;
             this.getSearchAdList();
           })
           .catch(error => {
