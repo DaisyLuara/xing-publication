@@ -205,7 +205,6 @@
           loadingText: '拼命加载中'
         },
         searchAdTradeList: [],
-        searchLoading: false,
         searchAdList: [],
         adPlanTimeForm: {
           aid: null,
@@ -324,15 +323,14 @@
         let args = {
           atid: this.adPlan.id,
         }
-        this.searchLoading = true
         return getSearchAdvertisementList(this, args)
         .then(response => {
           this.searchAdList = response.data
-          this.searchLoading = false
+          this.setting.loading = false
         })
         .catch(error => {
           console.log(error)
-          this.searchLoading = false
+          this.setting.loading = false
         })
       },
       submit(formName) {

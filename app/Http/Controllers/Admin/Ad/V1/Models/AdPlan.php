@@ -104,7 +104,7 @@ class AdPlan extends Model
     public function advertisements(): BelongsToMany
     {
         return $this->belongsToMany(Advertisement::class, 'avr_ad_trade_time', 'atiid','aid')
-            ->withPivot('mode', 'ori','screen','cdshow','shm','ehm','ktime','only','date','clientdate');
+            ->withPivot('id','mode', 'ori','screen','cdshow','shm','ehm','ktime','only','date','clientdate');
     }
 
 }

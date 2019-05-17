@@ -28,13 +28,21 @@ class AdPlanTimeController extends Controller
             abort(4122, '广告素材与广告方案的行业不同');
         }
 
+        $existPlanTime = AdPlanTime::query()->where('aid', '=', $request->get('aid'))
+            ->where('atiid', '=', $request->get('atiid'))
+            ->first();
+
+        if ($existPlanTime) {
+            abort(422, '该方案中已存在该素材，请前往修改');
+        }
+
         $updateParams = [
             'aid' => $request->get('aid'),
             'atiid' => $request->get('atiid'),
             'cdshow' => $request->get('cdshow'),
             'ktime' => $request->get('ktime'),
             'shm' => $request->get('shm') ? (int)Carbon::parse($request->get('shm'), 'UTC')->format('Hi') : 0,
-            'ehm' => $request->get('ehm') ? (int)Carbon::parse($request->get('shm'), 'UTC')->format('Hi') : 0,
+            'ehm' => $request->get('ehm') ? (int)Carbon::parse($request->get('ehm'), 'UTC')->format('Hi') : 0,
         ];
 
         if ($adPlan->type === AdPlan::TYPE_BID_SCREEN) {

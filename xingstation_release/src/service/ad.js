@@ -131,7 +131,7 @@ const getAdPlanTime = (context, args, plan_time_id) => {
 const addAdPlanTime = (context, args, plan_id) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .patch(HOST + AD_PLAN_TIME_API + '/' + plan_id + '/ad_plan', args)
+      .post(HOST + AD_PLAN_TIME_API + '/' + plan_id + '/ad_plan', args)
       .then(response => {
         resolve(response.data)
       })
