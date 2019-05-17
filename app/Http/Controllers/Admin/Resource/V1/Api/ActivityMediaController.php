@@ -91,13 +91,6 @@ class ActivityMediaController extends Controller
         $media->status = $request->get('status');
         $media->audit_user_id = $user->id;
         $media->update();
-        if ($media->status === 1) {
-            $board = Board::query()->where('activity_media_id', $media->id)->whereRaw('length(image_url)>1')->first();
-            if ($board) {
-                $board->update(['image_url' => $media->url]);
-            }
-        }
-
         return $this->response()->noContent()->setStatusCode(200);
     }
 
@@ -106,7 +99,14 @@ class ActivityMediaController extends Controller
         $user = $this->user();
         $ids = $request->get('ids');
         foreach ($ids as $id) {
-            ActivityMedia::query()->where('id', $id)->update(['status' => $request->get('status'), 'audit_user_id' => $user->id]);
+            $media = ActivityMedia::query()->findOrFail($id);
+            $media->update(['status' => $request->get('status'), 'audit_user_id' => $user->id]);
+            if ($media->status === 1) {
+                $board = Board::query()->where('activity_media_id', $media->id)->whereRaw('length(image_url)>1')->first();
+                if ($board) {
+                    $board->update(['image_url' => $media->url]);
+                }
+            }
         }
         return $this->response()->noContent()->setStatusCode(200);
     }
