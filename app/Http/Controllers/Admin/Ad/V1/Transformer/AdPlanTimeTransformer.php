@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers\Admin\Ad\V1\Transformer;
 
-use App\Http\Controllers\Admin\Ad\V1\Models\AdPlan;
 use App\Http\Controllers\Admin\Ad\V1\Models\AdPlanTime;
-use League\Fractal\Resource\Collection;
+use League\Fractal\Resource\Item;
 use League\Fractal\TransformerAbstract;
 
 class AdPlanTimeTransformer extends TransformerAbstract
@@ -32,10 +31,10 @@ class AdPlanTimeTransformer extends TransformerAbstract
         ];
     }
 
-    public function includeAdPlan(AdPlanTime $adPlanTime): Collection
+    public function includeAdPlan(AdPlanTime $adPlanTime): Item
     {
         $ad_plan = $adPlanTime->ad_plan;
 
-        return $this->collection($ad_plan, new AdPlanTransformer());
+        return $this->item($ad_plan, new AdPlanTransformer());
     }
 }

@@ -16,15 +16,15 @@
 
         <el-form-item
           label="类型">
-          <el-input :value="adPlan.type_text" disabled="disabled"/>
+          <el-input :value="adPlan.type_text" disabled />
         </el-form-item>
         <el-form-item
           label="广告行业">
-          <el-input :value="adPlan.ad_trade" disabled="disabled"/>
+          <el-input :value="adPlan.ad_trade" disabled />
         </el-form-item>
         <el-form-item
           label="广告方案名称">
-          <el-input :value="adPlan.name" disabled="disabled"/>
+          <el-input :value="adPlan.name" disabled />
         </el-form-item>
 
         <!--单选广告素材-->
@@ -33,7 +33,7 @@
           label="广告素材"
           prop="aid">
           <el-select
-            :disabled="planTimeId"
+            :disabled="!!planTimeId"
             v-model="adPlanTimeForm.aid"
             filterable
             placeholder="请搜索"
@@ -295,7 +295,9 @@
     methods: {
       getAdPlanTimeDetail() {
         let args = {
-          include: 'ad_plan',
+          params: {
+            include: 'ad_plan',
+          }
         }
 
         //获取AdPlan 详情

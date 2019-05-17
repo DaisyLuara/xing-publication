@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $clientdate 时间
  * @property-read \App\Http\Controllers\Admin\Ad\V1\Models\AdTrade $ad_trade
  * @property-read \App\Models\User|null $create_user
+ * @property-read \App\Models\User|null $create_customer
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\Advertisement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\Advertisement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model ordered()
@@ -56,7 +57,7 @@ class Advertisement extends Model
     public $fillable = [
         'atid',
         'name',
-//        'z',
+        'z',
         'img',
         'type',
         'link',
@@ -72,6 +73,12 @@ class Advertisement extends Model
     public function create_user(): BelongsTo
     {
         return $this->setConnection('mysql')->belongsTo(User::class, 'z', 'z');
+    }
+
+    //创建人
+    public function create_customer(): BelongsTo
+    {
+        return $this->setConnection('mysql')->belongsTo(Customer::class, 'z', 'z');
     }
 
     //广告行业

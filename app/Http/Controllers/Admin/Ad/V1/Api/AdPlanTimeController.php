@@ -45,6 +45,8 @@ class AdPlanTimeController extends Controller
             'visiable' => $request->get('visiable'),
             'shm' => $request->get('shm') ? (int)Carbon::parse($request->get('shm'), 'UTC')->format('Hi') : 0,
             'ehm' => $request->get('ehm') ? (int)Carbon::parse($request->get('ehm'), 'UTC')->format('Hi') : 0,
+            'date' => date('Y-m-d H:i:s'),
+            'clientdate' => time() * 1000,
         ];
 
         if ($adPlan->type === AdPlan::TYPE_BID_SCREEN) {
@@ -76,6 +78,8 @@ class AdPlanTimeController extends Controller
             'visiable' => $request->get('visiable'),
             'shm' => $request->get('shm') ? (int)Carbon::parse($request->get('shm'), 'UTC')->format('Hi') : 0,
             'ehm' => $request->get('ehm') ? (int)Carbon::parse($request->get('ehm'), 'UTC')->format('Hi') : 0,
+            'date' => date('Y-m-d H:i:s'),
+            'clientdate' => time() * 1000,
         ];
 
         if ($adPlanTime->ad_plan->type === AdPlan::TYPE_BID_SCREEN) {

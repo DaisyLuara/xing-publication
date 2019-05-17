@@ -156,13 +156,13 @@
                       <span>{{ ad_scope.row.ad_trade_name }}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column
-                    label="创建人"
-                    min-width="80">
-                    <template slot-scope="ad_scope">
-                      <span>{{ ad_scope.row.create_user_name }}</span>
-                    </template>
-                  </el-table-column>
+                  <!--<el-table-column-->
+                    <!--label="创建人"-->
+                    <!--min-width="80">-->
+                    <!--<template slot-scope="ad_scope">-->
+                      <!--<span>{{ ad_scope.row.create_user_name }}</span>-->
+                    <!--</template>-->
+                  <!--</el-table-column>-->
                   <el-table-column
                     label="图片"
                     min-width="50">
@@ -177,13 +177,6 @@
                     min-width="50">
                     <template slot-scope="ad_scope">
                       <span>{{ ad_scope.row.name }}</span>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    label="状态"
-                    min-width="50">
-                    <template slot-scope="ad_scope">
-                      <span>{{ ad_scope.row.visiable ? '运营中' : '下架' }}</span>
                     </template>
                   </el-table-column>
                   <el-table-column
@@ -239,6 +232,13 @@
                         {{ad_scope.row.pivot.cdshow ?'开启':'关闭'}}<br/>
                         {{ad_scope.row.pivot.ktime}}s
                       </span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="状态"
+                    min-width="50">
+                    <template slot-scope="ad_scope">
+                      <span>{{ ad_scope.row.pivot.visiable === 1 ? '运营中' : '下架' }}</span>
                     </template>
                   </el-table-column>
                   <el-table-column

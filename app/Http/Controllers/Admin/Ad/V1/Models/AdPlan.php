@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Admin\Ad\V1\Models;
 
+use App\Models\Customer;
 use App\Models\Model;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -105,6 +107,18 @@ class AdPlan extends Model
     {
         return $this->belongsToMany(Advertisement::class, 'avr_ad_trade_time', 'atiid', 'aid')
             ->withPivot('id', 'mode', 'ori', 'screen', 'cdshow', 'shm', 'ehm', 'ktime', 'only', 'visiable', 'date', 'clientdate');
+    }
+
+    //创建人
+    public function create_user(): BelongsTo
+    {
+        return $this->setConnection('mysql')->belongsTo(User::class, 'z', 'z');
+    }
+
+    //创建人
+    public function create_customer(): BelongsTo
+    {
+        return $this->setConnection('mysql')->belongsTo(Customer::class, 'z', 'z');
     }
 
 }
