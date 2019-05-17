@@ -27,7 +27,7 @@ class ArMemberController extends Controller
     {
         $phone = $request->get('phone');
 
-        if (0&&!app()->environment('production')) {
+        if (!app()->environment('production')) {
             $code = '1234';
         } else {
             // 生成4位随机数，左侧补0
