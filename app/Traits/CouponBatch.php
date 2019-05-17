@@ -20,6 +20,7 @@ use Illuminate\Http\Request;
 use Overtrue\EasySms\EasySms;
 use Carbon\Carbon;
 use DB;
+use Log;
 
 
 trait CouponBatch
@@ -162,10 +163,11 @@ trait CouponBatch
         $user = ThirdPartyUser::query()->where('wx_user_id', $wxUserId)
             ->where('marketid', $marketid)->firstOrFail();
 
-        $easySms = new EasySms($config = []);
+        $easySms = new EasySms(config('easysms'));
+
         try {
             $result = $easySms->send($user->mobile, [
-                'content' => '【星视度】尊敬的吾悦广场用户，恭喜您获得常州武进吾悦周年庆福利一份，优惠券：' . $coupon->code . ' 。请在2019年5月18号10点-5月20号22点期间前往武进吾悦2F客服台凭此短信领取。感谢您对吾悦广场的参与与支持！回T退订',
+                'content' => '【星视度】尊敬的吾悦广场用户，恭喜您获得常州武进吾悦周年庆福利一份，优惠券：' . $coupon->code . ' 。请在2019年5月21号10点-5月31号22点期间前往武进吾悦2F客服台凭此短信领取。感谢您对吾悦广场的参与与支持！回T退订',
             ]);
             Log::info('send_coupon_msg', $result);
 
@@ -225,5 +227,4 @@ trait CouponBatch
         ]);
 
     }
-
 }
