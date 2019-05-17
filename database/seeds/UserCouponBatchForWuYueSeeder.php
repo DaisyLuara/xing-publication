@@ -32,13 +32,13 @@ class UserCouponBatchForWuYueSeeder extends Seeder
 
             if (!app()->environment('production')) {
                 switch ($rank) {
-                    case $rank <= 10:
+                    case $rank <= 1:
                         $couponBatchId = 1090;
                         break;
-                    case $rank > 10 && $rank <= 20:
+                    case $rank > 1 && $rank <= 5:
                         $couponBatchId = 1089;
                         break;
-                    case $rank > 20  && $rank <= 120:
+                    case $rank > 5  && $rank <= 10:
                         $couponBatchId = 1088;
                         break;
                     default:
@@ -60,21 +60,23 @@ class UserCouponBatchForWuYueSeeder extends Seeder
                         $couponBatchId = 1095;
                         break;
                     case $rank > 400  && $rank <= 600:
-                        $couponBatchId = 1095;
+                        $couponBatchId = 1096;
                         break;
                     case $rank > 600  && $rank <= 1000:
-                        $couponBatchId = 1095;
+                        $couponBatchId = 1097;
                         break;
                     default:
                         return;
                 }
             }
 
-            UserCouponBatch::query()->create([
-                'wx_user_id' => $item->user_id,
-                'coupon_batch_id' => $couponBatchId,
-                'belong' => 'h5_beat_pig',
-            ]);
+            if ($couponBatchId) {
+                UserCouponBatch::query()->create([
+                    'wx_user_id' => $item->user_id,
+                    'coupon_batch_id' => $couponBatchId,
+                    'belong' => 'h5_beat_pig',
+                ]);
+            }
         }
     }
 }
