@@ -27,15 +27,21 @@ class ArMemberController extends Controller
     {
         $phone = $request->get('phone');
 
-        if (!app()->environment('production')) {
+        if (0&&!app()->environment('production')) {
             $code = '1234';
         } else {
             // 生成4位随机数，左侧补0
             $code = str_pad(random_int(1, 9999), 4, 0, STR_PAD_LEFT);
 
+            if ($request->has('utm_campaign') && $request->get('utm_campaign') === 'jt520Diamonds') {
+                $content = "【星视度】感谢参与520活动，短信验证码：$code ， 有效期为10分钟，感谢您的参与！";
+            } else {
+                $content = "【星视度】感谢参与星视度“全城告白，钻石屏证”活动，短信验证码：$code ， 有效期为10分钟，感谢您的参与！";
+            }
+
             try {
                 $easySms->send($phone, [
-                    'content' => "【星视度】感谢参与星视度“全城告白，钻石屏证”活动，短信验证码：$code ， 有效期为10分钟，感谢您的参与！",
+                    'content' => $content,
                 ]);
             } catch (\GuzzleHttp\Exception\ClientException $exception) {
                 $response = $exception->getResponse();
