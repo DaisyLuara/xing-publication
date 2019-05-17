@@ -26,7 +26,7 @@ class CouponController extends Controller
     public function store(CouponRequest $request)
     {
         $user = $this->getUser($request);
-        $userSql = $request->get('z') ? 'member_uid = ' . $user->uid : 'wx_user_id = ' . $user->id;
+        $userQuerySql = $this->getUserQuerySql($request, $user);
 
         /** @var PolicyLaunch $policyLaunch */
         $policyLaunch = PolicyLaunch::query()->where('belong', $request->get('belong'))
@@ -35,14 +35,14 @@ class CouponController extends Controller
 
         //策略每人抽奖次数校验
         if (!$policy->per_person_unlimit) {
-            $couponPerPersonGet = Coupon::query()->whereRaw($userSql)
+            $couponPerPersonGet = Coupon::query()->whereRaw($userQuerySql)
                 ->where('belong', $request->get('belong'))->count();
             abort_if($couponPerPersonGet >= $policy->per_person_times, 500, '优惠券领取数量已达上限!');
         }
 
         //策略每人每天抽奖次数校验
         if (!$policy->per_person_per_day_unlimit) {
-            $couponPerPersonPerDayGet = Coupon::query()->whereRaw($userSql)
+            $couponPerPersonPerDayGet = Coupon::query()->whereRaw($userQuerySql)
                 ->whereDate('created_at', Carbon::now()->toDateString())
                 ->where('belong', $request->get('belong'))->count();
             abort_if($couponPerPersonPerDayGet >= $policy->per_person_per_day_times, 500, '今日领券数量已达上限,请明天再来!');
@@ -68,7 +68,7 @@ class CouponController extends Controller
         //每人每天库存校验
         if (!$couponBatch->pmg_status) {
             $coupons = Coupon::query()->whereDate('created_at', Carbon::now()->toDateString())
-                ->whereRaw($userSql)->where('coupon_batch_id', $couponBatchId)
+                ->whereRaw($userQuerySql)->where('coupon_batch_id', $couponBatchId)
                 ->get();
             abort_if($coupons->count() >= $couponBatch->people_max_get, 500, '优惠券每人最多领取' . $couponBatch->people_max_get . '张');
         }

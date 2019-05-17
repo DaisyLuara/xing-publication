@@ -34,7 +34,7 @@ class CouponBatchController extends Controller
     public function store(CouponBatchRequest $request)
     {
         $user = $this->getUser($request);
-        $userSql = $request->get('z') ? 'member_uid = ' . $user->uid : 'wx_user_id = ' . $user->id;
+        $userQuerySql = $this->getUserQuerySql($request, $user);
 
         /** @var PolicyLaunch $policyLaunch */
         $policyLaunch = PolicyLaunch::query()->where('belong', $request->get('belong'))
@@ -74,7 +74,7 @@ class CouponBatchController extends Controller
             ->groupBy('coupon_batch_id');
 
         $couponsPersonGetQuery = clone $couponsDayGetQuery;
-        $couponsPersonGetQuery->whereRaw($userSql);
+        $couponsPersonGetQuery->whereRaw($userQuerySql);
 
         //当天领取数量
         $couponsDayGetArray = array_column($couponsDayGetQuery->get()->toArray(), 'day_receive', 'coupon_batch_id');
