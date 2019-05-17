@@ -6,7 +6,6 @@ use App\Http\Controllers\Admin\Common\V1\Transformer\CouponTransformer;
 use App\Http\Controllers\Admin\Common\V2\Request\UserCouponRequest;
 use App\Http\Controllers\Admin\Common\V2\Request\CouponRequest;
 use App\Http\Controllers\Admin\Launch\V1\Models\PolicyLaunch;
-use App\Http\Controllers\Admin\User\V1\Models\ArMemberSession;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
 use App\Traits\CouponBatch as CouponBatchTrait;
@@ -26,8 +25,8 @@ class CouponController extends Controller
      */
     public function store(CouponRequest $request)
     {
-        $member = ArMemberSession::query()->where('z', $request->get('z'))->firstOrFail();
-        $memberUID = $member->uid;
+        $user = $this->getUser($request);
+        $userSql = $request->get('z') ? 'member_uid = ' . $user->uid : 'wx_user_id = ' . $user->id;
 
         /** @var PolicyLaunch $policyLaunch */
         $policyLaunch = PolicyLaunch::query()->where('belong', $request->get('belong'))
@@ -36,20 +35,20 @@ class CouponController extends Controller
 
         //策略每人抽奖次数校验
         if (!$policy->per_person_unlimit) {
-            $couponPerPersonGet = Coupon::query()->where('member_uid', $memberUID)
+            $couponPerPersonGet = Coupon::query()->whereRaw($userSql)
                 ->where('belong', $request->get('belong'))->count();
             abort_if($couponPerPersonGet >= $policy->per_person_times, 500, '优惠券领取数量已达上限!');
         }
 
         //策略每人每天抽奖次数校验
         if (!$policy->per_person_per_day_unlimit) {
-            $couponPerPersonPerDayGet = Coupon::query()->where('member_uid', $memberUID)
+            $couponPerPersonPerDayGet = Coupon::query()->whereRaw($userSql)
                 ->whereDate('created_at', Carbon::now()->toDateString())
                 ->where('belong', $request->get('belong'))->count();
             abort_if($couponPerPersonPerDayGet >= $policy->per_person_per_day_times, 500, '今日领券数量已达上限,请明天再来!');
         }
 
-        $couponBatch = $member->userCouponBatches()->firstOrFail();
+        $couponBatch = $user->userCouponBatches()->firstOrFail();
         $couponBatchId = $couponBatch->id;
 
         //库存校验
@@ -69,7 +68,7 @@ class CouponController extends Controller
         //每人每天库存校验
         if (!$couponBatch->pmg_status) {
             $coupons = Coupon::query()->whereDate('created_at', Carbon::now()->toDateString())
-                ->where('member_uid', $memberUID)->where('coupon_batch_id', $couponBatchId)
+                ->whereRaw($userSql)->where('coupon_batch_id', $couponBatchId)
                 ->get();
             abort_if($coupons->count() >= $couponBatch->people_max_get, 500, '优惠券每人最多领取' . $couponBatch->people_max_get . '张');
         }
@@ -90,20 +89,36 @@ class CouponController extends Controller
 
         DB::beginTransaction();
         try {
+            if ($request->has('z')) {
+                $coupon = Coupon::query()->create([
+                    'code' => $code,
+                    'coupon_batch_id' => $couponBatchId,
+                    'status' => 3,
+                    'member_uid' => $user->uid,
+                    'qiniu_id' => $request->get('qiniu_id') ?? 0,
+                    'oid' => $request->get('oid'),
+                    'utm_source' => 1,
+                    'belong' => $request->get('belong') ?? '',
+                    'ser_timestamp' => $request->get('ser_timestamp') ?? 0,
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
+                ]);
+            } else {
+                $coupon = Coupon::query()->create([
+                    'code' => $code,
+                    'coupon_batch_id' => $couponBatchId,
+                    'status' => 3,
+                    'wx_user_id' => $user->id,
+                    'qiniu_id' => $request->get('qiniu_id') ?? 0,
+                    'oid' => $request->get('oid'),
+                    'utm_source' => 1,
+                    'belong' => $request->get('belong') ?? '',
+                    'ser_timestamp' => $request->get('ser_timestamp') ?? 0,
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
+                ]);
 
-            $coupon = Coupon::query()->create([
-                'code' => $code,
-                'coupon_batch_id' => $couponBatchId,
-                'status' => 3,
-                'member_uid' => $memberUID,
-                'qiniu_id' => $request->get('qiniu_id') ?? 0,
-                'oid' => $request->get('oid'),
-                'utm_source' => 1,
-                'belong' => $request->get('belong') ?? '',
-                'ser_timestamp' => $request->get('ser_timestamp') ?? 0,
-                'start_date' => $startDate,
-                'end_date' => $endDate,
-            ]);
+            }
 
             $coupon = $this->setCodeImageUrl($coupon, $prefix, $wechatCouponBatch, $request->get('code_type'));
 
@@ -129,7 +144,8 @@ class CouponController extends Controller
      */
     public function getUserCoupon(UserCouponRequest $request)
     {
-        $member = ArMemberSession::query()->where('z', $request->get('z'))->firstOrFail();
+        $user = $this->getUser($request);
+        $userQuerySql = $this->getUserQuerySql($request, $user);
 
         $query = Coupon::query();
 
@@ -153,7 +169,7 @@ class CouponController extends Controller
             $query->where('ser_timestamp', $request->get('ser_timestamp'));
         }
 
-        $coupon = $query->where('member_uid', $member->uid)->first();
+        $coupon = $query->whereRaw($userQuerySql)->first();
 
         abort_if(!$coupon, 204);
 
