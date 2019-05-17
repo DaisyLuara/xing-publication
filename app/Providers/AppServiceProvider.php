@@ -11,10 +11,12 @@ use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Ad\V1\Models\AdLaunch;
 use App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTpl;
 use App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTplSchedule;
+use App\Http\Controllers\Admin\Resource\V1\Models\ActivityMedia;
 use App\Http\Controllers\Admin\ShortUrl\V1\Models\ShortUrlRecords;
 use App\Http\Controllers\Admin\WeChat\V1\Models\ThirdPartyUser;
 use App\Models\Model;
 use App\Models\User;
+use App\Observers\ActivityMediaObserver;
 use App\Observers\AdminCustomerObserver;
 use App\Observers\MarketContractObserver;
 use App\Observers\MarketObserver;
@@ -57,6 +59,7 @@ class AppServiceProvider extends ServiceProvider
         ProjectLaunchTplSchedule::observe(ProjectLaunchTplScheduleObserver::class);
         DatabaseNotification::observe(NotificationObserver::class);
         Customer::observe(AdminCustomerObserver::class);
+        ActivityMedia::observe(ActivityMediaObserver::class);
 
         \Carbon\Carbon::setLocale('zh');
         $this->bootTowerSocialite();

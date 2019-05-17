@@ -18,6 +18,7 @@ use App\Http\Controllers\Controller;
 use App\Jobs\MediaCheckJob;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Admin\Board\V1\Models\Board;
 
 class ActivityMediaController extends Controller
 {
@@ -108,6 +109,7 @@ class ActivityMediaController extends Controller
                 }
             }
         }
+
         return $this->response()->noContent()->setStatusCode(200);
     }
 }
