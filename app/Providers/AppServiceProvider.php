@@ -59,7 +59,6 @@ class AppServiceProvider extends ServiceProvider
         ProjectLaunchTplSchedule::observe(ProjectLaunchTplScheduleObserver::class);
         DatabaseNotification::observe(NotificationObserver::class);
         Customer::observe(AdminCustomerObserver::class);
-        ActivityMedia::observe(ActivityMediaObserver::class);
 
         \Carbon\Carbon::setLocale('zh');
         $this->bootTowerSocialite();
