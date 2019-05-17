@@ -33,8 +33,8 @@ class CouponBatchController extends Controller
      */
     public function store(CouponBatchRequest $request)
     {
-        /** @var ArMemberSession $member */
-        $member = ArMemberSession::query()->where('z', $request->get('z'))->firstOrFail();
+        $user = $this->getUser($request);
+        $userQuerySql = $this->getUserQuerySql($request, $user);
 
         /** @var PolicyLaunch $policyLaunch */
         $policyLaunch = PolicyLaunch::query()->where('belong', $request->get('belong'))
@@ -74,7 +74,7 @@ class CouponBatchController extends Controller
             ->groupBy('coupon_batch_id');
 
         $couponsPersonGetQuery = clone $couponsDayGetQuery;
-        $couponsPersonGetQuery->where('member_uid', $member->uid);
+        $couponsPersonGetQuery->whereRaw($userQuerySql);
 
         //当天领取数量
         $couponsDayGetArray = array_column($couponsDayGetQuery->get()->toArray(), 'day_receive', 'coupon_batch_id');
@@ -112,11 +112,8 @@ class CouponBatchController extends Controller
 
         $couponBatch = CouponBatch::query()->findOrFail($targetCouponBatch->coupon_batch_id);
 
-        UserCouponBatch::query()->create([
-            'member_uid' => $member->uid,
-            'coupon_batch_id' => $couponBatch->id,
-            'belong' => $request->get('belong'),
-        ]);
+        //生成用户券规则
+        $this->generateUserCouponBatch($request, $couponBatch, $user);
 
         return $this->response->item($couponBatch, new CouponBatchTransformer());
 
