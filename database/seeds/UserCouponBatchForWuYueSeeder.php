@@ -29,27 +29,45 @@ class UserCouponBatchForWuYueSeeder extends Seeder
 
         foreach ($result as $item) {
             $rank = $item->rank;
-            switch ($rank) {
-                case $rank <= 10:
-                    $couponBatchId = 1078;
-                    break;
-                case $rank > 10 && $rank <= 20:
-                    $couponBatchId = 1093;
-                    break;
-                case $rank > 20  && $rank <= 120:
-                    $couponBatchId = 1094;
-                    break;
-                case $rank > 120  && $rank <= 400:
-                    $couponBatchId = 1095;
-                    break;
-                case $rank > 400  && $rank <= 600:
-                    $couponBatchId = 1095;
-                    break;
-                case $rank > 600  && $rank <= 1000:
-                    $couponBatchId = 1095;
-                    break;
-                default:
-                    return;
+
+            if (!app()->environment('production')) {
+                switch ($rank) {
+                    case $rank <= 10:
+                        $couponBatchId = 1090;
+                        break;
+                    case $rank > 10 && $rank <= 20:
+                        $couponBatchId = 1089;
+                        break;
+                    case $rank > 20  && $rank <= 120:
+                        $couponBatchId = 1088;
+                        break;
+                    default:
+                        return;
+                }
+
+            } else {
+                switch ($rank) {
+                    case $rank <= 10:
+                        $couponBatchId = 1078;
+                        break;
+                    case $rank > 10 && $rank <= 20:
+                        $couponBatchId = 1093;
+                        break;
+                    case $rank > 20  && $rank <= 120:
+                        $couponBatchId = 1094;
+                        break;
+                    case $rank > 120  && $rank <= 400:
+                        $couponBatchId = 1095;
+                        break;
+                    case $rank > 400  && $rank <= 600:
+                        $couponBatchId = 1095;
+                        break;
+                    case $rank > 600  && $rank <= 1000:
+                        $couponBatchId = 1095;
+                        break;
+                    default:
+                        return;
+                }
             }
 
             UserCouponBatch::query()->create([
