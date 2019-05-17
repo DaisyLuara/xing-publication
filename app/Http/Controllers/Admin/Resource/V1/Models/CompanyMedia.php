@@ -39,6 +39,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class CompanyMedia extends Model
 {
+    public $timestamps = false;
+    protected $fillable = [
+        'group_id',
+        'media_id',
+        'status',
+        'audit_user_id'
+    ];
+
     public function group(): BelongsTo
     {
         return $this->belongsTo(CompanyMediaGroup::class, 'group_id', 'id');
