@@ -24,7 +24,7 @@ class AdPlanTimeTransformer extends TransformerAbstract
             'screen' => $adPlanTime->screen,
             'cdshow' => $adPlanTime->cdshow,
             'shm' => substr($shm,0,2).':'.substr($shm,2,2),
-            'ehm' => substr($shm,0,2).':'.substr($ehm,2,2),
+            'ehm' => substr($ehm,0,2).':'.substr($ehm,2,2),
             'ktime' => $adPlanTime->ktime,
             'only' => $adPlanTime->only,
             'visiable' => $adPlanTime->visiable,
