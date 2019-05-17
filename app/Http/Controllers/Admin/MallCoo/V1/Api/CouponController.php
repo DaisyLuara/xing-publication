@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\MallCoo\V1\Api;
 
+use App\Http\Controllers\Admin\Coupon\V1\Models\UserCouponBatch;
 use App\Http\Controllers\Admin\MallCoo\V1\Transformer\CouponPackTransformer;
 
 use App\Http\Controllers\Admin\Common\V1\Transformer\CouponTransformer;
@@ -138,7 +139,9 @@ class CouponController extends BaseController
             ->where('belong', $request->get('belong'))->get();
         abort_if($coupon->isNotEmpty(), 500, '请勿重复领取');
 
-        $couponBatch = $this->getUserCouponBatch();
+        //获取用户券规则
+        $userCouponBatch = UserCouponBatch::query()->where('wx_user_id', $wxUserId)->where('belong', $request->get('belong'))->firstOrFail();
+        $couponBatch = $userCouponBatch->couponBatch;
         $couponBatchId = $couponBatch->id;
 
         //库存校验
