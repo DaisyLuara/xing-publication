@@ -102,7 +102,7 @@ class ActivityMediaController extends Controller
             $media = ActivityMedia::query()->findOrFail($id);
             $media->update(['status' => $request->get('status'), 'audit_user_id' => $user->id]);
             if ($media->status === 1) {
-                $board = Board::query()->where('activity_media_id', $media->id)->whereRaw('length(image_url)>1')->first();
+                $board = Board::query()->where('activity_media_id', $media->id)->whereRaw('length(image_url)=0')->first();
                 if ($board) {
                     $board->update(['image_url' => $media->url]);
                 }
