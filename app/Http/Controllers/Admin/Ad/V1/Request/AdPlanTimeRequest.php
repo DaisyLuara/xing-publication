@@ -20,6 +20,8 @@ class AdPlanTimeRequest extends Request
                     'screen' => ['integer','required_if:type,' . AdPlan::TYPE_BID_SCREEN],
                     'cdshow' => ['required', Rule::in([0, 1])],
                     'ktime' => 'required|integer|min:1',
+                    'only' =>['required', Rule::in([0, 1])],
+                    'visiable' => ['required', Rule::in([0, 1])],
                     'shm' => 'required|string',
                     'ehm' => 'required|string',
                 ];
@@ -31,6 +33,8 @@ class AdPlanTimeRequest extends Request
                     'screen' => ['integer','required_if:type,' . AdPlan::TYPE_BID_SCREEN],
                     'cdshow' => ['required', Rule::in([0, 1])],
                     'ktime' => 'required|integer|min:1',
+                    'only' =>['required', Rule::in([0, 1])],
+                    'visiable' => ['required', Rule::in([0, 1])],
                     'shm' => 'required|string',
                     'ehm' => 'required|string',
                 ];

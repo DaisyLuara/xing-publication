@@ -18,13 +18,13 @@
               <el-col
                 :span="8">
                 <el-form-item
-                  prop="type" >
+                  prop="type">
                   <el-select
                     v-model="adSearchForm.type"
                     :loading="searchLoading"
                     placeholder="请选择类型"
                     @change="typeChangeHandle()"
-                    clearable >
+                    clearable>
                     <el-option key="program" label="节目广告" value="program"/>
                     <el-option key="ads" label="小屏广告" value="ads"/>
                   </el-select>
@@ -40,7 +40,7 @@
                     filterable
                     placeholder="请搜索广告行业"
                     clearable
-                    @change="adTradeChangeHandle()" >
+                    @change="adTradeChangeHandle()">
                     <el-option
                       v-for="item in searchAdTradeList"
                       :key="item.id"
@@ -74,7 +74,7 @@
               <el-col
                 :span="8">
                 <el-form-item
-                  prop="type" >
+                  prop="type">
                   <el-input v-model="adSearchForm.ad_plan_name" placeholder="模糊查询广告方案"></el-input>
                 </el-form-item>
               </el-col>
@@ -83,9 +83,11 @@
                 <el-form-item>
                   <el-button
                     type="primary"
-                    @click="search('adSearchForm')">搜索</el-button>
+                    @click="search('adSearchForm')">搜索
+                  </el-button>
                   <el-button
-                    @click="resetSearch('adSearchForm')">重置</el-button>
+                    @click="resetSearch('adSearchForm')">重置
+                  </el-button>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -100,7 +102,8 @@
           <el-button
             size="small"
             type="success"
-            @click="linkToAddPlan">新增广告方案</el-button>
+            @click="linkToAddPlan">新增广告方案
+          </el-button>
         </div>
         <el-table
           ref="multipleTable"
@@ -174,6 +177,13 @@
                     min-width="50">
                     <template slot-scope="ad_scope">
                       <span>{{ ad_scope.row.name }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="状态"
+                    min-width="50">
+                    <template slot-scope="ad_scope">
+                      <span>{{ ad_scope.row.visiable ? '运营中' : '下架' }}</span>
                     </template>
                   </el-table-column>
                   <el-table-column
@@ -261,7 +271,8 @@
                       <el-button
                         size="small"
                         type="default"
-                        @click="linkToEditPlanTime(ad_scope.row.pivot.id)">编辑素材</el-button>
+                        @click="linkToEditPlanTime(ad_scope.row.pivot.id)">编辑
+                      </el-button>
                     </template>
                   </el-table-column>
 
@@ -316,15 +327,18 @@
               <el-button
                 size="small"
                 type="danger"
-                @click="linkToEditPlanBatch(scope.row.id)">编辑方案排期</el-button>
+                @click="linkToEditPlanBatch(scope.row.id)">编辑方案排期
+              </el-button>
               <el-button
                 size="small"
                 type="success"
-                @click="linkToEditPlan(scope.row.id)">编辑方案</el-button>
+                @click="linkToEditPlan(scope.row.id)">编辑方案
+              </el-button>
               <el-button
                 size="small"
                 type="default"
-                @click="linkToAddPlanTime(scope.row.id)">新增素材</el-button>
+                @click="linkToAddPlanTime(scope.row.id)">新增素材
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -344,278 +358,278 @@
 </template>
 
 <script>
-import {
-  getAdPlanList,
-  getSearchAdTradeList,
-  getSearchAdPlanList
-} from 'service'
+  import {
+    getAdPlanList,
+    getSearchAdTradeList,
+    getSearchAdPlanList
+  } from 'service'
 
-import {
-  Button,
-  Input,
-  Table,
-  Select,
-  Option,
-  Col,
-  TableColumn,
-  Pagination,
-  Form,
-  FormItem,
-  DatePicker,
-  Checkbox,
-  CheckboxGroup,
-  Dialog,
-  Row,
-  MessageBox,
-  Radio
-} from 'element-ui'
+  import {
+    Button,
+    Input,
+    Table,
+    Select,
+    Option,
+    Col,
+    TableColumn,
+    Pagination,
+    Form,
+    FormItem,
+    DatePicker,
+    Checkbox,
+    CheckboxGroup,
+    Dialog,
+    Row,
+    MessageBox,
+    Radio
+  } from 'element-ui'
 
-export default {
-  components: {
-    'el-table': Table,
-    'el-date-picker': DatePicker,
-    'el-table-column': TableColumn,
-    'el-button': Button,
-    'el-input': Input,
-    'el-pagination': Pagination,
-    'el-form': Form,
-    'el-select': Select,
-    'el-option': Option,
-    'el-form-item': FormItem,
-    'el-checkbox-group': CheckboxGroup,
-    'el-checkbox': Checkbox,
-    'el-dialog': Dialog,
-    'el-col': Col,
-    'el-row': Row,
-    'el-radio':Radio
-  },
-  data() {
-    return {
-      setting: {
+  export default {
+    components: {
+      'el-table': Table,
+      'el-date-picker': DatePicker,
+      'el-table-column': TableColumn,
+      'el-button': Button,
+      'el-input': Input,
+      'el-pagination': Pagination,
+      'el-form': Form,
+      'el-select': Select,
+      'el-option': Option,
+      'el-form-item': FormItem,
+      'el-checkbox-group': CheckboxGroup,
+      'el-checkbox': Checkbox,
+      'el-dialog': Dialog,
+      'el-col': Col,
+      'el-row': Row,
+      'el-radio': Radio
+    },
+    data() {
+      return {
+        setting: {
+          loading: false,
+          loadingText: '拼命加载中'
+        },
         loading: false,
-        loadingText: '拼命加载中'
-      },
-      loading: false,
 
-      searchAdTradeList: [],
-      searchLoading: false,
-      searchAdPlanList: [],
-      adSearchForm: {
-          type:'',
+        searchAdTradeList: [],
+        searchLoading: false,
+        searchAdPlanList: [],
+        adSearchForm: {
+          type: '',
           ad_trade_id: '',
           ad_plan_id: '',
           ad_plan_name: '',
-      },
-      pagination: {
-        total: 0,
-        pageSize: 10,
-        currentPage: 1
-      },
-      adPlanList: [],
-    }
-  },
-  created() {
-    this.setting.loading = true
-    let getSearchAdTradeList = this.getSearchAdTradeList()
-    let adPlanList = this.getAdPlanList()
-    Promise.all([getSearchAdTradeList, adPlanList])
-      .then(() => {
-        this.setting.loading = false
-      })
-      .catch(err => {
-        console.log(err)
-        this.setting.loading = false
-      })
-  },
-  methods: {
-
-    getSearchAdTradeList() {
-      return getSearchAdTradeList(this)
-        .then(response => {
-          let data = response.data
-          this.searchAdTradeList = data
-        })
-        .catch(error => {
-          console.log(error)
-          this.setting.loading = false
-        })
-    },
-    typeChangeHandle() {
-      this.adSearchForm.ad_plan_id = ''
-      this.getSearchAdPlanList()
-    },
-    adTradeChangeHandle() {
-      this.adSearchForm.ad_plan_id = ''
-      this.getSearchAdPlanList()
-    },
-    getSearchAdPlanList() {
-      let args = {}
-      args = {
-        ad_trade_id: this.adSearchForm.ad_trade_id,
-        type: this.adSearchForm.type,
+        },
+        pagination: {
+          total: 0,
+          pageSize: 10,
+          currentPage: 1
+        },
+        adPlanList: [],
       }
-      this.searchLoading = true
-      return getSearchAdPlanList(this, args)
-        .then(response => {
-          this.searchAdPlanList = response.data
-          this.searchLoading = false
-        })
-        .catch(error => {
-          console.log(error)
-          this.searchLoading = false
-        })
     },
-
-    getAdPlanList() {
-      this.setting.loadingText = '拼命加载中'
+    created() {
       this.setting.loading = true
-      let searchArgs = {
-        page: this.pagination.currentPage,
-        include: 'advertisements',
-        type: this.adSearchForm.type,
-        ad_trade_id: this.adSearchForm.ad_trade_id,
-        ad_plan_name: this.adSearchForm.ad_plan_name,
-        ad_plan_id: this.adSearchForm.ad_plan_id,
-      }
-      return getAdPlanList(this, searchArgs)
-        .then(response => {
-          this.adPlanList = response.data
-          this.pagination.total = response.meta.pagination.total
+      let getSearchAdTradeList = this.getSearchAdTradeList()
+      let adPlanList = this.getAdPlanList()
+      Promise.all([getSearchAdTradeList, adPlanList])
+        .then(() => {
           this.setting.loading = false
         })
-        .catch(error => {
-          console.log(error)
+        .catch(err => {
+          console.log(err)
           this.setting.loading = false
         })
     },
-    search(formName) {
-      this.pagination.currentPage = 1
-      this.getAdPlanList()
-    },
-    resetSearch(formName) {
-      this.adSearchForm.type = ''
-      this.adSearchForm.ad_trade_id = ''
-      this.adSearchForm.ad_plan_name = ''
-      this.adSearchForm.ad_plan_id = ''
-      this.pagination.currentPage = 1
-      this.getAdPlanList()
-    },
-    changePage(currentPage) {
-      this.pagination.currentPage = currentPage
-      this.getAdPlanList()
-    },
-    linkToAddPlan() {
-      this.$router.push({
-        path: '/ad/plan/add'
-      })
-    },
-    linkToEditPlan(plan_id) {
-      this.$router.push({
-        path: '/ad/plan/edit/' + plan_id + '/item/true'
-      })
-    },
-    linkToEditPlanBatch(plan_id) {
-      this.$router.push({
-        path: '/ad/plan/edit/' + plan_id + '/batch'
-      })
-    },
-    linkToEditPlanTime(plan_time_id) {
-      this.$router.push({
-        path: '/ad/plan/edit/plan_time/' + plan_time_id
-      })
-    },
-    linkToAddPlanTime(plan_id){
-      this.$router.push({
-        path: '/ad/plan/' + plan_id + '/add/plan_time/'
-      })
-    }
+    methods: {
 
+      getSearchAdTradeList() {
+        return getSearchAdTradeList(this)
+          .then(response => {
+            let data = response.data
+            this.searchAdTradeList = data
+          })
+          .catch(error => {
+            console.log(error)
+            this.setting.loading = false
+          })
+      },
+      typeChangeHandle() {
+        this.adSearchForm.ad_plan_id = ''
+        this.getSearchAdPlanList()
+      },
+      adTradeChangeHandle() {
+        this.adSearchForm.ad_plan_id = ''
+        this.getSearchAdPlanList()
+      },
+      getSearchAdPlanList() {
+        let args = {}
+        args = {
+          ad_trade_id: this.adSearchForm.ad_trade_id,
+          type: this.adSearchForm.type,
+        }
+        this.searchLoading = true
+        return getSearchAdPlanList(this, args)
+          .then(response => {
+            this.searchAdPlanList = response.data
+            this.searchLoading = false
+          })
+          .catch(error => {
+            console.log(error)
+            this.searchLoading = false
+          })
+      },
+
+      getAdPlanList() {
+        this.setting.loadingText = '拼命加载中'
+        this.setting.loading = true
+        let searchArgs = {
+          page: this.pagination.currentPage,
+          include: 'advertisements',
+          type: this.adSearchForm.type,
+          ad_trade_id: this.adSearchForm.ad_trade_id,
+          ad_plan_name: this.adSearchForm.ad_plan_name,
+          ad_plan_id: this.adSearchForm.ad_plan_id,
+        }
+        return getAdPlanList(this, searchArgs)
+          .then(response => {
+            this.adPlanList = response.data
+            this.pagination.total = response.meta.pagination.total
+            this.setting.loading = false
+          })
+          .catch(error => {
+            console.log(error)
+            this.setting.loading = false
+          })
+      },
+      search(formName) {
+        this.pagination.currentPage = 1
+        this.getAdPlanList()
+      },
+      resetSearch(formName) {
+        this.adSearchForm.type = ''
+        this.adSearchForm.ad_trade_id = ''
+        this.adSearchForm.ad_plan_name = ''
+        this.adSearchForm.ad_plan_id = ''
+        this.pagination.currentPage = 1
+        this.getAdPlanList()
+      },
+      changePage(currentPage) {
+        this.pagination.currentPage = currentPage
+        this.getAdPlanList()
+      },
+      linkToAddPlan() {
+        this.$router.push({
+          path: '/ad/plan/add'
+        })
+      },
+      linkToEditPlan(plan_id) {
+        this.$router.push({
+          path: '/ad/plan/edit/' + plan_id + '/item/true'
+        })
+      },
+      linkToEditPlanBatch(plan_id) {
+        this.$router.push({
+          path: '/ad/plan/edit/' + plan_id + '/batch'
+        })
+      },
+      linkToEditPlanTime(plan_time_id) {
+        this.$router.push({
+          path: '/ad/plan/edit/plan_time/' + plan_time_id
+        })
+      },
+      linkToAddPlanTime(plan_id) {
+        this.$router.push({
+          path: '/ad/plan/' + plan_id + '/add/plan_time/'
+        })
+      }
+
+    }
   }
-}
 </script>
 
 <style lang="less" scoped>
-.root {
-  font-size: 14px;
-  color: #5e6d82;
-  .item-list-wrap {
-    background: #fff;
-    padding: 30px;
-    .el-select,
-    .item-input,
-    .el-input {
-      width: 200px;
-    }
+  .root {
+    font-size: 14px;
+    color: #5e6d82;
+    .item-list-wrap {
+      background: #fff;
+      padding: 30px;
+      .el-select,
+      .item-input,
+      .el-input {
+        width: 200px;
+      }
 
-    .el-form-item {
-      margin-bottom: 20px;
-    }
-    .el-table__body-wrapper {
-      overflow-x: auto;
-      overflow-y: overlay;
-      position: relative;
-    }
-    .demo-table-expand {
-      font-size: 0;
-    }
+      .el-form-item {
+        margin-bottom: 20px;
+      }
+      .el-table__body-wrapper {
+        overflow-x: auto;
+        overflow-y: overlay;
+        position: relative;
+      }
+      .demo-table-expand {
+        font-size: 0;
+      }
 
-    .demo-table-expand label {
-      width: 90px;
-      color: #99a9bf;
-    }
-    .demo-table-expand .el-form-item {
-      margin-right: 0;
-      margin-bottom: 0;
-      width: 50%;
-    }
-    .item-content-wrap {
-      .icon-item {
-        padding: 10px;
+      .demo-table-expand label {
+        width: 90px;
+        color: #99a9bf;
+      }
+      .demo-table-expand .el-form-item {
+        margin-right: 0;
+        margin-bottom: 0;
         width: 50%;
       }
-      .search-wrap {
-        margin-top: 5px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        font-size: 16px;
-        align-items: center;
-        margin-bottom: 10px;
-        .el-form-item {
+      .item-content-wrap {
+        .icon-item {
+          padding: 10px;
+          width: 50%;
+        }
+        .search-wrap {
+          margin-top: 5px;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          font-size: 16px;
+          align-items: center;
           margin-bottom: 10px;
-        }
-        .el-select {
-          width: 200px;
-        }
-        .warning {
-          background: #ebf1fd;
-          padding: 8px;
-          margin-left: 10px;
-          color: #444;
-          font-size: 12px;
-          i {
-            color: #4a8cf3;
-            margin-right: 5px;
+          .el-form-item {
+            margin-bottom: 10px;
+          }
+          .el-select {
+            width: 200px;
+          }
+          .warning {
+            background: #ebf1fd;
+            padding: 8px;
+            margin-left: 10px;
+            color: #444;
+            font-size: 12px;
+            i {
+              color: #4a8cf3;
+              margin-right: 5px;
+            }
           }
         }
-      }
-      .actions-wrap {
-        margin-top: 5px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        font-size: 16px;
-        align-items: center;
-        margin-bottom: 10px;
-        .label {
-          font-size: 14px;
+        .actions-wrap {
+          margin-top: 5px;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          font-size: 16px;
+          align-items: center;
+          margin-bottom: 10px;
+          .label {
+            font-size: 14px;
+          }
         }
-      }
-      .pagination-wrap {
-        margin: 10px auto;
-        text-align: right;
+        .pagination-wrap {
+          margin: 10px auto;
+          text-align: right;
+        }
       }
     }
   }
-}
 </style>

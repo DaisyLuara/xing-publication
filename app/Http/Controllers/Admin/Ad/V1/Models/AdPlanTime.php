@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $ehm 结束时间
  * @property int $ktime 秒为单位
  * @property int $only 唯一
+ * @property int $visiable 运营
  * @property string $date
  * @property int $clientdate 时间
  * @property-read \App\Http\Controllers\Admin\Ad\V1\Models\AdPlan $ad_plan
@@ -60,6 +61,7 @@ class AdPlanTime extends Model
         'ehm',
         'ktime',
         'only',
+        'visiable',
         'date',
         'clientdate'
     ];

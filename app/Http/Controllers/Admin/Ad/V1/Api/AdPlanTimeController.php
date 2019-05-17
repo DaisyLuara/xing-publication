@@ -21,12 +21,12 @@ class AdPlanTimeController extends Controller
 
     public function store(AdPlanTimeRequest $request, AdPlanTime $adPlanTime, AdPlan $adPlan): Response
     {
-        $ad = Advertisement::query()->findOrFail($request->get('aid'));
 
+//        $ad = Advertisement::query()->findOrFail($request->get('aid'));
         //广告行业
-        if ($ad->atid !== $adPlan->atid) {
-            abort(4122, '广告素材与广告方案的行业不同');
-        }
+//        if ($ad->atid !== $adPlan->atid) {
+//            abort(4122, '广告素材与广告方案的行业不同');
+//        }
 
         $existPlanTime = AdPlanTime::query()->where('aid', '=', $request->get('aid'))
             ->where('atiid', '=', $request->get('atiid'))
@@ -41,6 +41,8 @@ class AdPlanTimeController extends Controller
             'atiid' => $request->get('atiid'),
             'cdshow' => $request->get('cdshow'),
             'ktime' => $request->get('ktime'),
+            'only' => $request->get('only'),
+            'visiable' => $request->get('visiable'),
             'shm' => $request->get('shm') ? (int)Carbon::parse($request->get('shm'), 'UTC')->format('Hi') : 0,
             'ehm' => $request->get('ehm') ? (int)Carbon::parse($request->get('ehm'), 'UTC')->format('Hi') : 0,
         ];
@@ -70,8 +72,10 @@ class AdPlanTimeController extends Controller
         $updateParams = [
             'cdshow' => $request->get('cdshow'),
             'ktime' => $request->get('ktime'),
+            'only' => $request->get('only'),
+            'visiable' => $request->get('visiable'),
             'shm' => $request->get('shm') ? (int)Carbon::parse($request->get('shm'), 'UTC')->format('Hi') : 0,
-            'ehm' => $request->get('ehm') ? (int)Carbon::parse($request->get('shm'), 'UTC')->format('Hi') : 0,
+            'ehm' => $request->get('ehm') ? (int)Carbon::parse($request->get('ehm'), 'UTC')->format('Hi') : 0,
         ];
 
         if ($adPlanTime->ad_plan->type === AdPlan::TYPE_BID_SCREEN) {

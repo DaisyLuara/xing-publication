@@ -105,6 +105,29 @@
               :value="item.id"/>
           </el-select>
         </el-form-item>
+
+        <el-form-item
+          :rules="[{ required: true, message: '请输入节目', trigger: 'submit',type: 'number'}]"
+          label="节目"
+          prop="piid">
+          <el-select
+            v-model="adForm.piid"
+            :loading="searchLoading"
+            :remote-method="getProject"
+            remote
+            placeholder="请输入节目名称"
+            filterable
+            clearable
+          >
+            <el-option
+              v-for="item in projectList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+
         <el-form-item 
           label="开始时间" 
           prop="sdate">
@@ -159,6 +182,7 @@ import {
   getSearchPointList,
   getSearchAeraList,
   getSearchMarketList,
+  getSearchProjectList,
 } from 'service'
 
 import {
@@ -205,12 +229,14 @@ export default {
         area: '',
         market: [],
         point: [],
+        piid: null,
         sdate: '',
         edate: '',
         visiable : 1,
         only : 1,
       },
-      areaList: []
+      areaList: [],
+      projectList:[],
     }
   },
   mounted() {},
@@ -228,6 +254,28 @@ export default {
       })
   },
   methods: {
+    getProject(query) {
+      if (query !== "") {
+        this.searchLoading = true;
+        let args = {
+          name: query
+        };
+        return getSearchProjectList(this, args)
+          .then(response => {
+            this.projectList = response.data;
+            if (this.projectList.length === 0) {
+              this.filters.alias = "";
+              this.projectList = [];
+            }
+            this.searchLoading = false;
+          })
+          .catch(err => {
+            this.searchLoading = false;
+          });
+      } else {
+        this.projectList = [];
+      }
+    },
     getAdTradeList() {
       return getSearchAdTradeList(this)
         .then(response => {
@@ -336,6 +384,7 @@ export default {
             atiid: this.adForm.ad_plan_id,
             marketid: this.adForm.market[0],
             oids: this.adForm.point,
+            piid: this.adForm.piid,
             visiable:this.adForm.visiable,
             only:this.adForm.only,
           }

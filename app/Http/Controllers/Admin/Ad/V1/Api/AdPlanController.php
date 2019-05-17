@@ -145,6 +145,8 @@ class AdPlanController extends Controller
             'ktime' => $request->get('ktime'),
             'shm' => $request->get('shm') ? (int)Carbon::parse($request->get('shm'), 'UTC')->format('Hi') : 0,
             'ehm' => $request->get('ehm') ? (int)Carbon::parse($request->get('ehm'), 'UTC')->format('Hi') : 0,
+            'only' => $request->get('only'),
+            'visiable' => $request->get('visiable'),
             'date' => date('Y-m-d H:i:s'),
             'clientdate' => time() * 1000,
         ];

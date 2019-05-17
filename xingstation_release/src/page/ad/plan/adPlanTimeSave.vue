@@ -131,19 +131,19 @@
             placeholder="选择结束时间">
           </el-time-picker>
         </el-form-item>
+        <el-form-item
+          :rules="[{ required: true, message: '请选择状态', trigger: 'submit'}]"
+          label="状态"
+          prop="visiable">
+          <el-radio v-model="adPlanTimeForm.visiable" :label="1">运营中</el-radio>
+          <el-radio v-model="adPlanTimeForm.visiable" :label="0">下架</el-radio>
+        </el-form-item>
         <!--<el-form-item-->
-        <!--:rules="[{ required: true, message: '请选择状态', trigger: 'submit'}]"-->
-        <!--label="状态"-->
-        <!--prop="visiable">-->
-        <!--<el-radio v-model="adPlanForm.visiable" :label="1">运营中</el-radio>-->
-        <!--<el-radio v-model="adPlanForm.visiable" :label="0">下架</el-radio>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item-->
-        <!--:rules="[{ required: true, message: '请选择唯一性', trigger: 'submit'}]"-->
-        <!--label="唯一"-->
-        <!--prop="only">-->
-        <!--<el-radio v-model="adPlanForm.only" :label="1">是</el-radio>-->
-        <!--<el-radio v-model="adPlanForm.only" :label="0">否</el-radio>-->
+          <!--:rules="[{ required: true, message: '请选择唯一性', trigger: 'submit'}]"-->
+          <!--label="唯一"-->
+          <!--prop="only">-->
+          <!--<el-radio v-model="adPlanTimeForm.only" :label="1">是</el-radio>-->
+          <!--<el-radio v-model="adPlanTimeForm.only" :label="0">否</el-radio>-->
         <!--</el-form-item>-->
 
         <el-form-item>
@@ -213,8 +213,10 @@
           screen: 100,
           cdshow: 1,
           ktime: 15,
+          visiable: 1,
+          only: 0,
           shm: "00:01",
-          ehm: "00:59",
+          ehm: "23:59",
         },
         modeOptions: [
           {
@@ -283,55 +285,57 @@
 
       this.setting.loading = true;
 
-      if (this.planTimeId){
+      if (this.planTimeId) {
         this.getAdPlanTimeDetail();
-      }else{
+      } else {
         this.getAdPlanDetail();
       }
 
     },
     methods: {
       getAdPlanTimeDetail() {
+        let args = {
+          include: 'ad_plan',
+        }
+
         //获取AdPlan 详情
-        return getAdPlanTime(this, {
-          include:'ad_plan'
-        }, this.planTimeId)
-        .then(response => {
-          this.adPlanTimeForm =  response;
-          this.adPlan = response.ad_plan.data;
-          this.getSearchAdList();
-        })
-        .catch(error => {
-          console.log(error)
-          this.setting.loading = false
-        })
+        return getAdPlanTime(this, args, this.planTimeId)
+          .then(response => {
+            this.adPlanTimeForm = response;
+            this.adPlan = response.ad_plan.data;
+            this.getSearchAdList();
+          })
+          .catch(error => {
+            console.log(error)
+            this.setting.loading = false
+          })
       },
       getAdPlanDetail() {
         //获取AdPlan 详情
         return getAdPlanDetail(this, {}, this.planId)
-        .then(response => {
-          this.adPlan = response;
-          this.getSearchAdList();
-        })
-        .catch(error => {
-          console.log(error)
-          this.setting.loading = false
-        })
+          .then(response => {
+            this.adPlan = response;
+            this.getSearchAdList();
+          })
+          .catch(error => {
+            console.log(error)
+            this.setting.loading = false
+          })
       },
 
       getSearchAdList() {
         let args = {
-          atid: this.adPlan.id,
+          atid: this.adPlan.atid,
         }
         return getSearchAdvertisementList(this, args)
-        .then(response => {
-          this.searchAdList = response.data
-          this.setting.loading = false
-        })
-        .catch(error => {
-          console.log(error)
-          this.setting.loading = false
-        })
+          .then(response => {
+            this.searchAdList = response.data
+            this.setting.loading = false
+          })
+          .catch(error => {
+            console.log(error)
+            this.setting.loading = false
+          })
       },
       submit(formName) {
         this.$refs[formName].validate(valid => {
@@ -346,12 +350,14 @@
               screen: this.adPlanTimeForm.screen,
               cdshow: this.adPlanTimeForm.cdshow,
               ktime: this.adPlanTimeForm.ktime,
+              only: this.adPlanTimeForm.only,
+              visiable: this.adPlanTimeForm.visiable,
               shm: this.adPlanTimeForm.shm,
               ehm: this.adPlanTimeForm.ehm,
             }
 
             if (this.planTimeId) {
-                return modifyAdPlanTime(this, args, this.planTimeId)
+              return modifyAdPlanTime(this, args, this.planTimeId)
                 .then(response => {
                   this.setting.loading = false
                   this.$message({
@@ -371,25 +377,25 @@
                   console.log(err)
                 })
             } else {
-              return addAdPlanTime(this, args,this.adPlan.id)
-              .then(response => {
-                this.setting.loading = false
-                this.$message({
-                  message: '添加成功',
-                  type: 'success'
+              return addAdPlanTime(this, args, this.adPlan.id)
+                .then(response => {
+                  this.setting.loading = false
+                  this.$message({
+                    message: '添加成功',
+                    type: 'success'
+                  })
+                  this.$router.push({
+                    path: '/ad/plan'
+                  })
                 })
-                this.$router.push({
-                  path: '/ad/plan'
+                .catch(err => {
+                  this.setting.loading = false
+                  this.$message({
+                    message: err.response.data.message,
+                    type: 'error'
+                  })
+                  console.log(err)
                 })
-              })
-              .catch(err => {
-                this.setting.loading = false
-                this.$message({
-                  message: err.response.data.message,
-                  type: 'error'
-                })
-                console.log(err)
-              })
             }
           } else {
             return

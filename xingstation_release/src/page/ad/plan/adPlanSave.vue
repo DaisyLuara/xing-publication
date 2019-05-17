@@ -178,19 +178,19 @@
               placeholder="选择结束时间">
             </el-time-picker>
           </el-form-item>
+          <el-form-item
+            :rules="[{ required: true, message: '请选择状态', trigger: 'submit'}]"
+            label="排期状态"
+            prop="visiable">
+            <el-radio v-model="adPlanForm.visiable" :label="1">运营中</el-radio>
+            <el-radio v-model="adPlanForm.visiable" :label="0">下架</el-radio>
+          </el-form-item>
           <!--<el-form-item-->
-          <!--:rules="[{ required: true, message: '请选择状态', trigger: 'submit'}]"-->
-          <!--label="状态"-->
-          <!--prop="visiable">-->
-          <!--<el-radio v-model="adPlanForm.visiable" :label="1">运营中</el-radio>-->
-          <!--<el-radio v-model="adPlanForm.visiable" :label="0">下架</el-radio>-->
-          <!--</el-form-item>-->
-          <!--<el-form-item-->
-          <!--:rules="[{ required: true, message: '请选择唯一性', trigger: 'submit'}]"-->
-          <!--label="唯一"-->
-          <!--prop="only">-->
-          <!--<el-radio v-model="adPlanForm.only" :label="1">是</el-radio>-->
-          <!--<el-radio v-model="adPlanForm.only" :label="0">否</el-radio>-->
+            <!--:rules="[{ required: true, message: '请选择唯一性', trigger: 'submit'}]"-->
+            <!--label="排期唯一"-->
+            <!--prop="only">-->
+            <!--<el-radio v-model="adPlanForm.only" :label="1">是</el-radio>-->
+            <!--<el-radio v-model="adPlanForm.only" :label="0">否</el-radio>-->
           <!--</el-form-item>-->
         </template>
         <el-form-item>
@@ -265,8 +265,10 @@
           screen: 100,
           cdshow: 1,
           ktime: 15,
+          only: 0,
+          visiable: 1,
           shm: "00:01",
-          ehm: "00:59",
+          ehm: "23:59",
         },
         modeOptions: [
           {
@@ -342,13 +344,13 @@
       }
 
       Promise.all([searchAdTradeList])
-      .then(() => {
-        this.setting.loading = false
-      })
-      .catch(err => {
-        console.log(err)
-        this.setting.loading = false
-      })
+        .then(() => {
+          this.setting.loading = false
+        })
+        .catch(err => {
+          console.log(err)
+          this.setting.loading = false
+        })
 
     },
     methods: {
@@ -359,29 +361,30 @@
       getAdPlanDetail() {
         //获取AdPlan 详情
         return getAdPlanDetail(this, {}, this.adPlanId)
-        .then(response => {
-          this.adPlanForm.aids = response.aids;
-          this.adPlanForm.atid = response.atid;
-          this.adPlanForm.type = response.type;
-          this.adPlanForm.icon = response.icon;
-          this.adPlanForm.name = response.name;
-          this.getSearchAdList();
-        })
-        .catch(error => {
-          console.log(error)
-          this.setting.loading = false
-        })
+          .then(response => {
+            this.adPlanForm.aids = response.aids;
+            this.adPlanForm.atid = response.atid;
+            this.adPlanForm.type = response.type;
+            this.adPlanForm.icon = response.icon;
+            this.adPlanForm.name = response.name;
+            this.adPlanForm.info = response.info;
+            this.getSearchAdList();
+          })
+          .catch(error => {
+            console.log(error)
+            this.setting.loading = false
+          })
 
       },
       getSearchAdTradeList() {
         return getSearchAdTradeList(this)
-        .then(response => {
-          this.searchAdTradeList = response.data
-        })
-        .catch(error => {
-          console.log(error)
-          this.setting.loading = false
-        })
+          .then(response => {
+            this.searchAdTradeList = response.data
+          })
+          .catch(error => {
+            console.log(error)
+            this.setting.loading = false
+          })
       },
       getSearchAdList() {
         let args = {
@@ -389,14 +392,14 @@
         }
         this.searchLoading = true
         return getSearchAdvertisementList(this, args)
-        .then(response => {
-          this.searchAdList = response.data
-          this.searchLoading = false
-        })
-        .catch(error => {
-          console.log(error)
-          this.searchLoading = false
-        })
+          .then(response => {
+            this.searchAdList = response.data
+            this.searchLoading = false
+          })
+          .catch(error => {
+            console.log(error)
+            this.searchLoading = false
+          })
       },
       submit(formName) {
         this.$refs[formName].validate(valid => {
@@ -414,6 +417,8 @@
               screen: this.adPlanForm.screen,
               cdshow: this.adPlanForm.cdshow,
               ktime: this.adPlanForm.ktime,
+              only: this.adPlanForm.only,
+              visiable: this.adPlanForm.visiable,
               shm: this.adPlanForm.shm,
               ehm: this.adPlanForm.ehm,
             }
@@ -421,66 +426,66 @@
             if (this.adPlanId) {
               if (this.isItem) {
                 return modifyAdPlan(this, args, this.adPlanId)
-                .then(response => {
-                  this.setting.loading = false
-                  this.$message({
-                    message: '编辑成功',
-                    type: 'success'
+                  .then(response => {
+                    this.setting.loading = false
+                    this.$message({
+                      message: '编辑成功',
+                      type: 'success'
+                    })
+                    this.$router.push({
+                      path: '/ad/plan'
+                    })
                   })
-                  this.$router.push({
-                    path: '/ad/plan'
+                  .catch(err => {
+                    this.setting.loading = false
+                    this.$message({
+                      message: err.response.data.message,
+                      type: 'error'
+                    })
+                    console.log(err)
                   })
-                })
-                .catch(err => {
-                  this.setting.loading = false
-                  this.$message({
-                    message: err.response.data.message,
-                    type: 'error'
-                  })
-                  console.log(err)
-                })
               } else {
                 return modifyBatchAdPlan(this, args, this.adPlanId)
-                .then(response => {
-                  this.setting.loading = false
-                  this.$message({
-                    message: '批量编辑成功',
-                    type: 'success'
+                  .then(response => {
+                    this.setting.loading = false
+                    this.$message({
+                      message: '批量编辑成功',
+                      type: 'success'
+                    })
+                    this.$router.push({
+                      path: '/ad/plan'
+                    })
                   })
-                  this.$router.push({
-                    path: '/ad/plan'
+                  .catch(err => {
+                    this.setting.loading = false
+                    this.$message({
+                      message: err.response.data.message,
+                      type: 'error'
+                    })
+                    console.log(err)
                   })
-                })
-                .catch(err => {
-                  this.setting.loading = false
-                  this.$message({
-                    message: err.response.data.message,
-                    type: 'error'
-                  })
-                  console.log(err)
-                })
               }
 
             } else {
               return saveAdPlan(this, args)
-              .then(response => {
-                this.setting.loading = false
-                this.$message({
-                  message: '添加成功',
-                  type: 'success'
+                .then(response => {
+                  this.setting.loading = false
+                  this.$message({
+                    message: '添加成功',
+                    type: 'success'
+                  })
+                  this.$router.push({
+                    path: '/ad/plan'
+                  })
                 })
-                this.$router.push({
-                  path: '/ad/plan'
+                .catch(err => {
+                  this.setting.loading = false
+                  this.$message({
+                    message: err.response.data.message,
+                    type: 'error'
+                  })
+                  console.log(err)
                 })
-              })
-              .catch(err => {
-                this.setting.loading = false
-                this.$message({
-                  message: err.response.data.message,
-                  type: 'error'
-                })
-                console.log(err)
-              })
             }
           } else {
             return

@@ -28,6 +28,7 @@ class AdPlanTimeTransformer extends TransformerAbstract
             'ehm' => substr($shm,0,2).':'.substr($ehm,2,2),
             'ktime' => $adPlanTime->ktime,
             'only' => $adPlanTime->only,
+            'visiable' => $adPlanTime->visiable,
         ];
     }
 

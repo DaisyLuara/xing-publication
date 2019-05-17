@@ -103,8 +103,8 @@ class AdPlan extends Model
     //广告素材排期
     public function advertisements(): BelongsToMany
     {
-        return $this->belongsToMany(Advertisement::class, 'avr_ad_trade_time', 'atiid','aid')
-            ->withPivot('id','mode', 'ori','screen','cdshow','shm','ehm','ktime','only','date','clientdate');
+        return $this->belongsToMany(Advertisement::class, 'avr_ad_trade_time', 'atiid', 'aid')
+            ->withPivot('id', 'mode', 'ori', 'screen', 'cdshow', 'shm', 'ehm', 'ktime', 'only', 'visiable', 'date', 'clientdate');
     }
 
 }
