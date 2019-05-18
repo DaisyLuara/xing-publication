@@ -25,7 +25,7 @@ class UserCouponBatchForWuYueSeeder extends Seeder
                         (SELECT * FROM jingsaas.oc_game_attribute where belong = "h5_beat_pig" ORDER BY score DESC) u, 
                         (SELECT @rank := 0, @last_score := NULL, @last_rank := 0) r
                     ) t LEFT JOIN jingsaas.oc_game_result r on t.id = r.game_attribute_id;';
-        $result = DB::select($sql);
+        $result = DB::connection('jingsaas')->select($sql);
 
         foreach ($result as $item) {
             $rank = $item->rank;
