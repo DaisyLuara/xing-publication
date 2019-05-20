@@ -64,7 +64,7 @@
                     v-model="adSearchForm.ad_plan_id"
                     :loading="searchLoading"
                     filterable
-                    placeholder="请搜索广告方案"
+                    placeholder="请搜索广告模版"
                     clearable>
                     <el-option
                       v-for="item in searchAdPlanList"
@@ -83,7 +83,7 @@
                   prop="type">
                   <el-input 
                     v-model="adSearchForm.ad_plan_name" 
-                    placeholder="模糊查询广告方案"/>
+                    placeholder="模糊查询广告模版"/>
                 </el-form-item>
               </el-col>
               <el-col
@@ -105,12 +105,12 @@
           class="actions-wrap">
           <span
             class="label">
-            广告方案数量: {{ pagination.total }}
+            广告模版数量: {{ pagination.total }}
           </span>
           <el-button
             size="small"
             type="success"
-            @click="linkToAddPlan">新增广告方案
+            @click="linkToAddPlan">新增广告模版
           </el-button>
         </div>
         <el-table
@@ -143,7 +143,7 @@
                       style="color: blue">查看</a>
                 </el-form-item>
                 <el-form-item
-                  label="广告方案">
+                  label="广告模版">
                   <span>{{ scope.row.name }}</span>
                 </el-form-item>
                 <el-form-item
@@ -332,7 +332,7 @@
           <el-table-column
             :show-overflow-tooltip="true"
             prop="name"
-            label="广告方案"
+            label="广告模版"
             min-width="130"
           />
           <el-table-column
@@ -365,13 +365,13 @@
                 size="small"
                 type="warning"
                 plain
-                @click="linkToEditPlanBatch(scope.row.id)">编辑方案排期
+                @click="linkToEditPlanBatch(scope.row.id)">编辑模版排期
               </el-button>
               <el-button
                 size="small"
                 type="success"
                 plain
-                @click="linkToEditPlan(scope.row.id)">编辑方案
+                @click="linkToEditPlan(scope.row.id)">编辑模版
               </el-button>
               <el-button
                 size="small"

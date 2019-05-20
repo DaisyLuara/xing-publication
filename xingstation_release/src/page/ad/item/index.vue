@@ -108,7 +108,7 @@
                     v-model="adSearchForm.ad_plan_id"
                     :loading="searchLoading"
                     filterable
-                    placeholder="请搜索广告方案"
+                    placeholder="请搜索广告模版"
                     clearable>
                     <el-option
                       v-for="item in adPlanList"
@@ -183,12 +183,12 @@
           class="actions-wrap">
           <span
             class="label">
-            方案投放数量: {{ pagination.total }}
+            模版投放数量: {{ pagination.total }}
           </span>
           <el-button
             size="small"
             type="success"
-            @click="linkToAddItem">投放广告方案
+            @click="linkToAddItem">投放广告模版
           </el-button>
         </div>
         <el-table
@@ -222,7 +222,7 @@
                   <span>{{ scope.row.ad_trade }}</span>
                 </el-form-item>
                 <el-form-item
-                  label="广告方案">
+                  label="广告模版">
                   <span>{{ scope.row.ad_plan_name }}</span>
                 </el-form-item>
                 <el-form-item
@@ -397,7 +397,7 @@
           <el-table-column
             :show-overflow-tooltip="true"
             prop="ad_plan_name"
-            label="广告方案"
+            label="广告模版"
             min-width="150"
           />
           <el-table-column
@@ -460,8 +460,8 @@
           </el-form-item>
           <el-form-item
             v-if="modifyOptionFlag.ad_plan_id"
-            :rules="[{ type: 'number', required: true, message: '请选择广告方案', trigger: 'submit' }]"
-            label="广告方案"
+            :rules="[{ type: 'number', required: true, message: '请选择广告模版', trigger: 'submit' }]"
+            label="广告模版"
             prop="ad_plan_id">
             <el-select
               v-model="adForm.ad_plan_id"
@@ -598,7 +598,7 @@
           loadingText: '拼命加载中'
         },
         conditionContent: [
-          '广告方案',
+          '广告模版',
           '开始时间',
           '结束时间',
           '状态',
@@ -849,7 +849,7 @@
       modifyEdit() {
         if (this.selectAll.length === 0) {
           this.$message({
-            message: '请选择广告方案投放',
+            message: '请选择广告模版投放',
             type: 'warning'
           })
         } else {
@@ -885,7 +885,7 @@
             for (let k = 0; k < optionModify.length; k++) {
               let type = optionModify[k]
               switch (type) {
-                case '广告方案':
+                case '广告模版':
                   this.modifyOptionFlag.ad_trade_id = true
                   this.modifyOptionFlag.ad_plan_id = true
                   break
