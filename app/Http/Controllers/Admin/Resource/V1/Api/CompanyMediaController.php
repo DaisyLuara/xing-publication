@@ -25,7 +25,7 @@ class CompanyMediaController extends Controller
         if ($request->has('status')) {
             $query->where('status', $request->get('status'));
         }
-        $companyMedia = $query->paginate(10);
+        $companyMedia = $query->orderByDesc('id')->paginate(10);
         return $this->response()->paginator($companyMedia, new CompanyMediaTransformer())->setStatusCode(200);
     }
 
