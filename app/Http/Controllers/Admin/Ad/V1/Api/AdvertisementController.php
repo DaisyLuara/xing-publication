@@ -42,6 +42,11 @@ class AdvertisementController extends Controller
         return $this->response->paginator($advertisements, new AdvertisementTransformer());
     }
 
+    public function show(Advertisement $advertisement): Response
+    {
+        return $this->response->item($advertisement, new AdvertisementTransformer());
+    }
+
     public function store(AdvertisementRequest $request, Advertisement $advertisement): Response
     {
         $data = $request->all();
@@ -51,6 +56,9 @@ class AdvertisementController extends Controller
 
         $advertisement->fill(array_merge($data, [
             'size' => strlen($content),
+            'date' => date('Y-m-d H:i:s'),
+            'clientdate' => time() * 1000,
+            'z' => $this->user->z,
         ]))->save();
 
         return $this->response->noContent();
@@ -65,6 +73,8 @@ class AdvertisementController extends Controller
 
         $advertisement->fill(array_merge($data, [
             'size' => strlen($content),
+            'date' => date('Y-m-d H:i:s'),
+            'clientdate' => time() * 1000,
         ]))->save();
 
         return $this->response->noContent();

@@ -110,6 +110,45 @@ let router = {
       ]
     },
     {
+      path: 'advertisement',
+      meta: {
+        title: '广告素材',
+        permission: 'ad.advertisement'
+      },
+      component: () =>
+        import(/* webpackChunkName: "page/ad/advertisement/routerView" */ 'page/ad/advertisement/routerView'),
+      children: [
+        {
+          path: '/',
+          name: '广告素材列表',
+          meta: {
+            title: '广告素材列表',
+            permission: 'ad.advertisement.read'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/ad/advertisement/index" */ 'page/ad/advertisement/index')
+        },
+        {
+          path: 'add',
+          component: () =>
+            import(/* webpackChunkName: "page/ad/advertisement/save" */ 'page/ad/advertisement/save'),
+          name: '广告素材增加',
+          meta: {
+            permission: 'ad.advertisement.create'
+          }
+        },
+        {
+          path: 'edit/:aid',
+          component: () =>
+            import(/* webpackChunkName: "page/ad/advertisement/save" */ 'page/ad/advertisement/save'),
+          name: '广告素材编辑',
+          meta: {
+            permission: 'ad.advertisement.update'
+          }
+        }
+      ]
+    },
+    {
       path: 'url',
       meta: {
         title: '短链接',
@@ -139,6 +178,7 @@ let router = {
         }
       ]
     }
+
   ]
 }
 

@@ -11,6 +11,7 @@ class AdvertisementTransformer extends TransformerAbstract
     {
         $array = [
             'id' => $advertisement->aid,
+            'atid' =>  $advertisement->atid,
             'ad_trade_name' => $advertisement->ad_trade ? $advertisement->ad_trade->name : '',
             'create_user_name' => ($advertisement->create_customer ? $advertisement->create_customer->name : null)
                 ?? ($advertisement->create_user ? $advertisement->create_user->name : null),
@@ -22,7 +23,7 @@ class AdvertisementTransformer extends TransformerAbstract
             'size' => round(((int)$advertisement->size) / 1024 / 1024, 2),
             'fps' => $advertisement->fps,
             'isad' => $advertisement->isad,
-            'isad_text' => $advertisement->isad === 1 ? '开启' : '关闭',
+            'isad_text' => $advertisement->isad === 1 ? '显示' : '隐藏',
             'pass' => $advertisement->pass,
             'created_at' => $advertisement->date,
             'updated_at' => formatClientDate($advertisement->clientdate),
