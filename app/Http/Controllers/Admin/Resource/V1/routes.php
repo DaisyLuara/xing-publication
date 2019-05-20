@@ -12,7 +12,7 @@ $api->version('v1', [
 
             //公司资源审核
             $api->get('company_media', ['middleware' => ['permission:resource.company.read'], 'uses' => 'CompanyMediaController@index']);
-            $api->patch('company_media/audit/{companyMedia}', ['middleware' => ['permission:resource.company.audit'], 'uses' => 'CompanyMediaController@audit']);
+            $api->patch('company_media/audit', ['middleware' => ['permission:resource.company.audit'], 'uses' => 'CompanyMediaController@audit']);
 
             //活动资源审核
             $api->get('activity_media', ['middleware' => ['permission:resource.activity.read'], 'uses' => 'ActivityMediaController@index']);

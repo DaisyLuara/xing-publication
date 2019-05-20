@@ -29,11 +29,14 @@ class CompanyMediaController extends Controller
         return $this->response()->paginator($companyMedia, new CompanyMediaTransformer())->setStatusCode(200);
     }
 
-    public function audit(CompanyMediaRequest $request, CompanyMedia $companyMedia)
+    public function audit(CompanyMediaRequest $request)
     {
         /** @var User $user */
         $user = $this->user();
-        $companyMedia->update(['status' => $request->get('status'), 'audit_user_id' => $user->id]);
+        $ids = $request->get('ids');
+        foreach ($ids as $id) {
+            CompanyMedia::query()->where('id', $id)->update(['status' => $request->get('status'), 'audit_user_id' => $user->id]);
+        }
         return $this->response()->noContent()->setStatusCode(200);
     }
 }
