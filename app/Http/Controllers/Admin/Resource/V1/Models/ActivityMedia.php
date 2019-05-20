@@ -46,7 +46,8 @@ class ActivityMedia extends Model
         'size',
         'url',
         'status',
-        'activity_id'
+        'activity_id',
+        'audit_user_id',
     ];
 
     public function auditUser(): \Illuminate\Database\Eloquent\Relations\BelongsTo
