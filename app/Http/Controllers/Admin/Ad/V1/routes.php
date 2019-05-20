@@ -20,9 +20,9 @@ $api->version('v1', [
 
             //广告
             $api->get('advertisement', ['middleware' => ['permission:ad.advertisement.read'], 'uses' =>'AdvertisementController@index']);
-            $api->get('advertisement/{advertisement}', ['middleware' => ['permission:ad.advertisement.read'], 'uses' =>'AdvertisementController@show']);
+            $api->get('advertisement/{advertisement}', ['middleware' => ['permission:ad.advertisement.read'], 'uses' =>'AdvertisementController@show'])->where('advertisement','[0-9]+');;
             $api->post('advertisement', ['middleware' => ['permission:ad.advertisement.create'], 'uses' =>'AdvertisementController@store']);
-            $api->patch('advertisement/{advertisement}', ['middleware' => ['permission:ad.advertisement.update'], 'uses' =>'AdvertisementController@update']);
+            $api->patch('advertisement/{advertisement}', ['middleware' => ['permission:ad.advertisement.update'], 'uses' =>'AdvertisementController@update'])->where('advertisement','[0-9]+');;
 
             //广告方案
             $api->get('ad_plan', ['middleware' => ['permission:ad.plan.read'], 'uses' =>'AdPlanController@index']);
