@@ -14,6 +14,13 @@
         :model="adPlanForm"
         label-width="150px">
 
+        <el-form-item>
+          <h3>
+            <i class="el-icon-star-on"></i>
+            广告方案
+          </h3>
+        </el-form-item>
+
         <el-form-item
           :rules="[{ required: true, message: '请选择类型', trigger: 'submit',type: 'string'}]"
           label="类型"
@@ -92,8 +99,47 @@
             placeholder="请输入广告方案介绍"
             v-model="adPlanForm.info"></el-input>
         </el-form-item>
+        <el-form-item
+          :rules="[{ required: true, message: '请选择小时/自定义', trigger: 'submit',type: 'string'}]"
+          label="小时/自定义"
+          prop="tmode">
+          <el-select
+            v-model="adPlanForm.tmode"
+            :loading="searchLoading"
+            placeholder="请选择请选择小时/自定义">
+            <el-option
+              key="div"
+              label="自定义"
+              value="div"/>
+            <el-option
+              key="hours"
+              label="小时"
+              value="hours"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          :rules="[{ required: true, message: '请选择硬件加速', trigger: 'submit',type: 'number'}]"
+          label="硬件加速"
+          prop="hardware">
+          <el-radio
+            v-model="adPlanForm.hardware"
+            :label="0">关闭
+          </el-radio>
+          <el-radio
+            v-model="adPlanForm.hardware"
+            :label="1">开启
+          </el-radio>
+        </el-form-item>
+
+
 
         <template v-if="!isItem">
+          <el-form-item>
+            <h3 class="text text-primary">
+              <i class="el-icon-star-on"></i>
+              排期细节
+            </h3>
+          </el-form-item>
           <template v-if="adPlanForm.type === 'program'">
             <el-form-item
               :rules="[{ required: true, message: '请选择模式', trigger: 'submit',type: 'string'}]"
@@ -260,6 +306,8 @@
           name: '',
           icon: 'http://image.xingstation.cn/1007/image/393_511_941_578_ic_launcher.png',
           info: '',
+          hardware: 1,
+          tmode: 'div',
           mode: 'fullscreen',
           ori: 'center',
           screen: 100,
@@ -368,6 +416,8 @@
             this.adPlanForm.icon = response.icon;
             this.adPlanForm.name = response.name;
             this.adPlanForm.info = response.info;
+            this.adPlanForm.tmode = response.tmode;
+            this.adPlanForm.hardware = response.hardware;
             this.getSearchAdList();
           })
           .catch(error => {
@@ -412,6 +462,8 @@
               name: this.adPlanForm.name,
               icon: this.adPlanForm.icon,
               info: this.adPlanForm.info,
+              tmode: this.adPlanForm.tmode,
+              hardware: this.adPlanForm.hardware,
               mode: this.adPlanForm.mode,
               ori: this.adPlanForm.ori,
               screen: this.adPlanForm.screen,
@@ -506,6 +558,7 @@
       .el-select,
       .item-input,
       .el-input,
+      .el-textarea,
       .el-date-editor {
         width: 380px;
       }
