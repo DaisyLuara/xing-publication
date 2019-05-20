@@ -7,7 +7,7 @@
       class="pane">
       <div
         class="pane-title">
-        {{ adPlanId ? '编辑广告方案' : '新增广告方案' }}
+        {{ adPlanId ? '编辑广告模版' : '新增广告模版' }}
       </div>
       <el-form
         ref="adPlanForm"
@@ -17,7 +17,7 @@
         <el-form-item>
           <h3>
             <i class="el-icon-star-on"></i>
-            广告方案
+            广告模版
           </h3>
         </el-form-item>
 
@@ -25,20 +25,12 @@
           :rules="[{ required: true, message: '请选择类型', trigger: 'submit',type: 'string'}]"
           label="类型"
           prop="type">
-          <el-select
-            :disabled="!!adPlanId"
+          <el-radio
             v-model="adPlanForm.type"
-            :loading="searchLoading"
-            placeholder="请选择类型">
-            <el-option
-              key="program"
-              label="节目广告"
-              value="program"/>
-            <el-option
-              key="ads"
-              label="小屏广告"
-              value="ads"/>
-          </el-select>
+            label="program">节目广告</el-radio>
+          <el-radio
+            v-model="adPlanForm.type"
+            label="ads">小屏广告</el-radio>
         </el-form-item>
         <el-form-item
           :rules="[{ required: true, message: '请选择广告行业', trigger: 'submit',type: 'number'}]"
@@ -78,44 +70,37 @@
           </el-select>
         </el-form-item>
         <el-form-item
-          :rules="[{ required: true, message: '请输入广告方案名称', trigger: 'submit',type: 'string'}]"
-          label="广告方案名称"
+          :rules="[{ required: true, message: '请输入广告模版名称', trigger: 'submit',type: 'string'}]"
+          label="广告模版名称"
           prop="name">
           <el-input
             v-model="adPlanForm.name"
-            placeholder="请输入广告方案名称"/>
+            placeholder="请输入广告模版名称"/>
         </el-form-item>
 
         <!--使用默认ICON-->
         <!--"icon":"http://image.xingstation.cn/1007/image/393_511_941_578_ic_launcher.png",-->
 
         <el-form-item
-          label="广告方案介绍"
+          label="广告模版介绍"
           prop="info">
           <el-input
             v-model="adPlanForm.info"
             type="textarea"
             maxlength="200"
             show-word-limit
-            placeholder="请输入广告方案介绍"/>
+            placeholder="请输入广告模版介绍"/>
         </el-form-item>
         <el-form-item
           :rules="[{ required: true, message: '请选择小时/自定义', trigger: 'submit',type: 'string'}]"
           label="小时/自定义"
           prop="tmode">
-          <el-select
+          <el-radio
             v-model="adPlanForm.tmode"
-            :loading="searchLoading"
-            placeholder="请选择请选择小时/自定义">
-            <el-option
-              key="div"
-              label="自定义"
-              value="div"/>
-            <el-option
-              key="hours"
-              label="小时"
-              value="hours"/>
-          </el-select>
+            label="div">自定义</el-radio>
+          <el-radio
+            v-model="adPlanForm.tmode"
+            label="hours">小时</el-radio>
         </el-form-item>
         <el-form-item
           :rules="[{ required: true, message: '请选择硬件加速', trigger: 'submit',type: 'number'}]"

@@ -27,7 +27,7 @@
             disabled />
         </el-form-item>
         <el-form-item
-          label="广告方案名称">
+          label="广告模版名称">
           <el-input 
             :value="adPlan.name" 
             disabled />

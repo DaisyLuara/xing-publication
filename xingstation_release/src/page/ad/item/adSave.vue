@@ -31,8 +31,8 @@
           </el-select>
         </el-form-item>
         <el-form-item 
-          :rules="[{ required: true, message: '请输入广告方案名称', trigger: 'submit',type: 'number'}]"
-          label="广告方案"
+          :rules="[{ required: true, message: '请输入广告模版名称', trigger: 'submit',type: 'number'}]"
+          label="广告模版"
           prop="ad_plan_id">
           <el-select 
             v-model="adForm.ad_plan_id"

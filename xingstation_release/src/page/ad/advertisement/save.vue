@@ -31,18 +31,20 @@
           </el-select>
         </el-form-item>
         <el-form-item
+          :rules="[{ required: true, message: '请填写素材名', trigger: 'submit',type: 'string'}]"
+          label="素材名"
+          prop="name">
+          <el-input v-model="adForm.name" placeholder="请填写素材名"></el-input>
+        </el-form-item>
+        <el-form-item
           :rules="[{ required: true, message: '请选择类型', trigger: 'submit',type: 'string'}]"
           label="类型"
           prop="type">
-          <el-select
-            v-model="adForm.type"
-            placeholder="请选择类型">
-            <el-option
-              v-for="item in typeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"/>
-          </el-select>
+          <template v-for="typeOption in typeOptions">
+            <el-radio
+              v-model="adForm.type"
+              :label="typeOption.value">{{ typeOption.label }}</el-radio>
+          </template>
         </el-form-item>
 
         <el-form-item
@@ -68,12 +70,6 @@
           label="附件"
           prop="link">
           <el-input v-model="adForm.link"  placeholder="请填写附件链接"></el-input>
-        </el-form-item>
-        <el-form-item
-          :rules="[{ required: true, message: '请填写素材名', trigger: 'submit',type: 'string'}]"
-          label="素材名"
-          prop="name">
-          <el-input v-model="adForm.name" placeholder="请填写素材名"></el-input>
         </el-form-item>
         <el-form-item
           :rules="[{ required: true, message: '请选择广告标示', trigger: 'submit',type: 'number'}]"

@@ -143,7 +143,7 @@
               <el-button
                 size="small"
                 type="success"
-                @click="linkToEdit(scope.row.id)">编辑方案
+                @click="linkToEdit(scope.row.id)">编辑模版
               </el-button>
             </template>
           </el-table-column>
