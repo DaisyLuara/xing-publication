@@ -22,6 +22,9 @@ class AdPlanTransformer extends TransformerAbstract
             'icon' => $adPlan->icon,
             'type' => $adPlan->type,
             'type_text' => AdPlan::$typeMapping[$adPlan->type] ?? '未知',
+            'hardware' => $adPlan->hardware,
+            'tmode' => $adPlan->tmode,
+            'tmode_text' => AdPlan::$modeMapping[$adPlan->tmode] ?? '未知',
             'created_at' => $adPlan->date,
             'updated_at' => formatClientDate($adPlan->clientdate),
         ];

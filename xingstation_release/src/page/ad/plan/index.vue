@@ -137,13 +137,22 @@
                 </el-form-item>
                 <el-form-item
                   label="图标">
-                  <img 
-                    :src="scope.row.icon" 
-                    width="40px">
+                    <a
+                      :href="scope.row.icon"
+                      target="_blank"
+                      style="color: blue">查看</a>
                 </el-form-item>
                 <el-form-item
                   label="广告方案">
                   <span>{{ scope.row.name }}</span>
+                </el-form-item>
+                <el-form-item
+                  label="硬件加速">
+                  <span>{{ scope.row.hardware ? '是' : '否' }}</span>
+                </el-form-item>
+                <el-form-item
+                  label="小时/自定义">
+                  <span>{{ scope.row.tmode_text}}</span>
                 </el-form-item>
                 <el-form-item
                   label="创建时间">
@@ -166,13 +175,13 @@
                       <span>{{ ad_scope.row.ad_trade_name }}</span>
                     </template>
                   </el-table-column>
-                  <!--<el-table-column-->
-                  <!--label="创建人"-->
-                  <!--min-width="80">-->
-                  <!--<template slot-scope="ad_scope">-->
-                  <!--<span>{{ ad_scope.row.create_user_name }}</span>-->
-                  <!--</template>-->
-                  <!--</el-table-column>-->
+                  <el-table-column
+                    label="创建人"
+                    min-width="80">
+                    <template slot-scope="ad_scope">
+                      <span>{{ ad_scope.row.create_user_name }}</span>
+                    </template>
+                  </el-table-column>
                   <el-table-column
                     label="图片"
                     min-width="50">
@@ -295,19 +304,19 @@
           <el-table-column
             prop="id"
             label="ID"
-            min-width="80"
+            min-width="50"
           />
           <el-table-column
             :show-overflow-tooltip="true"
             prop="type_text"
             label="类型"
-            min-width="80"
+            min-width="60"
           />
           <el-table-column
             :show-overflow-tooltip="true"
             prop="ad_trade"
             label="广告行业"
-            min-width="80"
+            min-width="60"
           />
           <el-table-column
             label="图片"
@@ -324,15 +333,29 @@
             :show-overflow-tooltip="true"
             prop="name"
             label="广告方案"
-            min-width="150"
+            min-width="130"
+          />
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="hardware"
+            label="硬件加速"
+            min-width="80">
+            <template slot-scope="scope">
+              {{ scope.row.hardware ? '是' : '否' }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="tmode_text"
+            label="小时/自定义"
+            min-width="80"
           />
           <el-table-column
             :show-overflow-tooltip="true"
             prop="created_at"
             label="创建时间"
-            min-width="150"
+            min-width="120"
           />
-
           <el-table-column
             label="操作"
             min-width="150"

@@ -22,6 +22,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property int $clientdate 时间
  * @property-read \App\Http\Controllers\Admin\Ad\V1\Models\AdTrade $ad_trade
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Http\Controllers\Admin\Ad\V1\Models\Advertisement[] $advertisements
+ * @property-read \App\Models\Customer $create_customer
+ * @property-read \App\Models\User $create_user
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\AdPlan newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\AdPlan newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model ordered()
@@ -51,6 +53,8 @@ class AdPlan extends Model
         'icon',
         'info',
         'type',
+        'hardware',
+        'tmode',
         'z',
         'date',
         'clientdate'
@@ -93,6 +97,13 @@ class AdPlan extends Model
         self::ORI_RIGHT_TOP => '右上角',
         self::ORI_RIGHT => '右侧居中',
         self::ORI_RIGHT_BOTTOM => '右下角',
+    ];
+
+    public const TMODE_DIV = 'div';
+    public const TMODE_HOURS = 'hours';
+    public static $tmodeMapping = [
+        self::TMODE_DIV => '自定义',
+        self::TMODE_HOURS => '小时',
     ];
 
 

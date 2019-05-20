@@ -1,31 +1,31 @@
 <template>
-  <div 
+  <div
     class="root">
-    <div 
-      v-loading="setting.loading" 
-      :element-loading-text="setting.loadingText" 
+    <div
+      v-loading="setting.loading"
+      :element-loading-text="setting.loadingText"
       class="item-list-wrap">
-      <div 
+      <div
         class="item-content-wrap">
-        <div 
+        <div
           class="search-wrap">
-          <el-form 
-            ref="adSearchForm" 
-            :model="adSearchForm" 
+          <el-form
+            ref="adSearchForm"
+            :model="adSearchForm"
             class="search-form">
-            <el-row 
+            <el-row
               :gutter="24">
-              <el-col 
+              <el-col
                 :span="6">
-                <el-form-item 
-                  label="" 
+                <el-form-item
+                  label=""
                   prop="area_id">
-                  <el-select 
-                    v-model="adSearchForm.area_id" 
-                    placeholder="请选择区域" 
+                  <el-select
+                    v-model="adSearchForm.area_id"
+                    placeholder="请选择区域"
                     filterable
                     clearable
-                    @change="areaChangeHandle" >
+                    @change="areaChangeHandle">
                     <el-option
                       v-for="item in areaList"
                       :key="item.id"
@@ -34,22 +34,22 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col 
+              <el-col
                 :span="6">
-                <el-form-item 
-                  label="" 
+                <el-form-item
+                  label=""
                   prop="market_id">
-                  <el-select 
+                  <el-select
                     v-model="adSearchForm.market_id"
                     :remote-method="getMarket"
-                    :loading="searchLoading" 
+                    :loading="searchLoading"
                     :multiple-limit="1"
                     multiple
-                    placeholder="请搜索商场" 
-                    filterable 
-                    remote 
+                    placeholder="请搜索商场"
+                    filterable
+                    remote
                     clearable
-                    @change="marketChangeHandle" >
+                    @change="marketChangeHandle">
                     <el-option
                       v-for="item in marketList"
                       :key="item.id"
@@ -58,16 +58,16 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col 
+              <el-col
                 :span="6">
-                <el-form-item 
-                  label="" 
+                <el-form-item
+                  label=""
                   prop="point_id">
-                  <el-select 
-                    v-model="adSearchForm.point_id" 
+                  <el-select
+                    v-model="adSearchForm.point_id"
                     :loading="searchLoading"
-                    placeholder="请选择点位"   
-                    filterable 
+                    placeholder="请选择点位"
+                    filterable
                     clearable>
                     <el-option
                       v-for="item in pointList"
@@ -90,7 +90,7 @@
                     filterable
                     placeholder="请搜索广告行业"
                     clearable
-                    @change="adTradeChangeHandle('search')" >
+                    @change="adTradeChangeHandle('search')">
                     <el-option
                       v-for="item in adTradeList"
                       :key="item.id"
@@ -121,7 +121,7 @@
               <el-col
                 :span="6">
                 <el-form-item
-                  prop="type" >
+                  prop="type">
                   <el-select
                     v-model="adSearchForm.type"
                     :loading="searchLoading"
@@ -143,63 +143,67 @@
                 <el-form-item>
                   <el-button
                     type="primary"
-                    @click="search('adSearchForm')">搜索</el-button>
+                    @click="search('adSearchForm')">搜索
+                  </el-button>
                   <el-button
-                    @click="resetSearch('adSearchForm')">重置</el-button>
+                    @click="resetSearch('adSearchForm')">重置
+                  </el-button>
                 </el-form-item>
               </el-col>
             </el-row>
           </el-form>
         </div>
-        <div 
-          class="editCondition-wrap" 
+        <div
+          class="editCondition-wrap"
           style="padding: 0 0 15px;">
-          <el-form 
+          <el-form
             ref="editForm"
-            :model="editCondition" 
-            :inline="true" 
+            :model="editCondition"
+            :inline="true"
           >
-            <el-form-item 
-              label="修改选项" 
+            <el-form-item
+              label="修改选项"
               style="margin-bottom: 0;">
-              <el-checkbox-group 
+              <el-checkbox-group
                 v-model="editCondition.conditionList">
-                <el-checkbox 
-                  v-for="item in conditionContent" 
-                  :label="item" 
+                <el-checkbox
+                  v-for="item in conditionContent"
+                  :label="item"
                   :key="item"/>
               </el-checkbox-group>
             </el-form-item>
-            <el-button 
-              type="danger" 
+            <el-button
+              type="danger"
               size="small"
-              @click="modifyEdit">修改</el-button>
+              @click="modifyEdit">修改
+            </el-button>
           </el-form>
         </div>
-        <div 
+        <div
           class="actions-wrap">
-          <span 
+          <span
             class="label">
             方案投放数量: {{ pagination.total }}
           </span>
-          <el-button 
-            size="small" 
+          <el-button
+            size="small"
             type="success"
-            @click="linkToAddItem">投放广告方案</el-button>
+            @click="linkToAddItem">投放广告方案
+          </el-button>
         </div>
-        <el-table 
+        <el-table
           ref="multipleTable"
           :data="adLaunchList"
           style="width: 100%"
-          highlight-current-row 
-          @selection-change="handleSelectionChange" 
+          highlight-current-row
+          @selection-change="handleSelectionChange"
         >
-          <el-table-column 
-            type="selection" 
+          <el-table-column
+            type="selection"
             width="55"/>
-          <el-table-column 
+          <el-table-column
             type="expand">
-            <template 
+            <template
               slot-scope="scope">
               <el-form
                 label-position="left"
@@ -228,6 +232,10 @@
                 <el-form-item
                   label="状态">
                   <span>{{ scope.row.visiable_text }}</span>
+                </el-form-item>
+                <el-form-item
+                  label="唯一性">
+                  <span>{{ scope.row.only ? '是' : '否' }}</span>
                 </el-form-item>
                 <el-form-item
                   label="创建时间">
@@ -307,35 +315,37 @@
                       <span>{{ ad_scope.row.isad_text }}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column
-                    label="显示"
-                    min-width="50">
-                    <template slot-scope="ad_scope">
+                  <template v-if="scope.row.ad_plan.type==='program'">
+                    <el-table-column
+                      label="显示"
+                      min-width="50">
+                      <template slot-scope="ad_scope">
                       <span v-if="ad_scope.row.pivot">
                         {{ ad_scope.row.pivot.mode }}
                       </span>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    label="屏幕"
-                    min-width="50">
-                    <template slot-scope="ad_scope">
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="屏幕"
+                      min-width="50">
+                      <template slot-scope="ad_scope">
                       <span v-if="ad_scope.row.pivot">
                         {{ ad_scope.row.pivot.ori }} <br>
                         {{ ad_scope.row.pivot.screen }}%
                       </span>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    label="倒计时"
-                    min-width="50">
-                    <template slot-scope="ad_scope">
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="倒计时"
+                      min-width="50">
+                      <template slot-scope="ad_scope">
                       <span v-if="ad_scope.row.pivot">
                         {{ ad_scope.row.pivot.cdshow ?'开启':'关闭' }}<br>
                         {{ ad_scope.row.pivot.ktime }}s
                       </span>
-                    </template>
-                  </el-table-column>
+                      </template>
+                    </el-table-column>
+                  </template>
                   <el-table-column
                     label="开始时间"
                     min-width="50">
@@ -364,7 +374,7 @@
           <el-table-column
             prop="id"
             label="ID"
-            min-width="80"
+            min-width="50"
           />
           <el-table-column
             :show-overflow-tooltip="true"
@@ -382,7 +392,7 @@
             :show-overflow-tooltip="true"
             prop="ad_trade"
             label="广告行业"
-            min-width="50"
+            min-width="80"
           />
           <el-table-column
             :show-overflow-tooltip="true"
@@ -404,18 +414,12 @@
           />
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="only_text"
-            label="唯一性"
-            min-width="80"
-          />
-          <el-table-column
-            :show-overflow-tooltip="true"
             prop="created_at"
             label="创建时间"
             min-width="150"
           />
         </el-table>
-        <div 
+        <div
           class="pagination-wrap">
           <el-pagination
             :total="pagination.total"
@@ -426,27 +430,27 @@
           />
         </div>
       </div>
-      <el-dialog  
+      <el-dialog
         v-loading="loading"
-        :visible.sync="editVisible" 
-        title="批量修改" 
+        :visible.sync="editVisible"
+        title="批量修改"
         @close="dialogClose"
       >
         <el-form
           ref="adForm"
-          :model="adForm" 
+          :model="adForm"
           label-width="150px">
-          <el-form-item 
-            v-if="modifyOptionFlag.ad_trade_id" 
+          <el-form-item
+            v-if="modifyOptionFlag.ad_trade_id"
             :rules="[{ type: 'number', required: true, message: '请选择广告行业', trigger: 'submit' }]"
-            label="广告行业" 
+            label="广告行业"
             prop="ad_trade_id">
-            <el-select 
-              v-model="adForm.ad_trade_id" 
-              filterable 
+            <el-select
+              v-model="adForm.ad_trade_id"
+              filterable
               placeholder="请搜索"
               clearable
-              @change="adTradeChangeHandle('edit')" >
+              @change="adTradeChangeHandle('edit')">
               <el-option
                 v-for="item in adTradeList"
                 :key="item.id"
@@ -454,16 +458,16 @@
                 :value="item.id"/>
             </el-select>
           </el-form-item>
-          <el-form-item 
+          <el-form-item
             v-if="modifyOptionFlag.ad_plan_id"
             :rules="[{ type: 'number', required: true, message: '请选择广告方案', trigger: 'submit' }]"
             label="广告方案"
-            prop="ad_plan_id" >
-            <el-select 
+            prop="ad_plan_id">
+            <el-select
               v-model="adForm.ad_plan_id"
-              :loading="searchLoading" 
-              placeholder="请选择" 
-              filterable 
+              :loading="searchLoading"
+              placeholder="请选择"
+              filterable
               clearable
             >
               <el-option
@@ -473,23 +477,23 @@
                 :value="item.id"/>
             </el-select>
           </el-form-item>
-          <el-form-item 
-            v-if="modifyOptionFlag.sdate" 
+          <el-form-item
+            v-if="modifyOptionFlag.sdate"
             :rules="[{ type: 'date', required: true, message: '请输入开始时间', trigger: 'submit' }]"
             label="开始时间"
-            prop="sdate" >
+            prop="sdate">
             <el-date-picker
               v-model="adForm.sdate"
               :editable="false"
               type="datetime"
-              placeholder="选择开始时间" 
+              placeholder="选择开始时间"
             />
           </el-form-item>
-          <el-form-item 
-            v-if="modifyOptionFlag.edate" 
+          <el-form-item
+            v-if="modifyOptionFlag.edate"
             :rules="[{ type: 'date', required: true, message: '请输入结束时间', trigger: 'submit' }]"
-            label="结束时间" 
-            prop="edate" >
+            label="结束时间"
+            prop="edate">
             <el-date-picker
               v-model="adForm.edate"
               :editable="false"
@@ -522,9 +526,10 @@
               :label="0">否</el-radio>
           </el-form-item>
           <el-form-item>
-            <el-button 
-              type="primary" 
-              @click="submitModify('adForm')">完成</el-button>
+            <el-button
+              type="primary"
+              @click="submitModify('adForm')">完成
+            </el-button>
           </el-form-item>
         </el-form>
       </el-dialog>
@@ -533,522 +538,522 @@
 </template>
 
 <script>
-import {
-  modifyAdLaunch,
-  getAdLaunchList,
-  getSearchAdTradeList,
-  getSearchMarketList,
-  getSearchPointList,
-  getSearchAdvertisementList,
-  getSearchAeraList,
-  getSearchAdPlanList
-} from 'service'
+  import {
+    modifyAdLaunch,
+    getAdLaunchList,
+    getSearchAdTradeList,
+    getSearchMarketList,
+    getSearchPointList,
+    getSearchAdvertisementList,
+    getSearchAeraList,
+    getSearchAdPlanList
+  } from 'service'
 
-import {
-  Button,
-  Input,
-  Table,
-  Select,
-  Option,
-  Col,
-  TableColumn,
-  Pagination,
-  Form,
-  FormItem,
-  MessageBox,
-  DatePicker,
-  Checkbox,
-  CheckboxGroup,
-  Dialog,
-  Row,
-  Radio
-} from 'element-ui'
+  import {
+    Button,
+    Input,
+    Table,
+    Select,
+    Option,
+    Col,
+    TableColumn,
+    Pagination,
+    Form,
+    FormItem,
+    MessageBox,
+    DatePicker,
+    Checkbox,
+    CheckboxGroup,
+    Dialog,
+    Row,
+    Radio
+  } from 'element-ui'
 
-export default {
-  components: {
-    'el-table': Table,
-    'el-date-picker': DatePicker,
-    'el-table-column': TableColumn,
-    'el-button': Button,
-    'el-input': Input,
-    'el-pagination': Pagination,
-    'el-form': Form,
-    'el-select': Select,
-    'el-option': Option,
-    'el-form-item': FormItem,
-    'el-checkbox-group': CheckboxGroup,
-    'el-checkbox': Checkbox,
-    'el-dialog': Dialog,
-    'el-col': Col,
-    'el-row': Row,
-    'el-radio':Radio
-  },
-  data() {
-    return {
-      filters: {
-        name: ''
-      },
-      setting: {
+  export default {
+    components: {
+      'el-table': Table,
+      'el-date-picker': DatePicker,
+      'el-table-column': TableColumn,
+      'el-button': Button,
+      'el-input': Input,
+      'el-pagination': Pagination,
+      'el-form': Form,
+      'el-select': Select,
+      'el-option': Option,
+      'el-form-item': FormItem,
+      'el-checkbox-group': CheckboxGroup,
+      'el-checkbox': Checkbox,
+      'el-dialog': Dialog,
+      'el-col': Col,
+      'el-row': Row,
+      'el-radio': Radio
+    },
+    data() {
+      return {
+        filters: {
+          name: ''
+        },
+        setting: {
+          loading: false,
+          loadingText: '拼命加载中'
+        },
+        conditionContent: [
+          '广告方案',
+          '开始时间',
+          '结束时间',
+          '状态',
+          '唯一性'
+        ],
+        editCondition: {
+          conditionList: []
+        },
         loading: false,
-        loadingText: '拼命加载中'
-      },
-      conditionContent: [
-        '广告方案',
-        '开始时间',
-        '结束时间',
-        '状态',
-        '唯一性'
-      ],
-      editCondition: {
-        conditionList: []
-      },
-      loading: false,
-      marketList: [],
-      weekdayList: [],
-      weekendList: [],
-      defineList: [],
-      pointList: [],
-      adTradeList: [],
-      searchLoading: false,
-      adPlanList: [],
-      advertiserFormList: [],
-      advertisementList: [],
-      advertisementFormList: [],
-      adSearchForm: {
-        ad_trade_id: '',
-        ad_plan_id: '',
-        area_id: '',
-        market_id: [],
-        point_id: '',
-        type:'',
-      },
-      areaList: [],
-      dataValue: '',
-      arUserName: '',
-      dataShowFlag: true,
-      pagination: {
-        total: 0,
-        pageSize: 10,
-        currentPage: 1
-      },
-      modifyOptionFlag: {
-        ad_trade_id:false,
-        ad_plan_id:false,
-        sdate:false,
-        edate:false,
-        visiable:false,
-        only:false,
-      },
-      adForm: {
-        ad_trade_id:'',
-        ad_plan_id: '',
-        sdate: '',
-        edate: '',
-        visiable: 1,
-        only: 1
-      },
-      aoids: [],
-      adLaunchList: [],
-      selectAll: [],
-      editVisible: false,
-      slectedLength: 0
-    }
-  },
-  created() {
-    this.setting.loading = true
-    let areaList = this.getAreaList()
-    let adTradeList = this.getAdTradeList()
-    let adLaunchList = this.getAdLaunchList()
-    Promise.all([areaList, adTradeList, adLaunchList])
-      .then(() => {
-        this.setting.loading = false
-      })
-      .catch(err => {
-        console.log(err)
-        this.setting.loading = false
-      })
-  },
-  methods: {
-    handleSelectionChange(val) {
-      this.selectAll = val
-    },
-    dialogClose() {
-      if (!this.editVisible) {
-        this.editCondition.conditionList = []
-        this.$refs.multipleTable.clearSelection()
+        marketList: [],
+        weekdayList: [],
+        weekendList: [],
+        defineList: [],
+        pointList: [],
+        adTradeList: [],
+        searchLoading: false,
+        adPlanList: [],
+        advertiserFormList: [],
+        advertisementList: [],
+        advertisementFormList: [],
+        adSearchForm: {
+          ad_trade_id: '',
+          ad_plan_id: '',
+          area_id: '',
+          market_id: [],
+          point_id: '',
+          type: '',
+        },
+        areaList: [],
+        dataValue: '',
+        arUserName: '',
+        dataShowFlag: true,
+        pagination: {
+          total: 0,
+          pageSize: 10,
+          currentPage: 1
+        },
+        modifyOptionFlag: {
+          ad_trade_id: false,
+          ad_plan_id: false,
+          sdate: false,
+          edate: false,
+          visiable: false,
+          only: false,
+        },
+        adForm: {
+          ad_trade_id: '',
+          ad_plan_id: '',
+          sdate: '',
+          edate: '',
+          visiable: 1,
+          only: 1
+        },
+        aoids: [],
+        adLaunchList: [],
+        selectAll: [],
+        editVisible: false,
+        slectedLength: 0
       }
     },
-    getAdTradeList() {
-      return getSearchAdTradeList(this)
-        .then(response => {
-          let data = response.data
-          this.adTradeList = data
-        })
-        .catch(error => {
-          console.log(error)
+    created() {
+      this.setting.loading = true
+      let areaList = this.getAreaList()
+      let adTradeList = this.getAdTradeList()
+      let adLaunchList = this.getAdLaunchList()
+      Promise.all([areaList, adTradeList, adLaunchList])
+        .then(() => {
           this.setting.loading = false
-        })
-    },
-    adTradeChangeHandle(type) {
-      if (type === 'edit') {
-        this.adForm.ad_plan_id = ''
-      } else {
-        this.adSearchForm.ad_plan_id = ''
-      }
-      this.getAdPlanList(type)
-    },
-    getAdPlanList(type) {
-      let args = {}
-      if (type === 'edit') {
-        args = {
-          ad_trade_id: this.adForm.ad_trade_id
-        }
-      } else {
-        args = {
-          ad_trade_id: this.adSearchForm.ad_trade_id
-        }
-      }
-      this.searchLoading = true
-      return getSearchAdPlanList(this, args)
-        .then(response => {
-          let data = response.data
-          if (type === 'edit') {
-            this.advertiserFormList = data
-          } else {
-            this.adPlanList = data
-          }
-          this.searchLoading = false
-        })
-        .catch(error => {
-          console.log(error)
-          this.searchLoading = false
-        })
-    },
-    areaChangeHandle() {
-      this.adSearchForm.market_id = []
-      this.getMarket()
-    },
-    getAreaList() {
-      return getSearchAeraList(this)
-        .then(response => {
-          let data = response.data
-          this.areaList = data
-        })
-        .catch(error => {
-          console.log(error)
-          this.setting.loading = false
-        })
-    },
-    marketChangeHandle() {
-      this.adSearchForm.point_id = ''
-      this.getPoint()
-    },
-    getPoint() {
-      let args = {
-        include: 'market',
-        market_id: this.adSearchForm.market_id[0]
-      }
-      this.searchLoading = true
-      return getSearchPointList(this, args)
-        .then(response => {
-          this.pointList = response.data
-          this.searchLoading = false
         })
         .catch(err => {
-          this.searchLoading = false
           console.log(err)
+          this.setting.loading = false
         })
     },
-    getMarket(query) {
-      if (query !== '') {
-        this.searchLoading = true
-        let args = {
-          name: query,
-          include: 'area',
-          area_id: this.adSearchForm.area_id
+    methods: {
+      handleSelectionChange(val) {
+        this.selectAll = val
+      },
+      dialogClose() {
+        if (!this.editVisible) {
+          this.editCondition.conditionList = []
+          this.$refs.multipleTable.clearSelection()
         }
-        return getSearchMarketList(this, args)
+      },
+      getAdTradeList() {
+        return getSearchAdTradeList(this)
           .then(response => {
-            this.marketList = response.data
-            if (this.marketList.length == 0) {
-              this.adSearchForm.market_id = ''
-              this.adSearchForm.marketList = []
+            let data = response.data
+            this.adTradeList = data
+          })
+          .catch(error => {
+            console.log(error)
+            this.setting.loading = false
+          })
+      },
+      adTradeChangeHandle(type) {
+        if (type === 'edit') {
+          this.adForm.ad_plan_id = ''
+        } else {
+          this.adSearchForm.ad_plan_id = ''
+        }
+        this.getAdPlanList(type)
+      },
+      getAdPlanList(type) {
+        let args = {}
+        if (type === 'edit') {
+          args = {
+            ad_trade_id: this.adForm.ad_trade_id
+          }
+        } else {
+          args = {
+            ad_trade_id: this.adSearchForm.ad_trade_id
+          }
+        }
+        this.searchLoading = true
+        return getSearchAdPlanList(this, args)
+          .then(response => {
+            let data = response.data
+            if (type === 'edit') {
+              this.advertiserFormList = data
+            } else {
+              this.adPlanList = data
             }
+            this.searchLoading = false
+          })
+          .catch(error => {
+            console.log(error)
+            this.searchLoading = false
+          })
+      },
+      areaChangeHandle() {
+        this.adSearchForm.market_id = []
+        this.getMarket()
+      },
+      getAreaList() {
+        return getSearchAeraList(this)
+          .then(response => {
+            let data = response.data
+            this.areaList = data
+          })
+          .catch(error => {
+            console.log(error)
+            this.setting.loading = false
+          })
+      },
+      marketChangeHandle() {
+        this.adSearchForm.point_id = ''
+        this.getPoint()
+      },
+      getPoint() {
+        let args = {
+          include: 'market',
+          market_id: this.adSearchForm.market_id[0]
+        }
+        this.searchLoading = true
+        return getSearchPointList(this, args)
+          .then(response => {
+            this.pointList = response.data
             this.searchLoading = false
           })
           .catch(err => {
-            console.log(err)
             this.searchLoading = false
+            console.log(err)
           })
-      } else {
-        this.marketList = []
-      }
-    },
-    getAdLaunchList() {
-      this.setting.loadingText = '拼命加载中'
-      this.setting.loading = true
-      let searchArgs = {
-        page: this.pagination.currentPage,
-        ad_trade_id: this.adSearchForm.ad_trade_id,
-        ad_plan_id: this.adSearchForm.ad_plan_id,
-        market_id: this.adSearchForm.market_id[0],
-        point_id: this.adSearchForm.point_id,
-        type: this.adSearchForm.type,
-        include: 'ad_plan.advertisements'
-      }
-      this.adSearchForm.ad_trade_id !== ''
-        ? searchArgs
-        : delete searchArgs.ad_trade_id
-      this.adSearchForm.ad_plan_id !== ''
-        ? searchArgs
-        : delete searchArgs.ad_plan_id
-      this.adSearchForm.area_id !== '' ? searchArgs : delete searchArgs.area_id
-      this.adSearchForm.market_id.length !== 0
-        ? searchArgs
-        : delete searchArgs.market_id
-      this.adSearchForm.point_id !== ''
-        ? searchArgs
-        : delete searchArgs.point_id
-      return getAdLaunchList(this, searchArgs)
-        .then(response => {
-          let data = response.data
-          this.adLaunchList = data
-          this.pagination.total = response.meta.pagination.total
-          this.setting.loading = false
-        })
-        .catch(error => {
-          console.log(error)
-          this.setting.loading = false
-        })
-    },
-    search(formName) {
-      this.pagination.currentPage = 1
-      this.editCondition.conditionList = []
-      this.getAdLaunchList()
-    },
-    resetSearch(formName) {
-      this.adSearchForm.ad_trade_id = ''
-      this.adSearchForm.ad_plan_id = ''
-      this.adSearchForm.area_id = ''
-      this.adSearchForm.market_id = []
-      this.adSearchForm.point_id = ''
-      this.pagination.currentPage = 1
-      this.editCondition.conditionList = []
-      this.getAdLaunchList()
-    },
-    changePage(currentPage) {
-      this.pagination.currentPage = currentPage
-      this.editCondition.conditionList = []
-      this.getAdLaunchList()
-    },
-    modifyEdit() {
-      if (this.selectAll.length === 0) {
-        this.$message({
-          message: '请选择广告方案投放',
-          type: 'warning'
-        })
-      } else {
-        if (this.editCondition.conditionList.length === 0) {
+      },
+      getMarket(query) {
+        if (query !== '') {
+          this.searchLoading = true
+          let args = {
+            name: query,
+            include: 'area',
+            area_id: this.adSearchForm.area_id
+          }
+          return getSearchMarketList(this, args)
+            .then(response => {
+              this.marketList = response.data
+              if (this.marketList.length == 0) {
+                this.adSearchForm.market_id = ''
+                this.adSearchForm.marketList = []
+              }
+              this.searchLoading = false
+            })
+            .catch(err => {
+              console.log(err)
+              this.searchLoading = false
+            })
+        } else {
+          this.marketList = []
+        }
+      },
+      getAdLaunchList() {
+        this.setting.loadingText = '拼命加载中'
+        this.setting.loading = true
+        let searchArgs = {
+          page: this.pagination.currentPage,
+          ad_trade_id: this.adSearchForm.ad_trade_id,
+          ad_plan_id: this.adSearchForm.ad_plan_id,
+          market_id: this.adSearchForm.market_id[0],
+          point_id: this.adSearchForm.point_id,
+          type: this.adSearchForm.type,
+          include: 'ad_plan.advertisements'
+        }
+        this.adSearchForm.ad_trade_id !== ''
+          ? searchArgs
+          : delete searchArgs.ad_trade_id
+        this.adSearchForm.ad_plan_id !== ''
+          ? searchArgs
+          : delete searchArgs.ad_plan_id
+        this.adSearchForm.area_id !== '' ? searchArgs : delete searchArgs.area_id
+        this.adSearchForm.market_id.length !== 0
+          ? searchArgs
+          : delete searchArgs.market_id
+        this.adSearchForm.point_id !== ''
+          ? searchArgs
+          : delete searchArgs.point_id
+        return getAdLaunchList(this, searchArgs)
+          .then(response => {
+            let data = response.data
+            this.adLaunchList = data
+            this.pagination.total = response.meta.pagination.total
+            this.setting.loading = false
+          })
+          .catch(error => {
+            console.log(error)
+            this.setting.loading = false
+          })
+      },
+      search(formName) {
+        this.pagination.currentPage = 1
+        this.editCondition.conditionList = []
+        this.getAdLaunchList()
+      },
+      resetSearch(formName) {
+        this.adSearchForm.ad_trade_id = ''
+        this.adSearchForm.ad_plan_id = ''
+        this.adSearchForm.area_id = ''
+        this.adSearchForm.market_id = []
+        this.adSearchForm.point_id = ''
+        this.pagination.currentPage = 1
+        this.editCondition.conditionList = []
+        this.getAdLaunchList()
+      },
+      changePage(currentPage) {
+        this.pagination.currentPage = currentPage
+        this.editCondition.conditionList = []
+        this.getAdLaunchList()
+      },
+      modifyEdit() {
+        if (this.selectAll.length === 0) {
           this.$message({
-            message: '请选择修改项目',
+            message: '请选择广告方案投放',
             type: 'warning'
           })
         } else {
-          this.getAdTradeList()
-          this.adForm = {
-            ad_trade_id:'',
-            ad_plan_id: '',
-            sdate: '',
-            edate: '',
-            visiable: '',
-            only: ''
-          }
-          this.aoids = []
-          let optionModify = this.editCondition.conditionList
-          for (let i = 0; i < this.selectAll.length; i++) {
-            let id = this.selectAll[i].id
-            this.aoids.push(id)
-          }
-
-          this.modifyOptionFlag.ad_trade_id = false
-          this.modifyOptionFlag.ad_plan_id = false
-          this.modifyOptionFlag.sdate = false
-          this.modifyOptionFlag.edate = false
-          this.modifyOptionFlag.visiable = false
-          this.modifyOptionFlag.only = false
-
-          for (let k = 0; k < optionModify.length; k++) {
-            let type = optionModify[k]
-            switch (type) {
-              case '广告方案':
-                this.modifyOptionFlag.ad_trade_id = true
-                this.modifyOptionFlag.ad_plan_id = true
-                break
-              case '开始时间':
-                this.modifyOptionFlag.sdate = true
-                break
-              case '结束时间':
-                this.modifyOptionFlag.edate = true
-                break
-              case '状态':
-                this.modifyOptionFlag.visiable = true
-                break
-              case '唯一性':
-                this.modifyOptionFlag.only = true
-                break
+          if (this.editCondition.conditionList.length === 0) {
+            this.$message({
+              message: '请选择修改项目',
+              type: 'warning'
+            })
+          } else {
+            this.getAdTradeList()
+            this.adForm = {
+              ad_trade_id: '',
+              ad_plan_id: '',
+              sdate: '',
+              edate: '',
+              visiable: '',
+              only: ''
             }
+            this.aoids = []
+            let optionModify = this.editCondition.conditionList
+            for (let i = 0; i < this.selectAll.length; i++) {
+              let id = this.selectAll[i].id
+              this.aoids.push(id)
+            }
+
+            this.modifyOptionFlag.ad_trade_id = false
+            this.modifyOptionFlag.ad_plan_id = false
+            this.modifyOptionFlag.sdate = false
+            this.modifyOptionFlag.edate = false
+            this.modifyOptionFlag.visiable = false
+            this.modifyOptionFlag.only = false
+
+            for (let k = 0; k < optionModify.length; k++) {
+              let type = optionModify[k]
+              switch (type) {
+                case '广告方案':
+                  this.modifyOptionFlag.ad_trade_id = true
+                  this.modifyOptionFlag.ad_plan_id = true
+                  break
+                case '开始时间':
+                  this.modifyOptionFlag.sdate = true
+                  break
+                case '结束时间':
+                  this.modifyOptionFlag.edate = true
+                  break
+                case '状态':
+                  this.modifyOptionFlag.visiable = true
+                  break
+                case '唯一性':
+                  this.modifyOptionFlag.only = true
+                  break
+              }
+            }
+            this.editVisible = true
           }
-          this.editVisible = true
         }
+      },
+      submitModify(formName) {
+        this.$refs[formName].validate(valid => {
+          if (valid) {
+            this.loading = true
+
+            let args = {
+              aoids: this.aoids,
+              keys: []
+            }
+
+            if (this.modifyOptionFlag.ad_plan_id) {
+              args.keys.push('atiid');
+              args.atiid = this.adForm.ad_plan_id;
+            }
+            if (this.modifyOptionFlag.sdate) {
+              args.keys.push('sdate');
+              args.sdate = this.adForm.sdate;
+            }
+            if (this.modifyOptionFlag.edate) {
+              args.keys.push('edate');
+              args.edate = new Date(this.adForm.edate);
+            }
+            if (this.modifyOptionFlag.visiable) {
+              args.keys.push('visiable');
+              args.visiable = this.adForm.visiable;
+            }
+            if (this.modifyOptionFlag.only) {
+              args.keys.push('only');
+              args.only = this.adForm.only;
+            }
+
+            return modifyAdLaunch(this, args)
+              .then(response => {
+                this.loading = false
+                this.$message({
+                  message: '修改成功',
+                  type: 'success'
+                })
+                this.getAdLaunchList()
+                this.editVisible = false
+                this.editCondition.conditionList = []
+              })
+              .catch(err => {
+                this.loading = false
+                console.log(err)
+                this.$message({
+                  message: err.response.data.message,
+                  type: 'error'
+                })
+              })
+          } else {
+            this.loading = false
+            return
+          }
+        })
+      },
+      linkToAddItem() {
+        this.$router.push({
+          path: '/ad/item/add'
+        })
       }
-    },
-    submitModify(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          this.loading = true
-
-          let args = {
-            aoids: this.aoids,
-            keys:[]
-          }
-
-          if(this.modifyOptionFlag.ad_plan_id){
-            args.keys.push('atiid');
-            args.atiid = this.adForm.ad_plan_id;
-          }
-          if(this.modifyOptionFlag.sdate){
-            args.keys.push('sdate');
-            args.sdate = this.adForm.sdate;
-          }
-          if(this.modifyOptionFlag.edate){
-            args.keys.push('edate');
-            args.edate = new Date(this.adForm.edate);
-          }
-          if(this.modifyOptionFlag.visiable){
-            args.keys.push('visiable');
-            args.visiable = this.adForm.visiable;
-          }
-          if(this.modifyOptionFlag.only){
-            args.keys.push('only');
-            args.only = this.adForm.only;
-          }
-
-          return modifyAdLaunch(this, args)
-            .then(response => {
-              this.loading = false
-              this.$message({
-                message: '修改成功',
-                type: 'success'
-              })
-              this.getAdLaunchList()
-              this.editVisible = false
-              this.editCondition.conditionList = []
-            })
-            .catch(err => {
-              this.loading = false
-              console.log(err)
-              this.$message({
-                message: err.response.data.message,
-                type: 'error'
-              })
-            })
-        } else {
-          this.loading = false
-          return
-        }
-      })
-    },
-    linkToAddItem() {
-      this.$router.push({
-        path: '/ad/item/add'
-      })
     }
   }
-}
 </script>
 
 <style lang="less" scoped>
-.root {
-  font-size: 14px;
-  color: #5e6d82;
-  .item-list-wrap {
-    background: #fff;
-    padding: 30px;
-    .el-select,
-    .item-input,
-    .el-input {
-      width: 380px;
-    }
+  .root {
+    font-size: 14px;
+    color: #5e6d82;
+    .item-list-wrap {
+      background: #fff;
+      padding: 30px;
+      .el-select,
+      .item-input,
+      .el-input {
+        width: 380px;
+      }
 
-    .el-form-item {
-      margin-bottom: 20px;
-    }
-    .el-table__body-wrapper {
-      overflow-x: auto;
-      overflow-y: overlay;
-      position: relative;
-    }
-    .demo-table-expand {
-      font-size: 0;
-    }
+      .el-form-item {
+        margin-bottom: 20px;
+      }
+      .el-table__body-wrapper {
+        overflow-x: auto;
+        overflow-y: overlay;
+        position: relative;
+      }
+      .demo-table-expand {
+        font-size: 0;
+      }
 
-    .demo-table-expand label {
-      width: 90px;
-      color: #99a9bf;
-    }
-    .demo-table-expand .el-form-item {
-      margin-right: 0;
-      margin-bottom: 0;
-      width: 50%;
-    }
-    .item-content-wrap {
-      .icon-item {
-        padding: 10px;
+      .demo-table-expand label {
+        width: 90px;
+        color: #99a9bf;
+      }
+      .demo-table-expand .el-form-item {
+        margin-right: 0;
+        margin-bottom: 0;
         width: 50%;
       }
-      .search-wrap {
-        margin-top: 5px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        font-size: 16px;
-        align-items: center;
-        margin-bottom: 10px;
-        .el-form-item {
+      .item-content-wrap {
+        .icon-item {
+          padding: 10px;
+          width: 50%;
+        }
+        .search-wrap {
+          margin-top: 5px;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          font-size: 16px;
+          align-items: center;
           margin-bottom: 10px;
-        }
-        .el-select {
-          width: 200px;
-        }
-        .warning {
-          background: #ebf1fd;
-          padding: 8px;
-          margin-left: 10px;
-          color: #444;
-          font-size: 12px;
-          i {
-            color: #4a8cf3;
-            margin-right: 5px;
+          .el-form-item {
+            margin-bottom: 10px;
+          }
+          .el-select {
+            width: 200px;
+          }
+          .warning {
+            background: #ebf1fd;
+            padding: 8px;
+            margin-left: 10px;
+            color: #444;
+            font-size: 12px;
+            i {
+              color: #4a8cf3;
+              margin-right: 5px;
+            }
           }
         }
-      }
-      .actions-wrap {
-        margin-top: 5px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        font-size: 16px;
-        align-items: center;
-        margin-bottom: 10px;
-        .label {
-          font-size: 14px;
+        .actions-wrap {
+          margin-top: 5px;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          font-size: 16px;
+          align-items: center;
+          margin-bottom: 10px;
+          .label {
+            font-size: 14px;
+          }
         }
-      }
-      .pagination-wrap {
-        margin: 10px auto;
-        text-align: right;
+        .pagination-wrap {
+          margin: 10px auto;
+          text-align: right;
+        }
       }
     }
   }
-}
 </style>
