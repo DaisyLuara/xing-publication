@@ -42,6 +42,11 @@ class AdvertisementController extends Controller
         return $this->response->paginator($advertisements, new AdvertisementTransformer());
     }
 
+    public function show(Advertisement $advertisement): Response
+    {
+        return $this->response->item($advertisement, new AdvertisementTransformer());
+    }
+
     public function store(AdvertisementRequest $request, Advertisement $advertisement): Response
     {
         $data = $request->all();

@@ -22,7 +22,7 @@ class AdvertisementTransformer extends TransformerAbstract
             'size' => round(((int)$advertisement->size) / 1024 / 1024, 2),
             'fps' => $advertisement->fps,
             'isad' => $advertisement->isad,
-            'isad_text' => $advertisement->isad === 1 ? '开启' : '关闭',
+            'isad_text' => $advertisement->isad === 1 ? '显示' : '隐藏',
             'pass' => $advertisement->pass,
             'created_at' => $advertisement->date,
             'updated_at' => formatClientDate($advertisement->clientdate),

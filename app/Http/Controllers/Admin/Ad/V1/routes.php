@@ -20,6 +20,7 @@ $api->version('v1', [
 
             //广告
             $api->get('advertisement', ['middleware' => ['permission:ad.advertisement.read'], 'uses' =>'AdvertisementController@index']);
+            $api->get('advertisement/{advertisement}', ['middleware' => ['permission:ad.advertisement.read'], 'uses' =>'AdvertisementController@show']);
             $api->post('advertisement', ['middleware' => ['permission:ad.advertisement.create'], 'uses' =>'AdvertisementController@store']);
             $api->patch('advertisement/{advertisement}', ['middleware' => ['permission:ad.advertisement.update'], 'uses' =>'AdvertisementController@update']);
 

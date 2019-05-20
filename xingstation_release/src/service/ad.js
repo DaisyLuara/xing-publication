@@ -1,6 +1,7 @@
 const AD_LAUNCH_API = '/api/ad_launch'
 const AD_PLAN_API = '/api/ad_plan'
 const AD_PLAN_TIME_API = '/api/ad_plan_time'
+const AD_API = '/api/advertisement'
 
 const HOST = process.env.SERVER_URL
 
@@ -157,6 +158,60 @@ const modifyAdPlanTime = (context, args, plan_time_id) => {
   })
 }
 
+//广告素材列表
+const getAdList = (context, args) => {
+  return new Promise(function (resolve, reject) {
+    context.$http
+      .get(HOST + AD_API, {params: args})
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+const getAdDetail = (context, args, id) => {
+  return new Promise(function (resolve, reject) {
+    context.$http
+      .get(HOST + AD_API + '/' + id, {params: args})
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+const saveAd = (context, args) => {
+  return new Promise(function (resolve, reject) {
+    context.$http
+      .post(HOST + AD_API, args)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+const modifyAd = (context, args , id) => {
+  return new Promise(function (resolve, reject) {
+    context.$http
+      .patch(HOST + AD_API + '/' + id, args)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+
 export {
   getAdLaunchList,
   saveAdLaunch,
@@ -168,6 +223,10 @@ export {
   modifyAdPlanTime,
   getAdPlanDetail,
   addAdPlanTime,
-  getAdPlanTime
+  getAdPlanTime,
+  getAdList,
+  getAdDetail,
+  saveAd,
+  modifyAd
 
 }

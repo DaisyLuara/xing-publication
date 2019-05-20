@@ -16,10 +16,10 @@ class AdvertisementRequest extends Request
                     'img' => 'required|string|url',
                     'type' => 'required|string|in:static,gif,fps,video',
                     'link' => 'required|string|url',
-                    'size' => 'required|integer',
-                    'fps' => 'required|integer',
+                    'size' => 'integer',
+                    'fps' => 'integer',
                     'isad' => 'required|integer|in:0,1',
-                    'pass' => 'required|integer'
+                    'pass' => 'integer'
                 ];
                 break;
             case 'PATCH':
@@ -29,10 +29,10 @@ class AdvertisementRequest extends Request
                     'img' => 'required|string|url',
                     'type' => 'required|string|in:static,gif,fps,video',
                     'link' => 'required|string|url',
-                    'size' => 'required|integer',
-                    'fps' => 'required|integer',
+                    'size' => 'integer',
+                    'fps' => 'integer',
                     'isad' => 'required|integer|in:0,1',
-                    'pass' => 'required|integer'
+                    'pass' => 'integer'
                 ];
                 break;
             default:
