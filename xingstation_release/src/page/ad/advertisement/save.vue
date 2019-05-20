@@ -211,7 +211,7 @@ export default {
       this.searchLoading = true;
       return getAdDetail(this, {},this.aid)
         .then(response => {
-          this.adForm = response.data;
+          this.adForm = response;
           this.searchLoading = false;
         })
         .catch(err => {

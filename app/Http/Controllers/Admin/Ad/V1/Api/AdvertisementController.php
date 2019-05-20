@@ -58,6 +58,7 @@ class AdvertisementController extends Controller
             'size' => strlen($content),
             'date' => date('Y-m-d H:i:s'),
             'clientdate' => time() * 1000,
+            'z' => $this->user->z,
         ]))->save();
 
         return $this->response->noContent();
