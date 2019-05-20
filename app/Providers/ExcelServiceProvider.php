@@ -26,6 +26,7 @@ use App\Exports\PaymentExport;
 use App\Exports\PaymentHistoryExport;
 use App\Exports\PaymentPayeeExport;
 use App\Exports\PersonRewardExport;
+use App\Exports\PlayTimesExport;
 use App\Exports\PointDailyAverageExport;
 use App\Exports\PointExport;
 use App\Exports\ProjectByPointExport;
@@ -144,6 +145,9 @@ class ExcelServiceProvider extends ServiceProvider
         });
         $this->app->bind('company', function ($app) {
             return new CompanyExport($app->request);
+        });
+        $this->app->bind('play_times', function ($app) {
+            return new PlayTimesExport($app->request);
         });
 
     }

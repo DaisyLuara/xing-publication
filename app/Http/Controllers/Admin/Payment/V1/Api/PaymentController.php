@@ -6,9 +6,8 @@ use App\Http\Controllers\Admin\Payment\V1\Models\Payment;
 use App\Http\Controllers\Admin\Payment\V1\Request\PaymentRequest;
 use App\Http\Controllers\Admin\Payment\V1\Transformer\PaymentTransformer;
 use App\Http\Controllers\Controller;
+use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Admin\Payment\V1\Models\PaymentHistory;
 
 class PaymentController extends Controller
@@ -18,43 +17,46 @@ class PaymentController extends Controller
         return $this->response->item($payment, new PaymentTransformer());
     }
 
-    public function index(PaymentRequest $request, Payment $payment)
+    public function index(PaymentRequest $request, Payment $payment): Response
     {
 
         $query = $payment->query();
 
-        if ($request->start_date && $request->end_date) {
-            $startDate = $request->start_date;
-            $endDate = $request->end_date;
-            $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '$startDate' and '$endDate' ");
+        if ($request->get('start_date') && $request->get('end_date')) {
+            $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '{$request->get('start_date')}' and '{$request->get('end_date')}' ");
         }
-
-        if ($request->payee) {
-            $query->where('payee', 'like', '%' . $request->payee . '%');
+        if ($request->get('payee')) {
+            $query->where('payee', 'like', '%' . $request->get('payee') . '%');
         }
-        if ($request->has('receive_status')) {
-            $query->where('receive_status', '=', $request->receive_status);
+        if ($request->get('applicant')) {
+            $query->where('applicant', '=', $request->get('applicant'));
         }
-        if ($request->status) {
-            $query->where('status', '=', $request->status);
+        if ($request->get('payee')) {
+            $query->where('payee', 'like', '%' . $request->get('payee') . '%');
+        }
+        if ($request->get('receive_status') !== null) {
+            $query->where('receive_status', '=', $request->get('receive_status'));
+        }
+        if ($request->get('status') !== null) {
+            $query->where('status', '=', $request->get('status'));
         }
         if ($request->has('contract_number')) {
-            $query->whereHas('contract', function ($q) use ($request) {
-                $q->where('contract_number', 'like', '%' . $request->contract_number . '%');
+            $query->whereHas('contract', static function ($q) use ($request) {
+                $q->where('contract_number', 'like', '%' . $request->get('contract_number') . '%');
             });
         }
 
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if ($user->id == getProcessStaffId('finance', 'payment')) {
+        if ($user->id === getProcessStaffId('finance', 'payment')) {
             $query->whereRaw("(handler=$user->id or status=4)");
         } else if ($user->hasRole('operation')) {
-            $query->whereRaw("(status=3 or status=4)");
+            $query->whereRaw('(status=3 or status=4)');
         } else {
             $query->whereRaw("(applicant=$user->id or handler=$user->id)");
         }
-        $payment = $query->orderBy('created_at', 'desc')->paginate(10);
-        return $this->response->paginator($payment, new PaymentTransformer());
+        $payments = $query->orderBy('created_at', 'desc')->paginate(10);
+        return $this->response->paginator($payments, new PaymentTransformer());
     }
 
     public function store(PaymentRequest $request, Payment $payment)

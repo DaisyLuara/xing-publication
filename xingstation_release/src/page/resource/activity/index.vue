@@ -7,9 +7,18 @@
     >
       <div class="item-content-wrap">
         <div class="search-wrap">
-          <el-form ref="searchForm" :model="searchForm" :inline="true">
-            <el-form-item label prop="status">
-              <el-select v-model="searchForm.status" placeholder="请选择状态" filterable clearable>
+          <el-form 
+            ref="searchForm" 
+            :model="searchForm" 
+            :inline="true">
+            <el-form-item 
+              label 
+              prop="status">
+              <el-select 
+                v-model="searchForm.status" 
+                placeholder="请选择状态" 
+                filterable 
+                clearable>
                 <el-option
                   v-for="item in statusList"
                   :key="item.id"
@@ -40,23 +49,45 @@
               />
             </el-form-item>
             <el-form-item label>
-              <el-button type="primary" size="small" @click="search">搜索</el-button>
-              <el-button type="default" size="small" @click="resetSearch('searchForm')">重置</el-button>
+              <el-button 
+                type="primary" 
+                size="small" 
+                @click="search">搜索</el-button>
+              <el-button 
+                type="default" 
+                size="small" 
+                @click="resetSearch('searchForm')">重置</el-button>
             </el-form-item>
           </el-form>
         </div>
         <div class="total-wrap">
           <span class="label">总数:{{ pagination.total }}</span>
           <div>
-            <el-button type="success" size="small" @click="batchPass">批量通过</el-button>
-            <el-button type="warning" size="small" @click="batchReject">批量驳回</el-button>
+            <el-button 
+              type="success" 
+              size="small" 
+              @click="batchPass">批量通过</el-button>
+            <el-button 
+              type="warning" 
+              size="small" 
+              @click="batchReject">批量驳回</el-button>
           </div>
         </div>
-        <el-table :data="tableData" style="width: 100%" @selection-change="handleSelectionChange" disabled='true'>
-          <el-table-column type="selection" width="45" :selectable="checkboxT"/>
+        <el-table 
+          :data="tableData" 
+          style="width: 100%" 
+          disabled="true" 
+          @selection-change="handleSelectionChange">
+          <el-table-column 
+            :selectable="checkboxT" 
+            type="selection" 
+            width="45"/>
           <el-table-column type="expand">
             <template slot-scope="scope">
-              <el-form label-position="left" inline class="demo-table-expand">
+              <el-form 
+                label-position="left" 
+                inline 
+                class="demo-table-expand">
                 <el-form-item label="ID">
                   <span>{{ scope.row.id }}</span>
                 </el-form-item>
@@ -67,7 +98,10 @@
                   <span>{{ scope.row.name }}</span>
                 </el-form-item>
                 <el-form-item label="资源">
-                  <a :href="scope.row.url" target="_blank" style="color: blue">查看</a>
+                  <a 
+                    :href="scope.row.url" 
+                    target="_blank" 
+                    style="color: blue">查看</a>
                 </el-form-item>
                 <el-form-item label="创建时间">
                   <span>{{ scope.row.created_at }}</span>
@@ -81,14 +115,21 @@
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="80"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="id" 
+            label="ID" 
+            min-width="80"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="activity_name"
             label="活动名称"
             min-width="100"
           />
-          <el-table-column prop="url" label="资源" min-width="130">
+          <el-table-column 
+            prop="url" 
+            label="资源" 
+            min-width="130">
             <template slot-scope="scope">
               <img
                 :src="scope.row.url+'?imageslim'"
@@ -104,7 +145,11 @@
             label="创建时间"
             min-width="100"
           />
-          <el-table-column :show-overflow-tooltip="true" prop="status" label="状态" min-width="100">
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="status" 
+            label="状态" 
+            min-width="100">
             <template
               slot-scope="scope"
             >{{ scope.row.status === 0 ? '未通过' : scope.row.status === 1 ? '通过' : '待审核' }}</template>
@@ -115,7 +160,9 @@
             label="审核人"
             min-width="150"
           />
-          <el-table-column label="操作" min-width="150">
+          <el-table-column 
+            label="操作" 
+            min-width="150">
             <template slot-scope="scope">
               <el-button
                 v-if="scope.row.status === 2"
@@ -144,12 +191,16 @@
       </div>
     </div>
     <!-- 图片弹窗 -->
-    <div v-show="imageVisible" class="widget-image">
+    <div 
+      v-show="imageVisible" 
+      class="widget-image">
       <div class="shade-image"/>
       <div class="widget-content">
         <img :src="imgUrl">
       </div>
-      <div class="widget-close" @click="handleImageClose">
+      <div 
+        class="widget-close" 
+        @click="handleImageClose">
         <i class="widget-icon">X</i>
       </div>
     </div>

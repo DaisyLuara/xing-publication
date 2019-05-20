@@ -16,7 +16,6 @@ class CouponRequest extends Request
         return [
             'sign' => 'required|string',
             'belong' => 'required|string',
-            'qiniu_id' => 'required|integer',
         ];
     }
 }
