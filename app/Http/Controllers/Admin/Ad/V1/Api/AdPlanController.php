@@ -181,6 +181,8 @@ class AdPlanController extends Controller
             'info' => $request->get('info'),
             'atid' => $request->get('atid'),
             'date' => date('Y-m-d H:i:s'),
+            'hardware' => $request->get('hardware'),
+            'tmode' => $request->get('tmode'),
             'clientdate' => time() * 1000,
         ])->save();
 
