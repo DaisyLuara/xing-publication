@@ -22,14 +22,19 @@
             class="rename-input"
           />
           <div class="btn-wrap">
-            <el-button type="primary" size="small" @click="modifyGroupName">确定</el-button>
+            <el-button 
+              type="primary" 
+              size="small" 
+              @click="modifyGroupName">确定</el-button>
             <el-button
               size="small"
               @click="mediaGroup.mediaGroupRenameFlag = false, mediaGroup.renameGroupValue = renameGroup"
             >取消</el-button>
           </div>
         </el-popover>
-        <a v-popover:rename v-show="mediaGroup.renameGroupValue !== '未分组'">重命名</a>
+        <a 
+          v-popover:rename 
+          v-show="mediaGroup.renameGroupValue !== '未分组'">重命名</a>
       </div>
       <div class="grouping-image-wrap">
         <div class="grouping-wrap">
@@ -58,7 +63,10 @@
               class="group-input"
             />
             <div class="btn-wrap">
-              <el-button type="primary" size="small" @click="addMediaGroup">确定</el-button>
+              <el-button 
+                type="primary" 
+                size="small" 
+                @click="addMediaGroup">确定</el-button>
               <el-button
                 size="small"
                 @click="mediaGroup.mediaGroupAddFlag = false,mediaGroup.addGroupNameValue = ''"
@@ -75,7 +83,9 @@
               v-show="mediaImage.mediaList.length == 0"
               class="hint-message"
             >暂无数据，可点击左下角“上传图片”按钮添加</div>
-            <li v-for="(imageItem, index) in mediaImage.mediaList" :key="imageItem.id">
+            <li 
+              v-for="(imageItem, index) in mediaImage.mediaList" 
+              :key="imageItem.id">
               <img
                 :src="imageItem.url"
                 class="image-file"
@@ -130,7 +140,9 @@
               list-type="picture"
               class="upload"
             >
-              <el-button size="small" type="success">上传图片</el-button>
+              <el-button 
+                size="small" 
+                type="success">上传图片</el-button>
             </el-upload>
             <span class="image-type">仅支持jpg、jpeg、gif 、png四种格式, 大小为10M以内</span>
             <div class="pagination">
@@ -147,12 +159,16 @@
       </div>
     </div>
     <!-- 图片弹窗 -->
-    <div v-show="mediaImage.imageVisible" class="widget-image">
+    <div 
+      v-show="mediaImage.imageVisible" 
+      class="widget-image">
       <div class="shade-image"/>
       <div class="widget-content">
         <img :src="mediaImage.mediaImageUrl">
       </div>
-      <div class="widget-close" @click="handleImageClose">
+      <div 
+        class="widget-close" 
+        @click="handleImageClose">
         <i class="widget-icon">X</i>
       </div>
     </div>
