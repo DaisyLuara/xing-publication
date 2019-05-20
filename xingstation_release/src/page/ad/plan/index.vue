@@ -363,17 +363,20 @@
             <template slot-scope="scope">
               <el-button
                 size="small"
-                type="danger"
+                type="warning"
+                plain
                 @click="linkToEditPlanBatch(scope.row.id)">编辑方案排期
               </el-button>
               <el-button
                 size="small"
                 type="success"
+                plain
                 @click="linkToEditPlan(scope.row.id)">编辑方案
               </el-button>
               <el-button
                 size="small"
                 type="default"
+                plain
                 @click="linkToAddPlanTime(scope.row.id)">新增素材
               </el-button>
             </template>
@@ -623,6 +626,9 @@
         .icon-item {
           padding: 10px;
           width: 50%;
+        }
+        .el-button {
+          margin: 2px 0;
         }
         .search-wrap {
           margin-top: 5px;
