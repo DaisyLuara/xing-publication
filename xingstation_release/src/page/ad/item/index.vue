@@ -127,10 +127,14 @@
                     :loading="searchLoading"
                     placeholder="请选择类型"
                     clearable>
-                    <el-option key="program"
-                               label="节目广告" value="program"/>
-                    <el-option key="ads"
-                               label="小屏广告" value="ads"/>
+                    <el-option 
+                      key="program"
+                      label="节目广告" 
+                      value="program"/>
+                    <el-option 
+                      key="ads"
+                      label="小屏广告" 
+                      value="ads"/>
                   </el-select>
                 </el-form-item>
               </el-col>
@@ -219,15 +223,15 @@
                 </el-form-item>
                 <el-form-item
                   label="广告方案">
-                  <span>{{ scope.row.ad_plan_name}}</span>
+                  <span>{{ scope.row.ad_plan_name }}</span>
                 </el-form-item>
                 <el-form-item
                   label="类型">
-                  <span>{{ scope.row.ad_plan.type_text}}</span>
+                  <span>{{ scope.row.ad_plan.type_text }}</span>
                 </el-form-item>
                 <el-form-item
                   label="状态">
-                  <span>{{ scope.row.visiable_text}}</span>
+                  <span>{{ scope.row.visiable_text }}</span>
                 </el-form-item>
                 <el-form-item
                   label="唯一性">
@@ -274,7 +278,9 @@
                     min-width="50">
                     <template slot-scope="ad_scope">
                       <span>
-                        <img :src="ad_scope.row.img" width="40px"/>
+                        <img 
+                          :src="ad_scope.row.img" 
+                          width="40px">
                       </span>
                     </template>
                   </el-table-column>
@@ -299,7 +305,7 @@
                       <a
                         :href="ad_scope.row.link"
                         target="_blank"
-                        style="color: blue">{{ad_scope.row.size}}K</a>
+                        style="color: blue">{{ ad_scope.row.size }}K</a>
                     </template>
                   </el-table-column>
                   <el-table-column
@@ -315,7 +321,7 @@
                       min-width="50">
                       <template slot-scope="ad_scope">
                       <span v-if="ad_scope.row.pivot">
-                        {{ad_scope.row.pivot.mode}}
+                        {{ ad_scope.row.pivot.mode }}
                       </span>
                       </template>
                     </el-table-column>
@@ -324,8 +330,8 @@
                       min-width="50">
                       <template slot-scope="ad_scope">
                       <span v-if="ad_scope.row.pivot">
-                        {{ad_scope.row.pivot.ori}} <br/>
-                        {{ad_scope.row.pivot.screen}}%
+                        {{ ad_scope.row.pivot.ori }} <br>
+                        {{ ad_scope.row.pivot.screen }}%
                       </span>
                       </template>
                     </el-table-column>
@@ -334,8 +340,8 @@
                       min-width="50">
                       <template slot-scope="ad_scope">
                       <span v-if="ad_scope.row.pivot">
-                        {{ad_scope.row.pivot.cdshow ?'开启':'关闭'}}<br/>
-                        {{ad_scope.row.pivot.ktime}}s
+                        {{ ad_scope.row.pivot.cdshow ?'开启':'关闭' }}<br>
+                        {{ ad_scope.row.pivot.ktime }}s
                       </span>
                       </template>
                     </el-table-column>
@@ -346,7 +352,7 @@
                     <template slot-scope="ad_scope">
                       <span v-if="ad_scope.row.pivot">
                         {{ ( (Array(4).join('0') + ad_scope.row.pivot.shm).slice(-4)).substring(0,2) + ":"
-                        + ( (Array(4).join('0') + ad_scope.row.pivot.shm).slice(-4)).substring(2)}}
+                        + ( (Array(4).join('0') + ad_scope.row.pivot.shm).slice(-4)).substring(2) }}
                       </span>
                     </template>
                   </el-table-column>
@@ -356,8 +362,8 @@
                     min-width="50">
                     <template slot-scope="ad_scope">
                       <span v-if="ad_scope.row.pivot">
-                         {{ ( (Array(4).join('0') + ad_scope.row.pivot.ehm).slice(-4)).substring(0,2) + ":"
-                        + ( (Array(4).join('0') + ad_scope.row.pivot.ehm).slice(-4)).substring(2)}}
+                        {{ ( (Array(4).join('0') + ad_scope.row.pivot.ehm).slice(-4)).substring(0,2) + ":"
+                        + ( (Array(4).join('0') + ad_scope.row.pivot.ehm).slice(-4)).substring(2) }}
                       </span>
                     </template>
                   </el-table-column>
@@ -500,16 +506,24 @@
             :rules="[{ required: true, message: '请选择状态', trigger: 'submit'}]"
             label="状态"
             prop="visiable">
-            <el-radio v-model="adForm.visiable" :label="1">运营中</el-radio>
-            <el-radio v-model="adForm.visiable" :label="0">下架</el-radio>
+            <el-radio 
+              v-model="adForm.visiable" 
+              :label="1">运营中</el-radio>
+            <el-radio 
+              v-model="adForm.visiable" 
+              :label="0">下架</el-radio>
           </el-form-item>
           <el-form-item
             v-if="modifyOptionFlag.only"
             :rules="[{ required: true, message: '请选择唯一性', trigger: 'submit'}]"
             label="唯一"
             prop="only">
-            <el-radio v-model="adForm.only" :label="1">是</el-radio>
-            <el-radio v-model="adForm.only" :label="0">否</el-radio>
+            <el-radio 
+              v-model="adForm.only" 
+              :label="1">是</el-radio>
+            <el-radio 
+              v-model="adForm.only" 
+              :label="0">否</el-radio>
           </el-form-item>
           <el-form-item>
             <el-button

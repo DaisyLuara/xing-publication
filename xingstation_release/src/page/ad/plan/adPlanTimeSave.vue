@@ -16,15 +16,21 @@
 
         <el-form-item
           label="类型">
-          <el-input :value="adPlan.type_text" disabled />
+          <el-input 
+            :value="adPlan.type_text" 
+            disabled />
         </el-form-item>
         <el-form-item
           label="广告行业">
-          <el-input :value="adPlan.ad_trade" disabled />
+          <el-input 
+            :value="adPlan.ad_trade" 
+            disabled />
         </el-form-item>
         <el-form-item
           label="广告方案名称">
-          <el-input :value="adPlan.name" disabled />
+          <el-input 
+            :value="adPlan.name" 
+            disabled />
         </el-form-item>
 
         <!--单选广告素材-->
@@ -52,26 +58,28 @@
             :rules="[{ required: true, message: '请选择模式', trigger: 'submit',type: 'string'}]"
             label="模式"
             prop="mode">
-            <el-select v-model="adPlanTimeForm.mode" placeholder="请选择模式">
+            <el-select 
+              v-model="adPlanTimeForm.mode" 
+              placeholder="请选择模式">
               <el-option
                 v-for="item in modeOptions"
                 :key="item.value"
                 :label="item.label"
-                :value="item.value">
-              </el-option>
+                :value="item.value"/>
             </el-select>
           </el-form-item>
           <el-form-item
             :rules="[{ required: true, message: '请选择位置', trigger: 'submit',type: 'string'}]"
             label="位置"
             prop="ori">
-            <el-select v-model="adPlanTimeForm.ori" placeholder="请选择位置">
+            <el-select 
+              v-model="adPlanTimeForm.ori" 
+              placeholder="请选择位置">
               <el-option
                 v-for="item in oriOptions"
                 :key="item.value"
                 :label="item.label"
-                :value="item.value">
-              </el-option>
+                :value="item.value"/>
             </el-select>
           </el-form-item>
           <el-form-item
@@ -80,10 +88,9 @@
             prop="screen">
             <el-input-number
               v-model="adPlanTimeForm.screen"
-              controls-position="right"
               :min="1"
-              :max="100">
-            </el-input-number>
+              :max="100"
+              controls-position="right"/>
             %
           </el-form-item>
         </template>
@@ -107,43 +114,45 @@
           prop="ktime">
           <el-input-number
             v-model="adPlanTimeForm.ktime"
-            controls-position="right"
-            :min="1"/>
+            :min="1"
+            controls-position="right"/>
           秒
         </el-form-item>
         <el-form-item
           label="开始时间"
           prop="shm">
           <el-time-picker
-            format='HH:mm'
-            value-format="HH:mm"
             v-model="adPlanTimeForm.shm"
-            placeholder="选择开始时间">
-          </el-time-picker>
+            format="HH:mm"
+            value-format="HH:mm"
+            placeholder="选择开始时间"/>
         </el-form-item>
         <el-form-item
           label="结束时间"
           prop="ehm">
           <el-time-picker
-            format='HH:mm'
-            value-format="HH:mm"
             v-model="adPlanTimeForm.ehm"
-            placeholder="选择结束时间">
-          </el-time-picker>
+            format="HH:mm"
+            value-format="HH:mm"
+            placeholder="选择结束时间"/>
         </el-form-item>
         <el-form-item
           :rules="[{ required: true, message: '请选择状态', trigger: 'submit'}]"
           label="状态"
           prop="visiable">
-          <el-radio v-model="adPlanTimeForm.visiable" :label="1">运营中</el-radio>
-          <el-radio v-model="adPlanTimeForm.visiable" :label="0">下架</el-radio>
+          <el-radio 
+            v-model="adPlanTimeForm.visiable" 
+            :label="1">运营中</el-radio>
+          <el-radio 
+            v-model="adPlanTimeForm.visiable" 
+            :label="0">下架</el-radio>
         </el-form-item>
         <!--<el-form-item-->
-          <!--:rules="[{ required: true, message: '请选择唯一性', trigger: 'submit'}]"-->
-          <!--label="唯一"-->
-          <!--prop="only">-->
-          <!--<el-radio v-model="adPlanTimeForm.only" :label="1">是</el-radio>-->
-          <!--<el-radio v-model="adPlanTimeForm.only" :label="0">否</el-radio>-->
+        <!--:rules="[{ required: true, message: '请选择唯一性', trigger: 'submit'}]"-->
+        <!--label="唯一"-->
+        <!--prop="only">-->
+        <!--<el-radio v-model="adPlanTimeForm.only" :label="1">是</el-radio>-->
+        <!--<el-radio v-model="adPlanTimeForm.only" :label="0">否</el-radio>-->
         <!--</el-form-item>-->
 
         <el-form-item>

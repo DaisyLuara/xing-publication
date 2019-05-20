@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Admin\Resource\V1\Api;
 
 
+use App\Http\Controllers\Admin\Board\V1\Models\Board;
 use App\Http\Controllers\Admin\Resource\V1\Models\Activity;
 use App\Http\Controllers\Admin\Resource\V1\Models\ActivityMedia;
 use App\Http\Controllers\Admin\Resource\V1\Request\ActivityMediaRequest;
@@ -98,8 +99,16 @@ class ActivityMediaController extends Controller
         $user = $this->user();
         $ids = $request->get('ids');
         foreach ($ids as $id) {
-            ActivityMedia::query()->where('id', $id)->update(['status' => $request->get('status'), 'audit_user_id' => $user->id]);
+            $media = ActivityMedia::query()->findOrFail($id);
+            $media->update(['status' => $request->get('status'), 'audit_user_id' => $user->id]);
+            if ($media->status === 1) {
+                $board = Board::query()->where('activity_media_id', $media->id)->whereRaw('length(image_url)=0')->first();
+                if ($board) {
+                    $board->update(['image_url' => $media->url]);
+                }
+            }
         }
+
         return $this->response()->noContent()->setStatusCode(200);
     }
 }

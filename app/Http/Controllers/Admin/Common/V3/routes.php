@@ -24,6 +24,7 @@ $api->version('v3', [
             $api->get('user/confession', 'ConfessionsController@show');//查询告白
             $api->patch('user/confession', 'ConfessionsController@update');//更新告白
             $api->get('user/upload/confession', 'ConfessionsController@extract');//提取告白
+            $api->get('confessions', 'ConfessionsController@index');//告白墙列表
         });
 
     });

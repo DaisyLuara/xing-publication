@@ -23,10 +23,16 @@
                     v-model="adSearchForm.type"
                     :loading="searchLoading"
                     placeholder="请选择类型"
-                    @change="typeChangeHandle()"
-                    clearable>
-                    <el-option key="program" label="节目广告" value="program"/>
-                    <el-option key="ads" label="小屏广告" value="ads"/>
+                    clearable
+                    @change="typeChangeHandle()">
+                    <el-option 
+                      key="program" 
+                      label="节目广告" 
+                      value="program"/>
+                    <el-option 
+                      key="ads" 
+                      label="小屏广告" 
+                      value="ads"/>
                   </el-select>
                 </el-form-item>
               </el-col>
@@ -75,7 +81,9 @@
                 :span="8">
                 <el-form-item
                   prop="type">
-                  <el-input v-model="adSearchForm.ad_plan_name" placeholder="模糊查询广告方案"></el-input>
+                  <el-input 
+                    v-model="adSearchForm.ad_plan_name" 
+                    placeholder="模糊查询广告方案"/>
                 </el-form-item>
               </el-col>
               <el-col
@@ -121,7 +129,7 @@
                 class="demo-table-expand">
                 <el-form-item
                   label="类型">
-                  <span>{{ scope.row.type_text}}</span>
+                  <span>{{ scope.row.type_text }}</span>
                 </el-form-item>
                 <el-form-item
                   label="广告行业">
@@ -136,7 +144,7 @@
                 </el-form-item>
                 <el-form-item
                   label="广告方案">
-                  <span>{{ scope.row.name}}</span>
+                  <span>{{ scope.row.name }}</span>
                 </el-form-item>
                 <el-form-item
                   label="硬件加速">
@@ -179,7 +187,9 @@
                     min-width="50">
                     <template slot-scope="ad_scope">
                       <span>
-                        <img :src="ad_scope.row.img" width="40px"/>
+                        <img 
+                          :src="ad_scope.row.img" 
+                          width="40px">
                       </span>
                     </template>
                   </el-table-column>
@@ -204,7 +214,7 @@
                       <a
                         :href="ad_scope.row.link"
                         target="_blank"
-                        style="color: blue">{{ad_scope.row.size}}K</a>
+                        style="color: blue">{{ ad_scope.row.size }}K</a>
                     </template>
                   </el-table-column>
                   <el-table-column
@@ -220,7 +230,7 @@
                       min-width="50">
                       <template slot-scope="ad_scope">
                         <span v-if="ad_scope.row.pivot">
-                          {{ad_scope.row.pivot.mode}}
+                          {{ ad_scope.row.pivot.mode }}
                         </span>
                       </template>
                     </el-table-column>
@@ -229,8 +239,8 @@
                       min-width="50">
                       <template slot-scope="ad_scope">
                         <span v-if="ad_scope.row.pivot">
-                          {{ad_scope.row.pivot.ori}} <br/>
-                          {{ad_scope.row.pivot.screen}}%
+                          {{ ad_scope.row.pivot.ori }} <br>
+                          {{ ad_scope.row.pivot.screen }}%
                         </span>
                       </template>
                     </el-table-column>
@@ -240,8 +250,8 @@
                     min-width="50">
                     <template slot-scope="ad_scope">
                       <span v-if="ad_scope.row.pivot">
-                        {{ad_scope.row.pivot.cdshow ?'开启':'关闭'}}<br/>
-                        {{ad_scope.row.pivot.ktime}}s
+                        {{ ad_scope.row.pivot.cdshow ?'开启':'关闭' }}<br>
+                        {{ ad_scope.row.pivot.ktime }}s
                       </span>
                     </template>
                   </el-table-column>
@@ -258,7 +268,7 @@
                     <template slot-scope="ad_scope">
                       <span v-if="ad_scope.row.pivot">
                         {{ ( (Array(4).join('0') + ad_scope.row.pivot.shm).slice(-4)).substring(0,2) + ":"
-                        + ( (Array(4).join('0') + ad_scope.row.pivot.shm).slice(-4)).substring(2)}}
+                        + ( (Array(4).join('0') + ad_scope.row.pivot.shm).slice(-4)).substring(2) }}
                       </span>
                     </template>
                   </el-table-column>
@@ -268,8 +278,8 @@
                     min-width="50">
                     <template slot-scope="ad_scope">
                       <span v-if="ad_scope.row.pivot">
-                         {{ ( (Array(4).join('0') + ad_scope.row.pivot.ehm).slice(-4)).substring(0,2) + ":"
-                        + ( (Array(4).join('0') + ad_scope.row.pivot.ehm).slice(-4)).substring(2)}}
+                        {{ ( (Array(4).join('0') + ad_scope.row.pivot.ehm).slice(-4)).substring(0,2) + ":"
+                        + ( (Array(4).join('0') + ad_scope.row.pivot.ehm).slice(-4)).substring(2) }}
                       </span>
                     </template>
                   </el-table-column>
@@ -313,7 +323,9 @@
             min-width="50">
             <template slot-scope="scope">
               <span>
-                <img :src="scope.row.icon" width="40px"/>
+                <img 
+                  :src="scope.row.icon" 
+                  width="40px">
               </span>
             </template>
           </el-table-column>

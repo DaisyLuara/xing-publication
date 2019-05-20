@@ -154,15 +154,23 @@
           :rules="[{ required: true, message: '请选择状态', trigger: 'submit'}]"
           label="状态"
           prop="visiable">
-          <el-radio v-model="adForm.visiable" :label="1">运营中</el-radio>
-          <el-radio v-model="adForm.visiable" :label="0">下架</el-radio>
+          <el-radio 
+            v-model="adForm.visiable" 
+            :label="1">运营中</el-radio>
+          <el-radio 
+            v-model="adForm.visiable" 
+            :label="0">下架</el-radio>
         </el-form-item>
         <el-form-item
           :rules="[{ required: true, message: '请选择唯一性', trigger: 'submit'}]"
           label="唯一"
           prop="only">
-          <el-radio v-model="adForm.only" :label="1">是</el-radio>
-          <el-radio v-model="adForm.only" :label="0">否</el-radio>
+          <el-radio 
+            v-model="adForm.only" 
+            :label="1">是</el-radio>
+          <el-radio 
+            v-model="adForm.only" 
+            :label="0">否</el-radio>
         </el-form-item>
         <el-form-item>
           <el-button 
