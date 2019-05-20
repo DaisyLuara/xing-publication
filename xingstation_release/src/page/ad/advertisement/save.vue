@@ -7,7 +7,7 @@
       class="pane" >
       <div 
         class="pane-title">
-        新增广告素材
+        {{ aid ? '编辑广告素材' : '新增广告素材'}}
       </div>
       <el-form
         ref="adForm"
@@ -16,9 +16,9 @@
         <el-form-item 
           :rules="[{ required: true, message: '请输入广告行业名称', trigger: 'submit',type: 'number'}]"
           label="广告行业"
-          prop="atiid" >
+          prop="atid" >
           <el-select 
-            v-model="adForm.atiid"
+            v-model="adForm.atid"
             filterable 
             placeholder="请搜索" 
             clearable
@@ -67,13 +67,13 @@
           :rules="[{ required: true, message: '请填写附件链接', trigger: 'submit',type: 'string'}]"
           label="附件"
           prop="link">
-          <el-input :value="adForm.link"></el-input>
+          <el-input v-model="adForm.link"  placeholder="请填写附件链接"></el-input>
         </el-form-item>
         <el-form-item
           :rules="[{ required: true, message: '请填写素材名', trigger: 'submit',type: 'string'}]"
           label="素材名"
           prop="name">
-          <el-input :value="adForm.name"></el-input>
+          <el-input v-model="adForm.name" placeholder="请填写素材名"></el-input>
         </el-form-item>
         <el-form-item
           :rules="[{ required: true, message: '请选择广告标示', trigger: 'submit',type: 'number'}]"
@@ -150,7 +150,7 @@ export default {
       searchLoading: false,
 
       adForm: {
-        atiid: '',
+        atid: '',
         name: '',
         img: 'http://image.xingstation.cn/1007/image/426_video.jpg',
         type: 'static',
@@ -235,14 +235,14 @@ export default {
         if (valid) {
           this.setting.loading = true
           let args = {
-            atiid: this.adForm.atiid,
+            atid: this.adForm.atid,
             name: this.adForm.name,
             type: this.adForm.type,
             img: (this.adForm.type === 'static' || this.adForm.type === 'gif') ? this.adForm.link :this.adForm.img,
             link:this.adForm.link,
             isad:this.adForm.isad,
           }
-          return saveAdLaunch(this, args)
+          return saveAd(this, args)
             .then(response => {
               this.setting.loading = false
               this.$message({

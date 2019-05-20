@@ -11,6 +11,7 @@ class AdvertisementTransformer extends TransformerAbstract
     {
         $array = [
             'id' => $advertisement->aid,
+            'atid' =>  $advertisement->atid,
             'ad_trade_name' => $advertisement->ad_trade ? $advertisement->ad_trade->name : '',
             'create_user_name' => ($advertisement->create_customer ? $advertisement->create_customer->name : null)
                 ?? ($advertisement->create_user ? $advertisement->create_user->name : null),
