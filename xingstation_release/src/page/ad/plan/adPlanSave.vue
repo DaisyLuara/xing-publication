@@ -42,8 +42,8 @@
             v-model="adPlanForm.atid"
             filterable
             placeholder="请搜索"
-            @change="AdTradeChangeHandle"
-            clearable>
+            clearable
+            @change="AdTradeChangeHandle">
             <el-option
               v-for="item in searchAdTradeList"
               :key="item.id"
@@ -58,8 +58,8 @@
           prop="aids">
           <el-select
             :disabled="isItem"
-            multiple
             v-model="adPlanForm.aids"
+            multiple
             filterable
             placeholder="请搜索"
             clearable>
@@ -75,8 +75,8 @@
           label="广告方案名称"
           prop="name">
           <el-input
-            placeholder="请输入广告方案名称"
-            v-model="adPlanForm.name"/>
+            v-model="adPlanForm.name"
+            placeholder="请输入广告方案名称"/>
         </el-form-item>
 
         <!--使用默认ICON-->
@@ -86,11 +86,11 @@
           label="广告方案介绍"
           prop="info">
           <el-input
+            v-model="adPlanForm.info"
             type="textarea"
             maxlength="200"
             show-word-limit
-            placeholder="请输入广告方案介绍"
-            v-model="adPlanForm.info"></el-input>
+            placeholder="请输入广告方案介绍"/>
         </el-form-item>
 
         <template v-if="!isItem">
@@ -99,26 +99,28 @@
               :rules="[{ required: true, message: '请选择模式', trigger: 'submit',type: 'string'}]"
               label="模式"
               prop="mode">
-              <el-select v-model="adPlanForm.mode" placeholder="请选择模式">
+              <el-select 
+                v-model="adPlanForm.mode" 
+                placeholder="请选择模式">
                 <el-option
                   v-for="item in modeOptions"
                   :key="item.value"
                   :label="item.label"
-                  :value="item.value">
-                </el-option>
+                  :value="item.value"/>
               </el-select>
             </el-form-item>
             <el-form-item
               :rules="[{ required: true, message: '请选择位置', trigger: 'submit',type: 'string'}]"
               label="位置"
               prop="ori">
-              <el-select v-model="adPlanForm.ori" placeholder="请选择位置">
+              <el-select 
+                v-model="adPlanForm.ori" 
+                placeholder="请选择位置">
                 <el-option
                   v-for="item in oriOptions"
                   :key="item.value"
                   :label="item.label"
-                  :value="item.value">
-                </el-option>
+                  :value="item.value"/>
               </el-select>
             </el-form-item>
             <el-form-item
@@ -127,10 +129,9 @@
               prop="screen">
               <el-input-number
                 v-model="adPlanForm.screen"
-                controls-position="right"
                 :min="1"
-                :max="100">
-              </el-input-number>
+                :max="100"
+                controls-position="right"/>
               %
             </el-form-item>
           </template>
@@ -154,43 +155,45 @@
             prop="ktime">
             <el-input-number
               v-model="adPlanForm.ktime"
-              controls-position="right"
-              :min="1"/>
+              :min="1"
+              controls-position="right"/>
             秒
           </el-form-item>
           <el-form-item
             label="开始时间"
             prop="shm">
             <el-time-picker
-              format='HH:mm'
-              value-format="HH:mm"
               v-model="adPlanForm.shm"
-              placeholder="选择开始时间">
-            </el-time-picker>
+              format="HH:mm"
+              value-format="HH:mm"
+              placeholder="选择开始时间"/>
           </el-form-item>
           <el-form-item
             label="结束时间"
             prop="ehm">
             <el-time-picker
-              format='HH:mm'
-              value-format="HH:mm"
               v-model="adPlanForm.ehm"
-              placeholder="选择结束时间">
-            </el-time-picker>
+              format="HH:mm"
+              value-format="HH:mm"
+              placeholder="选择结束时间"/>
           </el-form-item>
           <el-form-item
             :rules="[{ required: true, message: '请选择状态', trigger: 'submit'}]"
             label="排期状态"
             prop="visiable">
-            <el-radio v-model="adPlanForm.visiable" :label="1">运营中</el-radio>
-            <el-radio v-model="adPlanForm.visiable" :label="0">下架</el-radio>
+            <el-radio 
+              v-model="adPlanForm.visiable" 
+              :label="1">运营中</el-radio>
+            <el-radio 
+              v-model="adPlanForm.visiable" 
+              :label="0">下架</el-radio>
           </el-form-item>
           <!--<el-form-item-->
-            <!--:rules="[{ required: true, message: '请选择唯一性', trigger: 'submit'}]"-->
-            <!--label="排期唯一"-->
-            <!--prop="only">-->
-            <!--<el-radio v-model="adPlanForm.only" :label="1">是</el-radio>-->
-            <!--<el-radio v-model="adPlanForm.only" :label="0">否</el-radio>-->
+          <!--:rules="[{ required: true, message: '请选择唯一性', trigger: 'submit'}]"-->
+          <!--label="排期唯一"-->
+          <!--prop="only">-->
+          <!--<el-radio v-model="adPlanForm.only" :label="1">是</el-radio>-->
+          <!--<el-radio v-model="adPlanForm.only" :label="0">否</el-radio>-->
           <!--</el-form-item>-->
         </template>
         <el-form-item>

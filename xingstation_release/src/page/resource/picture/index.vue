@@ -132,7 +132,8 @@
               :data="uploadForm"
               :before-upload="beforeUpload"
               :on-success="handleSuccess"
-              :multiple="false"
+              :multiple="true"
+              :limit="5"
               :auto-upload="true"
               :show-file-list="false"
               :on-error="handleError"
@@ -243,15 +244,15 @@ export default {
     };
   },
   computed: {
-    renameGroup (){
-      let rename = ''
-       this.mediaGroup.mediaGroupList.find(item => {
+    renameGroup() {
+      let rename = "";
+      this.mediaGroup.mediaGroupList.find(item => {
         if (item.id === this.mediaGroup.groupId) {
-          rename = item.name
-          return 
+          rename = item.name;
+          return;
         }
       });
-      return rename
+      return rename;
     }
   },
   created() {

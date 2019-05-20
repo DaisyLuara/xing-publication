@@ -50,10 +50,10 @@ const getTenantMediaList = (context, params) => {
 }
 
 // 商户审核
-const TenantMediaAudit = (context, id, params) => {
+const TenantMediaAudit = (context, params) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .patch(HOST + TENANT_MEDIA_AUDIT_API + '/' + id, params)
+      .patch(HOST + TENANT_MEDIA_AUDIT_API, params)
       .then(response => {
         resolve(response.data)
       })
