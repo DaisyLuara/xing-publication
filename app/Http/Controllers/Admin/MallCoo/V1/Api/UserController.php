@@ -101,6 +101,7 @@ class UserController extends BaseController
      */
     public function store(UserRequest $request)
     {
+        $wxUserId = decrypt($request->get('sign'));
         $verifyData = Cache::get($request->verification_key);
         abort_if(!$verifyData, 422,'验证码已失效');
         abort_if(!hash_equals($verifyData['code'], $request->get('verification_code')), 401, '验证码错误');
@@ -125,10 +126,12 @@ class UserController extends BaseController
                 'gender' => $userInfo['Gender'],
                 'birthday' => $userInfo['Birthday'] ?: null,
                 'marketid' => $this->mall_coo->marketid,
-                'wx_user_id' => decrypt($request->get('sign')),
+                'wx_user_id' => $wxUserId,
                 'mall_card_apply_time' => $userInfo['MallCardApplyTime'],
             ]
         );
+
+        WeChatUser::query()->where('id', $wxUserId)->update(['mobile' => $user->mobile]);
 
         return $this->response->item($user, new ThirdPartyUserTransformer());
     }
