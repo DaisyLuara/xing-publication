@@ -77,10 +77,6 @@
             v-model="adPlanForm.name"
             placeholder="请输入广告模版名称"/>
         </el-form-item>
-
-        <!--使用默认ICON-->
-        <!--"icon":"http://image.xingstation.cn/1007/image/393_511_941_578_ic_launcher.png",-->
-
         <el-form-item
           label="广告模版介绍"
           prop="info">
@@ -103,21 +99,35 @@
             label="hours">小时</el-radio>
         </el-form-item>
         <el-form-item
+          v-if="adPlanForm.type === 'program'"
           :rules="[{ required: true, message: '请选择硬件加速', trigger: 'submit',type: 'number'}]"
-          label="硬件加速"
+          label="节目运行状态"
           prop="hardware">
           <el-radio
             v-model="adPlanForm.hardware"
-            :label="0">关闭
+            :label="0">开启
           </el-radio>
           <el-radio
             v-model="adPlanForm.hardware"
-            :label="1">开启
+            :label="1">关闭
           </el-radio>
         </el-form-item>
-
-
-
+        <el-form-item
+          :rules="[{ required: true, message: '请选择附件', trigger: 'submit',type: 'string'}]"
+          label="方案图标"
+          prop="icon">
+          <div
+            class="avatar-uploader"
+            @click="panelVisible=true">
+            <img
+              v-if="adPlanForm.icon"
+              :src="adPlanForm.icon"
+              class="avatar">
+            <i
+              v-else
+              class="el-icon-plus avatar-uploader-icon"/>
+          </div>
+        </el-form-item>
         <template v-if="!isItem">
           <el-form-item>
             <h3 class="text text-primary">
@@ -235,10 +245,15 @@
         </el-form-item>
       </el-form>
     </div>
+    <PicturePanel
+      :panel-visible.sync="panelVisible"
+      :single-flag="singleFlag"
+      @close="handleClose"/>
   </div>
 </template>
 
 <script>
+  import PicturePanel from "components/common/picturePanel";
   import {
     saveAdPlan,
     modifyBatchAdPlan,
@@ -273,10 +288,14 @@
       ElDatePicker: DatePicker,
       ElRadio: Radio,
       ElInputNumber: InputNumber,
-      elTimePicker: TimePicker
+      elTimePicker: TimePicker,
+      PicturePanel
     },
     data() {
       return {
+        panelVisible: false,
+        singleFlag: true,
+
         isItem: false,
         adPlanId: null,
         setting: {
@@ -390,6 +409,17 @@
 
     },
     methods: {
+      handleClose(data) {
+        if (data && data.length > 0) {
+          let { url } = data[0];
+          this.adPlanForm.icon = url;
+        } else {
+          // this.$message({
+          //   type: "warning",
+          //   message: "图片上传失败"
+          // });
+        }
+      },
       AdTradeChangeHandle() {
         this.adPlanForm.aids = [];
         this.getSearchAdList();
@@ -564,6 +594,34 @@
         flex-direction: row;
         justify-content: space-between;
       }
+    }
+    .avatar-uploader {
+      width: 178px;
+      height: 178px;
+      line-height: 178px;
+      border: 1px dashed #d9d9d9;
+      border-radius: 6px;
+    }
+    .avatar-uploader .el-upload {
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .avatar-uploader .el-upload:hover {
+      border-color: #409eff;
+    }
+    .avatar-uploader-icon {
+      font-size: 28px;
+      color: #8c939d;
+      width: 178px;
+      height: 178px;
+      line-height: 178px;
+      text-align: center;
+    }
+    .avatar {
+      width: 178px;
+      height: 178px;
+      display: block;
     }
   }
 </style>

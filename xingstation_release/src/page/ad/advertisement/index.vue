@@ -86,34 +86,25 @@
             min-width="60"
           />
           <el-table-column
-            label="图标"
-            min-width="50">
-            <template slot-scope="scope">
-              <span>
-                <img
-                  :src="scope.row.img"
-                  width="40px">
-              </span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            :show-overflow-tooltip="true"
-            prop="name"
-            label="名称"
-            min-width="130"
-          />
-          <el-table-column
-            :show-overflow-tooltip="true"
-            prop="create_user_name"
-            label="创建人"
-            min-width="80"
-          />
-          <el-table-column
             :show-overflow-tooltip="true"
             prop="type_text"
             label="类型"
             min-width="60"
           />
+          <el-table-column
+            :show-overflow-tooltip="true"
+            label="素材名称"
+            min-width="120">
+            <template slot-scope="scope">
+              <span>{{ scope.row.name }}</span>
+              <br/>
+              <span>
+                <img
+                  :src="(scope.row.type === 'static' || scope.row.type === 'gif' ) ? scope.row.link : scope.row.img"
+                  width="40px"/>
+              </span>
+            </template>
+          </el-table-column>
           <el-table-column
             label="附件">
             <template slot-scope="scope">
@@ -121,6 +112,14 @@
                 :href="scope.row.link"
                 target="_blank"
                 style="color: blue">{{ scope.row.size }} K</a>
+            </template>
+          </el-table-column>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            label="创建人"
+            min-width="80">
+            <template slot-scope="scope">
+              <span>{{ scope.row.create_user_name ? scope.row.create_user_name : '' }}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -239,7 +238,7 @@
       this.setting.loading = true
       let getSearchAdTradeList = this.getSearchAdTradeList()
       let getAdList = this.getAdList();
-      Promise.all([getSearchAdTradeList,getAdList])
+      Promise.all([getSearchAdTradeList, getAdList])
         .then(() => {
           this.setting.loading = false
         })
