@@ -8,11 +8,19 @@
 
 namespace App\Traits;
 
+use App\Http\Controllers\Admin\Coupon\V1\Models\UserCouponBatch;
 use App\Http\Controllers\Admin\Launch\V1\Models\PolicyLaunch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch as CouponBatchModel;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
+use App\Http\Controllers\Admin\MallCoo\V1\Models\GameResult;
+use App\Http\Controllers\Admin\User\V1\Models\ArMemberSession;
+use App\Http\Controllers\Admin\WeChat\V1\Models\ThirdPartyUser;
+use App\Models\WeChatUser;
+use Illuminate\Http\Request;
+use Overtrue\EasySms\EasySms;
 use Carbon\Carbon;
 use DB;
+use Log;
 
 
 trait CouponBatch
@@ -122,4 +130,101 @@ trait CouponBatch
         return collect($couponBatchPolicies)->sum('rate') === 0;
     }
 
+    /**
+     * 设置券码url
+     * @param Coupon $coupon
+     * @param string $prefix
+     * @param null $wechatCouponBatch
+     * @param string $code_type
+     * @return mixed
+     */
+    public function setCodeImageUrl($coupon, $prefix, $wechatCouponBatch = null, $code_type = 'qrcode')
+    {
+        if ($code_type === 'barcode') {
+            $barcodeUrl = couponBarCode($coupon->code, 2, 180, $prefix);
+            $coupon->setAttribute('barcode_url', $barcodeUrl);
+        } else {
+            $qrcodeUrl = couponQrCode($coupon->code, 200, $prefix, $wechatCouponBatch);
+            $coupon->setAttribute('qrcode_url', $qrcodeUrl);
+        }
+
+        return $coupon;
+    }
+
+    /**
+     * 发券券码短信(猫酷)
+     * @param Coupon $coupon
+     * @param int $wxUserId
+     * @param int $marketid
+     */
+    private function sendCouponMsg($coupon, $wxUserId, $marketid)
+    {
+        /** @var ThirdPartyUser $user */
+        $user = ThirdPartyUser::query()->where('wx_user_id', $wxUserId)
+            ->where('marketid', $marketid)->firstOrFail();
+
+        $easySms = new EasySms(config('easysms'));
+
+        try {
+            $result = $easySms->send($user->mobile, [
+                'content' => '【星视度】尊敬的吾悦广场用户，恭喜您获得常州武进吾悦周年庆福利一份，优惠券：' . $coupon->code . ' 。请在2019年5月21号10点-5月31号22点期间前往武进吾悦2F客服台凭此短信领取。感谢您对吾悦广场的参与与支持！回T退订',
+            ]);
+            Log::info('send_coupon_msg', $result);
+
+        } catch (\Exception $exception) {
+            Log::info('send_msg_exceptions', ['msg' => $exception->getMessage()]);
+        }
+    }
+
+    /**
+     * 获取用户信息
+     * @param Request $request
+     * @return ArMemberSession|WeChatUser|WeChatUser[]|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null
+     */
+    public function getUser($request)
+    {
+        if ($request->has('z')) {
+            $member = ArMemberSession::query()->where('z', $request->get('z'))->firstOrFail();
+            return $member;
+        }
+
+        return WeChatUser::query()->findOrFail(decrypt($request->get('sign')));
+
+    }
+
+    /**
+     *用户查询sql
+     * @param Request $request
+     * @param $user
+     * @return string
+     */
+    public function getUserQuerySql($request, $user)
+    {
+        return $request->get('z') ? 'member_uid = ' . $user->uid : 'wx_user_id = ' . $user->id;
+    }
+
+    /**
+     * 生成用户券规则
+     * @param Request $request
+     * @param \App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch $couponBatch
+     * @param $user
+     */
+    public function generateUserCouponBatch($request, $couponBatch, $user)
+    {
+        if ($request->has('z')) {
+            UserCouponBatch::query()->create([
+                'member_uid' => $user->uid,
+                'coupon_batch_id' => $couponBatch->id,
+                'belong' => $request->get('belong'),
+            ]);
+            return;
+        }
+
+        UserCouponBatch::query()->create([
+            'wx_user_id' => $user->id,
+            'coupon_batch_id' => $couponBatch->id,
+            'belong' => $request->get('belong'),
+        ]);
+
+    }
 }

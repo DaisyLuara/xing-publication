@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Http\Controllers\Admin\Coupon\V1\Transformer\PolicyTransformer;
 use App\Http\Controllers\Controller;
+use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Admin\Coupon\V1\Request\PolicyRequest;
 use App\Http\Controllers\Admin\Coupon\V1\Request\PolicyBatchesRequest;
@@ -45,6 +46,27 @@ class PolicyController extends Controller
         return $this->response->paginator($policy, new PolicyTransformer());
     }
 
+
+    /**
+     * @param Company $company
+     * @param Policy $policy
+     * @return \Dingo\Api\Http\Response
+     */
+    public function allByCompanyId(Company $company,Policy $policy): Response
+    {
+        $query = $policy->query()->where('company_id', '=', $company->id);
+
+        $loginUser = $this->user;
+
+        if ($loginUser->hasRole('user')) {
+            $query->where('bd_user_id', '=', $loginUser->id);
+        }
+
+        $policies = $query->orderByDesc('id')->get();
+
+        return $this->response->collection($policies, new PolicyTransformer());
+    }
+
     public function store(Company $company, Policy $policy, PolicyRequest $request)
     {
         $policy->fill(array_merge([
@@ -58,7 +80,7 @@ class PolicyController extends Controller
 
     public function update(Policy $policy, PolicyRequest $request)
     {
-        $policy->update($request->all());
+        $policy->update($request->except(['company_id']));
         return $this->response->item($policy, new PolicyTransformer())
             ->setStatusCode(201);
     }

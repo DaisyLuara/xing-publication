@@ -45,12 +45,12 @@ class Kernel extends ConsoleKernel
             //合同收款日期通知
             $schedule->call(function () {
                 ContractReceiveDatesJob::dispatch()->onQueue('data-clean');
-            })->daily()->at('8:00');
+            })->daily()->at('10:00');
 
             //奖品到期通知
             $schedule->call(function () {
                 CouponBatchEndDateNotificationJob::dispatch()->onQueue('demand');
-            })->daily()->at('9:00');
+            })->daily()->at('9:30');
 
         }
     }

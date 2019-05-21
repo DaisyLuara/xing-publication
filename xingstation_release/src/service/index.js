@@ -61,3 +61,9 @@ export * from './prize'
 
 //反馈
 export * from './feedback'
+
+//分值
+export * from './credit'
+
+//资源
+export * from './resource'

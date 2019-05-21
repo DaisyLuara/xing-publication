@@ -7,10 +7,8 @@ use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Models\Model;
 
 /**
- * Class ArWxUser
+ * App\Http\Controllers\Admin\Activity\V1\Models\ArWxUser
  *
- * @package App\Http\Controllers\Admin\Activity\V1\Models
- * @property int openid
  * @property int $id
  * @property int $uid 用户UID
  * @property int $fpid 人脸ID

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use Eloquent as Model;
 
 /**
@@ -86,5 +87,13 @@ class WeChatUser extends Model
         'mobile',
         'id'
     ];
+
+    public function userCouponBatches()
+    {
+        return $this->setConnection('mysql')->belongsToMany(CouponBatch::class, 'user_coupon_batches', 'wx_user_id', 'coupon_batch_id')
+            ->withTimestamps()
+            ->withPivot('belong')
+            ->orderByDesc('user_coupon_batches.created_at');
+    }
 
 }

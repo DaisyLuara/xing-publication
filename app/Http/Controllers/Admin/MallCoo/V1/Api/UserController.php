@@ -28,11 +28,11 @@ class UserController extends BaseController
             'sign' => 'required',
         ]);
 
-        $userID = decrypt($request->sign);
+        $userID = decrypt($request->get('sign'));
         $redirect_url = urldecode($request->get('redirect_url'));
         $redirect_url = add_query_string($redirect_url, 'user_id', $userID);
 
-        $callback_url = 'http://' . $request->getHost() . '/api/mallcoo/user/callback?oid=' . $request->oid . '&redirect_url=' . urlencode(($redirect_url));
+        $callback_url = 'http://' . $request->getHost() . '/api/mallcoo/user/callback?oid=' . $request->get('oid') . '&redirect_url=' . urlencode($redirect_url);
 
         return $this->mall_coo->oauth($callback_url);
     }
@@ -71,7 +71,7 @@ class UserController extends BaseController
         DB::beginTransaction();
         try {
 
-            $thirdPartyUser = ThirdPartyUser::updateOrCreate(
+            $thirdPartyUser = ThirdPartyUser::query()->updateOrCreate(
                 ['mallcoo_open_user_id' => $openUserId],
                 [
                     'mobile' => $mobile,
@@ -103,12 +103,12 @@ class UserController extends BaseController
     {
         $verifyData = Cache::get($request->verification_key);
         abort_if(!$verifyData, 422,'验证码已失效');
-        abort_if(!hash_equals($verifyData['code'], $request->verification_code), 401, '验证码错误');
+        abort_if(!hash_equals($verifyData['code'], $request->get('verification_code')), 401, '验证码错误');
 
         //开卡接口
         $sUrl = 'https://openapi10.mallcoo.cn/User/MallCard/v1/Open/ByMobile/';
         $cardResult = $this->mall_coo->send($sUrl, ['Mobile' => $verifyData['phone']]);
-        abort_if(($cardResult['Code'] != 1) && ($cardResult['Code'] != 307), 500, $cardResult['Message']);
+        abort_if(($cardResult['Code'] !== 1) && ($cardResult['Code'] !== 307), 500, $cardResult['Message']);
 
         //获取会员信息
         sleep(3);
@@ -125,7 +125,7 @@ class UserController extends BaseController
                 'gender' => $userInfo['Gender'],
                 'birthday' => $userInfo['Birthday'] ?: null,
                 'marketid' => $this->mall_coo->marketid,
-                'wx_user_id' => decrypt($request->sign),
+                'wx_user_id' => decrypt($request->get('sign')),
                 'mall_card_apply_time' => $userInfo['MallCardApplyTime'],
             ]
         );
@@ -140,11 +140,13 @@ class UserController extends BaseController
      */
     public function show(UserRequest $request)
     {
-        $wxUserId = decrypt($request->sign);
+        $wxUserId = decrypt($request->get('sign'));
 
         /** @var ThirdPartyUser $user */
         $user = ThirdPartyUser::query()->where('wx_user_id', $wxUserId)
             ->where('marketid', $this->mall_coo->marketid)->first();
+
+        abort_if(!$user, 204);
 
         return $this->response->item($user, new ThirdPartyUserTransformer());
     }

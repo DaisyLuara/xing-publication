@@ -6,10 +6,10 @@ use App\Http\Controllers\Admin\Activity\V1\Models\PlayingType;
 use App\Http\Controllers\Admin\Activity\V1\Transformer\PlayingTypeTransformer;
 use App\Http\Controllers\Admin\Ad\V1\Models\AdTrade;
 use App\Http\Controllers\Admin\Ad\V1\Models\Advertisement;
-use App\Http\Controllers\Admin\Ad\V1\Models\Advertiser;
+use App\Http\Controllers\Admin\Ad\V1\Models\AdPlan;
 use App\Http\Controllers\Admin\Ad\V1\Transformer\AdTradeTransformer;
 use App\Http\Controllers\Admin\Ad\V1\Transformer\AdvertisementTransformer;
-use App\Http\Controllers\Admin\Ad\V1\Transformer\AdvertiserTransformer;
+use App\Http\Controllers\Admin\Ad\V1\Transformer\AdPlanTransformer;
 use App\Http\Controllers\Admin\Attribute\V1\Models\Attribute;
 use App\Http\Controllers\Admin\Attribute\V1\Transformer\AttributeTransformer;
 use App\Http\Controllers\Admin\Common\V1\Transformer\DemandApplicationTransformer;
@@ -66,6 +66,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\User;
 use DB;
+use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -193,52 +194,80 @@ class QueryController extends Controller
     }
 
 
+    /**
+     * 广告行业
+     * @param Request $request
+     * @param AdTrade $adTrade
+     * @return \Dingo\Api\Http\Response
+     */
     public function adTradeQuery(Request $request, AdTrade $adTrade)
     {
         $query = $adTrade->query();
-        if ($request->name) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+        if ($request->get('name')) {
+            $query->where('name', 'like', '%' . $request->get('name') . '%');
         }
-        $adTrade = $query->get();
-        return $this->response->collection($adTrade, new AdTradeTransformer());
+        $adTrades = $query->get();
+        return $this->response->collection($adTrades, new AdTradeTransformer());
     }
 
-    public function advertiserQuery(Request $request, Advertiser $advertiser)
+    /**
+     * 广告方案
+     * @param Request $request
+     * @param AdPlan $adPlan
+     * @return \Dingo\Api\Http\Response
+     */
+    public function adPlanQuery(Request $request, AdPlan $adPlan): Response
     {
-        $query = $advertiser->query();
-        $advertiser = collect();
-        if (!$request->name && !$request->ad_trade_id) {
-            return $this->response->collection($advertiser, new AdvertiserTransformer());
+        $query = $adPlan->query();
+
+        if (!$request->get('name') && !$request->get('ad_trade_id') && !$request->get('type')) {
+            return $this->response->collection(collect(), new AdPlanTransformer());
         }
 
-        if ($request->name) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+        if ($request->get('name')) {
+            $query->where('name', 'like', '%' . $request->get('name') . '%');
         }
 
-        if ($request->ad_trade_id) {
-            $query->where('atid', '=', $request->ad_trade_id);
+        if ($request->get('ad_trade_id')) {
+            $query->where('atid', '=', $request->get('ad_trade_id'));
         }
-        $advertiser = $query->get();
-        return $this->response->collection($advertiser, new AdvertiserTransformer());
+
+        if ($request->get('type')) {
+            $query->where('type', '=', $request->get('type'));
+        }
+
+        $adPlans = $query->get();
+        return $this->response->collection($adPlans, new AdPlanTransformer());
     }
 
-    public function advertisementQuery(Request $request, Advertisement $advertisement)
+    /**
+     * 搜索广告素材
+     * @param Request $request
+     * @param Advertisement $advertisement
+     * @return Response
+     */
+    public function advertisementQuery(Request $request, Advertisement $advertisement): Response
     {
         $query = $advertisement->query();
-        $advertisement = collect();
-        if (!$request->advertiser_id && !$request->name) {
-            return $this->response->collection($advertisement, new AdvertisementTransformer());
+
+        if (!$request->get('name') && !$request->get('type') && !$request->get('atid')) {
+            return $this->response->collection(collect(), new AdvertisementTransformer());
         }
 
-        if ($request->name) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+        if ($request->get('name')) {
+            $query->where('name', 'like', '%' . $request->get('name') . '%');
         }
 
-        if ($request->advertiser_id) {
-            $query->where('atiid', '=', $request->advertiser_id);
+        if ($request->get('type')) {
+            $query->where('type', '=', $request->get('type'));
         }
-        $advertisement = $query->get();
-        return $this->response->collection($advertisement, new AdvertisementTransformer());
+
+        if ($request->get('atid')) {
+            $query->where('atid', '=', $request->get('atid'));
+        }
+
+        $advertisements = $query->get();
+        return $this->response->collection($advertisements, new AdvertisementTransformer());
     }
 
     public function sceneQueryIndex(Scene $scene)
@@ -582,10 +611,10 @@ class QueryController extends Controller
         if ($request->has('company_id')) {
             $company_id = $request->company_id;
 
-            $query->where(function ($q) use($company_id) {
+            $query->where(function ($q) use ($company_id) {
                 $q->where('company_id', $company_id);
             })->orWhere(function ($q) use ($company_id) {
-                $q->whereHas('company', function ($q) use($company_id) {
+                $q->whereHas('company', function ($q) use ($company_id) {
                     $q->where('parent_id', $company_id);
                 });
             });
@@ -658,7 +687,7 @@ class QueryController extends Controller
      * @param Customer $customer
      * @return \Dingo\Api\Http\Response
      */
-    public function adminCustomersQueryByRole($role_name = '',Request $request, Customer $customer)
+    public function adminCustomersQueryByRole($role_name = '', Request $request, Customer $customer)
     {
         $query = $customer->query()->role($role_name);
 

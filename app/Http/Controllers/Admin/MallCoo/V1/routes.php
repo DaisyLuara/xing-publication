@@ -12,6 +12,7 @@ $api->version('v1', [
         $api->group(['prefix' => 'mallcoo'], function ($api) {
 
             $api->post('verificationCodes', 'VerificationCodesController@store'); // 短信验证码
+            $api->post('couponMessage', 'VerificationCodesController@sendCouponMessage'); // 发送优惠券码
 
             $api->post('user/oauth', 'UserController@oauth');//获取授权页面url
             $api->any('user/callback', 'UserController@callback');//授权回调
@@ -19,8 +20,12 @@ $api->version('v1', [
             $api->post('users', 'UserController@store'); //手机号开通会员卡
             $api->get('user', 'UserController@show');//获取商场会员信息
 
-            $api->get('coupon', 'CouponController@index');
-            $api->post('coupon', 'CouponController@store');
+            $api->get('user/coupon', 'CouponController@show');//获取用户优惠券
+            $api->post('coupons', 'CouponController@store');//发送优惠券
+
+            $api->get('couponPacks', 'CouponController@getUserCouponPacks');//查看优惠券包
+            $api->post('couponPacks', 'CouponController@generateCouponPacks');//发送优惠券包
+
         });
     });
 

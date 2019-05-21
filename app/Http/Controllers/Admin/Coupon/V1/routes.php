@@ -11,6 +11,7 @@ $api->version('v1', [
         $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
             //优惠券策略
+            $api->get('coupon/policies/{company}/company', ['middleware' => ['permission:prize.strategy.read'], 'uses' => 'PolicyController@allByCompanyId']);
             $api->get('coupon/policies/{policy}', 'PolicyController@show');
             $api->get('coupon/policies', ['middleware' => ['permission:prize.strategy.read'], 'uses' => 'PolicyController@index']);
             $api->post('company/{company}/coupon/policy', ['middleware' => ['permission:prize.strategy.create'], 'uses' => 'PolicyController@store']);
@@ -29,7 +30,7 @@ $api->version('v1', [
             $api->post('company/{company}/coupon/batch', ['middleware' => ['permission:prize.rules.create'], 'uses' => 'CouponBatchController@store']);
             $api->patch('coupon/batches/{couponBatch}', ['middleware' => ['permission:prize.rules.update'], 'uses' => 'CouponBatchController@update']);
 
-            $api->put('company/batches/{company}/import', ['middleware' => ['permission:prize.rules.create'], 'uses' => 'ImportCouponController@importCouponBatchAndPolicy']);
+            $api->put('company/batches/{company}/import', ['middleware' => ['permission:prize.rules.import'], 'uses' => 'ImportCouponController@importCouponBatchAndPolicy']);
 
             //优惠券投放
             $api->get('coupons', ['middleware' => ['permission:prize.coupon.read'], 'uses' => 'CouponController@index']);

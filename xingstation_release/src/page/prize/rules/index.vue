@@ -82,6 +82,11 @@
               size="small" 
               type="success" 
               @click="addCoupon">新增</el-button>
+            <el-button
+              v-if="!BDManage && !BD"
+              size="small"
+              type="danger"
+              @click="addCouponImport">批量导入</el-button>
           </div>
         </div>
         <rulesTable 
@@ -161,6 +166,7 @@ import {
   MessageBox
 } from "element-ui";
 import rulesTable from "./com/rulesTable";
+import { Cookies } from "utils/cookies";
 export default {
   components: {
     "el-table": Table,
@@ -177,6 +183,7 @@ export default {
   },
   data() {
     return {
+      role:'',
       loading: true,
       companyList: [],
       templateForm: {
@@ -220,7 +227,21 @@ export default {
       tableData: []
     };
   },
+  computed: {
+    BDManage: function() {
+      return this.role.find(r => {
+        return r.name === "user";
+      });
+    },
+    BD: function() {
+      return this.role.find(r => {
+        return r.name === "bd-manager";
+      });
+    },
+  },
   created() {
+    let user_info = JSON.parse(Cookies.get("user_info"));
+    this.role = user_info.roles.data;
     this.getCouponList();
     this.getCompanyList();
   },
@@ -308,6 +329,11 @@ export default {
     addCoupon() {
       this.$router.push({
         path: "/prize/rules/add"
+      });
+    },
+    addCouponImport() {
+      this.$router.push({
+        path: "/prize/rules/import"
       });
     },
     copyRules(data) {

@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Company\V1\Request\CompanyRequest;
 use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
 use App\Http\Controllers\Admin\Privilege\V1\Models\Role;
+use App\Http\Controllers\Admin\Resource\V1\Models\CompanyMediaGroup;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use Illuminate\Http\Request;
@@ -50,7 +51,7 @@ class AdminCompaniesController extends Controller
 
         //角色为主管时，查看下属及自己
         if ($currentUser->parent_id === $currentUser->id) {
-            $companies = $query->whereHas('user', static function ($q) use ($currentUser) {
+            $companies = $query->whereHas('user', function ($q) use ($currentUser) {
                 $q->where('parent_id', $currentUser->id);
             })->orderByDesc('id')->paginate(10);
             return $this->response()->paginator($companies, new CompanyTransformer());
@@ -78,8 +79,9 @@ class AdminCompaniesController extends Controller
             'bd_user_id' => $request->get('bd_user_id'),
             'parent_id' => $request->get('parent_id'),
         ];
-        $company->fill(array_merge($companyData, ['user_id' => $this->user()->id]));
-        $company->save();
+        $company->fill(array_merge($companyData, ['user_id' => $this->user()->id]))->save();
+        CompanyMediaGroup::create(['company_id' => $company->id, 'name' => '默认分组']);
+
         activity('company')->on($company)->withProperties($request->all())->log('新增公司信息');
 
         if ($request->get('category') === 0) {
@@ -99,9 +101,10 @@ class AdminCompaniesController extends Controller
         activity('customer')->on($customer)->withProperties($companyData)->log('新增公司联系人');
 
         return $this->response()->item($company, new CompanyTransformer())->setStatusCode(201);
+
     }
 
-    public function update(CompanyRequest $request, Company $company)
+    public function update(CompanyRequest $request, Company $company): \Dingo\Api\Http\Response
     {
         $company->update($request->all());
         activity('company')->on($company)->withProperties($request->all())->log('修改公司信息');

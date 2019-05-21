@@ -2,13 +2,13 @@
 $api->version('v1', [
     'namespace' => 'App\Http\Controllers\Admin\Company\V1\Api',
     'middleware' => ['serializer:array', 'bindings'] //api返回数据切换. Fractal 组件默认提供  DataArraySerializer ArraySerializer
-], function ($api) {
+], static function ($api) {
     $api->group([
         'middleware' => 'api.throttle',//频率限制中间件
         'limit' => config('api.rate_limits.access.limit'),
         'expires' => config('api.rate_limits.access.expires'),
-    ], function ($api) {
-        $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
+    ], static function ($api) {
+        $api->group(['middleware' => 'api.auth', 'model' => 'App\Models\User'], static function ($api) {
 
             //公司管理
             $api->get('companies/export', ['middleware' => ['permission:company.customers.export'], 'uses' => 'AdminCompaniesController@export']);

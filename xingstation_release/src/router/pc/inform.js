@@ -1,11 +1,13 @@
 import auth from 'service/auth'
+import { URL } from '../../constant/Url'
 
 let router = {
   path: 'inform',
   name: '通知',
   meta: {
     title: '通知',
-    permission: ''
+    permission: '',
+    url: URL.CDN_URL + 'middle_ground/img/notification-icon.png'
   },
   component: () =>
     import(/* webpackChunkName: "page/inform/informView" */ 'page/inform/informView'),

@@ -130,6 +130,22 @@
               <span class="point-title">点位列表</span>
               数量: {{ pagination.total }}
             </span>
+            <div>
+              <el-select 
+                v-model="reportValue" 
+                placeholder="请选择导出报表类型">
+                <el-option
+                  v-for="item in reportList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+              <el-button 
+                type="success" 
+                size="small" 
+                @click="changeReportType">下载</el-button>
+            </div>
           </div>
           <el-table 
             :data="tableData" 
@@ -414,7 +430,8 @@
 import {
   getTimesStaus,
   getTimesChartData,
-  handleDateTypeTransform
+  handleDateTypeTransform,
+  getExcelData
 } from "service";
 import Vue from "vue";
 import PicChart from "./timesChart";
@@ -471,6 +488,12 @@ export default {
   },
   data() {
     return {
+      reportList: [
+        {
+          value: "play_times",
+          label: "点位数据"
+        }
+      ],
       projectAgeTitle: "",
       active: null,
       PersonprojectAgeChart: {
@@ -1066,6 +1089,7 @@ export default {
           }
         ]
       },
+      reportValue: "",
       projectTop: [],
       times: "",
       dialogLoading: false
@@ -1080,6 +1104,29 @@ export default {
   },
   created() {},
   methods: {
+    changeReportType() {
+      this.getExcelData();
+    },
+    getExcelData() {
+      let args = {
+        start_date: handleDateTypeTransform(this.searchForm.dateTime[0]),
+        end_date: handleDateTypeTransform(
+          new Date(this.searchForm.dateTime[1]).getTime()
+        )
+      };
+      args.type = this.reportValue;
+      return getExcelData(this, args)
+        .then(response => {
+          const a = document.createElement("a");
+          a.href = response;
+          a.download = "download";
+          a.click();
+          window.URL.revokeObjectURL(response);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
     typeHandle(type) {
       switch (type) {
         case 0:

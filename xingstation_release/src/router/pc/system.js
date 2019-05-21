@@ -1,4 +1,6 @@
 import auth from 'service/auth'
+import { URL } from '../../constant/Url'
+
 let router = {
   path: 'system',
   name: '权限',
@@ -6,7 +8,8 @@ let router = {
     import(/* webpackChunkName: "page/system/systemView" */ 'page/system/systemView'),
   meta: {
     title: '权限',
-    permission: 'system'
+    permission: 'system',
+    url: URL.CDN_URL + 'middle_ground/img/permission-icon.png'
   },
   // redirect: 'system/user',
   children: [

@@ -49,4 +49,9 @@ class UserCouponBatch extends Model
         'belong',
     ];
 
+    public function couponBatch()
+    {
+        return $this->belongsTo(CouponBatch::class, 'coupon_batch_id', 'id');
+    }
+
 }

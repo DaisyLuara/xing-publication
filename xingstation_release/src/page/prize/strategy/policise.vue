@@ -179,7 +179,7 @@ export default {
         .then(() => {
           this.setting.loadingText = "拼命加载中";
           this.setting.loading = true;
-          deleteBatchPolicy(this, this.cid, id)
+          deleteBatchPolicy(this, this.pid, id)
             .then(response => {
               this.setting.loading = false;
               this.$message({

@@ -12,19 +12,27 @@ class AdvertisementRequest extends Request
             case 'POST':
                 return [
                     'atid' => 'required|integer',
-                    'atiid' => 'required|integer',
                     'name' => 'required|string',
-                    'img' => 'required|string',
+                    'img' => 'required|string|url',
                     'type' => 'required|string|in:static,gif,fps,video',
-                    'link' => 'required|string',
-                    'size' => 'required|integer',
-                    'fps' => 'required|integer',
+                    'link' => 'required|string|url',
+                    'size' => 'integer',
+                    'fps' => 'integer',
                     'isad' => 'required|integer|in:0,1',
+                    'pass' => 'integer'
                 ];
                 break;
             case 'PATCH':
                 return [
-                    'aids' => 'required|array|max:10'
+                    'atid' => 'required|integer',
+                    'name' => 'required|string',
+                    'img' => 'required|string|url',
+                    'type' => 'required|string|in:static,gif,fps,video',
+                    'link' => 'required|string|url',
+                    'size' => 'integer',
+                    'fps' => 'integer',
+                    'isad' => 'required|integer|in:0,1',
+                    'pass' => 'integer'
                 ];
                 break;
             default:

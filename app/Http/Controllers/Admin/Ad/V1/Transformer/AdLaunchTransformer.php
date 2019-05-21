@@ -7,21 +7,36 @@ use League\Fractal\TransformerAbstract;
 
 class AdLaunchTransformer extends TransformerAbstract
 {
-    public function transform(AdLaunch $adLaunch)
+
+    protected $availableIncludes = ['ad_plan'];
+
+    public function transform(AdLaunch $adLaunch): array
     {
         return [
             'id' => $adLaunch->aoid,
-            'point' => $adLaunch->area->name . '-' . $adLaunch->market->name . $adLaunch->point->name,
-            'advertiser' => $adLaunch->advertiser->name,
-            'advertisement' => $adLaunch->advertisement->name,
-            'adType' => $adLaunch->advertisement->type,
-            'link' => $adLaunch->advertisement->link,
-            'size' => round(($adLaunch->advertisement->size) / 1024 / 1024, 1) . 'M',
-            'kTime' => (int)$adLaunch->ktime,
-            'startDate' => date('Y-m-d H:i:s', $adLaunch->sdate),
-            'endDate' => date('Y-m-d H:i:s', $adLaunch->edate),
+            'point' => ($adLaunch->market ? $adLaunch->market->name : '未知商场') . ($adLaunch->point ? $adLaunch->point->name : '未知点位'),//商场&点位
+            'project' => $adLaunch->project ? $adLaunch->project->name : '',//节目
+            'ad_plan_name' => $adLaunch->ad_plan ? $adLaunch->ad_plan->name : '未知广告方案',//广告方案
+            'ad_trade' => $adLaunch->ad_plan->ad_trade ? $adLaunch->ad_plan->ad_trade->name : '未知广告行业',//广告行业
+            'sdate' => date('Y-m-d H:i:s', $adLaunch->sdate),
+            'edate' => date('Y-m-d H:i:s', $adLaunch->edate),
+            'visiable' => $adLaunch->visiable,
+            'visiable_text' => $adLaunch->visiable === 1 ? '营业中' : '下架',
+            'only' => $adLaunch->only,
+            'only_text' => $adLaunch->only === 1 ? '唯一' : '否',
             'created_at' => $adLaunch->date,
             'updated_at' => formatClientDate($adLaunch->clientdate),
         ];
+
     }
+
+    public function includeAdPlan(AdLaunch $adLaunch)
+    {
+        $ad_plan = $adLaunch->ad_plan;
+        if ($ad_plan) {
+            return $this->item($ad_plan, new AdPlanTransformer());
+        }
+        return null;
+    }
+
 }
