@@ -147,8 +147,8 @@
                   <span>{{ scope.row.name }}</span>
                 </el-form-item>
                 <el-form-item
-                  label="硬件加速">
-                  <span>{{ scope.row.hardware ? '是' : '否' }}</span>
+                  label="节目运行状态">
+                  <span>{{ scope.row.hardware ? '关闭' : '开启' }}</span>
                 </el-form-item>
                 <el-form-item
                   label="小时/自定义">
@@ -169,47 +169,46 @@
                   style="width: 100%"
                 >
                   <el-table-column
+                    :show-overflow-tooltip="true"
                     label="广告行业"
-                    min-width="50">
+                    min-width="80">
                     <template slot-scope="ad_scope">
                       <span>{{ ad_scope.row.ad_trade_name }}</span>
                     </template>
                   </el-table-column>
                   <el-table-column
+                    :show-overflow-tooltip="true"
                     label="创建人"
-                    min-width="80">
+                    min-width="60">
                     <template slot-scope="ad_scope">
                       <span>{{ ad_scope.row.create_user_name }}</span>
                     </template>
                   </el-table-column>
                   <el-table-column
-                    label="图片"
-                    min-width="50">
-                    <template slot-scope="ad_scope">
-                      <span>
-                        <img 
-                          :src="ad_scope.row.img" 
-                          width="40px">
-                      </span>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    label="广告名"
-                    min-width="50">
-                    <template slot-scope="ad_scope">
-                      <span>{{ ad_scope.row.name }}</span>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
                     label="类型"
-                    min-width="50">
+                    min-width="60">
                     <template slot-scope="ad_scope">
                       <span>{{ ad_scope.row.type_text }}</span>
                     </template>
                   </el-table-column>
                   <el-table-column
+                    :show-overflow-tooltip="true"
+                    label="素材名称"
+                    min-width="100">
+                    <template slot-scope="ad_scope">
+                      <span>{{ ad_scope.row.name }}</span>
+                      <br/>
+                      <span>
+                        <img 
+                          :src="(ad_scope.row.type === 'static' || ad_scope.row.type === 'gif' ) ? ad_scope.row.link : ad_scope.row.img"
+                          width="40px">
+                      </span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    :show-overflow-tooltip="true"
                     label="附件"
-                    min-width="50">
+                    min-width="60">
                     <template slot-scope="ad_scope">
                       <a
                         :href="ad_scope.row.link"
@@ -218,7 +217,7 @@
                     </template>
                   </el-table-column>
                   <el-table-column
-                    label="广告标记"
+                    label="广告"
                     min-width="50">
                     <template slot-scope="ad_scope">
                       <span>{{ ad_scope.row.isad_text }}</span>
@@ -227,19 +226,19 @@
                   <template v-if="scope.row.type==='program'">
                     <el-table-column
                       label="显示"
-                      min-width="50">
+                      min-width="80">
                       <template slot-scope="ad_scope">
                         <span v-if="ad_scope.row.pivot">
-                          {{ ad_scope.row.pivot.mode }}
+                          {{ modeOptions[ad_scope.row.pivot.mode] }}
                         </span>
                       </template>
                     </el-table-column>
                     <el-table-column
                       label="屏幕"
-                      min-width="50">
+                      min-width="80">
                       <template slot-scope="ad_scope">
                         <span v-if="ad_scope.row.pivot">
-                          {{ ad_scope.row.pivot.ori }} <br>
+                          {{ oriOptions[ad_scope.row.pivot.ori] }} <br/>
                           {{ ad_scope.row.pivot.screen }}%
                         </span>
                       </template>
@@ -247,7 +246,7 @@
                   </template>
                   <el-table-column
                     label="倒计时"
-                    min-width="50">
+                    min-width="60">
                     <template slot-scope="ad_scope">
                       <span v-if="ad_scope.row.pivot">
                         {{ ad_scope.row.pivot.cdshow ?'开启':'关闭' }}<br>
@@ -257,14 +256,14 @@
                   </el-table-column>
                   <el-table-column
                     label="状态"
-                    min-width="50">
+                    min-width="65">
                     <template slot-scope="ad_scope">
                       <span>{{ ad_scope.row.pivot.visiable === 1 ? '运营中' : '下架' }}</span>
                     </template>
                   </el-table-column>
                   <el-table-column
                     label="开始时间"
-                    min-width="50">
+                    min-width="60">
                     <template slot-scope="ad_scope">
                       <span v-if="ad_scope.row.pivot">
                         {{ ( (Array(4).join('0') + ad_scope.row.pivot.shm).slice(-4)).substring(0,2) + ":"
@@ -275,7 +274,7 @@
 
                   <el-table-column
                     label="结束时间"
-                    min-width="50">
+                    min-width="60">
                     <template slot-scope="ad_scope">
                       <span v-if="ad_scope.row.pivot">
                         {{ ( (Array(4).join('0') + ad_scope.row.pivot.ehm).slice(-4)).substring(0,2) + ":"
@@ -286,7 +285,7 @@
 
                   <el-table-column
                     label="操作"
-                    min-width="150"
+                    min-width="50"
                   >
                     <template slot-scope="ad_scope">
                       <el-button
@@ -316,15 +315,15 @@
             :show-overflow-tooltip="true"
             prop="ad_trade"
             label="广告行业"
-            min-width="60"
+            min-width="80"
           />
           <el-table-column
             label="图片"
             min-width="50">
             <template slot-scope="scope">
               <span>
-                <img 
-                  :src="scope.row.icon" 
+                <img
+                  :src="scope.row.icon"
                   width="40px">
               </span>
             </template>
@@ -338,17 +337,17 @@
           <el-table-column
             :show-overflow-tooltip="true"
             prop="hardware"
-            label="硬件加速"
-            min-width="80">
+            label="节目运行状态"
+            min-width="100">
             <template slot-scope="scope">
-              {{ scope.row.hardware ? '是' : '否' }}
+              {{ scope.row.hardware ? '关闭' : '开启' }}
             </template>
           </el-table-column>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="tmode_text"
             label="小时/自定义"
-            min-width="80"
+            min-width="100"
           />
           <el-table-column
             :show-overflow-tooltip="true"
@@ -466,6 +465,27 @@
           currentPage: 1
         },
         adPlanList: [],
+
+        modeOptions: {
+          'fullscreen': '全屏显示',
+          'unmanned': '无人互动',
+          'qrcode': '二维码页面',
+          'floating': '浮窗显示',
+        },
+
+        oriOptions: {
+          'center': '居中',
+          'top': '顶部居中',
+          'bottom': '底部居中',
+          'left_top': '左上角',
+          'left': '左侧居中',
+          'left_bottom': '左下角',
+          'right_top': '右上角',
+          'right': '右侧居中',
+          'right_bottom': '右下角',
+          'center': '居中',
+        }
+
       }
     },
     created() {

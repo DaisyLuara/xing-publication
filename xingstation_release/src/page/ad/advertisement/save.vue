@@ -151,7 +151,7 @@ export default {
         img: 'http://image.xingstation.cn/1007/image/426_video.jpg',
         type: 'static',
         link: '',
-        isad: 0,
+        isad: 1,
       },
       typeOptions: [
         {
