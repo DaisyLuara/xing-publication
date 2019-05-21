@@ -72,8 +72,8 @@
           <el-input v-model="adForm.link"  placeholder="请填写附件链接"></el-input>
         </el-form-item>
         <el-form-item
-          :rules="[{ required: true, message: '请选择广告标示', trigger: 'submit',type: 'number'}]"
-          label="广告标示"
+          :rules="[{ required: true, message: '请选择广告标记', trigger: 'submit',type: 'number'}]"
+          label="广告标记"
           prop="isad">
           <el-radio 
             v-model="adForm.isad"
@@ -84,6 +84,7 @@
         </el-form-item>
 
         <el-form-item>
+          <el-button @click="historyBack">返回</el-button>
           <el-button 
             type="primary" 
             @click="submit('adForm')">完成</el-button>
@@ -105,6 +106,7 @@ import {
   saveAd,
   modifyAd,
   getSearchAdTradeList,
+  historyBack
 } from 'service'
 
 import {
@@ -261,6 +263,10 @@ export default {
           return
         }
       })
+    },
+
+    historyBack() {
+      historyBack();
     }
   }
 }

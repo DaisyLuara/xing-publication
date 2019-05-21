@@ -1,26 +1,26 @@
 <template>
-  <div 
+  <div
     class="item-wrap-template" >
-    <div 
+    <div
       v-loading="setting.loading"
       :element-loading-text="setting.loadingText"
       class="pane" >
-      <div 
+      <div
         class="pane-title">
         新增广告投放
       </div>
       <el-form
         ref="adForm"
-        :model="adForm" 
+        :model="adForm"
         label-width="150px">
-        <el-form-item 
+        <el-form-item
           :rules="[{ required: true, message: '请输入广告行业名称', trigger: 'submit',type: 'number'}]"
           label="广告行业"
           prop="ad_trade_id" >
-          <el-select 
+          <el-select
             v-model="adForm.ad_trade_id"
-            filterable 
-            placeholder="请搜索" 
+            filterable
+            placeholder="请搜索"
             clearable
             @change="adTradeChangeHandle">
             <el-option
@@ -30,15 +30,16 @@
               :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item 
+        <el-form-item
           :rules="[{ required: true, message: '请输入广告模版名称', trigger: 'submit',type: 'number'}]"
           label="广告模版"
           prop="ad_plan_id">
-          <el-select 
+          <el-select
+            @change="adPlanChangeHandle"
             v-model="adForm.ad_plan_id"
-            :loading="searchLoading" 
-            filterable 
-            placeholder="请搜索" 
+            :loading="searchLoading"
+            filterable
+            placeholder="请搜索"
             clearable>
             <el-option
               v-for="item in adPlanList"
@@ -47,14 +48,14 @@
               :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item 
+        <el-form-item
           :rules="[{ required: true, message: '请输入区域', trigger: 'submit' ,type: 'number'}]"
-          label="区域" 
+          label="区域"
           prop="area">
-          <el-select 
-            v-model="adForm.area" 
-            placeholder="请选择" 
-            filterable 
+          <el-select
+            v-model="adForm.area"
+            placeholder="请选择"
+            filterable
             clearable
             @change="areaChangeHandle" >
             <el-option
@@ -64,17 +65,17 @@
               :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item 
-          :rules="[{ required: true, message: '请输入商场', trigger: 'submit'}]" 
-          label="商场" 
+        <el-form-item
+          :rules="[{ required: true, message: '请输入商场', trigger: 'submit'}]"
+          label="商场"
           prop="market">
           <el-select
-            v-model="adForm.market"  
-            :remote-method="getMarket" 
-            :loading="searchLoading" 
+            v-model="adForm.market"
+            :remote-method="getMarket"
+            :loading="searchLoading"
             :multiple-limit="1"
             multiple
-            placeholder="请搜索" 
+            placeholder="请搜索"
             filterable
             remote
             clearable
@@ -86,16 +87,16 @@
               :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item 
+        <el-form-item
           :rules="[{ required: true, message: '请输入点位', trigger: 'submit',type: 'array'}]"
-          label="点位" 
+          label="点位"
           prop="point">
-          <el-select 
-            v-model="adForm.point"  
-            :loading="searchLoading" 
-            :multiple-limit="10" 
-            placeholder="请选择"  
-            multiple 
+          <el-select
+            v-model="adForm.point"
+            :loading="searchLoading"
+            :multiple-limit="10"
+            placeholder="请选择"
+            multiple
             filterable
             clearable>
             <el-option
@@ -107,7 +108,7 @@
         </el-form-item>
 
         <el-form-item
-          :rules="[{ required: true, message: '请输入节目', trigger: 'submit',type: 'number'}]"
+          v-if="project_show"
           label="节目"
           prop="piid">
           <el-select
@@ -128,19 +129,19 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item 
-          label="开始时间" 
+        <el-form-item
+          label="开始时间"
           prop="sdate">
           <el-date-picker
             v-model="adForm.sdate"
-            :editable="false"  
+            :editable="false"
             :clearable="false"
             type="datetime"
-            placeholder="选择开始时间" 
+            placeholder="选择开始时间"
           />
         </el-form-item>
-        <el-form-item 
-          label="结束时间" 
+        <el-form-item
+          label="结束时间"
           prop="edate">
           <el-date-picker
             v-model="adForm.edate"
@@ -154,27 +155,28 @@
           :rules="[{ required: true, message: '请选择状态', trigger: 'submit'}]"
           label="状态"
           prop="visiable">
-          <el-radio 
-            v-model="adForm.visiable" 
+          <el-radio
+            v-model="adForm.visiable"
             :label="1">运营中</el-radio>
-          <el-radio 
-            v-model="adForm.visiable" 
+          <el-radio
+            v-model="adForm.visiable"
             :label="0">下架</el-radio>
         </el-form-item>
         <el-form-item
           :rules="[{ required: true, message: '请选择唯一性', trigger: 'submit'}]"
           label="唯一"
           prop="only">
-          <el-radio 
-            v-model="adForm.only" 
+          <el-radio
+            v-model="adForm.only"
             :label="1">是</el-radio>
-          <el-radio 
-            v-model="adForm.only" 
+          <el-radio
+            v-model="adForm.only"
             :label="0">否</el-radio>
         </el-form-item>
         <el-form-item>
-          <el-button 
-            type="primary" 
+          <el-button @click="historyBack">返回</el-button>
+          <el-button
+            type="primary"
             @click="submit('adForm')">完成</el-button>
         </el-form-item>
       </el-form>
@@ -191,6 +193,7 @@ import {
   getSearchAeraList,
   getSearchMarketList,
   getSearchProjectList,
+  historyBack
 } from 'service'
 
 import {
@@ -218,6 +221,7 @@ export default {
   },
   data() {
     return {
+      project_show:false,
       setting: {
         isOpenSelectAll: true,
         loading: false,
@@ -298,6 +302,17 @@ export default {
     adTradeChangeHandle() {
       this.adForm.ad_plan_id = ''
       this.getAdPlanList()
+    },
+    adPlanChangeHandle(val){
+      let item = this.adPlanList.find(r => {
+        return r.id === val;
+      });
+      if(item.type === 'program') {
+        this.project_show = true;
+      } else {
+        this.adForm.piid = null;
+        this.project_show = false;
+      }
     },
     getAdPlanList() {
       let args = {
@@ -396,6 +411,9 @@ export default {
             visiable:this.adForm.visiable,
             only:this.adForm.only,
           }
+          if(!this.adForm.piid){
+            delete args.piid;
+          }
           return saveAdLaunch(this, args)
             .then(response => {
               this.setting.loading = false
@@ -419,6 +437,9 @@ export default {
           return
         }
       })
+    },
+    historyBack() {
+      historyBack();
     }
   }
 }

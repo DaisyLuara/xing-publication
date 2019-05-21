@@ -17,6 +17,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property string $icon 图标
  * @property string|null $info 备注
  * @property string $type program：节目 ads：小屏
+ * @property int $hardware 硬件加速
+ * @property string $tmode div:自定义 hours:小时
  * @property string $z 密钥
  * @property string $date
  * @property int $clientdate 时间
@@ -33,9 +35,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\AdPlan whereAtiid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\AdPlan whereClientdate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\AdPlan whereDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\AdPlan whereHardware($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\AdPlan whereIcon($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\AdPlan whereInfo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\AdPlan whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\AdPlan whereTmode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\AdPlan whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\AdPlan whereZ($value)
  * @mixin \Eloquent
@@ -69,11 +73,13 @@ class AdPlan extends Model
 
     public const MODE_FULLSCREEN = 'fullscreen';
     public const MODE_UNMANNED = 'unmanned';
+    public const MODE_INIT = 'init';
     public const MODE_QRCODE = 'qrcode';
     public const MODE_FLOATING = 'floating';
     public static $modeMapping = [
         self::MODE_FULLSCREEN => '全屏显示',
         self::MODE_UNMANNED => '无人互动',
+        self::MODE_INIT => '资源加载页',
         self::MODE_QRCODE => '二维码页面',
         self::MODE_FLOATING => '浮窗显示',
     ];
@@ -103,7 +109,7 @@ class AdPlan extends Model
     public const TMODE_HOURS = 'hours';
     public static $tmodeMapping = [
         self::TMODE_DIV => '自定义',
-        self::TMODE_HOURS => '小时',
+        self::TMODE_HOURS => '小时间隔',
     ];
 
 

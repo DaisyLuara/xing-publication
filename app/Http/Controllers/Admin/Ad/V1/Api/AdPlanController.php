@@ -87,6 +87,7 @@ class AdPlanController extends Controller
 
         /** @var AdPlan $adPlan */
         $adPlan->fill(array_merge([
+            'z' => $this->user->z,
             'date' => date('Y-m-d H:i:s'),
             'clientdate' => time() * 1000],
             $params))->save();

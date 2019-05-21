@@ -15,9 +15,14 @@
         label-width="150px">
 
         <el-form-item>
-          <h3>
+          <h3 class="item-title">
+            <i class="el-icon-star-on"></i>
+            <i class="el-icon-star-on"></i>
             <i class="el-icon-star-on"></i>
             广告模版
+            <i class="el-icon-star-on"></i>
+            <i class="el-icon-star-on"></i>
+            <i class="el-icon-star-on"></i>
           </h3>
         </el-form-item>
 
@@ -27,10 +32,12 @@
           prop="type">
           <el-radio
             v-model="adPlanForm.type"
-            label="program">节目广告</el-radio>
+            label="program">节目广告
+          </el-radio>
           <el-radio
             v-model="adPlanForm.type"
-            label="ads">小屏广告</el-radio>
+            label="ads">小屏广告
+          </el-radio>
         </el-form-item>
         <el-form-item
           :rules="[{ required: true, message: '请选择广告行业', trigger: 'submit',type: 'number'}]"
@@ -78,25 +85,35 @@
             placeholder="请输入广告模版名称"/>
         </el-form-item>
         <el-form-item
-          label="广告模版介绍"
-          prop="info">
-          <el-input
-            v-model="adPlanForm.info"
-            type="textarea"
-            maxlength="200"
-            show-word-limit
-            placeholder="请输入广告模版介绍"/>
+          :rules="[{ required: true, message: '请选择附件', trigger: 'submit',type: 'string'}]"
+          label="方案图标"
+          prop="icon">
+          <div
+            class="avatar-uploader"
+            @click="panelVisible=true">
+            <img
+              v-if="adPlanForm.icon"
+              :src="adPlanForm.icon"
+              class="avatar">
+            <i
+              v-else
+              class="el-icon-plus avatar-uploader-icon"/>
+          </div>
         </el-form-item>
         <el-form-item
-          :rules="[{ required: true, message: '请选择小时/自定义', trigger: 'submit',type: 'string'}]"
-          label="小时/自定义"
+          :rules="[{ required: true, message: '请选择播放模式', trigger: 'submit',type: 'string'}]"
+          label="播放模式"
           prop="tmode">
-          <el-radio
+          <el-radio-group
             v-model="adPlanForm.tmode"
-            label="div">自定义</el-radio>
-          <el-radio
-            v-model="adPlanForm.tmode"
-            label="hours">小时</el-radio>
+            @change="tmodeChangeHandle">
+            <el-radio
+              label="div">自定义
+            </el-radio>
+            <el-radio
+              label="hours">小时间隔
+            </el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item
           v-if="adPlanForm.type === 'program'"
@@ -113,36 +130,36 @@
           </el-radio>
         </el-form-item>
         <el-form-item
-          :rules="[{ required: true, message: '请选择附件', trigger: 'submit',type: 'string'}]"
-          label="方案图标"
-          prop="icon">
-          <div
-            class="avatar-uploader"
-            @click="panelVisible=true">
-            <img
-              v-if="adPlanForm.icon"
-              :src="adPlanForm.icon"
-              class="avatar">
-            <i
-              v-else
-              class="el-icon-plus avatar-uploader-icon"/>
-          </div>
+          label="备注"
+          prop="info">
+          <el-input
+            v-model="adPlanForm.info"
+            type="textarea"
+            maxlength="200"
+            show-word-limit
+            placeholder="请输入模版备注"/>
         </el-form-item>
+
         <template v-if="!isItem">
           <el-form-item>
-            <h3 class="text text-primary">
+            <h3 class="item-title">
+              <i class="el-icon-star-on"></i>
+              <i class="el-icon-star-on"></i>
               <i class="el-icon-star-on"></i>
               排期细节
+              <i class="el-icon-star-on"></i>
+              <i class="el-icon-star-on"></i>
+              <i class="el-icon-star-on"></i>
             </h3>
           </el-form-item>
           <template v-if="adPlanForm.type === 'program'">
             <el-form-item
-              :rules="[{ required: true, message: '请选择模式', trigger: 'submit',type: 'string'}]"
-              label="模式"
+              :rules="[{ required: true, message: '请选择显示模式', trigger: 'submit',type: 'string'}]"
+              label="显示模式"
               prop="mode">
-              <el-select 
-                v-model="adPlanForm.mode" 
-                placeholder="请选择模式">
+              <el-select
+                v-model="adPlanForm.mode"
+                placeholder="请选择显示模式">
                 <el-option
                   v-for="item in modeOptions"
                   :key="item.value"
@@ -150,33 +167,59 @@
                   :value="item.value"/>
               </el-select>
             </el-form-item>
-            <el-form-item
-              :rules="[{ required: true, message: '请选择位置', trigger: 'submit',type: 'string'}]"
-              label="位置"
-              prop="ori">
-              <el-select 
-                v-model="adPlanForm.ori" 
-                placeholder="请选择位置">
-                <el-option
-                  v-for="item in oriOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"/>
-              </el-select>
-            </el-form-item>
-            <el-form-item
-              :rules="[{ required: true, message: '请填入尺寸', trigger: 'submit',type: 'number'}]"
-              label="尺寸"
-              prop="screen">
-              <el-input-number
-                v-model="adPlanForm.screen"
-                :min="1"
-                :max="100"
-                controls-position="right"/>
-              %
-            </el-form-item>
+            <template v-if="adPlanForm.mode !== 'fullscreen'">
+              <el-form-item
+                :rules="[{ required: true, message: '请选择位置', trigger: 'submit',type: 'string'}]"
+                label="位置"
+                prop="ori">
+                <el-select
+                  v-model="adPlanForm.ori"
+                  placeholder="请选择位置">
+                  <el-option
+                    v-for="item in oriOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"/>
+                </el-select>
+              </el-form-item>
+              <el-form-item
+                :rules="[{ required: true, message: '请填入尺寸', trigger: 'submit',type: 'number'}]"
+                label="尺寸"
+                prop="screen">
+                <el-input-number
+                  v-model="adPlanForm.screen"
+                  :min="1"
+                  :max="100"
+                  controls-position="right"/>
+                %
+              </el-form-item>
+            </template>
           </template>
 
+          <el-form-item
+            :rules="[{ required: true, message: '请选择', trigger: 'submit',type: 'number'}]"
+            label="播放"
+            prop="cdshow">
+            <el-radio
+              v-model="adPlanForm.play"
+              :label="1">自定义时长
+            </el-radio>
+            <el-radio
+              v-model="adPlanForm.play"
+              :label="0">默认时长
+            </el-radio>
+          </el-form-item>
+          <el-form-item
+            v-if="adPlanForm.play"
+            :rules="[{ required: true, message: '请填入时长', trigger: 'submit',type: 'number'}]"
+            label="时长"
+            prop="ktime">
+            <el-input-number
+              v-model="adPlanForm.ktime"
+              :min="0"
+              controls-position="right"/>
+            秒
+          </el-form-item>
           <el-form-item
             :rules="[{ required: true, message: '请选择倒计时', trigger: 'submit',type: 'number'}]"
             label="倒计时"
@@ -190,54 +233,39 @@
               :label="1">开启
             </el-radio>
           </el-form-item>
+
           <el-form-item
-            :rules="[{ required: true, message: '请填入显示', trigger: 'submit',type: 'number'}]"
-            label="显示"
-            prop="ktime">
-            <el-input-number
-              v-model="adPlanForm.ktime"
-              :min="1"
-              controls-position="right"/>
-            秒
-          </el-form-item>
-          <el-form-item
-            label="开始时间"
-            prop="shm">
+            label="时间">
             <el-time-picker
               v-model="adPlanForm.shm"
-              format="HH:mm"
-              value-format="HH:mm"
+              :format="time_format"
+              :value-format="time_format"
               placeholder="选择开始时间"/>
-          </el-form-item>
-          <el-form-item
-            label="结束时间"
-            prop="ehm">
+            至
             <el-time-picker
               v-model="adPlanForm.ehm"
-              format="HH:mm"
-              value-format="HH:mm"
+              :format="time_format"
+              :value-format="time_format"
               placeholder="选择结束时间"/>
+            <span v-if="adPlanForm.tmode === 'hours'"> 分 </span>
           </el-form-item>
+
           <el-form-item
             :rules="[{ required: true, message: '请选择状态', trigger: 'submit'}]"
             label="排期状态"
             prop="visiable">
-            <el-radio 
-              v-model="adPlanForm.visiable" 
-              :label="1">运营中</el-radio>
-            <el-radio 
-              v-model="adPlanForm.visiable" 
-              :label="0">下架</el-radio>
+            <el-radio
+              v-model="adPlanForm.visiable"
+              :label="1">运营中
+            </el-radio>
+            <el-radio
+              v-model="adPlanForm.visiable"
+              :label="0">下架
+            </el-radio>
           </el-form-item>
-          <!--<el-form-item-->
-          <!--:rules="[{ required: true, message: '请选择唯一性', trigger: 'submit'}]"-->
-          <!--label="排期唯一"-->
-          <!--prop="only">-->
-          <!--<el-radio v-model="adPlanForm.only" :label="1">是</el-radio>-->
-          <!--<el-radio v-model="adPlanForm.only" :label="0">否</el-radio>-->
-          <!--</el-form-item>-->
         </template>
         <el-form-item>
+          <el-button @click="historyBack">返回</el-button>
           <el-button
             type="primary"
             @click="submit('adPlanForm')">完成
@@ -261,10 +289,12 @@
     getAdPlanDetail,
     getSearchAdTradeList,
     getSearchAdvertisementList,
+    historyBack
   } from 'service'
 
   import {
     Radio,
+    RadioGroup,
     Form,
     Select,
     Option,
@@ -287,6 +317,7 @@
       ElInput: Input,
       ElDatePicker: DatePicker,
       ElRadio: Radio,
+      ElRadioGroup: RadioGroup,
       ElInputNumber: InputNumber,
       elTimePicker: TimePicker,
       PicturePanel
@@ -295,7 +326,7 @@
       return {
         panelVisible: false,
         singleFlag: true,
-
+        time_format: "HH:mm",
         isItem: false,
         adPlanId: null,
         setting: {
@@ -319,6 +350,7 @@
           ori: 'center',
           screen: 100,
           cdshow: 1,
+          play: 0,
           ktime: 15,
           only: 0,
           visiable: 1,
@@ -333,6 +365,10 @@
           {
             'label': '无人互动',
             'value': 'unmanned'
+          },
+          {
+            'label': '资源加载页',
+            'value': 'init'
           },
           {
             'label': '二维码页面',
@@ -409,9 +445,20 @@
 
     },
     methods: {
+      tmodeChangeHandle(tmode) {
+        if (tmode === 'hours') {
+          this.adPlanForm.shm = '00';
+          this.adPlanForm.ehm = '59';
+          this.time_format = "mm";
+        } else {
+          this.adPlanForm.shm = '00:01';
+          this.adPlanForm.ehm = '23:59';
+          this.time_format = "HH:mm";
+        }
+      },
       handleClose(data) {
         if (data && data.length > 0) {
-          let { url } = data[0];
+          let {url} = data[0];
           this.adPlanForm.icon = url;
         } else {
           // this.$message({
@@ -436,6 +483,7 @@
             this.adPlanForm.info = response.info;
             this.adPlanForm.tmode = response.tmode;
             this.adPlanForm.hardware = response.hardware;
+            this.tmodeChangeHandle(response.tmode);
             this.getSearchAdList();
           })
           .catch(error => {
@@ -472,7 +520,20 @@
       submit(formName) {
         this.$refs[formName].validate(valid => {
           if (valid) {
-            this.setting.loading = true
+            this.setting.loading = true;
+            if (this.adPlanForm.mode === 'fullscreen') {
+              this.adPlanForm.ori = "center";
+              this.adPlanForm.screen = 100;
+            }
+            if (this.adPlanForm.play === 0) {
+              this.adPlanForm.ktime = 0;
+            }
+
+            if (this.adPlanForm.tmode === 'hours') {
+              this.adPlanForm.shm = '00:' + this.adPlanForm.shm.substring(this.adPlanForm.shm.length - 2);
+              this.adPlanForm.ehm = '00:' + this.adPlanForm.ehm.substring(this.adPlanForm.ehm.length - 2);
+            }
+
             let args = {
               aids: this.adPlanForm.aids,
               atid: this.adPlanForm.atid,
@@ -561,12 +622,20 @@
             return
           }
         })
+      },
+      historyBack() {
+        historyBack();
       }
     }
   }
 </script>
 
 <style lang="less" scoped>
+  .item-title {
+    color: #67C23A;
+    margin: 10px;
+  }
+
   .item-wrap-template {
     .pane {
       border-radius: 5px;
@@ -581,6 +650,9 @@
         width: 380px;
       }
 
+      .el-date-editor {
+        width: 150px;
+      }
       .item-list {
         .program-title {
           color: #555;

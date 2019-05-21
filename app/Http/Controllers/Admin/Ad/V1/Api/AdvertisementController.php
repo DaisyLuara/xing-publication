@@ -35,8 +35,7 @@ class AdvertisementController extends Controller
             $query->where('pass', '=', $request->get('pass'));
         }
 
-        $advertisements = $query->orderBy('atid', 'desc')
-            ->orderBy('date', 'desc')
+        $advertisements = $query->orderBy('aid', 'desc')
             ->paginate(10);
 
         return $this->response->paginator($advertisements, new AdvertisementTransformer());
