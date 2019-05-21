@@ -895,6 +895,7 @@ export default {
       this.customerList.find(item => {
         if (item.name === val) {
           this.pointForm.contract.contract_phone = item.phone;
+          this.customer=item
           return;
         }
       });
@@ -908,6 +909,7 @@ export default {
           this.contractInfo = item;
           this.pointForm.contract.contract_company = this.contractInfo.company.name;
           this.customerList = this.contractInfo.company.customers.data;
+          this.bdUser = this.contractInfo.company.bdUser;
           return;
         }
       });
@@ -915,7 +917,7 @@ export default {
     getContractReceiptList() {
       let searchLoading = true;
       let args = {
-        include: "company.customers"
+        include: "company.customers,company.bdUser"
       };
       getContractReceiptList(this, args)
         .then(res => {
@@ -1095,6 +1097,7 @@ export default {
     submit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+            this.pointForm.areaid=this.pointForm.area_id;
           delete this.pointForm.area_id;
           delete this.pointForm.contract.date;
           delete this.pointForm.share.date;
@@ -1120,7 +1123,8 @@ export default {
 
           let args = this.pointForm;
           delete args.permission;
-          args.bd_z = this.ar_user_z;
+          args.bd_z = this.bdUser.z;
+          args.site_z=this.customer.z
           if (this.pointID) {
             siteModifyPoint(this, args, this.pointID)
               .then(res => {
