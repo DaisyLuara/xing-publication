@@ -33,7 +33,6 @@ class LoginUserTransformer extends TransformerAbstract
             'z' => $user->z,
             'created_at' => $user->created_at->toDateTimeString(),
             'updated_at' => $user->updated_at->toDateTimeString(),
-            'pivot' => $user->pivot,
             'permissions' => $this->getUserPermission($user)
         ];
     }
