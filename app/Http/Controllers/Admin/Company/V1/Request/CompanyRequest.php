@@ -3,48 +3,59 @@
 namespace App\Http\Controllers\Admin\Company\V1\Request;
 
 use App\Http\Requests\Request;
+use Illuminate\Validation\Rule;
 
 class CompanyRequest extends Request
 {
 
-    public function rules()
+    public function rules(): ?array
     {
         switch ($this->method()) {
             case 'POST':
                 return [
                     'name' => 'required|string',
-                    'logo_media_id' => 'required|integer',
                     'address' => 'required|string',
-                    'customer_name' => 'filled',
-                    'position' => 'filled',
-                    'phone' => 'filled|regex:/^1[3456789]\d{9}$/|unique:customers',
+                    'category' => Rule::in([0, 1]),
+                    'parent_id' => 'filled',
+                    'description' => 'required',
+                    'logo_media_id' => 'required|integer',
+                    'internal_name' => 'required|string',
+                    'bd_user_id' => 'required',
+                    'customer_name' => 'required_if:category,0',
+                    'position' => 'required_if:category,0',
+                    'phone' => 'required_if:category,0|regex:/^1[3456789]\d{9}$/|unique:customers',
                     'telephone' => 'filled',
-                    'password' => 'filled|string|min:8',
-                    'role_id' => 'filled'
+                    'password' => 'required_if:category,0|string|min:8',
+                    'role_id' => 'required_if:category,0|integer'
                 ];
                 break;
             case 'PATCH':
                 return [
-                    'name' => 'string',
-                    'logo_media_id' => 'integer',
-                    'address' => 'string',
-                    'customer_name' => 'filled',
-                    'position' => 'filled',
-                    'phone' => 'filled|regex:/^1[3456789]\d{9}$/',
-                    'telephone' => 'filled',
-                    'password' => 'filled|string|min:8',
+                    'name' => 'filled',
+                    'address' => 'filled',
+                    'category' => 'filled',
+                    'parent_id' => 'filled',
+                    'description' => 'filled',
+                    'logo_media_id' => 'filled',
+                    'internal_name' => 'filled',
+                    'bd_user_id' => 'filled',
+                    'status' => 'filled'
                 ];
                 break;
         }
     }
 
-    public function attributes()
+    public function attributes(): array
     {
         return [
             'name' => '公司全称',
             'address' => '公司地址',
+            'category' => '公司属性',
+            'description' => '公司详情',
+            'logo_media_id' => '公司logo',
             'internal_name' => '公司简称',
-            'logo_media_id' => '公司logo'
+            'bd_user_id' => '所属人',
+
         ];
     }
 }

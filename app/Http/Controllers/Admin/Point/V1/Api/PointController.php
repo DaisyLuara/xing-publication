@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Admin\Point\V1\Api;
 
 use App\Http\Controllers\Admin\Attribute\V1\Models\Attribute;
-use App\Http\Controllers\Admin\Point\V1\Models\Market;
-use App\Http\Controllers\Admin\Point\V1\Transformer\PointTransformer;
-use App\Http\Controllers\Admin\Point\V1\Request\PointRequest;
 use App\Http\Controllers\Admin\Point\V1\Models\Point;
+use App\Http\Controllers\Admin\Point\V1\Request\PointRequest;
+use App\Http\Controllers\Admin\Point\V1\Transformer\PointTransformer;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -15,24 +14,24 @@ class PointController extends Controller
 {
     public function map(PointRequest $request, Point $point)
     {
-        $lat = $request->lat;
-        $lng = $request->lng;
-        $distance = $request->distance ? $request->distance : 1;
+        $lat = $request->get('lat');
+        $lng = $request->get('lng');
+        $distance = $request->get('distance') ?: 1;
 
         $query = $point->query();
-        if ($request->date && $request->date == 'today') {
+        if ($request->has('date') && $request->get('date') === 'today') {
             $startDate = Carbon::now()->startOfDay()->toDateTimeString();
             $endDate = Carbon::now()->endOfDay()->toDateTimeString();
             $query->whereRaw("str_to_date(face_count_log.date, '%Y-%m-%d %H:%i:%s') BETWEEN '" . $startDate . "' AND '" . $endDate . "'");
         }
         $points = $query->join('face_count_log', 'avr_official.oid', '=', 'face_count_log.oid')
-            ->selectRaw("sum(looknum) as count,lat,lng,avr_official.oid")
+            ->selectRaw('sum(looknum) as count,lat,lng,avr_official.oid')
             ->whereRaw("ACOS(SIN(($lat * 3.1415) / 180) * SIN((lat * 3.1415) / 180) + COS(($lat * 3.1415) / 180) * COS((lat * 3.1415) / 180) *COS(($lng * 3.1415) / 180 - (lng * 3.1415) / 180)) * 6380 <= $distance")
             ->where('face_count_log.belong', '=', 'all')
             ->groupBy('avr_official.oid')
             ->get();
 
-        return $this->response->collection($points, new PointTransformer());
+        return $this->response()->collection($points, new PointTransformer())->setStatusCode(200);
 
     }
 
@@ -53,46 +52,46 @@ class PointController extends Controller
 
         //点位名称
         if ($request->has('point_name')) {
-            $query->where('name', 'like', '%' . $request->point_name . '%');
+            $query->where('name', 'like', '%' . $request->get('point_name') . '%');
         }
 
         //场地名称
         if ($request->has('marketid')) {
-            $query->where('marketid', '=', $request->marketid);
+            $query->where('marketid', '=', $request->get('marketid'));
         }
 
         //区域
         if ($request->has('areaid')) {
-            $query->where('areaid', '=', $request->areaid);
+            $query->where('areaid', '=', $request->get('areaid'));
         }
 
         //点位类型
         if ($request->has('contract_type')) {
-            $contractType = $request->contract_type;
-            $query->whereHas('contract', function ($query) use ($contractType) {
+            $contractType = $request->get('contract_type');
+            $query->whereHas('contract', static function ($query) use ($contractType) {
                 $query->where('type', '=', $contractType);
             });
         }
 
         //合作模式
         if ($request->has('contract_mode')) {
-            $contractMode = $request->contract_mode;
-            $query->whereHas('contract', function ($query) use ($contractMode) {
+            $contractMode = $request->get('contract_mode');
+            $query->whereHas('contract', static function ($query) use ($contractMode) {
                 $query->where('mode', '=', $contractMode);
             });
         }
 
         //点位权限
         if ($request->has('share_users')) {
-            $shareUsers = explode(',', $request->share_users);
-            $query->whereHas('share', function ($query) use ($shareUsers) {
+            $shareUsers = explode(',', $request->get('share_users'));
+            $query->whereHas('share', static function ($query) use ($shareUsers) {
                 foreach ($shareUsers as $shareUser) {
-                    $query->where("$shareUser", '=', 1);
+                    $query->where((string)$shareUser, '=', 1);
                 }
             });
         }
-        $points = $query->paginate(10);
-        return $this->response->paginator($points, new PointTransformer());
+        $points = $query->orderByDesc('date')->paginate(10);
+        return $this->response()->paginator($points, new PointTransformer())->setStatusCode(200);
     }
 
     public function show($id, Request $request)
@@ -111,56 +110,40 @@ class PointController extends Controller
             abort(404);
         }
 
-        return $this->response->item($point, new PointTransformer());
+        return $this->response()->item($point, new PointTransformer())->setStatusCode(200);
     }
 
     public function store(PointRequest $request, Point $point)
     {
-        abort_if(!$request->bd_z, '500', '缺少用户标识');
-
-        $market = Market::find($request->marketid);
-        $area = $market->area;
-
-        $insertData = $request->all();
-        $insertData['areaid'] = $area->areaid;
-
-        $point->fill($insertData)->saveOrFail();
-        $point->attribute()->attach($request->attribute_id);
+        $point->fill($request->all())->saveOrFail();
+        $point->attribute()->attach($request->get('attribute_id'));
 
         if ($request->has('contract')) {
-            $point->contract()->create($request->contract);
+            $point->contract()->create($request->get('contract'));
         }
 
         if ($request->has('share')) {
-            $point->share()->create($request->share);
+            $point->share()->create($request->get('share'));
         }
 
-        $point->attribute()->get();
-
-        return $this->response->item($point, new PointTransformer());
+        return $this->response()->item($point, new PointTransformer())->setStatusCode(201);
     }
 
     public function update(PointRequest $request, Point $point)
     {
         $node = Attribute::query()->where('name', '业态')->first();
         $attribute = $point->attribute()->get();
-        /** @var \Baum\Node $item */
+        /** @var Attribute $item */
         foreach ($attribute as $item) {
             if ($item->isDescendantOf($node)) {
                 $point->attribute()->detach($item->id);
             }
         }
-        $point->attribute()->attach($request->attribute_id);
-
-        $market = Market::find($request->marketid);
-        $area = $market->area;
-
-        $insertData = $request->all();
-        $insertData['areaid'] = $area->areaid;
+        $point->attribute()->attach($request->get('attribute_id'));
 
         $point->update($request->all());
         if ($request->has('contract')) {
-            $contract = $request->contract;
+            $contract = $request->get('contract');
             if (isset($contract['oid'])) {
                 unset($contract['oid']);
             }
@@ -173,7 +156,7 @@ class PointController extends Controller
         }
 
         if ($request->has('share')) {
-            $share = $request->share;
+            $share = $request->get('share');
             if (isset($share['oid'])) {
                 unset($share['oid']);
             }
@@ -186,6 +169,6 @@ class PointController extends Controller
 
         }
 
-        return $this->response->item($point, new PointTransformer());
+        return $this->response()->item($point, new PointTransformer())->setStatusCode(200);
     }
 }
