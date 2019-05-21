@@ -53,12 +53,17 @@ class AdvertisementController extends Controller
         //需要获取link的size
         $content = file_get_contents($data['link']);
 
-        $advertisement->fill(array_merge($data, [
+        $addParams = [
             'size' => strlen($content),
             'date' => date('Y-m-d H:i:s'),
             'clientdate' => time() * 1000,
-            'z' => $this->user->z,
-        ]))->save();
+        ];
+
+        if ($this->user->z) {
+            $addParams['z'] = $this->user->z;
+        }
+
+        $advertisement->fill(array_merge($data, $addParams))->save();
 
         return $this->response->noContent();
     }

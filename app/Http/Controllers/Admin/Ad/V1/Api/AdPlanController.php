@@ -85,12 +85,17 @@ class AdPlanController extends Controller
             $params['icon'] = 'http://image.xingstation.cn/1007/image/393_511_941_578_ic_launcher.png';
         }
 
-        /** @var AdPlan $adPlan */
-        $adPlan->fill(array_merge([
-            'z' => $this->user->z,
+        $addParams = [
             'date' => date('Y-m-d H:i:s'),
-            'clientdate' => time() * 1000],
-            $params))->save();
+            'clientdate' => time() * 1000
+        ];
+
+        if ($this->user->z) {
+            $addParams['z'] = $this->user->z;
+        }
+
+        /** @var AdPlan $adPlan */
+        $adPlan->fill(array_merge($params, $addParams))->save();
         $this->syncAdvertisement($request, $adPlan, $aids);
 
         return $this->response->noContent();
