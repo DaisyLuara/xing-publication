@@ -10,30 +10,28 @@ use League\Fractal\TransformerAbstract;
 
 class ProjectLaunchTplScheduleTransformer extends TransformerAbstract
 {
-
-    protected $availableIncludes = ['project', 'skin'];
-
     public function transform(ProjectLaunchTplSchedule $projectLaunchTplSchedule): array
     {
+        $project = $projectLaunchTplSchedule->project;
+        $skin = $projectLaunchTplSchedule->skin;
         return [
             'id' => $projectLaunchTplSchedule->tviid,
             'tpl_id' => $projectLaunchTplSchedule->tvid,
+            'project' => [
+                'id' => $project->id,
+                'name' => $project->name,
+                'icon' => $project->icon,
+                'versionname' => $project->versionname
+            ],
+            'skin' => [
+                'bid' => $skin->bid,
+                'name' => $skin->name,
+                'icon' => $skin->icon
+
+            ],
             'date_start' => $this->formatTime($projectLaunchTplSchedule->shm),
             'date_end' => $this->formatTime($projectLaunchTplSchedule->ehm),
         ];
-    }
-
-    public function includeProject(ProjectLaunchTplSchedule $projectLaunchTplSchedule): ?Item
-    {
-        $project = $projectLaunchTplSchedule->project;
-        if ($project) {
-            return $this->item($projectLaunchTplSchedule->project, new ProjectTransformer());
-        }
-    }
-
-    public function includeSkin(ProjectLaunchTplSchedule $projectLaunchTplSchedule): Item
-    {
-        return $this->item($projectLaunchTplSchedule->skin, new SkinTransformer());
     }
 
     private function formatTime($time)

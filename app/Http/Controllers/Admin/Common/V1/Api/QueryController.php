@@ -68,6 +68,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\User;
 use DB;
+use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -737,9 +738,9 @@ class QueryController extends Controller
      * 可用皮肤搜索
      * @param Skin $skin
      * @param Request $request
-     * @return \Dingo\Api\Http\Response
+     * @return Response
      */
-    public function projectSkinQuery(Skin $skin, Request $request): \Dingo\Api\Http\Response
+    public function projectSkinQuery(Skin $skin, Request $request): Response
     {
         $query = $skin->query();
         if ($request->has('project_id')) {

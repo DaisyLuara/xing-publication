@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Project\V1\Models;
 
 use App\Http\Controllers\Admin\Point\V1\Models\Point;
 use App\Models\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch
@@ -30,30 +31,30 @@ use App\Models\Model;
  * @property-read \App\Http\Controllers\Admin\Point\V1\Models\Point $point
  * @property-read \App\Http\Controllers\Admin\Project\V1\Models\Project $project
  * @property-read \App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTpl $template
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model ordered()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model recent()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch whereCid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch whereClientdate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch whereDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch whereDay1Tvid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch whereDay2Tvid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch whereDay3Tvid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch whereDay4Tvid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch whereDay5Tvid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch whereDay6Tvid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch whereDay7Tvid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch whereDefaultPlid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch whereDivTvid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch whereEdate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch whereOid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch wherePid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch whereSdate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch whereTvoid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch whereWeekdayTvid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch whereWeekendTvid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunch newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunch newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Model ordered()
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunch query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Model recent()
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunch whereCid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunch whereClientdate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunch whereDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunch whereDay1Tvid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunch whereDay2Tvid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunch whereDay3Tvid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunch whereDay4Tvid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunch whereDay5Tvid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunch whereDay6Tvid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunch whereDay7Tvid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunch whereDefaultPlid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunch whereDivTvid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunch whereEdate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunch whereOid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunch wherePid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunch whereSdate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunch whereTvoid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunch whereWeekdayTvid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunch whereWeekendTvid($value)
  * @mixin \Eloquent
  */
 class ProjectLaunch extends Model
@@ -68,6 +69,7 @@ class ProjectLaunch extends Model
         'pid',
         'oid',
         'default_plid',
+        'default_bid',
         'weekday_tvid',
         'weekend_tvid',
         'day1_tvid',
@@ -83,19 +85,19 @@ class ProjectLaunch extends Model
         'date'
     ];
 
-    public function point()
+    public function point(): BelongsTo
     {
         return $this->belongsTo(Point::class, 'oid', 'oid');
     }
 
-    public function project()
+    public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class, 'default_plid', 'id');
     }
 
-    public function template()
+    public function template(): BelongsTo
     {
-        return $this->belongsTo(ProjectLaunchTpl::class,'div_tvid','tvid');
+        return $this->belongsTo(ProjectLaunchTpl::class, 'div_tvid', 'tvid');
     }
 
 }
