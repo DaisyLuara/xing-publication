@@ -12,7 +12,7 @@ use App\Http\Controllers\Admin\Common\V1\Models\WebsiteVisitor;
 use App\Http\Controllers\Admin\Common\V1\Request\WebsiteRequest;
 use App\Http\Controllers\Admin\Face\V1\Models\XsFaceCountLog;
 use App\Http\Controllers\Controller;
-use App\Jobs\WebsiteMailJob;
+use App\Mail\WebVisitor;
 
 class WebsiteController extends Controller
 {
@@ -28,7 +28,7 @@ class WebsiteController extends Controller
     {
         $data = XsFaceCountLog::query()
             ->whereRaw("belong='all'")
-            ->selectRaw('sum(playtimes7) as fcpe')
+            ->selectRaw("sum(playtimes7) as fcpe")
             ->first();
         $output = ['fcpe' => $data->fcpe];
         return response()->json($output);
@@ -36,7 +36,7 @@ class WebsiteController extends Controller
 
     public function storeVisitor(WebsiteRequest $request)
     {
-        $contact = $request->get('contact');
+        $contact = $request->contact;
         if (filter_var($contact, FILTER_VALIDATE_EMAIL)) {
             $data['email'] = $contact;
         }
@@ -48,16 +48,16 @@ class WebsiteController extends Controller
                 $data['phone'] = $contact;
             }
         }
-        $data['name'] = $request->get('name');
-        $data['remark'] = $request->get('remark');
-        $data['subscribe'] = $request->get('subscribe');
-        $data['type'] = $request->get('type');
+        $data['name'] = $request->name;
+        $data['remark'] = $request->remark;
+        $data['subscribe'] = $request->subscribe;
+        $data['type'] = $request->type;
         $visitor = WebsiteVisitor::create($data);
-
-        if (env('APP_ENV') === 'production') {
-            WebsiteMailJob::dispatch($this->mailMapping[$request->get('type')], $visitor)->onQueue('data-clean');
+        
+        if (env('APP_ENV') == 'production') {
+            \Mail::to($this->mailMapping[$request->type])->send(new WebVisitor($visitor));
         } else {
-            WebsiteMailJob::dispatch('yangqiang@jingfree.com', $visitor)->onQueue('data-clean');
+            \Mail::to('yangqiang@jingfree.com')->send(new WebVisitor($visitor));
         }
         return $this->response()->noContent()->setStatusCode(201);
     }

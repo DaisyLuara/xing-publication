@@ -38,7 +38,7 @@ class AdminCompaniesController extends Controller
 
         if ($request->has('bd_name')) {
             $query->whereHas('bdUser', static function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->get('bd_name') . ' %');
+                $q->where('name', 'like', '%' . $request->get('bd_name') . '%');
             });
         }
 
@@ -59,12 +59,12 @@ class AdminCompaniesController extends Controller
 
         //查看自己数据
         $companies = $query->where('user_id', $currentUser->id)->orderByDesc('id')->paginate(10);
-        return $this->response()->paginator($companies, new CompanyTransformer())->setStatusCode(200);
+        return $this->response()->paginator($companies, new CompanyTransformer());
     }
 
     public function show(Company $company)
     {
-        return $this->response()->item($company, new CompanyTransformer())->setStatusCode(200);
+        return $this->response()->item($company, new CompanyTransformer());
     }
 
     public function store(CompanyRequest $request, Company $company, Customer $customer)
@@ -93,14 +93,16 @@ class AdminCompaniesController extends Controller
                 'password' => bcrypt($request->get('password')),
                 'company_id' => $company->id,
             ];
-            $customer = Customer::query()->create($customerData);
+            $customer = Customer::create($customerData);
             $role = Role::findById($request->get('role_id'), 'shop');
             $customer->assignRole($role);
             CreateAdminStaffJob::dispatch($customer, $role)->onQueue('create_admin_staff');
         }
         activity('customer')->on($customer)->withProperties($companyData)->log('新增公司联系人');
 
-        return $this->response()->item($company, new CompanyTransformer())->setStatusCode(201);
+
+        return $this->response()->item($company, new CompanyTransformer())
+            ->setStatusCode(201);
 
     }
 
@@ -108,7 +110,7 @@ class AdminCompaniesController extends Controller
     {
         $company->update($request->all());
         activity('company')->on($company)->withProperties($request->all())->log('修改公司信息');
-        return $this->response()->item($company, new CompanyTransformer())->setStatusCode(200);
+        return $this->response()->item($company, new CompanyTransformer());
     }
 
     public function export(Request $request)
