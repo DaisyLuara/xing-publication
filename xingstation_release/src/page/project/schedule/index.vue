@@ -1,47 +1,27 @@
 <template>
-  <div  
+  <div
     v-loading="setting.loading"
-    :element-loading-text="setting.loadingText" 
-    class="schedule-wrap">
+    :element-loading-text="setting.loadingText"
+    class="schedule-wrap"
+  >
     <!-- 搜索 -->
-    <div 
-      class="search-wrap">
-      <el-form 
-        ref="searchForm"
-        :model="searchForm" 
-        :inline="true" >
-        <el-form-item 
-          label="" 
-          prop="name">
-          <el-input 
-            v-model="searchForm.name"
-            placeholder="请输入模板名称" 
-            clearable
-            class="item-input" 
-          />
+    <div class="search-wrap">
+      <el-form ref="searchForm" :model="searchForm" :inline="true">
+        <el-form-item label prop="name">
+          <el-input v-model="searchForm.name" placeholder="请输入模板名称" clearable class="item-input"/>
         </el-form-item>
-        <el-button  
-          type="primary" 
-          size="small" 
-          @click="search">搜索</el-button>
+        <el-button type="primary" size="small" @click="search">搜索</el-button>
       </el-form>
     </div>
-    <div 
-      class="actions-wrap">
-      <span 
-        class="label">
-        数量: {{ pagination.total }}
-      </span>
+    <div class="actions-wrap">
+      <span class="label">数量: {{ pagination.total }}</span>
       <!-- 模板增加 -->
       <div>
-        <el-button 
-          size="small" 
-          type="success" 
-          @click="addTemplate('templateForm')">新增模板</el-button>
+        <el-button size="small" type="success" @click="addTemplate('templateForm')">新增模板</el-button>
       </div>
     </div>
     <!-- 模板排期列表 -->
-    <el-collapse 
+    <!-- <el-collapse 
       v-model="activeNames" 
       accordion>
       <el-collapse-item 
@@ -183,9 +163,47 @@
           </el-table-column>
         </el-table> 
       </el-collapse-item>
-    </el-collapse>
-    <div 
-      class="pagination-wrap">
+    </el-collapse>-->
+    <el-table :data="tableData" style="width: 100%">
+      <el-table-column type="expand">
+        <template slot-scope="scope">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="ID:">
+              <span>{{ scope.row.id }}</span>
+            </el-form-item>
+            <el-form-item label="模板名称:">
+              <span>{{ scope.row.name }}</span>
+            </el-form-item>
+            <el-form-item label="公司名称:">
+              <span>{{ scope.row.company.name }}</span>
+            </el-form-item>
+            <el-form-item label="更新时间:">
+              <span>{{ scope.row.updated_at }}</span>
+            </el-form-item>
+          </el-form>
+        </template>
+      </el-table-column>
+      <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="100"/>
+      <el-table-column :show-overflow-tooltip="true" prop="name" label="模板名称" min-width="130">
+        <template slot-scope="scope">{{ scope.row.name }}</template>
+      </el-table-column>
+      <el-table-column :show-overflow-tooltip="true" prop="company" label="公司名称" min-width="130">
+        <template slot-scope="scope">{{ scope.row.company.name }}</template>
+      </el-table-column>
+      <el-table-column
+        :show-overflow-tooltip="true"
+        prop="updated_at"
+        label="更新时间"
+        min-width="100"
+      />
+      <el-table-column label="操作" min-width="100">
+        <template slot-scope="scope">
+          <el-button size="small" type="warning" @click="modifyTemplate(scope.row)">编辑</el-button>
+          <el-button size="small" @click="policy(scope.row)">子条目</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <div class="pagination-wrap">
       <el-pagination
         :total="pagination.total"
         :page-size="pagination.pageSize"
@@ -195,29 +213,17 @@
       />
     </div>
     <!-- 新增，修改 -->
-    <el-dialog 
-      :title="title"
-      :visible.sync="templateVisible" 
-      @close="dialogClose" >
-      <el-form
-        v-loading="loading"
-        ref="templateForm"
-        :model="templateForm" 
-        label-width="150px" >
-        <el-form-item 
+    <el-dialog :title="title" :visible.sync="templateVisible" @close="dialogClose">
+      <el-form v-loading="loading" ref="templateForm" :model="templateForm" label-width="150px">
+        <el-form-item
           :rules="[{ type: 'string', required: true, message: '请输入名称', trigger: 'submit' }]"
-          label="模板名" 
-          prop="name" >
-          <el-input 
-            v-model="templateForm.name" 
-            placeholder="请输入名称" 
-            class="item-input"/>
+          label="模板名"
+          prop="name"
+        >
+          <el-input v-model="templateForm.name" placeholder="请输入名称" class="item-input"/>
         </el-form-item>
         <el-form-item>
-          <el-button 
-            type="primary" 
-            size="small"
-            @click="submit('templateForm')" >完成</el-button>
+          <el-button type="primary" size="small" @click="submit('templateForm')">完成</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -239,7 +245,7 @@ import {
   TimeSelect,
   MessageBox,
   Input
-} from 'element-ui'
+} from "element-ui";
 import {
   modifySchedule,
   saveSchedule,
@@ -247,8 +253,8 @@ import {
   saveTemplate,
   getSearchModuleList,
   getSearchProjectList,
-  modifyTemplate,
-} from 'service'
+  modifyTemplate
+} from "service";
 
 export default {
   components: {
@@ -271,11 +277,11 @@ export default {
       activeNames: 0,
       templateVisible: false,
       loading: false,
-      title: '',
+      title: "",
       templateList: [],
       templateForm: {
-        tpl_id: '',
-        name: '',
+        tpl_id: "",
+        name: ""
       },
       projectList: [],
       tableData: [],
@@ -285,178 +291,178 @@ export default {
         currentPage: 1
       },
       searchForm: {
-        name: ''
+        name: ""
       },
       setting: {
         loading: false,
-        loadingText: '拼命加载中'
+        loadingText: "拼命加载中"
       },
       searchLoading: false
-    }
+    };
   },
   created() {
-    this.getModuleList()
-    this.getScheduleList()
+    this.getModuleList();
+    this.getScheduleList();
   },
   methods: {
     modifyTemplateName(item) {
-      this.loading = false
-      this.title = '修改模板'
-      let name = item.name
+      this.loading = false;
+      this.title = "修改模板";
+      let name = item.name;
       this.templateForm = {
         tpl_id: item.id,
-        name: name,
-      }
-      this.templateVisible = true
+        name: name
+      };
+      this.templateVisible = true;
     },
     projectChangeHandle(pIndex, index, val) {
-      this.tableData[pIndex].schedules.data[index].project.id = val
+      this.tableData[pIndex].schedules.data[index].project.id = val;
     },
     editSchedule(row) {
-      this.setting.loading = true
-      let id = row.id
-      let date_end = row.date_end
-      let date_start = row.date_start
-      let project_id = row.project.id
+      this.setting.loading = true;
+      let id = row.id;
+      let date_end = row.date_end;
+      let date_start = row.date_start;
+      let project_id = row.project.id;
       if (date_end && date_start && project_id) {
         let args = {
-          include: 'project',
+          include: "project",
           project_id: project_id,
           date_end: date_end,
           date_start: date_start
-        }
+        };
         modifySchedule(this, id, args)
           .then(response => {
-            this.setting.loading = false
+            this.setting.loading = false;
             this.$message({
-              message: '修改成功',
-              type: 'success'
-            })
-            this.getScheduleList()
+              message: "修改成功",
+              type: "success"
+            });
+            this.getScheduleList();
           })
           .catch(err => {
-            console.log(err)
-            this.setting.loading = false
-          })
+            console.log(err);
+            this.setting.loading = false;
+          });
       } else {
-        this.setting.loading = false
+        this.setting.loading = false;
         this.$message({
-          message: '节目名称，开始时间，结束时间不能为空',
-          type: 'warning'
-        })
+          message: "节目名称，开始时间，结束时间不能为空",
+          type: "warning"
+        });
       }
     },
     saveSchedule(row) {
-      this.setting.loading = true
-      let date_end = row.date_end
-      let date_start = row.date_start
-      let tpl_id = row.tpl_id
-      let project_id = row.project.id
+      this.setting.loading = true;
+      let date_end = row.date_end;
+      let date_start = row.date_start;
+      let tpl_id = row.tpl_id;
+      let project_id = row.project.id;
       if (date_end && date_start && project_id) {
         let args = {
           tpl_id: tpl_id,
           project_id: project_id,
           date_end: date_end,
           date_start: date_start
-        }
+        };
         saveSchedule(this, args)
           .then(response => {
-            this.setting.loading = false
+            this.setting.loading = false;
             this.$message({
-              message: '添加成功',
-              type: 'success'
-            })
-            this.getScheduleList()
+              message: "添加成功",
+              type: "success"
+            });
+            this.getScheduleList();
           })
           .catch(err => {
-            console.log(err)
-            this.setting.loading = false
-          })
+            console.log(err);
+            this.setting.loading = false;
+          });
       } else {
-        this.setting.loading = false
+        this.setting.loading = false;
         this.$message({
-          message: '节目名称，开始时间，结束时间不能为空',
-          type: 'warning'
-        })
+          message: "节目名称，开始时间，结束时间不能为空",
+          type: "warning"
+        });
       }
     },
     addTemplate() {
-      this.templateForm.name = ''
-      this.templateForm.tpl_id = ''
-      this.templateVisible = true
-      this.title = '增加模板'
+      this.templateForm.name = "";
+      this.templateForm.tpl_id = "";
+      this.templateVisible = true;
+      this.title = "增加模板";
     },
     deleteAddSchedule(pIndex, index, r) {
-      this.tableData[pIndex].schedules.data.splice(index, 1)
+      this.tableData[pIndex].schedules.data.splice(index, 1);
     },
     getScheduleList() {
-      this.setting.loading = true
+      this.setting.loading = true;
       let args = {
         page: this.pagination.currentPage,
-        include: 'schedules.project',
+        include: "schedules.project",
         name: this.searchForm.name
-      }
+      };
       return getScheduleList(this, args)
         .then(response => {
-          this.tableData = response.data
-          this.pagination.total = response.meta.pagination.total
-          this.setting.loading = false
+          this.tableData = response.data;
+          this.pagination.total = response.meta.pagination.total;
+          this.setting.loading = false;
         })
         .catch(err => {
-          console.log(err)
-          this.setting.loading = false
-        })
+          console.log(err);
+          this.setting.loading = false;
+        });
     },
     addSchedule(index) {
-      let tpl_id = this.tableData[index].id
+      let tpl_id = this.tableData[index].id;
       let td = {
-        date_start: '',
-        date_end: '',
+        date_start: "",
+        date_end: "",
         project: {
-          id: '',
-          info: '',
-          icon: '',
-          created_at: ''
+          id: "",
+          info: "",
+          icon: "",
+          created_at: ""
         },
         tpl_id: tpl_id
-      }
-      this.tableData[index].schedules.data.push(td)
+      };
+      this.tableData[index].schedules.data.push(td);
     },
     dialogClose() {
-      this.templateVisible = false
+      this.templateVisible = false;
     },
     getProject(query) {
-      if (query !== '') {
-        this.searchLoading = true
+      if (query !== "") {
+        this.searchLoading = true;
         let args = {
           name: query
-        }
+        };
         return getSearchProjectList(this, args)
           .then(response => {
-            this.projectList = response.data
+            this.projectList = response.data;
             if (this.projectList.length == 0) {
-              this.projectList = []
+              this.projectList = [];
             }
-            this.searchLoading = false
+            this.searchLoading = false;
           })
           .catch(err => {
-            console.log(err)
-            this.searchLoading = false
-          })
+            console.log(err);
+            this.searchLoading = false;
+          });
       } else {
-        this.projectList = []
+        this.projectList = [];
       }
     },
     getModuleList() {
       return getSearchModuleList(this)
         .then(response => {
-          let data = response.data
-          this.templateList = data
+          let data = response.data;
+          this.templateList = data;
         })
         .catch(error => {
-          console.log(error)
-          this.setting.loading = false
-        })
+          console.log(error);
+          this.setting.loading = false;
+        });
     },
     submit(formName) {
       this.$refs[formName].validate(valid => {
@@ -464,50 +470,50 @@ export default {
           let args = {
             point_id: this.templateForm.point_id,
             name: this.templateForm.name
-          }
-          let id = this.templateForm.tpl_id
+          };
+          let id = this.templateForm.tpl_id;
           if (this.templateForm.tpl_id) {
             modifyTemplate(this, id, args)
               .then(response => {
                 this.$message({
-                  message: '修改成功',
-                  type: 'success'
-                })
-                this.templateVisible = false
-                this.getScheduleList()
+                  message: "修改成功",
+                  type: "success"
+                });
+                this.templateVisible = false;
+                this.getScheduleList();
               })
               .catch(err => {
-                this.templateVisible = false
-                console.log(err)
-              })
+                this.templateVisible = false;
+                console.log(err);
+              });
           } else {
             saveTemplate(this, args)
               .then(response => {
                 this.$message({
-                  message: '添加成功',
-                  type: 'success'
-                })
-                this.templateVisible = false
-                this.getScheduleList()
+                  message: "添加成功",
+                  type: "success"
+                });
+                this.templateVisible = false;
+                this.getScheduleList();
               })
               .catch(err => {
-                this.templateVisible = false
-                console.log(err)
-              })
+                this.templateVisible = false;
+                console.log(err);
+              });
           }
         }
-      })
+      });
     },
     search() {
-      this.pagination.currentPage = 1
-      this.getScheduleList()
+      this.pagination.currentPage = 1;
+      this.getScheduleList();
     },
     changePage(currentPage) {
-      this.pagination.currentPage = currentPage
-      this.getScheduleList()
+      this.pagination.currentPage = currentPage;
+      this.getScheduleList();
     }
   }
-}
+};
 </script>
 <style lang="less" scoped>
 .schedule-wrap {

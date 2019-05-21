@@ -1,4 +1,4 @@
-const TEMPLATE_API = '/api/projects/launches/tpl'
+const TEMPLATE_API = '/api/projects/tpl'
 const SCHEDULE_API = '/api/projects/schedules'
 const HOST = process.env.SERVER_URL
 
