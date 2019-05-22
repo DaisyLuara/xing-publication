@@ -328,28 +328,6 @@
           currentPage: 1
         },
         adPlanList: [],
-
-        modeOptions: {
-          'fullscreen': '全屏显示',
-          'unmanned': '无人互动',
-          'qrcode': '二维码页面',
-          'qrcode': '二维码页',
-          'floating': '浮窗显示',
-        },
-
-        oriOptions: {
-          'center': '居中',
-          'top': '顶部居中',
-          'bottom': '底部居中',
-          'left_top': '左上角',
-          'left': '左侧居中',
-          'left_bottom': '左下角',
-          'right_top': '右上角',
-          'right': '右侧居中',
-          'right_bottom': '右下角',
-          'center': '居中',
-        }
-
       }
     },
     created() {

@@ -89,7 +89,7 @@ const saveAdPlan = (context, args) => {
 const modifyAdPlan = (context, args, id) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .put(HOST + AD_PLAN_API + '/' + id, args)
+      .patch(HOST + AD_PLAN_API + '/' + id, args)
       .then(response => {
         resolve(response.data)
       })

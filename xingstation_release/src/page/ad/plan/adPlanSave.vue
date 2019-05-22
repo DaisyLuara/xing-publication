@@ -31,7 +31,6 @@
           label="广告行业"
           prop="atid">
           <el-select
-            disabled="disabled"
             v-model="adPlanForm.atid"
             filterable
             placeholder="请搜索"

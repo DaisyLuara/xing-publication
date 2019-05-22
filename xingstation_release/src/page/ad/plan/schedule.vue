@@ -5,7 +5,10 @@
     class="schedule-wrap"
   >
     <div class="actions-wrap">
-      <span class="label">数量: {{ pagination.total }}</span>
+      <div>
+        <span class="label">{{ adPlan.name }}</span><br/>
+        <span class="label">数量: {{ pagination.total }}</span>
+      </div>
       <!-- 新增子策略 -->
       <div>
         <el-button 
@@ -16,21 +19,23 @@
     </div>
     <!-- 子条目列表 -->
     <el-table
+      ref="multipleTable"
       :data="tableData"
       style="width: 100%"
+      highlight-current-row
     >
       <el-table-column
         :show-overflow-tooltip="true"
         label="广告行业"
         min-width="80">
         <template slot-scope="scope">
-          <span>{{ scope.row.ad_plan.name }}</span>
+          <span>{{ scope.row.advertisement.ad_trade_name }}</span>
         </template>
       </el-table-column>
       <el-table-column
         :show-overflow-tooltip="true"
         label="素材创建人"
-        min-width="60">
+        min-width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.advertisement.create_user_name }}</span>
         </template>
@@ -73,60 +78,56 @@
       <el-table-column
         label="广告标记"
         min-width="80">
-        <template slot-scope="ad_scope">
+        <template slot-scope="scope">
           <span>{{ scope.row.advertisement.isad_text }}</span>
         </template>
       </el-table-column>
-      <template v-if="scope.row.ad_plan.type==='program'">
-        <el-table-column
-          :show-overflow-tooltip="true"
-          label="显示格式"
-          min-width="130">
-          <template slot-scope="scope">
-            <span>
-              模式：{{ modeOptions[scope.row.mode] }}<br>
-              位置：{{ oriOptions[scope.row.ori] }} <br>
-              尺寸：{{ scope.row.screen }}%
-            </span>
-          </template>
-        </el-table-column>
-      </template>
-
       <el-table-column
-        v-if="scope.row.ad_plan.tmode === 'hours'"
+        v-if="adPlan.type === 'program'"
+        :show-overflow-tooltip="true"
+        label="显示格式"
+        min-width="130">
+        <template slot-scope="scope">
+          <span>
+            模式：{{ modeOptions[scope.row.mode] }}<br>
+            位置：{{ oriOptions[scope.row.ori] }} <br>
+            尺寸：{{ scope.row.screen }}%
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        v-if="adPlan.tmode === 'hours'"
         label="素材投放时间"
         min-width="100">
         <template slot-scope="scope">
           <span style="color: #67C23A"><i class="el-icon-rank"/></span>
           <span>
-             {{ (scope.row.shm).toString().substring(scope.row.shm.toString().length-2) }}
+           {{ (scope.row.shm).toString().substring(scope.row.shm.toString().length-2) }}
           </span>
           至
           <span>
-            {{ (scope.row.ehm).toString().substring(scope.row.ehm.toString().length-2) }}
+          {{ (scope.row.ehm).toString().substring(scope.row.ehm.toString().length-2) }}
           </span>
           分
         </template>
       </el-table-column>
-
       <el-table-column
         v-else
         label="素材投放时间"
         min-width="130">
         <template
-          slot-scope="ad_scope">
+          slot-scope="scope">
           <span style="color: #67C23A"><i class="el-icon-time"/></span>
           <span>
-            {{ ( (Array(4).join('0') + scope.row.shm).slice(-4)).substring(0,2) + ":"
-            + ( (Array(4).join('0') + scope.row.shm).slice(-4)).substring(2) }}
+            {{scope.row.shm}}
           </span>
           至
           <span>
-            {{ ( (Array(4).join('0') + scope.row.ehm).slice(-4)).substring(0,2) + ":"
-            + ( (Array(4).join('0') + scope.row.ehm).slice(-4)).substring(2) }}
-          </span>
+            {{scope.row.ehm}}
+        </span>
         </template>
       </el-table-column>
+
 
       <el-table-column
         label="倒计时"
@@ -149,12 +150,12 @@
 
       <el-table-column
         label="操作"
-        min-width="50"
+        min-width="60"
       >
         <template slot-scope="scope">
           <el-button
             size="small"
-            type="default"
+            type="warning"
             @click="editPlanTime(scope.row.id)">编辑
           </el-button>
         </template>
@@ -186,7 +187,8 @@ import {
   Input
 } from "element-ui";
 import {
-  getAdPlanTimeList
+  getAdPlanTimeList,
+  getAdPlanDetail
 } from "service";
 
 export default {
@@ -213,31 +215,66 @@ export default {
         loading: false,
         loadingText: "拼命加载中"
       },
-      plan_id: null
+      plan_id: null,
+      adPlan:[],
+
+      modeOptions: {
+        'fullscreen': '全屏显示',
+        'unmanned': '无人互动',
+        'qrcode': '二维码页面',
+        'qrcode': '二维码页',
+        'floating': '浮窗显示',
+      },
+
+      oriOptions: {
+        'center': '居中',
+        'top': '顶部居中',
+        'bottom': '底部居中',
+        'left_top': '左上角',
+        'left': '左侧居中',
+        'left_bottom': '左下角',
+        'right_top': '右上角',
+        'right': '右侧居中',
+        'right_bottom': '右下角',
+        'center': '居中',
+      }
+
     };
   },
   created() {
     this.plan_id = this.$route.params.plan_id;
+    this.getAdPlanDetail();
     this.getPlanTimeList();
   },
   methods: {
-    editPlanTime(row) {
+    editPlanTime(id) {
       this.$router.push({
-        path: "/plan/plan_time/edit/" + row.id,
+        path: "/ad/plan/plan_time/edit/" + id,
       });
     },
     addPlanTime() {
       this.$router.push({
-        path: "/plan/" + this.plan_id + "/plan_time/add",
+        path: "/ad/plan/" + this.plan_id + "/plan_time/add",
       });
     },
 
+    getAdPlanDetail() {
+      //获取AdPlan 详情
+      return getAdPlanDetail(this, {}, this.plan_id)
+        .then(response => {
+          this.adPlan = response;
+        })
+        .catch(error => {
+          console.log(error)
+          this.setting.loading = false
+        })
+    },
     getPlanTimeList() {
       this.setting.loading = true;
       let args = {
         page: this.pagination.currentPage,
         atiid : this.plan_id,
-        include : "ad_plan,advertisement"
+        include : "advertisement"
       };
       return getAdPlanTimeList(this, args)
         .then(response => {

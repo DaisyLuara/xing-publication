@@ -7,7 +7,7 @@
       class="pane">
       <div
         class="pane-title">
-        {{ planTimeId ? '编辑素材' : '新增素材' }}
+        {{ planTimeId ? '编辑素材排期' : '新增素材排期' }}
       </div>
       <el-form
         ref="adPlanTimeForm"
@@ -430,7 +430,7 @@
                     type: 'success'
                   })
                   this.$router.push({
-                    path: '/ad/plan'
+                    path: '/ad/plan/'+ this.adPlan.id + '/plan_time'
                   })
                 })
                 .catch(err => {
@@ -450,7 +450,7 @@
                     type: 'success'
                   })
                   this.$router.push({
-                    path: '/ad/plan'
+                    path: '/ad/plan/'+ this.adPlan.id + '/plan_time'
                   })
                 })
                 .catch(err => {
