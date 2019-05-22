@@ -24,29 +24,125 @@
       style="width: 100%"
       highlight-current-row
     >
+
+      <el-table-column
+        type="expand">
+        <template
+          slot-scope="scope">
+          <el-form
+            label-position="left"
+            inline
+            class="demo-table-expand">
+            <el-form-item
+              label="ID">
+              <span>{{ scope.row.id }}</span>
+            </el-form-item>
+            <el-form-item
+              label="广告行业">
+              <span>{{ scope.row.advertisement.ad_trade_name }}</span>
+            </el-form-item>
+            <el-form-item
+              label="素材创建人">
+              <span>{{ scope.row.advertisement.create_user_name }}</span>
+            </el-form-item>
+            <el-form-item
+              label="素材类型">
+              <span>{{ scope.row.advertisement.type_text }}</span>
+            </el-form-item>
+            <el-form-item
+              label="素材名称">
+              <span>{{ scope.row.advertisement.name }}</span>
+            </el-form-item>
+            <el-form-item
+              label="附件">
+              <a
+                :href="scope.row.advertisement.link"
+                target="_blank"
+                style="color: blue">
+                <i class="el-icon-download"/>
+                {{ scope.row.advertisement.size }}M
+              </a>
+            </el-form-item>
+            <el-form-item
+              label="广告标记">
+              <span>{{ scope.row.advertisement.isad_text }}</span>
+            </el-form-item>
+
+            <template v-if="adPlan.type === 'program'">
+              <el-form-item
+                label="显示模式">
+                <span>{{ modeOptions[scope.row.mode] }}</span>
+              </el-form-item>
+              <el-form-item
+                label="显示位置">
+                <span>{{ oriOptions[scope.row.ori] }}</span>
+              </el-form-item>
+              <el-form-item
+                label="显示尺寸">
+                <span>{{ scope.row.screen }}%</span>
+              </el-form-item>
+            </template>
+
+            <el-form-item
+              label="素材投放时间">
+              <template
+                v-if="adPlan.tmode === 'hours'">
+                <span style="color: #67C23A"><i class="el-icon-rank"/></span>
+                <span>
+                  {{ (scope.row.shm).toString().substring(scope.row.shm.toString().length-2) }}
+                </span>
+                至
+                <span>
+                  {{ (scope.row.ehm).toString().substring(scope.row.ehm.toString().length-2) }}
+                </span>
+                分
+              </template>
+              <template v-else>
+                <span style="color: #67C23A"><i class="el-icon-time"/></span>
+                <span>
+                  {{scope.row.shm}}
+                </span>
+                至
+                <span>
+                  {{scope.row.ehm}}
+                </span>
+              </template>
+            </el-form-item>
+            <el-form-item
+              label="倒计时">
+              <span>
+                {{ scope.row.cdshow ?'开启':'关闭' }}
+              </span>
+            </el-form-item>
+            <el-form-item
+              label="播放时长">
+              <span>
+                {{ scope.row.ktime ? scope.row.ktime + '秒' : '默认时长' }}
+              </span>
+            </el-form-item>
+            <el-form-item
+              label="状态">
+              <span>{{ scope.row.visiable === 1 ? '运营中' : '下架' }}</span>
+            </el-form-item>
+          </el-form>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="id"
+        label="ID"
+        min-width="50"
+      />
       <el-table-column
         :show-overflow-tooltip="true"
         label="广告行业"
-        min-width="80">
-        <template slot-scope="scope">
-          <span>{{ scope.row.advertisement.ad_trade_name }}</span>
-        </template>
-      </el-table-column>
+        prop="advertisement.ad_trade_name"
+        min-width="80"
+      />
       <el-table-column
-        :show-overflow-tooltip="true"
-        label="素材创建人"
-        min-width="80">
-        <template slot-scope="scope">
-          <span>{{ scope.row.advertisement.create_user_name }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="素材类型"
-        min-width="60">
-        <template slot-scope="scope">
-          <span>{{ scope.row.advertisement.type_text }}</span>
-        </template>
-      </el-table-column>
+        label="类型"
+        prop="advertisement.type_text"
+        min-width="60"
+      />
       <el-table-column
         :show-overflow-tooltip="true"
         label="素材名称"
@@ -57,7 +153,7 @@
           <span>
             <img
               :src="(scope.row.advertisement.type === 'static' || scope.row.advertisement.type === 'gif' ) ? scope.row.advertisement.link : scope.row.advertisement.img"
-              width="40px">
+              width="80px">
           </span>
         </template>
       </el-table-column>
@@ -67,7 +163,7 @@
         min-width="80">
         <template slot-scope="scope">
           <a
-            :href="scope.row.link"
+            :href="scope.row.advertisement.link"
             target="_blank"
             style="color: blue">
             <i class="el-icon-download"/>
@@ -77,11 +173,9 @@
       </el-table-column>
       <el-table-column
         label="广告标记"
-        min-width="80">
-        <template slot-scope="scope">
-          <span>{{ scope.row.advertisement.isad_text }}</span>
-        </template>
-      </el-table-column>
+        prop="advertisement.isad_text"
+        min-width="80"
+      />
       <el-table-column
         v-if="adPlan.type === 'program'"
         :show-overflow-tooltip="true"
@@ -124,11 +218,9 @@
           至
           <span>
             {{scope.row.ehm}}
-        </span>
+          </span>
         </template>
       </el-table-column>
-
-
       <el-table-column
         label="倒计时"
         min-width="80">
@@ -139,7 +231,6 @@
           </span>
         </template>
       </el-table-column>
-
       <el-table-column
         label="状态"
         min-width="65">
@@ -147,10 +238,9 @@
           <span>{{ scope.row.visiable === 1 ? '运营中' : '下架' }}</span>
         </template>
       </el-table-column>
-
       <el-table-column
         label="操作"
-        min-width="60"
+        min-width="80"
       >
         <template slot-scope="scope">
           <el-button
