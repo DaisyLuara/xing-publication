@@ -104,15 +104,9 @@
             <el-form-item 
               label="商户logo" 
               prop="media_id">
-              <el-upload
-                :action="SERVER_URL + '/api/media'"
-                :data="{type: 'image'}"
-                :headers="formHeader"
-                :show-file-list="false"
-                :on-success="handleAvatarSuccess"
-                :before-upload="beforeAvatarUpload"
-                class="avatar-uploader"
-              >
+              <div 
+                class="avatar-uploader" 
+                @click="panelVisible=true">
                 <img 
                   v-if="logoUrl" 
                   :src="logoUrl" 
@@ -120,7 +114,7 @@
                 <i 
                   v-else 
                   class="el-icon-plus avatar-uploader-icon"/>
-              </el-upload>
+              </div>
             </el-form-item>
             <el-form-item 
               label="商户电话" 
@@ -226,11 +220,15 @@
         </el-form-item>
       </el-form>
     </div>
+    <PicturePanel 
+      :panel-visible.sync="panelVisible" 
+      :single-flag="singleFlag" 
+      @close="handleClose"/>
   </div>
 </template>
 
 <script>
-import auth from "service/auth";
+import PicturePanel from "components/common/picturePanel";
 
 import {
   historyBack,
@@ -261,10 +259,8 @@ import {
   Tooltip,
   Checkbox,
   CheckboxGroup,
-  Upload,
   MessageBox
 } from "element-ui";
-const SERVER_URL = process.env.SERVER_URL;
 
 export default {
   components: {
@@ -282,7 +278,7 @@ export default {
     ElTooltip: Tooltip,
     ElCheckboxGroup: CheckboxGroup,
     ElCheckbox: Checkbox,
-    ElUpload: Upload
+    PicturePanel
   },
   data() {
     let checkEnterEndDate = (rule, value, callback) => {
@@ -310,11 +306,9 @@ export default {
       }
     };
     return {
+      panelVisible: false,
+      singleFlag: true,
       btnLoading: false,
-      SERVER_URL: SERVER_URL,
-      formHeader: {
-        Authorization: "Bearer " + auth.getToken()
-      },
       logoUrl: "",
       marketShow: true,
       contractShow: true,
@@ -382,6 +376,18 @@ export default {
     }
   },
   methods: {
+    handleClose(data) {
+      if (data && data.length > 0) {
+        let { media_id, url } = data[0];
+        this.businessForm.media_id = media_id;
+        this.logoUrl = url;
+      } else {
+        // this.$message({
+        //   type: "warning",
+        //   message: "图片上传失败"
+        // });
+      }
+    },
     getSearchCustomer(val) {
       this.searchLoading = true;
       let args = {
@@ -445,17 +451,6 @@ export default {
             message: err.response.date.message
           });
         });
-    },
-    handleAvatarSuccess(res, file) {
-      this.businessForm.media_id = res.id;
-      this.logoUrl = URL.createObjectURL(file.raw);
-    },
-    beforeAvatarUpload(file) {
-      const isLt2M = file.size / 1024 / 1024 < 2;
-      if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
-      }
-      return isLt2M;
     },
     getSearchCompany() {
       this.searchLoading = true;

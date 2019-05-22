@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+use App\Http\Controllers\Admin\Face\V1\Models\FacePhoneRecord;
 
 class CreateFacePhoneRecordTable extends Migration
 {
@@ -18,6 +19,7 @@ class CreateFacePhoneRecordTable extends Migration
             $table->timestamp('date')->nullable();
             $table->timestamps();
         });
+        FacePhoneRecord::create(['date' => '2017-04-21']);
     }
 
     /**

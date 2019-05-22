@@ -10,6 +10,7 @@ class ContractHistoryExport extends BaseExport
 {
     private $status;//审批状态
     private $name; //公司名称
+    private $applicant; //公司名称
     private $contract_number;//合同编号
     private $product_status;//硬件状态
     private $start_date, $end_date; //开始时间,结束时间
@@ -21,6 +22,7 @@ class ContractHistoryExport extends BaseExport
         $this->end_date = $request->end_date;
         $this->status = $request->status;
         $this->name = $request->name;
+        $this->applicant = $request->applicant;
         $this->contract_number = $request->contract_number;
         $this->product_status = $request->product_status;
 
@@ -47,15 +49,23 @@ class ContractHistoryExport extends BaseExport
             $query->whereRaw("date_format(c.created_at,'%Y-%m-%d') between '$this->start_date' and '$this->end_date' ");
         }
 
-        if (!is_null($this->name)) {
+        if ($this->name !== null) {
             $query->where('companies.name', 'like', '%' . $this->name . '%');
         }
 
-        if (!is_null($this->status)) {
+        if ($this->applicant) {
+            $query->where('c.applicant', '=', $this->applicant);
+        }
+
+        if ($this->status !== null) {
             $query->where('c.status', $this->status);
         }
 
-        if (!is_null($this->contract_number)) {
+        if ($this->product_status !== null) {
+            $query->where('c.product_status', $this->product_status);
+        }
+
+        if ($this->contract_number !== null) {
             $query->where('c.contract_number', 'like', '%' . $this->contract_number . '%');
         }
 

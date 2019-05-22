@@ -14,6 +14,111 @@ let router = {
     import(/* webpackChunkName: "page/ad/adView" */ 'page/ad/adView'),
   children: [
     {
+      path: 'advertisement',
+      meta: {
+        title: '广告素材',
+        permission: 'ad.advertisement'
+      },
+      component: () =>
+        import(/* webpackChunkName: "page/ad/advertisement/routerView" */ 'page/ad/advertisement/routerView'),
+      children: [
+        {
+          path: '/',
+          name: '广告素材列表',
+          meta: {
+            title: '广告素材列表',
+            permission: 'ad.advertisement.read'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/ad/advertisement/index" */ 'page/ad/advertisement/index')
+        },
+        {
+          path: 'add',
+          component: () =>
+            import(/* webpackChunkName: "page/ad/advertisement/save" */ 'page/ad/advertisement/save'),
+          name: '广告素材增加',
+          meta: {
+            permission: 'ad.advertisement.create'
+          }
+        },
+        {
+          path: 'edit/:aid',
+          component: () =>
+            import(/* webpackChunkName: "page/ad/advertisement/save" */ 'page/ad/advertisement/save'),
+          name: '广告素材编辑',
+          meta: {
+            permission: 'ad.advertisement.update'
+          }
+        }
+      ]
+    },
+    {
+      path: 'plan',
+      meta: {
+        title: '广告模版',
+        permission: 'ad.plan'
+      },
+      component: () =>
+        import(/* webpackChunkName: "page/ad/plan/routerView" */ 'page/ad/plan/routerView'),
+      children: [
+        {
+          path: '/',
+          name: '广告模版详情列表',
+          meta: {
+            title: '广告模版详情列表',
+            permission: 'ad.plan.read'
+          },
+          component: () =>
+            import(/* webpackChunkName: "page/ad/plan/index" */ 'page/ad/plan/index')
+        },
+        {
+          path: 'add',
+          component: () =>
+            import(/* webpackChunkName: "page/ad/plan/adPlanSave" */ 'page/ad/plan/adPlanSave'),
+          name: '新增广告模版',
+          meta: {
+            permission: 'ad.plan.create'
+          }
+        },
+        {
+          path: 'edit/:ad_plan_id/batch',
+          component: () =>
+            import(/* webpackChunkName: "page/ad/plan/adPlanSave" */ 'page/ad/plan/adPlanSave'),
+          name: '编辑广告模版及批量排期',
+          meta: {
+            permission: 'ad.plan.update'
+          }
+        },
+        {
+          path: 'edit/:ad_plan_id/item/:is_item',
+          component: () =>
+            import(/* webpackChunkName: "page/ad/plan/adPlanSave" */ 'page/ad/plan/adPlanSave'),
+          name: '编辑广告模版',
+          meta: {
+            permission: 'ad.plan.update'
+          }
+        },
+        {
+          path: ':plan_id/add/plan_time',
+          component: () =>
+            import(/* webpackChunkName: "page/ad/plan/adPlanTimeSave" */ 'page/ad/plan/adPlanTimeSave'),
+          name: '新增排期',
+          meta: {
+            permission: 'ad.plan.create'
+          }
+        },
+        {
+          path: 'edit/plan_time/:plan_time_id',
+          component: () =>
+            import(/* webpackChunkName: "page/ad/plan/adPlanTimeSave" */ 'page/ad/plan/adPlanTimeSave'),
+          name: '更新排期',
+          meta: {
+            permission: 'ad.plan.update'
+          }
+        }
+      ]
+    },
+    {
       path: 'item',
       meta: {
         title: '广告投放',
