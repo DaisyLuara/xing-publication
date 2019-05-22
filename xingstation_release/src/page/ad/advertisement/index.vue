@@ -119,7 +119,7 @@
                   <span>{{ scope.row.create_user_name }}</span>
                 </el-form-item>
                 <el-form-item
-                  label="创建时间">
+                  label="修改时间">
                   <span>{{ scope.row.created_at }}</span>
                 </el-form-item>
               </el-form>
@@ -183,7 +183,7 @@
           <el-table-column
             :show-overflow-tooltip="true"
             prop="created_at"
-            label="创建时间"
+            label="修改时间"
             min-width="120"
           />
           <el-table-column
@@ -194,7 +194,7 @@
               <el-button
                 size="small"
                 type="success"
-                @click="linkToEdit(scope.row.id)">编辑模版
+                @click="linkToEdit(scope.row.id)">编辑
               </el-button>
             </template>
           </el-table-column>

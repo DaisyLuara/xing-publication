@@ -13,8 +13,8 @@ class AdvertisementTransformer extends TransformerAbstract
             'id' => $advertisement->aid,
             'atid' =>  $advertisement->atid,
             'ad_trade_name' => $advertisement->ad_trade ? $advertisement->ad_trade->name : '',
-            'create_user_name' => ($advertisement->create_customer ? $advertisement->create_customer->name : null)
-                ?? ($advertisement->create_user ? $advertisement->create_user->name : null),
+            'create_user_name' => ($advertisement->create_customer ? $advertisement->create_customer->name : '')
+                ?? ($advertisement->create_user ? $advertisement->create_user->name : ''),
             'name' => $advertisement->name,
             'type' => $advertisement->type,
             'type_text' => Advertisement::$typeMapping[$advertisement->type] ?? '未知',

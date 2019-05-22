@@ -188,7 +188,7 @@
           <el-button
             size="small"
             type="success"
-            @click="linkToAddItem">投放广告模版
+            @click="linkToAddItem">新增广告投放
           </el-button>
         </div>
         <el-table
@@ -238,12 +238,8 @@
                   <span>{{ scope.row.only ? '是' : '否' }}</span>
                 </el-form-item>
                 <el-form-item
-                  label="创建时间">
-                  <span>{{ scope.row.created_at }}</span>
-                </el-form-item>
-                <el-form-item
                   label="修改时间">
-                  <span>{{ scope.row.updated_at }}</span>
+                  <span>{{ scope.row.created_at }}</span>
                 </el-form-item>
                 <el-form-item
                   label="开始时间">
@@ -397,18 +393,6 @@
           />
           <el-table-column
             :show-overflow-tooltip="true"
-            prop="point"
-            label="点位"
-            min-width="150"
-          />
-          <el-table-column
-            :show-overflow-tooltip="true"
-            prop="project"
-            label="节目"
-            min-width="80"
-          />
-          <el-table-column
-            :show-overflow-tooltip="true"
             prop="ad_trade"
             label="广告行业"
             min-width="80"
@@ -427,6 +411,20 @@
           />
           <el-table-column
             :show-overflow-tooltip="true"
+            prop="point"
+            label="点位"
+            min-width="150"
+          />
+          <el-table-column
+            :show-overflow-tooltip="true"
+            label="节目"
+            min-width="80">
+            <template slot-scope="scope">
+              <span>{{ scope.row.ad_plan.type === 'ads' ? '--' : scope.row.project }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            :show-overflow-tooltip="true"
             prop="visiable_text"
             label="状态"
             min-width="80"
@@ -434,7 +432,7 @@
           <el-table-column
             :show-overflow-tooltip="true"
             prop="created_at"
-            label="创建时间"
+            label="修改时间"
             min-width="150"
           />
         </el-table>
@@ -618,10 +616,8 @@
         },
         conditionContent: [
           '广告模版',
-          '开始时间',
-          '结束时间',
-          '状态',
-          '唯一性'
+          '时间',
+          '状态'
         ],
         editCondition: {
           conditionList: []
@@ -931,17 +927,12 @@
                   this.modifyOptionFlag.ad_trade_id = true
                   this.modifyOptionFlag.ad_plan_id = true
                   break
-                case '开始时间':
+                case '时间':
                   this.modifyOptionFlag.sdate = true
-                  break
-                case '结束时间':
                   this.modifyOptionFlag.edate = true
                   break
                 case '状态':
                   this.modifyOptionFlag.visiable = true
-                  break
-                case '唯一性':
-                  this.modifyOptionFlag.only = true
                   break
               }
             }

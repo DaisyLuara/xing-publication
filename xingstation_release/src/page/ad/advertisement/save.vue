@@ -240,25 +240,48 @@ export default {
             link:this.adForm.link,
             isad:this.adForm.isad,
           }
-          return saveAd(this, args)
-            .then(response => {
-              this.setting.loading = false
-              this.$message({
-                message: '添加成功',
-                type: 'success'
+          if(this.aid){
+            return modifyAd(this, args, this.aid)
+              .then(response => {
+                this.setting.loading = false
+                this.$message({
+                  message: '编辑成功',
+                  type: 'success'
+                })
+                this.$router.push({
+                  path: '/ad/advertisement'
+                })
               })
-              this.$router.push({
-                path: '/ad/advertisement'
+              .catch(err => {
+                this.setting.loading = false
+                this.$message({
+                  message: err.response.data.message,
+                  type: 'error'
+                })
+                console.log(err)
               })
-            })
-            .catch(err => {
-              this.setting.loading = false
-              this.$message({
-                message: err.response.data.message,
-                type: 'error'
+          }else{
+            return saveAd(this, args)
+              .then(response => {
+                this.setting.loading = false
+                this.$message({
+                  message: '添加成功',
+                  type: 'success'
+                })
+                this.$router.push({
+                  path: '/ad/advertisement'
+                })
               })
-              console.log(err)
-            })
+              .catch(err => {
+                this.setting.loading = false
+                this.$message({
+                  message: err.response.data.message,
+                  type: 'error'
+                })
+                console.log(err)
+              })
+          }
+
         } else {
           return
         }
