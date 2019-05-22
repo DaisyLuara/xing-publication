@@ -30,6 +30,7 @@ const CUSTOMERS_MARKET_OWNER_API = '/api/customers/role/market_owner/query'
 const AUTH_POINT_API = '/api/authorized_points/query'
 const AUTH_POLICY_API = '/api/authorized_policies/query'
 const AUTH_PROJECT_API = '/api/authorized_projects/query'
+const SKIN_API = '/api/project_skin/query'
 
 const HOST = process.env.SERVER_URL
 
@@ -462,6 +463,20 @@ const getSearchAuthPolicies = (context, params) => {
       })
   })
 }
+// 皮肤
+
+const getSearchSkin = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + SKIN_API, { params: params })
+      .then(response => {
+        resolve(response.data.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
 
 export {
   getSearchAeraList,
@@ -495,5 +510,6 @@ export {
   getSearchMarketOwnerCustomer,
   getSearchAuthPolicies,
   getSearchAuthPoint,
-  getSearchAuthProject
+  getSearchAuthProject,
+  getSearchSkin
 }

@@ -115,7 +115,10 @@ class AdLaunchController extends Controller
 
         unset($launch['aoids'], $launch['keys']);
 
-        $update_params = [];
+        $update_params = [
+            'date' => date('Y-m-d H:i:s'),
+            'clientdate' => time() * 1000
+        ];
 
         foreach ($keys as $key) {
             if (!isset($launch[$key])) {

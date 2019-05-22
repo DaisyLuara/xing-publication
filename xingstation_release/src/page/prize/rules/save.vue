@@ -52,51 +52,7 @@
                 :disabled="true" 
                 class="coupon-form-input"/>
             </el-form-item>
-            <el-form-item 
-              label="投放场地（嗨蚪）" 
-              prop="marketid">
-              <el-select
-                v-model="couponForm.marketid"
-                :remote-method="getMarket"
-                :loading="searchLoading"
-                :multiple-limit="1"
-                multiple
-                placeholder="请搜索投放场地（嗨蚪）"
-                filterable
-                remote
-                clearable
-                class="coupon-form-select"
-                @change="marketChangeHandle"
-              >
-                <el-option
-                  v-for="item in marketList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                />
-              </el-select>
-            </el-form-item>
-            <el-form-item 
-              label="投放点位（嗨蚪）" 
-              prop="oid">
-              <el-select
-                v-model="couponForm.oid"
-                :loading="searchLoading"
-                :multiple-limit="10"
-                placeholder="请选择投放点位（嗨蚪）"
-                multiple
-                filterable
-                clearable
-                class="coupon-form-select"
-              >
-                <el-option
-                  v-for="item in pointList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                />
-              </el-select>
-            </el-form-item>
+
             <el-form-item 
               label="使用说明" 
               prop="description">
@@ -123,15 +79,6 @@
                 placement="right">
                 <i class="el-icon-info"/>
               </el-tooltip>
-            </el-form-item>
-            <el-form-item
-              :rules="{required: true, message: '兑换价格（嗨蚪）不能为空', trigger: 'submit'}"
-              label="兑换价格（嗨蚪）"
-              prop="credit"
-            >
-              <el-input 
-                v-model="couponForm.credit" 
-                class="coupon-form-input"/>
             </el-form-item>
             <el-form-item 
               label="h5图片链接" 
@@ -169,14 +116,6 @@
               prop="redirect_url">
               <el-input 
                 v-model="couponForm.redirect_url" 
-                class="coupon-form-input"/>
-            </el-form-item>
-            <el-form-item 
-              label="优先级" 
-              prop="sort_order">
-              <el-input 
-                v-model="couponForm.sort_order" 
-                :maxlength="3" 
                 class="coupon-form-input"/>
             </el-form-item>
             <el-form-item 
@@ -280,50 +219,6 @@
           <el-tab-pane 
             label="使用设置" 
             name="third">
-            <el-form-item 
-              label="动态库存" 
-              prop="dynamic_stock_status">
-              <el-radio-group
-                v-model="couponForm.dynamic_stock_status"
-                @change="handleWriteOffStatus"
-              >
-                <el-radio :label="0">关闭</el-radio>
-                <el-tooltip
-                  class="item"
-                  effect="dark"
-                  content="计算规则：由剩余库存 减去 当天领取但未使用的优惠券数量"
-                  placement="right"
-                >
-                  <el-radio :label="1">开启</el-radio>
-                </el-tooltip>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item 
-              label="核销减库存" 
-              prop="write_off_status">
-              <el-tooltip 
-                class="item" 
-                effect="dark" 
-                content="领券后，库存自动减少" 
-                placement="left">
-                <el-radio
-                  v-model="couponForm.write_off_status"
-                  :label="0"
-                  :disabled="disabledWriteStatus"
-                >关闭</el-radio>
-              </el-tooltip>
-              <el-tooltip 
-                class="item" 
-                effect="dark" 
-                content="核销后，库存自动减少" 
-                placement="right">
-                <el-radio
-                  v-model="couponForm.write_off_status"
-                  :label="1"
-                  :disabled="disabledWriteStatus"
-                >开启</el-radio>
-              </el-tooltip>
-            </el-form-item>
             <el-form-item
               :rules="{required: true, message: '库存总数不能为空', trigger: 'submit'}"
               label="库存总数"
@@ -344,20 +239,10 @@
                 :maxlength="6" 
                 class="coupon-form-input"/>
             </el-form-item>
-            <el-form-item 
-              label="每人无限领取" 
-              prop="pmg_status">
-              <el-radio-group 
-                v-model="couponForm.pmg_status" 
-                @change="unlimitedPeopleHandle">
-                <el-radio :label="1">开启</el-radio>
-                <el-radio :label="0">关闭</el-radio>
-              </el-radio-group>
-            </el-form-item>
             <el-form-item
               v-if="peopleReceiveShow"
-              :rules="{required: true, message: '每人最大获取数不能为空', trigger: 'submit'}"
-              label="每人最大获取数"
+              :rules="{required: true, message: '每人每天最大获取数不能为空', trigger: 'submit'}"
+              label="每人每天最大获取数"
               prop="people_max_get"
             >
               <el-input
@@ -366,25 +251,15 @@
                 class="coupon-form-input"
               />
             </el-form-item>
-            <el-form-item 
-              label="每天无限领取" 
-              prop="dmg_status">
-              <el-radio-group 
-                v-model="couponForm.dmg_status" 
-                @change="unlimitedDayHandle">
-                <el-radio :label="1">开启</el-radio>
-                <el-radio :label="0">关闭</el-radio>
-              </el-radio-group>
-            </el-form-item>
             <el-form-item
               v-if="peopleDayShow"
               :rules="{required: true, message: '每天最大获取数不能为空', trigger: 'submit'}"
               label="每天最大获取数"
               prop="day_max_get"
             >
-              <el-input 
-                v-model="couponForm.day_max_get" 
-                :maxlength="6" 
+              <el-input
+                v-model="couponForm.day_max_get"
+                :maxlength="6"
                 class="coupon-form-input"/>
             </el-form-item>
             <el-form-item 
@@ -399,23 +274,25 @@
             </el-form-item>
             <el-form-item 
               v-if="!dateShow" 
-              label="延后生效日期" 
+              label="延后生效时间"
               prop="delay_effective_day">
               <el-input
                 v-model="couponForm.delay_effective_day"
                 :maxlength="6"
-                class="coupon-form-input"
-              />
+                class="coupon-form-input">
+                <template slot="append">小时</template>
+              </el-input>
             </el-form-item>
             <el-form-item 
               v-if="!dateShow" 
-              label="有效天数" 
+              label="有效时长"
               prop="effective_day">
               <el-input
                 v-model="couponForm.effective_day"
                 :maxlength="6"
-                class="coupon-form-input"
-              />
+                class="coupon-form-input">
+                <template slot="append">小时</template>
+              </el-input>
             </el-form-item>
             <el-form-item 
               v-if="dateShow" 
@@ -467,8 +344,6 @@ import {
   getCouponDetial,
   getSearchCompany,
   saveCoupon,
-  getSearchMarketList,
-  getSearchPointList,
   getStoresList,
   getCompanyMarketList
 } from "service";
@@ -520,21 +395,6 @@ export default {
         callback();
       }
     };
-    var checkSortOrder = (rule, value, callback) => {
-      if (!value) {
-        callback("优先级不能为空");
-        return;
-      }
-      if (/^[0-9]+.?[0-9]*$/.test(value)) {
-        if (parseInt(value) < 1 || parseInt(value) > 100) {
-          callback(new Error("优先级只能是1-100"));
-        } else {
-          callback();
-        }
-      } else {
-        callback("优先级只能是数字");
-      }
-    };
     return {
       panelVisible: false,
       singleFlag: true,
@@ -553,7 +413,6 @@ export default {
       },
       rules: {
         end_date: [{ validator: checkEndDate, trigger: "submit" }],
-        sort_order: [{ validator: checkSortOrder, trigger: "submit" }]
       },
       writeOffSidRules: null,
       writeOffMidRules: {
@@ -563,8 +422,6 @@ export default {
       },
       disabledWriteStatus: false,
       user_name: "",
-      marketList: [],
-      pointList: [],
       writeOffSiteList: [],
       writeOffMarketList: [],
       searchLoading: false,
@@ -857,50 +714,6 @@ export default {
         this.peopleDayShow = true;
       }
     },
-    marketChangeHandle() {
-      this.couponForm.oid = [];
-      this.getPoint();
-    },
-    getPoint() {
-      let args = {
-        include: "market",
-        market_id: this.couponForm.marketid
-      };
-      this.searchLoading = true;
-      return getSearchPointList(this, args)
-        .then(response => {
-          this.pointList = response.data;
-          this.searchLoading = false;
-        })
-        .catch(err => {
-          this.searchLoading = false;
-          console.log(err);
-        });
-    },
-    getMarket(query) {
-      if (query !== "") {
-        this.searchLoading = true;
-        let args = {
-          name: query,
-          include: "area"
-        };
-        return getSearchMarketList(this, args)
-          .then(response => {
-            this.marketList = response.data;
-            if (this.marketList.length == 0) {
-              this.couponForm.marketid = [];
-              this.marketList = [];
-            }
-            this.searchLoading = false;
-          })
-          .catch(err => {
-            console.log(err);
-            this.searchLoading = false;
-          });
-      } else {
-        this.marketList = [];
-      }
-    },
 
     fixedDateHandle(val) {
       if (val === 0) {
@@ -909,14 +722,6 @@ export default {
         this.couponForm.delay_effective_day = 0;
         this.couponForm.effective_day = 0;
         this.dateShow = true;
-      }
-    },
-    handleWriteOffStatus(e) {
-      if (e === 1) {
-        this.couponForm.write_off_status = 1;
-        this.disabledWriteStatus = true;
-      } else {
-        this.disabledWriteStatus = false;
       }
     },
     onSubmit(formName) {

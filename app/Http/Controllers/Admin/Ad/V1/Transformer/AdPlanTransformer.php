@@ -15,7 +15,9 @@ class AdPlanTransformer extends TransformerAbstract
         return [
             'id' => $adPlan->atiid,
             'aids' => $adPlan->advertisements->pluck('aid')->toArray(),
-            'ad_trade' => $adPlan->ad_trade->name,
+            'create_user_name' => ($adPlan->create_customer ? $adPlan->create_customer->name : null)
+                ?? ($adPlan->create_user ? $adPlan->create_user->name : ''),
+            'ad_trade_name' => $adPlan->ad_trade->name,
             'atid' => $adPlan->atid,
             'name' => $adPlan->name,
             'info' => $adPlan->info,
@@ -24,7 +26,7 @@ class AdPlanTransformer extends TransformerAbstract
             'type_text' => AdPlan::$typeMapping[$adPlan->type] ?? '未知',
             'hardware' => $adPlan->hardware,
             'tmode' => $adPlan->tmode,
-            'tmode_text' => AdPlan::$modeMapping[$adPlan->tmode] ?? '未知',
+            'tmode_text' => AdPlan::$tmodeMapping[$adPlan->tmode] ?? '未知',
             'created_at' => $adPlan->date,
             'updated_at' => formatClientDate($adPlan->clientdate),
         ];

@@ -38,8 +38,8 @@
                 <el-form-item
                   prop="type">
                   <el-input
-                    v-model="adSearchForm.ad_name"
-                    placeholder="模糊查询广告素材"/>
+                    v-model="adSearchForm.name"
+                    placeholder="广告素材名称"/>
                 </el-form-item>
               </el-col>
               <el-col
@@ -70,10 +70,61 @@
           </el-button>
         </div>
         <el-table
+          ref="multipleTable"
           :data="adList"
           style="width: 100%"
           highlight-current-row
         >
+          <el-table-column
+            type="expand">
+            <template
+              slot-scope="scope">
+              <el-form
+                label-position="left"
+                inline
+                class="demo-table-expand">
+                <el-form-item
+                  label="ID">
+                  <span>{{ scope.row.id }}</span>
+                </el-form-item>
+                <el-form-item
+                  label="广告行业">
+                  <span>{{ scope.row.ad_trade_name }}</span>
+                </el-form-item>
+                <el-form-item
+                  label="类型">
+                  <span>{{ scope.row.type_text }}</span>
+                </el-form-item>
+                <el-form-item
+                  label="素材名称">
+                  <span>{{ scope.row.name }}</span>
+                </el-form-item>
+                <el-form-item
+                  label="附件">
+                  <a
+                    :href="scope.row.link"
+                    target="_blank"
+                    style="color: blue">点击查看</a>
+                </el-form-item>
+                <el-form-item
+                  label="附件大小">
+                  <span>{{ scope.row.size }} M</span>
+                </el-form-item>
+                <el-form-item
+                  label="广告标记">
+                  <span>{{ scope.row.isad_text }}</span>
+                </el-form-item>
+                <el-form-item
+                  label="创建人">
+                  <span>{{ scope.row.create_user_name }}</span>
+                </el-form-item>
+                <el-form-item
+                  label="修改时间">
+                  <span>{{ scope.row.created_at }}</span>
+                </el-form-item>
+              </el-form>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="id"
             label="ID"
@@ -97,21 +148,22 @@
             min-width="120">
             <template slot-scope="scope">
               <span>{{ scope.row.name }}</span>
-              <br/>
+              <br>
               <span>
                 <img
                   :src="(scope.row.type === 'static' || scope.row.type === 'gif' ) ? scope.row.link : scope.row.img"
-                  width="40px"/>
+                  width="40px">
               </span>
             </template>
           </el-table-column>
           <el-table-column
+            min-width="80"
             label="附件">
             <template slot-scope="scope">
               <a
                 :href="scope.row.link"
                 target="_blank"
-                style="color: blue">{{ scope.row.size }} K</a>
+                style="color: blue">点击查看</a>
             </template>
           </el-table-column>
           <el-table-column
@@ -125,13 +177,13 @@
           <el-table-column
             :show-overflow-tooltip="true"
             prop="isad_text"
-            label="广告"
-            min-width="50"
+            label="广告标记"
+            min-width="80"
           />
           <el-table-column
             :show-overflow-tooltip="true"
             prop="created_at"
-            label="创建时间"
+            label="修改时间"
             min-width="120"
           />
           <el-table-column
@@ -142,7 +194,7 @@
               <el-button
                 size="small"
                 type="success"
-                @click="linkToEdit(scope.row.id)">编辑模版
+                @click="linkToEdit(scope.row.id)">编辑
               </el-button>
             </template>
           </el-table-column>
@@ -224,7 +276,7 @@
 
         adSearchForm: {
           ad_trade_id: '',
-          ad_name: '',
+          name: '',
         },
         pagination: {
           total: 0,
@@ -267,7 +319,7 @@
         let searchArgs = {
           page: this.pagination.currentPage,
           ad_trade_id: this.adSearchForm.ad_trade_id,
-          ad_name: this.adSearchForm.ad_name,
+          name: this.adSearchForm.name,
         }
         return getAdList(this, searchArgs)
           .then(response => {
@@ -286,7 +338,7 @@
       },
       resetSearch(formName) {
         this.adSearchForm.ad_trade_id = ''
-        this.adSearchForm.ad_name = ''
+        this.adSearchForm.name = ''
         this.pagination.currentPage = 1
         this.getAdList()
       },

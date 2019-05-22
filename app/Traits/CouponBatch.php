@@ -174,6 +174,8 @@ trait CouponBatch
      * @param Coupon $coupon
      * @param int $wxUserId
      * @param int $marketid
+     * @return
+     * @throws \Overtrue\EasySms\Exceptions\InvalidArgumentException
      */
     private function sendCouponMsg($coupon, $wxUserId, $marketid)
     {
@@ -181,16 +183,20 @@ trait CouponBatch
         $user = ThirdPartyUser::query()->where('wx_user_id', $wxUserId)
             ->where('marketid', $marketid)->firstOrFail();
 
+        $sql = 'SELECT t.rank FROM (SELECT u.id, u.score, @rank := @rank + 1, @last_rank := CASE WHEN @last_score = u.score THEN @last_rank WHEN @last_score := u.score THEN @rank END AS rank FROM (SELECT * FROM jingsaas.oc_game_attribute where belong = "h5_beat_pig" ORDER BY score DESC) u, (SELECT @rank := 0, @last_score := NULL, @last_rank := 0) r) t LEFT JOIN jingsaas.oc_game_result r on t.id = r.game_attribute_id WHERE r.user_id = ' . $wxUserId;
+        $result = DB::connection('jingsaas')->select($sql)[0];
+
         $easySms = new EasySms(config('easysms'));
+        $couponBatch = $coupon->couponBatch;
+        $content = "【星视度】尊敬的吾悦广场用户，恭喜您获得常州武进吾悦周年庆福利一份，游戏排名：" . $result->rank . "，优惠券：" . $coupon->code . "，奖品：" . $couponBatch->name . "，请在2019年5月21号10点-5月31号22点期间前往武进吾悦2F客服台凭此短信领取。感谢您对吾悦广场的参与与支持！回T退订";
 
         try {
-            $result = $easySms->send($user->mobile, [
-                'content' => '【星视度】尊敬的吾悦广场用户，恭喜您获得常州武进吾悦周年庆福利一份，优惠券：' . $coupon->code . ' 。请在2019年5月21号10点-5月31号22点期间前往武进吾悦2F客服台凭此短信领取。感谢您对吾悦广场的参与与支持！回T退订',
-            ]);
-            Log::info('send_coupon_msg', $result);
-
-        } catch (\Exception $exception) {
-            Log::info('send_msg_exceptions', ['msg' => $exception->getMessage()]);
+            $easySms->send($user->mobile, [
+                'content' => $content,
+            ], ['yunpian' => ['api_key' => env('YUNPIAN_MARKETING_API_KEY')]]);
+        } catch (\Overtrue\EasySms\Exceptions\NoGatewayAvailableException $exception) {
+            $response = $exception->getMessage();
+            return $this->response->errorInternal($response ?? '短信发送异常');
         }
     }
 

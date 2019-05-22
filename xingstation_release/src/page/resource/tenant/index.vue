@@ -143,7 +143,7 @@
           />
           <el-table-column 
             label="操作" 
-            min-width="100">
+            min-width="150">
             <template slot-scope="scope">
               <el-button 
                 v-if="scope.row.status === 2"

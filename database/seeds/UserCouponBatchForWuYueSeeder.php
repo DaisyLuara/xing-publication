@@ -31,7 +31,7 @@ class UserCouponBatchForWuYueSeeder extends Seeder
         $result = DB::connection('jingsaas')->select($sql);
 
         //用户指定券规则
-        UserCouponBatch::query()->where('belong', 'h5_beat_pig')->delete();
+        UserCouponBatch::query()->where('belong', 'hitpig')->delete();
         foreach ($result as $item) {
             $rank = $item->rank;
 
@@ -79,7 +79,7 @@ class UserCouponBatchForWuYueSeeder extends Seeder
                 UserCouponBatch::query()->create([
                     'wx_user_id' => $item->user_id,
                     'coupon_batch_id' => $couponBatchId,
-                    'belong' => 'h5_beat_pig',
+                    'belong' => 'hitpig',
                 ]);
             }
         }

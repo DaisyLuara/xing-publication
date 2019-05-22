@@ -14,7 +14,7 @@ class AdPlanRequest extends Request
         switch ($this->method()) {
             case 'POST':
                 return [
-                    'aids' => 'required|array|max:10',//素材ID
+                    'aids' => 'required|array|max:30',//素材ID
                     'info' => 'string',
                     'atid' => 'required|integer|exists:ar.avr_ad_trade,atid',
                     'name' => 'required|string',
@@ -26,7 +26,7 @@ class AdPlanRequest extends Request
                     'ori' => ['required_if:type,' . AdPlan::TYPE_BID_SCREEN],
                     'screen' => ['integer', 'required_if:type,' . AdPlan::TYPE_BID_SCREEN],
                     'cdshow' => ['required', Rule::in([0, 1])],
-                    'ktime' => 'required|integer|min:1',
+                    'ktime' => 'required|integer|min:0',
                     'only' => ['required', Rule::in([0, 1])],
                     'visiable' => ['required', Rule::in([0, 1])],
                     'shm' => 'required|string',
@@ -35,7 +35,7 @@ class AdPlanRequest extends Request
                 break;
             case 'PATCH':
                 return [
-                    'aids' => 'required|array|max:10',//素材ID
+                    'aids' => 'required|array|max:30',//素材ID
                     'info' => 'string',
                     'atid' => 'required|integer|exists:ar.avr_ad_trade,atid',
                     'name' => 'required|string',
@@ -49,7 +49,7 @@ class AdPlanRequest extends Request
                     'cdshow' => ['required', Rule::in([0, 1])],
                     'only' => ['required', Rule::in([0, 1])],
                     'visiable' => ['required', Rule::in([0, 1])],
-                    'ktime' => 'required|integer|min:1',
+                    'ktime' => 'required|integer|min:0',
                     'shm' => 'required|string',
                     'ehm' => 'required|string',
                 ];
