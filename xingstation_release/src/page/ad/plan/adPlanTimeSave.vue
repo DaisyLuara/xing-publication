@@ -23,7 +23,7 @@
         <el-form-item
           label="广告行业">
           <el-input 
-            :value="adPlan.ad_trade" 
+            :value="adPlan.ad_trade_name"
             disabled />
         </el-form-item>
         <el-form-item

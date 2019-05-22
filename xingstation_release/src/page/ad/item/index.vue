@@ -873,13 +873,14 @@
         this.getAdLaunchList()
       },
       resetSearch(formName) {
-        this.adSearchForm.ad_trade_id = ''
-        this.adSearchForm.ad_plan_id = ''
-        this.adSearchForm.area_id = ''
-        this.adSearchForm.market_id = []
-        this.adSearchForm.point_id = ''
-        this.pagination.currentPage = 1
-        this.editCondition.conditionList = []
+        this.adSearchForm.ad_trade_id = '';
+        this.adSearchForm.ad_plan_id = '';
+        this.adSearchForm.area_id = '';
+        this.adSearchForm.market_id = [];
+        this.adSearchForm.point_id = '';
+        this.adSearchForm.type = '';
+        this.pagination.currentPage = 1;
+        this.editCondition.conditionList = [];
         this.getAdLaunchList()
       },
       changePage(currentPage) {
