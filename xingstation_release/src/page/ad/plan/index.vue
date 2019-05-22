@@ -148,7 +148,7 @@
                 </el-form-item>
                 <el-form-item
                   label="节目运行状态">
-                  <span>{{ scope.row.hardware ? '关闭' : '开启' }}</span>
+                  <span>{{ scope.row.type === 'ads' ? '--' : (scope.row.hardware ? '关闭' : '开启') }}</span>
                 </el-form-item>
                 <el-form-item
                   label="播放模式">
@@ -159,12 +159,8 @@
                   <span>{{ scope.row.create_user_name }}</span>
                 </el-form-item>
                 <el-form-item
-                  label="创建时间">
-                  <span>{{ scope.row.created_at }}</span>
-                </el-form-item>
-                <el-form-item
                   label="修改时间">
-                  <span>{{ scope.row.updated_at }}</span>
+                  <span>{{ scope.row.created_at }}</span>
                 </el-form-item>
               </el-form>
               <template>
@@ -357,7 +353,7 @@
             label="节目运行状态"
             min-width="100">
             <template slot-scope="scope">
-              {{ scope.row.hardware ? '关闭' : '开启' }}
+              {{ scope.row.type === 'ads' ? '--' : (scope.row.hardware ? '关闭' : '开启') }}
             </template>
           </el-table-column>
           <el-table-column
@@ -375,7 +371,7 @@
           <el-table-column
             :show-overflow-tooltip="true"
             prop="created_at"
-            label="创建时间"
+            label="修改时间"
             min-width="120"
           />
           <el-table-column

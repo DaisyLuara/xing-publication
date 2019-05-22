@@ -157,7 +157,7 @@
           prop="visiable">
           <el-radio
             v-model="adForm.visiable"
-            :label="1">运营中</el-radio>
+            :label="1">投放中</el-radio>
           <el-radio
             v-model="adForm.visiable"
             :label="0">下架</el-radio>

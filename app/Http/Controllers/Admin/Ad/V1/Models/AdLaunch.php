@@ -59,7 +59,7 @@ class AdLaunch extends Model
         'piid',
         'sdate',
         'edate',
-        'visiable', //1 运营中 0 下架
+        'visiable', //1 投放中 0 下架
         'only',  //1 唯一性 0 非唯一
         'date',
         'clientdate'
