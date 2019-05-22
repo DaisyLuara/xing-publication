@@ -7,13 +7,14 @@ use App\Http\Requests\Request;
 class ProjectLaunchRequest extends Request
 {
 
-    public function rules()
+    public function rules(): ?array
     {
         switch ($this->method()) {
             case 'POST':
                 return [
                     'oids' => 'required|array|max:10',
                     'default_plid' => 'required',
+                    'default_bid' => 'required'
                 ];
                 break;
             case 'PATCH':
@@ -24,13 +25,14 @@ class ProjectLaunchRequest extends Request
         }
     }
 
-    public function attributes()
+    public function attributes(): array
     {
         return [
-            'default_plid' => 'default_plid(节目)',
-            'sdate' => 'sdate(开始时间)',
-            'edate' => 'edate(结束时间)',
-            'tvoids' => 'tvoids(节目投放ID)',
+            'default_plid' => '节目',
+            'default_bid' => '皮肤',
+            'sdate' => '开始时间',
+            'edate' => '结束时间',
+            'tvoids' => '节目投放ID',
         ];
     }
 }

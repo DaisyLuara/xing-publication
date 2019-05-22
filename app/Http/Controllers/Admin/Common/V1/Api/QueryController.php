@@ -54,6 +54,8 @@ use App\Http\Controllers\Admin\Project\V1\Models\Project;
 use App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTpl;
 use App\Http\Controllers\Admin\Project\V1\Transformer\ProjectLaunchTplTransformer;
 use App\Http\Controllers\Admin\Project\V1\Transformer\ProjectTransformer;
+use App\Http\Controllers\Admin\Skin\V1\Models\Skin;
+use App\Http\Controllers\Admin\Skin\V1\Transformer\SkinTransformer;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamRate;
 use App\Http\Controllers\Admin\Team\V1\Transformer\TeamRateTransformer;
@@ -759,5 +761,21 @@ class QueryController extends Controller
         return $this->response->collection($policies, new PolicyTransformer());
     }
 
+    /**
+     * 可用皮肤搜索
+     * @param Skin $skin
+     * @param Request $request
+     * @return Response
+     */
+    public function projectSkinQuery(Skin $skin, Request $request): Response
+    {
+        $query = $skin->query();
+        if ($request->has('project_id')) {
+            $piid = $request->get('project_id');
+            $query->whereRaw("(piid='$piid' and  pass=1)");
+        }
+        $skin = $query->orWhere('bid', 0)->orderBy('bid')->get();
+        return $this->response()->collection($skin, new SkinTransformer());
+    }
 
 }

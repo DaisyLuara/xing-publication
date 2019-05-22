@@ -109,6 +109,7 @@ $api->version('v1', [
             $api->get('authorized_points/query', 'QueryController@authorizedPointQuery');//已授权点位列表
             $api->get('authorized_policies/query', 'QueryController@authorizedPolicyQuery');//已授权策略列表
             $api->get('authorized_customers/query', 'QueryController@authorizedCustomerQuery');//已授权策略列表
+            $api->get('project_skin/query','QueryController@projectSkinQuery');//可用节目皮肤
 
 
             //消息通知
