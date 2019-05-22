@@ -279,8 +279,9 @@
               <el-input
                 v-model="couponForm.delay_effective_day"
                 :maxlength="6"
-                class="coupon-form-input"
-              />
+                class="coupon-form-input">
+                <template slot="append">小时</template>
+              </el-input>
             </el-form-item>
             <el-form-item 
               v-if="!dateShow" 
@@ -289,8 +290,9 @@
               <el-input
                 v-model="couponForm.effective_day"
                 :maxlength="6"
-                class="coupon-form-input"
-              />小时
+                class="coupon-form-input">
+                <template slot="append">小时</template>
+              </el-input>
             </el-form-item>
             <el-form-item 
               v-if="dateShow" 
