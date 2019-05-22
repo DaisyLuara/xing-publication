@@ -5,7 +5,7 @@ const MODULE_API = '/api/launches/tpl/query'
 const POINT_API = '/api/points/query'
 const PROJECT_API = '/api/projects/query'
 const AD_TRADE_API = '/api/ad_trade/query'
-const ADVERTISER_API = '/api/advertiser/query'
+const AD_PLAN_API = '/api/ad_plan/query'
 const ADVERTISEMENT_API = '/api/advertisement/query'
 const SENCE_API = '/api/scene/query'
 const COMPANY_API = '/api/company/query'
@@ -30,6 +30,7 @@ const CUSTOMERS_MARKET_OWNER_API = '/api/customers/role/market_owner/query'
 const AUTH_POINT_API = '/api/authorized_points/query'
 const AUTH_POLICY_API = '/api/authorized_policies/query'
 const AUTH_PROJECT_API = '/api/authorized_projects/query'
+const SKIN_API = '/api/project_skin/query'
 
 const HOST = process.env.SERVER_URL
 
@@ -98,7 +99,7 @@ const getSearchProjectList = (context, args) => {
       })
   })
 }
-// 广告主
+// 广告行业
 const getSearchAdTradeList = context => {
   return new Promise(function(resolve, reject) {
     context.$http
@@ -111,11 +112,11 @@ const getSearchAdTradeList = context => {
       })
   })
 }
-// 广告
-const getSearchAdvertiserList = (context, args) => {
+// 广告方案
+const getSearchAdPlanList = (context, args) => {
   return new Promise(function(resolve, reject) {
     context.$http
-      .get(HOST + ADVERTISER_API, { params: args })
+      .get(HOST + AD_PLAN_API, { params: args })
       .then(response => {
         resolve(response.data)
       })
@@ -124,6 +125,7 @@ const getSearchAdvertiserList = (context, args) => {
       })
   })
 }
+//广告
 const getSearchAdvertisementList = (context, args) => {
   return new Promise(function(resolve, reject) {
     context.$http
@@ -461,6 +463,20 @@ const getSearchAuthPolicies = (context, params) => {
       })
   })
 }
+// 皮肤
+
+const getSearchSkin = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + SKIN_API, { params: params })
+      .then(response => {
+        resolve(response.data.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
 
 export {
   getSearchAeraList,
@@ -469,7 +485,7 @@ export {
   getSearchPointList,
   getSearchProjectList,
   getSearchAdTradeList,
-  getSearchAdvertiserList,
+  getSearchAdPlanList,
   getSearchAdvertisementList,
   getSearchStaffsList,
   getSearchCouponList,
@@ -494,5 +510,6 @@ export {
   getSearchMarketOwnerCustomer,
   getSearchAuthPolicies,
   getSearchAuthPoint,
-  getSearchAuthProject
+  getSearchAuthProject,
+  getSearchSkin
 }

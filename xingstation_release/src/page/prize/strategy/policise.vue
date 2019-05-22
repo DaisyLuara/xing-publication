@@ -8,25 +8,22 @@
       <span class="label">数量: {{ pagination.total }}</span>
       <!-- 新增子策略 -->
       <div>
-        <el-button
-          size="small"
-          type="success"
-          @click="addPolicy"
-        >新增子策略</el-button>
+        <el-button 
+          size="small" 
+          type="success" 
+          @click="addPolicy">新增子策略</el-button>
       </div>
     </div>
     <!-- 子条目列表 -->
-    <el-table
-      :data="tableData"
-      style="width: 100%"
-    >
+    <el-table 
+      :data="tableData" 
+      style="width: 100%">
       <el-table-column type="expand">
         <template slot-scope="scope">
-          <el-form
-            label-position="left"
-            inline
-            class="demo-table-expand"
-          >
+          <el-form 
+            label-position="left" 
+            inline 
+            class="demo-table-expand">
             <el-form-item label="ID:">
               <span>{{ scope.row.id }}</span>
             </el-form-item>
@@ -45,34 +42,30 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column
-        :show-overflow-tooltip="true"
-        prop="id"
-        label="ID"
-        min-width="100"
-      />
-      <el-table-column
-        :show-overflow-tooltip="true"
-        prop="name"
-        label="优惠券名称"
-        min-width="130"
-      >
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        prop="id" 
+        label="ID" 
+        min-width="100"/>
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        prop="name" 
+        label="优惠券名称" 
+        min-width="130">
         <template slot-scope="scope">{{ scope.row.name }}</template>
       </el-table-column>
-      <el-table-column
-        :show-overflow-tooltip="true"
-        prop="company"
-        label="公司名称"
-        min-width="130"
-      >
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        prop="company" 
+        label="公司名称" 
+        min-width="130">
         <template slot-scope="scope">{{ scope.row.company.name }}</template>
       </el-table-column>
-      <el-table-column
-        :show-overflow-tooltip="true"
-        prop="rate"
-        label="概率"
-        min-width="100"
-      >
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        prop="rate" 
+        label="概率" 
+        min-width="100">
         <template slot-scope="scope">{{ scope.row.pivot.rate }} %</template>
       </el-table-column>
       <el-table-column
@@ -81,20 +74,17 @@
         label="更新时间"
         min-width="120"
       />
-      <el-table-column
-        label="操作"
-        min-width="120"
-      >
+      <el-table-column 
+        label="操作" 
+        min-width="120">
         <template slot-scope="scope">
-          <el-button
-            size="small"
-            type="warning"
-            @click="editPolicy(scope.row)"
-          >编辑</el-button>
-          <el-button
-            size="small"
-            @click="deleteBatch(scope.row)"
-          >删除</el-button>
+          <el-button 
+            size="small" 
+            type="warning" 
+            @click="editPolicy(scope.row)">编辑</el-button>
+          <el-button 
+            size="small" 
+            @click="deleteBatch(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -139,16 +129,6 @@ export default {
   },
   data() {
     return {
-      genderList: [
-        {
-          id: 1,
-          name: "女"
-        },
-        {
-          id: 0,
-          name: "男"
-        }
-      ],
       tableData: [],
       pagination: {
         total: 0,
@@ -222,167 +202,6 @@ export default {
         }
       });
     },
-    getCouponList(company_id) {
-      let args = {
-        company_id: company_id
-      };
-      getSearchCouponList(this, args)
-        .then(result => {
-          this.couponList = result.data;
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    },
-    getCompanyList() {
-      getSearchCompany(this)
-        .then(result => {
-          this.companyList = result.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
-    editBatch(row) {
-      let id = row.id;
-      let policy_id = row.pivot.policy_id;
-      let max_age = row.pivot.max_age;
-      let min_age = row.pivot.min_age;
-      let max_score = row.pivot.max_score;
-      let min_score = row.pivot.min_score;
-      let gender = row.pivot.gender;
-      let rate = row.pivot.rate;
-      let coupon_batch_id = row.pivot.coupon_batch_id;
-      if (max_age === "" && min_age === "" && gender === "" && rate === "") {
-        this.$message({
-          message: "概率，性别，最大年龄，最小年龄不能都为空",
-          type: "warning"
-        });
-        return;
-      }
-      if (
-        (max_age !== "" && min_age === "") ||
-        (max_age === "" && min_age !== "")
-      ) {
-        this.$message({
-          message: "最大年龄，最小年龄必须都填写",
-          type: "warning"
-        });
-        return;
-      }
-      this.setting.loading = true;
-      let args = {
-        min_age: parseInt(min_age),
-        max_age: parseInt(max_age),
-        gender: parseInt(gender),
-        max_score: parseFloat(max_score),
-        min_score: parseFloat(min_score),
-        rate: rate,
-        coupon_batch_id: coupon_batch_id
-      };
-      if (!min_age) {
-        delete args.min_age;
-      }
-      if (!max_age) {
-        delete args.max_age;
-      }
-      if (!rate) {
-        delete args.rate;
-      }
-      if (max_score === "") {
-        delete args.max_score;
-      }
-      if (min_score === "") {
-        delete args.min_score;
-      }
-      modifyBatchPolicy(this, policy_id, args, id)
-        .then(response => {
-          this.$message({
-            message: "修改成功",
-            type: "success"
-          });
-          this.getCouponPoliciesList();
-          this.setting.loading = false;
-        })
-        .catch(err => {
-          console.log(err);
-          this.getCouponPoliciesList();
-          this.setting.loading = false;
-        });
-    },
-    saveBatch(row) {
-      let policy_id = row.pivot.policy_id;
-      let max_age = row.pivot.max_age;
-      let min_age = row.pivot.min_age;
-      let gender = row.pivot.gender;
-      let rate = row.pivot.rate;
-      let min_score = row.pivot.min_score;
-      let max_score = row.pivot.max_score;
-      let coupon_batch_id = row.pivot.coupon_batch_id;
-      if (max_age === "" && min_age === "" && gender === "" && rate === "") {
-        this.$message({
-          message: "概率，性别，最大年龄，最小年龄不能都为空",
-          type: "warning"
-        });
-        return;
-      }
-      if (coupon_batch_id === "") {
-        this.$message({
-          message: "优惠券必须填写",
-          type: "warning"
-        });
-        return;
-      }
-      if (
-        (max_age !== "" && min_age === "") ||
-        (max_age === "" && min_age !== "")
-      ) {
-        this.$message({
-          message: "最大年龄，最小年龄必须都填写",
-          type: "warning"
-        });
-        return;
-      }
-      this.setting.loading = true;
-      let args = {
-        min_age: parseInt(min_age),
-        max_age: parseInt(max_age),
-        gender: parseInt(gender),
-        rate: rate,
-        max_score: parseFloat(max_score),
-        min_score: parseFloat(min_score),
-        coupon_batch_id: coupon_batch_id
-      };
-      if (!min_age) {
-        delete args.min_age;
-      }
-      if (!max_age) {
-        delete args.max_age;
-      }
-      if (!rate) {
-        delete args.rate;
-      }
-      if (max_score === "") {
-        delete args.max_score;
-      }
-      saveBatchPolicy(this, policy_id, args)
-        .then(response => {
-          this.$message({
-            message: "添加成功",
-            type: "success"
-          });
-          this.getCouponPoliciesList();
-          this.setting.loading = false;
-        })
-        .catch(err => {
-          console.log(err);
-          this.getCouponPoliciesList();
-          this.setting.loading = false;
-        });
-      if (min_score === "") {
-        delete args.min_score;
-      }
-    },
     getCouponPoliciesList() {
       this.setting.loading = true;
       let args = {
@@ -391,7 +210,6 @@ export default {
       };
       return getCouponPoliciesList(this, this.pid, args)
         .then(response => {
-          this.activeNames = 0;
           this.tableData = response.data;
           this.pagination.total = response.meta.pagination.total;
           this.setting.loading = false;

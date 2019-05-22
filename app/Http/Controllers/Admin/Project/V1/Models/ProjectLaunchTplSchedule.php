@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Admin\Project\V1\Models;
 
+use App\Http\Controllers\Admin\Skin\V1\Models\Skin;
 use App\Models\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 
 /**
@@ -18,20 +20,21 @@ use App\Models\Model;
  * @property string $date
  * @property int $clientdate 时间
  * @property-read \App\Http\Controllers\Admin\Project\V1\Models\Project $project
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTplSchedule newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTplSchedule newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model ordered()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTplSchedule query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model recent()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTplSchedule whereCid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTplSchedule whereClientdate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTplSchedule whereDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTplSchedule whereEhm($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTplSchedule wherePid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTplSchedule wherePlid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTplSchedule whereShm($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTplSchedule whereTvid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTplSchedule whereTviid($value)
+ * @property-read Skin $skin
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunchTplSchedule newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunchTplSchedule newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Model ordered()
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunchTplSchedule query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Model recent()
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunchTplSchedule whereCid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunchTplSchedule whereClientdate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunchTplSchedule whereDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunchTplSchedule whereEhm($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunchTplSchedule wherePid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunchTplSchedule wherePlid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunchTplSchedule whereShm($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunchTplSchedule whereTvid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectLaunchTplSchedule whereTviid($value)
  * @mixin \Eloquent
  */
 class ProjectLaunchTplSchedule extends Model
@@ -46,6 +49,7 @@ class ProjectLaunchTplSchedule extends Model
         'pid',
         'tvid',
         'plid',
+        'bid',
         'shm',
         'ehm',
         'sdate',
@@ -54,8 +58,13 @@ class ProjectLaunchTplSchedule extends Model
         'date'
     ];
 
-    public function project()
+    public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class, 'plid', 'id');
+    }
+
+    public function skin(): BelongsTo
+    {
+        return $this->belongsTo(Skin::class, 'bid', 'bid');
     }
 }

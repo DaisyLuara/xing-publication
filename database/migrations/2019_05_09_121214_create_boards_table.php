@@ -30,11 +30,11 @@ class CreateBoardsTable extends Migration
         Schema::create('board_votes', static function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('board_id')->default(0);
-            $table->string('campaign', 32)->default('');
+            $table->string('campaign', 64)->default('');
             $table->unsignedInteger('voter')->default(0);
             $table->unsignedInteger('candidate')->default(0);
-            $table->string('voter_z', 32)->default('');
-            $table->string('candidate_z', 32)->default('');
+            $table->string('voter_z', 64)->default('');
+            $table->string('candidate_z', 64)->default('');
             $table->unsignedInteger('oid')->default(0);
             $table->string('belong', 32)->default('');
             $table->bigInteger('created_date')->default(0);
@@ -43,6 +43,8 @@ class CreateBoardsTable extends Migration
 
         Schema::create('board_vote_configs', static function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedInteger('voter')->default(0);
+            $table->string('voter_z', 64)->default('');
             $table->unsignedInteger('oid')->default(0);
             $table->string('belong', 32)->default('');
             $table->string('campaign', 32)->default('');
