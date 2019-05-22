@@ -16,7 +16,7 @@
 
         <el-form-item>
           <h3>
-            <i class="el-icon-star-on"></i>
+            <i class="el-icon-star-on"/>
             广告模版
           </h3>
         </el-form-item>
@@ -131,7 +131,7 @@
         <template v-if="!isItem">
           <el-form-item>
             <h3 class="text text-primary">
-              <i class="el-icon-star-on"></i>
+              <i class="el-icon-star-on"/>
               排期细节
             </h3>
           </el-form-item>

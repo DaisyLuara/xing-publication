@@ -1,8 +1,14 @@
 <template>
   <div class="item-wrap-template">
-    <div v-loading="setting.loading" :element-loading-text="setting.loadingText" class="pane">
+    <div 
+      v-loading="setting.loading" 
+      :element-loading-text="setting.loadingText" 
+      class="pane">
       <div class="pane-title">新增节目投放</div>
-      <el-form ref="projectForm" :model="projectForm" label-width="150px">
+      <el-form 
+        ref="projectForm" 
+        :model="projectForm" 
+        label-width="150px">
         <el-form-item
           :rules="[{ required: true, message: '请输入节目名称', trigger: 'submit'}]"
           label="节目名称"
@@ -60,7 +66,11 @@
             clearable
             @change="areaChangeHandle"
           >
-            <el-option v-for="item in areaList" :key="item.id" :label="item.name" :value="item.id"/>
+            <el-option 
+              v-for="item in areaList" 
+              :key="item.id" 
+              :label="item.name" 
+              :value="item.id"/>
           </el-select>
         </el-form-item>
         <el-form-item
@@ -111,22 +121,50 @@
           </el-select>
         </el-form-item>
         <el-form-item label="星期一模版">
-          <el-select v-model="projectForm.day1_tvid" placeholder="请选择" filterable clearable>
-            <el-option v-for="item in monList" :key="item.id" :label="item.name" :value="item.id"/>
+          <el-select 
+            v-model="projectForm.day1_tvid" 
+            placeholder="请选择" 
+            filterable 
+            clearable>
+            <el-option 
+              v-for="item in monList" 
+              :key="item.id" 
+              :label="item.name" 
+              :value="item.id"/>
           </el-select>
         </el-form-item>
         <el-form-item label="星期二模版">
-          <el-select v-model="projectForm.day2_tvid" placeholder="请选择" filterable clearable>
-            <el-option v-for="item in tueList" :key="item.id" :label="item.name" :value="item.id"/>
+          <el-select 
+            v-model="projectForm.day2_tvid" 
+            placeholder="请选择" 
+            filterable 
+            clearable>
+            <el-option 
+              v-for="item in tueList" 
+              :key="item.id" 
+              :label="item.name" 
+              :value="item.id"/>
           </el-select>
         </el-form-item>
         <el-form-item label="星期三模版">
-          <el-select v-model="projectForm.day3_tvid" placeholder="请选择" filterable clearable>
-            <el-option v-for="item in wedList" :key="item.id" :label="item.name" :value="item.id"/>
+          <el-select 
+            v-model="projectForm.day3_tvid" 
+            placeholder="请选择" 
+            filterable 
+            clearable>
+            <el-option 
+              v-for="item in wedList" 
+              :key="item.id" 
+              :label="item.name" 
+              :value="item.id"/>
           </el-select>
         </el-form-item>
         <el-form-item label="星期四模版">
-          <el-select v-model="projectForm.day4_tvid" placeholder="请选择" filterable clearable>
+          <el-select 
+            v-model="projectForm.day4_tvid" 
+            placeholder="请选择" 
+            filterable 
+            clearable>
             <el-option
               v-for="item in thursList"
               :key="item.id"
@@ -136,22 +174,50 @@
           </el-select>
         </el-form-item>
         <el-form-item label="星期五模版">
-          <el-select v-model="projectForm.day5_tvid" placeholder="请选择" filterable clearable>
-            <el-option v-for="item in friList" :key="item.id" :label="item.name" :value="item.id"/>
+          <el-select 
+            v-model="projectForm.day5_tvid" 
+            placeholder="请选择" 
+            filterable 
+            clearable>
+            <el-option 
+              v-for="item in friList" 
+              :key="item.id" 
+              :label="item.name" 
+              :value="item.id"/>
           </el-select>
         </el-form-item>
         <el-form-item label="星期六模版">
-          <el-select v-model="projectForm.day6_tvid" placeholder="请选择" filterable clearable>
-            <el-option v-for="item in satList" :key="item.id" :label="item.name" :value="item.id"/>
+          <el-select 
+            v-model="projectForm.day6_tvid" 
+            placeholder="请选择" 
+            filterable 
+            clearable>
+            <el-option 
+              v-for="item in satList" 
+              :key="item.id" 
+              :label="item.name" 
+              :value="item.id"/>
           </el-select>
         </el-form-item>
         <el-form-item label="星期日模版">
-          <el-select v-model="projectForm.day7_tvid" placeholder="请选择" filterable clearable>
-            <el-option v-for="item in sunList" :key="item.id" :label="item.name" :value="item.id"/>
+          <el-select 
+            v-model="projectForm.day7_tvid" 
+            placeholder="请选择" 
+            filterable 
+            clearable>
+            <el-option 
+              v-for="item in sunList" 
+              :key="item.id" 
+              :label="item.name" 
+              :value="item.id"/>
           </el-select>
         </el-form-item>
         <el-form-item label="工作日模版">
-          <el-select v-model="projectForm.weekday" placeholder="请选择" filterable clearable>
+          <el-select 
+            v-model="projectForm.weekday" 
+            placeholder="请选择" 
+            filterable 
+            clearable>
             <el-option
               v-for="item in weekdayList"
               :key="item.id"
@@ -161,7 +227,11 @@
           </el-select>
         </el-form-item>
         <el-form-item label="周末模版">
-          <el-select v-model="projectForm.weekend" placeholder="请选择" filterable clearable>
+          <el-select 
+            v-model="projectForm.weekend" 
+            placeholder="请选择" 
+            filterable 
+            clearable>
             <el-option
               v-for="item in weekendList"
               :key="item.id"
@@ -171,7 +241,11 @@
           </el-select>
         </el-form-item>
         <el-form-item label="自定义模版">
-          <el-select v-model="projectForm.define" placeholder="请选择" filterable clearable>
+          <el-select 
+            v-model="projectForm.define" 
+            placeholder="请选择" 
+            filterable 
+            clearable>
             <el-option
               v-for="item in defineList"
               :key="item.id"
@@ -180,7 +254,9 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="自定义开始时间" prop="sdate">
+        <el-form-item 
+          label="自定义开始时间" 
+          prop="sdate">
           <el-date-picker
             v-model="projectForm.sdate"
             :editable="false"
@@ -188,7 +264,9 @@
             placeholder="请选择自定义开始时间"
           />
         </el-form-item>
-        <el-form-item label="自定义结束时间" prop="edate">
+        <el-form-item 
+          label="自定义结束时间" 
+          prop="edate">
           <el-date-picker
             v-model="projectForm.edate"
             :editable="false"
@@ -198,7 +276,9 @@
           />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submit('projectForm')">完成</el-button>
+          <el-button 
+            type="primary" 
+            @click="submit('projectForm')">完成</el-button>
         </el-form-item>
       </el-form>
     </div>

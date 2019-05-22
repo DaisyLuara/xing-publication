@@ -320,29 +320,29 @@
                       label="显示"
                       min-width="50">
                       <template slot-scope="ad_scope">
-                      <span v-if="ad_scope.row.pivot">
-                        {{ ad_scope.row.pivot.mode }}
-                      </span>
+                        <span v-if="ad_scope.row.pivot">
+                          {{ ad_scope.row.pivot.mode }}
+                        </span>
                       </template>
                     </el-table-column>
                     <el-table-column
                       label="屏幕"
                       min-width="50">
                       <template slot-scope="ad_scope">
-                      <span v-if="ad_scope.row.pivot">
-                        {{ ad_scope.row.pivot.ori }} <br>
-                        {{ ad_scope.row.pivot.screen }}%
-                      </span>
+                        <span v-if="ad_scope.row.pivot">
+                          {{ ad_scope.row.pivot.ori }} <br>
+                          {{ ad_scope.row.pivot.screen }}%
+                        </span>
                       </template>
                     </el-table-column>
                     <el-table-column
                       label="倒计时"
                       min-width="50">
                       <template slot-scope="ad_scope">
-                      <span v-if="ad_scope.row.pivot">
-                        {{ ad_scope.row.pivot.cdshow ?'开启':'关闭' }}<br>
-                        {{ ad_scope.row.pivot.ktime }}s
-                      </span>
+                        <span v-if="ad_scope.row.pivot">
+                          {{ ad_scope.row.pivot.cdshow ?'开启':'关闭' }}<br>
+                          {{ ad_scope.row.pivot.ktime }}s
+                        </span>
                       </template>
                     </el-table-column>
                   </template>

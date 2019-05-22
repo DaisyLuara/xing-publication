@@ -6,28 +6,60 @@
   >
     <!-- 搜索 -->
     <div class="search-wrap">
-      <el-form ref="searchForm" :model="searchForm" :inline="true">
-        <el-form-item label prop="name">
-          <el-input v-model="searchForm.name" placeholder="请输入模板名称" clearable class="item-input"/>
+      <el-form 
+        ref="searchForm" 
+        :model="searchForm" 
+        :inline="true">
+        <el-form-item 
+          label 
+          prop="name">
+          <el-input 
+            v-model="searchForm.name" 
+            placeholder="请输入模板名称" 
+            clearable 
+            class="item-input"/>
         </el-form-item>
-        <el-button type="primary" size="small" @click="search">搜索</el-button>
+        <el-button 
+          type="primary" 
+          size="small" 
+          @click="search">搜索</el-button>
       </el-form>
     </div>
     <div class="actions-wrap">
       <span class="label">数量: {{ pagination.total }}</span>
       <!-- 模板增加 -->
       <div>
-        <el-button size="small" type="success" @click="addTemplate('templateForm')">新增模板</el-button>
+        <el-button 
+          size="small" 
+          type="success" 
+          @click="addTemplate('templateForm')">新增模板</el-button>
       </div>
     </div>
     <!-- 模板排期列表 -->
-    <el-table :data="tableData" style="width: 100%">
-      <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="100"/>
-      <el-table-column :show-overflow-tooltip="true" prop="name" label="模版名称" min-width="130"/>
-      <el-table-column label="操作" min-width="100">
+    <el-table 
+      :data="tableData" 
+      style="width: 100%">
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        prop="id" 
+        label="ID" 
+        min-width="100"/>
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        prop="name" 
+        label="模版名称" 
+        min-width="130"/>
+      <el-table-column 
+        label="操作" 
+        min-width="100">
         <template slot-scope="scope">
-          <el-button size="small" type="warning" @click="modifyTemplateName(scope.row)">编辑</el-button>
-          <el-button size="small" @click="schedule(scope.row)">子条目</el-button>
+          <el-button 
+            size="small" 
+            type="warning" 
+            @click="modifyTemplateName(scope.row)">编辑</el-button>
+          <el-button 
+            size="small" 
+            @click="schedule(scope.row)">子条目</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -41,17 +73,30 @@
       />
     </div>
     <!-- 新增，修改 -->
-    <el-dialog :title="title" :visible.sync="templateVisible" @close="dialogClose">
-      <el-form v-loading="loading" ref="templateForm" :model="templateForm" label-width="150px">
+    <el-dialog 
+      :title="title" 
+      :visible.sync="templateVisible" 
+      @close="dialogClose">
+      <el-form 
+        v-loading="loading" 
+        ref="templateForm" 
+        :model="templateForm" 
+        label-width="150px">
         <el-form-item
           :rules="[{ type: 'string', required: true, message: '请输入名称', trigger: 'submit' }]"
           label="模板名"
           prop="name"
         >
-          <el-input v-model="templateForm.name" placeholder="请输入名称" class="item-input"/>
+          <el-input 
+            v-model="templateForm.name" 
+            placeholder="请输入名称" 
+            class="item-input"/>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" size="small" @click="submit('templateForm')">完成</el-button>
+          <el-button 
+            type="primary" 
+            size="small" 
+            @click="submit('templateForm')">完成</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>

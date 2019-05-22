@@ -97,11 +97,11 @@
             min-width="120">
             <template slot-scope="scope">
               <span>{{ scope.row.name }}</span>
-              <br/>
+              <br>
               <span>
                 <img
                   :src="(scope.row.type === 'static' || scope.row.type === 'gif' ) ? scope.row.link : scope.row.img"
-                  width="40px"/>
+                  width="40px">
               </span>
             </template>
           </el-table-column>

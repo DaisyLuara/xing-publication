@@ -3,7 +3,10 @@
     <div class="account-wrap">
       <div class="item-info">
         <div class="prize-title">{{ templateId ? '子条目修改' : '子条目新增' }}</div>
-        <el-form ref="templateForm" :model="templateForm" label-width="180px">
+        <el-form 
+          ref="templateForm" 
+          :model="templateForm" 
+          label-width="180px">
           <el-form-item
             :rules="[{ required: true, message: '请选择节目', trigger: 'submit'}]"
             label="节目名称"
@@ -55,10 +58,10 @@
             <el-time-select
               v-model="templateForm.date_start"
               :picker-options="{
-                  start: '00:00',
-                  step: '00:01',
-                  end: '23:59'
-                }"
+                start: '00:00',
+                step: '00:01',
+                end: '23:59'
+              }"
               placeholder="开始时间"
               format="HH:mm"
             />
@@ -71,16 +74,18 @@
             <el-time-select
               v-model="templateForm.date_end"
               :picker-options="{
-                  start: '00:00',
-                  step: '00:01',
-                  end: '23:59'
-                }"
+                start: '00:00',
+                step: '00:01',
+                end: '23:59'
+              }"
               placeholder="结束时间"
               format="HH:mm"
             />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="submit('templateForm')">保存</el-button>
+            <el-button 
+              type="primary" 
+              @click="submit('templateForm')">保存</el-button>
             <el-button @click="back">返回</el-button>
           </el-form-item>
         </el-form>

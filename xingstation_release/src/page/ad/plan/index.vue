@@ -137,10 +137,10 @@
                 </el-form-item>
                 <el-form-item
                   label="图标">
-                    <a
-                      :href="scope.row.icon"
-                      target="_blank"
-                      style="color: blue">查看</a>
+                  <a
+                    :href="scope.row.icon"
+                    target="_blank"
+                    style="color: blue">查看</a>
                 </el-form-item>
                 <el-form-item
                   label="广告模版">
@@ -152,7 +152,7 @@
                 </el-form-item>
                 <el-form-item
                   label="小时/自定义">
-                  <span>{{ scope.row.tmode_text}}</span>
+                  <span>{{ scope.row.tmode_text }}</span>
                 </el-form-item>
                 <el-form-item
                   label="创建时间">
@@ -197,7 +197,7 @@
                     min-width="100">
                     <template slot-scope="ad_scope">
                       <span>{{ ad_scope.row.name }}</span>
-                      <br/>
+                      <br>
                       <span>
                         <img 
                           :src="(ad_scope.row.type === 'static' || ad_scope.row.type === 'gif' ) ? ad_scope.row.link : ad_scope.row.img"
@@ -238,7 +238,7 @@
                       min-width="80">
                       <template slot-scope="ad_scope">
                         <span v-if="ad_scope.row.pivot">
-                          {{ oriOptions[ad_scope.row.pivot.ori] }} <br/>
+                          {{ oriOptions[ad_scope.row.pivot.ori] }} <br>
                           {{ ad_scope.row.pivot.screen }}%
                         </span>
                       </template>

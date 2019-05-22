@@ -8,14 +8,22 @@
       <span class="label">数量: {{ pagination.total }}</span>
       <!-- 新增子策略 -->
       <div>
-        <el-button size="small" type="success" @click="addPolicy">新增排期</el-button>
+        <el-button 
+          size="small" 
+          type="success" 
+          @click="addPolicy">新增排期</el-button>
       </div>
     </div>
     <!-- 子条目列表 -->
-    <el-table :data="tableData" style="width: 100%">
+    <el-table 
+      :data="tableData" 
+      style="width: 100%">
       <el-table-column type="expand">
         <template slot-scope="scope">
-          <el-form label-position="left" inline class="demo-table-expand">
+          <el-form 
+            label-position="left" 
+            inline 
+            class="demo-table-expand">
             <el-form-item label="ID:">
               <span>{{ scope.row.id }}</span>
             </el-form-item>
@@ -24,7 +32,9 @@
             </el-form-item>
             <el-form-item label="节目图标:">
               <span>
-                <img :src="scope.row.project.icon" style="width:20%;padding:10px">
+                <img 
+                  :src="scope.row.project.icon" 
+                  style="width:20%;padding:10px">
               </span>
             </el-form-item>
             <el-form-item label="皮肤名称:">
@@ -32,7 +42,9 @@
             </el-form-item>
             <el-form-item label="皮肤图标:">
               <span>
-                <img :src="scope.row.skin.icon" style="width:40%;padding:10px">
+                <img 
+                  :src="scope.row.skin.icon" 
+                  style="width:40%;padding:10px">
               </span>
             </el-form-item>
             <el-form-item label="开始时间:">
@@ -44,21 +56,44 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="100"/>
-      <el-table-column :show-overflow-tooltip="true" prop="name" label="节目名称" min-width="130">
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        prop="id" 
+        label="ID" 
+        min-width="100"/>
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        prop="name" 
+        label="节目名称" 
+        min-width="130">
         <template slot-scope="scope">{{ scope.row.project.name }}</template>
       </el-table-column>
-      <el-table-column prop="project_icon" label="节目图标" width="130">
+      <el-table-column 
+        prop="project_icon" 
+        label="节目图标" 
+        width="130">
         <template slot-scope="scope">
-          <img :src="scope.row.project.icon" style="width:100%">
+          <img 
+            :src="scope.row.project.icon" 
+            style="width:100%">
         </template>
       </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" prop="name" label="皮肤名称" min-width="130">
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        prop="name" 
+        label="皮肤名称" 
+        min-width="130">
         <template slot-scope="scope">{{ scope.row.skin? scope.row.skin.name:'' }}</template>
       </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" prop="skin_icon" label="皮肤图标" width="130">
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        prop="skin_icon" 
+        label="皮肤图标" 
+        width="130">
         <template slot-scope="scope">
-          <img :src="scope.row.skin.icon" style="width:100%">
+          <img 
+            :src="scope.row.skin.icon" 
+            style="width:100%">
         </template>
       </el-table-column>
       <el-table-column
@@ -67,10 +102,19 @@
         label="开始时间"
         min-width="100"
       />
-      <el-table-column :show-overflow-tooltip="true" prop="date_end" label="结束时间" min-width="100"/>
-      <el-table-column label="操作" min-width="120">
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        prop="date_end" 
+        label="结束时间" 
+        min-width="100"/>
+      <el-table-column 
+        label="操作" 
+        min-width="120">
         <template slot-scope="scope">
-          <el-button size="small" type="warning" @click="editPolicy(scope.row)">编辑</el-button>
+          <el-button 
+            size="small" 
+            type="warning" 
+            @click="editPolicy(scope.row)">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
