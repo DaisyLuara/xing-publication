@@ -7,12 +7,11 @@ use League\Fractal\TransformerAbstract;
 
 class AdTradeTransformer extends TransformerAbstract
 {
-    public function transform(AdTrade $adTrade): array
+    public function transform(AdTrade $adTrade)
     {
         return [
             'id' => $adTrade->atid,
             'name' => $adTrade->name,
-            'icon' => $adTrade->icon,
         ];
     }
 }

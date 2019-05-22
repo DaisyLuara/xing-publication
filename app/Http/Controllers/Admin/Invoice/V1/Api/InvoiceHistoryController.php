@@ -34,10 +34,6 @@ class InvoiceHistoryController extends Controller
             });
         }
 
-        if ($request->get('applicant')) {
-            $query->where('applicant', '=', $request->get('applicant'));
-        }
-
         if ($request->status) {
             $query->where('status', '=', $request->status);
         }

@@ -1,17 +1,17 @@
 <template>
   <div class="add-coupon-wrap">
-    <div 
-      v-loading="setting.loading" 
+    <div
+      v-loading="setting.loading"
       :element-loading-text="setting.loadingText">
       <div class="coupon-title">{{ $route.name }}</div>
-      <el-form 
-        ref="couponForm" 
-        :model="couponForm" 
-        :rules="rules" 
+      <el-form
+        ref="couponForm"
+        :model="couponForm"
+        :rules="rules"
         label-width="180px">
         <el-tabs v-model="activeName">
-          <el-tab-pane 
-            label="优惠券设置" 
+          <el-tab-pane
+            label="优惠券设置"
             name="first">
             <el-form-item
               :rules="{required: true, message: '公司不能为空', trigger: 'submit'}"
@@ -40,20 +40,20 @@
               label="优惠券名称"
               prop="name"
             >
-              <el-input 
-                v-model="couponForm.name" 
+              <el-input
+                v-model="couponForm.name"
                 class="coupon-form-input"/>
             </el-form-item>
-            <el-form-item 
-              label="创建人" 
+            <el-form-item
+              label="创建人"
               prop="user_name">
-              <el-input 
-                v-model="user_name" 
-                :disabled="true" 
+              <el-input
+                v-model="user_name"
+                :disabled="true"
                 class="coupon-form-input"/>
             </el-form-item>
-            <el-form-item 
-              label="投放场地（嗨蚪）" 
+            <el-form-item
+              label="投放场地（嗨蚪）"
               prop="marketid">
               <el-select
                 v-model="couponForm.marketid"
@@ -76,8 +76,8 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item 
-              label="投放点位（嗨蚪）" 
+            <el-form-item
+              label="投放点位（嗨蚪）"
               prop="oid">
               <el-select
                 v-model="couponForm.oid"
@@ -97,8 +97,8 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item 
-              label="使用说明" 
+            <el-form-item
+              label="使用说明"
               prop="description">
               <el-input
                 v-model="couponForm.description"
@@ -112,14 +112,14 @@
               label="金额"
               prop="amount"
             >
-              <el-input 
-                v-model="couponForm.amount" 
-                :maxlength="6" 
+              <el-input
+                v-model="couponForm.amount"
+                :maxlength="6"
                 class="coupon-form-input"/>
-              <el-tooltip 
-                class="item" 
-                effect="dark" 
-                content="金额必须为整数" 
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="金额必须为整数"
                 placement="right">
                 <i class="el-icon-info"/>
               </el-tooltip>
@@ -129,75 +129,57 @@
               label="兑换价格（嗨蚪）"
               prop="credit"
             >
-              <el-input 
-                v-model="couponForm.credit" 
+              <el-input
+                v-model="couponForm.credit"
                 class="coupon-form-input"/>
             </el-form-item>
-            <el-form-item 
-              label="h5图片链接" 
+            <el-form-item
+              label="h5图片链接"
               prop="image_url">
-              <div 
-                class="avatar-uploader" 
-                @click="panelVisible=true,imgType = 'h5'">
-                <img 
-                  v-if="couponForm.image_url" 
-                  :src="couponForm.image_url" 
-                  class="avatar">
-                <i 
-                  v-else 
-                  class="el-icon-plus avatar-uploader-icon"/>
-              </div>
+              <el-input
+                v-model="couponForm.image_url"
+                class="coupon-form-input"/>
             </el-form-item>
-            <el-form-item 
-              label="大屏图片链接" 
+            <el-form-item
+              label="大屏图片链接"
               prop="bs_image_url">
-              <div 
-                class="avatar-uploader" 
-                @click="panelVisible=true,imgType = 'bs'">
-                <img 
-                  v-if="couponForm.bs_image_url" 
-                  :src="couponForm.bs_image_url" 
-                  class="avatar">
-                <i 
-                  v-else 
-                  class="el-icon-plus avatar-uploader-icon"/>
-              </div>
-              <!-- <el-input v-model="couponForm.bs_image_url" class="coupon-form-input"/> -->
+              <el-input
+                v-model="couponForm.bs_image_url"
+                class="coupon-form-input"/>
             </el-form-item>
-            <el-form-item 
-              label="跳转链接" 
+            <el-form-item
+              label="跳转链接"
               prop="redirect_url">
-              <el-input 
-                v-model="couponForm.redirect_url" 
+              <el-input
+                v-model="couponForm.redirect_url"
                 class="coupon-form-input"/>
             </el-form-item>
-            <el-form-item 
-              label="优先级" 
+            <el-form-item
+              label="优先级"
               prop="sort_order">
-              <el-input 
-                v-model="couponForm.sort_order" 
-                :maxlength="3" 
+              <el-input
+                v-model="couponForm.sort_order"
+                :maxlength="3"
                 class="coupon-form-input"/>
             </el-form-item>
-            <el-form-item 
-              label="状态" 
+            <el-form-item
+              label="状态"
               prop="is_active">
-              <el-radio 
-                v-model="couponForm.is_active" 
+              <el-radio
+                v-model="couponForm.is_active"
                 :label="1">启用</el-radio>
-              <el-radio 
-                v-model="couponForm.is_active" 
+              <el-radio
+                v-model="couponForm.is_active"
                 :label="0">停用</el-radio>
             </el-form-item>
           </el-tab-pane>
           <el-tab-pane 
             label="场景设置" 
             name="second">
-            <el-form-item
-              :rules="{required: true, message: '适用场景不能为空', trigger: 'submit'}"
-              label="适用场景"
-              prop="scene_type"
-            >
+            <el-form-item 
+              :rules="{required: true, message: '适用场景不能为空', trigger: 'submit'}" 
+              label="适用场景" 
+              prop="scene_type">
               <el-radio-group 
                 v-model="couponForm.scene_type" 
                 @change="handleSceneType">
@@ -208,32 +190,32 @@
                   placement="top">
                   <el-radio :label="1">场地通用</el-radio>
                 </el-tooltip>
-                <el-tooltip 
-                  class="item" 
-                  effect="dark" 
-                  content="仅供某一特定场地核销" 
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  content="仅供某一特定场地核销"
                   placement="top">
                   <el-radio :label="2">场地自营</el-radio>
                 </el-tooltip>
-                <el-tooltip 
-                  class="item" 
-                  effect="dark" 
-                  content="可在同一主体下，多家连锁商户核销" 
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  content="可在同一主体下，多家连锁商户核销"
                   placement="top">
                   <el-radio :label="3">商户通用</el-radio>
                 </el-tooltip>
-                <el-tooltip 
-                  class="item" 
-                  effect="dark" 
-                  content="仅供某一特定商户核销" 
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  content="仅供某一特定商户核销"
                   placement="top">
                   <el-radio :label="4">商户自营</el-radio>
                 </el-tooltip>
               </el-radio-group>
             </el-form-item>
-            <el-form-item 
-              :rules="writeOffMidRules" 
-              label="适用场地" 
+            <el-form-item
+              :rules="writeOffMidRules"
+              label="适用场地"
               prop="write_off_mid">
               <el-select
                 v-model="couponForm.write_off_mid"
@@ -253,9 +235,9 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item 
-              :rules="writeOffSidRules" 
-              label="适用商户" 
+            <el-form-item
+              :rules="writeOffSidRules"
+              label="适用商户"
               prop="write_off_sid">
               <el-select
                 v-model="couponForm.write_off_sid"
@@ -277,11 +259,11 @@
               </el-select>
             </el-form-item>
           </el-tab-pane>
-          <el-tab-pane 
-            label="使用设置" 
+          <el-tab-pane
+            label="使用设置"
             name="third">
-            <el-form-item 
-              label="动态库存" 
+            <el-form-item
+              label="动态库存"
               prop="dynamic_stock_status">
               <el-radio-group
                 v-model="couponForm.dynamic_stock_status"
@@ -298,13 +280,13 @@
                 </el-tooltip>
               </el-radio-group>
             </el-form-item>
-            <el-form-item 
-              label="核销减库存" 
+            <el-form-item
+              label="核销减库存"
               prop="write_off_status">
-              <el-tooltip 
-                class="item" 
-                effect="dark" 
-                content="领券后，库存自动减少" 
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="领券后，库存自动减少"
                 placement="left">
                 <el-radio
                   v-model="couponForm.write_off_status"
@@ -312,10 +294,10 @@
                   :disabled="disabledWriteStatus"
                 >关闭</el-radio>
               </el-tooltip>
-              <el-tooltip 
-                class="item" 
-                effect="dark" 
-                content="核销后，库存自动减少" 
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="核销后，库存自动减少"
                 placement="right">
                 <el-radio
                   v-model="couponForm.write_off_status"
@@ -329,9 +311,9 @@
               label="库存总数"
               prop="count"
             >
-              <el-input 
-                v-model="couponForm.count" 
-                :maxlength="6" 
+              <el-input
+                v-model="couponForm.count"
+                :maxlength="6"
                 class="coupon-form-input"/>
             </el-form-item>
             <el-form-item
@@ -339,16 +321,16 @@
               label="剩余库存"
               prop="stock"
             >
-              <el-input 
-                v-model="couponForm.stock" 
-                :maxlength="6" 
+              <el-input
+                v-model="couponForm.stock"
+                :maxlength="6"
                 class="coupon-form-input"/>
             </el-form-item>
-            <el-form-item 
-              label="每人无限领取" 
+            <el-form-item
+              label="每人无限领取"
               prop="pmg_status">
-              <el-radio-group 
-                v-model="couponForm.pmg_status" 
+              <el-radio-group
+                v-model="couponForm.pmg_status"
                 @change="unlimitedPeopleHandle">
                 <el-radio :label="1">开启</el-radio>
                 <el-radio :label="0">关闭</el-radio>
@@ -366,11 +348,11 @@
                 class="coupon-form-input"
               />
             </el-form-item>
-            <el-form-item 
-              label="每天无限领取" 
+            <el-form-item
+              label="每天无限领取"
               prop="dmg_status">
-              <el-radio-group 
-                v-model="couponForm.dmg_status" 
+              <el-radio-group
+                v-model="couponForm.dmg_status"
                 @change="unlimitedDayHandle">
                 <el-radio :label="1">开启</el-radio>
                 <el-radio :label="0">关闭</el-radio>
@@ -382,24 +364,24 @@
               label="每天最大获取数"
               prop="day_max_get"
             >
-              <el-input 
-                v-model="couponForm.day_max_get" 
-                :maxlength="6" 
+              <el-input
+                v-model="couponForm.day_max_get"
+                :maxlength="6"
                 class="coupon-form-input"/>
             </el-form-item>
-            <el-form-item 
-              label="是否固定日期" 
+            <el-form-item
+              label="是否固定日期"
               prop="is_fixed_date">
-              <el-radio-group 
-                v-model="couponForm.is_fixed_date" 
+              <el-radio-group
+                v-model="couponForm.is_fixed_date"
                 @change="fixedDateHandle">
                 <el-radio :label="1">固定</el-radio>
                 <el-radio :label="0">不固定</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item 
-              v-if="!dateShow" 
-              label="延后生效日期" 
+            <el-form-item
+              v-if="!dateShow"
+              label="延后生效日期"
               prop="delay_effective_day">
               <el-input
                 v-model="couponForm.delay_effective_day"
@@ -407,9 +389,9 @@
                 class="coupon-form-input"
               />
             </el-form-item>
-            <el-form-item 
-              v-if="!dateShow" 
-              label="有效天数" 
+            <el-form-item
+              v-if="!dateShow"
+              label="有效天数"
               prop="effective_day">
               <el-input
                 v-model="couponForm.effective_day"
@@ -417,9 +399,9 @@
                 class="coupon-form-input"
               />
             </el-form-item>
-            <el-form-item 
-              v-if="dateShow" 
-              label="开始日期" 
+            <el-form-item
+              v-if="dateShow"
+              label="开始日期"
               prop="start_date">
               <el-date-picker
                 v-model="couponForm.start_date"
@@ -429,9 +411,9 @@
                 value-format="yyyy-MM-dd HH:mm:ss"
               />
             </el-form-item>
-            <el-form-item 
-              v-if="dateShow" 
-              label="结束日期" 
+            <el-form-item
+              v-if="dateShow"
+              label="结束日期"
               prop="end_date">
               <el-date-picker
                 v-model="couponForm.end_date"
@@ -444,23 +426,17 @@
           </el-tab-pane>
         </el-tabs>
         <el-form-item>
-          <el-button 
-            type="primary" 
+          <el-button
+            type="primary"
             @click="onSubmit('couponForm')">保存</el-button>
           <el-button @click="historyBack">取消</el-button>
         </el-form-item>
       </el-form>
     </div>
-    <PicturePanel 
-      :panel-visible.sync="panelVisible" 
-      :single-flag="singleFlag" 
-      @close="handleClose"/>
   </div>
 </template>
 
 <script>
-import PicturePanel from "components/common/picturePanel";
-
 import {
   handleDateTransform,
   historyBack,
@@ -502,8 +478,7 @@ export default {
     "el-option": Option,
     "el-tooltip": Tooltip,
     "el-tabs": Tabs,
-    "el-tab-pane": TabPane,
-    PicturePanel
+    "el-tab-pane": TabPane
   },
   data() {
     var checkEndDate = (rule, value, callback) => {
@@ -536,8 +511,6 @@ export default {
       }
     };
     return {
-      panelVisible: false,
-      singleFlag: true,
       multipleNum: 0,
       writeOffMarketShow: true,
       writeOffSiteShow: true,
@@ -598,8 +571,7 @@ export default {
         write_off_mid: null,
         write_off_sid: []
       },
-      couponID: "",
-      imgType: null
+      couponID: ""
     };
   },
   created() {
@@ -615,21 +587,6 @@ export default {
     }
   },
   methods: {
-    handleClose(data) {
-      if (data && data.length > 0) {
-        let { url } = data[0];
-        if (this.imgType === "h5") {
-          this.couponForm.image_url = url;
-        } else {
-          this.couponForm.bs_image_url = url;
-        }
-      } else {
-        // this.$message({
-        //   type: "warning",
-        //   message: "图片上传失败"
-        // });
-      }
-    },
     handleCompany(val) {
       this.getCompanyMarketList(val);
       this.getStoresList(val);
@@ -698,17 +655,18 @@ export default {
         };
         this.multipleNum = 1;
       } else if (val === 3) {
-        this.couponForm.write_off_mid,
-          this.writeOffMidRules,
-          (this.writeOffSidRules = null);
+        this.couponForm.write_off_mid = null;
         this.writeOffMarketShow = true;
         this.writeOffSiteShow = false;
+        this.writeOffMidRules = null;
+        this.writeOffSidRules = null;
         this.multipleNum = 0;
       } else {
-        this.couponForm.write_off_mid, (this.writeOffMidRules = null);
+        this.couponForm.write_off_mid = null;
         this.couponForm.write_off_sid = [];
         this.writeOffMarketShow = true;
         this.writeOffSiteShow = false;
+        this.writeOffMidRules = null;
         this.writeOffSidRules = {
           required: true,
           message: "核销商户不能为空",
@@ -737,62 +695,30 @@ export default {
       };
       getCouponDetial(this, this.couponID, args)
         .then(result => {
-          let {
-            name,
-            description,
-            company,
-            image_url,
-            amount,
-            count,
-            stock,
-            people_max_get,
-            pmg_status,
-            day_max_get,
-            dmg_status,
-            scene_type,
-            is_fixed_date,
-            delay_effective_day,
-            effective_day,
-            end_date,
-            is_active,
-            start_date,
-            sort_order,
-            redirect_url,
-            user,
-            bs_image_url,
-            credit,
-            write_off_status,
-            dynamic_stock_status,
-            writeOffStore,
-            market,
-            point,
-            writeOffMarket
-          } = result;
-          market ? this.couponForm.marketid.push(market.id) : [];
-          point
-            ? point.data.map(r => {
+          result.market ? this.couponForm.marketid.push(result.market.id) : [];
+          result.point
+            ? result.point.data.map(r => {
                 let id = r.id;
                 this.couponForm.oid.push(id);
               })
             : [];
-          if (market) {
-            this.getMarket(market.name);
+          if (result.market) {
+            this.getMarket(result.market.name);
             this.getPoint();
           }
-
-          this.couponForm.name = name;
-          this.couponForm.description = description;
-          this.couponForm.company_id = company.id;
+          this.couponForm.name = result.name;
+          this.couponForm.description = result.description;
+          this.couponForm.company_id = result.company.id;
           this.handleCompany(this.couponForm.company_id);
-          this.couponForm.image_url = image_url;
-          this.couponForm.amount = amount;
-          this.couponForm.count = count;
-          this.couponForm.stock = stock;
-          this.couponForm.people_max_get = people_max_get;
-          this.couponForm.pmg_status = pmg_status;
-          this.couponForm.day_max_get = day_max_get;
-          this.couponForm.dmg_status = dmg_status;
-          this.couponForm.scene_type = scene_type;
+          this.couponForm.image_url = result.image_url;
+          this.couponForm.amount = result.amount;
+          this.couponForm.count = result.count;
+          this.couponForm.stock = result.stock;
+          this.couponForm.people_max_get = result.people_max_get;
+          this.couponForm.pmg_status = result.pmg_status;
+          this.couponForm.day_max_get = result.day_max_get;
+          this.couponForm.dmg_status = result.dmg_status;
+          this.couponForm.scene_type = result.scene_type;
           this.handleSceneType(this.couponForm.scene_type);
           if (this.couponForm.dmg_status === 1) {
             this.peopleDayShow = false;
@@ -800,39 +726,39 @@ export default {
           if (this.couponForm.pmg_status === 1) {
             this.peopleReceiveShow = false;
           }
-          writeOffStore
-            ? writeOffStore.data.map(r => {
+          result.writeOffStore
+            ? result.writeOffStore.data.map(r => {
                 let id = r.id;
                 this.couponForm.write_off_sid.push(id);
               })
             : [];
-          if (writeOffMarket) {
-            this.couponForm.write_off_mid = writeOffMarket.id;
+          if (result.writeOffMarket) {
+            this.couponForm.write_off_mid = result.writeOffMarket.id;
           }
-          this.couponForm.is_fixed_date = is_fixed_date;
-          this.couponForm.delay_effective_day = delay_effective_day;
-          this.couponForm.effective_day = effective_day;
-          this.couponForm.start_date = start_date;
-          this.couponForm.end_date = end_date;
-          this.couponForm.is_active = is_active;
-          this.couponForm.redirect_url = redirect_url;
-          this.couponForm.sort_order = sort_order;
-          this.user_name = user.name;
-          this.couponForm.dynamic_stock_status = dynamic_stock_status;
-          this.couponForm.write_off_status = write_off_status;
-          this.couponForm.credit = credit;
-          this.couponForm.bs_image_url = bs_image_url;
-          if (scene_type === 1) {
+          this.couponForm.is_fixed_date = result.is_fixed_date;
+          this.couponForm.delay_effective_day = result.delay_effective_day;
+          this.couponForm.effective_day = result.effective_day;
+          this.couponForm.start_date = result.start_date;
+          this.couponForm.end_date = result.end_date;
+          this.couponForm.is_active = result.is_active;
+          this.couponForm.redirect_url = result.redirect_url;
+          this.couponForm.sort_order = result.sort_order;
+          this.user_name = result.user.name;
+          this.couponForm.dynamic_stock_status = result.dynamic_stock_status;
+          this.couponForm.write_off_status = result.write_off_status;
+          this.couponForm.credit = result.credit;
+          this.couponForm.bs_image_url = result.bs_image_url;
+          if (result.scene_type === 1) {
             this.getStoresList(this.couponForm.write_off_mid, true);
           }
-          if (is_fixed_date === 1) {
+          if (result.is_fixed_date === 1) {
             this.dateShow = true;
           } else {
             this.dateShow = false;
           }
           if (
-            parseInt(write_off_status) === 1 &&
-            parseInt(dynamic_stock_status) === 1
+            parseInt(result.write_off_status) === 1 &&
+            parseInt(result.dynamic_stock_status) === 1
           ) {
             this.disabledWriteStatus = true;
           }
@@ -921,8 +847,33 @@ export default {
     },
     onSubmit(formName) {
       let company_id = this.couponForm.company_id;
-      let { ...args } = this.couponForm;
-      args.marketid = args.marketid.join(",");
+      let args = {
+        name: this.couponForm.name,
+        description: this.couponForm.description,
+        image_url: this.couponForm.image_url,
+        amount: this.couponForm.amount,
+        count: this.couponForm.count,
+        stock: this.couponForm.stock,
+        people_max_get: this.couponForm.people_max_get,
+        pmg_status: this.couponForm.pmg_status,
+        day_max_get: this.couponForm.day_max_get,
+        dmg_status: this.couponForm.dmg_status,
+        is_fixed_date: this.couponForm.is_fixed_date,
+        delay_effective_day: this.couponForm.delay_effective_day,
+        effective_day: this.couponForm.effective_day,
+        is_active: this.couponForm.is_active,
+        redirect_url: this.couponForm.redirect_url,
+        sort_order: this.couponForm.sort_order,
+        dynamic_stock_status: this.couponForm.dynamic_stock_status,
+        write_off_status: this.couponForm.write_off_status,
+        bs_image_url: this.couponForm.bs_image_url,
+        credit: this.couponForm.credit,
+        marketid: this.couponForm.marketid.join(","),
+        oid: this.couponForm.oid,
+        scene_type: this.couponForm.scene_type,
+        write_off_mid: this.couponForm.write_off_mid,
+        write_off_sid: this.couponForm.write_off_sid
+      };
       if (
         args.write_off_sid.length === 0 &&
         (this.scene_type === 1 || this.scene_type === 3)
@@ -975,7 +926,6 @@ export default {
         delete args.start_date;
         delete args.end_date;
       }
-
       this.$refs[formName].validate(valid => {
         if (valid) {
           saveCoupon(this, args, this.couponID, company_id)
@@ -1051,34 +1001,6 @@ export default {
   }
   .coupon-title {
     margin-bottom: 20px;
-  }
-  .avatar-uploader {
-    width: 178px;
-    height: 178px;
-    line-height: 178px;
-    border: 1px dashed #d9d9d9;
-    border-radius: 6px;
-  }
-  .avatar-uploader .el-upload {
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-  }
-  .avatar-uploader .el-upload:hover {
-    border-color: #409eff;
-  }
-  .avatar-uploader-icon {
-    font-size: 28px;
-    color: #8c939d;
-    width: 178px;
-    height: 178px;
-    line-height: 178px;
-    text-align: center;
-  }
-  .avatar {
-    width: 178px;
-    height: 178px;
-    display: block;
   }
   .el-checkbox {
     margin-left: 0px;

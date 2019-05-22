@@ -60,9 +60,15 @@
             <el-form-item 
               label="场地logo" 
               prop="media_id">
-              <div 
-                class="avatar-uploader" 
-                @click="panelVisible=true">
+              <el-upload
+                :action="SERVER_URL + '/api/media'"
+                :data="{type: 'image'}"
+                :headers="formHeader"
+                :show-file-list="false"
+                :on-success="handleAvatarSuccess"
+                :before-upload="beforeAvatarUpload"
+                class="avatar-uploader"
+              >
                 <img 
                   v-if="logoUrl" 
                   :src="logoUrl" 
@@ -70,7 +76,7 @@
                 <i 
                   v-else 
                   class="el-icon-plus avatar-uploader-icon"/>
-              </div>
+              </el-upload>
             </el-form-item>
             <el-form-item 
               label="场地电话" 
@@ -582,15 +588,12 @@
         </el-form-item>
       </el-form>
     </div>
-    <PicturePanel 
-      :panel-visible.sync="panelVisible" 
-      :single-flag="singleFlag" 
-      @close="handleClose"/>
   </div>
 </template>
 
 <script>
-import PicturePanel from "components/common/picturePanel";
+import auth from "service/auth";
+
 import {
   getSiteMarketDetail,
   historyBack,
@@ -618,9 +621,12 @@ import {
   Radio,
   Tooltip,
   CheckboxGroup,
-  Checkbox
+  Checkbox,
+  Upload
 } from "element-ui";
+import { setTimeout } from "timers";
 
+const SERVER_URL = process.env.SERVER_URL;
 export default {
   components: {
     ElForm: Form,
@@ -637,7 +643,7 @@ export default {
     ElTooltip: Tooltip,
     ElCheckboxGroup: CheckboxGroup,
     ElCheckbox: Checkbox,
-    PicturePanel
+    ElUpload: Upload
   },
   data() {
     let checkEnterEndDate = (rule, value, callback) => {
@@ -680,8 +686,10 @@ export default {
       }
     };
     return {
-      panelVisible: false,
-      singleFlag: true,
+      SERVER_URL: SERVER_URL,
+      formHeader: {
+        Authorization: "Bearer " + auth.getToken()
+      },
       logoUrl: "",
       searchLoading: false,
       modeNone: false,
@@ -927,24 +935,12 @@ export default {
     });
   },
   methods: {
-    handleClose(data) {
-      if (data && data.length > 0) {
-        let { media_id, url } = data[0];
-        this.siteForm.marketConfig.media_id = media_id;
-        this.logoUrl = url;
-      } else {
-        // this.$message({
-        //   type: "warning",
-        //   message: "图片上传失败"
-        // });
-      }
-    },
     async init() {
       try {
         await this.getContractReceiptList();
         await this.getSearchUserList();
         await this.getAreaList();
-        await this.getSearchCompany();
+        await this.getSearchCompany()
         if (this.siteID) {
           await this.getMarketDetail();
         }
@@ -1029,6 +1025,17 @@ export default {
             message: err.response.date.message
           });
         });
+    },
+    handleAvatarSuccess(res, file) {
+      this.siteForm.marketConfig.media_id = res.id;
+      this.logoUrl = URL.createObjectURL(file.raw);
+    },
+    beforeAvatarUpload(file) {
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isLt2M;
     },
     getSearchUserList() {
       this.searchLoading = true;
@@ -1142,13 +1149,12 @@ export default {
         });
     },
     modeHandle() {
-      let { mode } = this.siteForm.contract;
-      if (mode === "none") {
+      if (this.siteForm.contract.mode === "none") {
         this.modeNone = false;
-      } else if (mode === "part") {
+      } else if (this.siteForm.contract.mode === "part") {
         this.modeNone = true;
         this.modeFlag = true;
-      } else if (mode === "exchange") {
+      } else if (this.siteForm.contract.mode === "exchange") {
         this.modeNone = true;
         this.modeFlag = false;
       }
@@ -1161,10 +1167,10 @@ export default {
         if (valid) {
           delete this.siteForm.contract.date;
           delete this.siteForm.share.date;
-          this.siteForm.share.site,
-            this.siteForm.share.vipad,
-            this.siteForm.share.ad,
-            (this.siteForm.share.agent = 0);
+          this.siteForm.share.site = 0;
+          this.siteForm.share.vipad = 0;
+          this.siteForm.share.ad = 0;
+          this.siteForm.share.agent = 0;
           for (let i = 0; i < this.siteForm.permission.length; i++) {
             let value = this.siteForm.permission[i];
             if (value === "site") {
@@ -1182,6 +1188,7 @@ export default {
           }
 
           let args = this.siteForm;
+          // delete args.permission;
           if (this.siteID) {
             siteModifyMarket(this, args, this.siteID)
               .then(res => {

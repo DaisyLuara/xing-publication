@@ -18,7 +18,7 @@ class ProjectLaunchTplScheduleObserver
 
     }
 
-    public function updating(ProjectLaunchTplSchedule $schedule)
+    public function updating(ProjectLaunchTpl $schedule)
     {
         $schedule->clientdate = time() * 1000;
     }

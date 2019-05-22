@@ -11,7 +11,6 @@ class ContractExport extends BaseExport
 {
     private $status;//审批状态
     private $name; //公司名称
-    private $applicant; //申请人ID
     private $contract_number;//合同编号
     private $product_status;//硬件状态
     private $start_date, $end_date; //开始时间,结束时间
@@ -23,7 +22,6 @@ class ContractExport extends BaseExport
         $this->end_date = $request->end_date;
         $this->status = $request->status;
         $this->name = $request->name;
-        $this->applicant = $request->applicant;
         $this->contract_number = $request->contract_number;
         $this->product_status = $request->product_status;
 
@@ -40,24 +38,21 @@ class ContractExport extends BaseExport
             $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '$this->start_date' and '$this->end_date' ");
         }
 
-        if ($this->name !== null) {
+        if (!is_null($this->name)) {
             $query->whereHas('company', function ($q) {
                 $q->where('name', 'like', '%' . $this->name . '%');
             });
         }
-        if ($this->applicant !== null) {
-            $query->where('applicant', '=', $this->applicant);
-        }
 
-        if ($this->status !== null) {
+        if (!is_null($this->status)) {
             $query->where('status', $this->status);
         }
 
-        if ($this->contract_number !== null) {
+        if (!is_null($this->contract_number)) {
             $query->where('contract_number', 'like', '%' . $this->contract_number . '%');
         }
 
-        if ($this->product_status !== null) {
+        if (!is_null($this->product_status)) {
             $query->where('product_status', $this->product_status);
         }
 
@@ -69,13 +64,13 @@ class ContractExport extends BaseExport
             $query->whereRaw("(applicant = $user->id or handler = $user->id or status=3)");
         } elseif ($user->hasRole('purchasing')) {
             //角色为采购时，查询条件为：已审批完成(status=3),product_status为非0（1未出厂or2已出厂）
-            $query->whereRaw('(status = 3 and product_status != 0)');
+            $query->whereRaw("(status = 3 and product_status != 0)");
         } else {
             $query->where('status', ActionConfig::CONTRACT_STATUS_AGREE);
         }
 
         $contracts = $query->orderBy('created_at', 'desc')->get()
-            ->map(static function ($contract) {
+            ->map(function ($contract) {
                 return [
                     'id' => $contract->id,
                     'contract_number' => "\t" . $contract->contract_number . "\t",
@@ -86,7 +81,7 @@ class ContractExport extends BaseExport
                     'type' => Contract::$typeMapping[$contract->type] ?? $contract->type,
                     'kind' => Contract::$kindMapping[$contract->kind] ?? $contract->kind,
                     'remark' => $contract->remark,
-                    'serve_target' => $contract->serve_target === null ? null : Contract::$targetMapping[$contract->serve_target],
+                    'serve_target' => $contract->serve_target == null ? null : Contract::$targetMapping[$contract->serve_target],
                     'recharge' => $contract->recharge === null ? null : Contract::$chargeMapping[$contract->recharge],
                     'special_num' => $contract->special_num,
                     'common_num' => $contract->common_num,
@@ -96,7 +91,7 @@ class ContractExport extends BaseExport
                     'product_status' => Contract::$productStatusMapping[$contract->product_status] ?? $contract->product_status,
                     'created_at' => $contract->created_at->toDateTimeString(),
                     'updated_at' => $contract->updated_at->toDateTimeString(),
-                    'receive_date' => implode(',', array_column($contract->receiveDate->toArray(), 'receive_date')),
+                    'receive_date' => join(',', array_column($contract->receiveDate->toArray(), 'receive_date')),
                     'media' => implode(';   ', $contract->media ? $contract->media->pluck('url')->toArray() : []),
                 ];
             })->toArray();

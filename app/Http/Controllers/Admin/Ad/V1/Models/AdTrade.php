@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin\Ad\V1\Models;
 use App\Models\Model;
 
 /**
- * 广告行业
  * App\Http\Controllers\Admin\Ad\V1\Models\AdTrade
  *
  * @property int $atid

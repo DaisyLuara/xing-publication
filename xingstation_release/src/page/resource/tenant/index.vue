@@ -41,26 +41,10 @@
         </div>
         <div class="total-wrap">
           <span class="label">总数:{{ pagination.total }}</span>
-          <div>
-            <el-button 
-              type="success" 
-              size="small" 
-              @click="batchPass">批量通过</el-button>
-            <el-button 
-              type="warning" 
-              size="small" 
-              @click="batchReject">批量驳回</el-button>
-          </div>
         </div>
         <el-table 
           :data="tableData" 
-          style="width: 100%"
-          disabled="true" 
-          @selection-change="handleSelectionChange">
-          <el-table-column 
-            :selectable="checkboxT" 
-            type="selection" 
-            width="45"/>
+          style="width: 100%">
           <el-table-column type="expand">
             <template slot-scope="scope">
               <el-form 
@@ -143,15 +127,13 @@
           />
           <el-table-column 
             label="操作" 
-            min-width="150">
+            min-width="100">
             <template slot-scope="scope">
               <el-button 
-                v-if="scope.row.status === 2"
                 size="small" 
                 type="success" 
                 @click="pass(scope.row)">通过</el-button>
               <el-button 
-                v-if="scope.row.status === 2"
                 size="small" 
                 type="warning" 
                 @click="reject(scope.row)">驳回</el-button>
@@ -167,20 +149,6 @@
             @current-change="changePage"
           />
         </div>
-      </div>
-    </div>
-    <!-- 图片弹窗 -->
-    <div 
-      v-show="imageVisible" 
-      class="widget-image">
-      <div class="shade-image"/>
-      <div class="widget-content">
-        <img :src="imgUrl">
-      </div>
-      <div 
-        class="widget-close" 
-        @click="handleImageClose">
-        <i class="widget-icon">X</i>
       </div>
     </div>
   </div>
@@ -214,12 +182,9 @@ export default {
   },
   data() {
     return {
-      imageVisible: false,
-       imgUrl: "",
       searchForm: {
         status: ""
       },
-      selectAll:[],
       statusList: [
         {
           id: 0,
@@ -251,87 +216,30 @@ export default {
     this.getTenantMediaList();
   },
   methods: {
-    checkboxT(row, index) {
-      if(row.status === 2){
-        return 1
-      }else{
-        return 0
-      }
-    },
-    batchPass() {
-      if (this.selectAll.length !== 0) {
-        let ids = [];
-        this.selectAll.map(r => {
-          ids.push(r.id);
-        });
-        let args = {
-          status: 1,
-          ids: ids
-        };
-        let message = "审核通过!";
-        this.TenantMediaAudit(args, message);
-        return;
-      }
-      this.$message({
-        type: "warning",
-        message: "请先选择要通过的"
-      });
-    },
-    batchReject() {
-      if (this.selectAll.length !== 0) {
-        let ids = [];
-        this.selectAll.map(r => {
-          ids.push(r.id);
-        });
-        let args = {
-          status: 0,
-          ids: ids
-        };
-        let message = "驳回成功!";
-        this.TenantMediaAudit(args, message);
-        return;
-      }
-      this.$message({
-        type: "warning",
-        message: "请先选择要驳回的"
-      });
-    },
-    handleSelectionChange(val) {
-      this.selectAll = val;
-    },
-    imgShow(data) {
-      this.imageVisible = true;
-      this.imgUrl = data.url;
-    },
-    handleImageClose() {
-      this.imageVisible = false;
-    },
     pass(data) {
       let id = data.id;
       let args = {
-        status: 1,
-        ids: Array.of(id)
+        status: 1
       };
       let message = "审核通过!";
-      this.TenantMediaAudit(args, message);
+      this.TenantMediaAudit(id, args, message);
     },
     reject(data) {
       let id = data.id;
       let args = {
-        status: 0,
-        ids: Array.of(id)
+        status: 0
       };
       let message = "驳回成功!";
-      this.TenantMediaAudit(args, message);
+      this.TenantMediaAudit(id, args, message);
     },
-    TenantMediaAudit(args, message) {
+    TenantMediaAudit(id, args, message) {
       this.$confirm("审核, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
       })
         .then(() => {
-          TenantMediaAudit(this, args)
+          TenantMediaAudit(this, id, args)
             .then(res => {
               this.getTenantMediaList();
               this.$message({
