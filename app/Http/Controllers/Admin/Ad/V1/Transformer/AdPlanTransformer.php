@@ -15,7 +15,7 @@ class AdPlanTransformer extends TransformerAbstract
         return [
             'id' => $adPlan->atiid,
             'aids' => $adPlan->advertisements->pluck('aid')->toArray(),
-            'create_user_name' => ($adPlan->create_customer ? $adPlan->create_customer->name : '')
+            'create_user_name' => ($adPlan->create_customer ? $adPlan->create_customer->name : null)
                 ?? ($adPlan->create_user ? $adPlan->create_user->name : ''),
             'ad_trade_name' => $adPlan->ad_trade->name,
             'atid' => $adPlan->atid,
