@@ -38,8 +38,8 @@
                 <el-form-item
                   prop="type">
                   <el-input
-                    v-model="adSearchForm.ad_name"
-                    placeholder="模糊查询广告素材"/>
+                    v-model="adSearchForm.name"
+                    placeholder="广告素材名称"/>
                 </el-form-item>
               </el-col>
               <el-col
@@ -276,7 +276,7 @@
 
         adSearchForm: {
           ad_trade_id: '',
-          ad_name: '',
+          name: '',
         },
         pagination: {
           total: 0,
@@ -319,7 +319,7 @@
         let searchArgs = {
           page: this.pagination.currentPage,
           ad_trade_id: this.adSearchForm.ad_trade_id,
-          ad_name: this.adSearchForm.ad_name,
+          name: this.adSearchForm.name,
         }
         return getAdList(this, searchArgs)
           .then(response => {
@@ -338,7 +338,7 @@
       },
       resetSearch(formName) {
         this.adSearchForm.ad_trade_id = ''
-        this.adSearchForm.ad_name = ''
+        this.adSearchForm.name = ''
         this.pagination.currentPage = 1
         this.getAdList()
       },

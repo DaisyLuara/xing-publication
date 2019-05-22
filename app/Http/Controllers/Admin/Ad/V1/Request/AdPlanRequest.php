@@ -14,7 +14,7 @@ class AdPlanRequest extends Request
         switch ($this->method()) {
             case 'POST':
                 return [
-                    'aids' => 'required|array|max:10',//素材ID
+                    'aids' => 'required|array|max:30',//素材ID
                     'info' => 'string',
                     'atid' => 'required|integer|exists:ar.avr_ad_trade,atid',
                     'name' => 'required|string',
@@ -35,7 +35,7 @@ class AdPlanRequest extends Request
                 break;
             case 'PATCH':
                 return [
-                    'aids' => 'required|array|max:10',//素材ID
+                    'aids' => 'required|array|max:30',//素材ID
                     'info' => 'string',
                     'atid' => 'required|integer|exists:ar.avr_ad_trade,atid',
                     'name' => 'required|string',
