@@ -48,6 +48,7 @@ class CouponController extends Controller
             abort_if($couponPerPersonPerDayGet >= $policy->per_person_per_day_times, 500, '今日领券数量已达上限,请明天再来!');
         }
 
+        /** @var CouponBatch $couponBatch */
         $couponBatch = $user->userCouponBatches()->firstOrFail();
         $couponBatchId = $couponBatch->id;
 
@@ -58,6 +59,7 @@ class CouponController extends Controller
 
         //当天库存校验
         if (!$couponBatch->dmg_status) {
+            /** @var Coupon $coupon */
             $coupon = Coupon::query()->where('coupon_batch_id', $couponBatchId)
                 ->whereDate('created_at', Carbon::now()->toDateString())
                 ->selectRaw('count(coupon_batch_id) as day_receive')
@@ -73,19 +75,14 @@ class CouponController extends Controller
             abort_if($coupons->count() >= $couponBatch->people_max_get, 500, '优惠券每人最多领取' . $couponBatch->people_max_get . '张');
         }
 
-        $code = uniqid();
+        $code = uniqid('', false);
+
         //微信卡券二维码
         $wechatCouponBatch = $couponBatch->wechat;
         $prefix = 'h5_code_';
 
         //券的有效期
-        if ($couponBatch->is_fixed_date) {
-            $startDate = Carbon::createFromTimeString($couponBatch->start_date);
-            $endDate = Carbon::createFromTimeString($couponBatch->end_date);
-        } else {
-            $startDate = Carbon::now()->addDays($couponBatch->delay_effective_day);
-            $endDate = Carbon::now()->addDays($couponBatch->delay_effective_day + $couponBatch->effective_day);
-        }
+        $couponValidPeriod = $this->getCouponValidPeriod($couponBatch);
 
         DB::beginTransaction();
         try {
@@ -100,8 +97,8 @@ class CouponController extends Controller
                     'utm_source' => 1,
                     'belong' => $request->get('belong') ?? '',
                     'ser_timestamp' => $request->get('ser_timestamp') ?? null,
-                    'start_date' => $startDate,
-                    'end_date' => $endDate,
+                    'start_date' => $couponValidPeriod['start_date'],
+                    'end_date' => $couponValidPeriod['end_date'],
                 ]);
             } else {
                 $coupon = Coupon::query()->create([
@@ -114,8 +111,8 @@ class CouponController extends Controller
                     'utm_source' => 1,
                     'belong' => $request->get('belong') ?? '',
                     'ser_timestamp' => $request->get('ser_timestamp') ?? null,
-                    'start_date' => $startDate,
-                    'end_date' => $endDate,
+                    'start_date' => $couponValidPeriod['start_date'],
+                    'end_date' => $couponValidPeriod['end_date'],
                 ]);
 
             }

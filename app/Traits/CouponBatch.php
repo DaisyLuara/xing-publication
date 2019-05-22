@@ -131,6 +131,24 @@ trait CouponBatch
     }
 
     /**
+     * 获取券的有效期
+     * @param \App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch $couponBatch
+     * @return array
+     */
+    public function getCouponValidPeriod($couponBatch)
+    {
+        if ($couponBatch->is_fixed_date) {
+            $date['start_date'] = Carbon::createFromTimeString($couponBatch->start_date);
+            $date['end_date'] = Carbon::createFromTimeString($couponBatch->end_date);
+        } else {
+            $date['start_date'] = Carbon::now()->addHours($couponBatch->delay_effective_day);
+            $date['end_date'] = Carbon::now()->addHours($couponBatch->delay_effective_day + $couponBatch->effective_day);
+        }
+
+        return $date;
+    }
+
+    /**
      * 设置券码url
      * @param Coupon $coupon
      * @param string $prefix
