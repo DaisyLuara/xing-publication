@@ -16,6 +16,7 @@ class ProjectLaunchTplRequest extends Request
                 break;
             case 'PATCH':
                 return [
+                    'name' => 'filled'
                 ];
                 break;
         }

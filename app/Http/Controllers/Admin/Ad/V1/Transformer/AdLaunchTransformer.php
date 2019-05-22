@@ -21,7 +21,7 @@ class AdLaunchTransformer extends TransformerAbstract
             'sdate' => date('Y-m-d H:i:s', $adLaunch->sdate),
             'edate' => date('Y-m-d H:i:s', $adLaunch->edate),
             'visiable' => $adLaunch->visiable,
-            'visiable_text' => $adLaunch->visiable === 1 ? '营业中' : '下架',
+            'visiable_text' => $adLaunch->visiable === 1 ? '投放中' : '下架',
             'only' => $adLaunch->only,
             'only_text' => $adLaunch->only === 1 ? '唯一' : '否',
             'created_at' => $adLaunch->date,

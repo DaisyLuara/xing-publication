@@ -79,10 +79,9 @@
             placeholder="请填写附件链接"/>
         </el-form-item>
         <el-form-item
-          :rules="[{ required: true, message: '请选择广告标示', trigger: 'submit',type: 'number'}]"
-          label="广告标示"
-          prop="isad"
-        >
+          :rules="[{ required: true, message: '请选择广告标记', trigger: 'submit',type: 'number'}]"
+          label="广告标记"
+          prop="isad">
           <el-radio 
             v-model="adForm.isad" 
             :label="1">显示</el-radio>
@@ -92,6 +91,7 @@
         </el-form-item>
 
         <el-form-item>
+          <el-button @click="historyBack">返回</el-button>
           <el-button 
             type="primary" 
             @click="submit('adForm')">完成</el-button>
@@ -109,7 +109,13 @@
 <script>
 import PicturePanel from "components/common/picturePanel";
 
-import { getAdDetail, saveAd, modifyAd, getSearchAdTradeList } from "service";
+import {
+  getAdDetail,
+  saveAd,
+  modifyAd,
+  getSearchAdTradeList,
+  historyBack
+} from 'service'
 
 import {
   Radio,
@@ -237,36 +243,60 @@ export default {
             atid: this.adForm.atid,
             name: this.adForm.name,
             type: this.adForm.type,
-            img:
-              this.adForm.type === "static" || this.adForm.type === "gif"
-                ? this.adForm.link
-                : this.adForm.img,
-            link: this.adForm.link,
-            isad: this.adForm.isad
-          };
-          return saveAd(this, args)
-            .then(response => {
-              this.setting.loading = false;
-              this.$message({
-                message: "添加成功",
-                type: "success"
-              });
-              this.$router.push({
-                path: "/ad/advertisement"
-              });
-            })
-            .catch(err => {
-              this.setting.loading = false;
-              this.$message({
-                message: err.response.data.message,
-                type: "error"
-              });
-              console.log(err);
-            });
+            img: (this.adForm.type === 'static' || this.adForm.type === 'gif') ? this.adForm.link :this.adForm.img,
+            link:this.adForm.link,
+            isad:this.adForm.isad,
+          }
+          if(this.aid){
+            return modifyAd(this, args, this.aid)
+              .then(response => {
+                this.setting.loading = false
+                this.$message({
+                  message: '编辑成功',
+                  type: 'success'
+                })
+                this.$router.push({
+                  path: '/ad/advertisement'
+                })
+              })
+              .catch(err => {
+                this.setting.loading = false
+                this.$message({
+                  message: err.response.data.message,
+                  type: 'error'
+                })
+                console.log(err)
+              })
+          }else{
+            return saveAd(this, args)
+              .then(response => {
+                this.setting.loading = false
+                this.$message({
+                  message: '添加成功',
+                  type: 'success'
+                })
+                this.$router.push({
+                  path: '/ad/advertisement'
+                })
+              })
+              .catch(err => {
+                this.setting.loading = false
+                this.$message({
+                  message: err.response.data.message,
+                  type: 'error'
+                })
+                console.log(err)
+              })
+          }
+
         } else {
           return;
         }
-      });
+      })
+    },
+
+    historyBack() {
+      historyBack();
     }
   }
 };
