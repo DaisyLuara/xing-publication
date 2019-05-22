@@ -11,6 +11,11 @@ use Dingo\Api\Http\Response;
 
 class ProjectLaunchTplScheduleController extends Controller
 {
+    public function show(ProjectLaunchTpl $tpl, ProjectLaunchTplSchedule $schedule)
+    {
+        return $this->response()->item($schedule, new ProjectLaunchTplScheduleTransformer());
+    }
+
     public function index(ProjectLaunchTpl $tpl, ProjectLaunchTplSchedule $schedule): Response
     {
         $query = $schedule->query();
