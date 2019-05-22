@@ -56,7 +56,7 @@
         <template v-if="adPlan.type === 'program'">
           <el-form-item
             :rules="[{ required: true, message: '请选择显示模式', trigger: 'submit',type: 'string'}]"
-            label="显示模式"
+            label="素材显示模式"
             prop="mode">
             <el-select 
               v-model="adPlanTimeForm.mode" 
@@ -70,12 +70,12 @@
           </el-form-item>
           <template v-if="adPlanTimeForm.mode !== 'fullscreen'">
             <el-form-item
-              :rules="[{ required: true, message: '请选择位置', trigger: 'submit',type: 'string'}]"
-              label="位置"
+              :rules="[{ required: true, message: '请选择素材显示位置', trigger: 'submit',type: 'string'}]"
+              label="素材显示位置"
               prop="ori">
               <el-select
                 v-model="adPlanTimeForm.ori"
-                placeholder="请选择位置">
+                placeholder="请选择素材显示位置">
                 <el-option
                   v-for="item in oriOptions"
                   :key="item.value"
@@ -84,8 +84,8 @@
               </el-select>
             </el-form-item>
             <el-form-item
-              :rules="[{ required: true, message: '请填入尺寸', trigger: 'submit',type: 'number'}]"
-              label="尺寸"
+              :rules="[{ required: true, message: '请填入素材显示尺寸', trigger: 'submit',type: 'number'}]"
+              label="素材显示尺寸"
               prop="screen">
               <el-input-number
                 v-model="adPlanTimeForm.screen"
@@ -99,7 +99,7 @@
 
         <el-form-item
           :rules="[{ required: true, message: '请选择', trigger: 'submit',type: 'number'}]"
-          label="播放"
+          label="素材播放"
           prop="cdshow">
           <el-radio
             v-model="adPlanTimeForm.play"
@@ -113,8 +113,8 @@
 
         <el-form-item
           v-if="adPlanTimeForm.play"
-          :rules="[{ required: true, message: '请填入时长', trigger: 'submit',type: 'number'}]"
-          label="时长"
+          :rules="[{ required: true, message: '请填入素材播放时长', trigger: 'submit',type: 'number'}]"
+          label="素材播放时长"
           prop="ktime">
           <el-input-number
             v-model="adPlanTimeForm.ktime"
@@ -137,7 +137,7 @@
         </el-form-item>
 
         <el-form-item
-          label="时间">
+          label="素材投放时间">
           <el-time-picker
             v-model="adPlanTimeForm.shm"
             :format="time_format"

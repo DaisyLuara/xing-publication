@@ -111,7 +111,7 @@
                   <span>{{ scope.row.size }} M</span>
                 </el-form-item>
                 <el-form-item
-                  label="广告">
+                  label="广告标记">
                   <span>{{ scope.row.isad_text }}</span>
                 </el-form-item>
                 <el-form-item
@@ -177,8 +177,8 @@
           <el-table-column
             :show-overflow-tooltip="true"
             prop="isad_text"
-            label="广告"
-            min-width="50"
+            label="广告标记"
+            min-width="80"
           />
           <el-table-column
             :show-overflow-tooltip="true"

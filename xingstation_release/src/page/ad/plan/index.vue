@@ -224,8 +224,8 @@
                     </template>
                   </el-table-column>
                   <el-table-column
-                    label="广告"
-                    min-width="50">
+                    label="广告标记"
+                    min-width="80">
                     <template slot-scope="ad_scope">
                       <span>{{ ad_scope.row.isad_text }}</span>
                     </template>
@@ -246,7 +246,7 @@
                   </template>
 
                   <el-table-column
-                    label="时间"
+                    label="素材投放时间"
                     v-if="scope.row.tmode === 'hours'"
                     min-width="100">
                     <template slot-scope="ad_scope">
@@ -263,7 +263,7 @@
                   </el-table-column>
 
                   <el-table-column
-                    label="时间"
+                    label="素材投放时间"
                     v-else
                     min-width="130">
                     <template
