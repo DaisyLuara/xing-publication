@@ -58,51 +58,6 @@
             class="coupon-form-input"/>
         </el-form-item>
         <el-form-item
-          label="投放场地（嗨蚪）"
-          prop="marketid">
-          <el-select
-            v-model="couponForm.marketid"
-            :remote-method="getMarket"
-            :loading="searchLoading"
-            :multiple-limit="1"
-            multiple
-            placeholder="请搜索投放场地（嗨蚪）"
-            filterable
-            remote
-            clearable
-            class="coupon-form-select"
-            @change="marketChangeHandle"
-          >
-            <el-option
-              v-for="item in marketList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item
-          label="投放点位（嗨蚪）"
-          prop="oid">
-          <el-select
-            v-model="couponForm.oid"
-            :loading="searchLoading"
-            :multiple-limit="10"
-            placeholder="请选择投放点位（嗨蚪）"
-            multiple
-            filterable
-            clearable
-            class="coupon-form-select"
-          >
-            <el-option
-              v-for="item in pointList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item
           :rules="{required: true, message: '适用场景不能为空', trigger: 'submit'}"
           label="适用场景"
           prop="scene_type">
@@ -239,8 +194,6 @@ import {
   handleDateTransform,
   historyBack,
   getSearchCompany,
-  getSearchMarketList,
-  getSearchPointList,
   getStoresList,
   getPoliciesListByCompany,
   getMediaUpload,
@@ -315,7 +268,6 @@ export default {
       },
       disabledWriteStatus: false,
       user_name: "",
-      marketList: [],
       pointList: [],
       writeOffSiteList: [],
       writeOffMarketList: [],
@@ -542,51 +494,6 @@ export default {
           console.log(error);
         });
     },
-    marketChangeHandle() {
-      this.couponForm.oid = [];
-      this.getPoint();
-    },
-    getPoint() {
-      let args = {
-        include: "market",
-        market_id: this.couponForm.marketid
-      };
-      this.searchLoading = true;
-      return getSearchPointList(this, args)
-        .then(response => {
-          this.pointList = response.data;
-          this.searchLoading = false;
-        })
-        .catch(err => {
-          this.searchLoading = false;
-          console.log(err);
-        });
-    },
-    getMarket(query) {
-      if (query !== "") {
-        this.searchLoading = true;
-        let args = {
-          name: query,
-          include: "area"
-        };
-        return getSearchMarketList(this, args)
-          .then(response => {
-            this.marketList = response.data;
-            if (this.marketList.length == 0) {
-              this.couponForm.marketid = [];
-              this.marketList = [];
-            }
-            this.searchLoading = false;
-          })
-          .catch(err => {
-            console.log(err);
-            this.searchLoading = false;
-          });
-      } else {
-        this.marketList = [];
-      }
-    },
-
     onSubmit(formName) {
       let company_id = this.couponForm.company_id;
 
