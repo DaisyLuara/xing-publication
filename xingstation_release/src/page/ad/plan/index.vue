@@ -83,7 +83,7 @@
                   prop="type">
                   <el-input 
                     v-model="adSearchForm.ad_plan_name" 
-                    placeholder="模糊查询广告模版"/>
+                    placeholder="广告模版名称"/>
                 </el-form-item>
               </el-col>
               <el-col

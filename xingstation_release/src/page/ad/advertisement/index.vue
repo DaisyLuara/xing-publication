@@ -39,7 +39,7 @@
                   prop="type">
                   <el-input
                     v-model="adSearchForm.name"
-                    placeholder="模糊查询广告素材"/>
+                    placeholder="广告素材名称"/>
                 </el-form-item>
               </el-col>
               <el-col
