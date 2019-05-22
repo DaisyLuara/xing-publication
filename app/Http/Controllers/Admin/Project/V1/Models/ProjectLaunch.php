@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Project\V1\Models;
 
 use App\Http\Controllers\Admin\Point\V1\Models\Point;
+use App\Http\Controllers\Admin\Skin\V1\Models\Skin;
 use App\Models\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -100,4 +101,7 @@ class ProjectLaunch extends Model
         return $this->belongsTo(ProjectLaunchTpl::class, 'div_tvid', 'tvid');
     }
 
+    public function skin(){
+        return $this->belongsTo(Skin::class,'default_bid','bid');
+    }
 }
