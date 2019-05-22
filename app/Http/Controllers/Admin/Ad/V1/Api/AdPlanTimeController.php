@@ -62,7 +62,7 @@ class AdPlanTimeController extends Controller
         ];
 
         if ($adPlan->type === AdPlan::TYPE_BID_SCREEN) {
-            array_merge($updateParams, [
+            $updateParams = array_merge($updateParams, [
                 'mode' => $request->get('mode') ?? 'fullscreen',
                 'ori' => $request->get('ori') ?? 'center',
                 'screen' => $request->get('screen') ?? 0,
@@ -95,7 +95,7 @@ class AdPlanTimeController extends Controller
         ];
 
         if ($adPlanTime->ad_plan->type === AdPlan::TYPE_BID_SCREEN) {
-            array_merge($updateParams, [
+            $updateParams = array_merge($updateParams, [
                 'mode' => $request->get('mode') ?? 'fullscreen',
                 'ori' => $request->get('ori') ?? 'center',
                 'screen' => $request->get('screen') ?? 0,
