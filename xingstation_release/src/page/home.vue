@@ -11,7 +11,7 @@
         router>
         <el-menu-item
           v-for="m in modules"
-          v-if="m.path != 'inform'"
+          v-show="m.path != 'inform'"
           :key="m.path"
           :index="'/' + m.path"
           class="menu-item"
@@ -57,7 +57,7 @@
         router>
         <el-menu-item
           v-for="m in modules"
-          v-if="m.path != 'inform'"
+          v-show="m.path != 'inform'"
           :key="m.path"
           :index="'/' + m.path"
           class="menu-item"

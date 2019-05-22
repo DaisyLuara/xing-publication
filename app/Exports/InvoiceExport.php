@@ -12,6 +12,7 @@ class InvoiceExport extends BaseExport
     private $name;//公司名称
     private $contract_number;//合同编号
     private $start_date, $end_date; //开始日期,结束日期
+    private $applicant;
 
 
     public function __construct($request)
@@ -21,7 +22,7 @@ class InvoiceExport extends BaseExport
         $this->status = $request->status;
         $this->name = $request->name;
         $this->contract_number = $request->contract_number;
-
+        $this->applicant = $request->applicant;
         $this->fileName = '票据-开票管理列表';
     }
 
@@ -44,19 +45,23 @@ class InvoiceExport extends BaseExport
             $query->whereRaw("date_format(i.created_at,'%Y-%m-%d') between '$this->start_date' and '$this->end_date' ");
         }
 
-        if (!is_null($this->name)) {
+        if ($this->name !== null) {
             $query->where('companies.name', 'like', '%' . $this->name . '%');
         }
 
-        if (!is_null($this->status)) {
+        if ($this->applicant) {
+            $query->where('i.applicant', '=', $this->applicant);
+        }
+
+        if ($this->status !== null) {
             $query->where('i.status', '=', $this->status);
         }
 
-        if (!is_null($this->contract_number)) {
+        if ($this->contract_number !== null) {
             $query->where('contracts.contract_number', 'like', '%' . $this->contract_number . '%');
         }
 
-        if ($user->id == getProcessStaffId('finance', 'invoice')) {
+        if ($user->id === getProcessStaffId('finance', 'invoice')) {
             $query->whereRaw("(i.handler=$user->id or i.status=4 or i.status=5)");
         } else if ($user->hasRole('operation')) {
             $query->whereRaw('(i.status=3 or i.status=4 or i.status=5)');
@@ -90,7 +95,7 @@ class InvoiceExport extends BaseExport
             '开票种类', '货物或应税劳务-服务名称', '规格型号', '单位', '数量', '单价', '金额(含税)'];
 
 
-        $this->merge = collect($invoices)->groupBy('id')->map(function ($value) {
+        $this->merge = collect($invoices)->groupBy('id')->map(static function ($value) {
             return $value->count();
         })->values()->toArray();
         $this->merge_start = 1;

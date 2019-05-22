@@ -9,10 +9,11 @@ let router = {
     title: '节目',
     permission: 'project',
     url: URL.CDN_URL + 'middle_ground/img/project-icon.png'
-
   },
   component: () =>
-    import(/* webpackChunkName: "page/project/projectView" */ 'page/project/projectView'),
+    import(
+      /* webpackChunkName: "page/project/projectView" */ 'page/project/projectView'
+    ),
   children: [
     {
       path: 'item',
@@ -21,7 +22,9 @@ let router = {
         permission: 'project.item'
       },
       component: () =>
-        import(/* webpackChunkName: "page/project/item/routerView" */ 'page/project/item/routerView'),
+        import(
+          /* webpackChunkName: "page/project/item/routerView" */ 'page/project/item/routerView'
+        ),
       children: [
         {
           path: '/',
@@ -30,12 +33,16 @@ let router = {
             permission: 'project.item.read'
           },
           component: () =>
-            import(/* webpackChunkName: "page/project/item/index" */ 'page/project/item/index')
+            import(
+              /* webpackChunkName: "page/project/item/index" */ 'page/project/item/index'
+            )
         },
         {
           path: 'add',
           component: () =>
-            import(/* webpackChunkName: "page/project/item/itemSave" */ 'page/project/item/itemSave'),
+            import(
+              /* webpackChunkName: "page/project/item/itemSave" */ 'page/project/item/itemSave'
+            ),
           meta: {
             title: '新增投放节目',
             permission: 'project.item.create'
@@ -44,23 +51,62 @@ let router = {
       ]
     },
     {
-      path: 'schedule',
+      path: 'template',
       meta: {
         title: '模板排期',
-        permission: 'project.schedule'
+        permission: 'project.template'
       },
       component: () =>
-        import(/* webpackChunkName: "page/project/schedule/routerView" */ 'page/project/schedule/routerView'),
+        import(
+          /* webpackChunkName: "page/project/schedule/routerView" */ 'page/project/schedule/routerView'
+        ),
       children: [
         {
           path: '/',
           name: '模板排期列表',
           meta: {
             title: '模板排期列表',
-            permission: 'project.schedule.read'
+            permission: 'project.template.read'
           },
           component: () =>
-            import(/* webpackChunkName: "page/project/schedule/index" */ 'page/project/schedule/index')
+            import(
+              /* webpackChunkName: "page/project/schedule/index" */ 'page/project/schedule/index'
+            )
+        },
+        {
+          path: 'schedule',
+          name: '模板排期子条目列表',
+          meta: {
+            title: '模板排期子条目详情',
+            permission: 'project.template.childRead'
+          },
+          component: () =>
+            import(
+              /* webpackChunkName: "page/project/schedule/schedule" */ 'page/project/schedule/schedule'
+            )
+        },
+        {
+          path: 'add',
+          meta: {
+            title: '排期条目增加',
+            permission: 'project.template.childCreate'
+          },
+          component: () =>
+            import(
+              /* webpackChunkName: "page/project/schedule/save" */ 'page/project/schedule/save'
+            )
+        },
+        {
+          path: 'edit/:uid',
+          component: () =>
+            import(
+              /* webpackChunkName: "page/project/schedule/save" */ 'page/project/schedule/save'
+            ),
+          name: '排期条目修改',
+          meta: {
+            title: '排期条目修改',
+            permission: 'project.template.childUpdate'
+          }
         }
       ]
     },
@@ -71,7 +117,9 @@ let router = {
         permission: 'project.list'
       },
       component: () =>
-        import(/* webpackChunkName: "page/project/list/routerView" */ 'page/project/list/routerView'),
+        import(
+          /* webpackChunkName: "page/project/list/routerView" */ 'page/project/list/routerView'
+        ),
       children: [
         {
           path: '/',
@@ -81,7 +129,9 @@ let router = {
             permission: 'project.list.read'
           },
           component: () =>
-            import(/* webpackChunkName: "page/project/list/index" */ 'page/project/list/index')
+            import(
+              /* webpackChunkName: "page/project/list/index" */ 'page/project/list/index'
+            )
         }
       ]
     }
