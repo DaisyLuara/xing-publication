@@ -6,10 +6,10 @@ use App\Http\Controllers\Admin\Activity\V1\Models\PlayingType;
 use App\Http\Controllers\Admin\Activity\V1\Transformer\PlayingTypeTransformer;
 use App\Http\Controllers\Admin\Ad\V1\Models\AdTrade;
 use App\Http\Controllers\Admin\Ad\V1\Models\Advertisement;
-use App\Http\Controllers\Admin\Ad\V1\Models\AdPlan;
+use App\Http\Controllers\Admin\Ad\V1\Models\Advertiser;
 use App\Http\Controllers\Admin\Ad\V1\Transformer\AdTradeTransformer;
 use App\Http\Controllers\Admin\Ad\V1\Transformer\AdvertisementTransformer;
-use App\Http\Controllers\Admin\Ad\V1\Transformer\AdPlanTransformer;
+use App\Http\Controllers\Admin\Ad\V1\Transformer\AdvertiserTransformer;
 use App\Http\Controllers\Admin\Attribute\V1\Models\Attribute;
 use App\Http\Controllers\Admin\Attribute\V1\Transformer\AttributeTransformer;
 use App\Http\Controllers\Admin\Common\V1\Transformer\DemandApplicationTransformer;
@@ -54,8 +54,6 @@ use App\Http\Controllers\Admin\Project\V1\Models\Project;
 use App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTpl;
 use App\Http\Controllers\Admin\Project\V1\Transformer\ProjectLaunchTplTransformer;
 use App\Http\Controllers\Admin\Project\V1\Transformer\ProjectTransformer;
-use App\Http\Controllers\Admin\Skin\V1\Models\Skin;
-use App\Http\Controllers\Admin\Skin\V1\Transformer\SkinTransformer;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamRate;
 use App\Http\Controllers\Admin\Team\V1\Transformer\TeamRateTransformer;
@@ -68,7 +66,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\User;
 use DB;
-use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -196,80 +193,53 @@ class QueryController extends Controller
     }
 
 
-    /**
-     * 广告行业
-     * @param Request $request
-     * @param AdTrade $adTrade
-     * @return \Dingo\Api\Http\Response
-     */
     public function adTradeQuery(Request $request, AdTrade $adTrade)
     {
         $query = $adTrade->query();
-        if ($request->get('name')) {
-            $query->where('name', 'like', '%' . $request->get('name') . '%');
+        if ($request->name) {
+            $query->where('name', 'like', '%' . $request->name . '%');
         }
-        $adTrades = $query->get();
-        return $this->response->collection($adTrades, new AdTradeTransformer());
+        $adTrade = $query->get();
+        return $this->response->collection($adTrade, new AdTradeTransformer());
     }
 
-    /**
-     * 广告方案
-     * @param Request $request
-     * @param AdPlan $adPlan
-     * @return \Dingo\Api\Http\Response
-     */
-    public function adPlanQuery(Request $request, AdPlan $adPlan): Response
+    public function advertiserQuery(Request $request, Advertiser $advertiser)
     {
-        $query = $adPlan->query();
-
-        if (!$request->get('name') && !$request->get('ad_trade_id') && !$request->get('type')) {
-            return $this->response->collection(collect(), new AdPlanTransformer());
+        $query = $advertiser->query();
+        $advertiser = collect();
+        if (!$request->name && !$request->ad_trade_id) {
+            return $this->response->collection($advertiser, new AdvertiserTransformer());
         }
 
-        if ($request->get('name')) {
-            $query->where('name', 'like', '%' . $request->get('name') . '%');
+        if ($request->name) {
+            $query->where('name', 'like', '%' . $request->name . '%');
         }
 
-        if ($request->get('ad_trade_id')) {
-            $query->where('atid', '=', $request->get('ad_trade_id'));
+        if ($request->ad_trade_id) {
+            $query->where('atid', '=', $request->ad_trade_id);
         }
-
-        if ($request->get('type')) {
-            $query->where('type', '=', $request->get('type'));
-        }
-
-        $adPlans = $query->get();
-        return $this->response->collection($adPlans, new AdPlanTransformer());
+        $advertiser = $query->get();
+        return $this->response->collection($advertiser, new AdvertiserTransformer());
     }
 
-    /**
-     * 搜索广告素材
-     * @param Request $request
-     * @param Advertisement $advertisement
-     * @return Response
-     */
-    public function advertisementQuery(Request $request, Advertisement $advertisement): Response
+    public function advertisementQuery(Request $request, Advertisement $advertisement)
     {
         $query = $advertisement->query();
-
-        if (!$request->get('name') && !$request->get('type') && !$request->get('atid')) {
-            return $this->response->collection(collect(), new AdvertisementTransformer());
+        $advertisement = collect();
+        if (!$request->advertiser_id && !$request->name) {
+            return $this->response->collection($advertisement, new AdvertisementTransformer());
         }
 
-        if ($request->get('name')) {
-            $query->where('name', 'like', '%' . $request->get('name') . '%');
+        if ($request->name) {
+            $query->where('name', 'like', '%' . $request->name . '%');
         }
 
-        if ($request->get('type')) {
-            $query->where('type', '=', $request->get('type'));
+        if ($request->advertiser_id) {
+            $advertiser = Advertiser::findOrFail($request->advertiser_id);
+            $query->where('z', '=', $advertiser->z);
         }
-
-        if ($request->get('atid')) {
-            $query->where('atid', '=', $request->get('atid'));
-        }
-
-        $advertisements = $query->get();
-        return $this->response->collection($advertisements, new AdvertisementTransformer());
+        $advertisement = $query->get();
+        return $this->response->collection($advertisement, new AdvertisementTransformer());
     }
 
     public function sceneQueryIndex(Scene $scene)
@@ -761,21 +731,5 @@ class QueryController extends Controller
         return $this->response->collection($policies, new PolicyTransformer());
     }
 
-    /**
-     * 可用皮肤搜索
-     * @param Skin $skin
-     * @param Request $request
-     * @return Response
-     */
-    public function projectSkinQuery(Skin $skin, Request $request): Response
-    {
-        $query = $skin->query();
-        if ($request->has('project_id')) {
-            $piid = $request->get('project_id');
-            $query->whereRaw("(piid='$piid' and  pass=1)");
-        }
-        $skin = $query->orWhere('bid', 0)->orderBy('bid')->get();
-        return $this->response()->collection($skin, new SkinTransformer());
-    }
 
 }

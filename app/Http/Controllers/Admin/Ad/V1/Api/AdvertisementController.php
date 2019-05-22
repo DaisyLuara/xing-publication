@@ -6,81 +6,51 @@ use App\Http\Controllers\Admin\Ad\V1\Transformer\AdvertisementTransformer;
 use App\Http\Controllers\Admin\Ad\V1\Request\AdvertisementRequest;
 use App\Http\Controllers\Admin\Ad\V1\Models\Advertisement;
 use App\Http\Controllers\Controller;
-use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
 
 class AdvertisementController extends Controller
 {
-    public function index(Request $request, Advertisement $advertisement): Response
+    public function index(Request $request, Advertisement $advertisement)
     {
         $query = $advertisement->query();
-
-        if ($request->get('ad_trade_id')) {
-            $query->where('atid', '=', $request->get('ad_trade_id'));
+        if ($request->ad_trade_id) {
+            $query->where('atid', '=', $request->ad_trade_id);
         }
-
-        if ($request->get('name')) {
-            $query->where('name', 'like', '%' . $request->get('name') . '%');
+        if ($request->advertiser_id) {
+            $query->where('atiid', '=', $request->advertiser_id);
         }
-
-        if ($request->get('type')) {
-            $query->where('type', '=', $request->get('type'));
-        }
-
-        if ($request->get('isad') !== null) {
-            $query->where('isad', '=', $request->get('isad'));
-        }
-
-        if ($request->get('pass') !== null) {
-            $query->where('pass', '=', $request->get('pass'));
-        }
-
-        $advertisements = $query->orderBy('aid', 'desc')
+        $advertisement = $query->orderBy('atid', 'desc')
+            ->orderBy('date', 'desc')
             ->paginate(10);
-
-        return $this->response->paginator($advertisements, new AdvertisementTransformer());
+        return $this->response->paginator($advertisement, new AdvertisementTransformer());
     }
 
-    public function show(Advertisement $advertisement): Response
-    {
-        return $this->response->item($advertisement, new AdvertisementTransformer());
-    }
-
-    public function store(AdvertisementRequest $request, Advertisement $advertisement): Response
+    public function store(AdvertisementRequest $request, Advertisement $advertisement)
     {
         $data = $request->all();
+        $name = $data['name'];
+        $names = explode(PHP_EOL, $name);
+        unset($data['name']);
 
         //需要获取link的size
-        $content = file_get_contents($data['link']);
-
-        $addParams = [
-            'size' => strlen($content),
-            'date' => date('Y-m-d H:i:s'),
-            'clientdate' => time() * 1000,
-        ];
-
-        if ($this->user->z) {
-            $addParams['z'] = $this->user->z;
+        $query = $advertisement->query();
+        foreach ($names as $name) {
+            $query->create(array_merge(['name' => $name, 'date' => date('Y-m-d H:i:s'), 'clientdate' => time() * 1000], $data));
         }
-
-        $advertisement->fill(array_merge($data, $addParams))->save();
 
         return $this->response->noContent();
     }
 
-    public function update(AdvertisementRequest $request, Advertisement $advertisement): Response
+    public function update(AdvertisementRequest $request, Advertisement $advertisement)
     {
         $data = $request->all();
+        $aids = $request->aids;
+        unset($data['aids']);
 
-        //需要获取link的size
-        $content = file_get_contents($data['link']);
-
-        $advertisement->fill(array_merge($data, [
-            'size' => strlen($content),
-            'date' => date('Y-m-d H:i:s'),
-            'clientdate' => time() * 1000,
-        ]))->save();
-
+        $query = $advertisement->query();
+        foreach ($aids as $aid) {
+            $query->where('aid', '=', $aid)->update($data);
+        }
         return $this->response->noContent();
     }
 

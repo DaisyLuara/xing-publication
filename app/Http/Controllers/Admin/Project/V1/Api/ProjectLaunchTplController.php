@@ -6,46 +6,45 @@ use App\Http\Controllers\Admin\Project\V1\Transformer\ProjectLaunchTplTransforme
 use App\Http\Controllers\Admin\Project\V1\Request\ProjectLaunchTplRequest;
 use App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTpl;
 use App\Http\Controllers\Controller;
-use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
 
 class ProjectLaunchTplController extends Controller
 {
 
-    public function index(Request $request, ProjectLaunchTpl $projectLaunchTpl): Response
+    public function index(Request $request, ProjectLaunchTpl $projectLaunchTpl)
     {
         $query = $projectLaunchTpl->query();
         $table = $query->getModel()->getTable();
 
         $arUserZ = getArUserZ($this->user(), $request);
         handPointQuery($request, $query, $arUserZ, true);
-        if ($request->filled('name')) {
-            $query->where("$table.name", 'like', '%' . $request->get('name') . '%');
+        if ($request->name) {
+            $query->where("$table.name", 'like', "%" . $request->name . "%");
         }
 
-        $projectLaunchTpl = $query->selectRaw($query->getModel()->getTable() . '.*')->orderBy('tvid', 'desc')->paginate(10);
+        $projectLaunchTpl = $query->selectRaw($query->getModel()->getTable() . ".*")->orderBy('tvid', 'desc')->paginate(10);
 
-        return $this->response()->paginator($projectLaunchTpl, new ProjectLaunchTplTransformer());
+        return $this->response->paginator($projectLaunchTpl, new ProjectLaunchTplTransformer());
 
     }
 
-    public function store(ProjectLaunchTplRequest $request, ProjectLaunchTpl $tpl)
+    public function store(ProjectLaunchTplRequest $request, ProjectLaunchTpl $projectLaunchTpl)
     {
         $fillData = $this->convert($request->all());
-        $tpl->fill($fillData)->save();
-        return $this->response()->item($tpl, new ProjectLaunchTplTransformer())
+        $projectLaunchTpl->fill($fillData)->save();
+        return $this->response->item($projectLaunchTpl, new ProjectLaunchTplTransformer())
             ->setStatusCode(201);
     }
 
-    public function update(ProjectLaunchTplRequest $request, ProjectLaunchTpl $tpl)
+    public function update(ProjectLaunchTplRequest $request, ProjectLaunchTpl $projectLaunchTpl)
     {
         $updateData = $this->convert($request->all());
-        $tpl->update($updateData);
-        return $this->response()->item($tpl, new ProjectLaunchTplTransformer())
+        $projectLaunchTpl->update($updateData);
+        return $this->response->item($projectLaunchTpl, new ProjectLaunchTplTransformer())
             ->setStatusCode(201);
     }
 
-    private function convert($input): array
+    private function convert($input)
     {
         $data = [];
         if (isset($input['point_id'])) {

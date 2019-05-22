@@ -64,4 +64,9 @@ class Media extends Model
         'height',
         'width',
     ];
+
+    public function company(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Company::class, 'company_media', 'media_id', 'company_id')->withPivot(['status', 'audit_user_id']);
+    }
 }

@@ -150,7 +150,7 @@
               <el-col :span="6">
                 <el-form-item 
                   label 
-                  prop>
+                  prop="">
                   <el-button 
                     type="primary" 
                     size="small" 
@@ -162,12 +162,13 @@
                 </el-form-item>
               </el-col>
             </el-row>
+            
           </el-form>
         </div>
         <!-- 批量修改选项 -->
         <div 
-          style="padding: 0 0 15px;" 
-          class="editCondition-wrap">
+          style="padding: 0 0 15px;"
+          class="editCondition-wrap" >
           <el-form 
             ref="editForm" 
             :model="editCondition" 
@@ -220,15 +221,6 @@
                 <el-form-item label="节目icon">
                   <a 
                     :href="scope.row.project.icon" 
-                    target="_blank" 
-                    style="color: blue">查看</a>
-                </el-form-item>
-                <el-form-item label="皮肤名称">
-                  <span>{{ scope.row.skin.name }}</span>
-                </el-form-item>
-                <el-form-item label="皮肤icon">
-                  <a 
-                    :href="scope.row.skin.icon" 
                     target="_blank" 
                     style="color: blue">查看</a>
                 </el-form-item>
@@ -299,30 +291,21 @@
           <el-table-column 
             :show-overflow-tooltip="true" 
             prop="name" 
-            label="节目" 
-            width="150">
+            label="节目名称" 
+            min-width="150">
+            <template slot-scope="scope">{{ scope.row.project.name }}</template>
+          </el-table-column>
+          <el-table-column 
+            prop="icon" 
+            label="节目icon" 
+            min-width="100">
             <template slot-scope="scope">
               <img 
                 :src="scope.row.project.icon" 
                 alt 
                 class="icon-item">
-              <div style="text-align:center">{{ scope.row.project.name }}</div>
             </template>
           </el-table-column>
-          <el-table-column 
-            :show-overflow-tooltip="true" 
-            prop="name" 
-            label="皮肤" 
-            width="150">
-            <template slot-scope="scope">
-              <img 
-                :src="scope.row.skin.icon" 
-                alt 
-                class="icon-item">
-              <div style="text-align:center">{{ scope.row.skin.name }}</div>
-            </template>
-          </el-table-column>
-
           <el-table-column 
             :show-overflow-tooltip="true" 
             prop="scene" 
@@ -361,6 +344,14 @@
           >
             <template slot-scope="scope">{{ scope.row.point.visiable === 1 ? '运营中' : '下架' }}</template>
           </el-table-column>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="define"
+            label="自定义模版"
+            min-width="100"
+          >
+            <template slot-scope="scope">{{ scope.row.divtemplate.name }}</template>
+          </el-table-column>
         </el-table>
         <div class="pagination-wrap">
           <el-pagination
@@ -397,34 +388,12 @@
               placeholder="请搜索"
               remote
               clearable
-              @change="projectChangeHandle"
             >
               <el-option
                 v-for="item in projectList"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item
-            v-if="modifyOptionFlag.project"
-            :rules="[{ required: true, message: '请选择皮肤', trigger: 'submit'}]"
-            label="皮肤"
-            prop="default_bid"
-          >
-            <el-select
-              v-model="projectForm.default_bid"
-              :loading="searchLoading"
-              placeholder="请选择节目"
-              filterable
-              clearable
-            >
-              <el-option
-                v-for="item in skinList"
-                :key="item.bid"
-                :label="item.name"
-                :value="item.bid"
               />
             </el-select>
           </el-form-item>
@@ -639,8 +608,7 @@ import {
   getSearchSceneList,
   getSearchAeraList,
   getSearchModuleList,
-  getSearchProjectList,
-  getSearchSkin
+  getSearchProjectList
 } from "service";
 
 import {
@@ -777,7 +745,6 @@ export default {
       projectList: [],
       searchLoading: false,
       projectForm: {
-        default_bid: null,
         project: [],
         weekday: "",
         weekend: "",
@@ -792,7 +759,6 @@ export default {
         day6_tvid: "",
         day7_tvid: ""
       },
-      skinList: [],
       modifyOptionFlag: {
         project: false,
         template: false,
@@ -811,24 +777,6 @@ export default {
     this.getModuleList();
   },
   methods: {
-    getSkin(val) {
-      let args = {
-        project_id: val
-      };
-      getSearchSkin(this, args)
-        .then(result => {
-          this.skinList = result;
-        })
-        .catch(err => {
-          this.$message({
-            type: "warning",
-            message: err.response.data.message
-          });
-        });
-    },
-    projectChangeHandle(val) {
-      this.getSkin(val[0]);
-    },
     getSceneList() {
       return getSearchSceneList(this)
         .then(response => {
@@ -943,7 +891,6 @@ export default {
           let args = {
             tvoids: this.tvoids,
             default_plid: this.projectForm.project[0],
-            default_bid: this.projectForm.default_bid,
             sdate: new Date(this.projectForm.sdate).getTime() / 1000,
             edate: edate,
             weekday_tvid: this.projectForm.weekday,
@@ -958,7 +905,6 @@ export default {
             day7_tvid: this.projectForm.day7_tvid
           };
           this.modifyOptionFlag.project ? args : delete args.default_plid;
-          delete args.default_bid;
 
           if (!this.modifyOptionFlag.defineTemplate) {
             delete args.sdate;
@@ -975,8 +921,7 @@ export default {
           this.projectForm.weekday ? args : delete args.weekday_tvid;
           this.projectForm.weekend ? args : delete args.weekend_tvid;
           this.loading = false;
-          console.log(args);
-          modifyProjectLaunch(this, args)
+          return modifyProjectLaunch(this, args)
             .then(response => {
               this.setting.loading = false;
               this.$message({
@@ -1025,7 +970,7 @@ export default {
       this.setting.loading = true;
       let searchArgs = {
         page: this.pagination.currentPage,
-        include: "point.scene,point.market,point.area,project,skin",
+        include: "point.scene,point.market,point.area,project",
         project_name: this.filters.name,
         area_id: this.filters.area,
         market_id: this.filters.market[0],
@@ -1034,26 +979,8 @@ export default {
         tpl_id: this.filters.tpl_id,
         visiable: this.filters.visiable
       };
-      if (this.filters.visiable === "") {
-        delete searchArgs.visiable;
-      }
-      if (this.filters.name === "") {
-        delete searchArgs.project_name;
-      }
-      if (!this.filters.market_id) {
-        delete searchArgs.market_id;
-      }
-      if (!this.filters.area_id) {
-        delete searchArgs.area_id;
-      }
-      if (!this.filters.scene_id) {
-        delete searchArgs.scene_id;
-      }
-      if (!this.filters.tpl_id) {
-        delete searchArgs.tpl_id;
-      }
-      if (this.filters.tpl_name === "") {
-        delete searchArgs.tpl_name;
+      if(this.filters.visiable === '') {
+        delete searchArgs.visiable
       }
       getPutProjectList(this, searchArgs)
         .then(response => {
@@ -1148,7 +1075,7 @@ export default {
     .item-content-wrap {
       .icon-item {
         padding: 10px;
-        width: 100%;
+        width: 60%;
       }
       .demo-table-expand {
         font-size: 0;

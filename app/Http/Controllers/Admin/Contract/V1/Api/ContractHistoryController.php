@@ -20,41 +20,35 @@ class ContractHistoryController extends Controller
     {
 
         $query = $contract->query();
-        if ($request->get('start_date') && $request->get('end_date')) {
-            $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '{$request->get('start_date')}' and '{$request->get('end_date')}' ");
+        if ($request->start_date && $request->end_date) {
+            $startDate = $request->start_date;
+            $endDate = $request->end_date;
+            $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '$startDate' and '$endDate' ");
         }
 
-        if ($request->get('name')) {
-            $name = $request->get('name');
-            $query->whereHas('company', static function ($q) use ($name) {
+        if ($request->name) {
+            $name = $request->name;
+            $query->whereHas('company', function ($q) use ($name) {
                 $q->where('name', 'like', '%' . $name . '%');
             });
         }
 
-        if ($request->get('applicant')) {
-            $query->where('applicant', $request->get('applicant'));
+        if ($request->status) {
+            $query->where('status', $request->status);
         }
 
-        if ($request->get('status') !== null) {
-            $query->where('status', $request->get('status'));
-        }
-
-        if ($request->get('product_status') !== null) {
-            $query->where('product_status', $request->get('product_status'));
-        }
-
-        if ($request->get('contract_number') !== null) {
-            $query->where('contract_number', 'like', '%' . $request->get('contract_number') . '%');
+        if ($request->has('contract_number')) {
+            $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
         }
 
         /** @var  $user \App\Models\User */
         $user = $this->user();
 
-        $query->whereHas('contractHistory', static function ($q) use ($user) {
+        $query->whereHas('contractHistory', function ($q) use ($user) {
             $q->where('user_id', $user->id);
         });
-        $contracts = $query->orderBy('created_at', 'desc')->paginate(10);
-        return $this->response()->paginator($contracts, new ContractTransformer())->setStatusCode(200);
+        $contract = $query->orderBy('created_at', 'desc')->paginate(10);
+        return $this->response()->paginator($contract, new ContractTransformer())->setStatusCode(200);
     }
 
 

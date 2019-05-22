@@ -11,12 +11,14 @@ class ContractCostExport extends BaseExport
     private $contract_number;//合同编号
     private $start_date, $end_date; //修改开始日期,修改结束日期
 
+
     public function __construct($request)
     {
         $this->start_date = $request->start_date;
         $this->end_date = $request->end_date;
         $this->contract_name = $request->contract_name;
         $this->contract_number = $request->contract_number;
+
         $this->fileName = '合同-成本管理列表';
     }
 

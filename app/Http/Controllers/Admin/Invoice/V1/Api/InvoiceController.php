@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\Invoice\V1\Request\InvoiceRequest;
 use App\Http\Controllers\Admin\Invoice\V1\Transformer\InvoiceTransformer;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class InvoiceController extends Controller
@@ -23,47 +24,45 @@ class InvoiceController extends Controller
 
         $query = $invoice->query();
 
-        if ($request->get('start_date') && $request->get('end_date')) {
-            $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '{$request->get('start_date')}' and '{$request->get('end_date')}' ");
+        if ($request->start_date && $request->end_date) {
+            $startDate = $request->start_date;
+            $endDate = $request->end_date;
+            $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '$startDate' and '$endDate' ");
         }
 
-        if ($request->get('name')) {
-            $query->whereHas('contract', static function ($q) use ($request) {
-                $q->whereHas('company', static function ($q) use ($request) {
-                    $q->where('name', 'like', '%' .$request->get('name') . '%');
+        if ($request->name) {
+            $query->whereHas('contract', function ($q) use ($request) {
+                $q->whereHas('company', function ($q) use ($request) {
+                    $q->where('name', 'like', '%' . $request->name . '%');
                 });
             });
         }
 
-        if ($request->get('applicant')) {
-            $query->where('applicant', '=', $request->get('applicant'));
-        }
-
-        if ($request->get('status') !== null) {
-            $query->where('status', '=', $request->get('status'));
+        if ($request->status) {
+            $query->where('status', '=', $request->status);
         }
 
         if ($request->has('contract_number')) {
-            $query->whereHas('contract', static function ($q) use ($request) {
-                $q->where('contract_number', 'like', '%' . $request->get('contract_number') . '%');
+            $query->whereHas('contract', function ($q) use ($request) {
+                $q->where('contract_number', 'like', '%' . $request->contract_number . '%');
             });
         }
 
         if ($request->has('receive_status')) {
-            $query->where('receive_status', '=', $request->get('receive_status'));
+            $query->where('receive_status', '=', $request->receive_status);
         }
 
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if ($user->id === getProcessStaffId('finance', 'invoice')) {
+        if ($user->id == getProcessStaffId('finance', 'invoice')) {
             $query->whereRaw("(handler=$user->id or status=4 or status=5)");
         } else if ($user->hasRole('operation')) {
             $query->whereRaw('(status=3 or status=4 or status=5)');
         } else {
             $query->whereRaw("(applicant=$user->id or handler=$user->id)");
         }
-        $invoices = $query->orderBy('created_at', 'desc')->paginate(10);
-        return $this->response()->paginator($invoices, new InvoiceTransformer())->setStatusCode(200);
+        $invoice = $query->orderBy('created_at', 'desc')->paginate(10);
+        return $this->response()->paginator($invoice, new InvoiceTransformer())->setStatusCode(200);
     }
 
     public function store(InvoiceRequest $request, Invoice $invoice)

@@ -27,13 +27,15 @@ class ContractController extends Controller
     {
 
         $query = $contract->query();
-        if ($request->get('start_date') && $request->get('end_date')) {
-            $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '{$request->get('start_date')}' and '{$request->get('end_date')}' ");
+        if ($request->start_date && $request->end_date) {
+            $startDate = $request->start_date;
+            $endDate = $request->end_date;
+            $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '$startDate' and '$endDate' ");
         }
 
-        if ($request->get('name')) {
-            $name = $request->$request->get('name');
-            $query->whereHas('company', static function ($q) use ($name) {
+        if ($request->name) {
+            $name = $request->name;
+            $query->whereHas('company', function ($q) use ($name) {
                 $q->where('name', 'like', '%' . $name . '%');
             });
         }
@@ -42,16 +44,28 @@ class ContractController extends Controller
             $query->where('applicant', '=', $request->get('applicant'));
         }
 
-        if ($request->has('status')) {
-            $query->where('status', $request->get('status'));
+//        if ($request->name) {
+//            $name = $request->name;
+//            $query->where(function ($query) use ($name) {
+//                $query->where('name', 'like', '%' . $name . '%')
+//                    ->orWhere(function ($q) use ($name) {
+//                        $q->whereHas('company', function ($q) use ($name) {
+//                            $q->where('name', 'like', '%' . $name . '%');
+//                        });
+//                    });
+//            });
+//        }
+
+        if ($request->status) {
+            $query->where('status', $request->status);
         }
 
         if ($request->has('contract_number')) {
-            $query->where('contract_number', 'like', '%' . $request->get('contract_number') . '%');
+            $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
         }
 
         if ($request->has('product_status')) {
-            $query->where('product_status', $request->get('product_status'));
+            $query->where('product_status', $request->product_status);
         }
 
         /** @var  $user \App\Models\User */
@@ -62,12 +76,12 @@ class ContractController extends Controller
             $query->whereRaw("(applicant = $user->id or handler = $user->id or status=3)");
         } elseif ($user->hasRole('purchasing')) {
             //角色为采购时，查询条件为：已审批完成(status=3),product_status为非0（1未出厂or2已出厂）
-            $query->whereRaw('(status = 3 and product_status != 0)');
+            $query->whereRaw("(status = 3 and product_status != 0)");
         } else {
             $query->where('status', ActionConfig::CONTRACT_STATUS_AGREE);
         }
-        $contracts = $query->orderBy('created_at', 'desc')->paginate(10);
-        return $this->response()->paginator($contracts, new ContractTransformer())->setStatusCode(200);
+        $contract = $query->orderBy('created_at', 'desc')->paginate(10);
+        return $this->response()->paginator($contract, new ContractTransformer())->setStatusCode(200);
     }
 
 
@@ -278,6 +292,6 @@ class ContractController extends Controller
 
     public function export(Request $request)
     {
-        return excelExportByType($request, 'contract');
+        return excelExportByType($request,'contract');
     }
 }

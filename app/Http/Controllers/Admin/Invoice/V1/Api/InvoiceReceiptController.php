@@ -17,7 +17,6 @@ use App\Http\Controllers\Admin\Invoice\V1\Transformer\InvoiceReceiptTransformer;
 use App\Http\Controllers\Controller;
 use App\Jobs\InvoiceReceiptNotificationJob;
 use App\Models\User;
-use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
 
 class InvoiceReceiptController extends Controller
@@ -27,44 +26,46 @@ class InvoiceReceiptController extends Controller
         return $this->response()->item($invoiceReceipt, new InvoiceReceiptTransformer());
     }
 
-    public function index(Request $request, InvoiceReceipt $invoiceReceipt): Response
+    public function index(Request $request, InvoiceReceipt $invoiceReceipt)
     {
         $query = $invoiceReceipt->query();
-        if ($request->get('start_date') && $request->get('end_date')) {
-            $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '{$request->get('start_date')}' and '{$request->get('end_date')}' ");
+        if ($request->start_date && $request->end_date) {
+            $startDate = $request->start_date;
+            $endDate = $request->end_date;
+            $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '$startDate' and '$endDate' ");
         }
 
         if ($request->has('name')) {
-            $query->where('receipt_company', 'like', '%' . $request->get('name') . '%');
+            $query->where('receipt_company', 'like', '%' . $request->name . '%');
         }
 
         if ($request->has('claim_status')) {
-            $query->where('claim_status', $request->get('claim_status'));
+            $query->where('claim_status', $request->claim_status);
         }
 
         /** @var  $user \App\Models\User */
         $user = $this->user();
         if ($user->hasRole('user')) {
-            $query->whereHas('receiveDate', static function ($q) use ($user) {
-                $q->whereHas('contract', static function ($q) use ($user) {
+            $query->whereHas('receiveDate', function ($q) use ($user) {
+                $q->whereHas('contract', function ($q) use ($user) {
                     $q->where('applicant', $user->id);
                 });
             });
         }
 
         if ($user->hasRole('bd-manager')) {
-            $query->whereHas('receiveDate', static function ($q) use ($user) {
-                $q->whereHas('contract', static function ($q) use ($user) {
-                    $q->whereHas('applicantUser', static function ($q) use ($user) {
+            $query->whereHas('receiveDate', function ($q) use ($user) {
+                $q->whereHas('contract', function ($q) use ($user) {
+                    $q->whereHas('applicantUser', function ($q) use ($user) {
                         $q->where('parent_id', $user->id);
                     });
                 });
             });
         }
 
-        $invoiceReceipts = $query->orderByDesc('id')->paginate(10);;
+        $invoiceReceipt = $query->orderByDesc('id')->paginate(10);;
 
-        return $this->response()->paginator($invoiceReceipts, new InvoiceReceiptTransformer());
+        return $this->response()->paginator($invoiceReceipt, new InvoiceReceiptTransformer());
     }
 
     public function store(InvoiceReceiptRequest $request, InvoiceReceipt $invoiceReceipt)
