@@ -13,7 +13,7 @@ class PaymentExport extends BaseExport
     private $payee; //收款人
     private $contract_number;//合同编号
     private $start_date, $end_date; //开始时间,结束时间
-    private $applicant;
+
 
     public function __construct($request)
     {
@@ -23,7 +23,7 @@ class PaymentExport extends BaseExport
         $this->receive_status = $request->receive_status;
         $this->payee = $request->payee;
         $this->contract_number = $request->contract_number;
-        $this->applicant = $request->applicant;
+
         $this->fileName = '付款-付款管理列表';
     }
 
@@ -40,16 +40,13 @@ class PaymentExport extends BaseExport
         if ($this->payee) {
             $query->where('payee', 'like', '%' . $this->payee . '%');
         }
-        if ($this->applicant) {
-            $query->where('applicant', '=', $this->applicant);
-        }
-        if ($this->receive_status !== null) {
+        if (!is_null($this->receive_status)) {
             $query->where('receive_status', '=', $this->receive_status);
         }
-        if ($this->status !== null) {
+        if (!is_null($this->status)) {
             $query->where('status', '=', $this->status);
         }
-        if ($this->contract_number !== null) {
+        if ($this->contract_number) {
             $query->whereHas('contract', function ($q) {
                 $q->where('contract_number', 'like', '%' . $this->contract_number . '%');
             });
@@ -57,16 +54,16 @@ class PaymentExport extends BaseExport
 
         /** @var  User $user */
         $user = Auth::user();
-        if ($user->id === getProcessStaffId('finance', 'payment')) {
+        if ($user->id == getProcessStaffId('finance', 'payment')) {
             $query->whereRaw("(handler=$user->id or status=4)");
         } else if ($user->hasRole('operation')) {
-            $query->whereRaw('(status=3 or status=4)');
+            $query->whereRaw("(status=3 or status=4)");
         } else {
             $query->whereRaw("(applicant=$user->id or handler=$user->id)");
         }
 
         $payments = $query->orderBy('created_at', 'desc')->get()
-            ->map(static function ($payment) {
+            ->map(function ($payment) {
                 return [
                     'id' => $payment->id,
                     'contract_number' => $payment->contract->contract_number,
@@ -77,13 +74,13 @@ class PaymentExport extends BaseExport
                     'payment_payee_name' => $payment->paymentPayee ? $payment->paymentPayee->name : null,
                     'payment_payee_account_bank' => $payment->paymentPayee ? $payment->paymentPayee->account_bank : null,
                     'payment_payee_account_number' => "\t" . ($payment->paymentPayee ? $payment->paymentPayee->account_number : '') . "\t",
-                    'receive_status' => $payment->receive_status === 0 ? '未收票' : '已收票',
+                    'receive_status' => $payment->receive_status == 0 ? '未收票' : '已收票',
                     'status' => Payment::$statusMapping[$payment->status] ?? $payment->status,
                     'handler_name' => $payment->handler ? $payment->handlerUser->name : null,
                     'payer' => $payment->payer,
                     'created_at' => $payment->created_at->toDateTimeString(),
                     'updated_at' => $payment->updated_at->toDateTimeString(),
-                    'medias' => $payment->media ? implode(';', $payment->media->pluck('url')->toArray()) : '',
+                    'medias' => $payment->media ? implode(';',$payment->media->pluck('url')->toArray()) : '',
                     'remark' => $payment->remark,
                 ];
 

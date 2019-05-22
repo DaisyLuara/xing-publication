@@ -16,9 +16,8 @@ class CompanyMediaRequest extends Request
     public function rules(): array
     {
         $method = $this->method();
-        if ($method === 'PATCH') {
+        if ($method === 'POST') {
             return [
-                'ids' => 'required|array',
                 'status' => 'required|in:0,1'
             ];
         }

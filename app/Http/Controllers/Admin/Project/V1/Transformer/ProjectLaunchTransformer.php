@@ -4,13 +4,12 @@ namespace App\Http\Controllers\Admin\Project\V1\Transformer;
 
 use App\Http\Controllers\Admin\Point\V1\Transformer\PointTransformer;
 use App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunch;
-use App\Http\Controllers\Admin\Skin\V1\Transformer\SkinTransformer;
 use League\Fractal\TransformerAbstract;
 use App\Http\Controllers\Admin\Project\V1\Models\ProjectLaunchTpl;
 
 class ProjectLaunchTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['point', 'project', 'template', 'skin'];
+    protected $availableIncludes = ['point', 'project','template'];
 
     public function transform(ProjectLaunch $projectLaunch)
     {
@@ -44,7 +43,7 @@ class ProjectLaunchTransformer extends TransformerAbstract
 
         $data['day1template'] = $tpldata->getData()->firstWhere('tvid', $projectLaunch->day1_tvid);
         $data['day2template'] = $tpldata->getData()->firstWhere('tvid', $projectLaunch->day2_tvid);
-        $data['day3template'] = $tpldata->getData()->firstWhere('tvid', $projectLaunch->day3_tvid);
+        $data['day3template'] =$tpldata->getData()->firstWhere('tvid', $projectLaunch->day3_tvid);
         $data['day4template'] = $tpldata->getData()->firstWhere('tvid', $projectLaunch->day4_tvid);
         $data['day5template'] = $tpldata->getData()->firstWhere('tvid', $projectLaunch->day5_tvid);
         $data['day6template'] = $tpldata->getData()->firstWhere('tvid', $projectLaunch->day6_tvid);
@@ -69,14 +68,9 @@ class ProjectLaunchTransformer extends TransformerAbstract
 
     public function includeTemplate(ProjectLaunch $projectLaunch)
     {
-        if ($projectLaunch->template) {
-            return $this->item($projectLaunch->template, new ProjectLaunchTplTransformer());
+        if($projectLaunch->template){
+            return $this->item($projectLaunch->template,new ProjectLaunchTplTransformer());
         }
-    }
-
-    public function includeSkin(ProjectLaunch $projectLaunch)
-    {
-        return $this->item($projectLaunch->skin, new SkinTransformer());
     }
 
 }

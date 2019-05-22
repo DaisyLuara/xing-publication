@@ -11,24 +11,24 @@ namespace App\Http\Controllers\Admin\Resource\V1\Transformer;
 
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
-use App\Http\Controllers\Admin\Resource\V1\Models\CompanyMedia;
 use App\Models\User;
 use League\Fractal\TransformerAbstract;
 
 class CompanyMediaTransformer extends TransformerAbstract
 {
-    public function transform(CompanyMedia $companyMedia): array
+    public function transform(Media $media): array
     {
         /** @var Company $company */
-        $company = $companyMedia->group->company;
-        $media = $companyMedia->media;
+        $company = $media->company()->first();
+        $auditUser = User::find($company->pivot->audit_user_id);
         return [
-            'id' => $companyMedia->id,
+            'id' => $media->id,
             'name' => $media->name,
             'url' => $media->url,
-            'status' => $companyMedia->status,
+            'status' => $company->pivot->status,
             'company_name' => $company->name,
-            'audit_user_name' => $companyMedia->audit_user_id ? $companyMedia->auditor->name : null,
+            'audit_user_id' => $company->pivot->audit_user_id,
+            'audit_user_name' => $auditUser ? $auditUser->name : null,
             'created_at' => $media->created_at->toDateTimeString(),
             'updated_at' => $media->updated_at->toDateTimeString(),
         ];
