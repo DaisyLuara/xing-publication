@@ -182,7 +182,7 @@
     addAdPlanTime,
     getAdPlanDetail,
     getSearchAdvertisementList,
-    getAdPlanTime,
+    getAdPlanTimeDetail,
     historyBack
   } from 'service'
 
@@ -327,7 +327,7 @@
         }
 
         //获取AdPlan 详情
-        return getAdPlanTime(this, args, this.planTimeId)
+        return getAdPlanTimeDetail(this, args, this.planTimeId)
           .then(response => {
             this.adPlan = response.ad_plan;
 

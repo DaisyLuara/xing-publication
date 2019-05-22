@@ -63,9 +63,9 @@ let router = {
       children: [
         {
           path: '/',
-          name: '广告模版详情列表',
+          name: '广告模版列表',
           meta: {
-            title: '广告模版详情列表',
+            title: '广告模版列表',
             permission: 'ad.plan.read'
           },
           component: () =>
@@ -81,16 +81,7 @@ let router = {
           }
         },
         {
-          path: 'edit/:ad_plan_id/batch',
-          component: () =>
-            import(/* webpackChunkName: "page/ad/plan/adPlanSave" */ 'page/ad/plan/adPlanSave'),
-          name: '编辑广告模版及批量排期',
-          meta: {
-            permission: 'ad.plan.update'
-          }
-        },
-        {
-          path: 'edit/:ad_plan_id/item/:is_item',
+          path: 'edit/:plan_id',
           component: () =>
             import(/* webpackChunkName: "page/ad/plan/adPlanSave" */ 'page/ad/plan/adPlanSave'),
           name: '编辑广告模版',
@@ -99,7 +90,16 @@ let router = {
           }
         },
         {
-          path: ':plan_id/add/plan_time',
+          path: ':plan_id/plan_time',
+          component: () =>
+            import(/* webpackChunkName: "page/ad/plan/schedule" */ 'page/ad/plan/schedule'),
+          name: '排期列表',
+          meta: {
+            permission: 'ad.plan.create'
+          }
+        },
+        {
+          path: ':plan_id/plan_time/add',
           component: () =>
             import(/* webpackChunkName: "page/ad/plan/adPlanTimeSave" */ 'page/ad/plan/adPlanTimeSave'),
           name: '新增排期',
@@ -108,7 +108,7 @@ let router = {
           }
         },
         {
-          path: 'edit/plan_time/:plan_time_id',
+          path: '/plan_time/edit/:plan_time_id',
           component: () =>
             import(/* webpackChunkName: "page/ad/plan/adPlanTimeSave" */ 'page/ad/plan/adPlanTimeSave'),
           name: '更新排期',
