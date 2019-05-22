@@ -260,111 +260,130 @@
                   style="width: 100%"
                 >
                   <el-table-column
+                    :show-overflow-tooltip="true"
                     label="广告行业"
-                    min-width="50">
+                    min-width="80">
                     <template slot-scope="ad_scope">
                       <span>{{ ad_scope.row.ad_trade_name }}</span>
                     </template>
                   </el-table-column>
                   <el-table-column
+                    :show-overflow-tooltip="true"
                     label="创建人"
-                    min-width="80">
+                    min-width="60">
                     <template slot-scope="ad_scope">
                       <span>{{ ad_scope.row.create_user_name }}</span>
                     </template>
                   </el-table-column>
                   <el-table-column
-                    label="图片"
-                    min-width="50">
-                    <template slot-scope="ad_scope">
-                      <span>
-                        <img 
-                          :src="ad_scope.row.img" 
-                          width="40px">
-                      </span>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    label="广告名"
-                    min-width="50">
-                    <template slot-scope="ad_scope">
-                      <span>{{ ad_scope.row.name }}</span>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
                     label="类型"
-                    min-width="50">
+                    min-width="60">
                     <template slot-scope="ad_scope">
                       <span>{{ ad_scope.row.type_text }}</span>
                     </template>
                   </el-table-column>
                   <el-table-column
+                    :show-overflow-tooltip="true"
+                    label="素材名称"
+                    min-width="100">
+                    <template slot-scope="ad_scope">
+                      <span>{{ ad_scope.row.name }}</span>
+                      <br/>
+                      <span>
+                        <img
+                          :src="(ad_scope.row.type === 'static' || ad_scope.row.type === 'gif' ) ? ad_scope.row.link : ad_scope.row.img"
+                          width="40px">
+                      </span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    :show-overflow-tooltip="true"
                     label="附件"
-                    min-width="50">
+                    min-width="80">
                     <template slot-scope="ad_scope">
                       <a
                         :href="ad_scope.row.link"
                         target="_blank"
-                        style="color: blue">{{ ad_scope.row.size }}K</a>
+                        style="color: blue">
+                        <i class="el-icon-download"></i>
+                        {{ ad_scope.row.size }}M
+                      </a>
                     </template>
                   </el-table-column>
                   <el-table-column
                     label="广告标记"
-                    min-width="50">
+                    min-width="80">
                     <template slot-scope="ad_scope">
                       <span>{{ ad_scope.row.isad_text }}</span>
                     </template>
                   </el-table-column>
                   <template v-if="scope.row.ad_plan.type==='program'">
                     <el-table-column
-                      label="显示"
-                      min-width="50">
+                      :show-overflow-tooltip="true"
+                      label="素材显示格式"
+                      min-width="130">
                       <template slot-scope="ad_scope">
-                      <span v-if="ad_scope.row.pivot">
-                        {{ ad_scope.row.pivot.mode }}
-                      </span>
-                      </template>
-                    </el-table-column>
-                    <el-table-column
-                      label="屏幕"
-                      min-width="50">
-                      <template slot-scope="ad_scope">
-                      <span v-if="ad_scope.row.pivot">
-                        {{ ad_scope.row.pivot.ori }} <br>
-                        {{ ad_scope.row.pivot.screen }}%
-                      </span>
-                      </template>
-                    </el-table-column>
-                    <el-table-column
-                      label="倒计时"
-                      min-width="50">
-                      <template slot-scope="ad_scope">
-                      <span v-if="ad_scope.row.pivot">
-                        {{ ad_scope.row.pivot.cdshow ?'开启':'关闭' }}<br>
-                        {{ ad_scope.row.pivot.ktime }}s
-                      </span>
+                        <span v-if="ad_scope.row.pivot">
+                          模式：{{ modeOptions[ad_scope.row.pivot.mode] }}<br/>
+                          位置：{{ oriOptions[ad_scope.row.pivot.ori] }} <br/>
+                          尺寸：{{ ad_scope.row.pivot.screen }}%
+                        </span>
                       </template>
                     </el-table-column>
                   </template>
+
                   <el-table-column
-                    label="开始时间"
-                    min-width="50">
+                    label="素材投放时间"
+                    v-if="scope.row.ad_plan.tmode === 'hours'"
+                    min-width="100">
                     <template slot-scope="ad_scope">
+                      <span style="color: #67C23A"><i class="el-icon-rank"></i></span>
+                      <span v-if="ad_scope.row.pivot">
+                        {{ (ad_scope.row.pivot.shm).toString().substring(ad_scope.row.pivot.shm.toString().length-2) }}
+                      </span>
+                      至
+                      <span v-if="ad_scope.row.pivot">
+                        {{ (ad_scope.row.pivot.ehm).toString().substring(ad_scope.row.pivot.ehm.toString().length-2) }}
+                      </span>
+                      分
+                    </template>
+                  </el-table-column>
+
+                  <el-table-column
+                    label="素材投放时间"
+                    v-else
+                    min-width="130">
+                    <template
+                      slot-scope="ad_scope">
+                      <span style="color: #67C23A"><i class="el-icon-time"></i></span>
                       <span v-if="ad_scope.row.pivot">
                         {{ ( (Array(4).join('0') + ad_scope.row.pivot.shm).slice(-4)).substring(0,2) + ":"
                         + ( (Array(4).join('0') + ad_scope.row.pivot.shm).slice(-4)).substring(2) }}
+                      </span>
+                      至
+                      <span v-if="ad_scope.row.pivot">
+                        {{ ( (Array(4).join('0') + ad_scope.row.pivot.ehm).slice(-4)).substring(0,2) + ":"
+                        + ( (Array(4).join('0') + ad_scope.row.pivot.ehm).slice(-4)).substring(2) }}
                       </span>
                     </template>
                   </el-table-column>
 
                   <el-table-column
-                    label="结束时间"
-                    min-width="50">
+                    label="倒计时"
+                    min-width="80">
                     <template slot-scope="ad_scope">
                       <span v-if="ad_scope.row.pivot">
-                        {{ ( (Array(4).join('0') + ad_scope.row.pivot.ehm).slice(-4)).substring(0,2) + ":"
-                        + ( (Array(4).join('0') + ad_scope.row.pivot.ehm).slice(-4)).substring(2) }}
+                        {{ ad_scope.row.pivot.cdshow ?'开启':'关闭' }}<br>
+                        {{ ad_scope.row.pivot.ktime ? ad_scope.row.pivot.ktime + '秒' : '默认时长'}}
                       </span>
+                    </template>
+                  </el-table-column>
+
+                  <el-table-column
+                    label="状态"
+                    min-width="65">
+                    <template slot-scope="ad_scope">
+                      <span>{{ ad_scope.row.pivot.visiable === 1 ? '运营中' : '下架' }}</span>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -656,7 +675,29 @@
         adLaunchList: [],
         selectAll: [],
         editVisible: false,
-        slectedLength: 0
+        slectedLength: 0,
+
+        modeOptions: {
+          'fullscreen': '全屏显示',
+          'unmanned': '无人互动',
+          'qrcode': '二维码页面',
+          'qrcode': '二维码页',
+          'floating': '浮窗显示',
+        },
+
+        oriOptions: {
+          'center': '居中',
+          'top': '顶部居中',
+          'bottom': '底部居中',
+          'left_top': '左上角',
+          'left': '左侧居中',
+          'left_bottom': '左下角',
+          'right_top': '右上角',
+          'right': '右侧居中',
+          'right_bottom': '右下角',
+          'center': '居中',
+        }
+
       }
     },
     created() {

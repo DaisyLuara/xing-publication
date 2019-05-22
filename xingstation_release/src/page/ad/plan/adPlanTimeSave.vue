@@ -55,12 +55,12 @@
 
         <template v-if="adPlan.type === 'program'">
           <el-form-item
-            :rules="[{ required: true, message: '请选择模式', trigger: 'submit',type: 'string'}]"
-            label="模式"
+            :rules="[{ required: true, message: '请选择显示模式', trigger: 'submit',type: 'string'}]"
+            label="素材显示模式"
             prop="mode">
             <el-select 
               v-model="adPlanTimeForm.mode" 
-              placeholder="请选择模式">
+              placeholder="请选择显示模式">
               <el-option
                 v-for="item in modeOptions"
                 :key="item.value"
@@ -68,33 +68,60 @@
                 :value="item.value"/>
             </el-select>
           </el-form-item>
-          <el-form-item
-            :rules="[{ required: true, message: '请选择位置', trigger: 'submit',type: 'string'}]"
-            label="位置"
-            prop="ori">
-            <el-select 
-              v-model="adPlanTimeForm.ori" 
-              placeholder="请选择位置">
-              <el-option
-                v-for="item in oriOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"/>
-            </el-select>
-          </el-form-item>
-          <el-form-item
-            :rules="[{ required: true, message: '请填入尺寸', trigger: 'submit',type: 'number'}]"
-            label="尺寸"
-            prop="screen">
-            <el-input-number
-              v-model="adPlanTimeForm.screen"
-              :min="1"
-              :max="100"
-              controls-position="right"/>
-            %
-          </el-form-item>
+          <template v-if="adPlanTimeForm.mode !== 'fullscreen'">
+            <el-form-item
+              :rules="[{ required: true, message: '请选择素材显示位置', trigger: 'submit',type: 'string'}]"
+              label="素材显示位置"
+              prop="ori">
+              <el-select
+                v-model="adPlanTimeForm.ori"
+                placeholder="请选择素材显示位置">
+                <el-option
+                  v-for="item in oriOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"/>
+              </el-select>
+            </el-form-item>
+            <el-form-item
+              :rules="[{ required: true, message: '请填入素材显示尺寸', trigger: 'submit',type: 'number'}]"
+              label="素材显示尺寸"
+              prop="screen">
+              <el-input-number
+                v-model="adPlanTimeForm.screen"
+                :min="1"
+                :max="100"
+                controls-position="right"/>
+              %
+            </el-form-item>
+          </template>
         </template>
 
+        <el-form-item
+          :rules="[{ required: true, message: '请选择', trigger: 'submit',type: 'number'}]"
+          label="素材播放"
+          prop="cdshow">
+          <el-radio
+            v-model="adPlanTimeForm.play"
+            :label="1">自定义时长
+          </el-radio>
+          <el-radio
+            v-model="adPlanTimeForm.play"
+            :label="0">默认时长
+          </el-radio>
+        </el-form-item>
+
+        <el-form-item
+          v-if="adPlanTimeForm.play"
+          :rules="[{ required: true, message: '请填入素材播放时长', trigger: 'submit',type: 'number'}]"
+          label="素材播放时长"
+          prop="ktime">
+          <el-input-number
+            v-model="adPlanTimeForm.ktime"
+            :min="0"
+            controls-position="right"/>
+          秒
+        </el-form-item>
         <el-form-item
           :rules="[{ required: true, message: '请选择倒计时', trigger: 'submit',type: 'number'}]"
           label="倒计时"
@@ -108,34 +135,23 @@
             :label="1">开启
           </el-radio>
         </el-form-item>
+
         <el-form-item
-          :rules="[{ required: true, message: '请填入显示', trigger: 'submit',type: 'number'}]"
-          label="显示"
-          prop="ktime">
-          <el-input-number
-            v-model="adPlanTimeForm.ktime"
-            :min="1"
-            controls-position="right"/>
-          秒
-        </el-form-item>
-        <el-form-item
-          label="开始时间"
-          prop="shm">
+          label="素材投放时间">
           <el-time-picker
             v-model="adPlanTimeForm.shm"
-            format="HH:mm"
-            value-format="HH:mm"
+            :format="time_format"
+            :value-format="time_format"
             placeholder="选择开始时间"/>
-        </el-form-item>
-        <el-form-item
-          label="结束时间"
-          prop="ehm">
+          至
           <el-time-picker
             v-model="adPlanTimeForm.ehm"
-            format="HH:mm"
-            value-format="HH:mm"
+            :format="time_format"
+            :value-format="time_format"
             placeholder="选择结束时间"/>
+          <span v-if="adPlan.tmode === 'hours'"> 分 </span>
         </el-form-item>
+
         <el-form-item
           :rules="[{ required: true, message: '请选择状态', trigger: 'submit'}]"
           label="状态"
@@ -147,15 +163,9 @@
             v-model="adPlanTimeForm.visiable" 
             :label="0">下架</el-radio>
         </el-form-item>
-        <!--<el-form-item-->
-        <!--:rules="[{ required: true, message: '请选择唯一性', trigger: 'submit'}]"-->
-        <!--label="唯一"-->
-        <!--prop="only">-->
-        <!--<el-radio v-model="adPlanTimeForm.only" :label="1">是</el-radio>-->
-        <!--<el-radio v-model="adPlanTimeForm.only" :label="0">否</el-radio>-->
-        <!--</el-form-item>-->
 
         <el-form-item>
+          <el-button @click="historyBack">返回</el-button>
           <el-button
             type="primary"
             @click="submit('adPlanTimeForm')">完成
@@ -173,6 +183,7 @@
     getAdPlanDetail,
     getSearchAdvertisementList,
     getAdPlanTime,
+    historyBack
   } from 'service'
 
   import {
@@ -204,6 +215,7 @@
     },
     data() {
       return {
+        time_format: "HH:mm",
         planTimeId: null,
         planId: null,
         adPlan: [],
@@ -221,6 +233,7 @@
           ori: 'center',
           screen: 100,
           cdshow: 1,
+          play: 0,
           ktime: 15,
           visiable: 1,
           only: 0,
@@ -235,6 +248,10 @@
           {
             'label': '无人互动',
             'value': 'unmanned'
+          },
+          {
+            'label': '资源加载页',
+            'value': 'init'
           },
           {
             'label': '二维码页面',
@@ -312,8 +329,24 @@
         //获取AdPlan 详情
         return getAdPlanTime(this, args, this.planTimeId)
           .then(response => {
-            this.adPlanTimeForm = response;
             this.adPlan = response.ad_plan;
+
+            let adPlanTimeForm = response;
+            if(adPlanTimeForm.ktime){
+              adPlanTimeForm.play = 1;
+            } else {
+              adPlanTimeForm.play = 0;
+            }
+            if(this.adPlan.tmode === 'hours'){
+              this.time_format = "mm";
+              adPlanTimeForm.shm = adPlanTimeForm.shm.toString().substring( adPlanTimeForm.shm.toString().length - 2);
+              adPlanTimeForm.ehm = adPlanTimeForm.ehm.toString().substring( adPlanTimeForm.ehm.toString().length - 2);
+            } else {
+              this.time_format = "HH:mm";
+            }
+
+            this.adPlanTimeForm = adPlanTimeForm;
+
             this.getSearchAdList();
           })
           .catch(error => {
@@ -326,6 +359,13 @@
         return getAdPlanDetail(this, {}, this.planId)
           .then(response => {
             this.adPlan = response;
+            if(this.adPlan.tmode === 'hours'){
+              this.time_format = "mm";
+              this.adPlanTimeForm.shm = "00";
+              this.adPlanTimeForm.ehm = "59";
+            } else {
+              this.time_format = "HH:mm";
+            }
             this.getSearchAdList();
           })
           .catch(error => {
@@ -352,6 +392,20 @@
         this.$refs[formName].validate(valid => {
           if (valid) {
             this.setting.loading = true
+
+            if (this.adPlanTimeForm.mode === 'fullscreen') {
+              this.adPlanTimeForm.ori = "center";
+              this.adPlanTimeForm.screen = 100;
+            }
+            if (this.adPlanTimeForm.play === 0) {
+              this.adPlanTimeForm.ktime = 0;
+            }
+
+            if (this.adPlan.tmode === 'hours') {
+              this.adPlanTimeForm.shm = '00:' + this.adPlanTimeForm.shm.substring(this.adPlanTimeForm.shm.length - 2);
+              this.adPlanTimeForm.ehm = '00:' + this.adPlanTimeForm.ehm.substring(this.adPlanTimeForm.ehm.length - 2);
+            }
+
             let args = {
               atiid: this.adPlan.id,
               aid: this.adPlanTimeForm.aid,
@@ -412,6 +466,10 @@
             return
           }
         })
+      },
+
+      historyBack() {
+        historyBack();
       }
     }
   }
@@ -429,6 +487,10 @@
       .el-input,
       .el-date-editor {
         width: 380px;
+      }
+
+      .el-date-editor {
+        width: 150px;
       }
 
       .item-list {
