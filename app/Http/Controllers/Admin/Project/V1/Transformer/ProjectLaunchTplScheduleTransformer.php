@@ -21,7 +21,7 @@ class ProjectLaunchTplScheduleTransformer extends TransformerAbstract
                 'id' => $project->id,
                 'name' => $project->name,
                 'icon' => $project->icon,
-                'versionname' => $project->versionname
+                'versionname' => $project->versionname,
             ],
             'skin' => [
                 'bid' => $skin->bid,
@@ -31,6 +31,7 @@ class ProjectLaunchTplScheduleTransformer extends TransformerAbstract
             ],
             'date_start' => $this->formatTime($projectLaunchTplSchedule->shm),
             'date_end' => $this->formatTime($projectLaunchTplSchedule->ehm),
+            'created_at' => $projectLaunchTplSchedule->date
         ];
     }
 
