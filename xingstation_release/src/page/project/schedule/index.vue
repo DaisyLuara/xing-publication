@@ -21,185 +21,13 @@
       </div>
     </div>
     <!-- 模板排期列表 -->
-    <!-- <el-collapse 
-      v-model="activeNames" 
-      accordion>
-      <el-collapse-item 
-        v-for="(item, index) in tableData" 
-        :name="index" 
-        :key="item.id" >
-        <template 
-          slot="title">
-          {{ item.name }}
-          <el-button 
-            type="primary" 
-            icon="el-icon-edit" 
-            circle 
-            size="mini" 
-            @click="modifyTemplateName(item)"/>
-        </template>
-        <div class="actions-wrap">
-          <span class="label">
-            数目: {{ item.schedules.data.length }}
-          </span>
-          <div>
-            <el-button 
-              size="small" 
-              @click="addSchedule(index)">增加</el-button>
-          </div>
-        </div>
-        <el-table 
-          :data="item.schedules.data" 
-          style="width: 100%">
-          <el-table-column
-            prop=""
-            label="节目名称"
-            min-width="150"
-          >
-            <template 
-              slot-scope="scope">
-              <el-select 
-                v-model="scope.row.project.name" 
-                :loading="searchLoading" 
-                :remote-method="getProject"
-                filterable 
-                placeholder="请搜索"
-                remote 
-                clearable 
-                style="width: 180px;"
-                @change="projectChangeHandle(index, scope.$index, scope.row.project.name)" >
-                <el-option
-                  v-for="item in projectList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"/>
-              </el-select>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="icon"
-            label="节目图标"
-            width="100"
-          >
-            <template 
-              slot-scope="scope">
-              <img 
-                :src="scope.row.project.icon" 
-                style="width: 50%">
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="stime"
-            label="开始时间"
-            min-width="120"
-          >
-            <template 
-              slot-scope="scope">
-              <el-time-select
-                v-model="scope.row.date_start"
-                :picker-options="{
-                  start: '00:00',
-                  step: '00:01',
-                  end: '23:59'
-                }"
-                placeholder="开始时间"
-                format="HH:mm"
-                style="width: 150px"/>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="etime"
-            label="结束时间"
-            min-width="120"
-          >
-            <template 
-              slot-scope="scope">
-              <el-time-select
-                v-model="scope.row.date_end"
-                :picker-options="{
-                  start: '00:00',
-                  step: '00:01',
-                  end: '23:59',
-                  minTime: scope.row.date_start
-                }"
-                placeholder="结束时间"
-                format="HH:mm"
-                style="width: 150px"/>
-            </template>
-          </el-table-column>
-          <el-table-column
-            :show-overflow-tooltip="true"
-            prop="time"
-            label="时间"
-            min-width="100"
-          >
-            <template 
-              slot-scope="scope">
-              {{ scope.row.project.created_at }}
-            </template>
-          </el-table-column>
-          <el-table-column 
-            label="操作" 
-            min-width="100">
-            <template 
-              slot-scope="scope">
-              <el-button 
-                v-if="scope.row.project.icon"
-                size="mini"
-                type="warning"
-                @click="editSchedule(scope.row)">编辑</el-button>
-              <el-button 
-                v-if="!scope.row.project.icon" 
-                size="mini" 
-                type="danger" 
-                icon="el-icon-delete" 
-                @click="deleteAddSchedule(index, scope.$index, scope.row)"/>
-              <el-button 
-                v-if="!scope.row.project.icon" 
-                size="mini" 
-                style="background-color: #8bc34a;border-color: #8bc34a; color: #fff;"
-                @click="saveSchedule(scope.row)">保存</el-button>
-            </template>
-          </el-table-column>
-        </el-table> 
-      </el-collapse-item>
-    </el-collapse>-->
     <el-table :data="tableData" style="width: 100%">
-      <el-table-column type="expand">
-        <template slot-scope="scope">
-          <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="ID:">
-              <span>{{ scope.row.id }}</span>
-            </el-form-item>
-            <el-form-item label="模板名称:">
-              <span>{{ scope.row.name }}</span>
-            </el-form-item>
-            <el-form-item label="公司名称:">
-              <span>{{ scope.row.company.name }}</span>
-            </el-form-item>
-            <el-form-item label="更新时间:">
-              <span>{{ scope.row.updated_at }}</span>
-            </el-form-item>
-          </el-form>
-        </template>
-      </el-table-column>
       <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="100"/>
-      <el-table-column :show-overflow-tooltip="true" prop="name" label="模板名称" min-width="130">
-        <template slot-scope="scope">{{ scope.row.name }}</template>
-      </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" prop="company" label="公司名称" min-width="130">
-        <template slot-scope="scope">{{ scope.row.company.name }}</template>
-      </el-table-column>
-      <el-table-column
-        :show-overflow-tooltip="true"
-        prop="updated_at"
-        label="更新时间"
-        min-width="100"
-      />
+      <el-table-column :show-overflow-tooltip="true" prop="name" label="模版名称" min-width="130"/>
       <el-table-column label="操作" min-width="100">
         <template slot-scope="scope">
-          <el-button size="small" type="warning" @click="modifyTemplate(scope.row)">编辑</el-button>
-          <el-button size="small" @click="policy(scope.row)">子条目</el-button>
+          <el-button size="small" type="warning" @click="modifyTemplateName(scope.row)">编辑</el-button>
+          <el-button size="small" @click="schedule(scope.row)">子条目</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -249,7 +77,7 @@ import {
 import {
   modifySchedule,
   saveSchedule,
-  getScheduleList,
+  getTemplateList,
   saveTemplate,
   getSearchModuleList,
   getSearchProjectList,
@@ -302,7 +130,7 @@ export default {
   },
   created() {
     this.getModuleList();
-    this.getScheduleList();
+    this.getTemplateList();
   },
   methods: {
     modifyTemplateName(item) {
@@ -314,6 +142,14 @@ export default {
         name: name
       };
       this.templateVisible = true;
+    },
+    schedule(data) {
+      this.$router.push({
+        path: "/project/template/schedule",
+        query: {
+          pid: data.id
+        }
+      });
     },
     projectChangeHandle(pIndex, index, val) {
       this.tableData[pIndex].schedules.data[index].project.id = val;
@@ -338,7 +174,7 @@ export default {
               message: "修改成功",
               type: "success"
             });
-            this.getScheduleList();
+            this.getTemplateList();
           })
           .catch(err => {
             console.log(err);
@@ -372,7 +208,7 @@ export default {
               message: "添加成功",
               type: "success"
             });
-            this.getScheduleList();
+            this.getTemplateList();
           })
           .catch(err => {
             console.log(err);
@@ -395,14 +231,16 @@ export default {
     deleteAddSchedule(pIndex, index, r) {
       this.tableData[pIndex].schedules.data.splice(index, 1);
     },
-    getScheduleList() {
+    getTemplateList() {
       this.setting.loading = true;
       let args = {
         page: this.pagination.currentPage,
-        include: "schedules.project",
         name: this.searchForm.name
       };
-      return getScheduleList(this, args)
+      if (this.searchForm.name === "") {
+        delete args.name;
+      }
+      return getTemplateList(this, args)
         .then(response => {
           this.tableData = response.data;
           this.pagination.total = response.meta.pagination.total;
@@ -480,7 +318,7 @@ export default {
                   type: "success"
                 });
                 this.templateVisible = false;
-                this.getScheduleList();
+                this.getTemplateList();
               })
               .catch(err => {
                 this.templateVisible = false;
@@ -494,7 +332,7 @@ export default {
                   type: "success"
                 });
                 this.templateVisible = false;
-                this.getScheduleList();
+                this.getTemplateList();
               })
               .catch(err => {
                 this.templateVisible = false;
@@ -506,11 +344,11 @@ export default {
     },
     search() {
       this.pagination.currentPage = 1;
-      this.getScheduleList();
+      this.getTemplateList();
     },
     changePage(currentPage) {
       this.pagination.currentPage = currentPage;
-      this.getScheduleList();
+      this.getTemplateList();
     }
   }
 };

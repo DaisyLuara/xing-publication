@@ -374,6 +374,7 @@ export default {
             delete args.parent_id;
           }
           if (this.permsId) {
+            delete args.parent_id;
             savePermission(this, args, this.permsId)
               .then(res => {
                 this.$message({
@@ -486,7 +487,7 @@ export default {
       let args = {
         name: data.name,
         display_name: data.display_name,
-        parent_id: data.parent_id
+        // parent_id: data.parent_id
       };
       savePermission(this, args, data.id)
         .then(res => {
