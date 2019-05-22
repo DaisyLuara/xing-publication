@@ -22,9 +22,9 @@ $api->version('v1', [
             $api->post('projects/tpl', ['middleware' => ['permission:project.template.create'], 'uses' => 'ProjectLaunchTplController@store']);
             $api->patch('projects/tpl/{tpl}', ['middleware' => ['permission:project.template.update'], 'uses' => 'ProjectLaunchTplController@update']);
             //排期
-            $api->get('projects/tpl/{tpl}/schedules', ['middleware' => ['permission:project.schedule.read'],'uses'=>'ProjectLaunchTplScheduleController@index']);
-            $api->post('projects/tpl/{tpl}/schedules', ['middleware' => ['permission:project.schedule.create'], 'uses' => 'ProjectLaunchTplScheduleController@store']);
-            $api->patch('projects/tpl/{tpl}/schedules/{schedule}', ['middleware' => ['permission:project.schedule.update'], 'uses' => 'ProjectLaunchTplScheduleController@update']);
+            $api->get('projects/tpl/{tpl}/schedules', ['middleware' => ['permission:project.template.childRead'],'uses'=>'ProjectLaunchTplScheduleController@index']);
+            $api->post('projects/tpl/{tpl}/schedules', ['middleware' => ['permission:project.template.childCreate'], 'uses' => 'ProjectLaunchTplScheduleController@store']);
+            $api->patch('projects/tpl/{tpl}/schedules/{schedule}', ['middleware' => ['permission:project.template.childUpdate'], 'uses' => 'ProjectLaunchTplScheduleController@update']);
 
             //节目列表
             $api->get('projects', ['middleware' => ['permission:project.list.read'], 'uses' => 'ProjectController@index']);
