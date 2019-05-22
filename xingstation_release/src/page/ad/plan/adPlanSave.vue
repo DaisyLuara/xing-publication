@@ -16,13 +16,13 @@
 
         <el-form-item>
           <h3 class="item-title">
-            <i class="el-icon-star-on"></i>
-            <i class="el-icon-star-on"></i>
-            <i class="el-icon-star-on"></i>
+            <i class="el-icon-star-on"/>
+            <i class="el-icon-star-on"/>
+            <i class="el-icon-star-on"/>
             广告模版
-            <i class="el-icon-star-on"></i>
-            <i class="el-icon-star-on"></i>
-            <i class="el-icon-star-on"></i>
+            <i class="el-icon-star-on"/>
+            <i class="el-icon-star-on"/>
+            <i class="el-icon-star-on"/>
           </h3>
         </el-form-item>
 
@@ -143,13 +143,13 @@
         <template v-if="!isItem">
           <el-form-item>
             <h3 class="item-title">
-              <i class="el-icon-star-on"></i>
-              <i class="el-icon-star-on"></i>
-              <i class="el-icon-star-on"></i>
+              <i class="el-icon-star-on"/>
+              <i class="el-icon-star-on"/>
+              <i class="el-icon-star-on"/>
               排期细节
-              <i class="el-icon-star-on"></i>
-              <i class="el-icon-star-on"></i>
-              <i class="el-icon-star-on"></i>
+              <i class="el-icon-star-on"/>
+              <i class="el-icon-star-on"/>
+              <i class="el-icon-star-on"/>
             </h3>
           </el-form-item>
           <template v-if="adPlanForm.type === 'program'">

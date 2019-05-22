@@ -137,10 +137,10 @@
                 </el-form-item>
                 <el-form-item
                   label="图标">
-                    <a
-                      :href="scope.row.icon"
-                      target="_blank"
-                      style="color: blue">查看</a>
+                  <a
+                    :href="scope.row.icon"
+                    target="_blank"
+                    style="color: blue">查看</a>
                 </el-form-item>
                 <el-form-item
                   label="广告模版">
@@ -152,7 +152,7 @@
                 </el-form-item>
                 <el-form-item
                   label="播放模式">
-                  <span>{{ scope.row.tmode_text}}</span>
+                  <span>{{ scope.row.tmode_text }}</span>
                 </el-form-item>
                 <el-form-item
                   label="创建人">
@@ -197,7 +197,7 @@
                     min-width="100">
                     <template slot-scope="ad_scope">
                       <span>{{ ad_scope.row.name }}</span>
-                      <br/>
+                      <br>
                       <span>
                         <img 
                           :src="(ad_scope.row.type === 'static' || ad_scope.row.type === 'gif' ) ? ad_scope.row.link : ad_scope.row.img"
@@ -214,7 +214,7 @@
                         :href="ad_scope.row.link"
                         target="_blank"
                         style="color: blue">
-                        <i class="el-icon-download"></i>
+                        <i class="el-icon-download"/>
                         {{ ad_scope.row.size }}M
                       </a>
                     </template>
@@ -233,8 +233,8 @@
                       min-width="130">
                       <template slot-scope="ad_scope">
                         <span v-if="ad_scope.row.pivot">
-                          模式：{{ modeOptions[ad_scope.row.pivot.mode] }}<br/>
-                          位置：{{ oriOptions[ad_scope.row.pivot.ori] }} <br/>
+                          模式：{{ modeOptions[ad_scope.row.pivot.mode] }}<br>
+                          位置：{{ oriOptions[ad_scope.row.pivot.ori] }} <br>
                           尺寸：{{ ad_scope.row.pivot.screen }}%
                         </span>
                       </template>
@@ -242,11 +242,11 @@
                   </template>
 
                   <el-table-column
-                    label="素材投放时间"
                     v-if="scope.row.tmode === 'hours'"
+                    label="素材投放时间"
                     min-width="100">
                     <template slot-scope="ad_scope">
-                      <span style="color: #67C23A"><i class="el-icon-rank"></i></span>
+                      <span style="color: #67C23A"><i class="el-icon-rank"/></span>
                       <span v-if="ad_scope.row.pivot">
                         {{ (ad_scope.row.pivot.shm).toString().substring(ad_scope.row.pivot.shm.toString().length-2) }}
                       </span>
@@ -259,12 +259,12 @@
                   </el-table-column>
 
                   <el-table-column
-                    label="素材投放时间"
                     v-else
+                    label="素材投放时间"
                     min-width="130">
                     <template
                       slot-scope="ad_scope">
-                      <span style="color: #67C23A"><i class="el-icon-time"></i></span>
+                      <span style="color: #67C23A"><i class="el-icon-time"/></span>
                       <span v-if="ad_scope.row.pivot">
                         {{ ( (Array(4).join('0') + ad_scope.row.pivot.shm).slice(-4)).substring(0,2) + ":"
                         + ( (Array(4).join('0') + ad_scope.row.pivot.shm).slice(-4)).substring(2) }}
@@ -283,7 +283,7 @@
                     <template slot-scope="ad_scope">
                       <span v-if="ad_scope.row.pivot">
                         {{ ad_scope.row.pivot.cdshow ?'开启':'关闭' }}<br>
-                        {{ ad_scope.row.pivot.ktime ? ad_scope.row.pivot.ktime + '秒' : '默认时长'}}
+                        {{ ad_scope.row.pivot.ktime ? ad_scope.row.pivot.ktime + '秒' : '默认时长' }}
                       </span>
                     </template>
                   </el-table-column>

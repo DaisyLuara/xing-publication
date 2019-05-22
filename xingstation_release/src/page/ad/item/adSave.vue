@@ -35,12 +35,12 @@
           label="广告模版"
           prop="ad_plan_id">
           <el-select
-            @change="adPlanChangeHandle"
             v-model="adForm.ad_plan_id"
             :loading="searchLoading"
             filterable
             placeholder="请搜索"
-            clearable>
+            clearable
+            @change="adPlanChangeHandle">
             <el-option
               v-for="item in adPlanList"
               :key="item.id"

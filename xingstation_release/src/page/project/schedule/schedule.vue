@@ -11,7 +11,7 @@
         <el-button 
           size="small" 
           type="success" 
-          @click="addPolicy">新增子策略</el-button>
+          @click="addPolicy">新增排期</el-button>
       </div>
     </div>
     <!-- 子条目列表 -->
@@ -27,17 +27,31 @@
             <el-form-item label="ID:">
               <span>{{ scope.row.id }}</span>
             </el-form-item>
-            <el-form-item label="优惠券名称:">
-              <span>{{ scope.row.name }}</span>
+            <el-form-item label="节目名称:">
+              <span>{{ scope.row.project.name }}</span>
             </el-form-item>
-            <el-form-item label="公司名称:">
-              <span>{{ scope.row.company.name }}</span>
+            <el-form-item label="节目图标:">
+              <span>
+                <img 
+                  :src="scope.row.project.icon" 
+                  style="width:20%;padding:10px">
+              </span>
             </el-form-item>
-            <el-form-item label="概率:">
-              <span>{{ scope.row.pivot ? scope.row.pivot.rate:'' }}</span>
+            <el-form-item label="皮肤名称:">
+              <span>{{ scope.row.skin ? scope.row.skin.name:'' }}</span>
             </el-form-item>
-            <el-form-item label="更新时间:">
-              <span>{{ scope.row.updated_at }}</span>
+            <el-form-item label="皮肤图标:">
+              <span>
+                <img 
+                  :src="scope.row.skin.icon" 
+                  style="width:40%;padding:10px">
+              </span>
+            </el-form-item>
+            <el-form-item label="开始时间:">
+              <span>{{ scope.row.date_start }}</span>
+            </el-form-item>
+            <el-form-item label="结束时间:">
+              <span>{{ scope.row.date_end }}</span>
             </el-form-item>
           </el-form>
         </template>
@@ -50,30 +64,49 @@
       <el-table-column 
         :show-overflow-tooltip="true" 
         prop="name" 
-        label="优惠券名称" 
+        label="节目名称" 
         min-width="130">
-        <template slot-scope="scope">{{ scope.row.name }}</template>
+        <template slot-scope="scope">{{ scope.row.project.name }}</template>
+      </el-table-column>
+      <el-table-column 
+        prop="project_icon" 
+        label="节目图标" 
+        width="130">
+        <template slot-scope="scope">
+          <img 
+            :src="scope.row.project.icon" 
+            style="width:100%">
+        </template>
       </el-table-column>
       <el-table-column 
         :show-overflow-tooltip="true" 
-        prop="company" 
-        label="公司名称" 
+        prop="name" 
+        label="皮肤名称" 
         min-width="130">
-        <template slot-scope="scope">{{ scope.row.company.name }}</template>
+        <template slot-scope="scope">{{ scope.row.skin? scope.row.skin.name:'' }}</template>
       </el-table-column>
       <el-table-column 
         :show-overflow-tooltip="true" 
-        prop="rate" 
-        label="概率" 
-        min-width="100">
-        <template slot-scope="scope">{{ scope.row.pivot.rate }} %</template>
+        prop="skin_icon" 
+        label="皮肤图标" 
+        width="130">
+        <template slot-scope="scope">
+          <img 
+            :src="scope.row.skin.icon" 
+            style="width:100%">
+        </template>
       </el-table-column>
       <el-table-column
         :show-overflow-tooltip="true"
-        prop="updated_at"
-        label="更新时间"
-        min-width="120"
+        prop="date_start"
+        label="开始时间"
+        min-width="100"
       />
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        prop="date_end" 
+        label="结束时间" 
+        min-width="100"/>
       <el-table-column 
         label="操作" 
         min-width="120">
@@ -82,9 +115,6 @@
             size="small" 
             type="warning" 
             @click="editPolicy(scope.row)">编辑</el-button>
-          <el-button 
-            size="small" 
-            @click="deleteBatch(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -113,7 +143,7 @@ import {
   MessageBox,
   Input
 } from "element-ui";
-import { getCouponPoliciesList, deleteBatchPolicy } from "service";
+import { getScheduleList } from "service";
 
 export default {
   components: {
@@ -139,76 +169,36 @@ export default {
         loading: false,
         loadingText: "拼命加载中"
       },
-      pid: null,
-      cid: null
+      pid: null
     };
   },
   created() {
     this.pid = this.$route.query.pid;
-    this.cid = this.$route.query.cid;
-    this.getCouponPoliciesList();
+    this.getScheduleList();
   },
   methods: {
-    deleteBatch(row) {
-      let id = row.id;
-      MessageBox.confirm("确认删除选中策略条目?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          this.setting.loadingText = "拼命加载中";
-          this.setting.loading = true;
-          deleteBatchPolicy(this, this.pid, id)
-            .then(response => {
-              this.setting.loading = false;
-              this.$message({
-                type: "success",
-                message: "删除成功！"
-              });
-              this.pagination.currentPage = 1;
-              this.getCouponPoliciesList();
-            })
-            .catch(error => {
-              this.setting.loading = false;
-              this.$message({
-                type: "success",
-                message: err.response.data.message
-              });
-            });
-        })
-        .catch(e => {
-          this.$message({
-            type: "info",
-            message: "取消删除！"
-          });
-        });
-    },
     editPolicy(row) {
       this.$router.push({
-        path: "/prize/strategy/edit/" + row.id,
+        path: "/project/template/edit/" + row.id,
         query: {
-          cid: this.cid,
           pid: this.pid
         }
       });
     },
     addPolicy() {
       this.$router.push({
-        path: "/prize/strategy/add",
+        path: "/project/template/add",
         query: {
-          cid: this.cid,
           pid: this.pid
         }
       });
     },
-    getCouponPoliciesList() {
+    getScheduleList() {
       this.setting.loading = true;
       let args = {
-        page: this.pagination.currentPage,
-        include: "company"
+        page: this.pagination.currentPage
       };
-      return getCouponPoliciesList(this, this.pid, args)
+      return getScheduleList(this, this.pid, args)
         .then(response => {
           this.tableData = response.data;
           this.pagination.total = response.meta.pagination.total;
@@ -222,11 +212,11 @@ export default {
 
     search() {
       this.pagination.currentPage = 1;
-      this.getCouponPoliciesList();
+      this.getScheduleList();
     },
     changePage(currentPage) {
       this.pagination.currentPage = currentPage;
-      this.getCouponPoliciesList();
+      this.getScheduleList();
     }
   }
 };
