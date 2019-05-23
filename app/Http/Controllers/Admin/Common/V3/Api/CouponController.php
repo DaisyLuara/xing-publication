@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Admin\Common\V3\Api;
 use App\Http\Controllers\Admin\Common\V1\Transformer\CouponTransformer;
 use App\Http\Controllers\Admin\Common\V2\Request\UserCouponRequest;
 use App\Http\Controllers\Admin\Common\V2\Request\CouponRequest;
+use App\Http\Controllers\Admin\User\V1\Models\ArMemberSession;
 use App\Http\Controllers\Admin\Launch\V1\Models\PolicyLaunch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
 use App\Traits\CouponBatch as CouponBatchTrait;
 use App\Http\Controllers\Controller;
+use App\Models\WeChatUser;
 use Carbon\Carbon;
 use Log;
 use DB;
@@ -25,6 +27,7 @@ class CouponController extends Controller
      */
     public function store(CouponRequest $request)
     {
+        /** @var ArMemberSession|WeChatUser $user */
         $user = $this->getUser($request);
         $userQuerySql = $this->getUserQuerySql($request, $user);
 
@@ -75,49 +78,13 @@ class CouponController extends Controller
             abort_if($coupons->count() >= $couponBatch->people_max_get, 500, '优惠券每人最多领取' . $couponBatch->people_max_get . '张');
         }
 
-        $code = uniqid('', false);
-
-        //微信卡券二维码
-        $wechatCouponBatch = $couponBatch->wechat;
-        $prefix = 'h5_code_';
-
-        //券的有效期
-        $couponValidPeriod = $this->getCouponValidPeriod($couponBatch);
+        //生成券信息
+        $couponData = $this->generateCouponData($couponBatch, $request, $user);
 
         DB::beginTransaction();
         try {
-            if ($request->has('z')) {
-                $coupon = Coupon::query()->create([
-                    'code' => $code,
-                    'coupon_batch_id' => $couponBatchId,
-                    'status' => 3,
-                    'member_uid' => $user->uid,
-                    'qiniu_id' => $request->get('qiniu_id') ?? 0,
-                    'oid' => $request->get('oid'),
-                    'utm_source' => 1,
-                    'belong' => $request->get('belong') ?? '',
-                    'ser_timestamp' => $request->get('ser_timestamp') ?? null,
-                    'start_date' => $couponValidPeriod['start_date'],
-                    'end_date' => $couponValidPeriod['end_date'],
-                ]);
-            } else {
-                $coupon = Coupon::query()->create([
-                    'code' => $code,
-                    'coupon_batch_id' => $couponBatchId,
-                    'status' => 3,
-                    'wx_user_id' => $user->id,
-                    'qiniu_id' => $request->get('qiniu_id') ?? 0,
-                    'oid' => $request->get('oid'),
-                    'utm_source' => 1,
-                    'belong' => $request->get('belong') ?? '',
-                    'ser_timestamp' => $request->get('ser_timestamp') ?? null,
-                    'start_date' => $couponValidPeriod['start_date'],
-                    'end_date' => $couponValidPeriod['end_date'],
-                ]);
-
-            }
-
-            $coupon = $this->setCodeImageUrl($coupon, $prefix, $wechatCouponBatch, $request->get('code_type'));
+            $coupon = Coupon::query()->create($couponData);
+            $coupon = $this->setCodeImageUrl($coupon, $couponBatch, $request->get('code_type'));
 
             //不使用系统核销 领取优惠券后 ，自动减去库存
             if (!$couponBatch->write_off_status && !$couponBatch->pmg_status && !$couponBatch->pmg_status) {
@@ -171,10 +138,7 @@ class CouponController extends Controller
         abort_if(!$coupon, 204);
 
         //优惠券二维码
-        $wechatCouponBatch = CouponBatch::query()->findOrFail($coupon->coupon_batch_id)->wechat;
-        $prefix = 'h5_code_';
-
-        $coupon = $this->setCodeImageUrl($coupon, $prefix, $wechatCouponBatch, $request->get('code_type'));
+        $coupon = $this->setCodeImageUrl($coupon, $coupon->couponBatch, $request->get('code_type'));
 
         return $this->response->item($coupon, new CouponTransformer());
     }
