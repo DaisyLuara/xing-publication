@@ -412,6 +412,16 @@
                 message: "请选择素材投放时间",
                 type: 'error'
               })
+              return;
+            }
+
+            if(this.adPlanTimeForm.shm > this.adPlanTimeForm.ehm){
+              this.setting.loading = false
+              this.$message({
+                message: "素材投放时间的开始时间需小于结束时间",
+                type: 'error'
+              })
+              return;
             }
 
             if (this.adPlan.tmode === 'hours') {
