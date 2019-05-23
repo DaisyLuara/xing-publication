@@ -3,7 +3,7 @@
     <el-dialog 
       :visible.sync="panelVisible" 
       :before-close="cancel"
-      width="70%" 
+      width="80%" 
       @open="handleOpen()">
       <div slot="title">
         <span class="picture-panel__title">图片管理</span>
@@ -81,6 +81,7 @@
             <el-pagination
               :total="pagination.count"
               :page-size="pagination.limit"
+              :pager-count="2"
               :current-page.sync="pagination.page_num"
               layout="total, prev, pager, next, jumper"
               @current-change="changeCurrent"
