@@ -8,16 +8,15 @@
 
 namespace App\Traits;
 
+use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch as CouponBatchModel;
 use App\Http\Controllers\Admin\Coupon\V1\Models\UserCouponBatch;
 use App\Http\Controllers\Admin\Launch\V1\Models\PolicyLaunch;
-use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch as CouponBatchModel;
-use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
-use App\Http\Controllers\Admin\MallCoo\V1\Models\GameResult;
 use App\Http\Controllers\Admin\User\V1\Models\ArMemberSession;
 use App\Http\Controllers\Admin\WeChat\V1\Models\ThirdPartyUser;
-use App\Models\WeChatUser;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
 use Overtrue\EasySms\EasySms;
+use Illuminate\Http\Request;
+use App\Models\WeChatUser;
 use Carbon\Carbon;
 use DB;
 use Log;
@@ -63,7 +62,6 @@ trait CouponBatch
 
     public function getCouponBatch($couponBatchPolicies)
     {
-        /** @var \App\Http\Controllers\Api\V1\Coupon\Models\CouponBatch $targetCouponBatch */
         $targetCouponBatch = getRand($couponBatchPolicies);
 
         return CouponBatchModel::findOrFail($targetCouponBatch->coupon_batch_id);
@@ -131,15 +129,36 @@ trait CouponBatch
     }
 
     /**
+     * 获取券的有效期
+     * @param \App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch $couponBatch
+     * @return array
+     */
+    public function getCouponValidPeriod($couponBatch): array
+    {
+        if ($couponBatch->is_fixed_date) {
+            $date['start_date'] = Carbon::createFromTimeString($couponBatch->start_date);
+            $date['end_date'] = Carbon::createFromTimeString($couponBatch->end_date);
+        } else {
+            $date['start_date'] = Carbon::now()->addHours($couponBatch->delay_effective_day);
+            $date['end_date'] = Carbon::now()->addHours($couponBatch->delay_effective_day + $couponBatch->effective_day);
+        }
+
+        return $date;
+    }
+
+    /**
      * 设置券码url
      * @param Coupon $coupon
-     * @param string $prefix
-     * @param null $wechatCouponBatch
+     * @param \App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch $couponBatch
      * @param string $code_type
      * @return mixed
      */
-    public function setCodeImageUrl($coupon, $prefix, $wechatCouponBatch = null, $code_type = 'qrcode')
+    public function setCodeImageUrl($coupon, $couponBatch, $code_type = 'qrcode')
     {
+        //微信卡券二维码
+        $wechatCouponBatch = $couponBatch->wechat;
+        $prefix = 'h5_code_';
+
         if ($code_type === 'barcode') {
             $barcodeUrl = couponBarCode($coupon->code, 2, 180, $prefix);
             $coupon->setAttribute('barcode_url', $barcodeUrl);
@@ -156,7 +175,7 @@ trait CouponBatch
      * @param Coupon $coupon
      * @param int $wxUserId
      * @param int $marketid
-     * @return
+     * @return null
      * @throws \Overtrue\EasySms\Exceptions\InvalidArgumentException
      */
     private function sendCouponMsg($coupon, $wxUserId, $marketid)
@@ -201,10 +220,10 @@ trait CouponBatch
     /**
      *用户查询sql
      * @param Request $request
-     * @param $user
+     * @param ArMemberSession|WeChatUser $user
      * @return string
      */
-    public function getUserQuerySql($request, $user)
+    public function getUserQuerySql($request, $user): string
     {
         return $request->get('z') ? 'member_uid = ' . $user->uid : 'wx_user_id = ' . $user->id;
     }
@@ -213,9 +232,9 @@ trait CouponBatch
      * 生成用户券规则
      * @param Request $request
      * @param \App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch $couponBatch
-     * @param $user
+     * @param ArMemberSession|WeChatUser $user
      */
-    public function generateUserCouponBatch($request, $couponBatch, $user)
+    public function generateUserCouponBatch($request, $couponBatch, $user): void
     {
         if ($request->has('z')) {
             UserCouponBatch::query()->create([
@@ -231,6 +250,39 @@ trait CouponBatch
             'coupon_batch_id' => $couponBatch->id,
             'belong' => $request->get('belong'),
         ]);
+
+    }
+
+    /**
+     * 生成券信息
+     * @param \App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch $couponBatch
+     * @param Request $request
+     * @param ArMemberSession|WeChatUser $user
+     * @return array
+     */
+    public function generateCouponData($couponBatch, $request, $user): array
+    {
+        $code = uniqid('', false);
+
+        //券的有效期
+        $couponValidPeriod = $this->getCouponValidPeriod($couponBatch);
+
+        $data = [
+            'code' => $code,
+            'coupon_batch_id' => $couponBatch->id,
+            'status' => 3,
+            'qiniu_id' => $request->get('qiniu_id') ?? 0,
+            'oid' => $request->get('oid'),
+            'utm_source' => 1,
+            'belong' => $request->get('belong') ?? '',
+            'ser_timestamp' => $request->get('ser_timestamp'),
+            'start_date' => $couponValidPeriod['start_date'],
+            'end_date' => $couponValidPeriod['end_date'],
+        ];
+
+        $request->has('z') ? $data['member_uid'] = $user->uid : $data['wx_user_id'] = $user->id;
+
+        return $data;
 
     }
 }
