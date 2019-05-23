@@ -3,7 +3,7 @@
     <el-dialog 
       :visible.sync="panelVisible" 
       :before-close="cancel"
-      width="70%" 
+      width="90%" 
       @open="handleOpen()">
       <div slot="title">
         <span class="picture-panel__title">图片管理</span>
@@ -79,10 +79,12 @@
           <span class="image-type">仅支持jpg、jpeg、gif 、png四种格式, 大小为10M以内</span>
           <div class="picture-panel__page">
             <el-pagination
+              small
               :total="pagination.count"
               :page-size="pagination.limit"
+              :pager-count="5"
               :current-page.sync="pagination.page_num"
-              layout="total, prev, pager, next, jumper"
+              layout="total, prev, pager, next"
               @current-change="changeCurrent"
             />
           </div>
