@@ -42,7 +42,7 @@
           <el-select
             v-model="projectForm.default_bid"
             :loading="searchLoading"
-            placeholder="请选择节目"
+            placeholder="请选择节目皮肤"
             filterable
             clearable
           >
