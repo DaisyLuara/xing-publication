@@ -24,9 +24,6 @@
             <el-form-item label="创建人">
               <span>{{ scope.row.user.name }}</span>
             </el-form-item>
-            <el-form-item label="优先级">
-              <span>{{ scope.row.sort_order }}</span>
-            </el-form-item>
             <el-form-item label="剩余库存">
               <span>{{ scope.row.stock }}</span>
             </el-form-item>

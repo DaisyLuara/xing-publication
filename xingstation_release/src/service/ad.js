@@ -85,8 +85,8 @@ const saveAdPlan = (context, args) => {
   })
 }
 
-//批量更新广告方案以及其下排期
-const modifyBatchAdPlan = (context, args, id) => {
+//更新广告方案
+const modifyAdPlan = (context, args, id) => {
   return new Promise(function (resolve, reject) {
     context.$http
       .patch(HOST + AD_PLAN_API + '/' + id, args)
@@ -99,11 +99,11 @@ const modifyBatchAdPlan = (context, args, id) => {
   })
 }
 
-//更新广告方案
-const modifyAdPlan = (context, args, id) => {
+
+const getAdPlanTimeList = (context, args) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .put(HOST + AD_PLAN_API + '/' + id, args)
+      .get(HOST + AD_PLAN_TIME_API, {params: args})
       .then(response => {
         resolve(response.data)
       })
@@ -114,7 +114,7 @@ const modifyAdPlan = (context, args, id) => {
 }
 
 //排期详情
-const getAdPlanTime = (context, args, plan_time_id) => {
+const getAdPlanTimeDetail = (context, args, plan_time_id) => {
   return new Promise(function (resolve, reject) {
     context.$http
       .get(HOST + AD_PLAN_TIME_API + '/' + plan_time_id, args)
@@ -218,12 +218,12 @@ export {
   modifyAdLaunch,
   getAdPlanList,
   saveAdPlan,
-  modifyBatchAdPlan,
   modifyAdPlan,
   modifyAdPlanTime,
   getAdPlanDetail,
+  getAdPlanTimeList,
   addAdPlanTime,
-  getAdPlanTime,
+  getAdPlanTimeDetail,
   getAdList,
   getAdDetail,
   saveAd,

@@ -404,7 +404,7 @@ export default {
       peopleReceiveShow: true,
       peopleDayShow: true,
       activeName: "first",
-      dateShow: false,
+      dateShow: true,
       companyList: [],
       setting: {
         isOpenSelectAll: true,
@@ -440,7 +440,7 @@ export default {
         pmg_status: 0,
         day_max_get: 0,
         dmg_status: 0,
-        is_fixed_date: 0,
+        is_fixed_date: 1,
         delay_effective_day: 0,
         effective_day: 0,
         start_date: "",

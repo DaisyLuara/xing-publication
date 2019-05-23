@@ -4,15 +4,27 @@ namespace App\Http\Controllers\Admin\Ad\V1\Api;
 
 use App\Http\Controllers\Admin\Ad\V1\Models\AdPlan;
 use App\Http\Controllers\Admin\Ad\V1\Models\AdPlanTime;
-use App\Http\Controllers\Admin\Ad\V1\Models\Advertisement;
 use App\Http\Controllers\Admin\Ad\V1\Request\AdPlanTimeRequest;
 use App\Http\Controllers\Admin\Ad\V1\Transformer\AdPlanTimeTransformer;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Dingo\Api\Http\Response;
+use Illuminate\Http\Request;
 
 class AdPlanTimeController extends Controller
 {
+
+    public function index(AdPlanTime $adPlanTime,Request $request){
+
+        $query = $adPlanTime->query();
+        if ($request->get('atiid')) {
+            $query->where('atiid', '=', $request->get('atiid'));
+        }
+        $advertisements = $query->orderBy('id', 'desc')
+            ->paginate(10);
+
+        return $this->response->paginator($advertisements, new AdPlanTimeTransformer());
+    }
 
     public function show(AdPlanTime $adPlanTime)
     {
@@ -50,7 +62,7 @@ class AdPlanTimeController extends Controller
         ];
 
         if ($adPlan->type === AdPlan::TYPE_BID_SCREEN) {
-            array_merge($updateParams, [
+            $updateParams = array_merge($updateParams, [
                 'mode' => $request->get('mode') ?? 'fullscreen',
                 'ori' => $request->get('ori') ?? 'center',
                 'screen' => $request->get('screen') ?? 0,
@@ -83,7 +95,7 @@ class AdPlanTimeController extends Controller
         ];
 
         if ($adPlanTime->ad_plan->type === AdPlan::TYPE_BID_SCREEN) {
-            array_merge($updateParams, [
+            $updateParams = array_merge($updateParams, [
                 'mode' => $request->get('mode') ?? 'fullscreen',
                 'ori' => $request->get('ori') ?? 'center',
                 'screen' => $request->get('screen') ?? 0,

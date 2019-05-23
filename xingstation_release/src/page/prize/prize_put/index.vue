@@ -71,7 +71,7 @@
                   <span>{{ scope.row.id }}</span>
                 </el-form-item>
                 <el-form-item label="奖品模版">
-                  <span>{{ scope.row.policy.nam }}</span>
+                  <span>{{ scope.row.policy.name }}</span>
                 </el-form-item>
                 <el-form-item label="公司名称:">
                   <span>{{ scope.row.company.name }}</span>

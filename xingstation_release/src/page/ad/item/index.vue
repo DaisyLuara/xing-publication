@@ -288,7 +288,7 @@
                       <span>
                         <img
                           :src="(ad_scope.row.type === 'static' || ad_scope.row.type === 'gif' ) ? ad_scope.row.link : ad_scope.row.img"
-                          width="40px">
+                          width="80px">
                       </span>
                     </template>
                   </el-table-column>
