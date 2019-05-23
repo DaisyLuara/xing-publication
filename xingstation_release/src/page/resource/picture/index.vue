@@ -135,11 +135,12 @@
             <span class="image-type">仅支持jpg、jpeg、gif 、png四种格式, 大小为10M以内</span>
             <div class="pagination">
               <el-pagination
+                small
                 :page-size="pagination.limit"
-                :pager-count="2"
+                :pager-count="5"
                 :total="pagination.count"
                 :current-page.sync="pagination.page_num"
-                layout="prev, pager, next, jumper, total"
+                layout="prev, pager, next, total"
                 @current-change="changeCurrent"
               />
             </div>
