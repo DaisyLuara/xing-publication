@@ -192,7 +192,7 @@
       <el-table-column
         v-if="adPlan.tmode === 'hours'"
         label="素材投放时间"
-        min-width="100">
+        min-width="120">
         <template slot-scope="scope">
           <span style="color: #67C23A"><i class="el-icon-rank"/></span>
           <span>
