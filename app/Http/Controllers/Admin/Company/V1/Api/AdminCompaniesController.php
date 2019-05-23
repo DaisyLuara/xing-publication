@@ -80,7 +80,8 @@ class AdminCompaniesController extends Controller
             'parent_id' => $request->get('parent_id'),
         ];
         $company->fill(array_merge($companyData, ['user_id' => $this->user()->id]))->save();
-        CompanyMediaGroup::create(['company_id' => $company->id, 'name' => '默认分组']);
+        CompanyMediaGroup::create(['company_id' => $company->id, 'name' => '默认分组', 'type' => 'image']);
+        CompanyMediaGroup::create(['company_id' => $company->id, 'name' => '默认分组', 'type' => 'video']);
 
         activity('company')->on($company)->withProperties($request->all())->log('新增公司信息');
 

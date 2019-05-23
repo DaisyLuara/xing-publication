@@ -29,6 +29,7 @@ class CompanyMediaTransformer extends TransformerAbstract
             'status' => $companyMedia->status,
             'company_name' => $company->name,
             'audit_user_name' => $companyMedia->audit_user_id ? $companyMedia->auditor->name : null,
+            'type' => $companyMedia->group->type,
             'created_at' => $media->created_at->toDateTimeString(),
             'updated_at' => $media->updated_at->toDateTimeString(),
         ];
