@@ -790,8 +790,10 @@ export default {
             day6_tvid: this.projectForm.day6_tvid,
             day7_tvid: this.projectForm.day7_tvid
           };
-          this.modifyOptionFlag.project ? args : delete args.default_plid;
-          delete args.default_bid;
+          if (!this.modifyOptionFlag.project) {
+            delete args.default_plid;
+            delete args.default_bid;
+          }
 
           if (!this.modifyOptionFlag.defineTemplate) {
             delete args.sdate;
