@@ -56,11 +56,12 @@ class MediaController extends Controller
 
     public function create(Request $request, Media $media): \Dingo\Api\Http\Response
     {
+        $url = str_replace('+', '%20', urlencode($request->get('key')));
         $disk = \Storage::disk('qiniu');
         $domain = $disk->getDriver()->downloadUrl();
         $data = [
             'name' => $request->get('name'),
-            'url' => $domain . urlencode($request->get('key')),
+            'url' => $domain . $url,
             'size' => $request->get('size'),
             'height' => 0,
             'width' => 0,
