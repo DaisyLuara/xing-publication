@@ -32,7 +32,7 @@ class AdTradeController extends Controller
 
         $query = $adTrade->query();
         foreach ($names as $name) {
-            $query->create(array_merge($data, ['name' => $name, 'date' => date('Y-m-d H:i:s'), 'clientdate' => time() * 1000]));
+            $query->create(array_merge($data, ['name' => $name]));
         }
         return $this->response->noContent();
     }

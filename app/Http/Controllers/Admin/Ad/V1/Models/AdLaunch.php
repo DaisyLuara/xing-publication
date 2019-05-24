@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin\Ad\V1\Models;
 use App\Http\Controllers\Admin\Point\V1\Models\Market;
 use App\Http\Controllers\Admin\Point\V1\Models\Point;
 use App\Http\Controllers\Admin\Project\V1\Models\Project;
-use App\Models\Model;
+use App\Models\ArModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -44,13 +44,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\AdLaunch whereVisiable($value)
  * @mixin \Eloquent
  */
-class AdLaunch extends Model
+class AdLaunch extends ArModel
 {
 
-    protected $connection = 'ar';
     public $table = 'avr_ad_oid';
     protected $primaryKey = 'aoid';
-    public $timestamps = false;
 
     public $fillable = [
         'atiid',

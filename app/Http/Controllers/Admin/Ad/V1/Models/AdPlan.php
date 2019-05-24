@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin\Ad\V1\Models;
 
+use App\Models\ArModel;
 use App\Models\Customer;
-use App\Models\Model;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -44,12 +44,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\AdPlan whereZ($value)
  * @mixin \Eloquent
  */
-class AdPlan extends Model
+class AdPlan extends ArModel
 {
-    protected $connection = 'ar';
+
     public $table = 'avr_ad_trade_info';
     protected $primaryKey = 'atiid';
-    public $timestamps = false;
 
     public $fillable = [
         'atid',
