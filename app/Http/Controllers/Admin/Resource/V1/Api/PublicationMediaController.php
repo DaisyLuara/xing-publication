@@ -41,12 +41,13 @@ class PublicationMediaController extends Controller
      */
     public function store(PublicationMediaRequest $request, PublicationMediaGroup $group, PublicationMedia $publicationMedia): Response
     {
+        $url = str_replace('+', '%20', urlencode($request->get('key')));
         $disk = \Storage::disk('qiniu');
-        $info = $disk->getDriver()->imageInfo(urlencode($request->get('key')));
+        $info = $disk->getDriver()->imageInfo($url);
         $domain = $disk->getDriver()->downloadUrl();
         $data = [
             'name' => $request->get('name'),
-            'url' => $domain . urlencode($request->get('key')),
+            'url' => $domain . $url,
             'size' => $request->get('size'),
             'height' => $info['height'],
             'width' => $info['width'],
