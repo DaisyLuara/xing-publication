@@ -260,7 +260,7 @@
                   <span>{{ scope.row.end_date }}</span>
                 </el-form-item>
                 <el-form-item label="自定义模版">
-                  <span>{{ scope.row.divtemplate.name }}</span>
+                  <span>{{ scope.row.divtemplate ? scope.row.divtemplate.name:'' }}</span>
                 </el-form-item>
                 <el-form-item label="星期一模板">
                   <span>{{ scope.row.day1template.name }}</span>
@@ -367,7 +367,7 @@
             label="自定义模版"
             min-width="150"
           >
-            <template slot-scope="scope">{{ scope.row.divtemplate.name }}</template>
+            <template slot-scope="scope">{{ scope.row.divtemplate ? scope.row.divtemplate.name:'' }}</template>
           </el-table-column>
         </el-table>
         <div class="pagination-wrap">
