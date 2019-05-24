@@ -6,7 +6,7 @@
   >
     <div class="actions-wrap">
       <div>
-        <span class="label">{{ adPlan.name }}</span><br/>
+        <span class="label">{{ adPlan.name }}</span><br>
         <span class="label">数量: {{ pagination.total }}</span>
       </div>
       <!-- 新增子策略 -->
@@ -100,11 +100,11 @@
               <template v-else>
                 <span style="color: #67C23A"><i class="el-icon-time"/></span>
                 <span>
-                  {{scope.row.shm}}
+                  {{ scope.row.shm }}
                 </span>
                 至
                 <span>
-                  {{scope.row.ehm}}
+                  {{ scope.row.ehm }}
                 </span>
               </template>
             </el-form-item>
@@ -196,11 +196,11 @@
         <template slot-scope="scope">
           <span style="color: #67C23A"><i class="el-icon-rank"/></span>
           <span>
-           {{ (scope.row.shm).toString().substring(scope.row.shm.toString().length-2) }}
+            {{ (scope.row.shm).toString().substring(scope.row.shm.toString().length-2) }}
           </span>
           至
           <span>
-          {{ (scope.row.ehm).toString().substring(scope.row.ehm.toString().length-2) }}
+            {{ (scope.row.ehm).toString().substring(scope.row.ehm.toString().length-2) }}
           </span>
           分
         </template>
@@ -213,11 +213,11 @@
           slot-scope="scope">
           <span style="color: #67C23A"><i class="el-icon-time"/></span>
           <span>
-            {{scope.row.shm}}
+            {{ scope.row.shm }}
           </span>
           至
           <span>
-            {{scope.row.ehm}}
+            {{ scope.row.ehm }}
           </span>
         </template>
       </el-table-column>
