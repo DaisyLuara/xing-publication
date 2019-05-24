@@ -89,7 +89,7 @@ class AdLaunchController extends Controller
         }
 
         foreach ($oids as $oid) {
-            $query->create(array_merge($launch, ['oid' => $oid, 'date' => date('Y-m-d H:i:s'), 'clientdate' => time() * 1000]));
+            $query->create(array_merge($launch, ['oid' => $oid]));
         }
 
         activity('ad_launch')->on($adLaunch)->withProperties($request->all())->log('批量增加广告投放');
@@ -115,10 +115,7 @@ class AdLaunchController extends Controller
 
         unset($launch['aoids'], $launch['keys']);
 
-        $update_params = [
-            'date' => date('Y-m-d H:i:s'),
-            'clientdate' => time() * 1000
-        ];
+        $update_params = [];
 
         foreach ($keys as $key) {
             if (!isset($launch[$key])) {

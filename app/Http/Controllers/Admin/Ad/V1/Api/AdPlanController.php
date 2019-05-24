@@ -74,11 +74,7 @@ class AdPlanController extends Controller
             $params['icon'] = 'http://image.xingstation.cn/1007/image/393_511_941_578_ic_launcher.png';
         }
 
-        $addParams = [
-            'date' => date('Y-m-d H:i:s'),
-            'clientdate' => time() * 1000
-        ];
-
+        $addParams = [];
         if ($this->user->z) {
             $addParams['z'] = $this->user->z;
         }
@@ -103,13 +99,8 @@ class AdPlanController extends Controller
             $params['icon'] = 'http://image.xingstation.cn/1007/image/393_511_941_578_ic_launcher.png';
         }
 
-        $addParams = [
-            'date' => date('Y-m-d H:i:s'),
-            'clientdate' => time() * 1000
-        ];
-
         /** @var AdPlan $adPlan */
-        $adPlan->fill(array_merge($params, $addParams))->save();
+        $adPlan->fill($params)->save();
 
         return $this->response->noContent();
     }

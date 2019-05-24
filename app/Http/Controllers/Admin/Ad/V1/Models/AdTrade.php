@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Ad\V1\Models;
 
-use App\Models\Model;
+use App\Models\ArModel;
 
 /**
  * 广告行业
@@ -25,12 +25,10 @@ use App\Models\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\AdTrade whereName($value)
  * @mixin \Eloquent
  */
-class AdTrade extends Model
+class AdTrade extends ArModel
 {
-    protected $connection = 'ar';
     public $table = 'avr_ad_trade';
     protected $primaryKey = 'atid';
-    public $timestamps = false;
 
     public $fillable = [
         'name',

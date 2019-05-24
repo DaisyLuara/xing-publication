@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Ad\V1\Models;
 
-use App\Models\Model;
+use App\Models\ArModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -44,11 +44,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\AdPlanTime whereShm($value)
  * @mixin \Eloquent
  */
-class AdPlanTime extends Model
+class AdPlanTime extends ArModel
 {
-    protected $connection = 'ar';
+
     public $table = 'avr_ad_trade_time';
-    public $timestamps = false;
 
     public $fillable = [
         'atiid',
