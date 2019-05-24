@@ -279,6 +279,14 @@
           >
             <template slot-scope="scope">{{ scope.row.point.visiable === 1 ? '运营中' : '下架' }}</template>
           </el-table-column>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="visiable"
+            label="自定义模版"
+            min-width="150"
+          >
+            <template slot-scope="scope">{{ scope.row.divtemplate.name }}</template>
+          </el-table-column>
         </el-table>
         <div class="pagination-wrap">
           <el-pagination
