@@ -32,7 +32,8 @@ class ContractController extends Controller
         }
 
         if ($request->get('name')) {
-            $name = $request->$request->get('name');
+            $name = $request->get('name');
+
             $query->whereHas('company', static function ($q) use ($name) {
                 $q->where('name', 'like', '%' . $name . '%');
             });
