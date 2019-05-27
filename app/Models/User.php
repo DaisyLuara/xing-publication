@@ -16,9 +16,6 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * Class User
  *
  * @package App\Models
- * @property string name
- * @property string phone
- * @property int id
  * @property int $id
  * @property int|null $parent_id
  * @property string $name
