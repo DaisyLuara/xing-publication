@@ -12,41 +12,41 @@ class InvoiceRequest extends Request
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
-        switch ($this->method()) {
-            case 'POST':
-                return [
-                    'contract_id' => 'required|integer',
-                    'applicant' => 'required|integer',
-                    'type' => Rule::in([0, 1]),
-                    'invoice_company_id' => 'required|integer',
-                    'receive_status' => Rule::in([0, 1]),
-                    'invoice_content.*.num' => 'required|integer',
-                    'invoice_content.*.price' => 'required|numeric',
-                    'invoice_content.*.money' => 'required|numeric',
-                    'total' => 'required|numeric',
-                    'total_text' => 'required|string',
-                    'remark' => 'string|nullable|max:1000'
-                ];
-                break;
-            case 'PATCH':
-                return [
-                    'contract_id' => 'integer',
-                    'applicant' => 'integer',
-                    'type' => Rule::in([0, 1]),
-                    'invoice_company_id' => 'integer',
-                    'receive_status' => Rule::in([0, 1]),
-                    'invoice_content.*.num' => 'integer',
-                    'invoice_content.*.price' => 'numeric',
-                    'invoice_content.*.money' => 'numeric',
-                    'total' => 'numeric',
-                    'total_text' => 'string',
-                    'remark' => 'string|nullable|max:1000'
-                ];
-                break;
-            default:
-                return [];
+        $method = $this->method();
+        if ($method === 'POST') {
+            return [
+                'contract_id' => 'required|integer',
+                'applicant' => 'required|integer',
+                'type' => Rule::in([0, 1]),
+                'invoice_company_id' => 'required|integer',
+                'invoice_content.*.invoice_kind_id' => 'required|integer',
+                'invoice_content.*.goods_service_id' => 'required|integer',
+                'invoice_content.*.num' => 'required|integer',
+                'invoice_content.*.price' => 'required|numeric',
+                'invoice_content.*.money' => 'required|numeric',
+                'total' => 'required|numeric',
+                'total_text' => 'required|string',
+                'remark' => 'string|nullable|max:1000'
+            ];
         }
+        return [];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'contract_id' => '合同',
+            'applicant' => '申请人',
+            'type' => '开票类型',
+            'invoice_company_id' => '开票公司',
+            'invoice_content.*.invoice_kind_id' => '开票种类',
+            'invoice_content.*.goods_service_id' => '服务名称',
+            'invoice_content.*.num' => '数量',
+            'invoice_content.*.price' => '单价',
+            'invoice_content.*.money' => '金额',
+            'total' => '总计',
+        ];
     }
 }
