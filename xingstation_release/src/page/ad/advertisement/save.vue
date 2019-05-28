@@ -46,6 +46,7 @@
               v-model="adForm.type"
               :label="typeOption.value"
               :key="index"
+              @change="typeHandle"
             >{{ typeOption.label }}</el-radio>
           </template>
         </el-form-item>
@@ -189,38 +190,28 @@ export default {
     if (this.aid) {
       this.getAdDetail();
     }
-    this.setting.loading = true;
-    let searchAdTradeList = this.getSearchAdTradeList();
-    Promise.all([searchAdTradeList])
-      .then(() => {
-        this.setting.loading = false;
-      })
-      .catch(err => {
-        console.log(err);
-        this.setting.loading = false;
-      });
+    this.getSearchAdTradeList();
   },
   methods: {
+    typeHandle(val){
+      this.adForm.link = ''
+    }, 
     handleClose(data) {
       if (data && data.length > 0) {
         let { url } = data[0];
         this.adForm.link = url;
       } else {
-        // this.$message({
-        //   type: "warning",
-        //   message: "图片上传失败"
-        // });
       }
     },
     getAdDetail() {
-      this.searchLoading = true;
+      this.setting.loading = true;
       return getAdDetail(this, {}, this.aid)
         .then(response => {
           this.adForm = response;
-          this.searchLoading = false;
+          this.setting.loading = false;
         })
         .catch(err => {
-          this.searchLoading = false;
+          this.setting.loading = false;
         });
     },
     getSearchAdTradeList() {
