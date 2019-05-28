@@ -25,7 +25,6 @@ class PointRequest extends Request
                         }
                     }],
                     'name' => 'required',
-                    'bd_z' => 'required',
                     'site_z' => 'required',
                     'contract.type' => 'required',
                     'contract.pay' => 'required',
@@ -49,7 +48,6 @@ class PointRequest extends Request
                     'areaid' => 'filled',
                     'marketid' => 'filled',
                     'name' => 'filled',
-                    'bd_z' => 'filled',
                     'site_z' => 'filled',
                     'contract.type' => 'filled',
                     'contract.pay' => 'filled',

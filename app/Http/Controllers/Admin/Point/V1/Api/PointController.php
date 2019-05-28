@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\Point\V1\Transformer\PointTransformer;
 use App\Http\Controllers\Admin\Point\V1\Request\PointRequest;
 use App\Http\Controllers\Admin\Point\V1\Models\Point;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Carbon\Carbon;
 use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
@@ -117,8 +118,15 @@ class PointController extends Controller
 
     public function store(PointRequest $request, Point $point)
     {
-
-        $point->fill($request->all())->saveOrFail();
+        /** @var  User $user */
+        $user = $this->user();
+        if (!$user->hasRole('user|bd-manager')) {
+            abort(403, '无操作权限');
+        }
+        if (!$user->z) {
+            abort(500, '无用户标识');
+        }
+        $point->fill(array_merge($request->all(), ['bd_z' => $user->z]))->saveOrFail();
         $point->attribute()->attach($request->get('attribute_id'));
 
         if ($request->has('contract')) {
