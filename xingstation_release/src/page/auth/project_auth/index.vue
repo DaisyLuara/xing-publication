@@ -258,13 +258,13 @@
 
       addProjectAuth() {
         this.$router.push({
-          path: "/resource_auth/project_auth/add"
+          path: "/auth/project_auth/add"
         });
       },
 
       editProjectAuth(data) {
         this.$router.push({
-          path: "/resource_auth/project_auth/edit/" + data.id
+          path: "/auth/project_auth/edit/" + data.id
         });
       },
 
