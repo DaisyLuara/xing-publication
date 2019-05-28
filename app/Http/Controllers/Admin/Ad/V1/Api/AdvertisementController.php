@@ -61,6 +61,14 @@ class AdvertisementController extends Controller
             $addParams['z'] = $this->user->z;
         }
 
+        if (in_array($data['type'], ['static', 'gif'])) {
+            $data['img'] = $data['link'];
+        } else if ($data['type'] === 'video') {
+            $data['img'] = 'http://image.xingstation.cn/1007/image/426_video.jpg';
+        } else {
+            $data['img'] = 'http://image.xingstation.cn/1007/image/393_511_941_578_ic_launcher.png';
+        }
+
         $advertisement->fill(array_merge($data, $addParams))->save();
 
         return $this->response->noContent();
@@ -72,6 +80,14 @@ class AdvertisementController extends Controller
 
         //需要获取link的size
         $content = file_get_contents($data['link']);
+
+        if (in_array($data['type'], ['static', 'gif'])) {
+            $data['img'] = $data['link'];
+        } else if ($data['type'] === 'video') {
+            $data['img'] = 'http://image.xingstation.cn/1007/image/426_video.jpg';
+        } else {
+            $data['img'] = 'http://image.xingstation.cn/1007/image/393_511_941_578_ic_launcher.png';
+        }
 
         $advertisement->fill(array_merge($data, [
             'size' => strlen($content),
