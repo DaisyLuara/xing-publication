@@ -36,11 +36,12 @@ class CheckReceipt extends Notification
     public function toDatabase($notifiable)
     {
         // 存入数据库里的数据
+        $contract = $this->contract;
         return [
-            'id' => $this->contract->id,
-            'reply_content' => $this->contract->name.'收款日期截止',
-            'user_id' =>  $this->contract->applicant,
-            'user_name' => User::find($this->contract->applicant,['name'])->name,
+            'id' => $contract->id,
+            'reply_content' => $contract->name . '收款日期截止' . "\r\n" . '公司名称:' . $contract->company->name . "\r\n" . '申请人:' . $contract->applicantUser->name,
+            'user_id' => $contract->applicant,
+            'user_name' => User::find($contract->applicant, ['name'])->name,
             'type' => 'review'
         ];
 
