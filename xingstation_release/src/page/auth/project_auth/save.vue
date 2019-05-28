@@ -188,7 +188,7 @@
                     message: "修改成功"
                   });
                   this.$router.push({
-                    path: "/resource_auth/project_auth"
+                    path: "/auth/project_auth"
                   });
                   this.setting.loading = false;
                 })
@@ -207,7 +207,7 @@
                     message: "保存成功"
                   });
                   this.$router.push({
-                    path: "/resource_auth/project_auth"
+                    path: "/auth/project_auth"
                   });
                   this.setting.loading = false;
                 })
