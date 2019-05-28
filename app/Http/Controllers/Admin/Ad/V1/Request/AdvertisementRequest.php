@@ -13,7 +13,7 @@ class AdvertisementRequest extends Request
                 return [
                     'atid' => 'required|integer',
                     'name' => 'required|string',
-                    'img' => 'required|string|url',
+                    'img' => 'string|url',
                     'type' => 'required|string|in:static,gif,fps,video',
                     'link' => 'required|string|url',
                     'size' => 'integer',
@@ -26,7 +26,7 @@ class AdvertisementRequest extends Request
                 return [
                     'atid' => 'required|integer',
                     'name' => 'required|string',
-                    'img' => 'required|string|url',
+                    'img' => 'string|url',
                     'type' => 'required|string|in:static,gif,fps,video',
                     'link' => 'required|string|url',
                     'size' => 'integer',
