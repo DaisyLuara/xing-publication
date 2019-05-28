@@ -13,19 +13,6 @@
         ref="adPlanForm"
         :model="adPlanForm"
         label-width="150px">
-
-        <el-form-item>
-          <h3 class="item-title">
-            <i class="el-icon-star-on"/>
-            <i class="el-icon-star-on"/>
-            <i class="el-icon-star-on"/>
-            广告模版
-            <i class="el-icon-star-on"/>
-            <i class="el-icon-star-on"/>
-            <i class="el-icon-star-on"/>
-          </h3>
-        </el-form-item>
-
         <el-form-item
           :rules="[{ required: true, message: '请选择类型', trigger: 'submit',type: 'string'}]"
           label="类型"
@@ -44,33 +31,12 @@
           label="广告行业"
           prop="atid">
           <el-select
-            :disabled="isItem"
             v-model="adPlanForm.atid"
-            filterable
-            placeholder="请搜索"
-            clearable
-            @change="AdTradeChangeHandle">
-            <el-option
-              v-for="item in searchAdTradeList"
-              :key="item.id"
-              :label="item.id + '. ' + item.name"
-              :value="item.id"/>
-          </el-select>
-        </el-form-item>
-        <!--多选广告素材-->
-        <el-form-item
-          :rules="[{ required: true, message: '请选择广告素材', trigger: 'submit',type: 'array'}]"
-          label="广告素材"
-          prop="aids">
-          <el-select
-            :disabled="isItem"
-            v-model="adPlanForm.aids"
-            multiple
             filterable
             placeholder="请搜索"
             clearable>
             <el-option
-              v-for="item in searchAdList"
+              v-for="item in searchAdTradeList"
               :key="item.id"
               :label="item.id + '. ' + item.name"
               :value="item.id"/>
@@ -140,130 +106,6 @@
             placeholder="请输入模版备注"/>
         </el-form-item>
 
-        <template v-if="!isItem">
-          <el-form-item>
-            <h3 class="item-title">
-              <i class="el-icon-star-on"/>
-              <i class="el-icon-star-on"/>
-              <i class="el-icon-star-on"/>
-              排期细节
-              <i class="el-icon-star-on"/>
-              <i class="el-icon-star-on"/>
-              <i class="el-icon-star-on"/>
-            </h3>
-          </el-form-item>
-          <template v-if="adPlanForm.type === 'program'">
-            <el-form-item
-              :rules="[{ required: true, message: '请选择素材显示模式', trigger: 'submit',type: 'string'}]"
-              label="素材显示模式"
-              prop="mode">
-              <el-select
-                v-model="adPlanForm.mode"
-                placeholder="请选择素材显示模式">
-                <el-option
-                  v-for="item in modeOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"/>
-              </el-select>
-            </el-form-item>
-            <template v-if="adPlanForm.mode !== 'fullscreen'">
-              <el-form-item
-                :rules="[{ required: true, message: '请选择素材显示位置', trigger: 'submit',type: 'string'}]"
-                label="素材显示位置"
-                prop="ori">
-                <el-select
-                  v-model="adPlanForm.ori"
-                  placeholder="请选择素材显示位置">
-                  <el-option
-                    v-for="item in oriOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"/>
-                </el-select>
-              </el-form-item>
-              <el-form-item
-                :rules="[{ required: true, message: '请填入素材显示尺寸', trigger: 'submit',type: 'number'}]"
-                label="素材显示尺寸"
-                prop="screen">
-                <el-input-number
-                  v-model="adPlanForm.screen"
-                  :min="1"
-                  :max="100"
-                  controls-position="right"/>
-                %
-              </el-form-item>
-            </template>
-          </template>
-
-          <el-form-item
-            :rules="[{ required: true, message: '请选择', trigger: 'submit',type: 'number'}]"
-            label="素材播放"
-            prop="cdshow">
-            <el-radio
-              v-model="adPlanForm.play"
-              :label="1">自定义时长
-            </el-radio>
-            <el-radio
-              v-model="adPlanForm.play"
-              :label="0">默认时长
-            </el-radio>
-          </el-form-item>
-          <el-form-item
-            v-if="adPlanForm.play"
-            :rules="[{ required: true, message: '请填入素材播放时长', trigger: 'submit',type: 'number'}]"
-            label="素材播放时长"
-            prop="ktime">
-            <el-input-number
-              v-model="adPlanForm.ktime"
-              :min="0"
-              controls-position="right"/>
-            秒
-          </el-form-item>
-          <el-form-item
-            :rules="[{ required: true, message: '请选择倒计时', trigger: 'submit',type: 'number'}]"
-            label="倒计时"
-            prop="cdshow">
-            <el-radio
-              v-model="adPlanForm.cdshow"
-              :label="0">关闭
-            </el-radio>
-            <el-radio
-              v-model="adPlanForm.cdshow"
-              :label="1">开启
-            </el-radio>
-          </el-form-item>
-
-          <el-form-item
-            label="素材投放时间">
-            <el-time-picker
-              v-model="adPlanForm.shm"
-              :format="time_format"
-              :value-format="time_format"
-              placeholder="选择开始时间"/>
-            至
-            <el-time-picker
-              v-model="adPlanForm.ehm"
-              :format="time_format"
-              :value-format="time_format"
-              placeholder="选择结束时间"/>
-            <span v-if="adPlanForm.tmode === 'hours'"> 分 </span>
-          </el-form-item>
-
-          <el-form-item
-            :rules="[{ required: true, message: '请选择状态', trigger: 'submit'}]"
-            label="排期状态"
-            prop="visiable">
-            <el-radio
-              v-model="adPlanForm.visiable"
-              :label="1">运营中
-            </el-radio>
-            <el-radio
-              v-model="adPlanForm.visiable"
-              :label="0">下架
-            </el-radio>
-          </el-form-item>
-        </template>
         <el-form-item>
           <el-button @click="historyBack">返回</el-button>
           <el-button
@@ -284,7 +126,6 @@
   import PicturePanel from "components/common/picturePanel";
   import {
     saveAdPlan,
-    modifyBatchAdPlan,
     modifyAdPlan,
     getAdPlanDetail,
     getSearchAdTradeList,
@@ -327,7 +168,6 @@
         panelVisible: false,
         singleFlag: true,
         time_format: "HH:mm",
-        isItem: false,
         adPlanId: null,
         setting: {
           isOpenSelectAll: true,
@@ -336,26 +176,14 @@
         },
         searchAdTradeList: [],
         searchLoading: false,
-        searchAdList: [],
         adPlanForm: {
           type: 'program',
-          aids: [],
           atid: '',
           name: '',
           icon: 'http://image.xingstation.cn/1007/image/393_511_941_578_ic_launcher.png',
           info: '',
           hardware: 1,
           tmode: 'div',
-          mode: 'fullscreen',
-          ori: 'center',
-          screen: 100,
-          cdshow: 1,
-          play: 0,
-          ktime: 15,
-          only: 0,
-          visiable: 1,
-          shm: "00:01",
-          ehm: "23:59",
         },
         modeOptions: [
           {
@@ -423,8 +251,7 @@
     mounted() {
     },
     created() {
-      this.adPlanId = this.$route.params.ad_plan_id;
-      this.isItem = this.$route.params.is_item === 'true';
+      this.adPlanId = this.$route.params.plan_id;
 
       this.setting.loading = true
 
@@ -467,24 +294,12 @@
           // });
         }
       },
-      AdTradeChangeHandle() {
-        this.adPlanForm.aids = [];
-        this.getSearchAdList();
-      },
       getAdPlanDetail() {
         //获取AdPlan 详情
         return getAdPlanDetail(this, {}, this.adPlanId)
           .then(response => {
-            this.adPlanForm.aids = response.aids;
-            this.adPlanForm.atid = response.atid;
-            this.adPlanForm.type = response.type;
-            this.adPlanForm.icon = response.icon;
-            this.adPlanForm.name = response.name;
-            this.adPlanForm.info = response.info;
-            this.adPlanForm.tmode = response.tmode;
-            this.adPlanForm.hardware = response.hardware;
+            this.adPlanForm = response;
             this.tmodeChangeHandle(response.tmode);
-            this.getSearchAdList();
           })
           .catch(error => {
             console.log(error)
@@ -500,21 +315,6 @@
           .catch(error => {
             console.log(error)
             this.setting.loading = false
-          })
-      },
-      getSearchAdList() {
-        let args = {
-          atid: this.adPlanForm.atid,
-        }
-        this.searchLoading = true
-        return getSearchAdvertisementList(this, args)
-          .then(response => {
-            this.searchAdList = response.data
-            this.searchLoading = false
-          })
-          .catch(error => {
-            console.log(error)
-            this.searchLoading = false
           })
       },
       submit(formName) {
@@ -535,7 +335,6 @@
             }
 
             let args = {
-              aids: this.adPlanForm.aids,
               atid: this.adPlanForm.atid,
               type: this.adPlanForm.type,
               name: this.adPlanForm.name,
@@ -543,59 +342,28 @@
               info: this.adPlanForm.info,
               tmode: this.adPlanForm.tmode,
               hardware: this.adPlanForm.hardware,
-              mode: this.adPlanForm.mode,
-              ori: this.adPlanForm.ori,
-              screen: this.adPlanForm.screen,
-              cdshow: this.adPlanForm.cdshow,
-              ktime: this.adPlanForm.ktime,
-              only: this.adPlanForm.only,
-              visiable: this.adPlanForm.visiable,
-              shm: this.adPlanForm.shm,
-              ehm: this.adPlanForm.ehm,
             }
 
             if (this.adPlanId) {
-              if (this.isItem) {
-                return modifyAdPlan(this, args, this.adPlanId)
-                  .then(response => {
-                    this.setting.loading = false
-                    this.$message({
-                      message: '编辑成功',
-                      type: 'success'
-                    })
-                    this.$router.push({
-                      path: '/ad/plan'
-                    })
+              return modifyAdPlan(this, args, this.adPlanId)
+                .then(response => {
+                  this.setting.loading = false
+                  this.$message({
+                    message: '编辑成功',
+                    type: 'success'
                   })
-                  .catch(err => {
-                    this.setting.loading = false
-                    this.$message({
-                      message: err.response.data.message,
-                      type: 'error'
-                    })
-                    console.log(err)
+                  this.$router.push({
+                    path: '/ad/plan'
                   })
-              } else {
-                return modifyBatchAdPlan(this, args, this.adPlanId)
-                  .then(response => {
-                    this.setting.loading = false
-                    this.$message({
-                      message: '批量编辑成功',
-                      type: 'success'
-                    })
-                    this.$router.push({
-                      path: '/ad/plan'
-                    })
+                })
+                .catch(err => {
+                  this.setting.loading = false
+                  this.$message({
+                    message: err.response.data.message,
+                    type: 'error'
                   })
-                  .catch(err => {
-                    this.setting.loading = false
-                    this.$message({
-                      message: err.response.data.message,
-                      type: 'error'
-                    })
-                    console.log(err)
-                  })
-              }
+                  console.log(err)
+                })
 
             } else {
               return saveAdPlan(this, args)

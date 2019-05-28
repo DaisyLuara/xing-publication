@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin\Ad\V1\Models;
 
+use App\Models\ArModel;
 use App\Models\Customer;
-use App\Models\Model;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -47,12 +47,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Ad\V1\Models\Advertisement whereZ($value)
  * @mixin \Eloquent
  */
-class Advertisement extends Model
+class Advertisement extends ArModel
 {
-    protected $connection = 'ar';
     public $table = 'avr_ad_info';
     protected $primaryKey = 'aid';
-    public $timestamps = false;
 
     public $fillable = [
         'atid',

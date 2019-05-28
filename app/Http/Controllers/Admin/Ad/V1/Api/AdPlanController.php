@@ -70,127 +70,37 @@ class AdPlanController extends Controller
     {
         $params = $request->all();
 
-        //广告素材ID 对广告素材进行判断
-        $aids = $request->get('aids');
-        $select_aids = Advertisement::query()
-            ->whereIn('aid', $aids)
-//            ->where('atid','=',$params['atid'])
-            ->pluck('aid')->toArray();
-
-        if (array_diff($aids, $select_aids)) {
-            abort(422, '请选择正确的广告素材');
-        }
-
         if (!$request->get('icon')) {
             $params['icon'] = 'http://image.xingstation.cn/1007/image/393_511_941_578_ic_launcher.png';
         }
 
-        $addParams = [
-            'date' => date('Y-m-d H:i:s'),
-            'clientdate' => time() * 1000
-        ];
-
+        $addParams = [];
         if ($this->user->z) {
             $addParams['z'] = $this->user->z;
         }
 
         /** @var AdPlan $adPlan */
         $adPlan->fill(array_merge($params, $addParams))->save();
-        $this->syncAdvertisement($request, $adPlan, $aids);
 
         return $this->response->noContent();
     }
 
     /**
-     * 批量编辑
-     * @param AdPlanRequest $request
-     * @param AdPlan $adPlan
-     * @return Response
-     */
-    public function updateBatch(AdPlanRequest $request, AdPlan $adPlan): Response
-    {
-        $params = $request->all();
-
-        if ($params['type'] !== $adPlan->type) {
-            abort(422, '类型不可修改');
-        }
-        unset($params['type']);
-
-        //广告素材ID 对广告素材进行判断
-        $aids = $request->get('aids');
-        $select_aids = Advertisement::query()
-            ->whereIn('aid', $aids)
-//            ->where('atid','=',$params['atid'])
-            ->pluck('aid')->toArray();
-
-        if (array_diff($aids, $select_aids)) {
-            abort(422, '请选择正确的广告素材');
-        }
-
-        if (!$request->get('icon')) {
-            $params['icon'] = 'http://image.xingstation.cn/1007/image/393_511_941_578_ic_launcher.png';
-        }
-
-        /** @var AdPlan $adPlan */
-        $adPlan->fill(array_merge([
-            'date' => date('Y-m-d H:i:s'),
-            'clientdate' => time() * 1000],
-            $params))->save();
-        $this->syncAdvertisement($request, $adPlan, $aids);
-
-        return $this->response->noContent();
-    }
-
-
-    private function syncAdvertisement(Request $request, AdPlan $adPlan, array $aids): void
-    {
-        $advertisements = [];
-
-        $updateParams = [
-            'cdshow' => $request->get('cdshow'),
-            'ktime' => $request->get('ktime'),
-            'shm' => $request->get('shm') ? (int)Carbon::parse($request->get('shm'), 'UTC')->format('Hi') : 0,
-            'ehm' => $request->get('ehm') ? (int)Carbon::parse($request->get('ehm'), 'UTC')->format('Hi') : 0,
-            'only' => $request->get('only'),
-            'visiable' => $request->get('visiable'),
-            'date' => date('Y-m-d H:i:s'),
-            'clientdate' => time() * 1000,
-        ];
-
-        if ($adPlan->type === AdPlan::TYPE_BID_SCREEN) {
-            array_merge($updateParams, [
-                'mode' => $request->get('mode') ?? 'fullscreen',
-                'ori' => $request->get('ori') ?? 'center',
-                'screen' => $request->get('screen') ?? 0,
-            ]);
-        }
-
-        foreach ($aids as $aid) {
-            $advertisements [$aid] = $updateParams;
-        }
-
-        $adPlan->advertisements()->sync($advertisements);
-    }
-
-    /**
-     * 一般编辑
+     * 编辑
      * @param AdPlanRequest $request
      * @param AdPlan $adPlan
      * @return Response
      */
     public function update(AdPlanRequest $request, AdPlan $adPlan): Response
     {
+        $params = $request->all();
+
+        if (!$request->get('icon')) {
+            $params['icon'] = 'http://image.xingstation.cn/1007/image/393_511_941_578_ic_launcher.png';
+        }
+
         /** @var AdPlan $adPlan */
-        $adPlan->fill([
-            'name' => $request->get('name'),
-            'icon' => $request->get('icon') ?? 'http://image.xingstation.cn/1007/image/393_511_941_578_ic_launcher.png',
-            'info' => $request->get('info'),
-            'atid' => $request->get('atid'),
-            'date' => date('Y-m-d H:i:s'),
-            'hardware' => $request->get('hardware'),
-            'tmode' => $request->get('tmode'),
-            'clientdate' => time() * 1000,
-        ])->save();
+        $adPlan->fill($params)->save();
 
         return $this->response->noContent();
     }

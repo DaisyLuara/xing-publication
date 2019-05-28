@@ -52,11 +52,12 @@
               @click="batchReject">批量驳回</el-button>
           </div>
         </div>
-        <el-table 
-          :data="tableData" 
+        <el-table
+          :data="tableData"
           style="width: 100%"
-          disabled="true" 
-          @selection-change="handleSelectionChange">
+          disabled="true"
+          @selection-change="handleSelectionChange"
+        >
           <el-table-column 
             :selectable="checkboxT" 
             type="selection" 
@@ -99,11 +100,12 @@
             prop="id" 
             label="ID" 
             min-width="80"/>
-          <el-table-column 
-            :show-overflow-tooltip="true" 
-            prop="company_name" 
-            label="商户" 
-            min-width="100"/>
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="company_name"
+            label="商户"
+            min-width="100"
+          />
           <el-table-column 
             :show-overflow-tooltip="true" 
             prop="name" 
@@ -114,10 +116,19 @@
             label="资源" 
             min-width="130">
             <template slot-scope="scope">
-              <img 
-                :src="scope.row.url" 
-                alt 
-                class="icon-item">
+              <img
+                v-if="scope.row.type === 'image'"
+                :src="scope.row.url"
+                alt
+                class="icon-item"
+                @click="imgShow(scope.row)"
+              >
+              <video
+                v-if="scope.row.type === 'video'"
+                :src="scope.row.url"
+                controls="controls"
+                class="icon-item"
+              >您的浏览器不支持</video>
             </template>
           </el-table-column>
           <el-table-column
@@ -145,16 +156,18 @@
             label="操作" 
             min-width="150">
             <template slot-scope="scope">
-              <el-button 
+              <el-button
                 v-if="scope.row.status === 2"
-                size="small" 
-                type="success" 
-                @click="pass(scope.row)">通过</el-button>
-              <el-button 
+                size="small"
+                type="success"
+                @click="pass(scope.row)"
+              >通过</el-button>
+              <el-button
                 v-if="scope.row.status === 2"
-                size="small" 
-                type="warning" 
-                @click="reject(scope.row)">驳回</el-button>
+                size="small"
+                type="warning"
+                @click="reject(scope.row)"
+              >驳回</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -215,11 +228,11 @@ export default {
   data() {
     return {
       imageVisible: false,
-       imgUrl: "",
+      imgUrl: "",
       searchForm: {
         status: ""
       },
-      selectAll:[],
+      selectAll: [],
       statusList: [
         {
           id: 0,
@@ -252,10 +265,10 @@ export default {
   },
   methods: {
     checkboxT(row, index) {
-      if(row.status === 2){
-        return 1
-      }else{
-        return 0
+      if (row.status === 2) {
+        return 1;
+      } else {
+        return 0;
       }
     },
     batchPass() {
@@ -300,6 +313,7 @@ export default {
       this.selectAll = val;
     },
     imgShow(data) {
+      console.log(3);
       this.imageVisible = true;
       this.imgUrl = data.url;
     },
@@ -458,6 +472,56 @@ export default {
         margin: 10px auto;
         text-align: right;
       }
+    }
+  }
+  .widget-image {
+    position: fixed;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    left: 0px;
+    z-index: 3000;
+  }
+  .widget-close {
+    background: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    position: absolute;
+    right: 5%;
+    top: 5%;
+    z-index: 3444;
+  }
+  .widget-icon {
+    display: block;
+    font-style: normal;
+    text-align: center;
+    height: 40px;
+    line-height: 40px;
+    width: 40px;
+  }
+  .shade-image {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #000;
+    opacity: 0.6;
+    z-index: 2000;
+  }
+  .widget-content {
+    top: 0;
+    position: absolute;
+    z-index: 2001;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    img {
+      width: 20%;
     }
   }
 }

@@ -152,7 +152,7 @@
               <span>
                 <img
                   :src="(scope.row.type === 'static' || scope.row.type === 'gif' ) ? scope.row.link : scope.row.img"
-                  width="40px">
+                  width="80px">
               </span>
             </template>
           </el-table-column>
@@ -188,12 +188,12 @@
           />
           <el-table-column
             label="操作"
-            min-width="150"
+            min-width="80"
           >
             <template slot-scope="scope">
               <el-button
                 size="small"
-                type="success"
+                type="warning"
                 @click="linkToEdit(scope.row.id)">编辑
               </el-button>
             </template>

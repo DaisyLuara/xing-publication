@@ -7,7 +7,7 @@
       class="pane">
       <div
         class="pane-title">
-        {{ planTimeId ? '编辑素材' : '新增素材' }}
+        {{ planTimeId ? '编辑素材排期' : '新增素材排期' }}
       </div>
       <el-form
         ref="adPlanTimeForm"
@@ -137,14 +137,18 @@
         </el-form-item>
 
         <el-form-item
+          :rules="[{ required: true, message: '请选择素材投放时间', trigger: 'submit'}]"
+          prop="shm"
           label="素材投放时间">
           <el-time-picker
+            :clearable="false"
             v-model="adPlanTimeForm.shm"
             :format="time_format"
             :value-format="time_format"
             placeholder="选择开始时间"/>
           至
           <el-time-picker
+            :clearable="false"
             v-model="adPlanTimeForm.ehm"
             :format="time_format"
             :value-format="time_format"
@@ -182,7 +186,7 @@
     addAdPlanTime,
     getAdPlanDetail,
     getSearchAdvertisementList,
-    getAdPlanTime,
+    getAdPlanTimeDetail,
     historyBack
   } from 'service'
 
@@ -327,7 +331,7 @@
         }
 
         //获取AdPlan 详情
-        return getAdPlanTime(this, args, this.planTimeId)
+        return getAdPlanTimeDetail(this, args, this.planTimeId)
           .then(response => {
             this.adPlan = response.ad_plan;
 
@@ -391,6 +395,7 @@
       submit(formName) {
         this.$refs[formName].validate(valid => {
           if (valid) {
+
             this.setting.loading = true
 
             if (this.adPlanTimeForm.mode === 'fullscreen') {
@@ -399,6 +404,24 @@
             }
             if (this.adPlanTimeForm.play === 0) {
               this.adPlanTimeForm.ktime = 0;
+            }
+
+            if(!this.adPlanTimeForm.shm || !this.adPlanTimeForm.ehm){
+              this.setting.loading = false
+              this.$message({
+                message: "请选择素材投放时间",
+                type: 'error'
+              })
+              return;
+            }
+
+            if(this.adPlanTimeForm.shm > this.adPlanTimeForm.ehm){
+              this.setting.loading = false
+              this.$message({
+                message: "素材投放时间的开始时间需小于结束时间",
+                type: 'error'
+              })
+              return;
             }
 
             if (this.adPlan.tmode === 'hours') {
@@ -430,7 +453,7 @@
                     type: 'success'
                   })
                   this.$router.push({
-                    path: '/ad/plan'
+                    path: '/ad/plan/'+ this.adPlan.id + '/plan_time'
                   })
                 })
                 .catch(err => {
@@ -450,7 +473,7 @@
                     type: 'success'
                   })
                   this.$router.push({
-                    path: '/ad/plan'
+                    path: '/ad/plan/'+ this.adPlan.id + '/plan_time'
                   })
                 })
                 .catch(err => {
