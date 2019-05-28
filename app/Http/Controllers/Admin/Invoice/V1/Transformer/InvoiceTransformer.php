@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 use App\Http\Controllers\Admin\Invoice\V1\Models\Invoice;
 use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany;
 use App\Http\Controllers\Admin\Media\V1\Transformer\MediaTransformer;
+use League\Fractal\Resource\Collection;
+use League\Fractal\Resource\Item;
 use League\Fractal\TransformerAbstract;
 
 class InvoiceTransformer extends TransformerAbstract
@@ -13,7 +15,7 @@ class InvoiceTransformer extends TransformerAbstract
 
     protected $availableIncludes = ['invoice_content', 'contract', 'invoice_company', 'media'];
 
-    public function transform(Invoice $invoice)
+    public function transform(Invoice $invoice): array
     {
         return [
             'id' => $invoice->id,
@@ -22,9 +24,11 @@ class InvoiceTransformer extends TransformerAbstract
             'company_name' => $invoice->contract->company->name,
             'applicant' => $invoice->applicant,
             'applicant_name' => $invoice->applicantUser->name,
+            'owner' => $invoice->owner,
+            'owner_name' => $invoice->ownerUser->name,
             'handler' => $invoice->handler,
             'handler_name' => $invoice->handler ? $invoice->handlerUser->name : null,
-            'type' => $invoice->type == 0 ? '专票' : '普票',
+            'type' => $invoice->type === 0 ? '专票' : '普票',
             'invoice_company_name' => $invoice->invoiceCompany ? $invoice->invoiceCompany->name : null,
             'status' => Invoice::$statusMapping[$invoice->status],
             'kind' => $invoice->kind,
@@ -39,12 +43,12 @@ class InvoiceTransformer extends TransformerAbstract
         ];
     }
 
-    public function includeInvoiceContent(Invoice $invoice)
+    public function includeInvoiceContent(Invoice $invoice): Collection
     {
         return $this->collection($invoice->invoiceContent, new InvoiceContentTransformer());
     }
 
-    public function includeContract(Invoice $invoice)
+    public function includeContract(Invoice $invoice): Item
     {
         return $this->item($invoice->contract, new ContractTransformer());
     }
@@ -57,7 +61,7 @@ class InvoiceTransformer extends TransformerAbstract
         return $this->item($invoice->invoiceCompany, new InvoiceCompanyTransformer());
     }
 
-    public function includeMedia(Invoice $invoice)
+    public function includeMedia(Invoice $invoice): Collection
     {
         return $this->collection($invoice->media, new MediaTransformer());
     }

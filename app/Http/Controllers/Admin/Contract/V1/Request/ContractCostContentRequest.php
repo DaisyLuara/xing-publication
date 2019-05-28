@@ -13,7 +13,7 @@ use App\Http\Requests\Request;
 
 class ContractCostContentRequest extends Request
 {
-    public function rules()
+    public function rules(): ?array
     {
         switch ($this->method()) {
             case 'POST':
@@ -26,8 +26,8 @@ class ContractCostContentRequest extends Request
                 break;
             case 'PATCH':
                 return [
-                    'money'=>'filled|numeric',
-                    'total_cost'=>'filled|numeric'
+                    'money' => 'filled|numeric',
+                    'total_cost' => 'filled|numeric'
                 ];
                 break;
             default:
@@ -36,9 +36,10 @@ class ContractCostContentRequest extends Request
 
     }
 
-    public function attributes(){
+    public function attributes(): array
+    {
         return [
-            'money'=>'金额'
+            'money' => '金额'
         ];
     }
 }

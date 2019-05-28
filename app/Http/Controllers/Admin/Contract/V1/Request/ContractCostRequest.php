@@ -13,28 +13,21 @@ use App\Http\Requests\Request;
 
 class ContractCostRequest extends Request
 {
-    public function rules()
+    public function rules(): array
     {
-        switch ($this->method()) {
-            case 'POST':
-                return [
-                    'contract_id' => 'required',
-                    'applicant_id' => 'required',
-                    'applicant_name' => 'required',
-                    'total_cost' => 'required',
-                    'cost_content.*.creator' => 'required',
-                    'cost_content.*.kind_id' => 'required',
-                    'cost_content.*.money' => 'required',
-                    'cost_content.*.remark' => 'max:100'
-                ];
-                break;
-            case 'PATCH':
-                return [
-                ];
-                break;
-            default:
-                return [];
+        $method = $this->method();
+        if ($method === 'POST') {
+            return [
+                'contract_id' => 'required',
+                'applicant_id' => 'required',
+                'applicant_name' => 'required',
+                'total_cost' => 'required',
+                'cost_content.*.creator' => 'required',
+                'cost_content.*.kind_id' => 'required',
+                'cost_content.*.money' => 'required',
+                'cost_content.*.remark' => 'max:100'
+            ];
         }
-
+        return [];
     }
 }

@@ -10,6 +10,8 @@ namespace App\Http\Controllers\Admin\Contract\V1\Models;
 
 
 use App\Models\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * App\Http\Controllers\Admin\Contract\V1\Models\ContractCost
@@ -24,19 +26,19 @@ use App\Models\Model;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Http\Controllers\Admin\Contract\V1\Models\Contract $contract
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCostContent[] $costContent
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCost newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCost newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model ordered()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCost query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model recent()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCost whereApplicantId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCost whereApplicantName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCost whereConfirmCost($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCost whereContractId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCost whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCost whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCost whereTotalCost($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCost whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractCost newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractCost newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Model ordered()
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractCost query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Model recent()
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractCost whereApplicantId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractCost whereApplicantName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractCost whereConfirmCost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractCost whereContractId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractCost whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractCost whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractCost whereTotalCost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractCost whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class ContractCost extends Model
@@ -49,12 +51,12 @@ class ContractCost extends Model
         'total_cost'
     ];
 
-    public function contract()
+    public function contract(): BelongsTo
     {
         return $this->belongsTo(Contract::class, 'contract_id', 'id');
     }
 
-    public function costContent()
+    public function costContent(): HasMany
     {
         return $this->hasMany(ContractCostContent::class, 'cost_id', 'id');
     }

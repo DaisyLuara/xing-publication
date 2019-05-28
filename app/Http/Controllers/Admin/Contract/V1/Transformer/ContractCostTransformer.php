@@ -10,13 +10,14 @@ namespace App\Http\Controllers\Admin\Contract\V1\Transformer;
 
 
 use App\Http\Controllers\Admin\Contract\V1\Models\ContractCost;
+use League\Fractal\Resource\Collection;
 use League\Fractal\TransformerAbstract;
 
 class ContractCostTransformer extends TransformerAbstract
 {
     protected $availableIncludes = ['costContent'];
 
-    public function transform(ContractCost $contractCost)
+    public function transform(ContractCost $contractCost): array
     {
         return [
             'id' => $contractCost->id,
@@ -32,7 +33,7 @@ class ContractCostTransformer extends TransformerAbstract
         ];
     }
 
-    public function includeCostContent(ContractCost $contractCost)
+    public function includeCostContent(ContractCost $contractCost): Collection
     {
         return $this->collection($contractCost->costContent, new ContractCostContentTransformer());
     }

@@ -21,18 +21,18 @@ use App\Models\Model;
  * @property string $account_number 收款人开户账号
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Payment\V1\Models\PaymentPayee newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Payment\V1\Models\PaymentPayee newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model ordered()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Payment\V1\Models\PaymentPayee query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model recent()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Payment\V1\Models\PaymentPayee whereAccountBank($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Payment\V1\Models\PaymentPayee whereAccountNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Payment\V1\Models\PaymentPayee whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Payment\V1\Models\PaymentPayee whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Payment\V1\Models\PaymentPayee whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Payment\V1\Models\PaymentPayee whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Payment\V1\Models\PaymentPayee whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentPayee newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentPayee newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Model ordered()
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentPayee query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Model recent()
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentPayee whereAccountBank($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentPayee whereAccountNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentPayee whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentPayee whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentPayee whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentPayee whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PaymentPayee whereUserId($value)
  * @mixin \Eloquent
  */
 class PaymentPayee extends Model

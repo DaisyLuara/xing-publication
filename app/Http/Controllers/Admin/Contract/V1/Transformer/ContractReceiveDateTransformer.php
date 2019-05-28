@@ -11,19 +11,20 @@ namespace App\Http\Controllers\Admin\Contract\V1\Transformer;
 
 use App\Http\Controllers\Admin\Contract\V1\Models\ContractReceiveDate;
 use App\Http\Controllers\Admin\Invoice\V1\Transformer\InvoiceReceiptTransformer;
+use League\Fractal\Resource\Item;
 use League\Fractal\TransformerAbstract;
 
 class ContractReceiveDateTransformer extends TransformerAbstract
 {
     protected $availableIncludes = ['invoiceReceipt', 'contract'];
 
-    public function transform(ContractReceiveDate $contractReceiveDate)
+    public function transform(ContractReceiveDate $contractReceiveDate): array
     {
         return [
             'id' => $contractReceiveDate->id,
             'contract_id' => $contractReceiveDate->id,
             'receive_date' => $contractReceiveDate->receive_date,
-            'receive_status' => $contractReceiveDate->receive_status == 0 ? '未收款' : '已收款',
+            'receive_status' => $contractReceiveDate->receive_status === 0 ? '未收款' : '已收款',
         ];
     }
 
@@ -35,7 +36,7 @@ class ContractReceiveDateTransformer extends TransformerAbstract
         return $this->item($contractReceiveDate->invoiceReceipt, new InvoiceReceiptTransformer());
     }
 
-    public function includeContract(ContractReceiveDate $contractReceiveDate)
+    public function includeContract(ContractReceiveDate $contractReceiveDate): Item
     {
         return $this->item($contractReceiveDate->contract, new ContractTransformer());
     }

@@ -14,7 +14,7 @@ use League\Fractal\TransformerAbstract;
 
 class ContractCostKindTransformer extends TransformerAbstract
 {
-    public function transform(ContractCostKind $contractCostKind)
+    public function transform(ContractCostKind $contractCostKind): array
     {
         return [
             'id' => $contractCostKind->id,

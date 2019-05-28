@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
 use App\Http\Controllers\Admin\Media\V1\Transformer\MediaTransformer;
 use App\Http\Controllers\Admin\Team\V1\Models\TeamProject;
+use League\Fractal\Resource\Collection;
+use League\Fractal\Resource\Item;
 use League\Fractal\TransformerAbstract;
 
 class ContractTransformer extends TransformerAbstract
@@ -14,8 +16,7 @@ class ContractTransformer extends TransformerAbstract
     protected $availableIncludes = ['media', 'receiveDate', 'company'];
 
 
-
-    public function transform(Contract $contract)
+    public function transform(Contract $contract): array
     {
         $team_projects_num = TeamProject::query()->where('contract_id', $contract->id)
             ->whereIn('individual_attribute', [1, 2])
@@ -31,12 +32,14 @@ class ContractTransformer extends TransformerAbstract
             'company_name' => $contract->company->name,
             'applicant' => $contract->applicant,
             'applicant_name' => $contract->applicantUser->name,
+            'owner' => $contract->owner,
+            'owner_name' => $contract->ownerUser->name,
             'status' => Contract::$statusMapping[$contract->status],
             'handler' => $contract->handler,
             'handler_name' => $contract->handler ? $contract->handlerUser->name : null,
             'type' => Contract::$typeMapping[$contract->type],
             'kind' => Contract::$kindMapping[$contract->kind],
-            'serve_target' => $contract->serve_target == null ? null : Contract::$targetMapping[$contract->serve_target],
+            'serve_target' => $contract->serve_target === null ? null : Contract::$targetMapping[$contract->serve_target],
             'recharge' => $contract->recharge === null ? null : Contract::$chargeMapping[$contract->recharge],
             'special_num' => $contract->special_num,
             'true_special_num' => $team_projects_num[1] ?? 0,
@@ -47,7 +50,7 @@ class ContractTransformer extends TransformerAbstract
             'legal_message' => $contract->legal_message,
             'legal_ma_message' => $contract->legal_ma_message,
             'bd_ma_message' => $contract->bd_ma_message,
-            'receive_date' => join(',', array_column($contract->receiveDate->toArray(), 'receive_date')),
+            'receive_date' => implode(',', array_column($contract->receiveDate->toArray(), 'receive_date')),
             'product_status' => Contract::$productStatusMapping[$contract->product_status],
             'product_content' => $contract->product,
             'start_date' => $contract->start_date,
@@ -57,17 +60,17 @@ class ContractTransformer extends TransformerAbstract
         ];
     }
 
-    public function includeMedia(Contract $contract)
+    public function includeMedia(Contract $contract): Collection
     {
         return $this->collection($contract->media, new MediaTransformer());
     }
 
-    public function includeReceiveDate(Contract $contract)
+    public function includeReceiveDate(Contract $contract): Collection
     {
         return $this->collection($contract->receiveDate, new ContractReceiveDateTransformer());
     }
 
-    public function includeCompany(Contract $contract)
+    public function includeCompany(Contract $contract): Item
     {
         return $this->item($contract->company, new CompanyTransformer());
     }

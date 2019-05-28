@@ -19,7 +19,7 @@ use Illuminate\Http\Request;
 
 class ContractCostController extends Controller
 {
-    public function show(ContractCost $contractCost)
+    public function show(ContractCost $contractCost): Response
     {
         return $this->response()->item($contractCost, new ContractCostTransformer());
     }
@@ -57,11 +57,11 @@ class ContractCostController extends Controller
         $user = $this->user();
         if ($user->hasRole('legal-affairs-manager')) {
             $status = 1;
-            $contractCost->fill(array_merge($request->all(), ['confirm_cost' => $request->total_cost]))->save();
+            $contractCost->fill(array_merge($request->all(), ['confirm_cost' => $request->get('total_cost')]))->save();
         } else {
             $contractCost->fill($request->all())->save();
         }
-        $contents = $request->cost_content;
+        $contents = $request->get('cost_content');
         foreach ($contents as $content) {
             ContractCostContent::create(array_merge($content, ['cost_id' => $contractCost->id, 'status' => $status]));
         }
