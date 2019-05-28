@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\Point\V1\Models\Market;
 use App\Http\Controllers\Admin\Point\V1\Transformer\PointTransformer;
 use App\Http\Controllers\Admin\Point\V1\Request\PointRequest;
 use App\Http\Controllers\Admin\Point\V1\Models\Point;
+use App\Http\Controllers\Admin\User\V1\Models\ArUser;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Carbon\Carbon;
@@ -126,7 +127,9 @@ class PointController extends Controller
         if (!$user->z) {
             abort(500, '无用户标识');
         }
-        $point->fill(array_merge($request->all(), ['bd_z' => $user->z]))->saveOrFail();
+        $arUser = ArUser::query()->where('z', $user->z)->first();
+        $arSite = ArUser::query()->where('z', $request->get('site_z'))->first();
+        $point->fill(array_merge($request->all(), ['bd_uid' => $arUser->uid, 'bd_z' => $user->z, 'site_uid' => $arSite->uid]))->saveOrFail();
         $point->attribute()->attach($request->get('attribute_id'));
 
         if ($request->has('contract')) {
