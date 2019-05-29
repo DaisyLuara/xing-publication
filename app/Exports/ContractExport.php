@@ -46,7 +46,7 @@ class ContractExport extends BaseExport
             });
         }
         if ($this->applicant !== null) {
-            $query->where('applicant', '=', $this->applicant);
+            $query->where('owner', '=', $this->applicant);
         }
 
         if ($this->status !== null) {
@@ -64,9 +64,9 @@ class ContractExport extends BaseExport
         /** @var User $user */
         $user = Auth::user();
         if ($user->hasRole('user|bd-manager')) {
-            $query->whereRaw("(applicant = $user->id or handler = $user->id)");
+            $query->whereRaw("(owner = $user->id or handler = $user->id)");
         } elseif ($user->hasRole('legal-affairs|legal-affairs-manager')) {
-            $query->whereRaw("(applicant = $user->id or handler = $user->id or status=3)");
+            $query->whereRaw("(owner = $user->id or handler = $user->id or status=3)");
         } elseif ($user->hasRole('purchasing')) {
             //角色为采购时，查询条件为：已审批完成(status=3),product_status为非0（1未出厂or2已出厂）
             $query->whereRaw('(status = 3 and product_status != 0)');
@@ -81,6 +81,7 @@ class ContractExport extends BaseExport
                     'contract_number' => "\t" . $contract->contract_number . "\t",
                     'company_name' => $contract->company->name,
                     'applicant_name' => $contract->applicantUser->name,
+                    'owner_name' => $contract->ownerUser->name,
                     'name' => $contract->name,
                     'amount' => $contract->amount,
                     'type' => Contract::$typeMapping[$contract->type] ?? $contract->type,
@@ -101,7 +102,7 @@ class ContractExport extends BaseExport
                 ];
             })->toArray();
 
-        $header = ['合同ID', '合同编号', '公司名称', '申请人', '合同名称', '合同总额', '合同类型', '合同种类',
+        $header = ['合同ID', '合同编号', '公司名称', '申请人', '所属人', '合同名称', '合同总额', '合同类型', '合同种类',
             '备注', '服务对象', '预充值', '定制节目数量', '通用节目数量', '法务意见',
             '审批状态', '待处理人', '硬件状态',
             '申请时间', '最后操作时间', '预估收款日期', '合同内容',];

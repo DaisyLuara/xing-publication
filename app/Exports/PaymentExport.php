@@ -13,7 +13,7 @@ class PaymentExport extends BaseExport
     private $payee; //收款人
     private $contract_number;//合同编号
     private $start_date, $end_date; //开始时间,结束时间
-    private $applicant;
+    private $owner;
 
     public function __construct($request)
     {
@@ -23,7 +23,7 @@ class PaymentExport extends BaseExport
         $this->receive_status = $request->receive_status;
         $this->payee = $request->payee;
         $this->contract_number = $request->contract_number;
-        $this->applicant = $request->applicant;
+        $this->owner = $request->owner;
         $this->fileName = '付款-付款管理列表';
     }
 
@@ -40,8 +40,8 @@ class PaymentExport extends BaseExport
         if ($this->payee) {
             $query->where('payee', 'like', '%' . $this->payee . '%');
         }
-        if ($this->applicant) {
-            $query->where('applicant', '=', $this->applicant);
+        if ($this->owner) {
+            $query->where('applicant', '=', $this->owner);
         }
         if ($this->receive_status !== null) {
             $query->where('receive_status', '=', $this->receive_status);
@@ -62,7 +62,7 @@ class PaymentExport extends BaseExport
         } else if ($user->hasRole('operation')) {
             $query->whereRaw('(status=3 or status=4)');
         } else {
-            $query->whereRaw("(applicant=$user->id or handler=$user->id)");
+            $query->whereRaw("(owner=$user->id or handler=$user->id)");
         }
 
         $payments = $query->orderBy('created_at', 'desc')->get()
@@ -71,6 +71,7 @@ class PaymentExport extends BaseExport
                     'id' => $payment->id,
                     'contract_number' => $payment->contract->contract_number,
                     'applicant_name' => $payment->applicantUser->name,
+                    'owner_name' => $payment->ownerUser->name,
                     'amount' => $payment->amount,
                     'type' => Payment::$typeMapping[$payment->type],
                     'reason' => $payment->reason,
@@ -89,7 +90,7 @@ class PaymentExport extends BaseExport
 
             })->toArray();
 
-        $header = ['ID', '合同编号', '申请人', '申请金额（大写）', '票据种类', '申请事由',
+        $header = ['ID', '合同编号', '申请人', '所属人', '申请金额（大写）', '票据种类', '申请事由',
             '收款人', '收款人开户行', '收款人账号', '收票状态', '审批状态', '待处理人', '付款人',
             '申请时间', '最后操作时间', '附件内容', '备注',];
 

@@ -13,7 +13,7 @@ class PaymentHistoryExport extends BaseExport
     private $payee; //收款人
     private $contract_number;//合同编号
     private $start_date, $end_date; //开始时间,结束时间
-    private $applicant;
+    private $owner;
 
     public function __construct($request)
     {
@@ -23,7 +23,7 @@ class PaymentHistoryExport extends BaseExport
         $this->receive_status = $request->receive_status;
         $this->payee = $request->payee;
         $this->contract_number = $request->contract_number;
-        $this->applicant = $request->applicant;
+        $this->owner = $request->owner;
         $this->fileName = '付款-我已审核列表';
     }
 
@@ -37,8 +37,8 @@ class PaymentHistoryExport extends BaseExport
         if ($this->start_date && $this->end_date) {
             $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '$this->start_date' and '$this->end_date' ");
         }
-        if ($this->applicant) {
-            $query->where('applicant', '=', $this->applicant);
+        if ($this->owner) {
+            $query->where('applicant', '=', $this->owner);
         }
         if ($this->payee) {
             $query->where('payee', 'like', '%' . $this->payee . '%');
