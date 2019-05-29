@@ -7,10 +7,15 @@
     >
       <div class="item-content-wrap">
         <div class="search-wrap">
-          <el-form ref="adSearchForm" :model="adSearchForm" class="search-form">
+          <el-form 
+            ref="adSearchForm" 
+            :model="adSearchForm" 
+            class="search-form">
             <el-row :gutter="24">
               <el-col :span="8">
-                <el-form-item label prop="adTrade">
+                <el-form-item 
+                  label 
+                  prop="adTrade">
                   <el-select
                     v-model="adSearchForm.ad_trade_id"
                     filterable
@@ -28,12 +33,16 @@
               </el-col>
               <el-col :span="8">
                 <el-form-item prop="type">
-                  <el-input v-model="adSearchForm.name" placeholder="广告素材名称"/>
+                  <el-input 
+                    v-model="adSearchForm.name" 
+                    placeholder="广告素材名称"/>
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item>
-                  <el-button type="primary" @click="search('adSearchForm')">搜索</el-button>
+                  <el-button 
+                    type="primary" 
+                    @click="search('adSearchForm')">搜索</el-button>
                   <el-button @click="resetSearch('adSearchForm')">重置</el-button>
                 </el-form-item>
               </el-col>
@@ -42,12 +51,22 @@
         </div>
         <div class="actions-wrap">
           <span class="label">广告素材数量: {{ pagination.total }}</span>
-          <el-button size="small" type="success" @click="linkToAdd">新增广告素材</el-button>
+          <el-button 
+            size="small" 
+            type="success" 
+            @click="linkToAdd">新增广告素材</el-button>
         </div>
-        <el-table ref="multipleTable" :data="adList" style="width: 100%" highlight-current-row>
+        <el-table 
+          ref="multipleTable" 
+          :data="adList" 
+          style="width: 100%" 
+          highlight-current-row>
           <el-table-column type="expand">
             <template slot-scope="scope">
-              <el-form label-position="left" inline class="demo-table-expand">
+              <el-form 
+                label-position="left" 
+                inline 
+                class="demo-table-expand">
                 <el-form-item label="ID">
                   <span>{{ scope.row.id }}</span>
                 </el-form-item>
@@ -61,7 +80,10 @@
                   <span>{{ scope.row.name }}</span>
                 </el-form-item>
                 <el-form-item label="附件">
-                  <a :href="scope.row.link" target="_blank" style="color: blue">点击查看</a>
+                  <a 
+                    :href="scope.row.link" 
+                    target="_blank" 
+                    style="color: blue">点击查看</a>
                 </el-form-item>
                 <el-form-item label="附件大小">
                   <span>{{ scope.row.size }} M</span>
@@ -78,7 +100,10 @@
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column prop="id" label="ID" min-width="50"/>
+          <el-table-column 
+            prop="id" 
+            label="ID" 
+            min-width="50"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="ad_trade_name"
@@ -91,7 +116,10 @@
             label="类型"
             min-width="60"
           />
-          <el-table-column :show-overflow-tooltip="true" label="素材名称" min-width="120">
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            label="素材名称" 
+            min-width="120">
             <template slot-scope="scope">
               <span>{{ scope.row.name }}</span>
               <br>
@@ -103,12 +131,20 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column min-width="80" label="附件">
+          <el-table-column 
+            min-width="80" 
+            label="附件">
             <template slot-scope="scope">
-              <a :href="scope.row.link" target="_blank" style="color: blue">点击查看</a>
+              <a 
+                :href="scope.row.link" 
+                target="_blank" 
+                style="color: blue">点击查看</a>
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" label="创建人" min-width="80">
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            label="创建人" 
+            min-width="80">
             <template slot-scope="scope">
               <span>{{ scope.row.create_user_name ? scope.row.create_user_name : '' }}</span>
             </template>
@@ -125,9 +161,14 @@
             label="修改时间"
             min-width="120"
           />
-          <el-table-column label="操作" min-width="80">
+          <el-table-column 
+            label="操作" 
+            min-width="80">
             <template slot-scope="scope">
-              <el-button size="small" type="warning" @click="linkToEdit(scope.row.id)">编辑</el-button>
+              <el-button 
+                size="small" 
+                type="warning" 
+                @click="linkToEdit(scope.row.id)">编辑</el-button>
             </template>
           </el-table-column>
         </el-table>
