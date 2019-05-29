@@ -127,6 +127,7 @@ class PointController extends Controller
         if (!$user->z) {
             abort(500, '无用户标识');
         }
+
         $arUser = ArUser::query()->where('z', $user->z)->first();
         $arSite = ArUser::query()->where('z', $request->get('site_z'))->first();
         $point->fill(array_merge($request->all(), ['bd_uid' => $arUser->uid, 'bd_z' => $user->z, 'site_uid' => $arSite->uid]))->saveOrFail();
