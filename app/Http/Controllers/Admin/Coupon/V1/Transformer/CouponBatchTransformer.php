@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Admin\Coupon\V1\Transformer;
 
 use App\Http\Controllers\Admin\Company\V1\Transformer\CompanyTransformer;
+use App\Http\Controllers\Admin\Company\V1\Transformer\CustomerTransformer;
 use App\Http\Controllers\Admin\Point\V1\Models\Store;
 use App\Http\Controllers\Admin\Point\V1\Transformer\MarketTransformer;
 use App\Http\Controllers\Admin\Point\V1\Transformer\PointTransformer;
@@ -19,7 +20,7 @@ use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 
 class CouponBatchTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['user', 'company', 'wechat', 'market', 'point', 'writeOffMarket', 'writeOffStore'];
+    protected $availableIncludes = ['user', 'customer', 'company', 'wechat', 'market', 'point', 'writeOffMarket', 'writeOffStore'];
 
     public function transform(CouponBatch $couponBatch)
     {
@@ -27,8 +28,8 @@ class CouponBatchTransformer extends TransformerAbstract
             'id' => $couponBatch->id,
             'name' => $couponBatch->name,
             'description' => $couponBatch->description,
-            'image_url' => preg_replace('/exe666.com/','xingstation.cn', $couponBatch->image_url),
-            'bs_image_url' => preg_replace('/exe666.com/','xingstation.cn', $couponBatch->bs_image_url),
+            'image_url' => preg_replace('/exe666.com/', 'xingstation.cn', $couponBatch->image_url),
+            'bs_image_url' => preg_replace('/exe666.com/', 'xingstation.cn', $couponBatch->bs_image_url),
             'amount' => $couponBatch->amount,
             'count' => $couponBatch->count,
             'stock' => $couponBatch->stock,
@@ -59,7 +60,18 @@ class CouponBatchTransformer extends TransformerAbstract
 
     public function includeUser(CouponBatch $couponBatch)
     {
+        if (!$couponBatch->user) {
+            return null;
+        }
         return $this->item($couponBatch->user, new UserTransformer());
+    }
+
+    public function includeCustomer(CouponBatch $couponBatch)
+    {
+        if (!$couponBatch->customer) {
+            return null;
+        }
+        return $this->item($couponBatch->customer, new CustomerTransformer());
     }
 
     public function includeCompany(CouponBatch $couponBatch)
@@ -87,7 +99,7 @@ class CouponBatchTransformer extends TransformerAbstract
     public function includePoint(CouponBatch $couponBatch)
     {
         $points = collect();
-        $couponBatch->marketPointCouponBatches->each(function ($item) use($points){
+        $couponBatch->marketPointCouponBatches->each(function ($item) use ($points) {
             if ($item->point) {
                 $points->push($item->point);
             }
