@@ -178,6 +178,11 @@ class CouponBatch extends Model
         return $this->belongsTo(User::class, 'create_user_id', 'id');
     }
 
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'create_customer_id', 'id');
+    }
+
     public function company()
     {
         return $this->belongsTo(Company::class, 'company_id', 'id');
