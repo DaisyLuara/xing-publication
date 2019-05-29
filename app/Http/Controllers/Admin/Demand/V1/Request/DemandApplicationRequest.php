@@ -19,6 +19,7 @@ class DemandApplicationRequest extends Request
             case 'POST':
                 return [
                     'title' => 'required|string|unique:demand_applications',
+                    'owner' => 'integer|exists:users,id',
                     'launch_point_remark' => 'required|string',
                     'has_contract' => ['required', 'integer', Rule::in([0, 1, 2])],
                     'contract_ids' => 'required_if:has_contract,1|nullable|array',
@@ -39,6 +40,7 @@ class DemandApplicationRequest extends Request
                     'title' => ['required', 'string',
                         Rule::unique('demand_applications')->ignore($this->route('demand_application')->id),
                     ],
+                    'owner' => 'required|integer|exists:users,id',
                     'launch_point_remark' => 'required|string',
                     'has_contract' => ['required', 'integer', Rule::in([0, 1, 2])],
                     'contract_ids' => 'required_if:has_contract,1|nullable|array',
@@ -64,6 +66,7 @@ class DemandApplicationRequest extends Request
         return [
             'title' => '项目标的',
             'applicant_id' => '申请人',
+            'owner' => '所属人',
             'launch_point_remark' => '投放地点备注',
             'has_contract' => '有无合同',
             'contract_ids' => '合同编号',

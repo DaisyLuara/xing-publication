@@ -24,6 +24,10 @@ class AddOwnerToProcessTable extends Migration
         Schema::table('payments', function (Blueprint $table) {
             $table->integer('owner')->default(0)->after('applicant')->comment('所属人');
         });
+
+        Schema::table('demand_applications', function (Blueprint $table) {
+            $table->integer('owner')->default(0)->after('applicant_id')->comment('所属人');
+        });
     }
 
     /**
@@ -42,6 +46,10 @@ class AddOwnerToProcessTable extends Migration
         });
 
         Schema::table('payments', function (Blueprint $table) {
+            $table->dropColumn('owner');
+        });
+
+        Schema::table('demand_applications', function (Blueprint $table) {
             $table->dropColumn('owner');
         });
     }
