@@ -119,6 +119,7 @@
           <el-input-number
             v-model="adPlanTimeForm.ktime"
             :min="0"
+            :max="9999"
             controls-position="right"/>
           秒
         </el-form-item>

@@ -1,8 +1,15 @@
 <template>
   <div class="item-wrap-template">
-    <div v-loading="setting.loading" :element-loading-text="setting.loadingText" class="pane">
+    <div 
+      v-loading="setting.loading" 
+      :element-loading-text="setting.loadingText" 
+      class="pane">
       <div class="pane-title">{{ projectAuthId ? '修改节目授权' : '新增节目授权' }}</div>
-      <el-form ref="projectAuthForm" :model="projectAuthForm" label-width="150px" class="duty-form">
+      <el-form 
+        ref="projectAuthForm" 
+        :model="projectAuthForm" 
+        label-width="150px" 
+        class="duty-form">
         <el-form-item
           :rules="{required: true, message: '节目不能为空', trigger: 'submit'}"
           prop="project_id"
@@ -48,8 +55,13 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" size="small" @click="submit('projectAuthForm')">保存</el-button>
-          <el-button size="small" @click="historyBack">返回</el-button>
+          <el-button 
+            type="primary" 
+            size="small" 
+            @click="submit('projectAuthForm')">保存</el-button>
+          <el-button 
+            size="small" 
+            @click="historyBack">返回</el-button>
         </el-form-item>
       </el-form>
     </div>

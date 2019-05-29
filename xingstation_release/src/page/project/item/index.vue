@@ -306,7 +306,7 @@
                 :src="scope.row.project.icon" 
                 alt 
                 class="icon-item">
-              <div style="text-align:center">{{ scope.row.project.name }}</div>
+              <div style="text-align:left">{{ scope.row.project.name }}</div>
             </template>
           </el-table-column>
           <el-table-column 
@@ -319,7 +319,7 @@
                 :src="scope.row.skin.icon" 
                 alt 
                 class="icon-item">
-              <div style="text-align:center">{{ scope.row.skin.name }}</div>
+              <div style="text-align:left">{{ scope.row.skin.name }}</div>
             </template>
           </el-table-column>
 
@@ -1158,7 +1158,7 @@ export default {
     .item-content-wrap {
       .icon-item {
         padding: 10px;
-        width: 100%;
+        width: 50%;
       }
       .demo-table-expand {
         font-size: 0;
