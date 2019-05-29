@@ -44,7 +44,7 @@ class InvoiceReceiptExport extends BaseExport
         if ($user->hasRole('user')) {
             $query->whereHas('receiveDate', static function ($q) use ($user) {
                 $q->whereHas('contract', static function ($q) use ($user) {
-                    $q->where('applicant', $user->id);
+                    $q->where('owner', $user->id);
                 });
             });
         }
@@ -52,7 +52,7 @@ class InvoiceReceiptExport extends BaseExport
         if ($user->hasRole('bd-manager')) {
             $query->whereHas('receiveDate', static function ($q) use ($user) {
                 $q->whereHas('contract', static function ($q) use ($user) {
-                    $q->whereHas('applicantUser', static function ($q) use ($user) {
+                    $q->whereHas('ownerUser', static function ($q) use ($user) {
                         $q->where('parent_id', $user->id);
                     });
                 });
@@ -70,7 +70,7 @@ class InvoiceReceiptExport extends BaseExport
                     'creator' => $invoiceReceipt->creator,
                     'receiveDate_receive_date' => $invoiceReceipt->receiveDate ? $invoiceReceipt->receiveDate->receive_date : '',
                     'receiveDate_contract_contract_number' => "\t" . (($invoiceReceipt->receiveDate && $invoiceReceipt->receiveDate->contract) ? $invoiceReceipt->receiveDate->contract->contract_number : '') . "\t",
-                    'receiveDate_contract_applicant_name' => ($invoiceReceipt->receiveDate && $invoiceReceipt->receiveDate->contract && $invoiceReceipt->receiveDate->contract->applicantUser) ? $invoiceReceipt->receiveDate->contract->applicantUser->name : '',
+                    'receiveDate_contract_owner_name' => ($invoiceReceipt->receiveDate && $invoiceReceipt->receiveDate->contract && $invoiceReceipt->receiveDate->contract->ownerUser) ? $invoiceReceipt->receiveDate->contract->ownerUser->name : '',
                 ];
             })->toArray();
 

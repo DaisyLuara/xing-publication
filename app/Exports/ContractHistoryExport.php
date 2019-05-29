@@ -41,9 +41,11 @@ class ContractHistoryExport extends BaseExport
         $query = DB::table('contracts as c')
             ->leftJoin('companies', 'c.company_id', '=', 'companies.id')
             ->leftJoin('users as au', 'c.applicant', '=', 'au.id')
+            ->leftJoin('users as ou', 'c.owner', '=', 'ou.id')
             ->leftJoin('users as hu', 'c.handler', '=', 'hu.id')
             ->leftJoin('contract_products as cp', 'c.id', '=', 'cp.contract_id')
-            ->whereIn('c.id', $history_contract_ids);
+            ->whereIn('c.id', $history_contract_ids)
+            ->whereRaw('deleted_at is null');
 
         if ($this->start_date && $this->end_date) {
             $query->whereRaw("date_format(c.created_at,'%Y-%m-%d') between '$this->start_date' and '$this->end_date' ");
@@ -71,7 +73,7 @@ class ContractHistoryExport extends BaseExport
 
         $contracts = $query->orderByDesc('c.created_at')
             ->orderByDesc('c.id')
-            ->selectRaw("c.id,concat('\t',c.contract_number,'\t') as 'contract_number',companies.name as 'company_name',c.name,au.name as 'au_name',
+            ->selectRaw("c.id,concat('\t',c.contract_number,'\t') as 'contract_number',companies.name as 'company_name',c.name,au.name as 'au_name',ou.name as 'ou_name'
             case c.type when 0 then '收款合同' when 1 then '付款合同' when 2 then '其它合同' else c.type end as 'type' ,
             case c.kind when 1 then '铺屏' when 2 then '销售' when 3 then '租赁' when 4 then '服务' else '' end as 'kind',
             c.remark,c.special_num,c.common_num,c.legal_ma_message,c.bd_ma_message,
@@ -88,7 +90,7 @@ class ContractHistoryExport extends BaseExport
         $this->merge_start = 1;
         $this->merge_end = 17;
 
-        $header = ['合同ID', '合同编号', '公司名称', '合同名称', '申请人', '合同类型', '合同种类',
+        $header = ['合同ID', '合同编号', '公司名称', '合同名称', '申请人', '所属人', '合同类型', '合同种类',
             '备注', '定制节目数量', '通用节目数量', '法务主管意见', 'bd主管意见',
             '审批状态', '待处理人', '硬件状态',
             '申请时间', '最后操作时间',
