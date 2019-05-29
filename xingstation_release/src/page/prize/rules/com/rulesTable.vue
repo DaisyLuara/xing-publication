@@ -1,14 +1,9 @@
 <template>
   <div>
-    <el-table 
-      :data="tableData" 
-      style="width: 100%">
+    <el-table :data="tableData" style="width: 100%">
       <el-table-column type="expand">
         <template slot-scope="scope">
-          <el-form 
-            label-position="left" 
-            inline 
-            class="demo-table-expand">
+          <el-form label-position="left" inline class="demo-table-expand">
             <el-form-item label="ID">
               <span>{{ scope.row.id }}</span>
             </el-form-item>
@@ -22,7 +17,7 @@
               <span>{{ scope.row.company.internal_name }}</span>
             </el-form-item>
             <el-form-item label="创建人">
-              <span>{{ scope.row.user.name }}</span>
+              <span>{{ scope.row.user ? scope.row.user.name: scope.row.customer.name}}</span>
             </el-form-item>
             <el-form-item label="剩余库存">
               <span>{{ scope.row.stock }}</span>
@@ -33,26 +28,13 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column 
-        :show-overflow-tooltip="true" 
-        prop="id" 
-        label="ID" 
-        min-width="80"/>
-      <el-table-column
-        :show-overflow-tooltip="true"
-        prop="scene_type"
-        label="适用场景"
-        min-width="100"
-      >
+      <el-table-column :show-overflow-tooltip="true" prop="id" label="ID" min-width="80"/>
+      <el-table-column :show-overflow-tooltip="true" prop="scene_type" label="适用场景" min-width="100">
         <template
           slot-scope="scope"
         >{{ scope.row.scene_type === 1 ? '场地通用' : scope.row.scene_type === 2 ? '场地自营' : scope.row.scene_type === 3 ? '商户通用' : scope.row.scene_type === 4 ? '商户自营' : '无' }}</template>
       </el-table-column>
-      <el-table-column 
-        :show-overflow-tooltip="true" 
-        prop="name" 
-        label="优惠券名称" 
-        min-width="100"/>
+      <el-table-column :show-overflow-tooltip="true" prop="name" label="优惠券名称" min-width="100"/>
       <el-table-column
         :show-overflow-tooltip="true"
         prop="internal_name"
@@ -61,35 +43,22 @@
       >
         <template slot-scope="scope">{{ scope.row.company.internal_name }}</template>
       </el-table-column>
-      <el-table-column 
-        :show-overflow-tooltip="true" 
-        prop="user_name" 
-        label="创建人" 
-        min-width="100">
-        <template slot-scope="scope">{{ scope.row.user.name }}</template>
+      <el-table-column :show-overflow-tooltip="true" prop="user_name" label="创建人" min-width="100">
+        <template
+          slot-scope="scope"
+        >{{ scope.row.user ? scope.row.user.name : scope.row.customer.name}}</template>
       </el-table-column>
-      <el-table-column 
-        :show-overflow-tooltip="true" 
-        prop="stock" 
-        label="剩余库存" 
-        min-width="100"/>
+      <el-table-column :show-overflow-tooltip="true" prop="stock" label="剩余库存" min-width="100"/>
       <el-table-column
         :show-overflow-tooltip="true"
         prop="updated_at"
         label="修改时间"
         min-width="100"
       />
-      <el-table-column 
-        label="操作" 
-        min-width="150">
+      <el-table-column label="操作" min-width="150">
         <template slot-scope="scope">
-          <el-button 
-            size="small" 
-            type="warning" 
-            @click="linkToEdit(scope.row)">编辑</el-button>
-          <el-button 
-            size="small" 
-            @click="copyRules(scope.row)">复制</el-button>
+          <el-button size="small" type="warning" @click="linkToEdit(scope.row)">编辑</el-button>
+          <el-button size="small" @click="copyRules(scope.row)">复制</el-button>
         </template>
       </el-table-column>
     </el-table>

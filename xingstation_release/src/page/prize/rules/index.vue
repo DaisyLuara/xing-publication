@@ -291,7 +291,7 @@ export default {
     getCouponList() {
       this.setting.loading = true;
       let args = {
-        include: "user,company,writeOffMarket",
+        include: "user,company,customer,writeOffMarket",
         page: this.pagination.currentPage,
         status: this.status,
         name: this.filters.name,
@@ -418,9 +418,6 @@ export default {
     background: #fff;
     padding: 30px;
 
-    .el-form-item {
-      margin-bottom: 0;
-    }
     .item-content-wrap {
       .demo-table-expand {
         font-size: 0;
@@ -447,7 +444,7 @@ export default {
         align-items: center;
         margin-bottom: 10px;
         .el-form-item {
-          margin-bottom: 0;
+          margin-bottom: 10px;
         }
         .el-select {
           width: 200px;
