@@ -19,8 +19,6 @@ class ContractCostRequest extends Request
         if ($method === 'POST') {
             return [
                 'contract_id' => 'required',
-                'applicant_id' => 'required',
-                'applicant_name' => 'required',
                 'total_cost' => 'required',
                 'cost_content.*.creator' => 'required',
                 'cost_content.*.kind_id' => 'required',
