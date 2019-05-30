@@ -31,7 +31,8 @@ class ContractCostController extends Controller
             $query->whereRaw("date_format(updated_at,'%Y-%m-%d') between '{$request->get('start_date')}' and '{$request->get('end_date')}' ");
         }
 
-        $query->whereHas('contract', static function ($q) use ($request) {
+        $user = $this->user();
+        $query->whereHas('contract', static function ($q) use ($request, $user) {
             if ($request->filled('contract_number')) {
                 $q->where('contract_number', 'like', '%' . $request->get('contract_number') . '%');
             }
@@ -40,7 +41,6 @@ class ContractCostController extends Controller
                 $q->where('name', 'like', '%' . $request->get('contract_name') . '%');
             }
 
-            $user = $this->user();
             if ($user->hasRole('user|bd-manager')) {
                 $q->where('applicant', $user->id);
             }
