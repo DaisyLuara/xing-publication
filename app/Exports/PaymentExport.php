@@ -36,7 +36,7 @@ class PaymentExport extends BaseExport
         }
 
         if ($this->payment_payee_name) {
-            $query->whereHas('paymentPayee', static function ($q) {
+            $query->whereHas('paymentPayee', function ($q) {
                 $q->where('name', 'like', '%' . $this->payment_payee_name . '%');
             });
         }
