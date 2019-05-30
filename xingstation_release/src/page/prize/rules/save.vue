@@ -446,7 +446,7 @@ export default {
         start_date: "",
         end_date: "",
         is_active: 1,
-        write_off_status: 1,
+        write_off_status: 0,
         bs_image_url: "",
         credit: 0,
         marketid: [],
