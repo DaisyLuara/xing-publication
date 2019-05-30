@@ -88,7 +88,7 @@ class ContractHistoryExport extends BaseExport
             return $value->count();
         })->values()->toArray();
         $this->merge_start = 1;
-        $this->merge_end = 17;
+        $this->merge_end = 18;
 
         $header = ['合同ID', '合同编号', '公司名称', '合同名称', '申请人', '所属人', '合同类型', '合同种类',
             '备注', '定制节目数量', '通用节目数量', '法务主管意见', 'bd主管意见',

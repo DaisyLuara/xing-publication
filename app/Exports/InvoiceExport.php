@@ -101,7 +101,7 @@ class InvoiceExport extends BaseExport
             return $value->count();
         })->values()->toArray();
         $this->merge_start = 1;
-        $this->merge_end = 19;
+        $this->merge_end = 20;
 
         $this->header_num = count($header);
         array_unshift($invoices, $header, $header);

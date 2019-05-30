@@ -74,7 +74,7 @@ class ContractRemindExport extends BaseExport
             return $value->count();
         })->values()->toArray();
         $this->merge_start = 1;
-        $this->merge_end = 6;
+        $this->merge_end = 7;
 
         $this->header_num = count($header);
         array_unshift($contractReceiveDates, $header, $header);
