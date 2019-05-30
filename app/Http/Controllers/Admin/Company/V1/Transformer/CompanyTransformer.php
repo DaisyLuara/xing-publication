@@ -36,9 +36,6 @@ class CompanyTransformer extends TransformerAbstract
 
     public function includeCustomers(Company $company)
     {
-        if ($company->customers->isEmpty()) {
-            return null;
-        }
         return $this->collection($company->customers, new CustomerTransformer());
     }
 
