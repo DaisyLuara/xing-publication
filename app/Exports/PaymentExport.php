@@ -10,7 +10,7 @@ class PaymentExport extends BaseExport
 {
     private $status;//审批状态
     private $receive_status;//收票状态
-    private $payee; //收款人
+    private $payment_payee_name; //收款人
     private $contract_number;//合同编号
     private $start_date, $end_date; //开始时间,结束时间
     private $owner;
@@ -21,7 +21,7 @@ class PaymentExport extends BaseExport
         $this->end_date = $request->end_date;
         $this->status = $request->status;
         $this->receive_status = $request->receive_status;
-        $this->payee = $request->payee;
+        $this->payment_payee_name = $request->payment_payee_name;
         $this->contract_number = $request->contract_number;
         $this->owner = $request->owner;
         $this->fileName = '付款-付款管理列表';
@@ -29,26 +29,30 @@ class PaymentExport extends BaseExport
 
     public function collection()
     {
-
-
         $query = Payment::query();
 
         if ($this->start_date && $this->end_date) {
             $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '$this->start_date' and '$this->end_date' ");
         }
 
-        if ($this->payee) {
-            $query->where('payee', 'like', '%' . $this->payee . '%');
+        if ($this->payment_payee_name) {
+            $query->whereHas('paymentPayee', static function ($q) {
+                $q->where('name', 'like', '%' . $this->payment_payee_name . '%');
+            });
         }
+
         if ($this->owner) {
             $query->where('owner', '=', $this->owner);
         }
+
         if ($this->receive_status !== null) {
             $query->where('receive_status', '=', $this->receive_status);
         }
+
         if ($this->status !== null) {
             $query->where('status', '=', $this->status);
         }
+
         if ($this->contract_number !== null) {
             $query->whereHas('contract', function ($q) {
                 $q->where('contract_number', 'like', '%' . $this->contract_number . '%');

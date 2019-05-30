@@ -35,6 +35,7 @@ use App\Http\Controllers\Admin\Media\V1\Models\Media;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
  * @property-read \App\Models\User $applicantUser
+ * @property-read User $ownerUser
  * @property-read \App\Http\Controllers\Admin\Contract\V1\Models\Contract $contract
  * @property-read \App\Models\User|null $handlerUser
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Http\Controllers\Admin\Media\V1\Models\Media[] $media

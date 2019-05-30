@@ -24,7 +24,7 @@ class PaymentTransformer extends TransformerAbstract
             'applicant' => $payment->applicant,
             'applicant_name' => $payment->applicantUser->name,
             'owner' => $payment->owner,
-            'owner_name' => $payment->owner,
+            'owner_name' => $payment->ownerUser->name,
             'amount' => $payment->amount,
             'type' => Payment::$typeMapping[$payment->type],
             'reason' => $payment->reason,

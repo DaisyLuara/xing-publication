@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Admin\Contract\V1\Models;
 
 
 use App\Models\Model;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -18,13 +19,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property int $id
  * @property int $contract_id
- * @property int $applicant_id 所属人id
+ * @property int $applicant 所属人id
+ * @property int $owner
  * @property string $applicant_name 所属人
  * @property string $confirm_cost 已确认成本
  * @property string $total_cost 总成本
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Http\Controllers\Admin\Contract\V1\Models\Contract $contract
+ * @property-read User $applicantUser
+ * @property-read User $ownerUSer
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCostContent[] $costContent
  * @method static \Illuminate\Database\Eloquent\Builder|ContractCost newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ContractCost newQuery()
@@ -45,8 +49,6 @@ class ContractCost extends Model
 {
     protected $fillable = [
         'contract_id',
-        'applicant_id',
-        'applicant_name',
         'confirm_cost',
         'total_cost'
     ];
@@ -60,4 +62,5 @@ class ContractCost extends Model
     {
         return $this->hasMany(ContractCostContent::class, 'cost_id', 'id');
     }
+
 }

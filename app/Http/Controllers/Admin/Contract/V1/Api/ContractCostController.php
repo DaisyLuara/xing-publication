@@ -39,12 +39,13 @@ class ContractCostController extends Controller
             if ($request->filled('contract_name')) {
                 $q->where('name', 'like', '%' . $request->get('contract_name') . '%');
             }
+
+            $user = $this->user();
+            if ($user->hasRole('user|bd-manager')) {
+                $q->where('applicant', $user->id);
+            }
         });
-        /** @var  $user \App\Models\User */
-        $user = $this->user();
-        if ($user->hasRole('user|bd-manager')) {
-            $query->where('applicant_id', $user->id);
-        }
+
         $contractCosts = $query->orderBy('updated_at', 'desc')->paginate(10);
 
         return $this->response()->paginator($contractCosts, new ContractCostTransformer());

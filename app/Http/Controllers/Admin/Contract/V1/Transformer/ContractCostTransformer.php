@@ -19,13 +19,16 @@ class ContractCostTransformer extends TransformerAbstract
 
     public function transform(ContractCost $contractCost): array
     {
+        $contract = $contractCost->contract;
         return [
             'id' => $contractCost->id,
             'contract_id' => $contractCost->contract_id,
-            'contract_number' => $contractCost->contract->contract_number,
-            'contract_name' => $contractCost->contract->name,
-            'applicant_id' => $contractCost->applicant_id,
-            'applicant_name' => $contractCost->applicant_name,
+            'contract_number' => $contract->contract_number,
+            'contract_name' => $contract->name,
+            'applicant' => $contract->applicant,
+            'applicant_name' => $contract->applicantUser->name,
+            'owner' => $contract->owner,
+            'owner_name' => $contract->ownerUser->name,
             'confirm_cost' => $contractCost->confirm_cost,
             'total_cost' => $contractCost->total_cost,
             'created_at' => $contractCost->created_at->toDateTimeString(),
