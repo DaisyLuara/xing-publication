@@ -42,7 +42,7 @@ class ContractCostController extends Controller
             }
 
             if ($user->hasRole('user|bd-manager')) {
-                $q->where('applicant', $user->id);
+                $q->where('owner', $user->id);
             }
         });
 
