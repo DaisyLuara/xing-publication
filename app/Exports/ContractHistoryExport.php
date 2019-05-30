@@ -10,7 +10,7 @@ class ContractHistoryExport extends BaseExport
 {
     private $status;//审批状态
     private $name; //公司名称
-    private $applicant; //公司名称
+    private $owner; //公司名称
     private $contract_number;//合同编号
     private $product_status;//硬件状态
     private $start_date, $end_date; //开始时间,结束时间
@@ -22,7 +22,7 @@ class ContractHistoryExport extends BaseExport
         $this->end_date = $request->end_date;
         $this->status = $request->status;
         $this->name = $request->name;
-        $this->applicant = $request->applicant;
+        $this->owner = $request->owner;
         $this->contract_number = $request->contract_number;
         $this->product_status = $request->product_status;
 
@@ -55,8 +55,8 @@ class ContractHistoryExport extends BaseExport
             $query->where('companies.name', 'like', '%' . $this->name . '%');
         }
 
-        if ($this->applicant) {
-            $query->where('c.applicant', '=', $this->applicant);
+        if ($this->owner) {
+            $query->where('c.owner', '=', $this->owner);
         }
 
         if ($this->status !== null) {

@@ -13,7 +13,7 @@ $api->version('v1', [
     ], static function ($api) {
         $api->group(['middleware' => 'api.auth', 'model' => User::class], static function ($api) {
 
-            $api->get('invoice/export', ['middleware' => ['permission:invoice.list.export'], 'uses' => 'InvoiceController@export']);//下载
+            $api->get('invoice/export', ['middleware' => [], 'uses' => 'InvoiceController@export']);//下载
             $api->get('invoice/{invoice}', 'InvoiceController@show');
             $api->get('invoice', ['middleware' => ['permission:invoice.list.read'], 'uses' => 'InvoiceController@index']);
             $api->post('invoice', ['middleware' => ['permission:invoice.list.create'], 'uses' => 'InvoiceController@store']);
