@@ -41,7 +41,7 @@ class PaymentExport extends BaseExport
             $query->where('payee', 'like', '%' . $this->payee . '%');
         }
         if ($this->owner) {
-            $query->where('applicant', '=', $this->owner);
+            $query->where('owner', '=', $this->owner);
         }
         if ($this->receive_status !== null) {
             $query->where('receive_status', '=', $this->receive_status);

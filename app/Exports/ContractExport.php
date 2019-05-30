@@ -11,7 +11,7 @@ class ContractExport extends BaseExport
 {
     private $status;//审批状态
     private $name; //公司名称
-    private $applicant; //申请人ID
+    private $owner; //申请人ID
     private $contract_number;//合同编号
     private $product_status;//硬件状态
     private $start_date, $end_date; //开始时间,结束时间
@@ -23,7 +23,7 @@ class ContractExport extends BaseExport
         $this->end_date = $request->end_date;
         $this->status = $request->status;
         $this->name = $request->name;
-        $this->applicant = $request->applicant;
+        $this->owner = $request->owner;
         $this->contract_number = $request->contract_number;
         $this->product_status = $request->product_status;
 
@@ -45,8 +45,8 @@ class ContractExport extends BaseExport
                 $q->where('name', 'like', '%' . $this->name . '%');
             });
         }
-        if ($this->applicant !== null) {
-            $query->where('owner', '=', $this->applicant);
+        if ($this->owner !== null) {
+            $query->where('owner', '=', $this->owner);
         }
 
         if ($this->status !== null) {

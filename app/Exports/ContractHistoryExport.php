@@ -73,7 +73,7 @@ class ContractHistoryExport extends BaseExport
 
         $contracts = $query->orderByDesc('c.created_at')
             ->orderByDesc('c.id')
-            ->selectRaw("c.id,concat('\t',c.contract_number,'\t') as 'contract_number',companies.name as 'company_name',c.name,au.name as 'au_name',ou.name as 'ou_name'
+            ->selectRaw("c.id,concat('\t',c.contract_number,'\t') as 'contract_number',companies.name as 'company_name',c.name,au.name as 'au_name',ou.name as 'ou_name',
             case c.type when 0 then '收款合同' when 1 then '付款合同' when 2 then '其它合同' else c.type end as 'type' ,
             case c.kind when 1 then '铺屏' when 2 then '销售' when 3 then '租赁' when 4 then '服务' else '' end as 'kind',
             c.remark,c.special_num,c.common_num,c.legal_ma_message,c.bd_ma_message,

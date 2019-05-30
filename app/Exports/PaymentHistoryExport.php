@@ -38,7 +38,7 @@ class PaymentHistoryExport extends BaseExport
             $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '$this->start_date' and '$this->end_date' ");
         }
         if ($this->owner) {
-            $query->where('applicant', '=', $this->owner);
+            $query->where('owner', '=', $this->owner);
         }
         if ($this->payee) {
             $query->where('payee', 'like', '%' . $this->payee . '%');

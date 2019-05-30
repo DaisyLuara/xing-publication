@@ -70,7 +70,7 @@ class InvoiceHistoryExport extends BaseExport
 
         $invoices = $query->orderByDesc('i.created_at')
             ->orderByDesc('i.id')
-            ->selectRaw("i.id,concat('\t',contracts.contract_number,'\t') as 'contract_number',companies.name as 'company_name',au.name as 'au_name',ou.name as 'ou_name'
+            ->selectRaw("i.id,concat('\t',contracts.contract_number,'\t') as 'contract_number',companies.name as 'company_name',au.name as 'au_name',ou.name as 'ou_name',
             case i.type when 0 then '专票'  else '普票' end as 'type' ,
             concat('\t',invoice_companies.telephone,'\t') as 'invoice_company_telephone',
             invoice_companies.name as 'invoice_company_name',
