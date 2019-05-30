@@ -45,7 +45,7 @@ class ContractHistoryExport extends BaseExport
             ->leftJoin('users as hu', 'c.handler', '=', 'hu.id')
             ->leftJoin('contract_products as cp', 'c.id', '=', 'cp.contract_id')
             ->whereIn('c.id', $history_contract_ids)
-            ->whereRaw('deleted_at is null');
+            ->whereRaw('c.deleted_at is null');
 
         if ($this->start_date && $this->end_date) {
             $query->whereRaw("date_format(c.created_at,'%Y-%m-%d') between '$this->start_date' and '$this->end_date' ");

@@ -46,7 +46,7 @@ class InvoiceHistoryExport extends BaseExport
             ->leftJoin('invoice_kinds as ik', 'ik.id', '=', 'ic.invoice_kind_id')
             ->leftJoin('goods_services as gs', 'gs.id', '=', 'ic.goods_service_id')
             ->whereIn('i.id', $history_invoice_ids)
-            ->whereRaw('deleted_at is null');
+            ->whereRaw('i.deleted_at is null');
 
         if ($this->start_date && $this->end_date) {
             $query->whereRaw("date_format(i.created_at,'%Y-%m-%d') between '$this->start_date' and '$this->end_date' ");

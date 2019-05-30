@@ -37,7 +37,7 @@ class ContractRemindExport extends BaseExport
             ->leftJoin('users as ou', 'c.owner', '=', 'ou.id')
             ->leftJoin('contract_receive_dates as crd', 'c.id', '=', 'crd.contract_id')
             ->leftJoin('invoice_receipts as ir', 'ir.id', '=', 'crd.invoice_receipt_id')
-            ->whereRaw('deleted_at is null');
+            ->whereRaw('c.deleted_at is null');
 
         if ($this->name) {
             $query->where('c.name', 'like', '%' . $this->name . '%');
