@@ -166,9 +166,13 @@ class PointController extends Controller
         }
         $point->attribute()->attach($request->get('attribute_id'));
 
-        $arUser = ArUser::query()->where('z', $user->z)->first();
-        $arSite = ArUser::query()->where('z', $request->get('site_z'))->first();
-        $point->update(array_merge($request->all(), ['bd_uid' => $arUser->uid, 'bd_z' => $user->z, 'site_uid' => $arSite->uid]));
+        $arr = [];
+        if ($request->filled('site_z')) {
+            $arSite = ArUser::query()->where('z', $request->get('site_z'))->first();
+            $arr = ['site_uid' => $arSite->uid];
+        }
+        $point->update(array_merge($request->all(), $arr));
+
         if ($request->has('contract')) {
             $contract = $request->get('contract');
             if (isset($contract['oid'])) {
