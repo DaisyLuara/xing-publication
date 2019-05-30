@@ -43,7 +43,7 @@ class ContractRemindExport extends BaseExport
             $query->where('c.name', 'like', '%' . $this->name . '%');
         }
         if ($this->owner) {
-            $query->where('c.applicant', '=', $this->owner);
+            $query->where('c.owner', '=', $this->owner);
         }
         if ($this->company_name) {
             $query->where('companies.name', 'like', '%' . $this->company_name . '%');
