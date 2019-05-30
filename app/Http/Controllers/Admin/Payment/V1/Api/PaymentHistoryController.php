@@ -21,22 +21,22 @@ class PaymentHistoryController extends Controller
     {
         $query = $payment->query();
 
-        if ($request->get('start_date') && $request->get('end_date')) {
+        if ($request->filled('start_date') && $request->filled('end_date')) {
             $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '{$request->get('start_date')}' and '{$request->get('end_date')}' ");
         }
-        if ($request->get('applicant')) {
+        if ($request->filled('applicant')) {
             $query->where('applicant', '=', $request->get('applicant'));
         }
-        if ($request->get('payee')) {
+        if ($request->filled('payee')) {
             $query->where('payee', 'like', '%' . $request->get('payee') . '%');
         }
-        if ($request->get('receive_status') !== null) {
+        if ($request->filled('receive_status')) {
             $query->where('receive_status', '=', $request->get('receive_status'));
         }
-        if ($request->get('status') !== null) {
+        if ($request->filled('status')) {
             $query->where('status', '=', $request->get('status'));
         }
-        if ($request->get('contract_number') !== null) {
+        if ($request->filled('contract_number')) {
             $query->whereHas('contract', static function ($q) use ($request) {
                 $q->where('contract_number', 'like', '%' . $request->get('contract_number') . '%');
             });
@@ -48,12 +48,12 @@ class PaymentHistoryController extends Controller
             $q->where('user_id', $user->id);
         });
         $payments = $query->orderBy('created_at', 'desc')->paginate(10);
-        return $this->response->paginator($payments, new PaymentTransformer());
+        return $this->response()->paginator($payments, new PaymentTransformer());
     }
 
 
     public function export(Request $request)
     {
-        return excelExportByType($request,'payment_history');
+        return excelExportByType($request, 'payment_history');
     }
 }

@@ -22,7 +22,7 @@ use Illuminate\Http\Request;
 
 class InvoiceReceiptController extends Controller
 {
-    public function show(InvoiceReceipt $invoiceReceipt)
+    public function show(InvoiceReceipt $invoiceReceipt): Response
     {
         return $this->response()->item($invoiceReceipt, new InvoiceReceiptTransformer());
     }
@@ -34,11 +34,11 @@ class InvoiceReceiptController extends Controller
             $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '{$request->get('start_date')}' and '{$request->get('end_date')}' ");
         }
 
-        if ($request->has('name')) {
+        if ($request->filled('name')) {
             $query->where('receipt_company', 'like', '%' . $request->get('name') . '%');
         }
 
-        if ($request->has('claim_status')) {
+        if ($request->filled('claim_status')) {
             $query->where('claim_status', $request->get('claim_status'));
         }
 
@@ -47,7 +47,7 @@ class InvoiceReceiptController extends Controller
         if ($user->hasRole('user')) {
             $query->whereHas('receiveDate', static function ($q) use ($user) {
                 $q->whereHas('contract', static function ($q) use ($user) {
-                    $q->where('applicant', $user->id);
+                    $q->where('owner', $user->id);
                 });
             });
         }
@@ -55,7 +55,7 @@ class InvoiceReceiptController extends Controller
         if ($user->hasRole('bd-manager')) {
             $query->whereHas('receiveDate', static function ($q) use ($user) {
                 $q->whereHas('contract', static function ($q) use ($user) {
-                    $q->whereHas('applicantUser', static function ($q) use ($user) {
+                    $q->whereHas('ownerUser', static function ($q) use ($user) {
                         $q->where('parent_id', $user->id);
                     });
                 });
@@ -95,7 +95,7 @@ class InvoiceReceiptController extends Controller
             abort(403, '无操作权限');
         }
 
-        if ($invoiceReceipt->claim_status == 1) {
+        if ($invoiceReceipt->claim_status === 1) {
             abort(403, '已认领，无法修改');
         }
 
@@ -109,7 +109,7 @@ class InvoiceReceiptController extends Controller
      * @param InvoiceReceipt $invoiceReceipt
      * @return \Dingo\Api\Http\Response
      */
-    public function confirm(Request $request, InvoiceReceipt $invoiceReceipt)
+    public function confirm(Request $request, InvoiceReceipt $invoiceReceipt): Response
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
@@ -127,7 +127,7 @@ class InvoiceReceiptController extends Controller
             //通知合同的bd
             $contract = Contract::find($contractReceiveDate->contract_id);
             $bd = User::find($contract->applicant);
-            $content = "合同有一笔收款已认领" . "\r\n" . "合同编号：" . $contract->contract_number . "\r\n" . "合同公司：" . $contract->company->name . "\r\n" . "收款金额：" . $invoiceReceipt->receipt_money;
+            $content = '合同有一笔收款已认领' . "\r\n" . '合同编号：' . $contract->contract_number . "\r\n" . '合同公司：' . $contract->company->name . "\r\n" . '收款金额：' . $invoiceReceipt->receipt_money;
             if ($bd->weixin_openid) {
                 InvoiceReceiptNotificationJob::dispatch($bd, $content)->onQueue('data-clean');
             } else {

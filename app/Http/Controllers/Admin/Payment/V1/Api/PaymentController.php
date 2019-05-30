@@ -22,25 +22,25 @@ class PaymentController extends Controller
 
         $query = $payment->query();
 
-        if ($request->get('start_date') && $request->get('end_date')) {
+        if ($request->filled('start_date') && $request->filled('end_date')) {
             $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '{$request->get('start_date')}' and '{$request->get('end_date')}' ");
         }
-        if ($request->get('payee')) {
+        if ($request->filled('payee')) {
             $query->where('payee', 'like', '%' . $request->get('payee') . '%');
         }
-        if ($request->get('owner')) {
+        if ($request->filled('owner')) {
             $query->where('owner', '=', $request->get('owner'));
         }
-        if ($request->get('payee')) {
+        if ($request->filled('payee')) {
             $query->where('payee', 'like', '%' . $request->get('payee') . '%');
         }
-        if ($request->get('receive_status') !== null) {
+        if ($request->filled('receive_status')) {
             $query->where('receive_status', '=', $request->get('receive_status'));
         }
-        if ($request->get('status') !== null) {
+        if ($request->filled('status')) {
             $query->where('status', '=', $request->get('status'));
         }
-        if ($request->has('contract_number')) {
+        if ($request->filled('contract_number')) {
             $query->whereHas('contract', static function ($q) use ($request) {
                 $q->where('contract_number', 'like', '%' . $request->get('contract_number') . '%');
             });

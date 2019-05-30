@@ -21,8 +21,16 @@ class AddOwnerToProcessTable extends Migration
             $table->integer('owner')->default(0)->after('applicant')->comment('所属人');
         });
 
+        Schema::table('invoice_companies', function (Blueprint $table) {
+            $table->integer('owner')->default(0)->after('user_id')->comment('所属人');
+        });
+
         Schema::table('payments', function (Blueprint $table) {
             $table->integer('owner')->default(0)->after('applicant')->comment('所属人');
+        });
+
+        Schema::table('payment_payees', function (Blueprint $table) {
+            $table->integer('owner')->default(0)->after('user_id')->comment('所属人');
         });
 
         Schema::table('demand_applications', function (Blueprint $table) {
@@ -45,7 +53,15 @@ class AddOwnerToProcessTable extends Migration
             $table->dropColumn('owner');
         });
 
+        Schema::table('invoice_companies', function (Blueprint $table) {
+            $table->dropColumn('owner');
+        });
+
         Schema::table('payments', function (Blueprint $table) {
+            $table->dropColumn('owner');
+        });
+
+        Schema::table('payment_payees', function (Blueprint $table) {
             $table->dropColumn('owner');
         });
 

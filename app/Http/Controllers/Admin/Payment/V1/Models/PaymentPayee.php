@@ -39,6 +39,7 @@ class PaymentPayee extends Model
 {
     protected $fillable = [
         'user_id',
+        'owner',
         'name',
         'account_bank',
         'account_number',
