@@ -32,6 +32,46 @@
               />
             </el-form-item>
             <el-form-item
+              label="公司名称"
+              prop="companyname"
+            >
+              <el-select
+                v-model="pointForm.companyname"
+                filterable
+                placeholder="请输入合同公司"
+                class="item-input"
+                @change="companynameHandle"
+              >
+                <el-option
+                  v-for="item in companyList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.name"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item
+              label="公司联系人"
+              prop="contract.contract_user"
+            >
+              <el-select
+                v-model="pointForm.contract.contract_user"
+                :loading="searchLoading"
+                filterable
+                placeholder="请选择公司联系人"
+                :remote-method="getTel"
+                @change="contractUser"
+              >
+                <el-option
+                  v-for="item in this.customerList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.name"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item
               label="区域"
               prop="area_id"
             >
@@ -62,7 +102,6 @@
                 filterable
                 remote
                 clearable
-                @change="siteHandle"
               >
                 <el-option
                   v-for="item in siteList"
@@ -110,69 +149,72 @@
               <el-radio
                 v-model="pointForm.contract.contract"
                 :label="0"
+                @change="isHidden()"
               >无</el-radio>
               <el-radio
                 v-model="pointForm.contract.contract"
                 :label="1"
+                @change="isHidden()"
               >有</el-radio>
             </el-form-item>
-            <el-form-item
-              label="合同编号"
-              prop="contract.contract_num"
-            >
-              <el-select
-                v-model="pointForm.contract.contract_num"
-                :loading="searchLoading"
-                placeholder="请选择合同编号"
-                @change="changeContract"
+            <div v-show="this.hidden">
+              <el-form-item
+                label="合同编号"
+                prop="contract.contract_num"
               >
-                <el-option
-                  v-for="item in contractList"
-                  :key="item.contract_number"
-                  :label="item.contract_number"
-                  :value="item.contract_number"
-                />
-              </el-select>
-            </el-form-item>
-            <el-form-item
-              label="合同公司"
-              prop="contract.contract_company"
-            >
-              <el-input
-                v-model="pointForm.contract.contract_company"
-                placeholder="请输入合同公司"
-                class="item-input"
-              />
-            </el-form-item>
-            <el-form-item
-              label="合同联系人"
-              prop="contract.contract_user"
-            >
-              <el-select
-                v-model="pointForm.contract.contract_user"
-                :loading="searchLoading"
-                filterable
-                placeholder="请选择所属人"
-                @change="contractUser"
+                <el-select
+                  v-model="pointForm.contract.contract_num"
+                  :loading="searchLoading"
+                  placeholder="请选择合同编号"
+                  @change="changeContract"
+                >
+                  <el-option
+                    v-for="item in contractList"
+                    :key="item.contract_number"
+                    :label="item.contract_number"
+                    :value="item.contract_number"
+                  />
+                </el-select>
+              </el-form-item>
+              <el-form-item
+                label="合同公司"
+                prop="contract.contract_company"
               >
-                <el-option
-                  v-for="item in customerList"
-                  :key="item.name"
-                  :label="item.name"
-                  :value="item.name"
+                <el-input
+                  v-model="pointForm.contract.contract_company"
+                  placeholder="请输入合同公司"
+                  class="item-input"
                 />
-              </el-select>
-            </el-form-item>
-            <el-form-item
-              label="联系方式"
-              prop="contract.contract_phone"
-            >
-              <el-input
-                v-model="pointForm.contract.contract_phone"
-                placeholder="请输入联系方式"
-                class="item-input"
-              />
-            </el-form-item>
+              </el-form-item>
+              <el-form-item
+                label="合同联系人"
+                prop="contract.contract_user"
+              >
+                <el-select
+                  v-model="pointForm.contract.contract_user"
+                  :loading="searchLoading"
+                  filterable
+                  placeholder="请选择所属人"
+                >
+                  <el-option
+                    v-for="item in customerList"
+                    :key="item.name"
+                    :label="item.name"
+                    :value="item.name"
+                  />
+                </el-select>
+              </el-form-item>
+              <el-form-item
+                label="联系方式"
+                prop="contract.contract_phone"
+              >
+                <el-input
+                  v-model="pointForm.contract.contract_phone"
+                  placeholder="请输入联系方式"
+                  class="item-input"
+                />
+              </el-form-item>
+            </div>
             <el-form-item
               v-if="payFlag"
               label="租金"
@@ -628,8 +670,10 @@ import {
   siteModifyPoint,
   getSearchAeraList,
   getSearchMarketList,
+  getSearchTelList,
   getFormatsList,
-  getContractReceiptList
+  getContractReceiptList,
+  getCompanyList
 } from "service";
 import { Cookies } from "utils/cookies";
 
@@ -713,6 +757,7 @@ export default {
       modeNone: false,
       modeFlag: true,
       searchLoading: false,
+      hidden: true,
       modeList: [
         {
           id: "part",
@@ -785,6 +830,8 @@ export default {
       siteList: [],
       pointID: "",
       pointForm: {
+        companyname: "",
+        tel: "",
         marketid: "",
         area_id: null,
         name: "",
@@ -827,11 +874,22 @@ export default {
           phone_off: 100,
           coupon: 2000,
           coupon_off: 100
+        },
+        company: {
+          name: "",
+          customers: {
+            data: {
+              name: ""
+            }
+          }
         }
       },
+      companyList: [],
       areaList: [],
       rules: {
         name: [{ required: true, message: "请输入名称", trigger: "submit" }],
+        companyname: [{ required: true, message: "请输入公司名称", trigger: "submit" }],
+        "contract.contract_user": [{ required: true, message: "请输入联系人", trigger: "submit" }],
         area_id: [{ required: true, message: "请选择区域", trigger: "submit" }],
         marketid: [
           { required: true, message: "请选择场地", trigger: "submit" }
@@ -956,12 +1014,16 @@ export default {
         await this.getContractReceiptList();
         await this.getFormatsList();
         await this.getAreaList();
+        await this.getCompany();
         if (this.pointID) {
           await this.getPointDetail();
         } else {
           this.setting.loading = false;
         }
       } catch (e) { }
+    },
+    isHidden() {
+      this.hidden = !this.hidden
     },
     contractUser(val) {
       this.customerList.find(item => {
@@ -980,6 +1042,7 @@ export default {
           this.pointForm.contract.contract_company = "";
           this.contractInfo = item;
           this.pointForm.contract.contract_company = this.contractInfo.company.name;
+          console.log(this.pointForm.contract.contract_company)
           this.customerList = this.contractInfo.company.customers.data;
           return;
         }
@@ -993,7 +1056,6 @@ export default {
       getContractReceiptList(this, args)
         .then(res => {
           this.contractList = res;
-          console.log(this.contractList)
           this.searchLoading = false;
         })
         .catch(err => {
@@ -1122,9 +1184,26 @@ export default {
           });
         });
     },
+    getCompany() {
+      return getCompanyList(this)
+        .then(res => {
+          this.companyList = res.data;
+          this.setting.loading = false;
+        })
+        .catch(error => {
+          this.$message({
+            type: "warning",
+            message: error.response.data.message
+          });
+        });
+    },
     areaHandle() {
       this.pointForm.marketid = "";
       this.getMarket(this.pointForm.marketid);
+    },
+    companynameHandle() {
+      this.pointForm.tel = "";
+      this.getTel(this.pointForm.tel);
     },
     getMarket(query) {
       this.searchLoading = true;
@@ -1140,6 +1219,28 @@ export default {
             this.pointForm.marketid = "";
             this.pointForm.siteList = [];
           }
+          this.setting.loading = false;
+          this.searchLoading = false;
+        })
+        .catch(err => {
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
+          this.setting.loading = false;
+          this.searchLoading = false;
+        });
+    },
+    getTel(query) {
+      this.searchLoading = true;
+      let args = {
+        name: query,
+        name: this.pointForm.companyname,
+        include: "customers"
+      };
+      return getSearchTelList(this, args)
+        .then(response => {
+          this.customerList = response.data[0].customers.data;
           this.setting.loading = false;
           this.searchLoading = false;
         })
@@ -1197,9 +1298,8 @@ export default {
             marketid: this.pointForm.marketid,
             name: this.pointForm.name,
             share: this.pointForm.share,
-            site_z: this.pointForm.contract.z
+            site_z: this.pointForm.contract.z,
           }
-          console.log(args)
           if (this.pointID) {
             siteModifyPoint(this, args, this.pointID)
               .then(res => {

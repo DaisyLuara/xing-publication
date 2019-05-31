@@ -3,11 +3,12 @@ const MARKET_API = '/api/market'
 const POINTS_API = '/api/points'
 const POINT_API = '/api/point'
 const BUSINESS_API = '/api/stores'
+const COMPANYNAME_API = '/api/company/query'
 const HOST = process.env.SERVER_URL
 
 // 场地里的场地列表
 const getSiteMarketList = (context, params) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
       .get(HOST + MARKETS_API, { params: params })
       .then(res => {
@@ -20,7 +21,7 @@ const getSiteMarketList = (context, params) => {
 }
 // 场地里的点位列表
 const getSitePointList = (context, params) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
       .get(HOST + POINTS_API, { params: params })
       .then(res => {
@@ -33,7 +34,7 @@ const getSitePointList = (context, params) => {
 }
 // 场地详情
 const getSiteMarketDetail = (context, params, id) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
       .get(HOST + MARKETS_API + '/' + id, { params: params })
       .then(res => {
@@ -46,7 +47,7 @@ const getSiteMarketDetail = (context, params, id) => {
 }
 // 点位详情
 const getSitePointDetail = (context, params, id) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
       .get(HOST + POINTS_API + '/' + id, { params: params })
       .then(res => {
@@ -59,7 +60,7 @@ const getSitePointDetail = (context, params, id) => {
 }
 // 新增场地
 const siteSaveMarket = (context, params) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
       .post(HOST + MARKET_API, params)
       .then(res => {
@@ -72,7 +73,7 @@ const siteSaveMarket = (context, params) => {
 }
 // 修改场地
 const siteModifyMarket = (context, params, id) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
       .patch(HOST + MARKET_API + '/' + id, params)
       .then(res => {
@@ -85,7 +86,7 @@ const siteModifyMarket = (context, params, id) => {
 }
 // 保存点位
 const siteSavePoint = (context, params) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
       .post(HOST + POINT_API, params)
       .then(res => {
@@ -98,7 +99,7 @@ const siteSavePoint = (context, params) => {
 }
 // 修改点位
 const siteModifyPoint = (context, params, id) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
       .patch(HOST + POINTS_API + '/' + id, params)
       .then(res => {
@@ -111,7 +112,7 @@ const siteModifyPoint = (context, params, id) => {
 }
 // 商户列表
 const getBusinessList = (context, params) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
       .get(HOST + BUSINESS_API, { params: params })
       .then(res => {
@@ -124,7 +125,7 @@ const getBusinessList = (context, params) => {
 }
 // 商户新增
 const saveBusiness = (context, params) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
       .post(HOST + BUSINESS_API, params)
       .then(res => {
@@ -138,7 +139,7 @@ const saveBusiness = (context, params) => {
 
 // 修改点位
 const modifyBusiness = (context, params, id) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
       .patch(HOST + BUSINESS_API + '/' + id, params)
       .then(res => {
@@ -152,9 +153,22 @@ const modifyBusiness = (context, params, id) => {
 
 // 点位详情
 const getBusinessDetail = (context, params, id) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     context.$http
       .get(HOST + BUSINESS_API + '/' + id, { params: params })
+      .then(res => {
+        resolve(res.data)
+      })
+      .catch(err => {
+        reject(err)
+      })
+  })
+}
+//公司名称搜索
+const getCompanyList = (context, params) => {
+  return new Promise(function (resolve, reject) {
+    context.$http
+      .get(HOST + COMPANYNAME_API, { params: params })
       .then(res => {
         resolve(res.data)
       })
@@ -175,5 +189,6 @@ export {
   getBusinessList,
   saveBusiness,
   modifyBusiness,
-  getBusinessDetail
+  getBusinessDetail,
+  getCompanyList
 }
