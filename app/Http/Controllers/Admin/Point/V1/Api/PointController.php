@@ -127,6 +127,7 @@ class PointController extends Controller
         if (!$user->z) {
             abort(500, '无用户标识');
         }
+
         $arUser = ArUser::query()->where('z', $user->z)->first();
         $arSite = ArUser::query()->where('z', $request->get('site_z'))->first();
         $point->fill(array_merge($request->all(), ['bd_uid' => $arUser->uid, 'bd_z' => $user->z, 'site_uid' => $arSite->uid]))->saveOrFail();
@@ -145,6 +146,16 @@ class PointController extends Controller
 
     public function update(PointRequest $request, Point $point): Response
     {
+        /** @var  User $user */
+        $user = $this->user();
+        if (!$user->hasRole('user|bd-manager')) {
+            abort(403, '无操作权限');
+        }
+
+        if (!$user->z) {
+            abort(500, '无用户标识');
+        }
+
         $node = Attribute::query()->where('name', '业态')->first();
         $attribute = $point->attribute()->get();
         /** @var \Baum\Node $item */
@@ -155,7 +166,13 @@ class PointController extends Controller
         }
         $point->attribute()->attach($request->get('attribute_id'));
 
-        $point->update($request->all());
+        $arr = [];
+        if ($request->filled('site_z')) {
+            $arSite = ArUser::query()->where('z', $request->get('site_z'))->first();
+            $arr = ['site_uid' => $arSite->uid];
+        }
+        $point->update(array_merge($request->all(), $arr));
+
         if ($request->has('contract')) {
             $contract = $request->get('contract');
             if (isset($contract['oid'])) {

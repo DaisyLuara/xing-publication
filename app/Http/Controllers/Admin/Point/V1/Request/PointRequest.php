@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Point\V1\Request;
 
 use App\Http\Controllers\Admin\Point\V1\Models\Market;
 use App\Http\Requests\Request;
+use Illuminate\Validation\Rule;
 
 class PointRequest extends Request
 {
@@ -26,6 +27,11 @@ class PointRequest extends Request
                     }],
                     'name' => 'required',
                     'site_z' => 'required',
+                    'contract.contract' => ['required', Rule::in(1, 0)],
+                    'contract.contract_num' => 'required_if:contract.contract,1',
+                    'contract.contract_company' => 'required_if:contract.contract,1',
+                    'contract.contract_user' => 'required_if:contract.contract,1',
+                    'contract.contract_phone' => 'required_if:contract.contract,1',
                     'contract.type' => 'required',
                     'contract.pay' => 'required',
                     'contract.enter_sdate' => 'required|date_format:Y-m-d H:i:s',
@@ -77,7 +83,6 @@ class PointRequest extends Request
             'areaid' => '区域',
             'marketid' => '场地',
             'name' => '点位名称',
-            'bd_z' => 'bd标识',
             'site_z' => '场地主标识'
         ];
     }
