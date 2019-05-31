@@ -164,10 +164,10 @@ const getSearchSceneList = context => {
   })
 }
 // 公司
-const getSearchCompany = context => {
+const getSearchCompany = (context, args) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + COMPANY_API)
+      .get(HOST + COMPANY_API,{params: args})
       .then(response => {
         resolve(response.data)
       })
@@ -474,19 +474,7 @@ const getSearchSkin = (context, params) => {
       })
   })
 }
-//公司联系人
-const getSearchTelList = (context, params) => {
-  return new Promise(function (resolve, reject) {
-    context.$http
-      .get(HOST + COMPANY_API, { params: params })
-      .then(response => {
-        resolve(response.data)
-      })
-      .catch(error => {
-        reject(error)
-      })
-  })
-}
+
 export {
   getSearchAeraList,
   getSearchMarketList,
@@ -521,5 +509,4 @@ export {
   getSearchAuthPoint,
   getSearchAuthProject,
   getSearchSkin,
-  getSearchTelList
 }

@@ -164,19 +164,6 @@ const getBusinessDetail = (context, params, id) => {
       })
   })
 }
-//公司名称搜索
-const getCompanyList = (context, params) => {
-  return new Promise(function (resolve, reject) {
-    context.$http
-      .get(HOST + COMPANYNAME_API, { params: params })
-      .then(res => {
-        resolve(res.data)
-      })
-      .catch(err => {
-        reject(err)
-      })
-  })
-}
 export {
   siteModifyPoint,
   siteSavePoint,
@@ -190,5 +177,4 @@ export {
   saveBusiness,
   modifyBusiness,
   getBusinessDetail,
-  getCompanyList
 }
