@@ -47,8 +47,7 @@
                   :key="item.id"
                   :label="item.name"
                   :value="item.name"
-                >
-                </el-option>
+                />
               </el-select>
             </el-form-item>
             <el-form-item
@@ -58,13 +57,13 @@
               <el-select
                 v-model="pointForm.contract.contract_user"
                 :loading="searchLoading"
+                :remote-method="getTel"
                 filterable
                 placeholder="请选择公司联系人"
-                :remote-method="getTel"
                 @change="contractUser"
               >
                 <el-option
-                  v-for="item in this.customerList"
+                  v-for="item in customerList"
                   :key="item.id"
                   :label="item.name"
                   :value="item.name"
@@ -157,7 +156,7 @@
                 @change="isHidden()"
               >有</el-radio>
             </el-form-item>
-            <div v-show="this.hidden">
+            <div v-show="hidden">
               <el-form-item
                 label="合同编号"
                 prop="contract.contract_num"
