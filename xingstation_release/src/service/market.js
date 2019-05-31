@@ -3,7 +3,6 @@ const MARKET_API = '/api/market'
 const POINTS_API = '/api/points'
 const POINT_API = '/api/point'
 const BUSINESS_API = '/api/stores'
-const COMPANYNAME_API = '/api/company/query'
 const HOST = process.env.SERVER_URL
 
 // 场地里的场地列表
@@ -176,5 +175,5 @@ export {
   getBusinessList,
   saveBusiness,
   modifyBusiness,
-  getBusinessDetail,
+  getBusinessDetail
 }

@@ -508,5 +508,5 @@ export {
   getSearchAuthPolicies,
   getSearchAuthPoint,
   getSearchAuthProject,
-  getSearchSkin,
+  getSearchSkin
 }
