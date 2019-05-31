@@ -100,7 +100,7 @@ class InvoiceController extends Controller
                 InvoiceContent::query()->create($item);
             }
             //文件存储
-            if ($request->has('ids')) {
+            if ($request->filled('ids')) {
                 $ids = explode(',', $request->get('ids'));
                 foreach ($ids as $id) {
                     $invoice->media()->attach($id);
