@@ -182,17 +182,19 @@
                   v-model="pointForm.contract.contract_company"
                   placeholder="请输入合同公司"
                   class="item-input"
+                  :disabled="true"
                 />
               </el-form-item>
               <el-form-item
                 label="合同联系人"
-                prop="contract.contract_user"
+                prop="user"
               >
                 <el-select
-                  v-model="pointForm.contract.contract_user"
+                  v-model="pointForm.user"
                   :loading="searchLoading"
                   filterable
                   placeholder="请选择所属人"
+                  @change="getContractUser"
                 >
                   <el-option
                     v-for="item in customerList"
@@ -204,12 +206,13 @@
               </el-form-item>
               <el-form-item
                 label="联系方式"
-                prop="contract.contract_phone"
+                prop="phone"
               >
                 <el-input
-                  v-model="pointForm.contract.contract_phone"
+                  v-model="pointForm.phone"
                   placeholder="请输入联系方式"
                   class="item-input"
+                  :disabled="true"
                 />
               </el-form-item>
             </div>
@@ -833,6 +836,8 @@ export default {
         area_id: null,
         name: "",
         attribute_id: "",
+        user:"",
+        phone:"",
         contract: {
           type: "free",
           contract: 1,
@@ -849,7 +854,7 @@ export default {
           mode: "none",
           ad_istar: 5,
           ad_ads: 5,
-          exchange_num: 0
+          exchange_num: 0,
         },
         permission: [1],
         share: {
@@ -1031,6 +1036,15 @@ export default {
         }
       });
     },
+    //获取合约配置 联系人电话
+    getContractUser(val) {
+      this.customerList.find(item => {
+        if (item.name === val) {
+          this.pointForm.phone = item.phone;
+          return;
+        }
+      });
+    },
     changeContract(val) {
       this.contractList.find(item => {
         if (item.contract_number === val) {
@@ -1040,6 +1054,8 @@ export default {
           this.contractInfo = item;
           this.pointForm.contract.contract_company = this.contractInfo.company.name;
           this.customerList = this.contractInfo.company.customers.data;
+          this.pointForm.user="";
+          this.pointForm.phone="";
           return;
         }
       });
@@ -1109,6 +1125,9 @@ export default {
           this.pointForm.area_id = res.area.id;
           this.pointForm.marketid = res.market.id;
           this.pointForm.attribute_id = res.attribute_id;
+          this.pointForm.companyName = res.contract.contract_company
+          this.pointForm.user = res.contract.contract_user
+          this.pointForm.phone = res.contract.contract_phone
           this.fieldHandle(res);
           this.setting.loading = false;
         })
@@ -1121,6 +1140,7 @@ export default {
         });
     },
     fieldHandle(data) {
+      console.log(data)
       this.getMarket();
       if (data.contract) {
         this.pointForm.contract = data.contract;
@@ -1198,8 +1218,8 @@ export default {
       this.getMarket(this.pointForm.marketid);
     },
     companyNameHandle() {
-      this.pointForm.tel = "";
-      this.getTel(this.pointForm.tel);
+      this.pointForm.contract.contract_user = "";
+      this.getTel(this.pointForm.contract.contract_user);
     },
     getMarket(query) {
       this.searchLoading = true;
