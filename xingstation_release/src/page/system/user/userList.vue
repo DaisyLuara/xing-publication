@@ -6,9 +6,7 @@
   >
     <div class="user-list-content">
       <div class="search-wrap">
-        <el-form 
-          :model="filters" 
-          :inline="true">
+        <el-form :model="filters" :inline="true">
           <el-form-item label>
             <el-input
               v-model="filters.phone"
@@ -18,18 +16,10 @@
             />
           </el-form-item>
           <el-form-item label>
-            <el-input 
-              v-model="filters.name" 
-              style="width:200px" 
-              placeholder="请输入搜索的名字" 
-              clearable/>
+            <el-input v-model="filters.name" style="width:200px" placeholder="请输入搜索的名字" clearable/>
           </el-form-item>
           <el-form-item label>
-            <el-select 
-              v-model="filters.role_id" 
-              placeholder="请选择角色" 
-              filterable 
-              clearable>
+            <el-select v-model="filters.role_id" placeholder="请选择角色" filterable clearable>
               <el-option
                 v-for="item in roleList"
                 :key="item.id"
@@ -38,62 +28,34 @@
               />
             </el-select>
           </el-form-item>
-          <el-button 
-            type="primary" 
-            size="small" 
-            @click="search">搜索</el-button>
-          <el-button 
-            type="default" 
-            size="small" 
-            @click="resetSearch">重置</el-button>
+          <el-button type="primary" size="small" @click="search">搜索</el-button>
+          <el-button type="default" size="small" @click="resetSearch">重置</el-button>
         </el-form>
       </div>
       <div class="actions-wrap">
         <span class="label">用户数量: {{ pagination.total }}</span>
-        <el-button 
-          size="small" 
-          type="success" 
-          @click="linkToAddUser">新增用户</el-button>
+        <el-button size="small" type="success" @click="linkToAddUser">新增用户</el-button>
       </div>
-      <el-table 
-        ref="userTable" 
-        :data="userList" 
-        highlight-current-row 
-        style="width: 100%">
-        <el-table-column 
-          prop="name" 
-          label="姓名"/>
-        <el-table-column 
-          prop="phone" 
-          label="手机号码"/>
-        <el-table-column 
-          prop="role" 
-          label="角色"/>
-        <el-table-column 
-          prop="bind_weixin" 
-          label="是否绑定微信">
+      <el-table ref="userTable" :data="userList" highlight-current-row style="width: 100%">
+        <el-table-column prop="name" label="姓名"/>
+        <el-table-column prop="phone" label="手机号码"/>
+        <el-table-column prop="role" label="角色"/>
+        <el-table-column prop="bind_weixin" label="是否绑定微信">
           <template slot-scope="scope">
             <span>{{ scope.row.bind_weixin === true ? '是' : '否' }}</span>
           </template>
         </el-table-column>
-        <el-table-column 
-          prop="created_at" 
-          label="创建时间"/>
-        <el-table-column 
-          prop="updated_at" 
-          label="修改时间"/>
-        <el-table-column 
-          label="操作" 
-          width="150">
+        <el-table-column prop="created_at" label="创建时间"/>
+        <el-table-column prop="updated_at" label="修改时间"/>
+        <el-table-column label="操作" width="280">
           <template slot-scope="scope">
-            <el-button 
-              size="small" 
-              type="warning" 
-              @click="linkToEdit(scope.row)">修改</el-button>
-            <el-button 
-              size="small" 
-              type="danger" 
-              @click="deleteUsers(scope.row)">删除</el-button>
+            <el-button
+              v-if="scope.row.role === 'BD主管' || scope.row.role === 'BD'"
+              size="small"
+              @click="migration(scope.row)"
+            >迁移</el-button>
+            <el-button size="small" type="warning" @click="linkToEdit(scope.row)">修改</el-button>
+            <el-button size="small" type="danger" @click="deleteUsers(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -107,10 +69,36 @@
         />
       </div>
     </div>
+    <el-dialog title="账号迁移" :visible.sync="dialogFormVisible" :show-close="false">
+      <el-form :model="accountForm" ref="accountForm">
+        <el-form-item
+          label="账号迁移目标"
+          label-width="150px"
+          prop="user_id"
+          :rules="{
+            required: true, message: '账号迁移目标不能为空', trigger: 'submit'
+          }"
+        >
+          <el-select v-model="accountForm.user_id" placeholder="请选择账号迁移目标" clearable filterable>
+            <el-option :label="item.name" :value="item.id" :key="item.id" v-for="item in bdList"/>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancel('accountForm')">取 消</el-button>
+        <el-button type="primary" @click="submit('accountForm')">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
-import { getSearchRole, getUserList, deleteUser } from "service";
+import {
+  getSearchRole,
+  getUserList,
+  deleteUser,
+  getSearchBDList,
+  migrationBDAccount
+} from "service";
 import {
   Button,
   Input,
@@ -121,12 +109,14 @@ import {
   FormItem,
   MessageBox,
   Select,
-  Option
+  Option,
+  Dialog
 } from "element-ui";
 
 export default {
   name: "UserList",
   components: {
+    "el-dialog": Dialog,
     "el-table": Table,
     "el-table-column": TableColumn,
     "el-button": Button,
@@ -139,6 +129,10 @@ export default {
   },
   data() {
     return {
+      dialogFormVisible: false,
+      accountForm: {
+        user_id: null
+      },
       userList: [],
       roleList: [],
       setting: {
@@ -150,18 +144,60 @@ export default {
         role_id: "",
         name: ""
       },
+      bdList: [],
       pagination: {
         total: 100,
         pageSize: 10,
         currentPage: 1
-      }
+      },
+      bdID: null
     };
   },
   created() {
     this.getUserList();
     this.getRoleList();
+    this.init();
   },
   methods: {
+    cancel(formName) {
+      this.dialogFormVisible = false;
+      this.$refs[formName].resetFields();
+    },
+    submit(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          let args = this.accountForm;
+          migrationBDAccount(this, this.bdID, args)
+            .then(res => {
+              this.$message({
+                message: "迁移成功",
+                type: "success"
+              });
+              this.dialogFormVisible = false;
+            })
+            .catch(err => {
+              console.log(err);
+              this.dialogFormVisible = false;
+            });
+        }
+      });
+    },
+    async init() {
+      let res = await getSearchBDList(this);
+      this.bdList = res;
+    },
+    migration(data) {
+      this.$confirm("此操作将永久迁移，不可以逆转, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.bdID = data.id;
+          this.dialogFormVisible = true;
+        })
+        .catch(() => {});
+    },
     linkToEdit(currentUser) {
       this.$router.push({
         path: "/system/user/edit/" + currentUser.id

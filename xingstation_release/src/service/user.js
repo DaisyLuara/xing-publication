@@ -1,5 +1,6 @@
 const USER_API = '/api/system/users'
 const ROLES_API = '/api/system/roles' // 获取当前用户可分配角色的分页接口
+const SYSTEM_USERS_API = '/api/system/users/'
 const HOST = process.env.SERVER_URL
 
 const saveUser = (context, args, uid) => {
@@ -78,4 +79,18 @@ const deleteUser = (context, id) => {
       })
   })
 }
-export { deleteUser, getUserList, getUserDetial, getManageableRoles, saveUser }
+// 账号迁移
+const migrationBDAccount = (context, id, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .patch(`${HOST}${SYSTEM_USERS_API}${id}/user_transfer`, params)
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+  export { deleteUser, getUserList, getUserDetial, getManageableRoles, saveUser,  migrationBDAccount }
