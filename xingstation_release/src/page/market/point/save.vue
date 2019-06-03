@@ -183,7 +183,6 @@
                   placeholder="请输入合同公司"
                   class="item-input"
                   :disabled="true"
-                  @change="changeContractUser"
                 />
               </el-form-item>
               <el-form-item
@@ -194,7 +193,7 @@
                   v-model="pointForm.contract.contract_user"
                   :loading="searchLoading"
                   filterable
-                  placeholder="请选择所属人"
+                  placeholder="请选择联系人"
                   @change="getContractUser"
                 >
                   <el-option
@@ -1018,9 +1017,10 @@ export default {
         await this.getFormatsList();
         await this.getAreaList();
         await this.getCompany();
-        await this.getTel();
         if (this.pointID) {
           await this.getPointDetail();
+          await this.getTel();
+          await this.getContract_user();
         } else {
           this.setting.loading = false;
         }
@@ -1037,8 +1037,6 @@ export default {
         }
       });
     },
-    changeContractUser(){
-    },
     //获取合约配置 联系人电话
     getContractUser(val) {
       this.pointForm.contract.contract_phone=""
@@ -1050,6 +1048,7 @@ export default {
       });
     },
     changeContract(val) {
+      this.getContract_user()
       this.pointForm.contract.contract_user = "";
       this.pointForm.contract.contract_phone = "";
       this.contractList.find(item => {
@@ -1170,7 +1169,6 @@ export default {
         this.pointForm.permission = [];
         this.pointForm.share = data.share;
         delete this.pointForm.share.marketid;
-
         if (
           data.share.site === 0 &&
           data.share.vipad === 0 &&
@@ -1263,6 +1261,26 @@ export default {
       return getSearchCompany(this, args)
         .then(response => {
           this.pointList = response.data[0].customers.data;
+          this.setting.loading = false;
+          this.searchLoading = false;
+        })
+        .catch(err => {
+          this.$message({
+            type: "warning",
+            message: err.response.data.message
+          });
+          this.setting.loading = false;
+          this.searchLoading = false;
+        });
+    },
+    getContract_user() {
+      this.searchLoading = true;
+      let args = {
+        name: this.pointForm.companyName,
+        include: "customers"
+      };
+      return getSearchCompany(this, args)
+        .then(response => {
           this.customerList = response.data[0].customers.data;
           this.setting.loading = false;
           this.searchLoading = false;
