@@ -1169,7 +1169,6 @@ export default {
         this.pointForm.permission = [];
         this.pointForm.share = data.share;
         delete this.pointForm.share.marketid;
-
         if (
           data.share.site === 0 &&
           data.share.vipad === 0 &&
