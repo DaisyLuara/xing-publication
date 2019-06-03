@@ -94,6 +94,9 @@
                 <el-form-item label="创建人">
                   <span>{{ scope.row.create_user_name }}</span>
                 </el-form-item>
+                <el-form-item label="公司简称">
+                  <span>{{ scope.row.create_user_company }}</span>
+                </el-form-item>
                 <el-form-item label="修改时间">
                   <span>{{ scope.row.created_at }}</span>
                 </el-form-item>
@@ -146,7 +149,8 @@
             label="创建人" 
             min-width="80">
             <template slot-scope="scope">
-              <span>{{ scope.row.create_user_name ? scope.row.create_user_name : '' }}</span>
+              <span>{{ scope.row.create_user_name ? scope.row.create_user_name : '' }}</span><br/>
+              <span>{{ scope.row.create_user_company }}</span>
             </template>
           </el-table-column>
           <el-table-column
