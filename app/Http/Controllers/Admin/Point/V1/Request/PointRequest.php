@@ -26,7 +26,7 @@ class PointRequest extends Request
                         }
                     }],
                     'name' => 'required',
-                    'site_z' => 'required',
+                    'customer_id' => 'required',
                     'contract.contract' => ['required', Rule::in(1, 0)],
                     'contract.contract_num' => 'required_if:contract.contract,1',
                     'contract.contract_company' => 'required_if:contract.contract,1',
@@ -54,7 +54,7 @@ class PointRequest extends Request
                     'areaid' => 'filled',
                     'marketid' => 'filled',
                     'name' => 'filled',
-                    'site_z' => 'filled',
+                    'customer_id' => 'filled',
                     'contract.type' => 'filled',
                     'contract.pay' => 'filled',
                     'contract.enter_sdate' => 'filled|date_format:Y-m-d H:i:s',
@@ -83,7 +83,6 @@ class PointRequest extends Request
             'areaid' => '区域',
             'marketid' => '场地',
             'name' => '点位名称',
-            'site_z' => '场地主标识'
         ];
     }
 
