@@ -35,8 +35,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $legal_message 法务意见
  * @property string|null $legal_ma_message 法务主管意见
  * @property string|null $bd_ma_message bd主管意见
- * @property string|null $start_date 合同开始时间
- * @property string|null $end_date 合同结束时间
+ * @property string|null $filed_date 归档日期
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
@@ -115,8 +114,7 @@ class Contract extends Model
         'legal_message',
         'legal_ma_message',
         'bd_ma_message',
-        'start_date',
-        'end_date',
+        'filed_date'
     ];
 
     public function company(): BelongsTo

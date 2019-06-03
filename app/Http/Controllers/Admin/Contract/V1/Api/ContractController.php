@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\Invoice\V1\Models\Invoice;
 use App\Http\Controllers\Admin\Payment\V1\Models\Payment;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Carbon\Carbon;
 use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
@@ -291,5 +292,20 @@ class ContractController extends Controller
     public function export(Request $request)
     {
         return excelExportByType($request, 'contract');
+    }
+
+    public function filed(Contract $contract): Response
+    {
+        /** @var User $user */
+        $user = $this->user();
+        if (!$user->hasRole('legal-affairs|legal-affairs-manager')) {
+            abort(403, '无操作权限');
+        }
+        if ($contract->status !== ActionConfig::CONTRACT_STATUS_AGREE) {
+            abort(403, '此操作只适用于已审批合同');
+        }
+        $filedDate = Carbon::now()->toDateTimeString();
+        $contract->update(['filed_date' => $filedDate]);
+        return $this->response()->noContent();
     }
 }

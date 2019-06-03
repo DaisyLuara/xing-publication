@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Admin\Contract\V1\Api;
 
 
+use App\Http\Controllers\Admin\Common\V1\Request\ExportRequest;
 use App\Http\Controllers\Admin\Contract\V1\Models\ContractCost;
 use App\Http\Controllers\Admin\Contract\V1\Models\ContractCostContent;
 use App\Http\Controllers\Admin\Contract\V1\Request\ContractCostRequest;
@@ -75,4 +76,8 @@ class ContractCostController extends Controller
         return excelExportByType($request, 'contract_cost');
     }
 
+    public function export(ExportRequest $request)
+    {
+        return excelExport($request);
+    }
 }
