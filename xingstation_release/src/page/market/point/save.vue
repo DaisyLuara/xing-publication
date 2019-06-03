@@ -1030,9 +1030,7 @@ export default {
       this.hidden = !this.hidden
     },
     contractUser(val) {
-      console.log(val)
       this.pointList.find(item => {
-        console.log(item)
         if (item.name === val) {
           this.pointForm.contract.id = item.id;
           return;
