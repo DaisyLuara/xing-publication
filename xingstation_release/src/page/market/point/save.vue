@@ -193,7 +193,7 @@
                   v-model="pointForm.contract.contract_user"
                   :loading="searchLoading"
                   filterable
-                  placeholder="请选择所属人"
+                  placeholder="请选择联系人"
                   @change="getContractUser"
                 >
                   <el-option
@@ -1030,7 +1030,9 @@ export default {
       this.hidden = !this.hidden
     },
     contractUser(val) {
+      console.log(val)
       this.pointList.find(item => {
+        console.log(item)
         if (item.name === val) {
           this.pointForm.contract.id = item.id;
           return;
