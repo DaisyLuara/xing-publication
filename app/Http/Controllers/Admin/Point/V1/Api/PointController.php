@@ -17,6 +17,8 @@ use Illuminate\Http\Request;
 
 class PointController extends Controller
 {
+    public static $icon = 'http://image.xingstation.cn/1007/image/393_511_941_578_ic_launcher.png';
+
     public function map(PointRequest $request, Point $point): Response
     {
         $lat = $request->get('lat');
@@ -141,7 +143,8 @@ class PointController extends Controller
             'bd_uid' => $arUser->uid,
             'bd_z' => $user->z,
             'site_uid' => $arSite->uid,
-            'site_z' => $arSite->z
+            'site_z' => $arSite->z,
+            'icon' => self::$icon
         ];
         $point->fill(array_merge($request->all(), $authParam))->saveOrFail();
         $point->attribute()->attach($request->get('attribute_id'));
