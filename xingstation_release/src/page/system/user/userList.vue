@@ -6,7 +6,9 @@
   >
     <div class="user-list-content">
       <div class="search-wrap">
-        <el-form :model="filters" :inline="true">
+        <el-form 
+          :model="filters" 
+          :inline="true">
           <el-form-item label>
             <el-input
               v-model="filters.phone"
@@ -16,10 +18,18 @@
             />
           </el-form-item>
           <el-form-item label>
-            <el-input v-model="filters.name" style="width:200px" placeholder="请输入搜索的名字" clearable/>
+            <el-input 
+              v-model="filters.name" 
+              style="width:200px" 
+              placeholder="请输入搜索的名字" 
+              clearable/>
           </el-form-item>
           <el-form-item label>
-            <el-select v-model="filters.role_id" placeholder="请选择角色" filterable clearable>
+            <el-select 
+              v-model="filters.role_id" 
+              placeholder="请选择角色" 
+              filterable 
+              clearable>
               <el-option
                 v-for="item in roleList"
                 :key="item.id"
@@ -28,34 +38,106 @@
               />
             </el-select>
           </el-form-item>
-          <el-button type="primary" size="small" @click="search">搜索</el-button>
-          <el-button type="default" size="small" @click="resetSearch">重置</el-button>
+          <el-button 
+            type="primary" 
+            size="small" 
+            @click="search">搜索</el-button>
+          <el-button 
+            type="default" 
+            size="small" 
+            @click="resetSearch">重置</el-button>
         </el-form>
       </div>
       <div class="actions-wrap">
         <span class="label">用户数量: {{ pagination.total }}</span>
-        <el-button size="small" type="success" @click="linkToAddUser">新增用户</el-button>
+        <el-button 
+          size="small" 
+          type="success" 
+          @click="linkToAddUser">新增用户</el-button>
       </div>
-      <el-table ref="userTable" :data="userList" highlight-current-row style="width: 100%">
-        <el-table-column prop="name" label="姓名"/>
-        <el-table-column prop="phone" label="手机号码"/>
-        <el-table-column prop="role" label="角色"/>
-        <el-table-column prop="bind_weixin" label="是否绑定微信">
+      <el-table 
+        ref="userTable" 
+        :data="userList" 
+        highlight-current-row 
+        style="width: 100%" 
+        type="expand">
+        <el-table-column type="expand">
           <template slot-scope="scope">
-            <span>{{ scope.row.bind_weixin === true ? '是' : '否' }}</span>
+            <el-form 
+              label-position="left" 
+              inline 
+              class="demo-table-expand">
+              <el-form-item label="ID:">
+                <span>{{ scope.row.id }}</span>
+              </el-form-item>
+              <el-form-item label="姓名:">
+                <span>{{ scope.row.name }}</span>
+              </el-form-item>
+              <el-form-item label="手机号码:">
+                <span>{{ scope.row.phone }}</span>
+              </el-form-item>
+              <el-form-item label="是否绑定微信:">
+                <span>{{ scope.row.bind_weixin === true ? '是' : '否' }}</span>
+              </el-form-item>
+              <el-form-item label="是否有z值:">
+                <span>{{ scope.row.z ? '有' :'无' }}</span>
+              </el-form-item>
+              <el-form-item label="创建时间:">
+                <span>{{ scope.row.created_at }}</span>
+              </el-form-item>
+              <el-form-item label="更新时间:">
+                <span>{{ scope.row.updated_at }}</span>
+              </el-form-item>
+            </el-form>
           </template>
         </el-table-column>
-        <el-table-column prop="created_at" label="创建时间"/>
-        <el-table-column prop="updated_at" label="修改时间"/>
-        <el-table-column label="操作" width="280">
+        <el-table-column 
+          :show-overflow-tooltip="true" 
+          prop="name" 
+          label="姓名" 
+          min-width="100"/>
+        <el-table-column 
+          :show-overflow-tooltip="true" 
+          prop="phone" 
+          label="手机号码" 
+          min-width="150"/>
+        <el-table-column 
+          :show-overflow-tooltip="true" 
+          prop="role" 
+          label="角色" 
+          min-width="100"/>
+        <el-table-column 
+          :show-overflow-tooltip="true" 
+          prop="z" 
+          label="是否有z值" 
+          min-width="120">
+          <template slot-scope="scope">
+            <span>{{ scope.row.z ? '是' : '否' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          :show-overflow-tooltip="true"
+          prop="updated_at"
+          label="修改时间"
+          min-width="120"
+        />
+        <el-table-column 
+          label="操作" 
+          width="280">
           <template slot-scope="scope">
             <el-button
               v-if="scope.row.role === 'BD主管' || scope.row.role === 'BD'"
               size="small"
               @click="migration(scope.row)"
             >迁移</el-button>
-            <el-button size="small" type="warning" @click="linkToEdit(scope.row)">修改</el-button>
-            <el-button size="small" type="danger" @click="deleteUsers(scope.row)">删除</el-button>
+            <el-button 
+              size="small" 
+              type="warning" 
+              @click="linkToEdit(scope.row)">修改</el-button>
+            <el-button 
+              size="small" 
+              type="danger" 
+              @click="deleteUsers(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -69,24 +151,41 @@
         />
       </div>
     </div>
-    <el-dialog title="账号迁移" :visible.sync="dialogFormVisible" :show-close="false">
-      <el-form :model="accountForm" ref="accountForm">
+    <el-dialog 
+      :visible.sync="dialogFormVisible" 
+      :show-close="false" 
+      title="账号迁移">
+      <el-form 
+        ref="accountForm" 
+        :model="accountForm">
         <el-form-item
-          label="账号迁移目标"
-          label-width="150px"
-          prop="user_id"
           :rules="{
             required: true, message: '账号迁移目标不能为空', trigger: 'submit'
           }"
+          label="账号迁移目标"
+          label-width="150px"
+          prop="user_id"
         >
-          <el-select v-model="accountForm.user_id" placeholder="请选择账号迁移目标" clearable filterable>
-            <el-option :label="item.name" :value="item.id" :key="item.id" v-for="item in bdList"/>
+          <el-select 
+            v-model="accountForm.user_id" 
+            placeholder="请选择账号迁移目标" 
+            clearable 
+            filterable>
+            <el-option 
+              v-for="item in bdList" 
+              :label="item.name" 
+              :value="item.id" 
+              :key="item.id"/>
           </el-select>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div 
+        slot="footer" 
+        class="dialog-footer">
         <el-button @click="cancel('accountForm')">取 消</el-button>
-        <el-button type="primary" @click="submit('accountForm')">确 定</el-button>
+        <el-button 
+          type="primary" 
+          @click="submit('accountForm')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
