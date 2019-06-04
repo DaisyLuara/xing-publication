@@ -57,7 +57,7 @@ class PublicationMediaController extends Controller
 
         activity('create_publication_media')
             ->causedBy($this->user())
-            ->performedOn($media)
+            ->performedOn($publicationMedia)
             ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
             ->log('新建中台资源');
 
