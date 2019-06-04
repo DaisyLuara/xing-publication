@@ -24,7 +24,15 @@ class ProductController extends Controller
 
     public function store(ProductRequest $request)
     {
-        Product::query()->create($request->all());
+        $product = Product::query()->create($request->all());
+
+        activity('create_product')
+            ->causedBy($this->user())
+            ->performedOn($product)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增产品');
+
+
         return $this->response->noContent();
     }
 

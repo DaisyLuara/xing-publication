@@ -110,6 +110,12 @@ class DemandModifyController extends Controller
         DemandModifyNotificationJob::dispatch($demandModify, 'un_review')->onQueue('demand')
             ->delay(now()->addHours(12));
 
+        activity('create_demand_modify')
+            ->causedBy($user)
+            ->performedOn($demandModify)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $insertParams])
+            ->log('新增需求修改');
+
         return $this->response->item($demandModify, new DemandModifyTransformer());
     }
 
@@ -148,6 +154,12 @@ class DemandModifyController extends Controller
         $demandModify->update($updateParams);
 
         DemandModifyNotificationJob::dispatch($demandModify, 'update')->onQueue('demand');
+
+        activity('update_demand_modify')
+            ->causedBy($user)
+            ->performedOn($demandModify)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $updateParams])
+            ->log('编辑需求修改');
 
         return $this->response->item($demandModify, new DemandModifyTransformer());
     }
@@ -191,6 +203,12 @@ class DemandModifyController extends Controller
 
         DemandModifyNotificationJob::dispatch($demandModify, 'reviewed')->onQueue('demand');
 
+        activity('review_demand_modify')
+            ->causedBy($user)
+            ->performedOn($demandModify)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $updateParams])
+            ->log('审核需求修改');
+
         return $this->response->item($demandModify, new DemandModifyTransformer());
 
     }
@@ -229,6 +247,12 @@ class DemandModifyController extends Controller
         $demandModify->update($updateParams);
 
         DemandModifyNotificationJob::dispatch($demandModify, 'feedback')->onQueue('demand');
+
+        activity('feedback_demand_modify')
+            ->causedBy($user)
+            ->performedOn($demandModify)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $updateParams])
+            ->log('反馈需求修改');
 
         return $this->response->item($demandModify, new DemandModifyTransformer());
     }

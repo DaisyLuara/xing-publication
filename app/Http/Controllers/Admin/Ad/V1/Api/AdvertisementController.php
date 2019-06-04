@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\Ad\V1\Transformer\AdvertisementTransformer;
 use App\Http\Controllers\Admin\Ad\V1\Request\AdvertisementRequest;
 use App\Http\Controllers\Admin\Ad\V1\Models\Advertisement;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
 
@@ -49,6 +50,8 @@ class AdvertisementController extends Controller
     public function store(AdvertisementRequest $request, Advertisement $advertisement): Response
     {
         $data = $request->all();
+        /** @var User $user */
+        $user = $this->user();
 
         //需要获取link的size
         $content = file_get_contents($data['link']);
@@ -57,8 +60,8 @@ class AdvertisementController extends Controller
             'size' => strlen($content)
         ];
 
-        if ($this->user->z) {
-            $addParams['z'] = $this->user->z;
+        if ($user->z) {
+            $addParams['z'] = $user->z;
         }
 
         if (in_array($data['type'], ['static', 'gif'])) {
@@ -71,12 +74,20 @@ class AdvertisementController extends Controller
 
         $advertisement->fill(array_merge($data, $addParams))->save();
 
+        activity('create_ad')
+            ->causedBy($user)
+            ->performedOn($advertisement)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增广告素材');
+
         return $this->response->noContent();
     }
 
     public function update(AdvertisementRequest $request, Advertisement $advertisement): Response
     {
         $data = $request->all();
+        /** @var User $user */
+        $user = $this->user();
 
         //需要获取link的size
         $content = file_get_contents($data['link']);
@@ -92,6 +103,12 @@ class AdvertisementController extends Controller
         $advertisement->fill(array_merge($data, [
             'size' => strlen($content),
         ]))->save();
+
+        activity('update_ad')
+            ->causedBy($user)
+            ->performedOn($advertisement)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $data])
+            ->log('编辑广告素材');
 
         return $this->response->noContent();
     }

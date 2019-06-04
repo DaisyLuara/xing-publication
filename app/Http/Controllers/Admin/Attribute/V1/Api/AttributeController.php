@@ -22,14 +22,27 @@ class AttributeController extends Controller
         $attribute->name = $request->name;
         $attribute->desc = $request->desc;
         $attribute->save();
+
+        activity('create_attribute')
+        ->causedBy($this->user())
+        ->performedOn($attribute)
+        ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+        ->log('新增属性');
+
         return $this->response->noContent();
     }
 
     public function update(AttributeRequest $request, Attribute $attribute)
     {
         $data = $request->all();
-        $query = $attribute->query();
-        $query->where('id', '=', $data['id'])->update($data);
+        $attribute->query()->where('id', '=', $data['id'])->update($data);
+
+        activity('update_attribute')
+            ->causedBy($this->user())
+            ->performedOn($attribute)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $data])
+            ->log('编辑属性');
+
         return $this->response->noContent();
     }
 }

@@ -36,6 +36,13 @@ class LocationController extends Controller
     public function store(LocationRequest $request, Location $location)
     {
         $location->fill($request->all())->saveOrFail();
+
+        activity('create_location')
+            ->causedBy($this->user())
+            ->performedOn($location)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增库位');
+
         return $this->response->item($location, new LocationTransformer());
     }
 
@@ -43,6 +50,13 @@ class LocationController extends Controller
     public function update(LocationRequest $request, Location $location)
     {
         $location->update($request->all());
+
+        activity('update_location')
+            ->causedBy($this->user())
+            ->performedOn($location)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑库位');
+
         return $this->response()->item($location, new LocationTransformer())->setStatusCode(200);
     }
 

@@ -122,6 +122,13 @@ class ContractController extends Controller
                 ContractProduct::query()->create($item);
             }
         }
+
+        activity('create_contract')
+            ->causedBy($user)
+            ->performedOn($contract)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增合同申请');
+
         return $this->response()->item($contract, new ContractTransformer())->setStatusCode(201);
     }
 
@@ -148,16 +155,30 @@ class ContractController extends Controller
 //        }
         $contract->update($request->all());
 
+        activity('update_contract')
+            ->causedBy($this->user())
+            ->performedOn($contract)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑合同申请');
+
         return $this->response()->noContent();
 
     }
 
-    public function destroy(Contract $contract)
+    public function destroy(Contract $contract,Request $request)
     {
-        if ($contract->status != ActionConfig::CONTRACT_STATUS_WAIT) {
-            abort(403, "合同审批状态已更改，不可删除");
+        if ($contract->status !== ActionConfig::CONTRACT_STATUS_WAIT) {
+            abort(403, '合同审批状态已更改，不可删除');
         }
         $contract->delete();
+
+
+        activity('delete_contract')
+            ->causedBy($this->user())
+            ->performedOn($contract)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => []])
+            ->log('删除合同申请');
+
         return $this->response()->noContent()->setStatusCode(204);
     }
 
@@ -175,6 +196,12 @@ class ContractController extends Controller
         }
         $contract->update(array_merge($request->all(), ['status' => ActionConfig::CONTRACT_STATUS_REJECT, 'handler' => $contract->applicant]));
         ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
+
+        activity('reject_contract')
+            ->causedBy($user)
+            ->performedOn($contract)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('驳回合同申请');
 
         return $this->response()->item($contract, new ContractTransformer())->setStatusCode(200);
     }
@@ -228,6 +255,13 @@ class ContractController extends Controller
             $contract->bd_ma_message = $request->bd_ma_message;
             $this->updateContractAndHistory($user, $contract);
         }
+
+        activity('audit_contract')
+            ->causedBy($user)
+            ->performedOn($contract)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('审批合同申请');
+
         return $this->response()->item($contract, new ContractTransformer())->setStatusCode(201);
     }
 
@@ -253,12 +287,19 @@ class ContractController extends Controller
         $role = Role::findByName('legal-affairs-manager');
         $legalManager = $role->users()->first();
 
-        if ($contract->status == ActionConfig::CONTRACT_STATUS_ONGOING) {
-            abort(403, "合同审核中无法申请特批");
+        if ($contract->status === ActionConfig::CONTRACT_STATUS_ONGOING) {
+            abort(403, '合同审核中无法申请特批');
         }
         $contract->status = ActionConfig::CONTRACT_STATUS_SPECIAL;
         $contract->handler = $legalManager->id;
         $contract->update();
+
+        activity('special_audit_contract')
+            ->causedBy($this->user())
+            ->performedOn($contract)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('特批合同申请');
+
         return $this->response()->noContent();
     }
 

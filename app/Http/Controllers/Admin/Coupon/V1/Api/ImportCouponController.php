@@ -182,8 +182,13 @@ class ImportCouponController extends Controller
                     $policy_params['type'] = 'gender';
                 }
                 $policy->batches()->save($couponBatch, $policy_params);
-                activity('coupon_batch')->on($couponBatch)->withProperties($request->all())->log('批量新增优惠券规则');
-            }
+
+                activity('create_coupon_batch_by_import')
+                    ->causedBy($this->user())
+                    ->performedOn($couponBatch)
+                    ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+                    ->log('批量新增奖品');
+                            }
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();

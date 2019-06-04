@@ -141,6 +141,12 @@ class PointController extends Controller
             $point->share()->create($request->get('share'));
         }
 
+        activity('create_point')
+            ->causedBy($user)
+            ->performedOn($point)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增点位');
+
         return $this->response()->noContent()->setStatusCode(201);
     }
 
@@ -199,6 +205,12 @@ class PointController extends Controller
             }
 
         }
+
+        activity('update_point')
+            ->causedBy($user)
+            ->performedOn($point)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑点位');
 
         return $this->response()->item($point, new PointTransformer());
     }

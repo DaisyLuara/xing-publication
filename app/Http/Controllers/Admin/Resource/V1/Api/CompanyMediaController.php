@@ -37,6 +37,13 @@ class CompanyMediaController extends Controller
         foreach ($ids as $id) {
             CompanyMedia::query()->where('id', $id)->update(['status' => $request->get('status'), 'audit_user_id' => $user->id]);
         }
+
+        activity('audit_company_media')
+            ->causedBy($user)
+            ->performedOn(CompanyMedia::query())
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('批量审核商户资源');
+
         return $this->response()->noContent()->setStatusCode(200);
     }
 }

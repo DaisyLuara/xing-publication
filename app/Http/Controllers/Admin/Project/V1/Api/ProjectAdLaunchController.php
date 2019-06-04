@@ -40,6 +40,13 @@ class ProjectAdLaunchController extends Controller
         foreach ($oids as $oid) {
             $query->create(array_merge(['oid' => $oid, 'date' => date('Y-m-d H:i:s'), 'clientdate' => time() * 1000], $data));
         }
+
+        activity('create_product_ad_launch')
+            ->causedBy($this->user())
+            ->performedOn($projectAdLaunch)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增节目广告投放');
+
         return $this->response->noContent();
     }
 
@@ -53,6 +60,13 @@ class ProjectAdLaunchController extends Controller
         foreach ($adids as $adid) {
             $query->where('adid', '=', $adid)->update($data);
         }
+
+        activity('update_product_ad_launch')
+            ->causedBy($this->user())
+            ->performedOn($projectAdLaunch)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑节目广告投放');
+
         return $this->response->noContent();
     }
 }

@@ -22,7 +22,7 @@ use Illuminate\Http\Request;
 
 class InvoiceReceiptController extends Controller
 {
-    public function show(InvoiceReceipt $invoiceReceipt)
+    public function show(InvoiceReceipt $invoiceReceipt): Response
     {
         return $this->response()->item($invoiceReceipt, new InvoiceReceiptTransformer());
     }
@@ -62,7 +62,7 @@ class InvoiceReceiptController extends Controller
             });
         }
 
-        $invoiceReceipts = $query->orderByDesc('id')->paginate(10);;
+        $invoiceReceipts = $query->orderByDesc('id')->paginate(10);
 
         return $this->response()->paginator($invoiceReceipts, new InvoiceReceiptTransformer());
     }
@@ -78,11 +78,17 @@ class InvoiceReceiptController extends Controller
         $invoiceReceipt->fill(array_merge($request->all(), ['claim_status' => 0, 'creator' => $user->name]))->save();
         if (env('APP_ENV') === 'production') {
             //微信通知法务
-            $legal = User::find(getProcessStaffId('legal-affairs', 'invoice'));
-            $legalMa = User::find(getProcessStaffId('legal-affairs-manager', 'invoice'));
+            $legal = User::query()->find(getProcessStaffId('legal-affairs', 'invoice'));
+            $legalMa = User::query()->find(getProcessStaffId('legal-affairs-manager', 'invoice'));
             InvoiceReceiptNotificationJob::dispatch($legal, '有一笔新的收款待认领')->onQueue('data-clean');
             InvoiceReceiptNotificationJob::dispatch($legalMa, '有一笔新的收款待认领')->onQueue('data-clean');
         }
+
+        activity('create_invoice_receipt')
+            ->causedBy($user)
+            ->performedOn($invoiceReceipt)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增开票收款');
 
         return $this->response()->item($invoiceReceipt, new InvoiceReceiptTransformer())->setStatusCode(201);
     }
@@ -95,11 +101,17 @@ class InvoiceReceiptController extends Controller
             abort(403, '无操作权限');
         }
 
-        if ($invoiceReceipt->claim_status == 1) {
+        if ($invoiceReceipt->claim_status === 1) {
             abort(403, '已认领，无法修改');
         }
 
         $invoiceReceipt->update($request->all());
+
+        activity('update_invoice_receipt')
+            ->causedBy($user)
+            ->performedOn($invoiceReceipt)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑开票收款');
 
         return $this->response()->noContent()->setStatusCode(200);
     }
@@ -109,7 +121,7 @@ class InvoiceReceiptController extends Controller
      * @param InvoiceReceipt $invoiceReceipt
      * @return \Dingo\Api\Http\Response
      */
-    public function confirm(Request $request, InvoiceReceipt $invoiceReceipt)
+    public function confirm(Request $request, InvoiceReceipt $invoiceReceipt): Response
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
@@ -117,7 +129,7 @@ class InvoiceReceiptController extends Controller
             abort(403, '无操作权限');
         }
         /** @var  ContractReceiveDate $contractReceiveDate */
-        $contractReceiveDate = ContractReceiveDate::find($request->get('receive_date_id'));
+        $contractReceiveDate = ContractReceiveDate::query()->find($request->get('receive_date_id'));
         $contractReceiveDate->update(['receive_status' => 1, 'invoice_receipt_id' => $invoiceReceipt->id]);
 
         $invoiceReceipt->claim_status = 1;
@@ -125,14 +137,14 @@ class InvoiceReceiptController extends Controller
 
         if (env('APP_ENV') === 'production') {
             //通知合同的bd
-            $contract = Contract::find($contractReceiveDate->contract_id);
-            $bd = User::find($contract->applicant);
-            $content = "合同有一笔收款已认领" . "\r\n" . "合同编号：" . $contract->contract_number . "\r\n" . "合同公司：" . $contract->company->name . "\r\n" . "收款金额：" . $invoiceReceipt->receipt_money;
+            $contract = Contract::query()->find($contractReceiveDate->contract_id);
+            $bd = User::query()->find($contract->applicant);
+            $content = '合同有一笔收款已认领' . "\r\n" . '合同编号：' . $contract->contract_number . "\r\n" . '合同公司：' . $contract->company->name . "\r\n" . '收款金额：' . $invoiceReceipt->receipt_money;
             if ($bd->weixin_openid) {
                 InvoiceReceiptNotificationJob::dispatch($bd, $content)->onQueue('data-clean');
             } else {
                 //通知法务主管提醒bd关联公众号
-                $legalMa = User::find(getProcessStaffId('legal-affairs-manager', 'invoice'));
+                $legalMa = User::query()->find(getProcessStaffId('legal-affairs-manager', 'invoice'));
                 InvoiceReceiptNotificationJob::dispatch($legalMa, $bd->name . '的中台账号未关联公众号，请提醒')->onQueue('data-clean');
             }
 
@@ -140,6 +152,12 @@ class InvoiceReceiptController extends Controller
             $operation = User::query()->where('phone', 13661874698)->first();
             InvoiceReceiptNotificationJob::dispatch($operation, $content)->onQueue('data-clean');
         }
+
+        activity('confirm_invoice_receipt')
+            ->causedBy($user)
+            ->performedOn($invoiceReceipt)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('确认开票收款');
 
         return $this->response()->noContent()->setStatusCode(200);
     }

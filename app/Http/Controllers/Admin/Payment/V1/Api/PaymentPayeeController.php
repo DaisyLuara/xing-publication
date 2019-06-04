@@ -42,12 +42,26 @@ class PaymentPayeeController extends Controller
     {
         $user = $this->user();
         $paymentPayee->fill(array_merge($request->all(), ['user_id' => $user->id]))->save();
+
+        activity('create_payment_payee')
+            ->causedBy($user)
+            ->performedOn($paymentPayee)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增收款人');
+
         return $this->response()->noContent();
     }
 
     public function update(PaymentPayeeRequest $request, PaymentPayee $paymentPayee)
     {
         $paymentPayee->update($request->all());
+
+        activity('update_payment_payee')
+            ->causedBy($this->user())
+            ->performedOn($paymentPayee)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑收款人');
+
         return $this->response()->noContent();
     }
 

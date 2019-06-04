@@ -60,8 +60,8 @@ class CouponBatchController extends Controller
 
             switch ($request->get('status')) {
                 case 1:
-                    $query->where(function ($query) use($now) {
-                        $query->where(function ($q) use($now) {
+                    $query->where(function ($query) use ($now) {
+                        $query->where(function ($q) use ($now) {
                             $q->where('is_fixed_date', 1)->where('end_date', '>', $now)->where('start_date', '<', $now);
                         })->orWhere(function ($q) {
                             $q->where('is_fixed_date', 0)->where('is_active', 1);
@@ -72,7 +72,7 @@ class CouponBatchController extends Controller
                     $query->where('is_fixed_date', 1)->where('start_date', '>', $now);
                     break;
                 case 3:
-                    $query->where(function ($query) use($now) {
+                    $query->where(function ($query) use ($now) {
                         $query->where(function ($q) use ($now) {
                             $q->where('is_fixed_date', 1)->where('end_date', '<', $now);
                         })->orWhere(function ($q) {
@@ -99,9 +99,9 @@ class CouponBatchController extends Controller
 
         //绑定投放商场(嗨抖)
         if ($request->filled('marketid') && empty($request->oid)) {
-           $couponBatch->marketPointCouponBatches()->create([
-               'marketid' => $request->marketid,
-           ]);
+            $couponBatch->marketPointCouponBatches()->create([
+                'marketid' => $request->marketid,
+            ]);
         }
 
         //绑定投放点位(嗨抖)
@@ -122,7 +122,12 @@ class CouponBatchController extends Controller
             $couponBatch->update(['wechat_coupon_batch_id' => $wechatCouponBatch->id]);
         }
 
-        activity('coupon_batch')->on($couponBatch)->withProperties($request->all())->log('新增优惠券规则');
+        activity('create_coupon_batch')
+            ->causedBy($this->user())
+            ->performedOn($couponBatch)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增奖品');
+
 
         return $this->response->item($couponBatch, new CouponBatchTransformer())
             ->setStatusCode(201);
@@ -157,7 +162,11 @@ class CouponBatchController extends Controller
         $couponBatch->writeOffCustomers()->detach();
         $this->setWriteOffCustomers($request, $couponBatch);
 
-        activity('coupon_batch')->on($couponBatch)->withProperties($request->all())->log('修改优惠券规则');
+        activity('update_coupon_batch')
+            ->causedBy($this->user())
+            ->performedOn($couponBatch)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑奖品');
 
         return $this->response->item($couponBatch, new CouponBatchTransformer())
             ->setStatusCode(201);
@@ -186,7 +195,7 @@ class CouponBatchController extends Controller
                     'people_max_get' => $data['EPMaxGet'],
                     'dmg_status' => (int)$data['IsEDMaxGetInfinite'],
                     'day_max_get' => $data['EDMaxGet'],
-                    'start_date' =>$data['FixedDateBegin'],
+                    'start_date' => $data['FixedDateBegin'],
                     'end_date' => $data['FixedDateEnd'],
                 ]);
             }
@@ -204,7 +213,7 @@ class CouponBatchController extends Controller
         //绑定商场核销人员
         if ($request->filled('write_off_mid')) {
             $marketConfig = MarketConfig::query()->findOrFail($request->write_off_mid);
-            $marketConfig->company->customers->each(function ($item) use($couponBatch){
+            $marketConfig->company->customers->each(function ($item) use ($couponBatch) {
                 $couponBatch->writeOffCustomers()->attach($item);
             });
         }
@@ -213,7 +222,7 @@ class CouponBatchController extends Controller
         if ($request->write_off_sid) {
             foreach ($request->write_off_sid as $store_id) {
                 $store = Store::query()->findOrFail($store_id);
-                $store->company->customers->each(function ($item) use($couponBatch){
+                $store->company->customers->each(function ($item) use ($couponBatch) {
                     $couponBatch->writeOffCustomers()->attach($item);
                 });
             }

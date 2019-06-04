@@ -33,6 +33,13 @@ class ProjectLaunchTplController extends Controller
     {
         $fillData = $this->convert($request->all());
         $tpl->fill($fillData)->save();
+
+        activity('create_product_launch_tpl')
+            ->causedBy($this->user())
+            ->performedOn($tpl)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $fillData])
+            ->log('新增节目投放模版');
+
         return $this->response()->item($tpl, new ProjectLaunchTplTransformer())
             ->setStatusCode(201);
     }
@@ -41,6 +48,13 @@ class ProjectLaunchTplController extends Controller
     {
         $updateData = $this->convert($request->all());
         $tpl->update($updateData);
+
+        activity('update_product_launch_tpl')
+            ->causedBy($this->user())
+            ->performedOn($tpl)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $updateData])
+            ->log('编辑节目投放模版');
+
         return $this->response()->item($tpl, new ProjectLaunchTplTransformer())
             ->setStatusCode(201);
     }

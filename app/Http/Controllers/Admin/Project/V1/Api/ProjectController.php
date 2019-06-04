@@ -51,6 +51,13 @@ class ProjectController extends Controller
         foreach ($names as $name) {
             $query->create(array_merge(['name' => $name, 'date' => date('Y-m-d H:i:s'), 'clientdate' => time() * 1000], $data));
         }
+
+        activity('create_product')
+            ->causedBy($this->user())
+            ->performedOn($project)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增节目');
+
         return $this->response->noContent();
     }
 
@@ -65,6 +72,13 @@ class ProjectController extends Controller
         foreach ($ids as $id) {
             $project->query()->where('id', '=', $id)->update($data);
         }
+
+        activity('update_product')
+            ->causedBy($this->user())
+            ->performedOn($project)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑节目');
+
         return $this->response->noContent();
     }
 }

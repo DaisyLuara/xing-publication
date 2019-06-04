@@ -69,6 +69,7 @@ class AdminCompaniesController extends Controller
 
     public function store(CompanyRequest $request, Company $company, Customer $customer)
     {
+        $user = $this->user();
         $companyData = [
             'name' => $request->get('name'),
             'internal_name' => $request->get('internal_name'),
@@ -83,7 +84,11 @@ class AdminCompaniesController extends Controller
         CompanyMediaGroup::create(['company_id' => $company->id, 'name' => '默认分组', 'type' => 'image']);
         CompanyMediaGroup::create(['company_id' => $company->id, 'name' => '默认分组', 'type' => 'video']);
 
-        activity('company')->on($company)->withProperties($request->all())->log('新增公司信息');
+        activity('create_company')
+            ->causedBy($user)
+            ->performedOn($company)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $companyData])
+            ->log('新增公司信息');
 
         if ($request->get('category') === 0) {
             $customerData = [
@@ -98,8 +103,14 @@ class AdminCompaniesController extends Controller
             $role = Role::findById($request->get('role_id'), 'shop');
             $customer->assignRole($role);
             CreateAdminStaffJob::dispatch($customer, $role)->onQueue('create_admin_staff');
+
+            activity('create_customer')
+                ->causedBy($user)
+                ->performedOn($customer)
+                ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $customerData])
+                ->log('新增公司联系人');
+
         }
-        activity('customer')->on($customer)->withProperties($companyData)->log('新增公司联系人');
 
 
         return $this->response()->item($company, new CompanyTransformer())
@@ -110,7 +121,12 @@ class AdminCompaniesController extends Controller
     public function update(CompanyRequest $request, Company $company): \Dingo\Api\Http\Response
     {
         $company->update($request->all());
-        activity('company')->on($company)->withProperties($request->all())->log('修改公司信息');
+        activity('create_company')
+            ->causedBy($this->user())
+            ->performedOn($company)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('修改公司信息');
+
         return $this->response()->item($company, new CompanyTransformer());
     }
 

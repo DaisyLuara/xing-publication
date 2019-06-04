@@ -67,6 +67,13 @@ class MediaController extends Controller
             'width' => 0,
         ];
         $media->fill($data)->save();
+
+        activity('create_media')
+            ->causedBy($this->user())
+            ->performedOn($media)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $data])
+            ->log('新增媒体文件');
+
         return $this->response()->item($media, new MediaTransformer())->setStatusCode(201);
     }
 }

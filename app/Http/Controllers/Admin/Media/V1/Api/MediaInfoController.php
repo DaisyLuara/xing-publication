@@ -46,6 +46,12 @@ class MediaInfoController extends Controller
             'recorder_id' => $user->id
         ]))->save();
 
+        activity('create_media_info')
+            ->causedBy($user)
+            ->performedOn($mediaInfo)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增运营文件');
+
         return $this->response()->noContent()->setStatusCode(201);
 
     }
@@ -60,6 +66,13 @@ class MediaInfoController extends Controller
             'date' => Carbon::now('PRC')->toDateString(),
             'recorder_id' => $user->id
         ]));
+
+        activity('update_media_info')
+            ->causedBy($user)
+            ->performedOn($mediaInfo)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑运营文件');
+
         return $this->response()->noContent()->setStatusCode(200);
     }
 
