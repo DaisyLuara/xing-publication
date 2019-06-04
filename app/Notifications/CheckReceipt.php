@@ -39,7 +39,7 @@ class CheckReceipt extends Notification
         return [
             'id' => $this->contract->id,
             'reply_content' => $this->contract->name.'收款日期截止',
-            'user_id' =>  $this->contract->applicant,
+            'user_id' =>  $this->contract->owner,
             'user_name' => User::find($this->contract->applicant,['name'])->name,
             'type' => 'review'
         ];
