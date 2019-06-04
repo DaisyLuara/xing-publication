@@ -126,7 +126,7 @@ class ActivityMediaController extends Controller
 
         activity('mass_audit_activity_media')
             ->causedBy($user)
-            ->performedOn(ActivityMedia::query())
+            ->performedOn(new ActivityMedia())
             ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
             ->log('批量审核活动资源');
 

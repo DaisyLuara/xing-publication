@@ -92,8 +92,6 @@ class AdLaunchController extends Controller
             $query->create(array_merge($launch, ['oid' => $oid]));
         }
 
-        activity('ad_launch')->on($adLaunch)->withProperties($request->all())->log('批量增加广告投放');
-
         activity('create_ad_launch')
             ->causedBy($this->user())
             ->performedOn($adLaunch)
