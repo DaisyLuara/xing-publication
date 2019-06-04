@@ -74,7 +74,7 @@ class InvoiceReceiptExport extends BaseExport
                 ];
             })->toArray();
 
-        $header = ['ID', '付款公司', '收款金额', '到账日期', '认领状态', '收款创建人', '预估收款时间', '合同编号', '所属人'];
+        $header = ['ID', '付款公司', '收款金额', '到账日期', '认领状态', '收款创建人', '预估收款时间', '合同编号', '负责人'];
 
         $this->header_num = count($header);
         array_unshift($invoiceReceipts, $header, $header);

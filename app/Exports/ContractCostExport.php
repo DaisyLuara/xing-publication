@@ -62,7 +62,7 @@ class ContractCostExport extends BaseExport
         $this->merge_start = 1;
         $this->merge_end = 8;
 
-        $header = ['成本管理ID', '合同编号', '合同名称', '所属人', '成本总额', '已确认成本', '创建时间', '修改时间',
+        $header = ['成本管理ID', '合同编号', '合同名称', '负责人', '成本总额', '已确认成本', '创建时间', '修改时间',
             '成本创建人', '成本类型', '成本金额', '备注', '状态', '操作时间'];
         $this->header_num = count($header);
         array_unshift($contractCosts, $header, $header);

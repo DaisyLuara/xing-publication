@@ -67,7 +67,7 @@ class ContractRemindExport extends BaseExport
             ir.receipt_money,ir.receipt_company,ir.receipt_date as 'ir_receipt_date'")
             ->get()->toArray();
 
-        $header = ['合同ID', '合同编号', '公司名称', '合同名称', '申请人', '所属人', '合同金额',
+        $header = ['合同ID', '合同编号', '公司名称', '合同名称', '申请人', '负责人', '合同金额',
             '预估收款日期', '收款状态', '收款金额', '付款公司', '到账时间'];
 
         $this->merge = collect($contractReceiveDates)->groupBy('id')->map(static function ($value) {
