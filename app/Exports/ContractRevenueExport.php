@@ -21,6 +21,7 @@ class ContractRevenueExport extends AbstractExport
     private $endDate;
 
     private $kindMapping = [
+        0 => '',
         1 => '铺屏',
         2 => '销售',
         3 => '租赁',
@@ -41,7 +42,7 @@ class ContractRevenueExport extends AbstractExport
             ->leftJoin('companies', 'contracts.company_id', '=', 'companies.id')
             ->leftJoin('contract_receive_dates as crd', 'contracts.id', '=', 'crd.contract_id')
             ->leftJoin('invoice_receipts as ir', 'crd.invoice_receipt_id', '=', 'ir.id')
-            ->whereRaw("contracts.created_at between '$this->startDate' and '$this->endDate' and contracts.status=3")
+            ->whereRaw("contracts.created_at between '$this->startDate' and '$this->endDate' and contracts.status=3 and contracts.type in(0,2)")
             ->groupBy(DB::Raw('users.name,contract_number'))
             ->selectRaw('contracts.id as id,users.name as username,contracts.contract_number as contract_number,filed_date,
                          contracts.amount as amount,sum(ir.receipt_money) as receipt_money ,companies.internal_name as internal_name,
@@ -49,7 +50,7 @@ class ContractRevenueExport extends AbstractExport
 
         $product = DB::table('contracts')
             ->leftJoin('contract_products as cp', 'contracts.id', '=', 'cp.contract_id')
-            ->whereRaw("contracts.created_at between '$this->startDate' and '$this->endDate' and contracts.status=3")
+            ->whereRaw("contracts.created_at between '$this->startDate' and '$this->endDate' and contracts.status=3 and contracts.type in(0,2)")
             ->selectRaw('contracts.id as id,product_name,product_stock');
 
         $costKind = ContractCostKind::get();
@@ -61,7 +62,7 @@ class ContractRevenueExport extends AbstractExport
             ->leftJoin('contract_costs as cc', 'contracts.id', '=', 'cc.contract_id')
             ->leftJoin('contract_cost_contents as ccc', 'ccc.cost_id', '=', 'cc.id')
             ->leftJoin('contract_cost_kinds as cck', 'cck.id', '=', 'ccc.kind_id')
-            ->whereRaw("contracts.created_at between '$this->startDate' and '$this->endDate' and contracts.status=3")
+            ->whereRaw("contracts.created_at between '$this->startDate' and '$this->endDate' and contracts.status=3 and contracts.type in(0,2)")
             ->groupBy('contracts.id')
             ->selectRaw("contracts.id as id $max");
 
@@ -72,7 +73,7 @@ class ContractRevenueExport extends AbstractExport
             ->selectRaw('a.id as id,username,contract_number,filed_date,amount,receipt_money,internal_name,kind,product_name,product_stock,common_num,c.*')
             ->get();
         $header = ['负责人', '合同编号', '归档日期', '合同金额', '到账金额', '公司简称', '合同种类', '型号', '硬件数量', '定制节目数', '硬件费用', '物流费用', '运维费用', '4G网络费用', '人员差旅', '物料费用', '公司优惠', '其他'];
-        $arr=[];
+        $arr = [];
         foreach ($revenue as $item) {
             $arr[] = [
                 'username' => $item->username,
