@@ -24,21 +24,21 @@ use App\Models\Model;
  * @property int $status 0:未确认,1:已确认
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCostContent newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCostContent newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model ordered()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCostContent query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model recent()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCostContent whereCostId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCostContent whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCostContent whereCreator($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCostContent whereCreatorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCostContent whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCostContent whereKindId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCostContent whereMoney($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCostContent whereRemark($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCostContent whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractCostContent whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractCostContent newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractCostContent newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Model ordered()
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractCostContent query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Model recent()
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractCostContent whereCostId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractCostContent whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractCostContent whereCreator($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractCostContent whereCreatorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractCostContent whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractCostContent whereKindId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractCostContent whereMoney($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractCostContent whereRemark($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractCostContent whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractCostContent whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class ContractCostContent extends Model

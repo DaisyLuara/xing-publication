@@ -15,8 +15,9 @@ use \Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property string $title 项目标的(唯一)
  * @property int $applicant_id 申请人ID
+ * @property int $owner 所属人
  * @property string|null $launch_point_remark 投放地点备注
- * @property int $has_contract 是否有合同
+ * @property int $has_contract 是否有合同:0无合同 1有合同 2合同审批中
  * @property int $project_num 节目数量
  * @property string|null $similar_project_name 类似节目
  * @property string $expect_online_time 期望上线时间
@@ -40,36 +41,39 @@ use \Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read \App\Models\User|null $confirm_person
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Http\Controllers\Admin\Contract\V1\Models\Contract[] $contracts
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ * @property-read \App\Models\User $owner_user
  * @property-read \App\Models\User|null $receiver
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model ordered()
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model recent()
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication whereApplicantId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication whereApplicantRemark($value)
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication whereBigScreenDemand($value)
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication whereConfirmId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication whereConfirmName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication whereConfirmTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication whereExpectOnlineTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication whereExpectReceiverIds($value)
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication whereH5Demand($value)
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication whereHasContract($value)
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication whereLaunchPointRemark($value)
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication whereOtherDemand($value)
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication whereProjectNum($value)
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication whereReceiverId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication whereReceiverName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication whereReceiverRemark($value)
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication whereReceiverTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication whereSimilarProjectName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication whereTitle($value)
- * @method static \Illuminate\Database\Eloquent\Builder|DemandApplication whereUpdatedAt($value)
- * @mixin \Illuminate\Database\Eloquent\
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereApplicantId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereApplicantRemark($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereBigScreenDemand($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereConfirmId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereConfirmName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereConfirmTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereExpectOnlineTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereExpectReceiverIds($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereH5Demand($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereHasContract($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereLaunchPointRemark($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereOtherDemand($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereOwner($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereProjectNum($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereReceiverId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereReceiverName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereReceiverRemark($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereReceiverTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereSimilarProjectName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereSmallScreenDemand($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class DemandApplication extends Model
 {
@@ -79,6 +83,7 @@ class DemandApplication extends Model
     protected $fillable = [
         'title',
         'applicant_id',
+        'owner',
         'launch_point_remark',
         'has_contract',
         'project_num',
@@ -137,6 +142,11 @@ class DemandApplication extends Model
     public function applicant(): BelongsTo
     {
         return $this->belongsTo(User::class, 'applicant_id', 'id');
+    }
+
+    public function owner_user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'owner', 'id');
     }
 
     public function contracts(): MorphToMany

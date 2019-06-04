@@ -14,7 +14,7 @@ use League\Fractal\TransformerAbstract;
 
 class PaymentPayeeTransformer extends TransformerAbstract
 {
-    public function transform(PaymentPayee $paymentPayee)
+    public function transform(PaymentPayee $paymentPayee): array
     {
         return [
             'id' => $paymentPayee->id,

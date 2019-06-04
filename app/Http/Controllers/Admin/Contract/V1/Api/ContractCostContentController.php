@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\Contract\V1\Models\ContractCostContent;
 use App\Http\Controllers\Admin\Contract\V1\Request\ContractCostContentRequest;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
 
 class ContractCostContentController extends Controller
@@ -33,7 +34,7 @@ class ContractCostContentController extends Controller
         return $this->response()->noContent()->setStatusCode(201);
     }
 
-    public function update(ContractCostContentRequest $request, ContractCost $contractCost, ContractCostContent $content)
+    public function update(ContractCostContentRequest $request, ContractCost $contractCost, ContractCostContent $content): Response
     {
         if ($content->status === 1) {
             abort(403, '成本明细已确认,无法修改');
@@ -67,7 +68,7 @@ class ContractCostContentController extends Controller
         return $this->response()->noContent()->setStatusCode(204);
     }
 
-    public function confirm(ContractCostContent $content)
+    public function confirm(ContractCostContent $content): Response
     {
         $content->update(['status' => 1]);
         ContractCost::query()->where('id', $content->cost_id)->increment('confirm_cost', $content->money);

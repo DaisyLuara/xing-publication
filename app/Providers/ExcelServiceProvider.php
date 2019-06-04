@@ -7,6 +7,7 @@ use App\Exports\ContractCostExport;
 use App\Exports\ContractExport;
 use App\Exports\ContractHistoryExport;
 use App\Exports\ContractRemindExport;
+use App\Exports\ContractRevenueExport;
 use App\Exports\CouponExport;
 use App\Exports\DemandApplicationExport;
 use App\Exports\DemandModifyExport;
@@ -76,39 +77,47 @@ class ExcelServiceProvider extends ServiceProvider
         $this->app->bind('marketing_top', function ($app) {
             return new MarketingTopExport($app->request);
         });
-        $this->app->bind('old_marketing', function ($app) {
-            return new OldMarketingExport($app->request);
-        });
+
         $this->app->bind('person_reward', function ($app) {
             return new PersonRewardExport($app->request);
         });
+
         $this->app->bind('coupon', function ($app) {
             return new CouponExport($app->request);
         });
+
         $this->app->bind('team_project', function ($app) {
             return new TeamProjectExport($app->request);
         });
+
         $this->app->bind('contract', function ($app) {
             return new ContractExport($app->request);
         });
+
         $this->app->bind('remind_contract', function ($app) {
             return new ContractRemindExport($app->request);
         });
+
         $this->app->bind('contract_cost', function ($app) {
             return new ContractCostExport($app->request);
         });
+
         $this->app->bind('contract_history', function ($app) {
             return new ContractHistoryExport($app->request);
         });
+
         $this->app->bind('invoice', function ($app) {
             return new InvoiceExport($app->request);
         });
+
         $this->app->bind('invoice_company', function ($app) {
             return new InvoiceCompanyExport($app->request);
         });
+
         $this->app->bind('invoice_receipt', function ($app) {
             return new InvoiceReceiptExport($app->request);
         });
+
         $this->app->bind('invoice_history', function ($app) {
             return new InvoiceHistoryExport($app->request);
         });
@@ -116,39 +125,53 @@ class ExcelServiceProvider extends ServiceProvider
         $this->app->bind('payment', function ($app) {
             return new PaymentExport($app->request);
         });
+
         $this->app->bind('payment_payee', function ($app) {
             return new PaymentPayeeExport($app->request);
         });
+
         $this->app->bind('payment_history', function ($app) {
             return new PaymentHistoryExport($app->request);
         });
+
         $this->app->bind('demand_application', function ($app) {
             return new DemandApplicationExport($app->request);
         });
+
         $this->app->bind('demand_modify', function ($app) {
             return new DemandModifyExport($app->request);
         });
+
         $this->app->bind('location_product', function ($app) {
             return new ErpLocationProductExport($app->request);
         });
+
         $this->app->bind('erp_warehouse_change', function ($app) {
             return new ErpWarehouseChangeExport($app->request);
         });
+
         $this->app->bind('erp_warehouse', function ($app) {
             return new ErpWarehouseExport($app->request);
         });
+
         $this->app->bind('erp_location', function ($app) {
             return new ErpLocationExport($app->request);
         });
+
         $this->app->bind('erp_product', function ($app) {
             return new ErpProductExport($app->request);
         });
+
         $this->app->bind('company', function ($app) {
             return new CompanyExport($app->request);
         });
+
         $this->app->bind('play_times', function ($app) {
             return new PlayTimesExport($app->request);
         });
 
+        $this->app->bind('contract_revenue', function ($app) {
+            return new ContractRevenueExport($app->request);
+        });
     }
 }

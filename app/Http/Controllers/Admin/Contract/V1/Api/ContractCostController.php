@@ -19,7 +19,7 @@ use Illuminate\Http\Request;
 
 class ContractCostController extends Controller
 {
-    public function show(ContractCost $contractCost)
+    public function show(ContractCost $contractCost): Response
     {
         return $this->response()->item($contractCost, new ContractCostTransformer());
     }
@@ -27,24 +27,25 @@ class ContractCostController extends Controller
     public function index(Request $request, ContractCost $contractCost): Response
     {
         $query = $contractCost->query();
-        if ($request->get('start_date') && $request->get('end_date')) {
+        if ($request->filled('start_date') && $request->filled('end_date')) {
             $query->whereRaw("date_format(updated_at,'%Y-%m-%d') between '{$request->get('start_date')}' and '{$request->get('end_date')}' ");
         }
 
-        $query->whereHas('contract', static function ($q) use ($request) {
-            if ($request->has('contract_number')) {
+        $user = $this->user();
+        $query->whereHas('contract', static function ($q) use ($request, $user) {
+            if ($request->filled('contract_number')) {
                 $q->where('contract_number', 'like', '%' . $request->get('contract_number') . '%');
             }
 
-            if ($request->get('contract_name')) {
+            if ($request->filled('contract_name')) {
                 $q->where('name', 'like', '%' . $request->get('contract_name') . '%');
             }
+
+            if ($user->hasRole('user|bd-manager')) {
+                $q->where('owner', $user->id);
+            }
         });
-        /** @var  $user \App\Models\User */
-        $user = $this->user();
-        if ($user->hasRole('user|bd-manager')) {
-            $query->where('applicant_id', $user->id);
-        }
+
         $contractCosts = $query->orderBy('updated_at', 'desc')->paginate(10);
 
         return $this->response()->paginator($contractCosts, new ContractCostTransformer());
@@ -57,11 +58,11 @@ class ContractCostController extends Controller
         $user = $this->user();
         if ($user->hasRole('legal-affairs-manager')) {
             $status = 1;
-            $contractCost->fill(array_merge($request->all(), ['confirm_cost' => $request->total_cost]))->save();
+            $contractCost->fill(array_merge($request->all(), ['confirm_cost' => $request->get('total_cost')]))->save();
         } else {
             $contractCost->fill($request->all())->save();
         }
-        $contents = $request->cost_content;
+        $contents = $request->get('cost_content');
         foreach ($contents as $content) {
             ContractCostContent::create(array_merge($content, ['cost_id' => $contractCost->id, 'status' => $status]));
         }
@@ -73,5 +74,4 @@ class ContractCostController extends Controller
     {
         return excelExportByType($request, 'contract_cost');
     }
-
 }

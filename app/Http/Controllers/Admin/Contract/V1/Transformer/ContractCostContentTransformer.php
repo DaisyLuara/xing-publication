@@ -23,7 +23,7 @@ class ContractCostContentTransformer extends TransformerAbstract
         '6' => '其他',
     ];
 
-    public function transform(ContractCostContent $content)
+    public function transform(ContractCostContent $content): array
     {
         return [
             'id' => $content->id,

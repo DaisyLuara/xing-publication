@@ -23,6 +23,8 @@ class DemandApplicationTransformer extends TransformerAbstract
             'title' => $demandApplication->getTitle(),
             'applicant_id' => $demandApplication->getApplicantId(),
             'applicant_name' => $demandApplication->applicant->name,
+            'owner' => $demandApplication->owner,
+            'owner_name' => $demandApplication->owner_user->name,
             'launch_point_remark' => $demandApplication->getLaunchPointRemark(),
             'has_contract' => $demandApplication->getHasContract(),
             'has_contract_text' => $demandApplication->getHasContractText(),

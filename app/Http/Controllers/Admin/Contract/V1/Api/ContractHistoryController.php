@@ -20,30 +20,30 @@ class ContractHistoryController extends Controller
     {
 
         $query = $contract->query();
-        if ($request->get('start_date') && $request->get('end_date')) {
+        if ($request->filled('start_date') && $request->filled('end_date')) {
             $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '{$request->get('start_date')}' and '{$request->get('end_date')}' ");
         }
 
-        if ($request->get('name')) {
+        if ($request->filled('name')) {
             $name = $request->get('name');
             $query->whereHas('company', static function ($q) use ($name) {
                 $q->where('name', 'like', '%' . $name . '%');
             });
         }
 
-        if ($request->get('applicant')) {
-            $query->where('applicant', $request->get('applicant'));
+        if ($request->filled('owner')) {
+            $query->where('owner', $request->get('owner'));
         }
 
-        if ($request->get('status') !== null) {
+        if ($request->filled('status')) {
             $query->where('status', $request->get('status'));
         }
 
-        if ($request->get('product_status') !== null) {
+        if ($request->filled('product_status')) {
             $query->where('product_status', $request->get('product_status'));
         }
 
-        if ($request->get('contract_number') !== null) {
+        if ($request->filled('contract_number')) {
             $query->where('contract_number', 'like', '%' . $request->get('contract_number') . '%');
         }
 
@@ -60,7 +60,7 @@ class ContractHistoryController extends Controller
 
     public function export(Request $request)
     {
-        return excelExportByType($request,'contract_history');
+        return excelExportByType($request, 'contract_history');
     }
 
 }

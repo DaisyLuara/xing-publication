@@ -20,42 +20,42 @@ class InvoiceHistoryController extends Controller
     {
         $query = $invoice->query();
 
-        if ($request->start_date && $request->end_date) {
-            $startDate = $request->start_date;
-            $endDate = $request->end_date;
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $startDate = $request->get('start_date');
+            $endDate = $request->get('end_date');
             $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '$startDate' and '$endDate' ");
         }
 
-        if ($request->name) {
-            $query->whereHas('contract', function ($q) use ($request) {
-                $q->whereHas('company', function ($q) use ($request) {
-                    $q->where('name', 'like', '%' . $request->name . '%');
+        if ($request->filled('name')) {
+            $query->whereHas('contract', static function ($q) use ($request) {
+                $q->whereHas('company', static function ($q) use ($request) {
+                    $q->where('name', 'like', '%' . $request->get('name') . '%');
                 });
             });
         }
 
-        if ($request->get('applicant')) {
-            $query->where('applicant', '=', $request->get('applicant'));
+        if ($request->filled('owner')) {
+            $query->where('owner', '=', $request->get('owner'));
         }
 
-        if ($request->status) {
-            $query->where('status', '=', $request->status);
+        if ($request->filled('status')) {
+            $query->where('status', '=', $request->get('status'));
         }
 
-        if ($request->has('contract_number')) {
-            $query->whereHas('contract', function ($q) use ($request) {
-                $q->where('contract_number', 'like', '%' . $request->contract_number . '%');
+        if ($request->filled('contract_number')) {
+            $query->whereHas('contract', static function ($q) use ($request) {
+                $q->where('contract_number', 'like', '%' . $request->get('contract_number') . '%');
             });
         }
 
-        if ($request->has('receive_status')) {
-            $query->where('receive_status', '=', $request->receive_status);
+        if ($request->filled('receive_status')) {
+            $query->where('receive_status', '=', $request->get('receive_status'));
         }
 
         /** @var  $user \App\Models\User */
         $user = $this->user();
 
-        $query->whereHas('invoiceHistory', function ($q) use ($user) {
+        $query->whereHas('invoiceHistory', static function ($q) use ($user) {
             $q->where('user_id', $user->id);
         });
         $invoice = $query->orderBy('created_at', 'desc')->paginate(10);
@@ -65,6 +65,6 @@ class InvoiceHistoryController extends Controller
 
     public function export(Request $request)
     {
-        return excelExportByType($request,'invoice_history');
+        return excelExportByType($request, 'invoice_history');
     }
 }

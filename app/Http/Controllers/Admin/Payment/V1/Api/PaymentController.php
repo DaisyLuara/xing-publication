@@ -12,9 +12,9 @@ use App\Http\Controllers\Admin\Payment\V1\Models\PaymentHistory;
 
 class PaymentController extends Controller
 {
-    public function show(Payment $payment)
+    public function show(Payment $payment): Response
     {
-        return $this->response->item($payment, new PaymentTransformer());
+        return $this->response()->item($payment, new PaymentTransformer());
     }
 
     public function index(PaymentRequest $request, Payment $payment): Response
@@ -22,25 +22,29 @@ class PaymentController extends Controller
 
         $query = $payment->query();
 
-        if ($request->get('start_date') && $request->get('end_date')) {
+        if ($request->filled('start_date') && $request->filled('end_date')) {
             $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '{$request->get('start_date')}' and '{$request->get('end_date')}' ");
         }
-        if ($request->get('payee')) {
-            $query->where('payee', 'like', '%' . $request->get('payee') . '%');
+
+        if ($request->filled('owner')) {
+            $query->where('owner', '=', $request->get('owner'));
         }
-        if ($request->get('applicant')) {
-            $query->where('applicant', '=', $request->get('applicant'));
+
+        if ($request->filled('payment_payee_name')) {
+            $query->whereHas('paymentPayee', static function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->get('payment_payee_name') . '%');
+            });
         }
-        if ($request->get('payee')) {
-            $query->where('payee', 'like', '%' . $request->get('payee') . '%');
-        }
-        if ($request->get('receive_status') !== null) {
+
+        if ($request->filled('receive_status')) {
             $query->where('receive_status', '=', $request->get('receive_status'));
         }
-        if ($request->get('status') !== null) {
+
+        if ($request->filled('status')) {
             $query->where('status', '=', $request->get('status'));
         }
-        if ($request->has('contract_number')) {
+
+        if ($request->filled('contract_number')) {
             $query->whereHas('contract', static function ($q) use ($request) {
                 $q->where('contract_number', 'like', '%' . $request->get('contract_number') . '%');
             });
@@ -53,41 +57,36 @@ class PaymentController extends Controller
         } else if ($user->hasRole('operation')) {
             $query->whereRaw('(status=3 or status=4)');
         } else {
-            $query->whereRaw("(applicant=$user->id or handler=$user->id)");
+            $query->whereRaw("(owner=$user->id or handler=$user->id)");
         }
         $payments = $query->orderBy('created_at', 'desc')->paginate(10);
-        return $this->response->paginator($payments, new PaymentTransformer());
+        return $this->response()->paginator($payments, new PaymentTransformer());
     }
 
-    public function store(PaymentRequest $request, Payment $payment)
+    public function store(PaymentRequest $request, Payment $payment): Response
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if (($user->hasRole('user') || $user->hasRole('bd-manager')) && !$user->parent_id) {
+        if (!$user->parent_id || $user->hasRole('use|bd-manager')) {
             abort(500, '无所属主管，无法新增付款申请');
         }
-        if ($user->hasRole('legal-affairs')) {
+        $rest = [];
+        if ($user->hasRole('legal-affairs|legal-affairs-manager')) {
             $financeId = getProcessStaffId('finance', 'payment');
-            $payment->fill(array_merge($request->all(), ['status' => 3, 'handler' => $financeId, 'receive_status' => 0]))->save();
+            $rest = ['status' => 3, 'handler' => $financeId, 'owner' => $user->id, 'receive_status' => 0];
         }
-
-        if ($user->hasRole('legal-affairs-manager')) {
-            $financeId = getProcessStaffId('finance', 'payment');
-            $payment->fill(array_merge($request->all(), ['status' => 3, 'handler' => $financeId, 'receive_status' => 0]))->save();
-        }
-
-
         if ($user->hasRole('user')) {
-            $payment->fill(array_merge($request->all(), ['status' => 1, 'handler' => $user->parent_id, 'receive_status' => 0]))->save();
+            $rest = ['status' => 1, 'handler' => $user->parent_id, 'receive_status' => 0, 'owner' => $user->id];
         }
 
         if ($user->hasRole('bd-manager')) {
             $legalId = getProcessStaffId('legal-affairs', 'payment');
-            $payment->fill(array_merge($request->all(), ['status' => 1, 'handler' => $legalId, 'receive_status' => 0]))->save();
+            $rest = ['status' => 1, 'handler' => $legalId, 'receive_status' => 0, 'owner' => $user->id];
         }
+        $payment->fill(array_merge($request->all(), $rest))->save();
         //附件存储
-        if ($request->ids) {
-            $ids = explode(',', $request->ids);
+        if ($request->get('ids')) {
+            $ids = explode(',', $request->get('ids'));
             foreach ($ids as $id) {
                 $payment->media()->attach($id);
             }
@@ -96,16 +95,16 @@ class PaymentController extends Controller
     }
 
 
-    public function destroy(Payment $payment)
+    public function destroy(Payment $payment): Response
     {
-        if ($payment->status != 1) {
-            abort(403, "合同审批状态已更改，不可删除");
+        if ($payment->status !== 1) {
+            abort(403, '合同审批状态已更改，不可删除');
         }
         $payment->delete();
-        return $this->response->noContent();
+        return $this->response()->noContent();
     }
 
-    public function reject(Request $request, Payment $payment)
+    public function reject(Request $request, Payment $payment): Response
     {
         $user = $this->user();
         $payment->update(array_merge($request->all(), ['status' => 5, 'handler' => $payment->applicant]));
@@ -113,7 +112,7 @@ class PaymentController extends Controller
         return $this->response()->noContent();
     }
 
-    public function auditing(Request $request, Payment $payment)
+    public function auditing(Request $request, Payment $payment): Response
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
@@ -125,7 +124,7 @@ class PaymentController extends Controller
             if (!$request->has('bd_ma_message')) {
                 abort(500, '没有填写意见');
             }
-            $payment->bd_ma_message = $request->bd_ma_message;
+            $payment->bd_ma_message = $request->get('bd_ma_message');
             $payment->update();
             PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
 
@@ -134,14 +133,14 @@ class PaymentController extends Controller
             if (!$request->has('legal_message')) {
                 abort(500, '没有填写意见');
             }
-            $payment->legal_message = $request->legal_message;
+            $payment->legal_message = $request->get('legal_message');
             $payment->update();
             PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
         } else if ($user->hasRole('legal-affairs-manager')) {
 
             $auditorId = getProcessStaffId('auditor', 'payment');
             $payment->handler = $auditorId;
-            $payment->legal_ma_message = $request->legal_ma_message;
+            $payment->legal_ma_message = $request->get('legal_ma_message');
             if (!$request->has('legal_ma_message')) {
                 abort(500, '没有填写意见');
             }
@@ -155,7 +154,7 @@ class PaymentController extends Controller
             if (!$request->has('auditor_message')) {
                 abort(500, '没有填写意见');
             }
-            $payment->auditor_message = $request->auditor_message;
+            $payment->auditor_message = $request->get('auditor_message');
             $payment->update();
             PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
 
@@ -166,24 +165,24 @@ class PaymentController extends Controller
             $payment->update();
             PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
         }
-        return $this->response->noContent();
+        return $this->response()->noContent();
     }
 
-    public function receive(Request $request, Payment $payment)
+    public function receive(Payment $payment): Response
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if ($user->id != getProcessStaffId('finance', 'payment')) {
-            abort(403, "无操作权限");
+        if ($user->id !== getProcessStaffId('finance', 'payment')) {
+            abort(403, '无操作权限');
         }
         $payment->receive_status = 1;
         $payment->update();
-        return $this->response->noContent();
+        return $this->response()->noContent();
     }
 
 
     public function export(Request $request)
     {
-        return excelExportByType($request,'payment');
+        return excelExportByType($request, 'payment');
     }
 }
