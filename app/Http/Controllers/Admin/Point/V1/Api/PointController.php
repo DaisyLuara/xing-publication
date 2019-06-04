@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\Point\V1\Request\PointRequest;
 use App\Http\Controllers\Admin\Point\V1\Models\Point;
 use App\Http\Controllers\Admin\User\V1\Models\ArUser;
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use App\Models\User;
 use Carbon\Carbon;
 use Dingo\Api\Http\Response;
@@ -16,6 +17,8 @@ use Illuminate\Http\Request;
 
 class PointController extends Controller
 {
+    public static $icon = 'http://image.xingstation.cn/1007/image/393_511_941_578_ic_launcher.png';
+
     public function map(PointRequest $request, Point $point): Response
     {
         $lat = $request->get('lat');
@@ -124,13 +127,26 @@ class PointController extends Controller
         if (!$user->hasRole('user|bd-manager')) {
             abort(403, '无操作权限');
         }
+
         if (!$user->z) {
             abort(500, '无用户标识');
         }
 
+        $customer = Customer::find($request->get('customer_id'));
+        if (!$customer->z) {
+            abort(500, '无场地主标识');
+        }
+
         $arUser = ArUser::query()->where('z', $user->z)->first();
-        $arSite = ArUser::query()->where('z', $request->get('site_z'))->first();
-        $point->fill(array_merge($request->all(), ['bd_uid' => $arUser->uid, 'bd_z' => $user->z, 'site_uid' => $arSite->uid]))->saveOrFail();
+        $arSite = ArUser::query()->where('z', $customer->z)->first();
+        $authParam = [
+            'bd_uid' => $arUser->uid,
+            'bd_z' => $user->z,
+            'site_uid' => $arSite->uid,
+            'site_z' => $arSite->z,
+            'icon' => self::$icon
+        ];
+        $point->fill(array_merge($request->all(), $authParam))->saveOrFail();
         $point->attribute()->attach($request->get('attribute_id'));
 
         if ($request->has('contract')) {
@@ -167,8 +183,10 @@ class PointController extends Controller
         $point->attribute()->attach($request->get('attribute_id'));
 
         $arr = [];
-        if ($request->filled('site_z')) {
-            $arSite = ArUser::query()->where('z', $request->get('site_z'))->first();
+        if ($request->filled('customer_id')) {
+            $customer = Customer::find($request->get('customer_id'));
+            abort_if(!$customer, 500, '无场地主标识');
+            $arSite = ArUser::query()->where('z', $customer->z)->first();
             $arr = ['site_uid' => $arSite->uid];
         }
         $point->update(array_merge($request->all(), $arr));

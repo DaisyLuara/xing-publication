@@ -4,17 +4,14 @@ namespace App\Http\Controllers\Admin\MallCoo\V1\Api;
 
 use App\Http\Controllers\Admin\Common\V1\Models\FileUpload;
 use App\Http\Controllers\Admin\Coupon\V1\Models\UserCouponBatch;
+use App\Http\Controllers\Admin\Launch\V1\Models\PolicyLaunch;
 use App\Http\Controllers\Admin\MallCoo\V1\Transformer\CouponPackTransformer;
-
 use App\Http\Controllers\Admin\Common\V1\Transformer\CouponTransformer;
 use App\Http\Controllers\Admin\MallCoo\V1\Request\CouponPackRequest;
 use App\Http\Controllers\Admin\MallCoo\V1\Request\CouponRequest;
 use App\Http\Controllers\Admin\WeChat\V1\Models\ThirdPartyUser;
-use App\Http\Controllers\Admin\Coupon\V1\Models\CouponBatch;
 use App\Http\Controllers\Admin\Coupon\V1\Models\UserPolicy;
-use App\Http\Controllers\Admin\Project\V1\Models\Project;
 use App\Http\Controllers\Admin\Coupon\V1\Models\Coupon;
-use App\Http\Controllers\Admin\Coupon\V1\Models\Policy;
 use App\Traits\CouponBatch as CouponBatchTrait;
 use Carbon\Carbon;
 use DB;
@@ -32,8 +29,10 @@ class CouponController extends BaseController
     {
         $wxUserId = decrypt($request->get('sign'));
 
-        $project = Project::query()->where('versionname', '=', $request->get('belong'))->firstOrFail();
-        $policy = Policy::query()->findOrFail($project->policy_id);
+        /** @var PolicyLaunch $policyLaunch */
+        $policyLaunch = PolicyLaunch::query()->where('belong', $request->get('belong'))
+            ->where('oid', $request->get('oid'))->firstOrFail();
+        $policy = $policyLaunch->policy;
 
         //策略券礼包每人领取次数校验
         if (!$policy->per_person_unlimit) {
@@ -63,6 +62,7 @@ class CouponController extends BaseController
             foreach ($couponBatches as $couponBatch) {
                 //调用猫酷券接口
                 $result = $this->mall_coo->sendCouponByOpenUserID($user->mallcoo_open_user_id, $couponBatch->third_code);
+
                 abort_if($result['Code'] !== 1, 500, $result['Message']);
                 abort_if(!$result['Data'][0]['IsSuccess'], 500, $result['Data'][0]['FailReason']);
 
@@ -131,6 +131,7 @@ class CouponController extends BaseController
      * 发送优惠券
      * @param CouponRequest $request
      * @return \Dingo\Api\Http\Response
+     * @throws \Overtrue\EasySms\Exceptions\InvalidArgumentException
      */
     public function store(CouponRequest $request)
     {
@@ -167,7 +168,7 @@ class CouponController extends BaseController
             abort_if($coupons->count() >= $couponBatch->people_max_get, 500, '优惠券每人最多领取' . $couponBatch->people_max_get . '张');
         }
 
-        $code = uniqid();
+        $code = uniqid('', false);
 
         //券的有效期
         if ($couponBatch->is_fixed_date) {
