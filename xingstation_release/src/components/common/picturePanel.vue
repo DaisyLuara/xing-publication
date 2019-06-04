@@ -25,7 +25,7 @@
           <el-tab-pane
             v-for="item in mediaGroup.mediaGroupList"
             :name="item.name"
-            :group-id="item.id"
+            :groupId="item.id"
             :key="item.id"
           >
             <span 

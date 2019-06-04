@@ -22,7 +22,7 @@
               <span>{{ scope.row.company.internal_name }}</span>
             </el-form-item>
             <el-form-item label="创建人">
-              <span>{{ scope.row.user.name }}</span>
+              <span>{{ scope.row.user ? scope.row.user.name: scope.row.customer.name }}</span>
             </el-form-item>
             <el-form-item label="剩余库存">
               <span>{{ scope.row.stock }}</span>
@@ -38,12 +38,11 @@
         prop="id" 
         label="ID" 
         min-width="80"/>
-      <el-table-column
-        :show-overflow-tooltip="true"
-        prop="scene_type"
-        label="适用场景"
-        min-width="100"
-      >
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        prop="scene_type" 
+        label="适用场景" 
+        min-width="100">
         <template
           slot-scope="scope"
         >{{ scope.row.scene_type === 1 ? '场地通用' : scope.row.scene_type === 2 ? '场地自营' : scope.row.scene_type === 3 ? '商户通用' : scope.row.scene_type === 4 ? '商户自营' : '无' }}</template>
@@ -66,7 +65,9 @@
         prop="user_name" 
         label="创建人" 
         min-width="100">
-        <template slot-scope="scope">{{ scope.row.user.name }}</template>
+        <template
+          slot-scope="scope"
+        >{{ scope.row.user ? scope.row.user.name : scope.row.customer.name }}</template>
       </el-table-column>
       <el-table-column 
         :show-overflow-tooltip="true" 

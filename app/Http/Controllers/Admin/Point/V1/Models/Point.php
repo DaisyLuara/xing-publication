@@ -42,37 +42,37 @@ use App\Models\ArModel;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Http\Controllers\Admin\Project\V1\Models\Project[] $projects
  * @property-read \App\Http\Controllers\Admin\Point\V1\Models\Scene $scene
  * @property-read \App\Http\Controllers\Admin\Point\V1\Models\PointShare $share
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Point newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Point newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model ordered()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Point query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model recent()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereAreaid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereBdUid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereBdZ($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereCid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereClientdate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereCode($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereEhours($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereGeoHash($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereHours($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereIcon($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereInfo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereLat($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereLng($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereMarketid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereMode($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereOid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereShours($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereSid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereSiteUid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereSiteZ($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereVisiable($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereWeekday($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Point\V1\Models\Point whereWeekend($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereAreaid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereBdUid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereBdZ($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereCid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereClientdate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereEhours($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereGeoHash($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereHours($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereIcon($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereInfo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereLat($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereLng($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereMarketid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereMode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereOid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereShours($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereSid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereSiteUid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereSiteZ($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereVisiable($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereWeekday($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Point whereWeekend($value)
  * @mixin \Eloquent
  */
 class Point extends ArModel
@@ -85,7 +85,7 @@ class Point extends ArModel
         'areaid', 'marketid', 'sid', 'bd_uid', 'site_uid',
         'hours', 'shours', 'ehours', 'weekday', 'weekend',
         'visiable', 'name', 'info', 'icon', 'type', 'date',
-        'clientdate', 'lat', 'lng', 'geo_hash', 'bd_z'
+        'clientdate', 'lat', 'lng', 'geo_hash', 'bd_z','site_z'
     ];
 
     public function projects()
