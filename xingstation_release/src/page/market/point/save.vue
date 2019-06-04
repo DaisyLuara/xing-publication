@@ -998,105 +998,7 @@ export default {
         ],
         "share.coupon_off": [{ validator: checkNumber, trigger: "submit" }]
       },
-      // rules2: {
-      //   name: [{ required: true, message: "请输入名称", trigger: "submit" }],
-      //   companyName: [{ required: true, message: "请输入公司名称", trigger: "submit" }],
-      //   customer: [{ required: true, message: "请输入联系人", trigger: "submit" }],
-      //   area_id: [{ required: true, message: "请选择区域", trigger: "submit" }],
-      //   marketid: [
-      //     { required: true, message: "请选择场地", trigger: "submit" }
-      //   ],
-      //   "contract.type": [
-      //     { required: true, message: "请选择场地类型", trigger: "submit" }
-      //   ],
-      //   "contract.contract": [
-      //     { required: true, message: "请选择是否有无合同", trigger: "submit" }
-      //   ],
-      //   "contract.pay": [
-      //     { required: true, message: "请输入金额", trigger: "submit" },
-      //     { validator: checkNumber, trigger: "submit" }
-      //   ],
-      //   "contract.enter_sdate": [
-      //     { required: true, message: "请选择合同开始时间", trigger: "submit" }
-      //   ],
-      //   "contract.enter_edate": [
-      //     { required: true, validator: checkEnterEndDate, trigger: "submit" }
-      //   ],
-      //   "contract.oper_sdate": [
-      //     { required: true, message: "请选择入驻开始时间", trigger: "submit" }
-      //   ],
-      //   "contract.oper_edate": [
-      //     { required: true, validator: checkOperEndDate, trigger: "submit" }
-      //   ],
-      //   "contract.mode": [
-      //     { required: true, message: "请选择合作模式", trigger: "submit" }
-      //   ],
-      //   "contract.ad_istar": [
-      //     { required: true, message: "请输入A类广告分成", trigger: "submit" },
-      //     { validator: checkNumber, trigger: "submit" }
-      //   ],
-      //   "contract.ad_ads": [
-      //     { required: true, message: "请输入B类广告分成", trigger: "submit" },
-      //     { validator: checkNumber, trigger: "submit" }
-      //   ],
-      //   "contract.exchange_num": [
-      //     { required: true, message: "请输入置换节目数量", trigger: "submit" },
-      //     { validator: checkNumber, trigger: "submit" }
-      //   ],
-      //   permission: [
-      //     {
-      //       required: true,
-      //       message: "请选择场地权限",
-      //       trigger: "submit",
-      //       type: "array"
-      //     }
-      //   ],
-      //   "share.offer": [
-      //     { required: true, message: "请输入报刊价", trigger: "submit" },
-      //     { validator: checkNumber, trigger: "submit" }
-      //   ],
-      //   "share.offer_off": [{ validator: checkNumber, trigger: "submit" }],
-      //   "share.mad": [
-      //     { required: true, message: "请输入曝光价", trigger: "submit" },
-      //     { validator: checkNumber, trigger: "submit" }
-      //   ],
-      //   "share.mad_off": [{ validator: checkNumber, trigger: "submit" }],
-      //   "share.play": [
-      //     { required: true, message: "请输入冠名价", trigger: "submit" },
-      //     { validator: checkNumber, trigger: "submit" }
-      //   ],
-      //   "share.play_off": [{ validator: checkNumber, trigger: "submit" }],
-      //   "share.qrcode": [
-      //     { required: true, message: "请输入", trigger: "submit" },
-      //     { validator: checkNumber, trigger: "submit" }
-      //   ],
-      //   "share.qrcode_off": [{ validator: checkNumber, trigger: "submit" }],
-      //   "share.wx_pa": [
-      //     { required: true, message: "请输入", trigger: "submit" },
-      //     { validator: checkNumber, trigger: "submit" }
-      //   ],
-      //   "share.wx_pa_off": [{ validator: checkNumber, trigger: "submit" }],
-      //   "share.wx_mp": [
-      //     { required: true, message: "请输入", trigger: "submit" },
-      //     { validator: checkNumber, trigger: "submit" }
-      //   ],
-      //   "share.wx_mp_off": [{ validator: checkNumber, trigger: "submit" }],
-      //   "share.app": [
-      //     { required: true, message: "请输入", trigger: "submit" },
-      //     { validator: checkNumber, trigger: "submit" }
-      //   ],
-      //   "share.app_off": [{ validator: checkNumber, trigger: "submit" }],
-      //   "share.phone": [
-      //     { required: true, message: "请输入", trigger: "submit" },
-      //     { validator: checkNumber, trigger: "submit" }
-      //   ],
-      //   "share.phone_off": [{ validator: checkNumber, trigger: "submit" }],
-      //   "share.coupon": [
-      //     { required: true, message: "请输入", trigger: "submit" },
-      //     { validator: checkNumber, trigger: "submit" }
-      //   ],
-      //   "share.coupon_off": [{ validator: checkNumber, trigger: "submit" }]
-      // },
+      
       contractList: [],
       indexRouter: {
         path: "/market/point"
@@ -1121,15 +1023,6 @@ export default {
       }
     });
   },
-  // computed:{
-  //   rulesList: function() {
-  //     if (this.pointForm.contract.contract) {
-  //       return this.rules
-  //     } else {
-  //       return this.rules2
-  //     }
-  //   }
-  // },
   methods: {
     async init() {
       try {
