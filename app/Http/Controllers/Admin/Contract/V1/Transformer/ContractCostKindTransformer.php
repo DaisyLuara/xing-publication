@@ -19,6 +19,7 @@ class ContractCostKindTransformer extends TransformerAbstract
         return [
             'id' => $contractCostKind->id,
             'name' => $contractCostKind->name,
+            'default_cost' => $contractCostKind->default_cost
         ];
     }
 }

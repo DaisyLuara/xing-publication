@@ -23,7 +23,7 @@ $api->version('v1', [
             $api->delete('system/users/{user}', ['middleware' => ['permission:system.user.delete'], 'uses' => 'AdminUsersController@destroy']);
             $api->patch('system/users/z/{user}', ['middleware' => ['permission:system.user.update'], 'uses' => 'AdminUsersController@syncZValue']);
 
-            $api->patch('system/users/{user}/user_transfer', ['middleware' => [], 'uses' => 'AdminUsersController@transfer']);
+            $api->patch('system/users/{user}/user_transfer', ['middleware' => ['permission:system.user.transfer'], 'uses' => 'AdminUsersController@transfer']);
         });
     });
 

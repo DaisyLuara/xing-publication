@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Contract\V1\Api;
 
+use App\Http\Controllers\Admin\Common\V1\Request\ExportRequest;
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
 use App\Http\Controllers\Admin\Contract\V1\Models\ContractHistory;
 use App\Http\Controllers\Admin\Contract\V1\Models\ContractProduct;
@@ -307,5 +308,10 @@ class ContractController extends Controller
         $filedDate = Carbon::now()->toDateTimeString();
         $contract->update(['filed_date' => $filedDate]);
         return $this->response()->noContent();
+    }
+
+    public function revenueExport(ExportRequest $request)
+    {
+        return excelExport($request);
     }
 }
