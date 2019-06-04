@@ -155,7 +155,7 @@
                 @change="isHidden()"
               >有</el-radio>
             </el-form-item>
-            <div v-show="hidden">
+            <div v-if="hidden">
               <el-form-item
                 label="合同编号"
                 prop="contract.contract_num"
@@ -898,6 +898,18 @@ export default {
         "contract.type": [
           { required: true, message: "请选择场地类型", trigger: "submit" }
         ],
+        "contract.contract_num":[
+          { required: true, message: "请选择合同编号", trigger: "submit" }          
+        ],
+        "contract.contract_company":[
+          { required: true, message: "请输入合同公司", trigger: "submit" }          
+        ],
+         "contract.contract_user":[
+          { required: true, message: "请选择联系人", trigger: "submit" }          
+        ],
+         "contract.contract_phone":[
+          { required: true, message: "请输入联系方式", trigger: "submit" }          
+        ],
         "contract.contract": [
           { required: true, message: "请选择是否有无合同", trigger: "submit" }
         ],
@@ -986,6 +998,7 @@ export default {
         ],
         "share.coupon_off": [{ validator: checkNumber, trigger: "submit" }]
       },
+      
       contractList: [],
       indexRouter: {
         path: "/market/point"
