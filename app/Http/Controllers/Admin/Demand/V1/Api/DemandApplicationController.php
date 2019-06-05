@@ -155,7 +155,6 @@ class DemandApplicationController extends Controller
 
         $update_params = [
             'title' => $params['title'],
-            'owner' => $params['owner'],
             'launch_point_remark' => $params['launch_point_remark'],
             'has_contract' => $params['has_contract'],
             'project_num' => $params['project_num'],
