@@ -103,6 +103,7 @@ class ContractController extends Controller
             //法务和法务主管建的直接已审批
             if ($user->hasRole('legal-affairs|legal-affairs-manager')) {
                 $rest = [
+                    'applicant' => $user->id,
                     'owner' => $user->id,
                     'status' => ActionConfig::CONTRACT_STATUS_AGREE,
                     'handler' => null,
@@ -111,6 +112,7 @@ class ContractController extends Controller
             } else {
                 $legalId = getProcessStaffId('legal-affairs', 'contract');
                 $rest = [
+                    'applicant' => $user->id,
                     'owner' => $user->id,
                     'status' => ActionConfig::CONTRACT_STATUS_WAIT,
                     'handler' => $legalId,

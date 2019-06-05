@@ -73,15 +73,15 @@ class PaymentController extends Controller
         $rest = [];
         if ($user->hasRole('legal-affairs|legal-affairs-manager')) {
             $financeId = getProcessStaffId('finance', 'payment');
-            $rest = ['status' => 3, 'handler' => $financeId, 'owner' => $user->id, 'receive_status' => 0];
+            $rest = ['status' => 3, 'handler' => $financeId, 'receive_status' => 0, 'owner' => $user->id, 'applicant' => $user->id];
         }
         if ($user->hasRole('user')) {
-            $rest = ['status' => 1, 'handler' => $user->parent_id, 'receive_status' => 0, 'owner' => $user->id];
+            $rest = ['status' => 1, 'handler' => $user->parent_id, 'receive_status' => 0, 'owner' => $user->id, 'applicant' => $user->id];
         }
 
         if ($user->hasRole('bd-manager')) {
             $legalId = getProcessStaffId('legal-affairs', 'payment');
-            $rest = ['status' => 1, 'handler' => $legalId, 'receive_status' => 0, 'owner' => $user->id];
+            $rest = ['status' => 1, 'handler' => $legalId, 'receive_status' => 0, 'owner' => $user->id, 'applicant' => $user->id];
         }
         $payment->fill(array_merge($request->all(), $rest))->save();
         //附件存储

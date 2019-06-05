@@ -18,7 +18,6 @@ class PaymentRequest extends Request
             case 'POST':
                 return [
                     'contract_id' => 'required|integer',
-                    'applicant' => 'required|integer',
                     'amount' => 'required|string',
                     'type' => Rule::in([1, 2, 3]),
                     'reason' => 'required|string:max:150',
@@ -29,7 +28,6 @@ class PaymentRequest extends Request
             case 'PATCH':
                 return [
                     'contract_id' => 'integer',
-                    'applicant' => 'integer',
                     'amount' => 'string',
                     'type' => Rule::in([1, 2, 3]),
                     'reason' => 'string:max:150',

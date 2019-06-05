@@ -18,7 +18,6 @@ class InvoiceRequest extends Request
         if ($method === 'POST') {
             return [
                 'contract_id' => 'required|integer',
-                'applicant' => 'required|integer',
                 'type' => Rule::in([0, 1]),
                 'invoice_company_id' => 'required|integer',
                 'invoice_content.*.invoice_kind_id' => 'required|integer',
@@ -38,7 +37,6 @@ class InvoiceRequest extends Request
     {
         return [
             'contract_id' => '合同',
-            'applicant' => '申请人',
             'type' => '开票类型',
             'invoice_company_id' => '开票公司',
             'invoice_content.*.invoice_kind_id' => '开票种类',

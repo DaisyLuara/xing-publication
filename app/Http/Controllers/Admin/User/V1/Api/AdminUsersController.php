@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\User\V1\Api;
 use App\Http\Controllers\Admin\Common\V1\Models\Image;
 use App\Http\Controllers\Admin\Company\V1\Models\Company;
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
+use App\Http\Controllers\Admin\Demand\V1\Models\DemandApplication;
 use App\Http\Controllers\Admin\Invoice\V1\Models\Invoice;
 use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany;
 use App\Http\Controllers\Admin\Payment\V1\Models\Payment;
@@ -229,6 +230,11 @@ class AdminUsersController extends Controller
             $companies = Company::query()->where('bd_user_id', $user->id)->get();
             foreach ($companies as $company) {
                 $company->update(['bd_user_id' => $newUser->id]);
+            }
+
+            $demands = DemandApplication::query()->where('owner', $user->id)->get();
+            foreach ($demands as $demand) {
+                $demand->update(['owner' => $newUser->id]);
             }
 
             DB::commit();
