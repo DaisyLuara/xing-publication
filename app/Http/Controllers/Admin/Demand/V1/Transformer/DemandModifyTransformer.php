@@ -18,6 +18,8 @@ class DemandModifyTransformer extends TransformerAbstract
             'demand_application_id' => $demandModify->getDemandApplicationId(),
             'applicant_id' => $demandModify->getApplicantId(),
             'applicant_name' => $demandModify->applicant->name,
+            'owner' => $demandModify->demand_application->owner,
+            'owner_name' => $demandModify->demand_application->owner_user->name,
             'title' => $demandModify->getTitle(),
             'content' => $demandModify->getContent(),
             'has_feedback' => $demandModify->getHasFeedback(),
