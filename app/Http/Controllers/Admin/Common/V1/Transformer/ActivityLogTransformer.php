@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Admin\Common\V1\Transformer;
 
-use App\Http\Controllers\Admin\Company\V1\Transformer\CustomerTransformer;
-use App\Http\Controllers\Admin\User\V1\Transformer\UserTransformer;
 use App\Models\User;
 use League\Fractal\TransformerAbstract;
 use Spatie\Activitylog\Models\Activity;
@@ -20,7 +18,10 @@ class ActivityLogTransformer extends TransformerAbstract
             'id' => $activity->id,
             'log_name' => $activity->log_name,
             'description' => $activity->description,
-            'properties' => $activity->properties,
+            'subject_id' => $activity->subject_id,
+            'subject_type' => $activity->subject_type,
+            'ip' => $activity->getExtraProperty('ip') ?? '--',
+            'properties' => $activity->getExtraProperty('request_params') ?? $activity->properties,
             'created_at' => $activity->created_at->toDateTimeString(),
             'updated_at' => $activity->updated_at->toDateTimeString(),
         ];
