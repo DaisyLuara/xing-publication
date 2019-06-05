@@ -82,15 +82,15 @@ class InvoiceController extends Controller
         $rest = [];
         if ($user->hasRole('legal-affairs|legal-affairs-manager')) {
             $financeId = getProcessStaffId('finance', 'invoice');
-            $rest = ['status' => 3, 'handler' => $financeId, 'owner' => $user->id];
+            $rest = ['status' => 3, 'handler' => $financeId, 'owner' => $user->id, 'applicant' => $user->id];
         }
         if ($user->hasRole('user')) {
-            $rest = ['status' => 1, 'handler' => $user->parent_id, 'owner' => $user->id];
+            $rest = ['status' => 1, 'handler' => $user->parent_id, 'owner' => $user->id, 'applicant' => $user->id];
         }
         if ($user->hasRole('bd-manager')) {
             $role = Role::findByName('legal-affairs-manager');
             $legalMa = $role->users()->first();
-            $rest = ['status' => 1, 'handler' => $legalMa->id, 'owner' => $user->id];
+            $rest = ['status' => 1, 'handler' => $legalMa->id, 'owner' => $user->id, 'applicant' => $user->id];
         }
         try {
             DB::beginTransaction();
