@@ -35,6 +35,13 @@ class MallCooConfigSeeder extends Seeder
                 'mallcoo_public_key' => 'ZCHg5m',
                 'mallcoo_private_key' => 'd021b4c9d6c5c7ea',
             ],
+            [
+                'marketid' => 196,
+                'mallcoo_mall_id' => '',
+                'mallcoo_appid' => '5cf791bf4ba1f23020ab176b',
+                'mallcoo_public_key' => 'rAz0ta',
+                'mallcoo_private_key' => '17acf1f75f8ac86e',
+            ]
         ];
 
         MallcooConfig::query()->truncate();
