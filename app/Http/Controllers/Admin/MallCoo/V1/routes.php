@@ -12,6 +12,7 @@ $api->version('v1', [
         $api->group(['prefix' => 'mallcoo'], function ($api) {
 
             $api->post('verificationCodes', 'VerificationCodesController@store'); // 短信验证码
+            $api->post('huiju/verificationCodes', 'VerificationCodesController@sendVerificationCodes'); // 短信验证码
             $api->post('couponMessage', 'VerificationCodesController@sendCouponMessage'); // 发送优惠券码
 
             $api->post('user/oauth', 'UserController@oauth');//获取授权页面url
