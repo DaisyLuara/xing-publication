@@ -22,7 +22,6 @@ use App\Exports\InvoiceHistoryExport;
 use App\Exports\InvoiceReceiptExport;
 use App\Exports\MarketingExport;
 use App\Exports\MarketingTopExport;
-use App\Exports\OldMarketingExport;
 use App\Exports\PaymentExport;
 use App\Exports\PaymentHistoryExport;
 use App\Exports\PaymentPayeeExport;
@@ -32,6 +31,7 @@ use App\Exports\PointDailyAverageExport;
 use App\Exports\PointExport;
 use App\Exports\ProjectByPointExport;
 use App\Exports\ProjectExport;
+use App\Exports\ShortUrlExport;
 use App\Exports\TeamProjectExport;
 use Illuminate\Support\ServiceProvider;
 
@@ -172,6 +172,10 @@ class ExcelServiceProvider extends ServiceProvider
 
         $this->app->bind('contract_revenue', function ($app) {
             return new ContractRevenueExport($app->request);
+        });
+
+        $this->app->bind('short_url', function ($app) {
+            return new ShortUrlExport($app->request);
         });
     }
 }
