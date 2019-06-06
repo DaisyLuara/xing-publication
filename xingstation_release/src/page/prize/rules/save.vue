@@ -1,18 +1,10 @@
 <template>
   <div class="add-coupon-wrap">
-    <div 
-      v-loading="setting.loading" 
-      :element-loading-text="setting.loadingText">
+    <div v-loading="setting.loading" :element-loading-text="setting.loadingText">
       <div class="coupon-title">{{ $route.name }}</div>
-      <el-form 
-        ref="couponForm" 
-        :model="couponForm" 
-        :rules="rules" 
-        label-width="180px">
+      <el-form ref="couponForm" :model="couponForm" :rules="rules" label-width="180px">
         <el-tabs v-model="activeName">
-          <el-tab-pane 
-            label="优惠券设置" 
-            name="first">
+          <el-tab-pane label="优惠券设置" name="first">
             <el-form-item
               :rules="{required: true, message: '公司不能为空', trigger: 'submit'}"
               label="公司"
@@ -40,22 +32,13 @@
               label="优惠券名称"
               prop="name"
             >
-              <el-input 
-                v-model="couponForm.name" 
-                class="coupon-form-input"/>
+              <el-input v-model="couponForm.name" class="coupon-form-input"/>
             </el-form-item>
-            <el-form-item 
-              label="创建人" 
-              prop="user_name">
-              <el-input 
-                v-model="user_name" 
-                :disabled="true" 
-                class="coupon-form-input"/>
+            <el-form-item label="创建人" prop="user_name">
+              <el-input v-model="user_name" :disabled="true" class="coupon-form-input"/>
             </el-form-item>
 
-            <el-form-item 
-              label="使用说明" 
-              prop="description">
+            <el-form-item label="使用说明" prop="description">
               <el-input
                 v-model="couponForm.description"
                 :maxlength="1000"
@@ -68,112 +51,54 @@
               label="金额"
               prop="amount"
             >
-              <el-input 
-                v-model="couponForm.amount" 
-                :maxlength="6" 
-                class="coupon-form-input"/>
-              <el-tooltip 
-                class="item" 
-                effect="dark" 
-                content="金额必须为整数" 
-                placement="right">
+              <el-input v-model="couponForm.amount" :maxlength="6" class="coupon-form-input"/>
+              <el-tooltip class="item" effect="dark" content="金额必须为整数" placement="right">
                 <i class="el-icon-info"/>
               </el-tooltip>
             </el-form-item>
-            <el-form-item 
-              label="h5图片链接" 
-              prop="image_url">
-              <div 
-                class="avatar-uploader" 
-                @click="panelVisible=true,imgType = 'h5'">
-                <img 
-                  v-if="couponForm.image_url" 
-                  :src="couponForm.image_url" 
-                  class="avatar">
-                <i 
-                  v-else 
-                  class="el-icon-plus avatar-uploader-icon"/>
+            <el-form-item label="h5图片链接" prop="image_url">
+              <div class="avatar-uploader" @click="panelVisible=true,imgType = 'h5'">
+                <img v-if="couponForm.image_url" :src="couponForm.image_url" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"/>
               </div>
             </el-form-item>
-            <el-form-item 
-              label="大屏图片链接" 
-              prop="bs_image_url">
-              <div 
-                class="avatar-uploader" 
-                @click="panelVisible=true,imgType = 'bs'">
-                <img 
-                  v-if="couponForm.bs_image_url" 
-                  :src="couponForm.bs_image_url" 
-                  class="avatar">
-                <i 
-                  v-else 
-                  class="el-icon-plus avatar-uploader-icon"/>
+            <el-form-item label="大屏图片链接" prop="bs_image_url">
+              <div class="avatar-uploader" @click="panelVisible=true,imgType = 'bs'">
+                <img v-if="couponForm.bs_image_url" :src="couponForm.bs_image_url" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"/>
               </div>
               <!-- <el-input v-model="couponForm.bs_image_url" class="coupon-form-input"/> -->
             </el-form-item>
-            <el-form-item 
-              label="跳转链接" 
-              prop="redirect_url">
-              <el-input 
-                v-model="couponForm.redirect_url" 
-                class="coupon-form-input"/>
+            <el-form-item label="跳转链接" prop="redirect_url">
+              <el-input v-model="couponForm.redirect_url" class="coupon-form-input"/>
             </el-form-item>
-            <el-form-item 
-              label="状态" 
-              prop="is_active">
-              <el-radio 
-                v-model="couponForm.is_active" 
-                :label="1">启用</el-radio>
-              <el-radio 
-                v-model="couponForm.is_active" 
-                :label="0">停用</el-radio>
+            <el-form-item label="状态" prop="is_active">
+              <el-radio v-model="couponForm.is_active" :label="1">启用</el-radio>
+              <el-radio v-model="couponForm.is_active" :label="0">停用</el-radio>
             </el-form-item>
           </el-tab-pane>
-          <el-tab-pane 
-            label="场景设置" 
-            name="second">
+          <el-tab-pane label="场景设置" name="second">
             <el-form-item
               :rules="{required: true, message: '适用场景不能为空', trigger: 'submit'}"
               label="适用场景"
               prop="scene_type"
             >
-              <el-radio-group 
-                v-model="couponForm.scene_type" 
-                @change="handleSceneType">
-                <el-tooltip 
-                  class="item" 
-                  effect="dark" 
-                  content="可在同一场地下的多家商户核销" 
-                  placement="top">
+              <el-radio-group v-model="couponForm.scene_type" @change="handleSceneType">
+                <el-tooltip class="item" effect="dark" content="可在同一场地下的多家商户核销" placement="top">
                   <el-radio :label="1">场地通用</el-radio>
                 </el-tooltip>
-                <el-tooltip 
-                  class="item" 
-                  effect="dark" 
-                  content="仅供某一特定场地核销" 
-                  placement="top">
+                <el-tooltip class="item" effect="dark" content="仅供某一特定场地核销" placement="top">
                   <el-radio :label="2">场地自营</el-radio>
                 </el-tooltip>
-                <el-tooltip 
-                  class="item" 
-                  effect="dark" 
-                  content="可在同一主体下，多家连锁商户核销" 
-                  placement="top">
+                <el-tooltip class="item" effect="dark" content="可在同一主体下，多家连锁商户核销" placement="top">
                   <el-radio :label="3">商户通用</el-radio>
                 </el-tooltip>
-                <el-tooltip 
-                  class="item" 
-                  effect="dark" 
-                  content="仅供某一特定商户核销" 
-                  placement="top">
+                <el-tooltip class="item" effect="dark" content="仅供某一特定商户核销" placement="top">
                   <el-radio :label="4">商户自营</el-radio>
                 </el-tooltip>
               </el-radio-group>
             </el-form-item>
-            <el-form-item 
-              :rules="writeOffMidRules" 
-              label="适用场地" 
-              prop="write_off_mid">
+            <el-form-item :rules="writeOffMidRules" label="适用场地" prop="write_off_mid">
               <el-select
                 v-model="couponForm.write_off_mid"
                 :loading="searchLoading"
@@ -192,10 +117,7 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item 
-              :rules="writeOffSidRules" 
-              label="适用商户" 
-              prop="write_off_sid">
+            <el-form-item :rules="writeOffSidRules" label="适用商户" prop="write_off_sid">
               <el-select
                 v-model="couponForm.write_off_sid"
                 :disabled="writeOffSiteShow"
@@ -216,28 +138,20 @@
               </el-select>
             </el-form-item>
           </el-tab-pane>
-          <el-tab-pane 
-            label="使用设置" 
-            name="third">
+          <el-tab-pane label="使用设置" name="third">
             <el-form-item
               :rules="{required: true, message: '库存总数不能为空', trigger: 'submit'}"
               label="库存总数"
               prop="count"
             >
-              <el-input 
-                v-model="couponForm.count" 
-                :maxlength="6" 
-                class="coupon-form-input"/>
+              <el-input v-model="couponForm.count" :maxlength="6" class="coupon-form-input"/>
             </el-form-item>
             <el-form-item
               :rules="{required: true, message: '剩余库存不能为空', trigger: 'submit'}"
               label="剩余库存"
               prop="stock"
             >
-              <el-input 
-                v-model="couponForm.stock" 
-                :maxlength="6" 
-                class="coupon-form-input"/>
+              <el-input v-model="couponForm.stock" :maxlength="6" class="coupon-form-input"/>
             </el-form-item>
             <el-form-item
               v-if="peopleReceiveShow"
@@ -257,47 +171,29 @@
               label="每天最大获取数"
               prop="day_max_get"
             >
-              <el-input
-                v-model="couponForm.day_max_get"
-                :maxlength="6"
-                class="coupon-form-input"/>
+              <el-input v-model="couponForm.day_max_get" :maxlength="6" class="coupon-form-input"/>
             </el-form-item>
-            <el-form-item 
-              label="是否固定日期" 
-              prop="is_fixed_date">
-              <el-radio-group 
-                v-model="couponForm.is_fixed_date" 
-                @change="fixedDateHandle">
+            <el-form-item label="是否固定日期" prop="is_fixed_date">
+              <el-radio-group v-model="couponForm.is_fixed_date" @change="fixedDateHandle">
                 <el-radio :label="1">固定</el-radio>
                 <el-radio :label="0">不固定</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item 
-              v-if="!dateShow" 
-              label="延后生效时间"
-              prop="delay_effective_day">
+            <el-form-item v-if="!dateShow" label="延后生效时间" prop="delay_effective_day">
               <el-input
                 v-model="couponForm.delay_effective_day"
                 :maxlength="6"
-                class="coupon-form-input">
+                class="coupon-form-input"
+              >
                 <template slot="append">小时</template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              v-if="!dateShow" 
-              label="有效时长"
-              prop="effective_day">
-              <el-input
-                v-model="couponForm.effective_day"
-                :maxlength="6"
-                class="coupon-form-input">
+            <el-form-item v-if="!dateShow" label="有效时长" prop="effective_day">
+              <el-input v-model="couponForm.effective_day" :maxlength="6" class="coupon-form-input">
                 <template slot="append">小时</template>
               </el-input>
             </el-form-item>
-            <el-form-item 
-              v-if="dateShow" 
-              label="开始日期" 
-              prop="start_date">
+            <el-form-item v-if="dateShow" label="开始日期" prop="start_date">
               <el-date-picker
                 v-model="couponForm.start_date"
                 type="datetime"
@@ -306,10 +202,7 @@
                 value-format="yyyy-MM-dd HH:mm:ss"
               />
             </el-form-item>
-            <el-form-item 
-              v-if="dateShow" 
-              label="结束日期" 
-              prop="end_date">
+            <el-form-item v-if="dateShow" label="结束日期" prop="end_date">
               <el-date-picker
                 v-model="couponForm.end_date"
                 type="datetime"
@@ -321,17 +214,16 @@
           </el-tab-pane>
         </el-tabs>
         <el-form-item>
-          <el-button 
-            type="primary" 
-            @click="onSubmit('couponForm')">保存</el-button>
+          <el-button type="primary" @click="onSubmit('couponForm')">保存</el-button>
           <el-button @click="historyBack">取消</el-button>
         </el-form-item>
       </el-form>
     </div>
-    <PicturePanel 
-      :panel-visible.sync="panelVisible" 
-      :single-flag="singleFlag" 
-      @close="handleClose"/>
+    <PicturePanel
+      :panel-visible.sync="panelVisible"
+      :single-flag="singleFlag"
+      @close="handleClose"
+    />
   </div>
 </template>
 
@@ -412,7 +304,7 @@ export default {
         loadingText: "拼命加载中"
       },
       rules: {
-        end_date: [{ validator: checkEndDate, trigger: "submit" }],
+        end_date: [{ validator: checkEndDate, trigger: "submit" }]
       },
       writeOffSidRules: null,
       writeOffMidRules: {
@@ -480,11 +372,6 @@ export default {
         } else {
           this.couponForm.bs_image_url = url;
         }
-      } else {
-        // this.$message({
-        //   type: "warning",
-        //   message: "图片上传失败"
-        // });
       }
     },
     handleCompany(val) {
@@ -497,7 +384,7 @@ export default {
         this.getStoresList(this.couponForm.write_off_mid, true);
       }
     },
-    getStoresList(val, type) {
+    async getStoresList(val, type) {
       let args = {
         company_id: val
       };
@@ -505,32 +392,19 @@ export default {
         args.market_id = val;
         delete args.company_id;
       }
-
-      getStoresList(this, args)
-        .then(res => {
-          this.writeOffSiteList = res;
-        })
-        .catch(err => {
-          this.$message({
-            type: "warning",
-            message: err.response.data.message
-          });
-        });
+      try {
+        let res = await getStoresList(this, args);
+        this.writeOffSiteList = res;
+      } catch (e) {}
     },
-    getCompanyMarketList(val) {
+    async getCompanyMarketList(val) {
       let args = {
         company_id: val
       };
-      getCompanyMarketList(this, args)
-        .then(res => {
-          this.writeOffMarketList = res;
-        })
-        .catch(err => {
-          this.$message({
-            type: "warning",
-            message: err.response.data.message
-          });
-        });
+      try {
+        let res = getCompanyMarketList(this, args);
+        this.writeOffMarketList = res;
+      } catch (e) {}
     },
     handleSceneType(val) {
       if (val === 1) {
@@ -555,14 +429,15 @@ export default {
         };
         this.multipleNum = 1;
       } else if (val === 3) {
-        this.couponForm.write_off_mid,
-          this.writeOffMidRules,
-          (this.writeOffSidRules = null);
+        this.couponForm.write_off_mid = null;
+        this.writeOffMidRules = null;
+        this.writeOffSidRules = null;
         this.writeOffMarketShow = true;
         this.writeOffSiteShow = false;
         this.multipleNum = 0;
       } else {
-        this.couponForm.write_off_mid, (this.writeOffMidRules = null);
+        this.couponForm.write_off_mid=null;
+        this.writeOffMidRules = null;
         this.couponForm.write_off_sid = [];
         this.writeOffMarketShow = true;
         this.writeOffSiteShow = false;
@@ -574,18 +449,15 @@ export default {
         this.multipleNum = 1;
       }
     },
-    getSearchCompany() {
+    async getSearchCompany() {
       this.searchLoading = true;
-      getSearchCompany(this)
-        .then(result => {
-          this.searchLoading = false;
-          this.companyList = result.data;
-        })
-        .catch(error => {
-          this.searchLoading = false;
-
-          console.log(error);
-        });
+      try {
+        let res = await getSearchCompany(this);
+        this.searchLoading = false;
+        this.companyList = res.data;
+      } catch (e) {
+        this.searchLoading = false;
+      }
     },
     getCouponDetial() {
       this.setting.loading = true;
@@ -790,9 +662,7 @@ export default {
                 message: this.couponID ? "修改成功" : "添加成功",
                 type: "success"
               });
-              this.$router.push({
-                path: "/prize/rules/"
-              });
+              this.historyBack();
             })
             .catch(error => {
               this.loading = false;

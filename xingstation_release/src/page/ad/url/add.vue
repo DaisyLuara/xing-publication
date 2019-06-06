@@ -28,7 +28,7 @@
           class="btn-wrap">
           <el-button 
             type="default" 
-            @click="resetForm('urlInfo')">取消</el-button>
+            @click="historyBack">返回</el-button>
           <el-button 
             type="primary" 
             @click="submitForm('urlInfo')">保存</el-button>
@@ -38,7 +38,7 @@
   </div>
 </template>
 <script>
-import { saveUrl } from 'service'
+import { saveUrl,historyBack } from 'service'
 import router from 'router'
 import { Input, Button, FormItem, Form } from 'element-ui'
 
@@ -78,9 +78,7 @@ export default {
         if (valid) {
           saveUrl(this, this.urlInfo)
             .then(res => {
-              this.$router.push({
-                path: '/ad/url'
-              })
+              this.historyBack()
               this.$message({
                 type: 'success',
                 message: '保存成功'
@@ -92,14 +90,11 @@ export default {
                 message: '保存失败'
               })
             })
-        } else {
-          return false
         }
       })
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields()
-      router.back()
+    historyBack() {
+      historyBack()
     }
   }
 }

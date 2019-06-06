@@ -669,10 +669,10 @@ import {
   getSitePointDetail,
   siteSavePoint,
   siteModifyPoint,
-  getSearchAeraList,
-  getSearchMarketList,
+  getSearchAera,
+  getSearchMarket,
   getFormatsList,
-  getContractReceiptList,
+  getContractReceipt,
   getSearchCompany
 } from "service";
 import { Cookies } from "utils/cookies";
@@ -1026,7 +1026,7 @@ export default {
   methods: {
     async init() {
       try {
-        await this.getContractReceiptList();
+        await this.getContractReceipt();
         await this.getFormatsList();
         await this.getAreaList();
         await this.getCompany();
@@ -1076,12 +1076,12 @@ export default {
         }
       });
     },
-    getContractReceiptList() {
+    getContractReceipt() {
       let searchLoading = true;
       let args = {
         include: "company.customers"
       };
-      getContractReceiptList(this, args)
+      getContractReceipt(this, args)
         .then(res => {
           this.contractList = res;
           this.searchLoading = false;
@@ -1206,7 +1206,7 @@ export default {
       }
     },
     getAreaList() {
-      return getSearchAeraList(this)
+      return getSearchAera(this)
         .then(res => {
           this.areaList = res.data;
           this.setting.loading = false;
@@ -1246,7 +1246,7 @@ export default {
         include: "area",
         area_id: this.pointForm.area_id
       };
-      return getSearchMarketList(this, args)
+      return getSearchMarket(this, args)
         .then(response => {
           this.siteList = response.data;
           if (this.siteList.length == 0) {

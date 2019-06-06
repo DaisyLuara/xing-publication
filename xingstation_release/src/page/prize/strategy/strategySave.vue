@@ -146,7 +146,6 @@ import {
   RadioGroup,
   Tooltip
 } from "element-ui";
-import { truncate } from "fs";
 export default {
   components: {
     ElForm: Form,

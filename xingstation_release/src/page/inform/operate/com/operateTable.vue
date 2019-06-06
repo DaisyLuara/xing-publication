@@ -173,7 +173,7 @@
 </template>
 
 <script>
-import { getActivitiesList, getSearchUserList } from "service";
+import { getActivitiesList, getSearchUser } from "service";
 
 import {
   Button,
@@ -235,11 +235,11 @@ export default {
   },
   created() {
     this.getActivitiesList();
-    this.getSearchUserList();
+    this.getSearchUser();
   },
   methods: {
-    getSearchUserList() {
-      getSearchUserList(this)
+    getSearchUser() {
+      getSearchUser(this)
         .then(res => {
           this.userList = res.data;
         })

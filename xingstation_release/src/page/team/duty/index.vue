@@ -154,7 +154,7 @@
 <script>
 import {
   getEventList,
-  getSearchProjectList,
+  getSearchProject,
   handleDateTypeTransform
 } from "service";
 import { Cookies } from "utils/cookies";
@@ -279,7 +279,7 @@ export default {
         let args = {
           name: query
         };
-        return getSearchProjectList(this, args)
+        return getSearchProject(this, args)
           .then(response => {
             this.projectList = response.data;
             if (this.projectList.length == 0) {

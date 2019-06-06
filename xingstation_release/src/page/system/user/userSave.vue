@@ -105,9 +105,9 @@ import {
   getUserDetial,
   saveUser,
   historyBack,
-  getSearchLegalManagerList,
+  getSearchLegalManager,
   getSearchRole,
-  getSearchBDManagerList
+  getSearchBDManager
 } from "service";
 import {
   Button,
@@ -293,7 +293,7 @@ export default {
     },
     getBDManagerList() {
       this.searchLoading = true;
-      getSearchBDManagerList(this)
+      getSearchBDManager(this)
         .then(res => {
           this.custodianList = res.data;
           this.searchLoading = false;
@@ -304,7 +304,7 @@ export default {
     },
     getLegalManagerList() {
       this.searchLoading = true;
-      getSearchLegalManagerList(this)
+      getSearchLegalManager(this)
         .then(res => {
           this.custodianList = res.data;
           this.searchLoading = false;

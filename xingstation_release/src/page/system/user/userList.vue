@@ -195,7 +195,7 @@ import {
   getSearchRole,
   getUserList,
   deleteUser,
-  getSearchBDList,
+  getSearchBD,
   migrationBDAccount
 } from "service";
 import {
@@ -282,7 +282,7 @@ export default {
       });
     },
     async init() {
-      let res = await getSearchBDList(this);
+      let res = await getSearchBD(this);
       this.bdList = res;
     },
     migration(data) {

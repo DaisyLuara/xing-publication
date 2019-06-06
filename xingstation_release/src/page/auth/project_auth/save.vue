@@ -72,7 +72,7 @@
 import {
   getProjectAuthDetailData,
   getSearchMarketOwnerCustomer,
-  getSearchProjectList,
+  getSearchProject,
   modifyProjectAuth,
   saveProjectAuth,
   historyBack
@@ -80,7 +80,6 @@ import {
 
 import {
   Button,
-  DatePicker,
   Form,
   FormItem,
   Input,
@@ -94,7 +93,6 @@ export default {
     ElFormItem: FormItem,
     ElButton: Button,
     ElInput: Input,
-    ElDatePicker: DatePicker,
     ElSelect: Select,
     ElOption: Option
   },
@@ -146,7 +144,7 @@ export default {
         let args = {
           name: query
         };
-        return getSearchProjectList(this, args)
+        return getSearchProject(this, args)
           .then(response => {
             this.projectList = response.data;
             if (this.projectList.length == 0) {
@@ -193,9 +191,7 @@ export default {
                   type: "success",
                   message: "修改成功"
                 });
-                this.$router.push({
-                  path: "/auth/project_auth"
-                });
+                this.historyBack()
                 this.setting.loading = false;
               })
               .catch(err => {
@@ -212,9 +208,7 @@ export default {
                   type: "success",
                   message: "保存成功"
                 });
-                this.$router.push({
-                  path: "/auth/project_auth"
-                });
+               this.historyBack()
                 this.setting.loading = false;
               })
               .catch(err => {
