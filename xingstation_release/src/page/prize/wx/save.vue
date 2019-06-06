@@ -606,11 +606,10 @@ import {
   DatePicker,
   Select,
   Option,
-  Tooltip,
   Upload,
   Checkbox,
   CheckboxGroup,
-  Autocomplete
+  // Autocomplete
 } from "element-ui";
 
 export default {
@@ -624,11 +623,10 @@ export default {
     "el-select": Select,
     "el-date-picker": DatePicker,
     "el-option": Option,
-    "el-tooltip": Tooltip,
     "el-upload": Upload,
     "el-checkbox": Checkbox,
     "el-checkbox-group": CheckboxGroup,
-    "el-autocomplete": Autocomplete
+    // "el-autocomplete": Autocomplete
   },
   data() {
     return {

@@ -353,6 +353,8 @@ export default {
       float: left;
       .el-tabs__nav {
         width: 100%;
+        height: 450px;
+        overflow-y:scroll;
         .el-tabs__item {
           display: block;
           background-color: #eff2f7;

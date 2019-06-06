@@ -80,8 +80,6 @@
 
 <script>
 import {
-  Select,
-  Option,
   Table,
   TableColumn,
   Pagination,
@@ -97,8 +95,6 @@ import {
 import { mapState } from "vuex";
 export default {
   components: {
-    ElSelect: Select,
-    ElOption: Option,
     ElTable: Table,
     ElTableColumn: TableColumn,
     ElPagination: Pagination,

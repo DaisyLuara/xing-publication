@@ -104,26 +104,19 @@ import {
   Form,
   FormItem,
   Button,
-  Select,
-  Option,
   Pagination,
   Table,
   TableColumn,
-  TimeSelect,
   MessageBox,
-  Input
 } from "element-ui";
 import { getCouponPoliciesList, deleteBatchPolicy } from "service";
 
 export default {
   components: {
     ElPagination: Pagination,
-    ElInput: Input,
     ElForm: Form,
     ElFormItem: FormItem,
     ElButton: Button,
-    ElSelect: Select,
-    ElOption: Option,
     ElTable: Table,
     ElTableColumn: TableColumn
   },
@@ -235,35 +228,6 @@ export default {
 .schedule-wrap {
   background: #fff;
   padding: 30px;
-  .search-wrap {
-    margin-top: 5px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    font-size: 16px;
-    align-items: center;
-    margin-bottom: 10px;
-    .el-form-item {
-      margin-bottom: 10px;
-    }
-    .el-select {
-      width: 180px;
-    }
-    .item-input {
-      width: 180px;
-    }
-    .warning {
-      background: #ebf1fd;
-      padding: 8px;
-      margin-left: 10px;
-      color: #444;
-      font-size: 12px;
-      i {
-        color: #4a8cf3;
-        margin-right: 5px;
-      }
-    }
-  }
   .demo-table-expand {
     font-size: 0;
   }
