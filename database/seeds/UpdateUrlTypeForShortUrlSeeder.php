@@ -14,7 +14,7 @@ class UpdateUrlTypeForShortUrlSeeder extends Seeder
     {
         $urls = ShortUrl::query()->get();
         foreach ($urls as $url) {
-            if (!strpos($url->target_url, 'xingstation')) {
+            if (!(strpos($url->target_url, 'xingstation') || strpos($url->target_url, 'newgls'))) {
                 $url->update(['url_type' => 1]);
             }
         }
