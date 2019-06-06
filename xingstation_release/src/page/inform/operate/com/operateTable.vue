@@ -1,12 +1,17 @@
 <template>
   <div
-    class="item-content-wrap"
     v-loading="setting.loading"
     :element-loading-text="setting.loadingText"
+    class="item-content-wrap"
   >
     <div class="search-wrap">
-      <el-form ref="searchForm" :model="searchForm" :inline="true">
-        <el-form-item label prop="log_name">
+      <el-form 
+        ref="searchForm" 
+        :model="searchForm" 
+        :inline="true">
+        <el-form-item 
+          label 
+          prop="log_name">
           <el-input
             v-model="searchForm.log_name"
             placeholder="请输入操作名称"
@@ -14,7 +19,10 @@
             style="width: 250px;"
           />
         </el-form-item>
-        <el-form-item v-if="type === 'customer' " label prop="causer_id">
+        <el-form-item 
+          v-if="type === 'customer' " 
+          label 
+          prop="causer_id">
           <el-input
             v-model="searchForm.causer_id"
             placeholder="请输入操作用户ID"
@@ -22,7 +30,10 @@
             style="width: 250px;"
           />
         </el-form-item>
-        <el-form-item v-if="type === 'user' " label prop="causer_id">
+        <el-form-item 
+          v-if="type === 'user' " 
+          label 
+          prop="causer_id">
           <el-select
             v-model="searchForm.causer_id"
             placeholder="请选择操作用户"
@@ -30,10 +41,16 @@
             clearable
             style="width: 250px;"
           >
-            <el-option v-for="item in userList" :key="item.id" :label="item.name" :value="item.id"/>
+            <el-option 
+              v-for="item in userList" 
+              :key="item.id" 
+              :label="item.name" 
+              :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label prop="subject_type">
+        <el-form-item 
+          label 
+          prop="subject_type">
           <el-input
             v-model="searchForm.subject_type"
             placeholder="请输入操作对象模型名"
@@ -41,7 +58,10 @@
             style="width: 250px;"
           />
         </el-form-item>
-        <el-form-item v-if="searchForm.subject_type" label prop="subject_id">
+        <el-form-item 
+          v-if="searchForm.subject_type" 
+          label 
+          prop="subject_id">
           <el-input
             v-model="searchForm.subject_id"
             placeholder="请输入操作对象ID"
@@ -49,17 +69,30 @@
             style="width: 250px;"
           />
         </el-form-item>
-        <el-button type="primary" size="small" @click="search()">搜索</el-button>
-        <el-button type="default" size="small" @click="resetSearch('searchForm')">重置</el-button>
+        <el-button 
+          type="primary" 
+          size="small" 
+          @click="search()">搜索</el-button>
+        <el-button 
+          type="default" 
+          size="small" 
+          @click="resetSearch('searchForm')">重置</el-button>
       </el-form>
     </div>
     <div class="actions-wrap">
       <span class="label">通知数量: {{ pagination.total }}</span>
     </div>
-    <el-table ref="multipleTable" :data="tableData" style="width: 100%" type="expand">
+    <el-table 
+      ref="multipleTable" 
+      :data="tableData" 
+      style="width: 100%" 
+      type="expand">
       <el-table-column type="expand">
         <template slot-scope="scope">
-          <el-form label-position="left" inline class="demo-table-expand">
+          <el-form 
+            label-position="left" 
+            inline 
+            class="demo-table-expand">
             <el-form-item label="操作名称">
               <span>{{ scope.row.log_name }}</span>
             </el-form-item>
@@ -93,15 +126,33 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" prop="log_name" label="操作名称" min-width="130"/>
-      <el-table-column :show-overflow-tooltip="true" prop="name" label="操作人" min-width="100">
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        prop="log_name" 
+        label="操作名称" 
+        min-width="130"/>
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        prop="name" 
+        label="操作人" 
+        min-width="100">
         <template slot-scope="scope">{{ scope.row.causer.name }}</template>
       </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" prop="id" label="操作人ID" min-width="120">
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        prop="id" 
+        label="操作人ID" 
+        min-width="120">
         <template slot-scope="scope">{{ scope.row.causer.id }}</template>
       </el-table-column>
-      <el-table-column prop="description" label="描述" min-width="150"/>
-      <el-table-column prop="ip" label="IP" min-width="150"/>
+      <el-table-column 
+        prop="description" 
+        label="描述" 
+        min-width="150"/>
+      <el-table-column 
+        prop="ip" 
+        label="IP" 
+        min-width="150"/>
       <el-table-column
         :show-overflow-tooltip="true"
         prop="updated_at"

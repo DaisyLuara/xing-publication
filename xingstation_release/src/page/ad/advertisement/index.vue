@@ -149,7 +149,7 @@
             label="创建人" 
             min-width="80">
             <template slot-scope="scope">
-              <span>{{ scope.row.create_user_name ? scope.row.create_user_name : '' }}</span><br/>
+              <span>{{ scope.row.create_user_name ? scope.row.create_user_name : '' }}</span><br>
               <span>{{ scope.row.create_user_company }}</span>
             </template>
           </el-table-column>

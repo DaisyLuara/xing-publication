@@ -180,9 +180,9 @@
               >
                 <el-input
                   v-model="pointForm.contract.contract_company"
+                  :disabled="true"
                   placeholder="请输入合同公司"
                   class="item-input"
-                  :disabled="true"
                 />
               </el-form-item>
               <el-form-item
@@ -210,9 +210,9 @@
               >
                 <el-input
                   v-model="pointForm.contract.contract_phone"
+                  :disabled="true"
                   placeholder="请输入联系方式"
                   class="item-input"
-                  :disabled="true"
                 />
               </el-form-item>
             </div>

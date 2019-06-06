@@ -1,12 +1,26 @@
 <template>
   <div class="add-user-wrap">
-    <div v-loading="setting.loading" :element-loading-text="setting.loadingText">
+    <div 
+      v-loading="setting.loading" 
+      :element-loading-text="setting.loadingText">
       <div class="user-title">{{ $route.name }}</div>
-      <el-form ref="userForm" :model="userForm" :rules="rules" label-width="80px" class="userForm">
-        <el-form-item label="姓名" prop="user.name">
-          <el-input v-model="userForm.user.name" :maxlength="10" class="user-form-input"/>
+      <el-form 
+        ref="userForm" 
+        :model="userForm" 
+        :rules="rules" 
+        label-width="80px" 
+        class="userForm">
+        <el-form-item 
+          label="姓名" 
+          prop="user.name">
+          <el-input 
+            v-model="userForm.user.name" 
+            :maxlength="10" 
+            class="user-form-input"/>
         </el-form-item>
-        <el-form-item label="手机号码" prop="user.phone">
+        <el-form-item 
+          label="手机号码" 
+          prop="user.phone">
           <el-input
             v-model="userForm.user.phone"
             :maxlength="11"
@@ -14,30 +28,38 @@
             class="user-form-input"
           />
         </el-form-item>
-        <el-form-item label="密码" prop="user.password">
+        <el-form-item 
+          label="密码" 
+          prop="user.password">
           <el-input
-            placeholder="请输入密码"
-            autocomplete="off"
             :trigger-on-focus="false"
             v-model="userForm.user.password"
             :type="inputType"
+            placeholder="请输入密码"
+            autocomplete="off"
             class="user-form-input"
             @focus="inputType='password'"
           />
         </el-form-item>
-        <el-form-item label="确认密码" prop="user.repassword">
+        <el-form-item 
+          label="确认密码" 
+          prop="user.repassword">
           <el-input
-            placeholder="请再次输入密码"
-            autocomplete="off"
             :trigger-on-focus="false"
             v-model="userForm.user.repassword"
             :type="inputType"
+            placeholder="请再次输入密码"
+            autocomplete="off"
             class="user-form-input"
             @focus="inputType='password'"
           />
         </el-form-item>
-        <el-form-item label="角色" prop="user.role_id">
-          <el-radio-group v-model="userForm.user.role_id" @change="rolesChange">
+        <el-form-item 
+          label="角色" 
+          prop="user.role_id">
+          <el-radio-group 
+            v-model="userForm.user.role_id" 
+            @change="rolesChange">
             <el-radio
               v-for="role in allRoles"
               :data="role"
@@ -47,7 +69,10 @@
             >{{ role.display_name }}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item v-if="legelFlag" label="主管" prop="user.parent_id">
+        <el-form-item 
+          v-if="legelFlag" 
+          label="主管" 
+          prop="user.parent_id">
           <el-select
             v-model="userForm.user.parent_id"
             :loading="searchLoading"
@@ -64,7 +89,10 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button :loading="loading" type="primary" @click="onSubmit('userForm')">保存</el-button>
+          <el-button 
+            :loading="loading" 
+            type="primary" 
+            @click="onSubmit('userForm')">保存</el-button>
           <el-button @click="historyBack()">取消</el-button>
         </el-form-item>
       </el-form>
