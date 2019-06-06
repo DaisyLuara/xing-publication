@@ -23,6 +23,12 @@
           type="text" 
           placeholder="备注信息" />
       </el-form-item>
+      <el-form-item 
+        prop="description">
+        是否外链:
+        <el-radio v-model="radio" label="1">是</el-radio>
+        <el-radio v-model="radio" label="0">否</el-radio>
+      </el-form-item>
       <el-form-item>
         <div 
           class="btn-wrap">
@@ -40,14 +46,15 @@
 <script>
 import { saveUrl } from 'service'
 import router from 'router'
-import { Input, Button, FormItem, Form } from 'element-ui'
+import { Input, Button, FormItem, Form, Radio } from 'element-ui'
 
 export default {
   components: {
     'el-input': Input,
     'el-button': Button,
     'el-form-item': FormItem,
-    'el-form': Form
+    'el-form': Form,
+    'el-radio':Radio
   },
   data() {
     var checkUrl = (rule, value, callback) => {
@@ -69,7 +76,8 @@ export default {
       },
       rules: {
         target_url: [{ validator: checkUrl, trigger: 'blur' }]
-      }
+      },
+      radio: '1'
     }
   },
   methods: {

@@ -18,6 +18,19 @@
             placeholder="请输入备注" 
             clearable/>
         </el-form-item>
+        
+        <el-form-item 
+          label="" 
+          prop="description">
+          <el-select v-model="searchForm.type" clearable placeholder="请选择类型">
+            <el-option
+              v-for="item in this.templateForm.types"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item>
           <el-button 
             type="primary"
@@ -67,9 +80,64 @@
           min-width="280"/>
         <el-table-column
           prop="description"
+          min-width="100"
           label="备注"/>
+        <el-table-column
+          label="下载" 
+          min-width="80">
+            <template slot-scope="scope">
+                <el-button
+                  v-if="scope.row.url_type === 1 ? true:false"
+                  size="mini"
+                  @click="showDialog(scope.$index, scope.row)">下载
+                </el-button>
+            </template>
+          </el-table-column>
       </el-table>
     </div>
+    <el-dialog
+      title="请选择类型"
+      :visible.sync="centerDialogVisible"
+      width="50%"
+      center >
+      <el-form
+        ref="templateForm"
+        :model="templateForm"
+        label-position="top"
+      >
+        <el-form-item
+          :rules="[{ required: true, message: '请选择时间', trigger: 'submit'}]"
+          label="请选择时间"
+          prop="date"
+        >
+          <el-date-picker
+            v-model="templateForm.date"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item
+          :rules="[{ required: true, message: '请选择类型', trigger: 'submit'}]"
+          label="类型"
+          prop="value"
+        >
+          <el-select v-model="templateForm.value" placeholder="请选择">
+            <el-option
+              v-for="item in this.templateForm.types"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+           <el-button type="primary" size="small" @click="submit('templateForm')">下载</el-button>
+           <el-button size="small" @click="quxiao">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
     <div 
       class="pagination">
       <el-pagination
@@ -82,9 +150,10 @@
   </div>
 </template>
 <script>
-import { getUrlList } from 'service'
+import { getUrlList, getExportDownload } from 'service'
 import VueClipboards from 'vue-clipboards'
 import Vue from 'vue'
+import moment from "moment"
 Vue.use(VueClipboards)
 import {
   Input,
@@ -93,7 +162,11 @@ import {
   Form,
   Table,
   TableColumn,
-  Pagination
+  Pagination,
+  DatePicker,
+  Select,
+  Option,
+  Dialog
 } from 'element-ui'
 export default {
   components: {
@@ -103,7 +176,11 @@ export default {
     'el-form': Form,
     'el-table': Table,
     'el-table-column': TableColumn,
-    'el-pagination': Pagination
+    'el-pagination': Pagination,
+    'el-date-picker': DatePicker,
+    'el-select': Select,
+    'el-option': Option,
+    "el-dialog": Dialog
   },
   data() {
     var checkUrl = (rule, value, callback) => {
@@ -121,8 +198,10 @@ export default {
       }
     }
     return {
+      centerDialogVisible: false,
       searchForm: {
-        description: ''
+        description: '',
+        type:''
       },
       currentPage: 1,
       pageSize: 10,
@@ -131,7 +210,19 @@ export default {
       setting: {
         loading: false,
         loadingText: '拼命加载中'
-      }
+      },
+        id:null,
+        templateForm: {
+          types: [{
+            value: 'num',
+            label: '人数'
+          }, {
+            value: 'times',
+            label: '人次'
+          }],
+          date: '',
+          value:''
+        }
     }
   },
   created() {
@@ -158,6 +249,7 @@ export default {
       getUrlList(this, args)
         .then(response => {
           this.tableData = response.data
+          console.log(this.tableData)
           this.total = response.meta.pagination.total
           this.setting.loading = false
         })
@@ -181,6 +273,40 @@ export default {
         message: '链接复制失败',
         type: 'error'
       })
+    },
+    showDialog(index, row) {
+       this.centerDialogVisible = true
+       this.id = row.id
+    },
+    submit(formName){
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          let args={
+            id:this.id,
+            start_date:moment(this.templateForm.date[0]).format("YYYY-MM-DD"),
+            end_date:moment(this.templateForm.date[1]).format("YYYY-MM-DD"),
+            data_type:this.templateForm.value,
+            type: "short_url"
+          }
+            getExportDownload(this, args)
+              .then(response => {
+                this.centerDialogVisible = false;
+                const a = document.createElement("a");
+                a.href = response;
+                a.download = "download";
+                a.click();
+                window.URL.revokeObjectURL(response);
+              })
+              .catch(err => {
+                console.log(err);
+              });
+          }
+      });
+    },
+    quxiao(){
+      this.centerDialogVisible = false;
+      this.templateForm.value = '';
+      this.templateForm.date = '';
     }
   }
 }
@@ -229,6 +355,12 @@ export default {
   }
   .copy-link {
     color: #03a9f4;
+  }
+  .download_date{
+    height: 70px;
+  }
+  .download_type{
+    height: 100px;
   }
 }
 </style>
