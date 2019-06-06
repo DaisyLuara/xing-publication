@@ -191,11 +191,11 @@ class CouponBatchController extends Controller
                     'count' => $data['StoreCount'],
                     'stock' => $data['StoreOverGount'],
                     'is_fixed_date' => 1,
-                    'pmg_status' => (int)$data['IsEPMaxGetInfinite'],
-                    'people_max_get' => $data['EPMaxGet'],
-                    'dmg_status' => (int)$data['IsEDMaxGetInfinite'],
-                    'day_max_get' => $data['EDMaxGet'],
-                    'start_date' => $data['FixedDateBegin'],
+                    'pmg_status' => 0,
+                    'people_max_get' => 1,
+                    'dmg_status' => 0,
+                    'day_max_get' => 100,
+                    'start_date' =>$data['FixedDateBegin'],
                     'end_date' => $data['FixedDateEnd'],
                 ]);
             }

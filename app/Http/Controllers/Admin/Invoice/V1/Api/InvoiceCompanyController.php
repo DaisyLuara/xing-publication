@@ -20,21 +20,21 @@ class InvoiceCompanyController extends Controller
 {
     public function show(InvoiceCompany $invoiceCompany): Response
     {
-        return $this->response->item($invoiceCompany, new InvoiceCompanyTransformer());
+        return $this->response()->item($invoiceCompany, new InvoiceCompanyTransformer());
     }
 
     public function index(Request $request, InvoiceCompany $invoiceCompany): Response
     {
         $query = $invoiceCompany->query();
 
-        if ($request->has('name')) {
+        if ($request->filled('name')) {
             $query->where('name', 'like', '%' . $request->get('name') . '%');
         }
 
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if ($user->hasRole('user') || $user->hasRole('bd-manager')) {
-            $query->where('user_id', $user->id);
+        if ($user->hasRole('user|bd-manager')) {
+            $query->where('owner', $user->id);
         }
         $invoiceCompanyItems = $query->orderByDesc('created_at')->paginate(10);
 
@@ -45,10 +45,11 @@ class InvoiceCompanyController extends Controller
     {
         /** @var  $user  \App\Models\User */
         $user = $this->user();
-        if (!$user->hasRole('user') && !$user->hasRole('bd-manager') && !$user->hasRole('legal-affairs') && !$user->hasRole('legal-affairs-manager')) {
+        if (!$user->hasRole('user|bd-manager|legal-affairs|legal-affairs-manager')) {
             abort(403, '无操作权限');
         }
-        $invoiceCompany->fill(array_merge($request->all(), ['user_id' => $user->id]))->save();
+
+        $invoiceCompany->fill(array_merge($request->all(), ['user_id' => $user->id, 'owner' => $user->id]))->save();
 
         activity('create_invoice_company')
             ->causedBy($user)
@@ -57,7 +58,6 @@ class InvoiceCompanyController extends Controller
             ->log('新增开票公司');
 
         return $this->response()->noContent();
-
     }
 
     public function update(InvoiceCompanyRequest $request, InvoiceCompany $invoiceCompany): Response
@@ -80,6 +80,6 @@ class InvoiceCompanyController extends Controller
 
     public function export(Request $request)
     {
-        return excelExportByType($request,'invoice_company');
+        return excelExportByType($request, 'invoice_company');
     }
 }

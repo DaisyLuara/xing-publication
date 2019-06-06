@@ -64,6 +64,7 @@ class DemandApplicationRequest extends Request
         return [
             'title' => '项目标的',
             'applicant_id' => '申请人',
+            'owner' => '所属人',
             'launch_point_remark' => '投放地点备注',
             'has_contract' => '有无合同',
             'contract_ids' => '合同编号',

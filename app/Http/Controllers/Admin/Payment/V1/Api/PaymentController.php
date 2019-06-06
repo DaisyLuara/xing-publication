@@ -14,7 +14,7 @@ class PaymentController extends Controller
 {
     public function show(Payment $payment): Response
     {
-        return $this->response->item($payment, new PaymentTransformer());
+        return $this->response()->item($payment, new PaymentTransformer());
     }
 
     public function index(PaymentRequest $request, Payment $payment): Response
@@ -22,25 +22,29 @@ class PaymentController extends Controller
 
         $query = $payment->query();
 
-        if ($request->get('start_date') && $request->get('end_date')) {
+        if ($request->filled('start_date') && $request->filled('end_date')) {
             $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '{$request->get('start_date')}' and '{$request->get('end_date')}' ");
         }
-        if ($request->get('payee')) {
-            $query->where('payee', 'like', '%' . $request->get('payee') . '%');
+
+        if ($request->filled('owner')) {
+            $query->where('owner', '=', $request->get('owner'));
         }
-        if ($request->get('applicant')) {
-            $query->where('applicant', '=', $request->get('applicant'));
+
+        if ($request->filled('payment_payee_name')) {
+            $query->whereHas('paymentPayee', static function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->get('payment_payee_name') . '%');
+            });
         }
-        if ($request->get('payee')) {
-            $query->where('payee', 'like', '%' . $request->get('payee') . '%');
-        }
-        if ($request->get('receive_status') !== null) {
+
+        if ($request->filled('receive_status')) {
             $query->where('receive_status', '=', $request->get('receive_status'));
         }
-        if ($request->get('status') !== null) {
+
+        if ($request->filled('status')) {
             $query->where('status', '=', $request->get('status'));
         }
-        if ($request->has('contract_number')) {
+
+        if ($request->filled('contract_number')) {
             $query->whereHas('contract', static function ($q) use ($request) {
                 $q->where('contract_number', 'like', '%' . $request->get('contract_number') . '%');
             });
@@ -53,38 +57,34 @@ class PaymentController extends Controller
         } else if ($user->hasRole('operation')) {
             $query->whereRaw('(status=3 or status=4)');
         } else {
-            $query->whereRaw("(applicant=$user->id or handler=$user->id)");
+            $query->whereRaw("(owner=$user->id or handler=$user->id)");
         }
         $payments = $query->orderBy('created_at', 'desc')->paginate(10);
-        return $this->response->paginator($payments, new PaymentTransformer());
+        return $this->response()->paginator($payments, new PaymentTransformer());
     }
 
     public function store(PaymentRequest $request, Payment $payment): Response
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if (!$user->parent_id && ($user->hasRole('user') || $user->hasRole('bd-manager')) ) {
+
+        if (!$user->parent_id || $user->hasRole('user|bd-manager')) {
             abort(500, '无所属主管，无法新增付款申请');
         }
-        if ($user->hasRole('legal-affairs')) {
+        $rest = [];
+        if ($user->hasRole('legal-affairs|legal-affairs-manager')) {
             $financeId = getProcessStaffId('finance', 'payment');
-            $payment->fill(array_merge($request->all(), ['status' => 3, 'handler' => $financeId, 'receive_status' => 0]))->save();
+            $rest = ['status' => 3, 'handler' => $financeId, 'receive_status' => 0, 'owner' => $user->id, 'applicant' => $user->id];
         }
-
-        if ($user->hasRole('legal-affairs-manager')) {
-            $financeId = getProcessStaffId('finance', 'payment');
-            $payment->fill(array_merge($request->all(), ['status' => 3, 'handler' => $financeId, 'receive_status' => 0]))->save();
-        }
-
-
         if ($user->hasRole('user')) {
-            $payment->fill(array_merge($request->all(), ['status' => 1, 'handler' => $user->parent_id, 'receive_status' => 0]))->save();
+            $rest = ['status' => 1, 'handler' => $user->parent_id, 'receive_status' => 0, 'owner' => $user->id, 'applicant' => $user->id];
         }
 
         if ($user->hasRole('bd-manager')) {
             $legalId = getProcessStaffId('legal-affairs', 'payment');
-            $payment->fill(array_merge($request->all(), ['status' => 1, 'handler' => $legalId, 'receive_status' => 0]))->save();
+            $rest = ['status' => 1, 'handler' => $legalId, 'receive_status' => 0, 'owner' => $user->id, 'applicant' => $user->id];
         }
+        $payment->fill(array_merge($request->all(), $rest))->save();
         //附件存储
         if ($request->get('ids')) {
             $ids = explode(',', $request->get('ids'));
@@ -116,13 +116,14 @@ class PaymentController extends Controller
         }
         $payment->delete();
 
+
         activity('delete_payment')
             ->causedBy($this->user())
             ->performedOn($payment)
             ->withProperties(['ip' => $request->getClientIp(), 'request_params' => []])
             ->log('删除付款申请');
 
-        return $this->response->noContent();
+        return $this->response()->noContent();
     }
 
     public function reject(Request $request, Payment $payment): Response
@@ -200,8 +201,9 @@ class PaymentController extends Controller
             ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
             ->log('审计付款申请');
 
-        return $this->response->noContent();
+        return $this->response()->noContent();
     }
+
 
     public function receive(Request $request, Payment $payment): Response
     {
@@ -219,12 +221,12 @@ class PaymentController extends Controller
             ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
             ->log('确定处理付款申请');
 
-        return $this->response->noContent();
+        return $this->response()->noContent();
     }
 
 
     public function export(Request $request)
     {
-        return excelExportByType($request,'payment');
+        return excelExportByType($request, 'payment');
     }
 }

@@ -33,6 +33,10 @@ class DemandApplicationController extends Controller
             $query->where('applicant_id', '=', $request->get('applicant_id'));
         }
 
+        if ($request->has('owner') && $request->get('owner')) {
+            $query->where('owner', '=', $request->get('owner'));
+        }
+
         if ($request->has('status')) {
             $query->where('status', '=', $request->get('status') ?? 0);
         }
@@ -50,10 +54,10 @@ class DemandApplicationController extends Controller
             //BD主管可查看自己及下属BD新建的申请列表
             $user_ids = $user->subordinates()->pluck('id')->toArray();
             $user_ids[] = $user->id;
-            $query->whereIn('applicant_id', $user_ids);
+            $query->whereIn('owner', $user_ids);
         } else if ($user->hasRole('user') || $user->hasRole('business-operation')) {
             //只能查询自己创建的 Application
-            $query->where('applicant_id', '=', $user->id);
+            $query->where('owner', '=', $user->id);
         }
 
 
@@ -84,6 +88,7 @@ class DemandApplicationController extends Controller
         $params = $request->all();
 
         $params['applicant_id'] = $user->id;
+        $params['owner'] = $params['owner'] ?? $user->id;
         $params['expect_receiver_ids'] = implode(',', $params['expect_receiver_ids']);
         $params['status'] = DemandApplication::STATUS_UN_RECEIVE;
         $params['contract_ids'] = $params['contract_ids'] ?? [];
@@ -137,8 +142,8 @@ class DemandApplicationController extends Controller
             abort(422, '状态不是未接单，无法修改');
         }
 
-        if ($demandApplication->getApplicantId() !== $user->id) {
-            abort(422, '该申请非您创建，无权修改');
+        if ($demandApplication->owner !== $user->id) {
+            abort(422, '该申请非您所属，无权修改');
         }
 
         //查询所选合同是否为已审批合同
@@ -199,8 +204,8 @@ class DemandApplicationController extends Controller
         /** @var User $user */
         $user = $this->user();
 
-        if ($demandApplication->getApplicantId() !== $user->id) {
-            abort(422, '该申请非您创建，无权修改');
+        if ($demandApplication->owner !== $user->id) {
+            abort(422, '该申请非您所属，无权修改');
         }
 
         if ($demandApplication->getHasContract() !== DemandApplication::HAS_CONTRACT_REVIEWING) {
@@ -304,8 +309,8 @@ class DemandApplicationController extends Controller
             abort(422, '该状态无法确认完成');
         }
 
-        if ($demandApplication->getApplicantId() !== $user->id) {
-            abort(422, '该申请非您创建，无权确认完成');
+        if ($demandApplication->owner !== $user->id) {
+            abort(422, '该申请非您所属，无权确认完成');
         }
 
 

@@ -16,6 +16,7 @@ class AdPlanTransformer extends TransformerAbstract
             'id' => $adPlan->atiid,
             'create_user_name' => ($adPlan->create_customer ? $adPlan->create_customer->name : null)
                 ?? ($adPlan->create_user ? $adPlan->create_user->name : ''),
+            'create_user_company' => ($adPlan->create_customer && $adPlan->create_customer->company) ? $adPlan->create_customer->company->internal_name : '',
             'ad_trade_name' => $adPlan->ad_trade->name,
             'atid' => $adPlan->atid,
             'name' => $adPlan->name,
