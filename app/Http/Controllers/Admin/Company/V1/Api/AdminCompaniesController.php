@@ -9,12 +9,13 @@ use App\Http\Controllers\Admin\Privilege\V1\Models\Role;
 use App\Http\Controllers\Admin\Resource\V1\Models\CompanyMediaGroup;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
+use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
 use App\Jobs\CreateAdminStaffJob;
 
 class AdminCompaniesController extends Controller
 {
-    public function index(Request $request, Company $company)
+    public function index(Request $request, Company $company): Response
     {
         $query = $company->query();
         /** @var  $currentUser \App\Models\User */
@@ -51,24 +52,25 @@ class AdminCompaniesController extends Controller
 
         //角色为主管时，查看下属及自己
         if ($currentUser->parent_id === $currentUser->id) {
-            $companies = $query->whereHas('user', function ($q) use ($currentUser) {
+            $companies = $query->whereHas('bdUser', static function ($q) use ($currentUser) {
                 $q->where('parent_id', $currentUser->id);
             })->orderByDesc('id')->paginate(10);
             return $this->response()->paginator($companies, new CompanyTransformer());
         }
 
         //查看自己数据
-        $companies = $query->where('user_id', $currentUser->id)->orderByDesc('id')->paginate(10);
+        $companies = $query->where('bd_user_id', $currentUser->id)->orderByDesc('id')->paginate(10);
         return $this->response()->paginator($companies, new CompanyTransformer());
     }
 
-    public function show(Company $company)
+    public function show(Company $company): Response
     {
         return $this->response()->item($company, new CompanyTransformer());
     }
 
     public function store(CompanyRequest $request, Company $company, Customer $customer)
     {
+        $user = $this->user();
         $companyData = [
             'name' => $request->get('name'),
             'internal_name' => $request->get('internal_name'),
@@ -83,7 +85,11 @@ class AdminCompaniesController extends Controller
         CompanyMediaGroup::create(['company_id' => $company->id, 'name' => '默认分组', 'type' => 'image']);
         CompanyMediaGroup::create(['company_id' => $company->id, 'name' => '默认分组', 'type' => 'video']);
 
-        activity('company')->on($company)->withProperties($request->all())->log('新增公司信息');
+        activity('create_company')
+            ->causedBy($user)
+            ->performedOn($company)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $companyData])
+            ->log('新增公司信息');
 
         if ($request->get('category') === 0) {
             $customerData = [
@@ -98,19 +104,27 @@ class AdminCompaniesController extends Controller
             $role = Role::findById($request->get('role_id'), 'shop');
             $customer->assignRole($role);
             CreateAdminStaffJob::dispatch($customer, $role)->onQueue('create_admin_staff');
+
+            activity('create_customer')
+                ->causedBy($user)
+                ->performedOn($customer)
+                ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $customerData])
+                ->log('新增公司联系人');
+
         }
-        activity('customer')->on($customer)->withProperties($companyData)->log('新增公司联系人');
 
-
-        return $this->response()->item($company, new CompanyTransformer())
-            ->setStatusCode(201);
-
+        return $this->response()->item($company, new CompanyTransformer())->setStatusCode(201);
     }
 
-    public function update(CompanyRequest $request, Company $company): \Dingo\Api\Http\Response
+    public function update(CompanyRequest $request, Company $company): Response
     {
         $company->update($request->all());
-        activity('company')->on($company)->withProperties($request->all())->log('修改公司信息');
+        activity('create_company')
+            ->causedBy($this->user())
+            ->performedOn($company)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('修改公司信息');
+
         return $this->response()->item($company, new CompanyTransformer());
     }
 

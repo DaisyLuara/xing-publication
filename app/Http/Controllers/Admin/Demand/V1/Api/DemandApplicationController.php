@@ -12,7 +12,6 @@ use App\Models\User;
 use Carbon\Carbon;
 use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class DemandApplicationController extends Controller
 {
@@ -25,13 +24,17 @@ class DemandApplicationController extends Controller
     {
         $query = DemandApplication::query();
         /** @var User $user */
-        $user = Auth::user();
+        $user = $this->user();
         if ($request->get('title')) {
             $query->where('title', 'like', '%' . $request->get('title') . '%');
         }
 
         if ($request->has('applicant_id') && $request->get('applicant_id')) {
             $query->where('applicant_id', '=', $request->get('applicant_id'));
+        }
+
+        if ($request->has('owner') && $request->get('owner')) {
+            $query->where('owner', '=', $request->get('owner'));
         }
 
         if ($request->has('status')) {
@@ -51,10 +54,10 @@ class DemandApplicationController extends Controller
             //BD主管可查看自己及下属BD新建的申请列表
             $user_ids = $user->subordinates()->pluck('id')->toArray();
             $user_ids[] = $user->id;
-            $query->whereIn('applicant_id', $user_ids);
+            $query->whereIn('owner', $user_ids);
         } else if ($user->hasRole('user') || $user->hasRole('business-operation')) {
             //只能查询自己创建的 Application
-            $query->where('applicant_id', '=', $user->id);
+            $query->where('owner', '=', $user->id);
         }
 
 
@@ -80,11 +83,12 @@ class DemandApplicationController extends Controller
     public function store(DemandApplicationRequest $request, DemandApplication $demandApplication): Response
     {
         /** @var User $user */
-        $user = Auth::user();
+        $user = $this->user();
 
         $params = $request->all();
 
         $params['applicant_id'] = $user->id;
+        $params['owner'] = $params['owner'] ?? $user->id;
         $params['expect_receiver_ids'] = implode(',', $params['expect_receiver_ids']);
         $params['status'] = DemandApplication::STATUS_UN_RECEIVE;
         $params['contract_ids'] = $params['contract_ids'] ?? [];
@@ -110,6 +114,12 @@ class DemandApplicationController extends Controller
         DemandApplicationNotificationJob::dispatch($demandApplication, 'un_receive')->onQueue('demand')
             ->delay(now()->addHours(12));
 
+        activity('create_demand_application')
+            ->causedBy($user)
+            ->performedOn($demandApplication)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $params])
+            ->log('新增需求申请');
+
         return $this->response->item($demandApplication, new DemandApplicationTransformer());
     }
 
@@ -123,7 +133,7 @@ class DemandApplicationController extends Controller
     {
 
         /** @var User $user */
-        $user = Auth::user();
+        $user = $this->user();
 
         $params = $request->all();
         $params['contract_ids'] = $params['contract_ids'] ?? [];
@@ -132,8 +142,8 @@ class DemandApplicationController extends Controller
             abort(422, '状态不是未接单，无法修改');
         }
 
-        if ($demandApplication->getApplicantId() !== $user->id) {
-            abort(422, '该申请非您创建，无权修改');
+        if ($demandApplication->owner !== $user->id) {
+            abort(422, '该申请非您所属，无权修改');
         }
 
         //查询所选合同是否为已审批合同
@@ -172,6 +182,12 @@ class DemandApplicationController extends Controller
 
         DemandApplicationNotificationJob::dispatch($demandApplication, 'update')->onQueue('demand');
 
+        activity('update_demand_application')
+            ->causedBy($user)
+            ->performedOn($demandApplication)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $params])
+            ->log('编辑需求申请');
+
         return $this->response->item($demandApplication, new DemandApplicationTransformer());
     }
 
@@ -186,10 +202,10 @@ class DemandApplicationController extends Controller
     {
 
         /** @var User $user */
-        $user = Auth::user();
+        $user = $this->user();
 
-        if ($demandApplication->getApplicantId() !== $user->id) {
-            abort(422, '该申请非您创建，无权修改');
+        if ($demandApplication->owner !== $user->id) {
+            abort(422, '该申请非您所属，无权修改');
         }
 
         if ($demandApplication->getHasContract() !== DemandApplication::HAS_CONTRACT_REVIEWING) {
@@ -216,6 +232,12 @@ class DemandApplicationController extends Controller
         //更新与合同的关联
         $demandApplication->contracts()->sync($params['contract_ids']);
 
+        activity('update_demand_application_contract')
+            ->causedBy($user)
+            ->performedOn($demandApplication)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑需求申请合同信息');
+
         return $this->response->item($demandApplication, new DemandApplicationTransformer());
     }
 
@@ -229,7 +251,7 @@ class DemandApplicationController extends Controller
     public function receiveDemand(Request $request, DemandApplication $demandApplication): Response
     {
         /** @var User $user */
-        $user = Auth::user();
+        $user = $this->user();
 
         if ($user->can('demand.application.receive_special')) {
             if ($demandApplication->getStatus() === DemandApplication::STATUS_CONFIRM) {
@@ -262,6 +284,12 @@ class DemandApplicationController extends Controller
 
         DemandApplicationNotificationJob::dispatch($demandApplication, 'received')->onQueue('demand');
 
+        activity('receive_demand_application')
+            ->causedBy($user)
+            ->performedOn($demandApplication)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('接单需求申请');
+
         return $this->response->item($demandApplication, new DemandApplicationTransformer());
     }
 
@@ -269,19 +297,20 @@ class DemandApplicationController extends Controller
     /**
      * 确认完成
      * @param DemandApplication $demandApplication
-     * @return \Dingo\Api\Http\Response
+     * @param Request $request
+     * @return Response
      */
-    public function confirmDemand(DemandApplication $demandApplication): Response
+    public function confirmDemand(DemandApplication $demandApplication, Request $request): Response
     {
         /** @var User $user */
-        $user = Auth::user();
+        $user = $this->user();
 
         if (!in_array($demandApplication->getStatus(), [DemandApplication::STATUS_RECEIVED, DemandApplication::STATUS_MODIFY], true)) {
             abort(422, '该状态无法确认完成');
         }
 
-        if ($demandApplication->getApplicantId() !== $user->id) {
-            abort(422, '该申请非您创建，无权确认完成');
+        if ($demandApplication->owner !== $user->id) {
+            abort(422, '该申请非您所属，无权确认完成');
         }
 
 
@@ -296,6 +325,12 @@ class DemandApplicationController extends Controller
         $demandApplication->update($update_params);
 
         DemandApplicationNotificationJob::dispatch($demandApplication, 'confirm')->onQueue('demand');
+
+        activity('confirm_demand_application')
+            ->causedBy($user)
+            ->performedOn($demandApplication)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $update_params])
+            ->log('确认完成需求申请');
 
         return $this->response->item($demandApplication, new DemandApplicationTransformer());
 

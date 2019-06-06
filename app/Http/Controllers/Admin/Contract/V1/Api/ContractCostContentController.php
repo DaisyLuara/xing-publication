@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\Contract\V1\Models\ContractCostContent;
 use App\Http\Controllers\Admin\Contract\V1\Request\ContractCostContentRequest;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
 
 class ContractCostContentController extends Controller
@@ -30,10 +31,17 @@ class ContractCostContentController extends Controller
         }
         $costContent->fill(array_merge($request->all(), ['cost_id' => $contractCost->id, 'status' => $status]))->save();
         $contractCost->update(['total_cost' => $request->get('total_cost'), 'confirm_cost' => $confirm_cost]);
+
+        activity('create_contract_cost_content')
+            ->causedBy($this->user())
+            ->performedOn($costContent)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增合同成本明细');
+
         return $this->response()->noContent()->setStatusCode(201);
     }
 
-    public function update(ContractCostContentRequest $request, ContractCost $contractCost, ContractCostContent $content)
+    public function update(ContractCostContentRequest $request, ContractCost $contractCost, ContractCostContent $content): Response
     {
         if ($content->status === 1) {
             abort(403, '成本明细已确认,无法修改');
@@ -52,10 +60,17 @@ class ContractCostContentController extends Controller
 //        }
         $content->update(array_merge($request->all(), ['status' => $status]));
         $contractCost->update(['total_cost' => $request->get('total_cost'), 'confirm_cost' => $confirm_cost]);
+
+        activity('update_contract_cost_content')
+            ->causedBy($this->user())
+            ->performedOn($content)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑合同成本明细');
+
         return $this->response()->noContent();
     }
 
-    public function destroy(ContractCost $contractCost, ContractCostContent $content)
+    public function destroy(ContractCost $contractCost, ContractCostContent $content, Request $request)
     {
         if ($content->status === 1) {
             abort(403, '成本明细已确认,无法删除');
@@ -64,13 +79,27 @@ class ContractCostContentController extends Controller
         abort_if($user->id !== $content->creator_id, '403', '无操作权限');
         $content->delete();
         $contractCost->update(['total_cost' => $contractCost->total_cost - $content->money]);
+
+        activity('delete_contract_cost_content')
+            ->causedBy($this->user())
+            ->performedOn($content)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => []])
+            ->log('删除合同成本明细');
+
         return $this->response()->noContent()->setStatusCode(204);
     }
 
-    public function confirm(ContractCostContent $content)
+    public function confirm(ContractCostContent $content, Request $request)
     {
         $content->update(['status' => 1]);
         ContractCost::query()->where('id', $content->cost_id)->increment('confirm_cost', $content->money);
+
+        activity('confirm_contract_cost_content')
+            ->causedBy($this->user())
+            ->performedOn($content)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => []])
+            ->log('确认合同成本明细');
+
         return $this->response()->noContent();
     }
 }

@@ -52,7 +52,11 @@ class PolicyLaunchController extends Controller
             'belong' => $request->versionname,
         ], $request->all()));
 
-        activity('project_launch')->on($policyLaunch)->withProperties($request->all())->log('增加策略投放');
+        activity('create_policy_launch')
+            ->causedBy($this->user())
+            ->performedOn($policyLaunch)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增奖品投放');
 
         return $this->response->noContent();
     }
@@ -60,6 +64,12 @@ class PolicyLaunchController extends Controller
     public function update(PolicyLaunch $policyLaunch, PolicyLaunchRequest $request)
     {
         $policyLaunch->fill(array_merge(['belong' => $request->versionname], $request->all()))->update();
+
+        activity('update_policy_launch')
+            ->causedBy($this->user())
+            ->performedOn($policyLaunch)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑奖品投放');
 
         return $this->response->noContent();
     }

@@ -39,6 +39,13 @@ class TeamRateController extends Controller
         /** @var  $user \App\Models\User */
         $user = $this->user();
         $teamRate->update($request->all());
+
+        activity('update_team_rate')
+            ->causedBy($user)
+            ->performedOn($teamRate)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('更新节目智造比例');
+
         return $this->response()->noContent()->setStatusCode(200);
     }
 }

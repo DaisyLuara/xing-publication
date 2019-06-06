@@ -102,7 +102,11 @@ class ProjectLaunchController extends Controller
             $query->create(array_merge(['oid' => $oid], $launch));
         }
 
-        activity('project_launch')->on($projectLaunch)->withProperties($request->all())->log('批量增加节目投放');
+        activity('create_product_launch')
+            ->causedBy($this->user())
+            ->performedOn($projectLaunch)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('批量新增节目投放');
 
         return $this->response()->noContent()->setStatusCode(201);
     }
@@ -120,7 +124,11 @@ class ProjectLaunchController extends Controller
             $query->where(['tvoid' => $tvoid])->update($launch);
         }
 
-        activity('project_launch')->on($projectLaunch)->withProperties($request->all())->log('批量修改节目投放');
+        activity('create_product_launch')
+            ->causedBy($this->user())
+            ->performedOn($projectLaunch)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('批量编辑节目投放');
 
         return $this->response()->noContent();
     }

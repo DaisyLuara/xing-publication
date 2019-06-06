@@ -29,6 +29,13 @@ class ShortUrlController extends Controller
     public function store(ShortUrlRequest $request, ShortUrl $shortUrl)
     {
         $shortUrl->fill($request->all())->save();
+
+        activity('create_short_url')
+            ->causedBy($this->user())
+            ->performedOn($shortUrl)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增短链接');
+
         return $this->response->item($shortUrl, new ShortUrlTransformer());
     }
 

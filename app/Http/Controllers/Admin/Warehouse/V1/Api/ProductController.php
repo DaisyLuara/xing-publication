@@ -52,6 +52,13 @@ class ProductController extends Controller
             $item['product_id'] = $product->id;
             ProductAttribute::query()->create($item);
         }
+
+        activity('create_erp_product')
+            ->causedBy($this->user())
+            ->performedOn($product)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增Erp产品');
+
         return $this->response->item($product, new ProductTransformer());
     }
 
@@ -69,6 +76,13 @@ class ProductController extends Controller
             ProductAttribute::query()->where('product_id', $request->id)
                 ->where('attributes_id', $item['attributes_id'])->update($item);
         }
+
+        activity('update_erp_product')
+            ->causedBy($this->user())
+            ->performedOn($product)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑Erp产品');
+
         return $this->response()->item($product, new ProductTransformer())->setStatusCode(200);
     }
 

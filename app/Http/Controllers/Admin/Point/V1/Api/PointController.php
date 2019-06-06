@@ -137,7 +137,9 @@ class PointController extends Controller
             abort(500, '无场地主标识');
         }
 
+        /** @var ArUser $arUser */
         $arUser = ArUser::query()->where('z', $user->z)->first();
+        /** @var ArUser $arSite */
         $arSite = ArUser::query()->where('z', $customer->z)->first();
         $authParam = [
             'bd_uid' => $arUser->uid,
@@ -156,6 +158,12 @@ class PointController extends Controller
         if ($request->has('share')) {
             $point->share()->create($request->get('share'));
         }
+
+        activity('create_point')
+            ->causedBy($user)
+            ->performedOn($point)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增点位');
 
         return $this->response()->noContent()->setStatusCode(201);
     }
@@ -217,6 +225,12 @@ class PointController extends Controller
             }
 
         }
+
+        activity('update_point')
+            ->causedBy($user)
+            ->performedOn($point)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑点位');
 
         return $this->response()->item($point, new PointTransformer());
     }

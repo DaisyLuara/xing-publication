@@ -54,12 +54,26 @@ class PublicationMediaController extends Controller
         ];
         $media = Media::create($data);
         $publicationMedia->fill(['group_id' => $group->id, 'media_id' => $media->id, 'creator' => $this->user()->id])->save();
+
+        activity('create_publication_media')
+            ->causedBy($this->user())
+            ->performedOn($publicationMedia)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新建中台资源');
+
         return $this->response()->item($publicationMedia, new PublicationMediaTransformer())->setStatusCode(201);
     }
 
     public function update(PublicationMediaRequest $request, PublicationMediaGroup $group, PublicationMedia $publicationMedia)
     {
         $publicationMedia->media()->update($request->all());
+
+        activity('update_publication_media')
+            ->causedBy($this->user())
+            ->performedOn($publicationMedia)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑中台资源');
+
         return $this->response()->noContent()->setStatusCode(200);
     }
 }

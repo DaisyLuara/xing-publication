@@ -9,13 +9,14 @@ use App\Http\Controllers\Admin\Media\V1\Models\Media;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\User;
+use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 
 class FeedbackController extends Controller
 {
-    public function index(Request $request, Feedback $feedback)
+    public function index(Request $request, Feedback $feedback): Response
     {
         /** @var User $user */
         $user = Auth::user();
@@ -31,7 +32,7 @@ class FeedbackController extends Controller
         }
 
         if ($user->hasRole('user|bd-manager')) {
-            $customer_ids = Customer::query()->whereHas('company', function ($c) use ($user) {
+            $customer_ids = Customer::query()->whereHas('company', static function ($c) use ($user) {
                 $c->whereHas('bdUser', function ($bd) use ($user) {
                     $bd->whereRaw("(id = {$user->id} or parent_id = {$user->id})");
                 });
@@ -43,7 +44,7 @@ class FeedbackController extends Controller
 
         $company_name = $request->get('company_name');
         if ($company_name) {
-            $customer_ids = Customer::query()->whereHas('company', function ($c) use ($company_name) {
+            $customer_ids = Customer::query()->whereHas('company', static function ($c) use ($company_name) {
                 $c->where('name', 'like', '%' . $company_name . '%');
             })->pluck('id')->toArray();
 
@@ -52,24 +53,24 @@ class FeedbackController extends Controller
         }
 
 
-        $feedback = $query->where('parent_id', 0)
+        $feedbackItems = $query->where('parent_id', 0)
             ->orderByDesc('id')->paginate(10);
 
-        return $this->response()->paginator($feedback, new FeedbackTransformer());
+        return $this->response()->paginator($feedbackItems, new FeedbackTransformer());
     }
 
 
-    public function show(Feedback $feedback)
+    public function show(Feedback $feedback): Response
     {
-        if ($feedback->parent_id != 0) {
-            abort(422, "该条反馈非问题");
+        if ($feedback->parent_id !== 0) {
+            abort(422, '该条反馈非问题');
         }
 
         return $this->response()->item($feedback, new FeedbackTransformer());
     }
 
 
-    public function store(FeedbackRequest $request, Feedback $feedback)
+    public function store(FeedbackRequest $request, Feedback $feedback): Response
     {
 
         /** @var User $user */
@@ -79,13 +80,13 @@ class FeedbackController extends Controller
         $parentFeedback = Feedback::query()->find($request->get('parent_id'));
 
         /** @var Feedback $topFeedback */
-        $topFeedback = $parentFeedback->top_parent_id == 0 ? $parentFeedback : $parentFeedback->top_parent;
+        $topFeedback = $parentFeedback->top_parent_id === 0 ? $parentFeedback : $parentFeedback->top_parent;
         if ($user->hasRole('user|bd-manager') && $topFeedback) {
             $bd_user = $topFeedback->createable && $topFeedback->createable->company ?
                 $topFeedback->createable->company->bdUser : null;
 
-            if (!$bd_user || ($bd_user->id != $user->id && $bd_user->parent_id != $user->id)) {
-                abort("您无权回答该反馈");
+            if (!$bd_user || ($bd_user->id !== $user->id && $bd_user->parent_id !== $user->id)) {
+                abort('您无权回答该反馈');
             }
         }
 
@@ -95,12 +96,12 @@ class FeedbackController extends Controller
                 ->pluck('id')->toArray();
 
             if (array_diff($photo_media_ids, $photo_ids)) {
-                abort("上传的照片中有不存在的媒体文件");
+                abort('上传的照片中有不存在的媒体文件');
             }
         }
 
-        $feedback = $feedback->query()->create([
-            'title' => $request->get('title') ?? "无标题",
+        $newFeedback = $feedback->query()->create([
+            'title' => $request->get('title') ?? '无标题',
             'content' => $request->get('content'),
             'createable_id' => $user->id,
             'createable_type' => User::class,
@@ -115,13 +116,19 @@ class FeedbackController extends Controller
 
         if ($photo_media_ids) {
             $photo_media_pivot = [];
-            for ($i = 0; $i < count($photo_media_ids); $i++) {
+            for ($i = 0, $iMax = count($photo_media_ids); $i < $iMax; $i++) {
                 $photo_media_pivot[] = ['type' => 'feedback', 'recorder_id' => $user->id];
             }
-            $feedback->photos()->attach(array_combine($photo_media_ids, $photo_media_pivot));
+            $newFeedback->photos()->attach(array_combine($photo_media_ids, $photo_media_pivot));
         }
 
-        return $this->response()->item($feedback, new FeedbackTransformer());
+        activity('response_feedback')
+            ->causedBy($user)
+            ->performedOn($newFeedback)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('回复反馈');
+
+        return $this->response()->item($newFeedback, new FeedbackTransformer());
 
     }
 

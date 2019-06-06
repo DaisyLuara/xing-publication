@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Contract\V1\Models;
 
 use App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceReceipt;
 use App\Models\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * App\Http\Controllers\Admin\Contract\V1\Models\ContractProduct
@@ -15,16 +16,16 @@ use App\Models\Model;
  * @property string|null $product_stock 硬件数量
  * @property-read \App\Http\Controllers\Admin\Contract\V1\Models\Contract|null $contract
  * @property-read \App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceReceipt $invoiceReceipt
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractProduct newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractProduct newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model ordered()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractProduct query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model recent()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractProduct whereContractId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractProduct whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractProduct whereProductColor($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractProduct whereProductName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Contract\V1\Models\ContractProduct whereProductStock($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractProduct newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractProduct newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Model ordered()
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractProduct query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Model recent()
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractProduct whereContractId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractProduct whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractProduct whereProductColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractProduct whereProductName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ContractProduct whereProductStock($value)
  * @mixin \Eloquent
  */
 class ContractProduct extends Model
@@ -37,12 +38,12 @@ class ContractProduct extends Model
     ];
     public $timestamps = false;
 
-    public function contract()
+    public function contract(): BelongsTo
     {
         return $this->belongsTo(Contract::class, 'contract_id', 'id');
     }
 
-    public function invoiceReceipt()
+    public function invoiceReceipt(): BelongsTo
     {
         return $this->belongsTo(InvoiceReceipt::class, 'invoice_receipt_id', 'id');
     }

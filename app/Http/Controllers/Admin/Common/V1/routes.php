@@ -57,60 +57,73 @@ $api->version('v1', [
         $api->get('s/{url_path}', 'ShortUrlController@redirect');//短链接跳转
         $api->post('open/short_urls', 'ShortUrlController@store');//短链接生成
 
-        $api->group(['middleware' => "api.auth", 'model' => 'App\Models\User'], function ($api) {
 
-            //远程搜索
+        //远程搜索
+        $api->group(['middleware' => 'api.auth', 'model' => 'App\Models\User'], function ($api) {
+            $api->get('scene/query', 'QueryController@sceneQueryIndex');//场景搜索
             $api->get('areas/query', 'QueryController@areaQuery');//区域搜索
             $api->get('markets/query', 'QueryController@marketQuery');//商场搜索
             $api->get('points/query', 'QueryController@pointQuery');//点位查询
-            $api->get('launches/tpl/query', 'QueryController@launchTplQuery');//点位模板查询
+            $api->get('attribute/query', 'QueryController@attributeQuery');//业态搜索
+            $api->get('user/query', 'QueryController@userQuery');//用户搜索
 
+            //节目
+            $api->get('launches/tpl/query', 'QueryController@launchTplQuery');//点位模板查询
+            $api->get('projects/query', 'QueryController@projectQuery');//节目搜索
+            $api->get('project_skin/query', 'QueryController@projectSkinQuery');//可用节目皮肤
+
+            //广告
             $api->get('ad_trade/query', 'QueryController@adTradeQuery');//广告行业搜索
             $api->get('ad_plan/query', 'QueryController@adPlanQuery');//广告方案搜索
             $api->get('advertisement/query', 'QueryController@advertisementQuery');//广告搜索
-            $api->get('projects/query', 'QueryController@projectQuery');//节目搜索
+
+            //team
             $api->get('team_projects/query', 'QueryController@teamProjectQuery');//团队节目搜索
+            $api->get('team_rate/query', 'QueryController@teamRateQuery');
+
+            //奖品
             $api->get('coupon_batch/query', 'QueryController@couponBatchQuery');
-            $api->get('company/query', 'QueryController@companyQuery');
-            $api->get('staffs', 'QueryController@arUserQueryIndex');
-            $api->get('scene/query', 'QueryController@sceneQueryIndex');
             $api->get('policy/query', 'QueryController@policyQuery');
+
+            //流程管理
+            $api->get('company/query', 'QueryController@companyQuery');
+            $api->get('customer/query', 'QueryController@customerQuery');
             $api->get('contract/query', 'QueryController@contractQuery');
+            $api->get('cost_kind/query', 'QueryController@costKindQuery');
             $api->get('invoice_kind/query', 'QueryController@invoiceKindQuery');
             $api->get('goods_service/query', 'QueryController@goodsServiceQuery');
-            $api->get('bd_manager/query', 'QueryController@bdManagerQuery');
-            $api->get('bd_users/query', 'QueryController@bdAndBdManagerQuery');
             $api->get('legal_manager/query', 'QueryController@legalManagerQuery');
             $api->get('invoice_company/query', 'QueryController@invoiceCompanyQuery');
             $api->get('payment_payee/query', 'QueryController@paymentPayeeQuery');
             $api->get('receive_date/query', 'QueryController@receiveDateQuery');
-            $api->get('customer/query', 'QueryController@customerQuery');
-            $api->get('user/query', 'QueryController@userQuery');
 
-            $api->get('user/permission/query', 'QueryController@userPermissionQuery');
-            $api->get('demand_application/query', 'QueryController@demandApplicationQuery');
-
-            $api->get('team_rate/query', 'QueryController@teamRateQuery');
-            $api->get('attribute/query', 'QueryController@attributeQuery');
-            $api->get('permission/query', 'QueryController@permissionQuery');
-            $api->get('role/query', 'QueryController@roleQuery');
             $api->get('erp_warehouse/query', 'QueryController@warehouseQuery');//流程管理ERP仓库搜索
             $api->get('erp_attribute/query', 'QueryController@erpAttributeQuery');//流程管理ERP商品属性搜索
             $api->get('erp_supplier/query', 'QueryController@erpSupplierQuery');//供应商搜索
             $api->get('erp_sku/query', 'QueryController@erpSkuQuery');//sku下拉列表
             $api->get('erp_location/query', 'QueryController@erpLocationQuery');//库位下拉列表
+
+
+            $api->get('user/permission/query', 'QueryController@userPermissionQuery');
+            $api->get('demand_application/query', 'QueryController@demandApplicationQuery');
+
+            //权限
+            $api->get('bd_manager/query', 'QueryController@bdManagerQuery');
+            $api->get('permission/query', 'QueryController@permissionQuery');
+            $api->get('role/query', 'QueryController@roleQuery');
+
+            //暂不清楚
+            $api->get('bd_users/query', 'QueryController@bdAndBdManagerQuery');
+            $api->get('staffs', 'QueryController@arUserQueryIndex');
             $api->get('stores/query', 'QueryController@storeQuery');//商户搜索
             $api->get('company/markets/query', 'QueryController@marketConfigQuery');//公司搜索
             $api->get('playing_types/query', 'QueryController@playingTypeQuery');//玩法配置列表
-            $api->get('cost_kind/query', 'QueryController@costKindQuery');
             $api->get('customers/query', 'QueryController@adminCustomersQuery');//所有联系人查询
             $api->get('customers/role/{role_name}/query', 'QueryController@adminCustomersQueryByRole'); //某个角色的customer
             $api->get('authorized_projects/query', 'QueryController@authorizedProjectQuery');//已授权节目列表
             $api->get('authorized_points/query', 'QueryController@authorizedPointQuery');//已授权点位列表
             $api->get('authorized_policies/query', 'QueryController@authorizedPolicyQuery');//已授权策略列表
             $api->get('authorized_customers/query', 'QueryController@authorizedCustomerQuery');//已授权策略列表
-            $api->get('project_skin/query','QueryController@projectSkinQuery');//可用节目皮肤
-
 
             //消息通知
             $api->get('user/notifications', 'NotificationsController@index');

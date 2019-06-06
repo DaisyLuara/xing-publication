@@ -26,29 +26,29 @@ class ContractReceiveDateController extends Controller
         $user = $this->user();
 
         $query = $contract->query();
-        if ($request->has('name')) {
+        if ($request->filled('name')) {
             $query->where('name', 'like', '%' . $request->get('name') . '%');
         }
-        
-        if ($request->get('applicant')) {
-            $query->where('applicant', '=', $request->get('applicant'));
+
+        if ($request->filled('owner')) {
+            $query->where('owner', '=', $request->get('owner'));
         }
 
-        if ($request->has('company_name')) {
+        if ($request->filled('company_name')) {
             $query->whereHas('company', static function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->get('company_name') . '%');
             });
         }
-        if ($request->has('contract_number')) {
+        if ($request->filled('contract_number')) {
             $query->where('contract_number', 'like', '%' . $request->get('contract_number') . '%');
         }
 
         if ($user->hasRole('user')) {
-            $query->where('applicant', $user->id);
+            $query->where('owner', $user->id);
         }
 
         if ($user->hasRole('bd-manager')) {
-            $query->whereHas('applicantUser', static function ($q) use ($user) {
+            $query->whereHas('ownerUser', static function ($q) use ($user) {
                 $q->where('parent_id', $user->id);
             });
         }
@@ -60,7 +60,15 @@ class ContractReceiveDateController extends Controller
 
     public function store(ContractReceiveDateRequest $request, Contract $contract, ContractReceiveDate $contractReceiveDate)
     {
-        $contractReceiveDate->fill(array_merge($request->all(), ['contract_id' => $contract->id, 'receive_status' => 0]))->save();
+        $params = $request->all();
+        $contractReceiveDate->fill(array_merge($params, ['contract_id' => $contract->id, 'receive_status' => 0]))->save();
+
+        activity('create_contract_receive_date')
+            ->causedBy($this->user())
+            ->performedOn($contractReceiveDate)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $params])
+            ->log('新增合同收款日期');
+
         return $this->response()->noContent()->setStatusCode(201);
     }
 

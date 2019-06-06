@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Contract\V1\Api;
 
+use App\Http\Controllers\Admin\Common\V1\Request\ExportRequest;
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
 use App\Http\Controllers\Admin\Contract\V1\Models\ContractHistory;
 use App\Http\Controllers\Admin\Contract\V1\Models\ContractProduct;
@@ -12,8 +13,11 @@ use App\Http\Controllers\Admin\Invoice\V1\Models\Invoice;
 use App\Http\Controllers\Admin\Payment\V1\Models\Payment;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Carbon\Carbon;
+use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
+use DB;
 
 
 class ContractController extends Controller
@@ -27,11 +31,11 @@ class ContractController extends Controller
     {
 
         $query = $contract->query();
-        if ($request->get('start_date') && $request->get('end_date')) {
+        if ($request->filled('start_date') && $request->get('end_date')) {
             $query->whereRaw("date_format(created_at,'%Y-%m-%d') between '{$request->get('start_date')}' and '{$request->get('end_date')}' ");
         }
 
-        if ($request->get('name')) {
+        if ($request->filled('name')) {
             $name = $request->get('name');
 
             $query->whereHas('company', static function ($q) use ($name) {
@@ -39,28 +43,28 @@ class ContractController extends Controller
             });
         }
 
-        if ($request->get('applicant')) {
-            $query->where('applicant', '=', $request->get('applicant'));
+        if ($request->filled('owner')) {
+            $query->where('owner', '=', $request->get('owner'));
         }
 
-        if ($request->has('status')) {
+        if ($request->filled('status')) {
             $query->where('status', $request->get('status'));
         }
 
-        if ($request->has('contract_number')) {
+        if ($request->filled('contract_number')) {
             $query->where('contract_number', 'like', '%' . $request->get('contract_number') . '%');
         }
 
-        if ($request->has('product_status')) {
+        if ($request->filled('product_status')) {
             $query->where('product_status', $request->get('product_status'));
         }
 
         /** @var  $user \App\Models\User */
         $user = $this->user();
         if ($user->hasRole('user|bd-manager')) {
-            $query->whereRaw("(applicant = $user->id or handler = $user->id)");
+            $query->whereRaw("(owner = $user->id or handler = $user->id)");
         } elseif ($user->hasRole('legal-affairs|legal-affairs-manager')) {
-            $query->whereRaw("(applicant = $user->id or handler = $user->id or status=3)");
+            $query->whereRaw("(owner = $user->id or handler = $user->id or status=3)");
         } elseif ($user->hasRole('purchasing')) {
             //角色为采购时，查询条件为：已审批完成(status=3),product_status为非0（1未出厂or2已出厂）
             $query->whereRaw('(status = 3 and product_status != 0)');
@@ -76,88 +80,119 @@ class ContractController extends Controller
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if ($user->hasRole('user|bd-manager') && !$user->parent_id) {
+        if (!$user->parent_id && $user->hasRole('user|bd-manager')) {
             abort(500, '无所属主管，无法新增合同申请');
         }
 
         $product_status = ActionConfig::CONTRACT_PRODUCT_STATUS_NOHARDWARE;
         //收款合同且不是服务类型
-        if ($request->type == ActionConfig::CONTRACT_TYPE_RECEIVE && $request->kind != ActionConfig::CONTRACT_KIND_SERVE) {
+        if ($request->get('type') === ActionConfig::CONTRACT_TYPE_RECEIVE && $request->get('kind') !== ActionConfig::CONTRACT_KIND_SERVE) {
             $product_status = ActionConfig::CONTRACT_PRODUCT_STATUS_NOTOUT;
         }
         $param = $request->all();
         //不是收款合同默认0
-        if ($request->type != ActionConfig::CONTRACT_TYPE_RECEIVE) {
+        if ($request->get('type') !== ActionConfig::CONTRACT_TYPE_RECEIVE) {
             $param['kind'] = 0;
             $param['special_num'] = 0;
             $param['common_num'] = 0;
         }
-        //法务和法务主管建的直接已审批
-        if ($user->hasRole('legal-affairs|legal-affairs-manager')) {
-            $contract->fill(array_merge($param, ['status' => ActionConfig::CONTRACT_STATUS_AGREE, 'handler' => null, 'product_status' => $product_status]))->save();
-        } else {
-            $legalId = getProcessStaffId('legal-affairs', 'contract');
-            $contract->fill(array_merge($param, ['status' => ActionConfig::CONTRACT_STATUS_WAIT, 'handler' => $legalId, 'product_status' => $product_status]))->save();
-        }
-        //文档存储
-        $ids = explode(',', $request->ids);
-        foreach ($ids as $id) {
-            $contract->media()->attach($id);
+
+        try {
+            DB::beginTransaction();
+
+            //法务和法务主管建的直接已审批
+            if ($user->hasRole('legal-affairs|legal-affairs-manager')) {
+                $rest = [
+                    'applicant' => $user->id,
+                    'owner' => $user->id,
+                    'status' => ActionConfig::CONTRACT_STATUS_AGREE,
+                    'handler' => null,
+                    'product_status' => $product_status
+                ];
+            } else {
+                $legalId = getProcessStaffId('legal-affairs', 'contract');
+                $rest = [
+                    'applicant' => $user->id,
+                    'owner' => $user->id,
+                    'status' => ActionConfig::CONTRACT_STATUS_WAIT,
+                    'handler' => $legalId,
+                    'product_status' => $product_status
+                ];
+            }
+            $contract->fill(array_merge($param, $rest))->save();
+
+            //文档存储
+            $ids = explode(',', $request->get('ids'));
+            foreach ($ids as $id) {
+                $contract->media()->attach($id);
+            }
+
+            //收款日期存储
+            if ($request->get('type') === ActionConfig::CONTRACT_TYPE_RECEIVE && $request->has('receive_date')) {
+                $dates = explode(',', $request->get('receive_date'));
+                foreach ($dates as $date) {
+                    ContractReceiveDate::create(['contract_id' => $contract->id, 'receive_date' => $date, 'receive_status' => 0]);
+                }
+            }
+
+            //硬件存储
+            if ($request->get('kind') !== ActionConfig::CONTRACT_KIND_SERVE && $request->has('product_content')) {
+                $param = $request->all();
+                $content = $param['product_content'];
+                foreach ($content as $item) {
+                    $item['contract_id'] = $contract->id;
+                    ContractProduct::query()->create($item);
+                }
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error($e);
+            abort(500, '系统错误');
         }
 
-        //收款日期存储
-        if ($request->type == ActionConfig::CONTRACT_TYPE_RECEIVE && $request->has('receive_date')) {
-            $dates = explode(',', $request->receive_date);
-            foreach ($dates as $date) {
-                ContractReceiveDate::create(['contract_id' => $contract->id, 'receive_date' => $date, 'receive_status' => 0]);
-            }
-        }
+        activity('create_contract')
+            ->causedBy($user)
+            ->performedOn($contract)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增合同申请');
 
-        //硬件存储
-        if ($request->kind != ActionConfig::CONTRACT_KIND_SERVE && $request->has('product_content')) {
-            $param = $request->all();
-            $content = $param['product_content'];
-            foreach ($content as $item) {
-                $item['contract_id'] = $contract->id;
-                ContractProduct::query()->create($item);
-            }
-        }
         return $this->response()->item($contract, new ContractTransformer())->setStatusCode(201);
     }
 
-    public function update(ContractRequest $request, Contract $contract)
+    public function update(ContractRequest $request, Contract $contract): Response
     {
-        if (!($contract->status == ActionConfig::CONTRACT_STATUS_AGREE && $contract->type == ActionConfig::CONTRACT_TYPE_RECEIVE)) {
+        if (!($contract->status === ActionConfig::CONTRACT_STATUS_AGREE && $contract->type === ActionConfig::CONTRACT_TYPE_RECEIVE)) {
             abort(403, '不可更改');
         }
 
-//        $param = $request->all();
-//        if ($param['kind'] == ActionConfig::CONTRACT_KIND_SERVE) {
-//            $contract->product()->delete();
-//        }
-//        if ($param['kind'] != ActionConfig::CONTRACT_KIND_SERVE) {
-//            $contract->product()->delete();
-//            $content = $request->product_content;
-//            foreach ($content as $item) {
-//                $item['contract_id'] = $contract->id;
-//                ContractProduct::create($item);
-//            }
-//            $param['serve_target'] = null;
-//            $param['recharge'] = null;
-//            $param['product_status'] = ActionConfig::CONTRACT_PRODUCT_STATUS_LEAVE;
-//        }
         $contract->update($request->all());
+
+        activity('update_contract')
+            ->causedBy($this->user())
+            ->performedOn($contract)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑合同申请');
 
         return $this->response()->noContent();
 
     }
 
-    public function destroy(Contract $contract)
+    public function destroy(Contract $contract,Request $request)
     {
-        if ($contract->status != ActionConfig::CONTRACT_STATUS_WAIT) {
-            abort(403, "合同审批状态已更改，不可删除");
+        if ($contract->status !== ActionConfig::CONTRACT_STATUS_WAIT) {
+            abort(403, '合同审批状态已更改，不可删除');
         }
         $contract->delete();
+
+
+        activity('delete_contract')
+            ->causedBy($this->user())
+            ->performedOn($contract)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => []])
+            ->log('删除合同申请');
+
         return $this->response()->noContent()->setStatusCode(204);
     }
 
@@ -167,7 +202,7 @@ class ContractController extends Controller
         $user = $this->user();
         //法务驳回可以修改文件
         if ($user->hasRole('legal-affairs')) {
-            $ids = explode(',', $request->ids);
+            $ids = explode(',', $request->get('ids'));
             $contract->media()->detach();
             foreach ($ids as $id) {
                 $contract->media()->attach($id);
@@ -176,6 +211,12 @@ class ContractController extends Controller
         $contract->update(array_merge($request->all(), ['status' => ActionConfig::CONTRACT_STATUS_REJECT, 'handler' => $contract->applicant]));
         ContractHistory::updateOrCreate(['user_id' => $user->id, 'contract_id' => $contract->id], ['user_id' => $user->id, 'contract_id' => $contract->id]);
 
+        activity('reject_contract')
+            ->causedBy($user)
+            ->performedOn($contract)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('驳回合同申请');
+
         return $this->response()->item($contract, new ContractTransformer())->setStatusCode(200);
     }
 
@@ -183,7 +224,7 @@ class ContractController extends Controller
     {
         /**@var $user \App\Models\User */
         $user = $this->user();
-        abort_if($user->id != $contract->handler, 403, '无审批权限');
+        abort_if($user->id !== $contract->handler, 403, '无审批权限');
 
         if ($user->hasRole('legal-affairs')) {
             $params = [
@@ -201,13 +242,13 @@ class ContractController extends Controller
             ];
             $this->checkParam($request, $params);
             //特批合同需要带合同编号
-            if ($contract->status == ActionConfig::CONTRACT_STATUS_SPECIAL) {
+            if ($contract->status === ActionConfig::CONTRACT_STATUS_SPECIAL) {
                 $this->checkParam($request, ['contract_number']);
             }
 
             $parentId = $contract->applicantUser->parent_id;
             // BD主管建的直接已审批,不经过自己
-            if ($parentId == $contract->applicant) {
+            if ($parentId === $contract->owner) {
                 $contract->status = ActionConfig::CONTRACT_STATUS_AGREE;
                 $contract->handler = null;
             } else {
@@ -225,20 +266,27 @@ class ContractController extends Controller
 
             $contract->status = ActionConfig::CONTRACT_STATUS_AGREE;
             $contract->handler = null;
-            $contract->bd_ma_message = $request->bd_ma_message;
+            $contract->bd_ma_message = $request->get('bd_ma_message');
             $this->updateContractAndHistory($user, $contract);
         }
+
+        activity('audit_contract')
+            ->causedBy($user)
+            ->performedOn($contract)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('审批合同申请');
+
         return $this->response()->item($contract, new ContractTransformer())->setStatusCode(201);
     }
 
-    private function checkParam(Request $request, array $param)
+    private function checkParam(Request $request, array $param): void
     {
         if (!$request->has($param)) {
             abort(422, '请填写完整信息');
         }
     }
 
-    private function updateContractAndHistory(User $user, Contract $contract)
+    private function updateContractAndHistory(User $user, Contract $contract): void
     {
         $contract->update();
         $data = [
@@ -248,17 +296,24 @@ class ContractController extends Controller
         ContractHistory::updateOrCreate($data, $data);
     }
 
-    public function specialAuditing(Request $request, Contract $contract)
+    public function specialAuditing(Request $request, Contract $contract): Response
     {
         $role = Role::findByName('legal-affairs-manager');
         $legalManager = $role->users()->first();
 
-        if ($contract->status == ActionConfig::CONTRACT_STATUS_ONGOING) {
-            abort(403, "合同审核中无法申请特批");
+        if ($contract->status === ActionConfig::CONTRACT_STATUS_ONGOING) {
+            abort(403, '合同审核中无法申请特批');
         }
         $contract->status = ActionConfig::CONTRACT_STATUS_SPECIAL;
         $contract->handler = $legalManager->id;
         $contract->update();
+
+        activity('special_audit_contract')
+            ->causedBy($this->user())
+            ->performedOn($contract)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('特批合同申请');
+
         return $this->response()->noContent();
     }
 
@@ -280,5 +335,25 @@ class ContractController extends Controller
     public function export(Request $request)
     {
         return excelExportByType($request, 'contract');
+    }
+
+    public function filed(Contract $contract): Response
+    {
+        /** @var User $user */
+        $user = $this->user();
+        if (!$user->hasRole('legal-affairs|legal-affairs-manager')) {
+            abort(403, '无操作权限');
+        }
+        if ($contract->status !== ActionConfig::CONTRACT_STATUS_AGREE) {
+            abort(403, '此操作只适用于已审批合同');
+        }
+        $filedDate = Carbon::now()->toDateTimeString();
+        $contract->update(['filed_date' => $filedDate]);
+        return $this->response()->noContent();
+    }
+
+    public function revenueExport(ExportRequest $request)
+    {
+        return excelExport($request);
     }
 }

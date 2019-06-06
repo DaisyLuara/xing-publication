@@ -63,6 +63,13 @@ class StoreController extends Controller
             $store->contract()->update($request->only(['start_date', 'end_date']));
         }
 
+        activity('create_store')
+            ->causedBy($this->user())
+            ->performedOn($store)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增门店');
+
+
         return $this->response->item($store, new StoreTransformer());
     }
 
@@ -73,6 +80,12 @@ class StoreController extends Controller
         if ($request->filled('contract_id')) {
             $store->contract()->update($request->only(['start_date', 'end_date']));
         }
+
+        activity('update_store')
+            ->causedBy($this->user())
+            ->performedOn($store)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑门店');
 
         return $this->response->item($store, new StoreTransformer());
     }

@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\Privilege\V1\Models\Permission;
 use App\Http\Controllers\Admin\Privilege\V1\Request\PermissionRequest;
 use App\Http\Controllers\Admin\Privilege\V1\Transformer\PermissionTransformer;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Spatie\Permission\PermissionRegistrar;
 
 class CompanyPermissionController extends Controller
@@ -32,7 +33,14 @@ class CompanyPermissionController extends Controller
 
     public function store(PermissionRequest $request)
     {
-        Permission::create(array_merge($request->all(), ['guard_name' => 'shop']));
+        $permission = Permission::create(array_merge($request->all(), ['guard_name' => 'shop']));
+
+        activity('create_shop_permission')
+            ->causedBy($this->user())
+            ->performedOn($permission)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增召唤宝权限');
+
         return $this->response()->noContent()->setStatusCode(201);
     }
 
@@ -42,13 +50,27 @@ class CompanyPermissionController extends Controller
             abort(403, '不可移动节点');
         }
         $permission->update($request->all());
+
+        activity('update_shop_permission')
+            ->causedBy($this->user())
+            ->performedOn($permission)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑召唤宝权限');
+
         return $this->response()->noContent()->setStatusCode(200);
     }
 
-    public function destroy(Permission $permission)
+    public function destroy(Permission $permission,Request $request)
     {
         $permission->descendantsAndSelf()->delete();
         app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+        activity('delete_shop_permission')
+            ->causedBy($this->user())
+            ->performedOn($permission)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => []])
+            ->log('删除召唤宝权限');
+
         return $this->response()->noContent()->setStatusCode(204);
     }
 }

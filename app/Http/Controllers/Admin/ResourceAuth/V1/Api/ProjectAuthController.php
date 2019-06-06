@@ -63,6 +63,13 @@ class ProjectAuthController extends Controller
 
         $projectAuth->fill($insertParams)->save();
 
+        activity('create_project_auth')
+            ->causedBy($this->user())
+            ->performedOn($projectAuth)
+            ->withProperties(['ip' => $projectAuthRequest->getClientIp(), 'request_params' => $projectAuthRequest->all()])
+            ->log('新增节目授权');
+
+
         return $this->response->item($projectAuth, new ProjectAuthTransformer());
     }
 
@@ -83,6 +90,13 @@ class ProjectAuthController extends Controller
         }
 
         $projectAuth->update($updateParams);
+
+        activity('update_project_auth')
+            ->causedBy($this->user())
+            ->performedOn($projectAuth)
+            ->withProperties(['ip' => $projectAuthRequest->getClientIp(), 'request_params' => $projectAuthRequest->all()])
+            ->log('编辑节目授权');
+
 
         return $this->response->item($projectAuth, new ProjectAuthTransformer());
 
@@ -116,12 +130,20 @@ class ProjectAuthController extends Controller
     /**
      * 删除节目授权
      * @param ProjectAuth $projectAuth
+     * @param Request $request
      * @return \Dingo\Api\Http\Response
      * @throws \Exception
      */
-    public function destroy( ProjectAuth $projectAuth)
+    public function destroy( ProjectAuth $projectAuth, Request $request)
     {
         $projectAuth->delete();
+
+        activity('delete_project_auth')
+            ->causedBy($this->user())
+            ->performedOn($projectAuth)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('删除节目授权');
+
         return $this->response()->noContent();
     }
 }

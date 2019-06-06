@@ -70,6 +70,12 @@ class AdPlanTimeController extends Controller
         /** @var AdPlanTime $adPlanTime */
         $adPlanTime->fill($updateParams)->save();
 
+        activity('create_ad_plan_time')
+            ->causedBy($this->user())
+            ->performedOn($adPlanTime)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $updateParams])
+            ->log('新增广告方案排期');
+
         return $this->response->noContent();
     }
 
@@ -100,6 +106,12 @@ class AdPlanTimeController extends Controller
 
         /** @var AdPlanTime $adPlanTime */
         $adPlanTime->fill($updateParams)->save();
+
+        activity('update_ad_plan_time')
+            ->causedBy($this->user())
+            ->performedOn($adPlanTime)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $updateParams])
+            ->log('编辑广告方案排期');
 
         return $this->response->noContent();
     }

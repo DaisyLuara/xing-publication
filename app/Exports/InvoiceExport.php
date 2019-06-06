@@ -12,7 +12,7 @@ class InvoiceExport extends BaseExport
     private $name;//公司名称
     private $contract_number;//合同编号
     private $start_date, $end_date; //开始日期,结束日期
-    private $applicant;
+    private $owner;
 
 
     public function __construct($request)
@@ -22,7 +22,7 @@ class InvoiceExport extends BaseExport
         $this->status = $request->status;
         $this->name = $request->name;
         $this->contract_number = $request->contract_number;
-        $this->applicant = $request->applicant;
+        $this->owner = $request->owner;
         $this->fileName = '票据-开票管理列表';
     }
 
@@ -36,10 +36,12 @@ class InvoiceExport extends BaseExport
             ->leftJoin('companies', 'contracts.company_id', '=', 'companies.id')
             ->leftJoin('invoice_companies', 'invoice_companies.id', '=', 'i.invoice_company_id')
             ->leftJoin('users as au', 'i.applicant', '=', 'au.id')
+            ->leftJoin('users as ou', 'i.owner', '=', 'ou.id')
             ->leftJoin('users as hu', 'i.handler', '=', 'hu.id')
             ->leftJoin('invoice_contents as ic', 'ic.invoice_id', '=', 'i.id')
             ->leftJoin('invoice_kinds as ik', 'ik.id', '=', 'ic.invoice_kind_id')
-            ->leftJoin('goods_services as gs', 'gs.id', '=', 'ic.goods_service_id');
+            ->leftJoin('goods_services as gs', 'gs.id', '=', 'ic.goods_service_id')
+            ->whereRaw('i.deleted_at is null');
 
         if ($this->start_date && $this->end_date) {
             $query->whereRaw("date_format(i.created_at,'%Y-%m-%d') between '$this->start_date' and '$this->end_date' ");
@@ -49,8 +51,8 @@ class InvoiceExport extends BaseExport
             $query->where('companies.name', 'like', '%' . $this->name . '%');
         }
 
-        if ($this->applicant) {
-            $query->where('i.applicant', '=', $this->applicant);
+        if ($this->owner) {
+            $query->where('i.owner', '=', $this->owner);
         }
 
         if ($this->status !== null) {
@@ -66,12 +68,12 @@ class InvoiceExport extends BaseExport
         } else if ($user->hasRole('operation')) {
             $query->whereRaw('(i.status=3 or i.status=4 or i.status=5)');
         } else {
-            $query->whereRaw("(i.applicant=$user->id or i.handler=$user->id)");
+            $query->whereRaw("(i.owner=$user->id or i.handler=$user->id)");
         }
 
         $invoices = $query->orderByDesc('i.created_at')
             ->orderByDesc('i.id')
-            ->selectRaw("i.id,concat('\t',contracts.contract_number,'\t') as 'contract_number',companies.name as 'company_name',au.name as 'au_name',
+            ->selectRaw("i.id,concat('\t',contracts.contract_number,'\t') as 'contract_number',companies.name as 'company_name',au.name as 'au_name',ou.name as 'ou_name',
             case i.type when 0 then '专票'  else '普票' end as 'type' ,
             concat('\t',invoice_companies.telephone,'\t') as 'invoice_company_telephone',
             invoice_companies.name as 'invoice_company_name',
@@ -88,7 +90,7 @@ class InvoiceExport extends BaseExport
             ->get()->toArray();
 
 
-        $header = ['票据ID', '合同编号', '公司名称', '申请人',
+        $header = ['票据ID', '合同编号', '公司名称', '申请人', '负责人',
             '开票类型', '座机电话', '开票公司', '纳税人识别号',
             '电话', '地址', '开户银行', '开户行账号', '开票总计（小写）', '开票总计（大写）',
             '备注', '审批状态', '待处理人', '申请时间', '最后操作时间',
@@ -99,7 +101,7 @@ class InvoiceExport extends BaseExport
             return $value->count();
         })->values()->toArray();
         $this->merge_start = 1;
-        $this->merge_end = 19;
+        $this->merge_end = 20;
 
         $this->header_num = count($header);
         array_unshift($invoices, $header, $header);

@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin\Invoice\V1\Models;
 use App\Http\Controllers\Admin\Contract\V1\Models\Contract;
 use App\Models\Model;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Http\Controllers\Admin\Media\V1\Models\Media;
 
@@ -14,6 +17,7 @@ use App\Http\Controllers\Admin\Media\V1\Models\Media;
  * @property int $id
  * @property int $contract_id 合同id
  * @property int $applicant 申请人
+ * @property int $owner 所属人
  * @property int|null $handler 处理人
  * @property int $type 0:专票,1:普票
  * @property int $invoice_company_id 开票公司id
@@ -29,6 +33,7 @@ use App\Http\Controllers\Admin\Media\V1\Models\Media;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
  * @property-read \App\Models\User $applicantUser
+ * @property-read User $ownerUser
  * @property-read \App\Http\Controllers\Admin\Contract\V1\Models\Contract $contract
  * @property-read \App\Models\User|null $handlerUser
  * @property-read \App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany $invoiceCompany
@@ -36,32 +41,32 @@ use App\Http\Controllers\Admin\Media\V1\Models\Media;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceHistory[] $invoiceHistory
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Http\Controllers\Admin\Media\V1\Models\Media[] $media
  * @method static bool|null forceDelete()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\Invoice newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\Invoice newQuery()
- * @method static \Illuminate\Database\Query\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\Invoice onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model ordered()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\Invoice query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model recent()
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice newQuery()
+ * @method static \Illuminate\Database\Query\Builder|Invoice onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Model ordered()
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Model recent()
  * @method static bool|null restore()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\Invoice whereApplicant($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\Invoice whereBdMaMessage($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\Invoice whereContractId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\Invoice whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\Invoice whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\Invoice whereDrawer($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\Invoice whereHandler($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\Invoice whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\Invoice whereInvoiceCompanyId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\Invoice whereKind($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\Invoice whereLegalMaMessage($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\Invoice whereRemark($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\Invoice whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\Invoice whereTotal($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\Invoice whereTotalText($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\Invoice whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\Invoice whereUpdatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\Invoice withTrashed()
- * @method static \Illuminate\Database\Query\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\Invoice withoutTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereApplicant($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereBdMaMessage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereContractId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereDrawer($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereHandler($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereInvoiceCompanyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereKind($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereLegalMaMessage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereRemark($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereTotal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereTotalText($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|Invoice withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Invoice withoutTrashed()
  * @mixin \Eloquent
  */
 class Invoice extends Model
@@ -71,6 +76,7 @@ class Invoice extends Model
     protected $fillable = [
         'contract_id',
         'applicant',
+        'owner',
         'handler',
         'type',
         'invoice_company_id',
@@ -84,37 +90,42 @@ class Invoice extends Model
         'drawer'
     ];
 
-    public function invoiceContent()
+    public function invoiceContent(): HasMany
     {
         return $this->hasMany(InvoiceContent::class, 'invoice_id', 'id');
     }
 
-    public function contract()
+    public function contract(): BelongsTo
     {
         return $this->belongsTo(Contract::class, 'contract_id', 'id');
     }
 
-    public function handlerUser()
+    public function handlerUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'handler', 'id');
     }
 
-    public function applicantUser()
+    public function applicantUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'applicant', 'id');
     }
 
-    public function invoiceCompany()
+    public function ownerUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'owner', 'id');
+    }
+
+    public function invoiceCompany(): BelongsTo
     {
         return $this->belongsTo(InvoiceCompany::class, 'invoice_company_id', 'id');
     }
 
-    public function invoiceHistory()
+    public function invoiceHistory(): HasMany
     {
         return $this->hasMany(InvoiceHistory::class, 'invoice_id', 'id');
     }
 
-    public function media()
+    public function media(): BelongsToMany
     {
         return $this->belongsToMany(Media::class, 'invoice_media', 'invoice_id', 'media_id');
     }

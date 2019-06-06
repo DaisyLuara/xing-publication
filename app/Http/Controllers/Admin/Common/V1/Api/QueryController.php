@@ -74,54 +74,54 @@ use Illuminate\Support\Facades\Auth;
 
 class QueryController extends Controller
 {
-    public function areaQuery(Request $request, Area $area)
+    public function areaQuery(Request $request, Area $area): Response
     {
         $query = $area->query();
 
-        if ($request->name) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->get('name') . '%');
         }
 
         $areas = $query->where('areaid', '>', 0)->get();
 
-        return $this->response->collection($areas, new AreaTransformer());
+        return $this->response()->collection($areas, new AreaTransformer());
     }
 
-    public function marketQuery(Request $request, Market $market)
+    public function marketQuery(Request $request, Market $market): Response
     {
         $query = $market->query();
         $markets = collect();
 
-        if (!$request->name && !$request->area_id) {
-            return $this->response->collection($markets, new AreaTransformer());
+        if (!$request->has('name') && !$request->has('area_id')) {
+            return $this->response()->collection($markets, new AreaTransformer());
         }
 
-        if ($request->name) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->get('name') . '%');
         }
 
-        if ($request->area_id) {
-            $query->where('areaid', '=', $request->area_id);
+        if ($request->has('area_id')) {
+            $query->where('areaid', '=', $request->get('area_id'));
         }
 
         $markets = $query->where('marketid', '>', 0)->get();
 
-        return $this->response->collection($markets, new MarketTransformer());
+        return $this->response()->collection($markets, new MarketTransformer());
     }
 
-    public function pointQuery(Request $request, Point $point)
+    public function pointQuery(Request $request, Point $point): Response
     {
         $query = $point->query();
         $points = collect();
-        if (!$request->name && !$request->market_id) {
-            return $this->response->collection($points, new AreaTransformer());
+        if (!$request->has('name') && !$request->has('market_id')) {
+            return $this->response()->collection($points, new AreaTransformer());
         }
-        if ($request->name) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->get('name') . '%');
         }
 
-        if ($request->market_id) {
-            $query->where('marketid', '=', $request->market_id);
+        if ($request->has('market_id')) {
+            $query->where('marketid', '=', $request->get('market_id'));
         }
 
         $user = $this->user();
@@ -132,7 +132,7 @@ class QueryController extends Controller
 
         $points = $query->get();
 
-        return $this->response->collection($points, new PointTransformer());
+        return $this->response()->collection($points, new PointTransformer());
     }
 
     /**
@@ -141,22 +141,22 @@ class QueryController extends Controller
      * @param Project $project
      * @return \Dingo\Api\Http\Response
      */
-    public function projectQuery(Request $request, Project $project)
+    public function projectQuery(Request $request, Project $project): Response
     {
         $user = $this->user();
         $arUserZ = getArUserZ($user, $request);
         $query = $project->query();
         if ($arUserZ) {
-            $query->whereHas('points', function ($q) use ($arUserZ) {
+            $query->whereHas('points', static function ($q) use ($arUserZ) {
                 $q->where('bd_z', '=', $arUserZ);
             });
         }
 
-        if ($request->alias) {
-            $query->where('versionname', '=', $request->alias);
+        if ($request->has('alias')) {
+            $query->where('versionname', '=', $request->get('alias'));
         }
-        $project = $query->where('name', 'like', "%{$request->name}%")->get();
-        return $this->response->collection($project, new ProjectTransformer());
+        $project = $query->where('name', 'like', "%{$request->get('name')}%")->get();
+        return $this->response()->collection($project, new ProjectTransformer());
     }
 
     /**
@@ -165,33 +165,33 @@ class QueryController extends Controller
      * @param TeamProject $teamProject
      * @return \Dingo\Api\Http\Response
      */
-    public function teamProjectQuery(Request $request, TeamProject $teamProject)
+    public function teamProjectQuery(Request $request, TeamProject $teamProject): Response
     {
         $query = $teamProject->query();
 
-        if ($request->belong) {
-            $query->where('belong', '=', $request->belong);
+        if ($request->has('belong')) {
+            $query->where('belong', '=', $request->get('belong'));
         }
 
         if ($request->has('copyright_attribute')) {
             $query->where('copyright_attribute', '=', $request->copyright_attribute ?? 0);
         }
 
-        $team_project = $query->where('project_name', 'like', "%{$request->project_name}%")->get();
-        return $this->response->collection($team_project, new TeamProjectTransformer());
+        $team_project = $query->where('project_name', 'like', "%{$request->get('project_name')}%")->get();
+        return $this->response()->collection($team_project, new TeamProjectTransformer());
     }
 
 
-    public function launchTplQuery(Request $request, ProjectLaunchTpl $projectLaunchTpl)
+    public function launchTplQuery(Request $request, ProjectLaunchTpl $projectLaunchTpl): Response
     {
         $query = $projectLaunchTpl->query();
 
-        if ($request->name) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->get('name') . '%');
         }
         $templates = $query->where('oid', '=', 0)->get();
 
-        return $this->response->collection($templates, new ProjectLaunchTplTransformer());
+        return $this->response()->collection($templates, new ProjectLaunchTplTransformer());
 
     }
 
@@ -202,14 +202,14 @@ class QueryController extends Controller
      * @param AdTrade $adTrade
      * @return \Dingo\Api\Http\Response
      */
-    public function adTradeQuery(Request $request, AdTrade $adTrade)
+    public function adTradeQuery(Request $request, AdTrade $adTrade): Response
     {
         $query = $adTrade->query();
         if ($request->get('name')) {
             $query->where('name', 'like', '%' . $request->get('name') . '%');
         }
         $adTrades = $query->get();
-        return $this->response->collection($adTrades, new AdTradeTransformer());
+        return $this->response()->collection($adTrades, new AdTradeTransformer());
     }
 
     /**
@@ -223,7 +223,7 @@ class QueryController extends Controller
         $query = $adPlan->query();
 
         if (!$request->get('name') && !$request->get('ad_trade_id') && !$request->get('type')) {
-            return $this->response->collection(collect(), new AdPlanTransformer());
+            return $this->response()->collection(collect(), new AdPlanTransformer());
         }
 
         if ($request->get('name')) {
@@ -239,7 +239,7 @@ class QueryController extends Controller
         }
 
         $adPlans = $query->get();
-        return $this->response->collection($adPlans, new AdPlanTransformer());
+        return $this->response()->collection($adPlans, new AdPlanTransformer());
     }
 
     /**
@@ -253,7 +253,7 @@ class QueryController extends Controller
         $query = $advertisement->query();
 
         if (!$request->get('name') && !$request->get('type') && !$request->get('atid')) {
-            return $this->response->collection(collect(), new AdvertisementTransformer());
+            return $this->response()->collection(collect(), new AdvertisementTransformer());
         }
 
         if ($request->get('name')) {
@@ -269,183 +269,185 @@ class QueryController extends Controller
         }
 
         $advertisements = $query->get();
-        return $this->response->collection($advertisements, new AdvertisementTransformer());
+        return $this->response()->collection($advertisements, new AdvertisementTransformer());
     }
 
-    public function sceneQueryIndex(Scene $scene)
+    public function sceneQueryIndex(Scene $scene): Response
     {
-        return $this->response->collection($scene->where('sid', '>', 0)->get(), new SceneTransformer());
+        return $this->response()->collection($scene->where('sid', '>', 0)->get(), new SceneTransformer());
     }
 
-    public function arUserQueryIndex(Request $request, ArUser $arUser)
+    public function arUserQueryIndex(Request $request, ArUser $arUser): Response
     {
 
         $query = $arUser->query();
         $arUsers = collect();
-        if ($request->name) {
-            $arUsers = $query->where('realname', 'like', '%' . $request->name . '%')->get();
+        if ($request->has('name')) {
+            $arUsers = $query->where('realname', 'like', '%' . $request->get('name') . '%')->get();
         }
-        return $this->response->collection($arUsers, new ArUserTransformer());
+        return $this->response()->collection($arUsers, new ArUserTransformer());
     }
 
-    public function couponBatchQuery(CouponBatch $couponBatch, Request $request)
+    public function couponBatchQuery(CouponBatch $couponBatch, Request $request): Response
     {
         $query = $couponBatch->query();
 
-        if ($request->name) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->get('name') . '%');
         }
 
-        if ($request->company_id) {
-            $query->where('company_id', '=', $request->company_id);
+        if ($request->has('company_id')) {
+            $query->where('company_id', '=', $request->get('company_id'));
         }
 
         $couponBatches = $query->get();
-        return $this->response->collection($couponBatches, new CouponBatchTransformer());
+        return $this->response()->collection($couponBatches, new CouponBatchTransformer());
     }
 
-    public function companyQuery(Company $company, Request $request)
+    public function companyQuery(Company $company, Request $request): Response
     {
         $query = $company->query();
 
         /** @var  $loginUser \App\Models\User */
-        $loginUser = $this->user;
+        $loginUser = $this->user();
 
-        if (!$loginUser->isAdmin() && !$loginUser->hasRole('legal-affairs') && !$loginUser->hasRole('legal-affairs-manager')) {
-            $query->where('user_id', '=', $loginUser->id);
+        if (!($loginUser->isAdmin() || $loginUser->hasRole('legal-affairs|legal-affairs-manager'))) {
+            $query->where('bd_user_id', '=', $loginUser->id);
         }
 
-        if ($request->name) {
-            $query->where('name', 'like', '%' . $request->name . '%')->get();
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->get('name') . '%')->get();
         }
 
         $companies = $query->get();
-        return $this->response->collection($companies, new CompanyTransformer());
+        return $this->response()->collection($companies, new CompanyTransformer());
     }
 
-    public function customerQuery(Request $request)
+    public function customerQuery(Request $request): Response
     {
         $builder = Customer::query();
-        $loginUser = $this->user;
-        if (!$loginUser->isAdmin() && !$loginUser->hasRole('legal-affairs') && !$loginUser->hasRole('legal-affairs-manager')) {
-            $builder->whereHas('company', function ($builder) use ($loginUser) {
-                $builder->where('user_id', '=', $loginUser->id);
+        $loginUser = $this->user();
+        if (!($loginUser->isAdmin() || $loginUser->hasRole('legal-affairs|legal-affairs-manager'))) {
+            $builder->whereHas('company', static function ($builder) use ($loginUser) {
+                $builder->where('bd_user_id', '=', $loginUser->id);
             });
         }
 
-        $customers = $builder->where('company_id', $request->company_id)->get();
-        return $this->response->collection($customers, new CustomerTransformer());
+        $customers = $builder->where('company_id', $request->get('company_id'))->get();
+        return $this->response()->collection($customers, new CustomerTransformer());
     }
 
-    public function policyQuery(Policy $policy, Request $request)
+    public function policyQuery(Policy $policy, Request $request): Response
     {
         $query = $policy->query();
 
-        $loginUser = $this->user;
+        $loginUser = $this->user();
 
         if (!$loginUser->isAdmin()) {
             $query->where('bd_user_id', '=', $loginUser->id);
         }
 
-        if ($request->name) {
-            $query->where('name', 'like', '%' . $request->name . '%')->get();
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->get('name') . '%')->get();
         }
 
         $policies = $query->get();
-        return $this->response->collection($policies, new PolicyTransformer());
+        return $this->response()->collection($policies, new PolicyTransformer());
     }
 
-    public function contractQuery(Contract $contract, Request $request)
+    public function contractQuery(Contract $contract, Request $request): Response
     {
         $query = $contract->query();
         /** @var  $user \App\Models\User */
         $user = $this->user();
 
-        if ($request->name) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->get('name') . '%');
         }
-        if ($request->contract_number) {
-            $query->where('contract_number', 'like', '%' . $request->contract_number . '%');
-        }
-
-        if ($request->company_id) {
-            $query->where('company_id', $request->company_id);
+        if ($request->has('contract_number')) {
+            $query->where('contract_number', 'like', '%' . $request->get('contract_number') . '%');
         }
 
-        //收款合同，付款合同
+        if ($request->has('company_id')) {
+            $query->where('company_id', $request->get('company_id'));
+        }
+
+        //合同类型
         if ($request->has('type')) {
-            $query->where('type', $request->type);
+            $query->where('type', $request->get('type'));
         }
 
         //合同成本
-        if ($request->has('cost') && $request->cost == 0) {
+        if ($request->has('cost') && $request->get('cost') === 0) {
             $query->doesntHave('contractCost');
         }
 
         if ($user->hasRole('user') || $user->hasRole('bd-manager')) {
-            $query->where('applicant', '=', $user->id);
+            $query->where('owner', '=', $user->id);
         }
         $contracts = $query->where('status', '3')->get();
 
-        return $this->response->collection($contracts, new ContractTransformer());
+        return $this->response()->collection($contracts, new ContractTransformer());
     }
 
-    public function invoiceKindQuery(InvoiceKind $invoiceKind, Request $request)
+    public function invoiceKindQuery(InvoiceKind $invoiceKind): Response
     {
         $query = $invoiceKind->query();
         $invoiceKind = $query->get();
         return $this->response()->collection($invoiceKind, new InvoiceKindTransformer());
     }
 
-    public function goodsServiceQuery(GoodsService $goodsService, Request $request)
+    public function costKindQuery(ContractCostKind $contractCostKind): Response
+    {
+        $query = $contractCostKind->query();
+        $contractCostKind = $query->get();
+        return $this->response()->collection($contractCostKind, new ContractCostKindTransformer());
+    }
+
+    public function goodsServiceQuery(GoodsService $goodsService, Request $request): Response
     {
         $query = $goodsService->query();
-        $goodsService = $query->where('invoice_kind_id', $request->invoice_kind_id)->get();
-        return $this->response->collection($goodsService, new GoodsServiceTransformer());
+        $goodsService = $query->where('invoice_kind_id', $request->get('invoice_kind_id'))->get();
+        return $this->response()->collection($goodsService, new GoodsServiceTransformer());
     }
 
-    public function warehouseQuery(Request $request)
-    {
-        return DB::table('erp_warehouses')->get();
-    }
-
-    public function bdManagerQuery(Request $request)
+    public function bdManagerQuery(): Response
     {
         $role = Role::findByName('bd-manager');
         $users = $role->users()->get();
-        return $this->response->collection($users, new UserTransformer());
+        return $this->response()->collection($users, new UserTransformer());
     }
 
-    public function legalManagerQuery(Request $request)
+    public function legalManagerQuery(): Response
     {
         $role = Role::findByName('legal-affairs-manager');
         $users = $role->users()->get();
-        return $this->response->collection($users, new UserTransformer());
+        return $this->response()->collection($users, new UserTransformer());
     }
 
-    public function invoiceCompanyQuery(Request $request, InvoiceCompany $invoiceCompany)
+    public function invoiceCompanyQuery(Request $request, InvoiceCompany $invoiceCompany): Response
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
         $query = $invoiceCompany->query();
         if ($request->has('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+            $query->where('name', 'like', '%' . $request->get('name') . '%');
         }
 
-        if ($user->hasRole('user') || $user->hasRole('bd-manager')) {
+        if ($user->hasRole('user|bd-manager')) {
             $query->where('user_id', $user->id);
         }
         $invoiceCompany = $query->get();
         return $this->response()->collection($invoiceCompany, new InvoiceCompanyTransformer());
     }
 
-    public function paymentPayeeQuery(Request $request, PaymentPayee $paymentPayee)
+    public function paymentPayeeQuery(Request $request, PaymentPayee $paymentPayee): Response
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
         $query = $paymentPayee->query();
         if ($request->has('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+            $query->where('name', 'like', '%' . $request->get('name') . '%');
         }
         if ($user->hasRole('user') || $user->hasRole('bd-manager')) {
             $query->where('user_id', $user->id);
@@ -454,18 +456,19 @@ class QueryController extends Controller
         return $this->response()->collection($paymentPayee, new PaymentPayeeTransformer());
     }
 
-    public function receiveDateQuery(Request $request, ContractReceiveDate $contractReceiveDate)
+    public function receiveDateQuery(Request $request, ContractReceiveDate $contractReceiveDate): Response
     {
         $query = $contractReceiveDate->query();
-        $contractReceiveDate = $query->where('contract_id', $request->id)->whereRaw("invoice_receipt_id is null")->get();
+        $contractReceiveDate = $query->where('contract_id', $request->get('id'))
+            ->whereRaw('invoice_receipt_id is null')->get();
         return $this->response()->collection($contractReceiveDate, new ContractReceiveDateTransformer());
     }
 
-    public function userQuery(Request $request, User $user)
+    public function userQuery(Request $request, User $user): Response
     {
         $query = $user->query();
         if ($request->has('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+            $query->where('name', 'like', '%' . $request->get('name') . '%');
         }
         $user = $query->get();
         return $this->response()->collection($user, new UserTransformer());
@@ -477,13 +480,13 @@ class QueryController extends Controller
      * @param User $user
      * @return \Dingo\Api\Http\Response
      */
-    public function userPermissionQuery(Request $request, User $user)
+    public function userPermissionQuery(Request $request, User $user): Response
     {
-        $permission_name = $request->get("permission") ?? '';
+        $permission_name = $request->get('permission') ?? '';
 
         $query = $user->query()->permission($permission_name);
         if ($request->has('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+            $query->where('name', 'like', '%' . $request->get('name') . '%');
         }
         $user = $query->get();
 
@@ -497,26 +500,26 @@ class QueryController extends Controller
      * @return \Dingo\Api\Http\Response
      * @throws \Exception
      */
-    public function demandApplicationQuery(Request $request, DemandApplication $demandApplication)
+    public function demandApplicationQuery(Request $request, DemandApplication $demandApplication): Response
     {
         /** @var User $user */
         $user = Auth::user();
 
         $query = $demandApplication->query();
 
-        if ($request->has("status")) {
-            $status = explode(',', $request->get("status"));
+        if ($request->has('status')) {
+            $status = explode(',', $request->get('status'));
             $query->whereIn('status', $status);
         }
 
-        if ($request->has("no_status")) {
-            $query->where('status', '!=', $request->get("no_status"));
+        if ($request->has('no_status')) {
+            $query->where('status', '!=', $request->get('no_status'));
         }
 
-        if ($user->hasRole("bd-manager") || $user->hasRole("user") || $user->hasRole("business-operation")) {
-            if (!$request->get("create_select") && $user->hasRole("bd-manager")) {
+        if ($user->hasRole('bd-manager') || $user->hasRole('user') || $user->hasRole('business-operation')) {
+            if (!$request->get('create_select') && $user->hasRole('bd-manager')) {
                 //BD主管可查看自己及下属BD新建的申请列表
-                $user_ids = $user->subordinates()->pluck("id")->toArray();
+                $user_ids = $user->subordinates()->pluck('id')->toArray();
                 $user_ids [] = $user->id;
                 $query->whereIn('applicant_id', $user_ids);
             } else {
@@ -525,20 +528,20 @@ class QueryController extends Controller
             }
         }
 
-        $demandApplication = $query->orderBy("id")->get();
+        $demandApplication = $query->orderBy('id')->get();
 
         return $this->response()->collection($demandApplication, new DemandApplicationTransformer());
     }
 
 
-    public function teamRateQuery(TeamRate $teamRate)
+    public function teamRateQuery(TeamRate $teamRate): Response
     {
         $query = $teamRate->query();
         $teamRate = $query->get();
         return $this->response()->collection($teamRate, new TeamRateTransformer());
     }
 
-    public function attributeQuery(Request $request)
+    public function attributeQuery(): Response
     {
         /** @var \Baum\Node $node */
         $node = Attribute::query()->where('name', '业态')->first();
@@ -550,14 +553,14 @@ class QueryController extends Controller
     public function permissionQuery(Request $request)
     {
         $permission = Permission::query()
-            ->where('guard_name', $request->guard_name)
+            ->where('guard_name', $request->get('guard_name'))
             ->orderBy('created_at', 'desc')
             ->get()
             ->toHierarchy();
         return response()->json($permission);
     }
 
-    public function roleQuery(Request $request, Role $role)
+    public function roleQuery(Request $request, Role $role): Response
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
@@ -565,34 +568,41 @@ class QueryController extends Controller
         if (!$user->isSuperAdmin()) {
             $query->where('name', '<>', 'super-admin');
         }
-        $role = $query->where('guard_name', $request->guard_name)->get();
+        $role = $query->where('guard_name', $request->get('guard_name'))->get();
         return $this->response()->collection($role, new RoleTransformer());
     }
 
-    public function erpAttributeQuery(Request $request)
+
+    public function warehouseQuery(): \Illuminate\Support\Collection
+    {
+        return DB::table('erp_warehouses')->get();
+    }
+
+    public function erpAttributeQuery(): Response
     {
         $attribute = ErpAttribute::query()->get();
         return $this->response()->collection($attribute, new ErpAttributeTransformer());
     }
 
-    public function erpSupplierQuery(Company $company, Request $request)
+    public function erpSupplierQuery(Company $company): Response
     {
         $query = $company->query();
         $companies = $query->where('category', '=', 1)->get();
-        return $this->response->collection($companies, new CompanyTransformer());
+        return $this->response()->collection($companies, new CompanyTransformer());
     }
 
-    public function erpSkuQuery(Company $company, Request $request)
+    public function erpSkuQuery(): \Illuminate\Support\Collection
     {
         return DB::table('erp_products')->select('id', 'sku')->get();
     }
 
-    public function erpLocationQuery(Company $company, Request $request)
+    public function erpLocationQuery(): \Illuminate\Support\Collection
     {
         return DB::table('erp_locations')->select('id', 'name')->get();
     }
 
-    public function bdAndBdManagerQuery(Request $request)
+
+    public function bdAndBdManagerQuery(): Response
     {
         $bdRole = Role::findByName('user');
         $bds = $bdRole->users()->get();
@@ -602,33 +612,33 @@ class QueryController extends Controller
 
         $merged = $bds->merge($bdManagers);
 
-        return $this->response->collection($merged, new UserTransformer());
+        return $this->response()->collection($merged, new UserTransformer());
     }
 
-    public function storeQuery(Request $request, Store $store)
+    public function storeQuery(Request $request, Store $store): Response
     {
         $query = $store->query();
 
         //公司以及子公司名下商户列表
         if ($request->has('company_id')) {
-            $company_id = $request->company_id;
+            $company_id = $request->get('company_id');
 
-            $query->where(function ($q) use ($company_id) {
+            $query->where(static function ($q) use ($company_id) {
                 $q->where('company_id', $company_id);
-            })->orWhere(function ($q) use ($company_id) {
-                $q->whereHas('company', function ($q) use ($company_id) {
+            })->orWhere(static function ($q) use ($company_id) {
+                $q->whereHas('company', static function ($q) use ($company_id) {
                     $q->where('parent_id', $company_id);
                 });
             });
         }
 
         if ($request->has('market_id')) {
-            $query->where('marketid', '=', $request->market_id);
+            $query->where('marketid', '=', $request->get('market_id'));
         }
 
         $stores = $query->get();
 
-        return $this->response->collection($stores, new StoreTransformer());
+        return $this->response()->collection($stores, new StoreTransformer());
     }
 
     public function marketConfigQuery(Request $request, MarketConfig $marketConfig)
@@ -636,13 +646,13 @@ class QueryController extends Controller
         $query = $marketConfig->query();
 
         if ($request->has('company_id')) {
-            $query->where('company_id', '=', $request->company_id);
+            $query->where('company_id', '=', $request->get('company_id'));
         }
 
         $marketConfigs = $query->get();
 
         $markets = collect();
-        $marketConfigs->each(function ($item) use ($markets) {
+        $marketConfigs->each(static function ($item) use ($markets) {
             if ($item->market) {
                 $markets->push($item->market);
             }
@@ -652,33 +662,26 @@ class QueryController extends Controller
             return null;
         }
 
-        return $this->response->collection($markets, new MarketTransformer());
+        return $this->response()->collection($markets, new MarketTransformer());
     }
 
-    public function playingTypeQuery(PlayingType $playingType)
+    public function playingTypeQuery(PlayingType $playingType): Response
     {
         $query = $playingType->query();
         $playingTypes = $query->orderByDesc('aid')->get();
         return $this->response()->collection($playingTypes, new PlayingTypeTransformer());
     }
 
-    public function costKindQuery(ContractCostKind $contractCostKind)
-    {
-        $query = $contractCostKind->query();
-        $contractCostKind = $query->get();
-        return $this->response()->collection($contractCostKind, new ContractCostKindTransformer());
-    }
-
-    public function adminCustomersQuery(Request $request, Customer $customer)
+    public function adminCustomersQuery(Request $request, Customer $customer): Response
     {
         $query = $customer->query();
-        $company = Company::query()->findOrFail($request->company_id);
+        $company = Company::query()->findOrFail($request->get('company_id'));
 
-        $customers = $query->whereHas('company', function ($q) use ($company) {
+        $customers = $query->whereHas('company', static function ($q) use ($company) {
             $q->where('id', $company->id);
         })->orderByDesc('id')->get();
 
-        return $this->response->collection($customers, new CustomerTransformer());
+        return $this->response()->collection($customers, new CustomerTransformer());
     }
 
 
@@ -689,12 +692,12 @@ class QueryController extends Controller
      * @param Customer $customer
      * @return \Dingo\Api\Http\Response
      */
-    public function adminCustomersQueryByRole($role_name = '', Request $request, Customer $customer)
+    public function adminCustomersQueryByRole($role_name = '', Request $request, Customer $customer): Response
     {
         $query = $customer->query()->role($role_name);
 
         if ($request->has('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+            $query->where('name', 'like', '%' . $request->get('name') . '%');
         }
 
         $customer = $query->get();
@@ -717,7 +720,7 @@ class QueryController extends Controller
         }
 
         $projects = $query->get();
-        return $this->response->collection($projects, new ProjectTransformer());
+        return $this->response()->collection($projects, new ProjectTransformer());
     }
 
     /**
@@ -739,7 +742,7 @@ class QueryController extends Controller
         }
 
         $points = $query->get();
-        return $this->response->collection($points, new PointTransformer());
+        return $this->response()->collection($points, new PointTransformer());
     }
 
 
@@ -749,7 +752,7 @@ class QueryController extends Controller
      * @param Request $request
      * @return \Dingo\Api\Http\Response
      */
-    public function authorizedPolicyQuery(Policy $policy, Request $request)
+    public function authorizedPolicyQuery(Policy $policy, Request $request): Response
     {
         $query = $policy->query();
 
@@ -758,7 +761,7 @@ class QueryController extends Controller
         }
 
         $policies = $query->get();
-        return $this->response->collection($policies, new PolicyTransformer());
+        return $this->response()->collection($policies, new PolicyTransformer());
     }
 
     /**

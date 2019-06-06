@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\Privilege\V1\Request\RoleRequest;
 use App\Http\Controllers\Admin\Privilege\V1\Transformer\RoleDetailTransformer;
 use App\Http\Controllers\Admin\Privilege\V1\Transformer\RoleTransformer;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 class RoleController extends Controller
 {
@@ -40,6 +41,12 @@ class RoleController extends Controller
         $ids = $request->get('ids');
         $role->givePermissionTo($ids);
 
+        activity('create_role')
+            ->causedBy($this->user())
+            ->performedOn($role)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增角色');
+
         return $this->response()->noContent()->setStatusCode(201);
     }
 
@@ -47,16 +54,31 @@ class RoleController extends Controller
     {
         $role->update($request->all());
         $role->syncPermissions($request->get('ids'));
+
+        activity('update_role')
+            ->causedBy($this->user())
+            ->performedOn($role)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('更新角色');
+
         return $this->response()->noContent()->setStatusCode(200);
     }
 
-    public function destroy(Role $role)
+    public function destroy(Role $role, Request $request)
     {
         if ($role->users()->count() !== 0) {
             abort(403, '该角色已关联用户，暂不可删除');
         }
         $this->checkRole($role);
         $role->delete();
+
+
+        activity('delete_role')
+            ->causedBy($this->user())
+            ->performedOn($role)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('删除角色');
+
         return $this->response()->noContent()->setStatusCode(204);
     }
 

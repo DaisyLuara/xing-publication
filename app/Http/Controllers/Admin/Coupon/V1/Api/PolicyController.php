@@ -74,6 +74,14 @@ class PolicyController extends Controller
             'create_user_id' => $this->user->id,
             'bd_user_id' => $company->user_id,
         ], $request->all()))->save();
+
+
+        activity('create_policy')
+            ->causedBy($this->user())
+            ->performedOn($policy)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增奖品模版');
+
         return $this->response->item($policy, new PolicyTransformer())
             ->setStatusCode(201);
     }
@@ -81,6 +89,13 @@ class PolicyController extends Controller
     public function update(Policy $policy, PolicyRequest $request)
     {
         $policy->update($request->except(['company_id']));
+
+        activity('update_policy')
+            ->causedBy($this->user())
+            ->performedOn($policy)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑奖品模版');
+
         return $this->response->item($policy, new PolicyTransformer())
             ->setStatusCode(201);
     }
@@ -105,6 +120,13 @@ class PolicyController extends Controller
         abort_if($policy->batches()->find($couponBatch->id), 500, '已存在该奖品,请勿重复添加');
 
         $policy->batches()->save($couponBatch, $this->convert($request));
+
+        activity('create_batch_policy')
+            ->causedBy($this->user())
+            ->performedOn($policy)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增奖品模版子策略');
+
         return $this->response->item($policy, new PolicyTransformer())
             ->setStatusCode(201);
     }
@@ -112,13 +134,27 @@ class PolicyController extends Controller
     public function updateBatchPolicy(Policy $policy, $batch_policy_id, PolicyBatchesRequest $request)
     {
         $policy->batches()->updateExistingPivot($batch_policy_id, $this->convert($request));
+
+        activity('update_batch_policy')
+            ->causedBy($this->user())
+            ->performedOn($policy)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑奖品模版子策略');
+
         return $this->response->item($policy, new PolicyTransformer())
             ->setStatusCode(201);
     }
 
-    public function destroyBatchPolicy(Policy $policy, $batch_policy_id)
+    public function destroyBatchPolicy(Policy $policy, $batch_policy_id, Request $request)
     {
         $policy->batches()->detach($batch_policy_id);
+
+        activity('delete_batch_policy')
+            ->causedBy($this->user())
+            ->performedOn($policy)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('删除奖品模版子策略');
+
         return $this->response->item($policy, new PolicyTransformer())
             ->setStatusCode(201);
     }

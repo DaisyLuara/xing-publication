@@ -59,10 +59,10 @@ class DemandModifyController extends Controller
                     //BD主管可查看自己及下属BD新建的申请列表
                     $user_ids = $user->subordinates()->pluck('id')->toArray();
                     $user_ids[] = $user->id;
-                    $demand_application->whereIn('applicant_id', $user_ids);
+                    $demand_application->whereIn('owner', $user_ids);
                 } else if ($user->hasRole('user') || $user->hasRole('business-operation')) {
                     //只能查询自己创建的 Application
-                    $demand_application->where('applicant_id', '=', $user->id);
+                    $demand_application->where('owner', '=', $user->id);
                 }
 
             });
@@ -92,8 +92,8 @@ class DemandModifyController extends Controller
         $user = Auth::user();
         /** @var DemandApplication $demandApplication */
         $demandApplication = DemandApplication::query()->findOrFail($request->get('demand_application_id'));
-        if ($demandApplication->getApplicantId() !== $user->id) {
-            abort(422, '选择的标的非您所创建');
+        if ($demandApplication->owner !== $user->id) {
+            abort(422, '选择的标的非您所属');
         }
         $insertParams = [
             'demand_application_id' => $request->get('demand_application_id'),
@@ -109,6 +109,12 @@ class DemandModifyController extends Controller
         DemandModifyNotificationJob::dispatch($demandModify, 'create')->onQueue('demand');
         DemandModifyNotificationJob::dispatch($demandModify, 'un_review')->onQueue('demand')
             ->delay(now()->addHours(12));
+
+        activity('create_demand_modify')
+            ->causedBy($user)
+            ->performedOn($demandModify)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $insertParams])
+            ->log('新增需求修改');
 
         return $this->response->item($demandModify, new DemandModifyTransformer());
     }
@@ -126,16 +132,12 @@ class DemandModifyController extends Controller
 
         /** @var DemandApplication $demandApplication */
         $demandApplication = DemandApplication::query()->findOrFail($request->get('demand_application_id'));
-        if ($demandApplication->getApplicantId() !== $user->id) {
-            abort(422, '选择的标的非您所创建');
+        if ($demandApplication->owner !== $user->id) {
+            abort(422, '选择的标的非您所属');
         }
 
         if ($demandModify->getStatus() !== DemandModify::STATUS_UN_REVIEW && $demandModify->getHasFeedback() !== false) {
             abort(422, '该状态无法修改');
-        }
-
-        if ($demandApplication->getApplicantId() !== $user->id) {
-            abort(422, '该需求申请非您创建，无权修改');
         }
 
         $updateParams = [
@@ -148,6 +150,12 @@ class DemandModifyController extends Controller
         $demandModify->update($updateParams);
 
         DemandModifyNotificationJob::dispatch($demandModify, 'update')->onQueue('demand');
+
+        activity('update_demand_modify')
+            ->causedBy($user)
+            ->performedOn($demandModify)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $updateParams])
+            ->log('编辑需求修改');
 
         return $this->response->item($demandModify, new DemandModifyTransformer());
     }
@@ -191,6 +199,12 @@ class DemandModifyController extends Controller
 
         DemandModifyNotificationJob::dispatch($demandModify, 'reviewed')->onQueue('demand');
 
+        activity('review_demand_modify')
+            ->causedBy($user)
+            ->performedOn($demandModify)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $updateParams])
+            ->log('审核需求修改');
+
         return $this->response->item($demandModify, new DemandModifyTransformer());
 
     }
@@ -229,6 +243,12 @@ class DemandModifyController extends Controller
         $demandModify->update($updateParams);
 
         DemandModifyNotificationJob::dispatch($demandModify, 'feedback')->onQueue('demand');
+
+        activity('feedback_demand_modify')
+            ->causedBy($user)
+            ->performedOn($demandModify)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $updateParams])
+            ->log('反馈需求修改');
 
         return $this->response->item($demandModify, new DemandModifyTransformer());
     }
