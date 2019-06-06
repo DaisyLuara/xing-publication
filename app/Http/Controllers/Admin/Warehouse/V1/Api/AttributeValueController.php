@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\Warehouse\V1\Models\ErpAttributeValue;
 use App\Http\Controllers\Admin\Warehouse\V1\Request\AttributeValueRequest;
 use App\Http\Controllers\Admin\Warehouse\V1\Transformer\ErpAttributeValueTransformer;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 class AttributeValueController extends Controller
 {
@@ -34,6 +35,13 @@ class AttributeValueController extends Controller
     public function store(AttributeValueRequest $request, ErpAttributeValue $value)
     {
         $value->fill($request->all())->save();
+
+        activity('create_erp_attribute_value')
+            ->causedBy($this->user())
+            ->performedOn($value)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增Erp属性值');
+
         return $this->response()->noContent()->setStatusCode(201);
     }
 
@@ -42,9 +50,16 @@ class AttributeValueController extends Controller
 
     }
 
-    public function delete(ErpAttributeValue $value)
+    public function delete(ErpAttributeValue $value, Request $request)
     {
         $value->delete();
+
+        activity('delete_erp_attribute_value')
+            ->causedBy($this->user())
+            ->performedOn($value)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => []])
+            ->log('删除Erp属性值');
+
         return $this->response()->noContent()->setStatusCode(204);
     }
 }

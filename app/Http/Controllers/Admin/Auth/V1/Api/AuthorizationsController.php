@@ -51,7 +51,11 @@ class AuthorizationsController extends Controller
 
         $user = Auth::guard('api')->user();
 
-        activity('login')->causedBy($user)->log('登陆成功');
+        activity('login')
+            ->causedBy($user)
+            ->performedOn($user)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => []])
+            ->log('登陆成功');
 
         return $this->response->array([
             'access_token' => $token,

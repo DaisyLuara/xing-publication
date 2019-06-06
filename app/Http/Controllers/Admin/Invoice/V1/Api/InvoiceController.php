@@ -11,7 +11,7 @@ use App\Http\Controllers\Controller;
 use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class InvoiceController extends Controller
 {
@@ -79,6 +79,7 @@ class InvoiceController extends Controller
         $content = $param['invoice_content'];
         unset($param['invoice_content']);
 
+
         $rest = [];
         if ($user->hasRole('legal-affairs|legal-affairs-manager')) {
             $financeId = getProcessStaffId('finance', 'invoice');
@@ -86,43 +87,68 @@ class InvoiceController extends Controller
         }
         if ($user->hasRole('user')) {
             $rest = ['status' => 1, 'handler' => $user->parent_id, 'owner' => $user->id, 'applicant' => $user->id];
+
         }
         if ($user->hasRole('bd-manager')) {
             $role = Role::findByName('legal-affairs-manager');
             $legalMa = $role->users()->first();
+
             $rest = ['status' => 1, 'handler' => $legalMa->id, 'owner' => $user->id, 'applicant' => $user->id];
         }
+
+
         try {
             DB::beginTransaction();
-            $invoice = Invoice::query()->create(array_merge($param, $rest));
+            $invoiceItem = $invoice->query()->create(array_merge($param, $rest));
             foreach ($content as $item) {
-                $item['invoice_id'] = $invoice['id'];
+                $item['invoice_id'] = $invoiceItem['id'];
                 InvoiceContent::query()->create($item);
             }
             //文件存储
             if ($request->filled('ids')) {
                 $ids = explode(',', $request->get('ids'));
                 foreach ($ids as $id) {
-                    $invoice->media()->attach($id);
+                    $invoiceItem->media()->attach($id);
                 }
             }
+
+            activity('create_invoice')
+                ->causedBy($user)
+                ->performedOn($invoiceItem)
+                ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+                ->log('新增开票');
+
             DB::commit();
+            return $this->response()->item($invoiceItem, new InvoiceTransformer())->setStatusCode(201);
+
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error($e);
             abort(500, '系统错误');
         }
 
-        return $this->response()->item($invoice, new InvoiceTransformer())->setStatusCode(201);
     }
 
 
-    public function destroy(Invoice $invoice)
+    /**
+     * @param Invoice $invoice
+     * @param Request $request
+     * @return \Dingo\Api\Http\Response
+     * @throws \Exception
+     */
+    public function destroy(Invoice $invoice, Request $request): Response
     {
         if ($invoice->status !== 1) {
             abort(403, '合同审批状态已更改，不可删除');
         }
         $invoice->delete();
+
+        activity('delete_invoice')
+            ->causedBy($this->user())
+            ->performedOn($invoice)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => []])
+            ->log('删除开票');
+
         return $this->response()->noContent()->setStatusCode(204);
     }
 
@@ -132,7 +158,14 @@ class InvoiceController extends Controller
         /** @var  $user \App\Models\User */
         $user = $this->user();
         $invoice->update(array_merge($request->all(), ['handler' => $invoice->applicant, 'status' => 6]));
-        InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'invoice_id' => $invoice->id], ['user_id' => $user->id, 'invoice_id' => $invoice->id]);
+        InvoiceHistory::query()->updateOrCreate(['user_id' => $user->id, 'invoice_id' => $invoice->id], ['user_id' => $user->id, 'invoice_id' => $invoice->id]);
+
+        activity('reject_invoice')
+            ->causedBy($user)
+            ->performedOn($invoice)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('驳回开票');
+
         return $this->response()->noContent()->setStatusCode(200);
     }
 
@@ -152,7 +185,7 @@ class InvoiceController extends Controller
             }
             $invoice->bd_ma_message = $request->get('bd_ma_message');
             $invoice->update();
-            InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'invoice_id' => $invoice->id], ['user_id' => $user->id, 'invoice_id' => $invoice->id]);
+            InvoiceHistory::query()->updateOrCreate(['user_id' => $user->id, 'invoice_id' => $invoice->id], ['user_id' => $user->id, 'invoice_id' => $invoice->id]);
 
         } else if ($user->hasRole('legal-affairs-manager')) {
             $financeId = getProcessStaffId('finance', 'invoice');
@@ -163,19 +196,25 @@ class InvoiceController extends Controller
             }
             $invoice->legal_ma_message = $request->get('legal_ma_message');
             $invoice->update();
-            InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'invoice_id' => $invoice->id], ['user_id' => $user->id, 'invoice_id' => $invoice->id]);
+            InvoiceHistory::query()->updateOrCreate(['user_id' => $user->id, 'invoice_id' => $invoice->id], ['user_id' => $user->id, 'invoice_id' => $invoice->id]);
         } else if ($user->hasRole('finance')) {
             $invoice->status = 4;
             $invoice->handler = $user->id;
             $invoice->drawer = $user->name;
             $invoice->update();
-            InvoiceHistory::updateOrCreate(['user_id' => $user->id, 'invoice_id' => $invoice->id], ['user_id' => $user->id, 'invoice_id' => $invoice->id]);
+            InvoiceHistory::query()->updateOrCreate(['user_id' => $user->id, 'invoice_id' => $invoice->id], ['user_id' => $user->id, 'invoice_id' => $invoice->id]);
         }
+
+        activity('audit_invoice')
+            ->causedBy($user)
+            ->performedOn($invoice)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('审计开票');
 
         return $this->response()->item($invoice, new InvoiceTransformer())->setStatusCode(201);
     }
 
-    public function receive(Invoice $invoice): Response
+    public function receive(Invoice $invoice, Request $request): Response
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
@@ -188,6 +227,13 @@ class InvoiceController extends Controller
         $invoice->status = 5;
         $invoice->handler = null;
         $invoice->update();
+
+        activity('receive_invoice')
+            ->causedBy($user)
+            ->performedOn($invoice)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => []])
+            ->log('领取开票');
+
         return $this->response()->noContent();
     }
 

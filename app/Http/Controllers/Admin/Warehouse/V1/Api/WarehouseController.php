@@ -34,6 +34,13 @@ class WarehouseController extends Controller
     public function store(WarehouseRequest $request, Warehouse $warehouse)
     {
         $warehouse->fill($request->all())->saveOrFail();
+
+        activity('create_warehouse')
+            ->causedBy($this->user())
+            ->performedOn($warehouse)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增仓库');
+
         return $this->response->item($warehouse, new WarehouseTransformer());
     }
 
@@ -41,6 +48,13 @@ class WarehouseController extends Controller
     public function update(WarehouseRequest $request, Warehouse $warehouse)
     {
         $warehouse->update($request->all());
+
+        activity('update_warehouse')
+            ->causedBy($this->user())
+            ->performedOn($warehouse)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑仓库');
+
         return $this->response()->item($warehouse, new WarehouseTransformer())->setStatusCode(200);
     }
 

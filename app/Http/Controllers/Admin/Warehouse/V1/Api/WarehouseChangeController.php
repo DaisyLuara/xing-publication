@@ -71,6 +71,13 @@ class WarehouseChangeController extends Controller
             Contract::find($contract_id)->update(['product_status' => 2]);
             //记录出厂详情
             ProductFactory::Create(['contract_id' => $contract_id, 'product_content' => \GuzzleHttp\json_encode($content)]);
+
+            activity('create_warehouse_change_batch')
+                ->causedBy($this->user())
+                ->performedOn($warehousechange)
+                ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $param])
+                ->log('批量新增调拨记录');
+
         }
 
         $hardwarechange = $warehousechange->query()->paginate(10);
@@ -100,6 +107,13 @@ class WarehouseChangeController extends Controller
         $this->inLocation($inLocation, $productId, $num);
         //记录库存变化
         $warehouseChange->fill($request->all())->saveOrFail();
+
+        activity('create_warehouse_change')
+            ->causedBy($this->user())
+            ->performedOn($warehouseChange)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增调拨记录');
+
         return $this->response->item($warehouseChange, new WarehouseChangeTransformer());
     }
 

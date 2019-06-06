@@ -53,19 +53,26 @@ class ContractCostController extends Controller
 
     public function store(ContractCostRequest $request, ContractCost $contractCost)
     {
+        $params = $request->all();
         $status = 0;
         /** @var  $user \App\Models\User */
         $user = $this->user();
         if ($user->hasRole('legal-affairs-manager')) {
             $status = 1;
-            $contractCost->fill(array_merge($request->all(), ['confirm_cost' => $request->get('total_cost')]))->save();
+            $contractCost->fill(array_merge($params, ['confirm_cost' => $request->get('total_cost')]))->save();
         } else {
-            $contractCost->fill($request->all())->save();
+            $contractCost->fill($params)->save();
         }
         $contents = $request->get('cost_content');
         foreach ($contents as $content) {
-            ContractCostContent::create(array_merge($content, ['cost_id' => $contractCost->id, 'status' => $status]));
+            ContractCostContent::query()->create(array_merge($content, ['cost_id' => $contractCost->id, 'status' => $status]));
         }
+
+        activity('create_contract_cost')
+            ->causedBy($this->user())
+            ->performedOn($contractCost)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $params])
+            ->log('新增合同成本');
 
         return $this->response()->noContent()->setStatusCode(201);
     }

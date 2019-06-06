@@ -75,6 +75,13 @@ class ActivityMediaController extends Controller
         $media->fill($data)->save();
         //七牛鉴定
         MediaCheckJob::dispatch($media)->onQueue('media-check');
+
+        activity('create_activity_media')
+            ->causedBy($this->user())
+            ->performedOn($media)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增活动资源');
+
         return response()->json(['id' => $media->id, 'url' => $media->url])->setStatusCode(201);
     }
 
@@ -91,6 +98,14 @@ class ActivityMediaController extends Controller
         $media->status = $request->get('status');
         $media->audit_user_id = $user->id;
         $media->update();
+
+        activity('audit_activity_media')
+            ->causedBy($user)
+            ->performedOn($media)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('审核活动资源');
+
+
         return $this->response()->noContent()->setStatusCode(200);
     }
 
@@ -108,6 +123,12 @@ class ActivityMediaController extends Controller
                 }
             }
         }
+
+        activity('mass_audit_activity_media')
+            ->causedBy($user)
+            ->performedOn(new ActivityMedia())
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('批量审核活动资源');
 
         return $this->response()->noContent()->setStatusCode(200);
     }

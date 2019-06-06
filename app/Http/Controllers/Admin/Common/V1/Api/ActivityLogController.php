@@ -43,7 +43,9 @@ class ActivityLogController extends Controller
         }
 
         if ($request->get('subject_type')) {
+            
             $query->whereRaw("subject_type = '". str_replace('\\','\\\\', $request->get('subject_type')) ."'");
+
             if ($request->get('subject_id')) {
                 $query->where('subject_id', '=', $request->get('subject_id'));
             }

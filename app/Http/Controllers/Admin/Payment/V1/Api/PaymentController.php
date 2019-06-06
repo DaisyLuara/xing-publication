@@ -67,7 +67,8 @@ class PaymentController extends Controller
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
-        if (!$user->parent_id || $user->hasRole('use|bd-manager')) {
+
+        if (!$user->parent_id || $user->hasRole('user|bd-manager')) {
             abort(500, '无所属主管，无法新增付款申请');
         }
         $rest = [];
@@ -91,16 +92,37 @@ class PaymentController extends Controller
                 $payment->media()->attach($id);
             }
         }
+
+        activity('create_payment')
+            ->causedBy($user)
+            ->performedOn($payment)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增付款申请');
+
         return $this->response()->noContent();
     }
 
 
-    public function destroy(Payment $payment): Response
+    /**
+     * @param Payment $payment
+     * @param Request $request
+     * @return Response
+     * @throws \Exception
+     */
+    public function destroy(Payment $payment, Request $request): Response
     {
         if ($payment->status !== 1) {
             abort(403, '合同审批状态已更改，不可删除');
         }
         $payment->delete();
+
+
+        activity('delete_payment')
+            ->causedBy($this->user())
+            ->performedOn($payment)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => []])
+            ->log('删除付款申请');
+
         return $this->response()->noContent();
     }
 
@@ -108,7 +130,14 @@ class PaymentController extends Controller
     {
         $user = $this->user();
         $payment->update(array_merge($request->all(), ['status' => 5, 'handler' => $payment->applicant]));
-        PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
+        PaymentHistory::query()->updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
+
+        activity('reject_payment')
+            ->causedBy($user)
+            ->performedOn($payment)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('驳回付款申请');
+
         return $this->response()->noContent();
     }
 
@@ -126,7 +155,7 @@ class PaymentController extends Controller
             }
             $payment->bd_ma_message = $request->get('bd_ma_message');
             $payment->update();
-            PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
+            PaymentHistory::query()->updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
 
         } else if ($user->hasRole('legal-affairs')) {
             $payment->handler = $user->parent_id;
@@ -135,7 +164,7 @@ class PaymentController extends Controller
             }
             $payment->legal_message = $request->get('legal_message');
             $payment->update();
-            PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
+            PaymentHistory::query()->updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
         } else if ($user->hasRole('legal-affairs-manager')) {
 
             $auditorId = getProcessStaffId('auditor', 'payment');
@@ -145,7 +174,7 @@ class PaymentController extends Controller
                 abort(500, '没有填写意见');
             }
             $payment->update();
-            PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
+            PaymentHistory::query()->updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
 
         } else if ($user->hasRole('auditor')) {
             $financeId = getProcessStaffId('finance', 'payment');
@@ -156,19 +185,27 @@ class PaymentController extends Controller
             }
             $payment->auditor_message = $request->get('auditor_message');
             $payment->update();
-            PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
+            PaymentHistory::query()->updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
 
         } else if ($user->hasRole('finance')) {
             $payment->status = 4;
             $payment->handler = null;
             $payment->payer = $user->name;
             $payment->update();
-            PaymentHistory::updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
+            PaymentHistory::query()->updateOrCreate(['user_id' => $user->id, 'payment_id' => $payment->id], ['user_id' => $user->id, 'payment_id' => $payment->id]);
         }
+
+        activity('audit_payment')
+            ->causedBy($user)
+            ->performedOn($payment)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('审计付款申请');
+
         return $this->response()->noContent();
     }
 
-    public function receive(Payment $payment): Response
+
+    public function receive(Request $request, Payment $payment): Response
     {
         /** @var  $user \App\Models\User */
         $user = $this->user();
@@ -177,6 +214,13 @@ class PaymentController extends Controller
         }
         $payment->receive_status = 1;
         $payment->update();
+
+        activity('receive_payment')
+            ->causedBy($user)
+            ->performedOn($payment)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('确定处理付款申请');
+
         return $this->response()->noContent();
     }
 

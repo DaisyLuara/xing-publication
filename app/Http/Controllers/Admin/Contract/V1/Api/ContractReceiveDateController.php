@@ -60,7 +60,15 @@ class ContractReceiveDateController extends Controller
 
     public function store(ContractReceiveDateRequest $request, Contract $contract, ContractReceiveDate $contractReceiveDate)
     {
-        $contractReceiveDate->fill(array_merge($request->all(), ['contract_id' => $contract->id, 'receive_status' => 0]))->save();
+        $params = $request->all();
+        $contractReceiveDate->fill(array_merge($params, ['contract_id' => $contract->id, 'receive_status' => 0]))->save();
+
+        activity('create_contract_receive_date')
+            ->causedBy($this->user())
+            ->performedOn($contractReceiveDate)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $params])
+            ->log('新增合同收款日期');
+
         return $this->response()->noContent()->setStatusCode(201);
     }
 

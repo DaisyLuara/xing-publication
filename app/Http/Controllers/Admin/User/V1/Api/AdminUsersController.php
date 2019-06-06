@@ -88,11 +88,12 @@ class AdminUsersController extends Controller
             $user->parent_id = $user->id;
             $user->update();
         }
-        activity('user')
+        activity('create_user')
             ->causedBy($this->user())
-            ->on($user)
-            ->withProperties($request->except(['password']))
+            ->performedOn($user)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->except(['password']) ])
             ->log('新增用户');
+
 
         CreateAdminStaffJob::dispatch($user, $role)->onQueue('create_admin_staff');
 
@@ -103,6 +104,10 @@ class AdminUsersController extends Controller
     public function update($user_id, UserRequest $request): Response
     {
         $user = $this->getUserByID($user_id);
+        if(!$user) {
+            abort(422,'不存在该用户');
+        }
+
         $currentUser = $this->user();
 
         //传入的权限不会超过管理员本身权限
@@ -123,11 +128,11 @@ class AdminUsersController extends Controller
 
         $user->update($attributes);
 
-        activity('user')
+        activity('update_user')
             ->causedBy($currentUser)
-            ->on($user)
-            ->withProperties($request->except(['password']))
-            ->log('修改用户');
+            ->performedOn($user)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->except(['password']) ])
+            ->log('编辑用户');
 
         return $this->response()->item($user, new UserTransformer());
     }
@@ -144,9 +149,9 @@ class AdminUsersController extends Controller
         })->where('id', '=', $user_id)->first();
     }
 
-    public function destroy($user_id)
+    public function destroy($user_id, Request $request)
     {
-        $user = User::findOrFail($user_id);
+        $user = User::query()->findOrFail($user_id);
         $currentUser = $this->user();
 
         if ($currentUser->id === $user_id) {
@@ -154,7 +159,14 @@ class AdminUsersController extends Controller
         }
 
         $user->delete();
-        return $this->response()->noContent();
+
+        activity('delete_user')
+            ->causedBy($currentUser)
+            ->performedOn($user)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => [] ])
+            ->log('删除用户');
+
+        return $this->response->noContent();
     }
 
     public function syncZValue($user_id)

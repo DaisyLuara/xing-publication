@@ -36,9 +36,9 @@ class InvoiceCompanyController extends Controller
         if ($user->hasRole('user|bd-manager')) {
             $query->where('owner', $user->id);
         }
-        $invoiceCompany = $query->orderByDesc('created_at')->paginate(10);
+        $invoiceCompanyItems = $query->orderByDesc('created_at')->paginate(10);
 
-        return $this->response()->paginator($invoiceCompany, new InvoiceCompanyTransformer());
+        return $this->response()->paginator($invoiceCompanyItems, new InvoiceCompanyTransformer());
     }
 
     public function store(InvoiceCompanyRequest $request, InvoiceCompany $invoiceCompany): Response
@@ -48,7 +48,15 @@ class InvoiceCompanyController extends Controller
         if (!$user->hasRole('user|bd-manager|legal-affairs|legal-affairs-manager')) {
             abort(403, '无操作权限');
         }
+
         $invoiceCompany->fill(array_merge($request->all(), ['user_id' => $user->id, 'owner' => $user->id]))->save();
+
+        activity('create_invoice_company')
+            ->causedBy($user)
+            ->performedOn($invoiceCompany)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增开票公司');
+
         return $this->response()->noContent();
     }
 
@@ -59,6 +67,13 @@ class InvoiceCompanyController extends Controller
             abort(403, '无操作权限');
         }
         $invoiceCompany->update($request->all());
+
+        activity('update_invoice_company')
+            ->causedBy($user)
+            ->performedOn($invoiceCompany)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑开票公司');
+
         return $this->response()->noContent();
     }
 

@@ -12,7 +12,6 @@ use App\Models\User;
 use Carbon\Carbon;
 use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class DemandApplicationController extends Controller
 {
@@ -25,7 +24,7 @@ class DemandApplicationController extends Controller
     {
         $query = DemandApplication::query();
         /** @var User $user */
-        $user = Auth::user();
+        $user = $this->user();
         if ($request->get('title')) {
             $query->where('title', 'like', '%' . $request->get('title') . '%');
         }
@@ -84,7 +83,7 @@ class DemandApplicationController extends Controller
     public function store(DemandApplicationRequest $request, DemandApplication $demandApplication): Response
     {
         /** @var User $user */
-        $user = Auth::user();
+        $user = $this->user();
 
         $params = $request->all();
 
@@ -115,6 +114,12 @@ class DemandApplicationController extends Controller
         DemandApplicationNotificationJob::dispatch($demandApplication, 'un_receive')->onQueue('demand')
             ->delay(now()->addHours(12));
 
+        activity('create_demand_application')
+            ->causedBy($user)
+            ->performedOn($demandApplication)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $params])
+            ->log('新增需求申请');
+
         return $this->response->item($demandApplication, new DemandApplicationTransformer());
     }
 
@@ -128,7 +133,7 @@ class DemandApplicationController extends Controller
     {
 
         /** @var User $user */
-        $user = Auth::user();
+        $user = $this->user();
 
         $params = $request->all();
         $params['contract_ids'] = $params['contract_ids'] ?? [];
@@ -177,6 +182,12 @@ class DemandApplicationController extends Controller
 
         DemandApplicationNotificationJob::dispatch($demandApplication, 'update')->onQueue('demand');
 
+        activity('update_demand_application')
+            ->causedBy($user)
+            ->performedOn($demandApplication)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $params])
+            ->log('编辑需求申请');
+
         return $this->response->item($demandApplication, new DemandApplicationTransformer());
     }
 
@@ -191,7 +202,7 @@ class DemandApplicationController extends Controller
     {
 
         /** @var User $user */
-        $user = Auth::user();
+        $user = $this->user();
 
         if ($demandApplication->owner !== $user->id) {
             abort(422, '该申请非您所属，无权修改');
@@ -221,6 +232,12 @@ class DemandApplicationController extends Controller
         //更新与合同的关联
         $demandApplication->contracts()->sync($params['contract_ids']);
 
+        activity('update_demand_application_contract')
+            ->causedBy($user)
+            ->performedOn($demandApplication)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑需求申请合同信息');
+
         return $this->response->item($demandApplication, new DemandApplicationTransformer());
     }
 
@@ -234,7 +251,7 @@ class DemandApplicationController extends Controller
     public function receiveDemand(Request $request, DemandApplication $demandApplication): Response
     {
         /** @var User $user */
-        $user = Auth::user();
+        $user = $this->user();
 
         if ($user->can('demand.application.receive_special')) {
             if ($demandApplication->getStatus() === DemandApplication::STATUS_CONFIRM) {
@@ -267,6 +284,12 @@ class DemandApplicationController extends Controller
 
         DemandApplicationNotificationJob::dispatch($demandApplication, 'received')->onQueue('demand');
 
+        activity('receive_demand_application')
+            ->causedBy($user)
+            ->performedOn($demandApplication)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('接单需求申请');
+
         return $this->response->item($demandApplication, new DemandApplicationTransformer());
     }
 
@@ -274,12 +297,13 @@ class DemandApplicationController extends Controller
     /**
      * 确认完成
      * @param DemandApplication $demandApplication
-     * @return \Dingo\Api\Http\Response
+     * @param Request $request
+     * @return Response
      */
-    public function confirmDemand(DemandApplication $demandApplication): Response
+    public function confirmDemand(DemandApplication $demandApplication, Request $request): Response
     {
         /** @var User $user */
-        $user = Auth::user();
+        $user = $this->user();
 
         if (!in_array($demandApplication->getStatus(), [DemandApplication::STATUS_RECEIVED, DemandApplication::STATUS_MODIFY], true)) {
             abort(422, '该状态无法确认完成');
@@ -301,6 +325,12 @@ class DemandApplicationController extends Controller
         $demandApplication->update($update_params);
 
         DemandApplicationNotificationJob::dispatch($demandApplication, 'confirm')->onQueue('demand');
+
+        activity('confirm_demand_application')
+            ->causedBy($user)
+            ->performedOn($demandApplication)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $update_params])
+            ->log('确认完成需求申请');
 
         return $this->response->item($demandApplication, new DemandApplicationTransformer());
 
