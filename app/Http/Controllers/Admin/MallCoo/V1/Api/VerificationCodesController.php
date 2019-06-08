@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Admin\MallCoo\V1\Api;
 
 use App\Http\Controllers\Admin\MallCoo\V1\Request\VerificationCodeRequest;
 use App\Http\Controllers\Controller;
+use App\Gateways\YouxuntongGateway;
+use Overtrue\EasySms\EasySms;
 use App\Traits\UmsSms;
 use Log;
-use Overtrue\EasySms\EasySms;
 
 class VerificationCodesController extends Controller
 {
@@ -53,31 +54,40 @@ class VerificationCodesController extends Controller
         ])->setStatusCode(201);
     }
 
+    /**
+     * @param VerificationCodeRequest $request
+     * @param EasySms $easySms
+     * @throws \Overtrue\EasySms\Exceptions\InvalidArgumentException
+     * @throws \Exception
+     */
     public function sendVerificationCodes(VerificationCodeRequest $request, EasySms $easySms)
     {
         $phone = $request->get('phone');
+
+        // 注册
+        $easySms->extend('youxuntong', function () {
+            return new YouxuntongGateway(config('easysms.gateways.youxuntong'));
+        });
 
         if (!app()->environment('production')) {
             $code = '1234';
         } else {
             // 生成4位随机数，左侧补0
             $code = str_pad(random_int(1, 9999), 4, 0, STR_PAD_LEFT);
-
-            $content = "【星视度】尊敬的用户您好，您的短信码：$code ， 有效期为10分钟，感谢您的参与！为保障您的账户安全，请勿泄露。";
+            $content = '尊敬的用户，您的验证码是' . $code . '，30分钟内有效。为保障账户安全，请勿泄露。';
 
             try {
                 $easySms->send($phone, [
                     'content' => $content,
                 ]);
-            } catch (\GuzzleHttp\Exception\ClientException $exception) {
-                $response = $exception->getResponse();
-                $result = json_decode($response->getBody()->getContents(), true);
-                return $this->response->errorInternal($result['msg'] ?? '短信发送异常');
+            } catch (\Overtrue\EasySms\Exceptions\NoGatewayAvailableException $exception) {
+                $message = $exception->getException('youxuntong')->getMessage();
+                return $this->response->errorInternal($message ?: '短信发送异常');
             }
         }
 
         $key = 'verificationCode_' . str_random(15);
-        $expiredAt = now()->addMinutes(10);
+        $expiredAt = now()->addMinutes(30);
         // 缓存短信验证码 10分钟过期。
         \Cache::put($key, ['phone' => $phone, 'code' => $code], $expiredAt);
 

@@ -11,6 +11,7 @@ return [
         // 默认可用的发送网关
         'gateways' => [
             'yunpian',
+            'youxuntong',
         ],
     ],
     // 可用的网关配置
@@ -21,5 +22,9 @@ return [
         'yunpian' => [
             'api_key' => env('YUNPIAN_API_KEY'),
         ],
+        'youxuntong' => [
+            'account' => env('YOUXUNTONG_ACCOUNT'),
+            'password' => env('YOUXUNTONG_PASSWORD'),
+        ]
     ],
 ];
