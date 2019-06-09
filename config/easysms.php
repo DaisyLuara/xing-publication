@@ -12,6 +12,7 @@ return [
         'gateways' => [
             'yunpian',
             'youxuntong',
+            'ums',
         ],
     ],
     // 可用的网关配置
@@ -25,6 +26,11 @@ return [
         'youxuntong' => [
             'account' => env('YOUXUNTONG_ACCOUNT'),
             'password' => env('YOUXUNTONG_PASSWORD'),
-        ]
+        ],
+        'ums' => [
+            'account' => env('UMS_ACCOUNT'),
+            'password' => env('UMS_PASSWORD'),
+        ],
+
     ],
 ];

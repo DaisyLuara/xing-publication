@@ -2,45 +2,47 @@
 
 namespace App\Http\Controllers\Admin\MallCoo\V1\Api;
 
+use App\Gateways\UmsGateway;
 use App\Http\Controllers\Admin\MallCoo\V1\Request\VerificationCodeRequest;
 use App\Http\Controllers\Controller;
 use App\Gateways\YouxuntongGateway;
 use Overtrue\EasySms\EasySms;
-use App\Traits\UmsSms;
 use Log;
 
 class VerificationCodesController extends Controller
 {
-    use UmsSms;
 
     /**
-     * 生成验证码
+     * UMS(吾悦)
      * @param VerificationCodeRequest $request
      * @throws \Exception
      */
-    public function store(VerificationCodeRequest $request)
+    public function store(VerificationCodeRequest $request, EasySms $easySms)
     {
-        $phone = $request->phone;
+        $phone = $request->get('phone');
+
+        // 注册
+        $easySms->extend('ums', function () {
+            return new UmsGateway(config('easysms.gateways.ums'));
+        });
 
         if (!app()->environment('production')) {
-            $code = "1234";
+            $code = '1234';
         } else {
             // 生成4位随机数，左侧补0
             $code = str_pad(random_int(1, 9999), 4, 0, STR_PAD_LEFT);
-            $content = "尊敬的用户，您的验证码是" . $code . "，30分钟内有效。为保障账户安全，请勿泄露。";
+            $content = '尊敬的用户，您的验证码是' . $code . '，30分钟内有效。为保障账户安全，请勿泄露。';
 
             try {
-                $strData = $this->send($phone, $content);
-                Log::info('verificationCodes.' . $phone, ['strData' => $strData]);
+                $easySms->send($phone, [
+                    'content' => $content,
+                ]);
 
-                parse_str($strData, $resData);
-                abort_if($resData['result'] != 0, 500, $resData['description']);
-
-            } catch (\GuzzleHttp\Exception\ClientException $exception) {
-                $response = $exception->getResponse();
-                $result = json_decode($response->getBody()->getContents(), true);
-                return $this->response->errorInternal($result['msg'] ?? '短信发送异常');
+            } catch (\Overtrue\EasySms\Exceptions\NoGatewayAvailableException $exception) {
+                $message = $exception->getException('ums')->getMessage();
+                return $this->response->errorInternal($message ?: '短信发送异常');
             }
+
         }
 
         $key = 'verificationCode_' . str_random(15);
@@ -55,6 +57,7 @@ class VerificationCodesController extends Controller
     }
 
     /**
+     * 优讯通(荟聚)
      * @param VerificationCodeRequest $request
      * @param EasySms $easySms
      * @throws \Overtrue\EasySms\Exceptions\InvalidArgumentException
@@ -88,7 +91,7 @@ class VerificationCodesController extends Controller
 
         $key = 'verificationCode_' . str_random(15);
         $expiredAt = now()->addMinutes(30);
-        // 缓存短信验证码 10分钟过期。
+        // 缓存短信验证码 30分钟过期。
         \Cache::put($key, ['phone' => $phone, 'code' => $code], $expiredAt);
 
         return $this->response->array([
