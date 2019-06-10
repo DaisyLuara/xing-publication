@@ -42,6 +42,7 @@ class CheckReceipt extends Notification
             'reply_content' => $contract->name . '收款日期截止' . "\r\n" . '公司名称:' . $contract->company->name . "\r\n" . '负责人:' . $contract->ownerUser->name,
             'user_id' => $contract->owner,
             'user_name' => User::find($contract->owner, ['name'])->name,
+            'wechat_notify' => true,
             'type' => 'review'
         ];
 

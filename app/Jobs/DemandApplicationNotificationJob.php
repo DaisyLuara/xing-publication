@@ -52,6 +52,7 @@ class DemandApplicationNotificationJob implements ShouldQueue
             'id' => $this->demandApplication->getId(),
             'user_id' => $this->demandApplication->owner,
             'user_name' => $demandOwnerUser->name,
+            'wechat_notify' => true,
             'type' => 'demand_application',
             'reply_content' => '需求申请有新的变更!' . $str
         ];

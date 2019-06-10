@@ -19,15 +19,12 @@ class NotificationObserver
         if (env('APP_ENV') === 'production') {
             try {
                 if ($databaseNotification->notifiable_type === 'App\Models\User') {
-                    /** @var User $user */
-                    $user = $databaseNotification->notifiable;
-                    if ($user->weixin_openid) {
-                        $app = Factory::officialAccount(config('wechat.official_account.default'));
-
-
-                        $content = $databaseNotification->data;
-                        if ($content && $content['reply_content']) {
-
+                    $content = $databaseNotification->data;
+                    if ($content && $content['reply_content'] && $content['wechat_notify']) {
+                        /** @var User $user */
+                        $user = $databaseNotification->notifiable;
+                        if ($user->weixin_openid) {
+                            $app = Factory::officialAccount(config('wechat.official_account.default'));
                             $app->template_message->send([
                                 'touser' => $user->weixin_openid,
                                 'template_id' => config('wechat.official_account_template_id.notification'),
