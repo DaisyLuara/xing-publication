@@ -14,7 +14,7 @@ class ShortUrlRequest extends Request
                 'target_url' => ['required', 'url', function ($key, $value, $fail) {
                     $urlType = $this->input('url_type');
                     $contain = strpos($value, env('COOKIE_DOMAIN'));
-                    if (($urlType === 1 && $contain) || ($urlType === 0 && !$contain)) {
+                    if (((int)$urlType === 1 && $contain) || ((int)$urlType === 0 && !$contain)) {
                         $fail('请检查链接和链接类型');
                     }
                 }],
