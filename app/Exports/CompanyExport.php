@@ -33,8 +33,8 @@ class CompanyExport extends BaseExport
         $currentUser = Auth::user();
 
         $query = DB::table('companies as c')
-            ->leftJoin('users as db_user', 'c.bd_user_id', '=', 'db_user.id')
-            ->leftJoin('users as create_user', 'c.bd_user_id', '=', 'create_user.id')
+            ->leftJoin('users as bd_user', 'c.bd_user_id', '=', 'bd_user.id')
+            ->leftJoin('users as create_user', 'c.user_id', '=', 'create_user.id')
             ->leftJoin('customers', 'c.id', '=', 'customers.company_id');
 
 
@@ -55,13 +55,13 @@ class CompanyExport extends BaseExport
         }
 
         if ($this->bdName) {
-            $query->where('create_user.name', 'like', '%' . $this->bdName . '%');
+            $query->where('bd_user.name', 'like', '%' . $this->bdName . '%');
         }
 
         //角色为管理员，法务，法务主管时，查看所有公司数据
         if (!$currentUser->isAdmin() && !$currentUser->hasRole('legal-affairs|legal-affairs-manager|operation')) {
             //角色为主管时，查看下属及自己
-            if ($currentUser->parent_id == $currentUser->id) {
+            if ($currentUser->parent_id === $currentUser->id) {
                 $query->where('create_user.parent_id', $currentUser->id);
             } else {
                 $query->where('c.user_id', $currentUser->id);
@@ -72,7 +72,7 @@ class CompanyExport extends BaseExport
             ->selectRaw("c.id,c.name,c.address,c.internal_name, 
             case c.category when 1 then '供应商' else '客户' end as 'category' ,
             case c.status when 1 then '待合作' when 2 then '合作中' else '已结束' end as 'status',
-            c.description,db_user.name as 'db_name',c.created_at,c.updated_at,
+            c.description,bd_user.name as 'db_name',c.created_at,c.updated_at,
             customers.id as '联系人ID',customers.name as 'customers_name',customers.position,concat('\t',customers.phone,'\t'),customers.telephone ")
             ->get()->toArray();
 
