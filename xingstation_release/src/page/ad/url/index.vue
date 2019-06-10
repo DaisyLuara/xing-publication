@@ -21,7 +21,7 @@
         
         <el-form-item 
           label="" 
-          prop="description">
+          prop="type">
           <el-select v-model="searchForm.type" clearable placeholder="请选择类型">
             <el-option
               v-for="item in linkTypes"
@@ -36,6 +36,9 @@
             type="primary"
             size="small"
             @click="search">搜索</el-button>
+          <el-button 
+            size="small"
+            @click="resetSearch('searchForm')">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -318,6 +321,11 @@ export default {
     resetField(formName){
       this.centerDialogVisible = false;
       this.$refs[formName].resetFields();
+    },
+    resetSearch(formName){
+      this.$refs[formName].resetFields();
+      this.currentPage = 1
+      this.getUrlList()
     }
   }
 }
@@ -374,7 +382,7 @@ export default {
     height: 100px;
   }
   .el_date_picker{
-    width: 100%;
+    width: 64%;
   }
 }
 </style>
