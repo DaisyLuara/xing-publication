@@ -162,10 +162,9 @@
   </div>
 </template>
 <script>
-import { getUrlList, getExportDownload } from 'service'
+import { getUrlList, getExportDownload,handleDateTypeTransform } from 'service'
 import VueClipboards from 'vue-clipboards'
 import Vue from 'vue'
-import moment from "moment"
 Vue.use(VueClipboards)
 import {
   Input,
@@ -195,20 +194,6 @@ export default {
     "el-dialog": Dialog
   },
   data() {
-    var checkUrl = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error('url不能为空'))
-      }
-      if (
-        !/(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/g.test(
-          value
-        )
-      ) {
-        callback(new Error('url必须符合规范'))
-      } else {
-        callback()
-      }
-    }
     return {
       centerDialogVisible: false,
       searchForm: {
@@ -305,8 +290,8 @@ export default {
         if (valid) {
           let args={
             id:this.id,
-            start_date:moment(this.templateForm.date[0]).format("YYYY-MM-DD"),
-            end_date:moment(this.templateForm.date[1]).format("YYYY-MM-DD"),
+            start_date:handleDateTypeTransform(this.templateForm.date[0]),
+            end_date:handleDateTypeTransform(this.templateForm.date[1]),
             data_type:this.templateForm.value,
             type: "short_url"
           }
