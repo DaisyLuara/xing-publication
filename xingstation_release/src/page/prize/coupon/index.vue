@@ -385,10 +385,20 @@ export default {
     };
   },
   created() {
-    this.putInCouponList();
-    this.getCompanyList();
+    this.init();
   },
+
   methods: {
+    async init() {
+      this.setting.loading = true;
+      try {
+        let res = await getSearchCompany(this);
+        this.companyList = res.data;
+        this.putInCouponList();
+      } catch (e) {
+        this.setting.loading = false;
+      }
+    },
     exportList() {
       let args = this.setArgs();
       args.type = "coupon";
@@ -428,15 +438,6 @@ export default {
           this.searchLoading = false;
 
           console.log(err);
-        });
-    },
-    getCompanyList() {
-      return getSearchCompany(this)
-        .then(result => {
-          this.companyList = result.data;
-        })
-        .catch(error => {
-          console.log(error);
         });
     },
     getCouponQuery(query) {
@@ -495,38 +496,6 @@ export default {
     putInCouponList() {
       this.setting.loading = true;
       let args = this.setArgs();
-      // let args = {
-      //   include: "couponBatch.company,point.market.area,customer",
-      //   page: this.pagination.currentPage,
-      //   coupon_batch_id: this.filters.coupon_batch_id[0],
-      //   status: this.filters.status,
-      //   company_id: this.filters.company_id,
-      //   shop_customer_id: this.filters.shop_customer_id
-      // };
-      // if (this.filters.coupon_batch_id.length === 0) {
-      //   delete args.coupon_batch_id;
-      // }
-      // if (this.filters.status === "") {
-      //   delete args.status;
-      // }
-      // if (this.filters.company_id === "") {
-      //   delete args.company_id;
-      // }
-      // if (this.filters.shop_customer_id === "") {
-      //   delete args.shop_customer_id;
-      // }
-      // if (this.filters.dataValue) {
-      //   if (this.filters.dataValue.length !== 0) {
-      //     if (this.filters.dataValue[0]) {
-      //       args.start_date = handleDateTimeTransform(
-      //         this.filters.dataValue[0]
-      //       );
-      //     }
-      //     if (this.filters.dataValue[1]) {
-      //       args.end_date = handleDateTimeTransform(this.filters.dataValue[1]);
-      //     }
-      //   }
-      // }
       putInCouponList(this, args)
         .then(response => {
           let data = response.data;

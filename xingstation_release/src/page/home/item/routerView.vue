@@ -12,7 +12,6 @@ export default {
 <style lang="less" scoped>
   .item-root {
     height: 100%;
-    // margin: 10px 10px 10px 0;
     background-color: #EFF2F7;
   }
 </style>

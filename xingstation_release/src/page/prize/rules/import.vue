@@ -1,8 +1,13 @@
 <template>
   <div class="add-coupon-import-wrap">
-    <div v-loading="setting.loading" :element-loading-text="setting.loadingText">
+    <div 
+      v-loading="setting.loading" 
+      :element-loading-text="setting.loadingText">
       <div class="coupon-title">{{ $route.name }}</div>
-      <el-form ref="couponForm" :model="couponForm" label-width="180px">
+      <el-form 
+        ref="couponForm" 
+        :model="couponForm" 
+        label-width="180px">
         <el-form-item
           :rules="{required: true, message: '公司不能为空', trigger: 'submit'}"
           label="公司"
@@ -44,30 +49,56 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="创建人" prop="user_name">
-          <el-input v-model="user_name" :disabled="true" class="coupon-form-input"/>
+        <el-form-item 
+          label="创建人" 
+          prop="user_name">
+          <el-input 
+            v-model="user_name" 
+            :disabled="true" 
+            class="coupon-form-input"/>
         </el-form-item>
         <el-form-item
           :rules="{required: true, message: '适用场景不能为空', trigger: 'submit'}"
           label="适用场景"
           prop="scene_type"
         >
-          <el-radio-group v-model="couponForm.scene_type" @change="handleSceneType">
-            <el-tooltip class="item" effect="dark" content="可在同一场地下的多家商户核销" placement="top">
+          <el-radio-group 
+            v-model="couponForm.scene_type" 
+            @change="handleSceneType">
+            <el-tooltip 
+              class="item" 
+              effect="dark" 
+              content="可在同一场地下的多家商户核销" 
+              placement="top">
               <el-radio :label="1">场地通用</el-radio>
             </el-tooltip>
-            <el-tooltip class="item" effect="dark" content="仅供某一特定场地核销" placement="top">
+            <el-tooltip 
+              class="item" 
+              effect="dark" 
+              content="仅供某一特定场地核销" 
+              placement="top">
               <el-radio :label="2">场地自营</el-radio>
             </el-tooltip>
-            <el-tooltip class="item" effect="dark" content="可在同一主体下，多家连锁商户核销" placement="top">
+            <el-tooltip 
+              class="item" 
+              effect="dark" 
+              content="可在同一主体下，多家连锁商户核销" 
+              placement="top">
               <el-radio :label="3">商户通用</el-radio>
             </el-tooltip>
-            <el-tooltip class="item" effect="dark" content="仅供某一特定商户核销" placement="top">
+            <el-tooltip 
+              class="item" 
+              effect="dark" 
+              content="仅供某一特定商户核销" 
+              placement="top">
               <el-radio :label="4">商户自营</el-radio>
             </el-tooltip>
           </el-radio-group>
         </el-form-item>
-        <el-form-item :rules="writeOffMidRules" label="适用场地" prop="write_off_mid">
+        <el-form-item 
+          :rules="writeOffMidRules" 
+          label="适用场地" 
+          prop="write_off_mid">
           <el-select
             v-model="couponForm.write_off_mid"
             :loading="searchLoading"
@@ -86,7 +117,10 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item :rules="writeOffSidRules" label="适用商户" prop="write_off_sid">
+        <el-form-item 
+          :rules="writeOffSidRules" 
+          label="适用商户" 
+          prop="write_off_sid">
           <el-select
             v-model="couponForm.write_off_sid"
             :disabled="writeOffSiteShow"
@@ -106,7 +140,9 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="导入数据EXCEL文档" prop="ids">
+        <el-form-item 
+          label="导入数据EXCEL文档" 
+          prop="ids">
           <el-upload
             ref="upload"
             :action="Domain"
@@ -120,13 +156,20 @@
             :on-exceed="handleExceed"
             class="upload-demo"
           >
-            <el-button size="small" type="primary">点击上传</el-button>
-            <div slot="tip" style="display:inline-block" class="el-upload__tip">文件类型只支持=xlsx、xls</div>
+            <el-button 
+              size="small" 
+              type="primary">点击上传</el-button>
+            <div 
+              slot="tip" 
+              style="display:inline-block" 
+              class="el-upload__tip">文件类型只支持=xlsx、xls</div>
           </el-upload>
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="onSubmit('couponForm')">保存</el-button>
+          <el-button 
+            type="primary" 
+            @click="onSubmit('couponForm')">保存</el-button>
           <el-button @click="historyBack">取消</el-button>
         </el-form-item>
       </el-form>
@@ -140,7 +183,9 @@
         <span>3、时间格式为【yyyy-mm-ss hh:mm:ss】(右击单元格，可设置自定义)</span>
         <br>
       </p>
-      <img :src="getImportFormatImg()" width="100%">
+      <img 
+        :src="getImportFormatImg()" 
+        width="100%">
     </div>
   </div>
 </template>

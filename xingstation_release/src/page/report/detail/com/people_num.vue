@@ -11,7 +11,7 @@
         class="btns-wrapper">
         <li 
           v-for="(item, key) in peopleCount.concat([{ index: 'cpf', display_name: 'CPF转化率' }, { index: 'cpr', display_name:'CPR转化率' }, { index: 'cpa', display_name:'CPA转化率' }, { index: 'cpl', display_name:'CPL转化率' }])" 
-          v-if="item.index !== 'outnum'"
+          v-show="item.index !== 'outnum'"
           :key="key">
           <a 
             :class="'btn color-'+ key">

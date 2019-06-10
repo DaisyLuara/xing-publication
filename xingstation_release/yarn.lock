@@ -6268,9 +6268,9 @@ vue-eslint-parser@^2.0.3:
     esquery "^1.0.0"
     lodash "^4.17.4"
 
-vue-highcharts@0.0.10:
-  version "0.0.10"
-  resolved "http://registry.npm.taobao.org/vue-highcharts/download/vue-highcharts-0.0.10.tgz#a4b90098ede77a65cca87e62bed87549e1e1c985"
+vue-highcharts@0.1.0:
+  version "0.1.0"
+  resolved "https://registry.npm.taobao.org/vue-highcharts/download/vue-highcharts-0.1.0.tgz#ee71a4320535b07fdc4269a8aa50b9194538e762"
 
 vue-hot-reload-api@^2.2.0:
   version "2.3.0"

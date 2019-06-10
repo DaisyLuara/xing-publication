@@ -11,50 +11,50 @@
             ref="searchForm" 
             :model="searchForm" 
             :inline="true">
-              <el-form-item 
-                label 
-                prop="customer_id">
-                <el-select
-                  v-model="searchForm.customer_id"
-                  placeholder="场地主"
-                  filterable
-                  clearable>
-                  <el-option
-                    v-for="item in marketOwnerList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id"
-                  />
-                </el-select>
-              </el-form-item>
-              <el-form-item 
-                label 
-                prop="project_id">
-                <el-select
-                  v-model="searchForm.project_id"
-                  :loading="searchLoading"
-                  :remote-method="getProject"
-                  remote
-                  placeholder="请输入节目名称"
-                  filterable
-                  clearable
-                >
-                  <el-option
-                    v-for="item in projectList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id"
-                  />
-                </el-select>
-              </el-form-item>
-              <el-button 
-                type="primary" 
-                size="small" 
-                @click="search('searchForm')">搜索</el-button>
-              <el-button 
-                type="default" 
-                size="small" 
-                @click="resetSearch('searchForm')">重置</el-button>
+            <el-form-item 
+              label 
+              prop="customer_id">
+              <el-select
+                v-model="searchForm.customer_id"
+                placeholder="场地主"
+                filterable
+                clearable>
+                <el-option
+                  v-for="item in marketOwnerList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item 
+              label 
+              prop="project_id">
+              <el-select
+                v-model="searchForm.project_id"
+                :loading="searchLoading"
+                :remote-method="getProject"
+                remote
+                placeholder="请输入节目名称"
+                filterable
+                clearable
+              >
+                <el-option
+                  v-for="item in projectList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+            <el-button 
+              type="primary" 
+              size="small" 
+              @click="search('searchForm')">搜索</el-button>
+            <el-button 
+              type="default" 
+              size="small" 
+              @click="resetSearch('searchForm')">重置</el-button>
           </el-form>
         </div>
         <!-- 点位列表 -->

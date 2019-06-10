@@ -10,7 +10,4 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.root {
-  height: 100%;
-}
 </style>

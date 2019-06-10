@@ -1,16 +1,28 @@
 <template>
   <div class="item-wrap-template">
-    <div v-loading="setting.loading" :element-loading-text="setting.loadingText" class="pane">
+    <div 
+      v-loading="setting.loading" 
+      :element-loading-text="setting.loadingText" 
+      class="pane">
       <div class="pane-title">{{ planTimeId ? '编辑素材排期' : '新增素材排期' }}</div>
-      <el-form ref="adPlanTimeForm" :model="adPlanTimeForm" label-width="150px">
+      <el-form 
+        ref="adPlanTimeForm" 
+        :model="adPlanTimeForm" 
+        label-width="150px">
         <el-form-item label="类型">
-          <el-input :value="adPlan.type_text" disabled/>
+          <el-input 
+            :value="adPlan.type_text" 
+            disabled/>
         </el-form-item>
         <el-form-item label="广告行业">
-          <el-input :value="adPlan.ad_trade_name" disabled/>
+          <el-input 
+            :value="adPlan.ad_trade_name" 
+            disabled/>
         </el-form-item>
         <el-form-item label="广告模版名称">
-          <el-input :value="adPlan.name" disabled/>
+          <el-input 
+            :value="adPlan.name" 
+            disabled/>
         </el-form-item>
 
         <!--单选广告素材-->
@@ -41,7 +53,9 @@
             label="素材显示模式"
             prop="mode"
           >
-            <el-select v-model="adPlanTimeForm.mode" placeholder="请选择显示模式">
+            <el-select 
+              v-model="adPlanTimeForm.mode" 
+              placeholder="请选择显示模式">
               <el-option
                 v-for="item in modeOptions"
                 :key="item.value"
@@ -56,7 +70,9 @@
               label="素材显示位置"
               prop="ori"
             >
-              <el-select v-model="adPlanTimeForm.ori" placeholder="请选择素材显示位置">
+              <el-select 
+                v-model="adPlanTimeForm.ori" 
+                placeholder="请选择素材显示位置">
                 <el-option
                   v-for="item in oriOptions"
                   :key="item.value"
@@ -85,8 +101,12 @@
           label="素材播放"
           prop="cdshow"
         >
-          <el-radio v-model="adPlanTimeForm.play" :label="1">自定义时长</el-radio>
-          <el-radio v-model="adPlanTimeForm.play" :label="0">默认时长</el-radio>
+          <el-radio 
+            v-model="adPlanTimeForm.play" 
+            :label="1">自定义时长</el-radio>
+          <el-radio 
+            v-model="adPlanTimeForm.play" 
+            :label="0">默认时长</el-radio>
         </el-form-item>
 
         <el-form-item
@@ -107,8 +127,12 @@
           label="倒计时"
           prop="cdshow"
         >
-          <el-radio v-model="adPlanTimeForm.cdshow" :label="0">关闭</el-radio>
-          <el-radio v-model="adPlanTimeForm.cdshow" :label="1">开启</el-radio>
+          <el-radio 
+            v-model="adPlanTimeForm.cdshow" 
+            :label="0">关闭</el-radio>
+          <el-radio 
+            v-model="adPlanTimeForm.cdshow" 
+            :label="1">开启</el-radio>
         </el-form-item>
 
         <el-form-item
@@ -138,13 +162,19 @@
           label="状态"
           prop="visiable"
         >
-          <el-radio v-model="adPlanTimeForm.visiable" :label="1">运营中</el-radio>
-          <el-radio v-model="adPlanTimeForm.visiable" :label="0">下架</el-radio>
+          <el-radio 
+            v-model="adPlanTimeForm.visiable" 
+            :label="1">运营中</el-radio>
+          <el-radio 
+            v-model="adPlanTimeForm.visiable" 
+            :label="0">下架</el-radio>
         </el-form-item>
 
         <el-form-item>
           <el-button @click="historyBack">返回</el-button>
-          <el-button type="primary" @click="submit('adPlanTimeForm')">完成</el-button>
+          <el-button 
+            type="primary" 
+            @click="submit('adPlanTimeForm')">完成</el-button>
         </el-form-item>
       </el-form>
     </div>
