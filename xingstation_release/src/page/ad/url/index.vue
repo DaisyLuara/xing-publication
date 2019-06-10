@@ -24,7 +24,7 @@
           prop="description">
           <el-select v-model="searchForm.type" clearable placeholder="请选择类型">
             <el-option
-              v-for="item in this.linkTypes"
+              v-for="item in linkTypes"
               :key="item.value"
               :label="item.label"
               :value="item.value">
@@ -127,7 +127,7 @@
         >
           <el-select v-model="templateForm.value" placeholder="请选择">
             <el-option
-              v-for="item in this.types"
+              v-for="item in types"
               :key="item.value"
               :label="item.label"
               :value="item.value">
