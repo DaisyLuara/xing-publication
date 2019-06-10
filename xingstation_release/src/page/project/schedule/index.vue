@@ -124,8 +124,8 @@ import {
   saveSchedule,
   getTemplateList,
   saveTemplate,
-  getSearchModuleList,
-  getSearchProjectList,
+  getSearchModule,
+  getSearchProject,
   modifyTemplate
 } from "service";
 
@@ -320,7 +320,7 @@ export default {
         let args = {
           name: query
         };
-        return getSearchProjectList(this, args)
+        return getSearchProject(this, args)
           .then(response => {
             this.projectList = response.data;
             if (this.projectList.length == 0) {
@@ -337,7 +337,7 @@ export default {
       }
     },
     getModuleList() {
-      return getSearchModuleList(this)
+      return getSearchModule(this)
         .then(response => {
           let data = response.data;
           this.templateList = data;

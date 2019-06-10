@@ -12,8 +12,6 @@
             ref="searchForm" 
             :model="searchForm" 
             :inline="true">
-            <el-row :gutter="20">
-              <el-col :span="8">
                 <el-form-item 
                   label 
                   prop="name">
@@ -24,8 +22,6 @@
                     class="item-input"
                   />
                 </el-form-item>
-              </el-col>
-              <el-col :span="8">
                 <el-form-item 
                   label 
                   prop="areaid">
@@ -44,8 +40,6 @@
                     />
                   </el-select>
                 </el-form-item>
-              </el-col>
-              <el-col :span="8">
                 <el-form-item 
                   label 
                   prop="site">
@@ -66,10 +60,6 @@
                     />
                   </el-select>
                 </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="8">
                 <el-form-item 
                   label 
                   prop="permission">
@@ -88,8 +78,6 @@
                     />
                   </el-select>
                 </el-form-item>
-              </el-col>
-              <el-col :span="8">
                 <el-form-item 
                   label 
                   prop="mode">
@@ -106,8 +94,6 @@
                     />
                   </el-select>
                 </el-form-item>
-              </el-col>
-              <el-col :span="8">
                 <el-form-item 
                   label 
                   prop="type">
@@ -124,8 +110,6 @@
                     />
                   </el-select>
                 </el-form-item>
-              </el-col>
-            </el-row>
             <el-button 
               type="primary" 
               size="small" 
@@ -219,8 +203,8 @@
 <script>
 import {
   getSitePointList,
-  getSearchMarketList,
-  getSearchAeraList
+  getSearchMarket,
+  getSearchAera
 } from "service";
 
 import {
@@ -234,8 +218,6 @@ import {
   MessageBox,
   Select,
   Option,
-  Row,
-  Col
 } from "element-ui";
 
 export default {
@@ -249,8 +231,6 @@ export default {
     "el-form-item": FormItem,
     "el-select": Select,
     "el-option": Option,
-    "el-row": Row,
-    "el-col": Col
   },
   data() {
     return {
@@ -384,7 +364,7 @@ export default {
         include: "area",
         area_id: this.searchForm.areaid
       };
-      return getSearchMarketList(this, args)
+      return getSearchMarket(this, args)
         .then(response => {
           this.siteList = response.data;
           if (this.siteList.length == 0) {
@@ -464,7 +444,7 @@ export default {
       }
     },
     getAeraList() {
-      getSearchAeraList(this)
+      getSearchAera(this)
         .then(result => {
           this.areaList = result.data;
         })

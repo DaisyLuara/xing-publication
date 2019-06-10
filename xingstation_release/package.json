@@ -11,7 +11,8 @@
     "lint": "eslint --ext .js,.vue src",
     "build": "node build/build.js",
     "test": "npm run production test && cp -r ./predist/* ./dist",
-    "release": "npm run production && cp -r ./predist/* ./dist"
+    "release": "npm run production && cp -r ./predist/* ./dist",
+    "analyze": "yarn build --report"
   },
   "dependencies": {
     "autoprefixer": "^7.1.2",

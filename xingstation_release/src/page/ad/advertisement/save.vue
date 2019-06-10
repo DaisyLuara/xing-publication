@@ -114,7 +114,7 @@ import {
   getAdDetail,
   saveAd,
   modifyAd,
-  getSearchAdTradeList,
+  getSearchAdTrade,
   historyBack
 } from 'service'
 
@@ -126,7 +126,6 @@ import {
   FormItem,
   Button,
   Input,
-  DatePicker,
   MessageBox
 } from "element-ui";
 
@@ -138,7 +137,6 @@ export default {
     ElFormItem: FormItem,
     ElButton: Button,
     ElInput: Input,
-    ElDatePicker: DatePicker,
     ElRadio: Radio,
     PicturePanel
   },
@@ -155,7 +153,6 @@ export default {
 
       searchAdTradeList: [],
       searchLoading: false,
-
       adForm: {
         atid: "",
         name: "",
@@ -184,13 +181,12 @@ export default {
       ]
     };
   },
-  mounted() {},
   created() {
     this.aid = this.$route.params.aid;
     if (this.aid) {
       this.getAdDetail();
     }
-    this.getSearchAdTradeList();
+    this.getSearchAdTrade();
   },
   methods: {
     typeHandle(val){
@@ -214,16 +210,12 @@ export default {
           this.setting.loading = false;
         });
     },
-    getSearchAdTradeList() {
-      return getSearchAdTradeList(this)
-        .then(response => {
-          let data = response.data;
-          this.searchAdTradeList = data;
-        })
-        .catch(error => {
-          console.log(error);
-          this.setting.loading = false;
-        });
+    async getSearchAdTrade() {
+      try{
+        let res = await getSearchAdTrade(this)
+        this.searchAdTradeList = res.data;
+      }catch(e){
+      }
     },
 
     submit(formName) {
@@ -246,17 +238,14 @@ export default {
                   message: '编辑成功',
                   type: 'success'
                 })
-                this.$router.push({
-                  path: '/ad/advertisement'
-                })
+                this.historyBack()
               })
               .catch(err => {
                 this.setting.loading = false
                 this.$message({
                   message: err.response.data.message,
-                  type: 'error'
+                  type: 'warning'
                 })
-                console.log(err)
               })
           }else{
             return saveAd(this, args)
@@ -266,23 +255,17 @@ export default {
                   message: '添加成功',
                   type: 'success'
                 })
-                this.$router.push({
-                  path: '/ad/advertisement'
-                })
+                this.historyBack()
               })
               .catch(err => {
                 this.setting.loading = false
                 this.$message({
                   message: err.response.data.message,
-                  type: 'error'
+                  type: 'warning'
                 })
-                console.log(err)
               })
           }
-
-        } else {
-          return;
-        }
+        } 
       })
     },
 

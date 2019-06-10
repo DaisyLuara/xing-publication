@@ -798,12 +798,12 @@ import {
   historyBack,
   getProgramDetails,
   modifyProgram,
-  getSearchUserList,
-  getSearchProjectList,
-  getSearchTeamRateList,
+  getSearchUser,
+  getSearchProject,
+  getSearchTeamRate,
   getQiniuToken,
   getMediaUpload,
-  getContractReceiptList,
+  getContractReceipt,
   getSearchCopyrightProject,
   confirmProgram,
 } from "service";
@@ -958,7 +958,7 @@ export default {
     } else {
       this.setting.loading = true;
       this.getTeamRateList();
-      this.getContractReceiptList();
+      this.getContractReceipt();
       this.programForm.applicant_name = user_info.name;
       this.programForm.applicant = user_info.id;
     }
@@ -968,16 +968,16 @@ export default {
       try {
         await this.getTeamRateList();
         await this.getProgramDetails();
-        await this.getContractReceiptList();
+        await this.getContractReceipt();
       } catch (e) {
         console.log(e);
       }
     },
-    getContractReceiptList() {
+    getContractReceipt() {
       let args = {
         type: 0
       };
-      getContractReceiptList(this, args)
+      getContractReceipt(this, args)
         .then(res => {
           this.contractList = res;
         })
@@ -1141,7 +1141,7 @@ export default {
     },
     // 比列
     getTeamRateList() {
-      getSearchTeamRateList(this)
+      getSearchTeamRate(this)
         .then(res => {
           let data = res.data[0];
           this.rate = data;
@@ -1477,7 +1477,7 @@ export default {
     },
     getUserList() {
       this.searchLoading = true;
-      return getSearchUserList(this)
+      return getSearchUser(this)
         .then(response => {
           this.userList = response.data;
           this.searchLoading = false;
@@ -1492,7 +1492,7 @@ export default {
         let args = {
           name: query
         };
-        return getSearchProjectList(this, args)
+        return getSearchProject(this, args)
           .then(response => {
             this.projectList = response.data;
             if (this.projectList.length == 0) {

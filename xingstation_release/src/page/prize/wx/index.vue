@@ -28,31 +28,31 @@
               v-model="card_type" 
               :label="DISCOUNT.card_type">折扣券</el-radio>
             <el-form-item>
-              <template slot-scope="scope">可为用户提供消费折扣</template>
+              可为用户提供消费折扣
             </el-form-item>
             <el-radio 
               v-model="card_type" 
               :label="CASH.card_type">代金券</el-radio>
             <el-form-item>
-              <template slot-scope="scope">可为用户提供抵扣现金服务。可设置成为"满*元，减*元"</template>
+              可为用户提供抵扣现金服务。可设置成为"满*元，减*元"
             </el-form-item>
             <el-radio 
               v-model="card_type" 
               :label="GIFT.card_type">兑换券</el-radio>
             <el-form-item>
-              <template slot-scope="scope">可为用户提供消费送赠品服务</template>
+              可为用户提供消费送赠品服务
             </el-form-item>
             <el-radio 
               v-model="card_type" 
               :label="GROUPON.card_type">团购券</el-radio>
             <el-form-item>
-              <template slot-scope="scope">可为用户提供团购套餐服务</template>
+              可为用户提供团购套餐服务
             </el-form-item>
             <el-radio 
               v-model="card_type" 
               :label="GENERAL_COUPON.card_type">优惠券</el-radio>
             <el-form-item>
-              <template slot-scope="scope">即“通用券”，建议当以上四种无法满足需求时采用</template>
+              即“通用券”，建议当以上四种无法满足需求时采用
             </el-form-item>
             <el-form-item>
               <el-button 
@@ -170,15 +170,6 @@
             </template>
           </el-table-column>
         </el-table>
-        <!-- <div class="pagination-wrap">
-          <el-pagination
-            :total="pagination.total"
-            :page-size="pagination.pageSize"
-            :current-page="pagination.currentPage"
-            layout="prev, pager, next, jumper, total"
-            @current-change="changePage"
-          />
-        </div>-->
       </div>
     </div>
   </div>
@@ -194,19 +185,15 @@ import {
 
 import {
   Button,
-  Input,
   Table,
-  Select,
-  Option,
   TableColumn,
   Pagination,
   Form,
   Dialog,
   FormItem,
   MessageBox,
-  RadioGroup,
-  Radio,
-  Popover
+  Popover,
+  Radio
 } from "element-ui";
 
 export default {
@@ -214,16 +201,12 @@ export default {
     "el-table": Table,
     "el-table-column": TableColumn,
     "el-button": Button,
-    "el-input": Input,
     "el-pagination": Pagination,
     "el-form": Form,
-    "el-select": Select,
-    "el-option": Option,
     "el-form-item": FormItem,
     "el-dialog": Dialog,
-    "el-radio-group": RadioGroup,
-    "el-radio": Radio,
-    "el-popover": Popover
+    "el-popover": Popover,
+    "el-radio":Radio
   },
   data() {
     return {

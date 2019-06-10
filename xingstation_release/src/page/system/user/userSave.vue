@@ -31,18 +31,28 @@
         <el-form-item 
           label="密码" 
           prop="user.password">
-          <el-input 
-            v-model="userForm.user.password" 
-            type="password" 
-            class="user-form-input"/>
+          <el-input
+            :trigger-on-focus="false"
+            v-model="userForm.user.password"
+            :type="inputType"
+            placeholder="请输入密码"
+            autocomplete="off"
+            class="user-form-input"
+            @focus="inputType='password'"
+          />
         </el-form-item>
         <el-form-item 
           label="确认密码" 
           prop="user.repassword">
-          <el-input 
-            v-model="userForm.user.repassword" 
-            type="password" 
-            class="user-form-input"/>
+          <el-input
+            :trigger-on-focus="false"
+            v-model="userForm.user.repassword"
+            :type="inputType"
+            placeholder="请再次输入密码"
+            autocomplete="off"
+            class="user-form-input"
+            @focus="inputType='password'"
+          />
         </el-form-item>
         <el-form-item 
           label="角色" 
@@ -95,9 +105,9 @@ import {
   getUserDetial,
   saveUser,
   historyBack,
-  getSearchLegalManagerList,
+  getSearchLegalManager,
   getSearchRole,
-  getSearchBDManagerList
+  getSearchBDManager
 } from "service";
 import {
   Button,
@@ -124,6 +134,7 @@ export default {
   },
   data() {
     return {
+      inputType: "text",
       setting: {
         isOpenSelectAll: true,
         loading: false,
@@ -282,7 +293,7 @@ export default {
     },
     getBDManagerList() {
       this.searchLoading = true;
-      getSearchBDManagerList(this)
+      getSearchBDManager(this)
         .then(res => {
           this.custodianList = res.data;
           this.searchLoading = false;
@@ -293,7 +304,7 @@ export default {
     },
     getLegalManagerList() {
       this.searchLoading = true;
-      getSearchLegalManagerList(this)
+      getSearchLegalManager(this)
         .then(res => {
           this.custodianList = res.data;
           this.searchLoading = false;

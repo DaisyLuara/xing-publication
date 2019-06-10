@@ -194,7 +194,6 @@ import {
   Input,
   Upload,
   Pagination,
-  Dialog,
   Message
 } from "element-ui";
 
@@ -205,7 +204,6 @@ export default {
     "el-input": Input,
     "el-upload": Upload,
     "el-pagination": Pagination,
-    "el-dialog": Dialog
   },
   data() {
     return {

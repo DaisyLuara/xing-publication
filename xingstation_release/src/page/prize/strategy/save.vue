@@ -111,7 +111,7 @@
 <script>
 import {
   historyBack,
-  getSearchCouponList,
+  getSearchCoupon,
   saveBatchPolicy,
   modifyBatchPolicy,
   getCouponPolicieseDetail
@@ -264,7 +264,7 @@ export default {
       let args = {
         company_id: this.cid
       };
-      getSearchCouponList(this, args)
+      getSearchCoupon(this, args)
         .then(result => {
           this.couponList = result.data;
         })

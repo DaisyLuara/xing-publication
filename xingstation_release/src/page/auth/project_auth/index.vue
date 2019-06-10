@@ -11,7 +11,6 @@
             ref="searchForm" 
             :model="searchForm" 
             :inline="true">
-            <el-row :gutter="20">
               <el-form-item 
                 label 
                 prop="customer_id">
@@ -28,7 +27,6 @@
                   />
                 </el-select>
               </el-form-item>
-
               <el-form-item 
                 label 
                 prop="project_id">
@@ -57,7 +55,6 @@
                 type="default" 
                 size="small" 
                 @click="resetSearch('searchForm')">重置</el-button>
-            </el-row>
           </el-form>
         </div>
         <!-- 点位列表 -->
@@ -159,19 +156,17 @@
     destroyProjectAuth,
     getProjectAuthListData,
     getSearchMarketOwnerCustomer,
-    getSearchProjectList
+    getSearchProject
   } from "service";
 
   import {
     Button,
-    Col,
     Form,
     FormItem,
     MessageBox,
     Input,
     Option,
     Pagination,
-    Row,
     Select,
     Table,
     TableColumn
@@ -188,8 +183,6 @@
       "el-form-item": FormItem,
       "el-select": Select,
       "el-option": Option,
-      "el-row": Row,
-      "el-col": Col
     },
     data() {
       return {
@@ -239,7 +232,7 @@
           let args = {
             name: query
           };
-          return getSearchProjectList(this, args)
+          return getSearchProject(this, args)
             .then(response => {
               this.projectList = response.data;
               if (this.projectList.length == 0) {

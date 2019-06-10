@@ -131,7 +131,7 @@
 import {
   historyBack,
   getSearchAuthPolicies,
-  getSearchMarketList,
+  getSearchMarket,
   getSearchAuthPoint,
   getSearchAuthProject,
   getSearchCompany,
@@ -215,7 +215,7 @@ export default {
         this.searchLoading = true;
         args.name = query
       }
-      getSearchMarketList(this, args)
+      getSearchMarket(this, args)
         .then(res => {
           this.marketList = res.data;
           if (this.marketList.length == 0) {

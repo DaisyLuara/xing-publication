@@ -1,11 +1,17 @@
 <template>
   <div class="root">
     <div class="item-list-wrap">
-      <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="中台记录" name="first">
+      <el-tabs 
+        v-model="activeName" 
+        @tab-click="handleClick">
+        <el-tab-pane 
+          label="中台记录" 
+          name="first">
           <OperateTable :type="type"/>
         </el-tab-pane>
-        <el-tab-pane label="商户记录" name="second">
+        <el-tab-pane 
+          label="商户记录" 
+          name="second">
           <OperateTable :type="type" />
         </el-tab-pane>
       </el-tabs>

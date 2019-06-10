@@ -187,12 +187,12 @@
 <script>
 import {
   saveAdLaunch,
-  getSearchAdTradeList,
-  getSearchAdPlanList,
-  getSearchPointList,
-  getSearchAeraList,
-  getSearchMarketList,
-  getSearchProjectList,
+  getSearchAdTrade,
+  getSearchAdPlan,
+  getSearchPoint,
+  getSearchAera,
+  getSearchMarket,
+  getSearchProject,
   historyBack
 } from 'service'
 
@@ -272,7 +272,7 @@ export default {
         let args = {
           name: query
         };
-        return getSearchProjectList(this, args)
+        return getSearchProject(this, args)
           .then(response => {
             this.projectList = response.data;
             if (this.projectList.length === 0) {
@@ -289,7 +289,7 @@ export default {
       }
     },
     getAdTradeList() {
-      return getSearchAdTradeList(this)
+      return getSearchAdTrade(this)
         .then(response => {
           let data = response.data
           this.adTradeList = data
@@ -319,7 +319,7 @@ export default {
         ad_trade_id: this.adForm.ad_trade_id
       }
       this.searchLoading = true
-      return getSearchAdPlanList(this, args)
+      return getSearchAdPlan(this, args)
         .then(response => {
           let data = response.data
           this.adPlanList = data
@@ -337,7 +337,7 @@ export default {
     },
     getAreaList() {
       this.searchLoading = true
-      return getSearchAeraList(this)
+      return getSearchAera(this)
         .then(response => {
           let data = response.data
           this.areaList = data
@@ -358,7 +358,7 @@ export default {
         market_id: this.adForm.market[0]
       }
       this.searchLoading = true
-      return getSearchPointList(this, args)
+      return getSearchPoint(this, args)
         .then(response => {
           this.pointList = response.data
           this.searchLoading = false
@@ -376,7 +376,7 @@ export default {
           include: 'area',
           area_id: this.adForm.area
         }
-        return getSearchMarketList(this, args)
+        return getSearchMarket(this, args)
           .then(response => {
             this.marketList = response.data
             if (this.marketList.length == 0) {

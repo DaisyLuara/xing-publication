@@ -258,9 +258,9 @@
 import {
   handleDateTimeTransform,
   putInCouponList,
-  getSearchShopCustomerList,
+  getSearchShopCustomer,
   getSearchCompany,
-  getSearchCouponList,
+  getSearchCoupon,
   getExcelCouponsData
 } from "service";
 import {
@@ -419,7 +419,7 @@ export default {
       let args = {
         company_id: this.filters.company_id
       };
-      return getSearchShopCustomerList(this, args)
+      return getSearchShopCustomer(this, args)
         .then(res => {
           this.shopCustomerList = res.data;
           this.searchLoading = false;
@@ -445,7 +445,7 @@ export default {
         let args = {
           name: query
         };
-        return getSearchCouponList(this, args)
+        return getSearchCoupon(this, args)
           .then(response => {
             this.couponList = response.data;
             this.searchLoading = false;
