@@ -12,7 +12,7 @@ class CompanyExport extends BaseExport
     private $internal_name;//公司简称
     private $category;//公司属性
     private $status;//状态
-    private $bd_user_id;//所属BD
+    private $bdName;//所属BD
 
 
     public function __construct($request)
@@ -21,7 +21,7 @@ class CompanyExport extends BaseExport
         $this->internal_name = $request->internal_name;
         $this->category = $request->category;
         $this->status = $request->status;
-        $this->bd_user_id = $request->bd_user_id;
+        $this->bdName = $request->bd_name;
 
         $this->fileName = '公司-公司管理列表';
     }
@@ -54,8 +54,8 @@ class CompanyExport extends BaseExport
             $query->where('c.status', '=', $this->status);
         }
 
-        if ($this->bd_user_id) {
-            $query->where('c.bd_user_id', '=', $this->bd_user_id);
+        if ($this->bdName) {
+            $query->where('create_user.name', 'like', '%' . $this->bdName . '%');
         }
 
         //角色为管理员，法务，法务主管时，查看所有公司数据
