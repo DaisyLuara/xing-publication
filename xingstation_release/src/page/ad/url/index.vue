@@ -241,15 +241,18 @@ export default {
       this.setting.loading = true
       let args = {
         page: this.currentPage,
-        description: this.searchForm.description
+        description: this.searchForm.description,
+        url_type: this.searchForm.type
       }
       if (!this.searchForm.description) {
         delete args.description
       }
+      if (!this.searchForm.type) {
+        delete args.url_type
+      }
       getUrlList(this, args)
         .then(response => {
           this.tableData = response.data
-          console.log(this.tableData)
           this.total = response.meta.pagination.total
           this.setting.loading = false
         })
