@@ -286,7 +286,7 @@ export default {
         type: 'error'
       })
     },
-    showDialog(index, row) {
+    showDialog(row) {
        this.centerDialogVisible = true
        this.id = row.id
     },
