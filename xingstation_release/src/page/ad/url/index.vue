@@ -24,7 +24,7 @@
           prop="description">
           <el-select v-model="searchForm.type" clearable placeholder="请选择类型">
             <el-option
-              v-for="item in this.templateForm.types"
+              v-for="item in this.linkTypes"
               :key="item.value"
               :label="item.label"
               :value="item.value">
@@ -99,7 +99,8 @@
       title="请选择类型"
       :visible.sync="centerDialogVisible"
       width="50%"
-      center >
+      center 
+      :show-close=false>
       <el-form
         ref="templateForm"
         :model="templateForm"
@@ -111,6 +112,7 @@
           prop="date"
         >
           <el-date-picker
+            class='el_date_picker'
             v-model="templateForm.date"
             type="daterange"
             range-separator="至"
@@ -125,7 +127,7 @@
         >
           <el-select v-model="templateForm.value" placeholder="请选择">
             <el-option
-              v-for="item in this.templateForm.types"
+              v-for="item in this.types"
               :key="item.value"
               :label="item.label"
               :value="item.value">
@@ -134,7 +136,7 @@
         </el-form-item>
         <el-form-item>
            <el-button type="primary" size="small" @click="submit('templateForm')">下载</el-button>
-           <el-button size="small" @click="quxiao">取消</el-button>
+           <el-button size="small" @click="resetField('templateForm')">取消</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -211,18 +213,25 @@ export default {
         loading: false,
         loadingText: '拼命加载中'
       },
-        id:null,
-        templateForm: {
-          types: [{
-            value: 'num',
-            label: '人数'
-          }, {
-            value: 'times',
-            label: '人次'
-          }],
-          date: '',
-          value:''
-        }
+      id:null,
+      templateForm: {
+        date: '',
+        value:''
+      },
+      types: [{
+        value: 'num',
+        label: '人数'
+      }, {
+        value: 'times',
+        label: '人次'
+      }],
+      linkTypes: [{
+        value: '1',
+        label: '外链'
+      },{
+        value: '0',
+        label: '内部链接'
+      }]
     }
   },
   created() {
@@ -306,10 +315,9 @@ export default {
           }
       });
     },
-    quxiao(){
+    resetField(formName){
       this.centerDialogVisible = false;
-      this.templateForm.value = '';
-      this.templateForm.date = '';
+      this.$refs[formName].resetFields();
     }
   }
 }
@@ -331,6 +339,9 @@ export default {
     }
     .el-input {
       width: 200px;
+    }
+    .el-range-separator{
+      padding: 0 20px;
     }
     .warning {
       background: #ebf1fd;
@@ -364,6 +375,9 @@ export default {
   }
   .download_type{
     height: 100px;
+  }
+  .el_date_picker{
+    width: 100%;
   }
 }
 </style>
