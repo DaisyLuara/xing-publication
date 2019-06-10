@@ -11,12 +11,17 @@ class ShortUrlRequest extends Request
         $method = $this->method();
         if ($method === 'POST') {
             return [
-                'target_url' => 'required|url',
+                'target_url' => ['required', 'url', function ($key, $value, $fail) {
+                    $urlType = $this->input('url_type');
+                    $contain = strpos($value, env('COOKIE_DOMAIN'));
+                    if (($urlType === 1 && $contain) || ($urlType === 0 && !$contain)) {
+                        $fail('请检查链接和链接类型');
+                    }
+                }],
                 'url_type' => 'required|in:0,1'
             ];
         }
         return [];
     }
-
 
 }
