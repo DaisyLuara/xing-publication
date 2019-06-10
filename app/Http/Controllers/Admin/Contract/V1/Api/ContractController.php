@@ -16,6 +16,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
 use DB;
 
@@ -179,7 +180,7 @@ class ContractController extends Controller
 
     }
 
-    public function destroy(Contract $contract,Request $request)
+    public function destroy(Contract $contract, Request $request)
     {
         if ($contract->status !== ActionConfig::CONTRACT_STATUS_WAIT) {
             abort(403, '合同审批状态已更改，不可删除');
@@ -231,7 +232,7 @@ class ContractController extends Controller
                 'legal_message',
                 'contract_number'
             ];
-            $this->checkParam($request, $params);
+            $this->checkParam($request, $params, $contract);
             $contract->fill(array_merge($request->all(), ['status' => ActionConfig::CONTRACT_STATUS_ONGOING, 'handler' => $user->parent_id]));
             $this->updateContractAndHistory($user, $contract);
         } else if ($user->hasRole('legal-affairs-manager')) {
@@ -240,10 +241,10 @@ class ContractController extends Controller
                 'special_num',
                 'common_num'
             ];
-            $this->checkParam($request, $params);
+            $this->checkParam($request, $params, $contract);
             //特批合同需要带合同编号
             if ($contract->status === ActionConfig::CONTRACT_STATUS_SPECIAL) {
-                $this->checkParam($request, ['contract_number']);
+                $this->checkParam($request, ['contract_number'], $contract);
             }
 
             $parentId = $contract->applicantUser->parent_id;
@@ -262,7 +263,7 @@ class ContractController extends Controller
             $params = [
                 'bd_ma_message'
             ];
-            $this->checkParam($request, $params);
+            $this->checkParam($request, $params, $contract);
 
             $contract->status = ActionConfig::CONTRACT_STATUS_AGREE;
             $contract->handler = null;
@@ -279,10 +280,18 @@ class ContractController extends Controller
         return $this->response()->item($contract, new ContractTransformer())->setStatusCode(201);
     }
 
-    private function checkParam(Request $request, array $param): void
+    private function checkParam(Request $request, array $param, Contract $contract): void
     {
         if (!$request->has($param)) {
             abort(422, '请填写完整信息');
+        }
+
+        if ($request->has('contract_number')) {
+            $existContract = Contract::query()
+                ->where('contract_number', $request->get('contract_number'))
+                ->where('id', '<>', $contract->id)
+                ->first();
+            abort_if($existContract, 422, '合同编号已存在');
         }
     }
 

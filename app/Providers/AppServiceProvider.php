@@ -37,7 +37,6 @@ class AppServiceProvider extends ServiceProvider
 
         User::observe(UserObserver::class);
         Company::observe(CompanyObserver::class);
-        AdminProject::observe(AdminProjectObserver::class);
         ProjectLaunch::observe(ProjectLaunchObserver::class);
         AdLaunch::observe(AdLaunchObserver::class);
         ProjectLaunchTpl::observe(ProjectLaunchTplObserver::class);

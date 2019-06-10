@@ -6,17 +6,16 @@ use App\Http\Requests\Request;
 
 class ShortUrlRequest extends Request
 {
-    public function rules()
+    public function rules(): array
     {
-        switch ($this->method()) {
-            case 'POST':
-                return [
-                    'target_url' => 'required|url',
-                ];
-                break;
-            default:
-                return [];
+        $method = $this->method();
+        if ($method === 'POST') {
+            return [
+                'target_url' => 'required|url',
+                'url_type' => 'required|in:0,1'
+            ];
         }
+        return [];
     }
 
 

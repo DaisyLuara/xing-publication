@@ -22,14 +22,18 @@ class ActivityLogController extends Controller
         }
 
         if ($request->get('type') === 'customer') {
-            if (!$user->isAdmin()){
-                abort(403,'您无权查看商户操作记录');
-            }
-
             $query->where('causer_type', Customer::class);
 
             if ($request->get('causer_id')) {
                 $query->where('causer_id', '=', $request->get('causer_id'));
+            }
+
+            if (!$user->isAdmin()) {
+                $customer_ids = Customer::query()->whereHas('company', static function ($q) use ($user) {
+                    $q->where('bd_user_id', '=', $user->id);
+                })->pluck('id')->toArray();
+
+                $query->whereIn('causer_id', $customer_ids);
             }
         }
 
@@ -43,8 +47,8 @@ class ActivityLogController extends Controller
         }
 
         if ($request->get('subject_type')) {
-            
-            $query->whereRaw("subject_type = '". str_replace('\\','\\\\', $request->get('subject_type')) ."'");
+
+            $query->whereRaw("subject_type = '" . str_replace('\\', '\\\\', $request->get('subject_type')) . "'");
 
             if ($request->get('subject_id')) {
                 $query->where('subject_id', '=', $request->get('subject_id'));
