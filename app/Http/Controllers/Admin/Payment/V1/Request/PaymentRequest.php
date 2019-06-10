@@ -18,7 +18,7 @@ class PaymentRequest extends Request
             case 'POST':
                 return [
                     'contract_id' => 'required|integer',
-                    'amount' => 'required|string',
+                    'amount' => 'required|regex:/^[负零壹贰叁肆伍陆柒捌玖分角拾佰仟萬億兆京垓秭穰元整]+$/',
                     'type' => Rule::in([1, 2, 3]),
                     'reason' => 'required|string:max:150',
                     'payment_payee_id' => 'required|integer',
@@ -28,7 +28,7 @@ class PaymentRequest extends Request
             case 'PATCH':
                 return [
                     'contract_id' => 'integer',
-                    'amount' => 'string',
+                    'amount' => 'regex:/^[负零壹贰叁肆伍陆柒捌玖分角拾佰仟萬億兆京垓秭穰元整]+$/',
                     'type' => Rule::in([1, 2, 3]),
                     'reason' => 'string:max:150',
                     'payment_payee_id' => 'integer',

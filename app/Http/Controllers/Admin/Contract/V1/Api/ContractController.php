@@ -16,6 +16,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
 use DB;
 
@@ -179,7 +180,7 @@ class ContractController extends Controller
 
     }
 
-    public function destroy(Contract $contract,Request $request)
+    public function destroy(Contract $contract, Request $request)
     {
         if ($contract->status !== ActionConfig::CONTRACT_STATUS_WAIT) {
             abort(403, '合同审批状态已更改，不可删除');
@@ -283,6 +284,11 @@ class ContractController extends Controller
     {
         if (!$request->has($param)) {
             abort(422, '请填写完整信息');
+        }
+
+        if ($request->has('contract_number')) {
+            $contract = Contract::query()->where('contract_number', $request->get('contract_number'));
+            abort_if($contract, 422, '合同编号已存在');
         }
     }
 
