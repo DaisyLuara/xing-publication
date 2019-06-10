@@ -13,7 +13,7 @@ class ExportRequest extends Request
             'marketing', 'point', 'project',
             'daily_average', 'project_point', 'marketing_top',
             'person_reward', 'coupon', 'team_project',
-            'play_times', 'contract_revenue'
+            'play_times', 'contract_revenue', 'short_url'
         ];
         return [
             'type' => ['required', Rule::in($type)]
