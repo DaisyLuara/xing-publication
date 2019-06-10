@@ -340,9 +340,6 @@ export default {
     .el-input {
       width: 200px;
     }
-    .el-range-separator{
-      padding: 0 20px;
-    }
     .warning {
       background: #ebf1fd;
       padding: 8px;
