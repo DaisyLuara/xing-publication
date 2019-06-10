@@ -89,7 +89,7 @@
                 <el-button
                   v-if="scope.row.url_type === 1 ? true:false"
                   size="mini"
-                  @click="showDialog(scope.$index, scope.row)">下载
+                  @click="showDialog(scope.row)">下载
                 </el-button>
             </template>
           </el-table-column>
