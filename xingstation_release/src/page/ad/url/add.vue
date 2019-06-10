@@ -26,8 +26,12 @@
       <el-form-item 
         prop="url_type">
         是否外链:
-        <el-radio v-model="urlInfo.url_type" label="1">是</el-radio>
-        <el-radio v-model="urlInfo.url_type" label="0">否</el-radio>
+        <el-radio 
+          v-model="urlInfo.url_type" 
+          label="1">是</el-radio>
+        <el-radio 
+          v-model="urlInfo.url_type" 
+          label="0">否</el-radio>
       </el-form-item>
       <el-form-item>
         <div 

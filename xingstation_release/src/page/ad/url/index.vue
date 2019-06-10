@@ -22,13 +22,15 @@
         <el-form-item 
           label="" 
           prop="type">
-          <el-select v-model="searchForm.type" clearable placeholder="请选择类型">
+          <el-select 
+            v-model="searchForm.type" 
+            clearable 
+            placeholder="请选择类型">
             <el-option
               v-for="item in linkTypes"
               :key="item.value"
               :label="item.label"
-              :value="item.value">
-            </el-option>
+              :value="item.value"/>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -88,22 +90,22 @@
         <el-table-column
           label="下载" 
           min-width="80">
-            <template slot-scope="scope">
-                <el-button
-                  v-if="scope.row.url_type === 1 ? true:false"
-                  size="mini"
-                  @click="showDialog(scope.row)">下载
-                </el-button>
-            </template>
-          </el-table-column>
+          <template slot-scope="scope">
+            <el-button
+              v-if="scope.row.url_type === 1 ? true:false"
+              size="mini"
+              @click="showDialog(scope.row)">下载
+            </el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
     <el-dialog
-      title="请选择类型"
       :visible.sync="centerDialogVisible"
-      width="50%"
-      center 
-      :show-close=false>
+      :show-close="false"
+      title="请选择类型"
+      width="50%" 
+      center>
       <el-form
         ref="templateForm"
         :model="templateForm"
@@ -115,31 +117,36 @@
           prop="date"
         >
           <el-date-picker
-            class='el_date_picker'
             v-model="templateForm.date"
+            class="el_date_picker"
             type="daterange"
             range-separator="至"
             start-placeholder="开始日期"
-            end-placeholder="结束日期">
-          </el-date-picker>
+            end-placeholder="结束日期"/>
         </el-form-item>
         <el-form-item
           :rules="[{ required: true, message: '请选择类型', trigger: 'submit'}]"
           label="类型"
           prop="value"
         >
-          <el-select v-model="templateForm.value" placeholder="请选择">
+          <el-select 
+            v-model="templateForm.value" 
+            placeholder="请选择">
             <el-option
               v-for="item in types"
               :key="item.value"
               :label="item.label"
-              :value="item.value">
-            </el-option>
+              :value="item.value"/>
           </el-select>
         </el-form-item>
         <el-form-item>
-           <el-button type="primary" size="small" @click="submit('templateForm')">下载</el-button>
-           <el-button size="small" @click="resetField('templateForm')">取消</el-button>
+          <el-button 
+            type="primary" 
+            size="small" 
+            @click="submit('templateForm')">下载</el-button>
+          <el-button 
+            size="small" 
+            @click="resetField('templateForm')">取消</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>

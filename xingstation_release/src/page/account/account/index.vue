@@ -30,8 +30,8 @@
               :trigger-on-focus="false"
               :type="inputType"
               v-model="userForm.user.password" 
-              @focus="inputType='password'"
-              class="user-form-input"/>
+              class="user-form-input"
+              @focus="inputType='password'"/>
           </el-form-item>
           <el-form-item 
             label="确认密码" 
@@ -40,8 +40,8 @@
               :trigger-on-focus="false"
               :type="inputType" 
               v-model="userForm.user.repassword" 
-              @focus="inputType='password'"
-              class="user-form-input"/>
+              class="user-form-input"
+              @focus="inputType='password'"/>
           </el-form-item>
           <el-form-item>
             <el-button 

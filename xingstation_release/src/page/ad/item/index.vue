@@ -7,8 +7,14 @@
     >
       <div class="item-content-wrap">
         <div class="search-wrap">
-          <el-form ref="adSearchForm" :model="adSearchForm" :inline="true" class="search-form">
-            <el-form-item label prop="area_id">
+          <el-form 
+            ref="adSearchForm" 
+            :model="adSearchForm" 
+            :inline="true" 
+            class="search-form">
+            <el-form-item 
+              label 
+              prop="area_id">
               <el-select
                 v-model="adSearchForm.area_id"
                 placeholder="请选择区域"
@@ -25,7 +31,9 @@
               </el-select>
             </el-form-item>
 
-            <el-form-item label prop="market_id">
+            <el-form-item 
+              label 
+              prop="market_id">
               <el-select
                 v-model="adSearchForm.market_id"
                 :remote-method="getMarket"
@@ -47,7 +55,9 @@
               </el-select>
             </el-form-item>
 
-            <el-form-item label prop="point_id">
+            <el-form-item 
+              label 
+              prop="point_id">
               <el-select
                 v-model="adSearchForm.point_id"
                 :loading="searchLoading"
@@ -64,7 +74,9 @@
               </el-select>
             </el-form-item>
 
-            <el-form-item label prop="adTrade">
+            <el-form-item 
+              label 
+              prop="adTrade">
               <el-select
                 v-model="adSearchForm.ad_trade_id"
                 filterable
@@ -80,7 +92,9 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label prop="ad_plan_id">
+            <el-form-item 
+              label 
+              prop="ad_plan_id">
               <el-select
                 v-model="adSearchForm.ad_plan_id"
                 :loading="searchLoading"
@@ -103,29 +117,56 @@
                 placeholder="请选择类型"
                 clearable
               >
-                <el-option key="program" label="节目广告" value="program"/>
-                <el-option key="ads" label="小屏广告" value="ads"/>
+                <el-option 
+                  key="program" 
+                  label="节目广告" 
+                  value="program"/>
+                <el-option 
+                  key="ads" 
+                  label="小屏广告" 
+                  value="ads"/>
               </el-select>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="search('adSearchForm')" size="small">搜索</el-button>
-              <el-button @click="resetSearch('adSearchForm')" size="small">重置</el-button>
+              <el-button 
+                type="primary" 
+                size="small" 
+                @click="search('adSearchForm')">搜索</el-button>
+              <el-button 
+                size="small" 
+                @click="resetSearch('adSearchForm')">重置</el-button>
             </el-form-item>
           </el-form>
         </div>
-        <div class="editCondition-wrap" style="padding: 0 0 15px;">
-          <el-form ref="editForm" :model="editCondition" :inline="true">
-            <el-form-item label="修改选项" style="margin-bottom: 0;">
+        <div 
+          class="editCondition-wrap" 
+          style="padding: 0 0 15px;">
+          <el-form 
+            ref="editForm" 
+            :model="editCondition" 
+            :inline="true">
+            <el-form-item 
+              label="修改选项" 
+              style="margin-bottom: 0;">
               <el-checkbox-group v-model="editCondition.conditionList">
-                <el-checkbox v-for="item in conditionContent" :label="item" :key="item"/>
+                <el-checkbox 
+                  v-for="item in conditionContent" 
+                  :label="item" 
+                  :key="item"/>
               </el-checkbox-group>
             </el-form-item>
-            <el-button type="danger" size="small" @click="modifyEdit">修改</el-button>
+            <el-button 
+              type="danger" 
+              size="small" 
+              @click="modifyEdit">修改</el-button>
           </el-form>
         </div>
         <div class="actions-wrap">
           <span class="label">模版投放数量: {{ pagination.total }}</span>
-          <el-button size="small" type="success" @click="linkToAddItem">新增广告投放</el-button>
+          <el-button 
+            size="small" 
+            type="success" 
+            @click="linkToAddItem">新增广告投放</el-button>
         </div>
         <el-table
           ref="multipleTable"
@@ -134,10 +175,15 @@
           highlight-current-row
           @selection-change="handleSelectionChange"
         >
-          <el-table-column type="selection" width="55"/>
+          <el-table-column 
+            type="selection" 
+            width="55"/>
           <el-table-column type="expand">
             <template slot-scope="scope">
-              <el-form label-position="left" inline class="demo-table-expand">
+              <el-form 
+                label-position="left" 
+                inline 
+                class="demo-table-expand">
                 <el-form-item label="点位">
                   <span>{{ scope.row.point }}</span>
                 </el-form-item>
@@ -170,23 +216,36 @@
                 </el-form-item>
               </el-form>
               <template>
-                <el-table :data="scope.row.ad_plan.advertisements.data" style="width: 100%">
-                  <el-table-column :show-overflow-tooltip="true" label="广告行业" min-width="80">
+                <el-table 
+                  :data="scope.row.ad_plan.advertisements.data" 
+                  style="width: 100%">
+                  <el-table-column 
+                    :show-overflow-tooltip="true" 
+                    label="广告行业" 
+                    min-width="80">
                     <template slot-scope="ad_scope">
                       <span>{{ ad_scope.row.ad_trade_name }}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column :show-overflow-tooltip="true" label="创建人" min-width="60">
+                  <el-table-column 
+                    :show-overflow-tooltip="true" 
+                    label="创建人" 
+                    min-width="60">
                     <template slot-scope="ad_scope">
                       <span>{{ ad_scope.row.create_user_name }}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column label="类型" min-width="60">
+                  <el-table-column 
+                    label="类型" 
+                    min-width="60">
                     <template slot-scope="ad_scope">
                       <span>{{ ad_scope.row.type_text }}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column :show-overflow-tooltip="true" label="素材名称" min-width="100">
+                  <el-table-column 
+                    :show-overflow-tooltip="true" 
+                    label="素材名称" 
+                    min-width="100">
                     <template slot-scope="ad_scope">
                       <span>{{ ad_scope.row.name }}</span>
                       <br>
@@ -198,21 +257,32 @@
                       </span>
                     </template>
                   </el-table-column>
-                  <el-table-column :show-overflow-tooltip="true" label="附件" min-width="80">
+                  <el-table-column 
+                    :show-overflow-tooltip="true" 
+                    label="附件" 
+                    min-width="80">
                     <template slot-scope="ad_scope">
-                      <a :href="ad_scope.row.link" target="_blank" style="color: blue">
+                      <a 
+                        :href="ad_scope.row.link" 
+                        target="_blank" 
+                        style="color: blue">
                         <i class="el-icon-download"/>
                         {{ ad_scope.row.size }}M
                       </a>
                     </template>
                   </el-table-column>
-                  <el-table-column label="广告标记" min-width="80">
+                  <el-table-column 
+                    label="广告标记" 
+                    min-width="80">
                     <template slot-scope="ad_scope">
                       <span>{{ ad_scope.row.isad_text }}</span>
                     </template>
                   </el-table-column>
                   <template v-if="scope.row.ad_plan.type==='program'">
-                    <el-table-column :show-overflow-tooltip="true" label="素材显示格式" min-width="130">
+                    <el-table-column 
+                      :show-overflow-tooltip="true" 
+                      label="素材显示格式" 
+                      min-width="130">
                       <template slot-scope="ad_scope">
                         <span v-if="ad_scope.row.pivot">
                           模式：{{ modeOptions[ad_scope.row.pivot.mode] }}
@@ -245,7 +315,10 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column v-else label="素材投放时间" min-width="130">
+                  <el-table-column 
+                    v-else 
+                    label="素材投放时间" 
+                    min-width="130">
                     <template slot-scope="ad_scope">
                       <span style="color: #67C23A">
                         <i class="el-icon-time"/>
@@ -262,7 +335,9 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column label="倒计时" min-width="80">
+                  <el-table-column 
+                    label="倒计时" 
+                    min-width="80">
                     <template slot-scope="ad_scope">
                       <span v-if="ad_scope.row.pivot">
                         {{ ad_scope.row.pivot.cdshow ?'开启':'关闭' }}
@@ -272,7 +347,9 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column label="状态" min-width="65">
+                  <el-table-column 
+                    label="状态" 
+                    min-width="65">
                     <template slot-scope="ad_scope">
                       <span>{{ ad_scope.row.pivot.visiable === 1 ? '运营中' : '下架' }}</span>
                     </template>
@@ -281,7 +358,10 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column prop="id" label="ID" min-width="50"/>
+          <el-table-column 
+            prop="id" 
+            label="ID" 
+            min-width="50"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="ad_trade"
@@ -300,8 +380,15 @@
             label="类型"
             min-width="80"
           />
-          <el-table-column :show-overflow-tooltip="true" prop="point" label="点位" min-width="150"/>
-          <el-table-column :show-overflow-tooltip="true" label="节目" min-width="80">
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="point" 
+            label="点位" 
+            min-width="150"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            label="节目" 
+            min-width="80">
             <template slot-scope="scope">
               <span>{{ scope.row.ad_plan.type === 'ads' ? '--' : scope.row.project }}</span>
             </template>
@@ -329,8 +416,15 @@
           />
         </div>
       </div>
-      <el-dialog v-loading="loading" :visible.sync="editVisible" title="批量修改" @close="dialogClose">
-        <el-form ref="adForm" :model="adForm" label-width="150px">
+      <el-dialog 
+        v-loading="loading" 
+        :visible.sync="editVisible" 
+        title="批量修改" 
+        @close="dialogClose">
+        <el-form 
+          ref="adForm" 
+          :model="adForm" 
+          label-width="150px">
           <el-form-item
             v-if="modifyOptionFlag.ad_trade_id"
             :rules="[{ type: 'number', required: true, message: '请选择广告行业', trigger: 'submit' }]"
@@ -405,8 +499,12 @@
             label="状态"
             prop="visiable"
           >
-            <el-radio v-model="adForm.visiable" :label="1">运营中</el-radio>
-            <el-radio v-model="adForm.visiable" :label="0">下架</el-radio>
+            <el-radio 
+              v-model="adForm.visiable" 
+              :label="1">运营中</el-radio>
+            <el-radio 
+              v-model="adForm.visiable" 
+              :label="0">下架</el-radio>
           </el-form-item>
           <el-form-item
             v-if="modifyOptionFlag.only"
@@ -414,11 +512,17 @@
             label="唯一"
             prop="only"
           >
-            <el-radio v-model="adForm.only" :label="1">是</el-radio>
-            <el-radio v-model="adForm.only" :label="0">否</el-radio>
+            <el-radio 
+              v-model="adForm.only" 
+              :label="1">是</el-radio>
+            <el-radio 
+              v-model="adForm.only" 
+              :label="0">否</el-radio>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="submitModify('adForm')">完成</el-button>
+            <el-button 
+              type="primary" 
+              @click="submitModify('adForm')">完成</el-button>
           </el-form-item>
         </el-form>
       </el-dialog>

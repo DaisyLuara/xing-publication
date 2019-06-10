@@ -7,7 +7,11 @@
     >
       <div class="item-content-wrap">
         <div class="search-wrap">
-          <el-form ref="adSearchForm" :model="adSearchForm" class="search-form" :inline="true">
+          <el-form 
+            ref="adSearchForm" 
+            :model="adSearchForm" 
+            :inline="true" 
+            class="search-form">
             <el-form-item prop="type">
               <el-select
                 v-model="adSearchForm.type"
@@ -16,11 +20,19 @@
                 clearable
                 @change="typeAndAdTradeChangeHandle"
               >
-                <el-option key="program" label="节目广告" value="program"/>
-                <el-option key="ads" label="小屏广告" value="ads"/>
+                <el-option 
+                  key="program" 
+                  label="节目广告" 
+                  value="program"/>
+                <el-option 
+                  key="ads" 
+                  label="小屏广告" 
+                  value="ads"/>
               </el-select>
             </el-form-item>
-            <el-form-item label prop="adTrade">
+            <el-form-item 
+              label 
+              prop="adTrade">
               <el-select
                 v-model="adSearchForm.ad_trade_id"
                 filterable
@@ -37,7 +49,9 @@
               </el-select>
             </el-form-item>
 
-            <el-form-item label prop="ad_plan_id">
+            <el-form-item 
+              label 
+              prop="ad_plan_id">
               <el-select
                 v-model="adSearchForm.ad_plan_id"
                 :loading="searchLoading"
@@ -55,22 +69,36 @@
             </el-form-item>
 
             <el-form-item prop="type">
-              <el-input v-model="adSearchForm.ad_plan_name" placeholder="广告模版名称"/>
+              <el-input 
+                v-model="adSearchForm.ad_plan_name" 
+                placeholder="广告模版名称"/>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="search('adSearchForm')">搜索</el-button>
+              <el-button 
+                type="primary" 
+                @click="search('adSearchForm')">搜索</el-button>
               <el-button @click="resetSearch('adSearchForm')">重置</el-button>
             </el-form-item>
           </el-form>
         </div>
         <div class="actions-wrap">
           <span class="label">广告模版数量: {{ pagination.total }}</span>
-          <el-button size="small" type="success" @click="linkToAddPlan">新增广告模版</el-button>
+          <el-button 
+            size="small" 
+            type="success" 
+            @click="linkToAddPlan">新增广告模版</el-button>
         </div>
-        <el-table ref="multipleTable" :data="adPlanList" style="width: 100%" highlight-current-row>
+        <el-table 
+          ref="multipleTable" 
+          :data="adPlanList" 
+          style="width: 100%" 
+          highlight-current-row>
           <el-table-column type="expand">
             <template slot-scope="scope">
-              <el-form label-position="left" inline class="demo-table-expand">
+              <el-form 
+                label-position="left" 
+                inline 
+                class="demo-table-expand">
                 <el-form-item label="类型">
                   <span>{{ scope.row.type_text }}</span>
                 </el-form-item>
@@ -78,7 +106,10 @@
                   <span>{{ scope.row.ad_trade_name }}</span>
                 </el-form-item>
                 <el-form-item label="图标">
-                  <a :href="scope.row.icon" target="_blank" style="color: blue">查看</a>
+                  <a 
+                    :href="scope.row.icon" 
+                    target="_blank" 
+                    style="color: blue">查看</a>
                 </el-form-item>
                 <el-form-item label="广告模版">
                   <span>{{ scope.row.name }}</span>
@@ -101,7 +132,10 @@
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column prop="id" label="ID" min-width="50"/>
+          <el-table-column 
+            prop="id" 
+            label="ID" 
+            min-width="50"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="type_text"
@@ -114,14 +148,22 @@
             label="广告行业"
             min-width="80"
           />
-          <el-table-column label="图片" min-width="50">
+          <el-table-column 
+            label="图片" 
+            min-width="50">
             <template slot-scope="scope">
               <span>
-                <img :src="scope.row.icon" width="40px">
+                <img 
+                  :src="scope.row.icon" 
+                  width="40px">
               </span>
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="name" label="广告模版" min-width="130"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="name" 
+            label="广告模版" 
+            min-width="130"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="hardware"
@@ -155,10 +197,18 @@
             label="修改时间"
             min-width="120"
           />
-          <el-table-column label="操作" min-width="150">
+          <el-table-column 
+            label="操作" 
+            min-width="150">
             <template slot-scope="scope">
-              <el-button size="small" type="warning" @click="linkToEditPlan(scope.row.id)">编辑</el-button>
-              <el-button size="small" type="default" @click="linkToPlanTimeList(scope.row)">子条目</el-button>
+              <el-button 
+                size="small" 
+                type="warning" 
+                @click="linkToEditPlan(scope.row.id)">编辑</el-button>
+              <el-button 
+                size="small" 
+                type="default" 
+                @click="linkToPlanTimeList(scope.row)">子条目</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -224,8 +274,7 @@ export default {
         total: 0,
         pageSize: 10,
         currentPage: 1
-      },
-      adPlanList: []
+      }
     };
   },
   created() {

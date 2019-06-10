@@ -1,22 +1,36 @@
 <template>
   <div class="item-wrap-template">
-    <div v-loading="setting.loading" :element-loading-text="setting.loadingText" class="pane">
+    <div 
+      v-loading="setting.loading" 
+      :element-loading-text="setting.loadingText" 
+      class="pane">
       <div class="pane-title">{{ adPlanId ? '编辑广告模版' : '新增广告模版' }}</div>
-      <el-form ref="adPlanForm" :model="adPlanForm" label-width="150px">
+      <el-form 
+        ref="adPlanForm" 
+        :model="adPlanForm" 
+        label-width="150px">
         <el-form-item
           :rules="[{ required: true, message: '请选择类型', trigger: 'submit',type: 'string'}]"
           label="类型"
           prop="type"
         >
-          <el-radio v-model="adPlanForm.type" label="program">节目广告</el-radio>
-          <el-radio v-model="adPlanForm.type" label="ads">小屏广告</el-radio>
+          <el-radio 
+            v-model="adPlanForm.type" 
+            label="program">节目广告</el-radio>
+          <el-radio 
+            v-model="adPlanForm.type" 
+            label="ads">小屏广告</el-radio>
         </el-form-item>
         <el-form-item
           :rules="[{ required: true, message: '请选择广告行业', trigger: 'submit',type: 'number'}]"
           label="广告行业"
           prop="atid"
         >
-          <el-select v-model="adPlanForm.atid" filterable placeholder="请搜索" clearable>
+          <el-select 
+            v-model="adPlanForm.atid" 
+            filterable 
+            placeholder="请搜索" 
+            clearable>
             <el-option
               v-for="item in adTradeList"
               :key="item.id"
@@ -30,16 +44,25 @@
           label="广告模版名称"
           prop="name"
         >
-          <el-input v-model="adPlanForm.name" placeholder="请输入广告模版名称"/>
+          <el-input 
+            v-model="adPlanForm.name" 
+            placeholder="请输入广告模版名称"/>
         </el-form-item>
         <el-form-item
           :rules="[{ required: true, message: '请选择附件', trigger: 'submit',type: 'string'}]"
           label="方案图标"
           prop="icon"
         >
-          <div class="avatar-uploader" @click="panelVisible=true">
-            <img v-if="adPlanForm.icon" :src="adPlanForm.icon" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"/>
+          <div 
+            class="avatar-uploader" 
+            @click="panelVisible=true">
+            <img 
+              v-if="adPlanForm.icon" 
+              :src="adPlanForm.icon" 
+              class="avatar">
+            <i 
+              v-else 
+              class="el-icon-plus avatar-uploader-icon"/>
           </div>
         </el-form-item>
         <el-form-item
@@ -47,7 +70,9 @@
           label="播放模式"
           prop="tmode"
         >
-          <el-radio-group v-model="adPlanForm.tmode" @change="tmodeChangeHandle">
+          <el-radio-group 
+            v-model="adPlanForm.tmode" 
+            @change="tmodeChangeHandle">
             <el-radio label="div">自定义</el-radio>
             <el-radio label="hours">小时间隔</el-radio>
           </el-radio-group>
@@ -58,10 +83,16 @@
           label="节目运行状态"
           prop="hardware"
         >
-          <el-radio v-model="adPlanForm.hardware" :label="0">开启</el-radio>
-          <el-radio v-model="adPlanForm.hardware" :label="1">关闭</el-radio>
+          <el-radio 
+            v-model="adPlanForm.hardware" 
+            :label="0">开启</el-radio>
+          <el-radio 
+            v-model="adPlanForm.hardware" 
+            :label="1">关闭</el-radio>
         </el-form-item>
-        <el-form-item label="备注" prop="info">
+        <el-form-item 
+          label="备注" 
+          prop="info">
           <el-input
             v-model="adPlanForm.info"
             type="textarea"
@@ -72,7 +103,9 @@
         </el-form-item>
         <el-form-item>
           <el-button @click="historyBack">返回</el-button>
-          <el-button type="primary" @click="submit('adPlanForm')">完成</el-button>
+          <el-button 
+            type="primary" 
+            @click="submit('adPlanForm')">完成</el-button>
         </el-form-item>
       </el-form>
     </div>

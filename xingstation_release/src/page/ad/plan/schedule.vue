@@ -12,14 +12,24 @@
       </div>
       <!-- 新增子策略 -->
       <div>
-        <el-button size="small" type="success" @click="addPlanTime">新增排期</el-button>
+        <el-button 
+          size="small" 
+          type="success" 
+          @click="addPlanTime">新增排期</el-button>
       </div>
     </div>
     <!-- 子条目列表 -->
-    <el-table ref="multipleTable" :data="tableData" style="width: 100%" highlight-current-row>
+    <el-table 
+      ref="multipleTable" 
+      :data="tableData" 
+      style="width: 100%" 
+      highlight-current-row>
       <el-table-column type="expand">
         <template slot-scope="scope">
-          <el-form label-position="left" inline class="demo-table-expand">
+          <el-form 
+            label-position="left" 
+            inline 
+            class="demo-table-expand">
             <el-form-item label="ID">
               <span>{{ scope.row.id }}</span>
             </el-form-item>
@@ -36,7 +46,10 @@
               <span>{{ scope.row.advertisement.name }}</span>
             </el-form-item>
             <el-form-item label="附件">
-              <a :href="scope.row.advertisement.link" target="_blank" style="color: blue">
+              <a 
+                :href="scope.row.advertisement.link" 
+                target="_blank" 
+                style="color: blue">
                 <i class="el-icon-download"/>
                 {{ scope.row.advertisement.size }}M
               </a>
@@ -88,15 +101,24 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column prop="id" label="ID" min-width="50"/>
+      <el-table-column 
+        prop="id" 
+        label="ID" 
+        min-width="50"/>
       <el-table-column
         :show-overflow-tooltip="true"
         label="广告行业"
         prop="advertisement.ad_trade_name"
         min-width="80"
       />
-      <el-table-column label="类型" prop="advertisement.type_text" min-width="60"/>
-      <el-table-column :show-overflow-tooltip="true" label="素材名称" min-width="100">
+      <el-table-column 
+        label="类型" 
+        prop="advertisement.type_text" 
+        min-width="60"/>
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        label="素材名称" 
+        min-width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.advertisement.name }}</span>
           <br>
@@ -108,15 +130,24 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" label="附件" min-width="80">
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        label="附件" 
+        min-width="80">
         <template slot-scope="scope">
-          <a :href="scope.row.advertisement.link" target="_blank" style="color: blue">
+          <a 
+            :href="scope.row.advertisement.link" 
+            target="_blank" 
+            style="color: blue">
             <i class="el-icon-download"/>
             {{ scope.row.advertisement.size }}M
           </a>
         </template>
       </el-table-column>
-      <el-table-column label="广告标记" prop="advertisement.isad_text" min-width="80"/>
+      <el-table-column 
+        label="广告标记" 
+        prop="advertisement.isad_text" 
+        min-width="80"/>
       <el-table-column
         v-if="adPlan.type === 'program'"
         :show-overflow-tooltip="true"
@@ -133,7 +164,10 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column v-if="adPlan.tmode === 'hours'" label="素材投放时间" min-width="120">
+      <el-table-column 
+        v-if="adPlan.tmode === 'hours'" 
+        label="素材投放时间" 
+        min-width="120">
         <template slot-scope="scope">
           <span style="color: #67C23A">
             <i class="el-icon-rank"/>
@@ -144,7 +178,10 @@
           分
         </template>
       </el-table-column>
-      <el-table-column v-else label="素材投放时间" min-width="130">
+      <el-table-column 
+        v-else 
+        label="素材投放时间" 
+        min-width="130">
         <template slot-scope="scope">
           <span style="color: #67C23A">
             <i class="el-icon-time"/>
@@ -154,7 +191,9 @@
           <span>{{ scope.row.ehm }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="倒计时" min-width="80">
+      <el-table-column 
+        label="倒计时" 
+        min-width="80">
         <template slot-scope="scope">
           <span>
             {{ scope.row.cdshow ?'开启':'关闭' }}
@@ -163,14 +202,21 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" min-width="65">
+      <el-table-column 
+        label="状态" 
+        min-width="65">
         <template slot-scope="scope">
           <span>{{ scope.row.visiable === 1 ? '运营中' : '下架' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" min-width="80">
+      <el-table-column 
+        label="操作" 
+        min-width="80">
         <template slot-scope="scope">
-          <el-button size="small" type="warning" @click="editPlanTime(scope.row.id)">编辑</el-button>
+          <el-button 
+            size="small" 
+            type="warning" 
+            @click="editPlanTime(scope.row.id)">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>

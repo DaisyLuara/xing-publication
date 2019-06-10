@@ -13,36 +13,36 @@
             :inline="true" 
             class="search-form">
             
-                <el-form-item 
-                  label 
-                  prop="adTrade">
-                  <el-select
-                    v-model="adSearchForm.ad_trade_id"
-                    filterable
-                    placeholder="请搜索广告行业"
-                    clearable
-                  >
-                    <el-option
-                      v-for="item in searchAdTradeList"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id"
-                    />
-                  </el-select>
-                </el-form-item>
+            <el-form-item 
+              label 
+              prop="adTrade">
+              <el-select
+                v-model="adSearchForm.ad_trade_id"
+                filterable
+                placeholder="请搜索广告行业"
+                clearable
+              >
+                <el-option
+                  v-for="item in searchAdTradeList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
              
-                <el-form-item prop="type">
-                  <el-input 
-                    v-model="adSearchForm.name" 
-                    placeholder="广告素材名称"/>
-                </el-form-item>
+            <el-form-item prop="type">
+              <el-input 
+                v-model="adSearchForm.name" 
+                placeholder="广告素材名称"/>
+            </el-form-item>
              
-                <el-form-item>
-                  <el-button 
-                    type="primary" 
-                    @click="search('adSearchForm')">搜索</el-button>
-                  <el-button @click="resetSearch('adSearchForm')">重置</el-button>
-                </el-form-item>
+            <el-form-item>
+              <el-button 
+                type="primary" 
+                @click="search('adSearchForm')">搜索</el-button>
+              <el-button @click="resetSearch('adSearchForm')">重置</el-button>
+            </el-form-item>
           </el-form>
         </div>
         <div class="actions-wrap">
