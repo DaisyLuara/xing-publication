@@ -7,13 +7,8 @@
     >
       <div class="item-content-wrap">
         <div class="search-wrap">
-          <el-form 
-            ref="filters" 
-            :model="filters" 
-            :inline="true">
-            <el-form-item 
-              label 
-              prop="coupon_batch_id">
+          <el-form ref="filters" :model="filters" :inline="true">
+            <el-form-item label prop="coupon_batch_id">
               <el-select
                 v-model="filters.coupon_batch_id"
                 :loading="searchLoading"
@@ -33,9 +28,7 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item 
-              label 
-              prop="status">
+            <el-form-item label prop="status">
               <el-select
                 v-model="filters.status"
                 placeholder="请选择优惠券状态"
@@ -50,9 +43,7 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item 
-              label 
-              prop="company_id">
+            <el-form-item label prop="company_id">
               <el-select
                 v-model="filters.company_id"
                 placeholder="请选择公司"
@@ -69,9 +60,7 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item 
-              label 
-              prop="shop_customer_id">
+            <el-form-item label prop="shop_customer_id">
               <el-select
                 v-model="filters.shop_customer_id"
                 placeholder="请选择核销人"
@@ -87,9 +76,7 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item 
-              label 
-              prop="dataValue">
+            <el-form-item label prop="dataValue">
               <el-date-picker
                 v-model="filters.dataValue"
                 :clearable="false"
@@ -100,38 +87,22 @@
                 align="right"
               />
             </el-form-item>
-            <el-form-item 
-              label 
-              prop>
-              <el-button 
-                type="primary" 
-                size="small" 
-                @click="search()">搜索</el-button>
-              <el-button 
-                type="default" 
-                size="small" 
-                @click="resetSearch('filters')">重置</el-button>
+            <el-form-item label prop>
+              <el-button type="primary" size="small" @click="search()">搜索</el-button>
+              <el-button type="default" size="small" @click="resetSearch('filters')">重置</el-button>
             </el-form-item>
           </el-form>
         </div>
         <div class="total-wrap">
           <span class="label">总数:{{ pagination.total }}</span>
           <div>
-            <el-button 
-              type="success" 
-              size="small" 
-              @click="exportList">导出</el-button>
+            <el-button type="success" size="small" @click="exportList">导出</el-button>
           </div>
         </div>
-        <el-table 
-          :data="tableData" 
-          style="width: 100%">
+        <el-table :data="tableData" style="width: 100%">
           <el-table-column type="expand">
             <template slot-scope="scope">
-              <el-form 
-                label-position="left" 
-                inline 
-                class="demo-table-expand">
+              <el-form label-position="left" inline class="demo-table-expand">
                 <el-form-item label="优惠券编码">
                   <span>{{ scope.row.code }}</span>
                 </el-form-item>
@@ -168,9 +139,7 @@
                 <el-form-item label="公司">
                   <span>{{ scope.row.couponBatch.company.name }}</span>
                 </el-form-item>
-                <el-form-item 
-                  :show-overflow-tooltip="true" 
-                  label="点位">
+                <el-form-item :show-overflow-tooltip="true" label="点位">
                   <span>{{ scope.row.point.id !== 0 ? scope.row.point.market.area.name + '-' + scope.row.point.market.name + '-' + scope.row.point.name : '' }}</span>
                 </el-form-item>
                 <el-form-item label="核销人">
@@ -179,16 +148,8 @@
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column 
-            :show-overflow-tooltip="true" 
-            prop="code" 
-            label="优惠券编码" 
-            min-width="100"/>
-          <el-table-column 
-            :show-overflow-tooltip="true" 
-            prop="name" 
-            label="优惠券名称" 
-            min-width="100"/>
+          <el-table-column :show-overflow-tooltip="true" prop="code" label="优惠券编码" min-width="100"/>
+          <el-table-column :show-overflow-tooltip="true" prop="name" label="优惠券名称" min-width="100"/>
           <el-table-column
             :show-overflow-tooltip="true"
             prop="status"
@@ -214,27 +175,15 @@
             label="核销时间"
             min-width="100"
           />
-          <el-table-column 
-            :show-overflow-tooltip="true" 
-            prop 
-            label="公司" 
-            min-width="100">
+          <el-table-column :show-overflow-tooltip="true" prop label="公司" min-width="100">
             <template slot-scope="scope">{{ scope.row.couponBatch.company.name }}</template>
           </el-table-column>
-          <el-table-column 
-            :show-overflow-tooltip="true" 
-            prop 
-            label="核销人" 
-            min-width="100">
+          <el-table-column :show-overflow-tooltip="true" prop label="核销人" min-width="100">
             <template
               slot-scope="scope"
             >{{ scope.row.customer !==undefined ? scope.row.customer.name : '' }}</template>
           </el-table-column>
-          <el-table-column 
-            :show-overflow-tooltip="true" 
-            prop 
-            label="点位" 
-            min-width="100">
+          <el-table-column :show-overflow-tooltip="true" prop label="点位" min-width="100">
             <template
               slot-scope="scope"
             >{{ scope.row.point.id !== 0 ? scope.row.point.market.area.name + '-' + scope.row.point.market.name + '-' + scope.row.point.name : '' }}</template>
@@ -385,10 +334,20 @@ export default {
     };
   },
   created() {
-    this.putInCouponList();
-    this.getCompanyList();
+    this.init();
   },
+
   methods: {
+    async init() {
+      this.setting.loading = true;
+      try {
+        let res = await getSearchCompany(this);
+        this.companyList = res.data;
+        this.putInCouponList();
+      } catch (e) {
+        this.setting.loading = false;
+      }
+    },
     exportList() {
       let args = this.setArgs();
       args.type = "coupon";
@@ -428,15 +387,6 @@ export default {
           this.searchLoading = false;
 
           console.log(err);
-        });
-    },
-    getCompanyList() {
-      return getSearchCompany(this)
-        .then(result => {
-          this.companyList = result.data;
-        })
-        .catch(error => {
-          console.log(error);
         });
     },
     getCouponQuery(query) {
@@ -495,38 +445,6 @@ export default {
     putInCouponList() {
       this.setting.loading = true;
       let args = this.setArgs();
-      // let args = {
-      //   include: "couponBatch.company,point.market.area,customer",
-      //   page: this.pagination.currentPage,
-      //   coupon_batch_id: this.filters.coupon_batch_id[0],
-      //   status: this.filters.status,
-      //   company_id: this.filters.company_id,
-      //   shop_customer_id: this.filters.shop_customer_id
-      // };
-      // if (this.filters.coupon_batch_id.length === 0) {
-      //   delete args.coupon_batch_id;
-      // }
-      // if (this.filters.status === "") {
-      //   delete args.status;
-      // }
-      // if (this.filters.company_id === "") {
-      //   delete args.company_id;
-      // }
-      // if (this.filters.shop_customer_id === "") {
-      //   delete args.shop_customer_id;
-      // }
-      // if (this.filters.dataValue) {
-      //   if (this.filters.dataValue.length !== 0) {
-      //     if (this.filters.dataValue[0]) {
-      //       args.start_date = handleDateTimeTransform(
-      //         this.filters.dataValue[0]
-      //       );
-      //     }
-      //     if (this.filters.dataValue[1]) {
-      //       args.end_date = handleDateTimeTransform(this.filters.dataValue[1]);
-      //     }
-      //   }
-      // }
       putInCouponList(this, args)
         .then(response => {
           let data = response.data;

@@ -54,8 +54,6 @@
                 />
               </el-select>
             </el-form-item>
-
-
             <el-form-item 
               label 
               prop="beginDate">

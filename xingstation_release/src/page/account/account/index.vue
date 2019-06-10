@@ -27,16 +27,20 @@
             label="密码" 
             prop="user.password">
             <el-input 
+              :trigger-on-focus="false"
+              :type="inputType"
               v-model="userForm.user.password" 
-              type="password" 
+              @focus="inputType='password'"
               class="user-form-input"/>
           </el-form-item>
           <el-form-item 
             label="确认密码" 
             prop="user.repassword">
-            <el-input 
+            <el-input
+              :trigger-on-focus="false"
+              :type="inputType" 
               v-model="userForm.user.repassword" 
-              type="password" 
+              @focus="inputType='password'"
               class="user-form-input"/>
           </el-form-item>
           <el-form-item>
@@ -53,20 +57,13 @@
 
 <script>
 const DOMAIN = process.env.DOMAIN;
-
 import auth from "service/auth";
-import router from "router";
+import {historyBack} from 'service'
 import {
-  Row,
-  Col,
   Button,
   Input,
   Form,
   FormItem,
-  Checkbox,
-  CheckboxGroup,
-  RadioGroup,
-  Radio
 } from "element-ui";
 
 export default {
@@ -79,6 +76,7 @@ export default {
   },
   data() {
     return {
+      inputType:'text',
       setting: {
         isOpenSelectAll: true,
         loading: false,
@@ -195,7 +193,7 @@ export default {
       this.$refs[formName].resetFields();
     },
     historyBack() {
-      router.back();
+      historyBack();
     }
   }
 };

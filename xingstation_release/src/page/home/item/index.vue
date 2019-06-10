@@ -23,7 +23,7 @@
       <el-card 
         v-loading="pointFlag"
         shadow="always" >
-        <highcharts 
+        <Highcharts 
           ref="pointTenChar"
           :options="pointTenOptions" 
           class="highchart"/>
@@ -39,7 +39,7 @@
           <el-col 
             v-loading="projectFlag"
             :span="16" >
-            <highcharts 
+            <Highcharts 
               ref="projectFiveChar"
               :options="projectFiveOptions" 
               class="highchart" />
@@ -48,7 +48,7 @@
           <el-col 
             v-loading="userFlag"
             :span="8" >
-            <highcharts 
+            <Highcharts 
               ref="userChar"
               :options="userOptions" 
               class="highchart"/>
@@ -62,7 +62,7 @@
       <el-card 
         v-loading="activeFlag"
         shadow="always">
-        <highcharts 
+        <Highcharts 
           ref="activeChar"
           :options="activeOptions" 
           class="highchart" />
@@ -72,20 +72,14 @@
 </template>
 <script>
 import {
-  Tabs,
-  TabPane,
   Button,
   Row,
   Col,
   Card,
   DatePicker,
-  Dialog
 } from 'element-ui'
-import Vue from 'vue'
-import Highcharts from 'highcharts'
-import VueHighcharts from 'vue-highcharts'
-Vue.use(VueHighcharts)
-
+import Highcharts from 'highcharts';
+import { genComponent } from 'vue-highcharts';
 import { getHomeChartData } from 'service'
 
 export default {
@@ -93,8 +87,8 @@ export default {
     ElRow: Row,
     ElCol: Col,
     ElCard: Card,
-    ElDialog: Dialog,
-    ElDatePicker: DatePicker
+    ElDatePicker: DatePicker,
+    Highcharts: genComponent('Highcharts', Highcharts),
   },
   data() {
     return {
@@ -215,11 +209,6 @@ export default {
           },
           labels: {
             autoRotationLimit: 40
-            // formatter: function() {
-            //   if (typeof this.value !== 'number') {
-            //     return this.value.substring(0, 5) + '...'
-            //   }
-            // }
           }
         },
         yAxis: {
@@ -229,7 +218,7 @@ export default {
             enabled: true,
             style: {
               fontWeight: 'bold',
-              color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+              color: 'gray'
             }
           }
         },
@@ -369,106 +358,6 @@ export default {
           {
             type: 'pie',
             name: '性别访问数'
-          }
-        ]
-      },
-      timeOptions: {
-        title: {
-          text: '时间段与人群特征',
-          align: 'left'
-        },
-        xAxis: {
-          type: 'category',
-          crosshair: true
-        },
-        yAxis: [
-          {
-            // Primary yAxis
-            labels: {
-              format: '{value}',
-              style: {
-                color: Highcharts.getOptions().colors[1]
-              }
-            },
-            title: {
-              text: '年龄数量',
-              style: {
-                color: Highcharts.getOptions().colors[1]
-              }
-            }
-          },
-          {
-            // Secondary yAxis
-            title: {
-              text: '女性百分比',
-              style: {
-                color: '#ED1E79'
-              }
-            },
-            labels: {
-              format: '{value}%',
-              style: {
-                color: '#ED1E79'
-              }
-            },
-            opposite: true
-          }
-        ],
-        legend: {
-          align: 'left',
-          verticalAlign: 'top',
-          y: 30
-        },
-        plotOptions: {
-          series: {
-            stacking: 'normal'
-          }
-        },
-        credits: {
-          enabled: false
-        },
-        series: [
-          {
-            type: 'column',
-            name: '10后',
-            color: '#3b9aca',
-            data: []
-          },
-          {
-            type: 'column',
-            name: '00后',
-            color: '#8CC63F',
-            data: []
-          },
-          {
-            type: 'column',
-            color: '#FBB03B',
-            name: '90后',
-            data: []
-          },
-          {
-            type: 'column',
-            name: '80后',
-            color: '#F15A24',
-            data: []
-          },
-          {
-            type: 'column',
-            name: '70前/后',
-            color: '#662D91',
-            data: []
-          },
-          {
-            type: 'spline',
-            name: '女',
-            color: '#ED1E79',
-            data: [],
-            yAxis: 1,
-            marker: {
-              lineWidth: 2,
-              lineColor: Highcharts.getOptions().colors[3],
-              fillColor: '#ED1E79'
-            }
           }
         ]
       },

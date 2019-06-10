@@ -17,8 +17,4 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  .account-root {
-    height: 100%;
-    background-color: #EFF2F7;
-  }
 </style>
