@@ -40,11 +40,12 @@ class CheckCompany extends Notification
         // 存入数据库里的数据
         return [
             'id' => $this->company->id,
-            'reply_content' => '创建公司待审批',
+            'reply_content' => "新的公司被创建 \n公司名称：" . $this->company->name
+                . " \n公司简称：" . $this->company->internal_name,
             'user_id' => $user->id,
             'user_name' => $user->name,
+            'wechat_notify' => true,
             'type' => 'review'
         ];
-
     }
 }
