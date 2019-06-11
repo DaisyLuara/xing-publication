@@ -16,7 +16,7 @@ class AddFiledDateToContractTable extends Migration
         Schema::table('contracts', function (Blueprint $table) {
             $table->dropColumn('start_date');
             $table->dropColumn('end_date');
-            $table->timestamp('filed_date')->nullable()->after('bd_ma_message')->comment('归档日期');
+            $table->string('filed_date')->nullable()->after('bd_ma_message')->comment('归档日期');
         });
     }
 

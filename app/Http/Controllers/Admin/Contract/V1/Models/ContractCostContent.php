@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Admin\Contract\V1\Models;
 
 
 use App\Models\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * App\Http\Controllers\Admin\Contract\V1\Models\ContractCostContent
@@ -24,6 +25,7 @@ use App\Models\Model;
  * @property int $status 0:未确认,1:已确认
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read ContractCostKind $costKind
  * @method static \Illuminate\Database\Eloquent\Builder|ContractCostContent newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ContractCostContent newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Model ordered()
@@ -52,4 +54,9 @@ class ContractCostContent extends Model
         'remark',
         'status',
     ];
+
+    public function costKind(): BelongsTo
+    {
+        return $this->belongsTo(ContractCostKind::class, 'cost_id', 'id');
+    }
 }
