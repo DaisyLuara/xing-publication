@@ -46,7 +46,7 @@ class ContractRevenueExport extends AbstractExport
             ->groupBy(DB::Raw('users.name,contract_number'))
             ->selectRaw('contracts.id as id,users.name as username,contracts.contract_number as contract_number,filed_date,
                          contracts.amount as amount,sum(ir.receipt_money) as receipt_money ,companies.internal_name as internal_name,
-                         contracts.kind as kind,contracts.common_num as common_num');
+                         contracts.kind as kind,contracts.special_num as special_num');
 
         $product = DB::table('contracts')
             ->leftJoin('contract_products as cp', 'contracts.id', '=', 'cp.contract_id')
@@ -70,7 +70,7 @@ class ContractRevenueExport extends AbstractExport
             ->join(DB::raw("({$product->toSql()}) b"), 'a.id', '=', 'b.id')
             ->join(DB::raw("({$cost->toSql()}) c"), 'a.id', '=', 'c.id')
             ->orderBy('a.username')
-            ->selectRaw('a.id as id,username,contract_number,filed_date,amount,receipt_money,internal_name,kind,product_name,product_stock,common_num,c.*')
+            ->selectRaw('a.id as id,username,contract_number,filed_date,amount,receipt_money,internal_name,kind,product_name,product_stock,special_num,c.*')
             ->get();
         $header = ['负责人', '合同编号', '归档日期', '合同金额', '到账金额', '公司简称', '合同种类', '型号', '硬件数量', '定制节目数', '硬件费用', '物流费用', '运维费用', '4G网络费用', '人员差旅', '物料费用', '公司优惠', '其他'];
         $arr = [];
@@ -85,7 +85,7 @@ class ContractRevenueExport extends AbstractExport
                 'kind' => $this->kindMapping[$item->kind],
                 'product_name' => $item->kind === 4 ? '软件' : $item->product_name,
                 'product_stock' => $item->product_stock,
-                'common_num' => $item->common_num,
+                'special_num' => $item->special_num,
                 'hardware' => $item->hardware,
                 'transport' => $item->transport,
                 'operation' => $item->operation,
