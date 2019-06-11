@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $company_id
  * @property int $applicant 申请人
  * @property int $owner 所属人
- * @property int $status 1:待审批,2:审批中,3:已审批,4:特批,5:驳回,6:已归档
+ * @property int $status 1:待审批,2:审批中,3:已审批,4:特批,5:驳回
  * @property int|null $handler 处理人
  * @property int $type 0:收款合同,1:付款合同
  * @property int $product_status 0:无硬件，1:未出厂，2:已出厂
@@ -170,7 +170,6 @@ class Contract extends Model
         '3' => '已审批',
         '4' => '特批',
         '5' => '驳回',
-        '6' => '已归档'
     ];
 
     public static $typeMapping = [

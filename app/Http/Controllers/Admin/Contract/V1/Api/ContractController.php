@@ -358,7 +358,7 @@ class ContractController extends Controller
         }
 
         if ($request->filled('filed_date')) {
-            $contract->update(['filed_date' => $request->get('filed_date'), 'status' => 6]);
+            $contract->update(['filed_date' => $request->get('filed_date')]);
         }
         return $this->response()->noContent();
     }
