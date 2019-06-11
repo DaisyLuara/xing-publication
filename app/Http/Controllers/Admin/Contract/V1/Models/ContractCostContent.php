@@ -57,6 +57,6 @@ class ContractCostContent extends Model
 
     public function costKind(): BelongsTo
     {
-        return $this->belongsTo(ContractCostKind::class, 'cost_id', 'id');
+        return $this->belongsTo(ContractCostKind::class, 'kind_id', 'id');
     }
 }
