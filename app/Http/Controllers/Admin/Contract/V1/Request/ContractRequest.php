@@ -25,7 +25,8 @@ class ContractRequest extends Request
                     'remark' => 'string|nullable|max:1000',
                     'amount' => 'numeric',
                     'special_num' => 'required|integer',
-                    'common_num' => 'required|integer|max:2'
+                    'common_num' => 'required|integer|max:2',
+                    'contract_number' => 'filled|unique:contracts'
                 ];
                 break;
             case 'PATCH':
