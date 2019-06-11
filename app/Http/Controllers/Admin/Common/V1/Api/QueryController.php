@@ -378,7 +378,7 @@ class QueryController extends Controller
         }
 
         //合同成本
-        if ($request->has('cost') && $request->get('cost') === 0) {
+        if ($request->has('cost') && (int)$request->get('cost') === 0) {
             $query->doesntHave('contractCost');
         }
 

@@ -346,7 +346,7 @@ class ContractController extends Controller
         return excelExportByType($request, 'contract');
     }
 
-    public function filed(Contract $contract): Response
+    public function filed(Request $request, Contract $contract): Response
     {
         /** @var User $user */
         $user = $this->user();
@@ -356,8 +356,10 @@ class ContractController extends Controller
         if ($contract->status !== ActionConfig::CONTRACT_STATUS_AGREE) {
             abort(403, '此操作只适用于已审批合同');
         }
-        $filedDate = Carbon::now()->toDateTimeString();
-        $contract->update(['filed_date' => $filedDate]);
+
+        if ($request->filled('filed_date')) {
+            $contract->update(['filed_date' => $request->get('filed_date'), 'status' => 6]);
+        }
         return $this->response()->noContent();
     }
 
