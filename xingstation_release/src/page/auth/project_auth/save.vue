@@ -176,7 +176,6 @@ export default {
             }
             this.searchLoading = false;
             this.getskin()
-
           })
           .catch(err => {
             this.searchLoading = false;
@@ -187,7 +186,7 @@ export default {
     },
     getskin(){
       let args = {
-        project_id: this.projectAuthForm.project_id
+        project_id: this.projectList[0].id
       };
       return getSearchSkin(this,args)
         .then(response =>{
@@ -206,6 +205,7 @@ export default {
         let res = await getProjectAuthDetailData(this, this.projectAuthId);
         await this.getProject(res.project_name);
         this.projectAuthForm = res;
+        console.log(this.projectAuthForm)
         this.setting.loading = false;
       } catch (e) {
         this.setting.loading = false;
@@ -221,7 +221,6 @@ export default {
         if (valid) {
           this.setting.loading = true;
           let args = this.projectAuthForm;
-          console.log(args)
           if (this.projectAuthId) {
             modifyProjectAuth(this, this.projectAuthId, args)
               .then(res => {
