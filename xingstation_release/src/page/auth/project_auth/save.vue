@@ -205,7 +205,6 @@ export default {
         let res = await getProjectAuthDetailData(this, this.projectAuthId);
         await this.getProject(res.project_name);
         this.projectAuthForm = res;
-        console.log(this.projectAuthForm)
         this.setting.loading = false;
       } catch (e) {
         this.setting.loading = false;
