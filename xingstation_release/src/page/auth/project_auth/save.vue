@@ -34,6 +34,26 @@
           </el-select>
         </el-form-item>
         <el-form-item
+          :rules="{required: true, message: '节目皮肤不能为空', trigger: 'submit'}"
+          label="节目皮肤"
+          prop="skin_id"
+        >
+          <el-select
+            v-model="projectAuthForm.skin_id"
+            :loading="searchLoading"
+            placeholder="请选择节目皮肤"
+            filterable
+            clearable
+          >
+            <el-option
+              v-for="item in skinList"
+              :key="item.bid"
+              :label="item.name"
+              :value="item.bid"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
           :rules="{required: true, message: '场地主不能为空', trigger: 'submit'}"
           prop="customer_id"
           label="场地主"
@@ -75,7 +95,8 @@ import {
   getSearchProject,
   modifyProjectAuth,
   saveProjectAuth,
-  historyBack
+  historyBack,
+  getSearchSkin
 } from "service";
 
 import {
@@ -101,17 +122,19 @@ export default {
       projectAuthForm: {
         id: "",
         customer_id: "",
-        project_id: ""
+        project_id: "",
+        skin_id: ""
       },
       marketOwnerList: [],
       projectList: [],
+      skinList:[],
       searchLoading: false,
       projectAuthId: "",
       setting: {
         isOpenSelectAll: true,
         loading: false,
         loadingText: "拼命加载中"
-      }
+      },
     };
   },
   created() {
@@ -139,6 +162,7 @@ export default {
     },
 
     getProject(query) {
+      this.projectAuthForm.skin_id=''
       if (query !== "") {
         this.searchLoading = true;
         let args = {
@@ -151,6 +175,7 @@ export default {
               this.projectList = [];
             }
             this.searchLoading = false;
+            this.getskin()
           })
           .catch(err => {
             this.searchLoading = false;
@@ -159,7 +184,18 @@ export default {
         this.projectList = [];
       }
     },
-
+    getskin(){
+      let args = {
+        project_id: this.projectList[0].id
+      };
+      return getSearchSkin(this,args)
+        .then(response =>{
+          this.skinList = response
+        })
+        .catch(err => {
+          this.searchLoading = false;          
+        })
+    },
     historyBack() {
       historyBack();
     },

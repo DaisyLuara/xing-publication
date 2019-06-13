@@ -85,11 +85,17 @@
                 <el-form-item label="授权场地主:">
                   <span>{{ scope.row.customer_name }}</span>
                 </el-form-item>
+                <el-form-item label="公司名称:">
+                  <span>{{ scope.row.customer.company_name }}</span>
+                </el-form-item>
                 <el-form-item label="节目ID:">
                   <span>{{ scope.row.project_id }}</span>
                 </el-form-item>
                 <el-form-item label="节目名称:">
                   <span>{{ scope.row.project_name }}</span>
+                </el-form-item>
+                <el-form-item label="节目皮肤:">
+                  <span>{{ scope.row.skin_name }}</span>
                 </el-form-item>
                 <el-form-item label="时间">
                   <span>{{ scope.row.date }}</span>
@@ -107,11 +113,21 @@
             :show-overflow-tooltip="true" 
             prop="customer_name" 
             label="授权场地主" 
+            min-width="60"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="customer.company_name" 
+            label="公司名称" 
             min-width="100"/>
           <el-table-column 
             :show-overflow-tooltip="true" 
             prop="project_name" 
             label="节目名称" 
+            min-width="100"/>
+          <el-table-column 
+            :show-overflow-tooltip="true" 
+            prop="skin_name" 
+            label="节目皮肤" 
             min-width="100"/>
           <el-table-column 
             :show-overflow-tooltip="true" 
@@ -302,6 +318,7 @@
           page: this.pagination.currentPage,
           customer_id: this.searchForm.customer_id,
           project_id: this.searchForm.project_id,
+          include: "customer"
         };
 
         getProjectAuthListData(this, args)
