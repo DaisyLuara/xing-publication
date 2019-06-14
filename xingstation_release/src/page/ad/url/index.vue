@@ -118,6 +118,7 @@
         >
           <el-date-picker
             v-model="templateForm.date"
+            unlink-panels
             class="el_date_picker"
             type="daterange"
             range-separator="至"
