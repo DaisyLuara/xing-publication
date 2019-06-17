@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Admin\MallCoo\V1\Api;
 
+use App\Http\Controllers\Admin\Coupon\V1\Models\UserCouponBatch;
 use App\Http\Controllers\Admin\MallCoo\V1\Request\MallCooRequest;
 use App\Http\Controllers\Admin\MallCoo\V1\Request\UserRequest;
 use App\Http\Controllers\Admin\MallCoo\V1\Transformer\ThirdPartyUserTransformer;
 use App\Http\Controllers\Admin\WeChat\V1\Models\ThirdPartyUser;
+use App\Jobs\FaceBindingJob;
+use App\Jobs\Test;
 use function GuzzleHttp\Psr7\parse_query;
 use Illuminate\Http\Request;
 use App\Models\WeChatUser;
@@ -131,6 +134,10 @@ class UserController extends BaseController
         );
 
         WeChatUser::query()->where('id', $wxUserId)->update(['mobile' => $user->mobile]);
+
+        if ($request->has('qiniu_id')) {
+            FaceBindingJob::dispatch($request->get('qiniu_id'), $user->mobile, $this->mall_coo->marketid)->onQueue('face-bind');
+        }
 
         return $this->response->item($user, new ThirdPartyUserTransformer());
     }
