@@ -25,28 +25,29 @@ use App\Models\Model;
  * @property string $account_number 开户账号
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model ordered()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model recent()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany whereAccountBank($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany whereAccountNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany whereAddress($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany wherePhone($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany whereTaxpayerNum($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany whereTelephone($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Invoice\V1\Models\InvoiceCompany whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceCompany newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceCompany newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Model ordered()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceCompany query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Model recent()
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceCompany whereAccountBank($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceCompany whereAccountNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceCompany whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceCompany whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceCompany whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceCompany whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceCompany wherePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceCompany whereTaxpayerNum($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceCompany whereTelephone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceCompany whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceCompany whereUserId($value)
  * @mixin \Eloquent
  */
 class InvoiceCompany extends Model
 {
     protected $fillable = [
         'user_id',
+        'owner',
         'name',
         'taxpayer_num',
         'phone',

@@ -41,6 +41,13 @@ class UsersController extends Controller
 
         $user->update($attributes);
 
+        activity('update_current_user')
+            ->causedBy($user)
+            ->performedOn($user)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $attributes ])
+            ->log('账号设置修改');
+
+
         return $this->response()->item($user, new UserTransformer());
     }
 }

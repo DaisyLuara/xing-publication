@@ -219,7 +219,7 @@
 
 <script>
 import {
-  getSearchCouponList,
+  getSearchCoupon,
   getActivityBillList,
   reSendRedPack
 } from "service";
@@ -315,7 +315,7 @@ export default {
     };
   },
   created() {
-    this.getSearchCouponList();
+    this.getSearchCoupon();
     this.getActivityBillList();
   },
   methods: {
@@ -345,9 +345,9 @@ export default {
           });
         });
     },
-    getSearchCouponList() {
+    getSearchCoupon() {
       this.searchLoading = true;
-      getSearchCouponList(this)
+      getSearchCoupon(this)
         .then(result => {
           this.couponList = result.data;
           this.searchLoading = false;

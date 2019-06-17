@@ -12,7 +12,7 @@ class CompanyExport extends BaseExport
     private $internal_name;//公司简称
     private $category;//公司属性
     private $status;//状态
-    private $bdName;//所属BD
+    private $bd_name;//所属BD
 
 
     public function __construct($request)
@@ -21,7 +21,7 @@ class CompanyExport extends BaseExport
         $this->internal_name = $request->internal_name;
         $this->category = $request->category;
         $this->status = $request->status;
-        $this->bdName = $request->bd_name;
+        $this->bd_name = $request->bd_name;
 
         $this->fileName = '公司-公司管理列表';
     }
@@ -34,7 +34,6 @@ class CompanyExport extends BaseExport
 
         $query = DB::table('companies as c')
             ->leftJoin('users as bd_user', 'c.bd_user_id', '=', 'bd_user.id')
-            ->leftJoin('users as create_user', 'c.user_id', '=', 'create_user.id')
             ->leftJoin('customers', 'c.id', '=', 'customers.company_id');
 
 
@@ -46,25 +45,25 @@ class CompanyExport extends BaseExport
             $query->where('c.internal_name', 'like', '%' . $this->internal_name . '%');
         }
 
-        if (!is_null($this->category)) {
+        if ($this->category !== null) {
             $query->where('c.category', '=', $this->category);
         }
 
-        if (!is_null($this->status)) {
+        if ($this->status !== null) {
             $query->where('c.status', '=', $this->status);
         }
 
-        if ($this->bdName) {
-            $query->where('bd_user.name', 'like', '%' . $this->bdName . '%');
+        if ($this->bd_name) {
+            $query->where('bd_user.name', 'like', '%' . $this->bd_name . '%');
         }
 
         //角色为管理员，法务，法务主管时，查看所有公司数据
         if (!$currentUser->isAdmin() && !$currentUser->hasRole('legal-affairs|legal-affairs-manager|operation')) {
             //角色为主管时，查看下属及自己
             if ($currentUser->parent_id === $currentUser->id) {
-                $query->where('create_user.parent_id', $currentUser->id);
+                $query->where('bd_user.parent_id', $currentUser->id);
             } else {
-                $query->where('c.user_id', $currentUser->id);
+                $query->where('c.bd_user_id', $currentUser->id);
             }
         }
 

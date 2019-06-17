@@ -233,8 +233,8 @@
 <script>
 import {
   getBusinessList,
-  getSearchMarketList,
-  getSearchAeraList
+  getSearchMarket,
+  getSearchAera
 } from "service";
 
 import {
@@ -248,8 +248,6 @@ import {
   MessageBox,
   Select,
   Option,
-  Row,
-  Col
 } from "element-ui";
 
 export default {
@@ -263,8 +261,6 @@ export default {
     "el-form-item": FormItem,
     "el-select": Select,
     "el-option": Option,
-    "el-row": Row,
-    "el-col": Col
   },
   data() {
     return {
@@ -328,7 +324,7 @@ export default {
         include: "area",
         area_id: this.searchForm.areaid
       };
-      return getSearchMarketList(this, args)
+      return getSearchMarket(this, args)
         .then(response => {
           this.marketList = response.data;
           if (this.marketList.length == 0) {
@@ -386,7 +382,7 @@ export default {
         });
     },
     getAeraList() {
-      getSearchAeraList(this)
+      getSearchAera(this)
         .then(result => {
           this.areaList = result.data;
         })

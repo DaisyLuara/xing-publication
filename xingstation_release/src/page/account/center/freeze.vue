@@ -128,7 +128,7 @@
 </template>
 
 <script>
-import { getFutureRewardList, getSearchProjectList } from "service";
+import { getFutureRewardList, getSearchProject } from "service";
 import {
   Select,
   Option,
@@ -184,7 +184,7 @@ export default {
         let args = {
           name: query
         };
-        return getSearchProjectList(this, args)
+        getSearchProject(this, args)
           .then(response => {
             this.projectList = response.data;
             if (this.projectList.length == 0) {
@@ -200,7 +200,6 @@ export default {
         this.projectList = [];
       }
     },
-
     getFutureRewardList() {
       this.setting.loading = true;
       let args = {

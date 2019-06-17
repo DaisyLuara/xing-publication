@@ -6,7 +6,8 @@
   >
     <div class="actions-wrap">
       <div>
-        <span class="label">{{ adPlan.name }}</span><br>
+        <span class="label">{{ adPlan.name }}</span>
+        <br>
         <span class="label">数量: {{ pagination.total }}</span>
       </div>
       <!-- 新增子策略 -->
@@ -18,134 +19,105 @@
       </div>
     </div>
     <!-- 子条目列表 -->
-    <el-table
-      ref="multipleTable"
-      :data="tableData"
-      style="width: 100%"
-      highlight-current-row
-    >
-
-      <el-table-column
-        type="expand">
-        <template
-          slot-scope="scope">
-          <el-form
-            label-position="left"
-            inline
+    <el-table 
+      ref="multipleTable" 
+      :data="tableData" 
+      style="width: 100%" 
+      highlight-current-row>
+      <el-table-column type="expand">
+        <template slot-scope="scope">
+          <el-form 
+            label-position="left" 
+            inline 
             class="demo-table-expand">
-            <el-form-item
-              label="ID">
+            <el-form-item label="ID">
               <span>{{ scope.row.id }}</span>
             </el-form-item>
-            <el-form-item
-              label="广告行业">
+            <el-form-item label="广告行业">
               <span>{{ scope.row.advertisement.ad_trade_name }}</span>
             </el-form-item>
-            <el-form-item
-              label="素材创建人">
+            <el-form-item label="素材创建人">
               <span>{{ scope.row.advertisement.create_user_name }}</span>
             </el-form-item>
-            <el-form-item
-              label="素材类型">
+            <el-form-item label="素材类型">
               <span>{{ scope.row.advertisement.type_text }}</span>
             </el-form-item>
-            <el-form-item
-              label="素材名称">
+            <el-form-item label="素材名称">
               <span>{{ scope.row.advertisement.name }}</span>
             </el-form-item>
-            <el-form-item
-              label="附件">
-              <a
-                :href="scope.row.advertisement.link"
-                target="_blank"
+            <el-form-item label="附件">
+              <a 
+                :href="scope.row.advertisement.link" 
+                target="_blank" 
                 style="color: blue">
                 <i class="el-icon-download"/>
                 {{ scope.row.advertisement.size }}M
               </a>
             </el-form-item>
-            <el-form-item
-              label="广告标记">
+            <el-form-item label="广告标记">
               <span>{{ scope.row.advertisement.isad_text }}</span>
             </el-form-item>
 
             <template v-if="adPlan.type === 'program'">
-              <el-form-item
-                label="显示模式">
+              <el-form-item label="显示模式">
                 <span>{{ modeOptions[scope.row.mode] }}</span>
               </el-form-item>
-              <el-form-item
-                label="显示位置">
+              <el-form-item label="显示位置">
                 <span>{{ oriOptions[scope.row.ori] }}</span>
               </el-form-item>
-              <el-form-item
-                label="显示尺寸">
+              <el-form-item label="显示尺寸">
                 <span>{{ scope.row.screen }}%</span>
               </el-form-item>
             </template>
 
-            <el-form-item
-              label="素材投放时间">
-              <template
-                v-if="adPlan.tmode === 'hours'">
-                <span style="color: #67C23A"><i class="el-icon-rank"/></span>
-                <span>
-                  {{ (scope.row.shm).toString().substring(scope.row.shm.toString().length-2) }}
+            <el-form-item label="素材投放时间">
+              <template v-if="adPlan.tmode === 'hours'">
+                <span style="color: #67C23A">
+                  <i class="el-icon-rank"/>
                 </span>
+                <span>{{ (scope.row.shm).toString().substring(scope.row.shm.toString().length-2) }}</span>
                 至
-                <span>
-                  {{ (scope.row.ehm).toString().substring(scope.row.ehm.toString().length-2) }}
-                </span>
+                <span>{{ (scope.row.ehm).toString().substring(scope.row.ehm.toString().length-2) }}</span>
                 分
               </template>
               <template v-else>
-                <span style="color: #67C23A"><i class="el-icon-time"/></span>
-                <span>
-                  {{ scope.row.shm }}
+                <span style="color: #67C23A">
+                  <i class="el-icon-time"/>
                 </span>
+                <span>{{ scope.row.shm }}</span>
                 至
-                <span>
-                  {{ scope.row.ehm }}
-                </span>
+                <span>{{ scope.row.ehm }}</span>
               </template>
             </el-form-item>
-            <el-form-item
-              label="倒计时">
-              <span>
-                {{ scope.row.cdshow ?'开启':'关闭' }}
-              </span>
+            <el-form-item label="倒计时">
+              <span>{{ scope.row.cdshow ?'开启':'关闭' }}</span>
             </el-form-item>
-            <el-form-item
-              label="播放时长">
-              <span>
-                {{ scope.row.ktime ? scope.row.ktime + '秒' : '默认时长' }}
-              </span>
+            <el-form-item label="播放时长">
+              <span>{{ scope.row.ktime ? scope.row.ktime + '秒' : '默认时长' }}</span>
             </el-form-item>
-            <el-form-item
-              label="状态">
+            <el-form-item label="状态">
               <span>{{ scope.row.visiable === 1 ? '运营中' : '下架' }}</span>
             </el-form-item>
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="id"
-        label="ID"
-        min-width="50"
-      />
+      <el-table-column 
+        prop="id" 
+        label="ID" 
+        min-width="50"/>
       <el-table-column
         :show-overflow-tooltip="true"
         label="广告行业"
         prop="advertisement.ad_trade_name"
         min-width="80"
       />
-      <el-table-column
-        label="类型"
-        prop="advertisement.type_text"
-        min-width="60"
-      />
-      <el-table-column
-        :show-overflow-tooltip="true"
-        label="素材名称"
+      <el-table-column 
+        label="类型" 
+        prop="advertisement.type_text" 
+        min-width="60"/>
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        label="素材名称" 
         min-width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.advertisement.name }}</span>
@@ -153,101 +125,98 @@
           <span>
             <img
               :src="(scope.row.advertisement.type === 'static' || scope.row.advertisement.type === 'gif' ) ? scope.row.advertisement.link : scope.row.advertisement.img"
-              width="80px">
+              width="80px"
+            >
           </span>
         </template>
       </el-table-column>
-      <el-table-column
-        :show-overflow-tooltip="true"
-        label="附件"
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        label="附件" 
         min-width="80">
         <template slot-scope="scope">
-          <a
-            :href="scope.row.advertisement.link"
-            target="_blank"
+          <a 
+            :href="scope.row.advertisement.link" 
+            target="_blank" 
             style="color: blue">
             <i class="el-icon-download"/>
             {{ scope.row.advertisement.size }}M
           </a>
         </template>
       </el-table-column>
-      <el-table-column
-        label="广告标记"
-        prop="advertisement.isad_text"
-        min-width="80"
-      />
+      <el-table-column 
+        label="广告标记" 
+        prop="advertisement.isad_text" 
+        min-width="80"/>
       <el-table-column
         v-if="adPlan.type === 'program'"
         :show-overflow-tooltip="true"
         label="显示格式"
-        min-width="130">
+        min-width="130"
+      >
         <template slot-scope="scope">
           <span>
-            模式：{{ modeOptions[scope.row.mode] }}<br>
-            位置：{{ oriOptions[scope.row.ori] }} <br>
+            模式：{{ modeOptions[scope.row.mode] }}
+            <br>
+            位置：{{ oriOptions[scope.row.ori] }}
+            <br>
             尺寸：{{ scope.row.screen }}%
           </span>
         </template>
       </el-table-column>
-      <el-table-column
-        v-if="adPlan.tmode === 'hours'"
-        label="素材投放时间"
+      <el-table-column 
+        v-if="adPlan.tmode === 'hours'" 
+        label="素材投放时间" 
         min-width="120">
         <template slot-scope="scope">
-          <span style="color: #67C23A"><i class="el-icon-rank"/></span>
-          <span>
-            {{ (scope.row.shm).toString().substring(scope.row.shm.toString().length-2) }}
+          <span style="color: #67C23A">
+            <i class="el-icon-rank"/>
           </span>
+          <span>{{ (scope.row.shm).toString().substring(scope.row.shm.toString().length-2) }}</span>
           至
-          <span>
-            {{ (scope.row.ehm).toString().substring(scope.row.ehm.toString().length-2) }}
-          </span>
+          <span>{{ (scope.row.ehm).toString().substring(scope.row.ehm.toString().length-2) }}</span>
           分
         </template>
       </el-table-column>
-      <el-table-column
-        v-else
-        label="素材投放时间"
+      <el-table-column 
+        v-else 
+        label="素材投放时间" 
         min-width="130">
-        <template
-          slot-scope="scope">
-          <span style="color: #67C23A"><i class="el-icon-time"/></span>
-          <span>
-            {{ scope.row.shm }}
+        <template slot-scope="scope">
+          <span style="color: #67C23A">
+            <i class="el-icon-time"/>
           </span>
+          <span>{{ scope.row.shm }}</span>
           至
-          <span>
-            {{ scope.row.ehm }}
-          </span>
+          <span>{{ scope.row.ehm }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="倒计时"
+      <el-table-column 
+        label="倒计时" 
         min-width="80">
         <template slot-scope="scope">
           <span>
-            {{ scope.row.cdshow ?'开启':'关闭' }}<br>
+            {{ scope.row.cdshow ?'开启':'关闭' }}
+            <br>
             {{ scope.row.ktime ? scope.row.ktime + '秒' : '默认时长' }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="状态"
+      <el-table-column 
+        label="状态" 
         min-width="65">
         <template slot-scope="scope">
           <span>{{ scope.row.visiable === 1 ? '运营中' : '下架' }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="操作"
-        min-width="80"
-      >
+      <el-table-column 
+        label="操作" 
+        min-width="80">
         <template slot-scope="scope">
-          <el-button
-            size="small"
-            type="warning"
-            @click="editPlanTime(scope.row.id)">编辑
-          </el-button>
+          <el-button 
+            size="small" 
+            type="warning" 
+            @click="editPlanTime(scope.row.id)">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -267,29 +236,19 @@ import {
   Form,
   FormItem,
   Button,
-  Select,
-  Option,
   Pagination,
   Table,
   TableColumn,
-  TimeSelect,
-  MessageBox,
-  Input
+  MessageBox
 } from "element-ui";
-import {
-  getAdPlanTimeList,
-  getAdPlanDetail
-} from "service";
+import { getAdPlanTimeList } from "service";
 
 export default {
   components: {
     ElPagination: Pagination,
-    ElInput: Input,
     ElForm: Form,
     ElFormItem: FormItem,
     ElButton: Button,
-    ElSelect: Select,
-    ElOption: Option,
     ElTable: Table,
     ElTableColumn: TableColumn
   },
@@ -306,67 +265,58 @@ export default {
         loadingText: "拼命加载中"
       },
       plan_id: null,
-      adPlan:[],
+      adPlan: {
+        type: "",
+        name: "",
+        tmode: ""
+      },
 
       modeOptions: {
-        'fullscreen': '全屏显示',
-        'unmanned': '无人互动',
-        'qrcode': '二维码页面',
-        'qrcode': '二维码页',
-        'floating': '浮窗显示',
+        fullscreen: "全屏显示",
+        unmanned: "无人互动",
+        qrcode: "二维码页面",
+        qrcode: "二维码页",
+        floating: "浮窗显示"
       },
 
       oriOptions: {
-        'center': '居中',
-        'top': '顶部居中',
-        'bottom': '底部居中',
-        'left_top': '左上角',
-        'left': '左侧居中',
-        'left_bottom': '左下角',
-        'right_top': '右上角',
-        'right': '右侧居中',
-        'right_bottom': '右下角',
-        'center': '居中',
+        center: "居中",
+        top: "顶部居中",
+        bottom: "底部居中",
+        left_top: "左上角",
+        left: "左侧居中",
+        left_bottom: "左下角",
+        right_top: "右上角",
+        right: "右侧居中",
+        right_bottom: "右下角",
+        center: "居中"
       }
-
     };
   },
   created() {
+    this.adPlan = this.$route.query;
     this.plan_id = this.$route.params.plan_id;
-    this.getAdPlanDetail();
     this.getPlanTimeList();
   },
   methods: {
     editPlanTime(id) {
       this.$router.push({
-        path: "/ad/plan/plan_time/edit/" + id,
+        path: "/ad/plan/plan_time/edit/" + id
       });
     },
     addPlanTime() {
       this.$router.push({
-        path: "/ad/plan/" + this.plan_id + "/plan_time/add",
+        path: "/ad/plan/" + this.plan_id + "/plan_time/add"
       });
-    },
-
-    getAdPlanDetail() {
-      //获取AdPlan 详情
-      return getAdPlanDetail(this, {}, this.plan_id)
-        .then(response => {
-          this.adPlan = response;
-        })
-        .catch(error => {
-          console.log(error)
-          this.setting.loading = false
-        })
     },
     getPlanTimeList() {
       this.setting.loading = true;
       let args = {
         page: this.pagination.currentPage,
-        atiid : this.plan_id,
-        include : "advertisement"
+        atiid: this.plan_id,
+        include: "advertisement"
       };
-      return getAdPlanTimeList(this, args)
+      getAdPlanTimeList(this, args)
         .then(response => {
           this.tableData = response.data;
           this.pagination.total = response.meta.pagination.total;
@@ -378,10 +328,6 @@ export default {
         });
     },
 
-    search() {
-      this.pagination.currentPage = 1;
-      this.getPlanTimeList();
-    },
     changePage(currentPage) {
       this.pagination.currentPage = currentPage;
       this.getPlanTimeList();
@@ -393,35 +339,6 @@ export default {
 .schedule-wrap {
   background: #fff;
   padding: 30px;
-  .search-wrap {
-    margin-top: 5px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    font-size: 16px;
-    align-items: center;
-    margin-bottom: 10px;
-    .el-form-item {
-      margin-bottom: 10px;
-    }
-    .el-select {
-      width: 180px;
-    }
-    .item-input {
-      width: 180px;
-    }
-    .warning {
-      background: #ebf1fd;
-      padding: 8px;
-      margin-left: 10px;
-      color: #444;
-      font-size: 12px;
-      i {
-        color: #4a8cf3;
-        margin-right: 5px;
-      }
-    }
-  }
   .demo-table-expand {
     font-size: 0;
   }

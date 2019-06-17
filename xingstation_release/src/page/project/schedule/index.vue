@@ -32,7 +32,7 @@
         <el-button 
           size="small" 
           type="success" 
-          @click="addTemplate('templateForm')">新增模板</el-button>
+          @click="addTemplate">新增模板</el-button>
       </div>
     </div>
     <!-- 模板排期列表 -->
@@ -76,7 +76,7 @@
     <el-dialog 
       :title="title" 
       :visible.sync="templateVisible" 
-      @close="dialogClose">
+      @close="templateVisible = false">
       <el-form 
         v-loading="loading" 
         ref="templateForm" 
@@ -107,56 +107,35 @@ import {
   Form,
   FormItem,
   Button,
-  Collapse,
-  CollapseItem,
-  Select,
-  Option,
   Pagination,
   Table,
   TableColumn,
   Dialog,
-  TimeSelect,
   MessageBox,
   Input
 } from "element-ui";
-import {
-  modifySchedule,
-  saveSchedule,
-  getTemplateList,
-  saveTemplate,
-  getSearchModuleList,
-  getSearchProjectList,
-  modifyTemplate
-} from "service";
+import { getTemplateList, saveTemplate, modifyTemplate } from "service";
 
 export default {
   components: {
-    ElCollapse: Collapse,
-    ElCollapseItem: CollapseItem,
-    ElTimeSelect: TimeSelect,
     ElDialog: Dialog,
     ElPagination: Pagination,
     ElInput: Input,
     ElForm: Form,
     ElFormItem: FormItem,
     ElButton: Button,
-    ElSelect: Select,
-    ElOption: Option,
     ElTable: Table,
     ElTableColumn: TableColumn
   },
   data() {
     return {
-      activeNames: 0,
       templateVisible: false,
       loading: false,
       title: "",
-      templateList: [],
       templateForm: {
         tpl_id: "",
         name: ""
       },
-      projectList: [],
       tableData: [],
       pagination: {
         total: 0,
@@ -169,22 +148,19 @@ export default {
       setting: {
         loading: false,
         loadingText: "拼命加载中"
-      },
-      searchLoading: false
+      }
     };
   },
   created() {
-    this.getModuleList();
     this.getTemplateList();
   },
   methods: {
     modifyTemplateName(item) {
       this.loading = false;
       this.title = "修改模板";
-      let name = item.name;
       this.templateForm = {
         tpl_id: item.id,
-        name: name
+        name: item.name
       };
       this.templateVisible = true;
     },
@@ -196,85 +172,11 @@ export default {
         }
       });
     },
-    projectChangeHandle(pIndex, index, val) {
-      this.tableData[pIndex].schedules.data[index].project.id = val;
-    },
-    editSchedule(row) {
-      this.setting.loading = true;
-      let id = row.id;
-      let date_end = row.date_end;
-      let date_start = row.date_start;
-      let project_id = row.project.id;
-      if (date_end && date_start && project_id) {
-        let args = {
-          include: "project",
-          project_id: project_id,
-          date_end: date_end,
-          date_start: date_start
-        };
-        modifySchedule(this, id, args)
-          .then(response => {
-            this.setting.loading = false;
-            this.$message({
-              message: "修改成功",
-              type: "success"
-            });
-            this.getTemplateList();
-          })
-          .catch(err => {
-            console.log(err);
-            this.setting.loading = false;
-          });
-      } else {
-        this.setting.loading = false;
-        this.$message({
-          message: "节目名称，开始时间，结束时间不能为空",
-          type: "warning"
-        });
-      }
-    },
-    saveSchedule(row) {
-      this.setting.loading = true;
-      let date_end = row.date_end;
-      let date_start = row.date_start;
-      let tpl_id = row.tpl_id;
-      let project_id = row.project.id;
-      if (date_end && date_start && project_id) {
-        let args = {
-          tpl_id: tpl_id,
-          project_id: project_id,
-          date_end: date_end,
-          date_start: date_start
-        };
-        saveSchedule(this, args)
-          .then(response => {
-            this.setting.loading = false;
-            this.$message({
-              message: "添加成功",
-              type: "success"
-            });
-            this.getTemplateList();
-          })
-          .catch(err => {
-            console.log(err);
-            this.setting.loading = false;
-          });
-      } else {
-        this.setting.loading = false;
-        this.$message({
-          message: "节目名称，开始时间，结束时间不能为空",
-          type: "warning"
-        });
-      }
-    },
-    addTemplate() {
-      this.templateForm.name = "";
+    addTemplate(formName) {
       this.templateForm.tpl_id = "";
+      this.templateForm.name = "";
       this.templateVisible = true;
       this.title = "增加模板";
-    },
-    deleteAddSchedule(pIndex, index, r) {
-      this.tableData[pIndex].schedules.data.splice(index, 1);
     },
     getTemplateList() {
       this.setting.loading = true;
@@ -285,65 +187,13 @@ export default {
       if (this.searchForm.name === "") {
         delete args.name;
       }
-      return getTemplateList(this, args)
+      getTemplateList(this, args)
         .then(response => {
           this.tableData = response.data;
           this.pagination.total = response.meta.pagination.total;
           this.setting.loading = false;
         })
         .catch(err => {
-          console.log(err);
-          this.setting.loading = false;
-        });
-    },
-    addSchedule(index) {
-      let tpl_id = this.tableData[index].id;
-      let td = {
-        date_start: "",
-        date_end: "",
-        project: {
-          id: "",
-          info: "",
-          icon: "",
-          created_at: ""
-        },
-        tpl_id: tpl_id
-      };
-      this.tableData[index].schedules.data.push(td);
-    },
-    dialogClose() {
-      this.templateVisible = false;
-    },
-    getProject(query) {
-      if (query !== "") {
-        this.searchLoading = true;
-        let args = {
-          name: query
-        };
-        return getSearchProjectList(this, args)
-          .then(response => {
-            this.projectList = response.data;
-            if (this.projectList.length == 0) {
-              this.projectList = [];
-            }
-            this.searchLoading = false;
-          })
-          .catch(err => {
-            console.log(err);
-            this.searchLoading = false;
-          });
-      } else {
-        this.projectList = [];
-      }
-    },
-    getModuleList() {
-      return getSearchModuleList(this)
-        .then(response => {
-          let data = response.data;
-          this.templateList = data;
-        })
-        .catch(error => {
-          console.log(error);
           this.setting.loading = false;
         });
     },
@@ -354,38 +204,33 @@ export default {
             point_id: this.templateForm.point_id,
             name: this.templateForm.name
           };
-          let id = this.templateForm.tpl_id;
           if (this.templateForm.tpl_id) {
-            modifyTemplate(this, id, args)
+            modifyTemplate(this, this.templateForm.tpl_id, args)
               .then(response => {
-                this.$message({
-                  message: "修改成功",
-                  type: "success"
-                });
-                this.templateVisible = false;
-                this.getTemplateList();
+                this.successHandle('修改成功')
               })
               .catch(err => {
                 this.templateVisible = false;
-                console.log(err);
               });
           } else {
             saveTemplate(this, args)
               .then(response => {
-                this.$message({
-                  message: "添加成功",
-                  type: "success"
-                });
-                this.templateVisible = false;
-                this.getTemplateList();
+                this.successHandle('添加成功')
               })
               .catch(err => {
                 this.templateVisible = false;
-                console.log(err);
               });
           }
         }
       });
+    },
+    successHandle(message) {
+      this.$message({
+        message: message,
+        type: "success"
+      });
+      this.templateVisible = false;
+      this.getTemplateList();
     },
     search() {
       this.pagination.currentPage = 1;

@@ -643,11 +643,11 @@
 import {
   modifyProjectLaunch,
   getPutProjectList,
-  getSearchMarketList,
-  getSearchSceneList,
-  getSearchAeraList,
-  getSearchModuleList,
-  getSearchProjectList,
+  getSearchMarket,
+  getSearchScene,
+  getSearchAera,
+  getSearchModule,
+  getSearchProject,
   getSearchSkin
 } from "service";
 
@@ -838,7 +838,7 @@ export default {
       this.getSkin(val[0]);
     },
     getSceneList() {
-      return getSearchSceneList(this)
+      return getSearchScene(this)
         .then(response => {
           this.sceneList = response.data;
         })
@@ -923,7 +923,7 @@ export default {
         let args = {
           name: query
         };
-        return getSearchProjectList(this, args)
+        return getSearchProject(this, args)
           .then(response => {
             this.projectList = response.data;
             if (this.projectList.length == 0) {
@@ -1010,7 +1010,7 @@ export default {
       });
     },
     getModuleList() {
-      return getSearchModuleList(this)
+      return getSearchModule(this)
         .then(response => {
           let data = response.data;
           this.templateNameList = data;
@@ -1089,7 +1089,7 @@ export default {
           include: "area",
           area_id: this.filters.area
         };
-        return getSearchMarketList(this, args)
+        return getSearchMarket(this, args)
           .then(response => {
             this.marketList = response.data;
             if (this.marketList.length == 0) {
@@ -1122,7 +1122,7 @@ export default {
       });
     },
     getAreaList() {
-      return getSearchAeraList(this)
+      return getSearchAera(this)
         .then(response => {
           let data = response.data;
           this.areaList = data;
@@ -1158,18 +1158,6 @@ export default {
     .item-content-wrap {
       .icon-item {
         padding: 10px;
-        width: 50%;
-      }
-      .demo-table-expand {
-        font-size: 0;
-      }
-      .demo-table-expand label {
-        width: 90px;
-        color: #99a9bf;
-      }
-      .demo-table-expand .el-form-item {
-        margin-right: 0;
-        margin-bottom: 0;
         width: 50%;
       }
       .search-wrap {

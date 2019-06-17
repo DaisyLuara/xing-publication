@@ -10,21 +10,25 @@ namespace App\Http\Controllers\Admin\Contract\V1\Transformer;
 
 
 use App\Http\Controllers\Admin\Contract\V1\Models\ContractCost;
+use League\Fractal\Resource\Collection;
 use League\Fractal\TransformerAbstract;
 
 class ContractCostTransformer extends TransformerAbstract
 {
     protected $availableIncludes = ['costContent'];
 
-    public function transform(ContractCost $contractCost)
+    public function transform(ContractCost $contractCost): array
     {
+        $contract = $contractCost->contract;
         return [
             'id' => $contractCost->id,
             'contract_id' => $contractCost->contract_id,
-            'contract_number' => $contractCost->contract->contract_number,
-            'contract_name' => $contractCost->contract->name,
-            'applicant_id' => $contractCost->applicant_id,
-            'applicant_name' => $contractCost->applicant_name,
+            'contract_number' => $contract->contract_number,
+            'contract_name' => $contract->name,
+            'applicant' => $contract->applicant,
+            'applicant_name' => $contract->applicantUser->name,
+            'owner' => $contract->owner,
+            'owner_name' => $contract->ownerUser->name,
             'confirm_cost' => $contractCost->confirm_cost,
             'total_cost' => $contractCost->total_cost,
             'created_at' => $contractCost->created_at->toDateTimeString(),
@@ -32,7 +36,7 @@ class ContractCostTransformer extends TransformerAbstract
         ];
     }
 
-    public function includeCostContent(ContractCost $contractCost)
+    public function includeCostContent(ContractCost $contractCost): Collection
     {
         return $this->collection($contractCost->costContent, new ContractCostContentTransformer());
     }

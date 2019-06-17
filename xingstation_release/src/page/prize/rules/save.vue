@@ -257,9 +257,9 @@
               label="每天最大获取数"
               prop="day_max_get"
             >
-              <el-input
-                v-model="couponForm.day_max_get"
-                :maxlength="6"
+              <el-input 
+                v-model="couponForm.day_max_get" 
+                :maxlength="6" 
                 class="coupon-form-input"/>
             </el-form-item>
             <el-form-item 
@@ -274,22 +274,23 @@
             </el-form-item>
             <el-form-item 
               v-if="!dateShow" 
-              label="延后生效时间"
+              label="延后生效时间" 
               prop="delay_effective_day">
               <el-input
                 v-model="couponForm.delay_effective_day"
                 :maxlength="6"
-                class="coupon-form-input">
+                class="coupon-form-input"
+              >
                 <template slot="append">小时</template>
               </el-input>
             </el-form-item>
             <el-form-item 
               v-if="!dateShow" 
-              label="有效时长"
+              label="有效时长" 
               prop="effective_day">
-              <el-input
-                v-model="couponForm.effective_day"
-                :maxlength="6"
+              <el-input 
+                v-model="couponForm.effective_day" 
+                :maxlength="6" 
                 class="coupon-form-input">
                 <template slot="append">小时</template>
               </el-input>
@@ -328,10 +329,11 @@
         </el-form-item>
       </el-form>
     </div>
-    <PicturePanel 
-      :panel-visible.sync="panelVisible" 
-      :single-flag="singleFlag" 
-      @close="handleClose"/>
+    <PicturePanel
+      :panel-visible.sync="panelVisible"
+      :single-flag="singleFlag"
+      @close="handleClose"
+    />
   </div>
 </template>
 
@@ -412,7 +414,7 @@ export default {
         loadingText: "拼命加载中"
       },
       rules: {
-        end_date: [{ validator: checkEndDate, trigger: "submit" }],
+        end_date: [{ validator: checkEndDate, trigger: "submit" }]
       },
       writeOffSidRules: null,
       writeOffMidRules: {
@@ -480,11 +482,6 @@ export default {
         } else {
           this.couponForm.bs_image_url = url;
         }
-      } else {
-        // this.$message({
-        //   type: "warning",
-        //   message: "图片上传失败"
-        // });
       }
     },
     handleCompany(val) {
@@ -497,7 +494,7 @@ export default {
         this.getStoresList(this.couponForm.write_off_mid, true);
       }
     },
-    getStoresList(val, type) {
+    async getStoresList(val, type) {
       let args = {
         company_id: val
       };
@@ -505,32 +502,19 @@ export default {
         args.market_id = val;
         delete args.company_id;
       }
-
-      getStoresList(this, args)
-        .then(res => {
-          this.writeOffSiteList = res;
-        })
-        .catch(err => {
-          this.$message({
-            type: "warning",
-            message: err.response.data.message
-          });
-        });
+      try {
+        let res = await getStoresList(this, args);
+        this.writeOffSiteList = res;
+      } catch (e) {}
     },
-    getCompanyMarketList(val) {
+    async getCompanyMarketList(val) {
       let args = {
         company_id: val
       };
-      getCompanyMarketList(this, args)
-        .then(res => {
-          this.writeOffMarketList = res;
-        })
-        .catch(err => {
-          this.$message({
-            type: "warning",
-            message: err.response.data.message
-          });
-        });
+      try {
+        let res = getCompanyMarketList(this, args);
+        this.writeOffMarketList = res;
+      } catch (e) {}
     },
     handleSceneType(val) {
       if (val === 1) {
@@ -555,14 +539,15 @@ export default {
         };
         this.multipleNum = 1;
       } else if (val === 3) {
-        this.couponForm.write_off_mid,
-          this.writeOffMidRules,
-          (this.writeOffSidRules = null);
+        this.couponForm.write_off_mid = null;
+        this.writeOffMidRules = null;
+        this.writeOffSidRules = null;
         this.writeOffMarketShow = true;
         this.writeOffSiteShow = false;
         this.multipleNum = 0;
       } else {
-        this.couponForm.write_off_mid, (this.writeOffMidRules = null);
+        this.couponForm.write_off_mid=null;
+        this.writeOffMidRules = null;
         this.couponForm.write_off_sid = [];
         this.writeOffMarketShow = true;
         this.writeOffSiteShow = false;
@@ -574,18 +559,15 @@ export default {
         this.multipleNum = 1;
       }
     },
-    getSearchCompany() {
+    async getSearchCompany() {
       this.searchLoading = true;
-      getSearchCompany(this)
-        .then(result => {
-          this.searchLoading = false;
-          this.companyList = result.data;
-        })
-        .catch(error => {
-          this.searchLoading = false;
-
-          console.log(error);
-        });
+      try {
+        let res = await getSearchCompany(this);
+        this.searchLoading = false;
+        this.companyList = res.data;
+      } catch (e) {
+        this.searchLoading = false;
+      }
     },
     getCouponDetial() {
       this.setting.loading = true;
@@ -790,9 +772,7 @@ export default {
                 message: this.couponID ? "修改成功" : "添加成功",
                 type: "success"
               });
-              this.$router.push({
-                path: "/prize/rules/"
-              });
+              this.historyBack();
             })
             .catch(error => {
               this.loading = false;

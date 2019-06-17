@@ -82,6 +82,12 @@ class AdPlanController extends Controller
         /** @var AdPlan $adPlan */
         $adPlan->fill(array_merge($params, $addParams))->save();
 
+        activity('create_ad_plan')
+            ->causedBy($this->user())
+            ->performedOn($adPlan)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增广告方案');
+
         return $this->response->noContent();
     }
 
@@ -101,6 +107,12 @@ class AdPlanController extends Controller
 
         /** @var AdPlan $adPlan */
         $adPlan->fill($params)->save();
+
+        activity('update_ad_plan')
+            ->causedBy($this->user())
+            ->performedOn($adPlan)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $params])
+            ->log('编辑广告方案');
 
         return $this->response->noContent();
     }

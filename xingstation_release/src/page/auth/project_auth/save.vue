@@ -34,6 +34,26 @@
           </el-select>
         </el-form-item>
         <el-form-item
+          :rules="{required: true, message: '节目皮肤不能为空', trigger: 'submit'}"
+          label="节目皮肤"
+          prop="skin_id"
+        >
+          <el-select
+            v-model="projectAuthForm.skin_id"
+            :loading="searchLoading"
+            placeholder="请选择节目皮肤"
+            filterable
+            clearable
+          >
+            <el-option
+              v-for="item in skinList"
+              :key="item.bid"
+              :label="item.name"
+              :value="item.bid"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
           :rules="{required: true, message: '场地主不能为空', trigger: 'submit'}"
           prop="customer_id"
           label="场地主"
@@ -72,15 +92,15 @@
 import {
   getProjectAuthDetailData,
   getSearchMarketOwnerCustomer,
-  getSearchProjectList,
+  getSearchProject,
   modifyProjectAuth,
   saveProjectAuth,
-  historyBack
+  historyBack,
+  getSearchSkin
 } from "service";
 
 import {
   Button,
-  DatePicker,
   Form,
   FormItem,
   Input,
@@ -94,7 +114,6 @@ export default {
     ElFormItem: FormItem,
     ElButton: Button,
     ElInput: Input,
-    ElDatePicker: DatePicker,
     ElSelect: Select,
     ElOption: Option
   },
@@ -103,17 +122,19 @@ export default {
       projectAuthForm: {
         id: "",
         customer_id: "",
-        project_id: ""
+        project_id: "",
+        skin_id: ""
       },
       marketOwnerList: [],
       projectList: [],
+      skinList:[],
       searchLoading: false,
       projectAuthId: "",
       setting: {
         isOpenSelectAll: true,
         loading: false,
         loadingText: "拼命加载中"
-      }
+      },
     };
   },
   created() {
@@ -141,18 +162,20 @@ export default {
     },
 
     getProject(query) {
+      this.projectAuthForm.skin_id=''
       if (query !== "") {
         this.searchLoading = true;
         let args = {
           name: query
         };
-        return getSearchProjectList(this, args)
+        return getSearchProject(this, args)
           .then(response => {
             this.projectList = response.data;
             if (this.projectList.length == 0) {
               this.projectList = [];
             }
             this.searchLoading = false;
+            this.getskin()
           })
           .catch(err => {
             this.searchLoading = false;
@@ -161,7 +184,18 @@ export default {
         this.projectList = [];
       }
     },
-
+    getskin(){
+      let args = {
+        project_id: this.projectList[0].id
+      };
+      return getSearchSkin(this,args)
+        .then(response =>{
+          this.skinList = response
+        })
+        .catch(err => {
+          this.searchLoading = false;          
+        })
+    },
     historyBack() {
       historyBack();
     },
@@ -193,9 +227,7 @@ export default {
                   type: "success",
                   message: "修改成功"
                 });
-                this.$router.push({
-                  path: "/auth/project_auth"
-                });
+                this.historyBack()
                 this.setting.loading = false;
               })
               .catch(err => {
@@ -212,9 +244,7 @@ export default {
                   type: "success",
                   message: "保存成功"
                 });
-                this.$router.push({
-                  path: "/auth/project_auth"
-                });
+               this.historyBack()
                 this.setting.loading = false;
               })
               .catch(err => {

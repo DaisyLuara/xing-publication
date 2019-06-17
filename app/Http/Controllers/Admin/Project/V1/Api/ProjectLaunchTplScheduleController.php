@@ -27,6 +27,14 @@ class ProjectLaunchTplScheduleController extends Controller
     {
         $fillData = $this->convert($request->all());
         $schedule->fill(array_merge($fillData, ['tvid' => $tpl->tvid]))->save();
+
+        activity('create_product_launch_tpl_schedule')
+            ->causedBy($this->user())
+            ->performedOn($schedule)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $fillData])
+            ->log('新增节目投放模版子条目');
+
+
         return $this->response()->noContent()->setStatusCode(201);
     }
 
@@ -34,6 +42,13 @@ class ProjectLaunchTplScheduleController extends Controller
     {
         $updateData = $this->convert($request->except('tpl_id'));
         $schedule->update($updateData);
+
+        activity('update_product_launch_tpl_schedule')
+            ->causedBy($this->user())
+            ->performedOn($schedule)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $updateData])
+            ->log('更新节目投放模版子条目');
+
         return $this->response()->noContent();
     }
 

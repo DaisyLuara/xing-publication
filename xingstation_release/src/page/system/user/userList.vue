@@ -59,33 +59,77 @@
         ref="userTable" 
         :data="userList" 
         highlight-current-row 
-        style="width: 100%">
-        <el-table-column 
-          prop="name" 
-          label="姓名"/>
-        <el-table-column 
-          prop="phone" 
-          label="手机号码"/>
-        <el-table-column 
-          prop="role" 
-          label="角色"/>
-        <el-table-column 
-          prop="bind_weixin" 
-          label="是否绑定微信">
+        style="width: 100%" 
+        type="expand">
+        <el-table-column type="expand">
           <template slot-scope="scope">
-            <span>{{ scope.row.bind_weixin === true ? '是' : '否' }}</span>
+            <el-form 
+              label-position="left" 
+              inline 
+              class="demo-table-expand">
+              <el-form-item label="ID:">
+                <span>{{ scope.row.id }}</span>
+              </el-form-item>
+              <el-form-item label="姓名:">
+                <span>{{ scope.row.name }}</span>
+              </el-form-item>
+              <el-form-item label="手机号码:">
+                <span>{{ scope.row.phone }}</span>
+              </el-form-item>
+              <el-form-item label="是否绑定微信:">
+                <span>{{ scope.row.bind_weixin === true ? '是' : '否' }}</span>
+              </el-form-item>
+              <el-form-item label="是否有z值:">
+                <span>{{ scope.row.z ? '有' :'无' }}</span>
+              </el-form-item>
+              <el-form-item label="创建时间:">
+                <span>{{ scope.row.created_at }}</span>
+              </el-form-item>
+              <el-form-item label="更新时间:">
+                <span>{{ scope.row.updated_at }}</span>
+              </el-form-item>
+            </el-form>
           </template>
         </el-table-column>
         <el-table-column 
-          prop="created_at" 
-          label="创建时间"/>
+          :show-overflow-tooltip="true" 
+          prop="name" 
+          label="姓名" 
+          min-width="100"/>
         <el-table-column 
-          prop="updated_at" 
-          label="修改时间"/>
+          :show-overflow-tooltip="true" 
+          prop="phone" 
+          label="手机号码" 
+          min-width="150"/>
+        <el-table-column 
+          :show-overflow-tooltip="true" 
+          prop="role" 
+          label="角色" 
+          min-width="100"/>
+        <el-table-column 
+          :show-overflow-tooltip="true" 
+          prop="z" 
+          label="是否有z值" 
+          min-width="120">
+          <template slot-scope="scope">
+            <span>{{ scope.row.z ? '是' : '否' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          :show-overflow-tooltip="true"
+          prop="updated_at"
+          label="修改时间"
+          min-width="120"
+        />
         <el-table-column 
           label="操作" 
-          width="150">
+          width="280">
           <template slot-scope="scope">
+            <el-button
+              v-if="scope.row.role === 'BD主管' || scope.row.role === 'BD'"
+              size="small"
+              @click="migration(scope.row)"
+            >迁移</el-button>
             <el-button 
               size="small" 
               type="warning" 
@@ -107,10 +151,53 @@
         />
       </div>
     </div>
+    <el-dialog 
+      :visible.sync="dialogFormVisible" 
+      :show-close="false" 
+      title="账号迁移">
+      <el-form 
+        ref="accountForm" 
+        :model="accountForm">
+        <el-form-item
+          :rules="{
+            required: true, message: '账号迁移目标不能为空', trigger: 'submit'
+          }"
+          label="账号迁移目标"
+          label-width="150px"
+          prop="user_id"
+        >
+          <el-select 
+            v-model="accountForm.user_id" 
+            placeholder="请选择账号迁移目标" 
+            clearable 
+            filterable>
+            <el-option 
+              v-for="item in bdList" 
+              :label="item.name" 
+              :value="item.id" 
+              :key="item.id"/>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div 
+        slot="footer" 
+        class="dialog-footer">
+        <el-button @click="cancel('accountForm')">取 消</el-button>
+        <el-button 
+          type="primary" 
+          @click="submit('accountForm')">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
-import { getSearchRole, getUserList, deleteUser } from "service";
+import {
+  getSearchRole,
+  getUserList,
+  deleteUser,
+  getSearchBD,
+  migrationBDAccount
+} from "service";
 import {
   Button,
   Input,
@@ -121,12 +208,14 @@ import {
   FormItem,
   MessageBox,
   Select,
-  Option
+  Option,
+  Dialog
 } from "element-ui";
 
 export default {
   name: "UserList",
   components: {
+    "el-dialog": Dialog,
     "el-table": Table,
     "el-table-column": TableColumn,
     "el-button": Button,
@@ -139,6 +228,10 @@ export default {
   },
   data() {
     return {
+      dialogFormVisible: false,
+      accountForm: {
+        user_id: null
+      },
       userList: [],
       roleList: [],
       setting: {
@@ -150,18 +243,60 @@ export default {
         role_id: "",
         name: ""
       },
+      bdList: [],
       pagination: {
         total: 100,
         pageSize: 10,
         currentPage: 1
-      }
+      },
+      bdID: null
     };
   },
   created() {
     this.getUserList();
     this.getRoleList();
+    this.init();
   },
   methods: {
+    cancel(formName) {
+      this.dialogFormVisible = false;
+      this.$refs[formName].resetFields();
+    },
+    submit(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          let args = this.accountForm;
+          migrationBDAccount(this, this.bdID, args)
+            .then(res => {
+              this.$message({
+                message: "迁移成功",
+                type: "success"
+              });
+              this.dialogFormVisible = false;
+            })
+            .catch(err => {
+              console.log(err);
+              this.dialogFormVisible = false;
+            });
+        }
+      });
+    },
+    async init() {
+      let res = await getSearchBD(this);
+      this.bdList = res;
+    },
+    migration(data) {
+      this.$confirm("此操作将永久迁移，不可以逆转, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.bdID = data.id;
+          this.dialogFormVisible = true;
+        })
+        .catch(() => {});
+    },
     linkToEdit(currentUser) {
       this.$router.push({
         path: "/system/user/edit/" + currentUser.id

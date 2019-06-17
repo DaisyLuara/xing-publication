@@ -582,10 +582,11 @@
         </el-form-item>
       </el-form>
     </div>
-    <PicturePanel 
-      :panel-visible.sync="panelVisible" 
-      :single-flag="singleFlag" 
-      @close="handleClose"/>
+    <PicturePanel
+      :panel-visible.sync="panelVisible"
+      :single-flag="singleFlag"
+      @close="handleClose"
+    />
   </div>
 </template>
 
@@ -596,11 +597,10 @@ import {
   historyBack,
   siteSaveMarket,
   siteModifyMarket,
-  getSearchAeraList,
-  getSearchUserList,
-  getContractReceiptList,
-  getSearchCompany,
-  getSearchCustomer
+  getSearchAera,
+  getSearchUser,
+  getContractReceipt,
+  getSearchCompany
 } from "service";
 
 import {
@@ -933,22 +933,36 @@ export default {
         this.siteForm.marketConfig.media_id = media_id;
         this.logoUrl = url;
       } else {
-        // this.$message({
-        //   type: "warning",
-        //   message: "图片上传失败"
-        // });
       }
     },
     async init() {
+      this.setting.loading = true;
       try {
-        await this.getContractReceiptList();
-        await this.getSearchUserList();
-        await this.getAreaList();
-        await this.getSearchCompany();
+        
+        this.searchLoading = true;
+        let args = {
+          include: "company.customers"
+        };
+        let resContractReceipt = await getContractReceipt(this, args);
+        this.contractList = resContractReceipt;
+
+        let resUser = await getSearchUser(this);
+        this.userList = resUser.data;
+
+        let resArea = await getSearchAera(this);
+        this.areaList = resArea.data;
+
+        let resCompany = await getSearchCompany(this);
+        this.companyList = resCompany.data;
         if (this.siteID) {
           await this.getMarketDetail();
         }
-      } catch (e) {}
+        this.setting.loading = false;
+        this.searchLoading = false;
+      } catch (e) {
+        this.searchLoading = false;
+        this.setting.loading = false;
+      }
     },
     contractUser(val) {
       this.customerList.find(item => {
@@ -971,79 +985,12 @@ export default {
         }
       });
     },
-    getContractReceiptList() {
-      let searchLoading = true;
-      let args = {
-        include: "company.customers"
-      };
-      getContractReceiptList(this, args)
-        .then(res => {
-          this.contractList = res;
-          this.searchLoading = false;
-        })
-        .catch(err => {
-          this.searchLoading = false;
-          this.$message({
-            type: "warning",
-            message: err.response.date.message
-          });
-        });
-    },
-    getSearchCustomer(val) {
-      this.searchLoading = true;
-      let args = {
-        company_id: val
-      };
-      getSearchCustomer(this, args)
-        .then(res => {
-          this.customerList = res;
-          this.searchLoading = false;
-        })
-        .catch(err => {
-          this.searchLoading = false;
-          this.$message({
-            type: "warning",
-            message: err.response.date.message
-          });
-        });
-    },
     handleContract(val) {
       if (val === 1) {
         this.contractShow = true;
       } else {
         this.contractShow = false;
       }
-    },
-    getSearchCompany() {
-      this.searchLoading = true;
-      getSearchCompany(this)
-        .then(res => {
-          this.companyList = res.data;
-          this.searchLoading = false;
-        })
-        .catch(err => {
-          this.searchLoading = false;
-
-          this.$message({
-            type: "warning",
-            message: err.response.date.message
-          });
-        });
-    },
-    getSearchUserList() {
-      this.searchLoading = true;
-      getSearchUserList(this)
-        .then(res => {
-          this.searchLoading = false;
-          this.userList = res.data;
-        })
-        .catch(err => {
-          this.searchLoading = false;
-          this.$message({
-            type: "warning",
-            message: err.response.date.message
-          });
-        });
     },
     getMarketDetail() {
       this.setting.loading = true;
@@ -1132,15 +1079,6 @@ export default {
           this.setting.loading = false;
         });
     },
-    getAreaList() {
-      return getSearchAeraList(this)
-        .then(res => {
-          this.areaList = res.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
     modeHandle() {
       let { mode } = this.siteForm.contract;
       if (mode === "none") {
@@ -1189,9 +1127,7 @@ export default {
                   message: "修改场地成功",
                   type: "success"
                 });
-                this.$router.push({
-                  path: "/market/site"
-                });
+                this.historyBack();
               })
               .catch(err => {
                 this.$message({
@@ -1206,9 +1142,7 @@ export default {
                   message: "新建场地成功",
                   type: "success"
                 });
-                this.$router.push({
-                  path: "/market/site"
-                });
+                this.historyBack();
               })
               .catch(err => {
                 this.$message({

@@ -29,7 +29,7 @@ class InvoiceCompanyExport extends BaseExport
         /** @var User $user */
         $user = Auth::user();
         if ($user->hasRole('user') || $user->hasRole('bd-manager')) {
-            $query->where('user_id', $user->id);
+            $query->where('owner', $user->id);
         }
 
         $invoiceCompanies = $query->orderByDesc('created_at')->get()

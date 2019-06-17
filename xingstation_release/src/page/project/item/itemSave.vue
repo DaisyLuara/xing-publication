@@ -288,11 +288,11 @@
 <script>
 import {
   savePorjectLaunch,
-  getSearchModuleList,
-  getSearchProjectList,
-  getSearchAeraList,
-  getSearchMarketList,
-  getSearchPointList,
+  getSearchModule,
+  getSearchProject,
+  getSearchAera,
+  getSearchMarket,
+  getSearchPoint,
   getSearchSkin
 } from "service";
 import {
@@ -392,7 +392,7 @@ export default {
         let args = {
           name: query
         };
-        return getSearchProjectList(this, args)
+        return getSearchProject(this, args)
           .then(response => {
             this.projectList = response.data;
             if (this.projectList.length == 0) {
@@ -410,7 +410,7 @@ export default {
       }
     },
     getModuleList() {
-      return getSearchModuleList(this)
+      return getSearchModule(this)
         .then(response => {
           let data = response.data;
           this.weekdayList = data;
@@ -435,7 +435,7 @@ export default {
       this.getMarket(this.projectForm.market);
     },
     getAreaList() {
-      return getSearchAeraList(this)
+      return getSearchAera(this)
         .then(response => {
           let data = response.data;
           this.areaList = data;
@@ -455,7 +455,7 @@ export default {
         market_id: this.projectForm.market
       };
       this.searchLoading = true;
-      return getSearchPointList(this, args)
+      return getSearchPoint(this, args)
         .then(response => {
           this.pointList = response.data;
           this.searchLoading = false;
@@ -473,7 +473,7 @@ export default {
           include: "area",
           area_id: this.projectForm.area
         };
-        return getSearchMarketList(this, args)
+        return getSearchMarket(this, args)
           .then(response => {
             this.marketList = response.data;
             if (this.marketList.length == 0) {

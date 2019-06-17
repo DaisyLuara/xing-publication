@@ -86,7 +86,8 @@
               v-if="!BDManage && !BD"
               size="small"
               type="danger"
-              @click="addCouponImport">批量导入</el-button>
+              @click="addCouponImport"
+            >批量导入</el-button>
           </div>
         </div>
         <rulesTable 
@@ -183,7 +184,7 @@ export default {
   },
   data() {
     return {
-      role:'',
+      role: "",
       loading: true,
       companyList: [],
       templateForm: {
@@ -237,7 +238,7 @@ export default {
       return this.role.find(r => {
         return r.name === "bd-manager";
       });
-    },
+    }
   },
   created() {
     let user_info = JSON.parse(Cookies.get("user_info"));
@@ -264,17 +265,11 @@ export default {
         }
       });
     },
-    getCompanyList() {
-      getSearchCompany(this)
-        .then(result => {
-          this.companyList = result.data;
-        })
-        .catch(error => {
-          this.$message({
-            type: "warning",
-            message: error.response.data.message
-          });
-        });
+    async getCompanyList() {
+      try {
+        let res = await getSearchCompany(this);
+        this.companyList = res.data;
+      } catch (e) {}
     },
     thirdParty() {
       this.loading = false;

@@ -65,10 +65,10 @@ class ImportCouponController extends Controller
                 if (($item[6] === '关闭' && (int)$item[7] <= 0) || ($item[6] === '开启' && (int)$item[7] !== 0)) {
                     abort(500, '第' . ($key + 1) . '行: 第H列请输入正确的每天最大获取数(开启无限领取时，填写0)');
                 }
-                if (!is_numeric($item[8]) || $item[8] <= 25569 ) {
+                if (!is_numeric($item[8]) || $item[8] <= 25569) {
                     abort(500, '第' . ($key + 1) . '行: 第I列请输入正确的开始日期');
                 }
-                if (!is_numeric($item[9]) ||  $item[9] <= 25569) {
+                if (!is_numeric($item[9]) || $item[9] <= 25569) {
                     abort(500, '第' . ($key + 1) . '行: 第J列请输入正确的结束日期');
                 }
                 if ($item[9] <= $item[8]) {
@@ -77,10 +77,10 @@ class ImportCouponController extends Controller
                 $start_date = Carbon::createFromTimestamp(($item[8] - 25569) * 86400, 'UTC')->toDateTimeString();
                 $end_date = Carbon::createFromTimestamp(($item[9] - 25569) * 86400, 'UTC')->toDateTimeString();
 
-                if (!is_numeric($item[10]) ||  (double)$item[10] < 0) {
+                if (!is_numeric($item[10]) || (double)$item[10] < 0) {
                     abort(500, '第' . ($key + 1) . '行: 第K列请输入正确的概率');
                 }
-                if (!is_string($item[11]) || !($url = parse_url($item[11], PHP_URL_HOST)) || count(dns_get_record($url, DNS_A | DNS_AAAA)) <= 0 ) {
+                if (!is_string($item[11]) || !($url = parse_url($item[11], PHP_URL_HOST)) || count(dns_get_record($url, DNS_A | DNS_AAAA)) <= 0) {
                     abort(500, '第' . ($key + 1) . '行: 第L列请输入正确的URL');
                 }
 
@@ -182,7 +182,12 @@ class ImportCouponController extends Controller
                     $policy_params['type'] = 'gender';
                 }
                 $policy->batches()->save($couponBatch, $policy_params);
-                activity('coupon_batch')->on($couponBatch)->withProperties($request->all())->log('批量新增优惠券规则');
+
+                activity('create_coupon_batch_by_import')
+                    ->causedBy($this->user())
+                    ->performedOn($couponBatch)
+                    ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+                    ->log('批量新增奖品');
             }
             DB::commit();
         } catch (\Exception $e) {

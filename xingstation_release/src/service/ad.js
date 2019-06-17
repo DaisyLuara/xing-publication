@@ -2,7 +2,7 @@ const AD_LAUNCH_API = '/api/ad_launch'
 const AD_PLAN_API = '/api/ad_plan'
 const AD_PLAN_TIME_API = '/api/ad_plan_time'
 const AD_API = '/api/advertisement'
-
+const AD_DOWNLOAD = '/api/short_urls/export'
 const HOST = process.env.SERVER_URL
 
 const getAdLaunchList = (context, args) => {
@@ -212,6 +212,20 @@ const modifyAd = (context, args , id) => {
 }
 
 
+// 下载短链接
+const getExportDownload = (context, params) => {
+  return new Promise(function(resolve, reject) {
+    context.$http
+      .get(HOST + AD_DOWNLOAD , { params: params })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
 export {
   getAdLaunchList,
   saveAdLaunch,
@@ -227,6 +241,6 @@ export {
   getAdList,
   getAdDetail,
   saveAd,
-  modifyAd
-
+  modifyAd,
+  getExportDownload
 }

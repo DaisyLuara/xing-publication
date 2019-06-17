@@ -96,7 +96,7 @@ import {
   modifyEvent,
   getEventDetails,
   historyBack,
-  getSearchProjectList
+  getSearchProject
 } from "service";
 import {
   Form,
@@ -198,7 +198,7 @@ export default {
         let args = {
           name: query
         };
-        return getSearchProjectList(this, args)
+        return getSearchProject(this, args)
           .then(response => {
             this.projectList = response.data;
             if (this.projectList.length == 0) {

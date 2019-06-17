@@ -10,8 +10,4 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.ratio-root {
-  height: 100%;
-  background-color: #eff2f7;
-}
 </style>

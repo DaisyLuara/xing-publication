@@ -92,6 +92,12 @@ class MarketController extends Controller
             $market->marketConfig()->create($request->marketConfig);
         }
 
+        activity('create_market')
+            ->causedBy($this->user())
+            ->performedOn($market)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增场地');
+
         return $this->response->item($market, new MarketTransformer());
     }
 
@@ -124,6 +130,12 @@ class MarketController extends Controller
 
             $market->marketConfig()->updateOrCreate(['id' => $market->marketid], $marketConfig);
         }
+
+        activity('update_market')
+            ->causedBy($this->user())
+            ->performedOn($market)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑场地');
 
         return $this->response->item($market, new MarketTransformer());
     }

@@ -12,120 +12,104 @@
             ref="searchForm" 
             :model="searchForm" 
             :inline="true">
-            <el-row :gutter="20">
-              <el-col :span="8">
-                <el-form-item 
-                  label 
-                  prop="name">
-                  <el-input
-                    v-model="searchForm.name"
-                    clearable
-                    placeholder="点位名称"
-                    class="item-input"
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item 
-                  label 
-                  prop="areaid">
-                  <el-select
-                    v-model="searchForm.areaid"
-                    placeholder="区域"
-                    filterable
-                    clearable
-                    @change="areaHandle"
-                  >
-                    <el-option
-                      v-for="item in areaList"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item 
-                  label 
-                  prop="site">
-                  <el-select
-                    v-model="searchForm.site"
-                    :remote-method="getMarket"
-                    :loading="searchLoading"
-                    placeholder="场地名称"
-                    remote
-                    filterable
-                    clearable
-                  >
-                    <el-option
-                      v-for="item in siteList"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="8">
-                <el-form-item 
-                  label 
-                  prop="permission">
-                  <el-select
-                    v-model="searchForm.permission"
-                    placeholder="点位权限"
-                    multiple
-                    filterable
-                    clearable
-                  >
-                    <el-option
-                      v-for="item in permissionList"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item 
-                  label 
-                  prop="mode">
-                  <el-select 
-                    v-model="searchForm.mode" 
-                    placeholder="合作模式" 
-                    filterable 
-                    clearable>
-                    <el-option
-                      v-for="item in modeList"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item 
-                  label 
-                  prop="type">
-                  <el-select 
-                    v-model="searchForm.type" 
-                    placeholder="点位类型" 
-                    filterable 
-                    clearable>
-                    <el-option
-                      v-for="item in typeList"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
+            <el-form-item 
+              label 
+              prop="name">
+              <el-input
+                v-model="searchForm.name"
+                clearable
+                placeholder="点位名称"
+                class="item-input"
+              />
+            </el-form-item>
+            <el-form-item 
+              label 
+              prop="areaid">
+              <el-select
+                v-model="searchForm.areaid"
+                placeholder="区域"
+                filterable
+                clearable
+                @change="areaHandle"
+              >
+                <el-option
+                  v-for="item in areaList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item 
+              label 
+              prop="site">
+              <el-select
+                v-model="searchForm.site"
+                :remote-method="getMarket"
+                :loading="searchLoading"
+                placeholder="场地名称"
+                remote
+                filterable
+                clearable
+              >
+                <el-option
+                  v-for="item in siteList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item 
+              label 
+              prop="permission">
+              <el-select
+                v-model="searchForm.permission"
+                placeholder="点位权限"
+                multiple
+                filterable
+                clearable
+              >
+                <el-option
+                  v-for="item in permissionList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item 
+              label 
+              prop="mode">
+              <el-select 
+                v-model="searchForm.mode" 
+                placeholder="合作模式" 
+                filterable 
+                clearable>
+                <el-option
+                  v-for="item in modeList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item 
+              label 
+              prop="type">
+              <el-select 
+                v-model="searchForm.type" 
+                placeholder="点位类型" 
+                filterable 
+                clearable>
+                <el-option
+                  v-for="item in typeList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
             <el-button 
               type="primary" 
               size="small" 
@@ -219,8 +203,8 @@
 <script>
 import {
   getSitePointList,
-  getSearchMarketList,
-  getSearchAeraList
+  getSearchMarket,
+  getSearchAera
 } from "service";
 
 import {
@@ -234,8 +218,6 @@ import {
   MessageBox,
   Select,
   Option,
-  Row,
-  Col
 } from "element-ui";
 
 export default {
@@ -249,8 +231,6 @@ export default {
     "el-form-item": FormItem,
     "el-select": Select,
     "el-option": Option,
-    "el-row": Row,
-    "el-col": Col
   },
   data() {
     return {
@@ -384,7 +364,7 @@ export default {
         include: "area",
         area_id: this.searchForm.areaid
       };
-      return getSearchMarketList(this, args)
+      return getSearchMarket(this, args)
         .then(response => {
           this.siteList = response.data;
           if (this.siteList.length == 0) {
@@ -464,7 +444,7 @@ export default {
       }
     },
     getAeraList() {
-      getSearchAeraList(this)
+      getSearchAera(this)
         .then(result => {
           this.areaList = result.data;
         })

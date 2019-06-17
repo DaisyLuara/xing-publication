@@ -144,11 +144,6 @@ import {
   FormItem,
   RadioGroup,
   Radio,
-  DatePicker,
-  Select,
-  Option,
-  Tooltip,
-  Upload,
   Checkbox,
   CheckboxGroup
 } from "element-ui";
@@ -161,11 +156,6 @@ export default {
     "el-form-item": FormItem,
     "el-radio-group": RadioGroup,
     "el-radio": Radio,
-    "el-select": Select,
-    "el-date-picker": DatePicker,
-    "el-option": Option,
-    "el-tooltip": Tooltip,
-    "el-upload": Upload,
     "el-checkbox": Checkbox,
     "el-checkbox-group": CheckboxGroup,
   },

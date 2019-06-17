@@ -198,7 +198,7 @@
 <script>
 import {
   getProjectListDetails,
-  getSearchPolicyList,
+  getSearchPolicy,
   modifyProject
 } from 'service'
 
@@ -286,7 +286,7 @@ export default {
       })
     },
     getPolicyList() {
-      getSearchPolicyList(this)
+      getSearchPolicy(this)
         .then(result => {
           this.policyList = result.data
         })

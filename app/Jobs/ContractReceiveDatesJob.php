@@ -45,9 +45,9 @@ class ContractReceiveDatesJob implements ShouldQueue
             $contract = Contract::query()->where('status', 3)->where('id', $item->contract_id)->first();
             if (!$contract)
                 continue;
-            $contract->applicantUser->notify(new CheckReceipt($contract));
-            if ($contract->applicantUser->parent_id) {
-                User::find($contract->applicantUser->parent_id)->notify(new CheckReceipt($contract));
+            $contract->ownerUser->notify(new CheckReceipt($contract));
+            if ($contract->ownerUser->parent_id) {
+                User::find($contract->ownerUser->parent_id)->notify(new CheckReceipt($contract));
             }
             $legal->notify(new CheckReceipt($contract));
             $legalMa->notify(new CheckReceipt($contract));

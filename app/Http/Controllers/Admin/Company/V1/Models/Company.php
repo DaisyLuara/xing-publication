@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\Point\V1\Models\Store;
 use App\Models\User;
 use App\Models\Model;
 use App\Models\Customer;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Company
@@ -28,80 +30,84 @@ use App\Models\Customer;
  * @property string $logo 商户logo
  * @property int|null $logo_media_id 商户图片
  * @property-read \App\Models\User|null $bdUser
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Http\Controllers\Admin\Company\V1\Models\Company[] $children
+ * @property-read \Illuminate\Database\Eloquent\Collection|Company[] $children
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Customer[] $customers
  * @property-read \App\Http\Controllers\Admin\Media\V1\Models\Media|null $media
- * @property-read \App\Http\Controllers\Admin\Company\V1\Models\Company $parent
+ * @property-read Company $parent
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Http\Controllers\Admin\Point\V1\Models\Store[] $stores
  * @property-read \App\Models\User $user
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Company\V1\Models\Company newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Company\V1\Models\Company newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model ordered()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Company\V1\Models\Company query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Model recent()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Company\V1\Models\Company whereAddress($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Company\V1\Models\Company whereBdUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Company\V1\Models\Company whereCategory($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Company\V1\Models\Company whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Company\V1\Models\Company whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Company\V1\Models\Company whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Company\V1\Models\Company whereInternalName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Company\V1\Models\Company whereLogo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Company\V1\Models\Company whereLogoMediaId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Company\V1\Models\Company whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Company\V1\Models\Company whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Company\V1\Models\Company whereTradeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Company\V1\Models\Company whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Controllers\Admin\Company\V1\Models\Company whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Company newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Company newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Model ordered()
+ * @method static \Illuminate\Database\Eloquent\Builder|Company query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Model recent()
+ * @method static \Illuminate\Database\Eloquent\Builder|Company whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Company whereBdUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Company whereCategory($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Company whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Company whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Company whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Company whereInternalName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Company whereLogo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Company whereLogoMediaId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Company whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Company whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Company whereTradeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Company whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Company whereUserId($value)
  * @mixin \Eloquent
  */
 class Company extends Model
 {
 
-    protected $fillable = ['name', 'internal_name', 'address', 'category','status', 'user_id', 'trade_id', 'bd_user_id','parent_id', 'description', 'logo', 'logo_media_id'];
+    protected $fillable = [
+        'name', 'internal_name', 'address', 'category',
+        'status', 'user_id', 'trade_id', 'bd_user_id', 'parent_id',
+        'description', 'logo', 'logo_media_id'
+    ];
 
     public function user()
     {
         return $this->belongsTo(User::class)->withTrashed();
     }
 
-    public function bdUser()
+    public function bdUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'bd_user_id', 'id');
     }
 
-    public function customers()
+    public function customers(): HasMany
     {
         return $this->hasMany(Customer::class);
     }
 
-    public function markets()
+    public function markets(): HasMany
     {
         return $this->setConnection('ar')->hasMany(Market::class, 'companyid', 'id');
     }
 
-    public function stores()
+    public function stores(): HasMany
     {
         return $this->hasMany(Store::class, 'company_id', 'id');
     }
 
-    public function parent()
+    public function parent(): BelongsTo
     {
-        return $this->belongsTo(Company::class, 'parent_id', 'id');
+        return $this->belongsTo(__CLASS__, 'parent_id', 'id');
     }
 
-    public function children()
+    public function children(): HasMany
     {
-        return $this->hasMany(Company::class, 'parent_id', 'id');
+        return $this->hasMany(__CLASS__, 'parent_id', 'id');
     }
 
-    public function media()
+    public function media(): BelongsTo
     {
         return $this->belongsTo(Media::class, 'logo_media_id', 'id');
     }
 
-    public function isCompanyCustomer($model)
+    public function isCompanyCustomer($model): bool
     {
-        return $this->id == $model->company_id;
+        return $this->id === $model->company_id;
     }
 }

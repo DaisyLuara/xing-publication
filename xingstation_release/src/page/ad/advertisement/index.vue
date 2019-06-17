@@ -9,44 +9,40 @@
         <div class="search-wrap">
           <el-form 
             ref="adSearchForm" 
-            :model="adSearchForm" 
+            :model="adSearchForm"
+            :inline="true" 
             class="search-form">
-            <el-row :gutter="24">
-              <el-col :span="8">
-                <el-form-item 
-                  label 
-                  prop="adTrade">
-                  <el-select
-                    v-model="adSearchForm.ad_trade_id"
-                    filterable
-                    placeholder="请搜索广告行业"
-                    clearable
-                  >
-                    <el-option
-                      v-for="item in searchAdTradeList"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item prop="type">
-                  <el-input 
-                    v-model="adSearchForm.name" 
-                    placeholder="广告素材名称"/>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item>
-                  <el-button 
-                    type="primary" 
-                    @click="search('adSearchForm')">搜索</el-button>
-                  <el-button @click="resetSearch('adSearchForm')">重置</el-button>
-                </el-form-item>
-              </el-col>
-            </el-row>
+            
+            <el-form-item 
+              label 
+              prop="adTrade">
+              <el-select
+                v-model="adSearchForm.ad_trade_id"
+                filterable
+                placeholder="请搜索广告行业"
+                clearable
+              >
+                <el-option
+                  v-for="item in searchAdTradeList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+             
+            <el-form-item prop="type">
+              <el-input 
+                v-model="adSearchForm.name" 
+                placeholder="广告素材名称"/>
+            </el-form-item>
+             
+            <el-form-item>
+              <el-button 
+                type="primary" 
+                @click="search('adSearchForm')">搜索</el-button>
+              <el-button @click="resetSearch('adSearchForm')">重置</el-button>
+            </el-form-item>
           </el-form>
         </div>
         <div class="actions-wrap">
@@ -149,8 +145,8 @@
             label="创建人" 
             min-width="80">
             <template slot-scope="scope">
-              <span>{{ scope.row.create_user_name ? scope.row.create_user_name : '' }}</span><br/>
-              <span>{{ scope.row.create_user_company }}</span>
+              <div>{{ scope.row.create_user_name }}</div>
+              <div>{{ scope.row.create_user_company }}</div>
             </template>
           </el-table-column>
           <el-table-column
@@ -191,7 +187,7 @@
 </template>
 
 <script>
-import { getSearchAdTradeList, getAdList, saveAd, modifyAd } from "service";
+import { getSearchAdTrade, getAdList, saveAd, modifyAd } from "service";
 
 import {
   Button,
@@ -199,24 +195,16 @@ import {
   Table,
   Select,
   Option,
-  Col,
   TableColumn,
   Pagination,
   Form,
   FormItem,
-  DatePicker,
-  Checkbox,
-  CheckboxGroup,
-  Dialog,
-  Row,
   MessageBox,
-  Radio
 } from "element-ui";
 
 export default {
   components: {
     "el-table": Table,
-    "el-date-picker": DatePicker,
     "el-table-column": TableColumn,
     "el-button": Button,
     "el-input": Input,
@@ -225,12 +213,6 @@ export default {
     "el-select": Select,
     "el-option": Option,
     "el-form-item": FormItem,
-    "el-checkbox-group": CheckboxGroup,
-    "el-checkbox": Checkbox,
-    "el-dialog": Dialog,
-    "el-col": Col,
-    "el-row": Row,
-    "el-radio": Radio
   },
   data() {
     return {
@@ -261,7 +243,7 @@ export default {
   methods: {
     async init() {
       try {
-        let tradeRes = await getSearchAdTradeList(this);
+        let tradeRes = await getSearchAdTrade(this);
         this.searchAdTradeList = tradeRes.data;
         await this.getAdList();
       } catch (e) {}
@@ -293,8 +275,7 @@ export default {
       this.getAdList();
     },
     resetSearch(formName) {
-      this.adSearchForm.ad_trade_id = "";
-      this.adSearchForm.name = "";
+      this.$ref[formName].resetFields()
       this.pagination.currentPage = 1;
       this.getAdList();
     },

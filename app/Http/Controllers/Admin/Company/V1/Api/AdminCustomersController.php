@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\Privilege\V1\Models\Role;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Jobs\CreateAdminStaffJob;
+use Dingo\Api\Http\Response;
 
 class AdminCustomersController extends Controller
 {
@@ -17,7 +18,7 @@ class AdminCustomersController extends Controller
      * @param Customer $customer
      * @return \Dingo\Api\Http\Response
      */
-    public function index(Company $company, Customer $customer)
+    public function index(Company $company, Customer $customer): Response
     {
         $query = $customer->query();
 
@@ -47,13 +48,15 @@ class AdminCustomersController extends Controller
         $role = Role::findById($request->get('role_id'), 'shop');
         $customer->assignRole($role);
 
-        activity('customer')->on($customer)->withProperties($request->all())->log('新增公司联系人');
-
         CreateAdminStaffJob::dispatch($customer, $role)->onQueue('create_admin_staff');
 
-        return $this->response()->item($customer, new CustomerTransformer())
-            ->setStatusCode(201);
+        activity('create_customer')
+            ->causedBy($this->user())
+            ->performedOn($customer)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增公司联系人');
 
+        return $this->response()->item($customer, new CustomerTransformer())->setStatusCode(201);
     }
 
     public function update(CustomerRequest $request, Company $company, Customer $customer)
@@ -67,7 +70,12 @@ class AdminCustomersController extends Controller
         $role = Role::findById($request->get('role_id'), 'shop');
         $customer->syncRoles($role);
 
-        activity('customer')->on($customer)->withProperties($request->all())->log('修改公司联系人');
+        activity('update_customer')
+            ->causedBy($this->user())
+            ->performedOn($customer)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('修改公司联系人');
+
         return $this->response()->item($customer, new CustomerTransformer())->setStatusCode(200);
     }
 

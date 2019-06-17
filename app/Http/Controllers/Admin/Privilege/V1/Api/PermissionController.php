@@ -31,7 +31,14 @@ class PermissionController extends Controller
 
     public function store(PermissionRequest $request)
     {
-        Permission::create($request->all());
+        $permission = Permission::create($request->all());
+
+        activity('create_permission')
+            ->causedBy($this->user())
+            ->performedOn($permission)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('新增权限');
+
         return $this->response()->noContent()->setStatusCode(201);
     }
 
@@ -43,15 +50,29 @@ class PermissionController extends Controller
             abort(403, '不可移动节点');
         }
         $permission->update($request->all());
+
+        activity('update_permission')
+            ->causedBy($this->user())
+            ->performedOn($permission)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('编辑权限');
+
         return $this->response()->noContent()->setStatusCode(200);
     }
 
-    public function destroy(Permission $permission)
+    public function destroy(Permission $permission, Request $request)
     {
         $this->checkPermission($permission);
 
         $permission->descendantsAndSelf()->delete();
         app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+        activity('delete_permission')
+            ->causedBy($this->user())
+            ->performedOn($permission)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('删除权限');
+
         return $this->response()->noContent()->setStatusCode(204);
     }
 

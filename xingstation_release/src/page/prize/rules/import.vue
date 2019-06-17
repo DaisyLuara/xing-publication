@@ -1,12 +1,12 @@
 <template>
   <div class="add-coupon-import-wrap">
-    <div
-      v-loading="setting.loading"
+    <div 
+      v-loading="setting.loading" 
       :element-loading-text="setting.loadingText">
       <div class="coupon-title">{{ $route.name }}</div>
-      <el-form
-        ref="couponForm"
-        :model="couponForm"
+      <el-form 
+        ref="couponForm" 
+        :model="couponForm" 
         label-width="180px">
         <el-form-item
           :rules="{required: true, message: '公司不能为空', trigger: 'submit'}"
@@ -49,54 +49,55 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item
-          label="创建人"
+        <el-form-item 
+          label="创建人" 
           prop="user_name">
-          <el-input
-            v-model="user_name"
-            :disabled="true"
+          <el-input 
+            v-model="user_name" 
+            :disabled="true" 
             class="coupon-form-input"/>
         </el-form-item>
         <el-form-item
           :rules="{required: true, message: '适用场景不能为空', trigger: 'submit'}"
           label="适用场景"
-          prop="scene_type">
-          <el-radio-group
-            v-model="couponForm.scene_type"
+          prop="scene_type"
+        >
+          <el-radio-group 
+            v-model="couponForm.scene_type" 
             @change="handleSceneType">
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="可在同一场地下的多家商户核销"
+            <el-tooltip 
+              class="item" 
+              effect="dark" 
+              content="可在同一场地下的多家商户核销" 
               placement="top">
               <el-radio :label="1">场地通用</el-radio>
             </el-tooltip>
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="仅供某一特定场地核销"
+            <el-tooltip 
+              class="item" 
+              effect="dark" 
+              content="仅供某一特定场地核销" 
               placement="top">
               <el-radio :label="2">场地自营</el-radio>
             </el-tooltip>
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="可在同一主体下，多家连锁商户核销"
+            <el-tooltip 
+              class="item" 
+              effect="dark" 
+              content="可在同一主体下，多家连锁商户核销" 
               placement="top">
               <el-radio :label="3">商户通用</el-radio>
             </el-tooltip>
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="仅供某一特定商户核销"
+            <el-tooltip 
+              class="item" 
+              effect="dark" 
+              content="仅供某一特定商户核销" 
               placement="top">
               <el-radio :label="4">商户自营</el-radio>
             </el-tooltip>
           </el-radio-group>
         </el-form-item>
-        <el-form-item
-          :rules="writeOffMidRules"
-          label="适用场地"
+        <el-form-item 
+          :rules="writeOffMidRules" 
+          label="适用场地" 
           prop="write_off_mid">
           <el-select
             v-model="couponForm.write_off_mid"
@@ -116,9 +117,9 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item
-          :rules="writeOffSidRules"
-          label="适用商户"
+        <el-form-item 
+          :rules="writeOffSidRules" 
+          label="适用商户" 
           prop="write_off_sid">
           <el-select
             v-model="couponForm.write_off_sid"
@@ -139,8 +140,8 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item
-          label="导入数据EXCEL文档"
+        <el-form-item 
+          label="导入数据EXCEL文档" 
           prop="ids">
           <el-upload
             ref="upload"
@@ -155,21 +156,19 @@
             :on-exceed="handleExceed"
             class="upload-demo"
           >
-            <el-button
-              size="small"
+            <el-button 
+              size="small" 
               type="primary">点击上传</el-button>
-            <div
-              slot="tip"
-              style="display:inline-block"
-              class="el-upload__tip"
-            >文件类型只支持=xlsx、xls</div>
+            <div 
+              slot="tip" 
+              style="display:inline-block" 
+              class="el-upload__tip">文件类型只支持=xlsx、xls</div>
           </el-upload>
         </el-form-item>
 
-
         <el-form-item>
-          <el-button
-            type="primary"
+          <el-button 
+            type="primary" 
             @click="onSubmit('couponForm')">保存</el-button>
           <el-button @click="historyBack">取消</el-button>
         </el-form-item>
@@ -177,9 +176,12 @@
 
       <h3>导入的Excel格式要求如下：</h3>
       <p>
-        <span>1、第一行为列名，请注意数据先后</span><br>
-        <span>2、当无限领取【开启】时，最大获取数请填写 0</span><br>
-        <span>3、时间格式为【yyyy-mm-ss hh:mm:ss】(右击单元格，可设置自定义)</span><br>
+        <span>1、第一行为列名，请注意数据先后</span>
+        <br>
+        <span>2、当无限领取【开启】时，最大获取数请填写 0</span>
+        <br>
+        <span>3、时间格式为【yyyy-mm-ss hh:mm:ss】(右击单元格，可设置自定义)</span>
+        <br>
       </p>
       <img 
         :src="getImportFormatImg()" 
@@ -209,12 +211,9 @@ import {
   FormItem,
   RadioGroup,
   Radio,
-  DatePicker,
   Select,
   Option,
-  Tooltip,
-  Tabs,
-  TabPane
+  Tooltip
 } from "element-ui";
 
 export default {
@@ -228,11 +227,8 @@ export default {
     "el-radio-group": RadioGroup,
     "el-radio": Radio,
     "el-select": Select,
-    "el-date-picker": DatePicker,
     "el-option": Option,
-    "el-tooltip": Tooltip,
-    "el-tabs": Tabs,
-    "el-tab-pane": TabPane
+    "el-tooltip": Tooltip
   },
   data() {
     return {
@@ -253,7 +249,7 @@ export default {
       activeName: "first",
       dateShow: false,
       companyList: [],
-      policiesList:[],
+      policiesList: [],
       setting: {
         isOpenSelectAll: true,
         loading: false,
@@ -280,8 +276,8 @@ export default {
         scene_type: null,
         write_off_mid: null,
         write_off_sid: [],
-        policy_id:null,
-      },
+        policy_id: null
+      }
     };
   },
   created() {
@@ -291,10 +287,9 @@ export default {
     this.getQiniuToken();
     this.getSearchCompany();
     this.user_name = user.name;
-
   },
   methods: {
-    getImportFormatImg(){
+    getImportFormatImg() {
       return require("../../../assets/images/import_coupons_format.png");
     },
     getQiniuToken() {
@@ -312,7 +307,7 @@ export default {
       this.$message.warning(
         `当前限制选择 1 个文件，本次选择了 ${
           files.length
-          } 个文件，共选择了 ${files.length + fileList.length} 个文件`
+        } 个文件，共选择了 ${files.length + fileList.length} 个文件`
       );
     },
     handleRemove(file, fileList) {
@@ -328,17 +323,10 @@ export default {
       let time = new Date().getTime();
       let random = parseInt(Math.random() * 10 + 1, 10);
       let suffix = time + "_" + random + "_" + name;
-      let key = (`${suffix}`);
-      if (
-        !(
-          type === ".xlsx" ||
-          type === ".xls"
-        )
-      ) {
+      let key = `${suffix}`;
+      if (!(type === ".xlsx" || type === ".xls")) {
         this.uploadForm.token = "";
-        return this.$message.error(
-          "文件类型只支持xlsx、xls"
-        );
+        return this.$message.error("文件类型只支持xlsx、xls");
       }
       if (!isLt100M) {
         this.uploadForm.token = "";
@@ -376,7 +364,6 @@ export default {
         });
     },
 
-
     handleCompany(val) {
       this.getCompanyMarketList(val);
       this.getStoresList(val);
@@ -389,21 +376,14 @@ export default {
       }
     },
 
-    getPoliciesList(val) {
-      getPoliciesListByCompany(this, val)
-        .then(res => {
-          console.log(res);
-          this.policiesList = res;
-        })
-        .catch(err => {
-          this.$message({
-            type: "warning",
-            message: err.response.data.message
-          });
-        });
+    async getPoliciesList(val) {
+      try {
+        let res = await getPoliciesListByCompany(this, val);
+        this.policiesList = res;
+      } catch (e) {}
     },
 
-    getStoresList(val, type) {
+    async getStoresList(val, type) {
       let args = {
         company_id: val
       };
@@ -411,32 +391,23 @@ export default {
         args.market_id = val;
         delete args.company_id;
       }
+      try {
+        let res = await getStoresList(this, args);
+        this.writeOffSiteList = res;
+      } catch (e) {
 
-      getStoresList(this, args)
-        .then(res => {
-          this.writeOffSiteList = res;
-        })
-        .catch(err => {
-          this.$message({
-            type: "warning",
-            message: err.response.data.message
-          });
-        });
+      }
     },
-    getCompanyMarketList(val) {
+    async getCompanyMarketList(val) {
       let args = {
         company_id: val
       };
-      getCompanyMarketList(this, args)
-        .then(res => {
-          this.writeOffMarketList = res;
-        })
-        .catch(err => {
-          this.$message({
-            type: "warning",
-            message: err.response.data.message
-          });
-        });
+      try {
+        let res = await getCompanyMarketList(this, args);
+        this.writeOffMarketList = res;
+      } catch (e) {
+        
+      }
     },
     handleSceneType(val) {
       if (val === 1) {
@@ -481,18 +452,15 @@ export default {
         this.multipleNum = 1;
       }
     },
-    getSearchCompany() {
+    async getSearchCompany() {
       this.searchLoading = true;
-      getSearchCompany(this)
-        .then(result => {
-          this.searchLoading = false;
-          this.companyList = result.data;
-        })
-        .catch(error => {
-          this.searchLoading = false;
-
-          console.log(error);
-        });
+      try {
+        let res = await getSearchCompany(this);
+        this.companyList = res.data;
+        this.searchLoading = false;
+      } catch (e) {
+        this.searchLoading = false;
+      }
     },
     onSubmit(formName) {
       let company_id = this.couponForm.company_id;
@@ -532,25 +500,22 @@ export default {
 
       this.$refs[formName].validate(valid => {
         if (valid) {
-          console.log("saveCouponByImport");
-          console.log(company_id);
-          console.log(args);
-          saveCouponByImport(this,company_id, args)
+          saveCouponByImport(this, company_id, args)
             .then(result => {
               this.loading = false;
               this.$message({
                 type: "success",
                 message: "导入成功"
               });
-              this.$router.push({
-                path: "/prize/rules/"
-              });
+              this.historyBack();
             })
             .catch(error => {
               this.loading = false;
-              console.log(error.response);
               this.$message({
-                message:(error.response && error.response.data.message) ? error.response.data.message : '出现错误',
+                message:
+                  error.response && error.response.data.message
+                    ? error.response.data.message
+                    : "出现错误",
                 type: "warning"
               });
             });

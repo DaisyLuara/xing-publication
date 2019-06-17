@@ -38,17 +38,17 @@ class DemandModifyExport extends BaseExport
 
         //需求申请
         if ($this->demand_application_id) {
-            $query->where("demand_application_id", "=", $this->demand_application_id);
+            $query->where('demand_application_id', '=', $this->demand_application_id);
         }
 
         //反馈意见
         if ($this->has_feedback) {
-            $query->where("has_feedback", "=", $this->has_feedback);
+            $query->where('has_feedback', '=', $this->has_feedback);
         }
 
         //平台意见
         if ($this->status) {
-            $query->where("status", "=", $this->status);
+            $query->where('status', '=', $this->status);
         }
 
         //创建时间
@@ -58,32 +58,30 @@ class DemandModifyExport extends BaseExport
 
         if (!$user->hasAnyPermission(['demand.modify.review'])) {
 
-            $query->whereHas('demand_application', function ($demand_application) use ($user) {
+            $query->whereHas('demand_application', static function ($demand_application) use ($user) {
                 //接单人看到自己接单的
                 if ($user->hasAnyPermission(['demand.modify.feedback'])) {
-                    $demand_application->where("receiver_id", '=', $user->id);
-                } else {
-                    if ($user->hasRole("bd-manager")) {
-                        //BD主管可查看自己及下属BD新建的申请列表
-                        $user_ids = $user->subordinates()->pluck("id")->toArray();
-                        $user_ids[] = $user->id;
-                        $demand_application->whereIn('applicant_id', $user_ids);
-                    } else if ($user->hasRole("user") || $user->hasRole("business-operation")) {
-                        //只能查询自己创建的 Application
-                        $demand_application->where('applicant_id', '=', $user->id);
-                    }
+                    $demand_application->where('receiver_id', '=', $user->id);
+                } else if ($user->hasRole('bd-manager')) {
+                    //BD主管可查看自己及下属BD新建的申请列表
+                    $user_ids = $user->subordinates()->pluck('id')->toArray();
+                    $user_ids[] = $user->id;
+                    $demand_application->whereIn('owner', $user_ids);
+                } else if ($user->hasRole('user') || $user->hasRole('business-operation')) {
+                    //只能查询自己创建的 Application
+                    $demand_application->where('owner', '=', $user->id);
                 }
 
             });
 
         }
 
-        $demandModifies = $query->orderByDesc("id")->get()
-            ->map(function (DemandModify $demandModify) {
+        $demandModifies = $query->orderByDesc('id')->get()
+            ->map(static function (DemandModify $demandModify) {
                 return [
                     'id' => $demandModify->getId(),
                     'demand_application_title' => $demandModify->demand_application ? $demandModify->demand_application->title : '',
-                    'applicant_name' => $demandModify->applicant ? $demandModify->applicant->name : '',
+                    'application_owner_name' => $demandModify->demand_application && $demandModify->demand_application->owner_user ? $demandModify->demand_application->owner_user->name : '',
                     'title' => $demandModify->getTitle(),
                     'content' => $demandModify->getContent(),
                     'has_feedback' => $demandModify->getHasFeedback() ? '已反馈' : '未反馈',
@@ -100,7 +98,7 @@ class DemandModifyExport extends BaseExport
             })->toArray();
 
 
-        $header = ['ID', '项目标的', '申请人', '修改标题', '修改详情', '是否有反馈', '反馈人', '反馈内容', '反馈时间',
+        $header = ['ID', '项目标的', '项目标的负责人', '修改标题', '修改详情', '是否有反馈', '反馈人', '反馈内容', '反馈时间',
             '审核人', '审核不通过备注', '审核时间', '状态', '创建时间', '最新更新时间'];
 
 

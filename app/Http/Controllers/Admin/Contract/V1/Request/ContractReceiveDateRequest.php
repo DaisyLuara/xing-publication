@@ -12,18 +12,15 @@ class ContractReceiveDateRequest extends Request
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
-        switch ($this->method()) {
-            case 'POST':
-                return [
-                    'receive_date'=>'required'
-                ];
-                break;
-            default:
-                return [];
+        $method = $this->method();
+        if ($method === 'POST') {
+            return [
+                'receive_date' => 'required'
+            ];
         }
-
+        return [];
     }
 }
 

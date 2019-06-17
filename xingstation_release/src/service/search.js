@@ -34,10 +34,10 @@ const SKIN_API = '/api/project_skin/query'
 const HOST = process.env.SERVER_URL
 
 // 区域
-const getSearchAeraList = context => {
+const getSearchAera = context => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + AREAS_API)
+      .get(`${HOST}${AREAS_API}`)
       .then(response => {
         resolve(response.data)
       })
@@ -47,10 +47,10 @@ const getSearchAeraList = context => {
   })
 }
 // 商场
-const getSearchMarketList = (context, args) => {
+const getSearchMarket = (context, args) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + MARKET_API, { params: args })
+      .get(`${HOST}${MARKET_API}`, { params: args })
       .then(response => {
         resolve(response.data)
       })
@@ -60,10 +60,10 @@ const getSearchMarketList = (context, args) => {
   })
 }
 // 模版
-const getSearchModuleList = context => {
+const getSearchModule = context => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + MODULE_API)
+      .get(`${HOST}${MODULE_API}`)
       .then(response => {
         resolve(response.data)
       })
@@ -73,10 +73,10 @@ const getSearchModuleList = context => {
   })
 }
 // 点位
-const getSearchPointList = (context, args) => {
+const getSearchPoint = (context, args) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + POINT_API, { params: args })
+      .get(`${HOST}${POINT_API}`, { params: args })
       .then(response => {
         resolve(response.data)
       })
@@ -86,10 +86,10 @@ const getSearchPointList = (context, args) => {
   })
 }
 // 节目
-const getSearchProjectList = (context, args) => {
+const getSearchProject = (context, args) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + PROJECT_API, { params: args })
+      .get(`${HOST}${PROJECT_API}`, { params: args })
       .then(response => {
         resolve(response.data)
       })
@@ -99,10 +99,10 @@ const getSearchProjectList = (context, args) => {
   })
 }
 // 广告行业
-const getSearchAdTradeList = context => {
+const getSearchAdTrade = context => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + AD_TRADE_API)
+      .get(`${HOST}${AD_TRADE_API}`)
       .then(response => {
         resolve(response.data)
       })
@@ -112,10 +112,10 @@ const getSearchAdTradeList = context => {
   })
 }
 // 广告方案
-const getSearchAdPlanList = (context, args) => {
+const getSearchAdPlan = (context, args) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + AD_PLAN_API, { params: args })
+      .get(`${HOST}${AD_PLAN_API}`, { params: args })
       .then(response => {
         resolve(response.data)
       })
@@ -125,10 +125,10 @@ const getSearchAdPlanList = (context, args) => {
   })
 }
 //广告
-const getSearchAdvertisementList = (context, args) => {
+const getSearchAdvertisement = (context, args) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + ADVERTISEMENT_API, { params: args })
+      .get(`${HOST}${ADVERTISEMENT_API}`, { params: args })
       .then(response => {
         resolve(response.data)
       })
@@ -138,10 +138,10 @@ const getSearchAdvertisementList = (context, args) => {
   })
 }
 // 星视度用户
-const getSearchStaffsList = (context, args) => {
+const getSearchStaffs = (context, args) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + STAFFS_API, { params: args })
+      .get(`${HOST}${STAFFS_API}`, { params: args })
       .then(response => {
         resolve(response.data)
       })
@@ -151,10 +151,10 @@ const getSearchStaffsList = (context, args) => {
   })
 }
 // 场景
-const getSearchSceneList = context => {
+const getSearchScene = context => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + SENCE_API)
+      .get(`${HOST}${SENCE_API}`)
       .then(response => {
         resolve(response.data)
       })
@@ -167,7 +167,7 @@ const getSearchSceneList = context => {
 const getSearchCompany = (context, args) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + COMPANY_API,{params: args})
+      .get(`${HOST}${COMPANY_API}`,{params: args})
       .then(response => {
         resolve(response.data)
       })
@@ -177,10 +177,10 @@ const getSearchCompany = (context, args) => {
   })
 }
 // 优惠券
-const getSearchCouponList = (context, args) => {
+const getSearchCoupon = (context, args) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + COUPON_API, { params: args })
+      .get(`${HOST}${COUPON_API}`, { params: args })
       .then(response => {
         resolve(response.data)
       })
@@ -189,10 +189,10 @@ const getSearchCouponList = (context, args) => {
       })
   })
 }
-const getSearchPolicyList = context => {
+const getSearchPolicy = context => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + POLICY_API)
+      .get(`${HOST}${POLICY_API}`)
       .then(response => {
         resolve(response.data)
       })
@@ -202,10 +202,10 @@ const getSearchPolicyList = context => {
   })
 }
 // 法务主管
-const getSearchLegalManagerList = context => {
+const getSearchLegalManager = context => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + LEGAL_MANAGER_API)
+      .get(`${HOST}${LEGAL_MANAGER_API}`)
       .then(response => {
         resolve(response.data)
       })
@@ -215,10 +215,10 @@ const getSearchLegalManagerList = context => {
   })
 }
 // BD主管
-const getSearchBDManagerList = context => {
+const getSearchBDManager = context => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + BD_MANAGER_API)
+      .get(`${HOST}${BD_MANAGER_API}`)
       .then(response => {
         resolve(response.data)
       })
@@ -228,10 +228,10 @@ const getSearchBDManagerList = context => {
   })
 }
 // 核销人
-const getSearchShopCustomerList = (context, params) => {
+const getSearchShopCustomer = (context, params) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + CUSTOMER_API, { params: params })
+      .get(`${HOST}${CUSTOMER_API}`, { params: params })
       .then(response => {
         resolve(response.data)
       })
@@ -241,10 +241,10 @@ const getSearchShopCustomerList = (context, params) => {
   })
 }
 // 用户
-const getSearchUserList = (context, params) => {
+const getSearchUser = (context, params) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + USER_API, { params: params })
+      .get(`${HOST}${USER_API}`, { params: params })
       .then(response => {
         resolve(response.data)
       })
@@ -254,10 +254,10 @@ const getSearchUserList = (context, params) => {
   })
 }
 // 比例
-const getSearchTeamRateList = context => {
+const getSearchTeamRate = context => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + TEAM_RATE_API)
+      .get(`${HOST}${TEAM_RATE_API}`)
       .then(response => {
         resolve(response.data)
       })
@@ -270,7 +270,7 @@ const getSearchTeamRateList = context => {
 const getFormatsList = context => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + FORMAT_API)
+      .get(`${HOST}${FORMAT_API}`)
       .then(response => {
         resolve(response.data)
       })
@@ -284,7 +284,7 @@ const getFormatsList = context => {
 const getPermission = (context, args) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + PERMISSION_API, { params: args })
+      .get(`${HOST}${PERMISSION_API}`, { params: args })
       .then(response => {
         resolve(response.data)
       })
@@ -295,10 +295,10 @@ const getPermission = (context, args) => {
 }
 // 收款合同
 
-const getContractReceiptList = (context, params) => {
+const getContractReceipt = (context, params) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + CONTRACT_RECEIPT_API, { params: params })
+      .get(`${HOST}${CONTRACT_RECEIPT_API}`, { params: params })
       .then(response => {
         resolve(response.data.data)
       })
@@ -311,7 +311,7 @@ const getContractReceiptList = (context, params) => {
 const getSearchRole = (context, args) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + ROLE_API, { params: args })
+      .get(`${HOST}${ROLE_API}`, { params: args })
       .then(response => {
         resolve(response.data)
       })
@@ -325,7 +325,7 @@ const getSearchRole = (context, args) => {
 const getSearchCopyrightProject = (context, params) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + TEAM_PROJECT_API, { params: params })
+      .get(`${HOST}${TEAM_PROJECT_API}`, { params: params })
       .then(response => {
         resolve(response.data.data)
       })
@@ -336,10 +336,10 @@ const getSearchCopyrightProject = (context, params) => {
 }
 
 // bd
-const getSearchBDList = (context, params) => {
+const getSearchBD = (context, params) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + BD_API, { params: params })
+      .get(`${HOST}${BD_API}`, { params: params })
       .then(response => {
         resolve(response.data.data)
       })
@@ -352,7 +352,7 @@ const getSearchBDList = (context, params) => {
 const getStoresList = (context, params) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + STORES_API, { params: params })
+      .get(`${HOST}${STORES_API}`, { params: params })
       .then(response => {
         resolve(response.data.data)
       })
@@ -366,7 +366,7 @@ const getStoresList = (context, params) => {
 const getCompanyMarketList = (context, params) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + COMPANY_MARKET_API, { params: params })
+      .get(`${HOST}${COMPANY_MARKET_API}`, { params: params })
       .then(response => {
         resolve(response.data.data)
       })
@@ -380,7 +380,7 @@ const getCompanyMarketList = (context, params) => {
 const getSearchPlayingTypes = (context, params) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + PLATYING_TYPES_API, { params: params })
+      .get(`${HOST}${PLATYING_TYPES_API}`, { params: params })
       .then(response => {
         resolve(response.data.data)
       })
@@ -393,7 +393,7 @@ const getSearchPlayingTypes = (context, params) => {
 const getSearchCustomer = (context, params) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + CUSTOMERS_API, { params: params })
+      .get(`${HOST}${CUSTOMERS_API}`, { params: params })
       .then(response => {
         resolve(response.data.data)
       })
@@ -407,7 +407,7 @@ const getSearchCustomer = (context, params) => {
 const getSearchMarketOwnerCustomer = (context, params) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + CUSTOMERS_MARKET_OWNER_API, { params: params })
+      .get(`${HOST}${CUSTOMERS_MARKET_OWNER_API}`, { params: params })
       .then(response => {
         resolve(response.data.data)
       })
@@ -421,7 +421,7 @@ const getSearchMarketOwnerCustomer = (context, params) => {
 const getSearchAuthPoint = (context, params) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + AUTH_POINT_API, { params: params })
+      .get(`${HOST}${AUTH_POINT_API}`, { params: params })
       .then(response => {
         resolve(response.data.data)
       })
@@ -436,7 +436,7 @@ const getSearchAuthPoint = (context, params) => {
 const getSearchAuthProject = (context, params) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + AUTH_PROJECT_API, { params: params })
+      .get(`${HOST}${AUTH_PROJECT_API}`, { params: params })
       .then(response => {
         resolve(response.data.data)
       })
@@ -451,7 +451,7 @@ const getSearchAuthProject = (context, params) => {
 const getSearchAuthPolicies = (context, params) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + AUTH_POLICY_API, { params: params })
+      .get(`${HOST}${AUTH_POLICY_API}`, { params: params })
       .then(response => {
         resolve(response.data.data)
       })
@@ -465,7 +465,7 @@ const getSearchAuthPolicies = (context, params) => {
 const getSearchSkin = (context, params) => {
   return new Promise(function (resolve, reject) {
     context.$http
-      .get(HOST + SKIN_API, { params: params })
+      .get(`${HOST}${SKIN_API}`, { params: params })
       .then(response => {
         resolve(response.data.data)
       })
@@ -476,30 +476,30 @@ const getSearchSkin = (context, params) => {
 }
 
 export {
-  getSearchAeraList,
-  getSearchMarketList,
-  getSearchModuleList,
-  getSearchPointList,
-  getSearchProjectList,
-  getSearchAdTradeList,
-  getSearchAdPlanList,
-  getSearchAdvertisementList,
-  getSearchStaffsList,
-  getSearchCouponList,
-  getSearchTeamRateList,
-  getSearchUserList,
-  getSearchShopCustomerList,
-  getSearchBDManagerList,
-  getSearchLegalManagerList,
-  getSearchPolicyList,
+  getSearchAera,
+  getSearchMarket,
+  getSearchModule,
+  getSearchPoint,
+  getSearchProject,
+  getSearchAdTrade,
+  getSearchAdPlan,
+  getSearchAdvertisement,
+  getSearchStaffs,
+  getSearchCoupon,
+  getSearchTeamRate,
+  getSearchUser,
+  getSearchShopCustomer,
+  getSearchBDManager,
+  getSearchLegalManager,
+  getSearchPolicy,
   getSearchCompany,
-  getSearchSceneList,
+  getSearchScene,
   getFormatsList,
   getPermission,
   getSearchRole,
-  getContractReceiptList,
+  getContractReceipt,
   getSearchCopyrightProject,
-  getSearchBDList,
+  getSearchBD,
   getStoresList,
   getCompanyMarketList,
   getSearchPlayingTypes,

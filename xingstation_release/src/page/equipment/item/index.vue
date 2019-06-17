@@ -8,154 +8,139 @@
       <div class="search-wrap">
         <el-form 
           ref="searchForm" 
-          :model="searchForm" 
+          :model="searchForm"
+          :inline="true" 
           class="search-form">
-          <el-row :gutter="20">
-            <el-col 
-              v-if="showUser" 
-              :span="8">
-              <el-form-item 
-                label 
-                prop="user_id">
-                <el-select
-                  v-model="searchForm.user_id"
-                  :loading="searchLoading"
-                  :remote-method="getUser"
-                  filterable
-                  placeholder="请搜索账号"
-                  remote
-                  clearable
-                  @change="userChangeHandle"
-                >
-                  <el-option
-                    v-for="item in userList"
-                    :key="item.z"
-                    :label="item.name"
-                    :value="item.z"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item 
-                label 
-                prop="project_id">
-                <el-select
-                  v-model="searchForm.project_id"
-                  :remote-method="getProject"
-                  :loading="searchLoading"
-                  filterable
-                  placeholder="请搜索节目"
-                  remote
-                  clearable
-                >
-                  <el-option
-                    v-for="item in projectList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.alias"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item 
-                label 
-                prop="machine_status">
-                <el-select
-                  v-model="searchForm.machine_status"
-                  placeholder="请选择分类"
-                  filterable
-                  clearable
-                >
-                  <el-option
-                    v-for="item in machineList"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8">
-              <el-form-item 
-                label 
-                prop="area_id">
-                <el-select
-                  v-model="searchForm.area_id"
-                  placeholder="请选择区域"
-                  filterable
-                  clearable
-                  @change="areaChangeHandle"
-                >
-                  <el-option
-                    v-for="item in areaList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item 
-                label 
-                prop="market_id">
-                <el-select
-                  v-model="searchForm.market_id"
-                  :remote-method="getMarket"
-                  :loading="searchLoading"
-                  placeholder="请搜索商场"
-                  filterable
-                  remote
-                  clearable
-                  @change="marketChangeHandle"
-                >
-                  <el-option
-                    v-for="item in marketList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item 
-                label 
-                prop="point_id">
-                <el-select
-                  v-model="searchForm.point_id"
-                  :loading="searchLoading"
-                  placeholder="请选择点位"
-                  filterable
-                  clearable
-                >
-                  <el-option
-                    v-for="item in pointList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="10">
-              <el-form-item>
-                <el-button 
-                  type="primary" 
-                  size="small" 
-                  @click="search('searchForm')">搜索</el-button>
-                <el-button 
-                  size="small" 
-                  @click="resetSearch('searchForm')">重置</el-button>
-              </el-form-item>
-            </el-col>
-          </el-row>
+          <el-form-item 
+            v-if="showUser" 
+            label 
+            prop="user_id">
+            <el-select
+              v-model="searchForm.user_id"
+              :loading="searchLoading"
+              :remote-method="getUser"
+              filterable
+              placeholder="请搜索账号"
+              remote
+              clearable
+              @change="userChangeHandle"
+            >
+              <el-option
+                v-for="item in userList"
+                :key="item.z"
+                :label="item.name"
+                :value="item.z"
+              />
+            </el-select>
+          </el-form-item>
+          
+          <el-form-item 
+            label 
+            prop="project_id">
+            <el-select
+              v-model="searchForm.project_id"
+              :remote-method="getProject"
+              :loading="searchLoading"
+              filterable
+              placeholder="请搜索节目"
+              remote
+              clearable
+            >
+              <el-option
+                v-for="item in projectList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.alias"
+              />
+            </el-select>
+          </el-form-item>
+           
+          <el-form-item 
+            label 
+            prop="machine_status">
+            <el-select
+              v-model="searchForm.machine_status"
+              placeholder="请选择分类"
+              filterable
+              clearable
+            >
+              <el-option
+                v-for="item in machineList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+            
+          <el-form-item 
+            label 
+            prop="area_id">
+            <el-select
+              v-model="searchForm.area_id"
+              placeholder="请选择区域"
+              filterable
+              clearable
+              @change="areaChangeHandle"
+            >
+              <el-option
+                v-for="item in areaList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              />
+            </el-select>
+          </el-form-item>
+            
+          <el-form-item 
+            label 
+            prop="market_id">
+            <el-select
+              v-model="searchForm.market_id"
+              :remote-method="getMarket"
+              :loading="searchLoading"
+              placeholder="请搜索商场"
+              filterable
+              remote
+              clearable
+              @change="marketChangeHandle"
+            >
+              <el-option
+                v-for="item in marketList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              />
+            </el-select>
+          </el-form-item>
+           
+          <el-form-item 
+            label 
+            prop="point_id">
+            <el-select
+              v-model="searchForm.point_id"
+              :loading="searchLoading"
+              placeholder="请选择点位"
+              filterable
+              clearable
+            >
+              <el-option
+                v-for="item in pointList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button 
+              type="primary" 
+              size="small" 
+              @click="search('searchForm')">搜索</el-button>
+            <el-button 
+              size="small" 
+              @click="resetSearch('searchForm')">重置</el-button>
+          </el-form-item>
         </el-form>
       </div>
       <div class="item-content-wrap">
@@ -301,11 +286,11 @@
 <script>
 import {
   gettEquipmentList,
-  getSearchStaffsList,
-  getSearchAeraList,
-  getSearchProjectList,
-  getSearchMarketList,
-  getSearchPointList
+  getSearchStaffs,
+  getSearchAera,
+  getSearchProject,
+  getSearchMarket,
+  getSearchPoint
 } from "service";
 
 import {
@@ -317,16 +302,12 @@ import {
   Form,
   FormItem,
   MessageBox,
-  Row,
-  Col,
   Select,
   Option
 } from "element-ui";
 
 export default {
   components: {
-    "el-row": Row,
-    "el-col": Col,
     "el-table": Table,
     "el-select": Select,
     "el-option": Option,
@@ -401,7 +382,7 @@ export default {
       };
       if (query !== "") {
         this.searchLoading = true;
-        return getSearchStaffsList(this, args)
+        return getSearchStaffs(this, args)
           .then(response => {
             this.userList = response.data;
             if (this.userList.length == 0) {
@@ -419,7 +400,7 @@ export default {
       }
     },
     getAreaList() {
-      return getSearchAeraList(this)
+      return getSearchAera(this)
         .then(response => {
           let data = response.data;
           this.areaList = data;
@@ -439,7 +420,7 @@ export default {
         if (!this.searchForm.user_id) {
           delete args.ar_user_z;
         }
-        return getSearchProjectList(this, args)
+        return getSearchProject(this, args)
           .then(response => {
             this.projectList = response.data;
             this.searchLoading = false;
@@ -453,7 +434,7 @@ export default {
         this.searchForm.user_id = user_info.ar_user_z;
         args.ar_user_z = this.searchForm.user_id;
         this.searchLoading = true;
-        return getSearchProjectList(this, args)
+        return getSearchProject(this, args)
           .then(response => {
             this.projectList = response.data;
             this.searchLoading = false;
@@ -471,7 +452,7 @@ export default {
         include: "area",
         area_id: this.searchForm.area_id
       };
-      return getSearchMarketList(this, args)
+      return getSearchMarket(this, args)
         .then(response => {
           this.marketList = response.data;
           if (this.marketList.length == 0) {
@@ -491,7 +472,7 @@ export default {
         market_id: this.searchForm.market_id
       };
       this.searchLoading = true;
-      return getSearchPointList(this, args)
+      return getSearchPoint(this, args)
         .then(response => {
           this.pointList = response.data;
           this.searchLoading = false;

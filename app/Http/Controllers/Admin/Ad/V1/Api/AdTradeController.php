@@ -34,6 +34,13 @@ class AdTradeController extends Controller
         foreach ($names as $name) {
             $query->create(array_merge($data, ['name' => $name]));
         }
+
+        activity('create_ad_trade')
+            ->causedBy($this->user())
+            ->performedOn($adTrade)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('批量新增广告行业');
+
         return $this->response->noContent();
     }
 
@@ -47,6 +54,13 @@ class AdTradeController extends Controller
         foreach ($atids as $atid) {
             $query->where('atid', '=', $atid)->update($data);
         }
+
+        activity('update_ad_trade')
+            ->causedBy($this->user())
+            ->performedOn($adTrade)
+            ->withProperties(['ip' => $request->getClientIp(), 'request_params' => $request->all()])
+            ->log('批量编辑广告行业');
+
         return $this->response->noContent();
     }
 }

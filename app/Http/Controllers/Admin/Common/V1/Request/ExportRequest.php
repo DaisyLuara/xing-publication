@@ -7,10 +7,16 @@ use Illuminate\Validation\Rule;
 
 class ExportRequest extends Request
 {
-    public function rules()
+    public function rules(): array
     {
+        $type = [
+            'marketing', 'point', 'project',
+            'daily_average', 'project_point', 'marketing_top',
+            'person_reward', 'coupon', 'team_project',
+            'play_times', 'contract_revenue', 'short_url'
+        ];
         return [
-            'type' => ['required', Rule::in(['marketing', 'point', 'project', 'daily_average', 'project_point', 'marketing_top', 'old_marketing', 'person_reward', 'coupon', 'team_project', 'play_times'])]
+            'type' => ['required', Rule::in($type)]
         ];
     }
 }

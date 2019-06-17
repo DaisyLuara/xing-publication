@@ -235,11 +235,11 @@ import {
   getBusinessDetail,
   saveBusiness,
   modifyBusiness,
-  getSearchAeraList,
-  getSearchMarketList,
+  getSearchAera,
+  getSearchMarket,
   getSearchCompany,
-  getSearchUserList,
-  getContractReceiptList,
+  getSearchUser,
+  getContractReceipt,
   handleDateTimeTransform,
   getSearchCustomer
 } from "service";
@@ -256,9 +256,6 @@ import {
   TabPane,
   RadioGroup,
   Radio,
-  Tooltip,
-  Checkbox,
-  CheckboxGroup,
   MessageBox
 } from "element-ui";
 
@@ -275,9 +272,6 @@ export default {
     ElTabPane: TabPane,
     ElRadioGroup: RadioGroup,
     ElRadio: Radio,
-    ElTooltip: Tooltip,
-    ElCheckboxGroup: CheckboxGroup,
-    ElCheckbox: Checkbox,
     PicturePanel
   },
   data() {
@@ -368,7 +362,7 @@ export default {
     this.setting.loading = true;
     this.businessID = this.$route.params.uid;
     this.getAreaList();
-    this.getSearchUserList();
+    this.getSearchUser();
     if (this.businessID) {
       this.getBusinessDetail();
     } else {
@@ -381,11 +375,6 @@ export default {
         let { media_id, url } = data[0];
         this.businessForm.media_id = media_id;
         this.logoUrl = url;
-      } else {
-        // this.$message({
-        //   type: "warning",
-        //   message: "图片上传失败"
-        // });
       }
     },
     getSearchCustomer(val) {
@@ -426,7 +415,7 @@ export default {
         company_id: val
       };
       this.getSearchCustomer(val);
-      getContractReceiptList(this, args)
+      getContractReceipt(this, args)
         .then(res => {
           this.contractList = res;
         })
@@ -437,9 +426,9 @@ export default {
           });
         });
     },
-    getSearchUserList() {
+    getSearchUser() {
       this.searchLoading = true;
-      getSearchUserList(this)
+      getSearchUser(this)
         .then(res => {
           this.searchLoading = false;
           this.userList = res.data;
@@ -513,7 +502,7 @@ export default {
         });
     },
     getAreaList() {
-      return getSearchAeraList(this)
+      return getSearchAera(this)
         .then(res => {
           this.areaList = res.data;
           this.setting.loading = false;
@@ -536,7 +525,7 @@ export default {
         include: "area",
         area_id: this.businessForm.areaid
       };
-      return getSearchMarketList(this, args)
+      return getSearchMarket(this, args)
         .then(response => {
           this.markteList = response.data;
           if (this.markteList.length == 0) {

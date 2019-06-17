@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin\Payment\V1\Transformer;
 
 use App\Http\Controllers\Admin\Media\V1\Transformer\MediaTransformer;
 use App\Http\Controllers\Admin\Payment\V1\Models\Payment;
+use League\Fractal\Resource\Collection;
+use League\Fractal\Resource\Item;
 use League\Fractal\TransformerAbstract;
 use App\Http\Controllers\Admin\Contract\V1\Transformer\ContractTransformer;
 
@@ -12,7 +14,7 @@ class PaymentTransformer extends TransformerAbstract
 
     protected $availableIncludes = ['contract', 'payment_payee', 'media'];
 
-    public function transform(Payment $payment)
+    public function transform(Payment $payment): array
     {
         return [
             'id' => $payment->id,
@@ -21,6 +23,8 @@ class PaymentTransformer extends TransformerAbstract
             'payment_payee_name' => $payment->paymentPayee ? $payment->paymentPayee->name : null,
             'applicant' => $payment->applicant,
             'applicant_name' => $payment->applicantUser->name,
+            'owner' => $payment->owner,
+            'owner_name' => $payment->ownerUser->name,
             'amount' => $payment->amount,
             'type' => Payment::$typeMapping[$payment->type],
             'reason' => $payment->reason,
@@ -30,7 +34,7 @@ class PaymentTransformer extends TransformerAbstract
             'legal_ma_message' => $payment->legal_ma_message,
             'auditor_message' => $payment->auditor_message,
             'payer' => $payment->payer,
-            'receive_status' => $payment->receive_status == 0 ? '未收票' : '已收票',
+            'receive_status' => $payment->receive_status === 0 ? '未收票' : '已收票',
             'status' => Payment::$statusMapping[$payment->status],
             'handler' => $payment->handler,
             'handler_name' => $payment->handler ? $payment->handlerUser->name : null,
@@ -39,7 +43,7 @@ class PaymentTransformer extends TransformerAbstract
         ];
     }
 
-    public function includeContract(Payment $payment)
+    public function includeContract(Payment $payment): Item
     {
         return $this->item($payment->contract, new ContractTransformer());
     }
@@ -52,7 +56,7 @@ class PaymentTransformer extends TransformerAbstract
         return $this->item($payment->paymentPayee, new PaymentPayeeTransformer());
     }
 
-    public function includeMedia(Payment $payment)
+    public function includeMedia(Payment $payment): Collection
     {
         return $this->collection($payment->media, new MediaTransformer());
     }

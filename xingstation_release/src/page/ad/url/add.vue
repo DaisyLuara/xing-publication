@@ -23,12 +23,22 @@
           type="text" 
           placeholder="备注信息" />
       </el-form-item>
+      <el-form-item 
+        prop="url_type">
+        是否外链:
+        <el-radio 
+          v-model="urlInfo.url_type" 
+          label="1">是</el-radio>
+        <el-radio 
+          v-model="urlInfo.url_type" 
+          label="0">否</el-radio>
+      </el-form-item>
       <el-form-item>
         <div 
           class="btn-wrap">
           <el-button 
             type="default" 
-            @click="resetForm('urlInfo')">取消</el-button>
+            @click="historyBack">返回</el-button>
           <el-button 
             type="primary" 
             @click="submitForm('urlInfo')">保存</el-button>
@@ -38,16 +48,17 @@
   </div>
 </template>
 <script>
-import { saveUrl } from 'service'
+import { saveUrl,historyBack } from 'service'
 import router from 'router'
-import { Input, Button, FormItem, Form } from 'element-ui'
+import { Input, Button, FormItem, Form, Radio } from 'element-ui'
 
 export default {
   components: {
     'el-input': Input,
     'el-button': Button,
     'el-form-item': FormItem,
-    'el-form': Form
+    'el-form': Form,
+    'el-radio':Radio
   },
   data() {
     var checkUrl = (rule, value, callback) => {
@@ -65,11 +76,12 @@ export default {
     return {
       urlInfo: {
         target_url: '',
-        description: ''
+        description: '',
+        url_type: '1'
       },
       rules: {
         target_url: [{ validator: checkUrl, trigger: 'blur' }]
-      }
+      },
     }
   },
   methods: {
@@ -78,9 +90,7 @@ export default {
         if (valid) {
           saveUrl(this, this.urlInfo)
             .then(res => {
-              this.$router.push({
-                path: '/ad/url'
-              })
+              this.historyBack()
               this.$message({
                 type: 'success',
                 message: '保存成功'
@@ -92,14 +102,11 @@ export default {
                 message: '保存失败'
               })
             })
-        } else {
-          return false
         }
       })
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields()
-      router.back()
+    historyBack() {
+      historyBack()
     }
   }
 }

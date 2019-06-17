@@ -30,10 +30,10 @@ class CouponBatchEndDateNotificationJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $tomorrow = Carbon::tomorrow('PRC')->toDateString();
-        $afterTomorrow = Carbon::tomorrow('PRC')->addDay(1)->toDateString();
+        $afterTomorrow = Carbon::tomorrow('PRC')->addDay()->toDateString();
 
 
         $couponBatches = CouponBatch::query()
@@ -54,13 +54,14 @@ class CouponBatchEndDateNotificationJob implements ShouldQueue
                 'id' => $couponBatch->id,
                 'user_id' => $couponBatch->user->id,
                 'user_name' => $couponBatch->user->name,
+                'wechat_notify' => true,
                 'type' => 'coupon_batch',
-                'reply_content' => "您创建的优惠券即将过期，请及时查看"
+                'reply_content' => '您创建的优惠券即将过期，请及时查看'
                     . "   \n优惠券名称：" . $couponBatch->name
                     . "   \n公司名称：" . ($couponBatch->company ? $couponBatch->company->name : '')
                     . "   \n创建人：" . $couponBatch->user->name
-                    . "   \n过期时间：" . (Carbon::parse($couponBatch->end_date)->toDateString())
-                    . "   "];
+                    . "   \n过期时间：" . Carbon::parse($couponBatch->end_date)->toDateString()
+                    . '   '];
 
             $couponBatch->user->notify(new BaseNotification($notification_params));
         }

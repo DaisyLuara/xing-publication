@@ -44,7 +44,7 @@ class InvoiceReceiptExport extends BaseExport
         if ($user->hasRole('user')) {
             $query->whereHas('receiveDate', static function ($q) use ($user) {
                 $q->whereHas('contract', static function ($q) use ($user) {
-                    $q->where('applicant', $user->id);
+                    $q->where('owner', $user->id);
                 });
             });
         }
@@ -52,7 +52,7 @@ class InvoiceReceiptExport extends BaseExport
         if ($user->hasRole('bd-manager')) {
             $query->whereHas('receiveDate', static function ($q) use ($user) {
                 $q->whereHas('contract', static function ($q) use ($user) {
-                    $q->whereHas('applicantUser', static function ($q) use ($user) {
+                    $q->whereHas('ownerUser', static function ($q) use ($user) {
                         $q->where('parent_id', $user->id);
                     });
                 });
@@ -70,11 +70,11 @@ class InvoiceReceiptExport extends BaseExport
                     'creator' => $invoiceReceipt->creator,
                     'receiveDate_receive_date' => $invoiceReceipt->receiveDate ? $invoiceReceipt->receiveDate->receive_date : '',
                     'receiveDate_contract_contract_number' => "\t" . (($invoiceReceipt->receiveDate && $invoiceReceipt->receiveDate->contract) ? $invoiceReceipt->receiveDate->contract->contract_number : '') . "\t",
-                    'receiveDate_contract_applicant_name' => ($invoiceReceipt->receiveDate && $invoiceReceipt->receiveDate->contract && $invoiceReceipt->receiveDate->contract->applicantUser) ? $invoiceReceipt->receiveDate->contract->applicantUser->name : '',
+                    'receiveDate_contract_owner_name' => ($invoiceReceipt->receiveDate && $invoiceReceipt->receiveDate->contract && $invoiceReceipt->receiveDate->contract->ownerUser) ? $invoiceReceipt->receiveDate->contract->ownerUser->name : '',
                 ];
             })->toArray();
 
-        $header = ['ID', '付款公司', '收款金额', '到账日期', '认领状态', '收款创建人', '预估收款时间', '合同编号', '所属人'];
+        $header = ['ID', '付款公司', '收款金额', '到账日期', '认领状态', '收款创建人', '预估收款时间', '合同编号', '负责人'];
 
         $this->header_num = count($header);
         array_unshift($invoiceReceipts, $header, $header);

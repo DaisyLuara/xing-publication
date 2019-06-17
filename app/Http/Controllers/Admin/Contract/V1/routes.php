@@ -24,6 +24,8 @@ $api->version('v1', [
             $api->post('contract/reject/{contract}', ['middleware' => ['permission:contract.list.reject'], 'uses' => 'ContractController@reject']);
             $api->post('contract/auditing/{contract}', ['middleware' => ['permission:contract.list.auditing'], 'uses' => 'ContractController@auditing']);
             $api->post('contract/special_auditing/{contract}', ['middleware' => ['permission:contract.list.special_auditing'], 'uses' => 'ContractController@specialAuditing']);
+            $api->post('contract/filed/{contract}', ['middleware' => ['permission:contract.list.filed'], 'uses' => 'ContractController@filed']);
+            $api->get('contract_revenue/export', ['middleware' => ['permission:contract.list.export'], 'uses' => 'ContractController@revenueExport']);
 
             //收款提示
             $api->get('remind_contract/export', ['middleware' => ['permission:contract.collection.export'], 'uses' => 'ContractReceiveDateController@export']);
