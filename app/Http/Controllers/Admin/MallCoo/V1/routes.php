@@ -27,10 +27,6 @@ $api->version('v1', [
             $api->get('couponPacks', 'CouponController@getUserCouponPacks');//查看优惠券包
             $api->post('couponPacks', 'CouponController@generateCouponPacks');//发送优惠券包
 
-            $api->post('face', 'UserController@test');//绑定人脸
-            $api->get('face', 'UserController@getFace');//通过人脸获取用户信息V2
-
-
         });
     });
 

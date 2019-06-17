@@ -6,7 +6,6 @@ use App\Http\Controllers\Admin\MallCoo\V1\Request\MallCooRequest;
 use App\Http\Controllers\Admin\MallCoo\V1\Request\UserRequest;
 use App\Http\Controllers\Admin\MallCoo\V1\Transformer\ThirdPartyUserTransformer;
 use App\Http\Controllers\Admin\WeChat\V1\Models\ThirdPartyUser;
-use App\Jobs\FaceBindingJob;
 use function GuzzleHttp\Psr7\parse_query;
 use Illuminate\Http\Request;
 use App\Models\WeChatUser;
@@ -110,14 +109,11 @@ class UserController extends BaseController
         //开卡接口
         $sUrl = 'https://openapi10.mallcoo.cn/User/MallCard/v1/Open/ByMobile/';
         $cardResult = $this->mall_coo->send($sUrl, ['Mobile' => $verifyData['phone']]);
-        dd($cardResult);
-//        abort_if(($cardResult['Code'] !== 1) && ($cardResult['Code'] !== 307), 500, $cardResult['Message']);
+        abort_if(($cardResult['Code'] !== 1) && ($cardResult['Code'] !== 307), 500, $cardResult['Message']);
 
         //获取会员信息
         $userResult = $this->mall_coo->getUserInfoByOpenUserID($cardResult['Data']['OpenUserID']);
-//        dd($userResult);
         abort_if(($userResult['Code'] !== 1) && ($userResult['Code'] !== 30018), 500, $userResult['Message']);
-
 
         $userInfo = $userResult['Data'];
         $user = ThirdPartyUser::query()->updateOrCreate(
@@ -130,26 +126,11 @@ class UserController extends BaseController
                 'birthday' => $userInfo['Birthday'] ?: null,
                 'marketid' => $this->mall_coo->marketid,
                 'wx_user_id' => $wxUserId,
-                'belong' => $request->get('belong') ?? '',
                 'mall_card_apply_time' => $userInfo['MallCardApplyTime'],
             ]
         );
 
         WeChatUser::query()->where('id', $wxUserId)->update(['mobile' => $user->mobile]);
-
-        if ($request->has('qiniu_id')) {
-//            dispatch(new FaceBindingJob($request->get('qiniu_id'), $user->mobile));
-            FaceBindingJob::dispatch($request->get('qiniu_id'), $user->mobile)->onQueue('face-bind');
-            //绑定人脸
-            /** @var TodayFileUpload $fileUpload */
-            $fileUpload = TodayFileUpload::query()->findOrFail($request->get('qiniu_id'));
-            /** @var TodayFaceCollect $faceCollect */
-            $faceCollect = TodayFaceCollect::query()->where('fpid', $fileUpload->fpid)->orderByDesc('clientdate')->first();
-
-            if ($faceCollect) {
-                $this->mall_coo->bindUserFace($faceCollect, $user->mobile);
-            }
-        }
 
         return $this->response->item($user, new ThirdPartyUserTransformer());
     }
@@ -170,37 +151,6 @@ class UserController extends BaseController
         abort_if(!$user, 204);
 
         return $this->response->item($user, new ThirdPartyUserTransformer());
-    }
-
-    public function test()
-    {
-        $sUrl = 'https://openapi10.mallcoo.cn/Facial/v2/Bind/UserFace/';
-
-        $data = [
-                    "Type" => 1,
-                    "VendorID" => 5,
-                    "FaceID" => "gDbgCXegKYCD6hMv",
-                    "Mobile" => "18635467384",
-                    "FaceImg" => "http://psi3spdxk.bkt.clouddn.com/1007/face/kiki_972_9331492923315123_111.jpg"
-                ];
-
-        $cardResult = $this->mall_coo->send($sUrl, $data);
-
-        abort_if(($cardResult['Code'] !== 1) && ($cardResult['Code'] !== 307), 500, $cardResult['Message']);
-    }
-
-    public function getFace()
-    {
-        $sUrl = 'https://openapi10.mallcoo.cn/Facial/v2/Get/User/ByFace/';
-
-        $data = [
-            "VendorID" => 5,
-            "FaceID" => "4a8p8698tleV341b",
-//            "FaceImg" => "http://psi3spdxk.bkt.clouddn.com/1007/face/kiki_972_9331492923315123_111.jpg"
-        ];
-
-        $result = $this->mall_coo->send($sUrl, $data);
-        dd($this->mall_coo->getUserInfoByOpenUserID($result['Data']['OpenUserID']));
     }
 
 }
