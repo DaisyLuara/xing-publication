@@ -14,6 +14,7 @@ class ActivityLogController extends Controller
     public function index(ActivityLogRequest $request, Activity $activity)
     {
 
+        /** @var User $user */
         $user = $this->user();
         $query = $activity->query();
 
@@ -28,7 +29,7 @@ class ActivityLogController extends Controller
                 $query->where('causer_id', '=', $request->get('causer_id'));
             }
 
-            if (!$user->isAdmin()) {
+            if (!$user->canSeeOperateLog()) {
                 $customer_ids = Customer::query()->whereHas('company', static function ($q) use ($user) {
                     $q->where('bd_user_id', '=', $user->id);
                 })->pluck('id')->toArray();
@@ -39,7 +40,7 @@ class ActivityLogController extends Controller
 
         if ($request->get('type') === 'user') {
             $query->where('causer_type', User::class);
-            if (!$user->isAdmin()) {
+            if (!$user->canSeeOperateLog()) {
                 $query->where('causer_id', '=', $user->id);
             } else if ($request->has('causer_id')) {
                 $query->where('causer_id', '=', $request->get('causer_id'));
