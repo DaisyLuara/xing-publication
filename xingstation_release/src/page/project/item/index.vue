@@ -16,18 +16,6 @@
               <el-col :span="6">
                 <el-form-item 
                   label 
-                  prop="name">
-                  <el-input
-                    v-model="filters.name"
-                    placeholder="请输入节目名称"
-                    style="width: 180px;"
-                    clearable
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item 
-                  label 
                   prop="scene">
                   <el-select 
                     v-model="filters.scene" 
@@ -63,28 +51,6 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="6">
-                <el-form-item 
-                  label 
-                  prop="tpl_name">
-                  <el-select
-                    v-model="filters.tpl_name"
-                    :loading="marketLoading"
-                    placeholder="请选择模板"
-                    filterable
-                    clearable
-                  >
-                    <el-option
-                      v-for="item in templateList"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
               <el-col :span="6">
                 <el-form-item 
                   label 
@@ -127,6 +93,20 @@
                   </el-select>
                 </el-form-item>
               </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="6">
+                <el-form-item 
+                  label 
+                  prop="name">
+                  <el-input
+                    v-model="filters.name"
+                    placeholder="请输入节目名称"
+                    style="width: 180px;"
+                    clearable
+                  />
+                </el-form-item>
+              </el-col>
               <el-col :span="6">
                 <el-form-item 
                   label 
@@ -140,6 +120,26 @@
                   >
                     <el-option
                       v-for="item in templateNameList"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item 
+                  label 
+                  prop="tpl_name">
+                  <el-select
+                    v-model="filters.tpl_name"
+                    :loading="marketLoading"
+                    placeholder="请选择模板"
+                    filterable
+                    clearable
+                  >
+                    <el-option
+                      v-for="item in templateList"
                       :key="item.id"
                       :label="item.name"
                       :value="item.id"
