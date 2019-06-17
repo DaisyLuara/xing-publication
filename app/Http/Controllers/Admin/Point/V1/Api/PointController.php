@@ -193,9 +193,9 @@ class PointController extends Controller
         $arr = [];
         if ($request->filled('customer_id')) {
             $customer = Customer::find($request->get('customer_id'));
-            abort_if(!$customer, 500, '无场地主标识');
+            abort_if(!$customer->z, 500, '无场地主标识');
             $arSite = ArUser::query()->where('z', $customer->z)->first();
-            $arr = ['site_uid' => $arSite->uid];
+            $arr = ['site_uid' => $arSite->uid, 'site_z' => $customer->z];
         }
         $point->update(array_merge($request->all(), $arr));
 

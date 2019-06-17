@@ -112,9 +112,8 @@ class UserController extends BaseController
         abort_if(($cardResult['Code'] !== 1) && ($cardResult['Code'] !== 307), 500, $cardResult['Message']);
 
         //获取会员信息
-        sleep(3);
         $userResult = $this->mall_coo->getUserInfoByOpenUserID($cardResult['Data']['OpenUserID']);
-        abort_if($userResult['Code'] !== 1, 500, $userResult['Message']);
+        abort_if(($userResult['Code'] !== 1) && ($userResult['Code'] !== 30018), 500, $userResult['Message']);
 
         $userInfo = $userResult['Data'];
         $user = ThirdPartyUser::query()->updateOrCreate(
