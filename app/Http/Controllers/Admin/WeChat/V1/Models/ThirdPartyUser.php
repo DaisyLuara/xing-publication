@@ -68,6 +68,7 @@ class ThirdPartyUser extends Model
         'birthday',
         'mallcoo_wx_open_id',
         'mall_card_apply_time',
+        'face_bind',
     ];
 
     public function mallcoo_score_histories()

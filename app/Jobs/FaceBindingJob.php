@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Http\Controllers\Admin\MallCoo\V1\Models\MallcooConfig;
 use App\Http\Controllers\Admin\MallCoo\V1\Models\TodayFaceCollect;
 use App\Http\Controllers\Admin\MallCoo\V1\Models\TodayFileUpload;
+use App\Http\Controllers\Admin\WeChat\V1\Models\ThirdPartyUser;
 use App\Support\MallCoo;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -60,7 +61,13 @@ class FaceBindingJob implements ShouldQueue
             $config = MallcooConfig::query()->where('marketid', $this->marketid)->firstOrFail();
             $mallcoo = new MallCoo($config['mallcoo_mall_id'], $config['mallcoo_appid'], $config['mallcoo_public_key'], $config['mallcoo_private_key']);
             $result = $mallcoo->bindUserFace($faceCollect, $this->mobile);
-            Log::info('face-bind', ['result' => $result]);
+
+            if ($result['Code'] === 1) {
+                ThirdPartyUser::query()->where('mobile', $this->mobile)
+                    ->where('marketid', $this->marketid)
+                    ->update(['face_bind' => 1]);
+            }
+//            Log::info('face-bind', ['result' => $result]);
         }
     }
 }
