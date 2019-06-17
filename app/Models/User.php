@@ -197,4 +197,10 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->isSuperAdmin() ? Role::all() : Role::where('name', '<>', 'super-admin')->get();
     }
+
+    //可查看操作记录的角色
+    public function canSeeOperateLog()
+    {
+        return $this->hasRole(['super-admin', 'admin','legal-affairs-manager']);
+    }
 }
