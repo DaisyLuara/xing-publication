@@ -62,12 +62,12 @@ class FaceBindingJob implements ShouldQueue
             $mallcoo = new MallCoo($config['mallcoo_mall_id'], $config['mallcoo_appid'], $config['mallcoo_public_key'], $config['mallcoo_private_key']);
             $result = $mallcoo->bindUserFace($faceCollect, $this->mobile);
 
-            if ($result['Code'] === 1) {
+            if ($result['Code'] === 1 || $result['Code'] === 9402) {
                 ThirdPartyUser::query()->where('mobile', $this->mobile)
                     ->where('marketid', $this->marketid)
                     ->update(['face_bind' => 1]);
             }
-//            Log::info('face-bind', ['result' => $result]);
+            Log::info('face-bind', ['result' => $result]);
         }
     }
 }
