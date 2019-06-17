@@ -92,15 +92,15 @@ class QueryController extends Controller
         $query = $market->query();
         $markets = collect();
 
-        if (!$request->has('name') && !$request->has('area_id')) {
+        if (!$request->filled('name') && !$request->filled('area_id')) {
             return $this->response()->collection($markets, new AreaTransformer());
         }
 
-        if ($request->has('name')) {
+        if ($request->filled('name')) {
             $query->where('name', 'like', '%' . $request->get('name') . '%');
         }
 
-        if ($request->has('area_id')) {
+        if ($request->filled('area_id')) {
             $query->where('areaid', '=', $request->get('area_id'));
         }
 
