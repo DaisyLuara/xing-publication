@@ -9,6 +9,7 @@
 namespace App\Support;
 
 use App\Http\Controllers\Admin\MallCoo\V1\Models\MallcooConfig;
+use App\Http\Controllers\Admin\MallCoo\V1\Models\TodayFaceCollect;
 use App\Http\Controllers\Admin\Point\V1\Models\Point;
 use Cache;
 
@@ -18,6 +19,7 @@ class MallCoo
     protected $m_AppID = '';
     protected $m_PublicKey = '';
     protected $m_PrivateKey = '';
+    protected $marketid;
 
     /**
      * 初始化
@@ -93,6 +95,27 @@ class MallCoo
         ];
 
         return $this->send($sUrl, $data);
+    }
+
+    /**
+     * 绑定人脸与用户关系V2
+     * @param TodayFaceCollect $faceCollect
+     * @param string $mobile
+     * @return array
+     */
+    public function bindUserFace($faceCollect, $mobile)
+    {
+        $sUrl = 'https://openapi10.mallcoo.cn/Facial/v2/Bind/UserFace/';
+
+        $data = [
+            "Type" => 1,
+            "VendorID" => 5,
+            "FaceID" => $faceCollect->face_token,
+            "Mobile" => $mobile,
+            "FaceImg" => $faceCollect->face,
+        ];
+
+        return  $this->send($sUrl, $data);
     }
 
     /**

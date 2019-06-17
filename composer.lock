@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "c3995d24c71735918efe1bd423bf954b",
+    "content-hash": "2d9b2fd257808e787caceb78ca947527",
     "packages": [
         {
             "name": "anahkiasen/underscore-php",
@@ -2238,16 +2238,16 @@
         },
         {
             "name": "laravel/horizon",
-            "version": "v1.4.3",
+            "version": "v3.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/horizon.git",
-                "reference": "b00da78d10158036cab2f45115ecc360f2014ed4"
+                "reference": "5a6a1744c7101ce509df79e4caa12198eff40faa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/horizon/zipball/b00da78d10158036cab2f45115ecc360f2014ed4",
-                "reference": "b00da78d10158036cab2f45115ecc360f2014ed4",
+                "url": "https://api.github.com/repos/laravel/horizon/zipball/5a6a1744c7101ce509df79e4caa12198eff40faa",
+                "reference": "5a6a1744c7101ce509df79e4caa12198eff40faa",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2258,26 +2258,27 @@
             },
             "require": {
                 "cakephp/chronos": "^1.0",
+                "ext-json": "*",
                 "ext-pcntl": "*",
                 "ext-posix": "*",
-                "illuminate/contracts": "~5.5",
-                "illuminate/queue": "~5.5",
-                "illuminate/support": "~5.5",
+                "illuminate/contracts": "~5.7.0|~5.8.0|~5.9.0",
+                "illuminate/queue": "~5.7.0|~5.8.0|~5.9.0",
+                "illuminate/support": "~5.7.0|~5.8.0|~5.9.0",
                 "php": ">=7.1.0",
                 "predis/predis": "^1.1",
                 "ramsey/uuid": "^3.5",
-                "symfony/debug": "~3.3|~4.0"
+                "symfony/debug": "^4.2",
+                "symfony/process": "^4.2"
             },
             "require-dev": {
-                "mockery/mockery": "~1.0",
-                "orchestra/database": "~3.5",
-                "orchestra/testbench": "~3.5",
-                "phpunit/phpunit": "~6.0"
+                "mockery/mockery": "^1.0",
+                "orchestra/testbench": "^3.7",
+                "phpunit/phpunit": "^7.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0-dev"
+                    "dev-master": "3.0-dev"
                 },
                 "laravel": {
                     "providers": [
@@ -2308,7 +2309,7 @@
                 "laravel",
                 "queue"
             ],
-            "time": "2018-11-01T14:03:51+00:00"
+            "time": "2019-06-04T13:52:41+00:00"
         },
         {
             "name": "laravel/nexmo-notification-channel",
@@ -7819,7 +7820,7 @@
                 },
                 {
                     "name": "Gert de Pagter",
-                    "email": "backendtea@gmail.com"
+                    "email": "BackEndTea@gmail.com"
                 }
             ],
             "description": "Symfony polyfill for ctype functions",
@@ -9009,7 +9010,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.dev.tencent.com/jingfree/exelook-api.git",
-                "reference": "3961137311ffe7ecf76af112e631b1cda618482a"
+                "reference": "2aefdaf79e8b11703df91a3bdac46d9b9e2ce1b4"
             },
             "require": {
                 "guzzlehttp/guzzle": "^6.3",
@@ -9032,7 +9033,7 @@
                 }
             ],
             "description": "Package description here.",
-            "time": "2019-04-25 06:09:05"
+            "time": "2019-05-13 10:10:25"
         },
         {
             "name": "yansongda/laravel-pay",
