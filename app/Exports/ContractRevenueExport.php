@@ -53,23 +53,18 @@ class ContractRevenueExport extends AbstractExport
             ->whereRaw("contracts.created_at between '$this->startDate' and '$this->endDate' and contracts.status=3 and contracts.type in(0,2)")
             ->selectRaw('contracts.id as id,product_name,product_stock');
 
-
-        $cost_sql = DB::table('contracts')
+        $costKind = ContractCostKind::get();
+        $sum = '';
+        foreach ($costKind as $item) {
+            $sum .= ",sum(case cck.alias when '$item->alias' then ccc.money else 0 end) $item->alias";
+        }
+        $cost = DB::table('contracts')
             ->leftJoin('contract_costs as cc', 'contracts.id', '=', 'cc.contract_id')
             ->leftJoin('contract_cost_contents as ccc', 'ccc.cost_id', '=', 'cc.id')
+            ->leftJoin('contract_cost_kinds as cck', 'cck.id', '=', 'ccc.kind_id')
             ->whereRaw("contracts.created_at between '$this->startDate' and '$this->endDate' and contracts.status=3 and contracts.type in(0,2) and ccc.status=1")
-            ->groupBy(DB::raw('contracts.id,cc.id,ccc.kind_id'))
-            ->selectRaw('contracts.id as id,cc.id as cost_id,ccc.kind_id as kind_id,sum(ccc.money) as money');
-
-        $costKind = ContractCostKind::get();
-        $max = '';
-        foreach ($costKind as $item) {
-            $max .= ",Max(case cck.alias when '$item->alias' then cost.money else 0 end) $item->alias";
-        }
-        $cost = DB::table(DB::raw("({$cost_sql->toSql()}) cost"))
-            ->leftJoin('contract_cost_kinds as cck', 'cck.id', '=', 'cost.kind_id')
-            ->groupBy('cost.id')
-            ->selectRaw("cost.id as id $max");
+            ->groupBy('contracts.id')
+            ->selectRaw("contracts.id as id $sum");
 
         $revenue = DB::table(DB::raw("({$contract->toSql()}) a"))
             ->join(DB::raw("({$product->toSql()}) b"), 'a.id', '=', 'b.id')
