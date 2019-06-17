@@ -53,23 +53,29 @@ class ContractRevenueExport extends AbstractExport
             ->whereRaw("contracts.created_at between '$this->startDate' and '$this->endDate' and contracts.status=3 and contracts.type in(0,2)")
             ->selectRaw('contracts.id as id,product_name,product_stock');
 
+
+        $cost_sql = DB::table('contracts')
+            ->leftJoin('contract_costs as cc', 'contracts.id', '=', 'cc.contract_id')
+            ->leftJoin('contract_cost_contents as ccc', 'ccc.cost_id', '=', 'cc.id')
+            ->whereRaw("contracts.created_at between '$this->startDate' and '$this->endDate' and contracts.status=3 and contracts.type in(0,2) and ccc.status=1")
+            ->groupBy(DB::raw('contracts.id,cc.id,ccc.kind_id'))
+            ->selectRaw('contracts.id as id,cc.id as cost_id,ccc.kind_id as kind_id,sum(ccc.money) as money');
+
         $costKind = ContractCostKind::get();
         $max = '';
         foreach ($costKind as $item) {
-            $max .= ",Max(case cck.alias when '$item->alias' then ccc.money else 0 end) $item->alias";
+            $max .= ",Max(case cck.alias when '$item->alias' then cost.money else 0 end) $item->alias";
         }
-        $cost = DB::table('contracts')
-            ->leftJoin('contract_costs as cc', 'contracts.id', '=', 'cc.contract_id')
-            ->leftJoin('contract_cost_contents as ccc', 'ccc.cost_id', '=', 'cc.id')
-            ->leftJoin('contract_cost_kinds as cck', 'cck.id', '=', 'ccc.kind_id')
-            ->whereRaw("contracts.created_at between '$this->startDate' and '$this->endDate' and contracts.status=3 and contracts.type in(0,2)")
-            ->groupBy('contracts.id')
-            ->selectRaw("contracts.id as id $max");
+        $cost = DB::table(DB::raw("({$cost_sql->toSql()}) cost"))
+            ->leftJoin('contract_cost_kinds as cck', 'cck.id', '=', 'cost.kind_id')
+            ->groupBy('cost.id')
+            ->selectRaw("cost.id as id $max");
 
         $revenue = DB::table(DB::raw("({$contract->toSql()}) a"))
             ->join(DB::raw("({$product->toSql()}) b"), 'a.id', '=', 'b.id')
             ->join(DB::raw("({$cost->toSql()}) c"), 'a.id', '=', 'c.id')
             ->orderBy('a.username')
+            ->orderBy('a.id')
             ->selectRaw('a.id as id,username,contract_number,filed_date,amount,receipt_money,internal_name,kind,product_name,product_stock,special_num,c.*')
             ->get();
         $header = ['负责人', '合同编号', '归档日期', '合同金额', '到账金额', '公司简称', '合同种类', '型号', '硬件数量', '定制节目数', '硬件费用', '物流费用', '运维费用', '4G网络费用', '人员差旅', '物料费用', '公司优惠', '其他'];
