@@ -112,11 +112,11 @@ class UserController extends BaseController
         //开卡接口
         $sUrl = 'https://openapi10.mallcoo.cn/User/MallCard/v1/Open/ByMobile/';
         $cardResult = $this->mall_coo->send($sUrl, ['Mobile' => $verifyData['phone']]);
-        abort_if(($cardResult['Code'] !== 1) && ($cardResult['Code'] !== 307), 500, $cardResult['Message']);
+        abort_if(!in_array($cardResult['Code'], [1, 307, 407]), 500, $cardResult['Message']);
 
         //获取会员信息
         $userResult = $this->mall_coo->getUserInfoByOpenUserID($cardResult['Data']['OpenUserID']);
-//        abort_if(($userResult['Code'] !== 1) && ($userResult['Code'] !== 30018), 500, $userResult['Message']);
+        abort_if(($userResult['Code'] !== 1) && ($userResult['Code'] !== 30018), 500, $userResult['Message']);
 
         $userInfo = $userResult['Data'];
         $user = ThirdPartyUser::query()->updateOrCreate(
