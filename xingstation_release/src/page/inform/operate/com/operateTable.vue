@@ -102,6 +102,9 @@
             <el-form-item label="操作人ID">
               <span>{{ scope.row.causer.id }}</span>
             </el-form-item>
+            <el-form-item label="公司" v-if="type === 'customer' ">
+              <span>{{ scope.row.causer.company_name }}</span>
+            </el-form-item>
             <el-form-item label="描述">
               <span>{{ scope.row.description }}</span>
             </el-form-item>
@@ -144,6 +147,14 @@
         label="操作人ID" 
         min-width="120">
         <template slot-scope="scope">{{ scope.row.causer.id }}</template>
+      </el-table-column>
+      <el-table-column 
+        :show-overflow-tooltip="true" 
+        prop="company_name" 
+        label="公司" 
+        min-width="120"
+        v-if="type === 'customer' ">
+        <template slot-scope="scope">{{ scope.row.causer.company_name }}</template>
       </el-table-column>
       <el-table-column 
         prop="description" 
