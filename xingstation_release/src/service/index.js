@@ -67,3 +67,6 @@ export * from './credit'
 
 //资源
 export * from './resource'
+
+//内容
+export * from './content'

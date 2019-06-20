@@ -15,6 +15,7 @@ import activity from 'router/pc/activity'
 import prize from 'router/pc/prize'
 import feedback from 'router/pc/feedback'
 import credit from 'router/pc/credit'
+import content from 'router/pc/content'
 
 export default {
   path: '/',
@@ -39,6 +40,7 @@ export default {
     team,
     report,
     activity,
-    resource
+    resource,
+    content
   ]
 }

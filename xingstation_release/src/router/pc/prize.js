@@ -9,10 +9,11 @@ let router = {
     title: '奖品',
     permission: 'prize',
     url: URL.CDN_URL + 'middle_ground/img/prize-icon.png'
-
   },
   component: () =>
-    import(/* webpackChunkName: "page/prize/prizeView" */ 'page/prize/prizeView'),
+    import(
+      /* webpackChunkName: "page/prize/prizeView" */ 'page/prize/prizeView'
+    ),
   children: [
     {
       path: 'rules',
@@ -21,7 +22,9 @@ let router = {
         permission: 'prize.rules'
       },
       component: () =>
-        import(/* webpackChunkName: "page/prize/rules/routerView" */ 'page/prize/rules/routerView'),
+        import(
+          /* webpackChunkName: "page/prize/rules/routerView" */ 'page/prize/rules/routerView'
+        ),
       children: [
         {
           path: '/',
@@ -31,7 +34,9 @@ let router = {
             permission: 'prize.rules.read'
           },
           component: () =>
-            import(/* webpackChunkName: "page/prize/rules/index" */ 'page/prize/rules/index')
+            import(
+              /* webpackChunkName: "page/prize/rules/index" */ 'page/prize/rules/index'
+            )
         },
         {
           path: 'import',
@@ -41,7 +46,9 @@ let router = {
             permission: 'prize.rules.create'
           },
           component: () =>
-            import(/* webpackChunkName: "page/prize/rules/import" */ 'page/prize/rules/import')
+            import(
+              /* webpackChunkName: "page/prize/rules/import" */ 'page/prize/rules/import'
+            )
         },
         {
           path: 'add',
@@ -51,12 +58,16 @@ let router = {
             permission: 'prize.rules.create'
           },
           component: () =>
-            import(/* webpackChunkName: "page/prize/rules/save" */ 'page/prize/rules/save')
+            import(
+              /* webpackChunkName: "page/prize/rules/save" */ 'page/prize/rules/save'
+            )
         },
         {
           path: 'edit/:uid',
           component: () =>
-            import(/* webpackChunkName: "page/prize/rules/save" */ 'page/prize/rules/save'),
+            import(
+              /* webpackChunkName: "page/prize/rules/save" */ 'page/prize/rules/save'
+            ),
           name: '奖品修改',
           meta: {
             title: '奖品增加',
@@ -72,7 +83,9 @@ let router = {
         permission: 'prize.strategy'
       },
       component: () =>
-        import(/* webpackChunkName: "page/prize/strategy/routerView" */ 'page/prize/strategy/routerView'),
+        import(
+          /* webpackChunkName: "page/prize/strategy/routerView" */ 'page/prize/strategy/routerView'
+        ),
       children: [
         {
           path: '/',
@@ -82,7 +95,9 @@ let router = {
             permission: 'prize.strategy.read'
           },
           component: () =>
-            import(/* webpackChunkName: "page/prize/strategy/index" */ 'page/prize/strategy/index')
+            import(
+              /* webpackChunkName: "page/prize/strategy/index" */ 'page/prize/strategy/index'
+            )
         },
         {
           path: 'policy',
@@ -92,7 +107,9 @@ let router = {
             permission: 'prize.strategy.childRead'
           },
           component: () =>
-            import(/* webpackChunkName: "page/prize/strategy/policise" */ 'page/prize/strategy/policise')
+            import(
+              /* webpackChunkName: "page/prize/strategy/policise" */ 'page/prize/strategy/policise'
+            )
         },
         {
           path: 'p_save',
@@ -101,12 +118,16 @@ let router = {
             permission: 'prize.strategy.create'
           },
           component: () =>
-            import(/* webpackChunkName: "page/prize/strategy/strategySave" */ 'page/prize/strategy/strategySave')
+            import(
+              /* webpackChunkName: "page/prize/strategy/strategySave" */ 'page/prize/strategy/strategySave'
+            )
         },
         {
           path: 'p_edit/:uid',
           component: () =>
-            import(/* webpackChunkName: "page/prize/strategy/strategySave" */ 'page/prize/strategy/strategySave'),
+            import(
+              /* webpackChunkName: "page/prize/strategy/strategySave" */ 'page/prize/strategy/strategySave'
+            ),
           name: '奖品模板修改',
           meta: {
             title: '奖品模板修改',
@@ -120,12 +141,16 @@ let router = {
             permission: 'prize.strategy.childCreate'
           },
           component: () =>
-            import(/* webpackChunkName: "page/prize/strategy/save" */ 'page/prize/strategy/save')
+            import(
+              /* webpackChunkName: "page/prize/strategy/save" */ 'page/prize/strategy/save'
+            )
         },
         {
           path: 'edit/:uid',
           component: () =>
-            import(/* webpackChunkName: "page/prize/strategy/save" */ 'page/prize/strategy/save'),
+            import(
+              /* webpackChunkName: "page/prize/strategy/save" */ 'page/prize/strategy/save'
+            ),
           name: '奖品子条目修改',
           meta: {
             title: '奖品子条目修改',
@@ -141,7 +166,9 @@ let router = {
         permission: 'prize.coupon'
       },
       component: () =>
-        import(/* webpackChunkName: "page/prize/coupon/routerView" */ 'page/prize/coupon/routerView'),
+        import(
+          /* webpackChunkName: "page/prize/coupon/routerView" */ 'page/prize/coupon/routerView'
+        ),
       children: [
         {
           path: '/',
@@ -150,7 +177,9 @@ let router = {
             permission: 'prize.coupon.read'
           },
           component: () =>
-            import(/* webpackChunkName: "page/prize/coupon/index" */ 'page/prize/coupon/index')
+            import(
+              /* webpackChunkName: "page/prize/coupon/index" */ 'page/prize/coupon/index'
+            )
         }
       ]
     },
@@ -161,7 +190,9 @@ let router = {
         permission: 'prize.launch'
       },
       component: () =>
-        import(/* webpackChunkName: "page/prize/prize_put/routerView" */ 'page/prize/prize_put/routerView'),
+        import(
+          /* webpackChunkName: "page/prize/prize_put/routerView" */ 'page/prize/prize_put/routerView'
+        ),
       children: [
         {
           path: '/',
@@ -170,7 +201,9 @@ let router = {
             permission: 'prize.launch.read'
           },
           component: () =>
-            import(/* webpackChunkName: "page/prize/prize_put/index" */ 'page/prize/prize_put/index')
+            import(
+              /* webpackChunkName: "page/prize/prize_put/index" */ 'page/prize/prize_put/index'
+            )
         },
         {
           path: 'add',
@@ -179,12 +212,16 @@ let router = {
             permission: 'prize.launch.create'
           },
           component: () =>
-            import(/* webpackChunkName: "page/prize/prize_put/save" */ 'page/prize/prize_put/save')
+            import(
+              /* webpackChunkName: "page/prize/prize_put/save" */ 'page/prize/prize_put/save'
+            )
         },
         {
           path: 'edit/:uid',
           component: () =>
-            import(/* webpackChunkName: "page/prize/prize_put/save" */ 'page/prize/prize_put/save'),
+            import(
+              /* webpackChunkName: "page/prize/prize_put/save" */ 'page/prize/prize_put/save'
+            ),
           meta: {
             title: '奖品投放修改',
             permission: 'prize.launch.update'
@@ -199,7 +236,9 @@ let router = {
         permission: 'prize.wx_cardpackage'
       },
       component: () =>
-        import(/* webpackChunkName: "page/prize/wx/routerView" */ 'page/prize/wx/routerView'),
+        import(
+          /* webpackChunkName: "page/prize/wx/routerView" */ 'page/prize/wx/routerView'
+        ),
       children: [
         {
           path: '/',
@@ -209,7 +248,9 @@ let router = {
             permission: 'prize.wx_cardpackage.read'
           },
           component: () =>
-            import(/* webpackChunkName: "page/prize/wx/index" */ 'page/prize/wx/index')
+            import(
+              /* webpackChunkName: "page/prize/wx/index" */ 'page/prize/wx/index'
+            )
         },
         {
           path: 'add',
@@ -220,7 +261,9 @@ let router = {
             permission: 'prize.wx_cardpackage.create'
           },
           component: () =>
-            import(/* webpackChunkName: "page/prize/wx/save" */ 'page/prize/wx/save')
+            import(
+              /* webpackChunkName: "page/prize/wx/save" */ 'page/prize/wx/save'
+            )
         },
         {
           path: 'use',
@@ -230,7 +273,9 @@ let router = {
             permission: 'prize.wx_cardpackage.use'
           },
           component: () =>
-            import(/* webpackChunkName: "page/prize/wx/use" */ 'page/prize/wx/use')
+            import(
+              /* webpackChunkName: "page/prize/wx/use" */ 'page/prize/wx/use'
+            )
         }
       ]
     }
