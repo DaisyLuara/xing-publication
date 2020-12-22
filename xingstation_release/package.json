@@ -81,7 +81,7 @@
     "function-bind": "^1.1.1",
     "html-entities": "^1.2.0",
     "http-proxy-middleware": "^0.17.3",
-    "node-notifier": "^5.1.2",
+    "node-notifier": "^8.0.1",
     "opn": "^4.0.2",
     "portfinder": "^1.0.13",
     "rimraf": "^2.6.2",
